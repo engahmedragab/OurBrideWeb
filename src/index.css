@@ -4,7 +4,7 @@ body {
   margin: 0;
   padding: 0;
   font-family:'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Nunito' , 'Nunito variant0' , 'SF Pro Text'
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -15,10 +15,10 @@ body {
   --third:#FF9186;
   --main: #f14836;
   --second:#BA3B2E;
-  --font:'Dancing Script';
+  --font:'SF Pro Text';
 }
 .main-font{
-  font-family: 'Dancing Script';
+  font-family: 'SF Pro Text';
 }
 .btn-main{
   background-color: var(--main);
