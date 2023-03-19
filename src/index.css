@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;400&family=Dancing+Script:wght@400;500;600;700&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:wght@200;300;400;600;700;900&family=Xanh+Mono:ital@1&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family:'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+:root{
+  --third:#FF9186;
+  --main: #f14836;
+  --second:#BA3B2E;
+  --font:'Dancing Script';
+}
+.main-font{
+  font-family: 'Dancing Script';
+}
+.btn-main{
+  background-color: var(--main);
+  color: #fff;
+  transition: all 1s;
+}
+.btn-outline-main{
+  color: var(--main);
+  background-color: #fff;
+  border: var(--main) 1px solid ;
+  transition: all 1s;
+}
+.btn-outline-main:hover{
+  background-color: var(--main);
+  color: #fff;
+}
+.bg-main {
+  background-color: var(--main);
+}
+.bg-second {
+  background-color: var(--second);
+}
+.bg-third {
+  background-color: var(--third);
+}
+.text-main {
+  color: var(--main);
+}
+.text-second {
+  color: var(--second);
+}
+.btn-main:hover{
+  border: var(--main) 1px solid;
+  color: var(--main);
+}
+
+.nav-link {
+  color: #222529;
+  font-size: 18px;
+  font-weight: 500;
+}
+.nav-link:hover {
+  color: var(--main);
+}
+.nav-link:focus{
+  color: #fff;
+  background-color:var(--main);
+  border-radius: 10px;
+}
+.nav-pills .nav-link.active{
+  color: #fff;
+  background-color:var(--main);
+  border-radius: 10px;
+}
+.main-head{
+  font-size: 70px;
+  font-weight: 800;
+}
+.hover-main{
+  cursor: pointer;
+  transition: all 0.5s;
+}
+.hover-main:hover{
+  color: #222529;
+}
+.h-line{
+  position: relative;
+}
+.inline{
+  position: relative;
+  height: 4px;
+  width: 100px;
+  margin: 35px 20px;
+  border-radius: 5px;
+  display: inline-block;
+}
+.icon-box{
+  width: 30px;
+  height: 30px;
+  border: 2px var(--third) solid;
+  color: var(--main);
+  cursor: pointer;
+  transition: all 0.5s;
+}
+.icon-box:focus{
+  background-color: var(--main);
+  color: white;
+}
+.icon-box:hover{
+  background-color: var(--main);
+  color: white;
+}
+.head{
+  font-size: 48px;
+}
+.overlay{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: gray;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.7;
+  cursor: pointer;
+}
+.overlay:hover{
+  opacity: 0.9;
+}
+.cover-img{
+  width: 100%;
+  background-image: url(Assets/heart-cover.jpg);
+  background-position: center center;
+  background-size: cover;
+}
+.opicity-gray{
+  width: 100%;
+}
+.footer{
+  font-size: 12px;
+}
+label{
+  margin: 10px 5px;
+}
+input,textarea{
+  padding: 5px;
+  font-size: larger;
+  border: none;
+}
+input:focus-visible,textarea:focus-visible{
+  outline: none;
+}
+input::placeholder,textarea::placeholder{
+  font-size: larger;
+}
+
+.hrz-line{
+  width: 100%;
+  height: 1px;
+  background-color: #eaeaea;
+  top: 100%;
+}
+
+.over{
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+}
+.text-green{
+  color: rgb(7, 219, 7);
+}

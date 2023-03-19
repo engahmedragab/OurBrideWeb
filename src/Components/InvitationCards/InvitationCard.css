@@ -1,0 +1,25 @@
+.text-card1{
+    color: #A17734;
+}
+.text-card2{
+    color: #687734;
+}
+.text-card3{
+    color: #B96E68;
+}
+.text-card4{
+    color: #F16E96;
+}
+.time{
+    font-weight: 700;
+}
+.top-75{
+    top: 73%;
+    left: 50%;
+    transform:translateX(-50%);
+  }
+  .contain-border{
+    top:64%;
+    left: 50%;
+    transform:translateX(-50%);
+  }
