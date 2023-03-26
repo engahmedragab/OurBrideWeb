@@ -24,7 +24,7 @@ export default function Navbar() {
             <Link className="nav-link px-4" to="about">About</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link px-4" to="invitation">Invitation</Link>
+            <Link className="nav-link px-4" to="blog">Blog</Link>
           </li>
           <li className="nav-item">
             <Link className="nav-link px-4" to="items">Items</Link>

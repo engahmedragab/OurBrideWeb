@@ -1,13 +1,12 @@
 import React from 'react';
 import MainButton from '../../SimpleComponent/MainButton/MainButton.jsx';
-import LoadingScreen from '../LoadingScreen/LoadingScreen.jsx';
-import {SvgIcons} from "../SVG/SvgIcons.jsx";
+import {SvgIcons} from "../../Components/SVG/SvgIcons.jsx";
 
 
 export default function Home() {
   return<>
   {/* <LoadingScreen/> */}
-  <div className="home">
+  <div className="container home">
     {/* <div id="carouselExampleControls" className="carousel slide" data-bs-ride="carousel">
     <div className="carousel-inner">
       <div className="carousel-item active">

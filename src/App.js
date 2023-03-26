@@ -1,12 +1,13 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {createBrowserRouter, RouterProvider} from "react-router-dom"
-import RoutLayout from './Components/RoutLayout/RoutLayout.jsx';
-import Home from './Components/Home/Home.jsx';
-import About from './Components/About/About.jsx';
-import Invitation from './Components/Invitation/invitation.jsx';
-import Items from './Components/Items/Items.jsx';
-import Contact from './Components/Contact/Contact.jsx';
+import RouteLayout from './Components/RouteLayout/RouteLayout.jsx';
+import Home from './Pages/Home/Home.jsx';
+import About from './Pages/About/About.jsx';
+import Invitation from './Pages/Invitation/Invitation.jsx';
+import Blog from './Pages/Blog/Blog.jsx';
+import Items from './Pages/Items/Items.jsx';
+import Contact from './Pages/Contact/Contact.jsx';
 import Register from './Components/Register/Register.jsx';
 import Login from './Components/Login/Login.jsx';
 import CreateInvitation from './Components/CreateInvitation/CreateInvitation.jsx';
@@ -23,10 +24,11 @@ export default function App () {
 
 
   let myRouter = createBrowserRouter([
-    {path:"/",element:<RoutLayout/>,children: [
+    {path:"/",element:<RouteLayout/>,children: [
       {index:true ,element:<Home/>},
       {path:"about" ,element:<About/>},
       {path:"invitation" ,element:<Invitation/>},
+      { path: "blog", element: <Blog/>},
       {path:"items" ,element:<Items/>},
       {path:"contact" ,element:<Contact/>},
       {path:"register" ,element:<Register/>},
