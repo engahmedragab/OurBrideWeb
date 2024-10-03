@@ -1,56 +1,67 @@
-@import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;400&family=Dancing+Script:wght@400;500;600;700&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:wght@200;300;400;600;700;900&family=Xanh+Mono:ital@1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
 
 body {
   margin: 0;
   padding: 0;
-  font-family:'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Nunito' , 'Nunito variant0' , 'SF Pro Text'
-    sans-serif;
+  font-family: 'Nunito', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  background-image: url(Assets/header-hero.jpg);
+  background-position: center center;
+  background-size: cover;
 }
 
-
-:root{
-  --third:#FF9186;
+:root {
+  --third: #FF9186;
   --main: #f14836;
-  --second:#BA3B2E;
-  --font:'SF Pro Text';
+  --second: #f14836;
+  --font: 'Nunito', sans-serif;
 }
-.main-font{
-  font-family: 'SF Pro Text';
+
+.main-font {
+  font-family: 'Nunito', sans-serif;
 }
-.btn-main{
+
+.btn-main {
   background-color: var(--main);
   color: #fff;
   transition: all 1s;
 }
-.btn-outline-main{
+
+.btn-outline-main {
   color: var(--main);
   background-color: #fff;
-  border: var(--main) 1px solid ;
+  border: var(--main) 1px solid;
   transition: all 1s;
 }
-.btn-outline-main:hover{
+
+.btn-outline-main:hover {
   background-color: var(--main);
   color: #fff;
 }
+
 .bg-main {
   background-color: var(--main);
 }
+
 .bg-second {
   background-color: var(--second);
 }
+
 .bg-third {
   background-color: var(--third);
 }
+
 .text-main {
   color: var(--main);
 }
+
 .text-second {
   color: var(--second);
 }
-.btn-main:hover{
+
+.btn-main:hover {
   border: var(--main) 1px solid;
   color: var(--main);
 }
@@ -60,34 +71,42 @@ body {
   font-size: 18px;
   font-weight: 500;
 }
+
 .nav-link:hover {
   color: var(--main);
 }
-.nav-link:focus{
+
+.nav-link:focus {
   color: #fff;
-  background-color:var(--main);
+  background-color: var(--main);
   border-radius: 10px;
 }
-.nav-pills .nav-link.active{
+
+.nav-pills .nav-link.active {
   color: #fff;
-  background-color:var(--main);
+  background-color: var(--main);
   border-radius: 10px;
 }
-.main-head{
-  font-size: 70px;
-  font-weight: 800;
+
+.main-head {
+  font-size: 60px;
+  /* font-weight: 800; */
 }
-.hover-main{
+
+.hover-main {
   cursor: pointer;
   transition: all 0.5s;
 }
-.hover-main:hover{
+
+.hover-main:hover {
   color: #222529;
 }
-.h-line{
+
+.h-line {
   position: relative;
 }
-.inline{
+
+.inline {
   position: relative;
   height: 4px;
   width: 100px;
@@ -95,7 +114,8 @@ body {
   border-radius: 5px;
   display: inline-block;
 }
-.icon-box{
+
+.icon-box {
   width: 30px;
   height: 30px;
   border: 2px var(--third) solid;
@@ -103,18 +123,22 @@ body {
   cursor: pointer;
   transition: all 0.5s;
 }
-.icon-box:focus{
+
+.icon-box:focus {
   background-color: var(--main);
   color: white;
 }
-.icon-box:hover{
+
+.icon-box:hover {
   background-color: var(--main);
   color: white;
 }
-.head{
+
+.head {
   font-size: 48px;
 }
-.overlay{
+
+.overlay {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -127,49 +151,173 @@ body {
   opacity: 0.7;
   cursor: pointer;
 }
-.overlay:hover{
+
+.overlay:hover {
   opacity: 0.9;
 }
-.cover-img{
+
+.cover-img {
   width: 100%;
   background-image: url(Assets/heart-cover.jpg);
   background-position: center center;
   background-size: cover;
 }
-.opicity-gray{
+
+.cover-img-home {
+  width: 100%;
+  background-image: url(Assets/header-hero.jpg);
+  background-position: center center;
+  background-size: cover;
+}
+
+.opicity-gray {
   width: 100%;
 }
-.footer{
+
+.footer {
   font-size: 12px;
 }
-label{
+
+label {
   margin: 10px 5px;
 }
-input,textarea{
+
+input,
+textarea {
   padding: 5px;
   font-size: larger;
   border: none;
 }
-input:focus-visible,textarea:focus-visible{
+
+input:focus-visible,
+textarea:focus-visible {
   outline: none;
 }
-input::placeholder,textarea::placeholder{
+
+input::placeholder,
+textarea::placeholder {
   font-size: larger;
 }
 
-.hrz-line{
+.hrz-line {
   width: 100%;
   height: 1px;
   background-color: #eaeaea;
   top: 100%;
 }
 
-.over{
+.over {
   top: 0;
   left: 0;
   right: 0;
   z-index: 99999;
 }
-.text-green{
+
+.text-green {
   color: rgb(7, 219, 7);
 }
+
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  background-image: none;
+  /* Remove the default background image */
+}
+
+.carousel-control-next-icon::after,
+.carousel-control-prev-icon::after {
+  content: '>';
+  font-size: 60px;
+  color: var(--main);
+}
+
+.carousel-control-prev-icon::after {
+  content: '<';
+}
+
+/* Section Styling */
+.app-section {
+  padding: 60px 0;
+    z-index: 1;
+    background-color: #f8f9fa;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.app-description {
+  font-size: 1.1rem;
+  margin: 20px 0;
+}
+
+.download-btn .btn {
+  margin: 10px 0;
+}
+
+/* Circular Gradient Behind Mobile App Mockup */
+.circle-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(to bottom, #f9d3d3, #f26d6d);
+  border-radius: 50%;
+  z-index: 9;
+}
+
+.app-screenshot {
+  z-index: 10;
+  position: relative;
+  width: 300px;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* 
+ .app-section {
+   padding: 80px 0;
+   background-color: #f8f9fa;
+ }
+
+ .app-title {
+   font-size: 2.5rem;
+   font-weight: bold;
+ }
+
+ .app-description {
+   font-size: 1.2rem;
+   color: #6c757d;
+ }
+
+
+ .download-btn {
+   margin: 20px 0;
+ }
+
+ .download-btn i {
+   margin-right: 10px;
+ }
+
+ .circle-bg {
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   width: 400px;
+   height: 400px;
+   background: radial-gradient(circle at center, #f9d3d3, #f26d6d);
+   border-radius: 50%;
+   z-index: -1;
+ }
+
+ .app-screenshot {
+   max-width: 100%;
+   border-radius: 20px;
+   z-index: 1;
+   position: relative;
+   width: 300px;
+   height: auto;
+ } */
