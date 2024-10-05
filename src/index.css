@@ -28,6 +28,11 @@ body {
   color: #fff;
   transition: all 1s;
 }
+.btn-main:disabled {
+  background-color: var(--main);
+  color: #fff;
+  transition: all 1s;
+}
 
 .btn-outline-main {
   color: var(--main);
@@ -37,6 +42,11 @@ body {
 }
 
 .btn-outline-main:hover {
+  background-color: var(--main);
+  color: #fff;
+}
+
+.btn-outline-main:disabled {
   background-color: var(--main);
   color: #fff;
 }
@@ -321,3 +331,6 @@ textarea::placeholder {
    width: 300px;
    height: auto;
  } */
+
+
+ 

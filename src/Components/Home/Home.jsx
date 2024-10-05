@@ -32,46 +32,48 @@ export default function Home() {
       <h2>OurBride</h2>
     </div>
     </div> */}
-        <div className="row p-5 my-5">
-          <div className="col-lg-6">
-            <div className="contain">
-              <h1 className="main-font main-head">
-                <b>Your</b> <span className="text-main">Bride</span> always is
-                our <b>Responsibility.</b>
-              </h1>
-              <p className="lead fs-6 pe-5 py-3">
-                We are a whole community about marriage, not just a page that
-                helps you with information through a wide range of services and
-                activities, we will help you with it until we reach you on your
-                wedding day.
-              </p>
-              <form>
-                <input
-                  type="email"
-                  className="form-control-lg shadow rounded-pill p-3 px-5 w-75 my-3"
-                  placeholder="Enter your Email"
-                />
-                <input
-                  type="number"
-                  className="form-control-lg shadow rounded-pill p-3 px-5 w-75 my-3"
-                  placeholder="Enter your Phone"
-                />
-                <div>
-                  <MainButton
-                    title="Join Us"
-                    link="register"
-                    classes="btn-main p-2 my-2 m-3 h-50"
+        <div className="container">
+          <div className="row p-5 my-5">
+            <div className="col-lg-6">
+              <div className="contain">
+                <h1 className="main-font main-head">
+                  <b>Your</b> <span className="text-main">Bride</span> always is
+                  our <b>Responsibility.</b>
+                </h1>
+                <p className="lead fs-6 pe-5 py-3">
+                  We are a whole community about marriage, not just a page that
+                  helps you with information through a wide range of services
+                  and activities, we will help you with it until we reach you on
+                  your wedding day.
+                </p>
+                <form>
+                  <input
+                    type="email"
+                    className="form-control-lg shadow rounded-pill p-3 px-5 w-75 my-3"
+                    placeholder="Enter your Email"
                   />
-                </div>
-              </form>
-              <p className="lead fs-6 pe-5 py-3">
-                Let us reach you, enter your Phone Number or Email, and we will
-                provide you with details and developments.
-              </p>
+                  <input
+                    type="number"
+                    className="form-control-lg shadow rounded-pill p-3 px-5 w-75 my-3"
+                    placeholder="Enter your Phone"
+                  />
+                  <div>
+                    <MainButton
+                      title="Join Us"
+                      link="register"
+                      classes="btn-main p-2 my-2 m-3 h-50"
+                    />
+                  </div>
+                </form>
+                <p className="lead fs-6 pe-5 py-3">
+                  Let us reach you, enter your Phone Number or Email, and we
+                  will provide you with details and developments.
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="col-lg-6">
-            <SvgIcons />
+            <div className="col-lg-6">
+              <SvgIcons />
+            </div>
           </div>
         </div>
 
@@ -91,11 +93,11 @@ export default function Home() {
                 </p>
 
                 <div className="download-btn">
-                  {/* <a href="#" className="btn btn-primary btn-lg me-2">
-                    <i className="fab fa-apple"></i> Download on the App Store
-                  </a> */}
-                  <a href="#" className="btn btn-lg btn-main ">
+                  <a href="#" className="btn btn-lg btn-main me-2 ">
                     <i className="fab fa-google-play"></i> Get it on Google Play
+                  </a>
+                  <a href="#" className="btn btn-lg btn-main disabled">
+                    <i className="fab fa-apple"></i> Soon on the App Store
                   </a>
                 </div>
               </div>

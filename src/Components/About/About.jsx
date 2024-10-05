@@ -8,7 +8,7 @@ import img4 from "../../Assets/Weddingplanner4.png";
 export default function About() {
   return (
     <>
-      <div className="about m-5">
+      <div className="container about m-5">
         <div className="contain w-100 d-flex flex-column justify-content-center align-items-center">
           <h2 className="text-main main-font fw-bolder fs-1">WELCOME</h2>
           <h2 className="fw-light">

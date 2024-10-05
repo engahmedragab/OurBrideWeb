@@ -34,16 +34,7 @@ export default function Navbar() {
                   About
                 </Link>
               </li>
-              <li className="nav-item m-1">
-                <a
-                  className="nav-link px-4"
-                  href="https://www.our-bride.store"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Store
-                </a>
-              </li>
+
               {/* <li className="nav-item">
                 <Link className="nav-link px-4" to="invitation">
                   Invitation
@@ -60,7 +51,14 @@ export default function Navbar() {
                 </Link>
               </li>
             </ul>
-            <MainButton title="Mobile App" classes="btn-main" />
+            <MainButton
+              title="Store"
+              classes="btn-main "
+              icon="store"
+              onClick={() =>
+                window.open("https://www.our-bride.store", "_blank")
+              }
+            />
           </div>
         </div>
       </nav>
