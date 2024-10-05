@@ -52,7 +52,7 @@ export default function Navbar() {
               </li>
             </ul>
             <MainButton
-              title="Store"
+              title="  OurBride Store"
               classes="btn-main "
               icon="store"
               onClick={() =>

@@ -254,6 +254,7 @@ textarea::placeholder {
 .app-title {
   font-size: 2.5rem;
   font-weight: bold;
+    margin-bottom: 20px;
 }
 
 .app-description {
@@ -282,55 +283,212 @@ textarea::placeholder {
   z-index: 10;
   position: relative;
   width: 300px;
+    /* max-width: 100%; */
   height: auto;
   border-radius: 10px;
 }
 
-/* 
- .app-section {
-   padding: 80px 0;
-   background-color: #f8f9fa;
- }
-
- .app-title {
-   font-size: 2.5rem;
-   font-weight: bold;
- }
-
- .app-description {
-   font-size: 1.2rem;
-   color: #6c757d;
- }
 
 
- .download-btn {
-   margin: 20px 0;
- }
+.app-features-section {
+  padding: 0 0;
+    background-color: #f8f9fa;
+    height: auto;
+  /* The red background */
+  
+}
 
- .download-btn i {
-   margin-right: 10px;
- }
+.container-feature {
+  max-width: 100%;
+  margin: 0 0;
+}
 
- .circle-bg {
-   position: absolute;
-   top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%);
-   width: 400px;
-   height: 400px;
-   background: radial-gradient(circle at center, #f9d3d3, #f26d6d);
-   border-radius: 50%;
-   z-index: -1;
- }
+.row-feature {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
- .app-screenshot {
-   max-width: 100%;
-   border-radius: 20px;
-   z-index: 1;
-   position: relative;
-   width: 300px;
-   height: auto;
- } */
+.mobile-screens {
+  display: flex;
+  gap: 30px;
+  margin-left: 130px;
+  /* Space between the screens */
+}
+
+.screen {
+  width: 280px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+    margin-left: 200px;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+  margin-left: 200px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.feature-number {
+  display: inline-block;
+  font-size: 24px;
+  font-weight: 700;
+  color: #f14836;
+  /* The red circle number */
+  margin-right: 20px;
+}
+
+.feature-item p {
+  font-size: 16px;
+  color: #333;
+  max-width: 400px;
+}
+
+.app-section {
+  padding: 50px 0;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+}
+
+.feature-item {
+  margin-bottom: 20px;
+}
+
+.feature-number {
+  font-size: 24px;
+  color: #f14836;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.half-red-background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, #f14836 50%, transparent 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-screenshot-container {
+  position: relative;
+  z-index: 2;
+}
+
+.app-screenshot {
+  width: 100%;
+  height: auto;
+  max-width: 300px; /* Adjust the max width as per the design */
+}
+
+.red-rectangle {
+  background-color: #f14836;
+  /* Red background */
+  padding: 100px;
+  /* Adjust padding to your design */
+  /* Optional: add rounded corners */
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  /* Optional: add shadow */
+  position: static;
+}
+
+.app-service-section {
+  padding: 80px 0;
+      background-color: #f8f9fa;
+}
+
+.app-store-section {
+  padding: 80px 0;
+      
+}
+
+.section-title-service {
+  font-size: 36px;
+  font-weight: bold;
+  text-align: left;
+  color: #222529;
+  margin-bottom: 40px;
+}
+
+.service-card-container {
+  display: flex;
+  gap: 30px;
+}
+
+.service-card {
+  background-color: #f5f5f5;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: left;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.highlighted-card {
+  background-color: #f14836;
+  color: white;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.service-card .icon-circle {
+  background-color: #f14836;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.highlighted-card .icon-circle {
+  background-color: white;
+  color: #f14836;
+}
+
+.service-card h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.service-card p {
+  font-size: 13px;
+  line-height: 1.6;
+}
 
 
- 
+.app-service-screenshot {
+  width: 80%;
+}
+
+
+
