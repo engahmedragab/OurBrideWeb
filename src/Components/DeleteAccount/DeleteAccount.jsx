@@ -26,7 +26,7 @@ export default function DeleteAccount() {
 
     try {
       const response = await axios.post(
-        "http://192.168.139.244/api/v1/identity/delete",
+        "http://161.35.32.218/api/v1/identity/delete",
         {
           emailOrPhone,
           password,
