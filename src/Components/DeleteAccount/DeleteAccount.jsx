@@ -3,6 +3,9 @@ import MainButton from "../../SimpleComponent/MainButton/MainButton";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 
 export default function DeleteAccount() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -10,6 +13,7 @@ export default function DeleteAccount() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Handle modal open/close
   const handleShow = () => setShowConfirmModal(true);
@@ -21,14 +25,29 @@ export default function DeleteAccount() {
     setError(null);
 
     try {
-      const response = await axios.delete("/api/user/delete", {
-        data: {
+      const response = await axios.post(
+        "http://192.168.139.244/api/v1/identity/delete",
+        {
           emailOrPhone,
           password,
-        },
-      }); // Change to your API endpoint
-      console.log("Account deleted:", response.data);
-      // Handle successful deletion (e.g., redirect to login)
+        }
+      ); // Change to your API endpoint
+      console.log("Account:", response);
+
+      if (response.data.success) {
+        console.log("Account deleted:", response.data);
+        toast.success("Account deleted successfully!");
+        navigate("/");
+        // Handle successful deletion (e.g., redirect to login)
+      } else {
+        console.log(
+          "Account deleted Errors:",
+          response.data.errors?.join(", ")
+        );
+
+        setError(response.data.errors.join(", "));
+        return;
+      }
     } catch (err) {
       console.error("Failed to delete account", err);
       setError("Failed to delete account, please try again.");

@@ -17,6 +17,7 @@ import InvitationDataContextProvider from "./Context/InvitationDataContext.jsx";
 import DeleteAccount from "./Components/DeleteAccount/DeleteAccount.jsx";
 import TermsAndConditions from "./Components/Helps/TermsAndConditions.jsx";
 import PrivacyPolicy from "./Components/Helps/PrivacyPolicy.jsx";
+import { ToastContainer } from "react-toastify";
 
 export default function App() {
   let myRouter = createBrowserRouter([
@@ -46,6 +47,7 @@ export default function App() {
   return (
     <InvitationDataContextProvider>
       <RouterProvider router={myRouter} />
+      <ToastContainer />
     </InvitationDataContextProvider>
   );
 }
