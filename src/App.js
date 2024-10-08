@@ -37,10 +37,19 @@ export default function App() {
         { path: "invitationCard2", element: <InvitationCard2 /> },
         { path: "invitationCard3", element: <InvitationCard3 /> },
         { path: "invitationCard4", element: <InvitationCard4 /> },
-        { path: "delete-account", element: <DeleteAccount /> },
-        { path: "terms-conditions", element: <TermsAndConditions /> },
-        { path: "privacy-policy", element: <PrivacyPolicy /> },
       ],
+    },
+    {
+      path: "/delete-account",
+      element: <DeleteAccount />,
+    },
+    {
+      path: "/terms-conditions",
+      element: <TermsAndConditions />,
+    },
+    {
+      path: "/privacy-policy",
+      element: <PrivacyPolicy />,
     },
   ]);
 
