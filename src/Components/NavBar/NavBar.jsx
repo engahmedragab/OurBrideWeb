@@ -35,11 +35,11 @@ export default function Navbar() {
                 </Link>
               </li>
 
-              {/* <li className="nav-item">
-                <Link className="nav-link px-4" to="invitation">
-                  Invitation
+              <li className="nav-item">
+                <Link className="nav-link px-4" to="providers">
+                  Providers
                 </Link>
-              </li> */}
+              </li>
               <li className="nav-item m-1">
                 <Link className="nav-link px-4" to="items">
                   Items

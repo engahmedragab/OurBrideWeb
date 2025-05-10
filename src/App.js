@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RoutLayout from "./Components/RoutLayout/RoutLayout.jsx";
 import Home from "./Components/Home/Home.jsx";
@@ -6,6 +5,7 @@ import About from "./Components/About/About.jsx";
 import Invitation from "./Components/Invitation/invitation.jsx";
 import Items from "./Components/Items/Items.jsx";
 import Contact from "./Components/Contact/Contact.jsx";
+import Providers from "./Components/Providers/Providers.jsx";
 import Register from "./Components/Register/Register.jsx";
 import Login from "./Components/Login/Login.jsx";
 import CreateInvitation from "./Components/CreateInvitation/CreateInvitation.jsx";
@@ -19,6 +19,9 @@ import TermsAndConditions from "./Components/Helps/TermsAndConditions.jsx";
 import PrivacyPolicy from "./Components/Helps/PrivacyPolicy.jsx";
 import { ToastContainer } from "react-toastify";
 
+import DeepLinkHandler from "./Components/DeepLink/DeepLinkHandler.jsx";
+
+
 export default function App() {
   let myRouter = createBrowserRouter([
     {
@@ -30,6 +33,7 @@ export default function App() {
         { path: "invitation", element: <Invitation /> },
         { path: "items", element: <Items /> },
         { path: "contact", element: <Contact /> },
+        { path: "providers", element: <Providers /> },
         { path: "register", element: <Register /> },
         { path: "login", element: <Login /> },
         { path: "createInvitation", element: <CreateInvitation /> },
@@ -38,6 +42,10 @@ export default function App() {
         { path: "invitationCard3", element: <InvitationCard3 /> },
         { path: "invitationCard4", element: <InvitationCard4 /> },
       ],
+    },
+    {
+      path: "/dl/:shortCode", // 🔥 This handles short links like our-bride.com/dl/abc123
+      element: <DeepLinkHandler />,
     },
     {
       path: "/delete-account",

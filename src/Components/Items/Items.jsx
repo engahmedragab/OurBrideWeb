@@ -110,7 +110,7 @@ export default function Items() {
         >
           <div className="row g-5 p-5">
             {imgsArray
-              .filter((x) => x.title == "أدوات المطبخ")
+              .filter((x) => x.title === "أدوات المطبخ")
               .map((img) => (
                 <div className="col-lg-4 ">
                   <img className="w-100 rounded" src={img.imgSrc} />
@@ -127,7 +127,7 @@ export default function Items() {
         >
           <div className="row g-5 p-5">
             {imgsArray
-              .filter((x) => x.title == "الأجهزة الكهربائية")
+              .filter((x) => x.title === "الأجهزة الكهربائية")
               .map((img) => (
                 <div className="col-lg-4 ">
                   <img className="w-100 rounded" src={img.imgSrc} />
@@ -144,7 +144,7 @@ export default function Items() {
         >
           <div className="row g-5 p-5">
             {imgsArray
-              .filter((x) => x.title == "الخزين")
+              .filter((x) => x.title === "الخزين")
               .map((img) => (
                 <div className="col-lg-4 ">
                   <img className="w-100 rounded" src={img.imgSrc} />
@@ -161,7 +161,7 @@ export default function Items() {
         >
           <div className="row g-5 p-5">
             {imgsArray
-              .filter((x) => x.title == "الكماليات")
+              .filter((x) => x.title === "الكماليات")
               .map((img) => (
                 <div className="col-lg-4 ">
                   <img className="w-100 rounded" src={img.imgSrc} />
@@ -178,7 +178,7 @@ export default function Items() {
         >
           <div className="row g-5 p-5">
             {imgsArray
-              .filter((x) => x.title == "المفروشات")
+              .filter((x) => x.title === "المفروشات")
               .map((img) => (
                 <div className="col-lg-4 ">
                   <img className="w-100 rounded" src={img.imgSrc} />
@@ -195,7 +195,7 @@ export default function Items() {
         >
           <div className="row g-5 p-5">
             {imgsArray
-              .filter((x) => x.title == "مستلزمات الحمام")
+              .filter((x) => x.title === "مستلزمات الحمام")
               .map((img) => (
                 <div className="col-lg-4 ">
                   <img className="w-100 rounded" src={img.imgSrc} />
