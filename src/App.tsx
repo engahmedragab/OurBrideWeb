@@ -1,15 +1,18 @@
+import { useTranslation } from 'react-i18next';
 import './App.css';
-import { Button } from './components/ui/button';
-import { cn } from './lib/utils';
+import { changeLanguage, currentLang } from './utils/i18n/i18n';
+
 
 function App() {
-  const sara = false;
+  const {t} = useTranslation();
+  console.log({currentLang});
   return (
-    <div className={cn('bg-red-500', sara && 'bg-blue-500')}>
-      sara
-      <Button>sara and shrouq</Button>
+    <div className=' text-start bg-slate-300'>
+      <h1>{t('shrouq')}</h1>
+      <button onClick={()=>changeLanguage(currentLang === 'en' ? 'ar' : 'en')} >{t('sara')}</button>
     </div>
-  );
+  )
+  ;
 }
 
 export default App;
