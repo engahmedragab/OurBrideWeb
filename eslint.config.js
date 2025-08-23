@@ -18,6 +18,7 @@ export default tseslint.config([
       tseslint.configs.recommended,
       reactHooks.configs['recommended-latest'],
       reactRefresh.configs.vite,
+      ...tanstackQuery.configs['flat/recommended'],
     ],
 
     languageOptions: {
@@ -27,6 +28,7 @@ export default tseslint.config([
 
     plugins: {
       react,
+      '@tanstack/query': tanstackQuery,
     },
 
     rules: {
