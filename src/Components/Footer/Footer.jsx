@@ -2,122 +2,242 @@ import React from "react";
 import { Link } from "react-router-dom";
 import appStore from "../../Assets/appstore.png";
 import googleplay from "../../Assets/googleplay.png";
+import logo from "../../Assets/logo.png";
 
 export default function Footer() {
   return (
     <>
-      <div className="container">
-        <div className="row p-5">
-          {/* App Store and Google Play Links */}
-          <div className="col-lg-3 d-flex align-items-center">
-            <a href="#" className="m-1">
-              <img className="w-100" src={appStore} alt="App Store" />
-            </a>
-            <a href="#" className="m-1">
-              <img className="w-100" src={googleplay} alt="Google Play" />
-            </a>
-          </div>
+      <footer className="footer">
+        <div className="container">
+          {/* Main Footer Content */}
+          <div className="footer-main">
+            <div className="row">
+              {/* Company Info */}
+              <div className="col-lg-4 col-md-6 mb-5">
+                <div className="footer-section">
+                  <div className="footer-brand">
+                    <img src={logo} alt="OurBride" className="footer-logo" />
+                  </div>
+                  <p className="footer-description">
+                    Your complete wedding planning companion. From planning to execution,
+                    we're here to make your special day perfect.
+                  </p>
+                  <div className="footer-social">
+                    <h5>Follow Us</h5>
+                    <div className="social-links">
+                      <a
+                        href="https://www.facebook.com/OurBrideCom"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="social-link"
+                      >
+                        <i className="fab fa-facebook-f"></i>
+                      </a>
+                      <a
+                        href="https://www.instagram.com/ourbridecom"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="social-link"
+                      >
+                        <i className="fab fa-instagram"></i>
+                      </a>
+                      <a
+                        href="https://mobile.twitter.com/ourbridecom"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="social-link"
+                      >
+                        <i className="fab fa-twitter"></i>
+                      </a>
+                      <a
+                        href="https://www.tiktok.com/@ourbridecom"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="social-link"
+                      >
+                        <i className="fab fa-tiktok"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          {/* Social Media Links */}
-          <div className="col-lg-3 offset-lg-6 text-center">
-            <h3 className="main-font fw-bolder">Reach US ON.</h3>
-            <div className="icon d-flex justify-content-center">
-              <a
-                className="text-decoration-none"
-                href="https://www.facebook.com/OurBrideCom"
-              >
-                <div className="icon-box rounded-circle d-flex justify-content-center align-items-center m-3">
-                  <i className="fa-brands fa-facebook-f"></i>
+              {/* Quick Links */}
+              <div className="col-lg-2 col-md-6 mb-5">
+                <div className="footer-section">
+                  <h4 className="footer-title">Quick Links</h4>
+                  <ul className="footer-links">
+                    <li>
+                      <Link to="/" className="footer-link">
+                        <i className="fas fa-home"></i>
+                        Home
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/about" className="footer-link">
+                        <i className="fas fa-info-circle"></i>
+                        About Us
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/providers" className="footer-link">
+                        <i className="fas fa-users"></i>
+                        Providers
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/items" className="footer-link">
+                        <i className="fas fa-shopping-bag"></i>
+                        Items
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/contact" className="footer-link">
+                        <i className="fas fa-envelope"></i>
+                        Contact
+                      </Link>
+                    </li>
+                  </ul>
                 </div>
-              </a>
-              <a
-                className="text-decoration-none"
-                href="https://www.instagram.com/ourbridecom"
-              >
-                <div className="icon-box rounded-circle d-flex justify-content-center align-items-center m-3">
-                  <i className="fa-brands fa-instagram"></i>
+              </div>
+
+              {/* Services */}
+              <div className="col-lg-2 col-md-6 mb-5">
+                <div className="footer-section">
+                  <h4 className="footer-title">Services</h4>
+                  <ul className="footer-links">
+                    <li>
+                      <a href="#" className="footer-link">
+                        <i className="fas fa-calendar-check"></i>
+                        Wedding Planning
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="footer-link">
+                        <i className="fas fa-store"></i>
+                        Vendor Directory
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="footer-link">
+                        <i className="fas fa-shopping-cart"></i>
+                        Wedding Shop
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="footer-link">
+                        <i className="fas fa-tasks"></i>
+                        Task Management
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#" className="footer-link">
+                        <i className="fas fa-budget"></i>
+                        Budget Tracker
+                      </a>
+                    </li>
+                  </ul>
                 </div>
-              </a>
-              <a
-                className="text-decoration-none"
-                href="https://mobile.twitter.com/ourbridecom"
-              >
-                <div className="icon-box rounded-circle d-flex justify-content-center align-items-center m-3">
-                  <i className="fa-brands fa-twitter"></i>
+              </div>
+
+              {/* Support & Legal */}
+              <div className="col-lg-2 col-md-6 mb-5">
+                <div className="footer-section">
+                  <h4 className="footer-title">Support & Legal</h4>
+                  <ul className="footer-links">
+                    <li>
+                      <Link to="/privacy-policy" className="footer-link">
+                        <i className="fas fa-shield-alt"></i>
+                        Privacy Policy
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/terms-conditions" className="footer-link">
+                        <i className="fas fa-file-contract"></i>
+                        Terms & Conditions
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/delete-account" className="footer-link">
+                        <i className="fas fa-user-times"></i>
+                        Delete Account
+                      </Link>
+                    </li>
+                    <li>
+                      <a href="mailto:support@ourbride.com" className="footer-link">
+                        <i className="fas fa-headset"></i>
+                        Support
+                      </a>
+                    </li>
+                    <li>
+                      <a href="tel:+1234567890" className="footer-link">
+                        <i className="fas fa-phone"></i>
+                        Contact Us
+                      </a>
+                    </li>
+                  </ul>
                 </div>
-              </a>
-              <a
-                className="text-decoration-none"
-                href="https://www.tiktok.com/@ourbridecom"
-              >
-                <div className="icon-box rounded-circle d-flex justify-content-center align-items-center m-3">
-                  <i className="fa-brands fa-tiktok"></i>
+              </div>
+
+              {/* Download App */}
+              <div className="col-lg-2 col-md-6 mb-5">
+                <div className="footer-section">
+                  <h4 className="footer-title">Download App</h4>
+                  <p className="footer-app-description">
+                    Get OurBride app for the best wedding planning experience
+                  </p>
+                  <div className="footer-app-buttons">
+                    <a
+                      href="https://play.google.com/store/apps/details?id=com.ourbride.app"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="app-download-btn"
+                    >
+                      <img src={googleplay} alt="Google Play" />
+                    </a>
+                    <a
+                      href="#"
+                      className="app-download-btn disabled"
+                      title="Coming Soon"
+                    >
+                      <img src={appStore} alt="App Store" />
+                    </a>
+                  </div>
+                  <div className="footer-store-link">
+                    <a
+                      href="https://www.our-bride.store"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="store-link"
+                    >
+                      <i className="fas fa-store"></i>
+                      Visit Our Store
+                    </a>
+                  </div>
                 </div>
-              </a>
+              </div>
             </div>
           </div>
 
-          {/* Horizontal Line */}
-          <hr className="text-black-50" />
-
-          {/* Useful Links Section */}
-          <div className="col-lg-3  offset-lg-9 text-center ">
-            <h3 className="main-font fw-bolder">Useful Links</h3>
-            <ul className="list-unstyled">
-              <li>
-                <a
-                  className="hover-main text-decoration-none text-main"
-                  href="https://www.our-bride.store"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className={`fas fa-store icon m-1`}> </i>OurBride Store
-                </a>
-              </li>
-              <li>
-                <Link
-                  to="/privacy-policy"
-                  className="hover-main text-decoration-none text-main"
-                >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/terms-conditions"
-                  className="hover-main text-decoration-none text-main"
-                >
-                  Terms and Conditions
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/delete-account"
-                  className="hover-main text-decoration-none text-main"
-                >
-                  Delete Account
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Footer Links */}
-          <div className="text-center">
-            {/* Footer Copyright */}
-            <p className="text-muted py-4">
-              © 2024 Crafted by{" "}
-              <Link
-                to="/"
-                className="hover-main text-decoration-none text-main"
-              >
-                OurBride
-              </Link>{" "}
-              All Rights Reserved.
-            </p>
+          {/* Footer Bottom */}
+          <div className="footer-bottom">
+            <div className="row align-items-center">
+              <div className="col-md-6">
+                <p className="footer-copyright">
+                  © 2024 <strong>OurBride</strong>. All Rights Reserved.
+                </p>
+              </div>
+              <div className="col-md-6 text-md-end">
+                <div className="footer-bottom-links">
+                  <span>Made with</span>
+                  <i className="fas fa-heart text-main"></i>
+                  <span>for couples worldwide</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </footer>
     </>
   );
 }

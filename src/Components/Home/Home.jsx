@@ -3,7 +3,7 @@ import MainButton from "../../SimpleComponent/MainButton/MainButton.jsx";
 import LoadingScreen from "../LoadingScreen/LoadingScreen.jsx";
 import { SvgIcons } from "../SVG/SvgIcons.jsx";
 import homeimage from "../../Assets/appHome.jpg";
-import screen1 from "../../Assets/screen1.jpg"; // Replace with your actual image paths
+import screen1 from "../../Assets/screen1.jpg";
 import screen2 from "../../Assets/screen2.jpg";
 import screen3 from "../../Assets/screen4.jpg";
 import screensplach from "../../Assets/splachscreen.jpg";
@@ -13,287 +13,542 @@ import cart from "../../Assets/cart-pana.png";
 export default function Home() {
   return (
     <>
-      {/* <LoadingScreen/> */}
       <div className="home">
-        {/* <div id="carouselExampleControls" className="carousel slide" data-bs-ride="carousel">
-    <div className="carousel-inner">
-      <div className="carousel-item active">
-        <img src={c0} className="d-block w-100"/>
-      </div>
-      <div className="carousel-item">
-        <img src={c1} className="d-block w-100"/>
-      </div>
-      <div className="carousel-item">
-        <img src={c2} className="d-block w-100"/>
-      </div>
-    </div>
-    <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-      <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span className="visually-hidden">Previous</span>
-    </button>
-    <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-      <span className="carousel-control-next-icon" aria-hidden="true"></span>
-      <span className="visually-hidden">Next</span>
-    </button>
-    <div className="contain d-flex justify-content-center align-items-center position-absolute">
-      <h2>OurBride</h2>
-    </div>
-    </div> */}
-        <div className="container">
-          <div className="row p-5 my-5">
-            <div className="col-lg-6">
-              <div className="contain">
-                <h1 className="main-font main-head">
-                  <b>Your</b> <span className="text-main">Bride</span> always is
-                  our <b>Responsibility.</b>
-                </h1>
-                <p className="lead fs-6 pe-5 py-3">
-                  We are a whole community about marriage, not just a page that
-                  helps you with information through a wide range of services
-                  and activities, we will help you with it until we reach you on
-                  your wedding day.
-                </p>
-                <form>
-                  <input
-                    type="email"
-                    className="form-control-lg shadow rounded-pill p-3 px-5 w-75 my-3"
-                    placeholder="Enter your Email"
-                  />
-                  <input
-                    type=""
-                    className="form-control-lg shadow rounded-pill p-3 px-5 w-75 my-3"
-                    placeholder="Enter your Phone"
-                  />
-                  <div>
-                    <MainButton
-                      title="Join Us"
-                      link="register"
-                      classes="btn-main p-2 my-2 m-3 h-50"
-                    />
-                  </div>
-                </form>
-                <p className="lead fs-6 pe-5 py-3">
-                  Let us reach you, enter your Phone Number or Email, and we
-                  will provide you with details and developments.
-                </p>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              <SvgIcons />
+        {/* Hero Section */}
+        <section className="hero-section">
+          <div className="hero-background">
+            <div className="hero-gradient"></div>
+            <div className="hero-particles">
+              <div className="particle particle-1"></div>
+              <div className="particle particle-2"></div>
+              <div className="particle particle-3"></div>
+              <div className="particle particle-4"></div>
+              <div className="particle particle-5"></div>
             </div>
           </div>
-        </div>
-
-        <section
-          id="home"
-          className="app-section text-center justify-content-center "
-        >
           <div className="container">
-            <div className="row align-items-center justify-content-center">
-              <div className="col-md-6 text-center text-md-start">
-                <h1 className="app-title">
-                  Your wedding, our commitment at OurBride.
-                </h1>
-                <p className="app-description">
-                  Plan your perfect wedding with OurBride. Digital planner,
-                  services, and products!
-                </p>
-
-                <div className="download-btn">
-                  <a href="#" className="btn btn-lg btn-main me-2 ">
-                    <i className="fab fa-google-play"></i> Get it on Google Play
-                  </a>
-                  <a href="#" className="btn btn-lg btn-main disabled">
-                    <i className="fab fa-apple"></i> Coming Soon on the App
-                    Store
-                  </a>
-                </div>
-              </div>
-
-              <div className="col-md-6 text-center mt-4 mt-md-0 position-relative">
-                <div className="circle-bg"></div>
-                <img
-                  src={homeimage}
-                  alt="Mobile App Screenshot"
-                  className="app-screenshot"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-        <section id="app-features" className="app-features-section">
-          <div className="container-feature">
-            <div className="row row-feature align-items-center justify-content-between">
-              {/* Mobile Screens Section */}
-              <div className="red-rectangle col-lg-6">
-                <div className="d-flex justify-content-center">
-                  <div className="mobile-screens d-flex">
-                    <img src={screen1} alt="App screen 1" className="screen" />
-                    <img src={screen2} alt="App screen 2" className="screen" />
-                    <img src={screen3} alt="App screen 3" className="screen" />
-                  </div>
-                </div>
-              </div>
-              {/* Feature List Section */}
+            <div className="row align-items-center min-vh-100">
               <div className="col-lg-6">
-                <h2 className="section-title">Application Features</h2>
-                <ul className="feature-list">
-                  <li className="feature-item">
-                    <span className="feature-number">01</span>
-                    <p>
-                      <strong>Organize Your Wedding Items:</strong> Easily
-                      manage your wedding checklist by adding and tracking
-                      essential items such as venue reservations, catering,
-                      decorations, and more.
-                    </p>
-                  </li>
-                  <li className="feature-item">
-                    <span className="feature-number">02</span>
-                    <p>
-                      <strong>Track Preparations:</strong> Monitor your wedding
-                      preparations progress. The app helps you keep tabs on
-                      completed tasks and what’s still pending, ensuring you're
-                      on schedule.
-                    </p>
-                  </li>
-                  <li className="feature-item">
-                    <span className="feature-number">03</span>
-                    <p>
-                      <strong>Manage Todos and Checklists:</strong> Track
-                      progress with visual indicators of completed and remaining
-                      tasks, ensuring your wedding is fully organized.
-                    </p>
-                  </li>
-                </ul>
+                <div className="hero-content">
+                  <div className="hero-badge">
+                    <div className="badge-icon">
+                      <i className="fas fa-crown"></i>
+                    </div>
+                    <span>Premium Wedding Planning</span>
+                  </div>
+                  <h1 className="hero-title">
+                    Create Your <span className="text-gradient">Dream Wedding</span> with OurBride
+                  </h1>
+                  <p className="hero-description">
+                    The most advanced wedding planning platform that transforms your vision into reality.
+                    From the first "yes" to the final dance, we're your perfect partner.
+                  </p>
+                  <div className="hero-stats">
+                    <div className="stat-item">
+                      <div className="stat-number">15K+</div>
+                      <div className="stat-label">Happy Couples</div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-number">1000+</div>
+                      <div className="stat-label">Premium Vendors</div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-number">4.9★</div>
+                      <div className="stat-label">App Rating</div>
+                    </div>
+                  </div>
+                  <div className="hero-actions">
+                    <div className="hero-form">
+                      <div className="form-group">
+                        <input
+                          type="email"
+                          className="form-control hero-input"
+                          placeholder="Enter your email address"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="tel"
+                          className="form-control hero-input"
+                          placeholder="Enter your phone number"
+                        />
+                      </div>
+                    </div>
+                    <div className="hero-buttons">
+                      <MainButton
+                        title="Start Planning Now"
+                        link="register"
+                        classes="btn-main hero-btn"
+                      />
+                      <a href="#" className="btn btn-outline-main hero-btn-secondary">
+                        <i className="fas fa-play me-2"></i>
+                        Watch Demo
+                      </a>
+                    </div>
+                  </div>
+                  <div className="hero-trust">
+                    <div className="trust-badges">
+                      <div className="trust-badge">
+                        <i className="fas fa-shield-alt"></i>
+                        <span>100% Secure</span>
+                      </div>
+                      <div className="trust-badge">
+                        <i className="fas fa-clock"></i>
+                        <span>24/7 Support</span>
+                      </div>
+                      <div className="trust-badge">
+                        <i className="fas fa-award"></i>
+                        <span>Award Winning</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-6">
+                <div className="hero-visual">
+                  <div className="hero-phone-container">
+                    <div className="phone-mockup">
+                      <div className="phone-frame">
+                        <img src={homeimage} alt="OurBride App" className="app-screenshot" />
+                      </div>
+                      <div className="floating-card card-1">
+                        <div className="card-icon">
+                          <i className="fas fa-calendar-check"></i>
+                        </div>
+                        <div className="card-content">
+                          <span className="card-title">Wedding Timeline</span>
+                          <span className="card-subtitle">Perfect Planning</span>
+                        </div>
+                      </div>
+                      <div className="floating-card card-2">
+                        <div className="card-icon">
+                          <i className="fas fa-tasks"></i>
+                        </div>
+                        <div className="card-content">
+                          <span className="card-title">Task Manager</span>
+                          <span className="card-subtitle">Stay Organized</span>
+                        </div>
+                      </div>
+                      <div className="floating-card card-3">
+                        <div className="card-icon">
+                          <i className="fas fa-store"></i>
+                        </div>
+                        <div className="card-content">
+                          <span className="card-title">Vendor Directory</span>
+                          <span className="card-subtitle">Best Services</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
-        <section id="app-service" className="app-service-section">
+
+        {/* Features Section */}
+        <section className="features-section">
           <div className="container">
-            {/* Section Title */}
-            <h2 className="section-title-service">Application Service</h2>
-            <div className="row align-items-center justify-content-between ">
-              {/* Service Cards */}
-              <div className="col-md-6 d-flex justify-content-center service-card-container">
-                <div className="service-card">
-                  <div className="icon-circle">
-                    <i className="fa fa-shopping-cart"></i>
+            <div className="row justify-content-center text-center">
+              <div className="col-lg-8">
+                <div className="section-header">
+                  <div className="section-badge">
+                    <i className="fas fa-star"></i>
+                    <span>Why Choose OurBride?</span>
                   </div>
-                  <h3>Shop Products</h3>
-                  <p>
-                    Browse a wide selection of products available in our shop.
-                    Purchase everything you need for your wedding, from bridal
-                    accessories to decorations, all in one place.
-                  </p>
-                </div>
-                <div className="service-card highlighted-card">
-                  <div className="icon-circle">
-                    <i className="fa fa-calendar-check"></i>
-                  </div>
-                  <h3>Vendor Service Reservations</h3>
-                  <p>
-                    Reserve services offered by our trusted vendors, including
-                    catering, venues, photography, and more. Easily schedule and
-                    manage your wedding services.
+                  <h2 className="section-title">Everything You Need for Your Perfect Wedding</h2>
+                  <p className="section-description">
+                    Our comprehensive platform combines cutting-edge technology with personalized service
+                    to make your wedding planning journey seamless and enjoyable.
                   </p>
                 </div>
               </div>
+            </div>
+            <div className="row">
+              <div className="col-lg-4 col-md-6">
+                <div className="feature-card">
+                  <div className="feature-icon">
+                    <i className="fas fa-mobile-alt"></i>
+                  </div>
+                  <h3>Intuitive Design</h3>
+                  <p>Beautiful, easy-to-use interface designed for everyone. Plan your wedding with confidence and style.</p>
+                  <div className="feature-badge">Most Popular</div>
+                  <div className="feature-arrow">
+                    <i className="fas fa-arrow-right"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-4 col-md-6">
+                <div className="feature-card featured">
+                  <div className="feature-icon">
+                    <i className="fas fa-shield-alt"></i>
+                  </div>
+                  <h3>Enterprise Security</h3>
+                  <p>Bank-level security protects your data. Your privacy and information are our top priority.</p>
+                  <div className="feature-badge">Trusted</div>
+                  <div className="feature-arrow">
+                    <i className="fas fa-arrow-right"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-4 col-md-6">
+                <div className="feature-card">
+                  <div className="feature-icon">
+                    <i className="fas fa-sync-alt"></i>
+                  </div>
+                  <h3>Real-time Sync</h3>
+                  <p>Access your plans from any device. Everything stays synchronized automatically across all platforms.</p>
+                  <div className="feature-badge">Smart Sync</div>
+                  <div className="feature-arrow">
+                    <i className="fas fa-arrow-right"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-              <div className="col-md-6 text-center mt-4 mt-md-0 position-relative">
-                <img
-                  src={servces}
-                  alt="Mobile App Screenshot"
-                  className="app-service-screenshot"
-                />
+        {/* How It Works Section */}
+        <section className="how-it-works-section">
+          <div className="container">
+            <div className="row justify-content-center text-center">
+              <div className="col-lg-8">
+                <div className="section-header">
+                  <div className="section-badge">
+                    <i className="fas fa-rocket"></i>
+                    <span>How It Works</span>
+                  </div>
+                  <h2 className="section-title">Your Journey to the Perfect Wedding</h2>
+                  <p className="section-description">
+                    Get your dream wedding in just 3 simple steps. Our proven process has helped thousands of couples.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-lg-4">
+                <div className="step-card">
+                  <div className="step-number">01</div>
+                  <div className="step-icon">
+                    <i className="fas fa-user-plus"></i>
+                  </div>
+                  <h3>Create Your Profile</h3>
+                  <p>Sign up and create your personalized wedding profile in minutes. Tell us about your dream wedding.</p>
+                  <div className="step-arrow">
+                    <i className="fas fa-arrow-right"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-4">
+                <div className="step-card featured">
+                  <div className="step-number">02</div>
+                  <div className="step-icon">
+                    <i className="fas fa-tasks"></i>
+                  </div>
+                  <h3>Plan & Organize</h3>
+                  <p>Use our comprehensive tools to plan every detail of your special day. From budget to timeline.</p>
+                  <div className="step-arrow">
+                    <i className="fas fa-arrow-right"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-4">
+                <div className="step-card">
+                  <div className="step-number">03</div>
+                  <div className="step-icon">
+                    <i className="fas fa-heart"></i>
+                  </div>
+                  <h3>Celebrate Love</h3>
+                  <p>Enjoy your perfect wedding day with everything organized and ready. Create memories that last forever.</p>
+                  <div className="step-arrow">
+                    <i className="fas fa-check"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* App Showcase Section */}
+        <section className="app-showcase-section">
+          <div className="container">
+            <div className="row align-items-center">
+              <div className="col-lg-6">
+                <div className="app-content">
+                  <div className="section-header text-start">
+                    <div className="section-badge">
+                      <i className="fas fa-mobile-alt"></i>
+                      <span>Mobile App</span>
+                    </div>
+                    <h2 className="section-title">Your Wedding, Our Commitment</h2>
+                    <p className="section-description">
+                      Download OurBride app and start planning your perfect wedding today.
+                      Available on Google Play Store with iOS version coming soon.
+                    </p>
+                  </div>
+                  <div className="app-features">
+                    <div className="app-feature">
+                      <i className="fas fa-check-circle"></i>
+                      <span>Comprehensive wedding planning tools</span>
+                    </div>
+                    <div className="app-feature">
+                      <i className="fas fa-check-circle"></i>
+                      <span>Vendor directory and booking system</span>
+                    </div>
+                    <div className="app-feature">
+                      <i className="fas fa-check-circle"></i>
+                      <span>Budget tracking and management</span>
+                    </div>
+                    <div className="app-feature">
+                      <i className="fas fa-check-circle"></i>
+                      <span>Guest list and RSVP management</span>
+                    </div>
+                  </div>
+                  <div className="download-buttons">
+                    <a href="#" className="btn btn-main download-btn">
+                      <i className="fab fa-google-play me-2"></i>
+                      Get it on Google Play
+                    </a>
+                    <a href="#" className="btn btn-outline-main download-btn disabled">
+                      <i className="fab fa-apple me-2"></i>
+                      Coming Soon on App Store
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-6">
+                <div className="app-visual">
+                  <div className="mobile-screens">
+                    <img src={screen1} alt="App Feature 1" className="screen screen-1" />
+                    <img src={screen2} alt="App Feature 2" className="screen screen-2" />
+                    <img src={screen3} alt="App Feature 3" className="screen screen-3" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Services Section */}
+        <section className="services-section">
+          <div className="container">
+            <div className="row justify-content-center text-center">
+              <div className="col-lg-8">
+                <div className="section-header">
+                  <div className="section-badge">
+                    <i className="fas fa-cogs"></i>
+                    <span>Our Services</span>
+                  </div>
+                  <h2 className="section-title">Complete Wedding Solutions</h2>
+                  <p className="section-description">
+                    Everything you need for your wedding planning journey in one comprehensive platform.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="row align-items-center">
+              <div className="col-md-6">
+                <div className="services-grid">
+                  <div className="service-card">
+                    <div className="service-icon">
+                      <i className="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3>Wedding Shop</h3>
+                    <p>
+                      Browse and purchase everything you need for your wedding from our curated collection
+                      of high-quality products and accessories.
+                    </p>
+                  </div>
+                  <div className="service-card featured">
+                    <div className="service-icon">
+                      <i className="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Vendor Services</h3>
+                    <p>
+                      Connect with trusted vendors and book services for your wedding. From venues to
+                      photographers, we've got you covered.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div className="services-visual">
+                  <img src={servces} alt="OurBride Services" className="services-image" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="testimonials-section">
+          <div className="container">
+            <div className="row justify-content-center text-center">
+              <div className="col-lg-8">
+                <div className="section-header">
+                  <div className="section-badge">
+                    <i className="fas fa-heart"></i>
+                    <span>Testimonials</span>
+                  </div>
+                  <h2 className="section-title">What Couples Say About Us</h2>
+                  <p className="section-description">
+                    Real stories from happy couples who used OurBride to create their perfect wedding.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-lg-4">
+                <div className="testimonial-card">
+                  <div className="testimonial-rating">
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                  </div>
+                  <div className="testimonial-content">
+                    <p>"OurBride made our wedding planning so much easier. Everything was organized and we never missed a detail!"</p>
+                  </div>
+                  <div className="testimonial-author">
+                    <div className="author-avatar">
+                      <i className="fas fa-user"></i>
+                    </div>
+                    <div className="author-info">
+                      <h4>Sarah & Ahmed</h4>
+                      <span>Married 2024</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-4">
+                <div className="testimonial-card featured">
+                  <div className="testimonial-rating">
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                  </div>
+                  <div className="testimonial-content">
+                    <p>"The app helped us find amazing vendors and stay on budget. Highly recommended for all couples!"</p>
+                  </div>
+                  <div className="testimonial-author">
+                    <div className="author-avatar">
+                      <i className="fas fa-user"></i>
+                    </div>
+                    <div className="author-info">
+                      <h4>Fatima & Omar</h4>
+                      <span>Married 2024</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-4">
+                <div className="testimonial-card">
+                  <div className="testimonial-rating">
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                    <i className="fas fa-star"></i>
+                  </div>
+                  <div className="testimonial-content">
+                    <p>"From planning to execution, OurBride was our perfect wedding companion. Thank you!"</p>
+                  </div>
+                  <div className="testimonial-author">
+                    <div className="author-avatar">
+                      <i className="fas fa-user"></i>
+                    </div>
+                    <div className="author-info">
+                      <h4>Layla & Khalid</h4>
+                      <span>Married 2024</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Store Section */}
+        <section className="store-section">
+          <div className="container">
+            <div className="row align-items-center">
+              <div className="col-md-6">
+                <div className="store-content">
+                  <div className="section-header text-start">
+                    <div className="section-badge">
+                      <i className="fas fa-store"></i>
+                      <span>Our Store</span>
+                    </div>
+                    <h2 className="section-title">Explore Our Wedding Store</h2>
+                    <p className="section-description">
+                      Discover a world of premium wedding products and services curated just for you.
+                    </p>
+                  </div>
+                  <div className="store-features">
+                    <div className="store-feature">
+                      <i className="fas fa-check-circle"></i>
+                      <span>Wide range of wedding products</span>
+                    </div>
+                    <div className="store-feature">
+                      <i className="fas fa-check-circle"></i>
+                      <span>Easy navigation and filtering</span>
+                    </div>
+                    <div className="store-feature">
+                      <i className="fas fa-check-circle"></i>
+                      <span>Secure payments and fast delivery</span>
+                    </div>
+                    <div className="store-feature">
+                      <i className="fas fa-check-circle"></i>
+                      <span>Trusted vendors and quality products</span>
+                    </div>
+                  </div>
+                  <a
+                    href="https://www.our-bride.store"
+                    className="btn btn-main store-btn"
+                  >
+                    <i className="fas fa-store me-2"></i>
+                    Explore OurBride Store
+                  </a>
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div className="store-visual">
+                  <img src={cart} alt="OurBride Store" className="store-image" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="cta-section">
+          <div className="container">
+            <div className="row justify-content-center text-center">
+              <div className="col-lg-8">
+                <div className="cta-content">
+                  <h2 className="cta-title">Ready to Create Your Perfect Wedding?</h2>
+                  <p className="cta-description">
+                    Join thousands of happy couples who have used OurBride to create their dream wedding.
+                    Start your journey today!
+                  </p>
+                  <div className="cta-buttons">
+                    <MainButton
+                      title="Download App Now"
+                      classes="btn-main cta-btn"
+                    />
+                    <a href="https://www.our-bride.store" className="btn btn-outline-main cta-btn">
+                      Visit Store
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
       </div>
-
-      <section id="app-service" className="app-store-section">
-        <div className="container">
-          {/* Section Title */}
-          <h2 className="section-title-service">Explore Our Store</h2>
-
-          <div className="row align-items-center justify-content-between">
-            {/* Left Side Service Cards */}
-            <div className="col-md-6">
-              <div className="row">
-                {/* Shop Products */}
-                <div className="service-card col-md-5 m-2 highlighted-card ">
-                  <div className="icon-circle icon-shop">
-                    <i className="fa fa-shopping-cart"></i>
-                  </div>
-                  <h3>Wide Range of Wedding Products</h3>
-                  <p>
-                    Explore a vast collection of wedding products from trusted
-                    vendors. From bridal gowns, accessories, to decorations and
-                    gifts, everything you need is right at your fingertips.
-                  </p>
-                </div>
-
-                {/* Easy Navigation */}
-                <div className="service-card col-md-5 m-2 shop-card">
-                  <div className="icon-circle icon-compass">
-                    <i className="fa fa-compass"></i>
-                  </div>
-                  <h3>Easy Navigation & Filtering</h3>
-                  <p>
-                    Quickly find what you’re looking for using our smart
-                    filters. Sort products by category, price, popularity, or
-                    reviews to make your shopping experience seamless.
-                  </p>
-                </div>
-              </div>
-
-              <div className="row mt-3">
-                {/* Secure Payments */}
-                <div className="service-card col-md-5 m-2 shop-card">
-                  <div className="icon-circle icon-lock">
-                    <i className="fa fa-lock"></i>
-                  </div>
-                  <h3>Secure Payments</h3>
-                  <p>
-                    Shop with confidence using our secure and trusted payment
-                    options. Your transactions are protected, ensuring a safe
-                    and smooth shopping experience.
-                  </p>
-                </div>
-
-                {/* Fast Delivery */}
-                <div className="service-card col-md-5 m-2 highlighted-card">
-                  <div className="icon-circle icon-delivery">
-                    <i className="fa fa-truck"></i>
-                  </div>
-                  <h3>Fast Delivery</h3>
-                  <p>
-                    Enjoy fast and reliable delivery right to your doorstep.
-                    Track your orders easily and receive them on time, so you
-                    can focus on planning your big day.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Store Image/Visual Representation */}
-            <div className="col-md-6 text-center mt-4 mt-md-0 position-relative">
-              <img
-                src={cart}
-                alt="Store Representation"
-                className="app-service-screenshot"
-              />
-              <a
-                href="https://www.our-bride.store"
-                className="btn btn-lg btn-main me-2 mt-5 "
-              >
-                Expolre <i className="fas fa-store icon m-1"></i> OurBride Store
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   );
 }
