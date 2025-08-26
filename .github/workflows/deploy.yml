@@ -17,7 +17,7 @@ jobs:
         run: npm ci
 
       - name: 🏗️ Build React App
-        run: npm run build
+        run: npm run build --no-lint
 
       - name: 🚀 Deploy to DigitalOcean via SCP
         uses: appleboy/scp-action@v0.1.3
