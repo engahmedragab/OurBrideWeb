@@ -146,7 +146,7 @@ export default function TermsAndConditions() {
       <p>
         If you have any questions about these Terms and Conditions, You can
         contact us by email:{" "}
-        <a href="mailto:ourbride.com@gmail.com">ourbride.com@gmail.com</a>.
+        <a href="mailto:info@our-bride.com">info@our-bride.com</a>.
       </p>
     </div>
   );

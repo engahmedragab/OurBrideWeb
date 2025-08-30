@@ -164,7 +164,7 @@ export default function Footer() {
                       </Link>
                     </li>
                     <li>
-                      <a href="mailto:support@ourbride.com" className="footer-link">
+                      <a href="mailto:support@our-bride.com" className="footer-link">
                         <i className="fas fa-headset"></i>
                         Support
                       </a>

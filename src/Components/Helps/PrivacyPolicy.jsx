@@ -224,7 +224,7 @@ export default function PrivacyPolicy() {
       <h2>Contact Us</h2>
       <p>
         If you have any questions about this Privacy Policy, You can contact us
-        at: <a href="mailto:ourbride.com@gmail.com">ourbride.com@gmail.com</a>.
+        at: <a href="mailto:info@our-bride.com">info@our-bride.com</a>.
       </p>
     </div>
   );

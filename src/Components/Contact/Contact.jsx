@@ -97,7 +97,7 @@ export default function Contact() {
                     <i className="fas fa-envelope"></i>
                   </div>
                   <h3>Email Us</h3>
-                  <p>support@ourbride.com</p>
+                  <p>support@our-bride.com</p>
                   <span className="contact-note">We respond within 2 hours</span>
                 </div>
               </div>
