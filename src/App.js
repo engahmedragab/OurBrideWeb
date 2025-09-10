@@ -17,6 +17,7 @@ import InvitationDataContextProvider from "./Context/InvitationDataContext.jsx";
 import DeleteAccount from "./Components/DeleteAccount/DeleteAccount.jsx";
 import TermsAndConditions from "./Components/Helps/TermsAndConditions.jsx";
 import PrivacyPolicy from "./Components/Helps/PrivacyPolicy.jsx";
+import Support from "./Components/Support/Support.jsx";
 import { ToastContainer } from "react-toastify";
 
 import DeepLinkHandler from "./Components/DeepLink/DeepLinkHandler.jsx";
@@ -41,6 +42,7 @@ export default function App() {
         { path: "invitationCard2", element: <InvitationCard2 /> },
         { path: "invitationCard3", element: <InvitationCard3 /> },
         { path: "invitationCard4", element: <InvitationCard4 /> },
+        { path: "support", element: <Support /> },
       ],
     },
     {
