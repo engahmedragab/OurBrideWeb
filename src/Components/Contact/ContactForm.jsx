@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { contactService } from "../../services/apiService";
 import { createContactData } from "../../utils/browserInfo";
+import { useFormAnalytics } from "../../Hooks/useAnalytics";
 
 const ContactForm = ({
     source = "Contact Form",
@@ -20,6 +21,9 @@ const ContactForm = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(null);
 
+    // Initialize form analytics
+    const { trackFormStart, trackFormSubmit, trackFormError, trackFormFieldFocus } = useFormAnalytics(source);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -28,10 +32,17 @@ const ContactForm = ({
         }));
     };
 
+    const handleInputFocus = (fieldName) => {
+        trackFormFieldFocus(fieldName);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         setSubmitStatus(null);
+
+        // Track form start
+        trackFormStart();
 
         try {
             // Create contact data with system information
@@ -40,8 +51,14 @@ const ContactForm = ({
             // Submit to API
             const response = await contactService.create(contactData);
 
-            console.log("Contact form submitted successfully:", response);
             setSubmitStatus('success');
+
+            // Track successful form submission
+            trackFormSubmit({
+                form_source: source,
+                has_phone: !!formData.phone,
+                message_length: formData.message.length
+            });
 
             // Reset form
             setFormData({
@@ -61,6 +78,9 @@ const ContactForm = ({
         } catch (error) {
             console.error("Error submitting contact form:", error);
             setSubmitStatus('error');
+
+            // Track form error
+            trackFormError(error.message || 'Unknown error occurred');
 
             // Call error callback if provided
             if (onError) {
@@ -96,6 +116,7 @@ const ContactForm = ({
                                     name="name"
                                     value={formData.name}
                                     onChange={handleInputChange}
+                                    onFocus={() => handleInputFocus('name')}
                                     placeholder="Enter your full name"
                                     required
                                 />
@@ -115,6 +136,7 @@ const ContactForm = ({
                                     name="email"
                                     value={formData.email}
                                     onChange={handleInputChange}
+                                    onFocus={() => handleInputFocus('email')}
                                     placeholder="Enter your email address"
                                     required
                                 />
@@ -135,6 +157,7 @@ const ContactForm = ({
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleInputChange}
+                                onFocus={() => handleInputFocus('phone')}
                                 placeholder="Enter your phone number"
                             />
                         </div>
@@ -152,6 +175,7 @@ const ContactForm = ({
                             rows="5"
                             value={formData.message}
                             onChange={handleInputChange}
+                            onFocus={() => handleInputFocus('message')}
                             placeholder="Tell us more about your inquiry..."
                             required
                         ></textarea>

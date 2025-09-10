@@ -22,8 +22,26 @@ import { ToastContainer } from "react-toastify";
 
 import DeepLinkHandler from "./Components/DeepLink/DeepLinkHandler.jsx";
 
+// Analytics imports
+import { useEffect } from "react";
+import { getAnalyticsConfig } from "./config/analytics";
+import { initializeAnalytics } from "./utils/AnalyticsManager";
+import { initializeAutoAnalytics } from "./utils/autoAnalytics";
+import AnalyticsToggle from "./Components/Analytics/AnalyticsToggle";
+
 
 export default function App() {
+  // Initialize analytics on app start
+  useEffect(() => {
+    try {
+      const analyticsConfig = getAnalyticsConfig();
+      initializeAnalytics(analyticsConfig);
+      initializeAutoAnalytics();
+    } catch (error) {
+      console.error('❌ Failed to initialize analytics in App:', error);
+    }
+  }, []);
+
   let myRouter = createBrowserRouter([
     {
       path: "/",
@@ -67,6 +85,7 @@ export default function App() {
     <InvitationDataContextProvider>
       <RouterProvider router={myRouter} />
       <ToastContainer />
+
     </InvitationDataContextProvider>
   );
 }

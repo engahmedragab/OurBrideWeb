@@ -50,7 +50,6 @@ export default function Invitation() {
   const handlePlayAudio = () => {
     if (audio) {
       audio.play().catch(error => {
-        console.log("Audio play error:", error);
       });
     }
   };

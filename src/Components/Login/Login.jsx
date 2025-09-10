@@ -18,13 +18,11 @@ export default function Login() {
     let myUser = { ...user };
     myUser[e.target.name] = e.target.value;
     setUser(myUser);
-    console.log(myUser);
   }
 
   async function sendLoginUserData() {
     try {
       const data = await authService.register(user);
-      console.log(data);
       if (data.message === "success") {
         setIsLoading(false);
         localStorage.setItem("userToken", data.token);
@@ -32,12 +30,10 @@ export default function Login() {
       } else {
         setIsLoading(false);
         setError(data.message);
-        console.log(error);
       }
     } catch (error) {
       setIsLoading(false);
       setError(error.message);
-      console.log(error);
     }
   }
 
@@ -48,7 +44,6 @@ export default function Login() {
     if (validation.error) {
       setIsLoading(false);
       setErrorList(validation.error.details);
-      console.log(errorList);
     } else {
       sendLoginUserData();
     }

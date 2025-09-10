@@ -1,7 +1,48 @@
 import React from "react";
 import { imgsArray } from "../ItemsCard/ItemsCard";
+import { useAnalytics } from "../../Hooks/useAnalytics";
 
 export default function Items() {
+  const { trackButtonClick, trackCustomEvent } = useAnalytics();
+
+  // Track category filter clicks
+  const handleCategoryClick = (categoryName) => {
+    trackCustomEvent('category_filter_click', {
+      category_name: categoryName,
+      page_section: 'items_gallery'
+    });
+  };
+
+  // Track product view button clicks
+  const handleViewDetails = (productId, productTitle) => {
+    trackButtonClick('view_details', 'product_card', {
+      product_id: productId,
+      product_title: productTitle
+    });
+  };
+
+  // Track wishlist button clicks
+  const handleAddToWishlist = (productId, productTitle) => {
+    trackButtonClick('add_to_wishlist', 'product_card', {
+      product_id: productId,
+      product_title: productTitle
+    });
+  };
+
+  // Track CTA button clicks
+  const handleStoreVisit = () => {
+    trackButtonClick('visit_store', 'cta_section', {
+      cta_type: 'external_link',
+      destination: 'our-bride.store'
+    });
+  };
+
+  const handleAppDownload = () => {
+    trackButtonClick('download_app', 'cta_section', {
+      cta_type: 'app_download'
+    });
+  };
+
   return (
     <>
       <div className="items-section">
@@ -57,6 +98,7 @@ export default function Items() {
                         role="tab"
                         aria-controls="pills-all"
                         aria-selected="true"
+                        onClick={() => handleCategoryClick('All Items')}
                       >
                         <i className="fas fa-th-large me-2"></i>
                         All Items
@@ -72,6 +114,7 @@ export default function Items() {
                         role="tab"
                         aria-controls="pills-electronic"
                         aria-selected="false"
+                        onClick={() => handleCategoryClick('الأجهزة الكهربائية')}
                       >
                         <i className="fas fa-plug me-2"></i>
                         الأجهزة الكهربائية
@@ -87,6 +130,7 @@ export default function Items() {
                         role="tab"
                         aria-controls="pills-store"
                         aria-selected="false"
+                        onClick={() => handleCategoryClick('الخزين')}
                       >
                         <i className="fas fa-box me-2"></i>
                         الخزين
@@ -102,6 +146,7 @@ export default function Items() {
                         role="tab"
                         aria-controls="pills-complited"
                         aria-selected="false"
+                        onClick={() => handleCategoryClick('الكماليات')}
                       >
                         <i className="fas fa-star me-2"></i>
                         الكماليات
@@ -117,6 +162,7 @@ export default function Items() {
                         role="tab"
                         aria-controls="pills-clothing"
                         aria-selected="false"
+                        onClick={() => handleCategoryClick('المفروشات')}
                       >
                         <i className="fas fa-couch me-2"></i>
                         المفروشات
@@ -132,6 +178,7 @@ export default function Items() {
                         role="tab"
                         aria-controls="pills-bathThings"
                         aria-selected="false"
+                        onClick={() => handleCategoryClick('مستلزمات الحمام')}
                       >
                         <i className="fas fa-bath me-2"></i>
                         مستلزمات الحمام
@@ -354,11 +401,19 @@ export default function Items() {
                     Visit our comprehensive store to find everything you need for your perfect wedding and new life together.
                   </p>
                   <div className="cta-buttons">
-                    <a href="https://www.our-bride.store" className="btn btn-main cta-btn">
+                    <a
+                      href="https://www.our-bride.store"
+                      className="btn btn-main cta-btn"
+                      onClick={handleStoreVisit}
+                    >
                       <i className="fas fa-store me-2"></i>
                       Visit Our Store
                     </a>
-                    <a href="#" className="btn btn-outline-main cta-btn">
+                    <a
+                      href="#"
+                      className="btn btn-outline-main cta-btn"
+                      onClick={handleAppDownload}
+                    >
                       <i className="fas fa-download me-2"></i>
                       Download App
                     </a>

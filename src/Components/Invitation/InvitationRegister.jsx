@@ -72,7 +72,6 @@ export default function InvitationRegister() {
             // Call the landing sign-in service (equivalent to _identityService.LandingSignInAsync)
             const response = await authService.landingSignIn(formData.email, formData.phone);
 
-            console.log("Registration successful:", response);
 
             // Redirect to create invitation page
             navigate('/invitations/create');

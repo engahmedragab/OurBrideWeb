@@ -18,21 +18,16 @@ export default function Register() {
     let myUser = { ...user };
     myUser[e.target.name] = e.target.value;
     setUser(myUser);
-    console.log(myUser);
   }
 
   async function sendUserData() {
     try {
       const response = await authService.register(user);
-      console.log(response, "res");
       if (response.status === 200) {
-        console.log("success");
         navigate("/login");
       } else {
-        console.log(response.errors, "err");
       }
     } catch (error) {
-      console.log(error, "err");
       setError(error.message);
     }
   }
@@ -42,7 +37,6 @@ export default function Register() {
     let validation = validateFormData();
     if (validation.error) {
       setErrorList(validation.error.details);
-      console.log(errorList);
     } else {
       sendUserData();
     }
@@ -61,7 +55,6 @@ export default function Register() {
     return scheme.validate(user, { abortEarly: false });
   }
 
-  console.log(user);
   return (
     <>
       <div className="register-section">

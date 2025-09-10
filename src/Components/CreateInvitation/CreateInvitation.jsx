@@ -17,14 +17,12 @@ export default function CreateInvitation() {
     let InvitaionData = { ...invitaionData };
     InvitaionData["img-src"] = e.target["src"];
     setInvitaionData(InvitaionData);
-    console.log(InvitaionData);
   };
 
   const getData = (e) => {
     let InvitaionData = { ...invitaionData };
     InvitaionData[e.target.name] = e.target.value;
     setInvitaionData(InvitaionData);
-    console.log(InvitaionData);
   };
 
   const sendData = () => {
@@ -50,13 +48,11 @@ export default function CreateInvitation() {
       "http://localhost:3000/static/media/My%20Invitation%204.469b610a6163c90bea91.jpeg"
     ) {
       navigate("/invitationCard4");
-      console.log("44");
     }
   };
 
   function SubmitData(e) {
     e.preventDefault();
-    console.log(invitaionData);
     sendData();
   }
 
