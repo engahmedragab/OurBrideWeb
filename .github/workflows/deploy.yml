@@ -35,6 +35,28 @@ jobs:
           rm: true
           strip_components: 1
 
+      - name: 📱 Deploy .well-known Files
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          source: "build/.well-known/*"
+          target: "/var/www/OurBrideWeb/build/.well-known"
+          strip_components: 2
+
+      - name: 🔧 Set .well-known Permissions
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            sudo chown -R www-data:www-data /var/www/OurBrideWeb/build/.well-known
+            sudo chmod -R 755 /var/www/OurBrideWeb/build/.well-known
+
       - name: 🔄 Reload Nginx
         uses: appleboy/ssh-action@v0.1.3
         with:
