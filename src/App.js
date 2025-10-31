@@ -22,6 +22,7 @@ import { ToastContainer } from "react-toastify";
 
 import DeepLinkHandler from "./Components/DeepLink/DeepLinkHandler.jsx";
 import DeepLinkRedirect from "./Components/DeepLink/DeepLinkRedirect.jsx";
+import CouponDeepLink from "./Components/DeepLink/CouponDeepLink.jsx";
 
 // Analytics imports
 import { useEffect } from "react";
@@ -67,6 +68,10 @@ export default function App() {
     {
       path: "/dl/:shortCode", // 🔥 This handles short links like our-bride.com/dl/abc123
       element: <DeepLinkHandler />,
+    },
+    {
+      path: "/app/coupon", // Special coupon route - redirects to store if app not installed
+      element: <CouponDeepLink />,
     },
     {
       path: "/app/*",

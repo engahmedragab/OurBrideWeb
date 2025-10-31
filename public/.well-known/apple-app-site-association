@@ -20,7 +20,20 @@
                     "/items/store/*",
                     "/scan/*",
                     "/redirect*",
-                    "/profile/*"
+                    "/profile/*",
+                    "/coupon/*",
+                    "/dl/*",
+                    "/app/coupon/*",
+                    "/app/dl/*",
+                    "/app/scan/*",
+                    "/app/redirect*",
+                    "/app/profile/*",
+                    "/app/coupon/*",
+                    "/app/dl/*",
+                    "/app/scan/*",
+                    "/app/redirect*",
+                    "/app/profile",
+                    "/app/coupon"
                 ]
             }
         ]
