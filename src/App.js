@@ -38,7 +38,7 @@ export default function App() {
       initializeAnalytics(analyticsConfig);
       initializeAutoAnalytics();
     } catch (error) {
-      console.error('❌ Failed to initialize analytics in App:', error);
+      // Analytics initialization failed silently
     }
   }, []);
 

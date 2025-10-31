@@ -119,8 +119,14 @@ export default function NavBar() {
                   classes="btn-main navbar-download-btn"
                   icon="download"
                   onClick={() => {
-                    // Add download app functionality
-                    window.open("https://play.google.com/store/apps/details?id=com.ourbride.app", "_blank");
+                    const ua = navigator.userAgent || "";
+                    const isIOS = /iPhone|iPad|iPod/i.test(ua);
+
+                    if (isIOS) {
+                      window.open("https://apps.apple.com/sa/app/ourbride/id6747453812", "_blank");
+                    } else {
+                      window.open("https://play.google.com/store/apps/details?id=com.ourbride.app", "_blank");
+                    }
                   }}
                 />
               </div>

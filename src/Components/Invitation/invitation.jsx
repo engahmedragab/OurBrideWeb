@@ -34,7 +34,7 @@ export default function Invitation() {
       const data = await invitationService.getBySlug(slug);
       setInvitation(data);
     } catch (error) {
-      console.error("Error loading invitation:", error);
+      // Error loading invitation handled silently
       setError("Invitation not found or has expired");
     } finally {
       setLoading(false);

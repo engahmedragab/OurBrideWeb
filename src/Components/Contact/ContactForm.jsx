@@ -76,7 +76,7 @@ const ContactForm = ({
             }
 
         } catch (error) {
-            console.error("Error submitting contact form:", error);
+            // Error submitting contact form handled silently
             setSubmitStatus('error');
 
             // Track form error

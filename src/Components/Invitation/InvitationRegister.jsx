@@ -77,7 +77,7 @@ export default function InvitationRegister() {
             navigate('/invitations/create');
 
         } catch (error) {
-            console.error("Registration error:", error);
+            // Registration error handled silently
             setErrors({ submit: error.message || 'Registration failed. Please try again.' });
         } finally {
             setIsSubmitting(false);

@@ -77,7 +77,6 @@ export const getIPAddress = async () => {
         const data = await response.json();
         return data.ip;
     } catch (error) {
-        console.error('Error fetching IP address:', error);
         return null;
     }
 };
@@ -94,7 +93,6 @@ export const getLocationInfo = async () => {
             mapsLink: `https://maps.google.com/?q=${data.latitude},${data.longitude}`
         };
     } catch (error) {
-        console.error('Error fetching location info:', error);
         return {
             countryId: null,
             cityId: null,

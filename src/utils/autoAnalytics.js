@@ -54,7 +54,6 @@ class AutoAnalytics {
             if (ANALYTICS_CONFIG.DEBUG) {
             }
         } catch (error) {
-            console.error('❌ Auto Analytics initialization failed:', error);
             this.logger.logError('auto_analytics_init_error', error.message, { error });
         }
     }
@@ -887,7 +886,7 @@ class AutoAnalytics {
                 meta_key: event.metaKey || false
             });
         } catch (error) {
-            console.warn('Mouse event tracking failed:', error);
+            // Mouse event tracking failed silently
         }
     }
 
@@ -965,7 +964,7 @@ class AutoAnalytics {
                 is_collapsed: selection ? selection.isCollapsed : true
             });
         } catch (error) {
-            console.warn('Selection event tracking failed:', error);
+            // Selection event tracking failed silently
         }
     }
 

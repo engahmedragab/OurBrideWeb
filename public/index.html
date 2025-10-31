@@ -41,8 +41,14 @@
   <meta name="theme-color" content="#f14836" />
   <meta name="msapplication-TileColor" content="#f14836" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="format-detection" content="telephone=no" />
+
+  <!-- Prevent caching issues -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
 
   <!-- Canonical URL -->
   <link rel="canonical" href="https://our-bride.com/" />
@@ -125,6 +131,57 @@
         "ratingCount": "15000"
       }
     }
+  </script>
+
+  <!-- Service Worker Cleanup - Run IMMEDIATELY before any modules load -->
+  <script>
+    // Unregister all service workers synchronously before React loads
+    (function () {
+      try {
+        if ('serviceWorker' in navigator) {
+          // Get registrations and unregister immediately
+          navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            registrations.forEach(function (registration) {
+              registration.unregister().catch(function () {
+                // Unregistration failed, continue
+              });
+            });
+          }).catch(function () {
+            // Get registrations failed, continue
+          });
+
+          // Clear controller if exists
+          if (navigator.serviceWorker.controller) {
+            // Controller exists, we'll need to reload after unregistering
+            var reloaded = sessionStorage.getItem('sw-cleanup-reload');
+            if (!reloaded) {
+              sessionStorage.setItem('sw-cleanup-reload', 'true');
+              // Wait a bit for unregistration, then reload
+              setTimeout(function () {
+                window.location.reload();
+              }, 200);
+            } else {
+              sessionStorage.removeItem('sw-cleanup-reload');
+            }
+          }
+        }
+
+        // Clear all caches
+        if ('caches' in window) {
+          caches.keys().then(function (cacheNames) {
+            cacheNames.forEach(function (cacheName) {
+              caches.delete(cacheName).catch(function () {
+                // Cache deletion failed, continue
+              });
+            });
+          }).catch(function () {
+            // Cache keys retrieval failed, continue
+          });
+        }
+      } catch (e) {
+        // Cleanup failed, continue anyway
+      }
+    })();
   </script>
 </head>
 

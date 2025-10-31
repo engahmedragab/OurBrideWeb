@@ -283,7 +283,7 @@ export default function Home() {
                     <h2 className="section-title">Your Wedding, Our Commitment</h2>
                     <p className="section-description">
                       Download OurBride app and start planning your perfect wedding today.
-                      Available on Google Play Store with iOS version coming soon.
+                      Available on Google Play Store and App Store.
                     </p>
                   </div>
                   <div className="app-features">
@@ -309,9 +309,14 @@ export default function Home() {
                       <i className="fab fa-google-play me-2"></i>
                       Get it on Google Play
                     </a>
-                    <a href="#" className="btn btn-outline-main download-btn disabled">
+                    <a
+                      href="https://apps.apple.com/sa/app/ourbride/id6747453812"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-outline-main download-btn"
+                    >
                       <i className="fab fa-apple me-2"></i>
-                      Coming Soon on App Store
+                      Get it on App Store
                     </a>
                   </div>
                 </div>
@@ -535,10 +540,15 @@ export default function Home() {
                     Start your journey today!
                   </p>
                   <div className="cta-buttons">
-                    <MainButton
-                      title="Download App Now"
-                      classes="btn-main cta-btn"
-                    />
+                    <a
+                      href="https://apps.apple.com/sa/app/ourbride/id6747453812"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-main cta-btn"
+                    >
+                      <i className="fas fa-download me-2"></i>
+                      Download App Now
+                    </a>
                     <a href="https://www.our-bride.store" className="btn btn-outline-main cta-btn">
                       Visit Store
                     </a>

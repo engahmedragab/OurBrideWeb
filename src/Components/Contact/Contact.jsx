@@ -1,5 +1,4 @@
 import React from "react";
-import MainButton from "../../SimpleComponent/MainButton/MainButton";
 import ContactForm from "./ContactForm";
 
 export default function Contact() {
@@ -205,7 +204,7 @@ export default function Contact() {
                   </div>
                   <div className="faq-content">
                     <h4>How do I download the OurBride app?</h4>
-                    <p>You can download OurBride from Google Play Store. The app is currently available for Android devices, with iOS version coming soon.</p>
+                    <p>You can download OurBride from Google Play Store and App Store. The app is available for both Android and iOS devices.</p>
                   </div>
                 </div>
               </div>
@@ -260,10 +259,15 @@ export default function Contact() {
                     Download OurBride app today and begin your journey to the perfect wedding
                   </p>
                   <div className="cta-buttons">
-                    <MainButton
-                      title="Download App"
-                      classes="btn-main cta-btn"
-                    />
+                    <a
+                      href="https://apps.apple.com/sa/app/ourbride/id6747453812"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-main cta-btn"
+                    >
+                      <i className="fas fa-download me-2"></i>
+                      Download App
+                    </a>
                     <a href="https://www.our-bride.store" className="btn btn-outline-main cta-btn">
                       <i className="fas fa-store me-2"></i>
                       Visit Store

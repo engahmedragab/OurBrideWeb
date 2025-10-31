@@ -30,7 +30,7 @@ const AnalyticsDashboard = ({ isVisible = false, onClose }) => {
                 setAnalyticsData(report);
             }
         } catch (error) {
-            console.error('Failed to load analytics data:', error);
+            // Failed to load analytics data silently
         } finally {
             setIsLoading(false);
         }
@@ -43,7 +43,7 @@ const AnalyticsDashboard = ({ isVisible = false, onClose }) => {
                 autoAnalytics.exportData();
             }
         } catch (error) {
-            console.error('Failed to export analytics data:', error);
+            // Failed to export analytics data silently
         }
     };
 

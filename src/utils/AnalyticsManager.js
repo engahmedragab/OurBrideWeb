@@ -2,7 +2,9 @@
 // Supports GA4, Meta Pixel, TikTok Pixel with e-commerce tracking
 
 import { ANALYTICS_CONFIG } from '../config/analytics';
-import { generateContentId, transformProductForAnalytics, logContentIdIssue } from './contentIdUtils';
+import { tiktokOptimizer } from './tiktokOptimizer';
+import { facebookOptimizer } from './facebookOptimizer';
+import { ga4Optimizer } from './ga4Optimizer';
 
 class AnalyticsManager {
     constructor(config) {
@@ -11,11 +13,8 @@ class AnalyticsManager {
         }
         this.config = config;
         this.isInitialized = false;
-    }
-
-    // Generate unique event ID for TikTok
-    generateEventId() {
-        return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        this.lastPageView = '';
+        this.requestThrottle = new Map();
     }
 
     // Hash function for PII data (SHA-256)
@@ -28,7 +27,6 @@ class AnalyticsManager {
                 const hashArray = Array.from(new Uint8Array(hashBuffer));
                 return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             } catch (error) {
-                console.error('Failed to hash data:', error);
                 return data; // Fallback if crypto API fails
             }
         }
@@ -43,7 +41,6 @@ class AnalyticsManager {
 
             // Check if config is available
             if (!this.config) {
-                console.error('❌ Analytics config is not available');
                 return;
             }
 
@@ -56,7 +53,7 @@ class AnalyticsManager {
             this.isInitialized = true;
 
         } catch (error) {
-            console.error('❌ Analytics initialization failed:', error);
+            // Initialization failed silently
         }
     }
 
@@ -93,7 +90,6 @@ class AnalyticsManager {
             };
 
             script.onerror = () => {
-                console.error('❌ Failed to load GA4 script');
                 resolve(); // Still resolve to prevent blocking other analytics
             };
         });
@@ -126,11 +122,10 @@ class AnalyticsManager {
                 })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
                 window.fbq('init', this.config.metaPixelId);
-                window.fbq('track', 'PageView');
+                // Don't call fbq('track', 'PageView') here - it will be called by usePageTracking
 
                 resolve();
             } catch (error) {
-                console.error('❌ Meta Pixel initialization failed:', error);
                 resolve(); // Still resolve to prevent blocking other analytics
             }
         });
@@ -148,7 +143,6 @@ class AnalyticsManager {
                 const pixelId = this.config.tiktokPixelId;
 
                 if (!pixelId) {
-                    console.warn('⚠️ TikTok Pixel ID is empty, skipping initialization');
                     resolve();
                     return;
                 }
@@ -187,12 +181,11 @@ class AnalyticsManager {
                     };
 
                     ttq.load(pixelId);
-                    ttq.page();
+                    // Don't call ttq.page() here - it will be called by usePageTracking
                 })(window, document, 'ttq', pixelId);
 
                 resolve();
             } catch (error) {
-                console.error('❌ TikTok Pixel initialization failed:', error);
                 resolve(); // Still resolve to prevent blocking other analytics
             }
         });
@@ -202,375 +195,49 @@ class AnalyticsManager {
     trackPageView(pagePath, pageTitle) {
         if (!this.isInitialized) return;
 
+        // Prevent duplicate page views for the same path
+        const currentPath = pagePath || window.location.pathname;
+        if (this.lastPageView === currentPath) {
+            return;
+        }
+        this.lastPageView = currentPath;
+
         try {
-            // GA4
+            // GA4 - use optimizer for page views
             if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('config', this.config.ga4MeasurementId, {
+                ga4Optimizer.queueEvent('page_view', {
+                    measurementId: this.config.ga4MeasurementId,
                     page_path: pagePath,
                     page_title: pageTitle
                 });
             }
 
-            // Meta Pixel
+            // Meta Pixel - use optimizer for page views
             if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'PageView');
+                facebookOptimizer.queueEvent('PageView', { page_path: pagePath, page_title: pageTitle });
             }
 
-            // TikTok Pixel
+            // TikTok Pixel - use optimizer for page views
             if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.page();
-            }
-
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics page view error:', error);
-        }
-    }
-
-    // Track product views
-    trackProductView(product) {
-        if (!this.isInitialized) return;
-
-        try {
-            // Transform product data with consistent content IDs
-            const analyticsProduct = transformProductForAnalytics(product);
-
-            if (!analyticsProduct) {
-                console.warn('Failed to transform product for analytics');
-                return;
-            }
-
-            // Log content ID issues in development
-            if (ANALYTICS_CONFIG.DEBUG) {
-                logContentIdIssue(product, 'Product view tracking');
-            }
-
-            // GA4 Enhanced Ecommerce
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'view_item', {
-                    currency: analyticsProduct.currency,
-                    value: analyticsProduct.price,
-                    items: [{
-                        item_id: analyticsProduct.item_id,
-                        item_name: analyticsProduct.item_name,
-                        item_category: analyticsProduct.item_category,
-                        item_brand: analyticsProduct.item_brand,
-                        item_variant: analyticsProduct.item_variant,
-                        price: analyticsProduct.price,
-                        quantity: 1
-                    }]
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'ViewContent', {
-                    content_ids: [analyticsProduct.content_id],
-                    content_type: 'product',
-                    content_name: analyticsProduct.content_name,
-                    content_category: analyticsProduct.content_category,
-                    value: analyticsProduct.price,
-                    currency: analyticsProduct.currency
-                });
-            }
-
-            // TikTok Pixel - ViewContent event
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('ViewContent', {
-                    contents: [{
-                        content_id: analyticsProduct.content_id,
-                        content_type: 'product',
-                        content_name: analyticsProduct.content_name,
-                        content_category: analyticsProduct.content_category,
-                        price: analyticsProduct.price,
-                        num_items: 1,
-                        brand: analyticsProduct.item_brand
-                    }],
-                    value: analyticsProduct.price,
-                    currency: analyticsProduct.currency
-                });
-            }
-
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics product view error:', error);
-        }
-    }
-
-    // Track add to cart
-    trackAddToCart(product) {
-        if (!this.isInitialized) return;
-
-        try {
-            // Transform product data with consistent content IDs
-            const analyticsProduct = transformProductForAnalytics(product);
-
-            if (!analyticsProduct) {
-                console.warn('Failed to transform product for analytics');
-                return;
-            }
-
-            // Log content ID issues in development
-            if (ANALYTICS_CONFIG.DEBUG) {
-                logContentIdIssue(product, 'Add to cart tracking');
-            }
-
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'add_to_cart', {
-                    currency: analyticsProduct.currency,
-                    value: analyticsProduct.price * (analyticsProduct.quantity || 1),
-                    items: [{
-                        item_id: analyticsProduct.item_id,
-                        item_name: analyticsProduct.item_name,
-                        item_category: analyticsProduct.item_category,
-                        item_brand: analyticsProduct.item_brand,
-                        item_variant: analyticsProduct.item_variant,
-                        price: analyticsProduct.price,
-                        quantity: analyticsProduct.quantity || 1
-                    }]
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'AddToCart', {
-                    content_ids: [analyticsProduct.content_id],
-                    content_type: 'product',
-                    content_name: analyticsProduct.content_name,
-                    content_category: analyticsProduct.content_category,
-                    value: analyticsProduct.price * (analyticsProduct.quantity || 1),
-                    currency: analyticsProduct.currency
-                });
-            }
-
-            // TikTok Pixel - AddToCart event
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('AddToCart', {
-                    contents: [{
-                        content_id: analyticsProduct.content_id,
-                        content_type: 'product',
-                        content_name: analyticsProduct.content_name
-                    }],
-                    value: analyticsProduct.price * (analyticsProduct.quantity || 1),
-                    currency: analyticsProduct.currency
-                });
-            }
-
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics add to cart error:', error);
-        }
-    }
-
-    // Track begin checkout
-    trackBeginCheckout(cart) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'begin_checkout', {
-                    currency: cart.currency,
-                    value: cart.value,
-                    items: cart.items.map(item => ({
-                        item_id: item.id.toString(),
-                        item_name: item.name,
-                        item_category: item.category,
-                        item_brand: item.brand,
-                        item_variant: item.variant,
-                        price: item.price,
-                        quantity: item.quantity || 1
-                    }))
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'InitiateCheckout', {
-                    content_ids: cart.items.map(item => item.id.toString()),
-                    content_type: 'product',
-                    value: cart.value,
-                    currency: cart.currency,
-                    num_items: cart.items.length
-                });
-            }
-
-            // TikTok Pixel - InitiateCheckout event
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('InitiateCheckout', {
-                    contents: cart.items.map(item => ({
-                        content_id: item.id.toString(),
-                        content_type: 'product',
-                        content_name: item.name
-                    })),
-                    value: cart.value,
-                    currency: cart.currency
-                });
+                tiktokOptimizer.queueEvent('page_view', { page_path: pagePath, page_title: pageTitle });
             }
 
             if (ANALYTICS_CONFIG.DEBUG) {
             }
         } catch (error) {
-            console.error('Analytics begin checkout error:', error);
+            // Page view error handled silently
         }
     }
 
-    // Track purchase
-    trackPurchase(purchase) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'purchase', {
-                    transaction_id: purchase.transaction_id,
-                    value: purchase.value,
-                    currency: purchase.currency,
-                    tax: purchase.tax || 0,
-                    shipping: purchase.shipping || 0,
-                    coupon: purchase.coupon,
-                    items: purchase.items.map(item => ({
-                        item_id: item.id.toString(),
-                        item_name: item.name,
-                        item_category: item.category,
-                        item_brand: item.brand,
-                        item_variant: item.variant,
-                        price: item.price,
-                        quantity: item.quantity || 1
-                    }))
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'Purchase', {
-                    content_ids: purchase.items.map(item => item.id.toString()),
-                    content_type: 'product',
-                    value: purchase.value,
-                    currency: purchase.currency,
-                    num_items: purchase.items.length
-                });
-            }
-
-            // TikTok Pixel - Purchase event
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('PlaceAnOrder', {
-                    contents: purchase.items.map(item => ({
-                        content_id: item.id.toString(),
-                        content_type: 'product',
-                        content_name: item.name
-                    })),
-                    value: purchase.value,
-                    currency: purchase.currency
-                });
-            }
-
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics purchase error:', error);
-        }
-    }
-
-    // Track search
-    trackSearch(searchTerm, resultsCount) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'search', {
-                    search_term: searchTerm,
-                    results_count: resultsCount
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'Search', {
-                    search_string: searchTerm
-                });
-            }
-
-            // TikTok Pixel - Search event
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('Search', {
-                    contents: [],
-                    value: 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY,
-                    search_string: searchTerm
-                });
-            }
-
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics search error:', error);
-        }
-    }
-
-    // Track WhatsApp clicks
-    trackWhatsAppClick(action, productId, orderValue) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4 Custom Event
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'whatsapp_click', {
-                    event_category: 'engagement',
-                    event_label: action,
-                    product_id: productId,
-                    value: orderValue || 0
-                });
-            }
-
-            // Meta Pixel Custom Event
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'WhatsAppClick', {
-                    action: action,
-                    product_id: productId,
-                    value: orderValue || 0
-                });
-            }
-
-            // TikTok Pixel Custom Event
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('Contact', {
-                    contents: productId ? [{
-                        content_id: productId,
-                        content_type: 'product',
-                        content_name: 'Product Inquiry'
-                    }] : [],
-                    value: orderValue || 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY
-                });
-            }
-
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics WhatsApp click error:', error);
-        }
-    }
 
     // Track scroll depth
     trackScrollDepth(percentage) {
         if (!this.isInitialized) return;
 
         try {
-            // GA4
+            // GA4 (optimized)
             if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'scroll', {
+                ga4Optimizer.queueEvent('scroll', {
                     event_category: 'engagement',
                     event_label: `${percentage}%`,
                     value: percentage
@@ -580,7 +247,7 @@ class AnalyticsManager {
             if (ANALYTICS_CONFIG.DEBUG) {
             }
         } catch (error) {
-            console.error('Analytics scroll depth error:', error);
+            // Scroll depth error handled silently
         }
     }
 
@@ -589,26 +256,25 @@ class AnalyticsManager {
         if (!this.isInitialized) return;
 
         try {
-            // GA4
+            // GA4 (optimized)
             if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', eventName, parameters);
+                ga4Optimizer.queueEvent(eventName, parameters);
             }
 
-            // Meta Pixel
+            // Meta Pixel Custom Event (optimized)
             if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', eventName, parameters);
+                facebookOptimizer.queueEvent(eventName, parameters);
             }
 
-            // TikTok Pixel
+            // TikTok Pixel Custom Event (optimized)
             if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track(eventName, parameters);
+                tiktokOptimizer.queueEvent(eventName, parameters);
             }
-
 
             if (ANALYTICS_CONFIG.DEBUG) {
             }
         } catch (error) {
-            console.error('Analytics custom event error:', error);
+            // Custom event error handled silently
         }
     }
 
@@ -630,920 +296,10 @@ class AnalyticsManager {
             if (ANALYTICS_CONFIG.DEBUG) {
             }
         } catch (error) {
-            console.error('TikTok identify error:', error);
+            // Identify error handled silently
         }
     }
 
-    // Track add to wishlist
-    trackAddToWishlist(product) {
-        if (!this.isInitialized) return;
-
-        try {
-            const analyticsProduct = transformProductForAnalytics(product);
-
-            if (!analyticsProduct) {
-                console.warn('Failed to transform product for analytics');
-                return;
-            }
-
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'add_to_wishlist', {
-                    currency: analyticsProduct.currency,
-                    value: analyticsProduct.price,
-                    items: [{
-                        item_id: analyticsProduct.item_id,
-                        item_name: analyticsProduct.item_name,
-                        item_category: analyticsProduct.item_category,
-                        item_brand: analyticsProduct.item_brand,
-                        price: analyticsProduct.price,
-                        quantity: 1
-                    }]
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'AddToWishlist', {
-                    content_ids: [analyticsProduct.content_id],
-                    content_type: 'product',
-                    content_name: analyticsProduct.content_name,
-                    value: analyticsProduct.price,
-                    currency: analyticsProduct.currency
-                });
-            }
-
-            // TikTok Pixel
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('AddToWishlist', {
-                    contents: [{
-                        content_id: analyticsProduct.content_id,
-                        content_type: 'product',
-                        content_name: analyticsProduct.content_name
-                    }],
-                    value: analyticsProduct.price,
-                    currency: analyticsProduct.currency
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics add to wishlist error:', error);
-        }
-    }
-
-    // Track add payment info
-    trackAddPaymentInfo(cart) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'add_payment_info', {
-                    currency: cart.currency,
-                    value: cart.value,
-                    items: cart.items.map(item => ({
-                        item_id: item.id.toString(),
-                        item_name: item.name,
-                        item_category: item.category,
-                        price: item.price,
-                        quantity: item.quantity || 1
-                    }))
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'AddPaymentInfo', {
-                    content_ids: cart.items.map(item => item.id.toString()),
-                    content_type: 'product',
-                    value: cart.value,
-                    currency: cart.currency
-                });
-            }
-
-            // TikTok Pixel
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('AddPaymentInfo', {
-                    contents: cart.items.map(item => ({
-                        content_id: item.id.toString(),
-                        content_type: 'product',
-                        content_name: item.name
-                    })),
-                    value: cart.value,
-                    currency: cart.currency
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics add payment info error:', error);
-        }
-    }
-
-    // Track complete registration
-    trackCompleteRegistration(value) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'sign_up', {
-                    value: value || 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'CompleteRegistration', {
-                    value: value || 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY
-                });
-            }
-
-            // TikTok Pixel
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('CompleteRegistration', {
-                    contents: [],
-                    value: value || 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY
-                });
-            }
-
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics complete registration error:', error);
-        }
-    }
-
-    // Track newsletter signup
-    trackNewsletterSignup(email) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'newsletter_signup', {
-                    event_category: 'engagement',
-                    event_label: 'newsletter'
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'Subscribe', {
-                    content_category: 'newsletter'
-                });
-            }
-
-            // TikTok Pixel
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('Subscribe', {
-                    contents: [],
-                    value: 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics newsletter signup error:', error);
-        }
-    }
-
-    // Track product review
-    trackProductReview(product, rating) {
-        if (!this.isInitialized) return;
-
-        try {
-            const analyticsProduct = transformProductForAnalytics(product);
-
-            if (!analyticsProduct) {
-                console.warn('Failed to transform product for analytics');
-                return;
-            }
-
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'product_review', {
-                    currency: analyticsProduct.currency,
-                    value: analyticsProduct.price,
-                    items: [{
-                        item_id: analyticsProduct.item_id,
-                        item_name: analyticsProduct.item_name,
-                        item_category: analyticsProduct.item_category,
-                        item_brand: analyticsProduct.item_brand,
-                        price: analyticsProduct.price,
-                        quantity: 1
-                    }],
-                    rating: rating
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'CustomizeProduct', {
-                    content_ids: [analyticsProduct.content_id],
-                    content_type: 'product',
-                    content_name: analyticsProduct.content_name,
-                    value: analyticsProduct.price,
-                    currency: analyticsProduct.currency
-                });
-            }
-
-            // TikTok Pixel
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('CustomizeProduct', {
-                    contents: [{
-                        content_id: analyticsProduct.content_id,
-                        content_type: 'product',
-                        content_name: analyticsProduct.content_name
-                    }],
-                    value: analyticsProduct.price,
-                    currency: analyticsProduct.currency
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics product review error:', error);
-        }
-    }
-
-    // Track user login
-    trackUserLogin(loginMethod = 'email', userId = null) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'login', {
-                    method: loginMethod,
-                    user_id: userId
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'CompleteRegistration', {
-                    content_category: 'user_login',
-                    login_method: loginMethod
-                });
-            }
-
-            // TikTok Pixel
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('CompleteRegistration', {
-                    contents: [],
-                    value: 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY,
-                    login_method: loginMethod
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics user login error:', error);
-        }
-    }
-
-    // Track user logout
-    trackUserLogout() {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'logout', {
-                    event_category: 'user_engagement'
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'UserLogout', {
-                    content_category: 'user_engagement'
-                });
-            }
-
-            // TikTok Pixel
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('CustomizeProduct', {
-                    contents: [],
-                    value: 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics user logout error:', error);
-        }
-    }
-
-    // Track video interactions
-    trackVideoPlay(videoTitle, videoDuration, currentTime = 0) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'video_play', {
-                    video_title: videoTitle,
-                    video_duration: videoDuration,
-                    video_current_time: currentTime
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'VideoPlay', {
-                    content_name: videoTitle,
-                    content_category: 'video'
-                });
-            }
-
-            // TikTok Pixel
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('VideoPlay', {
-                    contents: [{
-                        content_id: videoTitle,
-                        content_type: 'video',
-                        content_name: videoTitle
-                    }],
-                    value: 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics video play error:', error);
-        }
-    }
-
-    // Track video pause
-    trackVideoPause(videoTitle, currentTime) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'video_pause', {
-                    video_title: videoTitle,
-                    video_current_time: currentTime
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'VideoPause', {
-                    content_name: videoTitle,
-                    content_category: 'video'
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics video pause error:', error);
-        }
-    }
-
-    // Track video complete
-    trackVideoComplete(videoTitle, videoDuration) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'video_complete', {
-                    video_title: videoTitle,
-                    video_duration: videoDuration
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'VideoComplete', {
-                    content_name: videoTitle,
-                    content_category: 'video'
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics video complete error:', error);
-        }
-    }
-
-    // Track image interactions
-    trackImageClick(imageTitle, imageLocation, imageUrl) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'image_click', {
-                    image_title: imageTitle,
-                    image_location: imageLocation,
-                    image_url: imageUrl
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'ImageClick', {
-                    content_name: imageTitle,
-                    content_category: 'image',
-                    content_location: imageLocation
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics image click error:', error);
-        }
-    }
-
-    // Track link clicks
-    trackLinkClick(linkText, linkUrl, linkLocation) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'link_click', {
-                    link_text: linkText,
-                    link_url: linkUrl,
-                    link_location: linkLocation
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'LinkClick', {
-                    content_name: linkText,
-                    content_category: 'link',
-                    content_location: linkLocation
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics link click error:', error);
-        }
-    }
-
-    // Track social media interactions
-    trackSocialShare(platform, contentTitle, contentUrl) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'share', {
-                    method: platform,
-                    content_title: contentTitle,
-                    content_url: contentUrl
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('track', 'Share', {
-                    content_name: contentTitle,
-                    content_category: 'social_share',
-                    social_platform: platform
-                });
-            }
-
-            // TikTok Pixel
-            if (this.config.tiktokPixelId && window.ttq) {
-                window.ttq.track('Share', {
-                    contents: [{
-                        content_id: contentUrl,
-                        content_type: 'social_share',
-                        content_name: contentTitle
-                    }],
-                    value: 0,
-                    currency: ANALYTICS_CONFIG.DEFAULT_CURRENCY
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics social share error:', error);
-        }
-    }
-
-    // Track file downloads
-    trackFileDownload(fileName, fileType, fileSize, downloadLocation) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'file_download', {
-                    file_name: fileName,
-                    file_type: fileType,
-                    file_size: fileSize,
-                    download_location: downloadLocation
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'FileDownload', {
-                    content_name: fileName,
-                    content_category: 'file_download',
-                    file_type: fileType
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics file download error:', error);
-        }
-    }
-
-    // Track modal interactions
-    trackModalOpen(modalName, modalTrigger) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'modal_open', {
-                    modal_name: modalName,
-                    modal_trigger: modalTrigger
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'ModalOpen', {
-                    content_name: modalName,
-                    content_category: 'modal',
-                    trigger: modalTrigger
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics modal open error:', error);
-        }
-    }
-
-    // Track modal close
-    trackModalClose(modalName, modalDuration) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'modal_close', {
-                    modal_name: modalName,
-                    modal_duration: modalDuration
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'ModalClose', {
-                    content_name: modalName,
-                    content_category: 'modal',
-                    duration: modalDuration
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics modal close error:', error);
-        }
-    }
-
-    // Track tab switches
-    trackTabSwitch(tabName, tabLocation) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'tab_switch', {
-                    tab_name: tabName,
-                    tab_location: tabLocation
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'TabSwitch', {
-                    content_name: tabName,
-                    content_category: 'tab',
-                    content_location: tabLocation
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics tab switch error:', error);
-        }
-    }
-
-    // Track accordion interactions
-    trackAccordionToggle(accordionTitle, isOpen) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'accordion_toggle', {
-                    accordion_title: accordionTitle,
-                    is_open: isOpen
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'AccordionToggle', {
-                    content_name: accordionTitle,
-                    content_category: 'accordion',
-                    action: isOpen ? 'open' : 'close'
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics accordion toggle error:', error);
-        }
-    }
-
-    // Track carousel interactions
-    trackCarouselSlide(slideNumber, slideTitle, carouselName) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'carousel_slide', {
-                    slide_number: slideNumber,
-                    slide_title: slideTitle,
-                    carousel_name: carouselName
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'CarouselSlide', {
-                    content_name: slideTitle,
-                    content_category: 'carousel',
-                    carousel_name: carouselName,
-                    slide_number: slideNumber
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics carousel slide error:', error);
-        }
-    }
-
-    // Track filter interactions
-    trackFilterApply(filterType, filterValue, resultsCount) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'filter_apply', {
-                    filter_type: filterType,
-                    filter_value: filterValue,
-                    results_count: resultsCount
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'FilterApply', {
-                    content_name: filterValue,
-                    content_category: 'filter',
-                    filter_type: filterType,
-                    results_count: resultsCount
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics filter apply error:', error);
-        }
-    }
-
-    // Track sort interactions
-    trackSortApply(sortType, sortDirection, resultsCount) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'sort_apply', {
-                    sort_type: sortType,
-                    sort_direction: sortDirection,
-                    results_count: resultsCount
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'SortApply', {
-                    content_name: `${sortType}_${sortDirection}`,
-                    content_category: 'sort',
-                    sort_type: sortType,
-                    sort_direction: sortDirection
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics sort apply error:', error);
-        }
-    }
-
-    // Track pagination
-    trackPagination(pageNumber, totalPages, pageType) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'pagination', {
-                    page_number: pageNumber,
-                    total_pages: totalPages,
-                    page_type: pageType
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'Pagination', {
-                    content_name: `page_${pageNumber}`,
-                    content_category: 'pagination',
-                    page_type: pageType,
-                    total_pages: totalPages
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics pagination error:', error);
-        }
-    }
-
-    // Track error events
-    trackError(errorType, errorMessage, errorContext = {}) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'exception', {
-                    description: errorMessage,
-                    fatal: false,
-                    error_type: errorType,
-                    ...errorContext
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'ErrorOccurred', {
-                    content_name: errorType,
-                    content_category: 'error',
-                    error_message: errorMessage,
-                    ...errorContext
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics error tracking error:', error);
-        }
-    }
-
-    // Track performance metrics
-    trackPerformance(metricName, value, unit = 'ms') {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'timing_complete', {
-                    name: metricName,
-                    value: value,
-                    event_category: 'performance'
-                });
-            }
-
-            // Meta Pixel
-            if (this.config.metaPixelId && window.fbq) {
-                window.fbq('trackCustom', 'PerformanceMetric', {
-                    content_name: metricName,
-                    content_category: 'performance',
-                    metric_value: value,
-                    metric_unit: unit
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics performance tracking error:', error);
-        }
-    }
-
-    // Track user session events
-    trackSessionStart() {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'session_start', {
-                    event_category: 'user_engagement'
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics session start error:', error);
-        }
-    }
-
-    // Track user session end
-    trackSessionEnd(sessionDuration) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'session_end', {
-                    event_category: 'user_engagement',
-                    session_duration: sessionDuration
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics session end error:', error);
-        }
-    }
-
-    // Track user engagement score
-    trackEngagementScore(score, factors) {
-        if (!this.isInitialized) return;
-
-        try {
-            // GA4
-            if (this.config.ga4MeasurementId && window.gtag) {
-                window.gtag('event', 'engagement_score', {
-                    score: score,
-                    factors: factors.join(','),
-                    event_category: 'user_engagement'
-                });
-            }
-
-            if (ANALYTICS_CONFIG.DEBUG) {
-            }
-        } catch (error) {
-            console.error('Analytics engagement score error:', error);
-        }
-    }
 }
 
 // Create singleton instance
@@ -1553,11 +309,10 @@ export const initializeAnalytics = (config) => {
     if (!analyticsInstance) {
         try {
             analyticsInstance = new AnalyticsManager(config);
-            analyticsInstance.initialize().catch(error => {
-                console.error('❌ Failed to initialize analytics:', error);
+            analyticsInstance.initialize().catch(() => {
+                // Initialization failed silently
             });
         } catch (error) {
-            console.error('❌ Failed to create AnalyticsManager:', error);
             throw error;
         }
     }

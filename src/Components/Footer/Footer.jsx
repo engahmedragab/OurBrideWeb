@@ -196,9 +196,10 @@ export default function Footer() {
                       <img src={googleplay} alt="Google Play" />
                     </a>
                     <a
-                      href="#"
-                      className="app-download-btn disabled"
-                      title="Coming Soon"
+                      href="https://apps.apple.com/sa/app/ourbride/id6747453812"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="app-download-btn"
                     >
                       <img src={appStore} alt="App Store" />
                     </a>

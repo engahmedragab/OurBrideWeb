@@ -11,7 +11,6 @@ import { ANALYTICS_CONFIG } from '../config/analytics';
  */
 export const generateContentId = (productId, prefix = null) => {
     if (!productId) {
-        console.warn('⚠️ generateContentId: productId is required');
         return null;
     }
 
@@ -28,7 +27,6 @@ export const generateContentId = (productId, prefix = null) => {
  */
 export const transformProductForAnalytics = (product) => {
     if (!product) {
-        console.warn('⚠️ transformProductForAnalytics: product is required');
         return null;
     }
 
@@ -68,7 +66,6 @@ export const transformProductForAnalytics = (product) => {
  */
 export const transformCartForAnalytics = (items, totalValue, currency = ANALYTICS_CONFIG.DEFAULT_CURRENCY) => {
     if (!items || !Array.isArray(items)) {
-        console.warn('⚠️ transformCartForAnalytics: items array is required');
         return null;
     }
 
@@ -90,7 +87,6 @@ export const transformCartForAnalytics = (items, totalValue, currency = ANALYTIC
  */
 export const transformPurchaseForAnalytics = (purchaseData) => {
     if (!purchaseData) {
-        console.warn('⚠️ transformPurchaseForAnalytics: purchaseData is required');
         return null;
     }
 
@@ -134,11 +130,7 @@ export const logContentIdIssue = (product, context) => {
     }
 
     if (issues.length > 0) {
-        console.warn(`⚠️ Content ID issues in ${context}:`, {
-            product,
-            issues,
-            context
-        });
+        // Content ID issues detected silently
     }
 };
 

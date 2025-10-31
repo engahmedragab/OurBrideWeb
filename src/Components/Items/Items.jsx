@@ -410,7 +410,9 @@ export default function Items() {
                       Visit Our Store
                     </a>
                     <a
-                      href="#"
+                      href="https://apps.apple.com/sa/app/ourbride/id6747453812"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="btn btn-outline-main cta-btn"
                       onClick={handleAppDownload}
                     >

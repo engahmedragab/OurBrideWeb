@@ -100,7 +100,7 @@ export default function Providers() {
       setShowRegistrationModal(false);
       resetForm();
     } catch (error) {
-      console.error('Registration error:', error);
+      // Registration error handled silently
       alert(error.message || 'An error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);

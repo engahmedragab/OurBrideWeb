@@ -4,7 +4,7 @@ import axios from "axios";
 
 // App IDs
 const APP_PACKAGE = "com.ourbride.app";
-const IOS_APP_ID = "1234567890"; // replace with real App Store ID
+const IOS_APP_ID = "6747453812"; // OurBride App Store ID
 
 // Domain configuration
 const MAIN_DOMAIN = "our-bride.com";
@@ -143,7 +143,7 @@ export default function DeepLinkHandler() {
 
         window.location.replace(fullUrl);
       } catch (error) {
-        console.error("Deep link error:", error);
+        // Deep link error handled silently
         navigate("/", { replace: true });
       }
     })();

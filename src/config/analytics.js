@@ -128,7 +128,7 @@ export const getAnalyticsConfig = () => {
     const validation = validateAnalyticsConfig();
 
     if (!validation.isValid && ANALYTICS_CONFIG.DEBUG) {
-        console.warn('⚠️ Analytics configuration issues:', validation.issues);
+        // Analytics configuration issues detected silently
     }
 
     return {

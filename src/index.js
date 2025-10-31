@@ -9,6 +9,13 @@ import "bootstrap/dist/js/bootstrap.bundle.js";
 // import "bootstrap-icons/font/bootstrap-icons.css";
 import "./index.css";
 
+// Initialize security monitor early to intercept all requests
+import securityMonitor from "./utils/securityMonitor";
+// Security monitor is automatically initialized when imported
+
+// Unregister service workers and clear caches to prevent stale asset issues
+import "./utils/serviceWorkerCleanup";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
