@@ -43,6 +43,8 @@ export default function DeepLinkHandler() {
   const canceled = useRef(false);
 
   useEffect(() => {
+    canceled.current = false;
+
     const onPageHide = () => {
       if (fallbackTimer.current) {
         window.clearTimeout(fallbackTimer.current);
@@ -59,6 +61,15 @@ export default function DeepLinkHandler() {
         }
         canceled.current = true;
       }
+    };
+
+    const cleanup = () => {
+      if (fallbackTimer.current) {
+        window.clearTimeout(fallbackTimer.current);
+        fallbackTimer.current = null;
+      }
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("pagehide", onPageHide);
     };
 
     (async () => {
@@ -89,31 +100,60 @@ export default function DeepLinkHandler() {
           return;
         }
 
+        const attemptKeySuffix = `${path}${qsString ? `?${qsString}` : ""}`;
+        const attemptKey = `deeplink-handler:lastAttempt:${attemptKeySuffix}`;
+        const attemptCooldownMs = 2000;
+        let lastAttempt = 0;
+
+        try {
+          lastAttempt = Number(sessionStorage.getItem(attemptKey) || 0);
+        } catch {
+          lastAttempt = 0;
+        }
+
+        const shouldAttemptUniversalLink = Date.now() - lastAttempt > attemptCooldownMs;
+        const recordAttempt = () => {
+          try {
+            sessionStorage.setItem(attemptKey, String(Date.now()));
+          } catch {
+            // sessionStorage might not be available (Safari private mode), ignore
+          }
+        };
+
         // If we're on the app subdomain, handle differently
         if (currentSubdomain === "app") {
           // On app subdomain, prioritize app opening
           if (isMobile && !isInAppBrowser) {
+            document.addEventListener("visibilitychange", onVisibilityChange);
+            window.addEventListener("pagehide", onPageHide);
+
             if (isAndroid) {
-              window.location.href = fullUrl; // try Universal Link first
+              if (shouldAttemptUniversalLink) {
+                recordAttempt();
+                window.location.href = fullUrl; // try Universal Link first
+              }
               fallbackTimer.current = window.setTimeout(() => {
                 if (!canceled.current) window.location.href = playStoreUrl(qsString);
               }, 500); // shorter timeout for app subdomain
-              return;
+              return cleanup;
             }
 
             if (isIOS) {
-              window.location.href = fullUrl; // try Universal Link
+              if (shouldAttemptUniversalLink) {
+                recordAttempt();
+                window.location.href = fullUrl; // try Universal Link
+              }
               fallbackTimer.current = window.setTimeout(() => {
                 if (!canceled.current) window.location.href = appStoreUrl();
               }, 800); // shorter timeout for app subdomain
-              return;
+              return cleanup;
             }
           }
 
           // For desktop or in-app browsers on app subdomain, redirect to main domain
           const mainDomainUrl = `https://www.${MAIN_DOMAIN}${path}${qsString ? `?${qsString}` : ""}`;
           window.location.replace(mainDomainUrl);
-          return;
+          return cleanup;
         }
 
         // Main domain or other subdomain handling (original logic)
@@ -122,7 +162,7 @@ export default function DeepLinkHandler() {
 
         if (!isMobile || isInAppBrowser) { // web landing in in-app browsers/desktop
           window.location.replace(fullUrl);
-          return;
+          return cleanup;
         }
 
         if (isAndroid) {
@@ -130,7 +170,7 @@ export default function DeepLinkHandler() {
           fallbackTimer.current = window.setTimeout(() => {
             if (!canceled.current) window.location.href = playStoreUrl(qsString);
           }, 900);
-          return;
+          return cleanup;
         }
 
         if (isIOS) {
@@ -138,24 +178,18 @@ export default function DeepLinkHandler() {
           fallbackTimer.current = window.setTimeout(() => {
             if (!canceled.current) window.location.href = appStoreUrl();
           }, 1200);
-          return;
+          return cleanup;
         }
 
         window.location.replace(fullUrl);
+        return cleanup;
       } catch (error) {
         // Deep link error handled silently
         navigate("/", { replace: true });
       }
     })();
 
-    return () => {
-      if (fallbackTimer.current) {
-        window.clearTimeout(fallbackTimer.current);
-      }
-      // Clean up event listeners
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-      window.removeEventListener("pagehide", onPageHide);
-    };
+    return cleanup;
   }, [shortCode, navigate]);
 
   return <p>Redirecting…</p>;
