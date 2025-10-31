@@ -54,7 +54,7 @@ export default function DeepLinkRedirect() {
         const currentPath = window.location.pathname;
         const queryString = searchParams.toString();
 
-        // Build URL on app subdomain for universal links
+        // Build URL on app subdomain for universal links (iOS requires exact domain match)
         const fullUrl = `https://${APP_SUBDOMAIN}${currentPath}${queryString ? `?${queryString}` : ""}`;
 
         // Detect current subdomain
@@ -72,15 +72,23 @@ export default function DeepLinkRedirect() {
                     window.location.href = fullUrl; // try Universal Link first
                     fallbackTimer.current = window.setTimeout(() => {
                         if (!canceled.current) window.location.href = playStoreUrl();
-                    }, 500); // shorter timeout for app subdomain
+                    }, 800); // Fast timeout for Android
                     return;
                 }
 
                 if (isIOS) {
-                    window.location.href = fullUrl; // try Universal Link
+                    // Try to open app via Universal Link
+                    window.location.href = fullUrl;
+
+                    // iOS Universal Links - quick redirect if app doesn't open
                     fallbackTimer.current = window.setTimeout(() => {
-                        if (!canceled.current) window.location.href = appStoreUrl();
-                    }, 800); // shorter timeout for app subdomain
+                        if (!canceled.current) {
+                            // If we're still visible, app didn't open
+                            if (document.visibilityState === 'visible') {
+                                window.location.href = appStoreUrl();
+                            }
+                        }
+                    }, 1000); // Fast timeout for iOS (was 1500ms)
                     return;
                 }
             }
@@ -92,34 +100,40 @@ export default function DeepLinkRedirect() {
         }
 
         // Main domain or other subdomain handling
-        document.addEventListener("visibilitychange", onVisibilityChange);
-        window.addEventListener("pagehide", onPageHide);
+        // Redirect to app subdomain for Universal Links to work
+        if (isMobile && !isInAppBrowser) {
+            document.addEventListener("visibilitychange", onVisibilityChange);
+            window.addEventListener("pagehide", onPageHide);
 
+            if (isAndroid) {
+                // Redirect to app subdomain first, then try Universal Link
+                window.location.href = fullUrl;
+                fallbackTimer.current = window.setTimeout(() => {
+                    if (!canceled.current) {
+                        window.location.href = playStoreUrl();
+                    }
+                }, 800); // Fast timeout for Android (was 1200ms)
+                return;
+            }
+
+            if (isIOS) {
+                // Redirect to app subdomain for Universal Links
+                window.location.href = fullUrl;
+                fallbackTimer.current = window.setTimeout(() => {
+                    if (!canceled.current) {
+                        // If still visible, redirect to App Store
+                        if (document.visibilityState === 'visible') {
+                            window.location.href = appStoreUrl();
+                        }
+                    }
+                }, 1000); // Fast timeout for iOS from main domain (was 1500ms)
+                return;
+            }
+        }
+
+        // Desktop or in-app browser - redirect to main domain
         if (!isMobile || isInAppBrowser) {
-            // Desktop or in-app browser - stay on web, redirect to home
             navigate("/", { replace: true });
-            return;
-        }
-
-        if (isAndroid) {
-            window.location.href = fullUrl; // try Universal Link first
-            fallbackTimer.current = window.setTimeout(() => {
-                if (!canceled.current) {
-                    // Fallback: stay on web
-                    navigate("/", { replace: true });
-                }
-            }, 900);
-            return;
-        }
-
-        if (isIOS) {
-            window.location.href = fullUrl; // try Universal Link
-            fallbackTimer.current = window.setTimeout(() => {
-                if (!canceled.current) {
-                    // Fallback: stay on web
-                    navigate("/", { replace: true });
-                }
-            }, 1200);
             return;
         }
 
