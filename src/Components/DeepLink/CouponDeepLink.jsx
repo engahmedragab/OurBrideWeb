@@ -39,6 +39,15 @@ export default function CouponDeepLink() {
             }
         };
 
+        const cleanup = () => {
+            if (fallbackTimer.current) {
+                window.clearTimeout(fallbackTimer.current);
+                fallbackTimer.current = null;
+            }
+            document.removeEventListener("visibilitychange", onVisibilityChange);
+            window.removeEventListener("pagehide", onPageHide);
+        };
+
         // Get coupon code from query params
         const couponCode = searchParams.get("code") || "";
         const currentPath = "/app/coupon";
@@ -46,6 +55,25 @@ export default function CouponDeepLink() {
 
         // Build URL on app subdomain for universal links
         const fullUrl = `https://${APP_SUBDOMAIN}${currentPath}${queryString ? `?${queryString}` : ""}`;
+        const attemptKeySuffix = `${currentPath}${queryString ? `?${queryString}` : ""}`;
+        const attemptKey = `coupon-deeplink:lastAttempt:${attemptKeySuffix}`;
+        const attemptCooldownMs = 2000;
+        let lastAttempt = 0;
+
+        try {
+            lastAttempt = Number(sessionStorage.getItem(attemptKey) || 0);
+        } catch {
+            lastAttempt = 0;
+        }
+
+        const shouldAttemptUniversalLink = Date.now() - lastAttempt > attemptCooldownMs;
+        const recordAttempt = () => {
+            try {
+                sessionStorage.setItem(attemptKey, String(Date.now()));
+            } catch {
+                // sessionStorage can be unavailable (Safari private mode), ignore
+            }
+        };
 
         // Store URL to redirect to if app doesn't open
         const storeUrl = couponCode
@@ -64,7 +92,10 @@ export default function CouponDeepLink() {
                 window.addEventListener("pagehide", onPageHide);
 
                 // Try to open app via Universal Link
-                window.location.href = fullUrl;
+                if (shouldAttemptUniversalLink) {
+                    recordAttempt();
+                    window.location.href = fullUrl;
+                }
 
                 // If app doesn't open, redirect to store (NOT app store)
                 fallbackTimer.current = window.setTimeout(() => {
@@ -75,12 +106,12 @@ export default function CouponDeepLink() {
                         }
                     }
                 }, isIOS ? 1000 : 800); // Same timeout as regular deep links
-                return;
+                return cleanup;
             }
 
             // For desktop or in-app browsers, redirect to store
             window.location.replace(storeUrl);
-            return;
+            return cleanup;
         }
 
         // Main domain handling - redirect to app subdomain first
@@ -98,19 +129,13 @@ export default function CouponDeepLink() {
                     }
                 }
             }, isIOS ? 1000 : 800);
-            return;
+            return cleanup;
         }
 
         // Desktop or in-app browser - redirect directly to store
         window.location.replace(storeUrl);
 
-        return () => {
-            if (fallbackTimer.current) {
-                window.clearTimeout(fallbackTimer.current);
-            }
-            document.removeEventListener("visibilitychange", onVisibilityChange);
-            window.removeEventListener("pagehide", onPageHide);
-        };
+        return cleanup;
     }, [searchParams]);
 
     return (
@@ -375,4 +400,3 @@ export default function CouponDeepLink() {
         </div>
     );
 }
-
