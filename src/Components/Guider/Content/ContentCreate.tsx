@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
+import { ContentType, ContentVisibility } from '../../../common/api/gen/ourbride-api';
 
 export default function ContentCreate() {
   const navigate = useNavigate();
@@ -68,8 +69,17 @@ export default function ContentCreate() {
       if (!guideProfileId) {
         throw new Error('No guide profile found. Please complete onboarding.');
       }
-      // Create content
-      // const result = await guiderService.content.create(guideProfileId, formData);
+
+      // Prepare content data
+      const contentData = {
+        guideProfileId: guideProfileId,
+        title: formData.title,
+        caption: formData.description,
+        type: (formData.type === 'video' ? ContentType.Video : formData.type === 'photo' ? ContentType.Photo : ContentType.Article) as ContentType,
+        // Add media handling if needed
+      };
+
+      const result = await guiderService.ugcContent.create(contentData);
       toast.success('Content created successfully!');
       navigate('/content');
     } catch (error) {
@@ -97,8 +107,16 @@ export default function ContentCreate() {
       if (!guideProfileId) {
         throw new Error('No guide profile found.');
       }
-      // Save as draft
-      // await guiderService.content.create(guideProfileId, { ...formData, status: 'draft' });
+
+      // Prepare content data for draft
+      const contentData = {
+        guideProfileId: guideProfileId,
+        title: formData.title,
+        caption: formData.description,
+        type: (formData.type === 'video' ? ContentType.Video : formData.type === 'photo' ? ContentType.Photo : ContentType.Article) as ContentType,
+      };
+
+      await guiderService.ugcContent.create(contentData);
       toast.success('Draft saved!');
       navigate('/content/drafts');
     } catch (error) {
@@ -115,6 +133,8 @@ export default function ContentCreate() {
       <SEOHead
         title="Create Content"
         description="Create new content"
+        keywords=""
+        image=""
         url={`${window.location.origin}/content/new`}
       />
 

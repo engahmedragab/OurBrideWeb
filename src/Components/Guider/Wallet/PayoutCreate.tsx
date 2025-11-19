@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -58,10 +58,11 @@ export default function PayoutCreate() {
         throw new Error('No guide profile found.');
       }
       
-      await guiderService.wallet.createPayout(guideProfileId, {
-        ...formData,
-        guideProfileId,
+      await guiderService.payouts.createRequest({
+        guideProfileId: guideProfileId,
         amount: parseFloat(formData.amount),
+        payoutMethod: formData.method,
+        accountDetails: formData.accountDetails,
       });
       toast.success('Payout request submitted successfully!');
       navigate('/wallet/payouts');

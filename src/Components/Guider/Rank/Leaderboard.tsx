@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -34,16 +34,20 @@ export default function Leaderboard() {
       let guideProfileId = getGuideProfileId();
       
       if (!guideProfileId) {
-        const status = await guiderService.status.get();
-        if (status?.guideProfileId) {
-          guideProfileId = status.guideProfileId;
-          localStorage.setItem('guideProfileId', guideProfileId.toString());
-        } else {
+        const userId = user?.id || user?.userId;
+        if (userId) {
+          const profile = await guiderService.guides.getByUserId(userId);
+          if (profile?.guideProfileId || profile?.id) {
+            guideProfileId = profile.guideProfileId || profile.id;
+            localStorage.setItem('guideProfileId', guideProfileId.toString());
+          }
+        }
+        if (!guideProfileId) {
           throw new Error('No guide profile found.');
         }
       }
       
-      const data = await guiderService.rank.getLeaderboard(guideProfileId);
+      const data = await guiderService.guides.getTop();
       const leaderboardData = Array.isArray(data) ? data : (data?.data || []);
       setLeaderboard(leaderboardData);
       // Find current user's rank

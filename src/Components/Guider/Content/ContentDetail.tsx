@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -33,14 +33,19 @@ export default function ContentDetail() {
       setLoading(true);
       const guideProfileId = getGuideProfileId();
       if (!guideProfileId) {
-        const status = await guiderService.status.get();
-        if (status?.guideProfileId) {
-          localStorage.setItem('guideProfileId', status.guideProfileId.toString());
+        const userId = user?.id || user?.userId;
+        if (userId) {
+          const profile = await guiderService.guides.getByUserId(userId);
+          if (profile?.guideProfileId || profile?.id) {
+            const id = profile.guideProfileId || profile.id;
+            localStorage.setItem('guideProfileId', id.toString());
+          }
         }
       }
+      
       // Get content by ID
-      // const data = await guiderService.content.getById(contentId);
-      // setContent(data);
+      const data = await guiderService.ugcContent.getById(parseInt(contentId));
+      setContent(data);
     } catch (error) {
       console.error('Error loading content:', error);
       const errorMessage = error?.response?.data?.message || error?.message || 'Failed to load content.';

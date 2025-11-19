@@ -2,116 +2,119 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useEffect } from "react";
 import { AuthProvider } from "./Hooks/useAuth";
 import RoutLayout from "./Components/RoutLayout/RoutLayout";
-import Home from "./Components/Home/Home";
-import About from "./Components/About/About";
-import Invitation from "./Components/Invitation/invitation";
-import Items from "./Components/Items/Items";
-import Contact from "./Components/Contact/Contact";
-import Providers from "./Components/Providers/Providers";
-import Register from "./Components/Register/Register";
-import Login from "./Components/Login/Login";
-import CreateInvitation from "./Components/CreateInvitation/CreateInvitation";
-import InvitationCard from "./Components/InvitationCards/InvitationCard";
-import InvitationCard2 from "./Components/InvitationCards/InvitationCard2";
-import InvitationCard3 from "./Components/InvitationCards/InvitationCard3";
-import InvitationCard4 from "./Components/InvitationCards/InvitationCard4";
 import InvitationDataContextProvider from "./Context/InvitationDataContext";
-import DeleteAccount from "./Components/DeleteAccount/DeleteAccount";
-import TermsAndConditions from "./Components/Helps/TermsAndConditions";
-import PrivacyPolicy from "./Components/Helps/PrivacyPolicy";
-import Support from "./Components/Support/Support";
 import { ToastContainer } from "react-toastify";
 import { HelmetProvider } from "react-helmet-async";
 import { isCommunitySubdomain, isGuiderSubdomain, redirectToSubdomain } from "./utils/subdomainUtils";
 
-import DeepLinkHandler from "./Components/DeepLink/DeepLinkHandler";
-import DeepLinkRedirect from "./Components/DeepLink/DeepLinkRedirect";
-import CouponDeepLink from "./Components/DeepLink/CouponDeepLink";
-import PublicProviderProfile from "./Components/PublicProvider/PublicProviderProfile";
-import PublicProviderStore from "./Components/PublicProvider/PublicProviderStore";
-import PublicProviderLinks from "./Components/PublicProvider/PublicProviderLinks";
-import Preparations from "./Components/Preparations/Preparations";
-import PreparationDetails from "./Components/Preparations/PreparationDetails";
-import Services from "./Components/Services/Services";
-import ServiceDetails from "./Components/Services/ServiceDetails";
-import ProductDetails from "./Components/Products/ProductDetails";
+// Core pages
+import Home from "./pages/core/Home";
+import About from "./pages/core/About";
+import Contact from "./pages/core/Contact";
+import Explore from "./pages/core/Explore";
+import DownloadApp from "./pages/core/DownloadApp";
 
-// Planner imports
-import Planner from "./Components/Planner/Planner";
-import PlannerChecklist from "./Components/Planner/PlannerChecklist";
-import PlannerBudget from "./Components/Planner/PlannerBudget";
-import PlannerGuestList from "./Components/Planner/PlannerGuestList";
-import PlannerTimeline from "./Components/Planner/PlannerTimeline";
-import PlannerCalendar from "./Components/Planner/PlannerCalendar";
-import PlannerFavorites from "./Components/Planner/PlannerFavorites";
+// Auth pages
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import DeleteAccount from "./pages/auth/DeleteAccount";
 
-// UGC Public imports
-import UGCExplore from "./Components/UGC/UGCExplore";
-import UGCVideos from "./Components/UGC/UGCVideos";
-import UGCTopGuides from "./Components/UGC/UGCTopGuides";
-import UGCTopContent from "./Components/UGC/UGCTopContent";
-import GuidesList from "./Components/UGC/GuidesList";
-import GuidePublicProfile from "./Components/UGC/GuidePublicProfile";
-import ContentViewer from "./Components/UGC/ContentViewer";
-import Trending from "./Components/UGC/Trending";
-import Leaderboard from "./Components/UGC/Leaderboard";
-import CategoryContent from "./Components/UGC/CategoryContent";
-import ProviderUGC from "./Components/UGC/ProviderUGC";
-import ServiceUGC from "./Components/UGC/ServiceUGC";
+// Marketplace pages
+import ServicesHome from "./pages/marketplace/ServicesHome";
+import ProductsHome from "./pages/marketplace/ProductsHome";
+import GiftCardsHome from "./pages/marketplace/GiftCardsHome";
+import MembershipsHome from "./pages/marketplace/MembershipsHome";
+import Services from "./pages/marketplace/Services";
+import ServiceDetails from "./pages/marketplace/ServiceDetails";
+import ProductDetails from "./pages/marketplace/ProductDetails";
+import Providers from "./pages/marketplace/Providers";
+import PublicProviderProfile from "./pages/marketplace/PublicProviderProfile";
+import PublicProviderStore from "./pages/marketplace/PublicProviderStore";
+import PublicProviderLinks from "./pages/marketplace/PublicProviderLinks";
+import OffersList from "./pages/marketplace/OffersList";
+import OfferDetail from "./pages/marketplace/OfferDetail";
+import ShopRedirect from "./pages/marketplace/ShopRedirect";
 
-// Become Guide/Provider imports
-import BecomeGuide from "./Components/BecomeGuide/BecomeGuide";
-import BecomeProvider from "./Components/BecomeProvider/BecomeProvider";
+// Planner pages
+import Planner from "./pages/planner/Planner";
+import PlannerChecklist from "./pages/planner/PlannerChecklist";
+import PlannerBudget from "./pages/planner/PlannerBudget";
+import PlannerGuestList from "./pages/planner/PlannerGuestList";
+import PlannerTimeline from "./pages/planner/PlannerTimeline";
+import PlannerCalendar from "./pages/planner/PlannerCalendar";
+import PlannerFavorites from "./pages/planner/PlannerFavorites";
 
-// Explore import
-import Explore from "./Components/Explore/Explore";
 
-// Download App import
-import DownloadApp from "./Components/DownloadApp/DownloadApp";
 
-// User Profile imports
-import UserProfile from "./Components/UserProfile/UserProfile";
-import ProfileView from "./Components/UserProfile/ProfileView";
-import MyBookings from "./Components/UserProfile/MyBookings";
-import MyFavorites from "./Components/UserProfile/MyFavorites";
-import MyCoupons from "./Components/UserProfile/MyCoupons";
+// Community pages
+import CommunityHub from "./pages/community/CommunityHub";
+import ArticlesList from "./pages/community/ArticlesList";
+import ArticleDetail from "./pages/community/ArticleDetail";
+import PostsList from "./pages/community/PostsList";
+import PostDetail from "./pages/community/PostDetail";
+import BlogsList from "./pages/community/BlogsList";
+import BlogDetail from "./pages/community/BlogDetail";
+import ReelsList from "./pages/community/ReelsList";
+import ReelDetail from "./pages/community/ReelDetail";
+import PollsList from "./pages/community/PollsList";
+import PollDetail from "./pages/community/PollDetail";
+import ContestsList from "./pages/community/ContestsList";
+import ContestDetail from "./pages/community/ContestDetail";
+import TagsList from "./pages/community/TagsList";
+import TagDetail from "./pages/community/TagDetail";
+import UnifiedContentPage from "./pages/community/UnifiedContentPage";
+import ProfilePage from "./pages/community/ProfilePage";
 
-// Offers imports
-import OffersList from "./Components/Offers/OffersList";
-import OfferDetail from "./Components/Offers/OfferDetail";
+// User pages
+import UserProfile from "./pages/user/UserProfile";
+import ProfileView from "./pages/user/ProfileView";
+import MyBookings from "./pages/user/MyBookings";
+import MyFavorites from "./pages/user/MyFavorites";
+import MyCoupons from "./pages/user/MyCoupons";
 
-// Shop redirect
-import ShopRedirect from "./Components/Shop/ShopRedirect";
+// Orders pages
+import Cart from "./pages/orders/Cart";
+import Checkout from "./pages/orders/Checkout";
+import CreateOrder from "./pages/orders/CreateOrder";
+import OrderSuccess from "./pages/orders/OrderSuccess";
+import MyOrders from "./pages/orders/MyOrders";
+import OrderDetails from "./pages/orders/OrderDetails";
+import UserCarts from "./pages/orders/UserCarts";
 
-// Tracking redirects
-import AffiliateRedirect from "./Components/DeepLink/AffiliateRedirect";
-import QRRedirect from "./Components/DeepLink/QRRedirect";
-import OfferRedirect from "./Components/DeepLink/OfferRedirect";
+// Invitations pages
+import Invitation from "./pages/invitations/Invitation";
+import CreateInvitation from "./pages/invitations/CreateInvitation";
+import InvitationCard from "./pages/invitations/InvitationCard";
+import InvitationCard2 from "./pages/invitations/InvitationCard2";
+import InvitationCard3 from "./pages/invitations/InvitationCard3";
+import InvitationCard4 from "./pages/invitations/InvitationCard4";
 
-// Community imports
-import CommunityHub from "./Components/Community/CommunityHub";
-import ArticlesList from "./Components/Community/Articles/ArticlesList";
-import ArticleDetail from "./Components/Community/Articles/ArticleDetail";
-import PostsList from "./Components/Community/Posts/PostsList";
-import PostDetail from "./Components/Community/Posts/PostDetail";
-import BlogsList from "./Components/Community/Blogs/BlogsList";
-import BlogDetail from "./Components/Community/Blogs/BlogDetail";
-import ReelsList from "./Components/Community/Reels/ReelsList";
-import ReelDetail from "./Components/Community/Reels/ReelDetail";
-import PollsList from "./Components/Community/Polls/PollsList";
-import PollDetail from "./Components/Community/Polls/PollDetail";
-import ContestsList from "./Components/Community/Contests/ContestsList";
-import ContestDetail from "./Components/Community/Contests/ContestDetail";
-import TagsList from "./Components/Community/Tags/TagsList";
-import TagDetail from "./Components/Community/Tags/TagDetail";
-import UnifiedContentPage from "./Components/Community/Unified/UnifiedContentPage";
-import ProfilePage from "./Components/Community/Profiles/ProfilePage";
+// Legacy pages
+import Items from "./pages/marketplace/Items";
+import Preparations from "./pages/marketplace/Preparations";
+import PreparationDetails from "./pages/marketplace/PreparationDetails";
+
+// Helps pages
+import Support from "./pages/helps/Support";
+import PrivacyPolicy from "./pages/helps/PrivacyPolicy";
+import TermsAndConditions from "./pages/helps/TermsAndConditions";
+
+// DeepLink pages
+import DeepLinkHandler from "./pages/deeplink/DeepLinkHandler";
+import DeepLinkRedirect from "./pages/deeplink/DeepLinkRedirect";
+import CouponDeepLink from "./pages/deeplink/CouponDeepLink";
+import AffiliateRedirect from "./pages/deeplink/AffiliateRedirect";
+import QRRedirect from "./pages/deeplink/QRRedirect";
+import OfferRedirect from "./pages/deeplink/OfferRedirect";
+
+// Become pages
+import BecomeGuide from "./pages/become/BecomeGuide";
+import BecomeProvider from "./pages/become/BecomeProvider";
 
 // Analytics imports
 import { getAnalyticsConfig } from "./config/analytics";
 import { initializeAnalytics } from "./utils/AnalyticsManager";
 import { initializeAutoAnalytics } from "./utils/autoAnalytics";
-import AnalyticsToggle from "./Components/Analytics/AnalyticsToggle";
 
 
 export default function App() {
@@ -168,6 +171,17 @@ export default function App() {
       children: [
         { index: true, element: <Home /> },
         { path: "home", element: <Home /> },
+        { path: "services-home", element: <ServicesHome /> },
+        { path: "products-home", element: <ProductsHome /> },
+        { path: "gift-cards-home", element: <GiftCardsHome /> },
+        { path: "memberships-home", element: <MembershipsHome /> },
+        { path: "user-carts", element: <UserCarts /> },
+        { path: "cart", element: <Cart /> },
+        { path: "checkout", element: <Checkout /> },
+        { path: "order/create", element: <CreateOrder /> },
+        { path: "order/success", element: <OrderSuccess /> },
+        { path: "my-orders", element: <MyOrders /> },
+        { path: "order/:id", element: <OrderDetails /> },
         { path: "about", element: <About /> },
         { path: "contact", element: <Contact /> },
         { path: "explore", element: <Explore /> },
@@ -195,12 +209,12 @@ export default function App() {
         { path: "services", element: <Services /> },
         { path: "services/categories", element: <Services /> },
         { path: "services/:id", element: <ServiceDetails /> },
-        { path: "services/:serviceId/ugc", element: <ServiceUGC /> },
+        // { path: "services/:serviceId/ugc", element: <ServiceUGC /> },
 
         // Providers Routes
         { path: "providers", element: <Providers /> },
         { path: "providers/:providerId", element: <PublicProviderProfile /> },
-        { path: "providers/:providerId/ugc", element: <ProviderUGC /> },
+        // { path: "providers/:providerId/ugc", element: <ProviderUGC /> },
 
         // Offers Routes
         { path: "offers", element: <OffersList /> },
@@ -212,27 +226,6 @@ export default function App() {
         // Shop Redirect
         { path: "shop", element: <ShopRedirect /> },
 
-        // UGC Public Routes
-        {
-          path: "explore/ugc",
-          element: <UGCExplore />,
-          children: [
-            { index: true, element: <UGCVideos /> },
-            { path: "videos", element: <UGCVideos /> },
-            { path: "top-guides", element: <UGCTopGuides /> },
-            { path: "top-content", element: <UGCTopContent /> },
-          ],
-        },
-        { path: "guides", element: <GuidesList /> },
-        { path: "guides/:handle", element: <GuidePublicProfile /> },
-        { path: "content/:contentId", element: <ContentViewer /> },
-        {
-          path: "trending",
-          element: <Trending />,
-        },
-        { path: "trending/:type", element: <Trending /> },
-        { path: "leaderboard", element: <Leaderboard /> },
-        { path: "category/:niche", element: <CategoryContent /> },
 
         // Become Guide/Provider Routes - Redirect to guider subdomain if accessed on main domain
         {

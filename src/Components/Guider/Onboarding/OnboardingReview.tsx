@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import { toast } from 'react-toastify';
 import SEOHead from '../../SEO/SEOHead';
 import { getOnboardingData, clearOnboardingData } from '../../../utils/onboardingStorage';

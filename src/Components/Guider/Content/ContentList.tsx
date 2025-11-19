@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -49,16 +49,18 @@ export default function ContentList({ filter }) {
       const guideProfileId = getGuideProfileId();
       
       if (!guideProfileId) {
-        // Try to get from status
-        const status = await guiderService.status.get();
-        if (status?.guideProfileId) {
-          localStorage.setItem('guideProfileId', status.guideProfileId.toString());
-          // Retry with the guideProfileId
-          await loadContentWithId(status.guideProfileId);
-          return;
-        } else {
-          throw new Error('No guide profile found. Please complete onboarding.');
+        // Try to get from user object
+        const userId = user?.id || user?.userId;
+        if (userId) {
+          const profile = await guiderService.guides.getByUserId(userId);
+          if (profile?.guideProfileId || profile?.id) {
+            const id = profile.guideProfileId || profile.id;
+            localStorage.setItem('guideProfileId', id.toString());
+            await loadContentWithId(id);
+            return;
+          }
         }
+        throw new Error('No guide profile found. Please complete onboarding.');
       }
       
       await loadContentWithId(guideProfileId);
@@ -85,7 +87,7 @@ export default function ContentList({ filter }) {
       pageSize: 20,
     };
 
-    const data = await guiderService.content.getByGuide(guideProfileId, params);
+    const data = await guiderService.ugcContent.getByGuide(guideProfileId, params);
     
     // Handle response format
     let contentData = [];

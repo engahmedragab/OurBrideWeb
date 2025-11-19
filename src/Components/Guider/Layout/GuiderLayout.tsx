@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
 
@@ -24,13 +24,21 @@ export default function GuiderLayout({ children }) {
 
   const checkGuideStatus = async () => {
     try {
-      const status = await guiderService.status.get();
-      setGuideStatus(status);
+      const userId = user?.id || user?.userId;
+      let status = null;
       
-      // Store guideProfileId if available
-      if (status?.guideProfileId) {
-        localStorage.setItem('guideProfileId', status.guideProfileId.toString());
+      if (userId) {
+        const profile = await guiderService.guides.getByUserId(userId);
+        if (profile) {
+          const guideProfileId = profile.guideProfileId || profile.id;
+          if (guideProfileId) {
+            localStorage.setItem('guideProfileId', guideProfileId.toString());
+            status = await guiderService.guides.getStatus(guideProfileId);
+          }
+        }
       }
+      
+      setGuideStatus(status);
       
       // Redirect if pending
       if (status?.status === 'Pending' && !location.pathname.includes('/status')) {

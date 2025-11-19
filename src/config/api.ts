@@ -1,7 +1,8 @@
 // API Configuration
 export const API_CONFIG = {
   // Base URL for all API calls
-  BASE_URL: 'http://localhost:5001/api/v1',
+  // Note: Generated API paths already include /api/v1, so BASE_URL should not include it
+  BASE_URL: 'http://localhost:5001',
 
   // Request timeout in milliseconds
   TIMEOUT: 30000, // 30 seconds

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -39,17 +39,22 @@ export default function ProfilePublic() {
       const guideProfileId = user?.guideProfileId || getGuideProfileIdFromStorage();
 
       if (!guideProfileId) {
-        // Try to get from status
-        const status = await guiderService.status.get();
-        if (status?.guideProfileId) {
-          localStorage.setItem('guideProfileId', status.guideProfileId.toString());
-          const data = await guiderService.profile.getById(status.guideProfileId);
-          setProfileData(data);
+        // Try to get from user
+        const userId = user?.id || user?.userId;
+        if (userId) {
+          const profile = await guiderService.guides.getByUserId(userId);
+          if (profile?.guideProfileId || profile?.id) {
+            const id = profile.guideProfileId || profile.id;
+            localStorage.setItem('guideProfileId', id.toString());
+            setProfileData(profile);
+          } else {
+            throw new Error('No guide profile found. Please complete onboarding.');
+          }
         } else {
           throw new Error('No guide profile found. Please complete onboarding.');
         }
       } else {
-        const data = await guiderService.profile.getById(guideProfileId);
+        const data = await guiderService.guides.getById(guideProfileId);
         setProfileData(data);
       }
     } catch (error) {
@@ -117,10 +122,14 @@ export default function ProfilePublic() {
         throw new Error('No guide profile found. Please complete onboarding first.');
       }
 
-      await guiderService.profile.update(guideProfileId, {
-        handle: profile.handle,
-        bio: profile.bio,
-        socialLinks: profile.socialLinks,
+      await guiderService.guides.update(guideProfileId, {
+        guideProfileId: guideProfileId,
+        displayName: profile.handle,
+        shortBio: profile.bio,
+        instagramHandle: profile.socialLinks.instagram,
+        tiktokHandle: profile.socialLinks.tiktok,
+        youtubeHandle: profile.socialLinks.youtube,
+        facebookHandle: profile.socialLinks.website,
         // Note: Avatar and cover uploads may need separate endpoints
       });
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -41,13 +41,13 @@ export default function ContentEdit() {
       if (!guideProfileId) {
         throw new Error('No guide profile found.');
       }
-      // const data = await guiderService.content.getById(guideProfileId, contentId);
-      // setFormData({
-      //   title: data.title,
-      //   description: data.description,
-      //   content: data.content,
-      //   tags: data.tags || [],
-      // });
+      const data = await guiderService.ugcContent.getById(parseInt(contentId));
+      setFormData({
+        title: data.title || '',
+        description: data.caption || '',
+        content: data.content || '',
+        tags: data.tags ? data.tags.split(',').map(t => t.trim()) : [],
+      });
     } catch (error) {
       console.error('Error loading content:', error);
       const errorMessage = error?.response?.data?.message || error?.message || 'Failed to load content.';
@@ -74,7 +74,12 @@ export default function ContentEdit() {
     
     try {
       setSaving(true);
-      // await guiderService.content.update(contentId, formData);
+      const updateData = {
+        contentId: parseInt(contentId),
+        title: formData.title,
+        caption: formData.description,
+      };
+      await guiderService.ugcContent.update(parseInt(contentId), updateData);
       toast.success('Content updated successfully!');
       navigate(`/content/${contentId}`);
     } catch (error) {

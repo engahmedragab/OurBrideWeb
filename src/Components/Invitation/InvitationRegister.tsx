@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { authService } from "../../services/apiService";
+import authService from "../../services/authService";
 
 export default function InvitationRegister() {
     const navigate = useNavigate();

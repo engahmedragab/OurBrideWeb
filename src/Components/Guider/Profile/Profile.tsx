@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -29,24 +29,18 @@ export default function Profile() {
       
       let data;
       if (guideProfileId) {
-        data = await guiderService.profile.getById(guideProfileId);
+        data = await guiderService.guides.getById(guideProfileId);
         // Store for future use
         localStorage.setItem('guideProfileId', guideProfileId.toString());
       } else if (userId) {
-        data = await guiderService.profile.getByUserId(userId);
+        data = await guiderService.guides.getByUserId(userId);
         // If profile has guideProfileId, store it
-        if (data?.id) {
-          localStorage.setItem('guideProfileId', data.id.toString());
+        if (data?.guideProfileId || data?.id) {
+          const id = data.guideProfileId || data.id;
+          localStorage.setItem('guideProfileId', id.toString());
         }
       } else {
-        // Try to get from status first
-        const status = await guiderService.status.get();
-        if (status?.guideProfileId) {
-          localStorage.setItem('guideProfileId', status.guideProfileId.toString());
-          data = await guiderService.profile.getById(status.guideProfileId);
-        } else {
-          throw new Error('No guide profile found. Please complete onboarding.');
-        }
+        throw new Error('No guide profile found. Please complete onboarding.');
       }
       
       setProfile(data);

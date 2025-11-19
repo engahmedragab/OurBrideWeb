@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -24,13 +24,30 @@ export default function Status() {
   const loadStatus = async () => {
     try {
       setLoading(true);
-      const data = await guiderService.status.get();
-      setStatus(data);
+      const userId = user?.id || user?.userId;
+      let data = null;
       
-      // Store guideProfileId if available
-      if (data?.guideProfileId) {
-        localStorage.setItem('guideProfileId', data.guideProfileId.toString());
+      // Try to get guide profile first
+      if (userId) {
+        const profile = await guiderService.guides.getByUserId(userId);
+        if (profile) {
+          const guideProfileId = profile.guideProfileId || profile.id;
+          if (guideProfileId) {
+            localStorage.setItem('guideProfileId', guideProfileId.toString());
+            data = await guiderService.guides.getStatus(guideProfileId);
+          }
+        }
       }
+      
+      // If no profile, try from storage
+      if (!data) {
+        const storedId = localStorage.getItem('guideProfileId');
+        if (storedId) {
+          data = await guiderService.guides.getStatus(parseInt(storedId));
+        }
+      }
+      
+      setStatus(data);
     } catch (error) {
       console.error('Error loading status:', error);
       const errorMessage = error?.response?.data?.message || error?.message || 'Failed to load status.';

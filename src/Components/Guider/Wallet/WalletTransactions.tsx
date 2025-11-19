@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -33,16 +33,28 @@ export default function WalletTransactions() {
       let guideProfileId = getGuideProfileId();
       
       if (!guideProfileId) {
-        const status = await guiderService.status.get();
-        if (status?.guideProfileId) {
-          guideProfileId = status.guideProfileId;
-          localStorage.setItem('guideProfileId', guideProfileId.toString());
-        } else {
+        const userId = user?.id || user?.userId;
+        if (userId) {
+          const profile = await guiderService.guides.getByUserId(userId);
+          if (profile?.guideProfileId || profile?.id) {
+            guideProfileId = profile.guideProfileId || profile.id;
+            localStorage.setItem('guideProfileId', guideProfileId.toString());
+          }
+        }
+        if (!guideProfileId) {
           throw new Error('No guide profile found.');
         }
       }
       
-      const data = await guiderService.wallet.getTransactions(guideProfileId);
+      // Get wallet first, then get ledger
+      const userId = user?.id || user?.userId;
+      const wallet = await guiderService.wallets.getByUserId(userId);
+      if (wallet?.id) {
+        const data = await guiderService.wallets.getLedger(wallet.id);
+        setTransactions(Array.isArray(data) ? data : (data?.data || []));
+      } else {
+        setTransactions([]);
+      }
       setTransactions(Array.isArray(data) ? data : (data?.data || []));
     } catch (error) {
       console.error('Error loading transactions:', error);

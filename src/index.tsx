@@ -21,7 +21,7 @@ import { isCommunitySubdomain, isGuiderSubdomain } from "./utils/subdomainUtils"
 // Lazy load apps based on subdomain
 async function loadApp() {
   let App: React.ComponentType;
-  
+
   if (isCommunitySubdomain()) {
     // Load community app for community subdomain
     const CommunityAppModule = await import("./Components/Community/CommunityApp");

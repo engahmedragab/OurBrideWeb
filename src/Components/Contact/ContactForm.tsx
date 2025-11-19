@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { contactService } from "../../services/apiService";
+import contactService from "../../services/contactService";
 import { createContactData } from "../../utils/browserInfo";
 import { useFormAnalytics } from "../../Hooks/useAnalytics";
 

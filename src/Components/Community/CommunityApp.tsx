@@ -8,23 +8,23 @@ import { initializeAnalytics } from '../../utils/AnalyticsManager';
 import { initializeAutoAnalytics } from '../../utils/autoAnalytics';
 
 // Community Components
-import CommunityHub from './CommunityHub';
-import ArticlesList from './Articles/ArticlesList';
-import ArticleDetail from './Articles/ArticleDetail';
-import PostsList from './Posts/PostsList';
-import PostDetail from './Posts/PostDetail';
-import BlogsList from './Blogs/BlogsList';
-import BlogDetail from './Blogs/BlogDetail';
-import ReelsList from './Reels/ReelsList';
-import ReelDetail from './Reels/ReelDetail';
-import PollsList from './Polls/PollsList';
-import PollDetail from './Polls/PollDetail';
-import ContestsList from './Contests/ContestsList';
-import ContestDetail from './Contests/ContestDetail';
-import TagsList from './Tags/TagsList';
-import TagDetail from './Tags/TagDetail';
-import UnifiedContentPage from './Unified/UnifiedContentPage';
-import ProfilePage from './Profiles/ProfilePage';
+import CommunityHub from '../../pages/community/CommunityHub';
+import ArticlesList from '../../pages/community/ArticlesList';
+import ArticleDetail from '../../pages/community/ArticleDetail';
+import PostsList from '../../pages/community/PostsList';
+import PostDetail from '../../pages/community/PostDetail';
+import BlogsList from '../../pages/community/BlogsList';
+import BlogDetail from '../../pages/community/BlogDetail';
+import ReelsList from '../../pages/community/ReelsList';
+import ReelDetail from '../../pages/community/ReelDetail';
+import PollsList from '../../pages/community/PollsList';
+import PollDetail from '../../pages/community/PollDetail';
+import ContestsList from '../../pages/community/ContestsList';
+import ContestDetail from '../../pages/community/ContestDetail';
+import TagsList from '../../pages/community/TagsList';
+import TagDetail from '../../pages/community/TagDetail';
+import UnifiedContentPage from '../../pages/community/UnifiedContentPage';
+import ProfilePage from '../../pages/community/ProfilePage';
 
 // Layout component for community pages
 function CommunityLayout({ children }) {

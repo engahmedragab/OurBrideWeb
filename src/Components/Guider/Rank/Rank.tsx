@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import guiderService from '../../../services/guiderService';
+import { guiderService } from '../../../services/guiderService';
 import SEOHead from '../../SEO/SEOHead';
 import { useAuth } from '../../../Hooks/useAuth';
 import { requireAuth } from '../../../utils/authUtils';
@@ -33,16 +33,28 @@ export default function Rank() {
       let guideProfileId = getGuideProfileId();
       
       if (!guideProfileId) {
-        const status = await guiderService.status.get();
-        if (status?.guideProfileId) {
-          guideProfileId = status.guideProfileId;
-          localStorage.setItem('guideProfileId', guideProfileId.toString());
-        } else {
+        const userId = user?.id || user?.userId;
+        if (userId) {
+          const profile = await guiderService.guides.getByUserId(userId);
+          if (profile?.guideProfileId || profile?.id) {
+            guideProfileId = profile.guideProfileId || profile.id;
+            localStorage.setItem('guideProfileId', guideProfileId.toString());
+          }
+        }
+        if (!guideProfileId) {
           throw new Error('No guide profile found.');
         }
       }
       
-      const data = await guiderService.rank.get(guideProfileId);
+      // Get tier information
+      const userId = user?.id || user?.userId;
+      const tierCode = await guiderService.tiers.getCurrentTierCode(userId);
+      const profile = await guiderService.guides.getById(guideProfileId);
+      const data = {
+        tier: tierCode || profile?.tier || 'N/A',
+        points: profile?.points || 0,
+        rank: profile?.rank || 'N/A',
+      };
       setRank(data);
     } catch (error) {
       console.error('Error loading rank:', error);
