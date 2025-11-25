@@ -69,14 +69,26 @@ export const API_CONFIG = {
       GET_MAP: '/services/map',
       GET_BY_CATEGORY: '/services/category/:category',
       GET_BY_PROVIDER: '/services/provider/:providerId',
+      GET_BY_PREPARATION: '/services/preparation/:preparationId',
+      FILTER: '/services/filter',
+      ADD_TO_WISHLIST: '/services/:id/wishlist',
+      ADD_TO_FAVORITES: '/services/:id/favorites',
+      ADD_REVIEW: '/services/:id/reviews',
     },
 
     // Products endpoints
     PRODUCTS: {
+      GET_ALL: '/products',
       GET_BY_ID: '/products/:productId',
       GET_BY_SKU: '/products/sku/:sku',
       GET_HEADER: '/products/:productId/header',
       GET_DETAIL: '/products/:id/detail',
+      SEARCH: '/products/search',
+      GET_BY_CATEGORY: '/products/category/:categoryId',
+      GET_BY_PROVIDER: '/products/provider/:providerId',
+      CREATE: '/products',
+      UPDATE: '/products/:productId',
+      DELETE: '/products/:productId',
     },
 
     // Invitations endpoints

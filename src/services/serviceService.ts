@@ -1,5 +1,6 @@
 import { OurbrideApi } from '../common/api/ourbride-http-client';
 import { Source } from '../common/api/gen/ourbride-api';
+import { SERVICES_CONFIG, DEFAULT_SERVICE_QUERY } from '../config/services.config';
 
 /**
  * Helper function to extract data from ApiResult format
@@ -42,26 +43,25 @@ export const serviceService = {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
   } = {}) => {
-    // Map common params to API params
-    const apiParams: any = {};
-    if (params.Search) apiParams.Search = params.Search;
-    if (params.ServiceClass !== undefined) apiParams.ServiceClass = params.ServiceClass;
-    if (params.ServiceType !== undefined) apiParams.ServiceType = params.ServiceType;
-    if (params.MinPrice !== undefined) apiParams.MinPrice = params.MinPrice;
-    if (params.MaxPrice !== undefined) apiParams.MaxPrice = params.MaxPrice;
-    if (params.MinRating !== undefined) apiParams.MinRating = params.MinRating;
-    if (params.IsOurBrideService !== undefined) apiParams.IsOurBrideService = params.IsOurBrideService;
-    if (params.HasPackages !== undefined) apiParams.HasPackages = params.HasPackages;
-    if (params.HasInstallment !== undefined) apiParams.HasInstallment = params.HasInstallment;
-    if (params.Page !== undefined) apiParams.Page = params.Page;
-    if (params.PageSize !== undefined) apiParams.PageSize = params.PageSize;
+    // Merge with default query parameters
+    const apiParams: any = {
+      ...DEFAULT_SERVICE_QUERY,
+      ...params,
+      Page: params.Page ?? DEFAULT_SERVICE_QUERY.Page,
+      PageSize: params.PageSize ?? DEFAULT_SERVICE_QUERY.PageSize,
+      Search: params.Search ?? DEFAULT_SERVICE_QUERY.Search,
+      MinPrice: params.MinPrice ?? DEFAULT_SERVICE_QUERY.MinPrice,
+      MinRating: params.MinRating ?? DEFAULT_SERVICE_QUERY.MinRating,
+      sortBy: params.sortBy ?? DEFAULT_SERVICE_QUERY.sortBy,
+      sortOrder: params.sortOrder ?? DEFAULT_SERVICE_QUERY.sortOrder,
+    };
     
     const response = await OurbrideApi.api.getServicesSearch(apiParams);
     return extractData(response);
   },
 
   // Get all services with pagination
-  getAll: async (page: number = 1, pageSize: number = 10) => {
+  getAll: async (page: number = SERVICES_CONFIG.PAGINATION.DEFAULT_PAGE, pageSize: number = SERVICES_CONFIG.PAGINATION.DEFAULT_PAGE_SIZE) => {
     const response = await OurbrideApi.api.getServicesGetAll({ page, pageSize });
     return extractData(response);
   },
@@ -75,8 +75,8 @@ export const serviceService = {
   // Get service reviews
   getReviews: async (
     id: number,
-    page: number = 1,
-    pageSize: number = 10,
+    page: number = SERVICES_CONFIG.REVIEWS.DEFAULT_PAGE,
+    pageSize: number = SERVICES_CONFIG.REVIEWS.DEFAULT_PAGE_SIZE,
     rating?: number,
     sortBy?: string
   ) => {

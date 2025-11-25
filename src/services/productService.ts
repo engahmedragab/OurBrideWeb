@@ -1,4 +1,5 @@
 import { OurbrideApi } from '../common/api/ourbride-http-client';
+import { PRODUCTS_CONFIG, DEFAULT_PRODUCT_QUERY } from '../config/products.config';
 
 /**
  * Helper function to extract data from ApiResult format
@@ -36,7 +37,14 @@ export const productService = {
     branchId?: number;
     staffId?: string;
   } = {}) => {
-    const response = await OurbrideApi.api.getProductGetProducts(params);
+    // Merge with default query parameters
+    const queryParams = {
+      ...DEFAULT_PRODUCT_QUERY,
+      ...params,
+      page: params.page ?? DEFAULT_PRODUCT_QUERY.page,
+      pageSize: params.pageSize ?? DEFAULT_PRODUCT_QUERY.pageSize,
+    };
+    const response = await OurbrideApi.api.getProductGetProducts(queryParams);
     return extractData(response);
   },
 
