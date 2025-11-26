@@ -168,6 +168,30 @@ export const serviceService = {
     const response = await OurbrideApi.api.getServicesFilter({ term });
     return extractData(response);
   },
+
+  // Get services by preparation ID
+  getByPreparationId: async (preparationId: number) => {
+    const response = await OurbrideApi.api.getServicesGetByPreparationId(preparationId);
+    return extractData(response);
+  },
+
+  // Get services by preparation ID (paged)
+  getByPreparationIdPaged: async (preparationId: number, page: number = 1, pageSize: number = 10) => {
+    const response = await OurbrideApi.api.getServicesGetByPreparationIdPaged(preparationId, { page, pageSize });
+    return extractData(response);
+  },
+
+  // Get services by provider ID
+  getByProviderId: async (providerId: number) => {
+    const response = await OurbrideApi.api.getServicesGeByProviderId(providerId);
+    return extractData(response);
+  },
+
+  // Search services by term
+  searchByTerm: async (term?: string, page: number = 1, pageSize: number = 10) => {
+    const response = await OurbrideApi.api.getServicesSearchByTerm({ term, page, pageSize });
+    return extractData(response);
+  },
 };
 
 export default serviceService;

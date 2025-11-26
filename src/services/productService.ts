@@ -59,8 +59,22 @@ export const productService = {
   },
 
   // Get product by SKU
-  getBySku: async (sku: string) => {
-    const response = await OurbrideApi.api.getProductGetProductSku(sku);
+  getBySku: async (sku: string, query?: {
+    providerId?: number;
+    branchId?: number;
+    staffId?: string;
+  }) => {
+    const response = await OurbrideApi.api.getProductGetProductBySku(sku, query);
+    return extractData(response);
+  },
+
+  // Get product by Slug
+  getBySlug: async (slug: string, query?: {
+    providerId?: number;
+    branchId?: number;
+    staffId?: string;
+  }) => {
+    const response = await OurbrideApi.api.getProductGetProductBySlug(slug, query);
     return extractData(response);
   },
 
@@ -87,9 +101,9 @@ export const productService = {
     categoryId?: number;
     providerId?: number;
   } = {}) => {
-    // Use the search endpoint if query is provided, otherwise use getAll
+    // Use the search endpoint if query is provided
     if (params.query) {
-      const response = await OurbrideApi.api.getProductSearchProducts({ query: params.query });
+      const response = await OurbrideApi.api.postProductSearchProducts({ query: params.query });
       return extractData(response);
     }
     // Otherwise use getAll with search parameter
@@ -100,6 +114,46 @@ export const productService = {
       categoryId: params.categoryId,
       providerId: params.providerId,
     });
+    return extractData(response);
+  },
+
+  // Get product variations
+  getVariations: async (id: string, query?: {
+    productId?: number;
+    providerId?: number;
+    branchId?: number;
+    staffId?: string;
+  }) => {
+    const response = await OurbrideApi.api.getProductGetProductVariations(id, query);
+    return extractData(response);
+  },
+
+  // Get product attributes
+  getAttributes: async (id: number, query?: {
+    providerId?: number;
+    branchId?: number;
+    staffId?: string;
+  }) => {
+    const response = await OurbrideApi.api.getProductGetProductAttributes(id, query);
+    return extractData(response);
+  },
+
+  // Get product reviews
+  getReviews: async (id: string, query?: {
+    productId?: number;
+    page?: number;
+    pageSize?: number;
+    providerId?: number;
+    branchId?: number;
+    staffId?: string;
+  }) => {
+    const response = await OurbrideApi.api.getProductGetProductReviews(id, query);
+    return extractData(response);
+  },
+
+  // Submit product review
+  submitReview: async (id: number, reviewData: any) => {
+    const response = await OurbrideApi.api.postProductSubmitProductReview(id, reviewData);
     return extractData(response);
   },
 
