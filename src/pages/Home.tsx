@@ -12,8 +12,7 @@ import {
   type ProviderCardData,
   type MemberTestimonialCardData,
 } from '@/components/ui/Card'
-import appStoreSvg from '@/assets/svg/app-store.svg'
-import googlePlaySvg from '@/assets/svg/google-play.svg'
+import { StoreBadges } from '@/components/ui/StoreBadges'
 import {
   ArrowRight,
   Users,
@@ -22,10 +21,10 @@ import {
   DollarSign,
   BadgeCheck,
   CheckCircle2,
-  Target,
   Tag,
   Shield,
   TargetIcon,
+  Quote,
 } from 'lucide-react'
 import heroBrideImage from '@/assets/images/Hero-Bride.png'
 import heroCardBrideImage from '@/assets/images/HeroCard-Bride.png'
@@ -34,12 +33,6 @@ import lineS2Svg from '@/assets/svg/Line-s2.svg'
 import lineS4Svg from '@/assets/svg/Line-s4.svg'
 import product from '@/assets/svg/product-1.svg'
 import phoneImage from '@/assets/images/phone.png'
-
-// App Store constants
-const APP_PACKAGE = 'com.ourbride.app'
-const IOS_APP_ID = '6747453812'
-const appStoreUrl = `https://apps.apple.com/app/id${IOS_APP_ID}`
-const playStoreUrl = `https://play.google.com/store/apps/details?id=${APP_PACKAGE}`
 
 // Mock data - Replace with actual API data later
 const mockProducts: ProductCardData[] = [
@@ -372,6 +365,7 @@ export default function Home() {
       description:
         'Tailored for brides across Egypt — especially those outside the capital.',
       rotation: -3,
+      background: 'gray',
     },
     {
       id: '2',
@@ -379,18 +373,21 @@ export default function Home() {
       description:
         'A feminine, easy-to-use design that makes planning delightful.',
       rotation: 2,
+      background: 'white',
     },
     {
       id: '3',
       heading: 'Real Offers & Savings',
       description: 'Exclusive coupons and discounts designed for your budget.',
       rotation: -2,
+      background: 'gray',
     },
     {
       id: '4',
       heading: 'All-in-One Platform',
       description: 'Plan, book, shop, and celebrate everything in one place.',
       rotation: 3,
+      background: 'white',
     },
     {
       id: '5',
@@ -398,6 +395,7 @@ export default function Home() {
       description:
         'All our service providers are carefully verified and trusted.',
       rotation: -1.5,
+      background: 'gray',
     },
     {
       id: '6',
@@ -405,6 +403,7 @@ export default function Home() {
       description:
         'Your payments are safe and secure with our trusted payment system.',
       rotation: 2.5,
+      background: 'white',
     },
   ]
 
@@ -458,6 +457,12 @@ export default function Home() {
             <div className="flex flex-col gap-6">
               {/* Active Users */}
               <div className="flex items-center gap-3 -mt-2">
+                <span className="text-14 font-semibold text-gray-700">
+                  <span className="text-gray-500 font-normal text-24">+6K</span>
+                  <span className="text-gray-500 font-normal text-14">
+                    Active Users
+                  </span>
+                </span>
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map(i => (
                     <div
@@ -468,9 +473,6 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <span className="text-14 font-semibold text-gray-700">
-                  +6K Active Users
-                </span>
               </div>
               {/* Badge */}
               <div className="inline-flex items-center gap-2 self-start">
@@ -521,27 +523,53 @@ export default function Home() {
 
             {/* Right Content: Circular Text and Explore Products Card */}
             <div className="relative flex flex-col items-center lg:items-center gap-4 z-10">
-              {/* Circular Text Element */}
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white border-4 border-brand-500 shadow-lg flex items-center justify-center">
+              {/* Circular Badge Button */}
+              <div className="relative w-24 h-24 md:w-28 md:h-28 flex items-center justify-center">
+                {/* Outer Rotating Text Ring */}
                 <svg
-                  viewBox="0 0 160 160"
-                  className="w-full h-full animate-spin-slow"
+                  viewBox="0 0 120 120"
+                  className="absolute inset-0 w-full h-full animate-spin-slow"
                 >
                   <defs>
                     <path
                       id="circle-text"
-                      d="M 80, 80 m -60, 0 a 60,60 0 1,1 120,0 a 60,60 0 1,1 -120,0"
+                      d="M 60, 60 m -50, 0 a 50,50 0 1,1 100,0 a 50,50 0 1,1 -100,0"
                     />
                   </defs>
                   <text
-                    className="fill-brand-600 font-black text-[10px] uppercase"
+                    fill="#FF5A5A"
+                    className="font-black text-[12px] uppercase"
                     style={{ letterSpacing: '0.05em' }}
                   >
                     <textPath href="#circle-text" startOffset="0%">
-                      OURBRIDE START SHOPPING WITH US NOW →
+                      START SHOPPING NOW WITH OURBRIDE
                     </textPath>
                   </text>
                 </svg>
+
+                {/* Inner Fixed Circle and Arrow */}
+                <div className="relative z-10 flex items-center justify-center">
+                  {/* Inner Filled Circle */}
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#FF5A5A] flex items-center justify-center shadow-md">
+                    {/* White Arrow Icon (upward-right) */}
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="text-white"
+                    >
+                      <path
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
               </div>
 
               {/* Products Card */}
@@ -783,8 +811,17 @@ export default function Home() {
           <div className="container-custom relative z-10">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-32 md:text-40 lg:text-48 font-black">
-                <span className="text-gray-600">Why Brides</span>{' '}
-                <span className="text-gray-900">Trust Our Services.</span>
+                <span className="font-normal text-gray-900">
+                  Why{' '}
+                  <span className="font-semibold text-gray-900">Brides</span>
+                </span>
+                <br />
+                <span className="font-semibold text-gray-900">
+                  Trust{' '}
+                  <span className="font-normal text-gray-900">
+                    Our Services
+                  </span>
+                </span>
               </h2>
             </div>
             <div className="relative min-h-[600px] md:min-h-[700px]">
@@ -812,66 +849,94 @@ export default function Home() {
 
         {/* Section 8: Testimonials */}
         <section className="container-custom py-12 md:py-16">
-          <div className="flex items-center gap-6 mb-8 md:mb-12">
-            <div className="text-64 md:text-80 lg:text-96 font-black text-gray-300 leading-none">
-              &quot;
-            </div>
-            <div className="flex-1">
-              <h2 className="text-28 md:text-32 lg:text-40 font-black text-gray-900">
-                Good Reviews Make With Confidence.
-              </h2>
-              <div className="flex items-center gap-4 mt-6">
-                <button
-                  onClick={goToTestimonialsPrevious}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-brand-500 hover:bg-brand-50 transition-colors"
-                  aria-label="Previous testimonials"
-                >
-                  <ChevronLeft className="h-5 w-5 text-gray-700" />
-                </button>
-                <div className="flex-1 flex items-center gap-2">
-                  {Array.from({ length: testimonialsTotalPages }).map(
-                    (_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => goToTestimonialsPage(index)}
-                        className={cn(
-                          'flex-1 h-2 rounded-full transition-all',
-                          index === testimonialsIndex
-                            ? 'bg-brand-500'
-                            : 'bg-gray-200 hover:bg-gray-300'
-                        )}
-                        aria-label={`Go to page ${index + 1}`}
-                      />
-                    )
-                  )}
+          {/* Centered Heading Above Section */}
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-32 md:text-40 lg:text-48 font-black">
+              <span className="font-normal text-gray-900">
+                Read{' '}
+                <span className="font-semibold text-gray-900">Reviews</span>
+              </span>
+              <br />
+              <span className="font-semibold text-gray-900">
+                Ride With{' '}
+                <span className="font-normal text-gray-900">Confidence</span>
+              </span>
+            </h2>
+          </div>
+
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
+            {/* Left Side - Quote Icon and Heading */}
+            <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
+              <div className="flex-1 lg:max-w-md">
+                <div className="mb-4 md:mb-6">
+                  <Quote className="h-12 w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
+                  <p className="text-20 md:text-24 lg:text-28 font-normal text-gray-900">
+                    <span className="block">What Our</span>
+                    <span className="block font-semibold text-gray-900">
+                      Customers
+                    </span>
+                    <span className="block">Are Saying</span>
+                  </p>
                 </div>
-                <button
-                  onClick={goToTestimonialsNext}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-brand-500 hover:bg-brand-50 transition-colors"
-                  aria-label="Next testimonials"
-                >
-                  <ChevronRight className="h-5 w-5 text-gray-700" />
-                </button>
+                <div className="flex items-center gap-3 md:gap-4">
+                  <button
+                    onClick={goToTestimonialsPrevious}
+                    aria-label="Previous testimonials"
+                  >
+                    <ChevronLeft className="h-5 w-5 text-gray-700" />
+                  </button>
+                  <div className="flex-1 flex items-center gap-2">
+                    {Array.from({ length: testimonialsTotalPages }).map(
+                      (_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => goToTestimonialsPage(index)}
+                          className={cn(
+                            'flex-1 h-2 rounded-full transition-all',
+                            index === testimonialsIndex
+                              ? 'bg-red-500'
+                              : 'bg-gray-200 hover:bg-gray-300'
+                          )}
+                          aria-label={`Go to page ${index + 1}`}
+                        />
+                      )
+                    )}
+                  </div>
+                  <button
+                    onClick={goToTestimonialsNext}
+                    aria-label="Next testimonials"
+                  >
+                    <ChevronRight className="h-5 w-5 text-gray-700" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {currentTestimonials.map((testimonial, index) => (
-              <Card
-                key={`${testimonialsIndex}-${index}`}
-                cardData={{ type: 'testimonial', ...testimonial }}
-              />
-            ))}
+
+            {/* Right Side - Testimonial Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto">
+              {currentTestimonials.map((testimonial, index) => (
+                <Card
+                  key={`${testimonialsIndex}-${index}`}
+                  cardData={{ type: 'testimonial', ...testimonial }}
+                />
+              ))}
+            </div>
           </div>
         </section>
 
         {/* Section 9: Providers */}
         <section className="container-custom py-12 md:py-16">
           <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-28 md:text-32 lg:text-40 font-black text-gray-900">
-              <span className="font-normal">Glorious</span>{' '}
-              <span className="font-black">Trusted Wedding</span>{' '}
-              <span className="font-normal">Providers.</span>
+            <h2 className="text-32 md:text-40 lg:text-48 font-black mb-4 md:mb-6">
+              <span className="font-normal text-gray-900">
+                Discover{' '}
+                <span className="font-semibold text-gray-900">Trusted</span>
+              </span>
+              <br />
+              <span className="font-semibold text-gray-900">
+                Wedding{' '}
+                <span className="font-normal text-gray-900">Providers</span>
+              </span>
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -890,14 +955,21 @@ export default function Home() {
             <img
               src={lineS4Svg}
               alt=""
-              className="w-full h-full object-fit"
+              className="w-full h-full object-cover"
               aria-hidden="true"
             />
           </div>
           <div className="container-custom relative z-10">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900">
-                Your Wedding Journey Starts Here
+              <h2 className="text-32 md:text-40 lg:text-48 font-black mb-4 md:mb-6">
+                <span className="font-normal text-gray-900">
+                  Your Wedding{' '}
+                  <span className="font-semibold text-gray-900">Journey</span>
+                </span>
+                <br />
+                <span className="font-semibold text-gray-900">
+                  Starts <span className="font-normal text-gray-900">Here</span>
+                </span>
               </h2>
             </div>
             <div className="relative">
@@ -925,57 +997,79 @@ export default function Home() {
 
         {/* Section 11: Member Testimonials */}
         <section className="container-custom py-12 md:py-16">
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-            <div className="lg:w-1/3">
-              <div className="text-64 md:text-80 lg:text-96 font-black text-gray-300 leading-none mb-4">
-                &quot;
-              </div>
-              <h2 className="text-28 md:text-32 lg:text-40 font-black text-gray-900 mb-8">
-                Our Bride Members Are Loving.
-              </h2>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={goToMemberTestimonialsPrevious}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-brand-500 hover:bg-brand-50 transition-colors"
-                  aria-label="Previous testimonials"
-                >
-                  <ChevronLeft className="h-5 w-5 text-gray-700" />
-                </button>
-                <div className="flex-1 flex items-center gap-2">
-                  {Array.from({ length: memberTestimonialsTotalPages }).map(
-                    (_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => goToMemberTestimonialsPage(index)}
-                        className={cn(
-                          'flex-1 h-2 rounded-full transition-all',
-                          index === memberTestimonialsIndex
-                            ? 'bg-brand-500'
-                            : 'bg-gray-200 hover:bg-gray-300'
-                        )}
-                        aria-label={`Go to page ${index + 1}`}
-                      />
-                    )
-                  )}
+          {/* Centered Heading Above Section */}
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-32 md:text-40 lg:text-48 font-black">
+              <span className="font-normal text-gray-900">
+                Our Bride{' '}
+                <span className="font-semibold text-gray-900">Members</span>
+              </span>
+              <br />
+              <span className="font-semibold text-gray-900">
+                Are <span className="font-normal text-gray-900">Loving</span>
+              </span>
+            </h2>
+          </div>
+
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
+            {/* Left Side - Quote Icon and Heading */}
+            <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
+              <div className="flex-1 lg:max-w-md">
+                <div className="mb-4 md:mb-6">
+                  <Quote className="h-12 w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
+                  <p className="text-20 md:text-24 lg:text-28 font-normal text-gray-900">
+                    <span className="block">Discover</span>
+                    <span className="block font-semibold text-gray-900">
+                      What
+                    </span>
+                    <span className="block font-semibold text-gray-900">
+                      Members
+                    </span>
+                    <span className="block">Are Saying</span>
+                  </p>
                 </div>
-                <button
-                  onClick={goToMemberTestimonialsNext}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-brand-500 hover:bg-brand-50 transition-colors"
-                  aria-label="Next testimonials"
-                >
-                  <ChevronRight className="h-5 w-5 text-gray-700" />
-                </button>
+                <div className="flex items-center gap-3 md:gap-4">
+                  <button
+                    onClick={goToMemberTestimonialsPrevious}
+                    aria-label="Previous testimonials"
+                  >
+                    <ChevronLeft className="h-5 w-5 text-gray-700" />
+                  </button>
+                  <div className="flex-1 flex items-center gap-2">
+                    {Array.from({ length: memberTestimonialsTotalPages }).map(
+                      (_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => goToMemberTestimonialsPage(index)}
+                          className={cn(
+                            'flex-1 h-2 rounded-full transition-all',
+                            index === memberTestimonialsIndex
+                              ? 'bg-red-500'
+                              : 'bg-gray-200 hover:bg-gray-300'
+                          )}
+                          aria-label={`Go to page ${index + 1}`}
+                        />
+                      )
+                    )}
+                  </div>
+                  <button
+                    onClick={goToMemberTestimonialsNext}
+                    aria-label="Next testimonials"
+                  >
+                    <ChevronRight className="h-5 w-5 text-gray-700" />
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="lg:flex-1">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {currentMemberTestimonials.map((testimonial, index) => (
-                  <Card
-                    key={`${memberTestimonialsIndex}-${index}`}
-                    cardData={{ type: 'member-testimonial', ...testimonial }}
-                  />
-                ))}
-              </div>
+
+            {/* Right Side - Testimonial Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto">
+              {currentMemberTestimonials.map((testimonial, index) => (
+                <Card
+                  key={`${memberTestimonialsIndex}-${index}`}
+                  cardData={{ type: 'member-testimonial', ...testimonial }}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -986,36 +1080,11 @@ export default function Home() {
             <div className="text-center mb-8 md:mb-12">
               <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900">
                 <span className="font-normal">Find Your Wedding Journey</span>{' '}
-                <span className="font-black">Starts Here.</span>
+                <span className="font-semibold">Starts Here</span>
               </h2>
             </div>
-            <div className="flex items-center justify-center gap-4 md:gap-6 mb-12 md:mb-16">
-              <a
-                href={appStoreUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Download on the App Store"
-                className="inline-block hover:opacity-80 transition-opacity"
-              >
-                <img
-                  src={appStoreSvg}
-                  alt="Download on the App Store"
-                  className="h-12 md:h-14 w-auto"
-                />
-              </a>
-              <a
-                href={playStoreUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Get it on Google Play"
-                className="inline-block hover:opacity-80 transition-opacity"
-              >
-                <img
-                  src={googlePlaySvg}
-                  alt="Get it on Google Play"
-                  className="h-12 md:h-14 w-auto"
-                />
-              </a>
+            <div className="flex items-center justify-center mb-12 md:mb-16">
+              <StoreBadges size="lg" />
             </div>
             <div className="relative flex items-center justify-center">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-brand-500 rounded-full opacity-20 blur-3xl" />

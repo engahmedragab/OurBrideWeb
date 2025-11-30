@@ -2,15 +2,7 @@ import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import footerLogo from '@/assets/Footer-Logo.svg'
 import { Facebook, Instagram, Music2, Twitter } from 'lucide-react'
-import appStoreSvg from '@/assets/svg/app-store.svg'
-import googlePlaySvg from '@/assets/svg/google-play.svg'
-
-// App Store constants
-const APP_PACKAGE = 'com.ourbride.app'
-const IOS_APP_ID = '6747453812'
-
-const appStoreUrl = `https://apps.apple.com/app/id${IOS_APP_ID}`
-const playStoreUrl = `https://play.google.com/store/apps/details?id=${APP_PACKAGE}`
+import { StoreBadges } from '@/components/ui/StoreBadges'
 
 export interface FooterProps {
   className?: string
@@ -64,25 +56,25 @@ export const Footer = ({ className }: FooterProps) => {
           <nav className="flex items-center gap-6 md:gap-8">
             <Link
               to="/"
-              className="text-16 font-semibold hover:opacity-80 transition-opacity"
+              className="text-16 font-normal hover:opacity-80 transition-opacity"
             >
               Home
             </Link>
             <Link
               to="/store"
-              className="text-16 font-semibold hover:opacity-80 transition-opacity"
+              className="text-16 font-normal hover:opacity-80 transition-opacity"
             >
               Store
             </Link>
             <Link
               to="/about"
-              className="text-16 font-semibold hover:opacity-80 transition-opacity"
+              className="text-16 font-normal hover:opacity-80 transition-opacity"
             >
               About Us
             </Link>
             <Link
               to="/blog"
-              className="text-16 font-semibold hover:opacity-80 transition-opacity"
+              className="text-16 font-normal hover:opacity-80 transition-opacity"
             >
               Blog
             </Link>
@@ -95,7 +87,7 @@ export const Footer = ({ className }: FooterProps) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Column 1: Get In Touch */}
           <div className="flex flex-col gap-6">
-            <h3 className="text-20 font-bold">Get In Touch</h3>
+            <h3 className="text-20 font-normal">Get In Touch</h3>
 
             {/* Social Media Icons */}
             <div className="flex items-center gap-4">
@@ -119,7 +111,7 @@ export const Footer = ({ className }: FooterProps) => {
             {/* Service Provider Link */}
             <Link
               to="/provide-services"
-              className="text-16 font-medium underline hover:opacity-80 transition-opacity self-start"
+              className="text-16 font-normal underline hover:opacity-80 transition-opacity self-start"
             >
               Provide Your Services With Us
             </Link>
@@ -127,7 +119,7 @@ export const Footer = ({ className }: FooterProps) => {
 
           {/* Column 2: Help Center */}
           <div className="flex flex-col gap-6">
-            <h3 className="text-20 font-bold">Help Center</h3>
+            <h3 className="text-20 font-normal">Help Center</h3>
 
             {/* Help Links */}
             <div className="flex flex-col gap-4">
@@ -165,40 +157,10 @@ export const Footer = ({ className }: FooterProps) => {
 
           {/* Column 3: Download Our App */}
           <div className="flex flex-col gap-6">
-            <h3 className="text-20 font-bold">Download Our App</h3>
+            <h3 className="text-20 font-normal">Download Our App</h3>
 
             {/* App Store Badges */}
-            <div className="flex flex-col gap-4">
-              {/* Apple App Store */}
-              <a
-                href={appStoreUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Download on the App Store"
-                className="inline-block hover:opacity-80 transition-opacity"
-              >
-                <img
-                  src={appStoreSvg}
-                  alt="Download on the App Store"
-                  className="h-10 w-auto"
-                />
-              </a>
-
-              {/* Google Play Store */}
-              <a
-                href={playStoreUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Get it on Google Play"
-                className="inline-block hover:opacity-80 transition-opacity"
-              >
-                <img
-                  src={googlePlaySvg}
-                  alt="Get it on Google Play"
-                  className="h-10 w-auto"
-                />
-              </a>
-            </div>
+            <StoreBadges size="md" />
           </div>
         </div>
       </div>

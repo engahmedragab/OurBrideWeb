@@ -97,6 +97,7 @@ export interface TrustCardData {
   heading: string
   description: string
   rotation?: number
+  background?: 'white' | 'gray'
 }
 
 // Journey Step Props
@@ -145,7 +146,7 @@ const ProductServiceCard = ({
           <div className="absolute top-3 left-3 z-10">
             <Badge
               variant="default"
-              className="bg-brand-500 !text-white border-0 px-3 py-1 text-12 font-normal rounded-full"
+              className="bg-brand-400 !text-white border-0 px-3 py-1 text-12 font-normal rounded-full"
             >
               Top Offers
             </Badge>
@@ -202,11 +203,11 @@ const ProductServiceCard = ({
         {/* Pricing */}
         <div className="flex items-center gap-2">
           {hasDiscount && (
-            <span className="text-14 text-gray-400 line-through">
+            <span className="text-14 font-normal text-gray-400 line-through">
               {data.originalPrice.toLocaleString()} egp
             </span>
           )}
-          <span className="text-18 font-bold text-gray-900">
+          <span className="text-18 font-normal text-gray-900">
             {data.discountedPrice.toLocaleString()} egp
           </span>
         </div>
@@ -263,24 +264,16 @@ const ProductServiceCard = ({
 // Testimonial Card Component
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   return (
-    <div className="bg-gray-50 rounded-xl p-6 md:p-8 h-full flex flex-col">
+    <div className="bg-white rounded-xl p-6 md:p-8 h-full flex flex-col border border-gray-100 shadow-md">
       {/* Quote */}
-      <p className="text-16 text-gray-900 mb-6 flex-1">
+      <p className="text-16 text-gray-900 mb-6 flex-1 leading-relaxed">
         &quot;{data.quote}&quot;
       </p>
 
-      {/* Stars */}
+      {/* Stars - All red for 5-star rating */}
       <div className="flex items-center gap-1 mb-6">
         {Array.from({ length: 5 }).map((_, index) => (
-          <Star
-            key={index}
-            className={cn(
-              'h-5 w-5',
-              index < data.rating
-                ? 'fill-brand-500 text-brand-500'
-                : 'fill-gray-200 text-gray-200'
-            )}
-          />
+          <Star key={index} className="h-5 w-5 fill-red-500 text-red-500" />
         ))}
       </div>
 
@@ -289,7 +282,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
         <img
           src={data.authorImage}
           alt={data.authorName}
-          className="w-12 h-12 rounded-full object-cover"
+          className="w-12 h-12 rounded-full object-cover grayscale"
         />
         <div>
           <p className="text-16 font-semibold text-gray-900">
@@ -305,7 +298,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
 // Provider Card Component
 const ProviderCard = ({ data }: { data: ProviderCardData }) => {
   return (
-    <div className="bg-gray-50 rounded-xl p-6 md:p-8 text-center flex flex-col items-center">
+    <div className="bg-gray-100 rounded-xl p-6 md:p-8 text-center flex flex-col items-center">
       {/* Profile Image */}
       <img
         src={data.image}
@@ -351,7 +344,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
       {/* View Profile Link */}
       <Link
         to={`/providers/${data.id}`}
-        className="text-14 text-gray-600 hover:text-brand-500 transition-colors flex items-center gap-1"
+        className="text-14 text-brand hover:text-brand-500 transition-colors flex items-center gap-1"
       >
         View Profile
         <ArrowRight className="h-4 w-4" />
@@ -449,14 +442,17 @@ const MemberTestimonialCard = ({
 
 // Trust Card Component
 const TrustCard = ({ data }: { data: TrustCardData }) => {
+  const backgroundColor = data.background === 'gray' ? '#F4F4F6' : 'white'
+
   return (
     <div
-      className="bg-white rounded-xl shadow-md p-6 md:p-8 border border-gray-100 hover:shadow-lg transition-shadow duration-300"
+      className="rounded-xl shadow-md p-6 md:p-8 border border-gray-100 hover:shadow-lg transition-shadow duration-300 h-[360px] md:h-[400px] flex flex-col items-center justify-center text-center"
       style={{
         transform: `rotate(${data.rotation || 0}deg)`,
+        backgroundColor,
       }}
     >
-      <h3 className="text-20 md:text-24 font-black text-gray-900 mb-3">
+      <h3 className="text-20 md:text-24 font-normal text-gray-900 mb-3">
         {data.heading}
       </h3>
       <p className="text-16 text-gray-600 leading-relaxed">
