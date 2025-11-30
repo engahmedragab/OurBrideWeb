@@ -38,6 +38,8 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+.cursor/
+.cursor/rules/
 
 # OS
 Thumbs.db
