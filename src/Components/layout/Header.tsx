@@ -1,4 +1,7 @@
-import { Link, useLocation } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { SearchInput } from '@/components/ui/SearchInput'
 import logoImage from '@/assets/Logo.png'
@@ -25,8 +28,8 @@ export interface HeaderProps {
 }
 
 export const Header = ({ className }: HeaderProps) => {
-  const location = useLocation()
-  const isActive = (path: string) => location.pathname === path
+  const pathname = usePathname()
+  const isActive = (path: string) => pathname === path
 
   const navigationItems = [
     {
@@ -75,14 +78,14 @@ export const Header = ({ className }: HeaderProps) => {
       <div className="container-custom flex h-16 items-center justify-between gap-4">
         {/* Logo */}
         <Link
-          to="/"
+          href="/"
           className={cn(
             'flex items-center gap-2 transition-opacity duration-150',
             'hover:opacity-80',
             'focus:outline-none rounded-md'
           )}
         >
-          <img src={logoImage} alt="OurBride Logo" className="h-10 w-auto" />
+          <img src={typeof logoImage === 'string' ? logoImage : logoImage.src} alt="OurBride Logo" className="h-10 w-auto" />
         </Link>
 
         {/* Navigation Menu */}
@@ -122,7 +125,7 @@ export const Header = ({ className }: HeaderProps) => {
                           return (
                             <Link
                               key={dropdownItem.path}
-                              to={dropdownItem.path}
+                              href={dropdownItem.path}
                               className={cn(
                                 'group relative flex items-center gap-3 rounded-md px-3 py-2 text-14 font-medium',
                                 'transition-colors duration-150',
@@ -154,7 +157,7 @@ export const Header = ({ className }: HeaderProps) => {
               return (
                 <NavigationMenuItem key={item.path}>
                   <Link
-                    to={item.path}
+                    href={item.path}
                     className={cn(
                       'group relative flex items-center gap-2 rounded-full px-3 py-2 text-16 font-semibold',
                       'transition-colors duration-150',

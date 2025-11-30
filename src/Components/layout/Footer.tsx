@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import footerLogo from '@/assets/Footer-Logo.svg'
 import { Facebook, Instagram, Music2, Twitter } from 'lucide-react'
@@ -44,7 +44,7 @@ export const Footer = ({ className }: FooterProps) => {
       <div className="container-custom border-b border-white/20 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0">
+          <Link href="/" className="flex-shrink-0">
             <img
               src={footerLogo}
               alt="OurBride Logo"
@@ -55,25 +55,25 @@ export const Footer = ({ className }: FooterProps) => {
           {/* Navigation Links */}
           <nav className="flex items-center gap-6 md:gap-8">
             <Link
-              to="/"
+              href="/"
               className="text-16 font-normal hover:opacity-80 transition-opacity"
             >
               Home
             </Link>
             <Link
-              to="/store"
+              href="/store"
               className="text-16 font-normal hover:opacity-80 transition-opacity"
             >
               Store
             </Link>
             <Link
-              to="/about"
+              href="/about"
               className="text-16 font-normal hover:opacity-80 transition-opacity"
             >
               About Us
             </Link>
             <Link
-              to="/blog"
+              href="/blog"
               className="text-16 font-normal hover:opacity-80 transition-opacity"
             >
               Blog
@@ -110,7 +110,7 @@ export const Footer = ({ className }: FooterProps) => {
 
             {/* Service Provider Link */}
             <Link
-              to="/provide-services"
+              href="/provide-services"
               className="text-16 font-normal underline hover:opacity-80 transition-opacity self-start"
             >
               Provide Your Services With Us
@@ -124,19 +124,19 @@ export const Footer = ({ className }: FooterProps) => {
             {/* Help Links */}
             <div className="flex flex-col gap-4">
               <Link
-                to="/help"
+                href="/help"
                 className="text-16 font-medium underline hover:opacity-80 transition-opacity self-start"
               >
                 Help & FAQs
               </Link>
               <Link
-                to="/terms"
+                href="/terms"
                 className="text-16 font-medium underline hover:opacity-80 transition-opacity self-start"
               >
                 Terms of Use
               </Link>
               <Link
-                to="/privacy"
+                href="/privacy"
                 className="text-16 font-medium underline hover:opacity-80 transition-opacity self-start"
               >
                 Privacy Policy

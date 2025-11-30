@@ -1,6 +1,6 @@
 import { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
@@ -229,7 +229,7 @@ const ProductServiceCard = ({
               className="flex-1 rounded-full text-14 font-normal text-white"
               asChild
             >
-              <Link to={`/products/${data.id}`}>Buy Now</Link>
+              <Link href={`/products/${data.id}`}>Buy Now</Link>
             </Button>
           </div>
         ) : (
@@ -239,7 +239,7 @@ const ProductServiceCard = ({
             className="w-full rounded-full text-14 font-normal text-white"
             asChild
           >
-            <Link to={`/services/${data.id}`}>Book Now</Link>
+            <Link href={`/services/${data.id}`}>Book Now</Link>
           </Button>
         )}
 
@@ -343,7 +343,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
 
       {/* View Profile Link */}
       <Link
-        to={`/providers/${data.id}`}
+        href={`/providers/${data.id}`}
         className="text-14 text-brand hover:text-brand-500 transition-colors flex items-center gap-1"
       >
         View Profile

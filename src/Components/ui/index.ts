@@ -19,7 +19,18 @@ export {
   CardContent,
   cardVariants,
 } from './Card'
-export type { CardProps } from './Card'
+export type {
+  CardProps,
+  CardData,
+  ProductCardData,
+  ServiceCardData,
+  TestimonialCardData,
+  ProviderCardData,
+  MemberTestimonialCardData,
+  TrustCardData,
+  JourneyStepData,
+  BaseCardProps,
+} from './Card'
 
 export { Input, inputVariants } from './Input'
 export type { InputProps } from './Input'
@@ -45,11 +56,62 @@ export type { AlertProps } from './Alert'
 export { Accordion } from './Accordion'
 export type { AccordionProps, AccordionItemProps } from './Accordion'
 
-export {
-  SocialMediaButton,
-  socialMediaButtonVariants,
-} from './SocialMediaButton'
+export { SocialMediaButton, socialMediaButtonVariants } from './SocialMediaButton'
 export type { SocialMediaButtonProps } from './SocialMediaButton'
 
 export { Badge, badgeVariants } from './Badge'
 export type { BadgeProps } from './Badge'
+
+export {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuContent,
+  NavigationMenuTrigger,
+  NavigationMenuLink,
+  NavigationMenuIndicator,
+  NavigationMenuViewport,
+  navigationMenuTriggerStyle,
+} from './NavigationMenu'
+
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuGroup,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuRadioGroup,
+} from './DropdownMenu'
+
+export { StoreBadges } from './StoreBadges'
+export type { StoreBadgesProps } from './StoreBadges'
+
+export { ProductCard } from './ProductCard'
+export type { ProductCardProps } from './ProductCard'
+
+export { ProductGrid } from './ProductGrid'
+export type { ProductGridProps } from './ProductGrid'
+
+export { ProductList } from './ProductList'
+export type { ProductListProps } from './ProductList'
+
+export { ProductFilters } from './ProductFilters'
+export type { ProductFiltersProps } from './ProductFilters'
+
+export { ProductSort } from './ProductSort'
+export type { ProductSortProps } from './ProductSort'
+
+export { ProductImageGallery } from './ProductImageGallery'
+export type { ProductImageGalleryProps } from './ProductImageGallery'
+
+export { HeroCarousel } from './HeroCarousel'
+export type { HeroCarouselProps, HeroSlide } from './HeroCarousel'

@@ -1,5 +1,7 @@
+'use client'
+
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { cn } from '@/lib/utils'
@@ -504,7 +506,7 @@ export default function Home() {
                 <div className="relative w-80 h-80 md:w-96 md:h-96">
                   {/* SVG Border */}
                   <img
-                    src={heroCircularSvg}
+                    src={typeof heroCircularSvg === 'string' ? heroCircularSvg : heroCircularSvg.src}
                     alt=""
                     className="absolute inset-0 w-full h-full"
                     aria-hidden="true"
@@ -512,7 +514,7 @@ export default function Home() {
                   {/* Bride Image */}
                   <div className="absolute inset-[6.52px] rounded-full overflow-hidden z-10 flex items-center justify-center">
                     <img
-                      src={heroBrideImage}
+                      src={typeof heroBrideImage === 'string' ? heroBrideImage : heroBrideImage.src}
                       alt="Happy Bride"
                       className="w-full h-full object-contain"
                     />
@@ -576,7 +578,7 @@ export default function Home() {
               <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
                 <div className="aspect-[5/2] overflow-hidden">
                   <img
-                    src={heroCardBrideImage}
+                    src={typeof heroCardBrideImage === 'string' ? heroCardBrideImage : heroCardBrideImage.src}
                     alt="Explore Products"
                     className="w-full h-full object-cover"
                   />
@@ -588,14 +590,14 @@ export default function Home() {
                     className="w-full text-14 font-semibold rounded-full"
                     asChild
                   >
-                    <Link to="/products">Explore Products</Link>
+                    <Link href="/products">Explore Products</Link>
                   </Button>
                 </div>
               </div>
               <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
                 <div className="aspect-[5/2] overflow-hidden">
                   <img
-                    src={heroCardBrideImage}
+                    src={typeof heroCardBrideImage === 'string' ? heroCardBrideImage : heroCardBrideImage.src}
                     alt="Explore Products"
                     className="w-full h-full object-cover"
                   />
@@ -607,7 +609,7 @@ export default function Home() {
                     className="w-full text-14 font-semibold rounded-full"
                     asChild
                   >
-                    <Link to="/products">Explore Products</Link>
+                    <Link href="/products">Explore Products</Link>
                   </Button>
                 </div>
               </div>
@@ -635,7 +637,7 @@ export default function Home() {
                     className="px-8 py-6 text-16 font-semibold rounded-full bg-white text-brand-500 hover:bg-gray-50 border-white"
                     asChild
                   >
-                    <Link to="/products">
+                    <Link href="/products">
                       Start Shopping
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Link>
@@ -647,7 +649,7 @@ export default function Home() {
                 <div className="relative">
                   <div className="flex gap-4">
                     <img
-                      src={product}
+                      src={typeof product === 'string' ? product : product.src}
                       alt=""
                       className=" md:w-100 md:h-100 object-contain"
                       aria-hidden="true"
@@ -757,7 +759,7 @@ export default function Home() {
               Products Suggested for You
             </h2>
             <Link
-              to="/products"
+              href="/products"
               className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
             >
               View All
@@ -781,7 +783,7 @@ export default function Home() {
               Services Suggested for You
             </h2>
             <Link
-              to="/services"
+              href="/services"
               className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
             >
               View All
@@ -802,7 +804,7 @@ export default function Home() {
         <section className="relative py-16 md:py-24 overflow-hidden bg-white">
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <img
-              src={lineS2Svg}
+              src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
               alt=""
               className="w-full h-full object-cover"
               aria-hidden="true"
@@ -953,7 +955,7 @@ export default function Home() {
         <section className="relative py-16 md:py-24 overflow-hidden bg-white">
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <img
-              src={lineS4Svg}
+              src={typeof lineS4Svg === 'string' ? lineS4Svg : lineS4Svg.src}
               alt=""
               className="w-full h-full object-cover"
               aria-hidden="true"
@@ -1090,7 +1092,7 @@ export default function Home() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-brand-500 rounded-full opacity-20 blur-3xl" />
               <div className="relative z-10 transform rotate-6 md:rotate-12">
                 <img
-                  src={phoneImage}
+                  src={typeof phoneImage === 'string' ? phoneImage : phoneImage.src}
                   alt="OurBride Mobile App"
                   className="w-[280px] md:w-[400px] lg:w-[500px] h-auto drop-shadow-2xl"
                 />
