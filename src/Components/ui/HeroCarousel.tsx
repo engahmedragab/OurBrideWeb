@@ -61,25 +61,21 @@ export const HeroCarousel = ({
       <div className="relative">
         {/* Carousel Slide */}
         <div
-          className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px]"
-          style={{
-            background:
-              'linear-gradient(135deg, #FFE5E0 0%, #FFC4BD 100%)',
-          }}
+          className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] bg-gradient-to-br from-brand-100 to-brand-200"
         >
           {/* Navigation Arrows */}
           {slides.length > 1 && (
             <>
               <button
                 onClick={goToPrevious}
-                className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#FF6B5A] hover:bg-[#FF5A4A] text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
+                className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
                 aria-label="Previous slide"
               >
                 <ChevronLeft className="h-6 w-6 md:h-7 md:w-7" />
               </button>
               <button
                 onClick={goToNext}
-                className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#FF6B5A] hover:bg-[#FF5A4A] text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
+                className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
                 aria-label="Next slide"
               >
                 <ChevronRight className="h-6 w-6 md:h-7 md:w-7" />
@@ -94,27 +90,28 @@ export const HeroCarousel = ({
               <div className="lg:col-span-2 flex flex-col justify-center space-y-6 text-center lg:text-left">
                 {/* New Arrival Label */}
                 <div>
-                  <span className="inline-block text-12 md:text-14 font-semibold uppercase tracking-wider text-[#FF6B5A]">
+                  <span className="inline-block text-12 md:text-14 font-semibold uppercase tracking-wider text-brand-500">
                     {currentSlide.label}
                   </span>
                 </div>
 
                 {/* Main Heading */}
-                <h1 className="text-32 md:text-40 lg:text-48 xl:text-56 font-black text-[#2D2D2D] leading-tight">
+                <h1 className="text-32 md:text-40 lg:text-48 xl:text-56 font-semibold text-gray-900 leading-tight">
                   {currentSlide.title}
                 </h1>
 
                 {/* Description */}
-                <p className="text-14 md:text-16 lg:text-18 text-[#666666] leading-relaxed max-w-xl">
+                <p className="text-14 md:text-16 lg:text-18 text-gray-500 leading-relaxed max-w-xl">
                   {currentSlide.description}
                 </p>
 
                 {/* CTA Button */}
-                <div className="pt-2">
+                <div className="pt-2">  
                   <Link href={currentSlide.ctaLink}>
                     <Button
+                      variant="default"
                       size="lg"
-                      className="h-12 md:h-14 px-8 md:px-10 rounded-full bg-[#FF6B5A] hover:bg-[#FF5A4A] text-white text-16 md:text-18 font-semibold transition-all duration-200 hover:scale-105 shadow-md"
+                      className="h-12 md:h-14 px-8 md:px-10 rounded-full !text-white text-16 md:text-18 font-semibold transition-all duration-200 hover:scale-105 shadow-md"
                     >
                       {currentSlide.ctaText}
                     </Button>
@@ -123,11 +120,11 @@ export const HeroCarousel = ({
               </div>
 
               {/* Right Column - Visual (60%) */}
-              <div className="lg:col-span-3 relative flex items-center justify-center h-full min-h-[300px] md:min-h-[400px]">
+              <div className="lg:col-span-3 relative flex items-center justify-end h-full min-h-[300px] md:min-h-[400px] pr-4 md:pr-8">
                 {/* Discount Text Background */}
                 {currentSlide.discountText && (
-                  <div className="absolute inset-0 flex items-center justify-center z-0">
-                    <span className="text-[120px] md:text-[180px] lg:text-[240px] font-black text-[#FFD5D0] leading-none opacity-60 select-none">
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 z-0">
+                    <span className="text-[120px] md:text-[180px] lg:text-[240px] font-black text-brand-200 leading-none opacity-60 select-none">
                       {currentSlide.discountText}
                     </span>
                   </div>
@@ -138,7 +135,7 @@ export const HeroCarousel = ({
                   <img
                     src={currentSlide.productImage}
                     alt={currentSlide.title}
-                    className="w-full max-w-[280px] md:max-w-[400px] lg:max-w-[500px] h-auto object-contain drop-shadow-2xl"
+                    className="w-full max-w-[200px] md:max-w-[280px] lg:max-w-[350px] h-auto object-contain drop-shadow-2xl"
                   />
                 </div>
               </div>
@@ -156,7 +153,7 @@ export const HeroCarousel = ({
                 className={cn(
                   'w-2 h-2 rounded-full transition-all duration-200',
                   index === currentIndex
-                    ? 'bg-[#FF6B5A] w-8'
+                    ? 'bg-brand-500 w-8'
                     : 'bg-white/50 hover:bg-white/75'
                 )}
                 aria-label={`Go to slide ${index + 1}`}

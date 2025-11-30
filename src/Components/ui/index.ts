@@ -115,3 +115,37 @@ export type { ProductImageGalleryProps } from './ProductImageGallery'
 
 export { HeroCarousel } from './HeroCarousel'
 export type { HeroCarouselProps, HeroSlide } from './HeroCarousel'
+
+export { ProviderCard } from './ProviderCard'
+export type { ProviderCardProps } from './ProviderCard'
+
+export { PriceDisplay } from './PriceDisplay'
+export type { PriceDisplayProps } from './PriceDisplay'
+
+export { RatingDisplay } from './RatingDisplay'
+export type { RatingDisplayProps } from './RatingDisplay'
+
+export { QuantitySelector } from './QuantitySelector'
+export type { QuantitySelectorProps } from './QuantitySelector'
+
+export { OrderSummaryCard } from './OrderSummaryCard'
+export type { OrderSummaryCardProps } from './OrderSummaryCard'
+
+export { OfferBanner } from './OfferBanner'
+export type { OfferBannerProps } from './OfferBanner'
+
+export { Modal } from './Modal'
+export type { ModalProps } from './Modal'
+
+export { OrderCheckoutModal } from './OrderCheckoutModal'
+export type {
+  OrderCheckoutModalProps,
+  OrderItem,
+  OrderFormData,
+} from './OrderCheckoutModal'
+
+export { PaymentConfirmationModal } from './PaymentConfirmationModal'
+export type { PaymentConfirmationModalProps } from './PaymentConfirmationModal'
+
+export { OrderConfirmationModal } from './OrderConfirmationModal'
+export type { OrderConfirmationModalProps } from './OrderConfirmationModal'

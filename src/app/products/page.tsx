@@ -10,8 +10,10 @@ import {
   ProductSort,
   HeroCarousel,
   Button,
+  OfferBanner,
 } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
+import flowersImage from '@/assets/images/flowers.png'
 import type {
   Product,
   ProductFilter,
@@ -285,6 +287,21 @@ export default function Products() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Newsletter Banner */}
+        <div className="mb-12">
+          <OfferBanner
+            heading="Ready To Get Our News ?"
+            description="OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
+            variant="newsletter"
+            ctaText="Submit"
+            productImage={flowersImage}
+            onSubscribe={(email) => {
+              console.log('Newsletter subscription:', email)
+              // TODO: Implement newsletter subscription
+            }}
+          />
         </div>
       </main>
       <Footer />

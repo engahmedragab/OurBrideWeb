@@ -14,6 +14,7 @@ import {
   type ProviderCardData,
   type MemberTestimonialCardData,
 } from '@/components/ui/Card'
+import { OfferBanner } from '@/components/ui'
 import { StoreBadges } from '@/components/ui/StoreBadges'
 import {
   ArrowRight,
@@ -484,7 +485,7 @@ export default function Home() {
               </div>
 
               {/* Headline */}
-              <h1 className="text-30 md:text-40 lg:text-48 font-bold text-gray-900 leading-tight mt-2">
+              <h1 className="text-30 md:text-40 lg:text-48 font-semibold text-gray-900 leading-tight mt-2">
                 YOUR BRIDE ALWAYS IS <br />
                 <span className="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
                   OUR RESPONSIBILITY.
@@ -618,48 +619,13 @@ export default function Home() {
         </section>
 
         {/* Section 2: Offer Banner */}
-        <section className="container-custom">
-          <div className="bg-brand-500 rounded-2xl px-6 md:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              {/* Left Content */}
-              <div className="text-center lg:text-left">
-                <h2 className="text-32 md:text-40 lg:text-48 font-black text-white mb-4">
-                  25% Offer On our products
-                </h2>
-                <p className="text-18 md:text-18 text-white/90 mb-6 max-w-lg mx-auto lg:mx-0">
-                  OurBride is your all-in-one platform for wedding planning and
-                  shopping. Find everything you need to create your perfect day.
-                </p>
-                <div className="flex justify-center lg:justify-start">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="px-8 py-6 text-16 font-semibold rounded-full bg-white text-brand-500 hover:bg-gray-50 border-white"
-                    asChild
-                  >
-                    <Link href="/products">
-                      Start Shopping
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-              {/* Right Content - Product Images */}
-              <div className="flex justify-center lg:justify-end">
-                <div className="relative">
-                  <div className="flex gap-4">
-                    <img
-                      src={typeof product === 'string' ? product : product.src}
-                      alt=""
-                      className=" md:w-100 md:h-100 object-contain"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <OfferBanner
+          heading="25% Offer On our products"
+          description="OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
+          ctaText="Start Shopping"
+          ctaLink="/products"
+          productImage={product}
+        />
 
         {/* Section 3: Statistics */}
         <section className="container-custom py-12 md:py-16">

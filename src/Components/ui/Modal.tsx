@@ -1,0 +1,117 @@
+'use client'
+
+import { X } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { ReactNode } from 'react'
+
+export interface ModalProps {
+  isOpen: boolean
+  onClose: () => void
+  title?: string
+  children: ReactNode
+  className?: string
+  containerClassName?: string
+  headerClassName?: string
+  contentClassName?: string
+  showCloseButton?: boolean
+  closeOnOverlayClick?: boolean
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
+  zIndex?: number
+  disabled?: boolean
+}
+
+const maxWidthClasses = {
+  sm: 'max-w-[400px]',
+  md: 'max-w-[500px]',
+  lg: 'max-w-[600px]',
+  xl: 'max-w-[800px]',
+  '2xl': 'max-w-[1000px]',
+  full: 'max-w-full',
+}
+
+export const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  className,
+  containerClassName,
+  headerClassName,
+  contentClassName,
+  showCloseButton = true,
+  closeOnOverlayClick = true,
+  maxWidth = 'md',
+  zIndex = 50,
+  disabled = false,
+}: ModalProps) => {
+  if (!isOpen) return null
+
+  const handleOverlayClick = () => {
+    if (closeOnOverlayClick && !disabled) {
+      onClose()
+    }
+  }
+
+  return (
+    <div
+      className={cn(
+        'fixed inset-0 flex items-center justify-center p-4',
+        className
+      )}
+      style={{ zIndex: zIndex * 10 }}
+      onClick={handleOverlayClick}
+    >
+      {/* Overlay */}
+      <div
+        className={cn(
+          'fixed inset-0 bg-black/50 transition-opacity duration-300',
+          isOpen ? 'opacity-100' : 'opacity-0'
+        )}
+        style={{ zIndex: zIndex * 10 - 1 }}
+      />
+
+      {/* Modal Container */}
+      <div
+        className={cn(
+          'relative w-full bg-white rounded-2xl shadow-2xl',
+          'transform transition-all duration-300',
+          isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
+          maxWidthClasses[maxWidth],
+          containerClassName
+        )}
+        style={{ zIndex: zIndex * 10 + 1 }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Modal Header */}
+        {(title || showCloseButton) && (
+          <div
+            className={cn(
+              'flex items-center justify-between p-6 border-b border-gray-200',
+              headerClassName
+            )}
+          >
+            {title && (
+              <h2 className="text-20 md:text-24 font-normal text-gray-900">
+                {title}
+              </h2>
+            )}
+            {showCloseButton && (
+              <button
+                onClick={onClose}
+                disabled={disabled}
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Close modal"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Modal Content */}
+        <div className={cn('p-6', contentClassName)}>{children}</div>
+      </div>
+    </div>
+  )
+}
+

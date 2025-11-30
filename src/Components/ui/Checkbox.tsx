@@ -68,7 +68,16 @@ const Checkbox = forwardRef<HTMLDivElement, CheckboxProps>(
     }
 
     const isFilled = variant?.includes('Filled')
-    const iconColor = isFilled ? 'text-white' : 'text-transparent'
+    // Determine icon color based on variant and checked state
+    const getIconColor = () => {
+      if (isFilled) return 'text-white'
+      if (variant?.includes('brand')) return 'text-brand-500'
+      if (variant?.includes('success')) return 'text-green-500'
+      if (variant?.includes('error')) return 'text-red-500'
+      if (variant?.includes('gray')) return 'text-gray-600'
+      return 'text-gray-900'
+    }
+    const iconColor = getIconColor()
     const borderColor = variant?.includes('brand')
       ? 'border-brand-500'
       : variant?.includes('gray')

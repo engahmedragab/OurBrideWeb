@@ -2,7 +2,9 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
-import { Heart, ShoppingCart, Star, CheckCircle2 } from 'lucide-react'
+import { PriceDisplay } from './PriceDisplay'
+import { RatingDisplay } from './RatingDisplay'
+import { Heart, ShoppingCart, CheckCircle2 } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export interface ProductListProps {
@@ -109,15 +111,12 @@ export const ProductList = ({
 
                   {/* Rating and Tags */}
                   <div className="flex items-center gap-4 flex-wrap">
-                    <div className="flex items-center gap-1.5">
-                      <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
-                      <span className="text-14 font-medium text-gray-900">
-                        {product.rating.value}
-                      </span>
-                      <span className="text-12 text-gray-500">
-                        ({product.rating.count})
-                      </span>
-                    </div>
+                    <RatingDisplay
+                      rating={product.rating.value}
+                      count={product.rating.count}
+                      size="sm"
+                      className="gap-1.5"
+                    />
                     {product.tags && product.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
                         {product.tags.slice(0, 3).map((tag, index) => (
@@ -137,16 +136,13 @@ export const ProductList = ({
                 {/* Footer */}
                 <div className="flex items-center justify-between gap-4 pt-3 border-t border-gray-100">
                   <div className="flex items-center gap-2">
-                    {hasDiscount && (
-                      <span className="text-14 font-normal text-gray-400 line-through">
-                        {product.price.original.toLocaleString()}{' '}
-                        {product.price.currency}
-                      </span>
-                    )}
-                    <span className="text-20 font-semibold text-gray-900">
-                      {product.price.discounted.toLocaleString()}{' '}
-                      {product.price.currency}
-                    </span>
+                    <PriceDisplay
+                      original={hasDiscount ? product.price.original : undefined}
+                      discounted={product.price.discounted}
+                      currency={product.price.currency}
+                      size="md"
+                      showOriginal={hasDiscount}
+                    />
                     {hasDiscount && (
                       <Badge
                         variant="default"
@@ -165,7 +161,7 @@ export const ProductList = ({
                       disabled={!product.inStock}
                       aria-label="Add to cart"
                     >
-                      <ShoppingCart className="h-5 w-5" />
+                      <ShoppingCart className="h-5 w-5 text-brand-500" />
                     </Button>
                     <Button
                       variant="default"

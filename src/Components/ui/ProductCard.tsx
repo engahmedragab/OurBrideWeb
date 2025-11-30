@@ -2,7 +2,9 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
-import { Heart, ShoppingCart, Star, CheckCircle2 } from 'lucide-react'
+import { PriceDisplay } from './PriceDisplay'
+import { RatingDisplay } from './RatingDisplay'
+import { Heart, ShoppingCart, CheckCircle2 } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export interface ProductCardProps {
@@ -60,7 +62,7 @@ export const ProductCard = ({
             <div
               className={cn(
                 'absolute top-3 z-10',
-                hasDiscount ? 'left-12' : 'left-3'
+                hasDiscount ? 'left-[76px]' : 'left-3'
               )}
             >
               <Badge
@@ -130,29 +132,21 @@ export const ProductCard = ({
         </div>
 
         {/* Rating */}
-        <div className="flex items-center gap-1.5">
-          <div className="flex items-center gap-0.5">
-            <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
-            <span className="text-14 font-medium text-gray-900">
-              {product.rating.value}
-            </span>
-          </div>
-          <span className="text-12 text-gray-500">
-            ({product.rating.count})
-          </span>
-        </div>
+        <RatingDisplay
+          rating={product.rating.value}
+          count={product.rating.count}
+          size="sm"
+          className="gap-1.5"
+        />
 
         {/* Pricing */}
-        <div className="flex items-center gap-2">
-          {hasDiscount && (
-            <span className="text-14 font-normal text-gray-400 line-through">
-              {product.price.original.toLocaleString()} {product.price.currency}
-            </span>
-          )}
-          <span className="text-18 font-semibold text-gray-900">
-            {product.price.discounted.toLocaleString()} {product.price.currency}
-          </span>
-        </div>
+        <PriceDisplay
+          original={hasDiscount ? product.price.original : undefined}
+          discounted={product.price.discounted}
+          currency={product.price.currency}
+          size="sm"
+          showOriginal={hasDiscount}
+        />
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 pt-1">
@@ -164,7 +158,7 @@ export const ProductCard = ({
             disabled={!product.inStock}
             aria-label="Add to cart"
           >
-            <ShoppingCart className="h-5 w-5" />
+            <ShoppingCart className="h-5 w-5 text-brand-500" />
           </Button>
           <Button
             variant="default"

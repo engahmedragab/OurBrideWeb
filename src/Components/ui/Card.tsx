@@ -308,7 +308,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
 
       {/* Name with Verification */}
       <div className="flex items-center justify-center gap-1.5 mb-1">
-        <h3 className="text-18 font-bold text-gray-900">{data.name}</h3>
+        <h3 className="text-18 font-semibold text-gray-900">{data.name}</h3>
         {data.verified && (
           <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
         )}
@@ -483,7 +483,7 @@ const JourneyStep = ({
 
       {/* Step Content */}
       <div className="text-center max-w-[280px]">
-        <h3 className="text-16 md:text-18 font-bold text-gray-900 mb-2">
+        <h3 className="text-16 md:text-18 font-semibold text-gray-900 mb-2">
           {data.title}
         </h3>
         <p className="text-14 md:text-16 text-gray-600 leading-relaxed">

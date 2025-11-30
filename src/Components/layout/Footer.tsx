@@ -46,7 +46,7 @@ export const Footer = ({ className }: FooterProps) => {
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
             <img
-              src={footerLogo}
+              src={typeof footerLogo === 'string' ? footerLogo : footerLogo.src}
               alt="OurBride Logo"
               className="h-12 md:h-16 w-auto"
             />

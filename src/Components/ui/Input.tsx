@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, forwardRef, ReactNode } from 'react'
+import { InputHTMLAttributes, forwardRef, ReactNode, isValidElement } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { Check, X, LucideIcon } from 'lucide-react'
@@ -37,6 +37,36 @@ export interface InputProps
   suffix?: string | ReactNode
   errorMessage?: string
   showSuccessIcon?: boolean
+}
+
+// Helper to render prefix icon
+// This function safely renders Lucide icons and other React components
+const renderPrefixIcon = (Icon: LucideIcon | ReactNode): ReactNode => {
+  if (!Icon) return null
+  
+  // If it's already a valid React element, return it directly
+  if (isValidElement(Icon)) {
+    return Icon
+  }
+  
+  // Check if it's a React component
+  // forwardRef components (like Lucide icons) are functions
+  // But we also check for object with $$typeof in case of edge cases
+  const isComponent = 
+    typeof Icon === 'function' ||
+    (typeof Icon === 'object' && 
+     Icon !== null && 
+     ('$$typeof' in Icon || 'render' in Icon))
+  
+  if (isComponent) {
+    // Render as component - must use JSX, not return the component definition
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const IconComponent = Icon as React.ComponentType<any>
+    return <IconComponent className="h-5 w-5" />
+  }
+  
+  // For primitive types (string, number, etc.), return as-is
+  return Icon
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -83,11 +113,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 variant === 'error' ? 'text-red-500' : 'text-gray-400'
               )}
             >
-              {typeof PrefixIcon === 'function' ? (
-                <PrefixIcon className="h-5 w-5" />
-              ) : (
-                PrefixIcon
-              )}
+              {renderPrefixIcon(PrefixIcon)}
             </span>
           )}
           <input
