@@ -1,170 +1,195 @@
-# OurBride Web Application
+# OurBrideWeb
 
-A modern, scalable web application for wedding planning and services, built with React, TypeScript, and Vite.
+A modern wedding planning web application built with React, TypeScript, and Tailwind CSS.
 
-## 🚀 Quick Start
+## Tech Stack
+
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand
+- **Data Fetching**: TanStack React Query
+- **Routing**: React Router DOM
+- **Forms**: React Hook Form with Zod validation
+- **HTTP Client**: Axios
+- **UI Components**: Radix UI primitives with custom Tailwind styling
+
+## Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── ui/             # Reusable UI components (Button, etc.)
+│   ├── layout/         # Layout components
+│   ├── forms/          # Form components
+│   ├── common/         # Common shared components
+│   ├── features/       # Feature-specific components
+│   ├── community/      # Community-related components
+│   └── guider/         # Guider-related components
+├── pages/              # Page components
+├── hooks/              # Custom React hooks
+├── services/           # API services
+│   └── api/           # API client configuration
+├── lib/               # Utility libraries
+│   ├── utils.ts       # Utility functions (cn, etc.)
+│   └── reactQuery.ts  # React Query configuration
+├── utils/             # Helper utilities
+├── types/             # TypeScript type definitions
+├── constants/         # Application constants
+├── context/           # React context providers
+├── store/             # Zustand stores
+├── config/            # Configuration files
+├── assets/            # Static assets
+└── styles/            # Global styles
+    └── globals.css    # Tailwind CSS imports
+```
+
+## Setup Instructions
 
 ### Prerequisites
+
 - Node.js >= 18.17.0
 - npm >= 9.0.0
 
 ### Installation
-```bash
-npm install
-```
+
+1. Clone the repository
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file based on `.env.example`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Update the `.env` file with your actual configuration values
 
 ### Development
+
+Start the development server:
+
 ```bash
 npm run dev
-# or
-npm start
 ```
 
 The application will be available at `http://localhost:3005`
 
 ### Build
+
+Build for production:
+
 ```bash
 npm run build
 ```
 
 ### Type Checking
+
+Run TypeScript type checking:
+
 ```bash
 npm run typecheck
 ```
 
-### Format Code
-```bash
-npm run format.fix
-```
+### Code Formatting
 
-## 📁 Project Structure
-
-The project follows industry best practices with a well-organized folder structure:
-
-```
-src/
-├── Components/          # React components (organized by type)
-│   ├── ui/             # Primitive UI components
-│   ├── layout/         # Layout components
-│   ├── forms/          # Form components
-│   ├── common/         # Shared components
-│   ├── features/       # Feature-specific components
-│   ├── Community/      # Community subdomain
-│   └── Guider/         # Guider subdomain
-├── Hooks/              # Custom React hooks
-├── pages/              # Page-level components
-├── services/           # API service functions
-├── utils/              # Utility functions
-├── lib/                # Library configurations
-├── types/              # TypeScript types
-├── constants/          # Application constants
-├── context/            # React Context providers
-├── store/              # Zustand stores
-├── styles/             # Global styles and theme
-└── assets/             # Static assets
-```
-
-## 🔧 Key Features
-
-- **Multi-subdomain Architecture**: Main app, Community, and Guider subdomains
-- **TypeScript**: Full type safety
-- **Modern React**: React 18 with hooks
-- **State Management**: Zustand for global state
-- **Data Fetching**: React Query for server state
-- **Routing**: React Router v6
-- **Styling**: Bootstrap 5 + Styled Components + Tailwind CSS
-- **Form Handling**: React Hook Form
-- **Path Aliases**: Clean imports with `@/*` alias
-
-## 📚 Documentation
-
-- **[GETTING_STARTED.md](./GETTING_STARTED.md)** - Complete getting started guide
-- **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Detailed structure documentation
-- **[README_STRUCTURE.md](./README_STRUCTURE.md)** - Quick reference guide
-
-## 🎯 Import Patterns
-
-### Using Path Aliases (Recommended)
-```tsx
-import { Button } from '@/Components/ui';
-import { useAuth } from '@/Hooks';
-import { serviceService } from '@/services';
-import { ROUTES } from '@/constants';
-```
-
-### Using Relative Imports (Also Works)
-```tsx
-import Button from './Components/ui/Button';
-import { useAuth } from './Hooks/useAuth';
-```
-
-Both patterns work! Use path aliases for new code.
-
-## 🔐 Environment Variables
-
-Create a `.env` file based on `.env.example`:
+Check formatting:
 
 ```bash
-VITE_API_BASE_URL=your_api_url
-VITE_FIREBASE_API_KEY=your_firebase_key
-# ... see .env.example for all variables
+npm run format
 ```
 
-## 🧪 Testing
+Fix formatting issues:
 
 ```bash
-npm test
+npm run format:fix
 ```
 
-## 🛠️ Tech Stack
+### Linting
 
-- **React 18** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **React Router 6** - Routing
-- **Zustand** - State management
-- **React Query** - Data fetching
-- **Axios** - HTTP client
-- **React Hook Form** - Form handling
-- **Styled Components** - CSS-in-JS
-- **Bootstrap 5** - UI framework
-- **Tailwind CSS** - Utility-first CSS
+Run ESLint:
 
-## 📦 Scripts
+```bash
+npm run lint
+```
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm test` - Run tests
-- `npm run typecheck` - Type check without building
-- `npm run format.fix` - Format code with Prettier
+Fix linting issues:
 
-## 🚦 Development Workflow
+```bash
+npm run lint:fix
+```
 
-1. Create a feature branch
-2. Make changes following the project structure
-3. Test locally with `npm run dev`
-4. Type check with `npm run typecheck`
-5. Format code with `npm run format.fix`
-6. Commit and push
+## Development Guidelines
 
-## 📖 Additional Resources
+### File Naming Conventions
 
-- See individual `README.md` files in each directory for specific guidance
-- Check `GETTING_STARTED.md` for detailed development guide
-- Review `PROJECT_STRUCTURE.md` for architecture details
+- **Components**: PascalCase (`Button.tsx`, `UserProfile.tsx`)
+- **Hooks**: camelCase with 'use' prefix (`useAuth.ts`, `useFetch.ts`)
+- **Utils**: camelCase (`formatDate.ts`, `validation.ts`)
+- **Types**: PascalCase with `.types.ts` (`User.types.ts`)
+- **Constants**: File in camelCase, exports in UPPER_SNAKE_CASE
+- **Pages**: PascalCase (`HomePage.tsx`, `LoginPage.tsx`)
 
-## 🤝 Contributing
+### Import Paths
 
-1. Follow the project structure guidelines
-2. Use TypeScript for all new code
-3. Follow existing code patterns
-4. Add barrel exports for new components/hooks/utils
-5. Update documentation as needed
+Use path aliases for cleaner imports:
 
-## 📄 License
+```typescript
+// ✅ Good
+import { Button } from '@/components/ui'
+import { cn } from '@/lib/utils'
 
-[Your License Here]
+// ❌ Bad
+import { Button } from '../../../components/ui/Button'
+```
 
----
+### Styling
 
-**Ready to start developing!** Check out [GETTING_STARTED.md](./GETTING_STARTED.md) for detailed instructions.
+- Use Tailwind CSS for all styling
+- Use the `cn()` utility function for conditional classes
+- Follow the component variant pattern using `class-variance-authority`
+- No Bootstrap or Styled Components
+
+### Code Organization
+
+- Use barrel exports (`index.ts`) in each folder
+- Keep components small and focused
+- Separate concerns (UI, business logic, API calls)
+- Use TypeScript strict mode
+
+## Deeplinks Functionality
+
+The `public/deeplinks/` folder contains deeplink configurations and should be preserved exactly as-is. This folder is critical for the application's deeplink functionality and should never be modified or deleted during project reinitialization.
+
+## Environment Variables
+
+Required environment variables (see `.env.example`):
+
+- `VITE_API_BASE_URL`: Base URL for the API
+- `VITE_FIREBASE_API_KEY`: Firebase API key
+- `VITE_FIREBASE_AUTH_DOMAIN`: Firebase authentication domain
+- `VITE_FIREBASE_PROJECT_ID`: Firebase project ID
+- `VITE_APP_ENV`: Application environment (development/production)
+
+## API Client
+
+The API client is configured in `src/services/api/client.ts` with:
+
+- Automatic token injection from localStorage
+- Request/response interceptors
+- Error handling for 401 unauthorized responses
+
+## React Query
+
+React Query is configured with:
+
+- 5-minute stale time
+- No automatic refetch on window focus
+- Single retry on failure
+
+## License
+
+Private project

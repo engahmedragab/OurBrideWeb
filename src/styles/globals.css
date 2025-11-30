@@ -1,58 +1,241 @@
-/**
- * Global Styles
- * 
- * Global CSS styles, CSS variables, and base styles.
- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap');
 
-:root {
-  /* Color variables - can be overridden by theme */
-  --color-primary: #0ea5e9;
-  --color-secondary: #a855f7;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  
-  /* Spacing variables */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  
-  /* Typography */
-  --font-family-sans: 'Inter', system-ui, sans-serif;
-  --font-size-base: 1rem;
-  
-  /* Border radius */
-  --radius-sm: 0.125rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand Colors - Based on Figma 25-900 scale */
+    --brand-25: #ffffff;
+    --brand-50: #fff5f5;
+    --brand-100: #ffe5e5;
+    --brand-200: #ffcccc;
+    --brand-300: #ff9999;
+    --brand-400: #ff6b6b;
+    --brand-500: #f14836;
+    --brand-600: #d63d2e;
+    --brand-700: #b83226;
+    --brand-800: #99291e;
+    --brand-900: #7a1f16;
+    --brand-primary: #f14836;
+    --brand-primary-light: #ff6b6b;
+    --brand-primary-dark: #d63d2e;
+
+    /* Legacy CSS Variables */
+    --main: var(--brand-primary);
+
+    /* Gray Scale - Based on Figma 25-900 scale */
+    --gray-25: #ffffff;
+    --gray-50: #fafafa;
+    --gray-100: #f5f5f5;
+    --gray-200: #e5e5e5;
+    --gray-300: #d4d4d4;
+    --gray-400: #a3a3a3;
+    --gray-500: #737373;
+    --gray-600: #525252;
+    --gray-700: #404040;
+    --gray-800: #262626;
+    --gray-900: #171717;
+
+    /* Green Scale (Success) - Based on Figma 25-900 scale */
+    --green-25: #ffffff;
+    --green-50: #f0fdf4;
+    --green-100: #dcfce7;
+    --green-500: #22c55e;
+    --green-600: #16a34a;
+
+    /* Blue Scale (Info) - Based on Figma 25-900 scale */
+    --blue-25: #ffffff;
+    --blue-50: #eff6ff;
+    --blue-100: #dbeafe;
+    --blue-500: #3b82f6;
+    --blue-600: #2563eb;
+
+    /* Yellow Scale (Warning) - Based on Figma 25-900 scale */
+    --yellow-25: #ffffff;
+    --yellow-50: #fefce8;
+    --yellow-100: #fef9c3;
+    --yellow-500: #eab308;
+    --yellow-600: #ca8a04;
+
+    /* Red Scale (Error) - Based on Figma 25-900 scale */
+    --red-25: #ffffff;
+    --red-50: #fef2f2;
+    --red-100: #fee2e2;
+    --red-500: #ef4444;
+    --red-600: #dc2626;
+
+    /* Background Colors */
+    --background: #ffffff;
+    --background-secondary: #fafafa;
+    --background-tertiary: #f5f5f5;
+
+    /* Foreground Colors */
+    --foreground: #171717;
+    --foreground-secondary: #525252;
+    --foreground-tertiary: #737373;
+    --foreground-muted: #a3a3a3;
+
+    /* Border Colors */
+    --border: #e5e5e5;
+    --border-light: #f5f5f5;
+    --border-dark: #d4d4d4;
+
+    /* Input Colors */
+    --input: #e5e5e5;
+
+    /* Ring Colors */
+    --ring: var(--brand-primary);
+
+    /* Radius */
+    --radius: 0.375rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family:
+      'Poppins',
+      system-ui,
+      -apple-system,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight;
+  }
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer components {
+  /* Gradient Text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-500 via-primary to-brand-700 bg-clip-text text-transparent;
+  }
+
+  /* Brand Gradient Background */
+  .bg-gradient-brand {
+    @apply bg-gradient-to-r from-brand-500 via-primary to-brand-700;
+  }
+
+  /* Card Component Base */
+  .card {
+    @apply rounded-lg border border-border bg-background p-6 shadow-md;
+  }
+
+  /* Container */
+  .container-custom {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Focus Styles */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
 }
 
-body {
-  font-family: var(--font-family-sans);
-  font-size: var(--font-size-base);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer utilities {
+  /* Scrollbar Styling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Custom Scrollbar */
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    @apply bg-background-secondary;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-border-dark rounded-full;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    @apply bg-foreground-tertiary;
+  }
+
+  /* Animation Utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .animate-fade-out {
+    animation: fadeOut 0.3s ease-in-out;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .animate-slide-out {
+    animation: slideOut 0.3s ease-in;
+  }
+
+  /* Glass Morphism */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-md border border-white/10;
+  }
 }
 
-/* Utility classes */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+}
