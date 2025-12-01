@@ -1,7 +1,4 @@
-import AuthHeroCard from '@/auth/components/AuthHeroCard'
 import AuthHeroSection from '@/auth/components/AuthHeroSection'
-import HeroSection from '@/auth/components/HeroSection'
-import { DownloadApp } from '@/Components/common'
 import { cn } from '@/lib/utils'
 
 /**

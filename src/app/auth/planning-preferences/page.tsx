@@ -1,3 +1,5 @@
+'use client'
+
 import { PlanningPreferencesForm } from '@/Components/ui/auth/PlanningPreferencesForm'
 import { AuthLayout } from '@/Components/ui/auth/AuthLayout'
 
@@ -10,7 +12,6 @@ export default function PlanningPreferencesPage() {
     <AuthLayout showWelcomeHeader={false}>
       <PlanningPreferencesForm
         onBackClick={() => {
-          // Handle back navigation
           window.history.back()
         }}
       />

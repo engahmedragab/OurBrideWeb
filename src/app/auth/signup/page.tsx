@@ -1,5 +1,7 @@
+'use client'
+
 import { useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import {
   AuthLayout,
   AuthTabs,
@@ -20,10 +22,8 @@ export default function SignupPage() {
 
   const handleSignupSuccess = () => {
     setShowLoading(true)
-    // Simulate API call
     setTimeout(() => {
       setShowLoading(false)
-      // Redirect to mobile verification page
       router.push('/auth/mobile-verification')
     }, 2000)
   }

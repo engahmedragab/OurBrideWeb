@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { MobileVerificationForm } from '@/Components/ui/auth/MobileVerificationForm'
 import { AuthLayout } from '@/Components/ui/auth/AuthLayout'
@@ -15,7 +17,6 @@ export default function MobileVerificationPage() {
       <AuthLayout showWelcomeHeader={false}>
         <MobileVerificationForm
           onBackClick={() => {
-            // Handle back navigation
             window.history.back()
           }}
           onLoadingChange={setIsLoading}

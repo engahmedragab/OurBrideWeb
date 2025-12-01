@@ -1,10 +1,12 @@
+'use client'
+
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   AuthLayout,
   AuthTabs,
   AuthDivider,
   LoginForm,
-  TermsAndConditionsModal,
 } from '@/Components/ui/auth'
 import { SocialMediaButton } from '@/Components/ui/SocialMediaButton'
 import { LoadingOverlay } from '@/Components/ui/LoadingOverlay'
@@ -13,6 +15,7 @@ import { LoadingOverlay } from '@/Components/ui/LoadingOverlay'
  * Login Page - UI composition only, no logic
  */
 export default function LoginPage() {
+  const router = useRouter()
   const [showLoading, setShowLoading] = useState(false)
 
   return (
@@ -42,7 +45,7 @@ export default function LoginPage() {
 
         {/* Login Form */}
         <LoginForm
-          onForgotPasswordClick={() => console.log('Forgot password clicked')}
+          onForgotPasswordClick={() => router.push('/auth/forgot-password')}
           onLoginClick={() => {
             setShowLoading(true)
             setTimeout(() => setShowLoading(false), 2000)

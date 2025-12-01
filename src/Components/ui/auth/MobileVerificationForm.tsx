@@ -1,5 +1,7 @@
+'use client'
+
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { OTPInput } from '../OTPInput'
 import { Button } from '../Button'

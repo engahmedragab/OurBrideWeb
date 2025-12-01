@@ -1,4 +1,6 @@
-import { useRouter } from 'next/router'
+'use client'
+
+import { usePathname } from 'next/navigation'
 import { PillTabs, type PillTabItem } from '../PillTabs'
 
 export interface AuthTabsProps {
@@ -7,11 +9,11 @@ export interface AuthTabsProps {
 
 /**
  * AuthTabs - Auth-specific tabs component using PillTabs
- * Uses Next.js Pages Router for navigation
+ * Uses Next.js App Router for navigation
  */
 export const AuthTabs = ({ className }: AuthTabsProps) => {
-  const router = useRouter()
-  const currentPath = router?.pathname || ''
+  const pathname = usePathname()
+  const currentPath = pathname || ''
 
   const isLoginActive =
     currentPath === '/auth/login' || currentPath.startsWith('/auth/login')
