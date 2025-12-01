@@ -149,3 +149,12 @@ export type { PaymentConfirmationModalProps } from './PaymentConfirmationModal'
 
 export { OrderConfirmationModal } from './OrderConfirmationModal'
 export type { OrderConfirmationModalProps } from './OrderConfirmationModal'
+
+export { PillTabs, pillTabsVariants } from './PillTabs'
+export type { PillTabsProps, PillTabItem } from './PillTabs'
+
+export { LoadingOverlay } from './LoadingOverlay'
+export type { LoadingOverlayProps } from './LoadingOverlay'
+
+export { StatusModal } from './StatusModal'
+export type { StatusModalProps } from './StatusModal'

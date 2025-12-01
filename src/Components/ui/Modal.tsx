@@ -22,7 +22,7 @@ export interface ModalProps {
 
 const maxWidthClasses = {
   sm: 'max-w-[400px]',
-  md: 'max-w-[500px]',
+  md: 'max-w-[520px]',
   lg: 'max-w-[600px]',
   xl: 'max-w-[800px]',
   '2xl': 'max-w-[1000px]',
@@ -64,7 +64,7 @@ export const Modal = ({
       {/* Overlay */}
       <div
         className={cn(
-          'fixed inset-0 bg-black/50 transition-opacity duration-300',
+          'fixed inset-0 bg-black/40 transition-opacity duration-300',
           isOpen ? 'opacity-100' : 'opacity-0'
         )}
         style={{ zIndex: zIndex * 10 - 1 }}
@@ -86,12 +86,12 @@ export const Modal = ({
         {(title || showCloseButton) && (
           <div
             className={cn(
-              'flex items-center justify-between p-6 border-b border-gray-200',
+              'flex items-center justify-between p-4 sm:p-5 md:p-6 border-b border-gray-200',
               headerClassName
             )}
           >
             {title && (
-              <h2 className="text-20 md:text-24 font-normal text-gray-900">
+              <h2 className="text-18 sm:text-20 md:text-22 font-bold text-gray-900">
                 {title}
               </h2>
             )}

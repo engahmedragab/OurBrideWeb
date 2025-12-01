@@ -4,22 +4,22 @@ import { cn } from '@/lib/utils'
 import { Check, X, LucideIcon } from 'lucide-react'
 
 const inputVariants = cva(
-  'flex w-full items-center gap-2 rounded-md border bg-background px-3 py-2 text-16 ring-offset-background transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+  'flex w-full items-center gap-2 rounded-md border bg-background px-3 py-2 text-16 transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-within:outline-none focus-within:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       variant: {
         default:
-          'border-gray-300 focus-visible:border-brand-500 focus-visible:ring-brand-500',
+          'border-gray-300 focus-within:border-primary',
         error:
-          'border-red-500 bg-red-50 text-red-500 placeholder:text-red-400 focus-visible:border-red-500 focus-visible:ring-red-500',
+          'border-error-500 bg-error-50 text-error-900 placeholder:text-error-400 focus-within:border-error-600',
         success:
-          'border-gray-300 focus-visible:border-brand-500 focus-visible:ring-brand-500',
-        focused: 'border-brand-500 focus-visible:ring-brand-500',
+          'border-gray-300 bg-white focus-within:border-primary',
+        focused: 'border-primary focus-within:border-primary',
       },
       size: {
         sm: 'h-8 px-2 text-12',
         md: 'h-10 px-3 text-14',
-        lg: 'h-12 px-4 text-16',
+        lg: 'h-[42px] px-3 text-14',
       },
     },
     defaultVariants: {
@@ -110,7 +110,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             <span
               className={cn(
                 'flex-shrink-0',
-                variant === 'error' ? 'text-red-500' : 'text-gray-400'
+                variant === 'error' ? 'text-error-600' : 'text-gray-400'
               )}
             >
               {renderPrefixIcon(PrefixIcon)}
@@ -119,16 +119,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              'flex-1 bg-transparent outline-none',
-              variant === 'error' && 'text-red-500 placeholder:text-red-400'
+              'flex-1 bg-transparent outline-none focus:outline-none',
+              variant === 'error' && 'text-error-900 placeholder:text-error-400'
             )}
             ref={ref}
             {...props}
           />
           {showSuccessIcon && variant !== 'error' && (
             <div className="flex-shrink-0">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
-                <Check className="h-3 w-3 text-white" />
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white border border-success-500">
+                <Check className="h-3 w-3 text-success-500" />
               </div>
             </div>
           )}
@@ -136,7 +136,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             <span
               className={cn(
                 'flex-shrink-0 text-14',
-                variant === 'error' ? 'text-red-500' : 'text-gray-400'
+                variant === 'error' ? 'text-error-600' : 'text-gray-400'
               )}
             >
               {suffix}
@@ -144,8 +144,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {errorMessage && (
-          <div className="mt-1 flex items-center gap-1 text-12 text-red-500">
-            <X className="h-3 w-3" />
+          <div className="mt-1 flex items-center gap-1 text-12 text-error-500">
+            <X className="h-3 w-3 border border-red-500 rounded-full" />
             <span>{errorMessage}</span>
           </div>
         )}

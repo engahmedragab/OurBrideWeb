@@ -1,0 +1,72 @@
+---
+alwaysApply: true
+---
+# ourBride — Project Rules for Cursor
+
+## 1. Project Structure
+- Follow exact project folder structure. Case-sensitive.
+- Folders: lowercase (pages, utils, store, lib), PascalCase for Components, Assets, Context, Hooks.
+- Component folders must have index.ts for barrel export.
+- No new folders/files unless instructed.
+
+## 2. Naming Conventions
+- Components: PascalCase, match file name (Button.tsx → Button)
+- Props interfaces: PascalCase + Props (ButtonProps)
+- Functions & variables: camelCase
+- Constants: camelCase or UPPER_SNAKE_CASE
+- VariantProps: Use CVA pattern
+
+## 3. Imports
+- Use absolute imports with @/ alias.
+- Import order: 1) external libs, 2) internal absolute, 3) relative, 4) type-only imports
+- Exports: named exports preferred, default for pages only
+
+## 4. UI / Tailwind Rules
+- Use Tailwind CSS + design tokens only.
+- Use cn() for class merging.
+- Follow existing spacing, typography, colors, radius, shadows, breakpoints.
+- Use CVA for all variant-based components.
+- Reuse UI components only. No new design patterns unless instructed.
+- *Insert regular comments between HTML/JSX elements*, e.g., <div> {/* comment */} </div>
+- *Do not use inline/side comments at the end of lines*.
+
+## 5. API Handling
+- Use apiClient Axios instance only.
+- React Query for all queries/mutations.
+- Request interceptor: inject token from localStorage.
+- Response interceptor: 401 → remove token, redirect /login.
+- Do not call APIs directly in components.
+- Follow existing naming patterns (useGetItems, useCreateItem, etc.)
+
+## 6. Component Architecture
+- Functional React components only.
+- TypeScript strict mode.
+- Use forwardRef + displayName if component accepts ref.
+- Props exported separately.
+- Support asChild pattern (Radix Slot) and composition.
+- Use existing layout, UI, feature components.
+- *JSDoc comments only for functions, hooks, and components*.
+- Regular comments can be used in JSX/HTML.
+
+## 7. Routing
+- Use React Router v6 path + element format.
+- Routes only in src/routes/routes.tsx.
+- Protected routes: Redirect unauthenticated users.
+- Use Link, useNavigate, useLocation.
+
+## 8. Code Quality & Documentation
+- ESLint + Prettier mandatory.
+- No console.log in production.
+- No dead code or unused imports.
+- All functions, hooks, and components must have *JSDoc blocks*.
+- JSX/HTML can have regular comments between elements.
+- *No side-line/inline comments on the same line as code*.
+
+## 9. Stricter Rules
+- Never change filename casing.
+- Never create new folder structures without instruction.
+- Cursor must not modify existing logic unless explicitly instructed.
+- Follow all Tailwind classes, design tokens, spacing, typography exactly.
+- Reuse all existing utility components (Button, Input, Modal, etc.).
+- All API calls must follow Axios + React Query setup.
+- Do not introduce new design patterns unless instructed.
