@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { SearchInput } from '@/components/ui/SearchInput'
-import logoImage from '@/assets/Logo.png'
+import logoImage from '@/Assets/logo.png'
 import {
   NavigationMenu,
   NavigationMenuItem,
