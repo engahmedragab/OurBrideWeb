@@ -158,3 +158,9 @@ export type { LoadingOverlayProps } from './LoadingOverlay'
 
 export { StatusModal } from './StatusModal'
 export type { StatusModalProps } from './StatusModal'
+
+export { ServiceSelectCard } from './ServiceSelectCard'
+export type { ServiceSelectCardProps } from './ServiceSelectCard'
+
+export { LocationPickerModal } from './LocationPickerModal'
+export type { LocationPickerModalProps } from './LocationPickerModal'

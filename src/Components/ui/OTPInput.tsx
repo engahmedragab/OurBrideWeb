@@ -19,7 +19,7 @@ const otpInputVariants = cva(
         error:
           'border-error-500 bg-error-50 text-error-900 focus-visible:border-error-600',
         success:
-          'border-success-500 bg-white focus-visible:border-success-500',
+          'border-success-500 bg-green-50 focus-visible:border-success-500',
         focused: 'border-primary focus-visible:border-primary',
       },
     },
@@ -108,8 +108,10 @@ const OTPInput = forwardRef<HTMLDivElement, OTPInputProps>(
           ))}
         </div>
         {errorMessage && (
-          <div className="mt-1 flex items-center gap-1 text-12 text-error-500">
-            <X className="h-3 w-3 border border-red-500 rounded-full" />
+          <div className="mt-1 flex items-center justify-center gap-1 text-12 text-error-500">
+            <div className="flex h-4 w-4 items-center justify-center rounded-full border border-error-500">
+              <X className="h-2.5 w-2.5" />
+            </div>
             <span>{errorMessage}</span>
           </div>
         )}

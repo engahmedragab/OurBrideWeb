@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import {
   AuthLayout,
   AuthTabs,
@@ -13,8 +14,19 @@ import { LoadingOverlay } from '@/Components/ui/LoadingOverlay'
  * Signup Page - UI composition only, no logic
  */
 export default function SignupPage() {
+  const router = useRouter()
   const [showTermsModal, setShowTermsModal] = useState(false)
   const [showLoading, setShowLoading] = useState(false)
+
+  const handleSignupSuccess = () => {
+    setShowLoading(true)
+    // Simulate API call
+    setTimeout(() => {
+      setShowLoading(false)
+      // Redirect to mobile verification page
+      router.push('/auth/mobile-verification')
+    }, 2000)
+  }
 
   return (
     <>
@@ -44,10 +56,7 @@ export default function SignupPage() {
         {/* Signup Form */}
         <SignupForm
           onTermsClick={() => setShowTermsModal(true)}
-          onSignupClick={() => {
-            setShowLoading(true)
-            setTimeout(() => setShowLoading(false), 2000)
-          }}
+          onSignupClick={handleSignupSuccess}
           onProviderClick={() => console.log('Provider link clicked')}
         />
       </AuthLayout>
