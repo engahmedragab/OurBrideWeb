@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // Solid filled buttons - Brand/Red
-        brand: 'bg-brand-500 text-white hover:bg-brand-600',
+        brand: 'bg-brand-500 text-white hover:bg-brand-600 ',
         brandDark: 'bg-brand-600 text-white hover:bg-brand-700',
         brandDarker: 'bg-brand-700 text-white hover:bg-brand-800',
 
@@ -43,9 +43,9 @@ const buttonVariants = cva(
       },
       size: {
         sm: 'h-8 px-3 text-12',
-        default: 'h-10 px-4 text-16',
-        md: 'h-11 px-5 text-16',
-        lg: 'h-12 px-6 text-16',
+        default: 'h-10 px-4 text-14',
+        md: 'h-11 px-5 text-14',
+        lg: 'h-[42px] px-5 text-14',
         xl: 'h-14 px-8 text-20',
         icon: 'h-10 w-10',
       },

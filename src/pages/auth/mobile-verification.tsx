@@ -1,0 +1,34 @@
+import { useState } from 'react'
+import { MobileVerificationForm } from '@/Components/ui/auth/MobileVerificationForm'
+import { AuthLayout } from '@/Components/ui/auth/AuthLayout'
+import { LoadingOverlay } from '@/Components/ui/LoadingOverlay'
+
+/**
+ * Mobile Verification Page - OTP verification after signup
+ * User enters 4-digit OTP sent to their mobile number
+ */
+export default function MobileVerificationPage() {
+  const [isLoading, setIsLoading] = useState(false)
+
+  return (
+    <>
+      <AuthLayout showWelcomeHeader={false}>
+        <MobileVerificationForm
+          onBackClick={() => {
+            // Handle back navigation
+            window.history.back()
+          }}
+          onLoadingChange={setIsLoading}
+        />
+      </AuthLayout>
+
+      {/* Loading Overlay */}
+      <LoadingOverlay
+        open={isLoading}
+        title="Loading…"
+        subtitle="Please wait a moment."
+      />
+    </>
+  )
+}
+

@@ -7,19 +7,20 @@ import {
 } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { X } from 'lucide-react'
 
 const otpInputVariants = cva(
-  'flex h-12 w-12 items-center justify-center rounded-md border text-center text-16 font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+  'flex h-12 w-12 items-center justify-center rounded-md border text-center text-16 font-semibold transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       variant: {
         default:
-          'border-gray-300 bg-white focus-visible:border-brand-500 focus-visible:ring-brand-500',
+          'border-gray-300 bg-white focus-visible:border-primary',
         error:
-          'border-red-500 bg-red-50 text-red-500 focus-visible:border-red-500 focus-visible:ring-red-500',
+          'border-error-500 bg-error-50 text-error-900 focus-visible:border-error-600',
         success:
-          'border-green-500 bg-green-50 text-green-500 focus-visible:border-green-500 focus-visible:ring-green-500',
-        focused: 'border-brand-500 focus-visible:ring-brand-500',
+          'border-success-500 bg-green-50 focus-visible:border-success-500',
+        focused: 'border-primary focus-visible:border-primary',
       },
     },
     defaultVariants: {
@@ -90,7 +91,7 @@ const OTPInput = forwardRef<HTMLDivElement, OTPInputProps>(
 
     return (
       <div className={cn('w-full', className)} ref={ref}>
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-center">
           {Array.from({ length }).map((_, index) => (
             <input
               key={index}
@@ -107,10 +108,10 @@ const OTPInput = forwardRef<HTMLDivElement, OTPInputProps>(
           ))}
         </div>
         {errorMessage && (
-          <div className="mt-1 flex items-center gap-1 text-12 text-red-500">
-            <span className="flex h-3 w-3 items-center justify-center rounded-full bg-red-500 text-white text-10">
-              ×
-            </span>
+          <div className="mt-1 flex items-center justify-center gap-1 text-12 text-error-500">
+            <div className="flex h-4 w-4 items-center justify-center rounded-full border border-error-500">
+              <X className="h-2.5 w-2.5" />
+            </div>
             <span>{errorMessage}</span>
           </div>
         )}

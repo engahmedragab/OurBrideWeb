@@ -32,7 +32,7 @@ export const GenderSelector = ({
         type="button"
         onClick={() => handleChange('male')}
         className={cn(
-          'flex items-center justify-center gap-2 rounded-md border-2 px-4 py-3 text-16 font-semibold transition-colors',
+          'flex items-center justify-start gap-2 rounded-md border-1 border px-3 py-2 text-13 font-regular transition-colors',
           currentValue === 'male'
             ? 'border-brand-500 bg-brand-500 text-white'
             : 'border-gray-300 bg-white text-gray-400 hover:border-gray-400'
@@ -45,7 +45,7 @@ export const GenderSelector = ({
         type="button"
         onClick={() => handleChange('female')}
         className={cn(
-          'flex items-center justify-center gap-2 rounded-md border-2 px-4 py-3 text-16 font-semibold transition-colors',
+         'flex items-center justify-start gap-2 rounded-md border-1 border  px-3 py-2 text-13 font-regular transition-colors',
           currentValue === 'female'
             ? 'border-brand-500 bg-brand-500 text-white'
             : 'border-gray-300 bg-white text-gray-400 hover:border-gray-400'
