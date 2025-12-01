@@ -22,11 +22,11 @@ export const AuthLayout = ({
   return (
     <div
       className={cn(
-        'flex min-h-screen w-full items-center justify-center bg-white p-4 sm:p-6 md:py-8 md:px-6',
+        'flex min-h-screen w-full items-center justify-center bg-white p-3 sm:p-4 md:py-6 md:px-4',
         className
       )}
     >
-      <div className="w-full max-w-[340px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5 sm:space-y-3">
+      <div className="w-full max-w-[340px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-1.5">
         {/* Welcome Header */}
         {showWelcomeHeader && <WelcomeHeader welcomeText={welcomeText} />}
 

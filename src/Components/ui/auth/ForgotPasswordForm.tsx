@@ -10,7 +10,8 @@ import { Button } from '../Button'
 import { PasswordStrength } from '../PasswordStrength'
 import { Typography } from '../Typography'
 import { StatusModal } from '../StatusModal'
-import { Phone, ChevronLeft } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
+import { PhoneIcon } from '../icons/PhoneIcon'
 import forgetIcon from '@/Assets/images/forgetIcon.png'
 
 export type FieldStatus = 'default' | 'error' | 'success'
@@ -370,7 +371,7 @@ export const ForgotPasswordForm = ({
               onChange={handlePhoneChange}
               onBlur={handlePhoneBlur}
               variant={phoneInputVariant}
-              prefixIcon={<Phone className="h-6 w-6" />}
+              prefixIcon={<PhoneIcon className="h-6 w-6" />}
               errorMessage={phoneErrorMessage}
               showSuccessIcon={phoneStatus === 'success'}
               size="lg"

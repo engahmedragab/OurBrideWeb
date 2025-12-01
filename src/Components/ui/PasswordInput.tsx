@@ -1,7 +1,8 @@
 import { InputHTMLAttributes, forwardRef, useState } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { Lock, Eye, EyeOff, Check, X } from 'lucide-react'
+import { Eye, EyeOff, Check, X } from 'lucide-react'
+import { LockIcon } from './icons/LockIcon'
 
 const passwordInputVariants = cva(
   'flex w-full items-center gap-2 rounded-md border bg-background px-3 py-2 text-16 transition-colors placeholder:text-gray-400 focus-within:outline-none focus-within:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
@@ -18,8 +19,8 @@ const passwordInputVariants = cva(
       },
       size: {
         sm: 'h-8 px-2 text-12',
-        md: 'h-10 px-3 text-14',
-        lg: 'h-[42px] px-3 text-14',
+        md: 'h-9 px-3 text-13',
+        lg: 'h-10 px-3 text-14',
       },
     },
     defaultVariants: {
@@ -61,7 +62,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             passwordInputVariants({ variant, size, className })
           )}
         >
-          <Lock
+          <LockIcon
             className={cn(
               'h-5 w-5 flex-shrink-0',
               variant === 'error' ? 'text-error-600' : 'text-gray-400'

@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 const pillTabsVariants = cva(
-  'inline-flex items-center justify-center rounded-full mx-2 my-1 px-4 py-1.5 text-10  transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  'inline-flex items-center justify-center rounded-full mx-2 my-1 px-4 py-1 text-10  transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
   {
     variants: {
       active: {

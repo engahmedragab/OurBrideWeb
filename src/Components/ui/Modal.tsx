@@ -86,12 +86,12 @@ export const Modal = ({
         {(title || showCloseButton) && (
           <div
             className={cn(
-              'flex items-center justify-between p-4 sm:p-5 md:p-6 border-b border-gray-200',
+              'flex items-center justify-between px-4 sm:px-6 py-4 ',
               headerClassName
             )}
           >
             {title && (
-              <h2 className="text-18 sm:text-20 md:text-22 font-bold text-gray-900">
+              <h2 className="text-16 sm:text-18 font-semibold text-gray-900">
                 {title}
               </h2>
             )}
@@ -99,7 +99,7 @@ export const Modal = ({
               <button
                 onClick={onClose}
                 disabled={disabled}
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-1 text-gray-300 hover:text-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Close modal"
               >
                 <X className="h-5 w-5" />

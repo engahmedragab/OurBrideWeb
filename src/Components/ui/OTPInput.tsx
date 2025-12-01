@@ -10,17 +10,17 @@ import { cn } from '@/lib/utils'
 import { X } from 'lucide-react'
 
 const otpInputVariants = cva(
-  'flex h-12 w-12 items-center justify-center rounded-md border text-center text-16 font-semibold transition-colors focus-visible:outline-none focus-visible:ring-0 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50',
+  'flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-lg border-2 text-center text-18 sm:text-20 font-semibold transition-colors focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       variant: {
         default:
-          'border-gray-300 bg-white focus-visible:border-primary',
+          'border-gray-200 bg-white text-gray-700 focus-visible:border-brand-500',
         error:
           'border-error-500 bg-error-50 text-error-900 focus-visible:border-error-600',
         success:
-          'border-success-500 bg-green-50 focus-visible:border-success-500',
-        focused: 'border-primary focus-visible:border-primary',
+          'border-success-500 bg-green-50 text-gray-700 focus-visible:border-success-500',
+        focused: 'border-brand-500 bg-white focus-visible:border-brand-500',
       },
     },
     defaultVariants: {

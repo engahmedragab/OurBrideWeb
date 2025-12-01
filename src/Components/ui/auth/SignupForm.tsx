@@ -7,7 +7,8 @@ import { Checkbox } from '../Checkbox'
 import { GenderSelector } from '../GenderSelector'
 import { PasswordStrength } from '../PasswordStrength'
 import { Typography } from '../Typography'
-import { Mail, User, Phone, X, Check } from 'lucide-react'
+import { Mail, User, X, Check } from 'lucide-react'
+import { PhoneIcon } from '../icons/PhoneIcon'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 
@@ -442,9 +443,9 @@ export const SignupForm = ({
   })()
 
   return (
-    <form onSubmit={handleSubmit} className={cn('w-full space-y-2.5 sm:space-y-3', className)}>
+    <form onSubmit={handleSubmit} className={cn('w-full space-y-1.5', className)}>
       {/* Full Name Field */}
-      <div className="w-full space-y-1">
+      <div className="w-full space-y-0.5">
         <Input
           type="text"
           placeholder="Full Name"
@@ -460,7 +461,7 @@ export const SignupForm = ({
       </div>
 
       {/* Gender Selector */}
-      <div className="w-full space-y-1">
+      <div className="w-full space-y-0.5">
         <GenderSelector
           value={gender}
           onChange={handleGenderChange}
@@ -468,14 +469,14 @@ export const SignupForm = ({
         />
         {genderErrorMessage && (
           <div className="mt-1 flex items-center gap-1 text-12 text-error-500">
-            <X className="h-3 w-3 flex-shrink-0" />
+            <X className="h-3 w-3 border border-red-500 rounded-full flex-shrink-0" />
             <span>{genderErrorMessage}</span>
           </div>
         )}
       </div>
 
       {/* Email Field */}
-      <div className="w-full space-y-1">
+      <div className="w-full space-y-0.5">
         <Input
           type="email"
           placeholder="E-mail"
@@ -491,7 +492,7 @@ export const SignupForm = ({
       </div>
 
       {/* Mobile Number Field */}
-      <div className="w-full space-y-1">
+      <div className="w-full space-y-0.5">
         <Input
           type="tel"
           placeholder="Mobile Number"
@@ -499,7 +500,7 @@ export const SignupForm = ({
           onChange={handleMobileChange}
           onBlur={handleMobileBlur}
           variant={mobileInputVariant}
-          prefixIcon={Phone}
+          prefixIcon={<PhoneIcon className="h-5 w-5" />}
           errorMessage={mobileErrorMessage}
           showSuccessIcon={mobileStatus === 'success'}
           size="lg"
@@ -507,7 +508,7 @@ export const SignupForm = ({
       </div>
 
       {/* Password Field */}
-      <div className="w-full space-y-2">
+      <div className="w-full space-y-0.5">
         <PasswordInput
           placeholder="Enter Password"
           value={password}
@@ -522,7 +523,7 @@ export const SignupForm = ({
       </div>
 
       {/* Confirm Password Field */}
-      <div className="w-full space-y-1">
+      <div className="w-full space-y-0.5">
         <PasswordInput
           placeholder="Confirm Password"
           value={confirmPassword}
@@ -536,15 +537,15 @@ export const SignupForm = ({
       </div>
 
       {/* Terms & Conditions */}
-      <div className="w-full space-y-1">
+      <div className="w-full">
         <div className="flex items-center gap-2">
           <Checkbox
             checked={acceptedTerms}
             onChange={handleAcceptedTermsChange}
-            variant={termsErrorMessage ? 'error' : 'default'}
+            variant="default"
             size="md"
           />
-          <Typography variant="bodySmall" textColor="secondary" className="text-12 sm:text-14">
+          <Typography variant="bodySmall" textColor="secondary" className="text-11 sm:text-12">
             I Accepted{' '}
             <button
               type="button"
@@ -555,12 +556,6 @@ export const SignupForm = ({
             </button>
           </Typography>
         </div>
-        {termsErrorMessage && (
-          <div className="ml-7 flex items-center gap-1 text-11 sm:text-12 text-error-500">
-            <X className="h-3 w-3 flex-shrink-0" />
-            <span>{termsErrorMessage}</span>
-          </div>
-        )}
       </div>
 
       {/* Signup Button */}
@@ -575,12 +570,12 @@ export const SignupForm = ({
 
       {/* Provider Link */}
       <div className="flex items-center justify-center">
-        <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-12 sm:text-14">
+        <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-11 sm:text-12">
           Are you providing your services?{' '}
           <button
             type="button"
             onClick={onProviderClick}
-            className="font-semibold text-gray-800 underline hover:text-brand-500 transition-colors"
+            className="font-normal text-gray-800 underline hover:text-brand-500 transition-colors"
           >
             Continue as provider
           </button>

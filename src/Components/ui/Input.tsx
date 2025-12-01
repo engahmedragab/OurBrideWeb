@@ -18,8 +18,8 @@ const inputVariants = cva(
       },
       size: {
         sm: 'h-8 px-2 text-12',
-        md: 'h-10 px-3 text-14',
-        lg: 'h-[42px] px-3 text-14',
+        md: 'h-9 px-3 text-13',
+        lg: 'h-10 px-3 text-14',
       },
     },
     defaultVariants: {
@@ -110,7 +110,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             <span
               className={cn(
                 'flex-shrink-0',
-                variant === 'error' ? 'text-error-600' : 'text-gray-400'
+                variant === 'error' ? 'text-error-600' : 'text-gray-300'
               )}
             >
               {renderPrefixIcon(PrefixIcon)}

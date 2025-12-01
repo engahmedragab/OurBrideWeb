@@ -11,19 +11,19 @@ import { LocationPickerModal } from '../LocationPickerModal'
 import { StatusModal } from '../StatusModal'
 import { WelcomeHeader } from './WelcomeHeader'
 import {
-  Sparkles,
-  Building2,
-  Flower2,
-  Cake,
-  Camera,
-  Shirt,
-  Crown,
-  DollarSign,
   MapPin,
   User,
   Mail,
-  ShirtIcon,
 } from 'lucide-react'
+import { BudgetIcon } from '../icons/BudgetIcon'
+import { BridalBeautyIcon } from '../icons/services/BridalBeautyIcon'
+import { WeddingHallIcon } from '../icons/services/WeddingHallIcon'
+import { BouquetIcon } from '../icons/services/BouquetIcon'
+import { WeddingCakeIcon } from '../icons/services/WeddingCakeIcon'
+import { PhotographyIcon } from '../icons/services/PhotographyIcon'
+import { WeddingSuitIcon } from '../icons/services/WeddingSuitIcon'
+import { WeddingDressIcon } from '../icons/services/WeddingDressIcon'
+import { AccessoriesIcon } from '../icons/services/AccessoriesIcon'
 
 export interface PlanningPreferencesFormProps {
   onBackClick?: () => void
@@ -40,15 +40,15 @@ type ServiceType =
   | 'wedding-dress'
   | 'accessories'
 
-const services = [
-  { id: 'bridal-beauty' as ServiceType, label: 'Bridal & Beauty', icon: Sparkles },
-  { id: 'wedding-hall' as ServiceType, label: 'Wedding Hall', icon: Building2 },
-  { id: 'bouquet' as ServiceType, label: 'Bouquet', icon: Flower2 },
-  { id: 'wedding-cake' as ServiceType, label: 'Wedding cake', icon: Cake },
-  { id: 'photography' as ServiceType, label: 'Photography', icon: Camera },
-  { id: 'wedding-suit' as ServiceType, label: 'Wedding suit', icon: Shirt },
-  { id: 'wedding-dress' as ServiceType, label: 'Wedding Dress', icon: ShirtIcon },
-  { id: 'accessories' as ServiceType, label: 'Accessories', icon: Crown },
+const SERVICES = [
+  { id: 'bridal-beauty' as ServiceType, label: 'Bridal & Beauty', Icon: BridalBeautyIcon },
+  { id: 'wedding-hall' as ServiceType, label: 'Wedding Hall', Icon: WeddingHallIcon },
+  { id: 'bouquet' as ServiceType, label: 'Bouquet', Icon: BouquetIcon },
+  { id: 'wedding-cake' as ServiceType, label: 'Wedding cake', Icon: WeddingCakeIcon },
+  { id: 'photography' as ServiceType, label: 'Photography', Icon: PhotographyIcon },
+  { id: 'wedding-suit' as ServiceType, label: 'Wedding suit', Icon: WeddingSuitIcon },
+  { id: 'wedding-dress' as ServiceType, label: 'Wedding Dress', Icon: WeddingDressIcon },
+  { id: 'accessories' as ServiceType, label: 'Accessories', Icon: AccessoriesIcon },
 ]
 
 /**
@@ -147,41 +147,38 @@ export const PlanningPreferencesForm = ({
     <>
       <form
         onSubmit={handleSubmit}
-        className={cn('w-full space-y-4 sm:space-y-5', className)}
+        className={cn('w-full space-y-2.5 sm:space-y-3', className)}
       >
         {/* Logo and Title */}
         <WelcomeHeader welcomeText="Planning Preferences" />
 
         {/* Services Section */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Typography
             variant="h6"
-            weight="semibold"
+            weight="regular"
             textColor="default"
-            className="text-16 sm:text-18"
+            className="text-14 sm:text-16"
           >
             Services You're Looking For
           </Typography>
 
           {/* Services Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {services.map(service => {
-              const Icon = service.icon
-              return (
-                <ServiceSelectCard
-                  key={service.id}
-                  icon={Icon}
-                  label={service.label}
-                  selected={selectedServices.includes(service.id)}
-                  onClick={() => handleServiceToggle(service.id)}
-                />
-              )
-            })}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {SERVICES.map(({ id, label, Icon }) => (
+              <ServiceSelectCard
+                key={id}
+                icon={<Icon className="w-8 h-8" />}
+                label={label}
+                selected={selectedServices.includes(id)}
+                onClick={() => handleServiceToggle(id)}
+              />
+            ))}
           </div>
         </div>
 
         {/* Budget Input */}
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           <Input
             type="text"
             placeholder="Enter Your Budget"
@@ -192,7 +189,7 @@ export const PlanningPreferencesForm = ({
                 setErrors(prev => ({ ...prev, budget: undefined }))
               }
             }}
-            prefixIcon={DollarSign}
+            prefixIcon={<BudgetIcon className="h-5 w-5" />}
             suffix="EGP"
             variant={isSubmitted && errors.budget ? 'error' : 'default'}
             errorMessage={isSubmitted ? errors.budget : undefined}
@@ -201,7 +198,7 @@ export const PlanningPreferencesForm = ({
         </div>
 
         {/* Location Input */}
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           <div className="relative">
             <Input
               type="text"
@@ -225,18 +222,18 @@ export const PlanningPreferencesForm = ({
         </div>
 
         {/* Your Bride/Groom Details Section */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           <Typography
             variant="h6"
-            weight="semibold"
+             weight="regular"
             textColor="default"
-            className="text-16 sm:text-18"
+            className="text-14 sm:text-16"
           >
             Your Bride/Groom Details
           </Typography>
 
           {/* Full Name Input */}
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             <Input
               type="text"
               placeholder="Full Name"
@@ -255,7 +252,7 @@ export const PlanningPreferencesForm = ({
           </div>
 
           {/* Email Input */}
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             <Input
               type="email"
               placeholder="E-mail"

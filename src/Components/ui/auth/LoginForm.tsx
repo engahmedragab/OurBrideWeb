@@ -258,7 +258,7 @@ export const LoginForm = ({
           <button
             type="button"
             onClick={onProviderClick}
-            className="font-semibold text-gray-800 underline hover:text-brand-500 transition-colors"
+            className="font-normal text-gray-800 underline hover:text-brand-500 transition-colors"
           >
             Continue as provider
           </button>

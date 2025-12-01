@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  AuthLayout,
   AuthTabs,
   AuthDivider,
   LoginForm,
+  WelcomeHeader,
 } from '@/Components/ui/auth'
 import { SocialMediaButton } from '@/Components/ui/SocialMediaButton'
 import { LoadingOverlay } from '@/Components/ui/LoadingOverlay'
@@ -20,12 +20,15 @@ export default function LoginPage() {
 
   return (
     <>
-      <AuthLayout>
+      <div className="w-full max-w-[340px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-1.5">
+        {/* Welcome Header */}
+        <WelcomeHeader welcomeText="Welcome To OurBride" />
+
         {/* Tabs */}
         <AuthTabs />
 
         {/* Social Login */}
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-2">
           <SocialMediaButton
             provider="google"
             onClick={() => console.log('Google login clicked')}
@@ -52,7 +55,7 @@ export default function LoginPage() {
           }}
           onProviderClick={() => console.log('Provider link clicked')}
         />
-      </AuthLayout>
+      </div>
 
       {/* Loading Overlay */}
       <LoadingOverlay open={showLoading} />

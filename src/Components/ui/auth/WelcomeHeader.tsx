@@ -16,7 +16,7 @@ export const WelcomeHeader = ({
   className,
 }: WelcomeHeaderProps) => {
   return (
-    <div className={cn('flex flex-col items-center space-y-1.5 sm:space-y-2', className)}>
+    <div className={cn('flex flex-col items-center space-y-1', className)}>
       {/* Logo */}
       <div className="flex items-center justify-center">
         <img
@@ -27,13 +27,13 @@ export const WelcomeHeader = ({
       </div>
 
       {/* Welcome Text */}
-      <div className="flex flex-col items-center space-y-1">
+      <div className="flex flex-col items-center space-y-0.5">
         <Typography
           variant="h6"
           weight="semibold"
           textColor="default"
           align="center"
-          className="text-gray-800 text-18 sm:text-20"
+          className="text-gray-800 text-14 sm:text-16"
         >
           {welcomeText}
         </Typography>

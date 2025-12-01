@@ -37,13 +37,13 @@ export const PasswordStrength = ({
   }
 
   return (
-    <div className={cn('space-y-2', className)}>
-      <div className="flex items-center gap-2">
+    <div className={cn('space-y-1', className)}>
+      <div className="flex items-center gap-1.5">
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
             className={cn(
-              'h-1 flex-1 rounded-full transition-colors',
+              'h-0.5 flex-1 rounded-full transition-colors',
               getBarColor(index)
             )}
           />

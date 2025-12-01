@@ -14,7 +14,7 @@ export const AuthDivider = ({
   className,
 }: AuthDividerProps) => {
   return (
-    <div className={cn('flex items-center gap-3 mb-4', className)}>
+    <div className={cn('flex items-center gap-3 mb-1', className)}>
       <div className="h-px flex-1 bg-gray-300" />
       <Typography
         variant="bodySmall"
