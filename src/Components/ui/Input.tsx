@@ -110,7 +110,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             <span
               className={cn(
                 'flex-shrink-0',
-                variant === 'error' ? 'text-error-600' : 'text-gray-300'
+                variant === 'error' ? 'text-error-600' : 'text-gray-400'
               )}
             >
               {renderPrefixIcon(PrefixIcon)}
