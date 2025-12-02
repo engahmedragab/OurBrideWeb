@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -91,7 +93,12 @@ export const LoginForm = ({
     }
   }
 
+  const handleEmailFocus = () => {
+    setEmailFocused(true)
+  }
+
   const handleEmailBlur = () => {
+    setEmailFocused(false)
     setEmailTouched(true)
     const validation = validateEmail(email)
     if (validation.isValid) {
@@ -124,7 +131,12 @@ export const LoginForm = ({
     }
   }
 
+  const handlePasswordFocus = () => {
+    setPasswordFocused(true)
+  }
+
   const handlePasswordBlur = () => {
+    setPasswordFocused(false)
     setPasswordTouched(true)
     const validation = validatePassword(password)
     if (validation.isValid) {
@@ -172,14 +184,19 @@ export const LoginForm = ({
   }
 
   // Map field status to Input/PasswordInput variants
-  const getInputVariant = (status: FieldStatus): 'default' | 'error' | 'success' => {
+  const getInputVariant = (status: FieldStatus, value: string, isFocused: boolean): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
     if (status === 'error') return 'error'
     if (status === 'success') return 'success'
+    if (isFocused) return 'focused'
+    if (value && value.length > 0) return 'fill'
     return 'default'
   }
 
-  const emailInputVariant = getInputVariant(emailStatus)
-  const passwordInputVariant = getInputVariant(passwordStatus)
+  const [emailFocused, setEmailFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
+
+  const emailInputVariant = getInputVariant(emailStatus, email, emailFocused)
+  const passwordInputVariant = getInputVariant(passwordStatus, password, passwordFocused)
 
   // Check if form is valid - validate values directly
   const isFormValid = (() => {
@@ -189,14 +206,15 @@ export const LoginForm = ({
   })()
 
   return (
-    <form onSubmit={handleSubmit} className={cn('w-full space-y-2.5 sm:space-y-3', className)}>
+    <form onSubmit={handleSubmit} className={cn('w-full space-y-2.5', className)}>
       {/* Email Field */}
-      <div className="w-full space-y-1">
+      <div className="w-full space-y-1.5">
         <Input
           type="email"
           placeholder="example@example.com"
           value={email}
           onChange={handleEmailChange}
+          onFocus={handleEmailFocus}
           onBlur={handleEmailBlur}
           variant={emailInputVariant}
           prefixIcon={Mail}
@@ -207,11 +225,12 @@ export const LoginForm = ({
       </div>
 
       {/* Password Field */}
-      <div className="w-full space-y-1">
+      <div className="w-full space-y-1.5">
         <PasswordInput
           placeholder="Enter Password"
           value={password}
           onChange={handlePasswordChange}
+          onFocus={handlePasswordFocus}
           onBlur={handlePasswordBlur}
           variant={passwordInputVariant}
           errorMessage={passwordErrorMessage}
@@ -229,13 +248,13 @@ export const LoginForm = ({
             variant="default"
             size="md"
           />
-          <Typography variant="bodySmall" textColor="secondary" className="text-12 sm:text-14">
+          <Typography variant="bodySmall" textColor="secondary" className="text-16 font-medium">
             Remember Me
           </Typography>
         </div>
         <Link
           href="/auth/forgot-password"
-          className="text-12 sm:text-14 font-medium text-gray-600 hover:text-brand-500 transition-colors"
+          className="text-16 font-normal text-gray-600 hover:text-brand-500 transition-colors"
         >
           Forget Password?
         </Link>
@@ -252,8 +271,8 @@ export const LoginForm = ({
       </Button>
 
       {/* Provider Link */}
-      <div className="flex items-center justify-center">
-        <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-12 sm:text-14">
+      <div className="flex items-center justify-center pt-2">
+        <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-14 font-normal">
           Are you providing your services?{' '}
           <button
             type="button"

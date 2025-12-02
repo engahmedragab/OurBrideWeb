@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Input } from '../Input'
@@ -155,7 +157,12 @@ export const SignupForm = ({
     }
   }
 
+  const handleFullNameFocus = () => {
+    setFullNameFocused(true)
+  }
+
   const handleFullNameBlur = () => {
+    setFullNameFocused(false)
     setFullNameTouched(true)
     const validation = validateFullName(fullName)
     if (validation.isValid) {
@@ -194,7 +201,12 @@ export const SignupForm = ({
     }
   }
 
+  const handleEmailFocus = () => {
+    setEmailFocused(true)
+  }
+
   const handleEmailBlur = () => {
+    setEmailFocused(false)
     setEmailTouched(true)
     const validation = validateEmail(email)
     if (validation.isValid) {
@@ -227,7 +239,12 @@ export const SignupForm = ({
     }
   }
 
+  const handleMobileFocus = () => {
+    setMobileFocused(true)
+  }
+
   const handleMobileBlur = () => {
+    setMobileFocused(false)
     setMobileTouched(true)
     const validation = validateMobile(mobileNumber)
     if (validation.isValid) {
@@ -272,7 +289,12 @@ export const SignupForm = ({
     }
   }
 
+  const handlePasswordFocus = () => {
+    setPasswordFocused(true)
+  }
+
   const handlePasswordBlur = () => {
+    setPasswordFocused(false)
     setPasswordTouched(true)
     const validation = validatePassword(password)
     if (validation.isValid) {
@@ -307,7 +329,12 @@ export const SignupForm = ({
     }
   }
 
+  const handleConfirmPasswordFocus = () => {
+    setConfirmPasswordFocused(true)
+  }
+
   const handleConfirmPasswordBlur = () => {
+    setConfirmPasswordFocused(false)
     setConfirmPasswordTouched(true)
     const validation = validateConfirmPassword(confirmPassword, password)
     if (validation.isValid) {
@@ -410,18 +437,28 @@ export const SignupForm = ({
 
   // Map field status to Input/PasswordInput variants
   const getInputVariant = (
-    status: FieldStatus
-  ): 'default' | 'error' | 'success' => {
+    status: FieldStatus,
+    value: string,
+    isFocused: boolean
+  ): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
     if (status === 'error') return 'error'
     if (status === 'success') return 'success'
+    if (isFocused) return 'focused'
+    if (value && value.length > 0) return 'fill'
     return 'default'
   }
 
-  const fullNameInputVariant = getInputVariant(fullNameStatus)
-  const emailInputVariant = getInputVariant(emailStatus)
-  const mobileInputVariant = getInputVariant(mobileStatus)
-  const passwordInputVariant = getInputVariant(passwordStatus)
-  const confirmPasswordInputVariant = getInputVariant(confirmPasswordStatus)
+  const [fullNameFocused, setFullNameFocused] = useState(false)
+  const [emailFocused, setEmailFocused] = useState(false)
+  const [mobileFocused, setMobileFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
+  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false)
+
+  const fullNameInputVariant = getInputVariant(fullNameStatus, fullName, fullNameFocused)
+  const emailInputVariant = getInputVariant(emailStatus, email, emailFocused)
+  const mobileInputVariant = getInputVariant(mobileStatus, mobileNumber, mobileFocused)
+  const passwordInputVariant = getInputVariant(passwordStatus, password, passwordFocused)
+  const confirmPasswordInputVariant = getInputVariant(confirmPasswordStatus, confirmPassword, confirmPasswordFocused)
 
   // Check if form is valid - validate values directly
   const isFormValid = (() => {
@@ -443,14 +480,15 @@ export const SignupForm = ({
   })()
 
   return (
-    <form onSubmit={handleSubmit} className={cn('w-full space-y-1.5', className)}>
+    <form onSubmit={handleSubmit} className={cn('w-full space-y-2.5', className)}>
       {/* Full Name Field */}
-      <div className="w-full space-y-0.5">
+      <div className="w-full space-y-1.5">
         <Input
           type="text"
           placeholder="Full Name"
           value={fullName}
           onChange={handleFullNameChange}
+          onFocus={handleFullNameFocus}
           onBlur={handleFullNameBlur}
           variant={fullNameInputVariant}
           prefixIcon={User}
@@ -461,27 +499,30 @@ export const SignupForm = ({
       </div>
 
       {/* Gender Selector */}
-      <div className="w-full space-y-0.5">
+      <div className="w-full space-y-1.5">
         <GenderSelector
           value={gender}
           onChange={handleGenderChange}
           className="w-full"
         />
         {genderErrorMessage && (
-          <div className="mt-1 flex items-center gap-1 text-12 text-error-500">
-            <X className="h-3 w-3 border border-red-500 rounded-full flex-shrink-0" />
+          <div className="mt-2 flex items-center gap-2 text-14 font-normal leading-4 text-red-500">
+            <div className="flex h-4 w-4 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
+              <X className="h-2.5 w-2.5 text-red-500" />
+            </div>
             <span>{genderErrorMessage}</span>
           </div>
         )}
       </div>
 
       {/* Email Field */}
-      <div className="w-full space-y-0.5">
+      <div className="w-full space-y-1.5">
         <Input
           type="email"
           placeholder="E-mail"
           value={email}
           onChange={handleEmailChange}
+          onFocus={handleEmailFocus}
           onBlur={handleEmailBlur}
           variant={emailInputVariant}
           prefixIcon={Mail}
@@ -492,15 +533,16 @@ export const SignupForm = ({
       </div>
 
       {/* Mobile Number Field */}
-      <div className="w-full space-y-0.5">
+      <div className="w-full space-y-1.5">
         <Input
           type="tel"
           placeholder="Mobile Number"
           value={mobileNumber}
           onChange={handleMobileChange}
+          onFocus={handleMobileFocus}
           onBlur={handleMobileBlur}
           variant={mobileInputVariant}
-          prefixIcon={<PhoneIcon className="h-5 w-5" />}
+          prefixIcon={<PhoneIcon className="h-6 w-6" />}
           errorMessage={mobileErrorMessage}
           showSuccessIcon={mobileStatus === 'success'}
           size="lg"
@@ -508,11 +550,12 @@ export const SignupForm = ({
       </div>
 
       {/* Password Field */}
-      <div className="w-full space-y-0.5">
+      <div className="w-full space-y-1.5">
         <PasswordInput
           placeholder="Enter Password"
           value={password}
           onChange={handlePasswordChange}
+          onFocus={handlePasswordFocus}
           onBlur={handlePasswordBlur}
           variant={passwordInputVariant}
           errorMessage={passwordErrorMessage}
@@ -523,11 +566,12 @@ export const SignupForm = ({
       </div>
 
       {/* Confirm Password Field */}
-      <div className="w-full space-y-0.5">
+      <div className="w-full space-y-1.5">
         <PasswordInput
           placeholder="Confirm Password"
           value={confirmPassword}
           onChange={handleConfirmPasswordChange}
+          onFocus={handleConfirmPasswordFocus}
           onBlur={handleConfirmPasswordBlur}
           variant={confirmPasswordInputVariant}
           errorMessage={confirmPasswordErrorMessage}
@@ -545,7 +589,7 @@ export const SignupForm = ({
             variant="default"
             size="md"
           />
-          <Typography variant="bodySmall" textColor="secondary" className="text-11 sm:text-12">
+          <Typography variant="bodySmall" textColor="secondary" className="text-16 font-normal">
             I Accepted{' '}
             <button
               type="button"
@@ -569,8 +613,8 @@ export const SignupForm = ({
       </Button>
 
       {/* Provider Link */}
-      <div className="flex items-center justify-center">
-        <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-11 sm:text-12">
+      <div className="flex items-center justify-center pt-2">
+        <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-14 font-normal">
           Are you providing your services?{' '}
           <button
             type="button"

@@ -14,12 +14,12 @@ export const AuthDivider = ({
   className,
 }: AuthDividerProps) => {
   return (
-    <div className={cn('flex items-center gap-3 mb-1', className)}>
+    <div className={cn('flex items-center gap-2', className)}>
       <div className="h-px flex-1 bg-gray-300" />
       <Typography
         variant="bodySmall"
         textColor="tertiary"
-        className="text-gray-500"
+        className="text-16 font-normal text-gray-500"
       >
         {text}
       </Typography>

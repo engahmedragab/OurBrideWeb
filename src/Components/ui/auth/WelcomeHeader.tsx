@@ -1,3 +1,5 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import { Typography } from '../Typography'
 import logoImage from '@/Assets/images/logoWithoutourbirde.png'
@@ -16,7 +18,7 @@ export const WelcomeHeader = ({
   className,
 }: WelcomeHeaderProps) => {
   return (
-    <div className={cn('flex flex-col items-center space-y-1', className)}>
+    <div className={cn('flex flex-col items-center space-y-1.5', className)}>
       {/* Logo */}
       <div className="flex items-center justify-center">
         <img
@@ -27,13 +29,13 @@ export const WelcomeHeader = ({
       </div>
 
       {/* Welcome Text */}
-      <div className="flex flex-col items-center space-y-0.5">
+      <div className="flex flex-col items-center space-y-1">
         <Typography
           variant="h6"
           weight="semibold"
           textColor="default"
           align="center"
-          className="text-gray-800 text-14 sm:text-16"
+          className="text-gray-900 text-16 font-semibold"
         >
           {welcomeText}
         </Typography>

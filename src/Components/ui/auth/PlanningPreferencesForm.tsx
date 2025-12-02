@@ -81,6 +81,12 @@ export const PlanningPreferencesForm = ({
     email?: string
   }>({})
 
+  // Focus states
+  const [budgetFocused, setBudgetFocused] = useState(false)
+  const [locationFocused, setLocationFocused] = useState(false)
+  const [fullNameFocused, setFullNameFocused] = useState(false)
+  const [emailFocused, setEmailFocused] = useState(false)
+
   const handleServiceToggle = (serviceId: ServiceType) => {
     setSelectedServices(prev =>
       prev.includes(serviceId)
@@ -143,6 +149,18 @@ export const PlanningPreferencesForm = ({
     router.push('/')
   }
 
+  // Map field status to Input variants
+  const getInputVariant = (
+    hasError: boolean,
+    value: string,
+    isFocused: boolean
+  ): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
+    if (hasError) return 'error'
+    if (isFocused) return 'focused'
+    if (value && value.length > 0) return 'fill'
+    return 'default'
+  }
+
   return (
     <>
       <form
@@ -189,9 +207,11 @@ export const PlanningPreferencesForm = ({
                 setErrors(prev => ({ ...prev, budget: undefined }))
               }
             }}
+            onFocus={() => setBudgetFocused(true)}
+            onBlur={() => setBudgetFocused(false)}
             prefixIcon={<BudgetIcon className="h-5 w-5" />}
             suffix="EGP"
-            variant={isSubmitted && errors.budget ? 'error' : 'default'}
+            variant={getInputVariant(isSubmitted && !!errors.budget, budget, budgetFocused)}
             errorMessage={isSubmitted ? errors.budget : undefined}
             size="lg"
           />
@@ -205,8 +225,10 @@ export const PlanningPreferencesForm = ({
               placeholder="Location"
               value={location}
               readOnly
+              onFocus={() => setLocationFocused(true)}
+              onBlur={() => setLocationFocused(false)}
               prefixIcon={MapPin}
-              variant={isSubmitted && errors.location ? 'error' : 'default'}
+              variant={getInputVariant(isSubmitted && !!errors.location, location, locationFocused)}
               errorMessage={isSubmitted ? errors.location : undefined}
               size="lg"
               className="pr-24"
@@ -244,8 +266,10 @@ export const PlanningPreferencesForm = ({
                   setErrors(prev => ({ ...prev, fullName: undefined }))
                 }
               }}
+              onFocus={() => setFullNameFocused(true)}
+              onBlur={() => setFullNameFocused(false)}
               prefixIcon={User}
-              variant={isSubmitted && errors.fullName ? 'error' : 'default'}
+              variant={getInputVariant(isSubmitted && !!errors.fullName, fullName, fullNameFocused)}
               errorMessage={isSubmitted ? errors.fullName : undefined}
               size="lg"
             />
@@ -263,8 +287,10 @@ export const PlanningPreferencesForm = ({
                   setErrors(prev => ({ ...prev, email: undefined }))
                 }
               }}
+              onFocus={() => setEmailFocused(true)}
+              onBlur={() => setEmailFocused(false)}
               prefixIcon={Mail}
-              variant={isSubmitted && errors.email ? 'error' : 'default'}
+              variant={getInputVariant(isSubmitted && !!errors.email, email, emailFocused)}
               errorMessage={isSubmitted ? errors.email : undefined}
               size="lg"
             />

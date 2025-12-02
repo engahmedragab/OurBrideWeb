@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 const pillTabsVariants = cva(
-  'inline-flex items-center justify-center rounded-full mx-2 my-1 px-4 py-1 text-10  transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  'inline-flex items-center justify-center rounded-full flex-1 px-3 py-3 text-16 font-normal leading-6 transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
   {
     variants: {
       active: {
-        true: 'bg-brand-500 text-white shadow-sm',
-        false: 'bg-transparent text-gray-400 hover:text-gray-600',
+        true: 'bg-brand-500 text-white',
+        false: 'bg-transparent text-gray-500',
       },
     },
     defaultVariants: {
@@ -64,7 +64,7 @@ export const PillTabs = forwardRef<HTMLDivElement, PillTabsProps>(
       <div
         ref={ref}
         className={cn(
-          'inline-flex items-center rounded-full border border-gray-300 bg-white p-1',
+          'inline-flex items-center rounded-full border border-gray-300 bg-white p-1 gap-2 w-full max-w-[268px] transition-all duration-300 ease-in-out',
           containerClassName
         )}
         {...props}

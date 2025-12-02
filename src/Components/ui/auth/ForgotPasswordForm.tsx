@@ -66,6 +66,11 @@ export const ForgotPasswordForm = ({
   const [passwordTouched, setPasswordTouched] = useState(false)
   const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false)
 
+  // Focus states
+  const [phoneFocused, setPhoneFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
+  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false)
+
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
 
@@ -136,7 +141,12 @@ export const ForgotPasswordForm = ({
     }
   }
 
+  const handlePhoneFocus = () => {
+    setPhoneFocused(true)
+  }
+
   const handlePhoneBlur = () => {
+    setPhoneFocused(false)
     setPhoneTouched(true)
     const validation = validatePhone(phone)
     if (validation.isValid) {
@@ -208,7 +218,12 @@ export const ForgotPasswordForm = ({
     }
   }
 
+  const handlePasswordFocus = () => {
+    setPasswordFocused(true)
+  }
+
   const handlePasswordBlur = () => {
+    setPasswordFocused(false)
     setPasswordTouched(true)
     const validation = validatePassword(password)
     if (validation.isValid) {
@@ -239,7 +254,12 @@ export const ForgotPasswordForm = ({
     }
   }
 
+  const handleConfirmPasswordFocus = () => {
+    setConfirmPasswordFocused(true)
+  }
+
   const handleConfirmPasswordBlur = () => {
+    setConfirmPasswordFocused(false)
     setConfirmPasswordTouched(true)
     const validation = validateConfirmPassword(confirmPassword, password)
     if (validation.isValid) {
@@ -318,11 +338,20 @@ export const ForgotPasswordForm = ({
     }
   }
 
+  // Map field status to Input/PasswordInput variants
+  const getInputVariant = (status: FieldStatus, value: string, isFocused: boolean): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
+    if (status === 'error') return 'error'
+    if (status === 'success') return 'success'
+    if (isFocused) return 'focused'
+    if (value && value.length > 0) return 'fill'
+    return 'default'
+  }
+
   // Get input variants
-  const phoneInputVariant = phoneStatus === 'error' ? 'error' : phoneStatus === 'success' ? 'success' : 'default'
+  const phoneInputVariant = getInputVariant(phoneStatus, phone, phoneFocused)
   const otpInputVariant = otpStatus === 'error' ? 'error' : otpStatus === 'success' ? 'success' : 'default'
-  const passwordInputVariant = passwordStatus === 'error' ? 'error' : passwordStatus === 'success' ? 'success' : 'default'
-  const confirmPasswordInputVariant = confirmPasswordStatus === 'error' ? 'error' : confirmPasswordStatus === 'success' ? 'success' : 'default'
+  const passwordInputVariant = getInputVariant(passwordStatus, password, passwordFocused)
+  const confirmPasswordInputVariant = getInputVariant(confirmPasswordStatus, confirmPassword, confirmPasswordFocused)
 
   return (
     <div className={cn('w-full space-y-2.5 sm:space-y-3', className)}>
@@ -369,6 +398,7 @@ export const ForgotPasswordForm = ({
               placeholder="Mobile Number"
               value={phone}
               onChange={handlePhoneChange}
+              onFocus={handlePhoneFocus}
               onBlur={handlePhoneBlur}
               variant={phoneInputVariant}
               prefixIcon={<PhoneIcon className="h-6 w-6" />}
@@ -492,6 +522,7 @@ export const ForgotPasswordForm = ({
               placeholder="Enter New Password"
               value={password}
               onChange={handlePasswordChange}
+              onFocus={handlePasswordFocus}
               onBlur={handlePasswordBlur}
               variant={passwordInputVariant}
               errorMessage={passwordErrorMessage}
@@ -513,6 +544,7 @@ export const ForgotPasswordForm = ({
               placeholder="Confirm New Password"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
+              onFocus={handleConfirmPasswordFocus}
               onBlur={handleConfirmPasswordBlur}
               variant={confirmPasswordInputVariant}
               errorMessage={confirmPasswordErrorMessage}

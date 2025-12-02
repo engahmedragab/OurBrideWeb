@@ -5,22 +5,23 @@ import { Eye, EyeOff, Check, X } from 'lucide-react'
 import { LockIcon } from './icons/LockIcon'
 
 const passwordInputVariants = cva(
-  'flex w-full items-center gap-2 rounded-md border bg-background px-3 py-2 text-16 transition-colors placeholder:text-gray-400 focus-within:outline-none focus-within:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
+  'flex w-full items-center gap-2 rounded-xl border bg-white px-3 py-1.5 text-16 font-normal leading-6 transition-colors focus-within:outline-none focus-within:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       variant: {
         default:
-          'border-gray-300 focus-within:border-primary',
+          'border-gray-300 focus-within:border-brand-500',
         error:
-          'border-error-500 bg-error-50 text-error-900 placeholder:text-error-400 focus-within:border-error-600',
+          'border-red-500 bg-red-100 focus-within:border-red-500',
         success:
-          'border-gray-300 bg-white focus-within:border-primary',
-        focused: 'border-primary focus-within:border-primary',
+          'border-gray-500 bg-white focus-within:border-brand-500',
+        focused: 'border-brand-500 focus-within:border-brand-500',
+        fill: 'border-gray-200 bg-white focus-within:border-brand-500',
       },
       size: {
         sm: 'h-8 px-2 text-12',
         md: 'h-9 px-3 text-13',
-        lg: 'h-10 px-3 text-14',
+        lg: 'h-auto px-3 py-1.5 text-16',
       },
     },
     defaultVariants: {
@@ -64,15 +65,23 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         >
           <LockIcon
             className={cn(
-              'h-5 w-5 flex-shrink-0',
-              variant === 'error' ? 'text-error-600' : 'text-gray-400'
+              'h-6 w-6 flex-shrink-0',
+              variant === 'error' ? 'text-red-500' : 
+              variant === 'focused' ? 'text-gray-900' : 
+              variant === 'success' ? 'text-gray-500' :
+              variant === 'fill' ? 'text-gray-400' :
+              'text-gray-300'
             )}
           />
           <input
             type={showPassword ? 'text' : 'password'}
             className={cn(
-              'flex-1 bg-transparent outline-none focus:outline-none',
-              variant === 'error' && 'text-error-900 placeholder:text-error-400'
+              'flex-1 bg-transparent outline-none focus:outline-none font-normal text-16 leading-6',
+              variant === 'error' && 'text-red-500 placeholder:text-red-500',
+              variant === 'default' && 'text-gray-300 placeholder:text-gray-300',
+              variant === 'focused' && 'text-gray-900 placeholder:text-gray-900',
+              variant === 'success' && 'text-gray-500 placeholder:text-gray-500',
+              variant === 'fill' && 'text-gray-400 placeholder:text-gray-400'
             )}
             ref={ref}
             {...props}
@@ -82,26 +91,32 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             onClick={() => setShowPassword(!showPassword)}
             className={cn(
               'flex-shrink-0',
-              variant === 'error' ? 'text-error-600' : 'text-gray-400'
+              variant === 'error' ? 'text-red-500' : 
+              variant === 'focused' ? 'text-gray-900' : 
+              variant === 'success' ? 'text-gray-500' :
+              variant === 'fill' ? 'text-gray-400' :
+              'text-gray-500'
             )}
           >
             {showPassword ? (
-              <Eye className="h-5 w-5" />
+              <Eye className="h-6 w-6" />
             ) : (
-              < EyeOff className="h-5 w-5" />
+              < EyeOff className="h-6 w-6" />
             )}
           </button>
-          {showSuccessIcon && variant !== 'error' && (
+          {showSuccessIcon && variant === 'success' && (
             <div className="flex-shrink-0">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white border border-success-500">
-                <Check className="h-3 w-3 text-success-500" />
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-green-500">
+                <Check className="h-4 w-4 text-green-500" />
               </div>
             </div>
           )}
         </div>
         {errorMessage && (
-          <div className="mt-1 flex items-center gap-1 text-12 text-error-500 ">
-            <X className="h-3 w-3 border border-red-500 rounded-full" />
+          <div className="mt-2 flex items-center gap-2 text-14 font-normal leading-4 text-red-500">
+            <div className="flex h-4 w-4 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
+              <X className="h-2.5 w-2.5 text-red-500" />
+            </div>
             <span>{errorMessage}</span>
           </div>
         )}

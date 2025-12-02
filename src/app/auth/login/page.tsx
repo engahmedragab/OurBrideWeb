@@ -20,7 +20,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className="w-full max-w-[340px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-1.5">
+      <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
         {/* Welcome Header */}
         <WelcomeHeader welcomeText="Welcome To OurBride" />
 
