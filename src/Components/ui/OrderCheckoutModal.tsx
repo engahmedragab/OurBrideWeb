@@ -29,6 +29,7 @@ export interface OrderCheckoutModalProps {
   onClose: () => void
   items: OrderItem[]
   onCheckout?: (orderData: OrderFormData) => Promise<void> | void
+  onTrackOrder?: () => void
   currency?: string
   taxes?: number
   deliveryFee?: number
@@ -60,6 +61,7 @@ export const OrderCheckoutModal = ({
   onClose,
   items: initialItems,
   onCheckout,
+  onTrackOrder,
   currency = 'EGP',
   taxes = 120,
   deliveryFee = 90,
@@ -775,17 +777,17 @@ export const OrderCheckoutModal = ({
                                 <h4 className="text-16 font-semibold text-gray-900 mb-1">
                                   {item.title}
                                 </h4>
-                                <div className="flex items-center gap-2 mb-2">
-                                  <span className="text-16 font-semibold text-gray-900">
+                                <div className="flex items-center gap-1 mb-2">
+                                  <span className="text-16 font-normal text-gray-900">
                                     {item.discountedPrice.toLocaleString()} {item.currency}
                                   </span>
                                   {item.originalPrice > item.discountedPrice && (
                                     <>
-                                      <span className="text-14 text-gray-400 line-through">
+                                      <span className="text-12 text-gray-400 line-through">
                                         {item.originalPrice.toLocaleString()} {item.currency}
                                       </span>
                                       {discountPercentage > 0 && (
-                                        <span className="text-12 font-semibold text-green-500 ml-auto">
+                                        <span className="text-12 font-semibold text-gray-500 ml-auto">
                                           {discountPercentage}% OFF
                                         </span>
                                       )}
@@ -983,9 +985,14 @@ export const OrderCheckoutModal = ({
         isOpen={showOrderConfirmation}
         onClose={() => setShowOrderConfirmation(false)}
         onTrackOrder={() => {
-          // Navigate to order tracking page
-          // You can implement navigation here
-          console.log('Navigate to track order')
+          if (onTrackOrder) {
+            onTrackOrder()
+          } else {
+            // Default behavior - navigate to orders page
+            if (typeof window !== 'undefined') {
+              window.location.href = '/orders'
+            }
+          }
         }}
       />
     </>

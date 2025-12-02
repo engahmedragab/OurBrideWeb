@@ -1,4 +1,4 @@
-export interface Product {
+export interface Service {
   id: string
   title: string
   description: string
@@ -25,67 +25,48 @@ export interface Product {
     slug: string
   }
   tags: string[]
-  inStock: boolean
-  stockQuantity?: number
-  sku?: string
-  specifications?: ProductSpecification[]
-  reviews?: ProductReview[]
+  available: boolean
+  availabilityDays: {
+    monday: boolean
+    tuesday: boolean
+    wednesday: boolean
+    thursday: boolean
+    friday: boolean
+    saturday: boolean
+    sunday: boolean
+  }
   isWishlisted?: boolean
   showTopOfferBadge?: boolean
   createdAt?: string
   updatedAt?: string
 }
 
-export interface ProductSpecification {
-  label: string
-  value: string
-}
-
-export interface ProductReview {
-  id: string
-  userId: string
-  userName: string
-  userImage: string
-  rating: number
-  comment: string
-  images?: string[]
-  date: string
-  verified: boolean
-  helpful: number
-}
-
-export interface ProductCategory {
+export interface ServiceCategory {
   id: string
   name: string
   slug: string
   description?: string
   image?: string
   parentId?: string
-  productCount?: number
+  serviceCount?: number
 }
 
-export interface ProductFilter {
+export interface ServiceFilter {
   category?: string[]
   priceRange?: {
     min: number
     max: number
   }
   rating?: number
-  inStock?: boolean
+  available?: boolean
   tags?: string[]
+  availabilityDays?: string[]
 }
 
-export interface ProductSortOption {
+export interface ServiceSortOption {
   value: string
   label: string
 }
 
-export type ProductViewMode = 'grid' | 'list'
-
-
-
-
-
-
-
+export type ServiceViewMode = 'grid' | 'list'
 

@@ -201,9 +201,9 @@ const ProductServiceCard = ({
         </div>
 
         {/* Pricing */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {hasDiscount && (
-            <span className="text-14 font-normal text-gray-400 line-through">
+            <span className="text-12 font-normal text-gray-400 line-through">
               {data.originalPrice.toLocaleString()} egp
             </span>
           )}

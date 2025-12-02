@@ -35,7 +35,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     return (
       <div
         className={cn(
-          'relative flex w-full items-center',
+          'relative flex w-full items-center rounded-full',
           searchInputVariants({ variant, size }),
           className
         )}
