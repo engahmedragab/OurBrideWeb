@@ -4,7 +4,7 @@ import { Typography } from '@/Components/ui/Typography'
 import { ChevronLeft } from 'lucide-react'
 import AuthHeroCard from './AuthHeroCard'
 import { DownloadApp } from '@/Components/common'
-import authHeroImage from '@/Assets/images/authHero.png'
+import authHeroImage from '@/Assets/images/authHero.jpg'
 
 /**
  * AuthHeroSection component for authentication pages
@@ -26,7 +26,7 @@ export default function AuthHeroSection() {
       {/* Back to Home Button */}
       <Link
         href="/"
-        className="absolute top-0 left-0 z-30 px-4 py-3 md:py-4 bg-white rounded-bl-2xl text-14 sm:text-16 font-semibold text-gray-900 hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2 overflow-hidden"
+        className="absolute top-0 left-0 z-30 rounded-bl-3xl px-4 py-3 md:py-4 bg-white text-14 sm:text-16 font-semibold text-gray-900 hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2 overflow-hidden"
         style={{ borderBottomRightRadius: '1.5625rem' }}
       >
         <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -35,7 +35,7 @@ export default function AuthHeroSection() {
       </Link>
 
       {/* Floating Hero Card */}
-      <div className="absolute top-4 right-4 sm:top-11 sm:right-6 z-30 w-1/4 max-w-[12.5rem] min-w-[9.375rem]">
+      <div className="absolute top-4 right-4  sm:right-6 z-30 w-1/4 max-w-[12.5rem] min-w-[9.375rem]">
         <AuthHeroCard />
       </div>
 
@@ -55,7 +55,7 @@ export default function AuthHeroSection() {
 
       {/* Download App Buttons - Right */}
       <div className="absolute bottom-0 right-0   2xl:left-1/2   z-30 ">
-        <DownloadApp variant="secondary" className='px-8 md:px-3' />
+        <DownloadApp variant="secondary"  />
       </div>
     </div>
   )

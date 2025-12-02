@@ -10,11 +10,8 @@ import authHeroCardImage from '@/Assets/images/authHeroCard.png'
 export default function AuthHeroCard() {
   return (
     <div
-      className="overflow-hidden backdrop-blur-md w-full shadow-lg"
-      style={{
-        backgroundColor: 'rgba(89, 89, 89, 0.3)',
-        borderRadius: '1.5rem',
-      }}
+      className="overflow-hidden backdrop-blur-md w-full shadow-lg rounded-3xl"
+      
     >
       {/* Top Section - Image Header */}
       <div className="relative w-full h-32 overflow-hidden">
@@ -22,7 +19,7 @@ export default function AuthHeroCard() {
           src={authHeroCardImage}
           alt="Wedding organization"
           fill
-          className="object-cover"
+          className="object-cover w-full h-full"
           priority
         />
       </div>
