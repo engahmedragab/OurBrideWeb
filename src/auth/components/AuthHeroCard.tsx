@@ -1,56 +1,46 @@
 import Image from 'next/image'
 import { Typography } from '@/Components/ui/Typography'
-import { cn } from '@/lib/utils'
 import authHeroCardImage from '@/Assets/images/authHeroCard.png'
 
 /**
  * AuthHeroCard component for authentication pages
- * Displays a card with hero image, title, and description
+ * Floating glass card with image header and text content
  * @returns {JSX.Element} Auth hero card component
  */
 export default function AuthHeroCard() {
   return (
     <div
-      className={cn(
-        'bg-glassCard/50 backdrop-blur-md',
-        'rounded-3xl p-4',
-        'overflow-hidden',
-        'w-full'
-      )}
+      className="overflow-hidden backdrop-blur-md w-full shadow-lg"
+      style={{
+        backgroundColor: 'rgba(89, 89, 89, 0.3)',
+        borderRadius: '1.5rem',
+      }}
     >
-      {/* Top Section - Image */}
-      <div className={cn('relative w-full h-28 ')}>
+      {/* Top Section - Image Header */}
+      <div className="relative w-full h-32 overflow-hidden">
         <Image
           src={authHeroCardImage}
           alt="Wedding organization"
           fill
-          className={cn('object-fill')}
+          className="object-cover"
           priority
         />
       </div>
 
       {/* Bottom Section - Text Content */}
-      <div
-        className={cn(
-          'text-center'
-        )}
-      >
+      <div className="bg-white/40 backdrop-blur-md p-2 rounded-b-[3.125rem] text-center">
         <Typography
-          variant="h6"
-          className={cn('my-2 !text-14 text-white text-center')}
+          variant="h4"
+          className="mb-1 text-white text-center drop-shadow-md"
         >
           Organize your Wedding
         </Typography>
 
-        <span
-          className={cn(
-            '!text-12 text-white',
-            'block'
-          )}
-        >
+        <span className="text-12 text-white block drop-shadow-sm">
           Lorem ipsum dolor sit amet consectetur
         </span>
       </div>
     </div>
   )
 }
+
