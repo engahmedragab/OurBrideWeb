@@ -15,7 +15,7 @@ export default function AuthLayout({
       </div>
 
       {/* Right Section - Form (40%) */}
-      <div className="w-full h-full lg:w-[40%] flex flex-col bg-white p-6 lg:justify-center">
+      <div className="w-full min-h-screen lg:w-[40%] flex flex-col bg-white p-6 items-center  lg:justify-center">
         {children}
       </div>
     </div>
