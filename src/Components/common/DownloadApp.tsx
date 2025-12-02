@@ -4,11 +4,11 @@ import { cn } from '@/lib/utils'
 import AppleIcon from '@/assets/svg/Apple.svg'
 import PlaystoreIcon from '@/assets/svg/Playstore.svg'
 
-const downloadAppVariants = cva('p-4', {
+const downloadAppVariants = cva('py-2 px-2', {
   variants: {
     variant: {
       default: 'rounded-none bg-gray-25',
-      secondary: 'bg-white backdrop-blur-sm rounded-tr-3xl rounded-tl-3xl',
+      secondary: 'bg-white backdrop-blur-sm rounded-tl-3xl',
     },
   },
   defaultVariants: {
@@ -37,7 +37,7 @@ export default function DownloadApp({
       <Typography
         variant="h6"
         className={cn(
-          'mb-3 md:mb-4 !text-10 md:!text-12 font-semibold text-left uppercase',
+          'mb-2 !text-10 md:!text-12 font-semibold text-left uppercase px-2',
           variant === 'secondary' ? 'text-gray-900' : 'text-gray-900'
         )}
       >

@@ -9,7 +9,7 @@ import authHeroCardImage from '@/assets/images/authHeroCard.png'
  */
 export default function AuthHeroCard() {
   return (
-    <div className="overflow-hidden w-full shadow-lg rounded-3xl bg-white/80 backdrop-blur-sm">
+    <div className="overflow-hidden w-full shadow-lg rounded-3xl bg-glassCard/10 backdrop-blur-sm">
       {/* Top Section - Image Header */}
       <div className="relative w-full h-32 overflow-hidden rounded-t-3xl">
         <Image
@@ -22,10 +22,10 @@ export default function AuthHeroCard() {
       </div>
 
       {/* Bottom Section - Text Content */}
-      <div className="bg-white/60 backdrop-blur-sm p-3 rounded-b-3xl text-center">
+      <div className="  backdrop-blur-sm p-3 rounded-b-3xl text-center">
         <Typography
           variant="h4"
-          className="mb-1 text-white text-center drop-shadow-md font-bold text-14"
+          className="mb-1 !text-white text-center drop-shadow-md font-semibold text-14"
         >
           Organize your Wedding
         </Typography>

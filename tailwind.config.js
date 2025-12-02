@@ -167,6 +167,7 @@ export default {
           600: '#2563EB',
           foreground: '#ffffff',
         },
+        glassCard: '#595959',
       },
       fontFamily: {
         sans: ['Poppins', 'system-ui', 'sans-serif'],
