@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { SearchInput } from '@/components/ui/SearchInput'
-import logoImage from '@/assets/Logo.png'
+import brandLogo from '@/assets/svg/Brand-logo.svg'
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -78,15 +78,15 @@ export const Header = ({ className }: HeaderProps) => {
       <div className="container-custom flex h-16 items-center justify-between gap-4">
         {/* Logo */}
         <Link
-          href="/"
+          href="/"  
           className={cn(
             'flex items-center gap-2 transition-opacity duration-150',
             'hover:opacity-80',
             'focus:outline-none rounded-md'
           )}
         >
-          <img src={typeof logoImage === 'string' ? logoImage : logoImage.src} alt="OurBride Logo" className="h-10 w-auto" />
-        </Link>
+          <img src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src} alt="OurBride Logo" className="h-12 w-auto" />
+        </Link> 
 
         {/* Navigation Menu */}
         <NavigationMenu className="hidden md:flex">

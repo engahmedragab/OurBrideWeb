@@ -215,3 +215,7 @@ export type { HistorySectionProps } from './HistorySection'
 
 export { SectionHeader } from './SectionHeader'
 export type { SectionHeaderProps } from './SectionHeader'
+
+export { Toast, ToastProvider, useToast } from './Toaster'
+export type { ToastData } from './Toaster'
+export type { ToastProps } from './Toast'
