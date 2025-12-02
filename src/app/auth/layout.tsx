@@ -7,15 +7,15 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen w-screen flex-col lg:flex-row justify-between items-center lg:py-6 lg:px-4 lg:gap-6 overflow-hidden">
+    <div className="flex h-screen w-screen flex-col lg:flex-row overflow-hidden">
 
-      {/* Left Section - Hero */}
-      <div className="w-full h-screen lg:w-[45%] 2xl:h-[50vh] 2xl:w-[20%] mx-auto ">
+      {/* Left Section - Hero (60%) */}
+      <div className="w-full h-full lg:w-[60%] flex items-center justify-center lg:py-6 lg:px-4 overflow-hidden">
         <AuthHeroSection />
       </div>
 
-      {/* Right Section - Form */}
-      <div className="w-full lg:w-[55%] flex flex-col bg-white p-6">
+      {/* Right Section - Form (40%) */}
+      <div className="w-full h-full lg:w-[40%] flex flex-col bg-white p-6 lg:justify-center overflow-y-auto">
         {children}
       </div>
     </div>

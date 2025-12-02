@@ -1,14 +1,14 @@
-import { Typography } from '@/Components/ui/Typography'
+import { Typography } from '@/components/ui/Typography'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import AppleIcon from '@/Assets/svg/Apple.svg'
-import PlaystoreIcon from '@/Assets/svg/Playstore.svg'
+import AppleIcon from '@/assets/svg/Apple.svg'
+import PlaystoreIcon from '@/assets/svg/Playstore.svg'
 
-const downloadAppVariants = cva('bg-gray-25 p-2', {
+const downloadAppVariants = cva('p-4', {
   variants: {
     variant: {
-      default: 'rounded-none',
-      secondary: 'rounded-tl-3xl',
+      default: 'rounded-none bg-gray-25',
+      secondary: 'bg-white backdrop-blur-sm rounded-tr-3xl rounded-tl-3xl',
     },
   },
   defaultVariants: {
@@ -36,7 +36,10 @@ export default function DownloadApp({
       {/* Title */}
       <Typography
         variant="h6"
-        className={cn('mb-3 md:mb-4 !text-12 md:!text-14 text-gray-900 font-semibold text-center')}
+        className={cn(
+          'mb-3 md:mb-4 !text-10 md:!text-12 font-semibold text-left uppercase',
+          variant === 'secondary' ? 'text-gray-900' : 'text-gray-900'
+        )}
       >
         Download Our APP
       </Typography>
@@ -46,10 +49,11 @@ export default function DownloadApp({
         {/* App Store Button */}
         <button
           className={cn(
-            'flex items-center gap-x-1.5 md:gap-x-2 bg-white border border-gray-300 rounded-lg',
+            'flex items-center gap-x-1.5 md:gap-x-2 rounded-lg',
             'px-2 py-1 md:px-4 md:py-2',
-            'hover:bg-gray-100 transition-colors duration-200',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+            'hover:opacity-90 transition-opacity duration-200',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+            'bg-white border border-gray-300 text-gray-900 hover:bg-gray-100'
           )}
           aria-label="Download on the App Store"
           type="button"
@@ -61,10 +65,10 @@ export default function DownloadApp({
             aria-hidden="true"
           />
           <div className="flex flex-col items-start">
-            <span className="text-8 md:text-10 font-normal text-gray-900 leading-tight">
+            <span className="text-8 md:text-10 font-normal leading-tight text-gray-900">
               Download on the
             </span>
-            <span className="text-12 md:text-14 font-semibold text-gray-900 leading-tight">
+            <span className="text-12 md:text-14 font-semibold leading-tight text-gray-900">
               App Store
             </span>
           </div>
@@ -73,10 +77,11 @@ export default function DownloadApp({
         {/* Google Play Button */}
         <button
           className={cn(
-            'flex items-center gap-x-1.5 md:gap-x-2 bg-white border border-gray-300 rounded-lg',
+            'flex items-center gap-x-1.5 md:gap-x-2 rounded-lg',
             'px-2 py-1 md:px-4 md:py-2',
-            'hover:bg-gray-100 transition-colors duration-200',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+            'hover:opacity-90 transition-opacity duration-200',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+            'bg-white border border-gray-300 text-gray-900 hover:bg-gray-100'
           )}
           aria-label="GET IT ON Google Play"
           type="button"
@@ -88,10 +93,10 @@ export default function DownloadApp({
             aria-hidden="true"
           />
           <div className="flex flex-col items-start">
-            <span className="text-8 md:text-10 font-normal text-gray-900 leading-tight">
+            <span className="text-8 md:text-10 font-normal leading-tight text-gray-900">
               GET IT ON
             </span>
-            <span className="text-12 md:text-14 font-semibold text-gray-900 leading-tight">
+            <span className="text-12 md:text-14 font-semibold leading-tight text-gray-900">
               Google Play
             </span>
           </div>
