@@ -1,13 +1,15 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Typography } from '../Typography'
+
 import logoImage from '@/Assets/images/logoWithoutourbirde.png'
+import { Typography } from '@/components/ui/Typography'
 
 export interface WelcomeHeaderProps {
   welcomeText?: string
   className?: string
 }
+
 
 /**
  * WelcomeHeader - Reusable component for welcome message with logo

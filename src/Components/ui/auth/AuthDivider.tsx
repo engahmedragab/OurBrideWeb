@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Typography } from '../Typography'
+import { Typography } from '@/components/ui/Typography'
 
 export interface AuthDividerProps {
   text?: string

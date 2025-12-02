@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Input } from '../Input'
-import { Button } from '../Button'
-import { Typography } from '../Typography'
+import { Button } from '@/components/ui/Button'
+import { Typography } from '@/components/ui/Typography'
 import { ServiceSelectCard } from '../ServiceSelectCard'
 import { LocationPickerModal } from '../LocationPickerModal'
 import { StatusModal } from '../StatusModal'
@@ -13,7 +13,8 @@ import { WelcomeHeader } from './WelcomeHeader'
 import {
   MapPin,
   User,
-  Mail,
+  Mail, 
+  X,
 } from 'lucide-react'
 import { BudgetIcon } from '../icons/BudgetIcon'
 import { BridalBeautyIcon } from '../icons/services/BridalBeautyIcon'
@@ -219,27 +220,37 @@ export const PlanningPreferencesForm = ({
 
         {/* Location Input */}
         <div className="space-y-0.5">
+          <div className="relative w-full">
           <div className="relative">
             <Input
               type="text"
               placeholder="Location"
               value={location}
               readOnly
-              onFocus={() => setLocationFocused(true)}
-              onBlur={() => setLocationFocused(false)}
+                onFocus={() => setLocationFocused(true)}
+                onBlur={() => setLocationFocused(false)}
               prefixIcon={MapPin}
-              variant={getInputVariant(isSubmitted && !!errors.location, location, locationFocused)}
-              errorMessage={isSubmitted ? errors.location : undefined}
+                variant={getInputVariant(isSubmitted && !!errors.location, location, locationFocused)}
+                errorMessage={undefined}
               size="lg"
               className="pr-24"
             />
             <button
               type="button"
               onClick={() => setShowLocationModal(true)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-500 hover:text-brand-600 font-medium text-14 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-brand-500 hover:text-brand-600 font-medium text-14 transition-colors"
             >
               Set Location
             </button>
+            </div>
+            {isSubmitted && errors.location && (
+              <div className="mt-1.5 flex items-center gap-2 text-14 font-normal leading-4 text-red-500">
+                <div className="flex h-4 w-4 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
+                  <X className="h-2.5 w-2.5 text-red-500" />
+                </div>
+                <span>{errors.location}</span>
+              </div>
+            )}
           </div>
         </div>
 

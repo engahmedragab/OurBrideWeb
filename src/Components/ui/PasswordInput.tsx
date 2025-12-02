@@ -95,7 +95,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
               variant === 'focused' ? 'text-gray-900' : 
               variant === 'success' ? 'text-gray-500' :
               variant === 'fill' ? 'text-gray-400' :
-              'text-gray-500'
+              'text-gray-300'
             )}
           >
             {showPassword ? (

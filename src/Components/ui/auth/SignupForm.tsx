@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Input } from '../Input'
 import { PasswordInput } from '../PasswordInput'
-import { Button } from '../Button'
+import { Button } from '@/components/ui/Button'
 import { Checkbox } from '../Checkbox'
 import { GenderSelector } from '../GenderSelector'
 import { PasswordStrength } from '../PasswordStrength'
-import { Typography } from '../Typography'
+import { Typography } from '@/components/ui/Typography'
 import { Mail, User, X, Check } from 'lucide-react'
 import { PhoneIcon } from '../icons/PhoneIcon'
 
@@ -589,12 +589,12 @@ export const SignupForm = ({
             variant="default"
             size="md"
           />
-          <Typography variant="bodySmall" textColor="secondary" className="text-16 font-normal">
+          <Typography variant="bodySmall" textColor="secondary" className="text-14 font-normal">
             I Accepted{' '}
             <button
               type="button"
               onClick={onTermsClick}
-              className="font-semibold text-brand-500 hover:text-brand-600 underline transition-colors"
+              className="font-medium text-brand-500 hover:text-brand-600 underline transition-colors"
             >
               Terms & Conditions
             </button>
