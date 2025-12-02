@@ -3,7 +3,8 @@ export default {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/Components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/auth/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -166,10 +167,7 @@ export default {
           600: '#2563EB',
           foreground: '#ffffff',
         },
-        glassCard:{
-          DEFAULT: '#595959',
-          foreground: '#ffffff',
-        },
+        glassCard: '#595959',
       },
       fontFamily: {
         sans: ['Poppins', 'system-ui', 'sans-serif'],

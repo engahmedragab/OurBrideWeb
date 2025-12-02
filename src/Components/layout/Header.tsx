@@ -3,16 +3,16 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { SearchInput } from '@/Components/ui/SearchInput'
-import logoImage from '@/assets/logo.png'
+import { SearchInput } from '@/components/ui/SearchInput'
+import logoImage from '@/assets/Logo.png'
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuTrigger,
   NavigationMenuContent,
-} from '@/Components/ui/NavigationMenu'
-import { Button } from '@/Components/ui/Button'
+} from '@/components/ui/NavigationMenu'
+import { Button } from '@/components/ui/Button'
 import {
   Home,
   Store,
