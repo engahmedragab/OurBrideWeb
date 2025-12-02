@@ -22,27 +22,27 @@ export const PriceDisplay = ({
   const sizeClasses = {
     sm: {
       discounted: 'text-20',
-      original: 'text-16',
+      original: 'text-14',
     },
     md: {
       discounted: 'text-24',
-      original: 'text-18',
+      original: 'text-14',
     },
     lg: {
       discounted: 'text-32 md:text-40',
-      original: 'text-20',
+      original: 'text-16',
     },
     xl: {
       discounted: 'text-40 md:text-48',
-      original: 'text-24',
+      original: 'text-18',
     },
   }
 
   return (
-    <div className={cn('flex items-baseline gap-3', className)}>
+    <div className={cn('flex items-baseline gap-1', className)}>
       <span
         className={cn(
-          'font-semibold text-gray-900',
+          'font-normal text-gray-900',
           sizeClasses[size].discounted
         )}
       >

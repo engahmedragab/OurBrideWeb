@@ -18,6 +18,7 @@ import {
 import type { OrderItem, OrderFormData } from '@/components/ui/OrderCheckoutModal'
 import type { ProductCardData } from '@/components/ui/Card'
 import { Star, ArrowLeft, ArrowRight, ThumbsUp } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
 import productImage from '@/assets/svg/product-1.svg'
@@ -187,6 +188,7 @@ export default function ProductDetail({
   params: Promise<{ id: string }>
 }) {
   const { id } = use(params)
+  const router = useRouter()
   const [quantity, setQuantity] = useState(1)
   const [product, setProduct] = useState(mockProduct)
   const [userRating, setUserRating] = useState(0)
@@ -567,6 +569,9 @@ export default function ProductDetail({
         onClose={() => setIsCheckoutModalOpen(false)}
         items={getOrderItems()}
         onCheckout={handleCheckout}
+        onTrackOrder={() => {
+          router.push('/orders')
+        }}
         currency={product.price.currency}
         taxes={120}
         deliveryFee={90}
