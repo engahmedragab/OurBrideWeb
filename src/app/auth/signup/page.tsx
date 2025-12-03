@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import {
   AuthTabs,
   AuthDivider,
-  LoginForm,
+  SignupForm,
+  TermsAndConditionsModal,
   WelcomeHeader,
 } from '@/components/ui/auth/index'
 import { SocialMediaButton } from '@/components/ui/SocialMediaButton'
@@ -13,11 +14,20 @@ import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { DownloadApp } from '@/components/common'
 
 /**
- * Login Page - UI composition only, no logic
+ * Signup Page - UI composition only, no logic
  */
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter()
+  const [showTermsModal, setShowTermsModal] = useState(false)
   const [showLoading, setShowLoading] = useState(false)
+
+  const handleSignupSuccess = () => {
+    setShowLoading(true)
+    setTimeout(() => {
+      setShowLoading(false)
+      router.push('/auth/mobile-verification')
+    }, 2000)
+  }
 
   return (
     <>
@@ -32,28 +42,25 @@ export default function LoginPage() {
         <div className="flex items-center justify-center gap-2">
           <SocialMediaButton
             provider="google"
-            onClick={() => console.log('Google login clicked')}
+            onClick={() => console.log('Google signup clicked')}
           />
           <SocialMediaButton
             provider="facebook"
-            onClick={() => console.log('Facebook login clicked')}
+            onClick={() => console.log('Facebook signup clicked')}
           />
           <SocialMediaButton
             provider="apple"
-            onClick={() => console.log('Apple login clicked')}
+            onClick={() => console.log('Apple signup clicked')}
           />
         </div>
 
         {/* Divider */}
         <AuthDivider />
 
-        {/* Login Form */}
-        <LoginForm
-          onForgotPasswordClick={() => router.push('/auth/forgot-password')}
-          onLoginClick={() => {
-            setShowLoading(true)
-            setTimeout(() => setShowLoading(false), 2000)
-          }}
+        {/* Signup Form */}
+        <SignupForm
+          onTermsClick={() => setShowTermsModal(true)}
+          onSignupClick={handleSignupSuccess}
           onProviderClick={() => console.log('Provider link clicked')}
         />
 
@@ -62,6 +69,13 @@ export default function LoginPage() {
           <DownloadApp variant="default" />
         </div>
       </div>
+
+      {/* Terms Modal */}
+      <TermsAndConditionsModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        onAccept={() => console.log('Terms accepted')}
+      />
 
       {/* Loading Overlay */}
       <LoadingOverlay open={showLoading} />

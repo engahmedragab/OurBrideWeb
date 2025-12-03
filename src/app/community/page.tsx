@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Header } from '@/components/layout'
@@ -14,9 +14,9 @@ import {
   ReelsSidebar,
 } from '@/components/community'
 
-export default function CommunityPage() {
+function CommunityContent() {
   const searchParams = useSearchParams()
-  const tabParam = searchParams.get('tab')
+  const tabParam = searchParams?.get('tab')
   const [activeTab, setActiveTab] = useState<'posts' | 'articles' | 'reels'>(
     (tabParam as 'posts' | 'articles' | 'reels') || 'posts'
   )
@@ -72,6 +72,22 @@ export default function CommunityPage() {
       </main>
       <Footer />
     </div>
+  )
+}
+
+export default function CommunityPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-gray-500">Loading...</div>
+        </main>
+        <Footer />
+      </div>
+    }>
+      <CommunityContent />
+    </Suspense>
   )
 }
 

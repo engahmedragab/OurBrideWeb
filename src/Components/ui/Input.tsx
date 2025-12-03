@@ -4,22 +4,23 @@ import { cn } from '@/lib/utils'
 import { Check, X, LucideIcon } from 'lucide-react'
 
 const inputVariants = cva(
-  'flex w-full items-center gap-2 rounded-md border bg-background px-3 py-2 text-16 ring-offset-background transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+  'flex w-full items-center gap-2 rounded-xl border bg-white px-3 py-1.5 text-16 font-normal leading-6 transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-within:outline-none focus-within:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       variant: {
         default:
-          'border-gray-300 focus-visible:border-brand-500 focus-visible:ring-brand-500',
+          'border-gray-300 focus-within:border-brand-500',
         error:
-          'border-red-500 bg-red-50 text-red-500 placeholder:text-red-400 focus-visible:border-red-500 focus-visible:ring-red-500',
+          'border-red-500 bg-red-100 focus-within:border-red-500',
         success:
-          'border-gray-300 focus-visible:border-brand-500 focus-visible:ring-brand-500',
-        focused: 'border-brand-500 focus-visible:ring-brand-500',
+          'border-gray-500 bg-white focus-within:border-brand-500',
+        focused: 'border-brand-500 focus-within:border-brand-500',
+        fill: 'border-gray-200 bg-white focus-within:border-brand-500',
       },
       size: {
         sm: 'h-8 px-2 text-12',
-        md: 'h-10 px-3 text-14',
-        lg: 'h-12 px-4 text-16',
+        md: 'h-9 px-3 text-13',
+        lg: 'h-auto px-3 py-1.5 text-16',
       },
     },
     defaultVariants: {
@@ -62,7 +63,7 @@ const renderPrefixIcon = (Icon: LucideIcon | ReactNode): ReactNode => {
     // Render as component - must use JSX, not return the component definition
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const IconComponent = Icon as React.ComponentType<any>
-    return <IconComponent className="h-5 w-5" />
+    return <IconComponent className="h-6 w-6" />
   }
   
   // For primitive types (string, number, etc.), return as-is
@@ -110,7 +111,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             <span
               className={cn(
                 'flex-shrink-0',
-                variant === 'error' ? 'text-red-500' : 'text-gray-400'
+                variant === 'error' ? 'text-red-500' : 
+                variant === 'focused' ? 'text-gray-400' : 
+                variant === 'success' ? 'text-gray-400' :
+                variant === 'fill' ? 'text-gray-400' :
+                'text-gray-400'
               )}
             >
               {renderPrefixIcon(PrefixIcon)}
@@ -119,24 +124,28 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              'flex-1 bg-transparent outline-none',
-              variant === 'error' && 'text-red-500 placeholder:text-red-400'
+              'flex-1 bg-transparent outline-none focus:outline-none font-normal text-16 leading-6',
+              variant === 'error' && 'text-red-500 placeholder:text-red-500',
+              variant === 'default' && 'text-gray-900 placeholder:text-gray-400',
+              variant === 'focused' && 'text-gray-900 placeholder:text-gray-400',
+              variant === 'success' && 'text-gray-900 placeholder:text-gray-400',
+              variant === 'fill' && 'text-gray-900 placeholder:text-gray-400'
             )}
             ref={ref}
             {...props}
           />
-          {showSuccessIcon && variant !== 'error' && (
+          {showSuccessIcon && variant === 'success' && (
             <div className="flex-shrink-0">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
-                <Check className="h-3 w-3 text-white" />
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-green-500">
+                <Check className="h-4 w-4 text-green-500" />
               </div>
             </div>
           )}
           {suffix && (
             <span
               className={cn(
-                'flex-shrink-0 text-14',
-                variant === 'error' ? 'text-red-500' : 'text-gray-400'
+                'flex-shrink-0 text-16 font-normal leading-6',
+                variant === 'error' ? 'text-red-300' : 'text-gray-300'
               )}
             >
               {suffix}
@@ -144,8 +153,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {errorMessage && (
-          <div className="mt-1 flex items-center gap-1 text-12 text-red-500">
-            <X className="h-3 w-3" />
+          <div className="mt-2 flex items-center gap-2 text-14 font-normal leading-4 text-red-500">
+            <div className="flex h-4 w-4 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
+              <X className="h-2.5 w-2.5 text-red-500" />
+            </div>
             <span>{errorMessage}</span>
           </div>
         )}

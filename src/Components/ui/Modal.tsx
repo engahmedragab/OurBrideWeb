@@ -22,7 +22,7 @@ export interface ModalProps {
 
 const maxWidthClasses = {
   sm: 'max-w-[400px]',
-  md: 'max-w-[500px]',
+  md: 'max-w-[520px]',
   lg: 'max-w-[600px]',
   xl: 'max-w-[800px]',
   '2xl': 'max-w-[1000px]',
@@ -64,7 +64,7 @@ export const Modal = ({
       {/* Overlay */}
       <div
         className={cn(
-          'fixed inset-0 bg-black/50 transition-opacity duration-300',
+          'fixed inset-0 bg-black/40 transition-opacity duration-300',
           isOpen ? 'opacity-100' : 'opacity-0'
         )}
         style={{ zIndex: zIndex * 10 - 1 }}
@@ -86,12 +86,12 @@ export const Modal = ({
         {(title || showCloseButton) && (
           <div
             className={cn(
-              'flex items-center justify-between p-6 border-b border-gray-200',
+              'flex items-center justify-between px-4 sm:px-6 py-4 ',
               headerClassName
             )}
           >
             {title && (
-              <h2 className="text-20 md:text-24 font-normal text-gray-900">
+              <h2 className="text-16 sm:text-18 font-semibold text-gray-900">
                 {title}
               </h2>
             )}
@@ -99,7 +99,7 @@ export const Modal = ({
               <button
                 onClick={onClose}
                 disabled={disabled}
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-1 text-gray-300 hover:text-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Close modal"
               >
                 <X className="h-5 w-5" />
