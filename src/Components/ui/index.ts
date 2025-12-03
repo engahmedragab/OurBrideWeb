@@ -234,3 +234,15 @@ export type { ServiceSelectCardProps } from './ServiceSelectCard'
 
 export { LocationPickerModal } from './LocationPickerModal'
 export type { LocationPickerModalProps } from './LocationPickerModal'
+
+export { Toggle } from './Switch'
+export type { ToggleProps } from './Switch'
+
+export { DeleteAccountModal } from './DeleteAccountModal'
+export type { DeleteAccountModalProps } from './DeleteAccountModal'
+
+export { LogoutModal } from './LogoutModal'
+export type { LogoutModalProps } from './LogoutModal'
+
+export { DeleteIcon, LogoutIcon } from './ModalIcons'
+export type { ModalIconProps } from './ModalIcons'

@@ -106,7 +106,14 @@ export const UserSidebar = ({
     },
   ]
 
-  const isActive = (path: string) => pathname === path
+  const isActive = (path: string) => {
+    if (!pathname) return false
+    // Special handling for Settings - should be active for /settings and all sub-pages
+    if (path === '/settings') {
+      return pathname === '/settings' || pathname.startsWith('/settings/')
+    }
+    return pathname === path
+  }
 
   return (
     <aside
