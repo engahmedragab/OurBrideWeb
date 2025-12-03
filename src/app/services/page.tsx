@@ -66,9 +66,7 @@ const mockServices: Service[] = [
     id: '2',
     title: 'Hair Styling Service',
     description: 'Expert hair styling and hairdo for weddings.',
-    images: [
-      'https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400',
-    ],
+    images: ['https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400'],
     provider: {
       id: '2',
       name: 'Hair Studio Elite',
@@ -120,9 +118,7 @@ const mockServices: Service[] = [
     id: '4',
     title: 'Spa & Relaxation Package',
     description: 'Full body spa treatment for pre-wedding relaxation.',
-    images: [
-      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
-    ],
+    images: ['https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400'],
     provider: {
       id: '4',
       name: 'Luxury Spa',
@@ -230,9 +226,7 @@ const mockServices: Service[] = [
     id: '8',
     title: 'Bridal Hair Extension Service',
     description: 'Premium hair extensions for voluminous bridal hair.',
-    images: [
-      'https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400',
-    ],
+    images: ['https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400'],
     provider: {
       id: '8',
       name: 'Hair Extensions Pro',
@@ -284,9 +278,7 @@ const mockServices: Service[] = [
     id: '10',
     title: 'Hot Stone Massage',
     description: 'Relaxing hot stone massage for pre-wedding stress relief.',
-    images: [
-      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
-    ],
+    images: ['https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400'],
     provider: {
       id: '10',
       name: 'Wellness Spa',
@@ -393,9 +385,7 @@ const mockServices: Service[] = [
     id: '14',
     title: 'Hair Color Service',
     description: 'Professional hair coloring for your special day.',
-    images: [
-      'https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400',
-    ],
+    images: ['https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400'],
     provider: {
       id: '14',
       name: 'Color Studio',
@@ -447,9 +437,7 @@ const mockServices: Service[] = [
     id: '16',
     title: 'Aromatherapy Massage',
     description: 'Relaxing aromatherapy massage with essential oils.',
-    images: [
-      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
-    ],
+    images: ['https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400'],
     provider: {
       id: '16',
       name: 'Aroma Wellness',
@@ -590,9 +578,7 @@ export default function Services() {
 
     // Apply filters
     if (filters.category && filters.category.length > 0) {
-      result = result.filter(s =>
-        filters.category!.includes(s.category.id)
-      )
+      result = result.filter(s => filters.category!.includes(s.category.id))
     }
 
     if (filters.priceRange) {
@@ -636,10 +622,15 @@ export default function Services() {
   }, [filters, sortBy, searchQuery])
 
   // Calculate pagination
-  const totalPages = Math.ceil(filteredAndSortedServices.length / servicesPerPage)
+  const totalPages = Math.ceil(
+    filteredAndSortedServices.length / servicesPerPage
+  )
   const startIndex = (currentPage - 1) * servicesPerPage
   const endIndex = startIndex + servicesPerPage
-  const paginatedServices = filteredAndSortedServices.slice(startIndex, endIndex)
+  const paginatedServices = filteredAndSortedServices.slice(
+    startIndex,
+    endIndex
+  )
 
   // Reset to page 1 when filters change
   const handleFiltersChange = (newFilters: ProductFilter) => {
@@ -662,7 +653,11 @@ export default function Services() {
       <Header />
       <main className="flex-1">
         {/* Hero Carousel */}
-        <HeroCarousel slides={heroSlides} autoPlay={true} autoPlayInterval={5000} />
+        <HeroCarousel
+          slides={heroSlides}
+          autoPlay={true}
+          autoPlayInterval={5000}
+        />
 
         <div className="container-custom py-6 md:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
@@ -787,7 +782,7 @@ export default function Services() {
             variant="newsletter"
             ctaText="Submit"
             productImage={flowersImage}
-            onSubscribe={(email) => {
+            onSubscribe={email => {
               console.log('Newsletter subscription:', email)
               // TODO: Implement newsletter subscription
             }}
@@ -798,4 +793,3 @@ export default function Services() {
     </div>
   )
 }
-

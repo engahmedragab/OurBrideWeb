@@ -3,7 +3,11 @@
 import { CheckCircle2, X, Snowflake } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-export type StatusBadgeType = 'completed' | 'delivered' | 'cancelled' | 'inProgress'
+export type StatusBadgeType =
+  | 'completed'
+  | 'delivered'
+  | 'cancelled'
+  | 'inProgress'
 
 export interface StatusBadgeProps {
   status: StatusBadgeType
@@ -34,11 +38,7 @@ const statusConfig = {
   },
 }
 
-export const StatusBadge = ({
-  status,
-  label,
-  className,
-}: StatusBadgeProps) => {
+export const StatusBadge = ({ status, label, className }: StatusBadgeProps) => {
   const config = statusConfig[status]
   const Icon = config.icon
 
@@ -55,4 +55,3 @@ export const StatusBadge = ({
     </div>
   )
 }
-

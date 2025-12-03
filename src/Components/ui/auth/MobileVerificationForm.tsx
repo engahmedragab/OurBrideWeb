@@ -34,7 +34,9 @@ export const MobileVerificationForm = ({
   const [otpErrorMessage, setOtpErrorMessage] = useState('')
 
   // Resend state
-  const [resendState, setResendState] = useState<'idle' | 'countdown' | 'success'>('idle')
+  const [resendState, setResendState] = useState<
+    'idle' | 'countdown' | 'success'
+  >('idle')
   const [resendCountdown, setResendCountdown] = useState(30)
 
   // Loading state
@@ -57,7 +59,9 @@ export const MobileVerificationForm = ({
   }, [resendState, resendCountdown])
 
   // Validation helpers
-  const validateOTP = (value: string[]): { isValid: boolean; message: string } => {
+  const validateOTP = (
+    value: string[]
+  ): { isValid: boolean; message: string } => {
     const otpString = value.join('')
     if (!otpString || otpString.length !== 4) {
       return { isValid: false, message: 'Please enter the 4-digit OTP' }
@@ -143,7 +147,12 @@ export const MobileVerificationForm = ({
   }
 
   // Get input variant
-  const otpInputVariant = otpStatus === 'error' ? 'error' : otpStatus === 'success' ? 'success' : 'default'
+  const otpInputVariant =
+    otpStatus === 'error'
+      ? 'error'
+      : otpStatus === 'success'
+        ? 'success'
+        : 'default'
 
   return (
     <div className={cn('w-full space-y-2.5 sm:space-y-3', className)}>
@@ -156,7 +165,12 @@ export const MobileVerificationForm = ({
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <Typography variant="h6" weight="semibold" textColor="default" className="text-16 sm:text-18">
+        <Typography
+          variant="h6"
+          weight="semibold"
+          textColor="default"
+          className="text-16 sm:text-18"
+        >
           Mobile Verification
         </Typography>
       </div>
@@ -204,7 +218,12 @@ export const MobileVerificationForm = ({
 
       {/* Footer Link */}
       <div className="flex items-center justify-center">
-        <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-12 sm:text-14">
+        <Typography
+          variant="bodySmall"
+          textColor="tertiary"
+          align="center"
+          className="text-12 sm:text-14"
+        >
           Are you providing your services?{' '}
           {resendState === 'countdown' ? (
             <span className="text-gray-400">
@@ -238,4 +257,3 @@ export const MobileVerificationForm = ({
     </div>
   )
 }
-

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { UserPageLayout } from '@/Components/layout/UserPageLayout'
+import { UserPageLayout } from '@/components/layout/UserPageLayout'
 import {
   Toggle,
   DeleteAccountModal,
@@ -11,7 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/Components/ui'
+} from '@/components/ui'
 import { ChevronRight, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 
@@ -82,7 +82,9 @@ export default function SettingsPage() {
     children: React.ReactNode
     className?: string
   }) => (
-    <div className={`bg-white rounded-xl shadow-sm border border-gray-100 mb-6 ${className || ''}`}>
+    <div
+      className={`bg-white rounded-xl shadow-sm border border-gray-100 mb-6 ${className || ''}`}
+    >
       <div className="px-6 py-4 border-b border-gray-100">
         <h2 className="text-16 font-semibold text-gray-900">{title}</h2>
       </div>
@@ -116,9 +118,7 @@ export default function SettingsPage() {
                       <DropdownMenuItem
                         key={lang}
                         onClick={() => setAppLanguage(lang)}
-                        className={
-                          appLanguage === lang ? 'bg-brand-50' : ''
-                        }
+                        className={appLanguage === lang ? 'bg-brand-50' : ''}
                       >
                         {lang}
                       </DropdownMenuItem>
@@ -294,9 +294,7 @@ export default function SettingsPage() {
           <div className="bg-white rounded-xl  shadow-sm border border-gray-100 mb-6">
             <div className="px-6">
               <SettingRow
-                label={
-                  <span className="text-brand-500">Logout</span>
-                }
+                label={<span className="text-brand-500">Logout</span>}
                 action={
                   <button
                     onClick={() => setLogoutModalOpen(true)}

@@ -12,7 +12,8 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
         showOutsideDays={showOutsideDays}
         className={cn('p-3', className)}
         classNames={{
-          months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
+          months:
+            'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
           month: 'space-y-4',
           caption: 'flex justify-center pt-1 relative items-center',
           caption_label: 'text-16 font-semibold text-gray-900',
@@ -37,11 +38,14 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
             'focus:bg-gray-100 focus:text-gray-900'
           ),
           day_range_end: 'day-range-end',
-          day_selected: 'bg-brand-500 text-white hover:bg-brand-600 hover:text-white focus:bg-brand-500 focus:text-white',
+          day_selected:
+            'bg-brand-500 text-white hover:bg-brand-600 hover:text-white focus:bg-brand-500 focus:text-white',
           day_today: 'bg-gray-100 text-gray-900 font-semibold',
-          day_outside: 'day-outside text-gray-400 opacity-50 aria-selected:bg-gray-100/50 aria-selected:text-gray-400 aria-selected:opacity-30',
+          day_outside:
+            'day-outside text-gray-400 opacity-50 aria-selected:bg-gray-100/50 aria-selected:text-gray-400 aria-selected:opacity-30',
           day_disabled: 'text-gray-400 opacity-50',
-          day_range_middle: 'aria-selected:bg-gray-100 aria-selected:text-gray-900',
+          day_range_middle:
+            'aria-selected:bg-gray-100 aria-selected:text-gray-900',
           day_hidden: 'invisible',
           ...classNames,
         }}
@@ -57,4 +61,3 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
 Calendar.displayName = 'Calendar'
 
 export { Calendar }
-

@@ -42,7 +42,8 @@ const toggleThumbVariants = cva(
 )
 
 export interface ToggleProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'>,
+  extends
+    Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'>,
     VariantProps<typeof toggleVariants> {
   checked?: boolean
   onChange?: (checked: boolean) => void
@@ -50,15 +51,7 @@ export interface ToggleProps
 
 const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
   (
-    {
-      className,
-      variant,
-      size,
-      checked = false,
-      onChange,
-      disabled,
-      ...props
-    },
+    { className, variant, size, checked = false, onChange, disabled, ...props },
     ref
   ) => {
     const handleClick = () => {

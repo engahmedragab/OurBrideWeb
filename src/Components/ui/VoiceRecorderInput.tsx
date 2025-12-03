@@ -24,42 +24,7 @@ export const VoiceRecorderInput = ({
   className,
 }: VoiceRecorderInputProps) => {
   const [waveformData, setWaveformData] = useState<number[]>([])
-  const [displayDuration, setDisplayDuration] = useState(duration)
   const animationRef = useRef<number>()
-  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null)
-  
-  // Update display duration when duration prop changes
-  useEffect(() => {
-    setDisplayDuration(duration)
-  }, [duration])
-  
-  // Start local timer interval when recording
-  useEffect(() => {
-    if (isRecording) {
-      // Reset to current duration prop
-      setDisplayDuration(duration)
-      
-      // Start interval to update every second
-      timerIntervalRef.current = setInterval(() => {
-        setDisplayDuration((prev) => prev + 1)
-      }, 1000)
-      
-      return () => {
-        if (timerIntervalRef.current) {
-          clearInterval(timerIntervalRef.current)
-          timerIntervalRef.current = null
-        }
-      }
-    } else {
-      // Stop interval when not recording
-      if (timerIntervalRef.current) {
-        clearInterval(timerIntervalRef.current)
-        timerIntervalRef.current = null
-      }
-      // Update to final duration
-      setDisplayDuration(duration)
-    }
-  }, [isRecording, duration])
 
   // Generate waveform data (simulated for now, can be replaced with actual audio analysis)
   useEffect(() => {
@@ -94,32 +59,32 @@ export const VoiceRecorderInput = ({
   }
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
+    <div className={cn('flex items-center gap-1.5 sm:gap-2', className)}>
       {/* Voice Message Container */}
-      <div className="flex-1 bg-gray-50 rounded-3xl px-4 py-3 flex items-center gap-3">
+      <div className="flex-1 bg-gray-50 rounded-3xl px-2.5 py-2 sm:px-3 sm:py-2.5 md:px-4 md:py-3 flex items-center gap-2 sm:gap-3">
         {/* Delete Button */}
         <button
           type="button"
           onClick={onDelete}
-          className="flex-shrink-0 p-1 text-brand-500 hover:text-brand-600 transition-colors"
+          className="flex-shrink-0 p-0.5 sm:p-1 text-brand-500 hover:text-brand-600 transition-colors"
           aria-label="Delete recording"
         >
-          <Trash2 className="h-5 w-5" />
+          <Trash2 className="h-4 w-4 sm:h-5 sm:w-5" />
         </button>
 
         {/* Waveform Visualization */}
-        <div className="flex-1 flex items-center justify-center gap-0.5 h-12 px-2">
+        <div className="flex-1 flex items-center justify-center gap-0.5 h-8 sm:h-10 md:h-12 px-1.5 sm:px-2">
           {waveformData.length > 0 ? (
             waveformData.map((height, index) => (
               <div
                 key={index}
                 className={cn(
-                  'w-0.5 bg-gray-400 rounded-full transition-all duration-100',
+                  'w-[1px] md:w-0.5 bg-gray-400 rounded-full transition-all duration-100',
                   isRecording && 'bg-brand-500'
                 )}
                 style={{
                   height: `${height}%`,
-                  minHeight: '4px',
+                  minHeight: '3px',
                   animation: isRecording
                     ? `waveform-pulse ${0.5 + (index % 10) * 0.1}s ease-in-out infinite`
                     : 'none',
@@ -127,19 +92,19 @@ export const VoiceRecorderInput = ({
               />
             ))
           ) : (
-            <div className="text-14 text-gray-400">Recording...</div>
+            <div className="text-12 sm:text-13 md:text-14 text-gray-400">Recording...</div>
           )}
         </div>
 
         {/* Duration - Always visible */}
         <span 
-          key={`duration-${displayDuration}`} 
+          key={`duration-${duration}`} 
           className={cn(
-            "flex-shrink-0 text-14 min-w-[50px] text-right font-medium",
+            "flex-shrink-0 text-12 sm:text-13 md:text-14 min-w-[45px] sm:min-w-[50px] text-right font-medium",
             isRecording ? "text-brand-500" : "text-gray-600"
           )}
         >
-          {formatDuration(displayDuration)}
+          {formatDuration(duration)}
         </span>
       </div>
 
@@ -148,10 +113,10 @@ export const VoiceRecorderInput = ({
         variant="brand"
         size="icon"
         onClick={onSend}
-        className="h-[60px] w-[60px] rounded-full flex-shrink-0"
+        className="h-[45px] w-[45px] sm:h-[50px] sm:w-[50px] md:h-[60px] md:w-[60px] rounded-full flex-shrink-0"
         disabled={!audioBlob && !isRecording}
       >
-        <Send className="h-6 w-6 text-white" />
+        <Send className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-white" />
       </Button>
     </div>
   )

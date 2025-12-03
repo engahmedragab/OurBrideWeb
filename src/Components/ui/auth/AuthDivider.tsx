@@ -9,10 +9,7 @@ export interface AuthDividerProps {
 /**
  * AuthDivider - Divider component with "Or" text for separating auth methods
  */
-export const AuthDivider = ({
-  text = 'Or',
-  className,
-}: AuthDividerProps) => {
+export const AuthDivider = ({ text = 'Or', className }: AuthDividerProps) => {
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <div className="h-px flex-1 bg-gray-300" />
@@ -27,4 +24,3 @@ export const AuthDivider = ({
     </div>
   )
 }
-

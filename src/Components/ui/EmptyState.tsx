@@ -23,7 +23,8 @@ export const EmptyState = ({
   onAction,
   className,
 }: EmptyStateProps) => {
-  const illustrationSrc = typeof illustration === 'string' ? illustration : illustration.src
+  const illustrationSrc =
+    typeof illustration === 'string' ? illustration : illustration.src
 
   const actionButton = actionHref ? (
     <Link href={actionHref}>
@@ -38,7 +39,9 @@ export const EmptyState = ({
   ) : null
 
   return (
-    <div className={`flex flex-col items-center justify-center min-h-[60vh] py-12 ${className || ''}`}>
+    <div
+      className={`flex flex-col items-center justify-center min-h-[60vh] py-12 ${className || ''}`}
+    >
       {/* Illustration */}
       <div className="mb-8 flex items-center justify-center">
         <img
@@ -49,9 +52,7 @@ export const EmptyState = ({
       </div>
 
       {/* Primary Message */}
-      <h2 className="text-24 font-semibold text-gray-900 mb-3">
-        {title}
-      </h2>
+      <h2 className="text-24 font-semibold text-gray-900 mb-3">{title}</h2>
 
       {/* Secondary Message */}
       <p className="text-16 text-gray-600 mb-8 text-center max-w-md">
@@ -63,4 +64,3 @@ export const EmptyState = ({
     </div>
   )
 }
-

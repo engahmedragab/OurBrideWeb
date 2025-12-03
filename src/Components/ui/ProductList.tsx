@@ -30,8 +30,7 @@ export const ProductList = ({
   return (
     <div className={cn('space-y-4', className)}>
       {products.map(product => {
-        const hasDiscount =
-          product.price.discounted < product.price.original
+        const hasDiscount = product.price.discounted < product.price.original
         const discountPercentage = hasDiscount
           ? Math.round(
               ((product.price.original - product.price.discounted) /
@@ -137,11 +136,13 @@ export const ProductList = ({
                   <div className="flex items-center gap-0.5">
                     {hasDiscount && (
                       <span className="text-10 font-normal text-gray-400 line-through">
-                        {product.price.original.toLocaleString()} {product.price.currency}
+                        {product.price.original.toLocaleString()}{' '}
+                        {product.price.currency}
                       </span>
                     )}
                     <span className="text-18 font-normal text-gray-900">
-                      {product.price.discounted.toLocaleString()} {product.price.currency}
+                      {product.price.discounted.toLocaleString()}{' '}
+                      {product.price.currency}
                     </span>
                     {hasDiscount && (
                       <Badge
@@ -181,4 +182,3 @@ export const ProductList = ({
     </div>
   )
 }
-

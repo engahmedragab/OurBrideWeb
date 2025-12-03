@@ -60,9 +60,7 @@ export const HeroCarousel = ({
     <div className={cn('relative w-full overflow-hidden', className)}>
       <div className="relative">
         {/* Carousel Slide */}
-        <div
-          className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] bg-gradient-to-br from-brand-100 to-brand-200"
-        >
+        <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] bg-gradient-to-br from-brand-100 to-brand-200">
           {/* Navigation Arrows */}
           {slides.length > 1 && (
             <>
@@ -106,7 +104,7 @@ export const HeroCarousel = ({
                 </p>
 
                 {/* CTA Button */}
-                <div className="pt-2">  
+                <div className="pt-2">
                   <Link href={currentSlide.ctaLink}>
                     <Button
                       variant="default"
@@ -165,4 +163,3 @@ export const HeroCarousel = ({
     </div>
   )
 }
-

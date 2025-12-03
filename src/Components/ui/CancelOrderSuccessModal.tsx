@@ -45,8 +45,8 @@ export const CancelOrderSuccessModal = ({
 
         {/* Description */}
         <p className="mb-6 text-center text-16 text-gray-600">
-          Your order has been canceled. You can continue browsing and place a new
-          order anytime
+          Your order has been canceled. You can continue browsing and place a
+          new order anytime
         </p>
 
         {/* Action Buttons */}
@@ -79,4 +79,3 @@ export const CancelOrderSuccessModal = ({
     </Modal>
   )
 }
-

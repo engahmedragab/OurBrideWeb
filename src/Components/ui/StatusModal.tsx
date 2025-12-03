@@ -78,7 +78,11 @@ export const StatusModal = ({
           {/* Success check icon */}
           <div className="flex items-center justify-center mb-4">
             <img
-              src={typeof successCheckSvg === 'string' ? successCheckSvg : successCheckSvg.src}
+              src={
+                typeof successCheckSvg === 'string'
+                  ? successCheckSvg
+                  : successCheckSvg.src
+              }
               alt="Success"
               className="h-16 w-16"
             />
@@ -110,4 +114,3 @@ export const StatusModal = ({
     </div>
   )
 }
-

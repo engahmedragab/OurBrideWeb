@@ -2,23 +2,21 @@ import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
 
-const seenIndicatorVariants = cva(
-  'flex items-center gap-1',
-  {
-    variants: {
-      status: {
-        sent: 'text-gray-500',
-        read: 'text-gray-500',
-      },
+const seenIndicatorVariants = cva('flex items-center gap-1', {
+  variants: {
+    status: {
+      sent: 'text-gray-500',
+      read: 'text-gray-500',
     },
-    defaultVariants: {
-      status: 'sent',
-    },
-  }
-)
+  },
+  defaultVariants: {
+    status: 'sent',
+  },
+})
 
-export interface SeenIndicatorProps
-  extends VariantProps<typeof seenIndicatorVariants> {
+export interface SeenIndicatorProps extends VariantProps<
+  typeof seenIndicatorVariants
+> {
   seen?: boolean
   className?: string
 }
@@ -40,4 +38,3 @@ export const SeenIndicator = ({
     </div>
   )
 }
-

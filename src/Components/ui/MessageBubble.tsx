@@ -3,23 +3,21 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { SeenIndicator } from './SeenIndicator'
 import { AudioMessage } from './AudioMessage'
 
-const messageBubbleVariants = cva(
-  'flex flex-col gap-1 rounded-3xl p-3',
-  {
-    variants: {
-      sender: {
-        user: 'bg-brand-500 text-white items-end',
-        support: 'bg-white border border-gray-100 text-gray-500 items-start',
-      },
+const messageBubbleVariants = cva('flex flex-col gap-1 rounded-3xl p-3', {
+  variants: {
+    sender: {
+      user: 'bg-brand-500 text-white items-end',
+      support: 'bg-white border border-gray-100 text-gray-500 items-start',
     },
-    defaultVariants: {
-      sender: 'user',
-    },
-  }
-)
+  },
+  defaultVariants: {
+    sender: 'user',
+  },
+})
 
-export interface MessageBubbleProps
-  extends VariantProps<typeof messageBubbleVariants> {
+export interface MessageBubbleProps extends VariantProps<
+  typeof messageBubbleVariants
+> {
   message: string
   timestamp?: string
   seen?: boolean
@@ -57,7 +55,7 @@ export const MessageBubble = ({
         />
       ) : (
         <div className={cn(messageBubbleVariants({ sender }))}>
-          <p className="text-16 font-normal leading-6 whitespace-pre-wrap">
+          <p className="text-12 sm:text-14 md:text-16 font-normal leading-4 sm:leading-5 md:leading-6 whitespace-pre-wrap">
             {message}
           </p>
         </div>
@@ -69,7 +67,7 @@ export const MessageBubble = ({
         )}
       >
         {timestamp && (
-          <span className="text-12 font-normal leading-4 text-gray-500">
+          <span className="text-10 sm:text-11 md:text-12 font-normal leading-3 sm:leading-3.5 md:leading-4 text-gray-500">
             {timestamp}
           </span>
         )}
@@ -80,4 +78,3 @@ export const MessageBubble = ({
     </div>
   )
 }
-

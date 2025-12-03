@@ -2,7 +2,10 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { OrderProgressIndicator, type OrderStatus } from './OrderProgressIndicator'
+import {
+  OrderProgressIndicator,
+  type OrderStatus,
+} from './OrderProgressIndicator'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from './Button'
 import { StatusBadge } from './StatusBadge'
@@ -50,7 +53,11 @@ export const OrderCard = ({
   const isCompleted = status === 'delivered' || status === 'cancelled'
   const isInProgress = !isCompleted
 
-  const getStatusBadgeType = (): 'completed' | 'delivered' | 'cancelled' | 'inProgress' => {
+  const getStatusBadgeType = ():
+    | 'completed'
+    | 'delivered'
+    | 'cancelled'
+    | 'inProgress' => {
     if (status === 'delivered') return 'delivered'
     if (status === 'cancelled') return 'cancelled'
     return 'inProgress'
@@ -72,7 +79,11 @@ export const OrderCard = ({
             <button
               onClick={() => setIsSummaryOpen(!isSummaryOpen)}
               className="text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label={isSummaryOpen ? 'Collapse order summary' : 'Expand order summary'}
+              aria-label={
+                isSummaryOpen
+                  ? 'Collapse order summary'
+                  : 'Expand order summary'
+              }
             >
               {isSummaryOpen ? (
                 <ChevronDown className="h-4 w-4" />
@@ -129,57 +140,58 @@ export const OrderCard = ({
                 Order Summary
               </h4>
 
-          {/* Products List */}
-          <div className="space-y-3 mb-4">
-            {products.map(product => (
-              <div
-                key={product.id}
-                className="flex items-center gap-3 bg-white rounded-lg p-3 border border-gray-200"
-              >
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className="w-16 h-16 rounded-md object-cover flex-shrink-0"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-14 font-medium text-gray-900 truncate">
-                    {product.title}
-                  </p>
-                  <p className="text-14 text-gray-600">
-                    {product.price.toLocaleString()} EGP Qua {product.quantity}
-                  </p>
+              {/* Products List */}
+              <div className="space-y-3 mb-4">
+                {products.map(product => (
+                  <div
+                    key={product.id}
+                    className="flex items-center gap-3 bg-white rounded-lg p-3 border border-gray-200"
+                  >
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      className="w-16 h-16 rounded-md object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-14 font-medium text-gray-900 truncate">
+                        {product.title}
+                      </p>
+                      <p className="text-14 text-gray-600">
+                        {product.price.toLocaleString()} EGP Qua{' '}
+                        {product.quantity}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="space-y-2 pt-4 border-t border-gray-200">
+                <div className="flex justify-between text-14 text-gray-700">
+                  <span>Subtotal:</span>
+                  <span className="font-semibold text-gray-900">
+                    {subtotal.toLocaleString()} EGP
+                  </span>
+                </div>
+                {taxesAndFees > 0 && (
+                  <div className="flex justify-between text-14 text-gray-700">
+                    <span>Taxes & Fees:</span>
+                    <span className="font-semibold text-gray-900">
+                      {taxesAndFees.toLocaleString()} EGP
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between text-14 text-gray-700">
+                  <span>Delivery Fee:</span>
+                  <span className="font-semibold text-gray-900">
+                    {deliveryFee.toLocaleString()} EGP
+                  </span>
+                </div>
+                <div className="flex justify-between text-16 font-semibold text-gray-900 pt-2 border-t border-gray-200">
+                  <span>Total:</span>
+                  <span>{total.toLocaleString()} EGP</span>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Price Breakdown */}
-          <div className="space-y-2 pt-4 border-t border-gray-200">
-            <div className="flex justify-between text-14 text-gray-700">
-              <span>Subtotal:</span>
-              <span className="font-semibold text-gray-900">
-                {subtotal.toLocaleString()} EGP
-              </span>
-            </div>
-            {taxesAndFees > 0 && (
-              <div className="flex justify-between text-14 text-gray-700">
-                <span>Taxes & Fees:</span>
-                <span className="font-semibold text-gray-900">
-                  {taxesAndFees.toLocaleString()} EGP
-                </span>
-              </div>
-            )}
-            <div className="flex justify-between text-14 text-gray-700">
-              <span>Delivery Fee:</span>
-              <span className="font-semibold text-gray-900">
-                {deliveryFee.toLocaleString()} EGP
-              </span>
-            </div>
-            <div className="flex justify-between text-16 font-semibold text-gray-900 pt-2 border-t border-gray-200">
-              <span>Total:</span>
-              <span>{total.toLocaleString()} EGP</span>
-            </div>
-          </div>
 
               {/* Cancel Order Button for In Progress Orders */}
               {isInProgress && onCancelOrder && (
@@ -197,4 +209,3 @@ export const OrderCard = ({
     </div>
   )
 }
-

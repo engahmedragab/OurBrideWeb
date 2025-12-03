@@ -27,7 +27,8 @@ const textareaVariants = cva(
 )
 
 export interface TextareaProps
-  extends TextareaHTMLAttributes<HTMLTextAreaElement>,
+  extends
+    TextareaHTMLAttributes<HTMLTextAreaElement>,
     VariantProps<typeof textareaVariants> {
   errorMessage?: string
 }
@@ -36,16 +37,7 @@ export interface TextareaProps
  * Textarea component with variant support
  */
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      errorMessage,
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, variant, size, errorMessage, ...props }, ref) => {
     return (
       <div className="w-full">
         <textarea
@@ -74,4 +66,3 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 Textarea.displayName = 'Textarea'
 
 export { Textarea, textareaVariants }
-

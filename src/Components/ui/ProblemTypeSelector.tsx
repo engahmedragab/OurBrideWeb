@@ -32,7 +32,7 @@ export const ProblemTypeSelector = ({
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      {problemTypes.map((type) => {
+      {problemTypes.map(type => {
         const isSelected = selectedType === type
         return (
           <button
@@ -40,7 +40,7 @@ export const ProblemTypeSelector = ({
             type="button"
             onClick={() => onSelect(type)}
             className={cn(
-              'flex items-center gap-2 rounded-lg border bg-white px-5 py-3 text-left transition-colors',
+              'flex items-center gap-2 rounded-lg border bg-white px-5 py-3 text-left transition-colors  text-14',
               isSelected
                 ? 'border-brand-500'
                 : 'border-gray-200 hover:border-gray-300'
@@ -51,7 +51,7 @@ export const ProblemTypeSelector = ({
             )}
             <span
               className={cn(
-                'text-16 font-medium leading-6',
+                'text-14 leading-6',
                 isSelected ? 'text-brand-500' : 'text-gray-500'
               )}
             >
@@ -63,4 +63,3 @@ export const ProblemTypeSelector = ({
     </div>
   )
 }
-

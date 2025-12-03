@@ -15,12 +15,7 @@ export interface ModalIconProps {
  */
 export const DeleteIcon = ({ className, iconClassName }: ModalIconProps) => {
   return (
-    <div
-      className={cn(
-        'relative size-[120px]',
-        className
-      )}
-    >
+    <div className={cn('relative size-[120px]', className)}>
       <div
         className="absolute inset-[4.19%_4.15%_4.18%_4.16%]"
         data-name="Group"
@@ -43,7 +38,9 @@ export const DeleteIcon = ({ className, iconClassName }: ModalIconProps) => {
         {/* Red X icon - using SVG file */}
         <div className="absolute left-[29.30px] top-[29.27px]">
           <img
-            src={typeof deleteXIcon === 'string' ? deleteXIcon : deleteXIcon.src}
+            src={
+              typeof deleteXIcon === 'string' ? deleteXIcon : deleteXIcon.src
+            }
             alt="Delete icon"
             width={52}
             height={52}
@@ -62,12 +59,7 @@ export const DeleteIcon = ({ className, iconClassName }: ModalIconProps) => {
  */
 export const LogoutIcon = ({ className, iconClassName }: ModalIconProps) => {
   return (
-    <div
-      className={cn(
-        'relative size-[120px]',
-        className
-      )}
-    >
+    <div className={cn('relative size-[120px]', className)}>
       {/* Squircle background - exact color from Figma: rgba(255, 216, 216, 1) */}
       <div className="absolute h-[115.737px] left-[0.71px] top-[2.13px] w-[89.537px]">
         <svg

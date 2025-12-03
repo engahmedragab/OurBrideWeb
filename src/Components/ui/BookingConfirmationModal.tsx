@@ -44,7 +44,11 @@ export const BookingConfirmationModal = ({
         {/* Illustration */}
         <div className="flex justify-center mb-6">
           <img
-            src={typeof bookingConfirmationSvg === 'string' ? bookingConfirmationSvg : bookingConfirmationSvg.src}
+            src={
+              typeof bookingConfirmationSvg === 'string'
+                ? bookingConfirmationSvg
+                : bookingConfirmationSvg.src
+            }
             alt="Booking Confirmation"
             className="w-full max-w-[281px] h-auto"
           />
@@ -56,7 +60,8 @@ export const BookingConfirmationModal = ({
             Your Request Has Been Sent!
           </p>
           <p className="text-14 md:text-16 text-gray-600 leading-relaxed">
-            Your service request has been successfully submitted. The provider has been notified and you will receive an update once they respond.
+            Your service request has been successfully submitted. The provider
+            has been notified and you will receive an update once they respond.
           </p>
         </div>
 
@@ -79,4 +84,3 @@ export const BookingConfirmationModal = ({
     </Modal>
   )
 }
-

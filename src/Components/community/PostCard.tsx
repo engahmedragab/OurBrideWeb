@@ -93,9 +93,7 @@ export const PostCard = ({
             className="w-10 h-10 rounded-full object-cover"
           />
           <div>
-            <h4 className="text-16 font-normal text-gray-900">
-              {author.name}
-            </h4>
+            <h4 className="text-16 font-normal text-gray-900">{author.name}</h4>
             <p className="text-12 text-gray-500">{timestamp}</p>
           </div>
         </div>
@@ -164,14 +162,10 @@ export const PostCard = ({
             onClick={handleLikeClick}
             className={cn(
               'flex items-center gap-2 text-14 transition-colors',
-              isLiked
-                ? 'text-brand-500'
-                : 'text-gray-600 hover:text-brand-500'
+              isLiked ? 'text-brand-500' : 'text-gray-600 hover:text-brand-500'
             )}
           >
-            <Heart
-              className={cn('h-5 w-5', isLiked && 'fill-brand-500')}
-            />
+            <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
             <span>{likes} Likes</span>
           </button>
           <button
@@ -193,4 +187,3 @@ export const PostCard = ({
     </div>
   )
 }
-

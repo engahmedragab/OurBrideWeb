@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { UserPageLayout } from '@/Components/layout/UserPageLayout'
+import { UserPageLayout } from '@/components/layout/UserPageLayout'
 import { ChevronLeft } from 'lucide-react'
 
 /**
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
             className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Go back"
           >
-           <ChevronLeft className="h-6 w-6 text-gray-600" />
+            <ChevronLeft className="h-6 w-6 text-gray-600" />
           </button>
           <h1 className="text-20 font-normal text-gray-900">Privacy Policy</h1>
         </div>
@@ -78,8 +78,10 @@ export default function PrivacyPage() {
             {sections.map((section, index) => (
               <div key={index} className="flex flex-col gap-2">
                 {/* Section Title */}
-                <h2 className="text-16 font-medium text-gray-900">{section.title}</h2>
-                
+                <h2 className="text-16 font-medium text-gray-900">
+                  {section.title}
+                </h2>
+
                 {/* Section Content */}
                 {Array.isArray(section.content) ? (
                   <div className="text-14 font-normal text-gray-600">
@@ -102,4 +104,3 @@ export default function PrivacyPage() {
     </UserPageLayout>
   )
 }
-

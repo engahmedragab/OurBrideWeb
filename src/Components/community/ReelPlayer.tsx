@@ -2,7 +2,14 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
-import { ChevronUp, ChevronDown, Play, Pause, Volume2, VolumeX } from 'lucide-react'
+import {
+  ChevronUp,
+  ChevronDown,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+} from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
 export interface ReelPlayerProps {
@@ -14,15 +21,18 @@ export interface ReelPlayerProps {
 const mockReels = [
   {
     id: '1',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    videoUrl:
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
   },
   {
     id: '2',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+    videoUrl:
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
   },
   {
     id: '3',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    videoUrl:
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
   },
 ]
 
@@ -152,4 +162,3 @@ export const ReelPlayer = ({
     </div>
   )
 }
-

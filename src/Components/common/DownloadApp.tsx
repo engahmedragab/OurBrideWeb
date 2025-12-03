@@ -16,8 +16,9 @@ const downloadAppVariants = cva('py-2 px-2', {
   },
 })
 
-export interface DownloadAppProps
-  extends VariantProps<typeof downloadAppVariants> {
+export interface DownloadAppProps extends VariantProps<
+  typeof downloadAppVariants
+> {
   className?: string
 }
 
@@ -27,10 +28,7 @@ export interface DownloadAppProps
  * @param className - Additional CSS classes
  * @returns {JSX.Element} Download app component
  */
-export default function DownloadApp({
-  variant,
-  className,
-}: DownloadAppProps) {
+export default function DownloadApp({ variant, className }: DownloadAppProps) {
   return (
     <div className={cn(downloadAppVariants({ variant }), className)}>
       {/* Title */}
@@ -59,7 +57,11 @@ export default function DownloadApp({
           type="button"
         >
           <img
-            src={typeof AppleIcon === 'string' ? AppleIcon : AppleIcon.src || AppleIcon}
+            src={
+              typeof AppleIcon === 'string'
+                ? AppleIcon
+                : AppleIcon.src || AppleIcon
+            }
             alt=""
             className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0"
             aria-hidden="true"
@@ -87,7 +89,11 @@ export default function DownloadApp({
           type="button"
         >
           <img
-            src={typeof PlaystoreIcon === 'string' ? PlaystoreIcon : PlaystoreIcon.src || PlaystoreIcon}
+            src={
+              typeof PlaystoreIcon === 'string'
+                ? PlaystoreIcon
+                : PlaystoreIcon.src || PlaystoreIcon
+            }
             alt=""
             className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0"
             aria-hidden="true"

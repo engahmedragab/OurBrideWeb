@@ -36,7 +36,9 @@ export const OrderSummarySidebar = ({
         className
       )}
     >
-      <h2 className="text-20 font-semibold text-gray-900 mb-6">Order Summary</h2>
+      <h2 className="text-20 font-semibold text-gray-900 mb-6">
+        Order Summary
+      </h2>
 
       {/* Products List */}
       <div className="space-y-3 mb-6">
@@ -102,4 +104,3 @@ export const OrderSummarySidebar = ({
     </aside>
   )
 }
-

@@ -77,17 +77,18 @@ function CommunityContent() {
 
 export default function CommunityPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-gray-500">Loading...</div>
-        </main>
-        <Footer />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex flex-col bg-gray-50">
+          <Header />
+          <main className="flex-1 flex items-center justify-center">
+            <div className="text-gray-500">Loading...</div>
+          </main>
+          <Footer />
+        </div>
+      }
+    >
       <CommunityContent />
     </Suspense>
   )
 }
-

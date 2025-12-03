@@ -26,10 +26,7 @@ export const ProductSort = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className={`gap-2 ${className || ''}`}
-        >
+        <Button variant="outline" className={`gap-2 ${className || ''}`}>
           <ArrowUpDown className="h-4 w-4" />
           <span className="text-14">
             Sort: {currentOption?.label || 'Default'}
@@ -50,4 +47,3 @@ export const ProductSort = ({
     </DropdownMenu>
   )
 }
-

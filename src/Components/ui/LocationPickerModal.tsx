@@ -29,12 +29,12 @@ export const LocationPickerModal = ({
       name: 'Giza',
       address: '1st District, First of October, Giza Governorate, October City',
     },
-    
   ]
 
-  const filteredLocations = locations.filter(location =>
-    location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    location.address.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredLocations = locations.filter(
+    location =>
+      location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      location.address.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const handleSelectLocation = (location: string) => {
@@ -85,7 +85,9 @@ export const LocationPickerModal = ({
 
         {/* Search Results */}
         <div className="space-y-4">
-          <h3 className="text-14 font-semibold text-gray-900">Search Results</h3>
+          <h3 className="text-14 font-semibold text-gray-900">
+            Search Results
+          </h3>
           <div className="space-y-3">
             {displayLocations.length > 0 ? (
               displayLocations.map(location => (
@@ -95,8 +97,12 @@ export const LocationPickerModal = ({
                   onClick={() => handleSelectLocation(location.name)}
                   className="w-full text-left p-0 hover:opacity-80 transition-opacity"
                 >
-                  <p className="text-16 font-regular text-gray-900">{location.name},</p>
-                  <p className="text-12 text-gray-500 mt-0.5">{location.address}</p>
+                  <p className="text-16 font-regular text-gray-900">
+                    {location.name},
+                  </p>
+                  <p className="text-12 text-gray-500 mt-0.5">
+                    {location.address}
+                  </p>
                 </button>
               ))
             ) : (
@@ -110,4 +116,3 @@ export const LocationPickerModal = ({
     </Modal>
   )
 }
-

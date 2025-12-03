@@ -8,6 +8,7 @@ import { QuickReplySuggestions } from './QuickReplySuggestions'
 import { ChatInputArea, type QuickReplyChip } from './ChatInputArea'
 import { SeenIndicator } from './SeenIndicator'
 import { Button } from './Button'
+import chatAvatarImage from '@/Assets/images/ourBride_chat_avatar.png'
 
 export interface ChatMessage {
   id: string
@@ -51,6 +52,13 @@ export const ChatModal = ({
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
 
+  // Use default avatar if not provided
+  const defaultAvatar =
+    typeof chatAvatarImage === 'object' && 'src' in chatAvatarImage
+      ? chatAvatarImage.src
+      : String(chatAvatarImage)
+  const avatarSrc = supportAvatar || defaultAvatar
+
   useEffect(() => {
     if (isOpen && messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
@@ -84,64 +92,58 @@ export const ChatModal = ({
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center p-4',
+        'fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 p-2 sm:p-3 bg-black/60 backdrop-blur-[5px]',
         className
       )}
+      onClick={onClose}
     >
-      {/* Overlay */}
+      {/* Header - Separate Container */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-[5px]"
-        onClick={onClose}
-      />
-
-      {/* Modal Container */}
-      <div
-        className="relative w-full max-w-[848px] bg-white rounded-3xl shadow-[0px_0px_15px_0px_rgba(0,0,0,0.1)] flex flex-col max-h-[90vh]"
-        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-xl sm:rounded-2xl shadow-[0px_0px_15px_0px_rgba(0,0,0,0.1)] w-[90%] lg:w-[70%] flex items-center justify-between p-3 sm:p-4 md:p-6 flex-shrink-0"
+        onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <div className="flex items-center gap-2">
-            {supportAvatar && (
-              <img
-                src={supportAvatar}
-                alt={supportName}
-                className="h-[60px] w-[60px] rounded-full object-cover"
-              />
-            )}
-            <div className="flex flex-col gap-1">
-              <h3 className="text-20 font-medium leading-6 text-gray-900">
-                {supportName}
-              </h3>
-              <p className="text-14 font-normal leading-4 text-gray-500">
-                {supportSubtitle}
-              </p>
-            </div>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <img
+            src={avatarSrc}
+            alt={supportName}
+            className="h-8 w-8 sm:h-10 sm:w-10 md:h-[60px] md:w-[60px] rounded-full object-cover flex-shrink-0"
+          />
+          <div className="flex flex-col gap-0.5 sm:gap-1 min-w-0">
+            <h3 className="text-14 sm:text-16 md:text-20 font-medium leading-5 sm:leading-6 text-gray-900 truncate">
+              {supportName}
+            </h3>
+            <p className="text-12 sm:text-13 md:text-14 font-normal leading-4 text-gray-500 truncate">
+              {supportSubtitle}
+            </p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="h-8 w-8 rounded-full"
-          >
-            <X className="h-5 w-5 text-gray-500" />
-          </Button>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+          className="h-6 w-6 sm:h-7 sm:w-7 rounded-full flex-shrink-0"
+        >
+          <X className="h-4 w-4 text-gray-500" />
+        </Button>
+      </div>
 
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-9">
-          {messageHistory.map((msg) => (
+      {/* Messages Container - Separate with Scroll */}
+      <div
+        className="bg-white rounded-xl sm:rounded-2xl shadow-[0px_0px_15px_0px_rgba(0,0,0,0.1)] w-[90%] lg:w-[70%] flex flex-col h-[60vh] sm:h-[65vh] max-h-[500px] sm:max-h-[600px]"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Messages Area - Scrollable */}
+        <div className="flex-1 overflow-y-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 space-y-3 sm:space-y-4 md:space-y-6 min-h-0">
+          {messageHistory.map(msg => (
             <div key={msg.id}>
               {msg.sender === 'support' && (
-                <div className="flex gap-2 items-end mb-2">
-                  {supportAvatar && (
-                    <img
-                      src={supportAvatar}
-                      alt="Support"
-                      className="h-8 w-8 rounded-full object-cover flex-shrink-0"
-                    />
-                  )}
-                  <div className="flex-1 max-w-[476px]">
+                <div className="flex gap-1.5 items-end mb-1">
+                  <img
+                    src={avatarSrc}
+                    alt="Support"
+                    className="h-5 w-5 sm:h-6 sm:w-6 rounded-full object-cover flex-shrink-0"
+                  />
+                  <div className="flex-1 max-w-[80%] sm:max-w-[350px] md:max-w-[400px]">
                     <MessageBubble
                       message={msg.message}
                       timestamp={msg.timestamp}
@@ -173,7 +175,7 @@ export const ChatModal = ({
               )}
               {msg.sender === 'user' && (
                 <div className="flex justify-end">
-                  <div className="max-w-[476px]">
+                  <div className="max-w-[80%] sm:max-w-[350px] md:max-w-[400px]">
                     <MessageBubble
                       message={msg.message}
                       timestamp={msg.timestamp}
@@ -190,8 +192,8 @@ export const ChatModal = ({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Area */}
-        <div className="p-6 border-t border-gray-100">
+        {/* Input Area - Fixed */}
+        <div className="p-2 sm:p-3 md:p-4 lg:p-6 border-t border-gray-100 flex-shrink-0">
           <ChatInputArea
             value={inputValue}
             onChange={setInputValue}
@@ -205,4 +207,3 @@ export const ChatModal = ({
     </div>
   )
 }
-

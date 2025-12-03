@@ -14,15 +14,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui'
-import {
-  EmptyState,
-  HistorySection,
-  SectionHeader,
-} from '@/components/ui'
+import { EmptyState, HistorySection, SectionHeader } from '@/components/ui'
 import { UserPageLayout } from '@/components/layout'
 import type { OrderStatus } from '@/components/ui/OrderProgressIndicator'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
-import type { OrderItem, OrderFormData } from '@/components/ui/OrderCheckoutModal'
+import type {
+  OrderItem,
+  OrderFormData,
+} from '@/components/ui/OrderCheckoutModal'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import { ChevronDown } from 'lucide-react'
 
@@ -38,14 +37,16 @@ const mockOrdersInProgress = [
       {
         id: '1',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+        image:
+          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
         price: 350,
         quantity: 1,
       },
       {
         id: '2',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
+        image:
+          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
         price: 350,
         quantity: 1,
       },
@@ -65,14 +66,16 @@ const mockOrdersInProgress = [
       {
         id: '1',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+        image:
+          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
         price: 350,
         quantity: 1,
       },
       {
         id: '2',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
+        image:
+          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
         price: 350,
         quantity: 1,
       },
@@ -92,14 +95,16 @@ const mockOrdersInProgress = [
       {
         id: '1',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+        image:
+          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
         price: 350,
         quantity: 1,
       },
       {
         id: '2',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
+        image:
+          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
         price: 350,
         quantity: 1,
       },
@@ -122,14 +127,16 @@ const mockOrdersHistory = [
       {
         id: '1',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+        image:
+          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
         price: 350,
         quantity: 1,
       },
       {
         id: '2',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
+        image:
+          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
         price: 350,
         quantity: 1,
       },
@@ -149,14 +156,16 @@ const mockOrdersHistory = [
       {
         id: '1',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+        image:
+          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
         price: 350,
         quantity: 1,
       },
       {
         id: '2',
         title: 'Product Title',
-        image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
+        image:
+          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
         price: 350,
         quantity: 1,
       },
@@ -177,7 +186,8 @@ const mockRequestsInProgress = [
     service: {
       id: '1',
       title: 'Service Title',
-      image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+      image:
+        'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
       rating: {
         value: 4.5,
         count: 24,
@@ -206,7 +216,8 @@ const mockRequestsInProgress = [
     service: {
       id: '2',
       title: 'Service Title',
-      image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
+      image:
+        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
       rating: {
         value: 4.5,
         count: 24,
@@ -235,7 +246,8 @@ const mockRequestsInProgress = [
     service: {
       id: '3',
       title: 'Service Title',
-      image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+      image:
+        'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
       rating: {
         value: 4.5,
         count: 24,
@@ -268,7 +280,8 @@ const mockRequestsHistory = [
     service: {
       id: '4',
       title: 'Service Title',
-      image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+      image:
+        'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
       rating: {
         value: 4.5,
         count: 24,
@@ -297,7 +310,8 @@ const mockRequestsHistory = [
     service: {
       id: '5',
       title: 'Service Title',
-      image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
+      image:
+        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
       rating: {
         value: 4.5,
         count: 24,
@@ -326,9 +340,14 @@ export default function OrdersPage() {
   const [successModalOpen, setSuccessModalOpen] = useState(false)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false)
-  const [orderConfirmationModalOpen, setOrderConfirmationModalOpen] = useState(false)
-  const [selectedRequestForCheckout, setSelectedRequestForCheckout] = useState<typeof mockRequestsInProgress[0] | null>(null)
-  const [filterType, setFilterType] = useState<'services' | 'products'>('services')
+  const [orderConfirmationModalOpen, setOrderConfirmationModalOpen] =
+    useState(false)
+  const [selectedRequestForCheckout, setSelectedRequestForCheckout] = useState<
+    (typeof mockRequestsInProgress)[0] | null
+  >(null)
+  const [filterType, setFilterType] = useState<'services' | 'products'>(
+    'services'
+  )
 
   const handleCancelOrder = (orderId: string) => {
     setSelectedOrderId(orderId)
@@ -383,7 +402,9 @@ export default function OrdersPage() {
     }
   }
 
-  const convertRequestToOrderItems = (request: typeof mockRequestsInProgress[0]): OrderItem[] => {
+  const convertRequestToOrderItems = (
+    request: (typeof mockRequestsInProgress)[0]
+  ): OrderItem[] => {
     // Convert service request to order items format for checkout modal
     const items: OrderItem[] = [
       {
@@ -426,185 +447,196 @@ export default function OrdersPage() {
     setSelectedRequestForCheckout(null)
   }
 
-  const hasOrders = mockOrdersInProgress.length > 0 || mockOrdersHistory.length > 0
+  const hasOrders =
+    mockOrdersInProgress.length > 0 || mockOrdersHistory.length > 0
   const hasRequests = mockRequestsInProgress.length > 0
   const hasRequestsHistory = mockRequestsHistory.length > 0
   const hasAnyContent = hasOrders || hasRequests || hasRequestsHistory
 
   return (
     <>
-    <UserPageLayout>
-      {!hasAnyContent ? (
-        <EmptyState
-          illustration={orderEmptySvg}
-          title="You don't have any orders"
-          description="Start exploring services and products to begin your journey"
-          actionLabel="Start Shopping"
-          actionHref="/"
-        />
-      ) : (
-              <>
-                {/* Header */}
-                {/* Page Header */}
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h1 className="text-32 font-semibold text-gray-900">
-                      Order List
-                    </h1>
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    {hasRequests && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="gap-2 px-4 py-2 text-14 font-medium text-gray-900 bg-white border border-gray-300 hover:bg-gray-50"
-                          >
-                            {filterType === 'services' ? 'Services' : 'Products'}
-                            <ChevronDown className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40">
-                          <DropdownMenuItem
-                            onClick={() => setFilterType('services')}
-                            className={filterType === 'services' ? 'bg-brand-50' : ''}
-                          >
-                            Services
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => setFilterType('products')}
-                            className={filterType === 'products' ? 'bg-brand-50' : ''}
-                          >
-                            Products
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
-                </div>
-
-                {/* Service Requests Section */}
+      <UserPageLayout>
+        {!hasAnyContent ? (
+          <EmptyState
+            illustration={orderEmptySvg}
+            title="You don't have any orders"
+            description="Start exploring services and products to begin your journey"
+            actionLabel="Start Shopping"
+            actionHref="/"
+          />
+        ) : (
+          <>
+            {/* Header */}
+            {/* Page Header */}
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h1 className="text-32 font-semibold text-gray-900">
+                  Order List
+                </h1>
+              </div>
+              <div className="flex flex-col items-end gap-2">
                 {hasRequests && (
-                  <>
-                    <SectionHeader
-                      title="Request in Progress"
-                      count={mockRequestsInProgress.length}
-                      suffix="Requests in Progress"
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="gap-2 px-4 py-2 text-14 font-medium text-gray-900 bg-white border border-gray-300 hover:bg-gray-50"
+                      >
+                        {filterType === 'services' ? 'Services' : 'Products'}
+                        <ChevronDown className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40">
+                      <DropdownMenuItem
+                        onClick={() => setFilterType('services')}
+                        className={
+                          filterType === 'services' ? 'bg-brand-50' : ''
+                        }
+                      >
+                        Services
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setFilterType('products')}
+                        className={
+                          filterType === 'products' ? 'bg-brand-50' : ''
+                        }
+                      >
+                        Products
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
+            </div>
+
+            {/* Service Requests Section */}
+            {hasRequests && (
+              <>
+                <SectionHeader
+                  title="Request in Progress"
+                  count={mockRequestsInProgress.length}
+                  suffix="Requests in Progress"
+                />
+                <div className="space-y-6 mb-12">
+                  {mockRequestsInProgress.map(request => (
+                    <RequestCard
+                      key={request.requestId}
+                      requestId={request.requestId}
+                      requestDate={request.requestDate}
+                      status={request.status}
+                      service={request.service}
+                      assignedTo={request.assignedTo}
+                      dueDate={request.dueDate}
+                      dueTime={request.dueTime}
+                      packages={request.packages}
+                      subtotal={request.subtotal}
+                      taxesAndFees={request.taxesAndFees}
+                      total={request.total}
+                      onCancelRequest={() =>
+                        handleCancelRequest(request.requestId)
+                      }
+                      onCheckout={
+                        request.status === 'confirmed'
+                          ? () => handleCheckout(request.requestId)
+                          : undefined
+                      }
                     />
-                    <div className="space-y-6 mb-12">
-                    {mockRequestsInProgress.map(request => (
-                      <RequestCard
-                        key={request.requestId}
-                        requestId={request.requestId}
-                        requestDate={request.requestDate}
-                        status={request.status}
-                        service={request.service}
-                        assignedTo={request.assignedTo}
-                        dueDate={request.dueDate}
-                        dueTime={request.dueTime}
-                        packages={request.packages}
-                        subtotal={request.subtotal}
-                        taxesAndFees={request.taxesAndFees}
-                        total={request.total}
-                        onCancelRequest={() => handleCancelRequest(request.requestId)}
-                        onCheckout={request.status === 'confirmed' ? () => handleCheckout(request.requestId) : undefined}
-                      />
-                    ))}
-                    </div>
-                  </>
-                )}
-
-                {/* Product Orders Section */}
-                {mockOrdersInProgress.length > 0 && (
-                  <>
-                    <SectionHeader
-                      title="Order In Progress"
-                      count={mockOrdersInProgress.length}
-                      suffix="Orders In Progress"
-                    />
-
-                    {/* Order Cards */}
-                    <div className="space-y-6">
-                      {mockOrdersInProgress.map(order => (
-                        <OrderCard
-                          key={order.orderId}
-                          orderId={order.orderId}
-                          orderDate={order.orderDate}
-                          status={order.status}
-                          products={order.products}
-                          subtotal={order.subtotal}
-                          taxesAndFees={order.taxesAndFees}
-                          deliveryFee={order.deliveryFee}
-                          total={order.total}
-                          arrivalDate={order.arrivalDate}
-                          arrivalTime={order.arrivalTime}
-                          onCancelOrder={() => handleCancelOrder(order.orderId)}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                {/* Requests History Section */}
-                {hasRequestsHistory && (
-                  <HistorySection
-                    title="Requests History"
-                    itemCount={mockRequestsHistory.length}
-                    suffix="Requests"
-                    onClearHistory={handleClearHistory}
-                  >
-                    {mockRequestsHistory.map(request => (
-                      <RequestCard
-                        key={request.requestId}
-                        requestId={request.requestId}
-                        requestDate={request.requestDate}
-                        status={request.status}
-                        service={request.service}
-                        assignedTo={request.assignedTo}
-                        dueDate={request.dueDate}
-                        dueTime={request.dueTime}
-                        packages={request.packages}
-                        subtotal={request.subtotal}
-                        taxesAndFees={request.taxesAndFees}
-                        total={request.total}
-                        onReRequest={() => {
-                          console.log('Re-Request:', request.requestId)
-                          // Handle re-request logic
-                        }}
-                      />
-                    ))}
-                  </HistorySection>
-                )}
-
-                {/* Orders History Section */}
-                {mockOrdersHistory.length > 0 && (
-                  <HistorySection
-                    title="Orders History"
-                    itemCount={mockOrdersHistory.length}
-                    suffix="Orders"
-                    onClearHistory={handleClearHistory}
-                  >
-                    {mockOrdersHistory.map(order => (
-                      <OrderCard
-                        key={order.orderId}
-                        orderId={order.orderId}
-                        orderDate={order.orderDate}
-                        status={order.status}
-                        products={order.products}
-                        subtotal={order.subtotal}
-                        taxesAndFees={order.taxesAndFees}
-                        deliveryFee={order.deliveryFee}
-                        total={order.total}
-                        arrivalDate={order.arrivalDate}
-                        arrivalTime={order.arrivalTime}
-                        onReorder={() => handleReorder(order.orderId)}
-                      />
-                    ))}
-                  </HistorySection>
-                )}
+                  ))}
+                </div>
               </>
             )}
-    </UserPageLayout>
+
+            {/* Product Orders Section */}
+            {mockOrdersInProgress.length > 0 && (
+              <>
+                <SectionHeader
+                  title="Order In Progress"
+                  count={mockOrdersInProgress.length}
+                  suffix="Orders In Progress"
+                />
+
+                {/* Order Cards */}
+                <div className="space-y-6">
+                  {mockOrdersInProgress.map(order => (
+                    <OrderCard
+                      key={order.orderId}
+                      orderId={order.orderId}
+                      orderDate={order.orderDate}
+                      status={order.status}
+                      products={order.products}
+                      subtotal={order.subtotal}
+                      taxesAndFees={order.taxesAndFees}
+                      deliveryFee={order.deliveryFee}
+                      total={order.total}
+                      arrivalDate={order.arrivalDate}
+                      arrivalTime={order.arrivalTime}
+                      onCancelOrder={() => handleCancelOrder(order.orderId)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Requests History Section */}
+            {hasRequestsHistory && (
+              <HistorySection
+                title="Requests History"
+                itemCount={mockRequestsHistory.length}
+                suffix="Requests"
+                onClearHistory={handleClearHistory}
+              >
+                {mockRequestsHistory.map(request => (
+                  <RequestCard
+                    key={request.requestId}
+                    requestId={request.requestId}
+                    requestDate={request.requestDate}
+                    status={request.status}
+                    service={request.service}
+                    assignedTo={request.assignedTo}
+                    dueDate={request.dueDate}
+                    dueTime={request.dueTime}
+                    packages={request.packages}
+                    subtotal={request.subtotal}
+                    taxesAndFees={request.taxesAndFees}
+                    total={request.total}
+                    onReRequest={() => {
+                      console.log('Re-Request:', request.requestId)
+                      // Handle re-request logic
+                    }}
+                  />
+                ))}
+              </HistorySection>
+            )}
+
+            {/* Orders History Section */}
+            {mockOrdersHistory.length > 0 && (
+              <HistorySection
+                title="Orders History"
+                itemCount={mockOrdersHistory.length}
+                suffix="Orders"
+                onClearHistory={handleClearHistory}
+              >
+                {mockOrdersHistory.map(order => (
+                  <OrderCard
+                    key={order.orderId}
+                    orderId={order.orderId}
+                    orderDate={order.orderDate}
+                    status={order.status}
+                    products={order.products}
+                    subtotal={order.subtotal}
+                    taxesAndFees={order.taxesAndFees}
+                    deliveryFee={order.deliveryFee}
+                    total={order.total}
+                    arrivalDate={order.arrivalDate}
+                    arrivalTime={order.arrivalTime}
+                    onReorder={() => handleReorder(order.orderId)}
+                  />
+                ))}
+              </HistorySection>
+            )}
+          </>
+        )}
+      </UserPageLayout>
 
       {/* Cancel Order Modals */}
       <CancelOrderModal
@@ -645,7 +677,6 @@ export default function OrdersPage() {
           // Stay on orders page - could refresh or navigate
         }}
       />
-  </>
+    </>
   )
 }
-

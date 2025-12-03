@@ -33,9 +33,7 @@ export const QuantitySelector = ({
   }
 
   const borderColor =
-    variant === 'coral'
-      ? 'border-2 border-[#FF8B7A]'
-      : 'border border-gray-300'
+    variant === 'coral' ? 'border-2 border-[#FF8B7A]' : 'border border-gray-300'
   const buttonColor =
     variant === 'coral'
       ? 'text-[#FF8B7A] hover:bg-[#FF8B7A]/10'
@@ -77,4 +75,3 @@ export const QuantitySelector = ({
     </div>
   )
 }
-

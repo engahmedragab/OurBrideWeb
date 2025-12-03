@@ -97,7 +97,12 @@ export const Pagination = ({
   }
 
   return (
-    <div className={cn('flex items-center justify-center gap-2 relative z-10 pointer-events-auto', className)}>
+    <div
+      className={cn(
+        'flex items-center justify-center gap-2 relative z-10 pointer-events-auto',
+        className
+      )}
+    >
       {/* Previous Button */}
       <Button
         variant="default"
@@ -141,7 +146,7 @@ export const Pagination = ({
                   ? 'border-brand-500 hover:border-brand-600'
                   : 'border-gray-300 hover:border-gray-400'
               )}
-              onClick={(e) => handlePageClick(pageNumber, e)}
+              onClick={e => handlePageClick(pageNumber, e)}
               aria-label={`Go to page ${pageNumber}`}
               aria-current={isActive ? 'page' : undefined}
               type="button"
@@ -167,4 +172,3 @@ export const Pagination = ({
     </div>
   )
 }
-

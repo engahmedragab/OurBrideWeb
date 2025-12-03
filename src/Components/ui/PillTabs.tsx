@@ -24,8 +24,7 @@ export interface PillTabItem {
   href?: string
 }
 
-export interface PillTabsProps
-  extends VariantProps<typeof pillTabsVariants> {
+export interface PillTabsProps extends VariantProps<typeof pillTabsVariants> {
   items: PillTabItem[]
   activeValue: string
   onChange?: (value: string) => void
@@ -69,7 +68,7 @@ export const PillTabs = forwardRef<HTMLDivElement, PillTabsProps>(
         )}
         {...props}
       >
-        {items.map((item) => {
+        {items.map(item => {
           const isActive = activeValue === item.value
 
           const tabContent = renderItem ? (
@@ -83,8 +82,11 @@ export const PillTabs = forwardRef<HTMLDivElement, PillTabsProps>(
               <Link
                 key={item.value}
                 href={item.href}
-                onClick={(e) => handleClick(item, e)}
-                className={cn(pillTabsVariants({ active: isActive }), className)}
+                onClick={e => handleClick(item, e)}
+                className={cn(
+                  pillTabsVariants({ active: isActive }),
+                  className
+                )}
               >
                 {tabContent}
               </Link>
@@ -95,7 +97,7 @@ export const PillTabs = forwardRef<HTMLDivElement, PillTabsProps>(
             <button
               key={item.value}
               type="button"
-              onClick={(e) => handleClick(item, e)}
+              onClick={e => handleClick(item, e)}
               className={cn(pillTabsVariants({ active: isActive }), className)}
             >
               {tabContent}
@@ -109,4 +111,3 @@ export const PillTabs = forwardRef<HTMLDivElement, PillTabsProps>(
 PillTabs.displayName = 'PillTabs'
 
 export { pillTabsVariants }
-

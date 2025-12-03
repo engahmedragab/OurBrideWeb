@@ -40,7 +40,7 @@ export const ReportProblemForm = ({
     >
       {/* Header */}
       <div className="flex w-full flex-col gap-4">
-        <h2 className="text-20 font-normal leading-8 text-gray-900">
+        <h2 className="text-16 lg:text-20 font-normal leading-8 text-gray-900">
           Report A Problem
         </h2>
       </div>
@@ -70,11 +70,11 @@ export const ReportProblemForm = ({
         <Textarea
           placeholder="Please describe the problem in detail..."
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={e => setDescription(e.target.value)}
           variant="default"
           size="lg"
           rows={6}
-          className="min-h-[151px] rounded-xl"
+          className="min-h-[151px] rounded-xl placeholder:text-14 placeholder:text-gray-500 font-normal"
         />
       </div>
 
@@ -90,4 +90,3 @@ export const ReportProblemForm = ({
     </form>
   )
 }
-

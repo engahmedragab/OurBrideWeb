@@ -133,25 +133,27 @@ export const ServiceCard = ({
           )}
         </div>
 
-         {/* Rating and Pricing Row */}
-         <div className="flex items-center justify-between">
-           <div className="flex items-center gap-1">
-             <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
-             <span className="text-14 font-normal text-gray-900">
-               {service.rating.value}
-             </span>
-           </div>
-           <div className="flex items-baseline gap-0.5">
-             {hasDiscount && (
-               <span className="text-10 font-normal text-gray-400 line-through">
-                 {service.price.original.toLocaleString()} {service.price.currency}
-               </span>
-             )}
-             <span className="text-16 font-normal text-gray-900">
-               {service.price.discounted.toLocaleString()} {service.price.currency}
-             </span>
-           </div>
-         </div>
+        {/* Rating and Pricing Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
+            <span className="text-14 font-normal text-gray-900">
+              {service.rating.value}
+            </span>
+          </div>
+          <div className="flex items-baseline gap-0.5">
+            {hasDiscount && (
+              <span className="text-10 font-normal text-gray-400 line-through">
+                {service.price.original.toLocaleString()}{' '}
+                {service.price.currency}
+              </span>
+            )}
+            <span className="text-16 font-normal text-gray-900">
+              {service.price.discounted.toLocaleString()}{' '}
+              {service.price.currency}
+            </span>
+          </div>
+        </div>
 
         {/* Action Button */}
         <div className="pt-1">
@@ -186,4 +188,3 @@ export const ServiceCard = ({
     </div>
   )
 }
-

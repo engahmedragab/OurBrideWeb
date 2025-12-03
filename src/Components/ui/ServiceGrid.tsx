@@ -31,9 +31,7 @@ export const ServiceGrid = ({
   }
 
   return (
-    <div
-      className={`grid ${gridCols[columns]} gap-6 ${className || ''}`}
-    >
+    <div className={`grid ${gridCols[columns]} gap-6 ${className || ''}`}>
       {services.map(service => (
         <ServiceCard
           key={service.id}
@@ -45,4 +43,3 @@ export const ServiceGrid = ({
     </div>
   )
 }
-

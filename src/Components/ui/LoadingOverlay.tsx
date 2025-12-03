@@ -46,13 +46,16 @@ export const LoadingOverlay = ({
 
         {/* Loading Text */}
         <div className="mt-4 sm:mt-5 flex flex-col items-center">
-          <p className="text-base sm:text-lg font-semibold text-gray-900">{title}</p>
+          <p className="text-base sm:text-lg font-semibold text-gray-900">
+            {title}
+          </p>
           {subtitle && (
-            <p className="mt-2 text-sm sm:text-base text-gray-500">{subtitle}</p>
+            <p className="mt-2 text-sm sm:text-base text-gray-500">
+              {subtitle}
+            </p>
           )}
         </div>
       </div>
     </div>
   )
 }
-

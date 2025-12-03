@@ -33,13 +33,19 @@ const PriceRangeSlider = ({
   }, [minValue, maxValue])
 
   const getPercentage = (value: number) => ((value - min) / (max - min)) * 100
-  
-  const getValueFromPosition = useCallback((clientX: number) => {
-    if (!sliderRef.current) return min
-    const rect = sliderRef.current.getBoundingClientRect()
-    const percentage = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100))
-    return Math.round(min + (percentage / 100) * (max - min))
-  }, [min, max])
+
+  const getValueFromPosition = useCallback(
+    (clientX: number) => {
+      if (!sliderRef.current) return min
+      const rect = sliderRef.current.getBoundingClientRect()
+      const percentage = Math.max(
+        0,
+        Math.min(100, ((clientX - rect.left) / rect.width) * 100)
+      )
+      return Math.round(min + (percentage / 100) * (max - min))
+    },
+    [min, max]
+  )
 
   const handleStart = (type: 'min' | 'max', clientX: number) => {
     setIsDragging(type)
@@ -55,20 +61,23 @@ const PriceRangeSlider = ({
     }
   }
 
-  const handleMove = useCallback((clientX: number) => {
-    if (!isDragging) return
-    const value = getValueFromPosition(clientX)
+  const handleMove = useCallback(
+    (clientX: number) => {
+      if (!isDragging) return
+      const value = getValueFromPosition(clientX)
 
-    if (isDragging === 'min') {
-      const newMin = Math.max(min, Math.min(value, localMax - 1))
-      setLocalMin(newMin)
-      onChange(newMin, localMax)
-    } else {
-      const newMax = Math.min(max, Math.max(value, localMin + 1))
-      setLocalMax(newMax)
-      onChange(localMin, newMax)
-    }
-  }, [isDragging, localMin, localMax, min, max, onChange, getValueFromPosition])
+      if (isDragging === 'min') {
+        const newMin = Math.max(min, Math.min(value, localMax - 1))
+        setLocalMin(newMin)
+        onChange(newMin, localMax)
+      } else {
+        const newMax = Math.min(max, Math.max(value, localMin + 1))
+        setLocalMax(newMax)
+        onChange(localMin, newMax)
+      }
+    },
+    [isDragging, localMin, localMax, min, max, onChange, getValueFromPosition]
+  )
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => handleMove(e.clientX)
@@ -82,7 +91,9 @@ const PriceRangeSlider = ({
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
-      document.addEventListener('touchmove', handleTouchMove, { passive: false })
+      document.addEventListener('touchmove', handleTouchMove, {
+        passive: false,
+      })
       document.addEventListener('touchend', handleTouchEnd)
     }
 
@@ -103,7 +114,7 @@ const PriceRangeSlider = ({
       <div
         ref={sliderRef}
         className="relative h-2 bg-[#E5E5E5] rounded-full cursor-pointer group"
-        onMouseDown={(e) => {
+        onMouseDown={e => {
           const value = getValueFromPosition(e.clientX)
           const minDist = Math.abs(value - localMin)
           const maxDist = Math.abs(value - localMax)
@@ -113,7 +124,7 @@ const PriceRangeSlider = ({
             handleStart('max', e.clientX)
           }
         }}
-        onTouchStart={(e) => {
+        onTouchStart={e => {
           if (e.touches[0]) {
             const value = getValueFromPosition(e.touches[0].clientX)
             const minDist = Math.abs(value - localMin)
@@ -142,11 +153,11 @@ const PriceRangeSlider = ({
             hoveredHandle === 'min' && 'scale-110'
           )}
           style={{ left: `${minPercentage}%` }}
-          onMouseDown={(e) => {
+          onMouseDown={e => {
             e.stopPropagation()
             handleStart('min', e.clientX)
           }}
-          onTouchStart={(e) => {
+          onTouchStart={e => {
             e.stopPropagation()
             if (e.touches[0]) handleStart('min', e.touches[0].clientX)
           }}
@@ -168,11 +179,11 @@ const PriceRangeSlider = ({
             hoveredHandle === 'max' && 'scale-110'
           )}
           style={{ left: `${maxPercentage}%` }}
-          onMouseDown={(e) => {
+          onMouseDown={e => {
             e.stopPropagation()
             handleStart('max', e.clientX)
           }}
-          onTouchStart={(e) => {
+          onTouchStart={e => {
             e.stopPropagation()
             if (e.touches[0]) handleStart('max', e.touches[0].clientX)
           }}
@@ -282,7 +293,6 @@ export const ProductFilters = ({
       >
         {/* Header */}
 
-
         {/* Categories */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -308,7 +318,7 @@ export const ProductFilters = ({
               <div key={category.id} className="flex items-center gap-2">
                 <Checkbox
                   checked={filters.category?.includes(category.id) || false}
-                  onChange={(checked) => {
+                  onChange={checked => {
                     if (checked) {
                       const currentCategories = filters.category || []
                       const newCategories = [...currentCategories, category.id]
@@ -318,16 +328,23 @@ export const ProductFilters = ({
                       })
                     } else {
                       const currentCategories = filters.category || []
-                      const newCategories = currentCategories.filter(id => id !== category.id)
+                      const newCategories = currentCategories.filter(
+                        id => id !== category.id
+                      )
                       onFiltersChange({
                         ...filters,
-                        category: newCategories.length > 0 ? newCategories : undefined,
+                        category:
+                          newCategories.length > 0 ? newCategories : undefined,
                       })
                     }
                   }}
-                  variant={filters.category?.includes(category.id) ? 'brandFilled' : 'brand'}
+                  variant={
+                    filters.category?.includes(category.id)
+                      ? 'brandFilled'
+                      : 'brand'
+                  }
                 />
-                <label 
+                <label
                   className="text-14 text-gray-700 cursor-pointer flex-1"
                   onClick={() => handleCategoryToggle(category.id)}
                 >
@@ -364,13 +381,11 @@ export const ProductFilters = ({
 
         {/* Stock Status */}
         <div className="space-y-3">
-          <h4 className="text-14 font-semibold text-gray-900">
-            Availability
-          </h4>
+          <h4 className="text-14 font-semibold text-gray-900">Availability</h4>
           <div className="flex items-center gap-2">
             <Checkbox
               checked={filters.inStock === true}
-              onChange={(checked) => {
+              onChange={checked => {
                 onFiltersChange({
                   ...filters,
                   inStock: checked ? true : undefined,
@@ -378,7 +393,7 @@ export const ProductFilters = ({
               }}
               variant={filters.inStock === true ? 'brandFilled' : 'brand'}
             />
-            <label 
+            <label
               className="text-14 text-gray-700 cursor-pointer"
               onClick={() => {
                 onFiltersChange({
@@ -432,4 +447,3 @@ export const ProductFilters = ({
     </div>
   )
 }
-
