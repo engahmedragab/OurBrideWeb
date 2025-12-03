@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import footerLogo from '@/assets/Footer-Logo.svg'
+import footerLogo from '@/assets/svg/Footer-Logo.svg'
 import { Facebook, Instagram, Music2, Twitter } from 'lucide-react'
 import { StoreBadges } from '@/components/ui/StoreBadges'
 
