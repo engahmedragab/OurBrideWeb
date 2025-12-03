@@ -96,7 +96,7 @@ export default function SettingsPage() {
         <div className="max-w-4xl">
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="text-32 font-semibold text-gray-900">Settings</h1>
+            <h1 className="text-2xl font-normal text-gray-900">Settings</h1>
           </div>
 
           {/* App Preferences Section */}
