@@ -41,7 +41,7 @@ const AccordionItem = ({
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between px-4 py-3 text-left"
       >
-        <span className="text-16 font-semibold text-gray-900">{question}</span>
+        <span className="text-16  text-gray-900">{question}</span>
         <ChevronDown
           className={cn(
             'h-5 w-5 text-gray-500 transition-transform',
@@ -51,7 +51,7 @@ const AccordionItem = ({
       </button>
       {isOpen && (
         <div className="border-t border-gray-200 px-4 py-3">
-          <p className="text-14 text-gray-600">{answer}</p>
+          <p className="text-14 text-gray-500">{answer}</p>
         </div>
       )}
     </div>

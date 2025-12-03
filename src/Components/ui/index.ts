@@ -234,3 +234,36 @@ export type { ServiceSelectCardProps } from './ServiceSelectCard'
 
 export { LocationPickerModal } from './LocationPickerModal'
 export type { LocationPickerModalProps } from './LocationPickerModal'
+
+export { Textarea, textareaVariants } from './Textarea'
+export type { TextareaProps } from './Textarea'
+
+export { ProblemTypeSelector } from './ProblemTypeSelector'
+export type { ProblemTypeSelectorProps, ProblemType } from './ProblemTypeSelector'
+
+export { ReportProblemForm } from './ReportProblemForm'
+export type { ReportProblemFormProps } from './ReportProblemForm'
+
+export { LiveChatSection } from './LiveChatSection'
+export type { LiveChatSectionProps } from './LiveChatSection'
+
+export { SeenIndicator } from './SeenIndicator'
+export type { SeenIndicatorProps } from './SeenIndicator'
+
+export { MessageBubble } from './MessageBubble'
+export type { MessageBubbleProps } from './MessageBubble'
+
+export { QuickReplySuggestions } from './QuickReplySuggestions'
+export type { QuickReplySuggestionsProps } from './QuickReplySuggestions'
+
+export { ChatInputArea } from './ChatInputArea'
+export type { ChatInputAreaProps, QuickReplyChip } from './ChatInputArea'
+
+export { ChatModal } from './ChatModal'
+export type { ChatModalProps, ChatMessage } from './ChatModal'
+
+export { VoiceRecorderInput } from './VoiceRecorderInput'
+export type { VoiceRecorderInputProps } from './VoiceRecorderInput'
+
+export { AudioMessage } from './AudioMessage'
+export type { AudioMessageProps } from './AudioMessage'
