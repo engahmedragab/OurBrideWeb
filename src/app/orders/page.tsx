@@ -454,11 +454,11 @@ export default function OrdersPage() {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     {hasRequests && (
-                      <DropdownMenu>
+                      <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                           <Button
-                            variant="outline"
-                            className="gap-2 px-4 py-2 text-14 font-medium text-gray-900 bg-white border border-gray-300 hover:bg-gray-50"
+                            variant="brand"
+                            className="gap-2 px-4 py-2 text-14 font-medium text-white"
                           >
                             {filterType === 'services' ? 'Services' : 'Products'}
                             <ChevronDown className="h-4 w-4" />

@@ -49,7 +49,7 @@ export const ProductCard = ({
             <div className="absolute top-3 left-3 z-10">
               <Badge
                 variant="default"
-                className="bg-red-500 !text-white border-0 px-2 py-1 text-12 font-semibold rounded"
+                className="bg-brand-100 text-brand-500 border-0 px-2 py-1 text-12 font-normal rounded"
               >
                 -{discountPercentage}%
               </Badge>
@@ -61,12 +61,12 @@ export const ProductCard = ({
             <div
               className={cn(
                 'absolute top-3 z-10',
-                hasDiscount ? 'left-[76px]' : 'left-3'
+                hasDiscount ? 'left-[66px]' : 'left-3'
               )}
             >
               <Badge
                 variant="default"
-                className="bg-brand-500 !text-white border-0 px-3 py-1 text-12 font-normal rounded-full"
+                className="bg-brand-100 text-brand-500 border-0 px-3 py-1 text-12 font-normal rounded-full"
               >
                 Top Offers
               </Badge>

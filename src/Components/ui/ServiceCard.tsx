@@ -52,7 +52,7 @@ export const ServiceCard = ({
             <div className="absolute top-3 left-3 z-10">
               <Badge
                 variant="default"
-                className="bg-red-500 !text-white border-0 px-2 py-1 text-12 font-semibold rounded-full"
+                className="bg-brand-100 text-brand-500 border-0 px-2 py-1 text-12 font-normal rounded-full"
               >
                 {discountPercentage}% OFF
               </Badge>
@@ -69,7 +69,7 @@ export const ServiceCard = ({
             >
               <Badge
                 variant="default"
-                className="bg-red-500 !text-white border-0 px-3 py-1 text-12 font-normal rounded"
+                className="bg-brand-100 text-brand-500 border-0 px-3 py-1 text-12 font-normal rounded"
               >
                 Top Offers
               </Badge>
@@ -133,25 +133,27 @@ export const ServiceCard = ({
           )}
         </div>
 
-         {/* Rating and Pricing Row */}
-         <div className="flex items-center justify-between">
-           <div className="flex items-center gap-1">
-             <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
-             <span className="text-14 font-normal text-gray-900">
-               {service.rating.value}
-             </span>
-           </div>
-           <div className="flex items-baseline gap-0.5">
-             {hasDiscount && (
-               <span className="text-10 font-normal text-gray-400 line-through">
-                 {service.price.original.toLocaleString()} {service.price.currency}
-               </span>
-             )}
-             <span className="text-16 font-normal text-gray-900">
-               {service.price.discounted.toLocaleString()} {service.price.currency}
-             </span>
-           </div>
-         </div>
+        {/* Rating and Pricing Row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
+            <span className="text-14 font-normal text-gray-900">
+              {service.rating.value}
+            </span>
+          </div>
+          <div className="flex items-baseline gap-0.5">
+            {hasDiscount && (
+              <span className="text-10 font-normal text-gray-400 line-through">
+                {service.price.original.toLocaleString()}{' '}
+                {service.price.currency}
+              </span>
+            )}
+            <span className="text-16 font-normal text-gray-900">
+              {service.price.discounted.toLocaleString()}{' '}
+              {service.price.currency}
+            </span>
+          </div>
+        </div>
 
         {/* Action Button */}
         <div className="pt-1">
@@ -186,4 +188,3 @@ export const ServiceCard = ({
     </div>
   )
 }
-

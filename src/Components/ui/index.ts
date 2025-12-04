@@ -140,6 +140,12 @@ export type { QuantitySelectorProps } from './QuantitySelector'
 export { OrderSummaryCard } from './OrderSummaryCard'
 export type { OrderSummaryCardProps } from './OrderSummaryCard'
 
+export { CartItem } from './CartItem'
+export type { CartItemProps } from './CartItem'
+
+export { CartOrderSummary } from './CartOrderSummary'
+export type { CartOrderSummaryProps } from './CartOrderSummary'
+
 export { OfferBanner } from './OfferBanner'
 export type { OfferBannerProps } from './OfferBanner'
 
@@ -186,6 +192,12 @@ export type { CancelOrderModalProps } from './CancelOrderModal'
 
 export { CancelOrderSuccessModal } from './CancelOrderSuccessModal'
 export type { CancelOrderSuccessModalProps } from './CancelOrderSuccessModal'
+
+export { DeleteCartItemModal } from './DeleteCartItemModal'
+export type { DeleteCartItemModalProps } from './DeleteCartItemModal'
+
+export { CancelRequestModal } from './CancelRequestModal'
+export type { CancelRequestModalProps } from './CancelRequestModal'
 
 export { Pagination } from './Pagination'
 export type { PaginationProps } from './Pagination'
@@ -234,3 +246,6 @@ export type { ServiceSelectCardProps } from './ServiceSelectCard'
 
 export { LocationPickerModal } from './LocationPickerModal'
 export type { LocationPickerModalProps } from './LocationPickerModal'
+
+export { ReferralOnboardingModal } from './ReferralOnboardingModal'
+export type { ReferralOnboardingModalProps } from './ReferralOnboardingModal'
