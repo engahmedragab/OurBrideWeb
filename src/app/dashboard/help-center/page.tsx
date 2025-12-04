@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Header, UserPageLayout } from '@/components/layout'
-import { Footer } from '@/components/layout'
 import {
   Accordion,
   ReportProblemForm,
@@ -270,48 +268,46 @@ export default function HelpCenterPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
-      <UserPageLayout>
-        <div className=" mx-auto  py-8 ">
-          {/* Page Title */}
-          <div className="mb-6 lg:mb-8">
-            <h1 className="text-20 lg:text-24 font-normal leading-8 lg:leading-10 text-black">
-              Frequently Asked Questions ( FAQ )
-            </h1>
+    <>
+      <div className=" mx-auto  py-8 ">
+        {/* Page Title */}
+        <div className="mb-6 lg:mb-8">
+          <h1 className="text-20 lg:text-24 font-normal leading-8 lg:leading-10 text-black">
+            Frequently Asked Questions ( FAQ )
+          </h1>
+        </div>
+
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+          {/* Left Column - FAQ Accordion - 3/4 width */}
+          <div className="w-full space-y-4 lg:w-[60%] ">
+            {faqCategories.map((category, categoryIndex) => (
+              <div key={categoryIndex} className="flex flex-col gap-2">
+                <h2 className="text-16 lg:text-20 font-normal leading-8 lg:leading-10 text-black">
+                  {category.title}
+                </h2>
+                <Accordion
+                  items={category.items.map(item => ({
+                    question: item.question,
+                    answer: item.answer,
+                    defaultOpen: false,
+                    className: 'rounded-2xl',
+                  }))}
+                  className="space-y-2"
+                />
+              </div>
+            ))}
           </div>
 
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-            {/* Left Column - FAQ Accordion - 3/4 width */}
-            <div className="w-full space-y-4 lg:w-[60%] ">
-              {faqCategories.map((category, categoryIndex) => (
-                <div key={categoryIndex} className="flex flex-col gap-2">
-                  <h2 className="text-16 lg:text-20 font-normal leading-8 lg:leading-10 text-black">
-                    {category.title}
-                  </h2>
-                  <Accordion
-                    items={category.items.map(item => ({
-                      question: item.question,
-                      answer: item.answer,
-                      defaultOpen: false,
-                      className: 'rounded-2xl',
-                    }))}
-                    className="space-y-2"
-                  />
-                </div>
-              ))}
-            </div>
+          {/* Right Column - Report Problem & Live Chat - 1/4 width */}
+          <div className="flex w-full flex-col lg:mt-10 gap-4 lg:w-[40%] ">
+            {/* Report Problem Form */}
+            <ReportProblemForm onSubmit={handleReportSubmit} />
 
-            {/* Right Column - Report Problem & Live Chat - 1/4 width */}
-            <div className="flex w-full flex-col lg:mt-10 gap-4 lg:w-[40%] ">
-              {/* Report Problem Form */}
-              <ReportProblemForm onSubmit={handleReportSubmit} />
-
-              {/* Live Chat Section */}
-              <LiveChatSection onStartChat={handleStartChat} />
-            </div>
+            {/* Live Chat Section */}
+            <LiveChatSection onStartChat={handleStartChat} />
           </div>
         </div>
-      </UserPageLayout>
+      </div>
 
       {/* Success Modal */}
       <StatusModal
@@ -345,6 +341,7 @@ export default function HelpCenterPage() {
           { text: 'Thank you', onClick: () => handleSendMessage('Thank you') },
         ]}
       />
-    </div>
+    </>
   )
 }
+

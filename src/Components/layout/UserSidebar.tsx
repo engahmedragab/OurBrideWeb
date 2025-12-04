@@ -94,12 +94,12 @@ export const UserSidebar = ({
         },
         {
           label: 'Settings',
-          path: '/settings',
+          path: '/dashboard/settings',
           icon: Settings,
         },
         {
           label: 'Help Center',
-          path: '/help-center',
+          path: '/dashboard/help-center',
           icon: ThumbsUp,
         },
       ],
@@ -108,9 +108,13 @@ export const UserSidebar = ({
 
   const isActive = (path: string) => {
     if (!pathname) return false
-    // Special handling for Settings - should be active for /settings and all sub-pages
-    if (path === '/settings') {
-      return pathname === '/settings' || pathname.startsWith('/settings/')
+    // Special handling for Settings - should be active for /dashboard/settings and all sub-pages
+    if (path === '/dashboard/settings') {
+      return pathname === '/dashboard/settings' || pathname.startsWith('/dashboard/settings/')
+    }
+    // Special handling for Help Center
+    if (path === '/dashboard/help-center') {
+      return pathname === '/dashboard/help-center' || pathname.startsWith('/dashboard/help-center/')
     }
     return pathname === path
   }
