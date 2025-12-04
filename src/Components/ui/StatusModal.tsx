@@ -3,7 +3,7 @@
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
-import successCheckSvg from '@/Assets/svg/successCheck.svg'
+import successCheckSvg from '@/assets/svg/successCheck.svg'
 
 export interface StatusModalProps {
   open: boolean

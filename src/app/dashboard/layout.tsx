@@ -1,7 +1,7 @@
 'use client'
 
 import { ReactNode } from 'react'
-import { UserPageLayout } from '@/Components/layout'
+import { UserPageLayout } from '@/components/layout'
 
 export default function DashboardLayout({
   children,

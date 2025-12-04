@@ -24,7 +24,45 @@ export const VoiceRecorderInput = ({
   className,
 }: VoiceRecorderInputProps) => {
   const [waveformData, setWaveformData] = useState<number[]>([])
+  const [displayDuration, setDisplayDuration] = useState(0)
   const animationRef = useRef<number>()
+  const durationIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Update display duration from prop or increment during recording
+  useEffect(() => {
+    if (isRecording) {
+      // Start incrementing duration every second from the current duration prop
+      setDisplayDuration(duration)
+      // Clear any existing interval first
+      if (durationIntervalRef.current) {
+        clearInterval(durationIntervalRef.current)
+      }
+      durationIntervalRef.current = setInterval(() => {
+        setDisplayDuration(prev => prev + 1)
+      }, 1000)
+      return () => {
+        if (durationIntervalRef.current) {
+          clearInterval(durationIntervalRef.current)
+          durationIntervalRef.current = null
+        }
+      }
+    } else {
+      // Use the prop duration when not recording
+      setDisplayDuration(duration)
+      if (durationIntervalRef.current) {
+        clearInterval(durationIntervalRef.current)
+        durationIntervalRef.current = null
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRecording]) // Only depend on isRecording to avoid restarting interval on every duration change
+
+  // Sync displayDuration with duration prop when not recording
+  useEffect(() => {
+    if (!isRecording) {
+      setDisplayDuration(duration)
+    }
+  }, [duration, isRecording])
 
   // Generate waveform data (simulated for now, can be replaced with actual audio analysis)
   useEffect(() => {
@@ -98,13 +136,12 @@ export const VoiceRecorderInput = ({
 
         {/* Duration - Always visible */}
         <span 
-          key={`duration-${duration}`} 
           className={cn(
             "flex-shrink-0 text-12 sm:text-13 md:text-14 min-w-[45px] sm:min-w-[50px] text-right font-medium",
             isRecording ? "text-brand-500" : "text-gray-600"
           )}
         >
-          {formatDuration(duration)}
+          {formatDuration(displayDuration)}
         </span>
       </div>
 

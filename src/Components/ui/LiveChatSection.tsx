@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
-import supportImage from '@/Assets/images/support.png'
+import supportImage from '@/assets/images/support.png'
 
 export interface LiveChatSectionProps {
   onStartChat?: () => void

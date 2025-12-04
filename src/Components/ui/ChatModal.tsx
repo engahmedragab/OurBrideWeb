@@ -8,7 +8,7 @@ import { QuickReplySuggestions } from './QuickReplySuggestions'
 import { ChatInputArea, type QuickReplyChip } from './ChatInputArea'
 import { SeenIndicator } from './SeenIndicator'
 import { Button } from './Button'
-import chatAvatarImage from '@/Assets/images/ourBride_chat_avatar.png'
+import chatAvatarImage from '@/assets/images/ourBride_chat_avatar.png'
 
 export interface ChatMessage {
   id: string
@@ -129,7 +129,7 @@ export const ChatModal = ({
 
       {/* Messages Container - Separate with Scroll */}
       <div
-        className="bg-white rounded-xl sm:rounded-2xl shadow-[0px_0px_15px_0px_rgba(0,0,0,0.1)] w-[90%] lg:w-[70%] flex flex-col h-[60vh] sm:h-[65vh] max-h-[500px] sm:max-h-[600px]"
+        className="bg-white rounded-xl sm:rounded-2xl shadow-[0px_0px_15px_0px_rgba(0,0,0,0.1)] w-[90%] lg:w-[70%] flex flex-col h-[80vh] lg:h-[70vh] max-h-[500px] sm:max-h-[500px]"
         onClick={e => e.stopPropagation()}
       >
         {/* Messages Area - Scrollable */}

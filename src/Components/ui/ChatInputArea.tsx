@@ -119,8 +119,7 @@ export const ChatInputArea = ({
 
       mediaRecorder.start()
       setIsRecording(true)
-      setRecordingDuration(0)
-
+      
       // Start duration timer - update every second
       setRecordingDuration(0) // Reset to 0 first
       durationIntervalRef.current = setInterval(() => {

@@ -7,7 +7,7 @@ import { OTPInput } from '../OTPInput'
 import { Button } from '../Button'
 import { Typography } from '../Typography'
 import { ChevronLeft, Check } from 'lucide-react'
-import forgetIcon from '@/Assets/images/forgetIcon.png'
+import forgetIcon from '@/assets/images/forgetIcon.png'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 

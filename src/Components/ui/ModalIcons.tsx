@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import deleteXIcon from '@/Assets/svg/deleteXIcon.svg'
+import deleteXIcon from '@/assets/svg/deleteXIcon.svg'
 
 export interface ModalIconProps {
   className?: string

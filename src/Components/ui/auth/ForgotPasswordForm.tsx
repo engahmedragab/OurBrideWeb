@@ -11,7 +11,7 @@ import { PasswordStrength } from '../PasswordStrength'
 import { Typography } from '../Typography'
 import { StatusModal } from '../StatusModal'
 import { ChevronLeft, Phone } from 'lucide-react'
-import forgetIcon from '@/Assets/images/forgetIcon.png'
+import forgetIcon from '@/assets/images/forgetIcon.png'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 

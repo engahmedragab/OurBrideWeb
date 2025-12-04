@@ -10,7 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/Components/ui'
+} from '@/components/ui'
 import { ChevronRight, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 

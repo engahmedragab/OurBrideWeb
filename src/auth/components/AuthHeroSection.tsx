@@ -4,7 +4,7 @@ import { Typography } from '@/components/ui/Typography'
 import { ChevronLeft } from 'lucide-react'
 import AuthHeroCard from './AuthHeroCard'
 import { DownloadApp } from '@/components/common'
-import authHeroImage from '@/Assets/images/authHero.jpg'
+import authHeroImage from '@/assets/images/authHero.jpg'
 
 /**
  * AuthHeroSection component for authentication pages
