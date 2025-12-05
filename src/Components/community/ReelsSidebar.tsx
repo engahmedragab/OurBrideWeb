@@ -16,7 +16,8 @@ const mockPost = {
   id: '1',
   author: {
     name: 'Aya Mohamed',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
   content:
     'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque.',
@@ -31,7 +32,8 @@ const mockComments = [
     id: '1',
     author: {
       name: 'Aya Mohamed',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
     },
     content:
       'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque.',
@@ -41,7 +43,8 @@ const mockComments = [
     id: '2',
     author: {
       name: 'Aya Mohamed',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
     },
     content:
       'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque.',
@@ -51,7 +54,8 @@ const mockComments = [
     id: '3',
     author: {
       name: 'Aya Mohamed',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
     },
     content:
       'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque.',
@@ -73,7 +77,8 @@ export const ReelsSidebar = ({ className }: ReelsSidebarProps) => {
       id: Date.now().toString(),
       author: {
         name: 'Aya Mohamed',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+        avatar:
+          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       },
       content: commentText,
       timestamp: new Date().toLocaleString('en-GB', {
@@ -148,9 +153,7 @@ export const ReelsSidebar = ({ className }: ReelsSidebarProps) => {
                   : 'text-gray-600 hover:text-brand-500'
               )}
             >
-              <Heart
-                className={cn('h-5 w-5', isLiked && 'fill-brand-500')}
-              />
+              <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
               <span>{likes} Likes</span>
             </button>
             <button className="flex items-center gap-2 text-14 text-gray-600 hover:text-brand-500 transition-colors">
@@ -218,4 +221,3 @@ export const ReelsSidebar = ({ className }: ReelsSidebarProps) => {
     </aside>
   )
 }
-

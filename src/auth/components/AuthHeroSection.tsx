@@ -30,7 +30,6 @@ export default function AuthHeroSection() {
       <Link
         href="/"
         className="absolute -top-1 left-0 z-30 rounded-br-3xl px-4 py-3 md:py-4 bg-white text-14 sm:text-16 font-semibold text-gray-900 hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2 shadow-md"
-       
       >
         <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
         <span>Back To home</span>
@@ -43,12 +42,17 @@ export default function AuthHeroSection() {
 
       {/* Text Section - Bottom Left (overlaid on pink structure) */}
       <div className="absolute bottom-1/2 translate-y-full  md:bottom-1/4 md:translate-y-0 lg:left-4 left-6 z-30 max-w-[20rem] sm:max-w-[23.75rem]">
-        <Typography variant="h1" className="!text-white font-bold text-20 sm:text-24 mb-2 sm:mb-3 drop-shadow-lg">
+        <Typography
+          variant="h1"
+          className="!text-white font-bold text-20 sm:text-24 mb-2 sm:mb-3 drop-shadow-lg"
+        >
           Organize your Wedding
         </Typography>
         <Typography className="!text-white text-12 sm:text-14 opacity-90 drop-shadow-md leading-relaxed">
-          Lorem ipsum dolor sit amet consectetur. Volutpat tincidunt nullam lacus
-          enim mus consectetur. Posuere eget aliquam nunc faucibus amet. Laoreet egestas dapibus commodo tellus id lacus nisl egestas consectetur. Id quam convallis nunc mi sem.
+          Lorem ipsum dolor sit amet consectetur. Volutpat tincidunt nullam
+          lacus enim mus consectetur. Posuere eget aliquam nunc faucibus amet.
+          Laoreet egestas dapibus commodo tellus id lacus nisl egestas
+          consectetur. Id quam convallis nunc mi sem.
         </Typography>
       </div>
 

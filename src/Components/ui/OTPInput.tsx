@@ -20,7 +20,8 @@ const otpInputVariants = cva(
           'border-red-500 bg-red-100 text-red-500 focus-visible:border-red-500',
         success:
           'border-green-500 bg-green-100 text-green-500 focus-visible:border-green-500',
-        focused: 'border-brand-500 bg-white text-gray-900 focus-visible:border-brand-500',
+        focused:
+          'border-brand-500 bg-white text-gray-900 focus-visible:border-brand-500',
         fill: 'border-gray-300 bg-white text-gray-900 focus-visible:border-brand-500',
       },
     },
@@ -95,7 +96,7 @@ const OTPInput = forwardRef<HTMLDivElement, OTPInputProps>(
     const getVariantForInput = (index: number) => {
       const hasValue = value[index] && value[index].length > 0
       const isFocused = focusedIndex === index
-      
+
       if (variant === 'error') return 'error'
       if (variant === 'success') return 'success'
       if (isFocused) return 'focused'
@@ -111,7 +112,9 @@ const OTPInput = forwardRef<HTMLDivElement, OTPInputProps>(
             return (
               <input
                 key={index}
-                ref={el => { inputRefs.current[index] = el }}
+                ref={el => {
+                  inputRefs.current[index] = el
+                }}
                 type="text"
                 inputMode="numeric"
                 maxLength={1}

@@ -2,9 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  WelcomeHeader,
-} from '@/components/ui/auth/index'
+import { WelcomeHeader } from '@/components/ui/auth/index'
 import { ForgotPasswordForm } from '@/components/ui/auth/ForgotPasswordForm'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 
@@ -22,7 +20,7 @@ export default function ForgotPasswordPage() {
   const handleConfirmClick = () => {
     // Show loading modal first
     setShowLoading(true)
-    
+
     // Simulate API call
     setTimeout(() => {
       // Hide loading and show success modal
@@ -56,4 +54,3 @@ export default function ForgotPasswordPage() {
     </>
   )
 }
-

@@ -11,7 +11,7 @@ import { PasswordStrength } from '../PasswordStrength'
 import { Typography } from '../Typography'
 import { StatusModal } from '../StatusModal'
 import { ChevronLeft, Phone } from 'lucide-react'
-import forgetIcon from '@/Assets/images/forgetIcon.png'
+import forgetIcon from '@/assets/images/forgetIcon.png'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 
@@ -75,15 +75,19 @@ export const ForgotPasswordForm = ({
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false)
 
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [internalShowSuccessModal, setInternalShowSuccessModal] = useState(false)
-  
+  const [internalShowSuccessModal, setInternalShowSuccessModal] =
+    useState(false)
+
   // Use external modal state if provided, otherwise use internal state
-  const showSuccessModal = externalShowSuccessModal !== undefined 
-    ? externalShowSuccessModal 
-    : internalShowSuccessModal
+  const showSuccessModal =
+    externalShowSuccessModal !== undefined
+      ? externalShowSuccessModal
+      : internalShowSuccessModal
 
   // Validation helpers
-  const validatePhone = (value: string): { isValid: boolean; message: string } => {
+  const validatePhone = (
+    value: string
+  ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
       return { isValid: false, message: 'Mobile number is required' }
     }
@@ -95,7 +99,9 @@ export const ForgotPasswordForm = ({
     return { isValid: true, message: '' }
   }
 
-  const validateOTP = (value: string[]): { isValid: boolean; message: string } => {
+  const validateOTP = (
+    value: string[]
+  ): { isValid: boolean; message: string } => {
     const otpString = value.join('')
     if (otpString.length !== 4) {
       return { isValid: false, message: 'Please enter the 4-digit OTP' }
@@ -106,12 +112,17 @@ export const ForgotPasswordForm = ({
     return { isValid: true, message: '' }
   }
 
-  const validatePassword = (value: string): { isValid: boolean; message: string } => {
+  const validatePassword = (
+    value: string
+  ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
       return { isValid: false, message: 'Password is required' }
     }
     if (value.length < 8) {
-      return { isValid: false, message: 'Password must be at least 8 characters' }
+      return {
+        isValid: false,
+        message: 'Password must be at least 8 characters',
+      }
     }
     return { isValid: true, message: '' }
   }
@@ -243,7 +254,9 @@ export const ForgotPasswordForm = ({
     }
   }
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const value = e.target.value
     setConfirmPassword(value)
 
@@ -353,13 +366,17 @@ export const ForgotPasswordForm = ({
         router.push('/auth/login')
       }
     } else {
-      setStep((prev) => (prev - 1) as Step)
+      setStep(prev => (prev - 1) as Step)
       setIsSubmitted(false)
     }
   }
 
   // Map field status to Input/PasswordInput variants
-  const getInputVariant = (status: FieldStatus, value: string, isFocused: boolean): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
+  const getInputVariant = (
+    status: FieldStatus,
+    value: string,
+    isFocused: boolean
+  ): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
     if (status === 'error') return 'error'
     if (status === 'success') return 'success'
     if (isFocused) return 'focused'
@@ -369,9 +386,22 @@ export const ForgotPasswordForm = ({
 
   // Get input variants
   const phoneInputVariant = getInputVariant(phoneStatus, phone, phoneFocused)
-  const otpInputVariant = otpStatus === 'error' ? 'error' : otpStatus === 'success' ? 'success' : 'default'
-  const passwordInputVariant = getInputVariant(passwordStatus, password, passwordFocused)
-  const confirmPasswordInputVariant = getInputVariant(confirmPasswordStatus, confirmPassword, confirmPasswordFocused)
+  const otpInputVariant =
+    otpStatus === 'error'
+      ? 'error'
+      : otpStatus === 'success'
+        ? 'success'
+        : 'default'
+  const passwordInputVariant = getInputVariant(
+    passwordStatus,
+    password,
+    passwordFocused
+  )
+  const confirmPasswordInputVariant = getInputVariant(
+    confirmPasswordStatus,
+    confirmPassword,
+    confirmPasswordFocused
+  )
 
   return (
     <div className={cn('w-full space-y-2.5 sm:space-y-3', className)}>
@@ -384,7 +414,12 @@ export const ForgotPasswordForm = ({
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <Typography variant="h6" weight="semibold" textColor="default" className="text-16 sm:text-18">
+        <Typography
+          variant="h6"
+          weight="semibold"
+          textColor="default"
+          className="text-16 sm:text-18"
+        >
           Forget Password
         </Typography>
       </div>
@@ -442,7 +477,12 @@ export const ForgotPasswordForm = ({
 
           {/* Footer Link */}
           <div className="flex items-center justify-center">
-            <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-12 sm:text-14">
+            <Typography
+              variant="bodySmall"
+              textColor="tertiary"
+              align="center"
+              className="text-12 sm:text-14"
+            >
               Are you providing your services?{' '}
               <button
                 type="button"
@@ -501,7 +541,12 @@ export const ForgotPasswordForm = ({
 
           {/* Footer Link */}
           <div className="flex items-center justify-center">
-            <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-12 sm:text-14">
+            <Typography
+              variant="bodySmall"
+              textColor="tertiary"
+              align="center"
+              className="text-12 sm:text-14"
+            >
               Are you providing your services?{' '}
               <button
                 type="button"
@@ -586,7 +631,12 @@ export const ForgotPasswordForm = ({
 
           {/* Footer Link */}
           <div className="flex items-center justify-center">
-            <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-12 sm:text-14">
+            <Typography
+              variant="bodySmall"
+              textColor="tertiary"
+              align="center"
+              className="text-12 sm:text-14"
+            >
               Are you providing your services?{' '}
               <button
                 type="button"
@@ -611,4 +661,3 @@ export const ForgotPasswordForm = ({
     </div>
   )
 }
-

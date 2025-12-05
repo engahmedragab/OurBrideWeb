@@ -2,7 +2,10 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { RequestProgressIndicator, type RequestStatus } from './RequestProgressIndicator'
+import {
+  RequestProgressIndicator,
+  type RequestStatus,
+} from './RequestProgressIndicator'
 import { ChevronDown, ChevronUp, ChevronRight, Star } from 'lucide-react'
 import { Button } from './Button'
 import { StatusBadge } from './StatusBadge'
@@ -85,7 +88,11 @@ export const RequestCard = ({
             <button
               onClick={() => setIsSummaryOpen(!isSummaryOpen)}
               className="text-gray-400 hover:text-gray-600 transition-colors"
-              aria-label={isSummaryOpen ? 'Collapse request summary' : 'Expand request summary'}
+              aria-label={
+                isSummaryOpen
+                  ? 'Collapse request summary'
+                  : 'Expand request summary'
+              }
             >
               {isSummaryOpen ? (
                 <ChevronDown className="h-4 w-4" />
@@ -101,7 +108,7 @@ export const RequestCard = ({
               Request #{requestId}
             </h3>
             <p className="text-14 text-gray-600 mb-2">Placed: {requestDate}</p>
-            
+
             {/* Assign To Dropdown */}
             <div className="relative">
               <button
@@ -109,10 +116,12 @@ export const RequestCard = ({
                 className="flex items-center gap-1 text-14 text-brand-500 hover:text-brand-600 transition-colors"
               >
                 <span>Assign To {assignedTo || 'Dashboard Name'}</span>
-                <ChevronRight className={cn(
-                  'h-4 w-4 transition-transform',
-                  isAssignedToOpen && 'rotate-90'
-                )} />
+                <ChevronRight
+                  className={cn(
+                    'h-4 w-4 transition-transform',
+                    isAssignedToOpen && 'rotate-90'
+                  )}
+                />
               </button>
             </div>
           </div>
@@ -183,7 +192,7 @@ export const RequestCard = ({
                       {service.title}
                     </p>
                     <div className="flex items-center gap-1 mb-1">
-                      {[1, 2, 3, 4, 5].map((star) => (
+                      {[1, 2, 3, 4, 5].map(star => (
                         <Star
                           key={star}
                           className={cn(
@@ -195,10 +204,13 @@ export const RequestCard = ({
                         />
                       ))}
                       <span className="text-12 text-gray-600 ml-1">
-                        {service.rating.value} Rated By ({service.rating.count}) Users
+                        {service.rating.value} Rated By ({service.rating.count})
+                        Users
                       </span>
                     </div>
-                    <p className="text-12 text-gray-600">Provider: {service.provider.name}</p>
+                    <p className="text-12 text-gray-600">
+                      Provider: {service.provider.name}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -206,7 +218,10 @@ export const RequestCard = ({
               {/* Package Details */}
               <div className="space-y-2 mb-4">
                 {packages.map((pkg, index) => (
-                  <div key={index} className="flex justify-between text-14 text-gray-700">
+                  <div
+                    key={index}
+                    className="flex justify-between text-14 text-gray-700"
+                  >
                     <span>{pkg.title}:</span>
                     <span className="font-semibold text-gray-900">
                       {pkg.price.toLocaleString()} EGP
@@ -253,4 +268,3 @@ export const RequestCard = ({
     </div>
   )
 }
-

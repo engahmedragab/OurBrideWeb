@@ -37,7 +37,8 @@ const statusConfig = {
   },
   delivered: {
     title: 'Order Completed',
-    description: 'Your order is done and delivered successfully. Thank you for choosing OurBride!',
+    description:
+      'Your order is done and delivered successfully. Thank you for choosing OurBride!',
     progressStep: 2,
   },
   cancelled: {
@@ -68,7 +69,11 @@ export const OrderProgressIndicator = ({
       <div className="relative w-48 h-48 flex items-center justify-center">
         {status === 'preparing' && (
           <img
-            src={typeof orderPreparingSvg === 'string' ? orderPreparingSvg : orderPreparingSvg.src}
+            src={
+              typeof orderPreparingSvg === 'string'
+                ? orderPreparingSvg
+                : orderPreparingSvg.src
+            }
             alt="Order Preparing"
             className="w-full h-full object-contain"
           />
@@ -76,7 +81,11 @@ export const OrderProgressIndicator = ({
 
         {status === 'onTheWay' && (
           <img
-            src={typeof orderOnTheWaySvg === 'string' ? orderOnTheWaySvg : orderOnTheWaySvg.src}
+            src={
+              typeof orderOnTheWaySvg === 'string'
+                ? orderOnTheWaySvg
+                : orderOnTheWaySvg.src
+            }
             alt="Order On The Way"
             className="w-full h-full object-contain"
           />
@@ -84,7 +93,11 @@ export const OrderProgressIndicator = ({
 
         {status === 'received' && (
           <img
-            src={typeof orderReceivedSvg === 'string' ? orderReceivedSvg : orderReceivedSvg.src}
+            src={
+              typeof orderReceivedSvg === 'string'
+                ? orderReceivedSvg
+                : orderReceivedSvg.src
+            }
             alt="Order Received"
             className="w-full h-full object-contain"
           />
@@ -92,7 +105,11 @@ export const OrderProgressIndicator = ({
 
         {status === 'delivered' && (
           <img
-            src={typeof orderCompleteSvg === 'string' ? orderCompleteSvg : orderCompleteSvg.src}
+            src={
+              typeof orderCompleteSvg === 'string'
+                ? orderCompleteSvg
+                : orderCompleteSvg.src
+            }
             alt="Order Complete"
             className="w-full h-full object-contain"
           />
@@ -100,12 +117,15 @@ export const OrderProgressIndicator = ({
 
         {status === 'cancelled' && (
           <img
-            src={typeof orderCancelledSvg === 'string' ? orderCancelledSvg : orderCancelledSvg.src}
+            src={
+              typeof orderCancelledSvg === 'string'
+                ? orderCancelledSvg
+                : orderCancelledSvg.src
+            }
             alt="Order Cancelled"
             className="w-full h-full object-contain"
           />
         )}
-
       </div>
 
       {/* Progress Bar */}
@@ -117,7 +137,10 @@ export const OrderProgressIndicator = ({
               const isCurrent = index === config.progressStep
 
               return (
-                <div key={step.key} className="flex-1 flex flex-col items-center">
+                <div
+                  key={step.key}
+                  className="flex-1 flex flex-col items-center"
+                >
                   <div className="relative">
                     <div
                       className={cn(
@@ -183,4 +206,3 @@ export const OrderProgressIndicator = ({
     </div>
   )
 }
-

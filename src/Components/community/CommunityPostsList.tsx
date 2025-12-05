@@ -12,7 +12,8 @@ const mockPosts = [
     id: '1',
     author: {
       name: 'Aya Mohamed',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
     },
     content:
       "Hello World, I'm using Ourbride !! It's AwsomeHello World, I'm Using Ourbride !! It's..",
@@ -22,7 +23,8 @@ const mockPosts = [
     id: '2',
     author: {
       name: 'Aya Mohamed',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
     },
     content:
       "Hello World, I'm using Ourbride !! It's AwsomeHello World, I'm Using Ourbride !! It's..",
@@ -32,7 +34,8 @@ const mockPosts = [
     id: '3',
     author: {
       name: 'Aya Mohamed',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
     },
     content:
       "Hello World, I'm using Ourbride !! It's AwsomeHello World, I'm Using Ourbride !! It's..",
@@ -90,4 +93,3 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
     </div>
   )
 }
-

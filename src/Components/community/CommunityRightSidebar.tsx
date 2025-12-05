@@ -19,19 +19,22 @@ const mockSuggestions = [
     id: '1',
     name: 'Aya Mohamed',
     email: 'example@example.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
   {
     id: '2',
     name: 'Aya Mohamed',
     email: 'example@example.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
   {
     id: '3',
     name: 'Aya Mohamed',
     email: 'example@example.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
 ]
 
@@ -40,23 +43,33 @@ const mockProviders = [
     id: '1',
     name: 'Aya Mohamed',
     email: 'example@example.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
   {
     id: '2',
     name: 'Aya Mohamed',
     email: 'example@example.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
   {
     id: '3',
     name: 'Aya Mohamed',
     email: 'example@example.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
 ]
 
-const mockSuggestedTopics = ['Makeup', 'Fashion', 'Fashion', 'Fashion', 'Fashion', 'Makeup']
+const mockSuggestedTopics = [
+  'Makeup',
+  'Fashion',
+  'Fashion',
+  'Fashion',
+  'Fashion',
+  'Makeup',
+]
 
 const mockTopArticles = [
   {
@@ -106,7 +119,8 @@ export const CommunityRightSidebar = ({
   currentUser = {
     name: 'Aya Mohamed',
     email: 'example@example.com',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
   activeTab = 'posts',
 }: CommunityRightSidebarProps) => {
@@ -114,10 +128,7 @@ export const CommunityRightSidebar = ({
 
   return (
     <aside
-      className={cn(
-        'w-80 flex-shrink-0 space-y-6 overflow-y-auto',
-        className
-      )}
+      className={cn('w-80 flex-shrink-0 space-y-6 overflow-y-auto', className)}
     >
       {/* User Profile Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -142,7 +153,9 @@ export const CommunityRightSidebar = ({
       {activeTab === 'articles' ? (
         <>
           {/* Suggested Topics Title */}
-          <h3 className="text-16 font-normal text-gray-900">Suggested Topics</h3>
+          <h3 className="text-16 font-normal text-gray-900">
+            Suggested Topics
+          </h3>
 
           {/* Suggested Topics Buttons */}
           <div className="flex flex-wrap gap-2">
@@ -166,7 +179,9 @@ export const CommunityRightSidebar = ({
                 <div
                   key={article.id}
                   className="flex gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors -m-2"
-                  onClick={() => router.push(`/community/articles/${article.id}`)}
+                  onClick={() =>
+                    router.push(`/community/articles/${article.id}`)
+                  }
                 >
                   <img
                     src={article.thumbnail}
@@ -268,4 +283,3 @@ export const CommunityRightSidebar = ({
     </aside>
   )
 }
-

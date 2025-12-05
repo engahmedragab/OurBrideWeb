@@ -81,14 +81,18 @@ export const SignupForm = ({
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   // Validation helpers
-  const validateFullName = (value: string): { isValid: boolean; message: string } => {
+  const validateFullName = (
+    value: string
+  ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
       return { isValid: false, message: 'Full name is required' }
     }
     return { isValid: true, message: '' }
   }
 
-  const validateEmail = (value: string): { isValid: boolean; message: string } => {
+  const validateEmail = (
+    value: string
+  ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
       return { isValid: false, message: 'E-mail is required' }
     }
@@ -99,7 +103,9 @@ export const SignupForm = ({
     return { isValid: true, message: '' }
   }
 
-  const validateMobile = (value: string): { isValid: boolean; message: string } => {
+  const validateMobile = (
+    value: string
+  ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
       return { isValid: false, message: 'Mobile number is required' }
     }
@@ -111,12 +117,17 @@ export const SignupForm = ({
     return { isValid: true, message: '' }
   }
 
-  const validatePassword = (value: string): { isValid: boolean; message: string } => {
+  const validatePassword = (
+    value: string
+  ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
       return { isValid: false, message: 'Password is required' }
     }
     if (value.length < 8) {
-      return { isValid: false, message: 'Password must be at least 8 characters' }
+      return {
+        isValid: false,
+        message: 'Password must be at least 8 characters',
+      }
     }
     return { isValid: true, message: '' }
   }
@@ -453,11 +464,27 @@ export const SignupForm = ({
   const [passwordFocused, setPasswordFocused] = useState(false)
   const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false)
 
-  const fullNameInputVariant = getInputVariant(fullNameStatus, fullName, fullNameFocused)
+  const fullNameInputVariant = getInputVariant(
+    fullNameStatus,
+    fullName,
+    fullNameFocused
+  )
   const emailInputVariant = getInputVariant(emailStatus, email, emailFocused)
-  const mobileInputVariant = getInputVariant(mobileStatus, mobileNumber, mobileFocused)
-  const passwordInputVariant = getInputVariant(passwordStatus, password, passwordFocused)
-  const confirmPasswordInputVariant = getInputVariant(confirmPasswordStatus, confirmPassword, confirmPasswordFocused)
+  const mobileInputVariant = getInputVariant(
+    mobileStatus,
+    mobileNumber,
+    mobileFocused
+  )
+  const passwordInputVariant = getInputVariant(
+    passwordStatus,
+    password,
+    passwordFocused
+  )
+  const confirmPasswordInputVariant = getInputVariant(
+    confirmPasswordStatus,
+    confirmPassword,
+    confirmPasswordFocused
+  )
 
   // Check if form is valid - validate values directly
   const isFormValid = (() => {
@@ -465,8 +492,11 @@ export const SignupForm = ({
     const emailValidation = validateEmail(email)
     const mobileValidation = validateMobile(mobileNumber)
     const passwordValidation = validatePassword(password)
-    const confirmPasswordValidation = validateConfirmPassword(confirmPassword, password)
-    
+    const confirmPasswordValidation = validateConfirmPassword(
+      confirmPassword,
+      password
+    )
+
     return (
       fullNameValidation.isValid &&
       gender !== undefined &&
@@ -479,7 +509,10 @@ export const SignupForm = ({
   })()
 
   return (
-    <form onSubmit={handleSubmit} className={cn('w-full space-y-2.5', className)}>
+    <form
+      onSubmit={handleSubmit}
+      className={cn('w-full space-y-2.5', className)}
+    >
       {/* Full Name Field */}
       <div className="w-full space-y-1.5">
         <Input
@@ -588,7 +621,11 @@ export const SignupForm = ({
             variant="default"
             size="md"
           />
-          <Typography variant="bodySmall" textColor="secondary" className="text-14 font-normal">
+          <Typography
+            variant="bodySmall"
+            textColor="secondary"
+            className="text-14 font-normal"
+          >
             I Accepted{' '}
             <button
               type="button"
@@ -613,7 +650,12 @@ export const SignupForm = ({
 
       {/* Provider Link */}
       <div className="flex items-center justify-center pt-2">
-        <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-14 font-normal">
+        <Typography
+          variant="bodySmall"
+          textColor="tertiary"
+          align="center"
+          className="text-14 font-normal"
+        >
           Are you providing your services?{' '}
           <button
             type="button"

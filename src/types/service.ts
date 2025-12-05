@@ -69,4 +69,3 @@ export interface ServiceSortOption {
 }
 
 export type ServiceViewMode = 'grid' | 'list'
-

@@ -2,8 +2,8 @@
 
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Button } from './Button'
-import successCheckSvg from '@/Assets/svg/successCheck.svg'
+import { Button } from '@/components/ui/Button'
+import successCheckSvg from '@/assets/svg/successCheck.svg'
 
 export interface StatusModalProps {
   open: boolean
@@ -78,7 +78,11 @@ export const StatusModal = ({
           {/* Success check icon */}
           <div className="flex items-center justify-center mb-4">
             <img
-              src={typeof successCheckSvg === 'string' ? successCheckSvg : successCheckSvg.src}
+              src={
+                typeof successCheckSvg === 'string'
+                  ? successCheckSvg
+                  : successCheckSvg.src
+              }
               alt="Success"
               className="h-16 w-16"
             />
@@ -110,4 +114,3 @@ export const StatusModal = ({
     </div>
   )
 }
-

@@ -10,7 +10,8 @@ const mockPost = {
   id: '1',
   author: {
     name: 'Aya Mohamed',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
   content:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
@@ -49,4 +50,3 @@ export default function PostDetailsPage({
     </div>
   )
 }
-

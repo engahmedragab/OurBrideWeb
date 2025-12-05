@@ -22,7 +22,7 @@ export const ServiceList = ({
   className,
 }: ServiceListProps) => {
   const router = useRouter()
-  
+
   if (services.length === 0) {
     return (
       <div className="text-center py-12">
@@ -167,11 +167,13 @@ export const ServiceList = ({
                   <div className="flex items-center gap-0.5">
                     {hasDiscount && (
                       <span className="text-10 font-normal text-gray-400 line-through">
-                        {service.price.original.toLocaleString()} {service.price.currency}
+                        {service.price.original.toLocaleString()}{' '}
+                        {service.price.currency}
                       </span>
                     )}
                     <span className="text-18 font-normal text-gray-900">
-                      {service.price.discounted.toLocaleString()} {service.price.currency}
+                      {service.price.discounted.toLocaleString()}{' '}
+                      {service.price.currency}
                     </span>
                     {hasDiscount && (
                       <Badge
@@ -204,4 +206,3 @@ export const ServiceList = ({
     </div>
   )
 }
-

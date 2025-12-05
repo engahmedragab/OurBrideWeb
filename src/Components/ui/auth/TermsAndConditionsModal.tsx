@@ -50,7 +50,8 @@ export const TermsAndConditionsModal = ({
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                By using OurBride, you agree to the following terms and conditions.
+                By using OurBride, you agree to the following terms and
+                conditions.
               </Typography>
             </div>
 
@@ -68,8 +69,8 @@ export const TermsAndConditionsModal = ({
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                Users must provide accurate personal information. You are responsible
-                for keeping your account secure.
+                Users must provide accurate personal information. You are
+                responsible for keeping your account secure.
               </Typography>
             </div>
 
@@ -87,8 +88,8 @@ export const TermsAndConditionsModal = ({
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                Bookings depend on provider availability. Cancellations and refunds
-                follow each provider&apos;s policy.
+                Bookings depend on provider availability. Cancellations and
+                refunds follow each provider&apos;s policy.
               </Typography>
             </div>
 
@@ -125,8 +126,8 @@ export const TermsAndConditionsModal = ({
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                Users must not post offensive or harmful content. OurBride reserves
-                the right to remove any inappropriate material.
+                Users must not post offensive or harmful content. OurBride
+                reserves the right to remove any inappropriate material.
               </Typography>
             </div>
 
@@ -144,8 +145,8 @@ export const TermsAndConditionsModal = ({
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                We protect your data under our Privacy Policy. Identity verification
-                is required for providers.
+                We protect your data under our Privacy Policy. Identity
+                verification is required for providers.
               </Typography>
             </div>
           </div>

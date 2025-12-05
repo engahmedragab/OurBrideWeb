@@ -17,7 +17,13 @@ import {
 } from '@/components/ui'
 import type { BookingFormData } from '@/components/ui/BookingDetailsModal'
 import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
-import { Star, ArrowLeft, ArrowRight, ThumbsUp, MessageCircle } from 'lucide-react'
+import {
+  Star,
+  ArrowLeft,
+  ArrowRight,
+  ThumbsUp,
+  MessageCircle,
+} from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { Service } from '@/types/service'
@@ -139,9 +145,7 @@ const mockSuggestedServices: Service[] = [
     id: '2',
     title: 'Hair Styling Service',
     description: 'Expert hair styling and hairdo for weddings.',
-    images: [
-      'https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400',
-    ],
+    images: ['https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400'],
     provider: {
       id: '2',
       name: 'Hair Studio Elite',
@@ -194,9 +198,7 @@ const mockSuggestedServices: Service[] = [
     id: '4',
     title: 'Spa & Relaxation Package',
     description: 'Full body spa treatment for pre-wedding relaxation.',
-    images: [
-      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
-    ],
+    images: ['https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400'],
     provider: {
       id: '4',
       name: 'Luxury Spa',
@@ -257,12 +259,15 @@ export default function ServiceDetail({
   const [service, setService] = useState(mockService)
   const [userRating, setUserRating] = useState(0)
   const [hoveredRating, setHoveredRating] = useState(0)
-  const [isWishlisted, setIsWishlisted] = useState(service.isWishlisted || false)
+  const [isWishlisted, setIsWishlisted] = useState(
+    service.isWishlisted || false
+  )
   const [reviewText, setReviewText] = useState('')
   const [branchesExpanded, setBranchesExpanded] = useState(false)
   const [packagesExpanded, setPackagesExpanded] = useState(false)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
-  const [isBookingConfirmationModalOpen, setIsBookingConfirmationModalOpen] = useState(false)
+  const [isBookingConfirmationModalOpen, setIsBookingConfirmationModalOpen] =
+    useState(false)
 
   // Fetch service based on id - Replace with API call
   useEffect(() => {
@@ -322,7 +327,8 @@ export default function ServiceDetail({
         discountedPrice: service.price.discounted,
         currency: service.price.currency,
         quantity: 1,
-        discountPercentage: discountPercentage > 0 ? discountPercentage : undefined,
+        discountPercentage:
+          discountPercentage > 0 ? discountPercentage : undefined,
         deliveryDate: '25/8/2025', // You can calculate this dynamically
         maxQuantity: 1, // Services are typically booked as single items
       },
@@ -433,9 +439,10 @@ export default function ServiceDetail({
                               'h-4 w-4',
                               star <= Math.floor(service.rating.value)
                                 ? 'fill-brand-500 text-brand-500'
-                                : star === Math.ceil(service.rating.value) && service.rating.value % 1 !== 0
-                                ? 'fill-brand-500/50 text-brand-500'
-                                : 'fill-gray-200 text-gray-200'
+                                : star === Math.ceil(service.rating.value) &&
+                                    service.rating.value % 1 !== 0
+                                  ? 'fill-brand-500/50 text-brand-500'
+                                  : 'fill-gray-200 text-gray-200'
                             )}
                           />
                         ))}
@@ -463,34 +470,62 @@ export default function ServiceDetail({
                       <h4 className="text-14 font-semibold text-gray-900 mb-2">
                         Available Branches
                       </h4>
-                      <div className={cn(
-                        "space-y-1",
-                        !branchesExpanded && "line-clamp-2"
-                      )}>
+                      <div
+                        className={cn(
+                          'space-y-1',
+                          !branchesExpanded && 'line-clamp-2'
+                        )}
+                      >
                         {branchesExpanded ? (
                           <>
-                            <p className="text-14 text-gray-600">Giza, 6 Of October</p>
-                            <p className="text-14 text-gray-600">Cairo, Maadi</p>
-                            <p className="text-14 text-gray-600">Giza, Elshikh Zayed</p>
-                            <p className="text-14 text-gray-600">Mansoura, Glaa&apos; St.</p>
+                            <p className="text-14 text-gray-600">
+                              Giza, 6 Of October
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Cairo, Maadi
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Giza, Elshikh Zayed
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Mansoura, Glaa&apos; St.
+                            </p>
                             <p className="text-14 text-gray-600">Giza, Dokki</p>
-                            <p className="text-14 text-gray-600">Cairo, Nasr City</p>
-                            <p className="text-14 text-gray-600">Alexandria, Corniche</p>
-                            <p className="text-14 text-gray-600">Cairo, Zamalek</p>
-                            <p className="text-14 text-gray-600">Giza, Agouza</p>
-                            <p className="text-14 text-gray-600">Cairo, Heliopolis</p>
+                            <p className="text-14 text-gray-600">
+                              Cairo, Nasr City
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Alexandria, Corniche
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Cairo, Zamalek
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Giza, Agouza
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Cairo, Heliopolis
+                            </p>
                           </>
                         ) : (
                           <>
-                            <p className="text-14 text-gray-600">Giza, 6 Of October</p>
-                            <p className="text-14 text-gray-600">Cairo, Maadi</p>
-                            <p className="text-14 text-gray-600">Giza, Elshikh Zayed</p>
-                            <p className="text-14 text-gray-600">Mansoura, Glaa&apos; St.</p>
+                            <p className="text-14 text-gray-600">
+                              Giza, 6 Of October
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Cairo, Maadi
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Giza, Elshikh Zayed
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              Mansoura, Glaa&apos; St.
+                            </p>
                             <p className="text-14 text-gray-600">Giz...</p>
                           </>
                         )}
                       </div>
-                      <button 
+                      <button
                         onClick={() => setBranchesExpanded(!branchesExpanded)}
                         className="text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
                       >
@@ -504,34 +539,50 @@ export default function ServiceDetail({
                     <h4 className="text-14 font-semibold text-gray-900 mb-2">
                       Packages Details
                     </h4>
-                    <div className={cn(
-                      "space-y-1",
-                      !packagesExpanded && "line-clamp-2"
-                    )}>
+                    <div
+                      className={cn(
+                        'space-y-1',
+                        !packagesExpanded && 'line-clamp-2'
+                      )}
+                    >
                       {packagesExpanded ? (
                         <>
                           <p className="text-14 text-gray-600">
-                            Package 1 ( {service.price.discounted.toLocaleString()} {service.price.currency} ) : Type Some Details Here
+                            Package 1 ({' '}
+                            {service.price.discounted.toLocaleString()}{' '}
+                            {service.price.currency} ) : Type Some Details Here
                           </p>
                           <p className="text-14 text-gray-600">
-                            Package 2 ( {service.price.original.toLocaleString()} {service.price.currency} ) : Type Some Details Here for Package 2. This package includes additional services and premium features.
+                            Package 2 ({' '}
+                            {service.price.original.toLocaleString()}{' '}
+                            {service.price.currency} ) : Type Some Details Here
+                            for Package 2. This package includes additional
+                            services and premium features.
                           </p>
                           <p className="text-14 text-gray-600">
-                            Package 3 ( {(service.price.original * 1.5).toLocaleString()} {service.price.currency} ) : Premium package with all services included. This is our most comprehensive offering.
+                            Package 3 ({' '}
+                            {(service.price.original * 1.5).toLocaleString()}{' '}
+                            {service.price.currency} ) : Premium package with
+                            all services included. This is our most
+                            comprehensive offering.
                           </p>
                         </>
                       ) : (
                         <>
                           <p className="text-14 text-gray-600">
-                            Package 1 ( {service.price.discounted.toLocaleString()} {service.price.currency} ) : Type Some Details Here
+                            Package 1 ({' '}
+                            {service.price.discounted.toLocaleString()}{' '}
+                            {service.price.currency} ) : Type Some Details Here
                           </p>
                           <p className="text-14 text-gray-600">
-                            Package 2 ( {service.price.original.toLocaleString()} {service.price.currency} ) : Ty...
+                            Package 2 ({' '}
+                            {service.price.original.toLocaleString()}{' '}
+                            {service.price.currency} ) : Ty...
                           </p>
                         </>
                       )}
                     </div>
-                    <button 
+                    <button
                       onClick={() => setPackagesExpanded(!packagesExpanded)}
                       className="text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
                     >
@@ -733,7 +784,7 @@ export default function ServiceDetail({
                 <div className="space-y-3">
                   <textarea
                     value={reviewText}
-                    onChange={(e) => setReviewText(e.target.value)}
+                    onChange={e => setReviewText(e.target.value)}
                     placeholder="Write your review here..."
                     className="w-full min-h-[120px] px-4 py-3 border border-gray-300 rounded-lg text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 resize-none"
                     rows={5}
@@ -744,7 +795,10 @@ export default function ServiceDetail({
                     onClick={() => {
                       if (userRating > 0 && reviewText.trim()) {
                         // TODO: Implement review submission
-                        console.log('Submit review:', { rating: userRating, text: reviewText })
+                        console.log('Submit review:', {
+                          rating: userRating,
+                          text: reviewText,
+                        })
                         setReviewText('')
                         setUserRating(0)
                       }
@@ -809,8 +863,6 @@ export default function ServiceDetail({
         isOpen={isBookingConfirmationModalOpen}
         onClose={() => setIsBookingConfirmationModalOpen(false)}
       />
-
     </div>
   )
 }
-

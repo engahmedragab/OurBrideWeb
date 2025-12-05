@@ -8,12 +8,9 @@ const passwordInputVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          'border-gray-300 focus-within:border-brand-500',
-        error:
-          'border-red-500 bg-red-100 focus-within:border-red-500',
-        success:
-          'border-gray-500 bg-white focus-within:border-brand-500',
+        default: 'border-gray-300 focus-within:border-brand-500',
+        error: 'border-red-500 bg-red-100 focus-within:border-red-500',
+        success: 'border-gray-500 bg-white focus-within:border-brand-500',
         focused: 'border-brand-500 focus-within:border-brand-500',
         fill: 'border-gray-200 bg-white focus-within:border-brand-500',
       },
@@ -65,11 +62,15 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           <Lock
             className={cn(
               'h-6 w-6 flex-shrink-0',
-              variant === 'error' ? 'text-red-500' : 
-              variant === 'focused' ? 'text-gray-400' : 
-              variant === 'success' ? 'text-gray-400' :
-              variant === 'fill' ? 'text-gray-400' :
-              'text-gray-400'
+              variant === 'error'
+                ? 'text-red-500'
+                : variant === 'focused'
+                  ? 'text-gray-400'
+                  : variant === 'success'
+                    ? 'text-gray-400'
+                    : variant === 'fill'
+                      ? 'text-gray-400'
+                      : 'text-gray-400'
             )}
           />
           <input
@@ -77,30 +78,37 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             className={cn(
               'flex-1 bg-transparent outline-none focus:outline-none font-normal text-16 leading-6',
               variant === 'error' && 'text-red-500 placeholder:text-red-500',
-              variant === 'default' && 'text-gray-900 placeholder:text-gray-400',
-              variant === 'focused' && 'text-gray-900 placeholder:text-gray-400',
-              variant === 'success' && 'text-gray-900 placeholder:text-gray-400',
+              variant === 'default' &&
+                'text-gray-900 placeholder:text-gray-400',
+              variant === 'focused' &&
+                'text-gray-900 placeholder:text-gray-400',
+              variant === 'success' &&
+                'text-gray-900 placeholder:text-gray-400',
               variant === 'fill' && 'text-gray-900 placeholder:text-gray-400'
             )}
             ref={ref}
             {...props}
           />
-           <button
+          <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className={cn(
               'flex-shrink-0',
-              variant === 'error' ? 'text-red-500' : 
-              variant === 'focused' ? 'text-gray-400' : 
-              variant === 'success' ? 'text-gray-400' :
-              variant === 'fill' ? 'text-gray-400' :
-              'text-gray-400'
+              variant === 'error'
+                ? 'text-red-500'
+                : variant === 'focused'
+                  ? 'text-gray-400'
+                  : variant === 'success'
+                    ? 'text-gray-400'
+                    : variant === 'fill'
+                      ? 'text-gray-400'
+                      : 'text-gray-400'
             )}
           >
             {showPassword ? (
               <Eye className="h-6 w-6" />
             ) : (
-              < EyeOff className="h-6 w-6" />
+              <EyeOff className="h-6 w-6" />
             )}
           </button>
           {showSuccessIcon && variant === 'success' && (

@@ -155,9 +155,7 @@ export default function Products() {
 
     // Apply filters
     if (filters.category && filters.category.length > 0) {
-      result = result.filter(p =>
-        filters.category!.includes(p.category.id)
-      )
+      result = result.filter(p => filters.category!.includes(p.category.id))
     }
 
     if (filters.priceRange) {
@@ -217,10 +215,13 @@ export default function Products() {
       <Header />
       <main className="flex-1">
         {/* Hero Carousel */}
-        <HeroCarousel slides={heroSlides} autoPlay={true} autoPlayInterval={5000} />
+        <HeroCarousel
+          slides={heroSlides}
+          autoPlay={true}
+          autoPlayInterval={5000}
+        />
 
         <div className="container-custom py-6 md:py-8">
-
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Sidebar: Filters */}
             <aside className="lg:col-span-1">
@@ -297,7 +298,7 @@ export default function Products() {
             variant="newsletter"
             ctaText="Submit"
             productImage={flowersImage}
-            onSubscribe={(email) => {
+            onSubscribe={email => {
               console.log('Newsletter subscription:', email)
               // TODO: Implement newsletter subscription
             }}
@@ -308,4 +309,3 @@ export default function Products() {
     </div>
   )
 }
-

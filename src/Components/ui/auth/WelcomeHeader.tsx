@@ -10,7 +10,6 @@ export interface WelcomeHeaderProps {
   className?: string
 }
 
-
 /**
  * WelcomeHeader - Reusable component for welcome message with logo
  * Displays logo, welcome text, and underline
@@ -49,4 +48,3 @@ export const WelcomeHeader = ({
     </div>
   )
 }
-

@@ -50,7 +50,9 @@ export const LoginForm = ({
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   // Validation helpers
-  const validateEmail = (value: string): { isValid: boolean; message: string } => {
+  const validateEmail = (
+    value: string
+  ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
       return { isValid: false, message: 'Wrong E-mail, Please Try Again' }
     }
@@ -61,12 +63,20 @@ export const LoginForm = ({
     return { isValid: true, message: '' }
   }
 
-  const validatePassword = (value: string): { isValid: boolean; message: string } => {
+  const validatePassword = (
+    value: string
+  ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: "Password isn't correct, please try again" }
+      return {
+        isValid: false,
+        message: "Password isn't correct, please try again",
+      }
     }
     if (value.length < 8) {
-      return { isValid: false, message: "Password isn't correct, please try again" }
+      return {
+        isValid: false,
+        message: "Password isn't correct, please try again",
+      }
     }
     return { isValid: true, message: '' }
   }
@@ -184,7 +194,11 @@ export const LoginForm = ({
   }
 
   // Map field status to Input/PasswordInput variants
-  const getInputVariant = (status: FieldStatus, value: string, isFocused: boolean): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
+  const getInputVariant = (
+    status: FieldStatus,
+    value: string,
+    isFocused: boolean
+  ): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
     if (status === 'error') return 'error'
     if (status === 'success') return 'success'
     if (isFocused) return 'focused'
@@ -196,7 +210,11 @@ export const LoginForm = ({
   const [passwordFocused, setPasswordFocused] = useState(false)
 
   const emailInputVariant = getInputVariant(emailStatus, email, emailFocused)
-  const passwordInputVariant = getInputVariant(passwordStatus, password, passwordFocused)
+  const passwordInputVariant = getInputVariant(
+    passwordStatus,
+    password,
+    passwordFocused
+  )
 
   // Check if form is valid - validate values directly
   const isFormValid = (() => {
@@ -206,7 +224,10 @@ export const LoginForm = ({
   })()
 
   return (
-    <form onSubmit={handleSubmit} className={cn('w-full space-y-2.5', className)}>
+    <form
+      onSubmit={handleSubmit}
+      className={cn('w-full space-y-2.5', className)}
+    >
       {/* Email Field */}
       <div className="w-full space-y-1.5">
         <Input
@@ -248,7 +269,11 @@ export const LoginForm = ({
             variant="default"
             size="md"
           />
-          <Typography variant="bodySmall" textColor="secondary" className="text-16 font-medium">
+          <Typography
+            variant="bodySmall"
+            textColor="secondary"
+            className="text-16 font-medium"
+          >
             Remember Me
           </Typography>
         </div>
@@ -272,7 +297,12 @@ export const LoginForm = ({
 
       {/* Provider Link */}
       <div className="flex items-center justify-center pt-2">
-        <Typography variant="bodySmall" textColor="tertiary" align="center" className="text-14 font-normal">
+        <Typography
+          variant="bodySmall"
+          textColor="tertiary"
+          align="center"
+          className="text-14 font-normal"
+        >
           Are you providing your services?{' '}
           <button
             type="button"

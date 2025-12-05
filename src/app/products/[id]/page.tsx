@@ -15,7 +15,10 @@ import {
   OfferBanner,
   OrderCheckoutModal,
 } from '@/components/ui'
-import type { OrderItem, OrderFormData } from '@/components/ui/OrderCheckoutModal'
+import type {
+  OrderItem,
+  OrderFormData,
+} from '@/components/ui/OrderCheckoutModal'
 import type { ProductCardData } from '@/components/ui/Card'
 import { Star, ArrowLeft, ArrowRight, ThumbsUp } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -261,7 +264,8 @@ export default function ProductDetail({
         discountedPrice: product.price.discounted,
         currency: product.price.currency,
         quantity: quantity,
-        discountPercentage: discountPercentage > 0 ? discountPercentage : undefined,
+        discountPercentage:
+          discountPercentage > 0 ? discountPercentage : undefined,
         deliveryDate: '29/8/2025', // You can calculate this dynamically
         maxQuantity: product.stockQuantity || 99,
       },

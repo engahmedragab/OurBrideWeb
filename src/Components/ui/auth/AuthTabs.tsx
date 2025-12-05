@@ -34,7 +34,11 @@ export const AuthTabs = ({ className }: AuthTabsProps) => {
 
   return (
     <div className="flex w-full justify-center">
-      <PillTabs items={tabs} activeValue={activeValue} containerClassName={className} />
+      <PillTabs
+        items={tabs}
+        activeValue={activeValue}
+        containerClassName={className}
+      />
     </div>
   )
 }

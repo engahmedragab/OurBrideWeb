@@ -31,9 +31,7 @@ export const ProductGrid = ({
   }
 
   return (
-    <div
-      className={`grid ${gridCols[columns]} gap-6 ${className || ''}`}
-    >
+    <div className={`grid ${gridCols[columns]} gap-6 ${className || ''}`}>
       {products.map(product => (
         <ProductCard
           key={product.id}
@@ -45,4 +43,3 @@ export const ProductGrid = ({
     </div>
   )
 }
-

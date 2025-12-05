@@ -23,9 +23,7 @@ export const HistorySection = ({
     <section className={`mt-12 ${className || ''}`}>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-32 font-semibold text-gray-900">
-            {title}
-          </h2>
+          <h2 className="text-32 font-semibold text-gray-900">{title}</h2>
           {suffix && (
             <p className="text-16 text-gray-600 mt-2">
               {itemCount} {suffix}
@@ -42,10 +40,7 @@ export const HistorySection = ({
         )}
       </div>
 
-      <div className="space-y-6">
-        {children}
-      </div>
+      <div className="space-y-6">{children}</div>
     </section>
   )
 }
-

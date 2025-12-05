@@ -59,7 +59,7 @@ export const ArticleCard = ({
           </div>
         </div>
         <span
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation()
             router.push(`/community/articles/${id}`)
           }}
@@ -71,4 +71,3 @@ export const ArticleCard = ({
     </div>
   )
 }
-

@@ -9,9 +9,13 @@ export interface ReelsFeedProps {
 
 export const ReelsFeed = ({ className }: ReelsFeedProps) => {
   return (
-    <div className={cn('flex-1 flex justify-center items-center min-h-0', className)}>
+    <div
+      className={cn(
+        'flex-1 flex justify-center items-center min-h-0',
+        className
+      )}
+    >
       <ReelPlayer id="1" />
     </div>
   )
 }
-

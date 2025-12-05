@@ -10,13 +10,7 @@ import { ServiceSelectCard } from '../ServiceSelectCard'
 import { LocationPickerModal } from '../LocationPickerModal'
 import { StatusModal } from '../StatusModal'
 import { WelcomeHeader } from './WelcomeHeader'
-import {
-  MapPin,
-  User,
-  Mail, 
-  X,
-  Wallet,
-} from 'lucide-react'
+import { MapPin, User, Mail, X, Wallet } from 'lucide-react'
 import { BridalBeautyIcon } from '@/assets/icons/BridalBeautyIcon'
 import { WeddingHallIcon } from '@/assets/icons/WeddingHallIcon'
 import { BouquetIcon } from '@/assets/icons/BouquetIcon'
@@ -42,14 +36,42 @@ type ServiceType =
   | 'accessories'
 
 const SERVICES = [
-  { id: 'bridal-beauty' as ServiceType, label: 'Bridal & Beauty', Icon: BridalBeautyIcon },
-  { id: 'wedding-hall' as ServiceType, label: 'Wedding Hall', Icon: WeddingHallIcon },
+  {
+    id: 'bridal-beauty' as ServiceType,
+    label: 'Bridal & Beauty',
+    Icon: BridalBeautyIcon,
+  },
+  {
+    id: 'wedding-hall' as ServiceType,
+    label: 'Wedding Hall',
+    Icon: WeddingHallIcon,
+  },
   { id: 'bouquet' as ServiceType, label: 'Bouquet', Icon: BouquetIcon },
-  { id: 'wedding-cake' as ServiceType, label: 'Wedding cake', Icon: WeddingCakeIcon },
-  { id: 'photography' as ServiceType, label: 'Photography', Icon: PhotographyIcon },
-  { id: 'wedding-suit' as ServiceType, label: 'Wedding suit', Icon: WeddingSuitIcon },
-  { id: 'wedding-dress' as ServiceType, label: 'Wedding Dress', Icon: WeddingDressIcon },
-  { id: 'accessories' as ServiceType, label: 'Accessories', Icon: AccessoriesIcon },
+  {
+    id: 'wedding-cake' as ServiceType,
+    label: 'Wedding cake',
+    Icon: WeddingCakeIcon,
+  },
+  {
+    id: 'photography' as ServiceType,
+    label: 'Photography',
+    Icon: PhotographyIcon,
+  },
+  {
+    id: 'wedding-suit' as ServiceType,
+    label: 'Wedding suit',
+    Icon: WeddingSuitIcon,
+  },
+  {
+    id: 'wedding-dress' as ServiceType,
+    label: 'Wedding Dress',
+    Icon: WeddingDressIcon,
+  },
+  {
+    id: 'accessories' as ServiceType,
+    label: 'Accessories',
+    Icon: AccessoriesIcon,
+  },
 ]
 
 /**
@@ -212,7 +234,11 @@ export const PlanningPreferencesForm = ({
             onBlur={() => setBudgetFocused(false)}
             prefixIcon={<Wallet className="h-5 w-5" />}
             suffix="EGP"
-            variant={getInputVariant(isSubmitted && !!errors.budget, budget, budgetFocused)}
+            variant={getInputVariant(
+              isSubmitted && !!errors.budget,
+              budget,
+              budgetFocused
+            )}
             errorMessage={isSubmitted ? errors.budget : undefined}
             size="lg"
           />
@@ -221,27 +247,31 @@ export const PlanningPreferencesForm = ({
         {/* Location Input */}
         <div className="space-y-0.5">
           <div className="relative w-full">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Location"
-              value={location}
-              readOnly
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Location"
+                value={location}
+                readOnly
                 onFocus={() => setLocationFocused(true)}
                 onBlur={() => setLocationFocused(false)}
-              prefixIcon={MapPin}
-                variant={getInputVariant(isSubmitted && !!errors.location, location, locationFocused)}
+                prefixIcon={MapPin}
+                variant={getInputVariant(
+                  isSubmitted && !!errors.location,
+                  location,
+                  locationFocused
+                )}
                 errorMessage={undefined}
-              size="lg"
-              className="pr-24"
-            />
-            <button
-              type="button"
-              onClick={() => setShowLocationModal(true)}
+                size="lg"
+                className="pr-24"
+              />
+              <button
+                type="button"
+                onClick={() => setShowLocationModal(true)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-brand-500 hover:text-brand-600 font-medium text-14 transition-colors"
-            >
-              Set Location
-            </button>
+              >
+                Set Location
+              </button>
             </div>
             {isSubmitted && errors.location && (
               <div className="mt-1.5 flex items-center gap-2 text-14 font-normal leading-4 text-red-500">
@@ -258,7 +288,7 @@ export const PlanningPreferencesForm = ({
         <div className="space-y-2">
           <Typography
             variant="h6"
-             weight="regular"
+            weight="regular"
             textColor="default"
             className="text-14 sm:text-16"
           >
@@ -280,7 +310,11 @@ export const PlanningPreferencesForm = ({
               onFocus={() => setFullNameFocused(true)}
               onBlur={() => setFullNameFocused(false)}
               prefixIcon={User}
-              variant={getInputVariant(isSubmitted && !!errors.fullName, fullName, fullNameFocused)}
+              variant={getInputVariant(
+                isSubmitted && !!errors.fullName,
+                fullName,
+                fullNameFocused
+              )}
               errorMessage={isSubmitted ? errors.fullName : undefined}
               size="lg"
             />
@@ -301,7 +335,11 @@ export const PlanningPreferencesForm = ({
               onFocus={() => setEmailFocused(true)}
               onBlur={() => setEmailFocused(false)}
               prefixIcon={Mail}
-              variant={getInputVariant(isSubmitted && !!errors.email, email, emailFocused)}
+              variant={getInputVariant(
+                isSubmitted && !!errors.email,
+                email,
+                emailFocused
+              )}
               errorMessage={isSubmitted ? errors.email : undefined}
               size="lg"
             />
@@ -349,4 +387,3 @@ export const PlanningPreferencesForm = ({
     </>
   )
 }
-

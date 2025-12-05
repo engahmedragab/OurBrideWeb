@@ -1,2 +1,1 @@
 // Auth types and interfaces
-

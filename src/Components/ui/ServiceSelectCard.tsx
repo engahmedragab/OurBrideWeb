@@ -69,8 +69,7 @@ export const ServiceSelectCard = ({
       {/* Label */}
       <span
         className={cn(
-          'text-10 sm:text-12 text-center leading-tight text-gray-400 font-regular',
-         
+          'text-10 sm:text-12 text-center leading-tight text-gray-400 font-regular'
         )}
       >
         {label}
@@ -78,4 +77,3 @@ export const ServiceSelectCard = ({
     </button>
   )
 }
-

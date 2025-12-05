@@ -1,6 +1,12 @@
 'use client'
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from 'react'
 import { Toast } from './Toast'
 
 export interface ToastData {
@@ -12,7 +18,11 @@ export interface ToastData {
 
 interface ToastContextType {
   toasts: ToastData[]
-  addToast: (message: string, type?: ToastData['type'], duration?: number) => void
+  addToast: (
+    message: string,
+    type?: ToastData['type'],
+    duration?: number
+  ) => void
   removeToast: (id: string) => void
 }
 
@@ -55,14 +65,10 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
       <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none">
         {toasts.map(toast => (
           <div key={toast.id} className="pointer-events-auto">
-            <Toast
-              {...toast}
-              onClose={removeToast}
-            />
+            <Toast {...toast} onClose={removeToast} />
           </div>
         ))}
       </div>
     </ToastContext.Provider>
   )
 }
-

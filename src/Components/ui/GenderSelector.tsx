@@ -45,7 +45,7 @@ export const GenderSelector = ({
         type="button"
         onClick={() => handleChange('female')}
         className={cn(
-         'flex items-center justify-start gap-1.5 rounded-md border-1 border  px-2.5 py-1.5 text-12 font-regular transition-colors',
+          'flex items-center justify-start gap-1.5 rounded-md border-1 border  px-2.5 py-1.5 text-12 font-regular transition-colors',
           currentValue === 'female'
             ? 'border-brand-500 bg-brand-500 text-white'
             : 'border-gray-300 bg-white text-gray-400 hover:border-gray-400'

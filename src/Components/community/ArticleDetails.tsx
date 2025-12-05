@@ -3,7 +3,13 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Heart, MessageCircle, Share2, MoreVertical, ArrowLeft } from 'lucide-react'
+import {
+  Heart,
+  MessageCircle,
+  Share2,
+  MoreVertical,
+  ArrowLeft,
+} from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { CommentCard } from './CommentCard'
 import { useToast } from '@/components/ui/Toaster'
@@ -30,7 +36,8 @@ const mockComments = [
     id: '1',
     author: {
       name: 'Aya Mohamed',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
     },
     content:
       'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
@@ -40,7 +47,8 @@ const mockComments = [
     id: '2',
     author: {
       name: 'Aya Mohamed',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      avatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
     },
     content:
       'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
@@ -75,7 +83,8 @@ export const ArticleDetails = ({
       id: Date.now().toString(),
       author: {
         name: 'Aya Mohamed',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+        avatar:
+          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       },
       content: commentText,
       timestamp: new Date().toLocaleString('en-GB', {
@@ -196,9 +205,7 @@ export const ArticleDetails = ({
                   : 'text-gray-600 hover:text-brand-500'
               )}
             >
-              <Heart
-                className={cn('h-5 w-5', isLiked && 'fill-brand-500')}
-              />
+              <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
               <span>{likes} Likes</span>
             </button>
             <button className="flex items-center gap-2 text-14 text-gray-600 hover:text-brand-500 transition-colors">
@@ -261,4 +268,3 @@ export const ArticleDetails = ({
     </div>
   )
 }
-

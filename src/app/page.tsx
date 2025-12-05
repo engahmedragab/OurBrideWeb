@@ -507,7 +507,11 @@ export default function Home() {
                 <div className="relative w-80 h-80 md:w-96 md:h-96">
                   {/* SVG Border */}
                   <img
-                    src={typeof heroCircularSvg === 'string' ? heroCircularSvg : heroCircularSvg.src}
+                    src={
+                      typeof heroCircularSvg === 'string'
+                        ? heroCircularSvg
+                        : heroCircularSvg.src
+                    }
                     alt=""
                     className="absolute inset-0 w-full h-full"
                     aria-hidden="true"
@@ -515,7 +519,11 @@ export default function Home() {
                   {/* Bride Image */}
                   <div className="absolute inset-[6.52px] rounded-full overflow-hidden z-10 flex items-center justify-center">
                     <img
-                      src={typeof heroBrideImage === 'string' ? heroBrideImage : heroBrideImage.src}
+                      src={
+                        typeof heroBrideImage === 'string'
+                          ? heroBrideImage
+                          : heroBrideImage.src
+                      }
                       alt="Happy Bride"
                       className="w-full h-full object-contain"
                     />
@@ -579,7 +587,11 @@ export default function Home() {
               <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
                 <div className="aspect-[5/2] overflow-hidden">
                   <img
-                    src={typeof heroCardBrideImage === 'string' ? heroCardBrideImage : heroCardBrideImage.src}
+                    src={
+                      typeof heroCardBrideImage === 'string'
+                        ? heroCardBrideImage
+                        : heroCardBrideImage.src
+                    }
                     alt="Explore Products"
                     className="w-full h-full object-cover"
                   />
@@ -598,7 +610,11 @@ export default function Home() {
               <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
                 <div className="aspect-[5/2] overflow-hidden">
                   <img
-                    src={typeof heroCardBrideImage === 'string' ? heroCardBrideImage : heroCardBrideImage.src}
+                    src={
+                      typeof heroCardBrideImage === 'string'
+                        ? heroCardBrideImage
+                        : heroCardBrideImage.src
+                    }
                     alt="Explore Products"
                     className="w-full h-full object-cover"
                   />
@@ -1058,7 +1074,9 @@ export default function Home() {
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-brand-500 rounded-full opacity-20 blur-3xl" />
               <div className="relative z-10 transform rotate-6 md:rotate-12">
                 <img
-                  src={typeof phoneImage === 'string' ? phoneImage : phoneImage.src}
+                  src={
+                    typeof phoneImage === 'string' ? phoneImage : phoneImage.src
+                  }
                   alt="OurBride Mobile App"
                   className="w-[280px] md:w-[400px] lg:w-[500px] h-auto drop-shadow-2xl"
                 />

@@ -18,11 +18,11 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.`,
-  image:
-    'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
+  image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
   author: {
     name: 'Aya Mohamed',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    avatar:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
   },
   date: '12 Sep, 2025',
   likes: 20,
@@ -54,4 +54,3 @@ export default function ArticleDetailsPage({
     </div>
   )
 }
-

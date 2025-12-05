@@ -52,18 +52,21 @@ export function DatePicker({
     return format(dateValue, 'PPP')
   }, [dateValue])
 
-  const handleDateSelect = React.useCallback((date: Date | undefined) => {
-    if (!onChange) return
-    
-    if (dateFormat === 'string') {
-      // Return YYYY-MM-DD format string
-      onChange(date ? format(date, 'yyyy-MM-dd') : undefined)
-    } else {
-      // Return Date object
-      onChange(date)
-    }
-    setOpen(false)
-  }, [onChange, dateFormat])
+  const handleDateSelect = React.useCallback(
+    (date: Date | undefined) => {
+      if (!onChange) return
+
+      if (dateFormat === 'string') {
+        // Return YYYY-MM-DD format string
+        onChange(date ? format(date, 'yyyy-MM-dd') : undefined)
+      } else {
+        // Return Date object
+        onChange(date)
+      }
+      setOpen(false)
+    },
+    [onChange, dateFormat]
+  )
 
   return (
     <div className={cn('w-full', className)}>
@@ -76,9 +79,14 @@ export function DatePicker({
               value={displayValue}
               placeholder={placeholder}
               prefixIcon={prefixIcon}
-              variant={errorMessage || variant === 'error' ? 'error' : 'default'}
+              variant={
+                errorMessage || variant === 'error' ? 'error' : 'default'
+              }
               size={size}
-              className={cn('cursor-pointer', disabled && 'cursor-not-allowed opacity-50')}
+              className={cn(
+                'cursor-pointer',
+                disabled && 'cursor-not-allowed opacity-50'
+              )}
               disabled={disabled}
               required={required}
               onClick={() => !disabled && setOpen(true)}
@@ -102,4 +110,3 @@ export function DatePicker({
     </div>
   )
 }
-

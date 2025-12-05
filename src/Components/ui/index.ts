@@ -56,7 +56,10 @@ export type { AlertProps } from './Alert'
 export { Accordion } from './Accordion'
 export type { AccordionProps, AccordionItemProps } from './Accordion'
 
-export { SocialMediaButton, socialMediaButtonVariants } from './SocialMediaButton'
+export {
+  SocialMediaButton,
+  socialMediaButtonVariants,
+} from './SocialMediaButton'
 export type { SocialMediaButtonProps } from './SocialMediaButton'
 
 export { Badge } from './Badge'
@@ -185,7 +188,10 @@ export { OrderProgressIndicator } from './OrderProgressIndicator'
 export type { OrderStatus } from './OrderProgressIndicator'
 
 export { OrderSummarySidebar } from './OrderSummarySidebar'
-export type { OrderSummarySidebarProps, OrderProduct as OrderSummaryProduct } from './OrderSummarySidebar'
+export type {
+  OrderSummarySidebarProps,
+  OrderProduct as OrderSummaryProduct,
+} from './OrderSummarySidebar'
 
 export { CancelOrderModal } from './CancelOrderModal'
 export type { CancelOrderModalProps } from './CancelOrderModal'
@@ -214,7 +220,10 @@ export { RequestCard } from './RequestCard'
 export type { RequestCardProps, ServiceRequest } from './RequestCard'
 
 export { RequestProgressIndicator } from './RequestProgressIndicator'
-export type { RequestProgressIndicatorProps, RequestStatus } from './RequestProgressIndicator'
+export type {
+  RequestProgressIndicatorProps,
+  RequestStatus,
+} from './RequestProgressIndicator'
 
 export { StatusBadge } from './StatusBadge'
 export type { StatusBadgeProps, StatusBadgeType } from './StatusBadge'
@@ -256,6 +265,52 @@ export type { ServiceSelectCardProps } from './ServiceSelectCard'
 export { LocationPickerModal } from './LocationPickerModal'
 export type { LocationPickerModalProps } from './LocationPickerModal'
 
+export { Textarea, textareaVariants } from './Textarea'
+export type { TextareaProps } from './Textarea'
+
+export { ProblemTypeSelector } from './ProblemTypeSelector'
+export type {
+  ProblemTypeSelectorProps,
+  ProblemType,
+} from './ProblemTypeSelector'
+
+export { ReportProblemForm } from './ReportProblemForm'
+export type { ReportProblemFormProps } from './ReportProblemForm'
+
+export { LiveChatSection } from './LiveChatSection'
+export type { LiveChatSectionProps } from './LiveChatSection'
+
+export { SeenIndicator } from './SeenIndicator'
+export type { SeenIndicatorProps } from './SeenIndicator'
+
+export { MessageBubble } from './MessageBubble'
+export type { MessageBubbleProps } from './MessageBubble'
+
+export { QuickReplySuggestions } from './QuickReplySuggestions'
+export type { QuickReplySuggestionsProps } from './QuickReplySuggestions'
+
+export { ChatInputArea } from './ChatInputArea'
+export type { ChatInputAreaProps, QuickReplyChip } from './ChatInputArea'
+
+export { ChatModal } from './ChatModal'
+export type { ChatModalProps, ChatMessage } from './ChatModal'
+
+export { VoiceRecorderInput } from './VoiceRecorderInput'
+export type { VoiceRecorderInputProps } from './VoiceRecorderInput'
+
+export { AudioMessage } from './AudioMessage'
+export type { AudioMessageProps } from './AudioMessage'
+export { Toggle } from './Switch'
+export type { ToggleProps } from './Switch'
+
+export { DeleteAccountModal } from './DeleteAccountModal'
+export type { DeleteAccountModalProps } from './DeleteAccountModal'
+
+export { LogoutModal } from './LogoutModal'
+export type { LogoutModalProps } from './LogoutModal'
+
+export { DeleteIcon, LogoutIcon } from './ModalIcons'
+export type { ModalIconProps } from './ModalIcons'
 export { ReferralOnboardingModal } from './ReferralOnboardingModal'
 export type { ReferralOnboardingModalProps } from './ReferralOnboardingModal'
 
