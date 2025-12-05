@@ -59,7 +59,7 @@ export type { AccordionProps, AccordionItemProps } from './Accordion'
 export { SocialMediaButton, socialMediaButtonVariants } from './SocialMediaButton'
 export type { SocialMediaButtonProps } from './SocialMediaButton'
 
-export { Badge, badgeVariants } from './Badge'
+export { Badge } from './Badge'
 export type { BadgeProps } from './Badge'
 
 export {
@@ -140,6 +140,12 @@ export type { QuantitySelectorProps } from './QuantitySelector'
 export { OrderSummaryCard } from './OrderSummaryCard'
 export type { OrderSummaryCardProps } from './OrderSummaryCard'
 
+export { CartItem } from './CartItem'
+export type { CartItemProps } from './CartItem'
+
+export { CartOrderSummary } from './CartOrderSummary'
+export type { CartOrderSummaryProps } from './CartOrderSummary'
+
 export { OfferBanner } from './OfferBanner'
 export type { OfferBannerProps } from './OfferBanner'
 
@@ -187,6 +193,12 @@ export type { CancelOrderModalProps } from './CancelOrderModal'
 export { CancelOrderSuccessModal } from './CancelOrderSuccessModal'
 export type { CancelOrderSuccessModalProps } from './CancelOrderSuccessModal'
 
+export { DeleteCartItemModal } from './DeleteCartItemModal'
+export type { DeleteCartItemModalProps } from './DeleteCartItemModal'
+
+export { CancelRequestModal } from './CancelRequestModal'
+export type { CancelRequestModalProps } from './CancelRequestModal'
+
 export { Pagination } from './Pagination'
 export type { PaginationProps } from './Pagination'
 
@@ -206,6 +218,15 @@ export type { RequestProgressIndicatorProps, RequestStatus } from './RequestProg
 
 export { StatusBadge } from './StatusBadge'
 export type { StatusBadgeProps, StatusBadgeType } from './StatusBadge'
+
+export { SocialShareButtons } from './SocialShareButtons'
+export type { SocialShareButtonsProps } from './SocialShareButtons'
+
+export { InsightCard } from './InsightCard'
+export type { InsightCardProps } from './InsightCard'
+
+export { PromotedCampaignCard } from './PromotedCampaignCard'
+export type { PromotedCampaignCardProps } from './PromotedCampaignCard'
 
 export { EmptyState } from './EmptyState'
 export type { EmptyStateProps } from './EmptyState'
@@ -234,3 +255,18 @@ export type { ServiceSelectCardProps } from './ServiceSelectCard'
 
 export { LocationPickerModal } from './LocationPickerModal'
 export type { LocationPickerModalProps } from './LocationPickerModal'
+
+export { ReferralOnboardingModal } from './ReferralOnboardingModal'
+export type { ReferralOnboardingModalProps } from './ReferralOnboardingModal'
+
+export { AffiliateOnboardingModals } from './AffiliateOnboardingModals'
+export type { AffiliateOnboardingModalsProps } from './AffiliateOnboardingModals'
+
+export { AddPaymentCardModal } from './AddPaymentCardModal'
+export type { AddPaymentCardModalProps } from './AddPaymentCardModal'
+
+export { WithdrawFundsModal } from './WithdrawFundsModal'
+export type { WithdrawFundsModalProps } from './WithdrawFundsModal'
+
+export { PINModal } from './PINModal'
+export type { PINModalProps } from './PINModal'
