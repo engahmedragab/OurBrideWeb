@@ -33,7 +33,6 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = () => {
     // TODO: Implement delete account logic
-    console.log('Delete account')
   }
 
   const handleLogout = () => {
@@ -157,7 +156,6 @@ export default function SettingsPage() {
               <button
                 onClick={() => {
                   // TODO: Implement view blocked users
-                  console.log('View blocked users')
                 }}
                 className="flex items-center gap-1 text-14 font-medium text-brand-500 hover:text-brand-600"
               >
@@ -241,7 +239,6 @@ export default function SettingsPage() {
               <button
                 onClick={() => {
                   // TODO: Implement payment history
-                  console.log('Payment history')
                 }}
                 className="flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700"
               >

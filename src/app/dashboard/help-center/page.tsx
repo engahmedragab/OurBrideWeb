@@ -25,8 +25,6 @@ export default function HelpCenterPage() {
     problemType: string
     description: string
   }) => {
-    // Check if problemType or description has text
-    // If problemType is 'Other', description is required
     const hasProblemType =
       data.problemType && data.problemType.trim().length > 0
     const hasDescription =
@@ -34,19 +32,13 @@ export default function HelpCenterPage() {
     const isOther = data.problemType === 'Other'
 
     if (isOther) {
-      // If 'Other' is selected, description is required
       if (hasDescription) {
-        // Handle form submission
-        console.log('Report submitted:', data)
-        // Show success modal
+        // Handle form submission - API call would go here
         setSuccessMessage('Report Submitted Successfully')
         setIsSuccessModalOpen(true)
       }
     } else if (hasProblemType || hasDescription) {
-      // For other problem types, either problemType or description is enough
-      // Handle form submission
-      console.log('Report submitted:', data)
-      // Show success modal
+      // Handle form submission - API call would go here
       setSuccessMessage('Report Submitted Successfully')
       setIsSuccessModalOpen(true)
     }
@@ -58,7 +50,6 @@ export default function HelpCenterPage() {
 
   const handleStartChat = () => {
     setIsChatModalOpen(true)
-    // Initialize with first support message if no messages exist
     if (chatMessages.length === 0) {
       setChatMessages([
         {
@@ -87,14 +78,11 @@ export default function HelpCenterPage() {
   }
 
   const handleSendMessage = async (message?: string, audioBlob?: Blob) => {
-    // If it's a voice message, handle the audio blob
     if (audioBlob) {
-      // Convert blob to File for backend
       const audioFile = new File([audioBlob], 'voice-message.webm', {
         type: 'audio/webm',
       })
 
-      // Create FormData to send to backend
       const formData = new FormData()
       formData.append('audio', audioFile)
       formData.append('message', message || '[Voice Message]')
@@ -107,14 +95,11 @@ export default function HelpCenterPage() {
       // Example: await apiClient.post('/chat/send', { message })
     }
 
-    // Calculate audio duration if it's a voice message
     let audioDuration = 0
     if (audioBlob) {
-      // Create a temporary audio element to get duration
       const audioUrl = URL.createObjectURL(audioBlob)
       const audio = new Audio(audioUrl)
 
-      // Wait for metadata to load
       await new Promise<void>(resolve => {
         const handleLoadedMetadata = () => {
           audioDuration = Math.floor(audio.duration)
@@ -152,7 +137,6 @@ export default function HelpCenterPage() {
     }
     setChatMessages(prev => [...prev, newMessage])
 
-    // Simulate support response after a delay
     setTimeout(() => {
       const supportResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -170,7 +154,6 @@ export default function HelpCenterPage() {
         seen: true,
       }
       setChatMessages(prev => [...prev, supportResponse])
-      // Mark user message as seen
       setChatMessages(prev =>
         prev.map(msg =>
           msg.id === newMessage.id ? { ...msg, seen: true } : msg
@@ -183,7 +166,6 @@ export default function HelpCenterPage() {
     handleSendMessage(reply)
   }
 
-  // FAQ Data organized by categories
   const faqCategories = [
     {
       title: 'Account & Profile',
@@ -269,7 +251,7 @@ export default function HelpCenterPage() {
 
   return (
     <>
-      <div className=" mx-auto  py-8 ">
+      <div className="max-w-7xl mx-auto py-8">
         {/* Page Title */}
         <div className="mb-6 lg:mb-8">
           <h1 className="text-20 lg:text-24 font-normal leading-8 lg:leading-10 text-black">
@@ -278,8 +260,8 @@ export default function HelpCenterPage() {
         </div>
 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-          {/* Left Column - FAQ Accordion - 3/4 width */}
-          <div className="w-full space-y-4 lg:w-[60%] ">
+          {/* Left Column - FAQ Accordion */}
+          <div className="w-full space-y-4 lg:w-[60%]">
             {faqCategories.map((category, categoryIndex) => (
               <div key={categoryIndex} className="flex flex-col gap-2">
                 <h2 className="text-16 lg:text-20 font-normal leading-8 lg:leading-10 text-black">
@@ -298,12 +280,9 @@ export default function HelpCenterPage() {
             ))}
           </div>
 
-          {/* Right Column - Report Problem & Live Chat - 1/4 width */}
-          <div className="flex w-full flex-col lg:mt-10 gap-4 lg:w-[40%] ">
-            {/* Report Problem Form */}
+          {/* Right Column - Report Problem & Live Chat */}
+          <div className="flex w-full flex-col lg:mt-10 gap-4 lg:w-[40%]">
             <ReportProblemForm onSubmit={handleReportSubmit} />
-
-            {/* Live Chat Section */}
             <LiveChatSection onStartChat={handleStartChat} />
           </div>
         </div>
@@ -344,4 +323,3 @@ export default function HelpCenterPage() {
     </>
   )
 }
-

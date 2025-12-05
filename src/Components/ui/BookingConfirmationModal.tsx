@@ -46,9 +46,9 @@ export const BookingConfirmationModal = ({
         <div className="flex justify-center mb-6">
           <img
             src={
-              typeof bookingConfirmationSvg === 'string'
-                ? bookingConfirmationSvg
-                : bookingConfirmationSvg.src
+              typeof modalSuccessSvg === 'string'
+                ? modalSuccessSvg
+                : modalSuccessSvg.src
             }
             alt="Booking Confirmation"
             className="w-full max-w-[281px] h-auto"
