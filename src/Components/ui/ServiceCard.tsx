@@ -52,7 +52,7 @@ export const ServiceCard = ({
             <div className="absolute top-3 left-3 z-10">
               <Badge
                 variant="default"
-                className="bg-red-500 !text-white border-0 px-2 py-1 text-12 font-semibold rounded-full"
+                className="bg-brand-100 text-brand-500 border-0 px-2 py-1 text-12 font-normal rounded-full"
               >
                 {discountPercentage}% OFF
               </Badge>
@@ -69,7 +69,7 @@ export const ServiceCard = ({
             >
               <Badge
                 variant="default"
-                className="bg-red-500 !text-white border-0 px-3 py-1 text-12 font-normal rounded"
+                className="bg-brand-100 text-brand-500 border-0 px-3 py-1 text-12 font-normal rounded"
               >
                 Top Offers
               </Badge>

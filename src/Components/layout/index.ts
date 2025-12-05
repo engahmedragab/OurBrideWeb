@@ -9,3 +9,9 @@ export type { UserSidebarProps } from './UserSidebar'
 
 export { UserPageLayout } from './UserPageLayout'
 export type { UserPageLayoutProps } from './UserPageLayout'
+
+export { ProviderHeader } from './ProviderHeader'
+export type { ProviderHeaderProps } from './ProviderHeader'
+
+export { ProviderPageLayout } from './ProviderPageLayout'
+export type { ProviderPageLayoutProps } from './ProviderPageLayout'

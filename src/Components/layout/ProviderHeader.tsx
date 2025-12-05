@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { SearchInput } from '@/components/ui/SearchInput'
 import brandLogo from '@/assets/svg/Brand-logo.svg'
 import {
   NavigationMenu,
@@ -12,22 +11,23 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
 } from '@/components/ui/NavigationMenu'
-import { Button } from '@/components/ui/Button'
 import {
   Home,
   Store,
   FileHeart,
   Globe,
-  Heart,
-  ShoppingCart,
-  User,
 } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
 
-export interface HeaderProps {
+export interface ProviderHeaderProps {
   className?: string
 }
 
-export const Header = ({ className }: HeaderProps) => {
+/**
+ * ProviderHeader Component
+ * Simplified header for provider profile pages with logo and navigation only
+ */
+export const ProviderHeader = ({ className }: ProviderHeaderProps) => {
   const pathname = usePathname()
   const isActive = (path: string) => pathname === path
 
@@ -75,26 +75,23 @@ export const Header = ({ className }: HeaderProps) => {
         className
       )}
     >
-      <div className="container-custom flex h-16 items-center justify-between gap-4">
+      <div className="container-custom flex h-16 items-center gap-4">
         {/* Logo */}
         <Link
-          href="/"
+          href="/"  
           className={cn(
             'flex items-center gap-2 transition-opacity duration-150',
             'hover:opacity-80',
             'focus:outline-none rounded-md'
           )}
         >
-          <img
-            src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src}
-            alt="OurBride Logo"
-            className="h-12 w-auto"
-          />
-        </Link>
+          <img src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src} alt="OurBride Logo" className="h-12 w-auto" />
+        </Link> 
 
-        {/* Navigation Menu */}
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList className="gap-0.5 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm h-12">
+        {/* Navigation Menu - Centered */}
+        <div className="flex-1 flex justify-center">
+          <NavigationMenu className="hidden md:flex">
+            <NavigationMenuList className="gap-0.5 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm h-12">
             {navigationItems.map(item => {
               const Icon = item.icon
               const active = isActive(item.path)
@@ -186,79 +183,26 @@ export const Header = ({ className }: HeaderProps) => {
                 </NavigationMenuItem>
               )
             })}
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        {/* Search Bar */}
-        <div className="hidden flex-1 max-w-md lg:block">
-          <SearchInput
-            placeholder="Search..."
-            variant="default"
-            size="md"
-            className={cn(
-              'w-full h-12 rounded-full transition-all duration-200',
-              'focus:border-brand-500',
-              'hover:border-gray-300'
-            )}
-          />
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-1.5">
-          {/* Wishlist */}
-          <Button
-            asChild
-            variant="ghost"
-            size="icon"
-            className={cn(
-              'relative rounded-md border border-gray-200',
-              'transition-colors duration-150',
-              'hover:border-brand-300 hover:bg-brand-50/50',
-              'focus:outline-none'
-            )}
-            aria-label="Wishlist"
+        <div className="flex items-center gap-3">
+          <Link
+            href="/auth/register"
+            className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors whitespace-nowrap"
           >
-            <Link href="/wishlist">
-              <Heart className="h-5 w-5 text-brand-500" />
-            </Link>
-          </Button>
-
-          {/* Cart */}
-          <Button
-            asChild
-            variant="ghost"
-            size="icon"
-            className={cn(
-              'relative rounded-md border border-gray-200',
-              'transition-colors duration-150',
-              'hover:border-brand-300 hover:bg-brand-50/50',
-              'focus:outline-none'
-            )}
-            aria-label="Shopping Cart"
-          >
-            <Link href="/cart" className="relative">
-              <ShoppingCart className="h-5 w-5 text-brand-500" />
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white shadow-sm">
-                0
-              </span>
-            </Link>
-          </Button>
-
-          {/* User Profile */}
+            Become A Provider
+          </Link>
           <Button
             asChild
             variant="brand"
-            size="icon"
-            className={cn(
-              'h-10 w-10 rounded-full',
-              'transition-opacity duration-150',
-              'hover:opacity-90',
-              'focus:outline-none'
-            )}
-            aria-label="User Profile"
+            size="md"
+            className="text-white rounded-full px-8"
           >
-            <Link href="/profile">
-              <User className="h-5 w-5 text-white" />
+            <Link href="/auth/login">
+              Login
             </Link>
           </Button>
         </div>
@@ -266,3 +210,4 @@ export const Header = ({ className }: HeaderProps) => {
     </header>
   )
 }
+

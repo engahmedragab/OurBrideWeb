@@ -1,8 +1,10 @@
 'use client'
 
+import Image from 'next/image'
 import { Button } from './Button'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'
+import modalSuccessSvg from '@/assets/svg/Modal-success.svg'
 
 export interface OrderConfirmationModalProps {
   isOpen: boolean
