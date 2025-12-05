@@ -59,7 +59,7 @@ export type { AccordionProps, AccordionItemProps } from './Accordion'
 export { SocialMediaButton, socialMediaButtonVariants } from './SocialMediaButton'
 export type { SocialMediaButtonProps } from './SocialMediaButton'
 
-export { Badge, badgeVariants } from './Badge'
+export { Badge } from './Badge'
 export type { BadgeProps } from './Badge'
 
 export {
@@ -219,6 +219,15 @@ export type { RequestProgressIndicatorProps, RequestStatus } from './RequestProg
 export { StatusBadge } from './StatusBadge'
 export type { StatusBadgeProps, StatusBadgeType } from './StatusBadge'
 
+export { SocialShareButtons } from './SocialShareButtons'
+export type { SocialShareButtonsProps } from './SocialShareButtons'
+
+export { InsightCard } from './InsightCard'
+export type { InsightCardProps } from './InsightCard'
+
+export { PromotedCampaignCard } from './PromotedCampaignCard'
+export type { PromotedCampaignCardProps } from './PromotedCampaignCard'
+
 export { EmptyState } from './EmptyState'
 export type { EmptyStateProps } from './EmptyState'
 
@@ -249,3 +258,15 @@ export type { LocationPickerModalProps } from './LocationPickerModal'
 
 export { ReferralOnboardingModal } from './ReferralOnboardingModal'
 export type { ReferralOnboardingModalProps } from './ReferralOnboardingModal'
+
+export { AffiliateOnboardingModals } from './AffiliateOnboardingModals'
+export type { AffiliateOnboardingModalsProps } from './AffiliateOnboardingModals'
+
+export { AddPaymentCardModal } from './AddPaymentCardModal'
+export type { AddPaymentCardModalProps } from './AddPaymentCardModal'
+
+export { WithdrawFundsModal } from './WithdrawFundsModal'
+export type { WithdrawFundsModalProps } from './WithdrawFundsModal'
+
+export { PINModal } from './PINModal'
+export type { PINModalProps } from './PINModal'

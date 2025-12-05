@@ -28,6 +28,7 @@ export default {
         gray: {
           25: '#FFFFFF', // White
           50: '#FAFAFA', // Very light gray
+          75: '#F4F4F6', // Ultra light gray (badge background)
           100: '#F5F5F5', // Light gray
           200: '#E5E5E5', // Lighter gray
           300: '#D4D4D4', // Light gray

@@ -2,16 +2,19 @@
 
 import React, { useState } from 'react'
 import { UserPageLayout } from '@/components/layout'
-import { Button, Input, ReferralOnboardingModal } from '@/components/ui'
+import {
+  Button,
+  Input,
+  ReferralOnboardingModal,
+  Badge,
+  SocialShareButtons,
+  InsightCard,
+} from '@/components/ui'
 import {
   Send,
   UserPlus,
   Gift,
   Copy,
-  Facebook,
-  Instagram,
-  MessageCircle,
-  QrCode,
   CheckCircle,
   Clock,
   Ticket,
@@ -120,29 +123,6 @@ export default function ReferralsPage() {
     navigator.clipboard.writeText(inviteLink)
   }
 
-  const getStatusStyles = (status: ActivityItem['status']) => {
-    switch (status) {
-      case 'Delivered':
-        return 'bg-green-50 text-green-600 border border-green-200'
-      case 'Processing':
-        return 'bg-blue-50 text-blue-600 border border-blue-200'
-      case 'Pending':
-        return 'bg-gray-50 text-gray-600 border border-gray-200'
-      default:
-        return 'bg-gray-50 text-gray-600 border border-gray-200'
-    }
-  }
-
-  const getStatusIcon = (status: ActivityItem['status']) => {
-    switch (status) {
-      case 'Delivered':
-        return <CheckCircle className="w-3 h-3" />
-      case 'Processing':
-        return <Clock className="w-3 h-3" />
-      default:
-        return null
-    }
-  }
 
   return (
     <>
@@ -161,47 +141,21 @@ export default function ReferralsPage() {
               Referral Insights
             </h2>
             <div className="grid grid-cols-3 gap-4">
-              {/* Total Invites Sent */}
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
-                  <Send className="w-5 h-5 text-gray-600" />
-                </div>
-                <div>
-                  <p className="text-14 text-gray-600 mb-1">Total Invites Sent</p>
-                  <p className="text-20 font-normal text-gray-900">
-                    {referralInsights.totalInvites}{' '}
-                    <span className="text-12 text-gray-500">Egp</span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Friends Joined */}
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
-                  <UserPlus className="w-5 h-5 text-gray-600" />
-                </div>
-                <div>
-                  <p className="text-14 text-gray-600 mb-1">Friends Joined</p>
-                  <p className="text-20 font-normal text-gray-900">
-                    {referralInsights.friendsJoined}{' '}
-                    <span className="text-12 text-gray-500">Egp</span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Rewards Earned */}
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
-                  <Gift className="w-5 h-5 text-gray-600" />
-                </div>
-                <div>
-                  <p className="text-14 text-gray-600 mb-1">Rewards Earned</p>
-                  <p className="text-20 font-normal text-gray-900">
-                    {referralInsights.rewardsEarned}{' '}
-                    <span className="text-12 text-gray-500">Egp</span>
-                  </p>
-                </div>
-              </div>
+              <InsightCard
+                icon={Send}
+                label="Total Invites Sent"
+                value={referralInsights.totalInvites}
+              />
+              <InsightCard
+                icon={UserPlus}
+                label="Friends Joined"
+                value={referralInsights.friendsJoined}
+              />
+              <InsightCard
+                icon={Gift}
+                label="Rewards Earned"
+                value={referralInsights.rewardsEarned}
+              />
             </div>
           </div>
 
@@ -229,36 +183,7 @@ export default function ReferralsPage() {
             </div>
 
             {/* Social Share Buttons */}
-            <div className="grid grid-cols-4 gap-3">
-              <Button
-                variant="outline"
-                className="border-brand-500 text-brand-500 hover:bg-brand-50"
-              >
-                <Facebook className="h-5 w-5" />
-                Facebook
-              </Button>
-              <Button
-                variant="outline"
-                className="border-brand-500 text-brand-500 hover:bg-brand-50"
-              >
-                <Instagram className="h-5 w-5" />
-                Instagram
-              </Button>
-              <Button
-                variant="outline"
-                className="border-brand-500 text-brand-500 hover:bg-brand-50"
-              >
-                <MessageCircle className="h-5 w-5" />
-                Whatsapp
-              </Button>
-              <Button
-                variant="outline"
-                className="border-brand-500 text-brand-500 hover:bg-brand-50"
-              >
-                <QrCode className="h-5 w-5" />
-                QR Code
-              </Button>
-            </div>
+            <SocialShareButtons className="gap-3" />
           </div>
 
           {/* Bonus Progress */}
@@ -360,10 +285,17 @@ export default function ReferralsPage() {
                       <p className="text-12 text-gray-600 mb-2">
                         {item.bookings} Booking
                       </p>
-                       <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-12 font-medium ${getStatusStyles(item.status)}`}>
-                         {getStatusIcon(item.status)}
-                         <span>{item.status === 'Processing' ? 'Pending Payout' : item.status === 'Delivered' ? 'Confirmed' : item.status}</span>
-                       </div>
+                      <Badge
+                        variant={item.status === 'Delivered' ? 'confirmed' : 'processing'}
+                        className="gap-1.5 px-3 py-1 text-12 font-medium"
+                      >
+                        {item.status === 'Delivered' ? (
+                          <CheckCircle className="w-3 h-3" />
+                        ) : (
+                          <Clock className="w-3 h-3" />
+                        )}
+                        <span>{item.status === 'Processing' ? 'Pending Payout' : item.status === 'Delivered' ? 'Confirmed' : item.status}</span>
+                      </Badge>
                     </div>
                   </div>
                 </div>

@@ -1,10 +1,11 @@
 'use client'
 
+import Image from 'next/image'
 import { Button } from './Button'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
-import bookingConfirmationSvg from '@/assets/svg/booking-confirmation.svg'
+import modalSuccessSvg from '@/assets/svg/Modal-success.svg'
 
 export interface BookingConfirmationModalProps {
   isOpen: boolean
@@ -41,18 +42,20 @@ export const BookingConfirmationModal = ({
       contentClassName="p-0"
     >
       <div className="p-6">
-        {/* Illustration */}
+        {/* Success Illustration */}
         <div className="flex justify-center mb-6">
-          <img
-            src={typeof bookingConfirmationSvg === 'string' ? bookingConfirmationSvg : bookingConfirmationSvg.src}
-            alt="Booking Confirmation"
-            className="w-full max-w-[281px] h-auto"
+          <Image
+            src={modalSuccessSvg}
+            alt="Success"
+            width={120}
+            height={120}
+            className="w-24 h-24"
           />
         </div>
 
         {/* Success Message */}
         <div className="text-center mb-4">
-          <p className="text-20 md:text-24 font-semibold text-gray-900 mb-3">
+          <p className="text-20 md:text-24 font-normal text-gray-900 mb-3">
             Your Request Has Been Sent!
           </p>
           <p className="text-14 md:text-16 text-gray-600 leading-relaxed">
