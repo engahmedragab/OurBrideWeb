@@ -75,7 +75,7 @@ export const ServiceList = ({
                   <div
                     className={cn(
                       'absolute top-3 z-10',
-                      service.showTopOfferBadge ? 'left-[90px]' : 'left-3'
+                      service.showTopOfferBadge ? 'left-[98px]' : 'left-3'
                     )}
                   >
                     <Badge

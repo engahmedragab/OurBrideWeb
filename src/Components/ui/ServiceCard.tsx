@@ -64,7 +64,7 @@ export const ServiceCard = ({
             <div
               className={cn(
                 'absolute top-3 z-10',
-                hasDiscount ? 'left-[76px]' : 'left-3'
+                hasDiscount ? 'left-[84px]' : 'left-3'
               )}
             >
               <Badge

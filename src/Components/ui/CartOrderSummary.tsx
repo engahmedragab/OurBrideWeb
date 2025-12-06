@@ -34,17 +34,14 @@ export const CartOrderSummary = ({
 
   const handleRedeemPromo = () => {
     // TODO: Implement promo code redemption
-    console.log('Redeem promo code:', promoCode)
   }
 
   const handleRedeemDiamonds = () => {
     // TODO: Implement diamonds redemption
-    console.log('Redeem diamonds')
   }
 
   const handleRedeemGiftsCash = () => {
     // TODO: Implement gifts cash redemption
-    console.log('Redeem gifts cash')
   }
 
   return (

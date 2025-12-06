@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle2, X, Snowflake } from 'lucide-react'
+import { CheckCircle2, X, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export type StatusBadgeType =
@@ -33,7 +33,7 @@ const statusConfig = {
   },
   inProgress: {
     bgColor: 'bg-blue-500',
-    icon: Snowflake,
+    icon: Loader2,
     defaultLabel: 'In Progress',
   },
 }

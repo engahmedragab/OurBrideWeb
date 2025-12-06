@@ -8,7 +8,7 @@ import { QuickReplySuggestions } from './QuickReplySuggestions'
 import { ChatInputArea, type QuickReplyChip } from './ChatInputArea'
 import { SeenIndicator } from './SeenIndicator'
 import { Button } from './Button'
-import chatAvatarImage from '@/assets/images/ourBride_chat_avatar.png'
+import brandLogoSvg from '@/assets/svg/Brand-logo.svg'
 
 export interface ChatMessage {
   id: string
@@ -52,11 +52,11 @@ export const ChatModal = ({
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
 
-  // Use default avatar if not provided
+  // Use brand logo as default avatar
   const defaultAvatar =
-    typeof chatAvatarImage === 'object' && 'src' in chatAvatarImage
-      ? chatAvatarImage.src
-      : String(chatAvatarImage)
+    typeof brandLogoSvg === 'object' && 'src' in brandLogoSvg
+      ? brandLogoSvg.src
+      : String(brandLogoSvg)
   const avatarSrc = supportAvatar || defaultAvatar
 
   useEffect(() => {
@@ -68,15 +68,9 @@ export const ChatModal = ({
   const handleSend = (message?: string, audioBlob?: Blob) => {
     const messageToSend = message || inputValue.trim()
     if (messageToSend.length > 0 || audioBlob) {
-      // Send message and audio blob to parent component
-      // Parent component will handle sending to backend
       onSend(messageToSend || (audioBlob ? '[Voice Message]' : ''), audioBlob)
       setInputValue('')
     }
-  }
-
-  const handleRecord = () => {
-    // Recording is handled by ChatInputArea component
   }
 
   const handleQuickReplySelect = (reply: string) => {
@@ -103,11 +97,13 @@ export const ChatModal = ({
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <img
-            src={avatarSrc}
-            alt={supportName}
-            className="h-8 w-8 sm:h-10 sm:w-10 md:h-[60px] md:w-[60px] rounded-full object-cover flex-shrink-0"
-          />
+          <div className="h-8 w-8 sm:h-10 sm:w-10 md:h-[60px] md:w-[60px] rounded-full bg-white border border-gray-200 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0">
+            <img
+              src={avatarSrc}
+              alt={supportName}
+              className="w-full h-full object-contain"
+            />
+          </div>
           <div className="flex flex-col gap-0.5 sm:gap-1 min-w-0">
             <h3 className="text-14 sm:text-16 md:text-20 font-medium leading-5 sm:leading-6 text-gray-900 truncate">
               {supportName}
@@ -138,11 +134,13 @@ export const ChatModal = ({
             <div key={msg.id}>
               {msg.sender === 'support' && (
                 <div className="flex gap-1.5 items-end mb-1">
-                  <img
-                    src={avatarSrc}
-                    alt="Support"
-                    className="h-5 w-5 sm:h-6 sm:w-6 rounded-full object-cover flex-shrink-0"
-                  />
+                  <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-white border border-gray-200 flex items-center justify-center p-0.5 sm:p-1 flex-shrink-0">
+                    <img
+                      src={avatarSrc}
+                      alt="Support"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                   <div className="flex-1 max-w-[80%] sm:max-w-[350px] md:max-w-[400px]">
                     <MessageBubble
                       message={msg.message}
@@ -198,7 +196,6 @@ export const ChatModal = ({
             value={inputValue}
             onChange={setInputValue}
             onSend={handleSend}
-            onRecord={handleRecord}
             quickReplies={quickReplyChips}
             placeholder="Enter Your Message.."
           />

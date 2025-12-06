@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { Button } from './Button'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'

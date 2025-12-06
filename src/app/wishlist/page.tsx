@@ -337,14 +337,12 @@ export default function WishlistPage() {
     setWishlistProducts(prev => prev.filter(product => product.id !== productId))
   }
 
-  const handleBookNow = (serviceId: string) => {
+  const handleBookNow = (_serviceId: string) => {
     // TODO: Implement book now
-    console.log('Book now:', serviceId)
   }
 
-  const handleAddToCart = (productId: string) => {
+  const handleAddToCart = (_productId: string) => {
     // TODO: Implement add to cart
-    console.log('Add to cart:', productId)
   }
 
   return (

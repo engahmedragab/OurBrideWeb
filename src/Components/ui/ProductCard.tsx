@@ -61,7 +61,7 @@ export const ProductCard = ({
             <div
               className={cn(
                 'absolute top-3 z-10',
-                hasDiscount ? 'left-[66px]' : 'left-3'
+                hasDiscount ? 'left-[74px]' : 'left-3'
               )}
             >
               <Badge
