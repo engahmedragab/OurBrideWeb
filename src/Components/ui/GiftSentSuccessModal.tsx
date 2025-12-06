@@ -39,17 +39,17 @@ export const GiftSentSuccessModal = ({
                 : giftSuccessImage.src
             }
             alt="Gift Sent Successfully"
-            className="w-full max-w-[300px] h-auto object-contain"
+            className="w-full max-w-[120px] h-[120px] sm:max-w-[150px] sm:h-[150px] object-contain"
           />
         </div>
 
         {/* Success Message */}
         <div className="text-center mb-6">
           <p className="text-20 font-semibold text-gray-900 mb-2">
-            Success! ✨
+            Success! 🎉
           </p>
           <p className="text-16 text-gray-600">
-            Your Gift Sent Successfully!
+            Your Gift Sent Successfully! 
           </p>
         </div>
 
@@ -58,7 +58,7 @@ export const GiftSentSuccessModal = ({
           onClick={onClose}
           variant="brand"
           size="lg"
-          className="w-full rounded-full"
+          className="w-full rounded-full text-white"
         >
           Got It
         </Button>

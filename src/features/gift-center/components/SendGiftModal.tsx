@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Gift, User, Mail, CreditCard, Wallet } from 'lucide-react'
+import { Gift, User, Mail } from 'lucide-react'
 import { Modal, Button, Input, Checkbox } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import phoneIconSvg from '@/Assets/svg/PhoneIcon.svg'
@@ -11,73 +10,57 @@ import phoneIconSvg from '@/Assets/svg/PhoneIcon.svg'
  * Send Gift Modal Component Props
  */
 export interface SendGiftModalProps {
-  isOpen: boolean
+  open: boolean
   onClose: () => void
-  couponAmount: number
-  onCheckout?: () => void
 }
 
 /**
  * Send Gift Modal Component
- * Modal for sending gifts with payment form
+ * Modal for sending gifts with payment form and order summary
  */
-export const SendGiftModal = ({
-  isOpen,
-  onClose,
-  couponAmount,
-  onCheckout,
-}: SendGiftModalProps) => {
-  const router = useRouter()
+export const SendGiftModal = ({ open, onClose }: SendGiftModalProps) => {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'wallet'>('card')
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [selectedGiftId, setSelectedGiftId] = useState<string>('1')
 
-  const navigateToTermsAndConditions = (
-    e: React.MouseEvent<HTMLSpanElement>
-  ) => {
-    e.preventDefault()
-    e.stopPropagation()
-    onClose()
-    setTimeout(() => {
-      router.push('/dashboard/settings/terms')
-    }, 100)
-  }
-
   const orderItems = [
-    { id: '1', amount: couponAmount },
-    { id: '2', amount: couponAmount },
-    { id: '3', amount: couponAmount },
-    { id: '4', amount: couponAmount },
+    { id: '1', amount: 500 },
+    { id: '2', amount: 500 },
+    { id: '3', amount: 500 },
+    { id: '4', amount: 500 },
   ]
 
-  const subtotal = couponAmount
+  const subtotal = 500
   const taxes = 20
   const total = subtotal + taxes
 
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={open}
       onClose={onClose}
-      title="Send Gift"
       maxWidth="2xl"
-      contentClassName="p-0 max-h-[90vh] overflow-y-auto"
-      headerClassName="px-2.5 py-2 sm:px-3 sm:py-2.5 md:px-4 md:py-3"
-      containerClassName="max-h-[100vh] overflow-hidden max-w-[95%] sm:max-w-[90%] md:max-w-[700px] lg:max-w-[1000px] w-full"
+      showCloseButton={true}
+      contentClassName="p-0 overflow-visible"
+      headerClassName="px-4 sm:px-6 pt-4 sm:pt-6 pb-0 border-b-0"
+      containerClassName="overflow-visible"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 p-2.5 sm:gap-3 sm:p-3 md:gap-4 md:p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-6">
         {/* Left Column - Form */}
-        <div className="space-y-2.5 sm:space-y-3 md:space-y-4">
+        <div className="space-y-4 sm:space-y-6">
+          {/* Title */}
+          <h2 className="text-16 sm:text-18 font-semibold text-gray-900">
+            Send Gift
+          </h2>
+
           {/* Your Information */}
           <div>
-            <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">
+            <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2 sm:mb-3">
               Your Informations
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-2 sm:space-y-3">
               <Input
                 placeholder="Full Name"
-                prefixIcon={
-                  <User className="h-4 w-4 text-gray-400" />
-                }
+                prefixIcon={<User className="h-4 w-4 text-gray-400" />}
                 className="w-full"
                 size="sm"
                 variant="default"
@@ -92,7 +75,7 @@ export const SendGiftModal = ({
                         : phoneIconSvg.src
                     }
                     alt="Phone"
-                    className="h-4 w-4 text-gray-400"
+                    className="h-4 w-4"
                   />
                 }
                 type="tel"
@@ -105,24 +88,20 @@ export const SendGiftModal = ({
 
           {/* Recipient Information */}
           <div>
-            <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">
+            <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2 sm:mb-3">
               Who will receive your gift ?
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-2 sm:space-y-3">
               <Input
                 placeholder="Full Name"
-                prefixIcon={
-                  <User className="h-4 w-4 text-gray-400" />
-                }
+                prefixIcon={<User className="h-4 w-4 text-gray-400" />}
                 className="w-full"
                 size="sm"
                 variant="default"
               />
               <Input
                 placeholder="E-mail"
-                prefixIcon={
-                  <Mail className="h-4 w-4 text-gray-400" />
-                }
+                prefixIcon={<Mail className="h-4 w-4 text-gray-400" />}
                 type="email"
                 className="w-full"
                 size="sm"
@@ -151,10 +130,7 @@ export const SendGiftModal = ({
 
           {/* Payment Method */}
           <div>
-            <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">
-              Payment Method
-            </h3>
-            <div className="flex gap-2">
+            <div className="flex gap-2 sm:gap-3">
               <Button
                 variant={paymentMethod === 'card' ? 'outlineBrand' : 'outline'}
                 size="md"
@@ -163,7 +139,7 @@ export const SendGiftModal = ({
                   'flex-1 rounded-lg text-10 sm:text-12 font-normal',
                   paymentMethod === 'card'
                     ? '!border-brand-500 !text-gray-900 !bg-white'
-                    : '!border-gray-300 !text-gray-600 !bg-white hover:!bg-gray-50 hover:!text-gray-700'
+                    : '!border-gray-300 !text-gray-600 !bg-white hover:!bg-gray-50'
                 )}
               >
                 Debit / Credit
@@ -176,7 +152,7 @@ export const SendGiftModal = ({
                   'flex-1 rounded-lg text-10 sm:text-12 font-normal',
                   paymentMethod === 'wallet'
                     ? '!border-brand-500 !text-gray-900 !bg-white'
-                    : '!border-gray-300 !text-gray-600 !bg-white hover:!bg-gray-50 hover:!text-gray-700'
+                    : '!border-gray-300 !text-gray-600 !bg-white hover:!bg-gray-50'
                 )}
               >
                 Mobile Wallet
@@ -187,7 +163,7 @@ export const SendGiftModal = ({
           {/* Card Details */}
           {paymentMethod === 'card' && (
             <div>
-              <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">
+              <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2 sm:mb-3">
                 Card Details
               </h3>
               <div className="space-y-2 sm:space-y-3">
@@ -226,8 +202,10 @@ export const SendGiftModal = ({
         </div>
 
         {/* Right Column - Order Summary */}
-        <div className="rounded-xl p-2.5 sm:p-3 md:p-4 space-y-2.5 sm:space-y-3 md:space-y-4">
-          <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">Order Summary</h3>
+        <div className="rounded-xl p-4 sm:p-6 space-y-4 sm:space-y-6">
+          <h3 className="text-12 sm:text-14 font-semibold text-gray-900">
+            Order Summary
+          </h3>
 
           {/* Order Items */}
           <div className="space-y-2 sm:space-y-3">
@@ -236,14 +214,14 @@ export const SendGiftModal = ({
                 key={item.id}
                 onClick={() => setSelectedGiftId(item.id)}
                 className={cn(
-                  'flex items-center gap-2 sm:gap-3 md:gap-4 p-2 sm:p-3 md:p-4 bg-white rounded-xl cursor-pointer transition-all',
+                  'flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-white rounded-xl cursor-pointer transition-all',
                   selectedGiftId === item.id
                     ? 'border-2 border-brand-500'
                     : 'border border-gray-300'
                 )}
               >
                 <div className="flex items-center justify-center flex-shrink-0">
-                  <Gift className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-blue-500" />
+                  <Gift className="h-8 w-8 sm:h-10 sm:w-10 text-blue-500" />
                 </div>
                 <span className="text-12 sm:text-14 font-normal text-gray-900 flex-1">
                   {item.amount} egp Coupon
@@ -253,7 +231,7 @@ export const SendGiftModal = ({
           </div>
 
           {/* Cost Breakdown */}
-          <div className="space-y-1.5 pt-2 border-t border-gray-200">
+          <div className="space-y-1.5 sm:space-y-2 pt-2 sm:pt-3 border-t border-gray-200">
             <div className="flex justify-between items-center">
               <span className="text-10 sm:text-12 text-gray-600">Subtotal</span>
               <span className="text-10 sm:text-12 font-semibold text-gray-900">
@@ -261,13 +239,17 @@ export const SendGiftModal = ({
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-10 sm:text-12 text-gray-600">Taxes & Fees</span>
+              <span className="text-10 sm:text-12 text-gray-600">
+                Taxes & Fees
+              </span>
               <span className="text-10 sm:text-12 font-semibold text-gray-900">
                 {taxes} EGP
               </span>
             </div>
-            <div className="flex justify-between items-center pt-1.5 border-t border-gray-200">
-              <span className="text-12 sm:text-14 font-semibold text-gray-900">Total</span>
+            <div className="flex justify-between items-center pt-1.5 sm:pt-2 border-t border-gray-200">
+              <span className="text-12 sm:text-14 font-semibold text-gray-900">
+                Total
+              </span>
               <span className="text-12 sm:text-14 font-semibold text-gray-900">
                 {total} EGP
               </span>
@@ -275,8 +257,8 @@ export const SendGiftModal = ({
           </div>
 
           {/* Terms & Conditions */}
-          <div className="space-y-1.5">
-            <div className="flex items-start gap-1.5">
+          <div className="space-y-1.5 sm:space-y-2">
+            <div className="flex items-start gap-1.5 sm:gap-2">
               <Checkbox
                 checked={acceptTerms}
                 onChange={setAcceptTerms}
@@ -285,12 +267,7 @@ export const SendGiftModal = ({
               />
               <label className="text-10 sm:text-12 text-gray-600 cursor-pointer flex-1">
                 I Accept{' '}
-                <span
-                  onClick={navigateToTermsAndConditions}
-                  role="button"
-                  tabIndex={0}
-                  className="font-semibold text-gray-900 hover:text-brand-500 cursor-pointer transition-colors "
-                >
+                <span className="font-semibold text-gray-900">
                   Terms & Conditions
                 </span>
               </label>
@@ -305,13 +282,10 @@ export const SendGiftModal = ({
           {/* Checkout Button */}
           <Button
             variant="brand"
-            size="lg"
-            className="w-full rounded-full text-12 sm:text-14 font-normal text-white  mb-3"
-            disabled={!acceptTerms}
+            size="md"
+            className="w-full rounded-full text-12 sm:text-14 font-semibold"
             onClick={() => {
-              if (onCheckout) {
-                onCheckout()
-              }
+              // Placeholder for checkout logic
             }}
           >
             Checkout
@@ -321,3 +295,4 @@ export const SendGiftModal = ({
     </Modal>
   )
 }
+
