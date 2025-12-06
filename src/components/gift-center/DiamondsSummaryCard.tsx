@@ -1,9 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { Info, ChevronRight } from 'lucide-react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import diamondSvg from '@/assets/svg/Diamond.svg'
+import { HowPointsWorkModal } from './HowPointsWorkModal'
 
 const diamondsCardVariants = cva(
   'bg-white rounded-xl p-3 sm:p-4 border border-gray-100 shadow-sm flex flex-col gap-2',
@@ -46,17 +48,26 @@ export const DiamondsSummaryCard = ({
   variant,
   className,
 }: DiamondsSummaryCardProps) => {
+  const [isHowPointsWorkOpen, setIsHowPointsWorkOpen] = useState(false)
+
   return (
-    <div className={cn(diamondsCardVariants({ variant }), className)}>
-      {/* Header Row */}
-      <div className="flex  lg:flex-col xl:flex-row gap-2 sm:gap-3 xl:items-center justify-between w-full">
-        {/* Title with Info Icon */}
-        <div className="flex gap-1.5 sm:gap-2 xl:items-center xl:justify-center shrink-0">
-          <p className="text-12 sm:text-14 font-normal text-gray-500 text-center whitespace-nowrap">
-            {title}
-          </p>
-          <Info className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 shrink-0" />
-        </div>
+    <>
+      <div className={cn(diamondsCardVariants({ variant }), className)}>
+        {/* Header Row */}
+        <div className="flex  md:flex-col xl:flex-row gap-2 sm:gap-3 xl:items-center justify-between w-full">
+          {/* Title with Info Icon */}
+          <div className="flex gap-1.5 sm:gap-2 items-center justify-start shrink-0">
+            <p className="text-12 sm:text-14 font-normal text-gray-500 text-center whitespace-nowrap">
+              {title}
+            </p>
+            <button
+              onClick={() => setIsHowPointsWorkOpen(true)}
+              className="shrink-0 hover:opacity-80 transition-opacity"
+              aria-label="How points work"
+            >
+              <Info className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+            </button>
+          </div>
 
         {/* Diamonds Count */}
         <div className="flex gap-1 sm:gap-1.5 items-center shrink-0">
@@ -84,7 +95,14 @@ export const DiamondsSummaryCard = ({
       {helperText && (
         <p className="text-12 text-gray-500 text-center">{helperText}</p>
       )}
-    </div>
+      </div>
+
+      {/* How Points Work Modal */}
+      <HowPointsWorkModal
+        isOpen={isHowPointsWorkOpen}
+        onClose={() => setIsHowPointsWorkOpen(false)}
+      />
+    </>
   )
 }
 

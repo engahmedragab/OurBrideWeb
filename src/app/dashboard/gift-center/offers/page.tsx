@@ -1,11 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import {
   WeeklyMissionsSection,
   WeeklyOfferSection,
   DiamondsSummaryCard,
   ReferralProgramCard,
   AvailableCouponsSection,
+  RedeemDiamondsModal,
+  RedeemSuccessModal,
   type MissionCardProps,
   type OfferCardProps,
   type OfferCouponCardProps,
@@ -110,12 +113,32 @@ const mockAvailableCoupons: OfferCouponCardProps[] = [
  * Displays weekly missions, weekly offer, and available coupons
  */
 export default function OffersPage() {
+  const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false)
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
+  const diamondsCount = 3500
+
   const handleRedeemDiamonds = () => {
-    // TODO: Navigate to redeem page
+    setIsRedeemModalOpen(true)
+  }
+
+  const handleRedeemConfirm = () => {
+    setIsRedeemModalOpen(false)
+    setIsSuccessModalOpen(true)
+  }
+
+  const handleSuccessModalClose = () => {
+    setIsSuccessModalOpen(false)
   }
 
   const handleViewReferralDetails = () => {
     // TODO: Navigate to referral details
+  }
+
+  const handleCopyCode = () => {
+    // TODO: Copy code to clipboard
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText('amz005')
+    }
   }
 
   return (
@@ -164,6 +187,25 @@ export default function OffersPage() {
           coupons={mockAvailableCoupons}
         />
       </div>
+
+      {/* Redeem Diamonds Modal */}
+      <RedeemDiamondsModal
+        isOpen={isRedeemModalOpen}
+        onClose={() => setIsRedeemModalOpen(false)}
+        onRedeem={handleRedeemConfirm}
+        diamondsCount={diamondsCount}
+        discountPercentage={20}
+      />
+
+      {/* Redeem Success Modal */}
+      <RedeemSuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={handleSuccessModalClose}
+        discountLabel="You won 20% Off card"
+        validUntilLabel="Valid Due 15 Sep,2025"
+        code="amz005"
+        onCopyCode={handleCopyCode}
+      />
     </div>
   )
 }

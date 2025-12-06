@@ -35,4 +35,12 @@ export type { OfferCouponCardProps } from './OfferCouponCard'
 export { AvailableCouponsSection } from './AvailableCouponsSection'
 export type { AvailableCouponsSectionProps } from './AvailableCouponsSection'
 
+export { RedeemDiamondsModal } from './RedeemDiamondsModal'
+export type { RedeemDiamondsModalProps } from './RedeemDiamondsModal'
+
+export { RedeemSuccessModal } from './RedeemSuccessModal'
+export type { RedeemSuccessModalProps } from './RedeemSuccessModal'
+
+export { HowPointsWorkModal } from './HowPointsWorkModal'
+export type { HowPointsWorkModalProps } from './HowPointsWorkModal'
 
