@@ -325,3 +325,9 @@ export type { WithdrawFundsModalProps } from './WithdrawFundsModal'
 
 export { PINModal } from './PINModal'
 export type { PINModalProps } from './PINModal'
+
+export { Tabs, tabsVariants, tabItemVariants } from './Tabs'
+export type { TabsProps, TabItem } from './Tabs'
+
+export { GiftSentSuccessModal } from './GiftSentSuccessModal'
+export type { GiftSentSuccessModalProps } from './GiftSentSuccessModal'
