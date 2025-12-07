@@ -114,15 +114,15 @@ export default function CouponsPage() {
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         {/* Left Column - Main Content */}
-        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+        <div className="space-y-4 sm:space-y-5">
           {/* Received Gifts Section */}
           <div>
-            <h2 className="text-18 sm:text-20 font-semibold text-gray-900 mb-3 sm:mb-4">
+            <h2 className="text-14 sm:text-16 font-normal text-gray-900 mb-2 sm:mb-3">
               Received Gifts
             </h2>
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-2 sm:space-y-2.5">
               {mockReceivedGifts.map(gift => (
                 <ReceivedGiftItem
                   key={gift.id}
@@ -137,15 +137,15 @@ export default function CouponsPage() {
 
           {/* Express Your Love Section */}
           <div>
-            <div className="flex flex-col gap-1 sm:gap-2 mb-3 sm:mb-4">
-              <h2 className="text-20 sm:text-24 font-medium text-gray-900 leading-6 sm:leading-8">
+            <div className="flex flex-col gap-0.5 sm:gap-1 mb-2 sm:mb-3">
+              <h2 className="text-14 sm:text-16 font-normal text-gray-900 leading-4 sm:leading-5">
                 Express Your Love
               </h2>
-              <p className="text-16 sm:text-20 font-normal text-gray-500 leading-5 sm:leading-6">
+              <p className="text-12 sm:text-14 font-normal text-gray-500 leading-3 sm:leading-4">
                 Send a simple gift now to show how much you care.
               </p>
             </div>
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-2 sm:space-y-2.5">
               {mockCoupons.map(coupon => (
                 <CouponCard
                   key={coupon.id}
@@ -159,7 +159,7 @@ export default function CouponsPage() {
         </div>
 
         {/* Right Column - Sidebar */}
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-3 sm:space-y-4">
           <WalletSummaryCard />
           <ReferralProgramCard />
           <SentGiftsCard
