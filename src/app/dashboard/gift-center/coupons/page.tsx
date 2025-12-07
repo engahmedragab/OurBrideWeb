@@ -14,6 +14,12 @@ import {
 
 /**
  * Mock data for received gifts
+ * Different amounts with different icon colors:
+ * - 500 EGP: Blue
+ * - 1K EGP: Green
+ * - 2K EGP: Red
+ * - 5K EGP: Purple
+ * - 10K EGP: Orange
  */
 const mockReceivedGifts = [
   {
@@ -25,22 +31,42 @@ const mockReceivedGifts = [
   },
   {
     id: '2',
-    senderName: 'Sara Mohamed',
-    amount: 500,
-    date: 'Sep 15, 2025',
-    time: '11:30 am',
+    senderName: 'Ahmed Ali',
+    amount: 1000,
+    date: 'Sep 14, 2025',
+    time: '10:15 am',
   },
   {
     id: '3',
-    senderName: 'Sara Mohamed',
-    amount: 500,
-    date: 'Sep 15, 2025',
-    time: '11:30 am',
+    senderName: 'Fatima Hassan',
+    amount: 2000,
+    date: 'Sep 13, 2025',
+    time: '09:45 am',
+  },
+  {
+    id: '4',
+    senderName: 'Omar Ibrahim',
+    amount: 5000,
+    date: 'Sep 12, 2025',
+    time: '08:20 am',
+  },
+  {
+    id: '5',
+    senderName: 'Layla Ahmed',
+    amount: 10000,
+    date: 'Sep 11, 2025',
+    time: '07:00 am',
   },
 ]
 
 /**
  * Mock data for available coupons
+ * Different amounts with different icon colors:
+ * - 500 EGP: Blue
+ * - 1K EGP: Green
+ * - 2K EGP: Red
+ * - 5K EGP: Purple
+ * - 10K EGP: Orange
  */
 const mockCoupons = [
   {
@@ -50,18 +76,34 @@ const mockCoupons = [
   },
   {
     id: '2',
-    amount: 500,
+    amount: 1000,
     description: 'a simple way to show your appreciation',
   },
   {
     id: '3',
-    amount: 500,
+    amount: 2000,
+    description: 'a simple way to show your appreciation',
+  },
+  {
+    id: '4',
+    amount: 5000,
+    description: 'a simple way to show your appreciation',
+  },
+  {
+    id: '5',
+    amount: 10000,
     description: 'a simple way to show your appreciation',
   },
 ]
 
 /**
  * Mock data for sent gifts
+ * Different amounts with different icon colors:
+ * - 500 EGP: Blue
+ * - 1K EGP: Green
+ * - 2K EGP: Red
+ * - 5K EGP: Purple
+ * - 10K EGP: Orange
  */
 const mockSentGifts: SentGiftItem[] = [
   {
@@ -73,17 +115,31 @@ const mockSentGifts: SentGiftItem[] = [
   },
   {
     id: '2',
-    recipientName: 'Sara Mohomed',
-    date: 'Sep 15, 2025',
-    time: '11:30 am',
-    amount: 500,
+    recipientName: 'Ahmed Ali',
+    date: 'Sep 14, 2025',
+    time: '10:15 am',
+    amount: 1000,
   },
   {
     id: '3',
-    recipientName: 'Sara Mohomed',
-    date: 'Sep 15, 2025',
-    time: '11:30 am',
-    amount: 500,
+    recipientName: 'Fatima Hassan',
+    date: 'Sep 13, 2025',
+    time: '09:45 am',
+    amount: 2000,
+  },
+  {
+    id: '4',
+    recipientName: 'Omar Ibrahim',
+    date: 'Sep 12, 2025',
+    time: '08:20 am',
+    amount: 5000,
+  },
+  {
+    id: '5',
+    recipientName: 'Layla Ahmed',
+    date: 'Sep 11, 2025',
+    time: '07:00 am',
+    amount: 10000,
   },
 ]
 

@@ -39,7 +39,7 @@ export default function GiftCenterLayout({ children }: { children: ReactNode }) 
                 key={tab.value}
                 href={tab.href}
                 className={cn(
-                  'px-2 py-2 text-14 sm:text-16 font-normal transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 text-center w-full',
+                  'px-2 py-2 text-12 sm:text-14 font-normal transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 text-center w-full',
                   isActive
                     ? 'border-b-2 border-brand-500 text-gray-900'
                     : 'border-b-2 border-transparent text-gray-500 hover:text-gray-900'
