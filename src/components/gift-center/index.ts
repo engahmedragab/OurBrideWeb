@@ -44,3 +44,12 @@ export type { RedeemSuccessModalProps } from './RedeemSuccessModal'
 export { HowPointsWorkModal } from './HowPointsWorkModal'
 export type { HowPointsWorkModalProps } from './HowPointsWorkModal'
 
+export { RankUpModal } from './RankUpModal'
+export type { RankUpModalProps, RankType } from './RankUpModal'
+
+export { RewardTierCard } from './RewardTierCard'
+export type { RewardTierCardProps } from './RewardTierCard'
+
+export { ReceivedRewardCard } from './ReceivedRewardCard'
+export type { ReceivedRewardCardProps } from './ReceivedRewardCard'
+

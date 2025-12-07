@@ -1,10 +1,10 @@
 import { HTMLAttributes } from 'react'
-import bronzeImage from '@/Assets/rank/bronze.png'
-import silverImage from '@/Assets/rank/silver.png'
-import goldImage from '@/Assets/rank/gold.png'
-import blueImage from '@/Assets/rank/blue.png'
-import pinkImage from '@/Assets/rank/pink.png'
-import redImage from '@/Assets/rank/red.png'
+import bronzeImage from '@/assets/rank/bronze.png'
+import silverImage from '@/assets/rank/silver.png'
+import goldImage from '@/assets/rank/gold.png'
+import blueImage from '@/assets/rank/blue.png'
+import pinkImage from '@/assets/rank/pink.png'
+import redImage from '@/assets/rank/red.png'
 
 /**
  * Ranking Icon Component Props
