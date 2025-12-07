@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import NextImage from 'next/image'
 import { useParams } from 'next/navigation'
 import { ProviderPageLayout } from '@/components/layout'
 import { Button } from '@/components/ui'
@@ -200,11 +201,15 @@ export default function ProviderProfilePage() {
                   {/* Review Header */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={review.user.image}
-                        alt={review.user.name}
-                        className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                      />
+                      <div className="relative w-12 h-12 flex-shrink-0">
+                        <NextImage
+                          src={review.user.image}
+                          alt={review.user.name}
+                          fill
+                          sizes="48px"
+                          className="rounded-full object-cover"
+                        />
+                      </div>
                       <div>
                         <h3 className="text-16 font-semibold text-gray-900">
                           {review.user.name}
@@ -228,11 +233,15 @@ export default function ProviderProfilePage() {
               {/* Write Review Section */}
               <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <img
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
-                    alt="Your profile"
-                    className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                  />
+                  <div className="relative w-12 h-12 flex-shrink-0">
+                    <NextImage
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
+                      alt="Your profile"
+                      fill
+                      sizes="48px"
+                      className="rounded-full object-cover"
+                    />
+                  </div>
                   <div className="flex-1">
                     {/* Star Rating */}
                     <div className="mb-4">
@@ -278,11 +287,13 @@ export default function ProviderProfilePage() {
           <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
             {/* Profile Image */}
             <div className="flex justify-center mb-4">
-              <div className="relative">
-                <img
+              <div className="relative w-24 h-24">
+                <NextImage
                   src={provider.image}
                   alt={provider.name}
-                  className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
+                  fill
+                  sizes="96px"
+                  className="rounded-full object-cover border-2 border-gray-200"
                 />
               </div>
             </div>
@@ -350,11 +361,15 @@ export default function ProviderProfilePage() {
                   key={service.id}
                   className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/30 transition-all cursor-pointer"
                 >
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                  />
+                  <div className="relative w-16 h-16 flex-shrink-0">
+                    <NextImage
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      sizes="64px"
+                      className="rounded-lg object-cover"
+                    />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-14 font-medium text-gray-900 mb-1 truncate">
                       {service.title}

@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from './Button'
 
 export interface EmptyStateProps {
@@ -43,11 +44,13 @@ export const EmptyState = ({
       className={`flex flex-col items-center justify-center min-h-[60vh] py-12 ${className || ''}`}
     >
       {/* Illustration */}
-      <div className="mb-8 flex items-center justify-center">
-        <img
+      <div className="mb-8 flex items-center justify-center relative w-64 h-64">
+        <Image
           src={illustrationSrc}
           alt={title}
-          className="w-64 h-64 object-contain"
+          fill
+          sizes="256px"
+          className="object-contain"
         />
       </div>
 

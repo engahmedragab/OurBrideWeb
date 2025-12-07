@@ -1,12 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense, lazy } from 'react'
 import { OrderCard } from '@/components/ui/OrderCard'
 import { RequestCard } from '@/components/ui/RequestCard'
 import {
   CancelOrderModal,
   CancelOrderSuccessModal,
-  OrderCheckoutModal,
   OrderConfirmationModal,
   EmptyState,
   HistorySection,
@@ -14,6 +13,10 @@ import {
   ServicesProductsFilter,
   PageHeader,
 } from '@/components/ui'
+
+const OrderCheckoutModal = lazy(
+  () => import('@/components/ui/OrderCheckoutModal').then(module => ({ default: module.OrderCheckoutModal }))
+)
 import { UserPageLayout } from '@/components/layout'
 import type { OrderStatus } from '@/components/ui/OrderProgressIndicator'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
@@ -617,19 +620,21 @@ export default function OrdersPage() {
 
       {/* Service Checkout Modal */}
       {selectedRequestForCheckout && (
-        <OrderCheckoutModal
-          isOpen={checkoutModalOpen}
-          onClose={handleCloseCheckoutModal}
-          items={convertRequestToOrderItems(selectedRequestForCheckout)}
-          onCheckout={handleServiceCheckout}
-          onTrackOrder={() => {
-            handleCloseCheckoutModal()
-            // Stay on orders page
-          }}
-          currency="EGP"
-          taxes={selectedRequestForCheckout.taxesAndFees}
-          deliveryFee={0}
-        />
+        <Suspense fallback={null}>
+          <OrderCheckoutModal
+            isOpen={checkoutModalOpen}
+            onClose={handleCloseCheckoutModal}
+            items={convertRequestToOrderItems(selectedRequestForCheckout)}
+            onCheckout={handleServiceCheckout}
+            onTrackOrder={() => {
+              handleCloseCheckoutModal()
+              // Stay on orders page
+            }}
+            currency="EGP"
+            taxes={selectedRequestForCheckout.taxesAndFees}
+            deliveryFee={0}
+          />
+        </Suspense>
       )}
 
       {/* Order Confirmation Modal */}

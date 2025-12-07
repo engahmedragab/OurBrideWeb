@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { UserPageLayout } from '@/components/layout'
 import {
   Button,
@@ -279,11 +280,15 @@ export default function ReferralsPage() {
                 {activityItems.map(item => (
                   <div key={item.id} className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-start gap-3">
-                      <img
-                        src={item.userAvatar}
-                        alt={item.userName}
-                        className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                      />
+                      <div className="relative w-10 h-10 flex-shrink-0">
+                        <Image
+                          src={item.userAvatar}
+                          alt={item.userName}
+                          fill
+                          sizes="40px"
+                          className="rounded-full object-cover"
+                        />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
                           <p className="text-13 sm:text-14 font-normal text-gray-900">

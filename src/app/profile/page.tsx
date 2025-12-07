@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { UserPageLayout } from '@/components/layout'
 import { Input, Button } from '@/components/ui'
 import { Heart, MessageCircle, Share2, MoreVertical } from 'lucide-react'
@@ -135,10 +136,12 @@ export default function ProfilePage() {
                         key={index}
                         className="relative aspect-video rounded-lg overflow-hidden bg-gray-100"
                       >
-                        <img
+                        <Image
                           src={image}
                           alt={`Post image ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 640px) 50vw, 33vw"
+                          className="object-cover"
                         />
                       </div>
                     ))}
@@ -185,11 +188,13 @@ export default function ProfilePage() {
 
             {/* Profile Image */}
             <div className="flex justify-center mb-4 sm:mb-6">
-              <div className="relative group">
-                <img
+              <div className="relative group w-20 h-20 sm:w-24 sm:h-24">
+                <Image
                   src={profileImage}
                   alt="Profile"
-                  className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-2 border-gray-200 ${
+                  fill
+                  sizes="(max-width: 640px) 80px, 96px"
+                  className={`rounded-full object-cover border-2 border-gray-200 ${
                     isEditing ? 'cursor-pointer' : ''
                   }`}
                   onClick={handleImageClick}

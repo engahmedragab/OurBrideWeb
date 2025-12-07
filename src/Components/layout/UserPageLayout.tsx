@@ -58,9 +58,9 @@ export const UserPageLayout = ({
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsSidebarOpen(false)}
-              aria-label="Close menu"
-            >
+            onClick={() => setIsSidebarOpen(false)}
+            aria-label="Close menu"
+          >
               <X className="h-5 w-5" />
             </Button>
           </div>

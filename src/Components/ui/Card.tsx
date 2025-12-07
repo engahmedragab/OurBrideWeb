@@ -1,6 +1,7 @@
 import { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import Link from 'next/link'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
@@ -300,11 +301,15 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
   return (
     <div className="bg-gray-100 rounded-xl p-6 md:p-8 text-center flex flex-col items-center">
       {/* Profile Image */}
-      <img
-        src={data.image}
-        alt={data.name}
-        className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover mb-4"
-      />
+      <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
+        <Image
+          src={data.image}
+          alt={data.name}
+          fill
+          sizes="(max-width: 768px) 80px, 96px"
+          className="rounded-full object-cover"
+        />
+      </div>
 
       {/* Name with Verification */}
       <div className="flex items-center justify-center gap-1.5 mb-1">
@@ -366,11 +371,15 @@ const MemberTestimonialCard = ({
     <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
       {/* Author Header */}
       <div className="flex items-center gap-3 mb-4">
-        <img
-          src={data.authorImage}
-          alt={data.authorName}
-          className="w-12 h-12 rounded-full object-cover"
-        />
+        <div className="relative w-12 h-12">
+          <Image
+            src={data.authorImage}
+            alt={data.authorName}
+            fill
+            sizes="48px"
+            className="rounded-full object-cover"
+          />
+        </div>
         <div>
           <h4 className="text-16 font-semibold text-gray-900">
             {data.authorName}
@@ -386,20 +395,24 @@ const MemberTestimonialCard = ({
       {/* Product Images */}
       <div className="mb-4">
         {data.productImages.length === 1 ? (
-          <div className="aspect-video rounded-lg overflow-hidden bg-gray-100">
-            <img
+          <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+            <Image
               src={mainImage}
               alt="Product"
-              className="w-full h-full object-cover"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
             />
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-2">
-            <div className="col-span-2 aspect-video rounded-lg overflow-hidden bg-gray-100">
-              <img
+            <div className="col-span-2 relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+              <Image
                 src={mainImage}
                 alt="Product"
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
               />
             </div>
             {thumbnailImages.length > 0 && (
@@ -407,12 +420,14 @@ const MemberTestimonialCard = ({
                 {thumbnailImages.map((image, index) => (
                   <div
                     key={index}
-                    className="flex-1 rounded-lg overflow-hidden bg-gray-100"
+                    className="relative flex-1 rounded-lg overflow-hidden bg-gray-100"
                   >
-                    <img
+                    <Image
                       src={image}
                       alt={`Product ${index + 2}`}
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="(max-width: 768px) 33vw, 25vw"
+                      className="object-cover"
                     />
                   </div>
                 ))}

@@ -1,6 +1,8 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
@@ -15,7 +17,7 @@ export interface ServiceCardProps {
   className?: string
 }
 
-export const ServiceCard = ({
+export const ServiceCard = React.memo(({
   service,
   onWishlistToggle,
   onBookNow,
@@ -41,10 +43,12 @@ export const ServiceCard = ({
       {/* Image Container */}
       <Link href={`/services/${service.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-          <img
+          <Image
             src={service.images[0]}
             alt={service.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
 
           {/* Discount Badge */}
@@ -187,4 +191,6 @@ export const ServiceCard = ({
       </div>
     </div>
   )
-}
+})
+
+ServiceCard.displayName = 'ServiceCard'

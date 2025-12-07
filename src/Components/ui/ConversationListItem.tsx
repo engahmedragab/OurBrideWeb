@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { Conversation } from '@/types/message'
 
@@ -32,17 +33,19 @@ export const ConversationListItem = ({
       )}
     >
       {/* Avatar */}
-      <div className="relative flex-shrink-0">
-        <img
+      <div className="relative flex-shrink-0 w-12 h-12">
+        <Image
           src={
             conversation.participantAvatar ||
             'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100'
           }
           alt={conversation.participantName}
-          className="w-12 h-12 rounded-full object-cover"
+          fill
+          sizes="48px"
+          className="rounded-full object-cover"
         />
         {conversation.isOnline && (
-          <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+          <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full z-10" />
         )}
       </div>
 

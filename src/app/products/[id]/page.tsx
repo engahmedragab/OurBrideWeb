@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import {
@@ -383,11 +385,15 @@ export default function ProductDetail({
                       {/* User Avatar */}
                       <div className="flex-shrink-0">
                         {review.userAvatar ? (
-                          <img
-                            src={review.userAvatar}
-                            alt={review.userName}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
+                          <div className="relative w-12 h-12">
+                            <Image
+                              src={review.userAvatar}
+                              alt={review.userName}
+                              fill
+                              sizes="48px"
+                              className="rounded-full object-cover"
+                            />
+                          </div>
                         ) : (
                           <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
                             <span className="text-16 font-semibold text-gray-600">

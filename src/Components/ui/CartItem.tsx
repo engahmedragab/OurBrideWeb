@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Trash2, Minus, Plus } from 'lucide-react'
 import { PriceDisplay } from './PriceDisplay'
 import { Button } from './Button'
@@ -50,11 +51,13 @@ export const CartItem = ({
       )}
     >
       {/* Product Image */}
-      <div className="relative flex-shrink-0">
-        <img
+      <div className="relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20">
+        <Image
           src={image}
           alt={title}
-          className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover"
+          fill
+          sizes="(max-width: 640px) 64px, 80px"
+          className="rounded-lg object-cover"
         />
       </div>
 

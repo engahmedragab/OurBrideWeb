@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import {
@@ -410,11 +412,15 @@ export default function ServiceDetail({
                   {/* Provider Header */}
                   <div className="flex items-center gap-4 mb-6">
                     {service.provider.image ? (
-                      <img
+                      <div className="relative w-20 h-20 flex-shrink-0">
+                        <Image
                         src={service.provider.image}
                         alt={service.provider.name}
-                        className="w-20 h-20 rounded-full object-cover flex-shrink-0"
+                          fill
+                          sizes="80px"
+                          className="rounded-full object-cover"
                       />
+                      </div>
                     ) : (
                       <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
                         <span className="text-24 font-semibold text-gray-600">
@@ -635,11 +641,15 @@ export default function ServiceDetail({
                       {/* User Avatar */}
                       <div className="flex-shrink-0">
                         {review.userAvatar ? (
-                          <img
+                          <div className="relative w-12 h-12">
+                            <Image
                             src={review.userAvatar}
                             alt={review.userName}
-                            className="w-12 h-12 rounded-full object-cover"
+                              fill
+                              sizes="48px"
+                              className="rounded-full object-cover"
                           />
+                          </div>
                         ) : (
                           <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
                             <span className="text-16 font-semibold text-gray-600">

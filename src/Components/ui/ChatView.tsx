@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Phone, MoreVertical } from 'lucide-react'
 import { Button } from './Button'
@@ -159,18 +160,20 @@ export const ChatView = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowProfileView(true)}
-                className="relative hover:opacity-80 transition-opacity cursor-pointer"
+                className="relative hover:opacity-80 transition-opacity cursor-pointer w-12 h-12"
               >
-                <img
+                <Image
                   src={
                     conversation.participantAvatar ||
                     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100'
                   }
                   alt={conversation.participantName}
-                  className="w-12 h-12 rounded-full object-cover"
+                  fill
+                  sizes="48px"
+                  className="rounded-full object-cover"
                 />
                 {conversation.isOnline && (
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full z-10" />
                 )}
               </button>
               <div>
@@ -226,14 +229,18 @@ export const ChatView = ({
               )}
             >
               {!isUserMessage && (
-                <img
+                <div className="relative w-10 h-10 flex-shrink-0">
+                  <Image
                   src={
                     message.senderAvatar ||
                     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100'
                   }
                   alt={message.senderName}
-                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                    fill
+                    sizes="40px"
+                    className="rounded-full object-cover"
                 />
+                </div>
               )}
               <div className={cn('max-w-[70%]', isUserMessage && 'items-end')}>
                 {message.type === 'product' && message.productData ? (
@@ -242,11 +249,15 @@ export const ChatView = ({
                       'flex items-center gap-3 p-3 rounded-2xl border border-gray-200 bg-white mb-2'
                     )}
                   >
-                    <img
+                    <div className="relative w-16 h-16 flex-shrink-0">
+                      <Image
                       src={message.productData.image}
                       alt={message.productData.title}
-                      className="w-16 h-16 rounded-xl object-cover"
+                        fill
+                        sizes="64px"
+                        className="rounded-xl object-cover"
                     />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-14 font-semibold text-gray-900 mb-1">
                         {message.productData.title}
@@ -262,11 +273,13 @@ export const ChatView = ({
                 ) : null}
                 {message.type === 'image' ? (
                   <div className={cn('flex flex-col gap-1', isUserMessage ? 'items-end' : 'items-start')}>
-                    <div className="rounded-2xl overflow-hidden">
-                      <img
+                    <div className="relative rounded-2xl overflow-hidden max-w-full max-h-80 aspect-auto">
+                      <Image
                         src={message.content}
                         alt="Shared image"
-                        className="max-w-full h-auto max-h-80 object-cover"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover"
                       />
                     </div>
                     <div className={cn('flex items-center gap-1', isUserMessage ? 'justify-end' : 'justify-start')}>

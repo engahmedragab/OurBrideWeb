@@ -1,22 +1,23 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Suspense, lazy } from 'react'
 import { UserPageLayout } from '@/components/layout'
 import {
   EmptyState,
-  Button,
   CartItem,
   CartOrderSummary,
   RequestCard,
   DeleteCartItemModal,
   CancelRequestModal,
-  OrderCheckoutModal,
   OrderConfirmationModal,
   ServicesProductsFilter,
   PageHeader,
   type OrderItem,
   type OrderFormData,
 } from '@/components/ui'
+const OrderCheckoutModal = lazy(
+  () => import('@/components/ui/OrderCheckoutModal').then(module => ({ default: module.OrderCheckoutModal }))
+)
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
@@ -204,7 +205,6 @@ export default function CartPage() {
   }
 
   const handleRemoveItemClick = (id: string) => {
-    const product = cartProducts.find(p => p.id === id)
     setItemToDelete(id)
     setDeleteItemModalOpen(true)
   }
@@ -217,8 +217,7 @@ export default function CartPage() {
   }
 
   const handleBuyNow = (id: string) => {
-    const product = cartProducts.find(p => p.id === id)
-    if (product) {
+    if (cartProducts.find(p => p.id === id)) {
       setCheckoutType('products')
       setCheckoutModalOpen(true)
     }
@@ -243,7 +242,7 @@ export default function CartPage() {
     setCancelRequestModalOpen(true)
   }
 
-  const handleConfirmCancelRequest = (reason?: string) => {
+  const handleConfirmCancelRequest = (_reason?: string) => {
     if (requestToCancel) {
       setServiceRequests(prev => prev.filter(req => req.requestId !== requestToCancel))
       setRequestToCancel(null)
@@ -287,13 +286,13 @@ export default function CartPage() {
     ]
   }
 
-  const handleProductCheckout = async (orderData: OrderFormData) => {
+  const handleProductCheckout = async (_orderData: OrderFormData) => {
     // TODO: Implement API call for product checkout
     setCheckoutModalOpen(false)
     setOrderConfirmationModalOpen(true)
   }
 
-  const handleServiceCheckoutSubmit = async (orderData: OrderFormData) => {
+  const handleServiceCheckoutSubmit = async (_orderData: OrderFormData) => {
     // TODO: Implement API call for service checkout
     setCheckoutModalOpen(false)
     setOrderConfirmationModalOpen(true)
@@ -432,7 +431,8 @@ export default function CartPage() {
 
       {/* Product Checkout Modal */}
       {checkoutType === 'products' && (
-        <OrderCheckoutModal
+        <Suspense fallback={null}>
+          <OrderCheckoutModal
           isOpen={checkoutModalOpen}
           onClose={handleCloseCheckoutModal}
           items={convertProductsToOrderItems()}
@@ -446,24 +446,27 @@ export default function CartPage() {
           taxes={taxesAndFees}
           deliveryFee={deliveryFee}
         />
+        </Suspense>
       )}
 
       {/* Service Checkout Modal */}
       {checkoutType === 'service' && selectedRequestForCheckout && (
-        <OrderCheckoutModal
-          isOpen={checkoutModalOpen}
-          onClose={handleCloseCheckoutModal}
-          items={convertRequestToOrderItems(selectedRequestForCheckout)}
-          onCheckout={handleServiceCheckoutSubmit}
-          onTrackOrder={() => {
-            handleCloseCheckoutModal()
-            // Navigate to orders page
-            window.location.href = '/orders'
-          }}
-          currency="EGP"
-          taxes={selectedRequestForCheckout.taxesAndFees}
-          deliveryFee={0}
-        />
+        <Suspense fallback={null}>
+          <OrderCheckoutModal
+            isOpen={checkoutModalOpen}
+            onClose={handleCloseCheckoutModal}
+            items={convertRequestToOrderItems(selectedRequestForCheckout)}
+            onCheckout={handleServiceCheckoutSubmit}
+            onTrackOrder={() => {
+              handleCloseCheckoutModal()
+              // Navigate to orders page
+              window.location.href = '/orders'
+            }}
+            currency="EGP"
+            taxes={selectedRequestForCheckout.taxesAndFees}
+            deliveryFee={0}
+          />
+        </Suspense>
       )}
 
       {/* Order Confirmation Modal */}

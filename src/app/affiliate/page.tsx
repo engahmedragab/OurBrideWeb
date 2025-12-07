@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense, lazy } from 'react'
+import Image from 'next/image'
 import { UserPageLayout } from '@/components/layout'
 import {
   Button,
-  AffiliateOnboardingModals,
   Badge,
   InsightCard,
   PromotedCampaignCard,
@@ -13,6 +13,10 @@ import {
   WithdrawFundsModal,
   LoadingOverlay,
 } from '@/components/ui'
+
+const AffiliateOnboardingModals = lazy(
+  () => import('@/components/ui/AffiliateOnboardingModals').then(module => ({ default: module.AffiliateOnboardingModals }))
+)
 import {
   DollarSign,
   CheckCircle,
@@ -267,21 +271,25 @@ export default function AffiliatePage() {
   if (!hasJoined) {
     return (
       <>
+        <Suspense fallback={null}>
         <AffiliateOnboardingModals
           isOpen={showOnboarding}
           onClose={() => setShowOnboarding(false)}
           onComplete={handleOnboardingComplete}
         />
+        </Suspense>
 
         <UserPageLayout>
           <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4">
             <div className="max-w-md w-full text-center">
               {/* SVG Illustration */}
-              <div className="mb-6 sm:mb-8 flex justify-center">
-                <img
+              <div className="mb-6 sm:mb-8 flex justify-center relative w-48 h-48 sm:w-64 sm:h-64">
+                <Image
                   src={typeof affiliateStartingSvg === 'string' ? affiliateStartingSvg : affiliateStartingSvg.src}
                   alt="Join Affiliate Program"
-                  className="w-48 h-48 sm:w-64 sm:h-64 object-contain"
+                  fill
+                  sizes="(max-width: 640px) 192px, 256px"
+                  className="object-contain"
                 />
               </div>
 
@@ -442,11 +450,15 @@ export default function AffiliatePage() {
                 {activityItems.map(item => (
                   <div key={item.id} className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-start gap-3">
-                      <img
+                      <div className="relative w-10 h-10 flex-shrink-0">
+                        <Image
                         src={item.userAvatar}
                         alt={item.userName}
-                        className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                          fill
+                          sizes="40px"
+                          className="rounded-full object-cover"
                       />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
                           <p className="text-13 sm:text-14 font-normal text-gray-900">
@@ -586,11 +598,15 @@ export default function AffiliatePage() {
                 {activityItems.map(item => (
                   <div key={item.id} className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-start gap-3">
-                      <img
+                      <div className="relative w-10 h-10 flex-shrink-0">
+                        <Image
                         src={item.userAvatar}
                         alt={item.userName}
-                        className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                          fill
+                          sizes="40px"
+                          className="rounded-full object-cover"
                       />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
                           <p className="text-13 sm:text-14 font-normal text-gray-900">
@@ -804,11 +820,15 @@ export default function AffiliatePage() {
                 {activityItems.map(item => (
                   <div key={item.id} className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-start gap-3">
-                      <img
+                      <div className="relative w-10 h-10 flex-shrink-0">
+                        <Image
                         src={item.userAvatar}
                         alt={item.userName}
-                        className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                          fill
+                          sizes="40px"
+                          className="rounded-full object-cover"
                       />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
                           <p className="text-13 sm:text-14 font-normal text-gray-900">
