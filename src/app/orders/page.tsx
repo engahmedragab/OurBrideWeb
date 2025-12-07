@@ -3,18 +3,17 @@
 import { useState } from 'react'
 import { OrderCard } from '@/components/ui/OrderCard'
 import { RequestCard } from '@/components/ui/RequestCard'
-import { Button } from '@/components/ui/Button'
 import {
   CancelOrderModal,
   CancelOrderSuccessModal,
   OrderCheckoutModal,
   OrderConfirmationModal,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  EmptyState,
+  HistorySection,
+  SectionHeader,
+  ServicesProductsFilter,
+  PageHeader,
 } from '@/components/ui'
-import { EmptyState, HistorySection, SectionHeader } from '@/components/ui'
 import { UserPageLayout } from '@/components/layout'
 import type { OrderStatus } from '@/components/ui/OrderProgressIndicator'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
@@ -23,7 +22,6 @@ import type {
   OrderFormData,
 } from '@/components/ui/OrderCheckoutModal'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
-import { ChevronDown } from 'lucide-react'
 
 // Mock data - Replace with actual API data later
 const mockOrdersInProgress = [
@@ -354,8 +352,8 @@ export default function OrdersPage() {
     setCancelModalOpen(true)
   }
 
-  const handleConfirmCancel = (reason?: string) => {
-    console.log('Cancel order confirmed:', selectedOrderId, reason)
+  const handleConfirmCancel = (_reason?: string) => {
+    // TODO: Implement order cancellation API call
     setCancelModalOpen(false)
     // Here you would make an API call to cancel the order
     // After successful cancellation, show success modal
@@ -379,19 +377,16 @@ export default function OrdersPage() {
     window.location.href = '/'
   }
 
-  const handleReorder = (orderId: string) => {
-    console.log('Reorder:', orderId)
-    // Add items to cart and navigate to checkout
+  const handleReorder = (_orderId: string) => {
+    // TODO: Add items to cart and navigate to checkout
   }
 
   const handleClearHistory = () => {
-    console.log('Clear history')
-    // Clear orders history
+    // TODO: Clear orders history
   }
 
-  const handleCancelRequest = (requestId: string) => {
-    // Handle cancel request - could reuse cancel modal or create separate one
-    console.log('Cancel request:', requestId)
+  const handleCancelRequest = (_requestId: string) => {
+    // TODO: Handle cancel request - could reuse cancel modal or create separate one
   }
 
   const handleCheckout = (requestId: string) => {
@@ -429,8 +424,7 @@ export default function OrdersPage() {
     return items
   }
 
-  const handleServiceCheckout = async (orderData: OrderFormData) => {
-    console.log('Service checkout completed:', orderData)
+  const handleServiceCheckout = async (_orderData: OrderFormData) => {
     // TODO: Implement checkout API call
     // After successful checkout, close checkout modal and show confirmation
     setCheckoutModalOpen(false)
@@ -466,48 +460,19 @@ export default function OrdersPage() {
           />
         ) : (
           <>
-            {/* Header */}
             {/* Page Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-32 font-semibold text-gray-900">
-                  Order List
-                </h1>
-              </div>
-              <div className="flex flex-col items-end gap-2">
-                {hasRequests && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="gap-2 px-4 py-2 text-14 font-medium text-gray-900 bg-white border border-gray-300 hover:bg-gray-50"
-                      >
-                        {filterType === 'services' ? 'Services' : 'Products'}
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
-                      <DropdownMenuItem
-                        onClick={() => setFilterType('services')}
-                        className={
-                          filterType === 'services' ? 'bg-brand-50' : ''
-                        }
-                      >
-                        Services
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setFilterType('products')}
-                        className={
-                          filterType === 'products' ? 'bg-brand-50' : ''
-                        }
-                      >
-                        Products
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
-            </div>
+            <PageHeader
+              title="Order List"
+              rightContent={
+                hasRequests ? (
+                  <ServicesProductsFilter
+                    value={filterType}
+                    onChange={setFilterType}
+                    variant="outline"
+                  />
+                ) : undefined
+              }
+            />
 
             {/* Service Requests Section */}
             {hasRequests && (
@@ -600,8 +565,7 @@ export default function OrdersPage() {
                     taxesAndFees={request.taxesAndFees}
                     total={request.total}
                     onReRequest={() => {
-                      console.log('Re-Request:', request.requestId)
-                      // Handle re-request logic
+                      // TODO: Handle re-request logic
                     }}
                   />
                 ))}

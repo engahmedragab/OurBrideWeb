@@ -109,15 +109,15 @@ export default function ProviderProfilePage() {
   ]
 
   const handleFollow = () => {
-    console.log('Follow provider')
+    // TODO: Implement follow functionality
   }
 
   const handleMessage = () => {
-    console.log('Message provider')
+    // TODO: Implement message functionality
   }
 
   const handleSubmitReview = () => {
-    console.log('Submit review:', { rating: userReviewRating, text: reviewText })
+    // TODO: Implement review submission
     setUserReviewRating(0)
     setReviewText('')
   }
@@ -154,14 +154,14 @@ export default function ProviderProfilePage() {
 
   return (
     <ProviderPageLayout>
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Main Content - Reviews/Posts */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 space-y-6 min-w-0">
           {/* Tabs */}
-          <div className="flex items-center gap-6 border-b border-gray-200">
+          <div className="flex items-center gap-4 sm:gap-6 border-b border-gray-200 overflow-x-auto">
             <button
               onClick={() => setActiveTab('posts')}
-              className={`pb-3 text-16 font-medium transition-colors relative ${
+              className={`pb-3 text-14 sm:text-16 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'posts'
                   ? 'text-gray-900'
                   : 'text-gray-500 hover:text-gray-700'
@@ -175,7 +175,7 @@ export default function ProviderProfilePage() {
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`pb-3 text-16 font-medium transition-colors relative ${
+              className={`pb-3 text-14 sm:text-16 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'reviews'
                   ? 'text-gray-900'
                   : 'text-gray-500 hover:text-gray-700'
@@ -195,7 +195,7 @@ export default function ProviderProfilePage() {
               {reviews.map(review => (
                 <div
                   key={review.id}
-                  className="bg-white rounded-xl border border-gray-200 p-6"
+                  className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6"
                 >
                   {/* Review Header */}
                   <div className="flex items-start justify-between mb-3">
@@ -226,8 +226,8 @@ export default function ProviderProfilePage() {
               ))}
 
               {/* Write Review Section */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-start gap-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                <div className="flex items-start gap-3 sm:gap-4">
                   <img
                     src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
                     alt="Your profile"
@@ -266,16 +266,16 @@ export default function ProviderProfilePage() {
 
           {/* Posts - Placeholder */}
           {activeTab === 'posts' && (
-            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-              <p className="text-gray-500">No posts yet</p>
+            <div className="bg-white rounded-xl border border-gray-200 p-8 sm:p-12 text-center">
+              <p className="text-14 sm:text-16 text-gray-500">No posts yet</p>
             </div>
           )}
         </div>
 
         {/* Sidebar - Provider Info */}
-        <aside className="w-80 flex-shrink-0 space-y-4">
+        <aside className="w-full lg:w-80 flex-shrink-0 space-y-4">
           {/* Provider Card */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
             {/* Profile Image */}
             <div className="flex justify-center mb-4">
               <div className="relative">
@@ -338,10 +338,10 @@ export default function ProviderProfilePage() {
           </div>
 
           {/* Services Section */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-16 font-semibold text-gray-900">Services</h3>
-              <span className="text-14 text-gray-500">{services.length}</span>
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h3 className="text-14 sm:text-16 font-semibold text-gray-900">Services</h3>
+              <span className="text-12 sm:text-14 text-gray-500">{services.length}</span>
             </div>
 
             <div className="space-y-3">

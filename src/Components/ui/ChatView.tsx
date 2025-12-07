@@ -49,8 +49,7 @@ export const ChatView = ({
     setShowRatingModal(true);
   };
 
-  const handleRatingSubmit = (rating: number) => {
-    console.log('Call rated:', rating);
+  const handleRatingSubmit = (_rating: number) => {
     // TODO: Send rating to backend
   };
 
@@ -84,18 +83,15 @@ export const ChatView = ({
     }
   }
 
-  const handleAttachImage = (file: File) => {
-    console.log('Image attached:', file.name)
+  const handleAttachImage = (_file: File) => {
     // TODO: Implement image upload and preview
   }
 
-  const handleAttachDocument = (file: File) => {
-    console.log('Document attached:', file.name)
+  const handleAttachDocument = (_file: File) => {
     // TODO: Implement document upload
   }
 
   const handleAttachLocation = () => {
-    console.log('Location requested')
     // TODO: Implement location picker
   }
 
@@ -150,10 +146,10 @@ export const ChatView = ({
           }}
           mediaItems={mediaItems}
           onBack={() => setShowProfileView(false)}
-          onViewProfile={() => console.log('View profile')}
-          onMute={() => console.log('Mute')}
-          onBlock={() => console.log('Block')}
-          onCall={() => console.log('Call')}
+          onViewProfile={() => {/* TODO: Implement view profile */}}
+          onMute={() => {/* TODO: Implement mute */}}
+          onBlock={() => {/* TODO: Implement block */}}
+          onCall={() => {/* TODO: Implement call */}}
           className={className}
         />
       ) : (

@@ -4,17 +4,13 @@ import { useState } from 'react'
 import { UserPageLayout } from '@/components/layout'
 import {
   EmptyState,
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   ServiceGrid,
   ProductGrid,
+  ServicesProductsFilter,
+  PageHeader,
 } from '@/components/ui'
 import type { Service } from '@/types/service'
 import type { Product } from '@/types/product'
-import { ChevronDown } from 'lucide-react'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
 // Mock wishlist services data
@@ -348,45 +344,17 @@ export default function WishlistPage() {
   return (
     <UserPageLayout>
       {/* Page Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-32 font-semibold text-gray-900">
-            Wishlist{' '}
-            {hasWishlistItems && (
-              <span className="text-20 font-normal text-gray-600">
-                {wishlistType === 'services' ? wishlistServices.length : wishlistProducts.length} Items
-              </span>
-            )}
-          </h1>
-        </div>
-        <div className="flex flex-col items-end gap-2">
-          <DropdownMenu modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="brand"
-                className="gap-2 px-4 py-2 text-14 font-medium text-white"
-              >
-                {wishlistType === 'services' ? 'Services' : 'Products'}
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                onClick={() => setWishlistType('services')}
-                className={wishlistType === 'services' ? 'bg-brand-50' : ''}
-              >
-                Services
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setWishlistType('products')}
-                className={wishlistType === 'products' ? 'bg-brand-50' : ''}
-              >
-                Products
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+      <PageHeader
+        title="Wishlist"
+        subtitle={
+          hasWishlistItems
+            ? `${wishlistType === 'services' ? wishlistServices.length : wishlistProducts.length} Items`
+            : undefined
+        }
+        rightContent={
+          <ServicesProductsFilter value={wishlistType} onChange={setWishlistType} />
+        }
+      />
 
       {/* Content Area */}
       {wishlistType === 'services' && hasServices ? (

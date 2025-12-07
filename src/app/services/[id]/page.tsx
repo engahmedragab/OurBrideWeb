@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
-import Link from 'next/link'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import {
@@ -15,12 +14,12 @@ import {
   ServiceCard,
   BookingDetailsModal,
   BookingConfirmationModal,
+  BackButton,
 } from '@/components/ui'
 import type { BookingFormData } from '@/components/ui/BookingDetailsModal'
 import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
 import {
   Star,
-  ArrowLeft,
   ArrowRight,
   ThumbsUp,
   MessageCircle,
@@ -282,7 +281,6 @@ export default function ServiceDetail({
   }
 
   const handleConfirmBooking = (bookingData: BookingFormData) => {
-    console.log('Booking confirmed:', bookingData)
     // Close booking details modal
     setIsBookingModalOpen(false)
     // Show confirmation modal
@@ -292,7 +290,6 @@ export default function ServiceDetail({
   const handleWishlistToggle = () => {
     setIsWishlisted(!isWishlisted)
     // TODO: Implement wishlist toggle
-    console.log('Toggle wishlist:', service.id)
   }
 
   const getRatingLabel = (stars: number) => {
@@ -341,13 +338,11 @@ export default function ServiceDetail({
       <main className="flex-1">
         <div className="container-custom py-6 md:py-8">
           {/* Back Button */}
-          <Link
+          <BackButton
             href="/services"
-            className="inline-flex items-center gap-2 text-14 text-gray-600 hover:text-gray-900 mb-6"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Services
-          </Link>
+            label="Back to Services"
+            className="mb-6"
+          />
 
           {/* Main Service Section - 3 Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-12">
@@ -396,7 +391,7 @@ export default function ServiceDetail({
 
               {/* Description */}
               <div className="space-y-2">
-                <p className="text-16 text-[#666666] leading-[1.6]">
+                <p className="text-16 text-gray-500 leading-[1.6]">
                   {service.longDescription || service.description}
                 </p>
               </div>
@@ -598,7 +593,6 @@ export default function ServiceDetail({
                       className="h-12 w-12 rounded-full border-brand-500 text-brand-500 hover:bg-brand-50"
                       onClick={() => {
                         // TODO: Implement chat functionality
-                        console.log('Open chat with provider')
                       }}
                       aria-label="Chat with provider"
                     >
@@ -698,7 +692,7 @@ export default function ServiceDetail({
               </div>
 
               <div className="mt-6 text-center">
-                <button className="text-16 font-semibold text-[#FF8B7A] hover:text-[#FF6B5A]">
+                <button className="text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
                   See more reviews
                 </button>
               </div>
@@ -742,7 +736,7 @@ export default function ServiceDetail({
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-[#FF8B7A] h-2 rounded-full"
+                          className="bg-brand-400 h-2 rounded-full"
                           style={{ width: `${item.percentage}%` }}
                         />
                       </div>
@@ -782,10 +776,6 @@ export default function ServiceDetail({
                     onClick={() => {
                       if (userRating > 0 && reviewText.trim()) {
                         // TODO: Implement review submission
-                        console.log('Submit review:', {
-                          rating: userRating,
-                          text: reviewText,
-                        })
                         setReviewText('')
                         setUserRating(0)
                       }

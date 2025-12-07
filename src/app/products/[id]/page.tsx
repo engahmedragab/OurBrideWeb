@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
-import Link from 'next/link'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import {
@@ -15,13 +14,14 @@ import {
   OrderSummaryCard,
   OfferBanner,
   OrderCheckoutModal,
+  BackButton,
 } from '@/components/ui'
 import type {
   OrderItem,
   OrderFormData,
 } from '@/components/ui/OrderCheckoutModal'
 import type { ProductCardData } from '@/components/ui/Card'
-import { Star, ArrowLeft, ArrowRight, ThumbsUp } from 'lucide-react'
+import { Star, ArrowRight, ThumbsUp } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
@@ -213,7 +213,6 @@ export default function ProductDetail({
 
   const handleAddToCart = () => {
     // TODO: Implement add to cart
-    console.log('Add to cart:', product.id, quantity)
   }
 
   const handleBuyNow = () => {
@@ -222,7 +221,6 @@ export default function ProductDetail({
 
   const handleCheckout = async (orderData: OrderFormData) => {
     // TODO: Implement checkout logic
-    console.log('Checkout order:', orderData)
     // Here you would typically send the order data to your API
     // await submitOrder(orderData)
   }
@@ -278,13 +276,11 @@ export default function ProductDetail({
       <main className="flex-1">
         <div className="container-custom py-6 md:py-8">
           {/* Back Button */}
-          <Link
+          <BackButton
             href="/products"
-            className="inline-flex items-center gap-2 text-14 text-gray-600 hover:text-gray-900 mb-6"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Products
-          </Link>
+            label="Back to Products"
+            className="mb-6"
+          />
 
           {/* Main Product Section - 3 Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-12">
@@ -330,7 +326,7 @@ export default function ProductDetail({
 
               {/* Description */}
               <div className="space-y-2">
-                <p className="text-16 text-[#666666] leading-[1.6]">
+                <p className="text-16 text-gray-500 leading-[1.6]">
                   {product.longDescription || product.description}
                 </p>
               </div>
@@ -444,7 +440,7 @@ export default function ProductDetail({
               </div>
 
               <div className="mt-6 text-center">
-                <button className="text-16 font-semibold text-[#FF8B7A] hover:text-[#FF6B5A]">
+                <button className="text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
                   See more reviews
                 </button>
               </div>
@@ -488,7 +484,7 @@ export default function ProductDetail({
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-[#FF8B7A] h-2 rounded-full"
+                          className="bg-brand-400 h-2 rounded-full"
                           style={{ width: `${item.percentage}%` }}
                         />
                       </div>

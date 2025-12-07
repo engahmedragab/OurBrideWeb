@@ -47,7 +47,7 @@ export const CartOrderSummary = ({
   return (
     <aside
       className={cn(
-        'w-80 flex-shrink-0 bg-gray-50 p-6 overflow-y-auto sticky top-6 h-fit',
+        'w-full lg:w-80 flex-shrink-0 bg-gray-50 p-4 sm:p-6 overflow-y-auto lg:sticky lg:top-6 h-fit rounded-xl border border-gray-200',
         className
       )}
     >

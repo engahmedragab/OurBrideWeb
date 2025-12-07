@@ -7,6 +7,7 @@ import {
   MessagesCenterLayout,
   ConversationListItem,
   ChatView,
+  ChatPlaceholder,
 } from '@/components/ui'
 import messagesEmptySvg from '@/assets/svg/messages-empty.svg'
 import type { Conversation, Message } from '@/types/message'
@@ -283,6 +284,7 @@ export default function MessagesPage() {
         <MessagesCenterLayout
           searchValue={searchValue}
           onSearchChange={setSearchValue}
+          selectedConversationId={selectedConversationId}
           conversationsList={
             <div className="py-2">
               {filteredConversations.map(conversation => (
@@ -303,9 +305,7 @@ export default function MessagesPage() {
                 onSendMessage={handleSendMessage}
               />
             ) : (
-              <div className="flex items-center justify-center h-full bg-white rounded-2xl border border-gray-200">
-                <p className="text-14 sm:text-16 text-gray-500 px-4 text-center">Select a conversation to start</p>
-              </div>
+              <ChatPlaceholder />
             )
           }
         />

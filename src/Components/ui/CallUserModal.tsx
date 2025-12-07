@@ -93,7 +93,7 @@ export const CallUserModal = ({
           {/* Name */}
           <h3 className="text-18 font-normal text-gray-900 mt-2">{userName}</h3>
           {/* Timer */}
-          <div className="text-24 font-semibold text-gray-900 select-none" style={{letterSpacing: 2}}>{timerText}</div>
+          <div className="text-24 font-semibold text-gray-900 select-none tracking-widest">{timerText}</div>
           {/* Controls Row -- Speaker & Mic */}
           <div className="flex items-center justify-center gap-12 mt-3 mb-2">
             <button

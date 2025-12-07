@@ -57,8 +57,8 @@ export const UserProfileView = ({
     setIsReportModalOpen(true)
   }
 
-  const handleReportSubmit = (reason: string, details: string) => {
-    console.log('Report submitted:', { reason, details })
+  const handleReportSubmit = (_reason: string, _details: string) => {
+    // TODO: Implement report submission
   }
 
   return (

@@ -548,9 +548,8 @@ export default function Home() {
                     />
                   </defs>
                   <text
-                    fill="#FF5A5A"
-                    className="font-black text-[12px] uppercase"
-                    style={{ letterSpacing: '0.05em' }}
+                    fill="currentColor"
+                    className="font-black text-12 uppercase tracking-wide"
                   >
                     <textPath href="#circle-text" startOffset="0%">
                       START SHOPPING NOW WITH OURBRIDE
@@ -561,7 +560,7 @@ export default function Home() {
                 {/* Inner Fixed Circle and Arrow */}
                 <div className="relative z-10 flex items-center justify-center">
                   {/* Inner Filled Circle */}
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#FF5A5A] flex items-center justify-center shadow-md">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-brand-400 flex items-center justify-center shadow-md">
                     {/* White Arrow Icon (upward-right) */}
                     <svg
                       width="24"
@@ -647,34 +646,34 @@ export default function Home() {
         <section className="container-custom py-12 md:py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-md text-brand-500 mb-2">
+              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +1200
               </div>
-              <div className="text-14 md:text-16 font-md text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600">
                 Clients
               </div>
             </div>
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-md text-brand-500 mb-2">
+              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +600
               </div>
-              <div className="text-14 md:text-16 font-md text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600">
                 Services Providers
               </div>
             </div>
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-md text-brand-500 mb-2">
+              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +30
               </div>
-              <div className="text-14 md:text-16 font-md text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600">
                 Available Services
               </div>
             </div>
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-md text-brand-500 mb-2">
+              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +2500
               </div>
-              <div className="text-14 md:text-16 font-md text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600">
                 Products
               </div>
             </div>

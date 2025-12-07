@@ -11,6 +11,7 @@ import {
   Input,
   AddPaymentCardModal,
   WithdrawFundsModal,
+  LoadingOverlay,
 } from '@/components/ui'
 import {
   DollarSign,
@@ -90,12 +91,12 @@ export default function AffiliatePage() {
   const [editFormData, setEditFormData] = useState<Campaign | null>(null)
 
   const bannerColors = [
-    { id: 'coral', color: '#FFB8A8', name: 'Coral' },
-    { id: 'mint', color: '#A8E6CF', name: 'Mint' },
-    { id: 'pink', color: '#FFD1DC', name: 'Pink' },
-    { id: 'yellow', color: '#FFF4B8', name: 'Yellow' },
-    { id: 'blue', color: '#B8D4FF', name: 'Blue' },
-    { id: 'gray', color: '#D4D4D4', name: 'Gray' },
+    { id: 'coral', color: '#FFB8A8', name: 'Coral', className: 'bg-campaign-coral' },
+    { id: 'mint', color: '#A8E6CF', name: 'Mint', className: 'bg-campaign-mint' },
+    { id: 'pink', color: '#FFD1DC', name: 'Pink', className: 'bg-campaign-pink' },
+    { id: 'yellow', color: '#FFF4B8', name: 'Yellow', className: 'bg-campaign-yellow' },
+    { id: 'blue', color: '#B8D4FF', name: 'Blue', className: 'bg-campaign-blue' },
+    { id: 'gray', color: '#D4D4D4', name: 'Gray', className: 'bg-campaign-gray' },
   ]
 
   const toggleCategory = (category: string, index: number) => {
@@ -157,9 +158,7 @@ export default function AffiliatePage() {
   if (isLoading) {
     return (
       <UserPageLayout>
-        <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
-          <div className="text-gray-500">Loading...</div>
-        </div>
+        <LoadingOverlay open={true} />
       </UserPageLayout>
     )
   }
@@ -526,10 +525,7 @@ export default function AffiliatePage() {
                 {/* Campaign Card 1 */}
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                   <div className="p-3 sm:p-4">
-                    <div 
-                      className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4"
-                      style={{ backgroundColor: '#FFB8A8' }}
-                    >
+                    <div className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4 bg-campaign-coral">
                       <div className="inline-block bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-2 sm:mb-3">
                         <p className="text-11 sm:text-12 font-normal text-gray-900">Bridal Makeup</p>
                       </div>
@@ -553,10 +549,7 @@ export default function AffiliatePage() {
                 {/* Campaign Card 2 */}
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                   <div className="p-3 sm:p-4">
-                    <div 
-                      className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4"
-                      style={{ backgroundColor: '#00D9A3' }}
-                    >
+                    <div className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4 bg-campaign-mint-green">
                       <div className="inline-block bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-2 sm:mb-3">
                         <p className="text-11 sm:text-12 font-normal text-gray-900">Bridal Makeup</p>
                       </div>
@@ -754,7 +747,6 @@ export default function AffiliatePage() {
                         <Input
                           value={affiliateLink}
                           readOnly
-                          suffix="EGP"
                           className="flex-1"
                         />
                         <Button variant="brand" size="md" className="text-white px-4 whitespace-nowrap w-full sm:w-auto">

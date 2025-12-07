@@ -5,10 +5,6 @@ import { UserPageLayout } from '@/components/layout'
 import {
   EmptyState,
   Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
   CartItem,
   CartOrderSummary,
   RequestCard,
@@ -16,11 +12,12 @@ import {
   CancelRequestModal,
   OrderCheckoutModal,
   OrderConfirmationModal,
+  ServicesProductsFilter,
+  PageHeader,
   type OrderItem,
   type OrderFormData,
 } from '@/components/ui'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
-import { ChevronDown } from 'lucide-react'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
 interface CartProduct {
@@ -248,7 +245,6 @@ export default function CartPage() {
 
   const handleConfirmCancelRequest = (reason?: string) => {
     if (requestToCancel) {
-      console.log('Cancel request:', requestToCancel, reason)
       setServiceRequests(prev => prev.filter(req => req.requestId !== requestToCancel))
       setRequestToCancel(null)
     }
@@ -292,14 +288,12 @@ export default function CartPage() {
   }
 
   const handleProductCheckout = async (orderData: OrderFormData) => {
-    console.log('Product checkout completed:', orderData)
     // TODO: Implement API call for product checkout
     setCheckoutModalOpen(false)
     setOrderConfirmationModalOpen(true)
   }
 
   const handleServiceCheckoutSubmit = async (orderData: OrderFormData) => {
-    console.log('Service checkout completed:', orderData)
     // TODO: Implement API call for service checkout
     setCheckoutModalOpen(false)
     setOrderConfirmationModalOpen(true)
@@ -324,44 +318,18 @@ export default function CartPage() {
   return (
     <UserPageLayout>
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
-        <div>
-          <h1 className="text-24 sm:text-28 md:text-32 font-semibold text-gray-900">My Cart</h1>
-        </div>
-        <div className="flex flex-col items-stretch sm:items-end gap-2">
-          <DropdownMenu modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="brand"
-                className="gap-2 px-4 py-2 text-14 font-medium text-white w-full sm:w-auto"
-              >
-                {cartType === 'services' ? 'Services' : 'Products'}
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                onClick={() => setCartType('services')}
-                className={cartType === 'services' ? 'bg-brand-50' : ''}
-              >
-                Services
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setCartType('products')}
-                className={cartType === 'products' ? 'bg-brand-50' : ''}
-              >
-                Products
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+      <PageHeader
+        title="My Cart"
+        rightContent={
+          <ServicesProductsFilter value={cartType} onChange={setCartType} />
+        }
+      />
 
       {/* Content Area */}
       {cartType === 'products' && hasProducts ? (
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           {/* Cart Items */}
-          <div className="flex-1 space-y-3 sm:space-y-4">
+          <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
             {cartProducts.map(product => (
               <CartItem
                 key={product.id}
@@ -381,7 +349,8 @@ export default function CartPage() {
           </div>
 
           {/* Order Summary Sidebar */}
-          <div className="w-full lg:w-96 flex-shrink-0">
+          <div className="w-full lg:w-96 lg:flex-shrink-0">
+            <div className="lg:sticky lg:top-6">
             <CartOrderSummary
               subtotal={subtotal}
               taxesAndFees={taxesAndFees}
@@ -389,6 +358,7 @@ export default function CartPage() {
               total={total}
               onCheckout={handleCheckout}
             />
+            </div>
           </div>
         </div>
       ) : cartType === 'products' && !hasProducts ? (

@@ -1,9 +1,9 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { SearchInput } from './SearchInput'
-import { ArrowLeft, MessageSquare } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 export interface MessagesCenterLayoutProps {
   conversationsList: ReactNode
@@ -11,6 +11,7 @@ export interface MessagesCenterLayoutProps {
   searchValue?: string
   onSearchChange?: (value: string) => void
   className?: string
+  selectedConversationId?: string | null
 }
 
 /**
@@ -23,8 +24,38 @@ export const MessagesCenterLayout = ({
   searchValue = '',
   onSearchChange,
   className,
+  selectedConversationId,
 }: MessagesCenterLayoutProps) => {
-  const [showConversations, setShowConversations] = useState(true)
+  // Initialize state: if conversation is selected and we're on mobile, start with conversations hidden
+  const getInitialState = () => {
+    if (typeof window !== 'undefined' && selectedConversationId) {
+      return window.innerWidth >= 768 // Show conversations on desktop, hide on mobile
+    }
+    return true // Show conversations by default
+  }
+
+  const [showConversations, setShowConversations] = useState(getInitialState)
+  
+  const handleBackToConversations = () => {
+    setShowConversations(true)
+  }
+
+  // Automatically hide conversations list on mobile when a conversation is selected
+  useEffect(() => {
+    if (selectedConversationId) {
+      // Only auto-hide on mobile screens (below md breakpoint)
+      const isMobile = window.innerWidth < 768
+      if (isMobile) {
+        setShowConversations(false)
+      } else {
+        // On desktop, keep conversations visible
+        setShowConversations(true)
+      }
+    } else {
+      // Show conversations list when no conversation is selected
+      setShowConversations(true)
+    }
+  }, [selectedConversationId])
 
   return (
     <div className={cn('flex gap-4 h-full', className)}>
@@ -64,7 +95,7 @@ export const MessagesCenterLayout = ({
       >
         {/* Mobile Back Button */}
         <button
-          onClick={() => setShowConversations(true)}
+          onClick={handleBackToConversations}
           className="md:hidden flex items-center gap-2 text-brand-500 hover:text-brand-600 transition-colors py-2 px-4 bg-white rounded-2xl border border-gray-200 shadow-sm"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -72,17 +103,6 @@ export const MessagesCenterLayout = ({
         </button>
         {chatView}
       </div>
-
-      {/* Mobile Conversation Toggle FAB (when chat is hidden) */}
-      {!showConversations && (
-        <button
-          onClick={() => setShowConversations(true)}
-          className="md:hidden fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-brand-500 text-white shadow-lg flex items-center justify-center hover:bg-brand-600 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
-          aria-label="Show conversations"
-        >
-          <MessageSquare className="w-6 h-6" />
-        </button>
-      )}
     </div>
   )
 }

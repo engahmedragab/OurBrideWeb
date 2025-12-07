@@ -202,12 +202,10 @@ export default function Products() {
 
   const handleWishlistToggle = (productId: string) => {
     // TODO: Implement wishlist toggle
-    console.log('Toggle wishlist:', productId)
   }
 
   const handleAddToCart = (productId: string) => {
     // TODO: Implement add to cart
-    console.log('Add to cart:', productId)
   }
 
   return (
@@ -221,7 +219,7 @@ export default function Products() {
           autoPlayInterval={5000}
         />
 
-        <div className="container-custom py-6 md:py-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Sidebar: Filters */}
             <aside className="lg:col-span-1">
@@ -299,7 +297,6 @@ export default function Products() {
             ctaText="Submit"
             productImage={flowersImage}
             onSubscribe={email => {
-              console.log('Newsletter subscription:', email)
               // TODO: Implement newsletter subscription
             }}
           />

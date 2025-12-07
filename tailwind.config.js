@@ -169,6 +169,16 @@ export default {
           foreground: '#ffffff',
         },
         glassCard: '#595959',
+        // Campaign banner colors
+        campaign: {
+          coral: '#FFB8A8',
+          mint: '#A8E6CF',
+          pink: '#FFD1DC',
+          yellow: '#FFF4B8',
+          blue: '#B8D4FF',
+          gray: '#D4D4D4',
+          'mint-green': '#00D9A3',
+        },
       },
       fontFamily: {
         sans: ['Poppins', 'system-ui', 'sans-serif'],
@@ -177,10 +187,11 @@ export default {
         poppins: ['Poppins', 'system-ui', 'sans-serif'],
       },
       fontSize: {
-        // Exact font sizes from Figma (8, 10, 12, 14, 16, 20, 24, 28, 30, 32px)
+        // Exact font sizes from Figma (8, 10, 12, 13, 14, 16, 20, 24, 28, 30, 32px)
         8: ['0.5rem', { lineHeight: '1.2', letterSpacing: '0' }], // 8px
         10: ['0.625rem', { lineHeight: '1.2', letterSpacing: '0' }], // 10px
         12: ['0.75rem', { lineHeight: '1.4', letterSpacing: '0' }], // 12px
+        13: ['0.8125rem', { lineHeight: '1.4', letterSpacing: '0' }], // 13px
         14: ['0.875rem', { lineHeight: '1.4', letterSpacing: '0' }], // 14px
         16: ['1rem', { lineHeight: '1.5', letterSpacing: '0' }], // 16px
         20: ['1.25rem', { lineHeight: '1.5', letterSpacing: '0' }], // 20px
