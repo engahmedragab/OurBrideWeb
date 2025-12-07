@@ -19,14 +19,14 @@ export const AvailableCouponsSection = ({
   coupons,
 }: AvailableCouponsSectionProps) => {
   return (
-    <div className="flex flex-col gap-3 sm:gap-4 items-start w-full">
+    <div className="flex flex-col gap-2 sm:gap-2.5 items-start w-full">
       {/* Section Header */}
-      <div className="flex items-center justify-between w-full">
-        <p className="text-18 sm:text-20 font-normal text-gray-900 leading-6 sm:leading-8">{title}</p>
+      <div className="flex items-center justify-between w-full mb-2 sm:mb-3">
+        <p className="text-14 sm:text-16 font-normal text-gray-900 leading-4 sm:leading-5">{title}</p>
       </div>
 
       {/* Coupons List */}
-      <div className="flex flex-col gap-3 sm:gap-4 items-start w-full">
+      <div className="flex flex-col gap-2 sm:gap-2.5 items-start w-full">
         {coupons.map((coupon, index) => (
           <OfferCouponCard key={index} {...coupon} className='w-full'/>
         ))}

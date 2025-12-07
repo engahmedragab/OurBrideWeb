@@ -51,7 +51,7 @@ export const OfferCard = ({
       <div
         className={cn(
           offerCardVariants({ status }),
-          'h-[300px] w-3/4 mx-auto lg:mx-0 lg:h-[280px] lg:w-[200px] flex items-center justify-center',
+          'h-[220px] w-full mx-auto lg:mx-0 lg:h-[280px] lg:w-[200px] flex items-center justify-center',
           className
         )}
         style={{
@@ -68,25 +68,25 @@ export const OfferCard = ({
     <div
       className={cn(
         offerCardVariants({ status }),
-        'h-[300px]  w-3/4 mx-auto lg:mx-0 lg:h-[280px] lg:w-[200px] flex flex-col relative',
+        'h-[220px] w-full mx-auto lg:mx-0 lg:h-[280px] lg:w-[200px] flex flex-col relative',
         className
       )}
     >
       {/* Sale Icon */}
-      <div className="absolute top-3 sm:top-4 left-1/2 -translate-x-1/2 z-10">
+      <div className="absolute  top-8 lg:top-5  left-1/2 -translate-x-1/2 z-10">
         <img
           src={typeof saleSvg === 'string' ? saleSvg : saleSvg.src}
           alt="Sale"
-          className="size-14"
+          className="w-11 h-11 sm:w-12 sm:h-12 lg:w-[52px] lg:h-[52px]"
         />
       </div>
 
       {/* Content */}
-      <div className="flex flex-col gap-1.5 sm:gap-2 items-start lg:pt-20 pt-32 px-4 sm:px-5 flex-1 relative z-10">
+      <div className="flex flex-col gap-1 sm:gap-1.5 lg:gap-2 items-start  pt-24 px-2.5 sm:px-3 lg:px-3.5 flex-1 relative z-10">
         {/* Discount Label */}
         {discountLabel && (
           <div className="text-center w-full">
-            <p className="text-14 sm:text-16 font-medium text-gray-900 leading-5 sm:leading-6 whitespace-pre-wrap">
+            <p className="text-12 sm:text-14 font-medium text-gray-900 leading-4 sm:leading-5 whitespace-pre-wrap">
               {discountLabel}
             </p>
           </div>
@@ -94,7 +94,7 @@ export const OfferCard = ({
 
         {/* Valid Until */}
         {validUntilLabel && (
-          <p className="text-12 sm:text-14 font-normal text-gray-500 leading-4 sm:leading-5 w-full text-center">
+          <p className="text-10 sm:text-12 font-normal text-gray-500 leading-3 sm:leading-4 w-full text-center">
             {validUntilLabel}
           </p>
         )}
@@ -102,18 +102,18 @@ export const OfferCard = ({
 
       {/* Code Section */}
       {code && (
-        <div className="px-4 sm:px-5 pb-4 sm:pb-5 relative z-10">
-          <div className="bg-green-100 border border-dashed border-green-500 rounded-sm h-10 sm:h-12 flex items-center justify-center relative">
-            <p className="text-16 sm:text-18 font-normal text-green-500">
+        <div className="px-2.5 sm:px-3 lg:px-3.5 pb-2.5 sm:pb-3 lg:pb-3.5 relative z-10">
+          <div className="bg-green-100 border border-dashed border-green-500 rounded-sm h-8 sm:h-9 lg:h-10 flex items-center justify-center relative">
+            <p className="text-12 sm:text-14 font-normal text-green-500">
               {code}
             </p>
             {onCopyCode && (
               <button
                 onClick={onCopyCode}
-                className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 hover:opacity-80 transition-opacity"
+                className="absolute right-1.5 sm:right-2 lg:right-2.5 top-1/2 -translate-y-1/2 hover:opacity-80 transition-opacity"
                 aria-label="Copy code"
               >
-                <Copy className="h-3 w-3 text-green-500" />
+                <Copy className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-green-500" />
               </button>
             )}
           </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { Gift, ArrowRight } from 'lucide-react'
-import { Button } from '@/Components/ui'
+import { Button } from '@/components/ui'
 
 /**
  * Coupon Card Component Props

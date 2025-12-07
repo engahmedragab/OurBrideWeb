@@ -142,9 +142,9 @@ export default function OffersPage() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+    <div className="mt-6 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
       {/* Center Column - Main Content */}
-      <div className="md:col-span-2 space-y-4 sm:space-y-5 lg:space-y-6">
+      <div className="space-y-4 sm:space-y-5">
         {/* Weekly Missions Section */}
         <WeeklyMissionsSection
           title="Weekly Missions"
@@ -164,7 +164,7 @@ export default function OffersPage() {
       </div>
 
       {/* Right Column - Sidebar */}
-      <div className="space-y-3 sm:space-y-4 lg:space-y-5">
+      <div className="space-y-3 sm:space-y-4">
         {/* Diamonds Summary Card */}
         <DiamondsSummaryCard
           title="Diamonds you have"

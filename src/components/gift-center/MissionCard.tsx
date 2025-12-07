@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import diamondSvg from '@/assets/svg/Diamond.svg'
 
 const missionCardVariants = cva(
-  'border border-gray-300 rounded-xl p-3 sm:p-4 flex flex-col gap-2 bg-white',
+  'border border-gray-300 rounded-xl p-2.5 sm:p-3 flex flex-col gap-2 bg-white',
   {
     variants: {
       status: {
@@ -56,29 +56,29 @@ export const MissionCard = ({
   return (
     <div className={cn(missionCardVariants({ status }), className)}>
       {/* Header Row */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-2 sm:gap-0">
+      <div className="flex flex-row items-start sm:items-center justify-between w-full gap-2 sm:gap-0">
         {/* Title and Status Badge */}
         <div className="flex flex-1 gap-2 sm:gap-3 items-center min-w-0 w-full sm:w-auto">
-          <p className="text-14 sm:text-16 font-normal text-gray-900 whitespace-pre-wrap">
+          <p className="text-12 sm:text-14 font-normal text-gray-900 whitespace-pre-wrap leading-4 sm:leading-5">
             {title}
           </p>
           {isCompleted && (
-            <div className="bg-green-100 border border-green-500 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 flex items-center justify-center shrink-0">
-              <p className="text-12 sm:text-14 font-normal text-green-500">Done</p>
+            <div className="bg-green-100 border border-green-500 rounded-lg px-1.5 sm:px-2 py-0.5 sm:py-1 flex items-center justify-center shrink-0">
+              <p className="text-10 sm:text-12 font-normal text-green-500">Done</p>
             </div>
           )}
         </div>
 
         {/* Reward Section */}
-        <div className="flex gap-2 sm:gap-3 items-center shrink-0">
+        <div className="flex gap-1.5 sm:gap-2 items-center shrink-0">
           {isCompleted && (
-            <Check className="h-5 w-5 sm:h-6 sm:w-6 text-green-500 shrink-0" />
+            <Check className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 shrink-0" />
           )}
-          <p className="text-18 sm:text-20 font-normal text-gray-900">{rewardAmount}</p>
+          <p className="text-12 sm:text-14 font-normal text-gray-900 leading-4 sm:leading-5">{rewardAmount}</p>
           <img
             src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
             alt="Diamond"
-            className="h-5 w-5 sm:h-6 sm:w-6 shrink-0"
+            className="h-4 w-4 sm:h-5 sm:w-5 shrink-0"
           />
         </div>
       </div>
@@ -87,7 +87,7 @@ export const MissionCard = ({
       <div className="flex flex-row items-start sm:items-center justify-between w-full gap-2 sm:gap-0">
         <p
           className={cn(
-            'flex-1 text-14 sm:text-16 font-normal whitespace-pre-wrap',
+            'flex-1 !text-12 font-normal whitespace-pre-wrap leading-4 sm:leading-5',
             isCompleted ? 'text-gray-500' : 'text-gray-500'
           )}
         >
@@ -96,10 +96,10 @@ export const MissionCard = ({
         {onViewProducts && (
           <button
             onClick={onViewProducts}
-            className="flex gap-1.5 sm:gap-2 items-center justify-center rounded-lg shrink-0 hover:opacity-80 transition-opacity"
+            className="flex gap-1 sm:gap-1.5 items-center justify-center rounded-lg shrink-0 hover:opacity-80 transition-opacity"
           >
-            <p className="text-14 sm:text-16 font-medium text-brand-500">view Products</p>
-            <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand-500 shrink-0" />
+            <p className="text-12 sm:text-14 font-medium text-brand-500">view Products</p>
+            <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand-500 shrink-0" />
           </button>
         )}
       </div>

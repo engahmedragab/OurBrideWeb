@@ -8,7 +8,7 @@ import diamondSvg from '@/assets/svg/Diamond.svg'
 import { HowPointsWorkModal } from './HowPointsWorkModal'
 
 const diamondsCardVariants = cva(
-  'bg-white rounded-xl p-3 sm:p-4 border border-gray-100 shadow-sm flex flex-col gap-2',
+  'bg-white rounded-xl p-2.5 sm:p-3 border border-gray-100 shadow-sm flex flex-col gap-2',
   {
     variants: {
       variant: {
@@ -56,8 +56,8 @@ export const DiamondsSummaryCard = ({
         {/* Header Row */}
         <div className="flex  md:flex-col xl:flex-row gap-2 sm:gap-3 xl:items-center justify-between w-full">
           {/* Title with Info Icon */}
-          <div className="flex gap-1.5 sm:gap-2 items-center justify-start shrink-0">
-            <p className="text-12 sm:text-14 font-normal text-gray-500 text-center whitespace-nowrap">
+          <div className="flex gap-1 sm:gap-1.5 items-center justify-start shrink-0">
+            <p className="text-10 sm:text-12 font-normal text-gray-500 text-center whitespace-nowrap">
               {title}
             </p>
             <button
@@ -65,17 +65,17 @@ export const DiamondsSummaryCard = ({
               className="shrink-0 hover:opacity-80 transition-opacity"
               aria-label="How points work"
             >
-              <Info className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <Info className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-gray-400" />
             </button>
           </div>
 
         {/* Diamonds Count */}
         <div className="flex gap-1 sm:gap-1.5 items-center shrink-0">
-          <p className="text-16 sm:text-18 font-medium text-gray-900 leading-6 sm:leading-8">{diamondsCount}</p>
+          <p className="text-14 sm:text-16 font-medium text-gray-900 leading-4 sm:leading-5">{diamondsCount}</p>
           <img
             src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
             alt="Diamond"
-            className="h-5 w-5 sm:h-6 sm:w-6 shrink-0"
+            className="h-4 w-4 sm:h-5 sm:w-5 shrink-0"
           />
         </div>
       </div>
@@ -84,10 +84,10 @@ export const DiamondsSummaryCard = ({
       {onActionPress && (
         <button
           onClick={onActionPress}
-          className="flex gap-1.5 sm:gap-2 items-center justify-start rounded-lg shrink-0 hover:opacity-80 transition-opacity"
+          className="flex gap-1 sm:gap-1.5 items-center justify-start rounded-lg shrink-0 hover:opacity-80 transition-opacity"
         >
-          <p className="text-14 sm:text-16 font-medium text-brand-500">{actionLabel}</p>
-          <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand-500" />
+          <p className="text-12 sm:text-14 font-medium text-brand-500">{actionLabel}</p>
+          <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand-500" />
         </button>
       )}
 

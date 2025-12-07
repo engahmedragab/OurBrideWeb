@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import saleSvg from '@/assets/svg/sale.svg'
 
 const offerCouponCardVariants = cva(
-  'border border-gray-300 rounded-xl p-3 sm:p-4 flex gap-2 items-start bg-white',
+  'border border-gray-300 rounded-xl p-2.5 sm:p-3 flex gap-2 items-start bg-white',
   {
     variants: {
       status: {
@@ -58,36 +58,36 @@ export const OfferCouponCard = ({
         <img
           src={typeof saleSvg === 'string' ? saleSvg : saleSvg.src}
           alt="Sale"
-          className="h-8 w-8"
+          className="h-7 w-7 sm:h-8 sm:w-8"
         />
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col gap-1.5 sm:gap-2 items-start min-w-0">
+      <div className="flex flex-1 flex-col gap-1 sm:gap-1.5 items-start min-w-0">
         {/* Title */}
-        <p className="text-14 sm:text-16 font-normal text-gray-900 w-full whitespace-pre-wrap leading-5 sm:leading-6">
+        <p className="text-12 sm:text-14 font-normal text-gray-900 w-full whitespace-pre-wrap leading-4 sm:leading-5">
           {title}
         </p>
 
         {/* Code and Copy Button Row */}
         <div className="flex md:flex-col md:items-start xl:flex-row  items-center xl:items-center gap-1.5 sm:gap-2 items-start items-center w-full">
-          <p className="flex-1 text-14 sm:text-16 font-normal text-gray-900 whitespace-pre-wrap">
+          <p className="flex-1 text-12 sm:text-14 font-normal text-gray-900 whitespace-pre-wrap">
             {code}
           </p>
           {onCopyCode && (
             <button
               onClick={onCopyCode}
-              className="flex gap-1.5 sm:gap-2 items-center justify-center rounded-full px-3 sm:px-4 py-1 sm:py-1.5 shrink-0 hover:opacity-80 transition-opacity"
+              className="flex gap-1 sm:gap-1.5 items-center justify-center rounded-full px-2 sm:px-2.5 py-0.5 sm:py-1 shrink-0 hover:opacity-80 transition-opacity"
             >
-              <p className="text-12 font-medium text-brand-500">Copy Code</p>
-              <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand-500" />
+              <p className="text-10 sm:text-12 font-medium text-brand-500">Copy Code</p>
+              <Copy className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand-500" />
             </button>
           )}
         </div>
 
         {/* Expiry Date */}
         <div className="flex items-center w-full">
-          <p className="text-12 font-normal text-gray-500 leading-4">
+          <p className="text-10 sm:text-12 font-normal text-gray-500 leading-3 sm:leading-4">
             {expiryDateLabel}
           </p>
         </div>
