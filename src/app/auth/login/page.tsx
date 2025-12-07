@@ -32,15 +32,15 @@ export default function LoginPage() {
         <div className="flex items-center justify-center gap-2">
           <SocialMediaButton
             provider="google"
-            onClick={() => console.log('Google login clicked')}
+            onClick={() => {/* TODO: Implement Google login */}}
           />
           <SocialMediaButton
             provider="facebook"
-            onClick={() => console.log('Facebook login clicked')}
+            onClick={() => {/* TODO: Implement Facebook login */}}
           />
           <SocialMediaButton
             provider="apple"
-            onClick={() => console.log('Apple login clicked')}
+            onClick={() => {/* TODO: Implement Apple login */}}
           />
         </div>
 
@@ -54,7 +54,7 @@ export default function LoginPage() {
             setShowLoading(true)
             setTimeout(() => setShowLoading(false), 2000)
           }}
-          onProviderClick={() => console.log('Provider link clicked')}
+          onProviderClick={() => {/* TODO: Implement provider login navigation */}}
         />
 
         {/* Download App Section - Mobile Only */}

@@ -5,7 +5,7 @@ import { Slot } from '@radix-ui/react-slot'
 import { Checkbox, CheckboxProps } from './Checkbox'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-20 active:scale-[0.98]',
+  'inline-flex items-center justify-center gap-2 rounded-full font-normal transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-20 active:scale-[0.98]',
   {
     variants: {
       variant: {
@@ -160,4 +160,5 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
 Button.displayName = 'Button'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { Button, buttonVariants }

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import NextImage from 'next/image'
 import { useParams } from 'next/navigation'
 import { ProviderPageLayout } from '@/components/layout'
 import { Button } from '@/components/ui'
@@ -109,15 +110,15 @@ export default function ProviderProfilePage() {
   ]
 
   const handleFollow = () => {
-    console.log('Follow provider')
+    // TODO: Implement follow functionality
   }
 
   const handleMessage = () => {
-    console.log('Message provider')
+    // TODO: Implement message functionality
   }
 
   const handleSubmitReview = () => {
-    console.log('Submit review:', { rating: userReviewRating, text: reviewText })
+    // TODO: Implement review submission
     setUserReviewRating(0)
     setReviewText('')
   }
@@ -154,14 +155,14 @@ export default function ProviderProfilePage() {
 
   return (
     <ProviderPageLayout>
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Main Content - Reviews/Posts */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 space-y-6 min-w-0">
           {/* Tabs */}
-          <div className="flex items-center gap-6 border-b border-gray-200">
+          <div className="flex items-center gap-4 sm:gap-6 border-b border-gray-200 overflow-x-auto">
             <button
               onClick={() => setActiveTab('posts')}
-              className={`pb-3 text-16 font-medium transition-colors relative ${
+              className={`pb-3 text-14 sm:text-16 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'posts'
                   ? 'text-gray-900'
                   : 'text-gray-500 hover:text-gray-700'
@@ -175,7 +176,7 @@ export default function ProviderProfilePage() {
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`pb-3 text-16 font-medium transition-colors relative ${
+              className={`pb-3 text-14 sm:text-16 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'reviews'
                   ? 'text-gray-900'
                   : 'text-gray-500 hover:text-gray-700'
@@ -195,16 +196,20 @@ export default function ProviderProfilePage() {
               {reviews.map(review => (
                 <div
                   key={review.id}
-                  className="bg-white rounded-xl border border-gray-200 p-6"
+                  className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6"
                 >
                   {/* Review Header */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={review.user.image}
-                        alt={review.user.name}
-                        className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                      />
+                      <div className="relative w-12 h-12 flex-shrink-0">
+                        <NextImage
+                          src={review.user.image}
+                          alt={review.user.name}
+                          fill
+                          sizes="48px"
+                          className="rounded-full object-cover"
+                        />
+                      </div>
                       <div>
                         <h3 className="text-16 font-semibold text-gray-900">
                           {review.user.name}
@@ -226,13 +231,17 @@ export default function ProviderProfilePage() {
               ))}
 
               {/* Write Review Section */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-start gap-4">
-                  <img
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
-                    alt="Your profile"
-                    className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                  />
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="relative w-12 h-12 flex-shrink-0">
+                    <NextImage
+                      src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
+                      alt="Your profile"
+                      fill
+                      sizes="48px"
+                      className="rounded-full object-cover"
+                    />
+                  </div>
                   <div className="flex-1">
                     {/* Star Rating */}
                     <div className="mb-4">
@@ -266,23 +275,25 @@ export default function ProviderProfilePage() {
 
           {/* Posts - Placeholder */}
           {activeTab === 'posts' && (
-            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-              <p className="text-gray-500">No posts yet</p>
+            <div className="bg-white rounded-xl border border-gray-200 p-8 sm:p-12 text-center">
+              <p className="text-14 sm:text-16 text-gray-500">No posts yet</p>
             </div>
           )}
         </div>
 
         {/* Sidebar - Provider Info */}
-        <aside className="w-80 flex-shrink-0 space-y-4">
+        <aside className="w-full lg:w-80 flex-shrink-0 space-y-4">
           {/* Provider Card */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
             {/* Profile Image */}
             <div className="flex justify-center mb-4">
-              <div className="relative">
-                <img
+              <div className="relative w-24 h-24">
+                <NextImage
                   src={provider.image}
                   alt={provider.name}
-                  className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
+                  fill
+                  sizes="96px"
+                  className="rounded-full object-cover border-2 border-gray-200"
                 />
               </div>
             </div>
@@ -338,10 +349,10 @@ export default function ProviderProfilePage() {
           </div>
 
           {/* Services Section */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-16 font-semibold text-gray-900">Services</h3>
-              <span className="text-14 text-gray-500">{services.length}</span>
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h3 className="text-14 sm:text-16 font-semibold text-gray-900">Services</h3>
+              <span className="text-12 sm:text-14 text-gray-500">{services.length}</span>
             </div>
 
             <div className="space-y-3">
@@ -350,11 +361,15 @@ export default function ProviderProfilePage() {
                   key={service.id}
                   className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50/30 transition-all cursor-pointer"
                 >
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                  />
+                  <div className="relative w-16 h-16 flex-shrink-0">
+                    <NextImage
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      sizes="64px"
+                      className="rounded-lg object-cover"
+                    />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-14 font-medium text-gray-900 mb-1 truncate">
                       {service.title}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
@@ -37,10 +38,13 @@ export const ProductImageGallery = ({
     <div className={cn('space-y-4', className)}>
       {/* Main Image */}
       <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden group">
-        <img
+        <Image
           src={images[selectedIndex]}
           alt={`${productName} - Image ${selectedIndex + 1}`}
-          className="w-full h-full object-cover"
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover"
+          priority={selectedIndex === 0}
         />
 
         {/* Navigation Arrows */}
@@ -79,16 +83,18 @@ export const ProductImageGallery = ({
               key={index}
               onClick={() => setSelectedIndex(index)}
               className={cn(
-                'aspect-square rounded-lg overflow-hidden border-2 transition-all',
+                'relative aspect-square rounded-lg overflow-hidden border-2 transition-all',
                 selectedIndex === index
                   ? 'border-brand-500 ring-2 ring-brand-200'
                   : 'border-gray-200 hover:border-gray-300'
               )}
             >
-              <img
+              <Image
                 src={image}
                 alt={`${productName} thumbnail ${index + 1}`}
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 25vw, 12vw"
+                className="object-cover"
               />
             </button>
           ))}

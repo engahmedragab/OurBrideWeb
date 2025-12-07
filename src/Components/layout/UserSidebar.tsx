@@ -22,12 +22,14 @@ export interface UserSidebarProps {
   className?: string
   userName?: string
   userImage?: string
+  onLinkClick?: () => void
 }
 
 export const UserSidebar = ({
   className,
   userName = 'Aya Mohamed',
   userImage = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+  onLinkClick,
 }: UserSidebarProps) => {
   const pathname = usePathname()
 
@@ -122,7 +124,7 @@ export const UserSidebar = ({
   return (
     <aside
       className={cn(
-        'w-64 flex-shrink-0 bg-gray-50 py-6 px-4 space-y-4 overflow-y-auto',
+        'w-full lg:w-64 flex-shrink-0 bg-gray-50 lg:bg-gray-50 py-4 lg:py-6 px-4 space-y-4',
         className
       )}
     >
@@ -160,6 +162,7 @@ export const UserSidebar = ({
                   <li key={item.path}>
                     <Link
                       href={item.path}
+                      onClick={onLinkClick}
                       className={cn(
                         'flex items-center gap-3 px-3 py-2.5 rounded-lg text-14 font-normal transition-all duration-150',
                         active

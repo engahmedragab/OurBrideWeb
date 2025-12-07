@@ -51,12 +51,13 @@ export const AddPaymentCardModal = ({
       onClose={onClose}
       title="Payout Cards Management"
       maxWidth="xl"
+      contentClassName="max-h-[70vh] sm:max-h-[80vh] overflow-y-auto p-4 sm:p-6"
     >
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
         {/* Left Side - Form */}
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 space-y-3 sm:space-y-4">
           {/* Subtitle */}
-          <p className="text-14 text-gray-500 -mt-2">
+          <p className="text-13 sm:text-14 text-gray-500 -mt-2">
             Add Your Payment Method With Paymob
           </p>
 
@@ -83,7 +84,7 @@ export const AddPaymentCardModal = ({
           <div className="flex gap-2">
             <button
               onClick={() => setPaymentMethod('debit')}
-              className={`flex-1 py-2 px-4 rounded-full text-14 font-normal transition-colors ${
+              className={`flex-1 py-2 px-3 sm:px-4 rounded-full text-13 sm:text-14 font-normal transition-colors ${
                 paymentMethod === 'debit'
                   ? 'bg-brand-500 text-white'
                   : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
@@ -93,7 +94,7 @@ export const AddPaymentCardModal = ({
             </button>
             <button
               onClick={() => setPaymentMethod('mobile')}
-              className={`flex-1 py-2 px-4 rounded-full text-14 font-normal transition-colors ${
+              className={`flex-1 py-2 px-3 sm:px-4 rounded-full text-13 sm:text-14 font-normal transition-colors ${
                 paymentMethod === 'mobile'
                   ? 'bg-brand-500 text-white'
                   : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
@@ -105,8 +106,8 @@ export const AddPaymentCardModal = ({
 
           {/* Card Details Section */}
           {paymentMethod === 'debit' && (
-            <div className="space-y-4">
-              <h3 className="text-14 font-normal text-gray-900">Card Details</h3>
+            <div className="space-y-3 sm:space-y-4">
+              <h3 className="text-13 sm:text-14 font-normal text-gray-900">Card Details</h3>
 
               {/* Name On Card */}
               <div>
@@ -119,7 +120,7 @@ export const AddPaymentCardModal = ({
               </div>
 
               {/* MM/YY and CVV */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 <Input placeholder="MM/YY" />
                 <Input placeholder="CVV" />
               </div>
@@ -130,7 +131,7 @@ export const AddPaymentCardModal = ({
           <Button
             variant="brand"
             size="lg"
-            className="w-full text-white mt-6"
+            className="w-full text-white mt-4 sm:mt-6"
             onClick={onClose}
           >
             Add New Card
@@ -138,8 +139,9 @@ export const AddPaymentCardModal = ({
         </div>
 
         {/* Right Side - Saved Cards */}
-        <div className="w-80 flex-shrink-0">
-          <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+        <div className="w-full lg:w-80 flex-shrink-0">
+          <h3 className="text-14 font-normal text-gray-900 mb-3 lg:hidden">Saved Cards</h3>
+          <div className="space-y-3 sm:space-y-4 max-h-[400px] lg:max-h-[600px] overflow-y-auto pr-2">
             {savedCards.map((card) => (
               <div key={card.id} className="relative">
                 <div
@@ -164,28 +166,28 @@ export const AddPaymentCardModal = ({
                   </button>
 
                   {/* Card Icons */}
-                  <div className="flex items-center justify-between mb-6">
-                    <CreditCard className="w-6 h-6 text-white/80" />
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-white/80" />
                     <div className="flex items-center gap-1">
-                      <div className="w-6 h-6 rounded-full bg-red-500/80" />
-                      <div className="w-6 h-6 rounded-full bg-orange-400/80 -ml-3" />
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-red-500/80" />
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-orange-400/80 -ml-3" />
                     </div>
                   </div>
 
                   {/* Card Number */}
-                  <div className="mb-4">
-                    <p className="text-14 font-normal tracking-wider">
+                  <div className="mb-3 sm:mb-4">
+                    <p className="text-13 sm:text-14 font-normal tracking-wider">
                       {card.number}
                     </p>
                   </div>
 
                   {/* Card Holder & Expiry */}
                   <div className="flex items-center justify-between">
-                    <p className="text-12 font-normal">{card.holder}</p>
-                    <p className="text-12 font-normal">{card.expiry}</p>
+                    <p className="text-11 sm:text-12 font-normal">{card.holder}</p>
+                    <p className="text-11 sm:text-12 font-normal">{card.expiry}</p>
                   </div>
                 </div>
-                <p className="text-12 text-gray-900 mt-2 text-center">
+                <p className="text-11 sm:text-12 text-gray-900 mt-2 text-center">
                   {card.label}
                 </p>
               </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from './Button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -129,11 +130,14 @@ export const HeroCarousel = ({
                 )}
 
                 {/* Product Image */}
-                <div className="relative z-10 transform rotate-[-8deg] md:rotate-[-6deg] hover:rotate-[-4deg] transition-transform duration-300">
-                  <img
+                <div className="relative z-10 transform rotate-[-8deg] md:rotate-[-6deg] hover:rotate-[-4deg] transition-transform duration-300 w-full max-w-[200px] md:max-w-[280px] lg:max-w-[350px] aspect-square">
+                  <Image
                     src={currentSlide.productImage}
                     alt={currentSlide.title}
-                    className="w-full max-w-[200px] md:max-w-[280px] lg:max-w-[350px] h-auto object-contain drop-shadow-2xl"
+                    fill
+                    sizes="(max-width: 768px) 200px, (max-width: 1024px) 280px, 350px"
+                    className="object-contain drop-shadow-2xl"
+                    priority={currentIndex === 0}
                   />
                 </div>
               </div>

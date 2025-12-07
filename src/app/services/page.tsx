@@ -638,14 +638,12 @@ export default function Services() {
     setCurrentPage(1)
   }
 
-  const handleWishlistToggle = (serviceId: string) => {
+  const handleWishlistToggle = (_serviceId: string) => {
     // TODO: Implement wishlist toggle
-    console.log('Toggle wishlist:', serviceId)
   }
 
-  const handleBookNow = (serviceId: string) => {
+  const handleBookNow = (_serviceId: string) => {
     // TODO: Implement book now
-    console.log('Book now:', serviceId)
   }
 
   return (
@@ -659,7 +657,7 @@ export default function Services() {
           autoPlayInterval={5000}
         />
 
-        <div className="container-custom py-6 md:py-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Sidebar: Filters */}
             <aside className="lg:col-span-1">
@@ -782,8 +780,7 @@ export default function Services() {
             variant="newsletter"
             ctaText="Submit"
             productImage={flowersImage}
-            onSubscribe={email => {
-              console.log('Newsletter subscription:', email)
+            onSubscribe={_email => {
               // TODO: Implement newsletter subscription
             }}
           />

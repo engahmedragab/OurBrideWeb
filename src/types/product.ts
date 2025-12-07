@@ -81,3 +81,6 @@ export interface ProductSortOption {
 }
 
 export type ProductViewMode = 'grid' | 'list'
+
+
+

@@ -1,4 +1,6 @@
+import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
@@ -13,7 +15,7 @@ export interface ProductCardProps {
   className?: string
 }
 
-export const ProductCard = ({
+export const ProductCard = React.memo(({
   product,
   onWishlistToggle,
   onAddToCart,
@@ -38,10 +40,12 @@ export const ProductCard = ({
       {/* Image Container */}
       <Link href={`/products/${product.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-          <img
+          <Image
             src={product.images[0]}
             alt={product.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
 
           {/* Discount Badge */}
@@ -189,4 +193,6 @@ export const ProductCard = ({
       </div>
     </div>
   )
-}
+})
+
+ProductCard.displayName = 'ProductCard'

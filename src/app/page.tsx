@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { cn } from '@/lib/utils'
@@ -506,26 +507,32 @@ export default function Home() {
                 {/* Circular Image Container with Gradient Border */}
                 <div className="relative w-80 h-80 md:w-96 md:h-96">
                   {/* SVG Border */}
-                  <img
+                  <Image
                     src={
                       typeof heroCircularSvg === 'string'
                         ? heroCircularSvg
                         : heroCircularSvg.src
                     }
                     alt=""
-                    className="absolute inset-0 w-full h-full"
+                    fill
+                    sizes="(max-width: 768px) 320px, 384px"
+                    className="absolute inset-0"
                     aria-hidden="true"
+                    priority
                   />
                   {/* Bride Image */}
-                  <div className="absolute inset-[6.52px] rounded-full overflow-hidden z-10 flex items-center justify-center">
-                    <img
+                  <div className="absolute inset-[6.52px] rounded-full overflow-hidden z-10">
+                    <Image
                       src={
                         typeof heroBrideImage === 'string'
                           ? heroBrideImage
                           : heroBrideImage.src
                       }
                       alt="Happy Bride"
-                      className="w-full h-full object-contain"
+                      fill
+                      sizes="(max-width: 768px) 307px, 371px"
+                      className="object-contain"
+                      priority
                     />
                   </div>
                 </div>
@@ -548,9 +555,8 @@ export default function Home() {
                     />
                   </defs>
                   <text
-                    fill="#FF5A5A"
-                    className="font-black text-[12px] uppercase"
-                    style={{ letterSpacing: '0.05em' }}
+                    fill="currentColor"
+                    className="font-black text-12 uppercase tracking-wide"
                   >
                     <textPath href="#circle-text" startOffset="0%">
                       START SHOPPING NOW WITH OURBRIDE
@@ -561,7 +567,7 @@ export default function Home() {
                 {/* Inner Fixed Circle and Arrow */}
                 <div className="relative z-10 flex items-center justify-center">
                   {/* Inner Filled Circle */}
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#FF5A5A] flex items-center justify-center shadow-md">
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-brand-400 flex items-center justify-center shadow-md">
                     {/* White Arrow Icon (upward-right) */}
                     <svg
                       width="24"
@@ -608,15 +614,17 @@ export default function Home() {
                 </div>
               </div>
               <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-                <div className="aspect-[5/2] overflow-hidden">
-                  <img
+                <div className="relative aspect-[5/2] overflow-hidden">
+                  <Image
                     src={
                       typeof heroCardBrideImage === 'string'
                         ? heroCardBrideImage
                         : heroCardBrideImage.src
                     }
                     alt="Explore Products"
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 192px, 224px"
+                    className="object-cover"
                   />
                 </div>
                 <div className="p-4">
@@ -647,34 +655,34 @@ export default function Home() {
         <section className="container-custom py-12 md:py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-md text-brand-500 mb-2">
+              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +1200
               </div>
-              <div className="text-14 md:text-16 font-md text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600">
                 Clients
               </div>
             </div>
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-md text-brand-500 mb-2">
+              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +600
               </div>
-              <div className="text-14 md:text-16 font-md text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600">
                 Services Providers
               </div>
             </div>
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-md text-brand-500 mb-2">
+              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +30
               </div>
-              <div className="text-14 md:text-16 font-md text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600">
                 Available Services
               </div>
             </div>
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-md text-brand-500 mb-2">
+              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +2500
               </div>
-              <div className="text-14 md:text-16 font-md text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600">
                 Products
               </div>
             </div>
@@ -785,10 +793,12 @@ export default function Home() {
         {/* Section 7: Why Trust Section */}
         <section className="relative py-16 md:py-24 overflow-hidden bg-white">
           <div className="absolute inset-0 opacity-30 pointer-events-none">
-            <img
+            <Image
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
               alt=""
-              className="w-full h-full object-cover"
+              fill
+              sizes="100vw"
+              className="object-cover"
               aria-hidden="true"
             />
           </div>
@@ -936,10 +946,12 @@ export default function Home() {
         {/* Section 10: Wedding Journey */}
         <section className="relative py-16 md:py-24 overflow-hidden bg-white">
           <div className="absolute inset-0 opacity-30 pointer-events-none">
-            <img
+            <Image
               src={typeof lineS4Svg === 'string' ? lineS4Svg : lineS4Svg.src}
               alt=""
-              className="w-full h-full object-cover"
+              fill
+              sizes="100vw"
+              className="object-cover"
               aria-hidden="true"
             />
           </div>
@@ -1072,13 +1084,15 @@ export default function Home() {
             </div>
             <div className="relative flex items-center justify-center">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-brand-500 rounded-full opacity-20 blur-3xl" />
-              <div className="relative z-10 transform rotate-6 md:rotate-12">
-                <img
+              <div className="relative z-10 transform rotate-6 md:rotate-12 w-[280px] md:w-[400px] lg:w-[500px] aspect-[9/16]">
+                <Image
                   src={
                     typeof phoneImage === 'string' ? phoneImage : phoneImage.src
                   }
                   alt="OurBride Mobile App"
-                  className="w-[280px] md:w-[400px] lg:w-[500px] h-auto drop-shadow-2xl"
+                  fill
+                  sizes="(max-width: 768px) 280px, (max-width: 1024px) 400px, 500px"
+                  className="object-contain drop-shadow-2xl"
                 />
               </div>
             </div>

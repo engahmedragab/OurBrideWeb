@@ -31,7 +31,46 @@ function CommunityContent() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       <main className="flex-1">
-        <div className="container-custom py-6 md:py-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+          {/* Mobile Tab Navigation */}
+          <div className="lg:hidden mb-6">
+            <div className="flex gap-2 p-1 bg-white rounded-xl border border-gray-200 shadow-sm">
+              <button
+                onClick={() => setActiveTab('posts')}
+                className={cn(
+                  'flex-1 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
+                  activeTab === 'posts'
+                    ? 'bg-brand-500 text-white'
+                    : 'text-gray-700 hover:bg-gray-50'
+                )}
+              >
+                Posts
+              </button>
+              <button
+                onClick={() => setActiveTab('articles')}
+                className={cn(
+                  'flex-1 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
+                  activeTab === 'articles'
+                    ? 'bg-brand-500 text-white'
+                    : 'text-gray-700 hover:bg-gray-50'
+                )}
+              >
+                Articles
+              </button>
+              <button
+                onClick={() => setActiveTab('reels')}
+                className={cn(
+                  'flex-1 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
+                  activeTab === 'reels'
+                    ? 'bg-brand-500 text-white'
+                    : 'text-gray-700 hover:bg-gray-50'
+                )}
+              >
+                Reels
+              </button>
+            </div>
+          </div>
+
           <div
             className={cn(
               'flex flex-col gap-6',

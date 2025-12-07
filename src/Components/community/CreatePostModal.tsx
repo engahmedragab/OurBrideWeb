@@ -27,8 +27,7 @@ export const CreatePostModal = ({
   const [postContent, setPostContent] = useState('')
 
   const handlePost = () => {
-    // Handle post creation logic here
-    console.log('Posting:', postContent)
+    // TODO: Handle post creation logic here
     setPostContent('')
     onClose()
   }

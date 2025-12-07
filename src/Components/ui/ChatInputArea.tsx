@@ -1,9 +1,11 @@
 import { useState, KeyboardEvent, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Input } from './Input'
-import { Plus, Mic, Send } from 'lucide-react'
+import { Plus, Mic, Send, MapPin, Image as ImageIcon, Paperclip } from 'lucide-react'
 import { Button } from './Button'
 import { VoiceRecorderInput } from './VoiceRecorderInput'
+import { Popover, PopoverTrigger, PopoverContent } from './Popover'
+import { ImagePreviewList } from './ImagePreview'
 
 export interface QuickReplyChip {
   text: string
@@ -13,8 +15,12 @@ export interface QuickReplyChip {
 export interface ChatInputAreaProps {
   value: string
   onChange: (value: string) => void
-  onSend: (message?: string, audioBlob?: Blob) => void
+  onSend: (message?: string, audioBlob?: Blob, images?: File[]) => void
   onRecord?: () => void
+  onAttachImage?: (file: File) => void
+  onAttachDocument?: (file: File) => void
+  onAttachLocation?: () => void
+  onImagesChange?: (hasImages: boolean) => void
   placeholder?: string
   quickReplies?: QuickReplyChip[]
   disabled?: boolean
@@ -29,6 +35,10 @@ export const ChatInputArea = ({
   onChange,
   onSend,
   onRecord,
+  onAttachImage,
+  onAttachDocument,
+  onAttachLocation,
+  onImagesChange,
   placeholder = 'Enter Your Message..',
   quickReplies = [],
   disabled = false,
@@ -38,11 +48,15 @@ export const ChatInputArea = ({
   const [isRecording, setIsRecording] = useState(false)
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null)
   const [recordingDuration, setRecordingDuration] = useState(0)
+  const [isAttachMenuOpen, setIsAttachMenuOpen] = useState(false)
+  const [pendingImages, setPendingImages] = useState<Array<{ file: File; preview: string }>>([])
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
   const durationIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const sendOnStopRef = useRef<boolean>(false)
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const documentInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     return () => {
@@ -56,29 +70,37 @@ export const ChatInputArea = ({
     }
   }, [isRecording])
 
+  // Notify parent when images change
+  useEffect(() => {
+    onImagesChange?.(pendingImages.length > 0)
+  }, [pendingImages.length, onImagesChange])
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value
     onChange(newValue)
-    setIsTyping(newValue.length > 0)
+    setIsTyping(newValue.length > 0 || pendingImages.length > 0)
   }
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && value.trim().length > 0) {
+    if (e.key === 'Enter' && (value.trim().length > 0 || pendingImages.length > 0)) {
       handleSend(value.trim())
     }
   }
 
   const handleSend = (message?: string, audioBlob?: Blob) => {
     const messageToSend = message !== undefined ? message : value.trim()
-    if (messageToSend.length > 0 || audioBlob) {
+    if (messageToSend.length > 0 || audioBlob || pendingImages.length > 0) {
       const finalMessage = messageToSend || (audioBlob ? '[Voice Message]' : '')
-      onSend(finalMessage, audioBlob)
+      const imagesToSend = pendingImages.map(img => img.file)
+      onSend(finalMessage, audioBlob, imagesToSend)
       setIsTyping(false)
       onChange('')
       // Reset recording state
       setRecordedAudio(null)
       setRecordingDuration(0)
       audioChunksRef.current = []
+      // Clear pending images
+      setPendingImages([])
     }
   }
 
@@ -208,6 +230,61 @@ export const ChatInputArea = ({
     }
   }
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files && files.length > 0) {
+      const newImages: Array<{ file: File; preview: string }> = []
+      
+      Array.from(files).forEach(file => {
+        const preview = URL.createObjectURL(file)
+        newImages.push({ file, preview })
+      })
+      
+      setPendingImages(prev => [...prev, ...newImages])
+      setIsAttachMenuOpen(false)
+      // Update typing state to show send icon
+      setIsTyping(true)
+      
+      // Call the onAttachImage callback if provided
+      if (onAttachImage && files[0]) {
+        onAttachImage(files[0])
+      }
+    }
+    // Reset input value to allow selecting the same file again
+    e.target.value = ''
+  }
+
+  const handleRemoveImage = (index: number) => {
+    setPendingImages(prev => {
+      const newImages = [...prev]
+      // Revoke the object URL to free memory
+      URL.revokeObjectURL(newImages[index].preview)
+      newImages.splice(index, 1)
+      // Update typing state based on remaining images and text
+      if (newImages.length === 0 && value.trim().length === 0) {
+        setIsTyping(false)
+      }
+      return newImages
+    })
+  }
+
+  const handleDocumentSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file && onAttachDocument) {
+      onAttachDocument(file)
+      setIsAttachMenuOpen(false)
+      // Update typing state to show send icon
+      setIsTyping(true)
+    }
+  }
+
+  const handleLocationClick = () => {
+    if (onAttachLocation) {
+      onAttachLocation()
+      setIsAttachMenuOpen(false)
+    }
+  }
+
   // Show voice recorder input if recording or has recorded audio
   if (isRecording || recordedAudio) {
     return (
@@ -225,37 +302,93 @@ export const ChatInputArea = ({
 
   return (
     <div className={cn('flex flex-col gap-2 sm:gap-3 md:gap-4', className)}>
-      {/* Quick Reply Chips */}
-      {quickReplies.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 sm:gap-2">
-          {quickReplies.map((chip, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={chip.onClick}
-              className="bg-gray-50 rounded-xl px-2.5 py-1.5 sm:px-3 sm:py-2 md:py-2.5 text-12 sm:text-14 md:text-16 font-normal leading-4 sm:leading-5 md:leading-6 text-gray-500 hover:bg-gray-100 transition-colors"
-            >
-              {chip.text}
-            </button>
-          ))}
-        </div>
+      {/* Image Previews */}
+      {pendingImages.length > 0 && (
+        <ImagePreviewList
+          images={pendingImages}
+          onRemove={handleRemoveImage}
+        />
       )}
 
       {/* Input Area */}
       <div className="flex gap-1.5 sm:gap-2 items-center">
-        <div className="flex-1">
-          <Input
-            type="text"
-            value={value}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            placeholder={placeholder}
-            variant="fill"
-            size="lg"
-            prefixIcon={<Plus className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-brand-500" />}
-            disabled={disabled}
-            className="rounded-3xl px-3 py-2.5 sm:px-4 sm:py-3 md:px-5 md:py-4 text-12 sm:text-14 md:text-16"
-          />
+        {/* Hidden file inputs */}
+        <input
+          ref={imageInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={handleImageSelect}
+        />
+        <input
+          ref={documentInputRef}
+          type="file"
+          className="hidden"
+          onChange={handleDocumentSelect}
+        />
+
+        <div className="flex-1 relative">
+          <div className="relative">
+            <Input
+              type="text"
+              value={value}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              placeholder={placeholder}
+              variant="fill"
+              size="lg"
+              disabled={disabled}
+              className="rounded-3xl px-3 py-2.5 sm:px-4 sm:py-3 md:px-5 md:py-4 pl-11 sm:pl-12 md:pl-14 text-12 sm:text-14 md:text-16"
+            />
+
+            {/* Plus Icon with Popover */}
+            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+              <Popover open={isAttachMenuOpen} onOpenChange={setIsAttachMenuOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex items-center justify-center hover:bg-gray-100 rounded-full p-1 transition-colors"
+                    disabled={disabled}
+                  >
+                    <Plus className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-brand-500" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  side="top"
+                  align="start"
+                  className="w-56 p-3 bg-white shadow-lg"
+                >
+                  <div className="flex flex-col gap-2">
+                    <button
+                      type="button"
+                      onClick={handleLocationClick}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-gray-200 text-14 font-medium text-brand-500 hover:bg-gray-50 transition-colors text-left shadow-sm"
+                    >
+                      <MapPin className="h-5 w-5 text-brand-500" />
+                      <span>Location</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => imageInputRef.current?.click()}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-gray-200 text-14 font-medium text-brand-500 hover:bg-gray-50 transition-colors text-left shadow-sm"
+                    >
+                      <ImageIcon className="h-5 w-5 text-brand-500" />
+                      <span>Upload Image</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => documentInputRef.current?.click()}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-gray-200 text-14 font-medium text-brand-500 hover:bg-gray-50 transition-colors text-left shadow-sm"
+                    >
+                      <Paperclip className="h-5 w-5 text-brand-500" />
+                      <span>Upload Document</span>
+                    </button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
         </div>
         <Button
           variant="brand"

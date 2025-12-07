@@ -42,15 +42,15 @@ export default function SignupPage() {
         <div className="flex items-center justify-center gap-2">
           <SocialMediaButton
             provider="google"
-            onClick={() => console.log('Google signup clicked')}
+            onClick={() => {/* TODO: Implement Google signup */}}
           />
           <SocialMediaButton
             provider="facebook"
-            onClick={() => console.log('Facebook signup clicked')}
+            onClick={() => {/* TODO: Implement Facebook signup */}}
           />
           <SocialMediaButton
             provider="apple"
-            onClick={() => console.log('Apple signup clicked')}
+            onClick={() => {/* TODO: Implement Apple signup */}}
           />
         </div>
 
@@ -61,7 +61,7 @@ export default function SignupPage() {
         <SignupForm
           onTermsClick={() => setShowTermsModal(true)}
           onSignupClick={handleSignupSuccess}
-          onProviderClick={() => console.log('Provider link clicked')}
+          onProviderClick={() => {/* TODO: Implement provider signup navigation */}}
         />
 
         {/* Download App Section - Mobile Only */}
@@ -74,7 +74,7 @@ export default function SignupPage() {
       <TermsAndConditionsModal
         isOpen={showTermsModal}
         onClose={() => setShowTermsModal(false)}
-        onAccept={() => console.log('Terms accepted')}
+        onAccept={() => {/* TODO: Handle terms acceptance */}}
       />
 
       {/* Loading Overlay */}

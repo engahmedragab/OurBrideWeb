@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { UserPageLayout } from '@/components/layout'
 import {
   Button,
@@ -60,7 +61,8 @@ export default function ReferralsPage() {
     {
       id: '1',
       userName: 'Sarah Ahmed',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      userAvatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       date: 'Joined: Sep 23, 2025',
       bookings: 3,
       earnings: '+600 EGP',
@@ -69,7 +71,8 @@ export default function ReferralsPage() {
     {
       id: '2',
       userName: 'Sarah Ahmed',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      userAvatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       date: 'Joined: Sep 23, 2025',
       bookings: 4,
       earnings: '+600 EGP',
@@ -78,7 +81,8 @@ export default function ReferralsPage() {
     {
       id: '3',
       userName: 'Aya Ahmed',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      userAvatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       date: 'Joined: Sep 23, 2025',
       bookings: 2,
       earnings: '+600 EGP',
@@ -87,7 +91,8 @@ export default function ReferralsPage() {
     {
       id: '4',
       userName: 'Aya Ahmed',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      userAvatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       date: 'Joined: Sep 23, 2025',
       bookings: 3,
       earnings: '+600 EGP',
@@ -96,7 +101,8 @@ export default function ReferralsPage() {
     {
       id: '5',
       userName: 'Aya Ahmed',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      userAvatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       date: 'Joined: Sep 23, 2025',
       bookings: 3,
       earnings: '+600 EGP',
@@ -123,189 +129,211 @@ export default function ReferralsPage() {
     navigator.clipboard.writeText(inviteLink)
   }
 
-
   return (
     <>
       <ReferralOnboardingModal
         isOpen={showOnboarding}
         onClose={handleCloseOnboarding}
       />
-      
+
       <UserPageLayout>
-        <div className="flex gap-6">
-        {/* Main Content */}
-        <div className="flex-1 space-y-6">
-          {/* Referral Insights */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-18 font-normal text-gray-900 mb-4">
-              Referral Insights
-            </h2>
-            <div className="grid grid-cols-3 gap-4">
-              <InsightCard
-                icon={Send}
-                label="Total Invites Sent"
-                value={referralInsights.totalInvites}
-              />
-              <InsightCard
-                icon={UserPlus}
-                label="Friends Joined"
-                value={referralInsights.friendsJoined}
-              />
-              <InsightCard
-                icon={Gift}
-                label="Rewards Earned"
-                value={referralInsights.rewardsEarned}
-              />
-            </div>
-          </div>
-
-          {/* Invite Link */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-18 font-normal text-gray-900">Invite Link</h2>
-              <button
-                onClick={handleCopyLink}
-                className="flex items-center gap-2 text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
-              >
-                <Copy className="h-4 w-4" />
-                Copy Link
-              </button>
-            </div>
-
-            {/* Link Input */}
-            <div className="mb-4">
-              <Input
-                value={inviteLink}
-                readOnly
-                suffix="EGP"
-                className="w-full bg-gray-50"
-              />
-            </div>
-
-            {/* Social Share Buttons */}
-            <SocialShareButtons className="gap-3" />
-          </div>
-
-          {/* Bonus Progress */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-18 font-normal text-gray-900 mb-4">
-              Bonus Progress
-            </h2>
-            <div className="relative">
-              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-brand-500 rounded-full" style={{ width: '10%' }} />
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+          {/* Main Content */}
+          <div className="flex-1 space-y-4 sm:space-y-6">
+            {/* Referral Insights */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
+                Referral Insights
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                <InsightCard
+                  icon={Send}
+                  label="Total Invites Sent"
+                  value={referralInsights.totalInvites}
+                />
+                <InsightCard
+                  icon={UserPlus}
+                  label="Friends Joined"
+                  value={referralInsights.friendsJoined}
+                />
+                <InsightCard
+                  icon={Gift}
+                  label="Rewards Earned"
+                  value={referralInsights.rewardsEarned}
+                />
               </div>
-              <p className="text-14 text-gray-500 mt-3">
-                Invite 10 Friends To Get Bonus Coupon
-              </p>
-              <p className="text-16 font-normal text-gray-900 absolute right-0 -top-8">
-                1/10 Invited
-              </p>
             </div>
-          </div>
 
-          {/* Your Coupons */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-18 font-normal text-gray-900 mb-4">
-              Your Coupons
-            </h2>
-            <div className="space-y-4">
-              {coupons.map(coupon => (
-                <div
-                  key={coupon.id}
-                  className="flex items-center justify-between p-4 rounded-lg border border-gray-200 bg-gray-50"
+            {/* Invite Link */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">
+                  Invite Link
+                </h2>
+                <button
+                  onClick={handleCopyLink}
+                  className="flex items-center gap-1.5 sm:gap-2 text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
-                      <Ticket className="h-5 w-5 text-gray-600" />
-                    </div>
-                    <div>
-                      <p className="text-14 text-gray-600 mb-0.5">
-                        Coupon
-                      </p>
-                      <p className="text-16 font-normal text-gray-900 mb-1">
-                        {coupon.discount}
-                      </p>
-                      <p className="text-12 text-gray-500">{coupon.dueDate}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {coupon.status === 'Valid' && (
-                      <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-12 font-medium bg-green-50 text-green-600 border border-green-200">
-                        <CheckCircle className="w-3 h-3" />
-                        <span>Valid</span>
-                      </div>
-                    )}
-                    {coupon.status === 'Expired' && (
-                      <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-12 font-medium bg-red-50 text-red-600 border border-red-200">
-                        <Clock className="w-3 h-3" />
-                        <span>Expired</span>
-                      </div>
-                    )}
-                    <Button
-                      variant={coupon.status === 'Valid' ? 'brand' : 'gray'}
-                      size="md"
-                      className={coupon.status === 'Valid' ? 'text-white' : 'text-gray-900'}
-                      disabled={coupon.status === 'Expired'}
-                    >
-                      Redeem Now
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+                  <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Copy Link</span>
+                  <span className="sm:hidden">Copy</span>
+                </button>
+              </div>
 
-        {/* Recent Activity Sidebar */}
-        <aside className="w-80 flex-shrink-0">
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-18 font-normal text-gray-900 mb-4">
-              Recent Activity
-            </h2>
-            <div className="space-y-3">
-              {activityItems.map(item => (
-                <div key={item.id} className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-start gap-3">
-                    <img
-                      src={item.userAvatar}
-                      alt={item.userName}
-                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <p className="text-14 font-normal text-gray-900">
-                          {item.userName}
+              {/* Link Input */}
+              <div className="mb-3 sm:mb-4">
+                <Input
+                  value={inviteLink}
+                  readOnly
+                  suffix="EGP"
+                  className="w-full bg-gray-50 text-13 sm:text-14"
+                />
+              </div>
+
+              {/* Social Share Buttons */}
+              <SocialShareButtons className="gap-2 sm:gap-3" />
+            </div>
+
+            {/* Bonus Progress */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
+                Bonus Progress
+              </h2>
+              <div className="relative">
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-brand-500 rounded-full"
+                    style={{ width: '10%' }}
+                  />
+                </div>
+                <p className="text-13 sm:text-14 text-gray-500 mt-3">
+                  Invite 10 Friends To Get Bonus Coupon
+                </p>
+                <p className="text-14 sm:text-16 font-normal text-gray-900 absolute right-0 -top-6 sm:-top-8">
+                  1/10 Invited
+                </p>
+              </div>
+            </div>
+
+            {/* Your Coupons */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
+                Your Coupons
+              </h2>
+              <div className="space-y-3 sm:space-y-4">
+                {coupons.map(coupon => (
+                  <div
+                    key={coupon.id}
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 rounded-lg border border-gray-200 bg-gray-50 gap-3"
+                  >
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
+                        <Ticket className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <p className="text-12 sm:text-14 text-gray-600 mb-0.5">
+                          Coupon
                         </p>
-                        <p className="text-14 font-normal text-green-600 whitespace-nowrap">
-                          {item.earnings}
+                        <p className="text-14 sm:text-16 font-normal text-gray-900 mb-0.5 sm:mb-1">
+                          {coupon.discount}
+                        </p>
+                        <p className="text-11 sm:text-12 text-gray-500">
+                          {coupon.dueDate}
                         </p>
                       </div>
-                      <p className="text-12 text-gray-500 mb-2">{item.date}</p>
-                      <p className="text-12 text-gray-600 mb-2">
-                        {item.bookings} Booking
-                      </p>
-                      <Badge
-                        variant={item.status === 'Delivered' ? 'confirmed' : 'processing'}
-                        className="gap-1.5 px-3 py-1 text-12 font-medium"
-                      >
-                        {item.status === 'Delivered' ? (
+                    </div>
+                    <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                      {coupon.status === 'Valid' && (
+                        <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-11 sm:text-12 font-medium bg-green-50 text-green-600 border border-green-200">
                           <CheckCircle className="w-3 h-3" />
-                        ) : (
+                          <span>Valid</span>
+                        </div>
+                      )}
+                      {coupon.status === 'Expired' && (
+                        <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-11 sm:text-12 font-medium bg-red-50 text-red-600 border border-red-200">
                           <Clock className="w-3 h-3" />
-                        )}
-                        <span>{item.status === 'Processing' ? 'Pending Payout' : item.status === 'Delivered' ? 'Confirmed' : item.status}</span>
-                      </Badge>
+                          <span>Expired</span>
+                        </div>
+                      )}
+                      <Button
+                        variant={coupon.status === 'Valid' ? 'brand' : 'gray'}
+                        size="md"
+                        className={`${coupon.status === 'Valid' ? 'text-white' : 'text-gray-900'} text-13 sm:text-14 px-3 sm:px-4 text-white`}
+                        disabled={coupon.status === 'Expired'}
+                      >
+                        Redeem Now
+                      </Button>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </aside>
-      </div>
-    </UserPageLayout>
+
+          {/* Recent Activity Sidebar */}
+          <aside className="w-full lg:w-80 flex-shrink-0">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
+                Recent Activity
+              </h2>
+              <div className="space-y-3">
+                {activityItems.map(item => (
+                  <div key={item.id} className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex items-start gap-3">
+                      <div className="relative w-10 h-10 flex-shrink-0">
+                        <Image
+                          src={item.userAvatar}
+                          alt={item.userName}
+                          fill
+                          sizes="40px"
+                          className="rounded-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between mb-1">
+                          <p className="text-13 sm:text-14 font-normal text-gray-900">
+                            {item.userName}
+                          </p>
+                          <p className="text-13 sm:text-14 font-normal text-green-600 whitespace-nowrap">
+                            {item.earnings}
+                          </p>
+                        </div>
+                        <p className="text-11 sm:text-12 text-gray-500 mb-2">
+                          {item.date}
+                        </p>
+                        <p className="text-11 sm:text-12 text-gray-600 mb-2">
+                          {item.bookings} Booking
+                        </p>
+                        <Badge
+                          variant={
+                            item.status === 'Delivered'
+                              ? 'confirmed'
+                              : 'processing'
+                          }
+                          className="gap-1.5 px-2 sm:px-3 py-1 text-11 sm:text-12 font-medium"
+                        >
+                          {item.status === 'Delivered' ? (
+                            <CheckCircle className="w-3 h-3" />
+                          ) : (
+                            <Clock className="w-3 h-3" />
+                          )}
+                          <span>
+                            {item.status === 'Processing'
+                              ? 'Pending Payout'
+                              : item.status === 'Delivered'
+                                ? 'Confirmed'
+                                : item.status}
+                          </span>
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </aside>
+        </div>
+      </UserPageLayout>
     </>
   )
 }
-

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import {
@@ -9,17 +10,18 @@ import {
   ProductImageGallery,
   PriceDisplay,
   RatingDisplay,
+  RatingInput,
   OfferBanner,
   Button,
   ServiceCard,
   BookingDetailsModal,
   BookingConfirmationModal,
+  BackButton,
 } from '@/components/ui'
 import type { BookingFormData } from '@/components/ui/BookingDetailsModal'
 import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
 import {
   Star,
-  ArrowLeft,
   ArrowRight,
   ThumbsUp,
   MessageCircle,
@@ -258,7 +260,6 @@ export default function ServiceDetail({
   const router = useRouter()
   const [service, setService] = useState(mockService)
   const [userRating, setUserRating] = useState(0)
-  const [hoveredRating, setHoveredRating] = useState(0)
   const [isWishlisted, setIsWishlisted] = useState(
     service.isWishlisted || false
   )
@@ -282,7 +283,6 @@ export default function ServiceDetail({
   }
 
   const handleConfirmBooking = (bookingData: BookingFormData) => {
-    console.log('Booking confirmed:', bookingData)
     // Close booking details modal
     setIsBookingModalOpen(false)
     // Show confirmation modal
@@ -292,7 +292,6 @@ export default function ServiceDetail({
   const handleWishlistToggle = () => {
     setIsWishlisted(!isWishlisted)
     // TODO: Implement wishlist toggle
-    console.log('Toggle wishlist:', service.id)
   }
 
   const getRatingLabel = (stars: number) => {
@@ -341,13 +340,11 @@ export default function ServiceDetail({
       <main className="flex-1">
         <div className="container-custom py-6 md:py-8">
           {/* Back Button */}
-          <Link
+          <BackButton
             href="/services"
-            className="inline-flex items-center gap-2 text-14 text-gray-600 hover:text-gray-900 mb-6"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Services
-          </Link>
+            label="Back to Services"
+            className="mb-6"
+          />
 
           {/* Main Service Section - 3 Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-12">
@@ -396,7 +393,7 @@ export default function ServiceDetail({
 
               {/* Description */}
               <div className="space-y-2">
-                <p className="text-16 text-[#666666] leading-[1.6]">
+                <p className="text-16 text-gray-500 leading-[1.6]">
                   {service.longDescription || service.description}
                 </p>
               </div>
@@ -415,11 +412,15 @@ export default function ServiceDetail({
                   {/* Provider Header */}
                   <div className="flex items-center gap-4 mb-6">
                     {service.provider.image ? (
-                      <img
+                      <div className="relative w-20 h-20 flex-shrink-0">
+                        <Image
                         src={service.provider.image}
                         alt={service.provider.name}
-                        className="w-20 h-20 rounded-full object-cover flex-shrink-0"
+                          fill
+                          sizes="80px"
+                          className="rounded-full object-cover"
                       />
+                      </div>
                     ) : (
                       <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
                         <span className="text-24 font-semibold text-gray-600">
@@ -598,7 +599,6 @@ export default function ServiceDetail({
                       className="h-12 w-12 rounded-full border-brand-500 text-brand-500 hover:bg-brand-50"
                       onClick={() => {
                         // TODO: Implement chat functionality
-                        console.log('Open chat with provider')
                       }}
                       aria-label="Chat with provider"
                     >
@@ -641,11 +641,15 @@ export default function ServiceDetail({
                       {/* User Avatar */}
                       <div className="flex-shrink-0">
                         {review.userAvatar ? (
-                          <img
+                          <div className="relative w-12 h-12">
+                            <Image
                             src={review.userAvatar}
                             alt={review.userName}
-                            className="w-12 h-12 rounded-full object-cover"
+                              fill
+                              sizes="48px"
+                              className="rounded-full object-cover"
                           />
+                          </div>
                         ) : (
                           <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
                             <span className="text-16 font-semibold text-gray-600">
@@ -698,7 +702,7 @@ export default function ServiceDetail({
               </div>
 
               <div className="mt-6 text-center">
-                <button className="text-16 font-semibold text-[#FF8B7A] hover:text-[#FF6B5A]">
+                <button className="text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
                   See more reviews
                 </button>
               </div>
@@ -742,7 +746,7 @@ export default function ServiceDetail({
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-[#FF8B7A] h-2 rounded-full"
+                          className="bg-brand-400 h-2 rounded-full"
                           style={{ width: `${item.percentage}%` }}
                         />
                       </div>
@@ -756,26 +760,13 @@ export default function ServiceDetail({
                 <h3 className="text-18 font-semibold text-gray-900 mb-4">
                   Write Your Review
                 </h3>
-                <div className="flex items-center gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <button
-                      key={star}
-                      onClick={() => setUserRating(star)}
-                      onMouseEnter={() => setHoveredRating(star)}
-                      onMouseLeave={() => setHoveredRating(0)}
-                      className="focus:outline-none"
-                    >
-                      <Star
-                        className={cn(
-                          'h-8 w-8 transition-colors',
-                          star <= (hoveredRating || userRating)
-                            ? 'fill-[#FF8B7A] text-[#FF8B7A]'
-                            : 'fill-gray-200 text-gray-200'
-                        )}
-                      />
-                    </button>
-                  ))}
-                </div>
+                <RatingInput
+                  rating={userRating}
+                  onRatingChange={setUserRating}
+                  size="md"
+                  color="default"
+                  className="mb-4"
+                />
                 {userRating > 0 && (
                   <p className="text-14 text-gray-600 mb-4">
                     You rated this {userRating} star{userRating > 1 ? 's' : ''}
@@ -795,10 +786,6 @@ export default function ServiceDetail({
                     onClick={() => {
                       if (userRating > 0 && reviewText.trim()) {
                         // TODO: Implement review submission
-                        console.log('Submit review:', {
-                          rating: userRating,
-                          text: reviewText,
-                        })
                         setReviewText('')
                         setUserRating(0)
                       }

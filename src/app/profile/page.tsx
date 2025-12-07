@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { UserPageLayout } from '@/components/layout'
 import { Input, Button } from '@/components/ui'
 import { Heart, MessageCircle, Share2, MoreVertical } from 'lucide-react'
@@ -65,7 +66,6 @@ export default function ProfilePage() {
 
   const handleSave = () => {
     // TODO: Implement save logic
-    console.log('Saving profile:', formData)
     setIsEditing(false)
   }
 
@@ -88,20 +88,20 @@ export default function ProfilePage() {
 
   return (
     <UserPageLayout>
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Main Content - Feed */}
-        <div className="flex-1 space-y-6">
-          <h1 className="text-32 font-semibold text-gray-900">User Profile</h1>
+        <div className="flex-1 space-y-6 min-w-0">
+          <h1 className="text-24 sm:text-28 md:text-32 font-semibold text-gray-900">User Profile</h1>
 
           {/* Posts Feed */}
           <div className="space-y-4">
             {userPosts.map(post => (
               <div
                 key={post.id}
-                className="bg-white rounded-xl border border-gray-200 p-6"
+                className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6"
               >
                 {/* Post Header */}
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
                   <div className="flex items-center gap-3">
                     <img
                       src={post.user.image}
@@ -130,16 +130,18 @@ export default function ProfilePage() {
 
                 {/* Post Images */}
                 {post.images.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2 mb-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 gap-2 mb-4">
                     {post.images.map((image, index) => (
                       <div
                         key={index}
                         className="relative aspect-video rounded-lg overflow-hidden bg-gray-100"
                       >
-                        <img
+                        <Image
                           src={image}
                           alt={`Post image ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          fill
+                          sizes="(max-width: 640px) 50vw, 33vw"
+                          className="object-cover"
                         />
                       </div>
                     ))}
@@ -169,11 +171,11 @@ export default function ProfilePage() {
         </div>
 
         {/* Sidebar - Personal Details */}
-        <aside className="w-80 flex-shrink-0">
-          <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-6">
+        <aside className="w-full lg:w-80 flex-shrink-0">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 sticky top-6">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-18 font-semibold text-gray-900">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-16 sm:text-18 font-semibold text-gray-900">
                 Personal Details
               </h2>
               <button
@@ -185,12 +187,14 @@ export default function ProfilePage() {
             </div>
 
             {/* Profile Image */}
-            <div className="flex justify-center mb-6">
-              <div className="relative group">
-                <img
+            <div className="flex justify-center mb-4 sm:mb-6">
+              <div className="relative group w-20 h-20 sm:w-24 sm:h-24">
+                <Image
                   src={profileImage}
                   alt="Profile"
-                  className={`w-24 h-24 rounded-full object-cover border-2 border-gray-200 ${
+                  fill
+                  sizes="(max-width: 640px) 80px, 96px"
+                  className={`rounded-full object-cover border-2 border-gray-200 ${
                     isEditing ? 'cursor-pointer' : ''
                   }`}
                   onClick={handleImageClick}

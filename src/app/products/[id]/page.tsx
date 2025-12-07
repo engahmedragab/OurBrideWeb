@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import {
@@ -11,16 +12,18 @@ import {
   ProviderCard,
   PriceDisplay,
   RatingDisplay,
+  RatingInput,
   OrderSummaryCard,
   OfferBanner,
   OrderCheckoutModal,
+  BackButton,
 } from '@/components/ui'
 import type {
   OrderItem,
   OrderFormData,
 } from '@/components/ui/OrderCheckoutModal'
 import type { ProductCardData } from '@/components/ui/Card'
-import { Star, ArrowLeft, ArrowRight, ThumbsUp } from 'lucide-react'
+import { Star, ArrowRight, ThumbsUp } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
@@ -195,7 +198,6 @@ export default function ProductDetail({
   const [quantity, setQuantity] = useState(1)
   const [product, setProduct] = useState(mockProduct)
   const [userRating, setUserRating] = useState(0)
-  const [hoveredRating, setHoveredRating] = useState(0)
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false)
 
   // Fetch product based on id - Replace with API call
@@ -213,7 +215,6 @@ export default function ProductDetail({
 
   const handleAddToCart = () => {
     // TODO: Implement add to cart
-    console.log('Add to cart:', product.id, quantity)
   }
 
   const handleBuyNow = () => {
@@ -222,7 +223,6 @@ export default function ProductDetail({
 
   const handleCheckout = async (orderData: OrderFormData) => {
     // TODO: Implement checkout logic
-    console.log('Checkout order:', orderData)
     // Here you would typically send the order data to your API
     // await submitOrder(orderData)
   }
@@ -278,13 +278,11 @@ export default function ProductDetail({
       <main className="flex-1">
         <div className="container-custom py-6 md:py-8">
           {/* Back Button */}
-          <Link
+          <BackButton
             href="/products"
-            className="inline-flex items-center gap-2 text-14 text-gray-600 hover:text-gray-900 mb-6"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Products
-          </Link>
+            label="Back to Products"
+            className="mb-6"
+          />
 
           {/* Main Product Section - 3 Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-12">
@@ -330,7 +328,7 @@ export default function ProductDetail({
 
               {/* Description */}
               <div className="space-y-2">
-                <p className="text-16 text-[#666666] leading-[1.6]">
+                <p className="text-16 text-gray-500 leading-[1.6]">
                   {product.longDescription || product.description}
                 </p>
               </div>
@@ -387,11 +385,15 @@ export default function ProductDetail({
                       {/* User Avatar */}
                       <div className="flex-shrink-0">
                         {review.userAvatar ? (
-                          <img
-                            src={review.userAvatar}
-                            alt={review.userName}
-                            className="w-12 h-12 rounded-full object-cover"
-                          />
+                          <div className="relative w-12 h-12">
+                            <Image
+                              src={review.userAvatar}
+                              alt={review.userName}
+                              fill
+                              sizes="48px"
+                              className="rounded-full object-cover"
+                            />
+                          </div>
                         ) : (
                           <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
                             <span className="text-16 font-semibold text-gray-600">
@@ -444,7 +446,7 @@ export default function ProductDetail({
               </div>
 
               <div className="mt-6 text-center">
-                <button className="text-16 font-semibold text-[#FF8B7A] hover:text-[#FF6B5A]">
+                <button className="text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
                   See more reviews
                 </button>
               </div>
@@ -488,7 +490,7 @@ export default function ProductDetail({
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-[#FF8B7A] h-2 rounded-full"
+                          className="bg-brand-400 h-2 rounded-full"
                           style={{ width: `${item.percentage}%` }}
                         />
                       </div>
@@ -502,26 +504,13 @@ export default function ProductDetail({
                 <h3 className="text-18 font-semibold text-gray-900 mb-4">
                   Your Rating
                 </h3>
-                <div className="flex items-center gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <button
-                      key={star}
-                      onClick={() => setUserRating(star)}
-                      onMouseEnter={() => setHoveredRating(star)}
-                      onMouseLeave={() => setHoveredRating(0)}
-                      className="focus:outline-none"
-                    >
-                      <Star
-                        className={cn(
-                          'h-8 w-8 transition-colors',
-                          star <= (hoveredRating || userRating)
-                            ? 'fill-[#FF8B7A] text-[#FF8B7A]'
-                            : 'fill-gray-200 text-gray-200'
-                        )}
-                      />
-                    </button>
-                  ))}
-                </div>
+                <RatingInput
+                  rating={userRating}
+                  onRatingChange={setUserRating}
+                  size="md"
+                  color="default"
+                  className="mb-4"
+                />
                 {userRating > 0 && (
                   <p className="text-14 text-gray-600">
                     You rated this {userRating} star{userRating > 1 ? 's' : ''}
