@@ -11,6 +11,7 @@ import {
   ProviderCard,
   PriceDisplay,
   RatingDisplay,
+  RatingInput,
   OrderSummaryCard,
   OfferBanner,
   OrderCheckoutModal,
@@ -195,7 +196,6 @@ export default function ProductDetail({
   const [quantity, setQuantity] = useState(1)
   const [product, setProduct] = useState(mockProduct)
   const [userRating, setUserRating] = useState(0)
-  const [hoveredRating, setHoveredRating] = useState(0)
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false)
 
   // Fetch product based on id - Replace with API call
@@ -502,26 +502,13 @@ export default function ProductDetail({
                 <h3 className="text-18 font-semibold text-gray-900 mb-4">
                   Your Rating
                 </h3>
-                <div className="flex items-center gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <button
-                      key={star}
-                      onClick={() => setUserRating(star)}
-                      onMouseEnter={() => setHoveredRating(star)}
-                      onMouseLeave={() => setHoveredRating(0)}
-                      className="focus:outline-none"
-                    >
-                      <Star
-                        className={cn(
-                          'h-8 w-8 transition-colors',
-                          star <= (hoveredRating || userRating)
-                            ? 'fill-[#FF8B7A] text-[#FF8B7A]'
-                            : 'fill-gray-200 text-gray-200'
-                        )}
-                      />
-                    </button>
-                  ))}
-                </div>
+                <RatingInput
+                  rating={userRating}
+                  onRatingChange={setUserRating}
+                  size="md"
+                  color="default"
+                  className="mb-4"
+                />
                 {userRating > 0 && (
                   <p className="text-14 text-gray-600">
                     You rated this {userRating} star{userRating > 1 ? 's' : ''}

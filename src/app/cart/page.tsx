@@ -324,16 +324,16 @@ export default function CartPage() {
   return (
     <UserPageLayout>
       {/* Page Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-32 font-semibold text-gray-900">My Cart</h1>
+          <h1 className="text-24 sm:text-28 md:text-32 font-semibold text-gray-900">My Cart</h1>
         </div>
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-col items-stretch sm:items-end gap-2">
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="brand"
-                className="gap-2 px-4 py-2 text-14 font-medium text-white"
+                className="gap-2 px-4 py-2 text-14 font-medium text-white w-full sm:w-auto"
               >
                 {cartType === 'services' ? 'Services' : 'Products'}
                 <ChevronDown className="h-4 w-4" />
@@ -359,9 +359,9 @@ export default function CartPage() {
 
       {/* Content Area */}
       {cartType === 'products' && hasProducts ? (
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           {/* Cart Items */}
-          <div className="flex-1 space-y-4">
+          <div className="flex-1 space-y-3 sm:space-y-4">
             {cartProducts.map(product => (
               <CartItem
                 key={product.id}
@@ -381,13 +381,15 @@ export default function CartPage() {
           </div>
 
           {/* Order Summary Sidebar */}
-          <CartOrderSummary
-            subtotal={subtotal}
-            taxesAndFees={taxesAndFees}
-            deliveryFee={deliveryFee}
-            total={total}
-            onCheckout={handleCheckout}
-          />
+          <div className="w-full lg:w-96 flex-shrink-0">
+            <CartOrderSummary
+              subtotal={subtotal}
+              taxesAndFees={taxesAndFees}
+              deliveryFee={deliveryFee}
+              total={total}
+              onCheckout={handleCheckout}
+            />
+          </div>
         </div>
       ) : cartType === 'products' && !hasProducts ? (
         <EmptyState
@@ -398,7 +400,7 @@ export default function CartPage() {
           actionHref="/products"
         />
       ) : cartType === 'services' && hasServices ? (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {serviceRequests.map(request => (
             <RequestCard
               key={request.requestId}

@@ -9,6 +9,7 @@ import {
   ProductImageGallery,
   PriceDisplay,
   RatingDisplay,
+  RatingInput,
   OfferBanner,
   Button,
   ServiceCard,
@@ -258,7 +259,6 @@ export default function ServiceDetail({
   const router = useRouter()
   const [service, setService] = useState(mockService)
   const [userRating, setUserRating] = useState(0)
-  const [hoveredRating, setHoveredRating] = useState(0)
   const [isWishlisted, setIsWishlisted] = useState(
     service.isWishlisted || false
   )
@@ -756,26 +756,13 @@ export default function ServiceDetail({
                 <h3 className="text-18 font-semibold text-gray-900 mb-4">
                   Write Your Review
                 </h3>
-                <div className="flex items-center gap-1 mb-4">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <button
-                      key={star}
-                      onClick={() => setUserRating(star)}
-                      onMouseEnter={() => setHoveredRating(star)}
-                      onMouseLeave={() => setHoveredRating(0)}
-                      className="focus:outline-none"
-                    >
-                      <Star
-                        className={cn(
-                          'h-8 w-8 transition-colors',
-                          star <= (hoveredRating || userRating)
-                            ? 'fill-[#FF8B7A] text-[#FF8B7A]'
-                            : 'fill-gray-200 text-gray-200'
-                        )}
-                      />
-                    </button>
-                  ))}
-                </div>
+                <RatingInput
+                  rating={userRating}
+                  onRatingChange={setUserRating}
+                  size="md"
+                  color="default"
+                  className="mb-4"
+                />
                 {userRating > 0 && (
                   <p className="text-14 text-gray-600 mb-4">
                     You rated this {userRating} star{userRating > 1 ? 's' : ''}

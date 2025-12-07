@@ -36,7 +36,7 @@ export const QuickReplySuggestions = ({
   className,
 }: QuickReplySuggestionsProps) => {
   return (
-    <div className={cn('flex flex-col gap-1.5 sm:gap-2', className)}>
+    <div className={cn('flex flex-row flex-wrap gap-1.5 sm:gap-2', className)}>
       {suggestions.map(suggestion => {
         const isSelected = selectedSuggestion === suggestion
         return (

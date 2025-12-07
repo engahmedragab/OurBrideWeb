@@ -275,24 +275,24 @@ export default function AffiliatePage() {
         />
 
         <UserPageLayout>
-          <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+          <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4">
             <div className="max-w-md w-full text-center">
               {/* SVG Illustration */}
-              <div className="mb-8 flex justify-center">
+              <div className="mb-6 sm:mb-8 flex justify-center">
                 <img
                   src={typeof affiliateStartingSvg === 'string' ? affiliateStartingSvg : affiliateStartingSvg.src}
                   alt="Join Affiliate Program"
-                  className="w-64 h-64 object-contain"
+                  className="w-48 h-48 sm:w-64 sm:h-64 object-contain"
                 />
               </div>
 
               {/* Title */}
-              <h1 className="text-24 font-normal text-gray-900 mb-4">
+              <h1 className="text-20 sm:text-24 font-normal text-gray-900 mb-3 sm:mb-4">
                 Join Affiliate Program
               </h1>
 
               {/* Description */}
-              <p className="text-16 text-gray-500 mb-8 leading-relaxed">
+              <p className="text-14 sm:text-16 text-gray-500 mb-6 sm:mb-8 leading-relaxed px-4">
                 Share your unique link, promote OurBride, and earn commission for every successful booking made through you
               </p>
 
@@ -300,7 +300,7 @@ export default function AffiliatePage() {
               <Button
                 variant="brand"
                 size="lg"
-                className="text-white px-12"
+                className="text-white px-8 sm:px-12 w-full sm:w-auto"
                 onClick={handleJoinNow}
               >
                 Join Now
@@ -316,12 +316,12 @@ export default function AffiliatePage() {
   return (
     <UserPageLayout>
       {/* Tabs */}
-      <div className="mb-6">
-        <div className="border-b border-gray-200">
-          <nav className="flex gap-8">
+      <div className="mb-4 sm:mb-6 -mx-4 sm:mx-0">
+        <div className="border-b border-gray-200 overflow-x-auto">
+          <nav className="flex gap-4 sm:gap-6 md:gap-8 px-4 sm:px-0 min-w-max sm:min-w-0">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`pb-4 px-1 text-14 font-medium transition-colors relative ${
+              className={`pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'overview'
                   ? 'text-brand-500'
                   : 'text-gray-500 hover:text-gray-700'
@@ -334,7 +334,7 @@ export default function AffiliatePage() {
             </button>
             <button
               onClick={() => setActiveTab('campaigns')}
-              className={`pb-4 px-1 text-14 font-medium transition-colors relative ${
+              className={`pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'campaigns'
                   ? 'text-brand-500'
                   : 'text-gray-500 hover:text-gray-700'
@@ -347,7 +347,7 @@ export default function AffiliatePage() {
             </button>
             <button
               onClick={() => setActiveTab('tools')}
-              className={`pb-4 px-1 text-14 font-medium transition-colors relative ${
+              className={`pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'tools'
                   ? 'text-brand-500'
                   : 'text-gray-500 hover:text-gray-700'
@@ -360,7 +360,7 @@ export default function AffiliatePage() {
             </button>
             <button
               onClick={() => setActiveTab('wallet')}
-              className={`pb-4 px-1 text-14 font-medium transition-colors relative ${
+              className={`pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'wallet'
                   ? 'text-brand-500'
                   : 'text-gray-500 hover:text-gray-700'
@@ -377,15 +377,15 @@ export default function AffiliatePage() {
 
       {/* Overview Tab Content */}
       {activeTab === 'overview' && (
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           {/* Main Content */}
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-4 sm:space-y-6">
             {/* Earning Insights */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-18 font-normal text-gray-900 mb-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
                 Earning Insights
               </h2>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <InsightCard
                   icon={DollarSign}
                   label="Total Earning"
@@ -405,15 +405,15 @@ export default function AffiliatePage() {
             </div>
 
             {/* Promoted Campaigns */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-18 font-normal text-gray-900">Promoted Campaigns</h2>
-                <button className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Promoted Campaigns</h2>
+                <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
                   View All
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 <PromotedCampaignCard
                   badgeText="Limited Offer!"
                   title="Get 15 % OFF"
@@ -431,11 +431,11 @@ export default function AffiliatePage() {
           </div>
 
           {/* Recent Activity Sidebar */}
-          <aside className="w-80 flex-shrink-0">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-18 font-normal text-gray-900">Recent Activity</h2>
-                <button className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
+          <aside className="w-full lg:w-80 flex-shrink-0">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Recent Activity</h2>
+                <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
                   View all
                 </button>
               </div>
@@ -450,20 +450,20 @@ export default function AffiliatePage() {
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
-                          <p className="text-14 font-normal text-gray-900">
+                          <p className="text-13 sm:text-14 font-normal text-gray-900">
                             {item.userName}
                           </p>
-                          <p className="text-14 font-normal text-green-600 whitespace-nowrap">
+                          <p className="text-13 sm:text-14 font-normal text-green-600 whitespace-nowrap">
                             {item.commission}
                           </p>
                         </div>
-                        <p className="text-12 text-gray-500 mb-2">{item.date}</p>
-                        <p className="text-12 text-gray-600 mb-2">
+                        <p className="text-11 sm:text-12 text-gray-500 mb-2">{item.date}</p>
+                        <p className="text-11 sm:text-12 text-gray-600 mb-2">
                           {item.sales} Booking
                         </p>
                         <Badge
                           variant={item.status === 'Confirmed' ? 'confirmed' : 'pending'}
-                          className="gap-1.5 px-3 py-1 text-12 font-medium"
+                          className="gap-1.5 px-2 sm:px-3 py-1 text-11 sm:text-12 font-medium"
                         >
                           {item.status === 'Confirmed' ? (
                             <CheckCircle className="w-3 h-3" />
@@ -484,15 +484,15 @@ export default function AffiliatePage() {
 
       {/* Campaigns Tab Content */}
       {activeTab === 'campaigns' && (
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           {/* Main Content */}
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-4 sm:space-y-6">
             {/* Search Bar */}
-            <div className="bg-white rounded-xl border border-gray-200 px-4 py-3">
+            <div className="bg-white rounded-xl border border-gray-200 px-3 sm:px-4 py-2 sm:py-3">
               <input
                 type="search"
                 placeholder="Search For Campaigns..."
-                className="w-full bg-transparent outline-none text-16 text-gray-900 placeholder:text-gray-400"
+                className="w-full bg-transparent outline-none text-14 sm:text-16 text-gray-900 placeholder:text-gray-400"
               />
             </div>
 
@@ -506,7 +506,7 @@ export default function AffiliatePage() {
                     <button
                       key={categoryKey}
                       onClick={() => toggleCategory(category, index)}
-                      className={`bg-gray-75 px-3 py-1 rounded-full border text-13 font-normal transition-colors ${
+                      className={`bg-gray-75 px-2.5 sm:px-3 py-1 rounded-full border text-12 sm:text-13 font-normal transition-colors ${
                         isSelected
                           ? 'bg-white border-gray-900 text-gray-900'
                           : 'bg-white border-gray-200 text-gray-900 hover:border-gray-300'
@@ -521,28 +521,28 @@ export default function AffiliatePage() {
 
             {/* Top Campaigns Section */}
             <div>
-              <h2 className="text-18 font-normal text-gray-900 mb-4">Top Campaigns</h2>
-              <div className="space-y-4">
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">Top Campaigns</h2>
+              <div className="space-y-3 sm:space-y-4">
                 {/* Campaign Card 1 */}
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                  <div className="p-4">
+                  <div className="p-3 sm:p-4">
                     <div 
-                      className="rounded-xl p-8 text-center mb-4"
+                      className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4"
                       style={{ backgroundColor: '#FFB8A8' }}
                     >
-                      <div className="inline-block bg-white px-4 py-2 rounded-full mb-3">
-                        <p className="text-12 font-normal text-gray-900">Bridal Makeup</p>
+                      <div className="inline-block bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-2 sm:mb-3">
+                        <p className="text-11 sm:text-12 font-normal text-gray-900">Bridal Makeup</p>
                       </div>
-                      <h3 className="text-24 font-semibold text-gray-900">Get 15 % OFF</h3>
+                      <h3 className="text-20 sm:text-24 font-semibold text-gray-900">Get 15 % OFF</h3>
                     </div>
-                    <div className="space-y-3">
-                      <h4 className="text-16 font-normal text-gray-900">Bridal Makeup Essentials</h4>
-                      <p className="text-14 text-gray-500">
+                    <div className="space-y-2 sm:space-y-3">
+                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">Bridal Makeup Essentials</h4>
+                      <p className="text-13 sm:text-14 text-gray-500">
                         Promote our best selling bridal makeup sets for the big day.
                       </p>
-                      <div className="flex items-center justify-between">
-                        <p className="text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
-                        <Button variant="brand" size="md" className="text-white">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <p className="text-13 sm:text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
+                        <Button variant="brand" size="md" className="text-white w-full sm:w-auto">
                           Generate Link
                         </Button>
                       </div>
@@ -552,24 +552,24 @@ export default function AffiliatePage() {
 
                 {/* Campaign Card 2 */}
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                  <div className="p-4">
+                  <div className="p-3 sm:p-4">
                     <div 
-                      className="rounded-xl p-8 text-center mb-4"
+                      className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4"
                       style={{ backgroundColor: '#00D9A3' }}
                     >
-                      <div className="inline-block bg-white px-4 py-2 rounded-full mb-3">
-                        <p className="text-12 font-normal text-gray-900">Bridal Makeup</p>
+                      <div className="inline-block bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-2 sm:mb-3">
+                        <p className="text-11 sm:text-12 font-normal text-gray-900">Bridal Makeup</p>
                       </div>
-                      <h3 className="text-24 font-semibold text-gray-900">Get 15 % OFF</h3>
+                      <h3 className="text-20 sm:text-24 font-semibold text-gray-900">Get 15 % OFF</h3>
                     </div>
-                    <div className="space-y-3">
-                      <h4 className="text-16 font-normal text-gray-900">Bridal Makeup Essentials</h4>
-                      <p className="text-14 text-gray-500">
+                    <div className="space-y-2 sm:space-y-3">
+                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">Bridal Makeup Essentials</h4>
+                      <p className="text-13 sm:text-14 text-gray-500">
                         Promote our best selling bridal makeup sets for the big day.
                       </p>
-                      <div className="flex items-center justify-between">
-                        <p className="text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
-                        <Button variant="brand" size="md" className="text-white">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <p className="text-13 sm:text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
+                        <Button variant="brand" size="md" className="text-white w-full sm:w-auto">
                           Generate Link
                         </Button>
                       </div>
@@ -581,11 +581,11 @@ export default function AffiliatePage() {
           </div>
 
           {/* Recent Activity Sidebar */}
-          <aside className="w-80 flex-shrink-0">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-18 font-normal text-gray-900">Recent Activity</h2>
-                <button className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
+          <aside className="w-full lg:w-80 flex-shrink-0">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Recent Activity</h2>
+                <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
                   View all
                 </button>
               </div>
@@ -600,20 +600,20 @@ export default function AffiliatePage() {
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
-                          <p className="text-14 font-normal text-gray-900">
+                          <p className="text-13 sm:text-14 font-normal text-gray-900">
                             {item.userName}
                           </p>
-                          <p className="text-14 font-normal text-green-600 whitespace-nowrap">
+                          <p className="text-13 sm:text-14 font-normal text-green-600 whitespace-nowrap">
                             {item.commission}
                           </p>
                         </div>
-                        <p className="text-12 text-gray-500 mb-2">{item.date}</p>
-                        <p className="text-12 text-gray-600 mb-2">
+                        <p className="text-11 sm:text-12 text-gray-500 mb-2">{item.date}</p>
+                        <p className="text-11 sm:text-12 text-gray-600 mb-2">
                           {item.sales} Booking
                         </p>
                         <Badge
                           variant={item.status === 'Confirmed' ? 'confirmed' : 'pending'}
-                          className="gap-1.5 px-3 py-1 text-12 font-medium"
+                          className="gap-1.5 px-2 sm:px-3 py-1 text-11 sm:text-12 font-medium"
                         >
                           {item.status === 'Confirmed' ? (
                             <CheckCircle className="w-3 h-3" />
@@ -634,12 +634,12 @@ export default function AffiliatePage() {
 
       {/* Tools Tab Content */}
       {activeTab === 'tools' && (
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           {/* Main Content */}
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-4 sm:space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-20 font-normal text-gray-900">Your Campaigns</h2>
+              <h2 className="text-18 sm:text-20 font-normal text-gray-900">Your Campaigns</h2>
             </div>
 
             {/* Campaign Cards */}
@@ -648,30 +648,30 @@ export default function AffiliatePage() {
               const displayData = isEditing && editFormData ? editFormData : campaign
 
               return (
-                <div key={campaign.id} className="bg-white rounded-xl border border-gray-200 p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
+                <div key={campaign.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                       {isEditing ? (
                         <input
                           type="text"
                           value={displayData.name}
                           onChange={(e) => updateEditFormData('name', e.target.value)}
-                          className="text-16 font-normal text-gray-900 border-b border-transparent hover:border-gray-300 focus:border-brand-500 focus:outline-none transition-colors bg-transparent px-1"
+                          className="text-14 sm:text-16 font-normal text-gray-900 border-b border-transparent hover:border-gray-300 focus:border-brand-500 focus:outline-none transition-colors bg-transparent px-1"
                           placeholder="Campaign Name"
                         />
                       ) : (
-                        <h3 className="text-16 font-normal text-gray-900">{displayData.name}</h3>
+                        <h3 className="text-14 sm:text-16 font-normal text-gray-900">{displayData.name}</h3>
                       )}
-                      <Badge variant="success" className="bg-green-50 text-green-600 border-green-200 text-12 font-normal px-3 py-1">
+                      <Badge variant="success" className="bg-green-50 text-green-600 border-green-200 text-11 sm:text-12 font-normal px-2 sm:px-3 py-1">
                         Active
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       {isEditing ? (
                         <>
                           <button
                             onClick={() => handleSaveCampaign(campaign.id)}
-                            className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
+                            className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
                           >
                             Save
                           </button>
@@ -679,13 +679,13 @@ export default function AffiliatePage() {
                             onClick={handleCancelEdit}
                             className="text-gray-400 hover:text-gray-600 transition-colors"
                           >
-                            <X className="w-5 h-5" />
+                            <X className="w-4 h-4 sm:w-5 sm:h-5" />
                           </button>
                         </>
                       ) : (
                         <button
                           onClick={() => handleEditCampaign(campaign)}
-                          className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
+                          className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
                         >
                           Edit
                         </button>
@@ -695,20 +695,20 @@ export default function AffiliatePage() {
 
                   {/* Campaign Banner Preview */}
                   <div 
-                    className="rounded-xl p-8 text-center mb-4"
+                    className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4"
                     style={{ backgroundColor: displayData.bannerColor }}
                   >
-                    <div className="inline-block bg-white px-4 py-2 rounded-full mb-3">
+                    <div className="inline-block bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-2 sm:mb-3">
                       {isEditing ? (
                         <input
                           type="text"
                           value={displayData.badgeText}
                           onChange={(e) => updateEditFormData('badgeText', e.target.value)}
-                          className="text-12 font-normal text-gray-900 bg-transparent focus:outline-none text-center min-w-[100px]"
+                          className="text-11 sm:text-12 font-normal text-gray-900 bg-transparent focus:outline-none text-center min-w-[100px]"
                           placeholder="Badge Text"
                         />
                       ) : (
-                        <p className="text-12 font-normal text-gray-900">{displayData.badgeText}</p>
+                        <p className="text-11 sm:text-12 font-normal text-gray-900">{displayData.badgeText}</p>
                       )}
                     </div>
                     {isEditing ? (
@@ -716,11 +716,11 @@ export default function AffiliatePage() {
                         type="text"
                         value={displayData.offerText}
                         onChange={(e) => updateEditFormData('offerText', e.target.value)}
-                        className="text-24 font-semibold text-gray-900 bg-transparent focus:outline-none text-center w-full"
+                        className="text-20 sm:text-24 font-semibold text-gray-900 bg-transparent focus:outline-none text-center w-full"
                         placeholder="Offer Text"
                       />
                     ) : (
-                      <h3 className="text-24 font-semibold text-gray-900">{displayData.offerText}</h3>
+                      <h3 className="text-20 sm:text-24 font-semibold text-gray-900">{displayData.offerText}</h3>
                     )}
                   </div>
 
@@ -731,46 +731,46 @@ export default function AffiliatePage() {
                       <textarea
                         value={displayData.description}
                         onChange={(e) => updateEditFormData('description', e.target.value)}
-                        className="w-full text-14 text-gray-500 mb-4 border border-gray-200 rounded-xl p-3 focus:border-brand-500 focus:outline-none resize-none"
+                        className="w-full text-13 sm:text-14 text-gray-500 mb-3 sm:mb-4 border border-gray-200 rounded-xl p-3 focus:border-brand-500 focus:outline-none resize-none"
                         rows={3}
                         placeholder="Campaign description..."
                       />
 
                       {/* Commission */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <span className="text-14 font-normal text-gray-900">Commission :</span>
+                      <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
+                        <span className="text-13 sm:text-14 font-normal text-gray-900">Commission :</span>
                         <input
                           type="text"
                           value={displayData.commission}
                           onChange={(e) => updateEditFormData('commission', e.target.value)}
-                          className="text-14 font-normal text-gray-900 border-b border-gray-300 hover:border-gray-400 focus:border-brand-500 focus:outline-none transition-colors bg-transparent px-1 w-20"
+                          className="text-13 sm:text-14 font-normal text-gray-900 border-b border-gray-300 hover:border-gray-400 focus:border-brand-500 focus:outline-none transition-colors bg-transparent px-1 w-20"
                           placeholder="200"
                         />
-                        <span className="text-14 font-normal text-gray-900">EGP For Each Booking</span>
+                        <span className="text-13 sm:text-14 font-normal text-gray-900">EGP For Each Booking</span>
                       </div>
 
                       {/* Link Input */}
-                      <div className="flex items-center gap-2 mb-4">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-3 sm:mb-4">
                         <Input
                           value={affiliateLink}
                           readOnly
                           suffix="EGP"
                           className="flex-1"
                         />
-                        <Button variant="brand" size="md" className="text-white px-4 whitespace-nowrap">
+                        <Button variant="brand" size="md" className="text-white px-4 whitespace-nowrap w-full sm:w-auto">
                           Regenerate Link
                         </Button>
                       </div>
 
                       {/* Banner Color Selector */}
-                      <div className="mb-4">
-                        <p className="text-14 font-normal text-gray-900 mb-3">Banner Color</p>
-                        <div className="flex gap-3">
+                      <div className="mb-3 sm:mb-4">
+                        <p className="text-13 sm:text-14 font-normal text-gray-900 mb-3">Banner Color</p>
+                        <div className="flex gap-2 sm:gap-3 flex-wrap">
                           {bannerColors.map((bannerColor) => (
                             <button
                               key={bannerColor.id}
                               onClick={() => updateEditFormData('bannerColor', bannerColor.color)}
-                              className={`w-10 h-10 rounded-full transition-all ${
+                              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-all ${
                                 displayData.bannerColor === bannerColor.color
                                   ? 'ring-2 ring-offset-2 ring-gray-900'
                                   : 'hover:ring-2 hover:ring-offset-2 hover:ring-gray-300'
@@ -787,7 +787,7 @@ export default function AffiliatePage() {
                         <Button
                           variant="outline"
                           size="md"
-                          className="text-brand-500 border-brand-500 hover:bg-brand-50"
+                          className="text-brand-500 border-brand-500 hover:bg-brand-50 w-full sm:w-auto"
                         >
                           Deactivate Campaign
                         </Button>
@@ -800,11 +800,11 @@ export default function AffiliatePage() {
           </div>
 
           {/* Recent Activity Sidebar */}
-          <aside className="w-80 flex-shrink-0">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-18 font-normal text-gray-900">Recent Activity</h2>
-                <button className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
+          <aside className="w-full lg:w-80 flex-shrink-0">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Recent Activity</h2>
+                <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
                   View All
                 </button>
               </div>
@@ -819,20 +819,20 @@ export default function AffiliatePage() {
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
-                          <p className="text-14 font-normal text-gray-900">
+                          <p className="text-13 sm:text-14 font-normal text-gray-900">
                             {item.userName}
                           </p>
-                          <p className="text-14 font-normal text-green-600 whitespace-nowrap">
+                          <p className="text-13 sm:text-14 font-normal text-green-600 whitespace-nowrap">
                             {item.commission}
                           </p>
                         </div>
-                        <p className="text-12 text-gray-500 mb-2">{item.date}</p>
-                        <p className="text-12 text-gray-600 mb-2">
+                        <p className="text-11 sm:text-12 text-gray-500 mb-2">{item.date}</p>
+                        <p className="text-11 sm:text-12 text-gray-600 mb-2">
                           {item.sales} Booking
                         </p>
                         <Badge
                           variant={item.status === 'Confirmed' ? 'confirmed' : 'pending'}
-                          className="gap-1.5 px-3 py-1 text-12 font-medium"
+                          className="gap-1.5 px-2 sm:px-3 py-1 text-11 sm:text-12 font-medium"
                         >
                           {item.status === 'Confirmed' ? (
                             <CheckCircle className="w-3 h-3" />
@@ -853,27 +853,27 @@ export default function AffiliatePage() {
 
       {/* Wallet Tab Content */}
       {activeTab === 'wallet' && (
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
           {/* Transactions History */}
           <div className="flex-1">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h2 className="text-18 font-normal text-gray-900 mb-6">Transactions History</h2>
-              <div className="space-y-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-4 sm:mb-6">Transactions History</h2>
+              <div className="space-y-3 sm:space-y-4">
                 {transactions.map((transaction) => (
                   <div
                     key={transaction.id}
-                    className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
+                    className="flex items-center justify-between py-2 sm:py-3 border-b border-gray-100 last:border-0 gap-3"
                   >
-                    <div className="flex-1">
-                      <h3 className="text-14 font-normal text-gray-900 mb-1">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-13 sm:text-14 font-normal text-gray-900 mb-1 truncate">
                         {transaction.title}
                       </h3>
-                      <p className="text-12 text-gray-500 mb-0.5">
+                      <p className="text-11 sm:text-12 text-gray-500 mb-0.5">
                         ID: {transaction.transactionId}
                       </p>
-                      <p className="text-12 text-gray-500">{transaction.date}</p>
+                      <p className="text-11 sm:text-12 text-gray-500">{transaction.date}</p>
                     </div>
-                    <div className="text-16 font-normal text-green-600">
+                    <div className="text-14 sm:text-16 font-normal text-green-600 whitespace-nowrap">
                       {transaction.amount}
                     </div>
                   </div>
@@ -883,47 +883,47 @@ export default function AffiliatePage() {
           </div>
 
           {/* Wallet Card & Actions */}
-          <aside className="w-96 flex-shrink-0 space-y-4">
+          <aside className="w-full lg:w-96 flex-shrink-0 space-y-3 sm:space-y-4">
             {/* Credit Card */}
             <div
-              className="rounded-2xl p-6 text-white relative overflow-hidden"
+              className="rounded-2xl p-5 sm:p-6 text-white relative overflow-hidden"
               style={{
                 background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #8b2635 100%)',
               }}
             >
               {/* Card Icons */}
-              <div className="flex items-center justify-between mb-8">
-                <CreditCard className="w-8 h-8 text-white/80" />
+              <div className="flex items-center justify-between mb-6 sm:mb-8">
+                <CreditCard className="w-7 h-7 sm:w-8 sm:h-8 text-white/80" />
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-red-500/80" />
-                  <div className="w-8 h-8 rounded-full bg-orange-400/80 -ml-4" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-500/80" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-400/80 -ml-4" />
                 </div>
               </div>
 
               {/* Card Number */}
-              <div className="mb-6">
-                <p className="text-16 font-normal tracking-wider">34** **** **** ***7</p>
+              <div className="mb-5 sm:mb-6">
+                <p className="text-14 sm:text-16 font-normal tracking-wider">34** **** **** ***7</p>
               </div>
 
               {/* Card Holder & Expiry */}
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-14 font-normal">Ahmed Ramadan</p>
+                  <p className="text-13 sm:text-14 font-normal">Ahmed Ramadan</p>
                 </div>
                 <div>
-                  <p className="text-14 font-normal">02/30</p>
+                  <p className="text-13 sm:text-14 font-normal">02/30</p>
                 </div>
               </div>
 
               {/* Contactless Icon */}
-              <div className="absolute top-6 right-6">
-                <div className="w-8 h-8 flex items-center justify-center">
+              <div className="absolute top-5 sm:top-6 right-5 sm:right-6">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    className="w-6 h-6 text-white/60"
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-white/60"
                   >
                     <path d="M12 18a6 6 0 0 0 0-12" />
                     <path d="M12 15a3 3 0 0 0 0-6" />
@@ -933,26 +933,26 @@ export default function AffiliatePage() {
             </div>
 
             {/* Balance Card */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-start justify-between mb-2">
-                <p className="text-14 text-gray-500">Balance</p>
+                <p className="text-13 sm:text-14 text-gray-500">Balance</p>
                 <div className="flex items-center gap-1 text-green-600">
-                  <TrendingUp className="w-4 h-4" />
-                  <span className="text-12 font-medium">25 %</span>
+                  <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span className="text-11 sm:text-12 font-medium">25 %</span>
                 </div>
               </div>
-              <p className="text-28 font-semibold text-gray-900 mb-4">3500.00 EGP</p>
-              <div className="flex items-center justify-between text-12 text-gray-500 mb-6">
+              <p className="text-24 sm:text-28 font-semibold text-gray-900 mb-3 sm:mb-4">3500.00 EGP</p>
+              <div className="flex items-center justify-between text-11 sm:text-12 text-gray-500 mb-4 sm:mb-6">
                 <span>Last Update</span>
-                <span>Sep 15, 2025 11:30 am</span>
+                <span className="text-right">Sep 15, 2025 11:30 am</span>
               </div>
-              <div className="flex items-center justify-between text-12 mb-6">
+              <div className="flex items-center justify-between text-11 sm:text-12 mb-4 sm:mb-6">
                 <span className="text-gray-500">Status</span>
                 <span className="text-green-600 font-medium">Active</span>
               </div>
 
               {/* Action Buttons */}
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 <Button
                   variant="brand"
                   size="lg"
