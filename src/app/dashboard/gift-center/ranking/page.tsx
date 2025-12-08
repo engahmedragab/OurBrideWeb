@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button'
 
 /**
  * Ranking Page Component
- * Displays ranking information in the Gift Center
+ * Displays ranking information in the Gift Center matching Figma design
  */
 export default function RankingPage() {
   const router = useRouter()

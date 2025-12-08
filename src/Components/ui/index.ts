@@ -225,6 +225,9 @@ export type {
   RequestStatus,
 } from './RequestProgressIndicator'
 
+export { RankingProgressBar } from './RankingProgressBar'
+export type { RankingProgressBarProps } from './RankingProgressBar'
+
 export { StatusBadge } from './StatusBadge'
 export type { StatusBadgeProps, StatusBadgeType } from './StatusBadge'
 

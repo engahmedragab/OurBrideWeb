@@ -8,6 +8,49 @@ import { cn } from '@/lib/utils'
 import phoneIconSvg from '@/Assets/svg/PhoneIcon.svg'
 
 /**
+ * Get gift icon color based on coupon amount
+ * @param amount - The coupon amount in EGP
+ * @returns Tailwind color class for the gift icon
+ */
+const getGiftIconColor = (amount: number): string => {
+  // 500 EGP - Blue
+  if (amount === 500) {
+    return 'text-blue-500'
+  }
+  // 1K EGP - Green
+  if (amount === 1000) {
+    return 'text-green-500'
+  }
+  // 2K EGP - Red
+  if (amount === 2000) {
+    return 'text-red-500'
+  }
+  // 5K EGP - Purple/Lavender
+  if (amount === 5000) {
+    return 'text-purple-500'
+  }
+  // 10K EGP - Orange
+  if (amount === 10000) {
+    return 'text-orange-500'
+  }
+  // Default - Blue for other amounts
+  return 'text-blue-500'
+}
+
+/**
+ * Format coupon amount for display
+ * @param amount - The coupon amount in EGP
+ * @returns Formatted string (e.g., "500 egp" or "1K egp")
+ */
+const formatCouponAmount = (amount: number): string => {
+  if (amount >= 1000) {
+    const thousands = amount / 1000
+    return `${thousands}K egp`
+  }
+  return `${amount} egp`
+}
+
+/**
  * Send Gift Modal Component Props
  */
 export interface SendGiftModalProps {
@@ -43,14 +86,17 @@ export const SendGiftModal = ({
     }, 100)
   }
 
+  // Order items with different amounts to show all color variations
   const orderItems = [
-    { id: '1', amount: couponAmount },
-    { id: '2', amount: couponAmount },
-    { id: '3', amount: couponAmount },
-    { id: '4', amount: couponAmount },
+    { id: '1', amount: 500 },
+    { id: '2', amount: 1000 },
+    { id: '3', amount: 2000 },
+    { id: '4', amount: 5000 },
   ]
 
-  const subtotal = couponAmount
+  // Calculate subtotal from selected item or first item
+  const selectedItem = orderItems.find(item => item.id === selectedGiftId) || orderItems[0]
+  const subtotal = selectedItem.amount
   const taxes = 20
   const total = subtotal + taxes
 
@@ -231,25 +277,29 @@ export const SendGiftModal = ({
 
           {/* Order Items */}
           <div className="space-y-2 sm:space-y-3">
-            {orderItems.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => setSelectedGiftId(item.id)}
-                className={cn(
-                  'flex items-center gap-2 sm:gap-3 md:gap-4 p-2 sm:p-3 md:p-4 bg-white rounded-xl cursor-pointer transition-all',
-                  selectedGiftId === item.id
-                    ? 'border-2 border-brand-500'
-                    : 'border border-gray-300'
-                )}
-              >
-                <div className="flex items-center justify-center flex-shrink-0">
-                  <Gift className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-blue-500" />
+            {orderItems.map((item) => {
+              const iconColor = getGiftIconColor(item.amount)
+              const formattedAmount = formatCouponAmount(item.amount)
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => setSelectedGiftId(item.id)}
+                  className={cn(
+                    'flex items-center gap-2 sm:gap-3 md:gap-4 p-2 sm:p-3 md:p-4 bg-white rounded-xl cursor-pointer transition-all',
+                    selectedGiftId === item.id
+                      ? 'border-2 border-brand-500'
+                      : 'border border-gray-300'
+                  )}
+                >
+                  <div className="flex items-center justify-center flex-shrink-0">
+                    <Gift className={cn('h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7', iconColor)} />
+                  </div>
+                  <span className="text-12 sm:text-14 font-normal text-gray-900 flex-1">
+                    {formattedAmount} Coupon
+                  </span>
                 </div>
-                <span className="text-12 sm:text-14 font-normal text-gray-900 flex-1">
-                  {item.amount} egp Coupon
-                </span>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Cost Breakdown */}
