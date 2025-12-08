@@ -15,9 +15,9 @@ const passwordInputVariants = cva(
         fill: 'border-gray-200 bg-white focus-within:border-brand-500',
       },
       size: {
-        sm: 'h-8 px-2 text-12',
-        md: 'h-9 px-3 text-13',
-        lg: 'h-auto px-3 py-1.5 text-16',
+        sm: 'h-10 px-3 text-12',
+        md: 'h-11 px-4 text-13',
+        lg: 'h-auto px-4 py-2.5 text-16',
       },
     },
     defaultVariants: {

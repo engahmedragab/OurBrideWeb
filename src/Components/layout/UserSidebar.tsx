@@ -72,7 +72,7 @@ export const UserSidebar = ({
         },
         {
           label: 'Gift Center',
-          path: '/gift-center',
+          path: '/dashboard/gift-center',
           icon: Gift,
         },
         {
@@ -117,6 +117,10 @@ export const UserSidebar = ({
     // Special handling for Help Center
     if (path === '/dashboard/help-center') {
       return pathname === '/dashboard/help-center' || pathname.startsWith('/dashboard/help-center/')
+    }
+    // Special handling for Gift Center
+    if (path === '/dashboard/gift-center') {
+      return pathname === '/dashboard/gift-center' || pathname.startsWith('/dashboard/gift-center/')
     }
     return pathname === path
   }

@@ -27,7 +27,7 @@ export const StoreBadges = ({
   }
 
   return (
-    <div className={cn('flex flex-row gap-0', className)}>
+    <div className={cn('flex  md:flex-col md:gap-2 lg:gap-0 lg:flex-row gap-0', className)}>
       {/* Apple App Store */}
       <a
         href={appStoreUrl}

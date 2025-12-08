@@ -228,6 +228,9 @@ export type {
   RequestStatus,
 } from './RequestProgressIndicator'
 
+export { RankingProgressBar } from './RankingProgressBar'
+export type { RankingProgressBarProps } from './RankingProgressBar'
+
 export { StatusBadge } from './StatusBadge'
 export type { StatusBadgeProps, StatusBadgeType } from './StatusBadge'
 
@@ -370,3 +373,8 @@ export type { CardWrapperProps } from './CardWrapper'
 
 export { ChatPlaceholder } from './ChatPlaceholder'
 export type { ChatPlaceholderProps } from './ChatPlaceholder'
+export { Tabs, tabsVariants, tabItemVariants } from './Tabs'
+export type { TabsProps, TabItem } from './Tabs'
+
+export { GiftSentSuccessModal } from './GiftSentSuccessModal'
+export type { GiftSentSuccessModalProps } from './GiftSentSuccessModal'
