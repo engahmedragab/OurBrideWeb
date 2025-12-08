@@ -21,7 +21,7 @@ export default function GiftCenterLayout({ children }: { children: ReactNode }) 
   const getActiveTab = () => {
     if (pathname?.includes('/offers')) return 'offers'
     if (pathname?.includes('/coupons')) return 'coupons'
-    if (pathname?.includes('/ranking')) return 'ranking'
+    if (pathname?.includes('/ranking') || pathname?.includes('/rewards')) return 'ranking'
     return 'coupons' // Default to coupons
   }
 

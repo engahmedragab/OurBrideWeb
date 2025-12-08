@@ -100,7 +100,7 @@ export default function RewardsPage() {
       {/* Header with Back Button */}
       <div className="flex gap-1 items-center mb-4 sm:mb-6">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push('/dashboard/gift-center/ranking')}
           className="flex items-center justify-center relative rounded-full shrink-0 size-10"
           aria-label="Go back"
         >

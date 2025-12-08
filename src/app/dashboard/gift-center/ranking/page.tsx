@@ -15,6 +15,7 @@ import verificationBadge from '@/Assets/svg/verification-badge.svg'
 import bronzeCrown from '@/Assets/svg/bronze-crown.svg'
 import goldCrown from '@/Assets/svg/gold-crown.svg'
 import blueCrown from '@/Assets/svg/blue-crown.svg'
+import { useRouter } from 'next/navigation'
 
 import { cn } from '@/lib'
 
@@ -23,6 +24,8 @@ import { cn } from '@/lib'
  * Displays ranking information in the Gift Center matching Figma design
  */
 export default function RankingPage() {
+  const router = useRouter()
+  
   // Mock data
   const currentStep = 0 // Current active step (0-indexed)
   
@@ -113,7 +116,10 @@ export default function RankingPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-4 sm:mb-5">
             <h2 className="text-16 sm:text-18 font-normal text-gray-900">Ranking System</h2>
-            <button className="text-12 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
+            <button 
+              onClick={() => router.push('/dashboard/gift-center/rewards')}
+              className="text-12 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
+            >
               Rewards
             </button>
           </div>
