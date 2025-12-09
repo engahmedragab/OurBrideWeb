@@ -5,7 +5,7 @@ import { X, ChevronRight } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { SilverIcon, GoldIcon, BlueRankIcon, PinkRankIcon, RedRankIcon, BronzeIcon } from '@/assets/rank/rankingIcons'
-import diamondSvg from '@/assets/svg/Diamond.svg'
+import diamondSvg from '@/Assets/svg/Diamond.svg'
 
 /**
  * Rank type definition

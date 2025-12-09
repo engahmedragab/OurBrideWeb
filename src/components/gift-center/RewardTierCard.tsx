@@ -10,7 +10,7 @@ import {
   PinkRankIcon,
   RedRankIcon,
 } from '@/assets/rank/rankingIcons'
-import diamondSvg from '@/assets/svg/Diamond.svg'
+import diamondSvg from '@/Assets/svg/Diamond.svg'
 import type { RankType } from './RankUpModal'
 
 /**
