@@ -25,7 +25,7 @@ export const ProductOffersSection = ({
 }: ProductOffersSectionProps) => {
   return (
     <section
-      className={cn('container-custom py-12 md:py-20', className)}
+      className={cn('py-12 md:py-20', className)}
     >
       {/* Section Header with Timer */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">

@@ -23,6 +23,7 @@ import hairCareIcon from '@/assets/category/hair-care.svg'
 import bodyCareIcon from '@/assets/category/body-soap.svg'
 import toolsDevicesIcon from '@/assets/category/tools-devices.svg'
 import hairDryerIcon from '@/assets/category/hair-dryer.svg'
+import whyBridesChooseProductsImage from '@/assets/images/bridProductSection.png'
 
 
 // Mock data - Replace with API calls
@@ -255,7 +256,7 @@ export default function ProductIntroPage() {
   }
 
   return (
-    <div className="bg-white">
+    <div className="bg-white ">
       {/* 1) PromoHero */}
       <PromoHero
         badge="New Arrival"
@@ -268,31 +269,42 @@ export default function ProductIntroPage() {
         discountText="30% OFF"
       />
 
-      {/* 2) ProductCategoriesSection */}
-      <ProductCategoriesSection categories={PRODUCT_CATEGORIES} />
+      {/* Container for all sections except PromoHero and WhyBridesChooseProductsSection */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* 2) ProductCategoriesSection */}
+        <ProductCategoriesSection categories={PRODUCT_CATEGORIES} />
 
-      {/* 3) ProductOffersSection */}
-      <ProductOffersSection
-        products={mockProducts}
-        timerText="23 H 45 Min"
-        onWishlistToggle={handleWishlistToggle}
-        onAddToCart={handleAddToCart}
-      />
+        {/* 3) ProductOffersSection */}
+        <ProductOffersSection
+          products={mockProducts}
+          timerText="23 H 45 Min"
+          onWishlistToggle={handleWishlistToggle}
+          onAddToCart={handleAddToCart}
+        />
+      </div>
 
-      {/* 4) WhyBridesChooseProductsSection */}
+      {/* 4) WhyBridesChooseProductsSection - Full width with large side margins */}
       <WhyBridesChooseProductsSection
-        image="https://images.unsplash.com/photo-1571875257727-256c39da42af?w=800"
+        image={whyBridesChooseProductsImage}
         features={features}
+        topText="Why"
+        highlightText="Brides"
+        bottomText="Choose"
+        bottomHighlightText="OurBride Products"
+        headerAlignment="center"
       />
 
-      {/* 5) BestProvidersSection */}
-      <BestProvidersSection providers={providers} />
+      {/* Container for remaining sections */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* 5) BestProvidersSection */}
+        <BestProvidersSection providers={providers} />
 
-      {/* 6) ProductsNewsletterSection */}
-      <ProductsNewsletterSection
-        image={flowersImage}
-        onSubscribe={handleSubscribe}
-      />
+        {/* 6) ProductsNewsletterSection */}
+        <ProductsNewsletterSection
+          image={flowersImage}
+          onSubscribe={handleSubscribe}
+        />
+      </div>
     </div>
   )
 }

@@ -43,7 +43,7 @@ export const BestProvidersSection = ({
 }: BestProvidersSectionProps) => {
   return (
     <section
-      className={cn('container-custom py-12 md:py-20', className)}
+      className={cn('py-12 md:py-20', className)}
     >
       {/* Section Header */}
       <div className="mb-12 md:mb-[50px]">
