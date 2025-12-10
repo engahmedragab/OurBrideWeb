@@ -3,6 +3,7 @@
 import { ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { StaticImageData } from 'next/image'
 import { cn } from '@/lib/utils'
 
 export interface CategoryCardProps {
@@ -10,7 +11,7 @@ export interface CategoryCardProps {
   title: string
   description: string
   href: string
-  icon?: string | ReactNode
+  icon?: string | StaticImageData | ReactNode
   className?: string
 }
 
@@ -30,15 +31,15 @@ export const CategoryCard = ({
     <Link href={href}>
       <div
         className={cn(
-          'bg-white border border-gray-100 rounded-xl flex flex-col gap-4 items-center justify-center px-[38px] py-[123px] h-[468px] hover:shadow-lg transition-all duration-300',
+          'bg-white border border-gray-100 rounded-xl flex flex-col gap-3 items-center justify-center px-6 py-8 h-[280px] hover:shadow-lg transition-all duration-300',
           className
         )}
       >
         {icon && (
-          <div className="relative w-[120px] h-[120px] flex-shrink-0">
-            {typeof icon === 'string' ? (
+          <div className="relative w-[80px] h-[80px] flex-shrink-0">
+            {typeof icon === 'string' || (icon && typeof icon === 'object' && 'src' in icon) ? (
               <Image
-                src={icon}
+                src={typeof icon === 'string' ? icon : icon.src}
                 alt={title}
                 fill
                 className="object-contain"
@@ -49,10 +50,10 @@ export const CategoryCard = ({
           </div>
         )}
         <div className="flex flex-col gap-2 items-center text-center">
-          <h3 className="text-24 font-normal text-gray-900 leading-[32px]">
+          <h3 className="text-18 font-semibold text-gray-900 leading-[24px]">
             {title}
           </h3>
-          <p className="text-24 font-normal text-gray-500 leading-[32px] max-w-[304px]">
+          <p className="text-14 font-normal text-gray-400 leading-[20px] max-w-[200px]">
             {description}
           </p>
         </div>

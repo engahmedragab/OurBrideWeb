@@ -46,15 +46,14 @@ export const BestProvidersSection = ({
       className={cn('container-custom py-12 md:py-20', className)}
     >
       {/* Section Header */}
-      <div className="flex flex-col gap-4 items-center mb-12 md:mb-[50px]">
-        <div className="flex gap-3.5 md:gap-[14px] items-center leading-[72px] text-[64px] text-gray-900">
-          <h2 className="font-normal">Best</h2>
-          <h2 className="font-semibold">Providers</h2>
-        </div>
-        <div className="flex gap-3 md:gap-[12px] items-center justify-center leading-[72px] text-[64px] text-gray-900 w-full">
-          <h2 className="font-semibold">With</h2>
-          <h2 className="font-normal">Best Products</h2>
-        </div>
+      <div className="mb-12 md:mb-[50px]">
+        <SectionHeader
+          topText="Best"
+          highlightText="Providers"
+          bottomText="With"
+          bottomHighlightText="Best Products"
+          alignment="center"
+        />
       </div>
 
       {/* Providers Grid */}

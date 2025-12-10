@@ -46,11 +46,12 @@ export const Header = ({ className }: HeaderProps) => {
     },
     {
       label: 'Products',
-      path: '/product-intro',
+      path: '/products',
       icon: Store,
       hasDropdown: true,
       dropdownItems: [
-        { label: 'View All', path: '/product-intro' },
+        { label: 'Product Intro', path: '/product-intro' },
+        { label: 'View All', path: '/products' },
         { label: 'Wedding Dresses', path: '/products/dresses' },
         { label: 'Accessories', path: '/products/accessories' },
       ],

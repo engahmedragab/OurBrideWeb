@@ -13,6 +13,7 @@ export interface SectionHeaderProps {
   topText?: string
   highlightText?: string
   bottomText?: string
+  bottomHighlightText?: string
   alignment?: 'left' | 'center' | 'right'
 }
 
@@ -29,6 +30,7 @@ export const SectionHeader = ({
   topText,
   highlightText,
   bottomText,
+  bottomHighlightText,
   alignment = 'center',
 }: SectionHeaderProps) => {
   const alignmentClasses = {
@@ -50,7 +52,7 @@ export const SectionHeader = ({
         {topText && highlightText && (
           <div
             className={cn(
-              'flex gap-3.5 md:gap-[14px] items-center leading-[72px] text-[64px] text-gray-900',
+              'flex gap-2 md:gap-3 lg:gap-4 items-center leading-[1.2] text-20 md:text-24 lg:text-32 text-gray-900',
               alignmentClasses[alignment]
             )}
           >
@@ -58,14 +60,17 @@ export const SectionHeader = ({
             <h2 className="font-semibold">{highlightText}</h2>
           </div>
         )}
-        {bottomText && (
+        {(bottomText || bottomHighlightText) && (
           <div
             className={cn(
-              'flex gap-3 md:gap-[12px] items-center justify-center leading-[72px] text-[64px] text-gray-900 w-full',
+              'flex gap-2 md:gap-3 lg:gap-4 items-center justify-center leading-[1.2] text-20 md:text-24 lg:text-32 text-gray-900 w-full',
               alignmentClasses[alignment]
             )}
           >
-            <h2 className="font-semibold">{bottomText}</h2>
+            {bottomText && <h2 className="font-semibold">{bottomText}</h2>}
+            {bottomHighlightText && (
+              <h2 className="font-normal">{bottomHighlightText}</h2>
+            )}
           </div>
         )}
         {rightContent && <div className="mt-4">{rightContent}</div>}
@@ -82,16 +87,18 @@ export const SectionHeader = ({
       )}
     >
       <div>
-        <h2 className="text-32 font-semibold text-gray-900">{title}</h2>
+        <h2 className="text-20 md:text-24 lg:text-32 font-semibold text-gray-900">
+          {title}
+        </h2>
         {count !== undefined && suffix && (
-          <p className="text-16 text-gray-600 mt-2">
+          <p className="text-14 md:text-16 text-gray-600 mt-2">
             {count} {suffix}
           </p>
         )}
       </div>
       {rightContent && <div>{rightContent}</div>}
       {count !== undefined && !suffix && !rightContent && (
-        <p className="text-16 text-gray-600">{count}</p>
+        <p className="text-14 md:text-16 text-gray-600">{count}</p>
       )}
     </div>
   )

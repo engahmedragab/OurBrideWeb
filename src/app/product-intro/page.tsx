@@ -15,6 +15,13 @@ import type {
   Provider,
 } from '@/components/products'
 import flowersImage from '@/assets/images/flowers.png'
+import perfumesIcon from '@/assets/category/perfumes.svg'
+import makeupIcon from '@/assets/category/makeup.svg'
+import skinCareIcon from '@/assets/category/skin-care.svg'
+import boxesIcon from '@/assets/category/boxes.svg'
+import hairCareIcon from '@/assets/category/hair-dryer.svg'
+import bodyCareIcon from '@/assets/category/body-soap.svg'
+import toolsDevicesIcon from '@/assets/category/tools-devices.svg'
 
 // Mock data - Replace with API calls
 const PRODUCT_CATEGORIES: CategoryType[] = [
@@ -23,49 +30,49 @@ const PRODUCT_CATEGORIES: CategoryType[] = [
     title: 'Perfumes',
     description: 'Exclusive coupons and discounts designed for your budget.',
     href: '/products/perfumes',
-    icon: '/icons/perfume.svg',
+    icon: perfumesIcon,
   },
   {
     id: 'makeup',
     title: 'Makeup',
     description: 'Exclusive coupons and discounts designed for your budget.',
     href: '/products/makeup',
-    icon: '/icons/makeup.svg',
+    icon: makeupIcon,
   },
   {
     id: 'skin-care',
     title: 'Skin Care',
     description: 'Exclusive coupons and discounts designed for your budget.',
     href: '/products/skin-care',
-    icon: '/icons/skin-care.svg',
+    icon: skinCareIcon,
   },
   {
     id: 'boxes',
     title: 'Boxes',
     description: 'Exclusive coupons and discounts designed for your budget.',
     href: '/products/boxes',
-    icon: '/icons/boxes.svg',
+    icon: boxesIcon,
   },
   {
     id: 'hair-care',
     title: 'Hair Care',
     description: 'Exclusive coupons and discounts designed for your budget.',
     href: '/products/hair-care',
-    icon: '/icons/hair-care.svg',
+    icon: hairCareIcon,
   },
   {
     id: 'body-care',
     title: 'Body Care',
     description: 'Exclusive coupons and discounts designed for your budget.',
     href: '/products/body-care',
-    icon: '/icons/body-care.svg',
+    icon: bodyCareIcon,
   },
   {
     id: 'tools-devices',
     title: 'Tools & Devices',
     description: 'Exclusive coupons and discounts designed for your budget.',
     href: '/products/tools-devices',
-    icon: '/icons/tools.svg',
+    icon: toolsDevicesIcon,
   },
 ]
 
