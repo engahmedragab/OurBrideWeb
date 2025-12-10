@@ -19,9 +19,11 @@ import perfumesIcon from '@/assets/category/perfumes.svg'
 import makeupIcon from '@/assets/category/makeup.svg'
 import skinCareIcon from '@/assets/category/skin-care.svg'
 import boxesIcon from '@/assets/category/boxes.svg'
-import hairCareIcon from '@/assets/category/hair-dryer.svg'
+import hairCareIcon from '@/assets/category/hair-care.svg'
 import bodyCareIcon from '@/assets/category/body-soap.svg'
 import toolsDevicesIcon from '@/assets/category/tools-devices.svg'
+import hairDryerIcon from '@/assets/category/hair-dryer.svg'
+
 
 // Mock data - Replace with API calls
 const PRODUCT_CATEGORIES: CategoryType[] = [
@@ -37,7 +39,7 @@ const PRODUCT_CATEGORIES: CategoryType[] = [
     title: 'Makeup',
     description: 'Exclusive coupons and discounts designed for your budget.',
     href: '/products/makeup',
-    icon: makeupIcon,
+    icon: toolsDevicesIcon,
   },
   {
     id: 'skin-care',
@@ -74,6 +76,14 @@ const PRODUCT_CATEGORIES: CategoryType[] = [
     href: '/products/tools-devices',
     icon: toolsDevicesIcon,
   },
+  {
+    id: 'hair-dryer',
+    title: 'Hair-dryer',
+    description: 'Exclusive coupons and discounts designed for your budget.',
+    href: '/products/hair-dryer',
+    icon: hairDryerIcon,
+  },
+
 ]
 
 const mockProducts: Product[] = [
