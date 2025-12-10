@@ -272,12 +272,20 @@ export default function ProductIntroPage() {
       {/* Container for all sections except PromoHero and WhyBridesChooseProductsSection */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* 2) ProductCategoriesSection */}
-        <ProductCategoriesSection categories={PRODUCT_CATEGORIES} />
+        <ProductCategoriesSection
+          categories={PRODUCT_CATEGORIES}
+          topText="Choose"
+          highlightText="From"
+          bottomText="Our Product"
+          bottomHighlightText="Categories"
+          headerAlignment="center"
+        />
 
         {/* 3) ProductOffersSection */}
         <ProductOffersSection
           products={mockProducts}
           timerText="23 H 45 Min"
+          title="Today's Best Product Offers"
           onWishlistToggle={handleWishlistToggle}
           onAddToCart={handleAddToCart}
         />
@@ -297,11 +305,23 @@ export default function ProductIntroPage() {
       {/* Container for remaining sections */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* 5) BestProvidersSection */}
-        <BestProvidersSection providers={providers} />
+        <BestProvidersSection
+          providers={providers}
+          topText="Best"
+          highlightText="Providers"
+          bottomText="With"
+          bottomHighlightText="Best Products"
+          headerAlignment="center"
+          buttonText="Explore Now"
+        />
 
         {/* 6) ProductsNewsletterSection */}
         <ProductsNewsletterSection
           image={flowersImage}
+          title="Get Products Updates & Offers"
+          description="Stay informed about new providers, offers, and wedding planning tips"
+          placeholder="Enter Your E-mail"
+          buttonText="Subscribe"
           onSubscribe={handleSubscribe}
         />
       </div>

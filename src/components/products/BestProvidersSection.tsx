@@ -31,6 +31,14 @@ export interface Provider {
 export interface BestProvidersSectionProps {
   providers: Provider[]
   className?: string
+  // Header props
+  topText?: string
+  highlightText?: string
+  bottomText?: string
+  bottomHighlightText?: string
+  headerAlignment?: 'left' | 'center' | 'right'
+  // Button text
+  buttonText?: string
 }
 
 /**
@@ -40,6 +48,12 @@ export interface BestProvidersSectionProps {
 export const BestProvidersSection = ({
   providers,
   className,
+  topText = 'Best',
+  highlightText = 'Providers',
+  bottomText = 'With',
+  bottomHighlightText = 'Best Products',
+  headerAlignment = 'center',
+  buttonText = 'Explore Now',
 }: BestProvidersSectionProps) => {
   return (
     <section
@@ -48,11 +62,11 @@ export const BestProvidersSection = ({
       {/* Section Header */}
       <div className="mb-12 md:mb-[50px]">
         <SectionHeader
-          topText="Best"
-          highlightText="Providers"
-          bottomText="With"
-          bottomHighlightText="Best Products"
-          alignment="center"
+          topText={topText}
+          highlightText={highlightText}
+          bottomText={bottomText}
+          bottomHighlightText={bottomHighlightText}
+          alignment={headerAlignment}
         />
       </div>
 
@@ -150,7 +164,7 @@ export const BestProvidersSection = ({
                     variant="ghost"
                     className="text-20 font-normal text-brand-500 hover:text-brand-600 p-0 h-auto"
                   >
-                    Explore Now
+                    {buttonText}
                     <ChevronRight className="h-6 w-6 ml-2" />
                   </Button>
                 </div>

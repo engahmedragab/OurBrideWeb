@@ -10,6 +10,8 @@ export interface ProductOffersSectionProps {
   className?: string
   onWishlistToggle?: (productId: string) => void
   onAddToCart?: (productId: string) => void
+  // Header props
+  title?: string
 }
 
 /**
@@ -22,6 +24,7 @@ export const ProductOffersSection = ({
   className,
   onWishlistToggle,
   onAddToCart,
+  title = "Today's Best Product Offers",
 }: ProductOffersSectionProps) => {
   return (
     <section
@@ -30,7 +33,7 @@ export const ProductOffersSection = ({
       {/* Section Header with Timer */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
         <h2 className="text-24 md:text-30 font-medium text-gray-900 leading-[40px]">
-          Today's Best Product Offers
+          {title}
         </h2>
         {timerText && (
           <p className="text-16 md:text-24 font-normal text-gray-500 leading-[32px]">

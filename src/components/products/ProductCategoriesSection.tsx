@@ -23,6 +23,12 @@ export interface ProductCategory {
 export interface ProductCategoriesSectionProps {
   categories: ProductCategory[]
   className?: string
+  // Header props
+  topText?: string
+  highlightText?: string
+  bottomText?: string
+  bottomHighlightText?: string
+  headerAlignment?: 'left' | 'center' | 'right'
 }
 
 /**
@@ -32,6 +38,11 @@ export interface ProductCategoriesSectionProps {
 export const ProductCategoriesSection = ({
   categories,
   className,
+  topText = 'Choose',
+  highlightText = 'From',
+  bottomText = 'Our Product',
+  bottomHighlightText = 'Categories',
+  headerAlignment = 'center',
 }: ProductCategoriesSectionProps) => {
   return (
     <section
@@ -40,11 +51,11 @@ export const ProductCategoriesSection = ({
       {/* Section Header */}
       <div className="mb-12 md:mb-20">
         <SectionHeader
-          topText="Choose"
-          highlightText="From"
-          bottomText="Our Product"
-          bottomHighlightText="Categories"
-          alignment="center"
+          topText={topText}
+          highlightText={highlightText}
+          bottomText={bottomText}
+          bottomHighlightText={bottomHighlightText}
+          alignment={headerAlignment}
         />
       </div>
 

@@ -11,6 +11,11 @@ export interface ProductsNewsletterSectionProps {
   image?: string | StaticImageData
   className?: string
   onSubscribe?: (email: string) => void
+  // Content props
+  title?: string
+  description?: string
+  placeholder?: string
+  buttonText?: string
 }
 
 /**
@@ -21,6 +26,10 @@ export const ProductsNewsletterSection = ({
   image,
   className,
   onSubscribe,
+  title = 'Get Products Updates & Offers',
+  description = 'Stay informed about new providers, offers, and wedding planning tips',
+  placeholder = 'Enter Your E-mail',
+  buttonText = 'Subscribe',
 }: ProductsNewsletterSectionProps) => {
   const [email, setEmail] = useState('')
 
@@ -52,10 +61,10 @@ export const ProductsNewsletterSection = ({
         {/* Content */}
         <div className="relative z-10 flex flex-col gap-4 md:gap-[16px] max-w-[865px]">
           <h2 className="text-24 md:text-32 font-medium text-gray-900 leading-[40px]">
-            Get Products Updates & Offers
+            {title}
           </h2>
           <p className="text-16 md:text-28 font-normal text-gray-500 leading-[24px] md:leading-[40px]">
-            Stay informed about new providers, offers, and wedding planning tips
+            {description}
           </p>
         </div>
 
@@ -66,7 +75,7 @@ export const ProductsNewsletterSection = ({
         >
           <Input
             type="email"
-            placeholder="Enter Your E-mail"
+            placeholder={placeholder}
             value={email}
             onChange={e => setEmail(e.target.value)}
             className="flex-1 h-[48px] md:h-[60px] rounded-[24px] md:rounded-[60px] px-5 md:px-[20px] text-16"
@@ -78,7 +87,7 @@ export const ProductsNewsletterSection = ({
             variant="outlineBrand"
             className="h-[48px] md:h-[60px] px-4 md:px-8 rounded-[24px] md:rounded-[60px] text-16 md:text-20 font-normal text-brand-500 border-brand-500 hover:bg-brand-50 w-full sm:w-auto sm:min-w-[273px]"
           >
-            Subscribe
+            {buttonText}
           </Button>
         </form>
       </div>
