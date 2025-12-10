@@ -38,7 +38,7 @@ export const UserSidebar = ({
       items: [
         {
           label: 'Events',
-          path: '/events',
+          path: '/dashboard/my-events',
           icon: Grid3x3,
         },
         {
