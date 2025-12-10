@@ -22,9 +22,9 @@ const buttonVariants = cva(
 
         // Outlined buttons - Brand/Red
         outlineBrand:
-          'border-2 border-brand-500 bg-white text-white hover:bg-brand-50',
+          'border-2 border-brand-500 bg-white text-brand-500 hover:bg-brand-50',
         outlineBrandDark:
-          'border-2 border-brand-600 bg-white text-white hover:bg-brand-50',
+          'border-2 border-brand-600 bg-white text-brand-600 hover:bg-brand-50',
 
         // Outlined buttons - Green/Success
         outlineSuccess:

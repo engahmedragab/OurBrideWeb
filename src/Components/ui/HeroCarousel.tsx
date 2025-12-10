@@ -21,6 +21,7 @@ export interface HeroCarouselProps {
   autoPlay?: boolean
   autoPlayInterval?: number
   className?: string
+  showBackground?: boolean
 }
 
 export const HeroCarousel = ({
@@ -28,6 +29,7 @@ export const HeroCarousel = ({
   autoPlay = true,
   autoPlayInterval = 5000,
   className,
+  showBackground = true,
 }: HeroCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
 
@@ -61,7 +63,12 @@ export const HeroCarousel = ({
     <div className={cn('relative w-full overflow-hidden', className)}>
       <div className="relative">
         {/* Carousel Slide */}
-        <div className="relative min-h-[400px] md:min-h-[500px] lg:min-h-[600px] bg-gradient-to-br from-brand-100 to-brand-200">
+        <div
+          className={cn(
+            'relative min-h-[280px] md:min-h-[350px] lg:min-h-[420px]',
+            showBackground && 'bg-gradient-to-br from-brand-100 to-brand-200'
+          )}
+        >
           {/* Navigation Arrows */}
           {slides.length > 1 && (
             <>
@@ -84,7 +91,7 @@ export const HeroCarousel = ({
 
           {/* Content Container */}
           <div className="container-custom h-full">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 items-center min-h-[400px] md:min-h-[500px] lg:min-h-[600px] py-8 md:py-12">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 items-center min-h-[280px] md:min-h-[350px] lg:min-h-[420px] py-6 md:py-8">
               {/* Left Column - Content (40%) */}
               <div className="lg:col-span-2 flex flex-col justify-center space-y-6 text-center lg:text-left">
                 {/* New Arrival Label */}
@@ -109,8 +116,8 @@ export const HeroCarousel = ({
                   <Link href={currentSlide.ctaLink}>
                     <Button
                       variant="default"
-                      size="lg"
-                      className="h-12 md:h-14 px-8 md:px-10 rounded-full !text-white text-16 md:text-18 font-semibold transition-all duration-200 hover:scale-105 shadow-md"
+                      size="md"
+                      className="h-10 md:h-11 px-6 md:px-8 rounded-full !text-white text-14 md:text-16 font-semibold transition-all duration-200 hover:scale-105 shadow-md"
                     >
                       {currentSlide.ctaText}
                     </Button>
@@ -119,7 +126,7 @@ export const HeroCarousel = ({
               </div>
 
               {/* Right Column - Visual (60%) */}
-              <div className="lg:col-span-3 relative flex items-center justify-end h-full min-h-[300px] md:min-h-[400px] pr-4 md:pr-8">
+              <div className="lg:col-span-3 relative flex items-center justify-end h-full min-h-[200px] md:min-h-[280px] pr-4 md:pr-8">
                 {/* Discount Text Background */}
                 {currentSlide.discountText && (
                   <div className="absolute left-0 top-1/2 -translate-y-1/2 z-0">

@@ -42,7 +42,7 @@ export const PriceDisplay = ({
     <div className={cn('flex items-baseline gap-1', className)}>
       <span
         className={cn(
-          'font-normal text-gray-900',
+          'font-normal text-gray-600',
           sizeClasses[size].discounted
         )}
       >

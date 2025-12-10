@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { cn } from '@/lib/utils'
+import { Globe, FileText, Monitor } from 'lucide-react'
 import { SearchInput } from '@/components/ui/SearchInput'
 import { Button } from '@/components/ui/Button'
-import { Globe, FileText, Monitor } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { ArticlePreview } from './ArticlePreview'
 import { CommunityPostsList } from './CommunityPostsList'
 
@@ -100,50 +100,68 @@ export const CommunitySidebar = ({
       {/* Navigation Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         <div className="space-y-2">
-          <Button
-            variant={activeTab === 'posts' ? 'brand' : 'ghost'}
-            size="default"
-            className={cn(
-              'w-full justify-start gap-2 font-normal rounded-lg',
-              activeTab === 'posts'
-                ? 'bg-brand-500 text-white hover:bg-brand-600'
-                : 'text-gray-700 hover:bg-gray-50'
-            )}
+          <button
             onClick={() => handleTabChange('posts')}
-          >
-            <Globe className="h-5 w-5" />
-            Community Posts
-          </Button>
-
-          <Button
-            variant={activeTab === 'articles' ? 'brand' : 'ghost'}
-            size="default"
             className={cn(
-              'w-full justify-start gap-2 font-normal rounded-lg',
-              activeTab === 'articles'
-                ? 'bg-brand-500 text-white hover:bg-brand-600'
-                : 'text-gray-700 hover:bg-gray-50'
+              'w-full flex items-center gap-2 py-2 px-0 text-14 font-normal transition-colors relative',
+              activeTab === 'posts'
+                ? 'text-brand-500'
+                : 'text-gray-900 hover:text-gray-700'
             )}
+          >
+            <Globe
+              className={cn(
+                'h-5 w-5 flex-shrink-0',
+                activeTab === 'posts' ? 'text-brand-500' : 'text-gray-900'
+              )}
+            />
+            <span>Community Posts</span>
+            {activeTab === 'posts' && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+            )}
+          </button>
+
+          <button
             onClick={() => handleTabChange('articles')}
-          >
-            <FileText className="h-5 w-5" />
-            Articles
-          </Button>
-
-          <Button
-            variant={activeTab === 'reels' ? 'brand' : 'ghost'}
-            size="default"
             className={cn(
-              'w-full justify-start gap-2 font-normal rounded-lg',
-              activeTab === 'reels'
-                ? 'bg-brand-500 text-white hover:bg-brand-600'
-                : 'text-gray-700 hover:bg-gray-50'
+              'w-full flex items-center gap-2 py-2 px-0 text-14 font-normal transition-colors relative',
+              activeTab === 'articles'
+                ? 'text-brand-500'
+                : 'text-gray-900 hover:text-gray-700'
             )}
-            onClick={() => handleTabChange('reels')}
           >
-            <Monitor className="h-5 w-5" />
-            Reels
-          </Button>
+            <FileText
+              className={cn(
+                'h-5 w-5 flex-shrink-0',
+                activeTab === 'articles' ? 'text-brand-500' : 'text-gray-900'
+              )}
+            />
+            <span>Articles</span>
+            {activeTab === 'articles' && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+            )}
+          </button>
+
+          <button
+            onClick={() => handleTabChange('reels')}
+            className={cn(
+              'w-full flex items-center gap-2 py-2 px-0 text-14 font-normal transition-colors relative',
+              activeTab === 'reels'
+                ? 'text-brand-500'
+                : 'text-gray-900 hover:text-gray-700'
+            )}
+          >
+            <Monitor
+              className={cn(
+                'h-5 w-5 flex-shrink-0',
+                activeTab === 'reels' ? 'text-brand-500' : 'text-gray-900'
+              )}
+            />
+            <span>Reels</span>
+            {activeTab === 'reels' && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+            )}
+          </button>
         </div>
       </div>
 

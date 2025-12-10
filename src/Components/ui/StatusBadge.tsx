@@ -18,21 +18,25 @@ export interface StatusBadgeProps {
 const statusConfig = {
   completed: {
     bgColor: 'bg-green-500',
+    textColor: 'text-white',
     icon: CheckCircle2,
     defaultLabel: 'Done',
   },
   delivered: {
     bgColor: 'bg-green-500',
+    textColor: 'text-white',
     icon: CheckCircle2,
     defaultLabel: 'Done',
   },
   cancelled: {
     bgColor: 'bg-red-500',
+    textColor: 'text-white',
     icon: X,
     defaultLabel: 'Canceled',
   },
   inProgress: {
-    bgColor: 'bg-blue-500',
+    bgColor: 'bg-yellow-55',
+    textColor: 'text-yellow-650',
     icon: Loader2,
     defaultLabel: 'In Progress',
   },
@@ -41,12 +45,14 @@ const statusConfig = {
 export const StatusBadge = ({ status, label, className }: StatusBadgeProps) => {
   const config = statusConfig[status]
   const Icon = config.icon
+  const textColor = config.textColor || 'text-white'
 
   return (
     <div
       className={cn(
-        'flex items-center gap-1.5 text-white px-3 py-1.5 rounded-full text-14 font-normal text-white',
+        'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-14 font-normal',
         config.bgColor,
+        textColor,
         className
       )}
     >

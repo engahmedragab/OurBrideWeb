@@ -3,8 +3,15 @@
 import { useState, useEffect, use } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Header } from '@/components/layout'
-import { Footer } from '@/components/layout'
+import { useRouter } from 'next/navigation'
+import {
+  Star,
+  ArrowRight,
+  ThumbsUp,
+  MessageCircle,
+  Send,
+} from 'lucide-react'
+import { Header, Footer } from '@/components/layout'
 import {
   Badge,
   ProductImageGallery,
@@ -14,20 +21,12 @@ import {
   OfferBanner,
   Button,
   ServiceCard,
-  BookingDetailsModal,
   BookingConfirmationModal,
   BackButton,
+  ProviderCard,
 } from '@/components/ui'
-import type { BookingFormData } from '@/components/ui/BookingDetailsModal'
-import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
-import {
-  Star,
-  ArrowRight,
-  ThumbsUp,
-  MessageCircle,
-} from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
 import type { Service } from '@/types/service'
 import productImage from '@/assets/svg/product-1.svg'
 
@@ -263,10 +262,9 @@ export default function ServiceDetail({
   const [isWishlisted, setIsWishlisted] = useState(
     service.isWishlisted || false
   )
-  const [reviewText, setReviewText] = useState('')
+  const [reviewComment, setReviewComment] = useState('')
   const [branchesExpanded, setBranchesExpanded] = useState(false)
   const [packagesExpanded, setPackagesExpanded] = useState(false)
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
   const [isBookingConfirmationModalOpen, setIsBookingConfirmationModalOpen] =
     useState(false)
 
@@ -279,14 +277,7 @@ export default function ServiceDetail({
   }, [id])
 
   const handleBookNow = () => {
-    setIsBookingModalOpen(true)
-  }
-
-  const handleConfirmBooking = (bookingData: BookingFormData) => {
-    // Close booking details modal
-    setIsBookingModalOpen(false)
-    // Show confirmation modal
-    setIsBookingConfirmationModalOpen(true)
+    router.push('/booking')
   }
 
   const handleWishlistToggle = () => {
@@ -338,7 +329,7 @@ export default function ServiceDetail({
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        <div className="container-custom py-6 md:py-8">
+        <div className="container-custom max-w-[1600px] py-6 md:py-8">
           {/* Back Button */}
           <BackButton
             href="/services"
@@ -373,7 +364,7 @@ export default function ServiceDetail({
             <div className="lg:col-span-5 space-y-4">
               {/* Service Header */}
               <div>
-                <h1 className="text-32 md:text-40 font-semibold text-gray-900 mb-3">
+                <h1 className="text-32 md:text-40 font-normal text-gray-900 mb-3">
                   {service.title}
                 </h1>
                 <RatingDisplay
@@ -399,8 +390,8 @@ export default function ServiceDetail({
               </div>
 
               {/* Delivery Date */}
-              <div className="text-14 text-brand-500 font-medium">
-                Book now and get by 25 AUG 2025
+              <div className="text-14 text-brand-500 font-normal">
+                Book now and get by <span className="text-gray-900">25 AUG 2025</span>
               </div>
             </div>
 
@@ -408,51 +399,16 @@ export default function ServiceDetail({
             <div className="lg:col-span-3">
               <div className="space-y-6">
                 {/* Provider Card */}
+                <ProviderCard
+                  provider={{
+                    ...service.provider,
+                    rating: service.rating.value,
+                    profession: 'Makeup Artist',
+                  }}
+                />
+                
+                {/* Booking Details Card */}
                 <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                  {/* Provider Header */}
-                  <div className="flex items-center gap-4 mb-6">
-                    {service.provider.image ? (
-                      <div className="relative w-20 h-20 flex-shrink-0">
-                        <Image
-                        src={service.provider.image}
-                        alt={service.provider.name}
-                          fill
-                          sizes="80px"
-                          className="rounded-full object-cover"
-                      />
-                      </div>
-                    ) : (
-                      <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                        <span className="text-24 font-semibold text-gray-600">
-                          {service.provider.name.charAt(0)}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <h3 className="text-20 font-semibold text-gray-900 mb-1">
-                        {service.provider.name}
-                      </h3>
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <Star
-                            key={star}
-                            className={cn(
-                              'h-4 w-4',
-                              star <= Math.floor(service.rating.value)
-                                ? 'fill-brand-500 text-brand-500'
-                                : star === Math.ceil(service.rating.value) &&
-                                    service.rating.value % 1 !== 0
-                                  ? 'fill-brand-500/50 text-brand-500'
-                                  : 'fill-gray-200 text-gray-200'
-                            )}
-                          />
-                        ))}
-                        <span className="text-14 text-gray-600 ml-1">
-                          {service.rating.value}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Pricing Section */}
                   <div className="mb-6 pb-6 border-b border-gray-200">
@@ -596,7 +552,7 @@ export default function ServiceDetail({
                     <Button
                       variant="outline"
                       size="icon"
-                      className="h-12 w-12 rounded-full border-brand-500 text-brand-500 hover:bg-brand-50"
+                      className="h-11 w-11 rounded-full border-brand-500 text-brand-500 hover:bg-brand-50"
                       onClick={() => {
                         // TODO: Implement chat functionality
                       }}
@@ -606,7 +562,7 @@ export default function ServiceDetail({
                     </Button>
                     <Button
                       variant="default"
-                      className="flex-1 h-12 rounded-lg bg-brand-500 hover:bg-brand-600 text-white"
+                      className="flex-1 h-12 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
                       onClick={handleBookNow}
                       disabled={!service.available}
                     >
@@ -619,9 +575,9 @@ export default function ServiceDetail({
           </div>
 
           {/* Reviews and Rating Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 lg:gap-12 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-12">
             {/* Left: Reviews */}
-            <div>
+            <div className="lg:col-span-9">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-24 md:text-30 font-semibold text-gray-900">
                   Reviews
@@ -706,17 +662,71 @@ export default function ServiceDetail({
                   See more reviews
                 </button>
               </div>
+
+              {/* Write Your Review Section */}
+              <div className="mt-8 p-6">
+                <h3 className="text-18 font-semibold text-gray-900 mb-4">
+                  Write Your Review
+                </h3>
+                
+                {/* Star Rating - Centered */}
+                <div className="flex justify-center mb-4">
+                  <RatingInput
+                    rating={userRating}
+                    onRatingChange={setUserRating}
+                    size="md"
+                    color="default"
+                  />
+                </div>
+
+                {/* Comment Input Area */}
+                <div className="relative bg-white border border-gray-300 rounded-lg min-h-[120px] p-4">
+                  {/* User Avatar inside input */}
+                  <div className="absolute top-4 left-4 w-8 h-8 rounded-full overflow-hidden">
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-12 font-semibold text-gray-600">
+                        U
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Textarea */}
+                  <textarea
+                    value={reviewComment}
+                    onChange={e => setReviewComment(e.target.value)}
+                    placeholder="Share your Comments"
+                    className="w-full min-h-[100px] pl-12 pr-14 py-2 border-0 focus:outline-none text-14 text-gray-900 placeholder:text-gray-400 resize-none bg-transparent"
+                    rows={4}
+                  />
+
+                  {/* Send Button */}
+                  <button
+                    onClick={() => {
+                      if (reviewComment.trim()) {
+                        // TODO: Implement review submission
+                        setReviewComment('')
+                        setUserRating(0)
+                      }
+                    }}
+                    disabled={!reviewComment.trim()}
+                    className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+                    aria-label="Send review"
+                  >
+                    <Send className="h-5 w-5 text-white flex-shrink-0" />
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Right: Rating Summary Sidebar */}
-            <div className="space-y-6">
+            <div className="lg:col-span-3 space-y-6">
               {/* Overall Rating Display */}
               <div className="bg-white border border-gray-200 rounded-lg p-6">
                 <div className="text-center mb-4">
                   <div className="text-48 font-semibold text-gray-900 mb-2">
                     {service.rating.value.toFixed(1)}
                   </div>
-                  <div className="mb-2 flex items-center justify-center">
+                  <div className="mb-2 flex justify-center">
                     <RatingDisplay
                       rating={service.rating.value}
                       showCount={false}
@@ -755,47 +765,6 @@ export default function ServiceDetail({
                 </div>
               </div>
 
-              {/* User Rating Section */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h3 className="text-18 font-semibold text-gray-900 mb-4">
-                  Write Your Review
-                </h3>
-                <RatingInput
-                  rating={userRating}
-                  onRatingChange={setUserRating}
-                  size="md"
-                  color="default"
-                  className="mb-4"
-                />
-                {userRating > 0 && (
-                  <p className="text-14 text-gray-600 mb-4">
-                    You rated this {userRating} star{userRating > 1 ? 's' : ''}
-                  </p>
-                )}
-                <div className="space-y-3">
-                  <textarea
-                    value={reviewText}
-                    onChange={e => setReviewText(e.target.value)}
-                    placeholder="Write your review here..."
-                    className="w-full min-h-[120px] px-4 py-3 border border-gray-300 rounded-lg text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 resize-none"
-                    rows={5}
-                  />
-                  <Button
-                    variant="default"
-                    className="w-full h-10 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
-                    onClick={() => {
-                      if (userRating > 0 && reviewText.trim()) {
-                        // TODO: Implement review submission
-                        setReviewText('')
-                        setUserRating(0)
-                      }
-                    }}
-                    disabled={userRating === 0 || !reviewText.trim()}
-                  >
-                    Submit Review
-                  </Button>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -809,7 +778,7 @@ export default function ServiceDetail({
           />
 
           {/* Suggested for You Section */}
-          <section className="mb-12">
+          <section className="mb-12 max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-30 md:text-32 font-normal text-gray-900">
                 Suggested for You
@@ -836,14 +805,6 @@ export default function ServiceDetail({
         </div>
       </main>
       <Footer />
-
-      {/* Booking Details Modal */}
-      <BookingDetailsModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-        service={service}
-        onConfirmBooking={handleConfirmBooking}
-      />
 
       {/* Booking Confirmation Modal */}
       <BookingConfirmationModal

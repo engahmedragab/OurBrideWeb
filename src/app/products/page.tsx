@@ -217,6 +217,7 @@ export default function Products() {
           slides={heroSlides}
           autoPlay={true}
           autoPlayInterval={5000}
+          showBackground={false}
         />
 
         <div className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8">

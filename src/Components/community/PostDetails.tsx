@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { cn } from '@/lib/utils'
 import {
   Heart,
   MessageCircle,
@@ -11,8 +10,10 @@ import {
   ArrowLeft,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { CommentCard } from './CommentCard'
 import { useToast } from '@/components/ui/Toaster'
+import { cn } from '@/lib/utils'
+import { CommentCard } from './CommentCard'
+import { EngagementButton } from './EngagementButton'
 
 export interface PostDetailsProps {
   id: string
@@ -219,32 +220,25 @@ export const PostDetails = ({
         )}
 
         {/* Engagement Metrics */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-          <div className="flex items-center gap-6">
-            <button
-              onClick={handleLikeClick}
-              className={cn(
-                'flex items-center gap-2 text-14 transition-colors',
-                isLiked
-                  ? 'text-brand-500'
-                  : 'text-gray-600 hover:text-brand-500'
-              )}
-            >
-              <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
-              <span>{likes} Likes</span>
-            </button>
-            <button className="flex items-center gap-2 text-14 text-gray-600 hover:text-brand-500 transition-colors">
-              <MessageCircle className="h-5 w-5" />
-              <span>{comments.length} Comments</span>
-            </button>
-          </div>
-          <button
+        <div className="flex items-center justify-center gap-3 pt-4 border-t border-gray-100">
+          <EngagementButton
+            icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+            count={likes}
+            label="Likes"
+            onClick={handleLikeClick}
+            isActive={isLiked}
+          />
+          <EngagementButton
+            icon={<MessageCircle className="h-5 w-5" />}
+            count={comments.length}
+            label="Comments"
+          />
+          <EngagementButton
+            icon={<Share2 className="h-5 w-5" />}
+            count={shares}
+            label="Shares"
             onClick={handleShareClick}
-            className="flex items-center gap-2 text-14 text-gray-600 hover:text-brand-500 transition-colors"
-          >
-            <Share2 className="h-5 w-5" />
-            <span>{shares} Shares</span>
-          </button>
+          />
         </div>
       </div>
 

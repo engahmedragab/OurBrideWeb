@@ -3,8 +3,9 @@
 import { useState, useEffect, use } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Header } from '@/components/layout'
-import { Footer } from '@/components/layout'
+import { useRouter } from 'next/navigation'
+import { Star, ArrowRight, ThumbsUp, Send } from 'lucide-react'
+import { Header, Footer } from '@/components/layout'
 import {
   Badge,
   ProductImageGallery,
@@ -15,24 +16,18 @@ import {
   RatingInput,
   OrderSummaryCard,
   OfferBanner,
-  OrderCheckoutModal,
   BackButton,
 } from '@/components/ui'
-import type {
-  OrderItem,
-  OrderFormData,
-} from '@/components/ui/OrderCheckoutModal'
-import type { ProductCardData } from '@/components/ui/Card'
-import { Star, ArrowRight, ThumbsUp } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import type { Product } from '@/types/product'
 import productImage from '@/assets/svg/product-1.svg'
+import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
+import type { ProductCardData } from '@/components/ui/Card'
+import type { Product } from '@/types/product'
 
 // Mock data - Replace with API call
 const mockProduct: Product = {
   id: '1',
-  title: 'Essential Wedding Cream',
+  title: 'Product Name : it could be that long so it will be in two Rows',
   description:
     'Premium quality wedding cream for bridal beauty. Perfect for your special day.',
   longDescription:
@@ -198,7 +193,7 @@ export default function ProductDetail({
   const [quantity, setQuantity] = useState(1)
   const [product, setProduct] = useState(mockProduct)
   const [userRating, setUserRating] = useState(0)
-  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false)
+  const [reviewComment, setReviewComment] = useState('')
 
   // Fetch product based on id - Replace with API call
   useEffect(() => {
@@ -218,13 +213,9 @@ export default function ProductDetail({
   }
 
   const handleBuyNow = () => {
-    setIsCheckoutModalOpen(true)
-  }
-
-  const handleCheckout = async (orderData: OrderFormData) => {
-    // TODO: Implement checkout logic
-    // Here you would typically send the order data to your API
-    // await submitOrder(orderData)
+    // Navigate to checkout page with product data
+    // TODO: Pass product data via query params or state management
+    router.push('/checkout')
   }
 
   const handleQuantityChange = (delta: number) => {
@@ -276,7 +267,7 @@ export default function ProductDetail({
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        <div className="container-custom py-6 md:py-8">
+        <div className="container-custom max-w-[1600px] py-6 md:py-8">
           {/* Back Button */}
           <BackButton
             href="/products"
@@ -308,7 +299,7 @@ export default function ProductDetail({
                     </Badge>
                   )}
                 </div>
-                <h1 className="text-32 md:text-40 font-semibold text-gray-900 mb-3">
+                <h1 className="text-32 md:text-40 font-normal text-gray-900 mb-3">
                   {product.title}
                 </h1>
                 <RatingDisplay
@@ -334,8 +325,8 @@ export default function ProductDetail({
               </div>
 
               {/* Delivery Date */}
-              <div className="text-14 text-brand-500 font-medium">
-                Buy now and get by 25 AUG 2025
+              <div className="text-14 text-brand-500 font-normal">
+                Buy now and get by <span className="text-gray-900">25 AUG 2025</span>
               </div>
             </div>
 
@@ -346,6 +337,7 @@ export default function ProductDetail({
                   provider={{
                     ...product.provider,
                     rating: product.rating.value,
+                    profession: 'Makeup Artist',
                   }}
                 />
                 <OrderSummaryCard
@@ -355,6 +347,8 @@ export default function ProductDetail({
                   onQuantityChange={handleQuantityChange}
                   onAddToCart={handleAddToCart}
                   onBuyNow={handleBuyNow}
+                  deliveryLocation="Giza, 6 Of O..."
+                  fullAddress="Giza, 6 Of October City, Building 15, Apartment 42"
                   maxQuantity={product.stockQuantity || 99}
                   disabled={!product.inStock}
                 />
@@ -363,9 +357,9 @@ export default function ProductDetail({
           </div>
 
           {/* Reviews and Rating Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 lg:gap-12 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-12">
             {/* Left: Reviews */}
-            <div>
+            <div className="lg:col-span-9">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-24 md:text-30 font-semibold text-gray-900">
                   Reviews
@@ -450,17 +444,71 @@ export default function ProductDetail({
                   See more reviews
                 </button>
               </div>
+
+              {/* Write Your Review Section */}
+              <div className="mt-8 p-6">
+                <h3 className="text-18 font-semibold text-gray-900 mb-4">
+                  Write Your Review
+                </h3>
+                
+                {/* Star Rating - Centered */}
+                <div className="flex justify-center mb-4">
+                  <RatingInput
+                    rating={userRating}
+                    onRatingChange={setUserRating}
+                    size="md"
+                    color="default"
+                  />
+                </div>
+
+                {/* Comment Input Area */}
+                <div className="relative bg-white border border-gray-300 rounded-lg min-h-[120px] p-4">
+                  {/* User Avatar inside input */}
+                  <div className="absolute top-4 left-4 w-8 h-8 rounded-full overflow-hidden">
+                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-12 font-semibold text-gray-600">
+                        U
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Textarea */}
+                  <textarea
+                    value={reviewComment}
+                    onChange={e => setReviewComment(e.target.value)}
+                    placeholder="Share your Comments"
+                    className="w-full min-h-[100px] pl-12 pr-14 py-2 border-0 focus:outline-none text-14 text-gray-900 placeholder:text-gray-400 resize-none bg-transparent"
+                    rows={4}
+                  />
+
+                  {/* Send Button */}
+                  <button
+                    onClick={() => {
+                      if (reviewComment.trim()) {
+                        // TODO: Implement review submission
+                        setReviewComment('')
+                        setUserRating(0)
+                      }
+                    }}
+                    disabled={!reviewComment.trim()}
+                    className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+                    aria-label="Send review"
+                  >
+                    <Send className="h-5 w-5 text-white flex-shrink-0" />
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Right: Rating Summary Sidebar */}
-            <div className="space-y-6">
+            <div className="lg:col-span-3 space-y-6">
               {/* Overall Rating Display */}
               <div className="bg-white border border-gray-200 rounded-lg p-6">
                 <div className="text-center mb-4">
                   <div className="text-48 font-semibold text-gray-900 mb-2">
                     {product.rating.value}
                   </div>
-                  <div className="mb-2">
+                  <div className="mb-2 flex justify-center">
                     <RatingDisplay
                       rating={product.rating.value}
                       showCount={false}
@@ -498,25 +546,6 @@ export default function ProductDetail({
                   ))}
                 </div>
               </div>
-
-              {/* User Rating Section */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h3 className="text-18 font-semibold text-gray-900 mb-4">
-                  Your Rating
-                </h3>
-                <RatingInput
-                  rating={userRating}
-                  onRatingChange={setUserRating}
-                  size="md"
-                  color="default"
-                  className="mb-4"
-                />
-                {userRating > 0 && (
-                  <p className="text-14 text-gray-600">
-                    You rated this {userRating} star{userRating > 1 ? 's' : ''}
-                  </p>
-                )}
-              </div>
             </div>
           </div>
 
@@ -530,7 +559,7 @@ export default function ProductDetail({
           />
 
           {/* Suggested for You Section */}
-          <section className="mb-12">
+          <section className="mb-12 max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-30 md:text-32 font-normal text-gray-900">
                 Suggested for You
@@ -556,19 +585,6 @@ export default function ProductDetail({
       </main>
       <Footer />
 
-      {/* Order Checkout Modal */}
-      <OrderCheckoutModal
-        isOpen={isCheckoutModalOpen}
-        onClose={() => setIsCheckoutModalOpen(false)}
-        items={getOrderItems()}
-        onCheckout={handleCheckout}
-        onTrackOrder={() => {
-          router.push('/orders')
-        }}
-        currency={product.price.currency}
-        taxes={120}
-        deliveryFee={90}
-      />
     </div>
   )
 }

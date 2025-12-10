@@ -32,18 +32,10 @@ export const QuantitySelector = ({
     }
   }
 
-  const borderColor =
-    variant === 'coral' ? 'border-2 border-[#FF8B7A]' : 'border border-gray-300'
-  const buttonColor =
-    variant === 'coral'
-      ? 'text-[#FF8B7A] hover:bg-[#FF8B7A]/10'
-      : 'hover:bg-gray-50'
-
   return (
     <div
       className={cn(
-        'flex items-center gap-3 rounded-lg bg-white w-fit',
-        borderColor,
+        'flex items-center gap-2 rounded-lg bg-white w-fit',
         className
       )}
     >
@@ -51,26 +43,33 @@ export const QuantitySelector = ({
         onClick={handleDecrease}
         disabled={disabled || quantity <= min}
         className={cn(
-          'p-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
-          buttonColor
+          'h-8 w-8 rounded-full border border-gray-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors hover:bg-gray-50',
+          variant === 'coral' && 'border-gray-300'
         )}
         aria-label="Decrease quantity"
       >
-        <Minus className="h-4 w-4" />
+        <Minus className="h-4 w-4 text-gray-600" />
       </button>
-      <span className="text-16 font-semibold text-gray-900 w-8 text-center">
+      <span className="text-16 font-normal text-gray-900 w-8 text-center">
         {quantity}
       </span>
       <button
         onClick={handleIncrease}
         disabled={disabled || quantity >= max}
         className={cn(
-          'p-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
-          buttonColor
+          'h-8 w-8 rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
+          variant === 'coral'
+            ? 'border-2 border-brand-500 hover:bg-brand-50'
+            : 'border border-gray-300 hover:bg-gray-50'
         )}
         aria-label="Increase quantity"
       >
-        <Plus className="h-4 w-4" />
+        <Plus
+          className={cn(
+            'h-4 w-4',
+            variant === 'coral' ? 'text-brand-500' : 'text-gray-600'
+          )}
+        />
       </button>
     </div>
   )

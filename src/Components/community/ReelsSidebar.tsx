@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { cn } from '@/lib/utils'
-import { Heart, MessageCircle, Share2 } from 'lucide-react'
+import { Heart, MessageCircle, Share2, Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { CommentCard } from './CommentCard'
-import { Send } from 'lucide-react'
 import { useToast } from '@/components/ui/Toaster'
+import { cn } from '@/lib/utils'
+import { CommentCard } from './CommentCard'
+import { EngagementButton } from './EngagementButton'
 
 export interface ReelsSidebarProps {
   className?: string
@@ -142,32 +142,28 @@ export const ReelsSidebar = ({ className }: ReelsSidebarProps) => {
           {mockPost.content}
         </p>
 
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-          <div className="flex items-center gap-6">
-            <button
-              onClick={handleLikeClick}
-              className={cn(
-                'flex items-center gap-2 text-14 transition-colors',
-                isLiked
-                  ? 'text-brand-500'
-                  : 'text-gray-600 hover:text-brand-500'
-              )}
-            >
-              <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
-              <span>{likes} Likes</span>
-            </button>
-            <button className="flex items-center gap-2 text-14 text-gray-600 hover:text-brand-500 transition-colors">
-              <MessageCircle className="h-5 w-5" />
-              <span>{mockPost.comments} Comments</span>
-            </button>
-          </div>
-          <button
+        <div className="flex items-center justify-center gap-3 pt-4 border-t border-gray-100">
+          <EngagementButton
+            icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
+            count={likes}
+            label="Likes"
+            onClick={handleLikeClick}
+            isActive={isLiked}
+            size="sm"
+          />
+          <EngagementButton
+            icon={<MessageCircle className="h-4 w-4" />}
+            count={mockPost.comments}
+            label="Comments"
+            size="sm"
+          />
+          <EngagementButton
+            icon={<Share2 className="h-4 w-4" />}
+            count={mockPost.shares}
+            label="Shares"
             onClick={handleShareClick}
-            className="flex items-center gap-2 text-14 text-gray-600 hover:text-brand-500 transition-colors"
-          >
-            <Share2 className="h-5 w-5" />
-            <span>{mockPost.shares} Shares</span>
-          </button>
+            size="sm"
+          />
         </div>
       </div>
 

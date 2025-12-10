@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { PriceDisplay } from './PriceDisplay'
 import { QuantitySelector } from './QuantitySelector'
@@ -13,6 +14,7 @@ export interface OrderSummaryCardProps {
   onAddToCart?: () => void
   onBuyNow?: () => void
   deliveryLocation?: string
+  fullAddress?: string
   onDeliveryLocationChange?: () => void
   maxQuantity?: number
   disabled?: boolean
@@ -27,56 +29,75 @@ export const OrderSummaryCard = ({
   onAddToCart,
   onBuyNow,
   deliveryLocation = 'Giza, 6 Of O...',
+  fullAddress,
   onDeliveryLocationChange,
   maxQuantity = 99,
   disabled = false,
   className,
 }: OrderSummaryCardProps) => {
+  const [isAddressExpanded, setIsAddressExpanded] = useState(false)
+
+  const handleAddressToggle = () => {
+    setIsAddressExpanded(!isAddressExpanded)
+    if (onDeliveryLocationChange) {
+      onDeliveryLocationChange()
+    }
+  }
+
+  const displayAddress = fullAddress || deliveryLocation
+  const truncatedAddress = deliveryLocation
+
   return (
     <div
       className={cn(
-        'bg-white border border-gray-200 rounded-lg p-6 space-y-6 sticky top-6',
+        'bg-white border border-gray-200 rounded-lg p-6 space-y-4 sticky top-6',
         className
       )}
     >
-      {/* Order Summary */}
-      <div className="space-y-3">
-        <div>
-          <span className="text-14 text-gray-600">Total price</span>
-          <div className="text-24 font-semibold text-gray-900 mt-1">
-            {totalPrice.toLocaleString()} {currency}
-          </div>
-        </div>
-        <div>
-          <span className="text-14 text-gray-600">Deliver to</span>
-          <button
-            onClick={onDeliveryLocationChange}
-            className="flex items-center justify-between w-full mt-1 text-14 text-brand-500 hover:text-brand-600"
-          >
-            <span>{deliveryLocation}</span>
-            <ChevronDown className="h-4 w-4" />
-          </button>
-        </div>
+      {/* Total price */}
+      <div className="flex items-center justify-between">
+        <span className="text-14 text-gray-900">Total price</span>
+        <span className="text-20 font-semibold text-gray-900">
+          {totalPrice.toLocaleString()} {currency}
+        </span>
       </div>
 
-      {/* Quantity Selector */}
-      <div>
-        <span className="text-14 text-gray-600 block mb-2">Quantity</span>
+      {/* Deliver to */}
+      <div className="flex items-center justify-between">
+        <span className="text-14 text-gray-900">Deliver to</span>
+        <button
+          onClick={handleAddressToggle}
+          className="flex items-center gap-1 text-14 text-brand-500 hover:text-brand-600"
+        >
+          <span>{isAddressExpanded ? displayAddress : truncatedAddress}</span>
+          <ChevronDown
+            className={cn(
+              'h-4 w-4 text-brand-500 transition-transform duration-200',
+              isAddressExpanded && 'rotate-180'
+            )}
+          />
+        </button>
+      </div>
+
+      {/* Quantity */}
+      <div className="flex items-center justify-between">
+        <span className="text-14 text-gray-900">Quantity</span>
         <QuantitySelector
           quantity={quantity}
           onQuantityChange={onQuantityChange}
           max={maxQuantity}
           disabled={disabled}
+          variant="coral"
         />
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-3 pt-4 border-t border-gray-200">
+      <div className="flex items-center gap-3 pt-2">
         {onAddToCart && (
           <Button
             variant="outline"
             size="icon"
-            className="h-12 w-12 rounded-full border-gray-300"
+            className="h-12 w-12 rounded-full border-2 border-brand-500 bg-white hover:bg-gray-50"
             onClick={onAddToCart}
             disabled={disabled}
             aria-label="Add to cart"
@@ -88,7 +109,7 @@ export const OrderSummaryCard = ({
           <Button
             variant="default"
             size="lg"
-            className="flex-1 h-12 rounded-lg bg-brand-500 hover:bg-brand-600 !text-white font-semibold"
+            className="flex-1 h-12 rounded-full bg-brand-500 hover:bg-brand-600 !text-white font-normal"
             onClick={onBuyNow}
             disabled={disabled}
           >

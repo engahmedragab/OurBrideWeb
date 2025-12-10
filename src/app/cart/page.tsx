@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useMemo, Suspense, lazy } from 'react'
+import { useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { UserPageLayout } from '@/components/layout'
 import {
   EmptyState,
@@ -9,15 +10,10 @@ import {
   RequestCard,
   DeleteCartItemModal,
   CancelRequestModal,
-  OrderConfirmationModal,
   ServicesProductsFilter,
   PageHeader,
   type OrderItem,
-  type OrderFormData,
 } from '@/components/ui'
-const OrderCheckoutModal = lazy(
-  () => import('@/components/ui/OrderCheckoutModal').then(module => ({ default: module.OrderCheckoutModal }))
-)
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
@@ -158,6 +154,7 @@ const mockServiceRequests = [
 ]
 
 export default function CartPage() {
+  const router = useRouter()
   const [cartType, setCartType] = useState<'services' | 'products'>('products')
   const [cartProducts, setCartProducts] = useState<CartProduct[]>(mockCartProducts)
   const [serviceRequests, setServiceRequests] = useState(mockServiceRequests)
@@ -167,10 +164,6 @@ export default function CartPage() {
   const [itemToDelete, setItemToDelete] = useState<string | null>(null)
   const [cancelRequestModalOpen, setCancelRequestModalOpen] = useState(false)
   const [requestToCancel, setRequestToCancel] = useState<string | null>(null)
-  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false)
-  const [orderConfirmationModalOpen, setOrderConfirmationModalOpen] = useState(false)
-  const [checkoutType, setCheckoutType] = useState<'products' | 'service'>('products')
-  const [selectedRequestForCheckout, setSelectedRequestForCheckout] = useState<typeof mockServiceRequests[0] | null>(null)
 
   // Mock: In real app, check if cart has items
   const hasServices = serviceRequests.length > 0
@@ -218,22 +211,18 @@ export default function CartPage() {
 
   const handleBuyNow = (id: string) => {
     if (cartProducts.find(p => p.id === id)) {
-      setCheckoutType('products')
-      setCheckoutModalOpen(true)
+      router.push('/checkout')
     }
   }
 
   const handleCheckout = () => {
-    setCheckoutType('products')
-    setCheckoutModalOpen(true)
+    router.push('/checkout')
   }
 
   const handleServiceCheckout = (requestId: string) => {
     const request = serviceRequests.find(r => r.requestId === requestId)
     if (request) {
-      setSelectedRequestForCheckout(request)
-      setCheckoutType('service')
-      setCheckoutModalOpen(true)
+      router.push('/booking')
     }
   }
 
@@ -286,33 +275,6 @@ export default function CartPage() {
     ]
   }
 
-  const handleProductCheckout = async (_orderData: OrderFormData) => {
-    // TODO: Implement API call for product checkout
-    setCheckoutModalOpen(false)
-    setOrderConfirmationModalOpen(true)
-  }
-
-  const handleServiceCheckoutSubmit = async (_orderData: OrderFormData) => {
-    // TODO: Implement API call for service checkout
-    setCheckoutModalOpen(false)
-    setOrderConfirmationModalOpen(true)
-    if (selectedRequestForCheckout) {
-      // Remove the checked out request from the list
-      setServiceRequests(prev =>
-        prev.filter(req => req.requestId !== selectedRequestForCheckout.requestId)
-      )
-      setSelectedRequestForCheckout(null)
-    }
-  }
-
-  const handleCloseCheckoutModal = () => {
-    setCheckoutModalOpen(false)
-    setSelectedRequestForCheckout(null)
-  }
-
-  const handleCloseOrderConfirmation = () => {
-    setOrderConfirmationModalOpen(false)
-  }
 
   return (
     <UserPageLayout>
@@ -429,56 +391,6 @@ export default function CartPage() {
         requestId={requestToCancel || undefined}
       />
 
-      {/* Product Checkout Modal */}
-      {checkoutType === 'products' && (
-        <Suspense fallback={null}>
-          <OrderCheckoutModal
-          isOpen={checkoutModalOpen}
-          onClose={handleCloseCheckoutModal}
-          items={convertProductsToOrderItems()}
-          onCheckout={handleProductCheckout}
-          onTrackOrder={() => {
-            handleCloseCheckoutModal()
-            // Navigate to orders page
-            window.location.href = '/orders'
-          }}
-          currency="EGP"
-          taxes={taxesAndFees}
-          deliveryFee={deliveryFee}
-        />
-        </Suspense>
-      )}
-
-      {/* Service Checkout Modal */}
-      {checkoutType === 'service' && selectedRequestForCheckout && (
-        <Suspense fallback={null}>
-          <OrderCheckoutModal
-            isOpen={checkoutModalOpen}
-            onClose={handleCloseCheckoutModal}
-            items={convertRequestToOrderItems(selectedRequestForCheckout)}
-            onCheckout={handleServiceCheckoutSubmit}
-            onTrackOrder={() => {
-              handleCloseCheckoutModal()
-              // Navigate to orders page
-              window.location.href = '/orders'
-            }}
-            currency="EGP"
-            taxes={selectedRequestForCheckout.taxesAndFees}
-            deliveryFee={0}
-          />
-        </Suspense>
-      )}
-
-      {/* Order Confirmation Modal */}
-      <OrderConfirmationModal
-        isOpen={orderConfirmationModalOpen}
-        onClose={handleCloseOrderConfirmation}
-        onTrackOrder={() => {
-          handleCloseOrderConfirmation()
-          // Navigate to orders page
-          window.location.href = '/orders'
-        }}
-      />
     </UserPageLayout>
   )
 }

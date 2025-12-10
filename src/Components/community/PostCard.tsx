@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { cn } from '@/lib/utils'
 import { Heart, MessageCircle, Share2, MoreVertical } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toaster'
+import { cn } from '@/lib/utils'
+import { EngagementButton } from './EngagementButton'
 
 export interface PostCardProps {
   id: string
@@ -47,19 +48,16 @@ export const PostCard = ({
     router.push(`/community/posts/${id}`)
   }
 
-  const handleLikeClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleLikeClick = () => {
     setIsLiked(!isLiked)
     setLikes(prev => (isLiked ? prev - 1 : prev + 1))
   }
 
-  const handleCommentClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleCommentClick = () => {
     router.push(`/community/posts/${id}`)
   }
 
-  const handleShareClick = async (e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleShareClick = async () => {
     const url = `${window.location.origin}/community/posts/${id}`
     try {
       await navigator.clipboard.writeText(url)
@@ -156,33 +154,32 @@ export const PostCard = ({
       )}
 
       {/* Engagement Metrics */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-        <div className="flex items-center gap-6">
-          <button
+      <div className="flex items-center justify-center gap-3 pt-4 border-t border-gray-100">
+        <div onClick={e => e.stopPropagation()}>
+          <EngagementButton
+            icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+            count={likes}
+            label="Likes"
             onClick={handleLikeClick}
-            className={cn(
-              'flex items-center gap-2 text-14 transition-colors',
-              isLiked ? 'text-brand-500' : 'text-gray-600 hover:text-brand-500'
-            )}
-          >
-            <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
-            <span>{likes} Likes</span>
-          </button>
-          <button
-            onClick={handleCommentClick}
-            className="flex items-center gap-2 text-14 text-gray-600 hover:text-brand-500 transition-colors"
-          >
-            <MessageCircle className="h-5 w-5" />
-            <span>{comments} Comments</span>
-          </button>
+            isActive={isLiked}
+          />
         </div>
-        <button
-          onClick={handleShareClick}
-          className="flex items-center gap-2 text-14 text-gray-600 hover:text-brand-500 transition-colors"
-        >
-          <Share2 className="h-5 w-5" />
-          <span>{shares} Shares</span>
-        </button>
+        <div onClick={e => e.stopPropagation()}>
+          <EngagementButton
+            icon={<MessageCircle className="h-5 w-5" />}
+            count={comments}
+            label="Comments"
+            onClick={handleCommentClick}
+          />
+        </div>
+        <div onClick={e => e.stopPropagation()}>
+          <EngagementButton
+            icon={<Share2 className="h-5 w-5" />}
+            count={shares}
+            label="Shares"
+            onClick={handleShareClick}
+          />
+        </div>
       </div>
     </div>
   )
