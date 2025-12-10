@@ -34,7 +34,7 @@ export const WhyBridesChooseProductsSection = ({
 }: WhyBridesChooseProductsSectionProps) => {
   return (
     <section className={cn('w-full py-5 md:py-7 lg:py-9', className)}>
-      <div className="w-full px-8 sm:px-12 md:px-16 lg:px-20 xl:px-24 2xl:px-32">
+      <div className="w-full">
         {/* Header */}
         <div className="mb-5 md:mb-7">
           <SectionHeader

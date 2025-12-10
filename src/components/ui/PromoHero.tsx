@@ -63,7 +63,7 @@ export const PromoHero = ({
         className
       )}
     >
-      <div className="container-custom py-6 md:py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 md:py-12">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           {/* Left Side - Content */}
           <div className="flex-1 flex flex-col gap-6 items-start w-full lg:max-w-[753px]">
@@ -168,5 +168,4 @@ export const PromoHero = ({
     </div>
   )
 }
-
 

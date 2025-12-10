@@ -36,14 +36,14 @@ export const ProductOffersSection = ({
           {title}
         </h2>
         {timerText && (
-          <p className="text-16 md:text-24 font-normal text-gray-500 leading-[32px]">
+          <p className="text-16 md:text-20 font-normal text-gray-500 leading-[32px]">
             {timerText}
           </p>
         )}
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-[20px]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-[20px]">
         {products.map(product => (
           <ProductCard
             key={product.id}

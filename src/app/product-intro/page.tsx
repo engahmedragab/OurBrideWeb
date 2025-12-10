@@ -256,8 +256,8 @@ export default function ProductIntroPage() {
   }
 
   return (
-    <div className="bg-white ">
-      {/* 1) PromoHero */}
+    <div className="bg-white">
+      {/* 1) PromoHero - Full width background, content in container */}
       <PromoHero
         badge="New Arrival"
         title="Avca Sun Cream"
@@ -269,8 +269,8 @@ export default function ProductIntroPage() {
         discountText="30% OFF"
       />
 
-      {/* Container for all sections except PromoHero and WhyBridesChooseProductsSection */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Consistent container wrapper for all other sections */}
+      <div className="container-custom">
         {/* 2) ProductCategoriesSection */}
         <ProductCategoriesSection
           categories={PRODUCT_CATEGORIES}
@@ -289,21 +289,18 @@ export default function ProductIntroPage() {
           onWishlistToggle={handleWishlistToggle}
           onAddToCart={handleAddToCart}
         />
-      </div>
 
-      {/* 4) WhyBridesChooseProductsSection - Full width with large side margins */}
-      <WhyBridesChooseProductsSection
-        image={whyBridesChooseProductsImage}
-        features={features}
-        topText="Why"
-        highlightText="Brides"
-        bottomText="Choose"
-        bottomHighlightText="OurBride Products"
-        headerAlignment="center"
-      />
+        {/* 4) WhyBridesChooseProductsSection */}
+        <WhyBridesChooseProductsSection
+          image={whyBridesChooseProductsImage}
+          features={features}
+          topText="Why"
+          highlightText="Brides"
+          bottomText="Choose"
+          bottomHighlightText="OurBride Products"
+          headerAlignment="center"
+        />
 
-      {/* Container for remaining sections */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* 5) BestProvidersSection */}
         <BestProvidersSection
           providers={providers}
