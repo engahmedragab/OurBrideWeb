@@ -38,7 +38,7 @@ export const UserSidebar = ({
       items: [
         {
           label: 'Events',
-          path: '/events',
+          path: '/dashboard/my-events',
           icon: Grid3x3,
         },
         {
@@ -121,6 +121,10 @@ export const UserSidebar = ({
     // Special handling for Gift Center
     if (path === '/dashboard/gift-center') {
       return pathname === '/dashboard/gift-center' || pathname.startsWith('/dashboard/gift-center/')
+    }
+    // Special handling for Events - should be active for /dashboard/my-events and all sub-pages
+    if (path === '/dashboard/my-events') {
+      return pathname === '/dashboard/my-events' || pathname.startsWith('/dashboard/my-events/')
     }
     return pathname === path
   }

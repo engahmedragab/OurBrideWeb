@@ -378,3 +378,6 @@ export type { TabsProps, TabItem } from './Tabs'
 
 export { GiftSentSuccessModal } from './GiftSentSuccessModal'
 export type { GiftSentSuccessModalProps } from './GiftSentSuccessModal'
+
+export { CalendarEventBlock } from './CalendarEventBlock'
+export type { CalendarEventBlockProps, EventStatus } from './CalendarEventBlock'
