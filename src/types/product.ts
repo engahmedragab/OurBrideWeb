@@ -66,6 +66,7 @@ export interface ProductCategory {
 
 export interface ProductFilter {
   category?: string[]
+  subCategory?: string[]
   priceRange?: {
     min: number
     max: number

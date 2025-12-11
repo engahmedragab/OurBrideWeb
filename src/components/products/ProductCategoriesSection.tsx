@@ -1,11 +1,11 @@
 'use client'
 
+import React from 'react'
 import { CategoryCard } from '@/components/ui/CategoryCard'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 import { cn } from '@/lib/utils'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination } from 'swiper/modules'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 // Import Swiper styles
 import 'swiper/css'
@@ -17,7 +17,7 @@ export interface ProductCategory {
   title: string
   description: string
   href: string
-  icon?: string
+  icon?: string | React.ReactNode
 }
 
 export interface ProductCategoriesSectionProps {
