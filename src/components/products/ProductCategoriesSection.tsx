@@ -45,9 +45,7 @@ export const ProductCategoriesSection = ({
   headerAlignment = 'center',
 }: ProductCategoriesSectionProps) => {
   return (
-    <section
-      className={cn('py-12 md:py-20', className)}
-    >
+    <div className={cn('w-full', className)}>
       {/* Section Header */}
       <div className="mb-12 md:mb-20">
         <SectionHeader
@@ -123,7 +121,7 @@ export const ProductCategoriesSection = ({
         {/* Custom Pagination */}
         {/* <div className="swiper-pagination-categories flex justify-center items-center gap-2 mt-8" /> */}
       </div>
-    </section>
+    </div>
   )
 }
 

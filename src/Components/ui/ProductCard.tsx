@@ -168,11 +168,11 @@ export const ProductCard = React.memo(({
           </Button>
           <Button
             variant="default"
-            className="flex-1 h-10 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
+            className="flex-1 text-[12px] sm:text-[14px] font-normal  h-10 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
             onClick={() => onAddToCart?.(product.id)}
             disabled={!product.inStock}
           >
-            Add to Cart
+            Buy Now
           </Button>
         </div>
 

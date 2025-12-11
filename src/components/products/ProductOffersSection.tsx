@@ -27,8 +27,8 @@ export const ProductOffersSection = ({
   title = "Today's Best Product Offers",
 }: ProductOffersSectionProps) => {
   return (
-    <section
-      className={cn('py-12 md:py-20', className)}
+    <div
+      className={cn('w-full', className)}
     >
       {/* Section Header with Timer */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
@@ -43,7 +43,7 @@ export const ProductOffersSection = ({
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-[20px]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-[20px]">
         {products.map(product => (
           <ProductCard
             key={product.id}
@@ -53,7 +53,7 @@ export const ProductOffersSection = ({
           />
         ))}
       </div>
-    </section>
+    </div>
   )
 }
 
