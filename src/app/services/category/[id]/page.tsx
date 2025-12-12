@@ -332,7 +332,7 @@ export default function ServiceDetail({
         <div className="container-custom max-w-[1600px] py-6 md:py-8">
           {/* Back Button */}
           <BackButton
-            href="/services"
+            href="/services/category"
             label="Back to Services"
             className="mb-6"
           />
@@ -784,7 +784,7 @@ export default function ServiceDetail({
                 Suggested for You
               </h2>
               <Link
-                href="/services"
+                href="/services/category"
                 className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
               >
                 View All

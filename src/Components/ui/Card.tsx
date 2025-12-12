@@ -240,7 +240,7 @@ const ProductServiceCard = ({
             className="w-full rounded-full text-14 font-normal text-white"
             asChild
           >
-            <Link href={`/services/${data.id}`}>Book Now</Link>
+            <Link href={`/services/category/${data.id}`}>Book Now</Link>
           </Button>
         )}
 
