@@ -41,30 +41,30 @@ export const OfferBanner = ({
 
   return (
     <section className={cn('container-custom overflow-visible', className)}>
-      <div className="border border-primary/50 rounded-2xl pb-0 overflow-visible">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 items-end relative w-full">
+      <div className="border border-brand-500 rounded-2xl overflow-visible bg-white">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 relative w-full">
           {/* Left Content - Text and Buttons */}
-          <div className="text-center lg:text-left px-4 pb-6 md:pb-8 order-2 lg:order-1">
-            <h2 className="text-24 font-medium text-black mb-4">
+          <div className="text-center lg:text-left px-4 md:px-5 py-3 md:py-4 order-2 lg:order-1 flex flex-col justify-center">
+            <h2 className="text-18 md:text-20 font-medium text-gray-900 mb-1.5 md:mb-2">
               {heading}
             </h2>
             {description && (
-              <p className="text-18 md:text-18 text-gray-500 mb-6 max-w-lg mx-auto lg:mx-0">
+              <p className="text-13 md:text-14 text-gray-500 mb-3 md:mb-4 max-w-lg mx-auto lg:mx-0">
                 {description}
               </p>
             )}
             {variant === 'newsletter' ? (
-              <div className="flex flex-row gap-3 max-w-md mx-auto lg:mx-0 items-center">
+              <div className="flex flex-row gap-2 max-w-md mx-auto lg:mx-0 items-center">
                 <input
                   type="email"
                   placeholder="Enter Your E-mail"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="flex-1 h-14 sm:h-12 px-4 rounded-full border border-gray-300 text-16 text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="flex-1 h-9 md:h-10 px-3 md:px-4 rounded-full border border-gray-300 text-13 md:text-14 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
                 />
                 <Button
                   variant="outline"
-                  className="h-14 sm:h-12 px-8 text-16 font-semibold border border-primary rounded-full bg-white text-brand-500 hover:bg-gray-50 whitespace-nowrap"
+                  className="h-9 md:h-10 px-4 md:px-5 text-13 md:text-14 font-semibold border border-brand-500 rounded-full bg-white text-brand-500 hover:bg-gray-50 whitespace-nowrap"
                   onClick={handleSubscribe}
                 >
                   {ctaText || 'Subscribe'}
@@ -75,30 +75,33 @@ export const OfferBanner = ({
                 <Button
                   variant="outline"
                   size="lg"
-                  className="px-8 py-6 text-16 font-semibold rounded-full bg-white text-brand-500 hover:bg-gray-50 border-primary"
+                  className="px-5 md:px-6 py-3 md:py-4 text-13 md:text-14 font-semibold rounded-full bg-white text-brand-500 hover:bg-gray-50 border-brand-500"
                   asChild
                 >
                   <Link href={ctaLink}>
                     {ctaText}
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
               </div>
             )}
           </div>
-          {/* Product Image - Above on mobile, right on large screens */}
+          {/* Product Image - Right side, aligned from top border to bottom with form */}
           {productImage && (
-            <div className="flex justify-end items-end order-1 lg:order-2 -mt-20 md:-mt-32 lg:-mt-40 lg:ml-auto">
-              <img
-                src={
-                  typeof productImage === 'string'
-                    ? productImage
-                    : productImage.src
-                }
-                alt=""
-                className="w-128 h-128 md:w-64 md:h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96 object-contain block m-0"
-                aria-hidden="true"
-              />
+            <div className="flex justify-end items-end order-1 lg:order-2 relative overflow-visible">
+              <div className="relative w-full h-full flex items-end justify-end">
+                <img
+                  src={
+                    typeof productImage === 'string'
+                      ? productImage
+                      : productImage.src
+                  }
+                  alt=""
+                  className="w-auto h-[140px] md:h-[170px] lg:h-[200px] xl:h-[230px] object-contain object-bottom"
+                  style={{ marginTop: '-1px' }}
+                  aria-hidden="true"
+                />
+              </div>
             </div>
           )}
         </div>

@@ -20,7 +20,4 @@ export type {
   ProviderProduct,
 } from './BestProvidersSection'
 
-export { ProductsNewsletterSection } from './ProductsNewsletterSection'
-export type { ProductsNewsletterSectionProps } from './ProductsNewsletterSection'
-
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
@@ -526,11 +526,10 @@ const sortOptions: ServiceSortOption[] = [
 ]
 
 /**
- * ServicesCategoryPage - Grid page with sidebar filters
+ * ServicesCategoryPageContent - Main content component
  * Reads filters from URL query params and syncs changes back to URL
- * Route: /services/category
  */
-export default function ServicesCategoryPage() {
+function ServicesCategoryPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<ServiceViewMode>('grid')
@@ -745,7 +744,7 @@ export default function ServicesCategoryPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div className="container-custom py-6 md:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Sidebar: Filters */}
             <aside className="lg:col-span-1">
@@ -874,6 +873,25 @@ export default function ServicesCategoryPage() {
       </main>
       <Footer />
     </div>
+  )
+}
+
+/**
+ * ServicesCategoryPage - Grid page with sidebar filters
+ * Wrapped in Suspense for useSearchParams compatibility
+ * Route: /services/category
+ */
+export default function ServicesCategoryPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-16 text-gray-600">Loading...</div>
+        </div>
+      }
+    >
+      <ServicesCategoryPageContent />
+    </Suspense>
   )
 }
 

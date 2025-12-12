@@ -147,7 +147,7 @@ export const ReelsSidebar = ({ className }: ReelsSidebarProps) => {
             icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
             count={likes}
             label="Likes"
-            onClick={handleLikeClick}
+              onClick={handleLikeClick}
             isActive={isLiked}
             size="sm"
           />

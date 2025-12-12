@@ -177,7 +177,7 @@ export const PostCard = ({
             icon={<Share2 className="h-5 w-5" />}
             count={shares}
             label="Shares"
-            onClick={handleShareClick}
+          onClick={handleShareClick}
           />
         </div>
       </div>

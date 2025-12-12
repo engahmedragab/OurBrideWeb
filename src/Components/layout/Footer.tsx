@@ -66,7 +66,7 @@ export const Footer = ({ className }: FooterProps) => {
                 Home
               </Link>
               <Link
-                href="/products"
+                href="/products/intro"
                 className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
               >
                 Products

@@ -225,53 +225,53 @@ export const ReelPlayer = ({
 
   return (
     <>
-      <div className={cn('relative flex justify-center w-full', className)}>
-        <div className="relative w-full max-w-md aspect-[9/16] min-h-0 max-h-[90vh]">
-          {/* Reel Video */}
-          <div className="absolute inset-0 rounded-xl overflow-hidden bg-gray-900 group">
-            <video
-              ref={videoRef}
-              src={currentReel.videoUrl}
-              className="absolute inset-0 w-full h-full object-cover cursor-pointer"
-              loop
-              playsInline
-              onClick={handlePlayPause}
-            />
+    <div className={cn('relative flex justify-center w-full', className)}>
+      <div className="relative w-full max-w-md aspect-[9/16] min-h-0 max-h-[90vh]">
+        {/* Reel Video */}
+        <div className="absolute inset-0 rounded-xl overflow-hidden bg-gray-900 group">
+          <video
+            ref={videoRef}
+            src={currentReel.videoUrl}
+            className="absolute inset-0 w-full h-full object-cover cursor-pointer"
+            loop
+            playsInline
+            onClick={handlePlayPause}
+          />
 
             {/* Video Controls Overlay - Desktop Only */}
             <div className="hidden md:flex absolute inset-0 items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              <div className="flex items-center gap-4 pointer-events-auto">
-                {/* Play/Pause Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handlePlayPause}
-                  className="h-12 w-12 rounded-full bg-transparent hover:bg-transparent border-0 flex items-center justify-center"
-                  aria-label={isPlaying ? 'Pause' : 'Play'}
-                >
-                  {isPlaying ? (
-                    <Pause className="h-6 w-6 text-white" />
-                  ) : (
-                    <Play className="h-6 w-6 text-white" />
-                  )}
-                </Button>
+            <div className="flex items-center gap-4 pointer-events-auto">
+              {/* Play/Pause Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handlePlayPause}
+                className="h-12 w-12 rounded-full bg-transparent hover:bg-transparent border-0 flex items-center justify-center"
+                aria-label={isPlaying ? 'Pause' : 'Play'}
+              >
+                {isPlaying ? (
+                  <Pause className="h-6 w-6 text-white" />
+                ) : (
+                  <Play className="h-6 w-6 text-white" />
+                )}
+              </Button>
 
-                {/* Mute/Unmute Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleMuteToggle}
-                  className="h-12 w-12 rounded-full bg-transparent hover:bg-transparent border-0 flex items-center justify-center"
-                  aria-label={isMuted ? 'Unmute' : 'Mute'}
-                >
-                  {isMuted ? (
-                    <VolumeX className="h-6 w-6 text-white" />
-                  ) : (
-                    <Volume2 className="h-6 w-6 text-white" />
-                  )}
-                </Button>
-              </div>
+              {/* Mute/Unmute Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleMuteToggle}
+                className="h-12 w-12 rounded-full bg-transparent hover:bg-transparent border-0 flex items-center justify-center"
+                aria-label={isMuted ? 'Unmute' : 'Mute'}
+              >
+                {isMuted ? (
+                  <VolumeX className="h-6 w-6 text-white" />
+                ) : (
+                  <Volume2 className="h-6 w-6 text-white" />
+                )}
+              </Button>
             </div>
+          </div>
 
             {/* Mobile Controls - Top Right */}
             <div className="md:hidden absolute top-4 right-4 flex gap-2 z-20 pointer-events-auto">
@@ -370,31 +370,31 @@ export const ReelPlayer = ({
                 </div>
                 <span className="text-12 font-normal">{currentReel.shares}</span>
               </button>
-            </div>
+        </div>
 
             {/* Navigation Arrows - Desktop Only */}
             <div className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 flex-col gap-2 z-10 pointer-events-auto">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handlePrevious}
-                className="h-10 w-10 rounded-full bg-white/80 hover:bg-white border border-gray-200 flex items-center justify-center"
-                aria-label="Previous reel"
-              >
-                <ChevronUp className="h-5 w-5 text-gray-600" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleNext}
-                className="h-10 w-10 rounded-full bg-brand-500 hover:bg-brand-600 border border-brand-500 flex items-center justify-center"
-                aria-label="Next reel"
-              >
-                <ChevronDown className="h-5 w-5 text-white" />
-              </Button>
-            </div>
-          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handlePrevious}
+            className="h-10 w-10 rounded-full bg-white/80 hover:bg-white border border-gray-200 flex items-center justify-center"
+            aria-label="Previous reel"
+          >
+            <ChevronUp className="h-5 w-5 text-gray-600" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNext}
+            className="h-10 w-10 rounded-full bg-brand-500 hover:bg-brand-600 border border-brand-500 flex items-center justify-center"
+            aria-label="Next reel"
+          >
+            <ChevronDown className="h-5 w-5 text-white" />
+          </Button>
         </div>
+      </div>
+    </div>
       </div>
 
       {/* Mobile Comments Modal - Bottom Sheet */}

@@ -44,7 +44,7 @@ export const SectionHeader = ({
     return (
       <div
         className={cn(
-          'flex flex-col gap-2 sm:gap-3 md:gap-4',
+          'flex flex-col gap-1',
           alignmentClasses[alignment],
           className
         )}
@@ -52,7 +52,7 @@ export const SectionHeader = ({
         {topText && highlightText && (
           <div
             className={cn(
-              'flex gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 items-center leading-[1.2] sm:leading-[1.3] text-18 sm:text-20 md:text-24 lg:text-30 xl:text-36 text-gray-900',
+              'flex gap-2 items-center leading-[1.2] sm:leading-[1.3] text-18 sm:text-20 md:text-24 lg:text-30 xl:text-36 text-gray-900',
               alignmentClasses[alignment]
             )}
           >
@@ -63,7 +63,7 @@ export const SectionHeader = ({
         {(bottomText || bottomHighlightText) && (
           <div
             className={cn(
-              'flex gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 items-center justify-center leading-[1.2] sm:leading-[1.3] text-18 sm:text-20 md:text-24 lg:text-30 xl:text-36 text-gray-900 w-full',
+              'flex gap-2 items-center justify-center leading-[1.2] sm:leading-[1.3] text-18 sm:text-20 md:text-24 lg:text-30 xl:text-36 text-gray-900 w-full',
               alignmentClasses[alignment]
             )}
           >

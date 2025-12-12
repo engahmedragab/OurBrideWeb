@@ -1,30 +1,23 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Link from 'next/link'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import {
   HeroCarousel,
   OfferBanner,
-  ServiceGrid,
   Card,
   type ServiceCardData,
-  type TestimonialCardData,
+  type HeroSlide,
 } from '@/components/ui'
 import { WhyBridesChooseProductsSection } from '@/components/products/WhyBridesChooseProductsSection'
 import {
   ProductCategoriesSection,
   type ProductCategory,
 } from '@/components/products/ProductCategoriesSection'
-import {
-  ServicesHeroSlider,
-  BestProvidersWithProductsSection,
-  type Provider,
-  type Product,
-} from '@/components/services'
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react'
+import { BestProvidersSection } from '@/components/products/BestProvidersSection'
+import type { Provider as BestProvider } from '@/components/products/BestProvidersSection'
 import { AccessoriesIcon } from '@/assets/icons/AccessoriesIcon'
 import { BouquetIcon } from '@/assets/icons/BouquetIcon'
 import { BridalBeautyIcon } from '@/assets/icons/BridalBeautyIcon'
@@ -33,11 +26,8 @@ import { WeddingCakeIcon } from '@/assets/icons/WeddingCakeIcon'
 import { WeddingDressIcon } from '@/assets/icons/WeddingDressIcon'
 import { WeddingHallIcon } from '@/assets/icons/WeddingHallIcon'
 import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
-import { cn } from '@/lib/utils'
 import flowersImage from '@/assets/images/flowers.png'
-import type { HeroSlide } from '@/components/ui/HeroCarousel'
 import type { Service } from '@/types/service'
-import serviceSliderImage from '@/assets/images/service_slider.svg'
 import why_trust_ourBrideImage from '@/assets/images/why_trust_ourBride.svg'
 
 // Mock services for "Today's Offers" slider
@@ -168,65 +158,32 @@ const heroSlides: HeroSlide[] = [
       'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600',
     discountText: '30% OFF',
   },
+  {
+    id: '2',
+    label: 'Top Seller',
+    title: 'Bridal Photography',
+    description:
+      'Capture your special moments with our professional wedding photography services. Premium quality for your perfect day.',
+    ctaText: 'Book Now',
+    ctaLink: '/services/category?category=6',
+    productImage:
+      'https://images.unsplash.com/photo-1516035069371-29a1b244b32a?w=600',
+    discountText: '25% OFF',
+  },
+  {
+    id: '3',
+    label: 'New Arrival',
+    title: 'Wedding Planning',
+    description:
+      'Complete wedding planning services to make your special day unforgettable. From venues to decorations, we have it all.',
+    ctaText: 'Explore Now',
+    ctaLink: '/services',
+    productImage:
+      'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600',
+    discountText: '20% OFF',
+  },
 ]
 
-// Mock testimonials
-const mockTestimonials: TestimonialCardData[] = [
-  {
-    quote:
-      'Amazing service! The makeup artist was professional and created the perfect look for my wedding day. Highly recommend!',
-    authorName: 'Sarah Johnson',
-    authorImage:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    timeAgo: '2 months ago',
-    rating: 5,
-  },
-  {
-    quote:
-      'Great experience! The makeup lasted all day and looked beautiful in photos. Very satisfied with the service.',
-    authorName: 'Emily Chen',
-    authorImage:
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
-    timeAgo: '3 months ago',
-    rating: 5,
-  },
-  {
-    quote:
-      'Perfect makeup for my special day! The artist was skilled and made me feel comfortable throughout the process.',
-    authorName: 'Maria Garcia',
-    authorImage:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-    timeAgo: '1 month ago',
-    rating: 5,
-  },
-  {
-    quote:
-      'Excellent service! The makeup was flawless and stayed perfect throughout the entire wedding celebration.',
-    authorName: 'Ayman Hany',
-    authorImage:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-    timeAgo: '2 weeks ago',
-    rating: 5,
-  },
-  {
-    quote:
-      'Outstanding quality and attention to detail. Would definitely book again for future events!',
-    authorName: 'Lisa Anderson',
-    authorImage:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-    timeAgo: '1 week ago',
-    rating: 5,
-  },
-  {
-    quote:
-      'The best wedding service I have ever used. Professional, reliable, and exceeded all expectations.',
-    authorName: 'Jessica Brown',
-    authorImage:
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100',
-    timeAgo: '3 weeks ago',
-    rating: 5,
-  },
-]
 
 // Features for "Why Brides Trust OurBride" section
 const trustFeatures = [
@@ -314,7 +271,7 @@ const trustCategories: ProductCategory[] = [
 ]
 
 // Demo providers for Best Providers section
-const demoProviders: Provider[] = [
+const demoProviders = [
   {
     id: '1',
     name: 'Sarah Johnson',
@@ -366,16 +323,15 @@ const demoProviders: Provider[] = [
 ]
 
 // Demo products for Best Products section
-const demoProducts: Product[] = [
+const demoProducts = [
   {
     id: '1',
     title: 'Bridal Makeup Collection',
     image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
     rating: 4.8,
     price: 4500,
-    currency: 'EGP',
+    currency: 'egp',
     href: '/products/1',
-    ctaText: 'Explore Now',
   },
   {
     id: '2',
@@ -383,9 +339,8 @@ const demoProducts: Product[] = [
     image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=400&fit=crop',
     rating: 4.9,
     price: 3200,
-    currency: 'EGP',
+    currency: 'egp',
     href: '/products/2',
-    ctaText: 'Explore Now',
   },
   {
     id: '3',
@@ -393,9 +348,8 @@ const demoProducts: Product[] = [
     image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
     rating: 4.7,
     price: 8500,
-    currency: 'EGP',
+    currency: 'egp',
     href: '/products/3',
-    ctaText: 'Explore Now',
   },
   {
     id: '4',
@@ -403,9 +357,8 @@ const demoProducts: Product[] = [
     image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
     rating: 4.6,
     price: 2800,
-    currency: 'EGP',
+    currency: 'egp',
     href: '/products/4',
-    ctaText: 'Explore Now',
   },
   {
     id: '5',
@@ -413,9 +366,8 @@ const demoProducts: Product[] = [
     image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400',
     rating: 4.9,
     price: 5500,
-    currency: 'EGP',
+    currency: 'egp',
     href: '/products/5',
-    ctaText: 'Explore Now',
   },
   {
     id: '6',
@@ -423,18 +375,27 @@ const demoProducts: Product[] = [
     image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400',
     rating: 4.8,
     price: 1800,
-    currency: 'EGP',
+    currency: 'egp',
     href: '/products/6',
-    ctaText: 'Explore Now',
   },
 ]
 
+// Combine providers with products for BestProvidersSection
+const bestProviders: BestProvider[] = demoProviders.map((provider, index) => ({
+  id: provider.id,
+  name: provider.name,
+  image: provider.image,
+  profession: provider.role,
+  verified: provider.isVerified || false,
+  rating: provider.rating,
+  product: demoProducts[index] || demoProducts[0],
+}))
+
 /**
- * ServicesIntroPage - Introduction page for services
- * Route: /services
+ * ServicesIntroPageContent - Main content component
  * Redirects to /services/category if filter params are present in URL
  */
-export default function ServicesIntroPage() {
+function ServicesIntroPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -456,32 +417,6 @@ export default function ServicesIntroPage() {
       router.replace(`/services/category?${queryString}`)
     }
   }, [searchParams, router])
-
-  // Testimonials carousel state
-  const [testimonialsIndex, setTestimonialsIndex] = useState(0)
-  const testimonialsPerPage = 3
-  const testimonialsTotalPages = Math.ceil(
-    mockTestimonials.length / testimonialsPerPage
-  )
-
-  const currentTestimonials = mockTestimonials.slice(
-    testimonialsIndex * testimonialsPerPage,
-    (testimonialsIndex + 1) * testimonialsPerPage
-  )
-
-  const goToTestimonialsPrevious = () => {
-    setTestimonialsIndex(prev =>
-      prev === 0 ? testimonialsTotalPages - 1 : prev - 1
-    )
-  }
-
-  const goToTestimonialsNext = () => {
-    setTestimonialsIndex(prev => (prev + 1) % testimonialsTotalPages)
-  }
-
-  const goToTestimonialsPage = (index: number) => {
-    setTestimonialsIndex(index)
-  }
 
   const handleWishlistToggle = (_serviceId: string) => {
     // TODO: Implement wishlist toggle
@@ -509,22 +444,17 @@ export default function ServicesIntroPage() {
     })
   )
 
-  // Demo images for the slider (can be replaced with API data later)
-  const demoSliderImages = [
-    
-    serviceSliderImage.src,
-    serviceSliderImage.src,
-    serviceSliderImage.src,
-    serviceSliderImage.src,
-    serviceSliderImage.src,
-  ]
-
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
-        {/* Services Hero Slider */}
-        <ServicesHeroSlider className='w-full' images={demoSliderImages} />
+        {/* Hero Carousel */}
+        <HeroCarousel
+          slides={heroSlides}
+          autoPlay={true}
+          autoPlayInterval={5000}
+          showBackground={false}
+        />
 
       
 
@@ -542,7 +472,7 @@ export default function ServicesIntroPage() {
         <section className="container-custom py-12 md:py-16">
           <div className="flex items-center justify-between mb-6 md:mb-8">
             <h2 className="text-24 md:text-30 font-medium text-gray-900">
-              Today's Offers
+              Today&apos;s Offers
             </h2>
             <span className="text-18 md:text-24 text-gray-500">
               23 H 45 Min
@@ -570,17 +500,17 @@ export default function ServicesIntroPage() {
         </section>
 
         {/* Section 4: Best Providers With Best Products */}
-        <BestProvidersWithProductsSection
-          titleParts={[
-            { text: 'Best', isHighlighted: false },
-            { text: 'Providers', isHighlighted: true },
-            { text: 'With', isHighlighted: false },
-            { text: 'Best', isHighlighted: true },
-            { text: 'Products', isHighlighted: false },
-          ]}
-          providers={demoProviders}
-          products={demoProducts}
-        />
+        <div className="container-custom">
+          <BestProvidersSection
+            providers={bestProviders}
+            topText="Best"
+            highlightText="Providers"
+            bottomText="With"
+            bottomHighlightText="Best Products"
+            headerAlignment="center"
+            buttonText="Explore Now"
+          />
+        </div>
 
 
         {/* Newsletter Banner */}
@@ -599,5 +529,24 @@ export default function ServicesIntroPage() {
       </main>
       <Footer />
     </div>
+  )
+}
+
+/**
+ * ServicesIntroPage - Introduction page for services
+ * Wrapped in Suspense for useSearchParams compatibility
+ * Route: /services
+ */
+export default function ServicesIntroPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-16 text-gray-600">Loading...</div>
+        </div>
+      }
+    >
+      <ServicesIntroPageContent />
+    </Suspense>
   )
 }

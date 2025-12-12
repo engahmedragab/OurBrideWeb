@@ -3,8 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { RatingDisplay } from '@/components/ui/RatingDisplay'
-import { CheckCircle2, ChevronRight } from 'lucide-react'
+import { CheckCircle2, ChevronRight, Star } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
@@ -71,106 +70,121 @@ export const BestProvidersSection = ({
       </div>
 
       {/* Providers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-[20px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-[20px] mb-8 md:mb-12">
         {providers.map(provider => (
           <div
             key={provider.id}
-            className="bg-white border border-gray-100 rounded-[24px] p-5 flex flex-col gap-6"
+            className="bg-white border border-gray-100 rounded-[24px] p-6 md:p-8 flex flex-col items-center gap-4 shadow-sm"
           >
-            {/* Provider Card */}
-            <div className="flex flex-col gap-4 items-center">
-              {/* Provider Avatar */}
-              <div className="relative w-[220px] h-[220px] rounded-full border-[3.901px] border-brand-50 bg-brand-100 p-[18.723px]">
-                <div className="relative w-full h-full rounded-full border-[9.362px] border-white overflow-hidden">
-                  {provider.image ? (
-                    <Image
-                      src={provider.image}
-                      alt={provider.name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-200" />
-                  )}
-                </div>
-              </div>
-
-              {/* Provider Info */}
-              <div className="flex flex-col gap-2 items-center">
-                <div className="flex gap-2 items-center">
-                  <h3 className="text-24 font-medium text-gray-900">
-                    {provider.name}
-                  </h3>
-                  {provider.verified && (
-                    <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
-                  )}
-                </div>
-                <p className="text-16 font-normal text-gray-900 text-center">
-                  {provider.profession}
-                </p>
-                <RatingDisplay
-                  rating={provider.rating}
-                  size="sm"
-                  showCount={false}
-                  className="gap-1"
-                />
+            {/* Provider Avatar */}
+            <div className="relative w-32 h-32 md:w-36 md:h-36">
+              {/* Outer gray ring (thicker) */}
+              <div className="absolute inset-0 rounded-full border-[3px] border-gray-200"></div>
+              {/* Middle pink ring (thin) */}
+              <div className="absolute inset-[3px] rounded-full border-2 border-brand-50"></div>
+              {/* Inner image */}
+              <div className="absolute inset-[7px] rounded-full overflow-hidden border-2 border-white">
+                {provider.image ? (
+                  <Image
+                    src={provider.image}
+                    alt={provider.name}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-200" />
+                )}
               </div>
             </div>
 
-            {/* Product Card */}
-            <Link href={provider.product.href}>
-              <div className="flex gap-4 items-center">
-                {/* Product Image */}
-                {provider.product.image && (
-                  <div className="relative w-[100px] h-[152px] rounded-bl-[24px] rounded-tl-[24px] overflow-hidden flex-shrink-0">
-                    <Image
-                      src={provider.product.image}
-                      alt={provider.product.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+            {/* Provider Info */}
+            <div className="flex flex-col gap-2 items-center">
+              <div className="flex gap-2 items-center">
+                <h3 className="text-20 md:text-24 font-semibold text-gray-900">
+                  {provider.name}
+                </h3>
+                {provider.verified && (
+                  <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
                 )}
+              </div>
+              <p className="text-14 md:text-16 font-normal text-gray-600 text-center">
+                {provider.profession}
+              </p>
+              {/* Red Stars for Provider Rating */}
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <Star
+                    key={star}
+                    className={cn(
+                      'h-4 w-4',
+                      star <= Math.round(provider.rating)
+                        ? 'fill-red-500 text-red-500'
+                        : 'fill-gray-200 text-gray-200'
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-                {/* Product Info */}
-                <div className="flex-1 bg-white border border-gray-100 rounded-br-[24px] rounded-tr-[24px] p-5 flex flex-col gap-4 items-end">
-                  <div className="w-full flex flex-col gap-2 items-start">
-                    <h4 className="text-24 font-medium text-gray-900 leading-[32px]">
-                      {provider.product.title}
-                    </h4>
-                    <div className="flex gap-4 items-center w-full">
-                      <div className="flex gap-1 items-center flex-1">
-                        <RatingDisplay
-                          rating={provider.product.rating}
-                          size="sm"
-                          showCount={false}
-                          className="gap-1"
-                        />
-                        <span className="text-16 font-normal text-gray-500">
-                          {provider.product.rating}
-                        </span>
-                      </div>
-                      <div className="flex gap-0.5 items-center">
-                        <span className="text-24 font-semibold text-gray-900">
-                          {provider.product.price.toLocaleString()}
-                        </span>
-                        <span className="text-14 font-normal text-gray-900">
-                          {provider.product.currency}
-                        </span>
-                      </div>
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-[20px]">
+        {providers.map(provider => (
+          <Link
+            key={`product-${provider.id}`}
+            href={provider.product.href}
+            className="bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-sm hover:shadow-md transition-shadow min-h-[152px]"
+          >
+            <div className="flex items-stretch h-full">
+              {/* Product Image */}
+              {provider.product.image && (
+                <div className="relative w-[100px] h-full overflow-hidden flex-shrink-0">
+                  <Image
+                    src={provider.product.image}
+                    alt={provider.product.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              )}
+
+              {/* Product Info */}
+              <div className="flex-1 p-4 flex flex-col justify-between">
+                <div className="flex flex-col gap-1.5">
+                  <h4 className="text-16 md:text-18 font-normal text-gray-900">
+                    {provider.product.title}
+                  </h4>
+                  {/* Rating and Price on same row */}
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex gap-1 items-center">
+                      {/* Red Star for Product Rating */}
+                      <Star className="h-3.5 w-3.5 fill-red-500 text-red-500" />
+                      <span className="text-12 md:text-14 font-normal text-gray-500">
+                        {provider.product.rating}
+                      </span>
+                    </div>
+                    <div className="flex gap-1 items-baseline">
+                      <span className="text-18 md:text-20 font-normal text-gray-900">
+                        {provider.product.price.toLocaleString()}
+                      </span>
+                      <span className="text-11 md:text-12 font-normal text-gray-600">
+                        {provider.product.currency}
+                      </span>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    className="text-20 font-normal text-brand-500 hover:text-brand-600 p-0 h-auto"
-                  >
-                    {buttonText}
-                    <ChevronRight className="h-6 w-6 ml-2" />
-                  </Button>
                 </div>
+                <Button
+                  variant="ghost"
+                  className="text-14 md:text-16 font-normal text-brand-500 p-0 h-auto self-end hover:bg-transparent"
+                >
+                  {buttonText}
+                  <ChevronRight className="h-4 w-4 md:h-5 md:w-5 ml-1" />
+                </Button>
               </div>
-            </Link>
-          </div>
+            </div>
+          </Link>
         ))}
       </div>
     </section>
