@@ -50,7 +50,8 @@ export const Header = ({ className }: HeaderProps) => {
       icon: Store,
       hasDropdown: true,
       dropdownItems: [
-        { label: 'All Products', path: '/products' },
+        { label: 'Product Intro', path: '/product-intro' },
+        { label: 'View All', path: '/products' },
         { label: 'Wedding Dresses', path: '/products/dresses' },
         { label: 'Accessories', path: '/products/accessories' },
       ],

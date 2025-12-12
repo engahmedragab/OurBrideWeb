@@ -378,3 +378,9 @@ export type { TabsProps, TabItem } from './Tabs'
 
 export { GiftSentSuccessModal } from './GiftSentSuccessModal'
 export type { GiftSentSuccessModalProps } from './GiftSentSuccessModal'
+
+export { PromoHero } from './PromoHero'
+export type { PromoHeroProps } from './PromoHero'
+
+export { CategoryCard } from './CategoryCard'
+export type { CategoryCardProps } from './CategoryCard'
