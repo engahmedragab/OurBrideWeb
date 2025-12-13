@@ -51,7 +51,7 @@ export const ServiceList = ({
             <div className="flex flex-col md:flex-row gap-4 p-4">
               {/* Image */}
               <Link
-                href={`/services/${service.id}`}
+                href={`/services/category/${service.id}`}
                 className="block flex-shrink-0 w-full md:w-48 h-48 rounded-lg overflow-hidden bg-gray-100 relative"
               >
                 <img
@@ -94,7 +94,7 @@ export const ServiceList = ({
                   {/* Header */}
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <Link href={`/services/${service.id}`}>
+                      <Link href={`/services/category/${service.id}`}>
                         <h3 className="text-18 font-semibold text-gray-900 line-clamp-2 hover:text-brand-500 transition-colors">
                           {service.title}
                         </h3>
@@ -189,7 +189,7 @@ export const ServiceList = ({
                       variant="default"
                       className="h-10 px-6 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
                       onClick={() => {
-                        router.push(`/services/${service.id}`)
+                        router.push(`/services/category/${service.id}`)
                         onBookNow?.(service.id)
                       }}
                       disabled={!service.available}

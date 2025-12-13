@@ -74,12 +74,14 @@ export default {
         yellow: {
           25: '#FFFFFF', // White
           50: '#FEFCE8', // Very light yellow
+          55: '#FFF5CC', // Light yellow for in-progress badge background
           100: '#FEF9C3', // Light yellow
           200: '#FEF08A', // Lighter yellow
           300: '#FDE047', // Light yellow
           400: '#FACC15', // Medium-light yellow
           500: '#EAB308', // Base yellow
           600: '#CA8A04', // Darker yellow
+          650: '#CCA300', // Dark yellow for in-progress badge text
           700: '#A16207', // Dark yellow
           800: '#854D0E', // Very dark yellow
           900: '#713F12', // Darkest yellow

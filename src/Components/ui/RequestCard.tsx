@@ -1,14 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { cn } from '@/lib/utils'
+import { ChevronDown, ChevronUp, ChevronRight, Star } from 'lucide-react'
+import { Button } from './Button'
+import { StatusBadge } from './StatusBadge'
 import {
   RequestProgressIndicator,
   type RequestStatus,
 } from './RequestProgressIndicator'
-import { ChevronDown, ChevronUp, ChevronRight, Star } from 'lucide-react'
-import { Button } from './Button'
-import { StatusBadge } from './StatusBadge'
+import { cn } from '@/lib/utils'
 
 export interface ServiceRequest {
   id: string
@@ -72,10 +72,17 @@ export const RequestCard = ({
     return 'inProgress'
   }
 
+  const getStatusLineColor = () => {
+    if (status === 'completed') return 'border-l-4 border-green-500'
+    if (status === 'cancelled') return 'border-l-4 border-red-500'
+    return 'border-l-4 border-yellow-500'
+  }
+
   return (
     <div
       className={cn(
         'bg-white rounded-xl border border-gray-200 p-6 shadow-sm relative',
+        getStatusLineColor(),
         className
       )}
     >

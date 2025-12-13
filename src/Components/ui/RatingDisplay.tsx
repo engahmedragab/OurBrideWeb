@@ -35,8 +35,11 @@ export const RatingDisplay = ({
 
     if (format === 'rated-by') {
       return (
-        <span className={cn('text-gray-600', textSizeClasses[size])}>
-          {rating} Rated By ({count}) Users
+        <span
+          className={cn('!text-gray-500 font-normal', textSizeClasses[size])}
+        >
+          {rating}{' '}
+          <span className="text-brand-500">Rated By ({count}) Users</span>
         </span>
       )
     }

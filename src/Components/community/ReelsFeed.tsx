@@ -11,7 +11,8 @@ export const ReelsFeed = ({ className }: ReelsFeedProps) => {
   return (
     <div
       className={cn(
-        'flex-1 flex justify-center items-center min-h-0',
+        'flex-1 flex justify-center items-center min-h-0 w-full',
+        'md:min-h-[calc(100vh-200px)]',
         className
       )}
     >

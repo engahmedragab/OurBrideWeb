@@ -36,7 +36,12 @@ export const Header = ({ className }: HeaderProps) => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const isActive = (path: string) => pathname === path
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return pathname === path
+    }
+    return pathname === path || pathname.startsWith(path + '/')
+  }
 
   const navigationItems = [
     {
@@ -46,13 +51,12 @@ export const Header = ({ className }: HeaderProps) => {
     },
     {
       label: 'Products',
-      path: '/products',
+      path: '/products/intro',
       icon: Store,
       hasDropdown: true,
       dropdownItems: [
         { label: 'All Products', path: '/products' },
-        { label: 'Wedding Dresses', path: '/products/dresses' },
-        { label: 'Accessories', path: '/products/accessories' },
+        { label: 'Category', path: '/products/category' },
       ],
     },
     {
@@ -62,8 +66,7 @@ export const Header = ({ className }: HeaderProps) => {
       hasDropdown: true,
       dropdownItems: [
         { label: 'All Services', path: '/services' },
-        { label: 'Planning', path: '/services/planning' },
-        { label: 'Venues', path: '/services/venues' },
+        { label: 'Category', path: '/services/category' },
       ],
     },
     {

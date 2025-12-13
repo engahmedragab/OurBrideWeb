@@ -1,30 +1,23 @@
 'use client'
 
-import { useState, Suspense, lazy } from 'react'
-import { OrderCard } from '@/components/ui/OrderCard'
-import { RequestCard } from '@/components/ui/RequestCard'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { UserPageLayout } from '@/components/layout'
 import {
   CancelOrderModal,
   CancelOrderSuccessModal,
-  OrderConfirmationModal,
   EmptyState,
   HistorySection,
   SectionHeader,
   ServicesProductsFilter,
   PageHeader,
+  OrderCard,
+  RequestCard,
 } from '@/components/ui'
-
-const OrderCheckoutModal = lazy(
-  () => import('@/components/ui/OrderCheckoutModal').then(module => ({ default: module.OrderCheckoutModal }))
-)
-import { UserPageLayout } from '@/components/layout'
+import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import type { OrderStatus } from '@/components/ui/OrderProgressIndicator'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
-import type {
-  OrderItem,
-  OrderFormData,
-} from '@/components/ui/OrderCheckoutModal'
-import orderEmptySvg from '@/assets/svg/order-empty.svg'
+import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
 
 // Mock data - Replace with actual API data later
 const mockOrdersInProgress = [
@@ -337,15 +330,10 @@ const mockRequestsHistory = [
 ]
 
 export default function OrdersPage() {
+  const router = useRouter()
   const [cancelModalOpen, setCancelModalOpen] = useState(false)
   const [successModalOpen, setSuccessModalOpen] = useState(false)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
-  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false)
-  const [orderConfirmationModalOpen, setOrderConfirmationModalOpen] =
-    useState(false)
-  const [selectedRequestForCheckout, setSelectedRequestForCheckout] = useState<
-    (typeof mockRequestsInProgress)[0] | null
-  >(null)
   const [filterType, setFilterType] = useState<'services' | 'products'>(
     'services'
   )
@@ -393,55 +381,9 @@ export default function OrdersPage() {
   }
 
   const handleCheckout = (requestId: string) => {
-    const request = mockRequestsInProgress.find(r => r.requestId === requestId)
-    if (request) {
-      setSelectedRequestForCheckout(request)
-      setCheckoutModalOpen(true)
-    }
-  }
-
-  const convertRequestToOrderItems = (
-    request: (typeof mockRequestsInProgress)[0]
-  ): OrderItem[] => {
-    // Convert service request to order items format for checkout modal
-    const items: OrderItem[] = [
-      {
-        id: request.requestId,
-        title: request.service.title,
-        image: request.service.image,
-        originalPrice: request.subtotal,
-        discountedPrice: request.subtotal,
-        currency: 'EGP',
-        quantity: 1,
-      },
-      ...request.packages.map((pkg, index) => ({
-        id: `${request.requestId}-pkg-${index}`,
-        title: pkg.title,
-        image: request.service.image,
-        originalPrice: pkg.price,
-        discountedPrice: pkg.price,
-        currency: 'EGP',
-        quantity: 1,
-      })),
-    ]
-    return items
-  }
-
-  const handleServiceCheckout = async (_orderData: OrderFormData) => {
-    // TODO: Implement checkout API call
-    // After successful checkout, close checkout modal and show confirmation
-    setCheckoutModalOpen(false)
-    setOrderConfirmationModalOpen(true)
-  }
-
-  const handleCloseCheckoutModal = () => {
-    setCheckoutModalOpen(false)
-    setSelectedRequestForCheckout(null)
-  }
-
-  const handleCloseOrderConfirmation = () => {
-    setOrderConfirmationModalOpen(false)
-    setSelectedRequestForCheckout(null)
+    // Navigate to checkout page
+    // TODO: Pass service request data via query params or state management
+    router.push('/checkout')
   }
 
   const hasOrders =
@@ -618,34 +560,6 @@ export default function OrdersPage() {
         onBrowseMore={handleBrowseMore}
       />
 
-      {/* Service Checkout Modal */}
-      {selectedRequestForCheckout && (
-        <Suspense fallback={null}>
-          <OrderCheckoutModal
-            isOpen={checkoutModalOpen}
-            onClose={handleCloseCheckoutModal}
-            items={convertRequestToOrderItems(selectedRequestForCheckout)}
-            onCheckout={handleServiceCheckout}
-            onTrackOrder={() => {
-              handleCloseCheckoutModal()
-              // Stay on orders page
-            }}
-            currency="EGP"
-            taxes={selectedRequestForCheckout.taxesAndFees}
-            deliveryFee={0}
-          />
-        </Suspense>
-      )}
-
-      {/* Order Confirmation Modal */}
-      <OrderConfirmationModal
-        isOpen={orderConfirmationModalOpen}
-        onClose={handleCloseOrderConfirmation}
-        onTrackOrder={() => {
-          handleCloseOrderConfirmation()
-          // Stay on orders page - could refresh or navigate
-        }}
-      />
     </>
   )
 }

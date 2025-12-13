@@ -41,7 +41,7 @@ export const ServiceCard = React.memo(({
       )}
     >
       {/* Image Container */}
-      <Link href={`/services/${service.id}`} className="block">
+      <Link href={`/services/category/${service.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
           <Image
             src={service.images[0]}
@@ -123,7 +123,7 @@ export const ServiceCard = React.memo(({
       {/* Content */}
       <div className="p-4 space-y-3">
         {/* Title */}
-        <Link href={`/services/${service.id}`}>
+        <Link href={`/services/category/${service.id}`}>
           <h3 className="text-16 font-semibold text-gray-900 line-clamp-2 hover:text-brand-500 transition-colors">
             {service.title}
           </h3>
@@ -165,7 +165,7 @@ export const ServiceCard = React.memo(({
             variant="default"
             className="w-full h-10 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
             onClick={() => {
-              router.push(`/services/${service.id}`)
+              router.push(`/services/category/${service.id}`)
               onBookNow?.(service.id)
             }}
             disabled={!service.available}
