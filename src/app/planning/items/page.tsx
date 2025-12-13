@@ -1,9 +1,28 @@
 'use client'
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { cn } from '@/lib'
-import { CheckSquare, ChevronRight, List, Plus } from 'lucide-react'
-import Link from 'next/link';
-import { Button, Checkbox, NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/Components/ui';
+
+import { useMemo, useState } from 'react'
+import { cn } from '@/lib/utils'
+import {
+  ChevronRight,
+  List,
+  Plus,
+  Package,
+  CheckCircle2,
+  Clock,
+  Calendar,
+  DollarSign,
+  ShoppingBag,
+  Store,
+} from 'lucide-react'
+import Link from 'next/link'
+import {
+  Button,
+  Checkbox,
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from '@/components/ui'
 
 
 const INITIAL_ITEMS = [
@@ -402,14 +421,8 @@ const [items, setItems] = useState(INITIAL_ITEMS);
 
 
     // States
-    const [categoriesList, setCategoriesList] = useState<string[]>(uniqueCategories);
-    
-    const [editingCategory, setEditingCategory] = useState<string | null>(null);
-
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const [activeCategory, setActiveCategory] = useState('All');
-    const [expandedCategory, setExpandedCategory] = useState('All');
+    const [activeCategory, setActiveCategory] = useState('All')
+    const [expandedCategory, setExpandedCategory] = useState<string | null>('All')
 
 
     // 2. Filtered Items by Category
@@ -429,58 +442,60 @@ const [items, setItems] = useState(INITIAL_ITEMS);
     }, [filteredItems]);
 
 
-    // 4. Group Items 
+    // 4. Group Items
+    interface GroupedItemData {
+        totalItems: number
+        items: typeof INITIAL_ITEMS
+    }
+
     const groupedItems = useMemo(() => {
-        return filteredItems.reduce((groups, item) => {
-            const category = item.category;
+        return filteredItems.reduce(
+            (groups: Record<string, GroupedItemData>, item) => {
+                const category = item.category
 
-            if (!groups[category]) {
-                groups[category] = {
-                    totalItems: 0,
-                    items: []
-                };
-            }
+                if (!groups[category]) {
+                    groups[category] = {
+                        totalItems: 0,
+                        items: [],
+                    }
+                }
 
-            groups[category].items.push(item);
-            groups[category].totalItems += item.quantity || 0;
+                groups[category].items.push(item)
+                groups[category].totalItems += item.quantity || 0
 
-            return groups;
-        }, {});
-    }, [filteredItems]);
+                return groups
+            },
+            {}
+        )
+    }, [filteredItems])
 
     const categoriesArray = Object.entries(groupedItems);
 
 
     // 5. Handlers
-    const handleCategoryChange = (category) => {
-        setActiveCategory(category);
-        setExpandedCategory(category);
-    };
-
-    const handleToggleExpand = (category) => {
-        setExpandedCategory(prev =>
-            prev === category ? null : category
-        );
-    };
-
-    const toggleComplete = (id) => {
-    setItems(prev =>
-        prev.map(item =>
-            item.id === id
-                ? { ...item, iscompleted: !item.iscompleted }
-                : item
-        )
-      );
+    const handleCategoryChange = (category: string) => {
+        setActiveCategory(category)
+        setExpandedCategory(category)
     }
-    const handleAddNewCategory = () => {
-        const newCategoryName = 'New Category';
-        
-        // 1. Add a temporary category name to the list
-        setCategoriesList(prevList => [...prevList, newCategoryName]);
 
-        // 2. Set the state to indicate we are editing/naming the new category
-        setEditingCategory(newCategoryName); 
-    };
+    const handleToggleExpand = (category: string) => {
+        setExpandedCategory(prev => (prev === category ? null : category))
+    }
+
+    const toggleComplete = (id: number) => {
+        setItems(prev =>
+            prev.map(item =>
+                item.id === id
+                    ? { ...item, iscompleted: !item.iscompleted }
+                    : item
+            )
+        )
+    }
+
+    const handleAddNewCategory = () => {
+        // Handler for adding new category
+        console.log('Add new category')
+    }
 
     // --- NEW FUNCTION: Function to handle saving/renaming the category ---
    /*  const handleSaveCategory = (oldName: string, newName: string) => {
@@ -519,10 +534,10 @@ const [items, setItems] = useState(INITIAL_ITEMS);
                       <NavigationMenuLink
                         onClick={() => handleCategoryChange(category)}                         
                         className={cn(
-                          "px-4 py-2 text-sm font-medium rounded-full whitespace-nowrap transition-colors duration-200 cursor-pointer",
+                          'px-5 py-2.5 text-14 md:text-16 font-normal rounded-full whitespace-nowrap transition-colors duration-200 cursor-pointer',
                           isActive
-                            ? 'bg-brand-600 text-white shadow-md'
-                            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                            ? 'bg-brand-500 text-white shadow-md'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         )}
                       >
                         {category}
@@ -536,34 +551,53 @@ const [items, setItems] = useState(INITIAL_ITEMS);
 
 
                 {/* ---------- TOP STATS ----------- */}
-                <div className="flex flex-col items-center p-4 bg-white border-b shadow-sm">
-                    <div className="flex gap-2 text-center">
-                        <div className="bg-white rounded-lg p-3 shadow-md border-b-4">
-                            <p className="text-xs text-gray-500">Count</p>
-                            <p className="text-xl font-bold text-brand-600 mt-1">{filteredItems.length}</p>
+                <div className="flex flex-col items-center py-8 md:py-12 bg-white border-b border-gray-100">
+                    <div className="flex flex-wrap justify-center gap-6 md:gap-8 w-full max-w-5xl">
+                        {/* Count Card */}
+                        <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg border-2 border-brand-100 hover:border-brand-200 transition-all duration-200 min-w-[180px] md:min-w-[220px] flex-1 max-w-[240px]">
+                            <div className="flex flex-col items-center text-center">
+                                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-brand-50 flex items-center justify-center mb-4 md:mb-5">
+                                    <Package className="w-7 h-7 md:w-8 md:h-8 text-brand-500" />
+                                </div>
+                                <p className="text-14 md:text-16 font-normal text-gray-600 mb-3">Count</p>
+                                <p className="text-32 md:text-40 lg:text-48 font-normal text-brand-500 leading-none">{filteredItems.length}</p>
+                            </div>
                         </div>
 
-                        <div className="bg-white rounded-lg p-3 shadow-md border-b-4">
-                            <p className="text-xs text-gray-500">Completed</p>
-                            <p className="text-xl font-bold text-gbrandreen-600 mt-1">{completedCount}</p>
+                        {/* Completed Card */}
+                        <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg border-2 border-green-100 hover:border-green-200 transition-all duration-200 min-w-[180px] md:min-w-[220px] flex-1 max-w-[240px]">
+                            <div className="flex flex-col items-center text-center">
+                                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-green-50 flex items-center justify-center mb-4 md:mb-5">
+                                    <CheckCircle2 className="w-7 h-7 md:w-8 md:h-8 text-green-600" />
+                                </div>
+                                <p className="text-14 md:text-16 font-normal text-gray-600 mb-3">Completed</p>
+                                <p className="text-32 md:text-40 lg:text-48 font-normal text-green-600 leading-none">{completedCount}</p>
+                            </div>
                         </div>
 
-                        <div className="bg-white rounded-lg p-3 shadow-md border-b-4">
-                            <p className="text-xs text-gray-500">Remaining</p>
-                            <p className="text-xl font-bold text-brand-600 mt-1">{remainingCount}</p>
+                        {/* Remaining Card */}
+                        <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg border-2 border-orange-100 hover:border-orange-200 transition-all duration-200 min-w-[180px] md:min-w-[220px] flex-1 max-w-[240px]">
+                            <div className="flex flex-col items-center text-center">
+                                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-orange-50 flex items-center justify-center mb-4 md:mb-5">
+                                    <Clock className="w-7 h-7 md:w-8 md:h-8 text-orange-500" />
+                                </div>
+                                <p className="text-14 md:text-16 font-normal text-gray-600 mb-3">Remaining</p>
+                                <p className="text-32 md:text-40 lg:text-48 font-normal text-orange-500 leading-none">{remainingCount}</p>
+                            </div>
                         </div>
                     </div>
 
 
                     {/* ---------- Category Title ----------- */}
-                    <div className="mt-4">
-                        <h3 className="text-sm font-medium">Items in {activeCategory}:</h3>
+                    <div className="mt-8 md:mt-10 mb-6 md:mb-8">
+                        <h3 className="text-18 md:text-20 font-normal text-gray-900">
+                            Items in <span className="text-brand-500">{activeCategory}</span>
+                        </h3>
                     </div>
 
-
                     {/* ---------- ACCORDION GROUPS ----------- */}
-                    <div className="p-4 max-w-lg mx-auto w-full">
-                        <div className="space-y-4">
+                    <div className="w-full max-w-5xl mx-auto px-4 md:px-6">
+                        <div className="space-y-5 md:space-y-7">
                             {categoriesArray.map(([categoryName, data]) => {
                                 const isExpanded = categoryName === expandedCategory;
                                 
@@ -571,97 +605,257 @@ const [items, setItems] = useState(INITIAL_ITEMS);
                                     <div
                                         key={categoryName}
                                         className={cn(
-                                            "bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300",
-                                            isExpanded ? 'border border-brand-200' : 'border border-transparent'
+                                            'bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 border',
+                                            isExpanded
+                                              ? 'border-brand-200 shadow-lg'
+                                              : 'border-gray-200 hover:border-gray-300'
                                         )}
                                     >
-
                                         {/* Accordion Header */}
-                                      <div className="space-y-2 ">
                                         <button
                                             onClick={() => handleToggleExpand(categoryName)}
                                             className={cn(
-                                                "flex items-center justify-between w-full p-4 transition-colors",
-                                                isExpanded ? 'bg-white hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100'
+                                                'flex items-center justify-between w-full p-6 md:p-7 transition-all duration-200',
+                                                isExpanded
+                                                  ? 'bg-brand-50 hover:bg-brand-100'
+                                                  : 'bg-gray-50 hover:bg-gray-100'
                                             )}
                                         >
-                                            <span className="text-base font-medium text-gray-600">
-                                                {categoryName}
-                                            </span>
-                                            <div className="flex items-center space-x-2">
-                                                <span className="text-brand-600 font-bold text-lg">{data.totalItems} Item</span>
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                                                    <ShoppingBag className="w-6 h-6 text-brand-500" />
+                                                </div>
+                                                <div className="text-left">
+                                                    <span className="text-16 md:text-18 font-normal text-gray-900 block">
+                                                        {categoryName}
+                                                    </span>
+                                                    <span className="text-12 md:text-14 text-gray-500 mt-1 block">
+                                                        {data.items.length} {data.items.length === 1 ? 'item' : 'items'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                {/* Completion Progress */}
+                                                <div className="hidden sm:flex flex-col items-end gap-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <CheckCircle2 className="w-4 h-4 text-green-600" />
+                                                        <span className="text-12 font-normal text-gray-700">
+                                                            {
+                                                                data.items.filter(i => i.iscompleted)
+                                                                    .length
+                                                            }
+                                                            /{data.items.length}
+                                                        </span>
+                                                    </div>
+                                                    <div className="w-28 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full bg-green-500 rounded-full transition-all duration-500"
+                                                            style={{
+                                                                width: `${
+                                                                    (data.items.filter(i => i.iscompleted)
+                                                                        .length /
+                                                                        data.items.length) *
+                                                                    100
+                                                                }%`,
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
                                                 <ChevronRight
                                                     className={cn(
-                                                        "w-5 h-5 text-gray-500 transition-transform duration-300",
+                                                        'w-5 h-5 md:w-6 md:h-6 text-gray-500 transition-transform duration-300',
                                                         isExpanded ? 'rotate-90' : 'rotate-0'
                                                     )}
                                                 />
                                             </div>
                                         </button>
-                                      </div>
                                         {/* Accordion Body */}
                                         {isExpanded && (
-                                            <div className="border-t border-gray-100 p-4 space-y-3">
-                                                {data.items.map((item) => (
-                                                
-                                                <div key={item.id} className="flex items-center justify-between bg-white border border-gray-100 rounded-lg p-3 pr-0">
-
-                                                    <div className="flex items-center space-x-3">
-                                                       <Checkbox
-                                                          checked={item.iscompleted}
-                                                          onChange={() => toggleComplete(item.id)}
-                                                          size="md"
-                                                          variant={item.iscompleted ? "successFilled" : "gray"}
-                                                          shape="square"
-                                                          className="cursor-pointer"
-                                                        />
-                                                    </div>
-
-                                                    <Link
-                                                      href={`${ITEM_DETAILS_BASE_PATH}/${item.id}`}
-                                                      className="flex justify-between items-center flex-1 ml-3 p-2 rounded-lg transition-all hover:bg-gray-50 hover:shadow-sm"
+                                            <div className="border-t border-gray-100 p-6 md:p-8 space-y-4 md:space-y-6">
+                                                {data.items.map(item => (
+                                                    <div
+                                                        key={item.id}
+                                                        className={cn(
+                                                            'group relative bg-white border rounded-2xl p-5 md:p-6 transition-all duration-300 hover:shadow-lg',
+                                                            item.iscompleted
+                                                              ? 'border-green-300 bg-gradient-to-br from-green-50/50 to-white'
+                                                              : 'border-gray-200 hover:border-brand-200'
+                                                        )}
                                                     >
-                                                      {/* LEFT SIDE (name + buy date) */}
-                                                      <div>
-                                                        <span className="text-base font-medium text-gray-800 block">
-                                                          {item.name}
-                                                        </span>
+                                                        {/* Status Badge */}
+                                                        {item.iscompleted && (
+                                                            <div className="absolute top-5 right-5 bg-green-500 text-white px-4 py-1.5 rounded-full text-12 font-normal flex items-center gap-2 shadow-sm">
+                                                                <CheckCircle2 className="w-4 h-4" />
+                                                                Completed
+                                                            </div>
+                                                        )}
 
-                                                        <span className="text-xs text-brand-600 block mt-0.5">
-                                                          Buy Date: <span className="text-gray-500">{item.buyDate}</span>
-                                                        </span>
-                                                      </div>
+                                                        <div className="flex flex-col sm:flex-row gap-5 md:gap-7">
+                                                            {/* Left Section - Checkbox and Main Info */}
+                                                            <div className="flex gap-5 flex-1 min-w-0">
+                                                                {/* Checkbox */}
+                                                                <div className="flex-shrink-0 pt-1">
+                                                                    <Checkbox
+                                                                        checked={item.iscompleted}
+                                                                        onChange={() =>
+                                                                            toggleComplete(item.id)
+                                                                        }
+                                                                        size="md"
+                                                                        variant={
+                                                                            item.iscompleted
+                                                                                ? 'successFilled'
+                                                                                : 'gray'
+                                                                        }
+                                                                        shape="square"
+                                                                        className="cursor-pointer"
+                                                                    />
+                                                                </div>
 
-                                                      {/* RIGHT SIDE (paid + remaining + quantity) */}
-                                                      <div className="flex items-center space-x-3">
-                                                        <div className="text-right">
-                                                          <span className="text-xs text-brand-600 block">
-                                                            Paid: {item.advancePayment}
-                                                          </span>
-                                                          <span className="text-xs text-gray-500 block">
-                                                            Remaining: {item.remaining}
-                                                          </span>
+                                                                {/* Main Content */}
+                                                                <Link
+                                                                    href={`${ITEM_DETAILS_BASE_PATH}/${item.id}`}
+                                                                    className="flex-1 min-w-0"
+                                                                >
+                                                                    {/* Item Name */}
+                                                                    <div className="flex items-start gap-2 mb-4">
+                                                                        <h4
+                                                                            className={cn(
+                                                                                'text-18 md:text-20 font-normal text-gray-900',
+                                                                                item.iscompleted &&
+                                                                                    'line-through text-gray-400'
+                                                                            )}
+                                                                        >
+                                                                            {item.name}
+                                                                        </h4>
+                                                                    </div>
+
+                                                                    {/* Description */}
+                                                                    {item.description && (
+                                                                        <p className="text-14 md:text-15 text-gray-600 mb-4 line-clamp-2">
+                                                                            {item.description}
+                                                                        </p>
+                                                                    )}
+
+                                                                    {/* Info Grid */}
+                                                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5">
+                                                                        {/* Buy Date */}
+                                                                        <div className="flex items-center gap-2 text-13 md:text-14 text-gray-600">
+                                                                            <Calendar className="w-4 h-4 text-brand-500 flex-shrink-0" />
+                                                                            <span className="truncate">
+                                                                                {new Date(
+                                                                                    item.buyDate
+                                                                                ).toLocaleDateString(
+                                                                                    'en-US',
+                                                                                    {
+                                                                                        month: 'short',
+                                                                                        day: 'numeric',
+                                                                                        year: 'numeric',
+                                                                                    }
+                                                                                )}
+                                                                            </span>
+                                                                        </div>
+
+                                                                        {/* Seller */}
+                                                                        {item.seller && (
+                                                                            <div className="flex items-center gap-2 text-13 md:text-14 text-gray-600">
+                                                                                <Store className="w-4 h-4 text-brand-500 flex-shrink-0" />
+                                                                                <span className="truncate">
+                                                                                    {item.seller}
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+
+                                                                        {/* Category Badge */}
+                                                                        <div className="hidden sm:flex items-center">
+                                                                            <span className="inline-flex items-center px-3 py-1.5 rounded-full text-12 font-normal bg-gray-100 text-gray-700">
+                                                                                {item.category}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {/* Payment Progress */}
+                                                                    <div className="space-y-3">
+                                                                        <div className="flex items-center justify-between text-12 md:text-13 text-gray-600">
+                                                                            <span>Payment Progress</span>
+                                                                            <span className="font-normal">
+                                                                                {Math.round(
+                                                                                    (item.advancePayment /
+                                                                                        item.totalCost) *
+                                                                                        100
+                                                                                )}
+                                                                                %
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                                                            <div
+                                                                                className={cn(
+                                                                                    'h-full rounded-full transition-all duration-500',
+                                                                                    item.remaining === 0
+                                                                                        ? 'bg-green-500'
+                                                                                        : 'bg-brand-500'
+                                                                                )}
+                                                                                style={{
+                                                                                    width: `${
+                                                                                        (item.advancePayment /
+                                                                                            item.totalCost) *
+                                                                                        100
+                                                                                    }%`,
+                                                                                }}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="flex items-center justify-between text-11 md:text-12 text-gray-500">
+                                                                            <span>
+                                                                                Paid:{' '}
+                                                                                <span className="font-normal text-green-600">
+                                                                                    {item.advancePayment.toLocaleString()}
+                                                                                </span>
+                                                                            </span>
+                                                                            <span>
+                                                                                Remaining:{' '}
+                                                                                <span className="font-normal text-gray-700">
+                                                                                    {item.remaining.toLocaleString()}
+                                                                                </span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </Link>
+                                                            </div>
+
+                                                            {/* Right Section - Cost and Quantity */}
+                                                            <div className="flex sm:flex-col items-center gap-5 sm:gap-4 flex-shrink-0">
+                                                                {/* Total Cost */}
+                                                                <div className="text-center">
+                                                                    <div className="text-11 md:text-12 text-gray-500 mb-2">
+                                                                        Total Cost
+                                                                    </div>
+                                                                    <div className="flex items-baseline justify-center gap-1.5">
+                                                                        <DollarSign className="w-5 h-5 text-brand-500" />
+                                                                        <span className="text-20 md:text-24 font-normal text-gray-900">
+                                                                            {item.totalCost.toLocaleString()}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-
-                                                        <div className="bg-brand-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold">
-                                                          {item.quantity}
-                                                        </div>
-                                                      </div>
-                                                    </Link>
-                                                </div>
-                                                
+                                                    </div>
                                                 ))}
 
                                                 {/* Buttons inside accordion */}
-                                                <div className="flex justify-end space-x-4 pt-2">
+                                                <div className="flex justify-end gap-4 pt-5 border-t border-gray-100">
                                                     <Link href={ADD_NEW_ITEM_PATH}>
-                                                        <Button variant={"brand"} size={"sm"} className='text-white'>
-                                                            <Plus className="w-5 h-5" />
+                                                        <Button
+                                                            variant="brand"
+                                                            size="md"
+                                                            className="gap-2 font-normal text-white"
+                                                        >
+                                                            <Plus className="w-4 h-4 md:w-5 md:h-5" />
+                                                            <span className="hidden sm:inline">Add Item</span>
                                                         </Button>
                                                     </Link>
 
-                                                    <Button variant={"outline"} size={"sm"}>
-                                                        <List className="w-4 h-4" />
+                                                    <Button variant="outline" size="md" className="gap-2 font-normal text-white bg-brand-500 border-brand-500 hover:bg-brand-600">
+                                                        <List className="w-4 h-4 md:w-5 md:h-5" />
+                                                        <span className="hidden sm:inline">View List</span>
                                                     </Button>
                                                 </div>
                                             </div>
@@ -674,8 +868,8 @@ const [items, setItems] = useState(INITIAL_ITEMS);
 
                         {/* Add New Item — bottom button */}
                         <div className="mt-8 text-center">
-                          <Button variant={"brand"} size={'xl'} className='text-white' onClick={handleAddNewCategory}>
-                              <Plus className="w-6 h-6 mr-2" />
+                          <Button variant="brand" size="lg" onClick={handleAddNewCategory} className="text-white">
+                              <Plus className="w-5 h-5 mr-2" />
                               Add new Item
                           </Button>
                         </div>
