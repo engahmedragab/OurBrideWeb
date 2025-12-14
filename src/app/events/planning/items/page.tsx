@@ -406,7 +406,6 @@ const INITIAL_ITEMS = [
 ];
 
 // CONSTANT ROUTES
-const ADD_NEW_ITEM_PATH = '/planning/items/new';
 const ITEM_DETAILS_BASE_PATH = '/planning/items';
 
 
