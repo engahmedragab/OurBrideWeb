@@ -25,7 +25,7 @@ export const VoiceRecorderInput = ({
 }: VoiceRecorderInputProps) => {
   const [waveformData, setWaveformData] = useState<number[]>([])
   const [displayDuration, setDisplayDuration] = useState(0)
-  const animationRef = useRef<number>()
+  const animationRef = useRef<number | undefined>(undefined)
   const durationIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   // Update display duration from prop or increment during recording
