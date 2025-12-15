@@ -1,6 +1,10 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { FreeMode } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/free-mode'
 
 export interface CategoryFilter {
   id: string
@@ -21,42 +25,54 @@ export const CategoryFilterChips = ({
   className,
 }: CategoryFilterChipsProps) => {
   return (
-    <div
-      className={cn('flex gap-2 overflow-x-auto pb-2 scrollbar-hide', className)}
-    >
-      {/* All Category */}
-      <button
-        onClick={() => onSelectCategory('all')}
-        className={cn(
-          'flex-shrink-0 px-4 py-2 rounded-full text-14 font-medium transition-all duration-200',
-          'whitespace-nowrap',
-          selectedCategoryId === 'all' || !selectedCategoryId
-            ? 'bg-brand-500 text-white shadow-sm'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-        )}
+    <div className={cn('w-full', className)}>
+      <Swiper
+        modules={[FreeMode]}
+        freeMode={{
+          enabled: true,
+          sticky: false,
+        }}
+        slidesPerView="auto"
+        spaceBetween={8}
+        className="!pb-2"
       >
-        All
-      </button>
-
-      {/* Category Chips */}
-      {categories.map(category => {
-        const isSelected = selectedCategoryId === category.id
-        return (
+        {/* All Category */}
+        <SwiperSlide className="!w-auto">
           <button
-            key={category.id}
-            onClick={() => onSelectCategory(category.id)}
+            onClick={() => onSelectCategory('all')}
             className={cn(
-              'flex-shrink-0 px-4 py-2 rounded-full text-14 font-medium transition-all duration-200',
+              'px-4 py-2 rounded-full text-14 font-medium transition-all duration-200',
               'whitespace-nowrap',
-              isSelected
+              selectedCategoryId === 'all' || !selectedCategoryId
                 ? 'bg-brand-500 text-white shadow-sm'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             )}
           >
-            {category.name}
+            All
           </button>
-        )
-      })}
+        </SwiperSlide>
+
+        {/* Category Chips */}
+        {categories.map(category => {
+          const isSelected = selectedCategoryId === category.id
+          return (
+            <SwiperSlide key={category.id} className="!w-auto">
+              <button
+                onClick={() => onSelectCategory(category.id)}
+                className={cn(
+                  'px-4 py-2 rounded-full text-14 font-medium transition-all duration-200',
+                  'whitespace-nowrap',
+                  isSelected
+                    ? 'bg-brand-500 text-white shadow-sm'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                )}
+              >
+                {category.name}
+              </button>
+            </SwiperSlide>
+          )
+        })}
+      </Swiper>
     </div>
   )
 }

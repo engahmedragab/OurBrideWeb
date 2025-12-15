@@ -32,14 +32,29 @@ const mockBudgetCategories: BudgetCategory[] = [
     total: 5000.0,
     estimatedCost: 5000.0,
     finalCost: 0.0,
-    items: [],
+    items: [
+      {
+        id: 'entertain-1',
+        itemType: 'entertain',
+        name: 'entertain and Cutting Fees',
+        estimatedCost: 2000.0,
+        paidAmount: 1000.0,
+      },
+      {
+        id: 'entertain-2',
+        itemType: 'Buffet',
+        name: 'Buffets',
+        estimatedCost: 500.0,
+        paidAmount: 300.0,
+      },
+    ],
   },
   {
     id: 'beauty',
     name: 'Beauty & Health',
     total: 2300.0,
     estimatedCost: 2300.0,
-    finalCost: 0.0,
+    finalCost: 1000.0,
     items: [],
   },
   {
@@ -78,7 +93,7 @@ const mockBudgetCategories: BudgetCategory[] = [
     name: 'At the Party',
     total: 0.0,
     estimatedCost: 0.0,
-    finalCost: 0.0,
+    finalCost: 250.0,
     items: [],
   },
 ]
@@ -287,6 +302,14 @@ export default function BudgetPage() {
     setDeletingItem(null)
   }
 
+  const handleAddItemFromCategory = (categoryId: string) => {
+    setSelectedCategoryId(categoryId)
+    setEditingItem(null)
+    setIsAddModalOpen(true)
+    // Expand the category to show the empty state
+    setExpandedCategoryId(categoryId)
+  }
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24">
       {/* Header */}
@@ -304,18 +327,7 @@ export default function BudgetPage() {
           </h1>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Refresh"
-          >
-            <RefreshCw className="h-5 w-5 text-gray-600" />
-          </button>
-          <button
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Save"
-          >
-            <Camera className="h-5 w-5 text-gray-600" />
-          </button>
+        
           {/* Desktop Add Button */}
           {!isMobile && (
             <Button
@@ -325,9 +337,9 @@ export default function BudgetPage() {
                 setEditingItem(null)
                 setIsAddModalOpen(true)
               }}
-              className="ml-2"
+              className="ml-2 text-white"
             >
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-2 text-white" />
               Add New
             </Button>
           )}
@@ -387,6 +399,7 @@ export default function BudgetPage() {
               onToggle={() => handleToggleCategory(category.id)}
               onEditItem={handleEditItem}
               onDeleteItem={handleDeleteItem}
+              onAddItem={handleAddItemFromCategory}
             />
           ))
         ) : (

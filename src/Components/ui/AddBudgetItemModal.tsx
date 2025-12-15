@@ -82,10 +82,10 @@ export const AddBudgetItemModal = ({
   const isEditMode = !!editingItem
 
   const ModalContent = () => (
-    <div className="space-y-4 sm:space-y-5 w-full max-w-full">
+    <div className="space-y-5 sm:space-y-6 w-full">
       {/* Item Type */}
-      <div>
-        <label className="block text-14 font-medium text-gray-700 mb-2">
+      <div className="space-y-2">
+        <label className="block text-14 font-semibold text-gray-900">
           Type
         </label>
         <Input
@@ -98,8 +98,8 @@ export const AddBudgetItemModal = ({
       </div>
 
       {/* Item Name */}
-      <div>
-        <label className="block text-14 font-medium text-gray-700 mb-2">
+      <div className="space-y-2">
+        <label className="block text-14 font-semibold text-gray-900">
           Item Name
         </label>
         <Input
@@ -111,40 +111,47 @@ export const AddBudgetItemModal = ({
         />
       </div>
 
-      {/* Estimated Cost */}
-      <div>
-        <label className="block text-14 font-medium text-gray-700 mb-2">
-          Estimated Cost
-        </label>
-        <Input
-          type="number"
-          value={estimatedCost}
-          onChange={e => setEstimatedCost(e.target.value)}
-          placeholder="0.00"
-          size="lg"
-        />
-      </div>
+      {/* Cost Fields Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+        {/* Estimated Cost */}
+        <div className="space-y-2">
+          <label className="block text-14 font-semibold text-gray-900">
+            Estimated Cost
+          </label>
+          <Input
+            type="number"
+            value={estimatedCost}
+            onChange={e => setEstimatedCost(e.target.value)}
+            placeholder="0.00"
+            size="lg"
+          />
+        </div>
 
-      {/* Paid Amount */}
-      <div>
-        <label className="block text-14 font-medium text-gray-700 mb-2">
-          Paid Amount{' '}
-          <span className="text-gray-400">(Optional)</span>
-        </label>
-        <Input
-          type="number"
-          value={paidAmount}
-          onChange={e => setPaidAmount(e.target.value)}
-          placeholder="0.00"
-          size="lg"
-        />
+        {/* Paid Amount */}
+        <div className="space-y-2">
+          <label className="block text-14 font-semibold text-gray-900">
+            Paid Amount
+            <span className="text-12 font-normal text-gray-400 ml-1">
+              (Optional)
+            </span>
+          </label>
+          <Input
+            type="number"
+            value={paidAmount}
+            onChange={e => setPaidAmount(e.target.value)}
+            placeholder="0.00"
+            size="lg"
+          />
+        </div>
       </div>
 
       {/* Notes */}
-      <div>
-        <label className="block text-14 font-medium text-gray-700 mb-2">
-          Notes{' '}
-          <span className="text-gray-400">(Optional)</span>
+      <div className="space-y-2">
+        <label className="block text-14 font-semibold text-gray-900">
+          Notes
+          <span className="text-12 font-normal text-gray-400 ml-1">
+            (Optional)
+          </span>
         </label>
         <Textarea
           value={notes}
@@ -156,12 +163,12 @@ export const AddBudgetItemModal = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
+      <div className="flex gap-3 pt-4 border-t border-gray-200">
         <Button
           variant="gray"
           size="lg"
           onClick={onClose}
-          className="flex-1 w-full sm:w-auto"
+          className="flex-1 w-full sm:w-auto order-2 sm:order-1"
         >
           Cancel
         </Button>
@@ -169,7 +176,7 @@ export const AddBudgetItemModal = ({
           variant="brand"
           size="lg"
           onClick={handleSave}
-          className="flex-1 w-full sm:w-auto"
+          className="flex-1 w-full sm:w-auto order-1 sm:order-2 text-white"
           disabled={!itemType || !itemName || !estimatedCost}
         >
           {isEditMode ? 'Update' : 'Save'}
@@ -185,7 +192,8 @@ export const AddBudgetItemModal = ({
         isOpen={isOpen}
         onClose={onClose}
         title={isEditMode ? 'Edit Budget Item' : 'Add New Budget Item'}
-        contentClassName="px-4 sm:px-6"
+        headerClassName="px-5 py-4"
+        contentClassName="px-5 py-5"
       >
         <ModalContent />
       </BottomSheet>
@@ -199,7 +207,8 @@ export const AddBudgetItemModal = ({
       title={isEditMode ? 'Edit Budget Item' : 'Add New Budget Item'}
       maxWidth="md"
       containerClassName="mx-4 sm:mx-auto"
-      contentClassName="px-4 sm:px-6"
+      headerClassName="px-6 py-5 border-b border-gray-200"
+      contentClassName="px-6 py-6"
     >
       <ModalContent />
     </Modal>
