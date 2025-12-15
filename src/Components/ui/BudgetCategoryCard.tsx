@@ -36,6 +36,7 @@ export interface BudgetCategoryCardProps {
   onEditItem?: (item: BudgetItem) => void
   onDeleteItem?: (item: BudgetItem) => void
   onAddItem?: (categoryId: string) => void
+  onUpdateAmount?: (itemId: string, field: 'estimatedCost' | 'paidAmount', amount: number) => void
 }
 
 // Helper function to get icon based on category id
@@ -65,6 +66,7 @@ export const BudgetCategoryCard = ({
   onEditItem,
   onDeleteItem,
   onAddItem,
+  onUpdateAmount,
 }: BudgetCategoryCardProps) => {
   // Calculate realistic progress based on paid amount vs estimated cost
   const totalPaid = category.items.reduce((sum, item) => sum + item.paidAmount, 0)
@@ -212,13 +214,13 @@ export const BudgetCategoryCard = ({
                             <div className="flex items-center justify-between text-12 text-gray-600">
                               <span>Cost:</span>
                               <span className="font-medium">
-                                {item.estimatedCost.toLocaleString()} (Estimated)
+                                £{item.estimatedCost.toLocaleString()} (Estimated)
                               </span>
                             </div>
                             <div className="flex items-center justify-between text-12 text-gray-600">
                               <span>Paid:</span>
                               <span className="font-medium">
-                                {item.paidAmount.toLocaleString()}
+                                £{item.paidAmount.toLocaleString()}
                               </span>
                             </div>
                             {item.notes && (

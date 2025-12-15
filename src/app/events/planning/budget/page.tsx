@@ -121,16 +121,24 @@ export default function BudgetPage() {
   } | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>(mockBudgetCategories)
+  
+  // Manual adjustments for summary cards (separate from items)
+  const [summaryAdjustments, setSummaryAdjustments] = useState({
+    estimatedCost: 0,
+    paid: 0,
+  })
 
-  // Calculate summary metrics based on actual items
+  // Calculate summary metrics based on actual items + manual adjustments
   const totalEstimatedCost = budgetCategories.reduce(
     (sum, cat) => sum + cat.items.reduce((itemSum, item) => itemSum + item.estimatedCost, 0),
     0
-  )
+  ) + summaryAdjustments.estimatedCost
+  
   const totalPaid = budgetCategories.reduce(
     (sum, cat) => sum + cat.items.reduce((itemSum, item) => itemSum + item.paidAmount, 0),
     0
-  )
+  ) + summaryAdjustments.paid
+  
   const totalPending = totalEstimatedCost - totalPaid
   const totalCount = budgetCategories.reduce(
     (sum, cat) => sum + cat.items.length,
@@ -310,6 +318,50 @@ export default function BudgetPage() {
     setExpandedCategoryId(categoryId)
   }
 
+  const handleUpdateAmount = (itemId: string, field: 'estimatedCost' | 'paidAmount', amount: number) => {
+    setBudgetCategories(prev =>
+      prev.map(cat => ({
+        ...cat,
+        items: cat.items.map(item =>
+          item.id === itemId
+            ? { ...item, [field]: amount }
+            : item
+        ),
+      }))
+    )
+  }
+
+  // Calculate base values (without adjustments)
+  const baseEstimatedCost = budgetCategories.reduce(
+    (sum, cat) => sum + cat.items.reduce((itemSum, item) => itemSum + item.estimatedCost, 0),
+    0
+  )
+  const basePaid = budgetCategories.reduce(
+    (sum, cat) => sum + cat.items.reduce((itemSum, item) => itemSum + item.paidAmount, 0),
+    0
+  )
+
+  // Handle direct value changes in summary cards
+  const handleEstimatedCostChange = (newValue: number) => {
+    setSummaryAdjustments(prev => ({
+      ...prev,
+      estimatedCost: Math.max(0, newValue - baseEstimatedCost),
+    }))
+  }
+
+  const handlePaidChange = (newValue: number) => {
+    setSummaryAdjustments(prev => ({
+      ...prev,
+      paid: Math.max(0, newValue - basePaid),
+    }))
+  }
+
+  const handlePendingChange = (newValue: number) => {
+    // Adjusting pending means adjusting estimated cost
+    const newEstimatedCost = newValue + totalPaid
+    handleEstimatedCostChange(newEstimatedCost)
+  }
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24">
       {/* Header */}
@@ -368,15 +420,21 @@ export default function BudgetPage() {
         >
           <SummaryMetricCard
             label="Estimated Cost"
-            value={`£${totalEstimatedCost.toLocaleString()}`}
+            value={totalEstimatedCost}
             variant="default"
+            editable
+            onValueChange={handleEstimatedCostChange}
           />
           <SummaryMetricCard
             label="Paid"
-            value={`£${totalPaid.toLocaleString()}`}
+            value={totalPaid}
             subLabel="Pending"
-            subValue={`£${totalPending.toLocaleString()}`}
+            subValue={totalPending}
             variant="highlight"
+            editable
+            editableSub
+            onValueChange={handlePaidChange}
+            onSubValueChange={handlePendingChange}
           />
           <SummaryMetricCard
             label="Count"
@@ -400,6 +458,7 @@ export default function BudgetPage() {
               onEditItem={handleEditItem}
               onDeleteItem={handleDeleteItem}
               onAddItem={handleAddItemFromCategory}
+              onUpdateAmount={handleUpdateAmount}
             />
           ))
         ) : (
