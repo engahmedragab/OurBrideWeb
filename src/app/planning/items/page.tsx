@@ -18,11 +18,8 @@ import Link from 'next/link'
 import {
   Button,
   Checkbox,
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
 } from '@/components/ui'
+import { CategoryFilterChips, type CategoryFilter } from '@/components/ui/CategoryFilterChips'
 
 
 const INITIAL_ITEMS = [
@@ -413,21 +410,21 @@ const ITEM_DETAILS_BASE_PATH = '/planning/items';
 export default function ItemsPage() {
 const [items, setItems] = useState(INITIAL_ITEMS);
 
-    // 1. Unique Categories
-    const uniqueCategories = useMemo(() => {
+    // 1. Unique Categories for filter chips
+    const categoryFilters: CategoryFilter[] = useMemo(() => {
         const cats = items.map(item => item.category);
-        return ['All', ...new Set(cats)];
+        const uniqueCats = Array.from(new Set(cats));
+        return uniqueCats.map(cat => ({ id: cat, name: cat }));
     }, [items]);
 
-
     // States
-    const [activeCategory, setActiveCategory] = useState('All')
-    const [expandedCategory, setExpandedCategory] = useState<string | null>('All')
+    const [activeCategory, setActiveCategory] = useState('all')
+    const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
 
 
     // 2. Filtered Items by Category
     const filteredItems = useMemo(() => {
-        return activeCategory === 'All'
+        return activeCategory === 'all'
             ? items
             : items.filter(item => item.category === activeCategory);
     }, [items, activeCategory]);
@@ -473,9 +470,15 @@ const [items, setItems] = useState(INITIAL_ITEMS);
 
 
     // 5. Handlers
-    const handleCategoryChange = (category: string) => {
-        setActiveCategory(category)
-        setExpandedCategory(category)
+    const handleCategoryChange = (categoryId: string) => {
+        setActiveCategory(categoryId)
+        // Auto-expand first category when filtering
+        if (categoryId !== 'all') {
+            const firstCategory = Object.keys(groupedItems)[0]
+            setExpandedCategory(firstCategory || null)
+        } else {
+            setExpandedCategory(null)
+        }
     }
 
     const handleToggleExpand = (category: string) => {
@@ -521,83 +524,68 @@ const [items, setItems] = useState(INITIAL_ITEMS);
     }; */
 
     return (
-        <>
-            <div className="w-full mx-auto">
-                
-                {/* ---------- FILTER BUTTONS ----------- */}
-              <NavigationMenu>
-                <NavigationMenuList className="flex space-x-2">
-                  {uniqueCategories.map((category: string) => {
-                    const isActive = category === activeCategory;
-                  return (
-                    <NavigationMenuItem key={category}>
-                      <NavigationMenuLink
-                        onClick={() => handleCategoryChange(category)}                         
-                        className={cn(
-                          'px-5 py-2.5 text-14 md:text-16 font-normal rounded-full whitespace-nowrap transition-colors duration-200 cursor-pointer',
-                          isActive
-                            ? 'bg-brand-500 text-white shadow-md'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        )}
-                      >
-                        {category}
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
-                  );
-                  })}
-                </NavigationMenuList>
-              </NavigationMenu>
+        <div className="w-full min-h-screen bg-white">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+                {/* Header */}
+                <div className="mb-6 sm:mb-8">
+                    <h1 className="text-24 sm:text-28 md:text-32 font-semibold text-gray-900 mb-2">
+                        Items
+                    </h1>
+                </div>
+
+                {/* Category Filter Chips */}
+                <div className="mb-6 sm:mb-8">
+                    <CategoryFilterChips
+                        categories={categoryFilters}
+                        selectedCategoryId={activeCategory}
+                        onSelectCategory={handleCategoryChange}
+                    />
+                </div>
           
 
 
-                {/* ---------- TOP STATS ----------- */}
-                <div className="flex flex-col items-center py-8 md:py-12 bg-white border-b border-gray-100">
-                    <div className="flex flex-wrap justify-center gap-6 md:gap-8 w-full max-w-5xl">
-                        {/* Count Card */}
-                        <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg border-2 border-brand-100 hover:border-brand-200 transition-all duration-200 min-w-[180px] md:min-w-[220px] flex-1 max-w-[240px]">
-                            <div className="flex flex-col items-center text-center">
-                                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-brand-50 flex items-center justify-center mb-4 md:mb-5">
-                                    <Package className="w-7 h-7 md:w-8 md:h-8 text-brand-500" />
-                                </div>
-                                <p className="text-14 md:text-16 font-normal text-gray-600 mb-3">Count</p>
-                                <p className="text-32 md:text-40 lg:text-48 font-normal text-brand-500 leading-none">{filteredItems.length}</p>
+                {/* Summary Metric Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-sm border-2 border-brand-100">
+                        <div className="flex flex-col items-center text-center">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-brand-50 flex items-center justify-center mb-3 sm:mb-4">
+                                <Package className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-brand-500" />
                             </div>
-                        </div>
-
-                        {/* Completed Card */}
-                        <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg border-2 border-green-100 hover:border-green-200 transition-all duration-200 min-w-[180px] md:min-w-[220px] flex-1 max-w-[240px]">
-                            <div className="flex flex-col items-center text-center">
-                                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-green-50 flex items-center justify-center mb-4 md:mb-5">
-                                    <CheckCircle2 className="w-7 h-7 md:w-8 md:h-8 text-green-600" />
-                                </div>
-                                <p className="text-14 md:text-16 font-normal text-gray-600 mb-3">Completed</p>
-                                <p className="text-32 md:text-40 lg:text-48 font-normal text-green-600 leading-none">{completedCount}</p>
-                            </div>
-                        </div>
-
-                        {/* Remaining Card */}
-                        <div className="bg-white rounded-2xl p-8 md:p-10 shadow-lg border-2 border-orange-100 hover:border-orange-200 transition-all duration-200 min-w-[180px] md:min-w-[220px] flex-1 max-w-[240px]">
-                            <div className="flex flex-col items-center text-center">
-                                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-orange-50 flex items-center justify-center mb-4 md:mb-5">
-                                    <Clock className="w-7 h-7 md:w-8 md:h-8 text-orange-500" />
-                                </div>
-                                <p className="text-14 md:text-16 font-normal text-gray-600 mb-3">Remaining</p>
-                                <p className="text-32 md:text-40 lg:text-48 font-normal text-orange-500 leading-none">{remainingCount}</p>
-                            </div>
+                            <p className="text-12 sm:text-14 font-medium text-gray-600 mb-2">Count</p>
+                            <p className="text-24 sm:text-28 md:text-32 font-bold text-brand-500 leading-none">{filteredItems.length}</p>
                         </div>
                     </div>
 
-
-                    {/* ---------- Category Title ----------- */}
-                    <div className="mt-8 md:mt-10 mb-6 md:mb-8">
-                        <h3 className="text-18 md:text-20 font-normal text-gray-900">
-                            Items in <span className="text-brand-500">{activeCategory}</span>
-                        </h3>
+                    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-sm border-2 border-green-100">
+                        <div className="flex flex-col items-center text-center">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-green-50 flex items-center justify-center mb-3 sm:mb-4">
+                                <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-green-600" />
+                            </div>
+                            <p className="text-12 sm:text-14 font-medium text-gray-600 mb-2">Completed</p>
+                            <p className="text-24 sm:text-28 md:text-32 font-bold text-green-600 leading-none">{completedCount}</p>
+                        </div>
                     </div>
 
-                    {/* ---------- ACCORDION GROUPS ----------- */}
-                    <div className="w-full max-w-5xl mx-auto px-4 md:px-6">
-                        <div className="space-y-5 md:space-y-7">
+                    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-sm border-2 border-orange-100">
+                        <div className="flex flex-col items-center text-center">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-orange-50 flex items-center justify-center mb-3 sm:mb-4">
+                                <Clock className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-orange-500" />
+                            </div>
+                            <p className="text-12 sm:text-14 font-medium text-gray-600 mb-2">Remaining</p>
+                            <p className="text-24 sm:text-28 md:text-32 font-bold text-orange-500 leading-none">{remainingCount}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Section Title */}
+                <div className="mb-6 sm:mb-8">
+                    <h3 className="text-18 sm:text-20 md:text-24 font-normal text-gray-900">
+                        Items in <span className="text-brand-500">{activeCategory === 'all' ? 'All' : activeCategory}</span>
+                    </h3>
+                </div>
+
+                {/* Accordion Groups */}
+                <div className="space-y-5 sm:space-y-7">
                             {categoriesArray.map(([categoryName, data]) => {
                                 const isExpanded = categoryName === expandedCategory;
                                 
@@ -862,21 +850,19 @@ const [items, setItems] = useState(INITIAL_ITEMS);
                                         )}
                                     </div>
                                 );
-                            })}
-                        </div>
+                    })}
+                </div>
 
-
-                        {/* Add New Item — bottom button */}
-                        <div className="mt-8 text-center">
-                          <Button variant="brand" size="lg" onClick={handleAddNewCategory} className="text-white">
-                              <Plus className="w-5 h-5 mr-2" />
-                              Add new Item
-                          </Button>
-                        </div>
-
-                    </div>
+                {/* Add New Item — bottom button */}
+                <div className="mt-8 text-center">
+                    <Link href={ADD_NEW_ITEM_PATH}>
+                        <Button variant="brand" size="lg" className="text-white">
+                            <Plus className="w-5 h-5 mr-2" />
+                            Add new Item
+                        </Button>
+                    </Link>
                 </div>
             </div>
-        </>
+        </div>
     );
 }

@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { FreeMode } from 'swiper/modules'
+import { FreeMode, Navigation, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/free-mode'
 
@@ -27,11 +27,16 @@ export const CategoryFilterChips = ({
   return (
     <div className={cn('w-full', className)}>
       <Swiper
-        modules={[FreeMode]}
-        freeMode={{
-          enabled: true,
-          sticky: false,
-        }}
+       modules={[Navigation, Pagination]}
+       navigation={{
+        nextEl: '.swiper-button-next-categories',
+        prevEl: '.swiper-button-prev-categories',
+      }}
+      pagination={{
+        clickable: true,
+        el: '.swiper-pagination-categories',
+      }}
+      
         slidesPerView="auto"
         spaceBetween={8}
         className="!pb-2"
