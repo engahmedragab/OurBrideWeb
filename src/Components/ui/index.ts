@@ -35,6 +35,12 @@ export type {
 export { Input, inputVariants } from './Input'
 export type { InputProps } from './Input'
 
+export { Select, selectVariants } from './Select'
+export type { SelectProps } from './Select'
+
+export { SelectPopover } from './SelectPopover'
+export type { SelectPopoverProps, SelectOption } from './SelectPopover'
+
 export { PasswordInput, passwordInputVariants } from './PasswordInput'
 export type { PasswordInputProps } from './PasswordInput'
 

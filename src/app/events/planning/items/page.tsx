@@ -407,6 +407,7 @@ const INITIAL_ITEMS = [
 
 // CONSTANT ROUTES
 const ITEM_DETAILS_BASE_PATH = '/planning/items';
+const ADD_NEW_ITEM_PATH = '/events/planning/items/new';
 
 
 export default function ItemsPage() {
