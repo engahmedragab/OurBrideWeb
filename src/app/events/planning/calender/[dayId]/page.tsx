@@ -1,15 +1,17 @@
 'use client'
 
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { parseISO } from 'date-fns'
 import {
   ItineraryHeader,
   ItineraryList,
   AddEventButton,
+  AddEventModal,
+  EditEventModal,
   type ItineraryEvent,
 } from '@/components/planning'
 import { Button } from '@/components/ui/Button'
+import { parseDateSafe } from '@/lib/date-utils'
 
 const BIG_DAY_STORAGE_KEY = 'ourbride_big_days'
 
@@ -32,7 +34,7 @@ const saveBigDay = (dayId: string, isBigDay: boolean) => {
 }
 
 const createMockEvents = (dayId: string): ItineraryEvent[] => {
-  const baseDate = new Date(parseISO(dayId))
+  const baseDate = parseDateSafe(dayId)
   return [
     {
       id: '1',
@@ -75,11 +77,13 @@ const createMockEvents = (dayId: string): ItineraryEvent[] => {
 
 export default function CalenderDayPage() {
   const params = useParams()
-  const router = useRouter()
   const dayId = params?.dayId as string
 
   const [isBigDay, setIsBigDay] = useState(false)
   const [events, setEvents] = useState<ItineraryEvent[]>([])
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingEvent, setEditingEvent] = useState<ItineraryEvent | null>(null)
 
   useEffect(() => {
     if (dayId) {
@@ -93,7 +97,7 @@ export default function CalenderDayPage() {
     }
   }, [dayId])
 
-  const eventDate = dayId ? parseISO(dayId) : new Date()
+  const eventDate = dayId ? parseDateSafe(dayId) : new Date()
   const eventTitle = isBigDay ? 'The Big Day' : undefined
 
   const handleToggleBigDay = () => {
@@ -112,12 +116,38 @@ export default function CalenderDayPage() {
     if (!isBigDay) {
       handleToggleBigDay()
     } else {
-      console.log('Add new event')
+      setIsAddModalOpen(true)
     }
   }
 
+  const handleCreateEvent = (eventData: { startTime: Date; title: string; duration: number }) => {
+    const newEvent: ItineraryEvent = {
+      id: Date.now().toString(),
+      startTime: eventData.startTime,
+      title: eventData.title,
+      duration: eventData.duration,
+    }
+    
+    setEvents(prev => {
+      const updated = [...prev, newEvent]
+      return updated.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+    })
+  }
+
   const handleEditEvent = (event: ItineraryEvent) => {
-    console.log('Edit event:', event)
+    setEditingEvent(event)
+    setIsEditModalOpen(true)
+  }
+
+  const handleUpdateEvent = (eventId: string, eventData: { startTime: Date; title: string; duration: number }) => {
+    setEvents(prev => {
+      const updated = prev.map(e => 
+        e.id === eventId 
+          ? { ...e, ...eventData }
+          : e
+      )
+      return updated.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+    })
   }
 
   const handleDeleteEvent = (event: ItineraryEvent) => {
@@ -135,14 +165,6 @@ export default function CalenderDayPage() {
   return (
     <div className="w-full min-h-screen bg-white pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <button
-            onClick={() => router.push('/events/planning/calender')}
-            className="text-14 text-brand-500 hover:text-brand-600 mb-4"
-          >
-            ← Back to Calendar
-          </button>
-        </div>
 
         <ItineraryHeader
           date={eventDate}
@@ -160,6 +182,7 @@ export default function CalenderDayPage() {
               onClick={handleToggleBigDay}
               variant="brand"
               size="md"
+              className='text-white'
             >
               Mark as Big Day
             </Button>
@@ -187,7 +210,22 @@ export default function CalenderDayPage() {
         )}
       </div>
 
-      {isBigDay && <AddEventButton onClick={handleAddEvent} />}
+      {isBigDay && <AddEventButton onClick={handleAddEvent} className='lg:w-1/2 mx-auto'/>}
+      
+      <AddEventModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        baseDate={eventDate}
+        onCreate={handleCreateEvent}
+      />
+      
+      <EditEventModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        baseDate={eventDate}
+        event={editingEvent}
+        onUpdate={handleUpdateEvent}
+      />
     </div>
   )
 }

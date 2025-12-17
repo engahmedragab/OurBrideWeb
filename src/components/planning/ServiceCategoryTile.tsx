@@ -45,13 +45,13 @@ export const ServiceCategoryTile = ({
         <img
           src={service.icon.value}
           alt={service.title}
-          className="w-16 h-16 object-contain"
+          className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain"
         />
       )
     } else {
       const IconComponent = ICON_MAP[service.icon.value]
       if (IconComponent) {
-        return <IconComponent className="w-16 h-16 text-primary" />
+        return <IconComponent className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-primary" />
       }
       return null
     }
@@ -98,7 +98,7 @@ export const ServiceCategoryTile = ({
             e.stopPropagation()
             onDelete()
           }}
-          className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-red-500 text-white hover:bg-red-600 flex items-center justify-center transition-colors"
+          className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-primary  text-white hover:bg-red-600 flex items-center justify-center transition-colors"
           aria-label="Delete service"
         >
           <Trash2 className="h-5 w-5 md:h-4 md:w-4" />
@@ -123,8 +123,8 @@ export const ServiceCategoryTile = ({
             'cursor-pointer !h-full !py-4 !px-4',
             // Ensure card content wrapper is perfectly centered - remove any justify-start or top margins
             '[&>div]:!h-full [&>div]:flex [&>div]:flex-col [&>div]:items-center [&>div]:justify-center [&>div]:gap-0 [&>div]:!pt-0 [&>div]:!mt-0',
-            // Icon container - centered, proper spacing below
-            '[&>div>div:first-child]:w-16 [&>div>div:first-child]:h-16 [&>div>div:first-child]:flex-shrink-0 [&>div>div:first-child]:!mb-3 [&>div>div:first-child]:!mt-0',
+            // Icon container - centered, proper spacing below, responsive sizing
+            '[&>div>div:first-child]:w-10 [&>div>div:first-child]:sm:w-12 [&>div>div:first-child]:md:w-14 [&>div>div:first-child]:h-10 [&>div>div:first-child]:sm:h-12 [&>div>div:first-child]:md:h-14 [&>div>div:first-child]:flex-shrink-0 [&>div>div:first-child]:!mb-3 [&>div>div:first-child]:!mt-0',
             // Title wrapper - centered below icon, no extra gaps
             '[&>div>div:last-child]:flex [&>div>div:last-child]:flex-col [&>div>div:last-child]:items-center [&>div>div:last-child]:justify-center [&>div>div:last-child]:gap-0',
             // Title - responsive size: text-base on mobile, text-sm on md+, normal weight, centered

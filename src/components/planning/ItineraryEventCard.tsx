@@ -1,8 +1,14 @@
 'use client'
 
-import { MoreVertical } from 'lucide-react'
+import { MoreVertical, Edit, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu'
 
 export interface ItineraryEvent {
   id: string
@@ -59,15 +65,32 @@ export const ItineraryEventCard = ({
             <p className="text-14 text-gray-500 mb-1">Duration: {durationText}</p>
             <p className="text-14 text-gray-500">{event.title}</p>
           </div>
-          <button
-            onClick={() => {
-              if (onEdit) onEdit(event)
-            }}
-            className="p-1 hover:bg-brand-100 rounded transition-colors"
-            aria-label="Event options"
-          >
-            <MoreVertical className="h-5 w-5 text-gray-900" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="p-1 hover:bg-brand-100 rounded transition-colors"
+                aria-label="Event options"
+              >
+                <MoreVertical className="h-5 w-5 text-gray-900" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40 bg-white border border-gray-200">
+              <DropdownMenuItem
+                onClick={() => onEdit?.(event)}
+                className="cursor-pointer text-gray-900 hover:bg-brand-50 focus:bg-brand-50"
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Event
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete?.(event)}
+                className="cursor-pointer text-red-600 hover:bg-red-50 focus:text-red-600 focus:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Event
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>

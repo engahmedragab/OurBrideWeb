@@ -35,54 +35,18 @@ export const ItineraryHeader = ({
           <ArrowLeft className="h-5 w-5 text-gray-900" />
         </button>
         <h1 className="text-16 font-normal text-gray-900">Events Itinerary</h1>
-        <div className="flex items-center gap-2">
-          {onRefresh && (
-            <button
-              onClick={onRefresh}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Refresh"
-            >
-              <RefreshCw className="h-5 w-5 text-brand-500" />
-            </button>
-          )}
-          {onSave && (
-            <button
-              onClick={onSave}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Save"
-            >
-              <Save className="h-5 w-5 text-gray-900" />
-            </button>
-          )}
-        </div>
+    
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-col items-center justify-center ">
         <p className="text-14 text-gray-500 mb-1">
           Event Date : {formattedDate}
         </p>
         {eventTitle && (
-          <div className="flex items-center gap-2">
-            <h2 className="text-18 font-normal text-gray-900">{eventTitle}</h2>
+          <div className="flex flex-col items-center gap-2">
+            <h2 className="text-24 text-gray-400 font-medium">{eventTitle}</h2>
             <div className="h-0.5 w-12 bg-brand-500" />
-            <button
-              className="p-1 hover:bg-gray-100 rounded transition-colors"
-              aria-label="More options"
-            >
-              <svg
-                className="h-5 w-5 text-gray-900"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                />
-              </svg>
-            </button>
+           
           </div>
         )}
       </div>

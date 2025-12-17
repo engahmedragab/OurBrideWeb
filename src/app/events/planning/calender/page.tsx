@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Calendar from 'react-calendar'
-import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
+import { YearSelector, MonthSelector } from '@/components/planning'
+import { formatDateSafe, getToday } from '@/lib/date-utils'
 import 'react-calendar/dist/Calendar.css'
 
 type ValuePiece = Date | null
@@ -20,8 +21,12 @@ const getBigDays = (): string[] => {
 
 export default function CalenderPage() {
   const router = useRouter()
-  const [value, setValue] = useState<Value>(new Date())
+  const today = getToday()
+  const [value, setValue] = useState<Value>(today)
   const [bigDays, setBigDays] = useState<string[]>([])
+  const [activeStartDate, setActiveStartDate] = useState<Date>(today)
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear())
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth())
 
   useEffect(() => {
     setBigDays(getBigDays())
@@ -42,23 +47,43 @@ export default function CalenderPage() {
   }, [])
 
   const handleDateChange = (date: Value) => {
-    setValue(date)
     if (date instanceof Date) {
-      const dayId = format(date, 'yyyy-MM-dd')
+      const safeDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)
+      setValue(safeDate)
+      const dayId = formatDateSafe(safeDate)
       router.push(`/events/planning/calender/${dayId}`)
+    }
+  }
+
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year)
+    const newDate = new Date(year, selectedMonth, 1, 12, 0, 0)
+    setActiveStartDate(newDate)
+  }
+
+  const handleMonthChange = (month: number) => {
+    setSelectedMonth(month)
+    const newDate = new Date(selectedYear, month, 1, 12, 0, 0)
+    setActiveStartDate(newDate)
+  }
+
+  const handleActiveStartDateChange = ({ activeStartDate }: { activeStartDate: Date | null }) => {
+    if (activeStartDate) {
+      const safeDate = new Date(activeStartDate.getFullYear(), activeStartDate.getMonth(), 1, 12, 0, 0)
+      setActiveStartDate(safeDate)
+      setSelectedYear(safeDate.getFullYear())
+      setSelectedMonth(safeDate.getMonth())
     }
   }
 
   const tileClassName = ({ date, view }: { date: Date; view: string }) => {
     if (view === 'month') {
-      const dateKey = format(date, 'yyyy-MM-dd')
-      const isSelected = value instanceof Date && format(date, 'yyyy-MM-dd') === format(value, 'yyyy-MM-dd')
+      const dateKey = formatDateSafe(date)
       const isBigDay = bigDays.includes(dateKey)
       
       return cn(
-        'hover:bg-brand-50 transition-colors rounded-lg',
-        isSelected && 'bg-brand-500 text-white font-semibold',
-        isBigDay && !isSelected && 'bg-brand-100 border-2 border-brand-500'
+        'w-full hover:bg-brand-50 transition-colors rounded-lg',
+        isBigDay && 'bg-brand-100 border-2 border-brand-500'
       )
     }
     return ''
@@ -66,33 +91,56 @@ export default function CalenderPage() {
 
   const tileContent = ({ date, view }: { date: Date; view: string }) => {
     if (view === 'month') {
-      const dateKey = format(date, 'yyyy-MM-dd')
+      const dateKey = formatDateSafe(date)
+      const safeDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)
       const isBigDay = bigDays.includes(dateKey)
-      const isSelected = value instanceof Date && format(date, 'yyyy-MM-dd') === format(value, 'yyyy-MM-dd')
+      const dayNumber = safeDate.getDate()
       
-      if (isBigDay && !isSelected) {
-        return (
-          <div className="mt-1">
-            <div className="bg-brand-500 text-white text-8 font-medium px-1 py-0.5 rounded">
-              Big Day
-            </div>
+      return (
+        <div className="flex flex-col items-center justify-center w-full h-full gap-0.5">
+          <div className="text-sm sm:text-base md:text-lg font-normal text-gray-900">
+            {dayNumber}
           </div>
-        )
-      }
+          {isBigDay && (
+            <div className="mt-0.5">
+              <div className="bg-brand-500 text-white text-[10px] md:text-xs font-medium px-0.5 py-[1px] md:px-1 md:py-0.5 rounded">
+                Big Day
+              </div>
+            </div>
+          )}
+        </div>
+      )
     }
     return null
   }
 
   return (
-    <div className="w-full min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div className="w-full min-h-screen bg-white flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full">
+        <div className="mb-6 flex items-center gap-4 justify-center">
+          <YearSelector
+            selectedYear={selectedYear}
+            onChange={handleYearChange}
+          />
+          <MonthSelector
+            selectedMonth={selectedMonth}
+            onChange={handleMonthChange}
+          />
+        </div>
+
         <Calendar
           onChange={handleDateChange}
           value={value}
+          activeStartDate={activeStartDate}
+          onActiveStartDateChange={handleActiveStartDateChange}
           tileClassName={tileClassName}
           tileContent={tileContent}
+          formatDay={() => ''}
           className="!w-full rounded-lg !shadow-none !border-none"
-          minDate={new Date()}
+          minDate={today}
+          calendarType="iso8601"
+          showFixedNumberOfWeeks={true}
+          showNeighboringMonth={true}
         />
       </div>
     </div>
