@@ -22,10 +22,10 @@ export default function PlanningLayout({ children }: { children: ReactNode }) {
     if (pathname?.includes('/items')) return 'items'
     if (pathname?.includes('/budget')) return 'budget'
     if (pathname?.includes('/overview')) return 'overview'
-    if (pathname?.includes('/calender')) return 'calender'
+    if (pathname?.includes('/calendar') || pathname?.includes('/calender')) return 'calender'
     if (pathname?.includes('/invitation')) return 'invitation'
     if (pathname?.includes('/bookings')) return 'bookings'
-    return 'overview' // Default to coupons
+    return 'overview' // Default to overview
   }
 
   const activeTab = getActiveTab()
