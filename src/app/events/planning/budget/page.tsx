@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, RefreshCw, Camera, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/BudgetCategoryCard'
 import { SummaryMetricCard } from '@/components/ui/SummaryMetricCard'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import type { Swiper as SwiperType } from 'swiper'
 import { FreeMode } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/free-mode'
@@ -104,6 +105,7 @@ const mockBudgetCategories: BudgetCategory[] = [
 export default function BudgetPage() {
   const router = useRouter()
   const { addToast } = useToast()
+  const swiperRef = useRef<{ swiper: SwiperType } | null>(null)
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('all')
   const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>('cake')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -405,6 +407,7 @@ export default function BudgetPage() {
       <div className="mb-6 sm:mb-8">
         <div className="w-full">
           <Swiper
+            ref={swiperRef}
             modules={[FreeMode]}
             slidesPerView="auto"
             spaceBetween={8}
@@ -414,6 +417,13 @@ export default function BudgetPage() {
             observeParents={true}
             speed={300}
             touchEventsTarget="container"
+            onSwiper={(swiper) => {
+              // Force update after initialization
+              setTimeout(() => {
+                swiper.update()
+                swiper.updateSlides()
+              }, 100)
+            }}
             className="!pb-2"
           >
             {/* All Category */}
