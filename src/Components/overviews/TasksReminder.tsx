@@ -29,27 +29,25 @@ export const TasksReminder = ({ tasks, viewAllHref = '#' }: TasksReminderProps) 
           View All Tasks
         </Link>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-3 sm:space-y-4">
         {tasks.map(task => (
-          <div key={task.id} className="bg-white rounded-lg border border-gray-200 p-3 flex items-start gap-3">
+          <div key={task.id} className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 sm:p-5 flex items-start gap-2 sm:gap-3">
             <Checkbox
               checked={task.completed}
               onChange={() => {}}
               variant={task.completed ? 'successFilled' : 'gray'}
               shape="circle"
               size="sm"
-              className="mt-0.5 flex-shrink-0"
+              className="flex-shrink-0 mt-0.5"
             />
-            <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <p className={cn(
-                  'text-13 mb-1',
-                  task.completed ? 'line-through text-gray-400' : 'text-gray-900'
-                )}>
-                  {task.description}
-                </p>
-              </div>
-              <p className="text-11 text-gray-500 flex-shrink-0">
+            <div className="flex-1 min-w-0 flex flex-col gap-2">
+              <p className={cn(
+                'text-12 sm:text-13 md:text-14',
+                task.completed ? 'line-through text-gray-400' : 'text-gray-900'
+              )}>
+                {task.description}
+              </p>
+              <p className="text-12 text-gray-500">
                 Due : {format(new Date(task.dueDate), 'dd/MM/yyyy')}
               </p>
             </div>
