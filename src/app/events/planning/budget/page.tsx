@@ -11,10 +11,11 @@ import {
 } from '@/components/ui/BudgetCategoryCard'
 import { SummaryMetricCard } from '@/components/ui/SummaryMetricCard'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import type { Swiper as SwiperType } from 'swiper'
-import { FreeMode } from 'swiper/modules'
+import { FreeMode, Navigation, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/free-mode'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 import { AddBudgetItemModal } from '@/components/ui/AddBudgetItemModal'
 import { DeleteBudgetItemModal } from '@/components/ui/DeleteBudgetItemModal'
 import { useToast } from '@/components/ui/Toaster'
@@ -105,7 +106,7 @@ const mockBudgetCategories: BudgetCategory[] = [
 export default function BudgetPage() {
   const router = useRouter()
   const { addToast } = useToast()
-  const swiperRef = useRef<{ swiper: SwiperType } | null>(null)
+  const swiperRef = useRef<any>(null)
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('all')
   const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>('cake')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -412,17 +413,14 @@ export default function BudgetPage() {
             slidesPerView="auto"
             spaceBetween={8}
             freeMode={true}
-            watchOverflow={true}
             observer={true}
             observeParents={true}
-            speed={300}
-            touchEventsTarget="container"
             onSwiper={(swiper) => {
               // Force update after initialization
               setTimeout(() => {
                 swiper.update()
                 swiper.updateSlides()
-              }, 100)
+              }, 50)
             }}
             className="!pb-2"
           >
