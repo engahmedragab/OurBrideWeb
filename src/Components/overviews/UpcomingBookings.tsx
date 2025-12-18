@@ -38,15 +38,15 @@ export const UpcomingBookings = ({ bookings, imageSrc, viewAllHref = '/events/pl
       </div>
       <div className="space-y-3 sm:space-y-4">
         {bookings.map(booking => (
-          <div key={booking.id} className="bg-white rounded-lg border border-gray-200 flex items-stretch sm:items-start gap-0 relative">
+          <div key={booking.id} className="bg-white rounded-lg border border-gray-200 flex items-stretch gap-0 relative">
             {/* Image Thumbnail */}
-            <div className="w-24 sm:w-32 md:w-36 h-full sm:h-auto self-stretch sm:self-start rounded-l-lg rounded-r-none bg-gray-200 flex-shrink-0 overflow-hidden">
+            <div className="w-24 sm:w-32 md:w-36 self-stretch rounded-l-lg rounded-r-none bg-gray-200 flex-shrink-0 overflow-hidden relative">
               <Image
                 src={booking.imageSrc || imageSrc}
                 alt={booking.title}
-                width={144}
-                height={144}
-                className="w-full h-full sm:h-auto sm:max-h-36 object-cover"
+                fill
+                sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 144px"
+                className="object-cover"
               />
             </div>
             
@@ -57,21 +57,21 @@ export const UpcomingBookings = ({ bookings, imageSrc, viewAllHref = '/events/pl
                 {/* Badge - Show on mobile only, above title */}
                 <div className="sm:hidden flex flex-col gap-2">
                   {booking.status === 'pending' && (
-                    <Badge variant="pending" className="text-10 flex items-center gap-1 w-fit">
-                      <Sun className="w-2.5 h-2.5" />
-                      <span>Booking Pending</span>
+                    <Badge variant="pending" className="text-8 flex items-center gap-0.5 w-fit px-1.5 py-0.5">
+                      <Sun className="w-2 h-2" />
+                      <span className='text-[10px]'>Booking Pending</span>
                     </Badge>
                   )}
                   {booking.status === 'confirmed' && (
-                    <Badge variant="confirmed" className="text-10 flex items-center gap-1 w-fit">
-                      <CheckCircle2 className="w-2.5 h-2.5" />
-                      <span>Booking Confirmed</span>
+                    <Badge variant="confirmed" className="text-8 flex items-center gap-0.5 w-fit px-1.5 py-0.5">
+                      <CheckCircle2 className="w-2 h-2" />
+                      <span className='text-[10px]'>Booking Confirmed</span>
                     </Badge>
                   )}
                   {booking.status === 'canceled' && (
-                    <Badge variant="outline" className="text-10 flex items-center gap-1 w-fit border-red-500 text-red-500 bg-red-50">
-                      <X className="w-2.5 h-2.5" />
-                      <span>Booking Canceled</span>
+                    <Badge variant="outline" className="text-8 flex items-center gap-0.5 w-fit px-1.5 py-0.5 border-red-500 text-red-500 bg-red-50">
+                      <X className="w-2 h-2 rounded-full border border-red-500 text-red-500" />
+                      <span className='text-[10px]'>Booking Canceled</span>
                     </Badge>
                   )}
                   <p className="text-14 font-semibold text-gray-900">{booking.title}</p>
@@ -93,7 +93,7 @@ export const UpcomingBookings = ({ bookings, imageSrc, viewAllHref = '/events/pl
                   )}
                   {booking.status === 'canceled' && (
                     <Badge variant="outline" className="text-12 flex items-center gap-1 flex-shrink-0 border-red-500 text-red-500 bg-red-50">
-                      <X className="w-4 h-4" />
+                      <X className="w-3.5 h-3.5  rounded-full border border-red-500 text-red-500" />
                       <span>Booking Canceled</span>
                     </Badge>
                   )}

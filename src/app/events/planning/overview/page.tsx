@@ -169,7 +169,7 @@ export default function OverviewPage() {
       </div>
 
       {/* SECTION 5: Budget & Guests - Two Columns */}
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2">
         <BudgetPayments
           total={budgetStats.total}
           remaining={budgetStats.remaining}

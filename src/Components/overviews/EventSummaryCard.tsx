@@ -49,9 +49,9 @@ export const EventSummaryCard = ({
 
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-200">
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col md:flex-row">
         {/* Image Section */}
-        <div className="lg:w-1/3 h-40 lg:h-auto relative overflow-hidden">
+        <div className="md:w-1/3 h-40 md:h-auto relative overflow-hidden">
           <Image
             src={imageSrc}
             alt="Event Hero"
@@ -62,7 +62,7 @@ export const EventSummaryCard = ({
         </div>
 
         {/* Event Details */}
-        <div className="lg:w-2/3 p-4 lg:p-6 relative">
+        <div className="md:w-2/3 p-4 md:p-6 relative">
           {/* Action Buttons */}
           <div className="absolute top-3 right-3">
             <Link href={viewDetailsHref} className="text-brand-500 hover:text-brand-600 text-12 font-medium">
@@ -70,7 +70,7 @@ export const EventSummaryCard = ({
             </Link>
           </div>
 
-          <div className="mt-6 lg:mt-0">
+          <div className="mt-6 md:mt-0">
             <h1 className="text-22 sm:text-24 font-semibold text-gray-900 mb-2">{eventName}</h1>
             <div className="flex items-center gap-2 text-14 text-gray-600 mb-4">
               <Calendar className="w-4 h-4 text-brand-500" />
