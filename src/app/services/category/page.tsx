@@ -464,7 +464,7 @@ const mockServices: Service[] = [
     title: 'Wedding Album Photography',
     description: 'Professional wedding album photography services.',
     images: [
-      'https://images.unsplash.com/photo-1519741497674-611481863552?w=400',
+      ؤ,
     ],
     provider: {
       id: '17',
