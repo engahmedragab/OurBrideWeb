@@ -4,18 +4,11 @@ import { useState, useEffect } from 'react'
 import {
   PlanningServicesHeader,
   PreparationsSummaryCard,
-  ServicesGrid,
+  PreparationsTable,
   ServiceModal,
   ConfirmDialog,
 } from '@/components/planning'
 import type { PreparationService } from '@/types/planning'
-
-// Service type options
-const SERVICE_TYPES = [
-  { id: 'rent', label: 'Rent' },
-  { id: 'buy', label: 'Buy' },
-  { id: 'service', label: 'Service' },
-]
 
 // Initial dummy data
 const createInitialServices = (): PreparationService[] => [
@@ -95,16 +88,39 @@ export default function BookingsPage() {
     setIsConfirmDialogOpen(true)
   }
 
-  const handleSave = (serviceData: Omit<PreparationService, 'id'>) => {
+  const handleSave = (serviceData: {
+    completed: boolean
+    serviceKey: string
+    title: string
+    serviceType: 'rent' | 'buy'
+    quantity: number
+    cost: number
+    advancePayment: number
+    providerUserName: string
+    purchaseDate: string
+  }) => {
+    // Map the new payload to PreparationService format
+    const mappedService: Omit<PreparationService, 'id'> = {
+      title: serviceData.title,
+      icon: { kind: 'asset', value: serviceData.serviceKey },
+      serviceType: serviceData.serviceType,
+      quantity: serviceData.quantity,
+      cost: serviceData.cost,
+      advancePayment: serviceData.advancePayment,
+      providerUserName: serviceData.providerUserName,
+      purchaseDate: serviceData.purchaseDate || '',
+      completed: serviceData.completed,
+    }
+
     if (editingService) {
       // Edit existing
       setServices(prev =>
-        prev.map(s => (s.id === editingService.id ? { ...serviceData, id: s.id } : s))
+        prev.map(s => (s.id === editingService.id ? { ...mappedService, id: s.id } : s))
       )
     } else {
       // Add new
       const newService: PreparationService = {
-        ...serviceData,
+        ...mappedService,
         id: Date.now().toString(),
       }
       setServices(prev => [...prev, newService])
@@ -133,9 +149,9 @@ export default function BookingsPage() {
           <PreparationsSummaryCard total={total} completed={completed} />
         </div>
 
-        {/* Services Grid */}
+        {/* Preparations Table */}
         <div className="mb-8">
-          <ServicesGrid
+          <PreparationsTable
             services={services}
             onEdit={handleEdit}
             onDelete={handleDelete}
@@ -146,8 +162,25 @@ export default function BookingsPage() {
         <ServiceModal
           open={isModalOpen}
           mode={editingService ? 'edit' : 'add'}
-          initialValue={editingService}
-          serviceTypeOptions={SERVICE_TYPES}
+          initialValue={
+            editingService
+              ? {
+                  id: editingService.id,
+                  serviceKey:
+                    editingService.icon.kind === 'asset'
+                      ? editingService.icon.value
+                      : undefined,
+                  title: editingService.title,
+                  serviceType: editingService.serviceType,
+                  quantity: editingService.quantity,
+                  cost: editingService.cost,
+                  advancePayment: editingService.advancePayment,
+                  providerUserName: editingService.providerUserName,
+                  purchaseDate: editingService.purchaseDate || '',
+                  completed: editingService.completed,
+                }
+              : undefined
+          }
           onClose={() => {
             setIsModalOpen(false)
             setEditingService(undefined)

@@ -152,8 +152,10 @@ export default {
         warning: {
           DEFAULT: '#EAB308',
           50: '#FEFCE8',
+          55: '#FFF5CC', // Light yellow for in-progress badge background
           500: '#EAB308',
           600: '#CA8A04',
+          650: '#CCA300', // Dark yellow for in-progress badge text
           foreground: '#ffffff',
         },
         error: {
