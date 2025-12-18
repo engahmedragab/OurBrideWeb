@@ -10,14 +10,17 @@ import {
   type BudgetItem,
 } from '@/components/ui/BudgetCategoryCard'
 import { SummaryMetricCard } from '@/components/ui/SummaryMetricCard'
-import { CategoryFilterChips, type CategoryFilter } from '@/components/ui/CategoryFilterChips'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { FreeMode } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/free-mode'
 import { AddBudgetItemModal } from '@/components/ui/AddBudgetItemModal'
 import { DeleteBudgetItemModal } from '@/components/ui/DeleteBudgetItemModal'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
 
 // Mock data - Replace with actual API data
-const mockCategories: CategoryFilter[] = [
+const mockCategories = [
   { id: 'entertainment', name: 'Entertainment' },
   { id: 'beauty', name: 'Beauty & Health' },
   { id: 'cake', name: 'Cake' },
@@ -400,11 +403,57 @@ export default function BudgetPage() {
 
       {/* Category Filters */}
       <div className="mb-6 sm:mb-8">
-        <CategoryFilterChips
-          categories={mockCategories}
-          selectedCategoryId={selectedCategoryId}
-          onSelectCategory={setSelectedCategoryId}
-        />
+        <div className="w-full">
+          <Swiper
+            modules={[FreeMode]}
+            slidesPerView="auto"
+            spaceBetween={8}
+            freeMode={true}
+            watchOverflow={true}
+            observer={true}
+            observeParents={true}
+            speed={300}
+            touchEventsTarget="container"
+            className="!pb-2"
+          >
+            {/* All Category */}
+            <SwiperSlide className="!w-auto">
+              <button
+                onClick={() => setSelectedCategoryId('all')}
+                className={cn(
+                  'px-4 py-2 rounded-full text-14 font-medium transition-all duration-200',
+                  'whitespace-nowrap border',
+                  selectedCategoryId === 'all' || !selectedCategoryId
+                    ? 'bg-brand-500 text-white shadow-sm border-brand-500'
+                    : 'bg-white text-gray-700 border-brand-500 hover:bg-brand-50'
+                )}
+              >
+                All
+              </button>
+            </SwiperSlide>
+
+            {/* Category Chips */}
+            {mockCategories.map(category => {
+              const isSelected = selectedCategoryId === category.id
+              return (
+                <SwiperSlide key={category.id} className="!w-auto">
+                  <button
+                    onClick={() => setSelectedCategoryId(category.id)}
+                    className={cn(
+                      'px-4 py-2 rounded-full text-14 font-medium transition-all duration-200',
+                      'whitespace-nowrap border',
+                      isSelected
+                        ? 'bg-brand-500 text-white shadow-sm border-brand-500'
+                        : 'bg-white text-gray-700 border-brand-500 hover:bg-brand-50'
+                    )}
+                  >
+                    {category.name}
+                  </button>
+                </SwiperSlide>
+              )
+            })}
+          </Swiper>
+        </div>
       </div>
 
       {/* Summary Metrics */}
