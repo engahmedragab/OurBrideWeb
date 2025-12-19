@@ -32,6 +32,10 @@ export default function PlanningLayout({ children }: { children: ReactNode }) {
 
   const activeTab = getActiveTab()
 
+  // Split tabs into two rows for mobile (3 tabs per row)
+  const firstRowTabs = tabs.slice(0, 3)
+  const secondRowTabs = tabs.slice(3)
+
   return (
     <div className="w-full">
       {/* Page Header with Tabs */}

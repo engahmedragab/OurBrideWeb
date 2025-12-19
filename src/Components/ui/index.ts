@@ -35,6 +35,12 @@ export type {
 export { Input, inputVariants } from './Input'
 export type { InputProps } from './Input'
 
+export { Select, selectVariants } from './Select'
+export type { SelectProps } from './Select'
+
+export { SelectPopover } from './SelectPopover'
+export type { SelectPopoverProps, SelectOption } from './SelectPopover'
+
 export { PasswordInput, passwordInputVariants } from './PasswordInput'
 export type { PasswordInputProps } from './PasswordInput'
 
@@ -379,8 +385,5 @@ export type { TabsProps, TabItem } from './Tabs'
 export { GiftSentSuccessModal } from './GiftSentSuccessModal'
 export type { GiftSentSuccessModalProps } from './GiftSentSuccessModal'
 
-export { PromoHero } from './PromoHero'
-export type { PromoHeroProps } from './PromoHero'
-
-export { CategoryCard } from './CategoryCard'
-export type { CategoryCardProps } from './CategoryCard'
+export { CalendarEventBlock } from './CalendarEventBlock'
+export type { CalendarEventBlockProps, EventStatus } from './CalendarEventBlock'

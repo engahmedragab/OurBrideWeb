@@ -252,6 +252,185 @@
   }
 }
 
+/* React Calendar Custom Styling - Full Page */
+.react-calendar {
+  @apply bg-white border border-gray-200 rounded-lg font-poppins;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  padding: 1.5rem;
+}
+
+.react-calendar__navigation {
+  @apply flex items-center justify-between mb-6 sm:mb-8;
+  padding: 0.5rem 0;
+}
+
+.react-calendar__navigation button {
+  @apply text-gray-900 hover:bg-brand-50 rounded-lg transition-colors;
+  min-width: 48px;
+  min-height: 48px;
+  background: none;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  @apply bg-brand-50;
+}
+
+.react-calendar__navigation button[disabled] {
+  @apply opacity-30 cursor-not-allowed;
+}
+
+.react-calendar__navigation__label {
+  @apply text-16 sm:text-20 md:text-24 font-semibold text-gray-900;
+  pointer-events: none;
+}
+
+/* Hide week numbers column */
+.react-calendar__month-view__weekNumbers,
+.react-calendar__weekNumbers {
+  display: none !important;
+}
+
+.react-calendar__month-view__weekdays {
+  @apply text-12 sm:text-14 md:text-16 text-gray-900 font-medium mb-4;
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.react-calendar__month-view__weekdays > * {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  @apply text-gray-900;
+  padding: 0.75rem 0.5rem;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 0.5rem;
+}
+
+.react-calendar__month-view__days > * {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.react-calendar__tile {
+  @apply text-gray-900 font-normal rounded-lg transition-all;
+  width: 100%;
+  padding: 1rem 0.5rem;
+  min-height: 64px;
+  background: none;
+  text-align: center;
+  border: none;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  @apply bg-brand-50 scale-105;
+}
+
+.react-calendar__tile--now {
+  @apply bg-gray-100 font-semibold;
+}
+
+/* Remove active day styling - no selected/active state */
+.react-calendar__tile--active {
+  @apply bg-transparent text-gray-900;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  @apply bg-brand-50;
+}
+
+.react-calendar__tile.react-calendar__tile--active {
+  @apply bg-transparent text-gray-900;
+}
+
+.react-calendar__tile--neighboringMonth {
+  @apply text-gray-400 opacity-50;
+  pointer-events: none;
+}
+
+.react-calendar__tile--neighboringMonth > div {
+  opacity: 0.5;
+}
+
+/* Responsive adjustments - maintain grid structure */
+@media (min-width: 640px) {
+  .react-calendar__month-view__weekdays,
+  .react-calendar__month-view__days {
+    gap: 0.75rem;
+  }
+  
+  .react-calendar__tile {
+    min-height: 72px;
+    padding: 1.25rem 0.75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .react-calendar {
+    padding: 2rem;
+  }
+  
+  .react-calendar__month-view__weekdays,
+  .react-calendar__month-view__days {
+    gap: 1rem;
+  }
+  
+  .react-calendar__tile {
+    min-height: 80px;
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .react-calendar__month-view__weekdays,
+  .react-calendar__month-view__days {
+    gap: 1rem;
+  }
+  
+  .react-calendar__tile {
+    min-height: 96px;
+    padding: 2rem 1.25rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .react-calendar__month-view__weekdays,
+  .react-calendar__month-view__days {
+    gap: 1rem;
+  }
+  
+  .react-calendar__tile {
+    min-height: 112px;
+    padding: 2.5rem 1.5rem;
+  }
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(100%);
@@ -261,4 +440,43 @@
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+/* Limit native select dropdown height and enable scrolling */
+/* Note: Native select dropdowns are rendered by the browser/OS, so styling is limited */
+/* This CSS works best in modern browsers that support it */
+select#year-select,
+select#month-select {
+  /* Limit the visible options when using size attribute (if needed) */
+  max-height: 50vh;
+}
+
+/* Style select option list for better scrolling experience */
+select#year-select option,
+select#month-select option {
+  padding: 0.5rem 0.75rem;
+  line-height: 1.5;
+}
+
+/* For browsers that support styling the dropdown panel */
+select#year-select::-webkit-scrollbar,
+select#month-select::-webkit-scrollbar {
+  width: 8px;
+}
+
+select#year-select::-webkit-scrollbar-track,
+select#month-select::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+select#year-select::-webkit-scrollbar-thumb,
+select#month-select::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 4px;
+}
+
+select#year-select::-webkit-scrollbar-thumb:hover,
+select#month-select::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
 }
