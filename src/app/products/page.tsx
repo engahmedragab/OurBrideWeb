@@ -9,12 +9,16 @@ import {
   WhyBridesChooseProductsSection,
   BestProvidersSection,
 } from '@/components/products'
-import type { Product } from '@/types/product'
 import type {
   ProductCategory as CategoryType,
   Feature,
   Provider,
 } from '@/components/products'
+import {
+  useProductCategories,
+  useProductOffers,
+  useProducts,
+} from '@/hooks/products'
 import flowersImage from '@/assets/images/flowers.png'
 import perfumesIcon from '@/assets/category/perfumes.svg'
 import skinCareIcon from '@/assets/category/skin-care.svg'
@@ -24,145 +28,22 @@ import bodyCareIcon from '@/assets/category/body-soap.svg'
 import toolsDevicesIcon from '@/assets/category/tools-devices.svg'
 import hairDryerIcon from '@/assets/category/hair-dryer.svg'
 import whyBridesChooseProductsImage from '@/assets/images/bridProductSection.png'
+import { useMemo } from 'react'
 
-// Mock data - Replace with API calls
-const PRODUCT_CATEGORIES: CategoryType[] = [
-  {
-    id: 'perfumes',
-    title: 'Perfumes',
-    description: 'Exclusive coupons and discounts designed for your budget.',
-    href: '/products/perfumes',
-    icon: perfumesIcon,
-  },
-  {
-    id: 'makeup',
-    title: 'Makeup',
-    description: 'Exclusive coupons and discounts designed for your budget.',
-    href: '/products/makeup',
-    icon: toolsDevicesIcon,
-  },
-  {
-    id: 'skin-care',
-    title: 'Skin Care',
-    description: 'Exclusive coupons and discounts designed for your budget.',
-    href: '/products/skin-care',
-    icon: skinCareIcon,
-  },
-  {
-    id: 'boxes',
-    title: 'Boxes',
-    description: 'Exclusive coupons and discounts designed for your budget.',
-    href: '/products/boxes',
-    icon: boxesIcon,
-  },
-  {
-    id: 'hair-care',
-    title: 'Hair Care',
-    description: 'Exclusive coupons and discounts designed for your budget.',
-    href: '/products/hair-care',
-    icon: hairCareIcon,
-  },
-  {
-    id: 'body-care',
-    title: 'Body Care',
-    description: 'Exclusive coupons and discounts designed for your budget.',
-    href: '/products/body-care',
-    icon: bodyCareIcon,
-  },
-  {
-    id: 'tools-devices',
-    title: 'Tools & Devices',
-    description: 'Exclusive coupons and discounts designed for your budget.',
-    href: '/products/tools-devices',
-    icon: toolsDevicesIcon,
-  },
-  {
-    id: 'hair-dryer',
-    title: 'Hair-dryer',
-    description: 'Exclusive coupons and discounts designed for your budget.',
-    href: '/products/hair-dryer',
-    icon: hairDryerIcon,
-  },
-]
+// Category icon mapping - maps category slugs to icons
+const categoryIconMap: Record<string, string> = {
+  perfumes: perfumesIcon,
+  makeup: toolsDevicesIcon,
+  'skin-care': skinCareIcon,
+  boxes: boxesIcon,
+  'hair-care': hairCareIcon,
+  'body-care': bodyCareIcon,
+  'tools-devices': toolsDevicesIcon,
+  'hair-dryer': hairDryerIcon,
+}
 
-const mockProducts: Product[] = [
-  {
-    id: '1',
-    title: 'Product Title',
-    description: 'Premium quality wedding cream for bridal beauty.',
-    images: [
-      'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-    ],
-    provider: {
-      id: '1',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 128 },
-    category: { id: '1', name: 'Makeup', slug: 'makeup' },
-    tags: ['Makeup', 'Body Care', 'Tag', 'Tag'],
-    inStock: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '2',
-    title: 'Product Title',
-    description: 'Complete bridal makeup kit for your special day.',
-    images: [
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-    ],
-    provider: {
-      id: '2',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 89 },
-    category: { id: '1', name: 'Makeup', slug: 'makeup' },
-    tags: ['Makeup', 'Body Care', 'Tag', 'Tag'],
-    inStock: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '3',
-    title: 'Product Title',
-    description: 'Professional hair care products for wedding styling.',
-    images: [
-      'https://images.unsplash.com/photo-1583241801824-9055b66b9d29?w=400',
-    ],
-    provider: {
-      id: '3',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 67 },
-    category: { id: '2', name: 'Hair Care', slug: 'hair-care' },
-    tags: ['Makeup', 'Body Care', 'Tag', 'Tag'],
-    inStock: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '4',
-    title: 'Product Title',
-    description: 'Complete skincare routine for glowing bridal skin.',
-    images: [
-      'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-    ],
-    provider: {
-      id: '4',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 94 },
-    category: { id: '3', name: 'Skin Care', slug: 'skin-care' },
-    tags: ['Makeup', 'Body Care', 'Tag', 'Tag'],
-    inStock: true,
-    showTopOfferBadge: true,
-  },
-]
+// Default icon fallback
+const defaultCategoryIcon = toolsDevicesIcon
 
 const features: Feature[] = [
   {
@@ -269,16 +150,52 @@ const heroSlides = [
 ]
 
 export default function ProductIntroPage() {
-  const handleWishlistToggle = (productId: string) => {
+  // Fetch data using hooks
+  const { data: categories = [], isLoading: categoriesLoading } = useProductCategories()
+  const { data: offerProducts = [], isLoading: offersLoading } = useProductOffers()
+  const { data: allProducts = [], isLoading: productsLoading } = useProducts({
+    pageSize: 8,
+  })
+
+  // Map API categories to component format
+  const mappedCategories: CategoryType[] = useMemo(() => {
+    return categories.map(category => ({
+      id: category.id,
+      title: category.name,
+      description: 'Exclusive coupons and discounts designed for your budget.',
+      href: `/products/category/${category.slug || category.id}`,
+      icon: categoryIconMap[category.slug] || defaultCategoryIcon,
+    }))
+  }, [categories])
+
+  // Use offer products if available, otherwise use regular products
+  const displayProducts = offerProducts.length > 0 ? offerProducts : allProducts.slice(0, 4)
+
+  const handleWishlistToggle = (_productId: string) => {
     // TODO: Implement wishlist toggle
   }
 
-  const handleAddToCart = (productId: string) => {
+  const handleAddToCart = (_productId: string) => {
     // TODO: Implement add to cart
   }
 
-  const handleSubscribe = (email: string) => {
+  const handleSubscribe = (_email: string) => {
     // TODO: Implement newsletter subscription
+  }
+
+  // Show loading state
+  if (categoriesLoading || offersLoading || productsLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 bg-white flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-18 text-gray-600">Loading products...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   return (
@@ -296,23 +213,27 @@ export default function ProductIntroPage() {
         {/* Consistent container wrapper for all other sections */}
         <div className="container-custom">
           {/* 2) ProductCategoriesSection */}
-          <ProductCategoriesSection
-            categories={PRODUCT_CATEGORIES}
-            topText="Choose"
-            highlightText="From"
-            bottomText="Our Product"
-            bottomHighlightText="Categories"
-            headerAlignment="center"
-          />
+          {mappedCategories.length > 0 && (
+            <ProductCategoriesSection
+              categories={mappedCategories}
+              topText="Choose"
+              highlightText="From"
+              bottomText="Our Product"
+              bottomHighlightText="Categories"
+              headerAlignment="center"
+            />
+          )}
 
           {/* 3) ProductOffersSection */}
-          <ProductOffersSection
-            products={mockProducts}
-            timerText="23 H 45 Min"
-            title="Today's Best Product Offers"
-            onWishlistToggle={handleWishlistToggle}
-            onAddToCart={handleAddToCart}
-          />
+          {displayProducts.length > 0 && (
+            <ProductOffersSection
+              products={displayProducts}
+              timerText="23 H 45 Min"
+              title="Today's Best Product Offers"
+              onWishlistToggle={handleWishlistToggle}
+              onAddToCart={handleAddToCart}
+            />
+          )}
 
           {/* 4) WhyBridesChooseProductsSection */}
           <WhyBridesChooseProductsSection

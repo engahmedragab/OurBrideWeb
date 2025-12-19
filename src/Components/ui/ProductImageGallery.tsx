@@ -14,17 +14,22 @@ export const ProductImageGallery = ({
   productName,
   className,
 }: ProductImageGalleryProps) => {
+  // Filter out empty strings and invalid image URLs
+  const validImages = images.filter(
+    img => img && typeof img === 'string' && img.trim() !== ''
+  )
+  
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   const goToPrevious = () => {
-    setSelectedIndex(prev => (prev === 0 ? images.length - 1 : prev - 1))
+    setSelectedIndex(prev => (prev === 0 ? validImages.length - 1 : prev - 1))
   }
 
   const goToNext = () => {
-    setSelectedIndex(prev => (prev === images.length - 1 ? 0 : prev + 1))
+    setSelectedIndex(prev => (prev === validImages.length - 1 ? 0 : prev + 1))
   }
 
-  if (images.length === 0) {
+  if (validImages.length === 0) {
     return (
       <div className={cn('aspect-square bg-gray-100 rounded-xl', className)}>
         <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -38,17 +43,23 @@ export const ProductImageGallery = ({
     <div className={cn('space-y-4', className)}>
       {/* Main Image */}
       <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden group">
-        <Image
-          src={images[selectedIndex]}
-          alt={`${productName} - Image ${selectedIndex + 1}`}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover"
-          priority={selectedIndex === 0}
-        />
+        {validImages[selectedIndex] ? (
+          <Image
+            src={validImages[selectedIndex]}
+            alt={`${productName} - Image ${selectedIndex + 1}`}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+            priority={selectedIndex === 0}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-400">
+            No image
+          </div>
+        )}
 
         {/* Navigation Arrows */}
-        {images.length > 1 && (
+        {validImages.length > 1 && (
           <>
             <button
               onClick={goToPrevious}
@@ -68,17 +79,17 @@ export const ProductImageGallery = ({
         )}
 
         {/* Image Counter */}
-        {images.length > 1 && (
+        {validImages.length > 1 && (
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-12 px-3 py-1 rounded-full">
-            {selectedIndex + 1} / {images.length}
+            {selectedIndex + 1} / {validImages.length}
           </div>
         )}
       </div>
 
       {/* Thumbnail Gallery */}
-      {images.length > 1 && (
+      {validImages.length > 1 && (
         <div className="grid grid-cols-4 gap-3">
-          {images.map((image, index) => (
+          {validImages.map((image, index) => (
             <button
               key={index}
               onClick={() => setSelectedIndex(index)}
@@ -89,13 +100,19 @@ export const ProductImageGallery = ({
                   : 'border-gray-200 hover:border-gray-300'
               )}
             >
-              <Image
-                src={image}
-                alt={`${productName} thumbnail ${index + 1}`}
-                fill
-                sizes="(max-width: 768px) 25vw, 12vw"
-                className="object-cover"
-              />
+              {image && image.trim() !== '' ? (
+                <Image
+                  src={image}
+                  alt={`${productName} thumbnail ${index + 1}`}
+                  fill
+                  sizes="(max-width: 768px) 25vw, 12vw"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-10">
+                  No image
+                </div>
+              )}
             </button>
           ))}
         </div>

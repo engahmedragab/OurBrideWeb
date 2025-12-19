@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, use } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -23,56 +23,9 @@ import productImage from '@/assets/svg/product-1.svg'
 import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
 import type { ProductCardData } from '@/components/ui/Card'
 import type { Product } from '@/types/product'
+import { useProductDetails, useRelatedProducts } from '@/hooks/products'
 
-// Mock data - Replace with API call
-const mockProduct: Product = {
-  id: '1',
-  title: 'Product Name : it could be that long so it will be in two Rows',
-  description:
-    'Premium quality wedding cream for bridal beauty. Perfect for your special day.',
-  longDescription:
-    'This essential wedding cream is specially formulated for brides who want to look their absolute best on their special day. Made with premium ingredients, it provides long-lasting hydration and a radiant glow. Perfect for all skin types, this cream ensures your skin looks flawless in photos and throughout your wedding celebration. The formula is lightweight yet deeply nourishing, creating a perfect base for makeup application. It contains natural extracts that help reduce inflammation and promote healthy, glowing skin. Regular use will leave your skin feeling soft, smooth, and ready for your special day.',
-  images: [
-    'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=800',
-    'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800',
-    'https://images.unsplash.com/photo-1583241801824-9055b66b9d29?w=800',
-    'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800',
-  ],
-  provider: {
-    id: '1',
-    name: 'Aroma & Co.',
-    verified: true,
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-  },
-  price: {
-    original: 6000,
-    discounted: 4800,
-    currency: 'LE',
-  },
-  rating: {
-    value: 4.8,
-    count: 8264,
-  },
-  category: {
-    id: '1',
-    name: 'Makeup',
-    slug: 'makeup',
-  },
-  tags: ['Makeup', 'Body Care', 'Wedding', 'Premium'],
-  inStock: true,
-  stockQuantity: 50,
-  sku: '50-42-7010',
-  specifications: [
-    { label: 'Brand', value: 'YUNJAC' },
-    { label: 'Size', value: '100ml' },
-    { label: 'Type', value: 'Cream' },
-    { label: 'Skin Type', value: 'All Types' },
-  ],
-  isWishlisted: false,
-  showTopOfferBadge: true,
-}
-
-// Mock reviews
+// Mock reviews (TODO: Replace with API call when reviews endpoint is available)
 interface Review {
   id: string
   userName: string
@@ -133,56 +86,6 @@ const ratingDistribution = [
   { stars: 1, count: 165, percentage: 2 },
 ]
 
-// Mock suggested products
-const mockSuggestedProducts: ProductCardData[] = [
-  {
-    id: '2',
-    image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-    title: 'Bridal Makeup Kit',
-    providerName: 'Beauty Pro',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 5000,
-    discountedPrice: 4500,
-    tags: ['Makeup', 'Kit'],
-    showTopOfferBadge: true,
-  },
-  {
-    id: '3',
-    image: 'https://images.unsplash.com/photo-1583241801824-9055b66b9d29?w=400',
-    title: 'Hair Care Essentials',
-    providerName: 'Hair Studio',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 5500,
-    discountedPrice: 4500,
-    tags: ['Hair', 'Care'],
-  },
-  {
-    id: '4',
-    image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-    title: 'Skin Care Bundle',
-    providerName: 'Skincare Co',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 6000,
-    discountedPrice: 4500,
-    tags: ['Skin', 'Care'],
-  },
-  {
-    id: '5',
-    image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-    title: 'Premium Face Cream',
-    providerName: 'YUNJAC',
-    verified: true,
-    rating: 4.7,
-    originalPrice: 7000,
-    discountedPrice: 5500,
-    tags: ['Face', 'Cream'],
-    showTopOfferBadge: true,
-  },
-]
-
 export default function ProductDetail({
   params,
 }: {
@@ -191,22 +94,54 @@ export default function ProductDetail({
   const { id } = use(params)
   const router = useRouter()
   const [quantity, setQuantity] = useState(1)
-  const [product, setProduct] = useState(mockProduct)
   const [userRating, setUserRating] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
 
-  // Fetch product based on id - Replace with API call
-  useEffect(() => {
-    if (id) {
-      // TODO: Replace with actual API call
-      // const fetchProduct = async () => {
-      //   const data = await getProductById(id)
-      //   setProduct(data)
-      // }
-      // fetchProduct()
-      setProduct(mockProduct)
-    }
-  }, [id])
+  // Fetch product using hook
+  const {
+    data: product,
+    isLoading: productLoading,
+    error: productError,
+  } = useProductDetails(id)
+
+  // Fetch related products
+  const { data: relatedProducts = [] } = useRelatedProducts(
+    id ? parseInt(id, 10) : null,
+    4
+  )
+
+  // Show loading state
+  if (productLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-18 text-gray-600">Loading product...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Show error state
+  if (productError || !product) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-18 text-gray-600 mb-4">
+              Product not found
+            </div>
+            <BackButton href="/products" label="Back to Products" />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   const handleAddToCart = () => {
     // TODO: Implement add to cart
@@ -370,7 +305,19 @@ export default function ProductDetail({
               </div>
 
               <div className="space-y-4">
-                {mockReviews.map(review => (
+                {/* Use product reviews if available, otherwise show mock reviews */}
+                {(product.reviews && product.reviews.length > 0
+                  ? product.reviews.map(review => ({
+                      id: review.id,
+                      userName: review.userName,
+                      userAvatar: review.userImage,
+                      date: review.date,
+                      rating: review.rating,
+                      text: review.comment,
+                      helpful: review.helpful,
+                    }))
+                  : mockReviews
+                ).map(review => (
                   <div
                     key={review.id}
                     className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
@@ -521,6 +468,7 @@ export default function ProductDetail({
                 </div>
 
                 {/* Rating Breakdown */}
+                {/* TODO: Calculate rating distribution from product.reviews */}
                 <div className="space-y-3 mt-6">
                   {ratingDistribution.map(item => (
                     <div key={item.stars} className="space-y-1">
@@ -559,28 +507,42 @@ export default function ProductDetail({
           />
 
           {/* Suggested for You Section */}
-          <section className="mb-12 max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-30 md:text-32 font-normal text-gray-900">
-                Suggested for You
-              </h2>
-              <Link
-                href="/products"
-                className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
-              >
-                View All
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {mockSuggestedProducts.map(product => (
-                <Card
-                  key={product.id}
-                  cardData={{ type: 'product', ...product }}
-                />
-              ))}
-            </div>
-          </section>
+          {relatedProducts.length > 0 && (
+            <section className="mb-12 max-w-7xl mx-auto">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-30 md:text-32 font-normal text-gray-900">
+                  Suggested for You
+                </h2>
+                <Link
+                  href="/products"
+                  className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
+                >
+                  View All
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {relatedProducts.map(product => (
+                  <Card
+                    key={product.id}
+                    cardData={{
+                      type: 'product',
+                      id: product.id,
+                      image: product.images[0] || '',
+                      title: product.title,
+                      providerName: product.provider.name,
+                      verified: product.provider.verified,
+                      rating: product.rating.value,
+                      originalPrice: product.price.original,
+                      discountedPrice: product.price.discounted,
+                      tags: product.tags,
+                      showTopOfferBadge: product.showTopOfferBadge,
+                    }}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </main>
       <Footer />
