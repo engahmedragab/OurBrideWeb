@@ -172,7 +172,7 @@ export const ProductCard = React.memo(({
             onClick={() => onAddToCart?.(product.id)}
             disabled={!product.inStock}
           >
-            Add to Cart
+           Buy Now
           </Button>
         </div>
 

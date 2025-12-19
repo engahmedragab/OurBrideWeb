@@ -2,307 +2,130 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { UserPageLayout } from '@/components/layout'
-import { Input, Button } from '@/components/ui'
-import { Heart, MessageCircle, Share2, MoreVertical } from 'lucide-react'
+import { Button } from '@/components/ui'
+import { PostCard } from '@/components/community/PostCard'
 
 /**
  * User Profile Page
  * Displays user profile information with personal details form and activity feed
  */
 export default function ProfilePage() {
-  const [formData, setFormData] = useState({
-    firstName: 'Aya',
-    lastName: 'Mohamed',
-    gender: 'Female',
-    phone: '+12123854879',
-    email: 'azamohamed@example.com',
-  })
-
-  const [profileImage, setProfileImage] = useState(
+  const router = useRouter()
+  const [profileImage] = useState(
     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200'
   )
-  const [isEditing, setIsEditing] = useState(false)
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
+
+  // Mock user data
+  const userData = {
+    name: 'Aya Mohamed',
+    postsCount: 5,
+    followersCount: 150,
+    followingsCount: 150,
+  }
 
   // Mock user posts/activity data
   const userPosts = [
     {
       id: '1',
-      user: {
+      author: {
         name: 'Aya Mohamed',
-        image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       },
-      date: '15 Aug 2025, 12:28 PM',
+      timestamp: '18 Aug 2025 12:45 PM',
       content:
-        'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie sit cras at sed lectus porta scelerisque. Tempus odio vitae nulla feugiat ornare non tempor sed maximus semper aliqueti facilisis lacum elementum sagittis enim dignissim nullam nibh tempus turpis erat. Sit id molestie boncus id.',
+        'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque.',
       images: [],
-      likes: 49,
-      comments: 31,
+      likes: 20,
+      comments: 20,
+      shares: 20,
     },
     {
       id: '2',
-      user: {
+      author: {
         name: 'Aya Mohamed',
-        image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       },
-      date: '15 Aug 2025, 12:28 PM',
+      timestamp: '18 Aug 2025 12:45 PM',
       content:
-        'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie sit cras at sed lectus porta scelerisque. Tempus odio vitae nulla feugiat ornare non tempor sed maximus semper aliqueti facilisis lacum elementum sagittis enim dignissim nullam nibh tempus turpis erat. Sit id molestie boncus id.',
+        'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque.',
       images: [
         'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=400',
         'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=400',
         'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=400',
-        'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=400',
       ],
-      likes: 49,
-      comments: 39,
+      likes: 20,
+      comments: 20,
+      shares: 20,
     },
   ]
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
-
-  const handleSave = () => {
-    // TODO: Implement save logic
-    setIsEditing(false)
-  }
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const handleImageClick = () => {
-    if (isEditing) {
-      fileInputRef.current?.click()
-    }
-  }
-
   return (
     <UserPageLayout>
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Main Content - Feed */}
-        <div className="flex-1 space-y-6 min-w-0">
-          <h1 className="text-24 sm:text-28 md:text-32 font-semibold text-gray-900">User Profile</h1>
+      <div className="flex flex-col space-y-6">
+        {/* Profile Header Section */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
+          <div className="flex items-center gap-4">
+            {/* Profile Picture */}
+            <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
+              <Image
+                src={profileImage}
+                alt={userData.name}
+                fill
+                sizes="(max-width: 640px) 64px, 80px"
+                className="rounded-full object-cover"
+              />
+            </div>
 
-          {/* Posts Feed */}
-          <div className="space-y-4">
-            {userPosts.map(post => (
-              <div
-                key={post.id}
-                className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6"
-              >
-                {/* Post Header */}
-                <div className="flex items-start justify-between mb-3 sm:mb-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={post.user.image}
-                      alt={post.user.name}
-                      className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                    />
-                    <div>
-                      <h3 className="text-16 font-semibold text-gray-900">
-                        {post.user.name}
-                      </h3>
-                      <p className="text-12 text-gray-500">{post.date}</p>
-                    </div>
-                  </div>
-                  <button
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                    aria-label="More options"
-                  >
-                    <MoreVertical className="h-5 w-5 text-gray-500" />
-                  </button>
+            {/* Name and Stats */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-18 sm:text-20 font-normal text-gray-900">
+                  {userData.name}
+                </h1>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-14 font-normal text-brand-500 hover:text-brand-600 hover:bg-transparent p-0 h-auto"
+                  onClick={() => router.push('/profile/edit')}
+                >
+                  Edit
+                </Button>
+              </div>
+
+              {/* Stats */}
+              <div className="flex items-center gap-4 sm:gap-6">
+                <div className="text-14 font-normal text-gray-900">
+                  {userData.postsCount} Posts
                 </div>
-
-                {/* Post Content */}
-                <p className="text-14 text-gray-700 mb-4 leading-relaxed">
-                  {post.content}
-                </p>
-
-                {/* Post Images */}
-                {post.images.length > 0 && (
-                  <div className="grid grid-cols-2 sm:grid-cols-2 gap-2 mb-4">
-                    {post.images.map((image, index) => (
-                      <div
-                        key={index}
-                        className="relative aspect-video rounded-lg overflow-hidden bg-gray-100"
-                      >
-                        <Image
-                          src={image}
-                          alt={`Post image ${index + 1}`}
-                          fill
-                          sizes="(max-width: 640px) 50vw, 33vw"
-                          className="object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Post Actions */}
-                <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
-                  <button className="flex items-center gap-2 text-14 text-gray-700 hover:text-brand-500 transition-colors">
-                    <Heart className="h-5 w-5" />
-                    <span>{post.likes}</span>
-                  </button>
-                  <button className="flex items-center gap-2 text-14 text-gray-700 hover:text-brand-500 transition-colors">
-                    <MessageCircle className="h-5 w-5" />
-                    <span>{post.comments}</span>
-                  </button>
-                  <button
-                    className="flex items-center gap-2 text-14 text-gray-700 hover:text-brand-500 transition-colors ml-auto"
-                    aria-label="Share post"
-                  >
-                    <Share2 className="h-5 w-5" />
-                  </button>
+                <div className="text-14 font-normal text-gray-900">
+                  {userData.followersCount} Followers
+                </div>
+                <div className="text-14 font-normal text-gray-900">
+                  {userData.followingsCount} Followings
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
 
-        {/* Sidebar - Personal Details */}
-        <aside className="w-full lg:w-80 flex-shrink-0">
-          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 sticky top-6">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h2 className="text-16 sm:text-18 font-semibold text-gray-900">
-                Personal Details
-              </h2>
-              <button
-                onClick={() => setIsEditing(!isEditing)}
-                className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
-              >
-                {isEditing ? 'Cancel' : 'Edit'}
-              </button>
-            </div>
-
-            {/* Profile Image */}
-            <div className="flex justify-center mb-4 sm:mb-6">
-              <div className="relative group w-20 h-20 sm:w-24 sm:h-24">
-                <Image
-                  src={profileImage}
-                  alt="Profile"
-                  fill
-                  sizes="(max-width: 640px) 80px, 96px"
-                  className={`rounded-full object-cover border-2 border-gray-200 ${
-                    isEditing ? 'cursor-pointer' : ''
-                  }`}
-                  onClick={handleImageClick}
-                />
-                {isEditing && (
-                  <div
-                    className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                    onClick={handleImageClick}
-                  >
-                    <span className="text-white text-12 font-medium">
-                      Change Photo
-                    </span>
-                  </div>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </div>
-            </div>
-
-            {/* Form Fields */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-14 font-medium text-gray-700 mb-1">
-                  First Name
-                </label>
-                <Input
-                  value={formData.firstName}
-                  onChange={e => handleInputChange('firstName', e.target.value)}
-                  disabled={!isEditing}
-                  placeholder="First Name"
-                  variant={isEditing ? 'default' : 'fill'}
-                  size="lg"
-                />
-              </div>
-
-              <div>
-                <label className="block text-14 font-medium text-gray-700 mb-1">
-                  Last Name
-                </label>
-                <Input
-                  value={formData.lastName}
-                  onChange={e => handleInputChange('lastName', e.target.value)}
-                  disabled={!isEditing}
-                  placeholder="Last Name"
-                  variant={isEditing ? 'default' : 'fill'}
-                  size="lg"
-                />
-              </div>
-
-              <div>
-                <label className="block text-14 font-medium text-gray-700 mb-1">
-                  Gender
-                </label>
-                <Input
-                  value={formData.gender}
-                  onChange={e => handleInputChange('gender', e.target.value)}
-                  disabled={!isEditing}
-                  placeholder="Gender"
-                  variant={isEditing ? 'default' : 'fill'}
-                  size="lg"
-                />
-              </div>
-
-              <div>
-                <label className="block text-14 font-medium text-gray-700 mb-1">
-                  Phone Number
-                </label>
-                <Input
-                  value={formData.phone}
-                  onChange={e => handleInputChange('phone', e.target.value)}
-                  disabled={!isEditing}
-                  placeholder="Phone Number"
-                  variant={isEditing ? 'default' : 'fill'}
-                  size="lg"
-                />
-              </div>
-
-              <div>
-                <label className="block text-14 font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <Input
-                  value={formData.email}
-                  onChange={e => handleInputChange('email', e.target.value)}
-                  disabled={!isEditing}
-                  placeholder="Email Address"
-                  variant={isEditing ? 'default' : 'fill'}
-                  size="lg"
-                />
-              </div>
-
-              {isEditing && (
-                <Button
-                  variant="brand"
-                  className="w-full text-white"
-                  onClick={handleSave}
-                >
-                  Save Changes
-                </Button>
-              )}
-            </div>
-          </div>
-        </aside>
+        {/* Posts Feed */}
+        <div className="space-y-4">
+          {userPosts.map(post => (
+            <PostCard
+              key={post.id}
+              id={post.id}
+              author={post.author}
+              content={post.content}
+              images={post.images}
+              timestamp={post.timestamp}
+              likes={post.likes}
+              comments={post.comments}
+              shares={post.shares}
+            />
+          ))}
+        </div>
       </div>
     </UserPageLayout>
   )

@@ -2,3 +2,4 @@
 export * from './product'
 export * from './service'
 export * from './message'
+export * from './planning'

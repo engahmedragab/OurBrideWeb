@@ -32,18 +32,10 @@ export const QuantitySelector = ({
     }
   }
 
-  const borderColor =
-    variant === 'coral' ? 'border-2 border-[#FF8B7A]' : 'border border-gray-300'
-  const buttonColor =
-    variant === 'coral'
-      ? 'text-[#FF8B7A] hover:bg-[#FF8B7A]/10'
-      : 'hover:bg-gray-50'
-
   return (
     <div
       className={cn(
-        'flex items-center gap-3 rounded-lg bg-white w-fit',
-        borderColor,
+        'flex items-center gap-3 rounded-lg bg-white w-full justify-center',
         className
       )}
     >
@@ -51,22 +43,26 @@ export const QuantitySelector = ({
         onClick={handleDecrease}
         disabled={disabled || quantity <= min}
         className={cn(
-          'p-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
-          buttonColor
+          'h-10 w-10 rounded-full border-2 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2',
+          variant === 'coral'
+            ? 'border-brand-500 bg-white hover:bg-brand-50 hover:border-brand-600 text-brand-500 focus:ring-brand-500'
+            : 'border-gray-300 hover:bg-gray-50 text-gray-600 focus:ring-gray-300'
         )}
         aria-label="Decrease quantity"
       >
         <Minus className="h-4 w-4" />
       </button>
-      <span className="text-16 font-semibold text-gray-900 w-8 text-center">
-        {quantity}
-      </span>
+      <div className="min-w-[60px] text-center px-2">
+        <span className="text-16 font-semibold text-gray-900">{quantity}</span>
+      </div>
       <button
         onClick={handleIncrease}
         disabled={disabled || quantity >= max}
         className={cn(
-          'p-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
-          buttonColor
+          'h-10 w-10 rounded-full border-2 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2',
+          variant === 'coral'
+            ? 'border-brand-500 bg-white hover:bg-brand-50 hover:border-brand-600 text-brand-500 focus:ring-brand-500'
+            : 'border-gray-300 hover:bg-gray-50 text-gray-600 focus:ring-gray-300'
         )}
         aria-label="Increase quantity"
       >

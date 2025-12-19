@@ -1,39 +1,37 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import {
-  ServiceGrid,
-  ServiceList,
-  ProductFilters,
-  ProductSort,
   HeroCarousel,
-  Button,
   OfferBanner,
-  SearchInput,
-  Pagination,
+  Card,
+  type ServiceCardData,
+  type HeroSlide,
 } from '@/components/ui'
-import { Grid3x3, List } from 'lucide-react'
+import { WhyBridesChooseProductsSection } from '@/components/products/WhyBridesChooseProductsSection'
+import {
+  ProductCategoriesSection,
+  type ProductCategory,
+} from '@/components/products/ProductCategoriesSection'
+import { BestProvidersSection } from '@/components/products/BestProvidersSection'
+import type { Provider as BestProvider } from '@/components/products/BestProvidersSection'
+import { AccessoriesIcon } from '@/assets/icons/AccessoriesIcon'
+import { BouquetIcon } from '@/assets/icons/BouquetIcon'
+import { BridalBeautyIcon } from '@/assets/icons/BridalBeautyIcon'
+import { PhotographyIcon } from '@/assets/icons/PhotographyIcon'
+import { WeddingCakeIcon } from '@/assets/icons/WeddingCakeIcon'
+import { WeddingDressIcon } from '@/assets/icons/WeddingDressIcon'
+import { WeddingHallIcon } from '@/assets/icons/WeddingHallIcon'
+import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
 import flowersImage from '@/assets/images/flowers.png'
-import type {
-  Service,
-  ServiceSortOption,
-  ServiceViewMode,
-} from '@/types/service'
-import type { ProductCategory, ProductFilter } from '@/types/product'
+import type { Service } from '@/types/service'
+import why_trust_ourBrideImage from '@/assets/images/why_trust_ourBride.svg'
 
-// Mock data - Replace with API calls
-const mockCategories: ProductCategory[] = [
-  { id: '1', name: 'Makeup', slug: 'makeup', productCount: 45 },
-  { id: '2', name: 'Hair Care', slug: 'hair-care', productCount: 32 },
-  { id: '3', name: 'Skin Care', slug: 'skin-care', productCount: 28 },
-  { id: '4', name: 'Spa & Massage', slug: 'spa-massage', productCount: 20 },
-  { id: '5', name: 'Photography', slug: 'photography', productCount: 15 },
-  { id: '6', name: 'Videography', slug: 'videography', productCount: 12 },
-]
-
-const mockServices: Service[] = [
+// Mock services for "Today's Offers" slider
+const mockOffersServices: Service[] = [
   {
     id: '1',
     title: 'Wedding Makeup Service',
@@ -63,58 +61,6 @@ const mockServices: Service[] = [
     showTopOfferBadge: true,
   },
   {
-    id: '2',
-    title: 'Hair Styling Service',
-    description: 'Expert hair styling and hairdo for weddings.',
-    images: ['https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400'],
-    provider: {
-      id: '2',
-      name: 'Hair Studio Elite',
-      verified: true,
-    },
-    price: { original: 4000, discounted: 3500, currency: 'egp' },
-    rating: { value: 4.8, count: 89 },
-    category: { id: '2', name: 'Hair Care', slug: 'hair-care' },
-    tags: ['Hair', 'Styling'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-  },
-  {
-    id: '3',
-    title: 'Bridal Skincare Treatment',
-    description: 'Complete skincare routine for glowing bridal skin.',
-    images: [
-      'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
-    ],
-    provider: {
-      id: '3',
-      name: 'Skincare Co',
-      verified: true,
-    },
-    price: { original: 6000, discounted: 5000, currency: 'egp' },
-    rating: { value: 4.6, count: 67 },
-    category: { id: '3', name: 'Skin Care', slug: 'skin-care' },
-    tags: ['Skin', 'Care', 'Treatment'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: false,
-    },
-  },
-  {
     id: '4',
     title: 'Spa & Relaxation Package',
     description: 'Full body spa treatment for pre-wedding relaxation.',
@@ -139,219 +85,6 @@ const mockServices: Service[] = [
       sunday: true,
     },
     showTopOfferBadge: true,
-  },
-  {
-    id: '5',
-    title: 'Wedding Photography',
-    description: 'Professional wedding photography services.',
-    images: [
-      'https://images.unsplash.com/photo-1519741497674-611481863552?w=400',
-    ],
-    provider: {
-      id: '5',
-      name: 'Photo Studio Pro',
-      verified: true,
-    },
-    price: { original: 15000, discounted: 12000, currency: 'egp' },
-    rating: { value: 4.7, count: 156 },
-    category: { id: '5', name: 'Photography', slug: 'photography' },
-    tags: ['Photography', 'Wedding'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-  },
-  {
-    id: '6',
-    title: 'Wedding Videography',
-    description: 'Cinematic wedding videography services.',
-    images: [
-      'https://images.unsplash.com/photo-1516035069371-29a1b244b32a?w=400',
-    ],
-    provider: {
-      id: '6',
-      name: 'Video Production Co',
-      verified: true,
-    },
-    price: { original: 18000, discounted: 15000, currency: 'egp' },
-    rating: { value: 4.8, count: 112 },
-    category: { id: '6', name: 'Videography', slug: 'videography' },
-    tags: ['Videography', 'Wedding'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-  },
-  // Add more services for pagination
-  {
-    id: '7',
-    title: 'Professional Nail Art Service',
-    description: 'Beautiful nail art designs for your wedding day.',
-    images: [
-      'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400',
-    ],
-    provider: {
-      id: '7',
-      name: 'Nail Art Studio',
-      verified: true,
-    },
-    price: { original: 3000, discounted: 2500, currency: 'egp' },
-    rating: { value: 4.4, count: 78 },
-    category: { id: '1', name: 'Makeup', slug: 'makeup' },
-    tags: ['Nails', 'Art'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: false,
-    },
-  },
-  {
-    id: '8',
-    title: 'Bridal Hair Extension Service',
-    description: 'Premium hair extensions for voluminous bridal hair.',
-    images: ['https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400'],
-    provider: {
-      id: '8',
-      name: 'Hair Extensions Pro',
-      verified: true,
-    },
-    price: { original: 7000, discounted: 6000, currency: 'egp' },
-    rating: { value: 4.7, count: 95 },
-    category: { id: '2', name: 'Hair Care', slug: 'hair-care' },
-    tags: ['Hair', 'Extensions'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: false,
-    },
-  },
-  {
-    id: '9',
-    title: 'Facial Treatment Service',
-    description: 'Deep cleansing facial for radiant bridal skin.',
-    images: [
-      'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
-    ],
-    provider: {
-      id: '9',
-      name: 'Beauty Spa Center',
-      verified: true,
-    },
-    price: { original: 4500, discounted: 3800, currency: 'egp' },
-    rating: { value: 4.6, count: 112 },
-    category: { id: '3', name: 'Skin Care', slug: 'skin-care' },
-    tags: ['Facial', 'Treatment'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: false,
-      sunday: false,
-    },
-  },
-  {
-    id: '10',
-    title: 'Hot Stone Massage',
-    description: 'Relaxing hot stone massage for pre-wedding stress relief.',
-    images: ['https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400'],
-    provider: {
-      id: '10',
-      name: 'Wellness Spa',
-      verified: true,
-    },
-    price: { original: 5500, discounted: 4800, currency: 'egp' },
-    rating: { value: 4.8, count: 134 },
-    category: { id: '4', name: 'Spa & Massage', slug: 'spa-massage' },
-    tags: ['Massage', 'Relaxation'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-  },
-  {
-    id: '11',
-    title: 'Engagement Photography',
-    description: 'Beautiful engagement photo sessions.',
-    images: [
-      'https://images.unsplash.com/photo-1519741497674-611481863552?w=400',
-    ],
-    provider: {
-      id: '11',
-      name: 'Photo Memories',
-      verified: true,
-    },
-    price: { original: 12000, discounted: 10000, currency: 'egp' },
-    rating: { value: 4.9, count: 167 },
-    category: { id: '5', name: 'Photography', slug: 'photography' },
-    tags: ['Photography', 'Engagement'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-  },
-  {
-    id: '12',
-    title: 'Pre-Wedding Videography',
-    description: 'Cinematic pre-wedding video production.',
-    images: [
-      'https://images.unsplash.com/photo-1516035069371-29a1b244b32a?w=400',
-    ],
-    provider: {
-      id: '12',
-      name: 'Cinema Studio',
-      verified: true,
-    },
-    price: { original: 16000, discounted: 14000, currency: 'egp' },
-    rating: { value: 4.7, count: 98 },
-    category: { id: '6', name: 'Videography', slug: 'videography' },
-    tags: ['Videography', 'Pre-Wedding'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
   },
   {
     id: '13',
@@ -380,110 +113,6 @@ const mockServices: Service[] = [
       sunday: false,
     },
     showTopOfferBadge: true,
-  },
-  {
-    id: '14',
-    title: 'Hair Color Service',
-    description: 'Professional hair coloring for your special day.',
-    images: ['https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400'],
-    provider: {
-      id: '14',
-      name: 'Color Studio',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4200, currency: 'egp' },
-    rating: { value: 4.5, count: 87 },
-    category: { id: '2', name: 'Hair Care', slug: 'hair-care' },
-    tags: ['Hair', 'Color'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: false,
-    },
-  },
-  {
-    id: '15',
-    title: 'Body Scrub Treatment',
-    description: 'Exfoliating body scrub for smooth, glowing skin.',
-    images: [
-      'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
-    ],
-    provider: {
-      id: '15',
-      name: 'Body Care Spa',
-      verified: true,
-    },
-    price: { original: 4000, discounted: 3500, currency: 'egp' },
-    rating: { value: 4.6, count: 76 },
-    category: { id: '3', name: 'Skin Care', slug: 'skin-care' },
-    tags: ['Body', 'Scrub'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: false,
-    },
-  },
-  {
-    id: '16',
-    title: 'Aromatherapy Massage',
-    description: 'Relaxing aromatherapy massage with essential oils.',
-    images: ['https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400'],
-    provider: {
-      id: '16',
-      name: 'Aroma Wellness',
-      verified: true,
-    },
-    price: { original: 6000, discounted: 5200, currency: 'egp' },
-    rating: { value: 4.7, count: 103 },
-    category: { id: '4', name: 'Spa & Massage', slug: 'spa-massage' },
-    tags: ['Massage', 'Aromatherapy'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-  },
-  {
-    id: '17',
-    title: 'Wedding Album Photography',
-    description: 'Professional wedding album photography services.',
-    images: [
-      'https://images.unsplash.com/photo-1519741497674-611481863552?w=400',
-    ],
-    provider: {
-      id: '17',
-      name: 'Album Studio',
-      verified: true,
-    },
-    price: { original: 18000, discounted: 15000, currency: 'egp' },
-    rating: { value: 4.8, count: 145 },
-    category: { id: '5', name: 'Photography', slug: 'photography' },
-    tags: ['Photography', 'Album'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
   },
   {
     id: '18',
@@ -515,25 +144,16 @@ const mockServices: Service[] = [
   },
 ]
 
-const sortOptions: ServiceSortOption[] = [
-  { value: 'default', label: 'Default' },
-  { value: 'price-low', label: 'Price: Low to High' },
-  { value: 'price-high', label: 'Price: High to Low' },
-  { value: 'rating', label: 'Highest Rated' },
-  { value: 'newest', label: 'Newest First' },
-  { value: 'popular', label: 'Most Popular' },
-]
-
 // Hero Carousel Slides
-const heroSlides = [
+const heroSlides: HeroSlide[] = [
   {
     id: '1',
-    label: 'New Arrival',
+    label: 'Limited Offer | 2d 4h 45m',
     title: 'Wedding Makeup',
     description:
       'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
     ctaText: 'Book Now',
-    ctaLink: '/services/1',
+    ctaLink: '/services/category?category=1',
     productImage:
       'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600',
     discountText: '30% OFF',
@@ -541,102 +161,262 @@ const heroSlides = [
   {
     id: '2',
     label: 'Top Seller',
-    title: 'Professional Hair Styling',
+    title: 'Bridal Photography',
     description:
-      'Premium quality services for your special day. Discover our curated collection of wedding services.',
-    ctaText: 'Explore Services',
+      'Capture your special moments with our professional wedding photography services. Premium quality for your perfect day.',
+    ctaText: 'Book Now',
+    ctaLink: '/services/category?category=6',
+    productImage:
+      'https://images.unsplash.com/photo-1516035069371-29a1b244b32a?w=600',
+    discountText: '25% OFF',
+  },
+  {
+    id: '3',
+    label: 'New Arrival',
+    title: 'Wedding Planning',
+    description:
+      'Complete wedding planning services to make your special day unforgettable. From venues to decorations, we have it all.',
+    ctaText: 'Explore Now',
     ctaLink: '/services',
     productImage:
-      'https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=600',
-    discountText: '25% OFF',
+      'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600',
+    discountText: '20% OFF',
   },
 ]
 
-export default function Services() {
-  const [viewMode, setViewMode] = useState<ServiceViewMode>('grid')
-  const [filters, setFilters] = useState<ProductFilter>({})
-  const [sortBy, setSortBy] = useState('default')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
-  const servicesPerPage = 9
 
-  // Filter and sort services
-  const filteredAndSortedServices = useMemo(() => {
-    let result = [...mockServices]
+// Features for "Why Brides Trust OurBride" section
+const trustFeatures = [
+  {
+    title: 'Usp Title',
+    description:
+      'OurBride is your all-in-one platform for wedding planning .',
+  },
+  {
+    title: 'Usp Title',
+    description:
+      'OurBride is your all-in-one platform for wedding planning .',
+  },
+  {
+    title: 'Usp Title',
+    description:
+      'OurBride is your all-in-one platform for wedding planning .',
+  },
+  {
+    title: 'Usp Title',
+    description:
+      'OurBride is your all-in-one platform for wedding planning .',
+  },
+]
 
-    // Apply search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase()
-      result = result.filter(
-        s =>
-          s.title.toLowerCase().includes(query) ||
-          s.description.toLowerCase().includes(query) ||
-          s.tags.some(tag => tag.toLowerCase().includes(query)) ||
-          s.provider.name.toLowerCase().includes(query)
-      )
+// Categories for "Why Brides Trust OurBride" section (ProductCategoriesSection)
+// Using all icons from assets/icons with icon name as id and title
+const trustCategories: ProductCategory[] = [
+  {
+    id: 'accessories',
+    title: 'Accessories',
+    description: 'Exclusive coupons and discounts designed for your budget.',
+    href: '/services/category?category=accessories',
+    icon: <AccessoriesIcon className="w-20 h-20 text-brand-500" />,
+  },
+  {
+    id: 'bouquet',
+    title: 'Bouquet',
+    description: 'Exclusive coupons and discounts designed for your budget.',
+    href: '/services/category?category=bouquet',
+    icon: <BouquetIcon className="w-20 h-20 text-brand-500" />,
+  },
+  {
+    id: 'bridal-beauty',
+    title: 'Bridal Beauty',
+    description: 'Exclusive coupons and discounts designed for your budget.',
+    href: '/services/category?category=bridal-beauty',
+    icon: <BridalBeautyIcon className="w-20 h-20 text-brand-500" />,
+  },
+  {
+    id: 'photography',
+    title: 'Photography',
+    description: 'Exclusive coupons and discounts designed for your budget.',
+    href: '/services/category?category=photography',
+    icon: <PhotographyIcon className="w-20 h-20 text-brand-500" />,
+  },
+  {
+    id: 'wedding-cake',
+    title: 'Wedding Cake',
+    description: 'Exclusive coupons and discounts designed for your budget.',
+    href: '/services/category?category=wedding-cake',
+    icon: <WeddingCakeIcon className="w-20 h-20 text-brand-500" />,
+  },
+  {
+    id: 'wedding-dress',
+    title: 'Wedding Dress',
+    description: 'Exclusive coupons and discounts designed for your budget.',
+    href: '/services/category?category=wedding-dress',
+    icon: <WeddingDressIcon className="w-20 h-20 text-brand-500" />,
+  },
+  {
+    id: 'wedding-hall',
+    title: 'Wedding Hall',
+    description: 'Exclusive coupons and discounts designed for your budget.',
+    href: '/services/category?category=wedding-hall',
+    icon: <WeddingHallIcon className="w-20 h-20 text-brand-500" />,
+  },
+  {
+    id: 'wedding-suit',
+    title: 'Wedding Suit',
+    description: 'Exclusive coupons and discounts designed for your budget.',
+    href: '/services/category?category=wedding-suit',
+    icon: <WeddingSuitIcon className="w-20 h-20 text-brand-500" />,
+  },
+]
+
+// Demo providers for Best Providers section
+const demoProviders = [
+  {
+    id: '1',
+    name: 'Sarah Johnson',
+    role: 'Makeup Artist',
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
+    rating: 4.8,
+    isVerified: true,
+  },
+  {
+    id: '2',
+    name: 'Emily Davis',
+    role: 'Hair Stylist',
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400',
+    rating: 4.9,
+    isVerified: true,
+  },
+  {
+    id: '3',
+    name: 'Jessica Brown',
+    role: 'Photographer',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
+    rating: 4.7,
+    isVerified: true,
+  },
+  {
+    id: '4',
+    name: 'Amanda Wilson',
+    role: 'Wedding Planner',
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400',
+    rating: 4.6,
+    isVerified: true,
+  },
+  {
+    id: '5',
+    name: 'Maria Garcia',
+    role: 'Florist',
+    image: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400',
+    rating: 4.9,
+    isVerified: true,
+  },
+  {
+    id: '6',
+    name: 'Lisa Anderson',
+    role: 'Cake Designer',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+    rating: 4.8,
+    isVerified: true,
+  },
+]
+
+// Demo products for Best Products section
+const demoProducts = [
+  {
+    id: '1',
+    title: 'Bridal Makeup Collection',
+    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
+    rating: 4.8,
+    price: 4500,
+    currency: 'egp',
+    href: '/products/1',
+  },
+  {
+    id: '2',
+    title: 'Hair Styling Essentials',
+    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=400&fit=crop',
+    rating: 4.9,
+    price: 3200,
+    currency: 'egp',
+    href: '/products/2',
+  },
+  {
+    id: '3',
+    title: 'Wedding Photography Package',
+    image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
+    rating: 4.7,
+    price: 8500,
+    currency: 'egp',
+    href: '/products/3',
+  },
+  {
+    id: '4',
+    title: 'Bridal Bouquet Collection',
+    image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
+    rating: 4.6,
+    price: 2800,
+    currency: 'egp',
+    href: '/products/4',
+  },
+  {
+    id: '5',
+    title: 'Wedding Cake Designs',
+    image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400',
+    rating: 4.9,
+    price: 5500,
+    currency: 'egp',
+    href: '/products/5',
+  },
+  {
+    id: '6',
+    title: 'Bridal Accessories Set',
+    image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400',
+    rating: 4.8,
+    price: 1800,
+    currency: 'egp',
+    href: '/products/6',
+  },
+]
+
+// Combine providers with products for BestProvidersSection
+const bestProviders: BestProvider[] = demoProviders.map((provider, index) => ({
+  id: provider.id,
+  name: provider.name,
+  image: provider.image,
+  profession: provider.role,
+  verified: provider.isVerified || false,
+  rating: provider.rating,
+  product: demoProducts[index] || demoProducts[0],
+}))
+
+/**
+ * ServicesIntroPageContent - Main content component
+ * Redirects to /services/category if filter params are present in URL
+ */
+function ServicesIntroPageContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Redirect logic: If any filter params are present, redirect to /services/category
+  useEffect(() => {
+    const hasFilterParams =
+      searchParams.has('category') ||
+      searchParams.has('subCategory') ||
+      searchParams.has('priceRangeMin') ||
+      searchParams.has('priceRangeMax') ||
+      searchParams.has('rating') ||
+      searchParams.has('availability') ||
+      searchParams.has('sort') ||
+      searchParams.has('page') ||
+      searchParams.has('search')
+
+    if (hasFilterParams) {
+      const queryString = searchParams.toString()
+      router.replace(`/services/category?${queryString}`)
     }
-
-    // Apply filters
-    if (filters.category && filters.category.length > 0) {
-      result = result.filter(s => filters.category!.includes(s.category.id))
-    }
-
-    if (filters.priceRange) {
-      result = result.filter(
-        s =>
-          s.price.discounted >= filters.priceRange!.min &&
-          s.price.discounted <= filters.priceRange!.max
-      )
-    }
-
-    if (filters.rating) {
-      result = result.filter(s => s.rating.value >= filters.rating!)
-    }
-
-    if (filters.inStock !== undefined) {
-      result = result.filter(s => s.available === filters.inStock)
-    }
-
-    // Apply sorting
-    switch (sortBy) {
-      case 'price-low':
-        result.sort((a, b) => a.price.discounted - b.price.discounted)
-        break
-      case 'price-high':
-        result.sort((a, b) => b.price.discounted - a.price.discounted)
-        break
-      case 'rating':
-        result.sort((a, b) => b.rating.value - a.rating.value)
-        break
-      case 'newest':
-        result.reverse()
-        break
-      case 'popular':
-        result.sort((a, b) => b.rating.count - a.rating.count)
-        break
-      default:
-        break
-    }
-
-    return result
-  }, [filters, sortBy, searchQuery])
-
-  // Calculate pagination
-  const totalPages = Math.ceil(
-    filteredAndSortedServices.length / servicesPerPage
-  )
-  const startIndex = (currentPage - 1) * servicesPerPage
-  const endIndex = startIndex + servicesPerPage
-  const paginatedServices = filteredAndSortedServices.slice(
-    startIndex,
-    endIndex
-  )
-
-  // Reset to page 1 when filters change
-  const handleFiltersChange = (newFilters: ProductFilter) => {
-    setFilters(newFilters)
-    setCurrentPage(1)
-  }
+  }, [searchParams, router])
 
   const handleWishlistToggle = (_serviceId: string) => {
     // TODO: Implement wishlist toggle
@@ -645,6 +425,24 @@ export default function Services() {
   const handleBookNow = (_serviceId: string) => {
     // TODO: Implement book now
   }
+
+  // Convert Service to ServiceCardData for Today's Offers
+  const offersServiceCards: ServiceCardData[] = mockOffersServices.map(
+    service => ({
+      id: service.id,
+      image: service.images[0],
+      title: service.title,
+      providerName: service.provider.name,
+      verified: service.provider.verified,
+      rating: service.rating.value,
+      originalPrice: service.price.original,
+      discountedPrice: service.price.discounted,
+      tags: service.tags,
+      showTopOfferBadge: service.showTopOfferBadge,
+      onWishlistToggle: () => handleWishlistToggle(service.id),
+      onBookNow: () => handleBookNow(service.id),
+    })
+  )
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -655,122 +453,65 @@ export default function Services() {
           slides={heroSlides}
           autoPlay={true}
           autoPlayInterval={5000}
+          showBackground={false}
         />
 
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
-            {/* Sidebar: Filters */}
-            <aside className="lg:col-span-1">
-              <ProductFilters
-                categories={mockCategories}
-                filters={filters}
-                onFiltersChange={handleFiltersChange}
-                onReset={() => {
-                  setFilters({})
-                  setCurrentPage(1)
-                }}
-              />
-            </aside>
+      
 
-            {/* Main Content */}
-            <div className="lg:col-span-3">
-              {/* Search Bar */}
-              <div className="mb-6">
-                <SearchInput
-                  placeholder="Search for a Service..."
-                  value={searchQuery}
-                  onChange={e => {
-                    setSearchQuery(e.target.value)
-                    setCurrentPage(1)
-                  }}
-                  size="lg"
-                  className="w-full rounded-full"
-                />
-              </div>
+        {/* Section 2: Why Brides Trust OurBride - ProductCategoriesSection */}
+        <ProductCategoriesSection
+          categories={trustCategories}
+          topText="Why"
+          highlightText="Brides"
+          bottomText="Trust"
+          bottomHighlightText="OurBride"
+          headerAlignment="center"
+        />
 
-              {/* Toolbar */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="text-14 text-gray-600">
-                    {filteredAndSortedServices.length} services found
-                    {totalPages > 1 && (
-                      <span className="ml-2 text-gray-500">
-                        (Page {currentPage} of {totalPages})
-                      </span>
-                    )}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <ProductSort
-                    sortOptions={sortOptions}
-                    currentSort={sortBy}
-                    onSortChange={setSortBy}
-                  />
-                  <div className="flex items-center gap-1 border border-gray-300 rounded-lg p-1">
-                    <Button
-                      variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => setViewMode('grid')}
-                      aria-label="Grid view"
-                    >
-                      <Grid3x3 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant={viewMode === 'list' ? 'default' : 'ghost'}
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => setViewMode('list')}
-                      aria-label="List view"
-                    >
-                      <List className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Services */}
-              {viewMode === 'grid' ? (
-                <>
-                  <ServiceGrid
-                    services={paginatedServices}
-                    onWishlistToggle={handleWishlistToggle}
-                    onBookNow={handleBookNow}
-                    columns={3}
-                  />
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="mt-8 relative z-10">
-                      <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                      />
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  <ServiceList
-                    services={paginatedServices}
-                    onWishlistToggle={handleWishlistToggle}
-                    onBookNow={handleBookNow}
-                  />
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="mt-8 relative z-10">
-                      <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                      />
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+        {/* Today's Offers Section */}
+        <section className="container-custom py-12 md:py-16">
+          <div className="flex items-center justify-between mb-6 md:mb-8">
+            <h2 className="text-24 md:text-30 font-medium text-gray-900">
+              Today&apos;s Offers
+            </h2>
+            <span className="text-18 md:text-24 text-gray-500">
+              23 H 45 Min
+            </span>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {offersServiceCards.map(cardData => (
+              <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
+            ))}
+          </div>
+        </section>
+
+        {/* Why Brides Trust OurBride - Features Section */}
+        <section className="container-custom py-5">
+          <WhyBridesChooseProductsSection
+            image={why_trust_ourBrideImage}
+            features={trustFeatures}
+            topText="Why"
+            highlightText="Brides"
+            bottomText="Trust"
+            bottomHighlightText="OurBride"
+            headerAlignment="center"
+          />
+        </section>
+
+        {/* Section 4: Best Providers With Best Products */}
+        <div className="container-custom">
+          <BestProvidersSection
+            providers={bestProviders}
+            topText="Best"
+            highlightText="Providers"
+            bottomText="With"
+            bottomHighlightText="Best Products"
+            headerAlignment="center"
+            buttonText="Explore Now"
+          />
         </div>
+
 
         {/* Newsletter Banner */}
         <div className="mb-12">
@@ -788,5 +529,24 @@ export default function Services() {
       </main>
       <Footer />
     </div>
+  )
+}
+
+/**
+ * ServicesIntroPage - Introduction page for services
+ * Wrapped in Suspense for useSearchParams compatibility
+ * Route: /services
+ */
+export default function ServicesIntroPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-16 text-gray-600">Loading...</div>
+        </div>
+      }
+    >
+      <ServicesIntroPageContent />
+    </Suspense>
   )
 }
