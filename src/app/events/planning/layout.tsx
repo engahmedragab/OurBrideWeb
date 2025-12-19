@@ -39,28 +39,29 @@ export default function PlanningLayout({ children }: { children: ReactNode }) {
   return (
     <div className="w-full">
       {/* Page Header with Tabs */}
-      <div className="mb-6 sm:mb-8 border-b px-4 md:px-10 border-gray-100">
+      <div className="mb-6 sm:mb-8 px-4 md:px-10">
         <div className={cn(
-            "flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full",
-            "grid grid-cols-2 sm:flex sm:justify-between")}>
+          "flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full",
+          "grid grid-cols-2 sm:flex sm:justify-between"
+        )}>
           {tabs.map(tab => {
             const isActive = activeTab === tab.value
             return (
               <Link
                 key={tab.value}
                 href={tab.href}
-               className={cn(
-            'px-1 py-3 text-[13px] sm:text-14 font-medium transition-all duration-200 text-center relative shrink-0',
-            'focus-visible:outline-none w-full sm:w-auto', 
-            isActive
-              ? 'text-brand-600'
-              : 'text-gray-500 hover:text-gray-900'
-          )}
+                className={cn(
+                  'px-1 py-3 text-[13px] sm:text-14 font-medium transition-all duration-200 text-center relative shrink-0',
+                  'focus-visible:outline-none w-full sm:w-auto',
+                  isActive
+                    ? 'text-brand-600'
+                    : 'text-gray-500 hover:text-gray-900'
+                )}
               >
                 {tab.label}
                 {isActive && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full animate-in fade-in slide-in-from-bottom-1" />
-          )}
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full animate-in fade-in slide-in-from-bottom-1" />
+                )}
               </Link>
             )
           })}

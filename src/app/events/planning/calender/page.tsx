@@ -75,7 +75,7 @@ export default function CalenderPage() {
   const weekDays = getWeekDays(selectedDate)
 
   return (
-    <div className="w-full min-h-screen bg-white p-4 sm:p-6 lg:p-8">
+    <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
       {/* Single Layout with Responsive Order */}
       <div className="flex flex-col lg:grid lg:grid-cols-[70%_30%] gap-2">
         {/* Mini Calendar - Mobile: order-1 (top), Desktop: right sidebar */}

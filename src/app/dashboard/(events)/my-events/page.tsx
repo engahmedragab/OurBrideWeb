@@ -119,7 +119,7 @@ export default function MyEventsPage() {
   }
 
   const handleEventClick = (eventId: string) => {
-    router.push('/dashboard/calendar')
+    router.push('/events/planning/overview')
   }
 
   return (

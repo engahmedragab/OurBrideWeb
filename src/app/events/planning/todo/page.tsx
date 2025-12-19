@@ -186,8 +186,8 @@ const [inputValue, setInputValue] = useState('')
         variant='brand'
         size="md"
       >
-        <Plus className="w-5 h-5 mr-2" />
         Add New Task
+        <Plus className="w-5 h-5 ml-2" />
       </Button>
 
       {/* TASKS */}
@@ -335,8 +335,8 @@ const [inputValue, setInputValue] = useState('')
                   onClick={() => addSubTask(task.id)}
                   className="text-brand-500"
                 >
-                  <Plus className="w-4 h-4 mr-1" />
                   Add SubTask
+                  <Plus className="w-4 h-4 ml-1" />
                 </Button>
               </div>
             )}

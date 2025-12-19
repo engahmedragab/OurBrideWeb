@@ -172,8 +172,8 @@ export default function GuestsPage() {
         <div className="py-12 text-center">
           <p className="text-16 text-gray-500 mb-4">No guests yet</p>
           <Button variant="brand" onClick={() => handleAddGuest()} className="text-white ">
-            <Plus className="h-4 w-4 mr-2 text-white" />
             Add New Guest
+            <Plus className="h-4 w-4 ml-2 text-white" />
           </Button>
         </div>
       ) : (
@@ -215,8 +215,8 @@ export default function GuestsPage() {
             onClick={() => handleAddGuest()}
             className="w-full sm:w-auto sm:px-6 text-white "
           >
-            <Plus className="h-4 w-4 mr-2" />
             Add new guests
+            <Plus className="h-4 w-4 ml-2" />
           </Button>
         </div>
       )}

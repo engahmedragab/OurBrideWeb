@@ -139,7 +139,7 @@ export default function BookingsPage() {
   const total = services.length
 
   return (
-    <div className="w-full min-h-screen bg-white">
+    <div className="w-full min-h-screen">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header with Add Button */}
         <PlanningServicesHeader onAdd={handleAdd} />

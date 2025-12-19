@@ -397,8 +397,8 @@ export default function BudgetPage() {
               }}
               className="ml-2 text-white"
             >
-              <Plus className="h-4 w-4 mr-2 text-white" />
               Add New
+              <Plus className="h-4 w-4 ml-2 text-white" />
             </Button>
           )}
         </div>
