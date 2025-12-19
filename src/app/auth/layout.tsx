@@ -1,4 +1,3 @@
-// src/auth/layout/AuthLayout.tsx
 import AuthHeroSection from '@/auth/components/AuthHeroSection'
 
 export default function AuthLayout({

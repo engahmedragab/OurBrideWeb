@@ -11,8 +11,8 @@ const nextConfig = {
   },
   // Exclude old pages directory from being treated as Pages Router
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
-  // Skip static generation for error pages to avoid _document issues
-  output: 'standalone',
+  // Static export for nginx serving
+  output: 'export',
 }
 
 export default nextConfig
