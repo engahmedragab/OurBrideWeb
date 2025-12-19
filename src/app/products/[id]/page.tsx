@@ -16,3 +16,4 @@ export default async function ProductDetail({
   const { id } = await params
   return <ProductDetailClient productId={id} />
 }
+
