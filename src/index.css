@@ -15778,3 +15778,193 @@ textarea::placeholder {
     flex-direction: row;
   }
 }
+
+/* ===== NEW NAVBAR DESIGN STYLES ===== */
+
+/* Top Dashboard Bar */
+.navbar-top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #4a4a4a;
+  color: #b0b0b0;
+  padding: 8px 0;
+  z-index: 1001;
+  font-size: 14px;
+}
+
+.navbar-top-bar-text {
+  color: #b0b0b0;
+  font-weight: 500;
+}
+
+/* Navigation Links Container */
+.navbar-nav-container {
+  display: flex;
+  align-items: center;
+  margin: 0 20px;
+  padding: 8px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+}
+
+.navbar-nav-container .navbar-nav {
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.navbar-nav-container .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 16px !important;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.2px;
+  border: none;
+  background: transparent;
+}
+
+.navbar-nav-container .nav-link:hover {
+  color: var(--main);
+  background: rgba(241, 72, 54, 0.08);
+}
+
+.navbar-nav-container .nav-link.active {
+  color: var(--main);
+  background: rgba(241, 72, 54, 0.1);
+}
+
+.nav-chevron {
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+/* Search Bar */
+.navbar-search {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin: 0 20px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.navbar-search-input {
+  width: 100%;
+  padding: 10px 45px 10px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.navbar-search-input:focus {
+  outline: none;
+  border-color: var(--main);
+  box-shadow: 0 0 0 3px rgba(241, 72, 54, 0.1);
+}
+
+.navbar-search-input::placeholder {
+  color: #999;
+}
+
+.navbar-search-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.navbar-search-btn:hover {
+  color: var(--main);
+}
+
+/* Action Icons (Wishlist & Cart) */
+.navbar-action-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #ffcccc;
+  border-radius: 12px;
+  background: white;
+}
+
+.navbar-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--main);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+.navbar-action-icon:hover {
+  background: rgba(241, 72, 54, 0.1);
+  color: var(--main);
+  transform: scale(1.1);
+}
+
+/* User Profile Button (Red Circular) */
+.navbar-user-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--main);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.navbar-user-btn:hover {
+  background: #d63d2e;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(241, 72, 54, 0.3);
+}
+
+/* Responsive adjustments for new navbar */
+@media (max-width: 991px) {
+  .navbar-nav-container {
+    margin: 10px 0;
+    width: 100%;
+  }
+  
+  .navbar-search {
+    margin: 10px 0;
+    max-width: 100%;
+  }
+  
+  .navbar-action-icons {
+    margin: 10px 0;
+  }
+}
