@@ -1,12 +1,9 @@
 'use client'
 
-import type { ReactNode } from 'react'
-
-export default function EventsPage({ children }: { children: ReactNode }) {
-
+export default function EventsPage() {
   return (
     <div className="w-full">
-        events
+      events
     </div>
   )
 }

@@ -24,6 +24,9 @@ jobs:
 
       - name: 🏗️ Build Next.js App (Staging)
         run: npm run build
+        env:
+          NEXT_DISABLE_TURBOPACK: 1
+          NODE_ENV: production
 
       - name: 🚀 Deploy Static Export to DigitalOcean (Staging)
         uses: appleboy/scp-action@v0.1.3
