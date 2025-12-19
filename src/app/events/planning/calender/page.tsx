@@ -79,7 +79,7 @@ export default function CalenderPage() {
       {/* Single Layout with Responsive Order */}
       <div className="flex flex-col lg:grid lg:grid-cols-[70%_30%] gap-2">
         {/* Mini Calendar - Mobile: order-1 (top), Desktop: right sidebar */}
-        <div className="order-1 lg:order-2  flex justify-center items-start">
+        <div className="order-1 lg:order-2  flex justify-center items-start px-4 pb-3">
           <PlanningMiniCalendar
             value={selectedDayId}
             onChange={handleDateSelect}

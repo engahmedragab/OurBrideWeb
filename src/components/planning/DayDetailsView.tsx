@@ -218,7 +218,7 @@ export const DayDetailsView = ({
         </div>
       )}
 
-      {isBigDay && <AddEventButton onClick={handleAddEvent} className='lg:w-1/2 mx-auto'/>}
+      {isBigDay && <AddEventButton onClick={handleAddEvent} className='lg:w-1/2 mx-auto py-4'/>}
       
       <AddEventModal
         open={isAddModalOpen}

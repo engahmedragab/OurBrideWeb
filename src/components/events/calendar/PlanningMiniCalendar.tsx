@@ -306,7 +306,7 @@ export const PlanningMiniCalendar = ({
   return (
     <div
       className={cn(
-        'bg-white flex flex-col gap-3 p-4 rounded-3xl shadow-[0px_0px_9px_0px_rgba(143,144,166,0.15)] w-full max-w-[240px]',
+        'bg-white flex flex-col gap-3 p-4 rounded-3xl shadow-[0px_0px_9px_0px_rgba(143,144,166,0.15)] w-full',
         className
       )}
     >
@@ -412,7 +412,7 @@ export const PlanningMiniCalendar = ({
         </div>
 
         {/* Calendar Days Grid */}
-        <div className="grid grid-cols-7 gap-0 w-full">
+        <div className="grid grid-cols-7 gap-2 w-full">
           {calendarDays.map((dateInfo, index) => {
             // Priority: other month (muted) → bigDay → selected → default
             const isOtherMonth = dateInfo.isOtherMonth
@@ -429,7 +429,7 @@ export const PlanningMiniCalendar = ({
                   // Selected day: brand-500 background, white text
                   showSelected && 'bg-brand-500 rounded-full',
                   // If selected is also bigDay, add green border to combine styles
-                  isBoth && 'ring-2 ring-green-500 ring-offset-1',
+                  isBoth && 'ring-2 ring-brand-500 ring-offset-1',
                   // Big day (not selected): green background with border
                   showBigDay && !showSelected && 'bg-green-100 border border-green-500 rounded-full',
                   // Other month: muted style
