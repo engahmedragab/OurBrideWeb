@@ -9,7 +9,6 @@ import {
   ServiceList,
   ProductFilters,
   ProductSort,
-  HeroCarousel,
   Button,
   OfferBanner,
   SearchInput,

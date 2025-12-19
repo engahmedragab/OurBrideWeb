@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, RefreshCw, Camera, Plus } from 'lucide-react'
+import { ArrowLeft, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import {
   BudgetCategoryCard,
@@ -10,8 +10,8 @@ import {
   type BudgetItem,
 } from '@/components/ui/BudgetCategoryCard'
 import { SummaryMetricCard } from '@/components/ui/SummaryMetricCard'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { FreeMode, Navigation, Pagination } from 'swiper/modules'
+import { Swiper, SwiperSlide, type SwiperRef } from 'swiper/react'
+import { FreeMode } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/free-mode'
 import 'swiper/css/navigation'
@@ -106,7 +106,7 @@ const mockBudgetCategories: BudgetCategory[] = [
 export default function BudgetPage() {
   const router = useRouter()
   const { addToast } = useToast()
-  const swiperRef = useRef<any>(null)
+  const swiperRef = useRef<SwiperRef>(null)
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('all')
   const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>('cake')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -127,7 +127,7 @@ export default function BudgetPage() {
   } | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [budgetCategories, setBudgetCategories] = useState<BudgetCategory[]>(mockBudgetCategories)
-  
+
   // Manual adjustments for summary cards (separate from items)
   const [summaryAdjustments, setSummaryAdjustments] = useState({
     estimatedCost: 0,
@@ -139,12 +139,12 @@ export default function BudgetPage() {
     (sum, cat) => sum + cat.items.reduce((itemSum, item) => itemSum + item.estimatedCost, 0),
     0
   ) + summaryAdjustments.estimatedCost
-  
+
   const totalPaid = budgetCategories.reduce(
     (sum, cat) => sum + cat.items.reduce((itemSum, item) => itemSum + item.paidAmount, 0),
     0
   ) + summaryAdjustments.paid
-  
+
   const totalPending = totalEstimatedCost - totalPaid
   const totalCount = budgetCategories.reduce(
     (sum, cat) => sum + cat.items.length,
@@ -188,13 +188,13 @@ export default function BudgetPage() {
               items: cat.items.map(item =>
                 item.id === editingItem.id
                   ? {
-                      ...item,
-                      itemType: data.itemType,
-                      name: data.itemName,
-                      estimatedCost: data.estimatedCost,
-                      paidAmount: data.paidAmount,
-                      notes: data.notes,
-                    }
+                    ...item,
+                    itemType: data.itemType,
+                    name: data.itemName,
+                    estimatedCost: data.estimatedCost,
+                    paidAmount: data.paidAmount,
+                    notes: data.notes,
+                  }
                   : item
               ),
             }
@@ -207,7 +207,7 @@ export default function BudgetPage() {
     } else {
       // Add new item to selected category or first category if none selected
       const targetCategoryId = selectedCategoryId !== 'all' ? selectedCategoryId : budgetCategories[0]?.id
-      
+
       if (targetCategoryId) {
         const newItem = {
           id: `item-${Date.now()}`,
@@ -220,7 +220,7 @@ export default function BudgetPage() {
 
         setBudgetCategories(prev => {
           const categoryExists = prev.some(cat => cat.id === targetCategoryId)
-          
+
           if (!categoryExists) {
             // If category doesn't exist, add it
             const categoryFromFilter = mockCategories.find(c => c.id === targetCategoryId)
@@ -238,14 +238,14 @@ export default function BudgetPage() {
               ]
             }
           }
-          
+
           return prev.map(cat =>
             cat.id === targetCategoryId
               ? { ...cat, items: [...cat.items, newItem] }
               : cat
           )
         })
-        
+
         // Expand the category to show the new item
         setExpandedCategoryId(targetCategoryId)
         addToast('Item added successfully', 'success', 3000)
@@ -261,7 +261,7 @@ export default function BudgetPage() {
     const category = budgetCategories.find(cat =>
       cat.items.some(i => i.id === item.id)
     )
-    
+
     if (category) {
       setEditingItem({
         id: item.id,
@@ -281,7 +281,7 @@ export default function BudgetPage() {
     const category = budgetCategories.find(cat =>
       cat.items.some(i => i.id === item.id)
     )
-    
+
     if (category) {
       setDeletingItem({
         id: item.id,
@@ -385,7 +385,7 @@ export default function BudgetPage() {
           </h1>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-        
+
           {/* Desktop Add Button */}
           {!isMobile && (
             <Button

@@ -1,9 +1,13 @@
-'use client'
-
-import { use } from 'react'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { ArticleDetails } from '@/components/community'
+
+// Generate static params for static export
+export function generateStaticParams() {
+  // Return array of article IDs to pre-generate at build time
+  // In a real app, this would fetch from an API
+  return [{ id: '1' }]
+}
 
 // Mock data - Replace with API call
 const mockArticle = {
@@ -30,12 +34,12 @@ Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed 
   shares: 215,
 }
 
-export default function ArticleDetailsPage({
+export default async function ArticleDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  const { id } = use(params)
+  const { id } = await params
 
   // In a real app, fetch article data based on id
   const article = mockArticle

@@ -269,15 +269,15 @@ const heroSlides = [
 ]
 
 export default function ProductIntroPage() {
-  const handleWishlistToggle = (productId: string) => {
+  const handleWishlistToggle = (_productId: string) => {
     // TODO: Implement wishlist toggle
   }
 
-  const handleAddToCart = (productId: string) => {
+  const handleAddToCart = (_productId: string) => {
     // TODO: Implement add to cart
   }
 
-  const handleSubscribe = (email: string) => {
+  const handleSubscribe = (_email: string) => {
     // TODO: Implement newsletter subscription
   }
 

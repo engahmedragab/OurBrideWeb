@@ -1,9 +1,13 @@
-'use client'
-
-import { use } from 'react'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { PostDetails } from '@/components/community'
+
+// Generate static params for static export
+export function generateStaticParams() {
+  // Return array of post IDs to pre-generate at build time
+  // In a real app, this would fetch from an API
+  return [{ id: '1' }, { id: '2' }, { id: '3' }]
+}
 
 // Mock data - Replace with API call
 const mockPost = {
@@ -26,12 +30,12 @@ const mockPost = {
   shares: 215,
 }
 
-export default function PostDetailsPage({
+export default async function PostDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
-  const { id } = use(params)
+  const { id } = await params
 
   // In a real app, fetch post data based on id
   const post = mockPost

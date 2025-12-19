@@ -200,11 +200,11 @@ export default function Products() {
     return result
   }, [filters, sortBy])
 
-  const handleWishlistToggle = (productId: string) => {
+  const handleWishlistToggle = (_productId: string) => {
     // TODO: Implement wishlist toggle
   }
 
-  const handleAddToCart = (productId: string) => {
+  const handleAddToCart = (_productId: string) => {
     // TODO: Implement add to cart
   }
 
@@ -297,7 +297,7 @@ export default function Products() {
             variant="newsletter"
             ctaText="Submit"
             productImage={flowersImage}
-            onSubscribe={email => {
+            onSubscribe={_email => {
               // TODO: Implement newsletter subscription
             }}
           />

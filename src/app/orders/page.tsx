@@ -17,7 +17,6 @@ import {
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import type { OrderStatus } from '@/components/ui/OrderProgressIndicator'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
-import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
 
 // Mock data - Replace with actual API data later
 const mockOrdersInProgress = [
@@ -380,7 +379,7 @@ export default function OrdersPage() {
     // TODO: Handle cancel request - could reuse cancel modal or create separate one
   }
 
-  const handleCheckout = (requestId: string) => {
+  const handleCheckout = (_requestId: string) => {
     // Navigate to checkout page
     // TODO: Pass service request data via query params or state management
     router.push('/checkout')

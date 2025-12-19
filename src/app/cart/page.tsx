@@ -238,44 +238,6 @@ export default function CartPage() {
     }
   }
 
-  const convertProductsToOrderItems = (): OrderItem[] => {
-    return cartProducts.map(product => ({
-      id: product.id,
-      title: product.title,
-      image: product.image,
-      originalPrice: product.originalPrice,
-      discountedPrice: product.discountedPrice,
-      currency: 'EGP',
-      quantity: product.quantity,
-      discountPercentage: product.discountPercentage,
-      deliveryDate: product.deliveryDate,
-    }))
-  }
-
-  const convertRequestToOrderItems = (request: typeof mockServiceRequests[0]): OrderItem[] => {
-    return [
-      {
-        id: request.requestId,
-        title: request.service.title,
-        image: request.service.image,
-        originalPrice: request.subtotal,
-        discountedPrice: request.subtotal,
-        currency: 'EGP',
-        quantity: 1,
-      },
-      ...request.packages.map((pkg, index) => ({
-        id: `${request.requestId}-pkg-${index}`,
-        title: pkg.title,
-        image: request.service.image,
-        originalPrice: pkg.price,
-        discountedPrice: pkg.price,
-        currency: 'EGP',
-        quantity: 1,
-      })),
-    ]
-  }
-
-
   return (
     <UserPageLayout>
       {/* Page Header */}
@@ -312,13 +274,13 @@ export default function CartPage() {
           {/* Order Summary Sidebar */}
           <div className="w-full lg:w-96 lg:flex-shrink-0">
             <div className="lg:sticky lg:top-6">
-            <CartOrderSummary
-              subtotal={subtotal}
-              taxesAndFees={taxesAndFees}
-              deliveryFee={deliveryFee}
-              total={total}
-              onCheckout={handleCheckout}
-            />
+              <CartOrderSummary
+                subtotal={subtotal}
+                taxesAndFees={taxesAndFees}
+                deliveryFee={deliveryFee}
+                total={total}
+                onCheckout={handleCheckout}
+              />
             </div>
           </div>
         </div>

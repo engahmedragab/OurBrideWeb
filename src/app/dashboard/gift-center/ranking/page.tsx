@@ -11,7 +11,7 @@ import {
   RedRankIcon,
 } from '@/assets/rank/rankingIcons'
 import { RankingProgressBar } from '@/components/ui'
-import { CheckCircle2, ChevronRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import verificationBadge from '@/assets/svg/verification-badge.svg'
 import bronzeCrown from '@/assets/svg/bronze-crown.svg'
 import goldCrown from '@/assets/svg/gold-crown.svg'

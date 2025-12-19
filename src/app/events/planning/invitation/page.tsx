@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useMemo, useRef, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { EmptyState } from '@/components/ui/EmptyState'
 import { useToast } from '@/components/ui/Toaster'
 import {
   GuestsHeader,
@@ -48,12 +47,12 @@ export default function GuestsPage() {
   const availableGroups = useMemo(() => {
     const groupsFromGuests = getGroupsFromGuests(guests)
     const groupMap = new Map<GuestGroupId, GuestGroup>()
-    
+
     // Only add groups that have guests
     groupsFromGuests.forEach(group => {
       groupMap.set(group.id, group)
     })
-    
+
     // Add any manually added groups that have guests
     groups.forEach(group => {
       const hasGuests = guests.some(g => g.groupId === group.id)
@@ -61,7 +60,7 @@ export default function GuestsPage() {
         groupMap.set(group.id, group)
       }
     })
-    
+
     return Array.from(groupMap.values())
   }, [guests, groups])
 
@@ -94,9 +93,9 @@ export default function GuestsPage() {
       prev.map(guest =>
         guest.id === id
           ? {
-              ...guest,
-              status: guest.status === 'confirmed' ? 'none' : 'confirmed',
-            }
+            ...guest,
+            status: guest.status === 'confirmed' ? 'none' : 'confirmed',
+          }
           : guest
       )
     )
@@ -123,7 +122,7 @@ export default function GuestsPage() {
     return newGroupId
   }
 
-  const handleGroupCreated = (groupId: GuestGroupId) => {
+  const handleGroupCreated = (_groupId: GuestGroupId) => {
     // This will be called when a new group is created in the dialog
     // The group is already added by handleAddNewGroup, so we just need to track it
   }
@@ -142,16 +141,16 @@ export default function GuestsPage() {
       selected: false,
     }
     setGuests(prev => [...prev, newGuest])
-    
+
     // Auto-focus the group that the guest was added to
     setExpandedGroupId(guestData.groupId)
     setScrollToGroupId(guestData.groupId)
-    
+
     // Reset scroll flag after a delay
     setTimeout(() => {
       setScrollToGroupId(null)
     }, 1000)
-    
+
     addToast('Guest added successfully', 'success')
   }
 
@@ -236,22 +235,22 @@ export default function GuestsPage() {
         availableGroups={useMemo(() => {
           // For dialog, include default groups even if empty, plus groups with guests
           const dialogGroups = new Map<GuestGroupId, GuestGroup>()
-          
+
           // Add default groups (always available for selection)
           DEFAULT_GROUPS.forEach(group => {
             dialogGroups.set(group.id, group)
           })
-          
+
           // Add groups from guests
           availableGroups.forEach(group => {
             dialogGroups.set(group.id, group)
           })
-          
+
           // Add manually created groups
           groups.forEach(group => {
             dialogGroups.set(group.id, group)
           })
-          
+
           return Array.from(dialogGroups.values())
         }, [availableGroups, groups])}
         onAddNewGroup={handleAddNewGroup}

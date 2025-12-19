@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { format } from 'date-fns'
 import {
   User,
   Phone,
@@ -170,7 +171,6 @@ export default function BookingPage() {
     acceptTerms: false,
   })
 
-  const [showPromoInput, setShowPromoInput] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const selectedPackageData = packages.find(
@@ -187,7 +187,7 @@ export default function BookingPage() {
   const deliveryFee = 90
   const total = subtotal + taxes + deliveryFee
 
-  const handleInputChange = (field: keyof BookingFormData, value: any) => {
+  const handleInputChange = (field: keyof BookingFormData, value: string | boolean | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
@@ -374,9 +374,14 @@ export default function BookingPage() {
                 <div className="mb-4">
                   <DatePicker
                     value={formData.selectedDate || undefined}
-                    onChange={date =>
-                      handleInputChange('selectedDate', date || '')
-                    }
+                    onChange={date => {
+                      // Convert Date to string if needed (dateFormat="string" should return string, but TypeScript doesn't know)
+                      const dateString =
+                        date instanceof Date
+                          ? format(date, 'yyyy-MM-dd')
+                          : date || ''
+                      handleInputChange('selectedDate', dateString)
+                    }}
                     placeholder="Select a date"
                     prefixIcon={Calendar}
                     errorMessage={errors.selectedDate}
@@ -439,7 +444,7 @@ export default function BookingPage() {
                             star <= Math.floor(service.rating.value)
                               ? 'fill-brand-500 text-brand-500'
                               : star === Math.ceil(service.rating.value) &&
-                                  service.rating.value % 1 !== 0
+                                service.rating.value % 1 !== 0
                                 ? 'fill-brand-500/50 text-brand-500'
                                 : 'fill-gray-200 text-gray-200'
                           )}

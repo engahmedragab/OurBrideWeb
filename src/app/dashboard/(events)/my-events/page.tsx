@@ -118,7 +118,7 @@ export default function MyEventsPage() {
     console.log('Creating event:', { eventName, eventCode })
   }
 
-  const handleEventClick = (eventId: string) => {
+  const handleEventClick = (_eventId: string) => {
     router.push('/events/planning/overview')
   }
 
