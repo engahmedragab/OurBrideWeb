@@ -419,7 +419,6 @@ export default function BudgetPage() {
               // Force update after initialization
               setTimeout(() => {
                 swiper.update()
-                swiper.updateSlides()
               }, 50)
             }}
             className="!pb-2"
