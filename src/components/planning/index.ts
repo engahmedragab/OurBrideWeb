@@ -23,3 +23,4 @@ export { ItineraryEventCard, type ItineraryEvent, type ItineraryEventCardProps }
 export { AddEventButton, type AddEventButtonProps } from './AddEventButton'
 export { AddEventModal, type AddEventModalProps } from './AddEventModal'
 export { EditEventModal, type EditEventModalProps } from './EditEventModal'
+export { DayDetailsView, type DayDetailsViewProps } from './DayDetailsView'

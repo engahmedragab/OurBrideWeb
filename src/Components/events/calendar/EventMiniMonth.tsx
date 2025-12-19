@@ -4,11 +4,21 @@ import { useState, useMemo, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getEventsForDate } from './mockEvents'
+import { formatDateSafe } from '@/lib/date-utils'
+
+const BIG_DAY_STORAGE_KEY = 'ourbride_big_days'
+
+const getBigDays = (): string[] => {
+  if (typeof window === 'undefined') return []
+  const stored = localStorage.getItem(BIG_DAY_STORAGE_KEY)
+  return stored ? JSON.parse(stored) : []
+}
 
 export interface EventMiniMonthProps {
   selectedDate?: Date
   onDateSelect?: (date: Date) => void
   className?: string
+  checkBigDays?: boolean
 }
 
 /**
@@ -19,6 +29,7 @@ export const EventMiniMonth = ({
   selectedDate = new Date(),
   onDateSelect,
   className,
+  checkBigDays = false,
 }: EventMiniMonthProps) => {
   const [currentMonth, setCurrentMonth] = useState(() => {
     return new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
@@ -76,11 +87,14 @@ export const EventMiniMonth = ({
       // Check if this day has events
       const eventsForDay = getEventsForDate(date)
       const hasEvent = eventsForDay.length > 0
+      
+      // Check if this day is a big day (for planning calendar)
+      const isBigDay = checkBigDays ? getBigDays().includes(formatDateSafe(date)) : false
 
       days.push({
         day,
         isOtherMonth: false,
-        hasEvent,
+        hasEvent: hasEvent || isBigDay,
         isSelected,
         date,
       })
