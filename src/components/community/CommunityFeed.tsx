@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import NextImage from 'next/image'
 import { cn } from '@/lib/utils'
 import { Image, Video, List } from 'lucide-react'
 import { PostCard } from './PostCard'
@@ -68,11 +69,15 @@ export const CommunityFeed = ({
         onClick={() => setIsModalOpen(true)}
       >
         <div className="flex items-start gap-4">
-          <img
-            src={currentUser.avatar}
-            alt={currentUser.name}
-            className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-          />
+          <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <NextImage
+              src={currentUser.avatar}
+              alt={currentUser.name}
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
+          </div>
           <div className="flex-1">
             <input
               type="text"

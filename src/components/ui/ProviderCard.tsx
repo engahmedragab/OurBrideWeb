@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { MessageCircle, CheckCircle2, Star } from 'lucide-react'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
@@ -42,10 +43,12 @@ export const ProviderCard = ({
         <div className="relative w-28 h-28">
           {/* Image with inner border */}
           <div className="relative w-full h-full rounded-full border-2 border-pink-200 overflow-hidden shadow-[0_0_0_4px_rgba(251,207,232,0.4),0_0_0_6px_rgba(251,207,232,0.2)]">
-            <img
+            <Image
               src={provider.image}
               alt={provider.name}
-              className="w-full h-full rounded-full object-cover"
+              fill
+              sizes="112px"
+              className="object-cover"
             />
           </div>
         </div>

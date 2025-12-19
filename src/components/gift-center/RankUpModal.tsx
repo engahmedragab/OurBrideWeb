@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { X, ChevronRight } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
@@ -131,9 +132,11 @@ export const RankUpModal = ({
               <p className="text-16 sm:text-18 font-normal text-gray-500">
                 {rewardValue}
               </p>
-              <img
+              <Image
                 src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
                 alt="Diamond"
+                width={24}
+                height={24}
                 className="h-5 w-5 sm:h-6 sm:w-6"
               />
             </div>

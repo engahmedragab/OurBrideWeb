@@ -1,5 +1,6 @@
 "use client"
 
+import Image from 'next/image'
 import serverErrorSvg from '@/assets/svg/server-error.svg'
 
 export default function ServerErrorPage() {
@@ -11,9 +12,11 @@ export default function ServerErrorPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
       <div className="flex flex-col items-center justify-center w-full">
         {/* SVG Illustration */}
-        <img
+        <Image
           src={typeof serverErrorSvg === 'string' ? serverErrorSvg : serverErrorSvg.src}
           alt="Server Error"
+          width={256}
+          height={256}
           className="w-64 h-64 object-contain mb-8"
         />
         {/* Heading */}

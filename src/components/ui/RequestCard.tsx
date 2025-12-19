@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { ChevronDown, ChevronUp, ChevronRight, Star } from 'lucide-react'
 import { Button } from './Button'
 import { StatusBadge } from './StatusBadge'
@@ -189,11 +190,15 @@ export const RequestCard = ({
               {/* Service Info */}
               <div className="mb-4 bg-white rounded-lg p-4 border border-gray-200">
                 <div className="flex items-start gap-3">
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                  />
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                    <Image
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      sizes="64px"
+                      className="object-cover"
+                    />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-14 font-semibold text-gray-900 mb-1">
                       {service.title}

@@ -31,19 +31,19 @@ export const ProductOffersSection = ({
       className={cn('py-12 md:py-20', className)}
     >
       {/* Section Header with Timer */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
-        <h2 className="text-24 md:text-30 font-medium text-gray-900 leading-[40px]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
+        <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
           {title}
         </h2>
         {timerText && (
-          <p className="text-16 md:text-20 font-normal text-gray-500 leading-[32px]">
+          <p className="text-14 sm:text-16 md:text-20 font-normal text-gray-500 leading-normal sm:leading-[24px] md:leading-[32px]">
             {timerText}
           </p>
         )}
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-[20px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {products.map(product => (
           <ProductCard
             key={product.id}

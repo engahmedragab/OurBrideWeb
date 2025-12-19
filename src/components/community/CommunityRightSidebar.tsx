@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
@@ -133,11 +134,15 @@ export const CommunityRightSidebar = ({
       {/* User Profile Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center gap-3">
-          <img
-            src={currentUser.avatar}
-            alt={currentUser.name}
-            className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-          />
+          <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+            <Image
+              src={currentUser.avatar}
+              alt={currentUser.name}
+              fill
+              sizes="48px"
+              className="object-cover"
+            />
+          </div>
           <div className="flex-1 min-w-0">
             <h4 className="text-16 font-normal text-gray-900 truncate">
               {currentUser.name}
@@ -183,11 +188,15 @@ export const CommunityRightSidebar = ({
                     router.push(`/community/articles/${article.id}`)
                   }
                 >
-                  <img
-                    src={article.thumbnail}
-                    alt={article.title}
-                    className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
-                  />
+                  <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                    <Image
+                      src={article.thumbnail}
+                      alt={article.title}
+                      fill
+                      sizes="80px"
+                      className="object-cover"
+                    />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-14 font-normal text-gray-900 line-clamp-2 mb-1">
                       {article.title}
@@ -215,11 +224,15 @@ export const CommunityRightSidebar = ({
                   className="flex items-center gap-3 justify-between"
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <img
-                      src={suggestion.avatar}
-                      alt={suggestion.name}
-                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                    />
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                      <Image
+                        src={suggestion.avatar}
+                        alt={suggestion.name}
+                        fill
+                        sizes="40px"
+                        className="object-cover"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-14 font-normal text-gray-900 truncate">
                         {suggestion.name}
@@ -253,11 +266,15 @@ export const CommunityRightSidebar = ({
                   className="flex items-center gap-3 justify-between"
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <img
-                      src={provider.avatar}
-                      alt={provider.name}
-                      className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                    />
+                    <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                      <Image
+                        src={provider.avatar}
+                        alt={provider.name}
+                        fill
+                        sizes="40px"
+                        className="object-cover"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-14 font-normal text-gray-900 truncate">
                         {provider.name}

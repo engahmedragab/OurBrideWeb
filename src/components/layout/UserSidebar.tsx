@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
@@ -139,11 +140,15 @@ export const UserSidebar = ({
       {/* User Profile Card */}
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
         <div className="flex items-center gap-3">
-          <img
-            src={userImage}
-            alt={userName}
-            className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-          />
+          <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+            <Image
+              src={userImage}
+              alt={userName}
+              fill
+              sizes="48px"
+              className="object-cover"
+            />
+          </div>
           <div className="flex-1 min-w-0">
             <p className="text-12 text-gray-500 font-medium">Welcome Back</p>
             <p className="text-16 font-semibold text-gray-900 truncate">

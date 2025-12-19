@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Modal } from './Modal'
 import { OTPInput } from './OTPInput'
 import { Button } from './Button'
@@ -46,9 +47,11 @@ export const PINModal = ({
       <div className="flex flex-col items-center w-full">
         {/* PIN Lock Illustration */}
         <div className="mb-6">
-          <img
+          <Image
             src={typeof pinLockSvg === 'string' ? pinLockSvg : pinLockSvg.src}
             alt="Enter PIN"
+            width={192}
+            height={192}
             className="w-48 h-48 object-contain"
           />
         </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
@@ -77,13 +78,15 @@ export const StatusModal = ({
         <div className="flex flex-col items-center p-6 pt-8">
           {/* Success check icon */}
           <div className="flex items-center justify-center mb-4">
-            <img
+            <Image
               src={
                 typeof successCheckSvg === 'string'
                   ? successCheckSvg
                   : successCheckSvg.src
               }
               alt="Success"
+              width={64}
+              height={64}
               className="h-16 w-16"
             />
           </div>

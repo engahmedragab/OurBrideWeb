@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { X, PhoneCall, Volume2, VolumeX, Mic, MicOff } from 'lucide-react'
@@ -31,11 +32,15 @@ function AnimatedAvatar({ userAvatar, userName }: { userAvatar?: string, userNam
         style={{ animationDelay: '0.8s' }}
       />
       {userAvatar ? (
-        <img
-          src={userAvatar}
-          alt={userName}
-          className="w-24 h-24 rounded-full object-cover relative z-10"
-        />
+        <div className="relative w-24 h-24 rounded-full overflow-hidden relative z-10">
+          <Image
+            src={userAvatar}
+            alt={userName}
+            fill
+            sizes="96px"
+            className="object-cover"
+          />
+        </div>
       ) : (
         <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-32 font-normal text-gray-500 relative z-10">
           {userName?.charAt(0)}

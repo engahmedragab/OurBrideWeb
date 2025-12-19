@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
   Heart,
@@ -154,11 +155,15 @@ export const ArticleDetails = ({
         {/* Article Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <img
-              src={author.avatar}
-              alt={author.name}
-              className="w-10 h-10 rounded-full object-cover"
-            />
+            <div className="relative w-10 h-10 rounded-full overflow-hidden">
+              <Image
+                src={author.avatar}
+                alt={author.name}
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
+            </div>
             <div>
               <h4 className="text-16 font-normal text-gray-900">
                 {author.name}
@@ -177,11 +182,15 @@ export const ArticleDetails = ({
         </div>
 
         {/* Article Image */}
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-96 rounded-lg object-cover mb-4"
-        />
+        <div className="relative w-full h-96 rounded-lg overflow-hidden mb-4">
+          <Image
+            src={image}
+            alt={title}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
 
         {/* Article Title */}
         <h1 className="text-24 font-normal text-gray-900 mb-4">{title}</h1>
@@ -231,11 +240,15 @@ export const ArticleDetails = ({
         {/* Add Comment Form */}
         <div className="pt-6 border-t border-gray-100">
           <div className="flex gap-3">
-            <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
-              alt="Your avatar"
-              className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-            />
+            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+              <Image
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
+                alt="Your avatar"
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
+            </div>
             <div className="flex-1">
               <textarea
                 value={commentText}

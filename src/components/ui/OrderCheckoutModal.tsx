@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import {
   X,
   User,
@@ -875,11 +876,15 @@ export const OrderCheckoutModal = ({
                           </div>
 
                           {/* Product Image */}
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                          />
+                          <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                            <Image
+                              src={item.image}
+                              alt={item.title}
+                              fill
+                              sizes="64px"
+                              className="object-cover"
+                            />
+                          </div>
 
                           {/* Product Details */}
                           <div className="flex-1 min-w-0">

@@ -456,51 +456,50 @@ function ServicesIntroPageContent() {
           showBackground={false}
         />
 
-      
-
-        {/* Section 2: Why Brides Trust OurBride - ProductCategoriesSection */}
-        <ProductCategoriesSection
-          categories={trustCategories}
-          topText="Why"
-          highlightText="Brides"
-          bottomText="Trust"
-          bottomHighlightText="OurBride"
-          headerAlignment="center"
-        />
-
-        {/* Today's Offers Section */}
-        <section className="container-custom py-12 md:py-16">
-          <div className="flex items-center justify-between mb-6 md:mb-8">
-            <h2 className="text-24 md:text-30 font-medium text-gray-900">
-              Today&apos;s Offers
-            </h2>
-            <span className="text-18 md:text-24 text-gray-500">
-              23 H 45 Min
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {offersServiceCards.map(cardData => (
-              <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
-            ))}
-          </div>
-        </section>
-
-        {/* Why Brides Trust OurBride - Features Section */}
-        <section className="container-custom py-5">
-          <WhyBridesChooseProductsSection
-            image={why_trust_ourBrideImage}
-            features={trustFeatures}
+        {/* Consistent container wrapper for all sections */}
+        <div className="container-custom">
+          {/* Section 2: Why Brides Trust OurBride - ProductCategoriesSection */}
+          <ProductCategoriesSection
+            categories={trustCategories}
             topText="Why"
             highlightText="Brides"
             bottomText="Trust"
             bottomHighlightText="OurBride"
             headerAlignment="center"
           />
+
+          {/* Today's Offers Section */}
+          <section className="py-12 md:py-16">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
+            <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
+              Today&apos;s Offers
+            </h2>
+            <span className="text-14 sm:text-16 md:text-20 text-gray-500 whitespace-nowrap leading-normal sm:leading-[24px] md:leading-[32px]">
+              23 H 45 Min
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {offersServiceCards.map(cardData => (
+              <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
+            ))}
+          </div>
         </section>
 
-        {/* Section 4: Best Providers With Best Products */}
-        <div className="container-custom">
+          {/* Why Brides Trust OurBride - Features Section */}
+          <section>
+            <WhyBridesChooseProductsSection
+              image={why_trust_ourBrideImage}
+              features={trustFeatures}
+              topText="Why"
+              highlightText="Brides"
+              bottomText="Trust"
+              bottomHighlightText="OurBride"
+              headerAlignment="center"
+            />
+          </section>
+
+          {/* Section 4: Best Providers With Best Products */}
           <BestProvidersSection
             providers={bestProviders}
             topText="Best"
@@ -510,21 +509,20 @@ function ServicesIntroPageContent() {
             headerAlignment="center"
             buttonText="Explore Now"
           />
-        </div>
 
-
-        {/* Newsletter Banner */}
-        <div className="mb-12">
-          <OfferBanner
-            heading="Ready To Get Our News ?"
-            description="OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
-            variant="newsletter"
-            ctaText="Submit"
-            productImage={flowersImage}
-            onSubscribe={_email => {
-              // TODO: Implement newsletter subscription
-            }}
-          />
+          {/* Newsletter Banner */}
+          <div className="mb-12">
+            <OfferBanner
+              heading="Ready To Get Our News ?"
+              description="OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
+              variant="newsletter"
+              ctaText="Submit"
+              productImage={flowersImage}
+              onSubscribe={_email => {
+                // TODO: Implement newsletter subscription
+              }}
+            />
+          </div>
         </div>
       </main>
       <Footer />

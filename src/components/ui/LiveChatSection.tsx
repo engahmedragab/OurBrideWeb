@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import supportImage from '@/assets/images/support.png'
@@ -31,14 +32,16 @@ export const LiveChatSection = ({
       {/* Icon */}
       <div className="relative h-[190px] w-[190px] flex-shrink-0">
         <div className="absolute inset-[2.5%] flex items-center justify-center">
-          <img
+          <Image
             src={
               typeof supportImage === 'object' && 'src' in supportImage
                 ? supportImage.src
                 : String(supportImage)
             }
             alt="Support"
-            className="h-full w-full object-contain"
+            fill
+            sizes="190px"
+            className="object-contain"
           />
         </div>
       </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { ChevronRight, Check } from 'lucide-react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -75,9 +76,11 @@ export const MissionCard = ({
             <Check className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 shrink-0" />
           )}
           <p className="text-12 sm:text-14 font-normal text-gray-900 leading-4 sm:leading-5">{rewardAmount}</p>
-          <img
+          <Image
             src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
             alt="Diamond"
+            width={20}
+            height={20}
             className="h-4 w-4 sm:h-5 sm:w-5 shrink-0"
           />
         </div>

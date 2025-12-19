@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import {
   ChevronUp,
@@ -308,11 +309,15 @@ export const ReelPlayer = ({
             {/* Mobile User Info - Bottom Left */}
             <div className="md:hidden absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent pointer-events-none">
               <div className="flex items-start gap-3 pointer-events-auto">
-                <img
-                  src={currentReel.author.avatar}
-                  alt={currentReel.author.name}
-                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                />
+                <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                  <Image
+                    src={currentReel.author.avatar}
+                    alt={currentReel.author.name}
+                    fill
+                    sizes="40px"
+                    className="object-cover"
+                  />
+                </div>
                 <div className="flex-1 text-white">
                   <h4 className="text-14 font-normal mb-1">
                     {currentReel.author.name}
@@ -432,11 +437,15 @@ export const ReelPlayer = ({
             {/* Comment Input */}
             <div className="p-4 border-t border-gray-200 bg-white">
               <div className="flex gap-3">
-                <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
-                  alt="Your avatar"
-                  className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                />
+                <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                  <Image
+                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
+                    alt="Your avatar"
+                    fill
+                    sizes="40px"
+                    className="object-cover"
+                  />
+                </div>
                 <div className="flex-1">
                   <input
                     type="text"

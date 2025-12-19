@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { CategoryCard } from '@/components/ui/CategoryCard'
 import { Edit2, Trash2, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -42,9 +43,11 @@ export const ServiceCategoryTile = ({
   const renderIcon = () => {
     if (service.icon.kind === 'uploaded') {
       return (
-        <img
+        <Image
           src={service.icon.value}
           alt={service.title}
+          width={56}
+          height={56}
           className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 object-contain"
         />
       )

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import referralWelcomeSvg from '@/assets/svg/refferal-welcome.svg'
 import diamondSvg from '@/assets/svg/Diamond.svg'
@@ -30,13 +31,15 @@ export const ReferralProgramCard = ({
     <div className="bg-white rounded-xl p-3 sm:p-4 border border-gray-100 shadow-sm flex flex-col gap-3 sm:gap-4">
       {/* Illustration */}
       <div className="flex justify-center">
-        <img
+        <Image
           src={
             typeof referralWelcomeSvg === 'string'
               ? referralWelcomeSvg
               : referralWelcomeSvg.src
           }
           alt="Referral Program"
+          width={128}
+          height={128}
           className="w-24 h-24 sm:w-32 sm:h-32 object-contain"
         />
       </div>
@@ -75,9 +78,11 @@ export const ReferralProgramCard = ({
             <p className="text-16 sm:text-18 font-semibold text-gray-900">
               {earnedPointsOrDiamonds}
             </p>
-            <img
+            <Image
               src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
               alt="Diamond"
+              width={24}
+              height={24}
               className="h-5 w-5 sm:h-6 sm:w-6 shrink-0"
             />
           </div>

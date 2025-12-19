@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import deleteXIcon from '@/assets/svg/deleteXIcon.svg'
 
@@ -37,7 +38,7 @@ export const DeleteIcon = ({ className, iconClassName }: ModalIconProps) => {
 
         {/* Red X icon - using SVG file */}
         <div className="absolute left-[29.30px] top-[29.27px]">
-          <img
+          <Image
             src={
               typeof deleteXIcon === 'string' ? deleteXIcon : deleteXIcon.src
             }

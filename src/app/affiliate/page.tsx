@@ -283,7 +283,7 @@ export default function AffiliatePage() {
           <div className="flex items-center justify-center min-h-[calc(100vh-200px)] px-4">
             <div className="max-w-md w-full text-center">
               {/* SVG Illustration */}
-              <div className="mb-6 sm:mb-8 flex justify-center relative w-48 h-48 sm:w-64 sm:h-64">
+              <div className="mb-6 sm:mb-8 flex justify-center items-center relative w-48 h-48 sm:w-64 sm:h-64 mx-auto">
                 <Image
                   src={typeof affiliateStartingSvg === 'string' ? affiliateStartingSvg : affiliateStartingSvg.src}
                   alt="Join Affiliate Program"

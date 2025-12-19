@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import NextImage from 'next/image'
 import { cn } from '@/lib/utils'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
@@ -56,11 +57,15 @@ export const CreatePostModal = ({
       <div className="px-6 pb-4">
         {/* User Info Section */}
         <div className="flex items-start gap-3 mb-4">
-          <img
-            src={currentUser.avatar}
-            alt={currentUser.name}
-            className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-          />
+          <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+            <NextImage
+              src={currentUser.avatar}
+              alt={currentUser.name}
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
+          </div>
           <div className="flex-1">
             <p className="text-14 font-normal text-gray-900">
               {currentUser.name}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { SearchInput } from '@/components/ui/SearchInput'
@@ -96,9 +97,11 @@ export const Header = ({ className }: HeaderProps) => {
               'focus:outline-none rounded-md'
             )}
           >
-            <img
+            <Image
               src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src}
               alt="OurBride Logo"
+              width={120}
+              height={48}
               className="h-10 sm:h-12 w-auto"
             />
           </Link>
@@ -349,9 +352,11 @@ export const Header = ({ className }: HeaderProps) => {
       >
         {/* Drawer Header */}
         <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200">
-          <img
+          <Image
             src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src}
             alt="OurBride Logo"
+            width={120}
+            height={48}
             className="h-10 w-auto"
           />
           <Button

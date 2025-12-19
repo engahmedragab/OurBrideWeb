@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
@@ -54,10 +55,12 @@ export const ServiceList = ({
                 href={`/services/category/${service.id}`}
                 className="block flex-shrink-0 w-full md:w-48 h-48 rounded-lg overflow-hidden bg-gray-100 relative"
               >
-                <img
+                <Image
                   src={service.images[0]}
                   alt={service.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 192px"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 {/* Top Offers Badge */}
                 {service.showTopOfferBadge && (

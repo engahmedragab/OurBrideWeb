@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Button } from './Button'
 import { Modal } from './Modal'
 import giftSuccessImage from '@/assets/images/Giftsuccess.png'
@@ -32,13 +33,15 @@ export const GiftSentSuccessModal = ({
       <div className="p-6">
         {/* Success Illustration */}
         <div className="flex justify-center mb-6">
-          <img
+          <Image
             src={
               typeof giftSuccessImage === 'string'
                 ? giftSuccessImage
                 : giftSuccessImage.src
             }
             alt="Gift Sent Successfully"
+            width={150}
+            height={150}
             className="w-full max-w-[120px] h-[120px] sm:max-w-[150px] sm:h-[150px] object-contain"
           />
         </div>

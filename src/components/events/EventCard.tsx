@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Users } from 'lucide-react'
 
@@ -67,15 +68,21 @@ export const EventCard = ({
           {/* Attendee Avatars */}
           <div className="flex items-center justify-end pr-2">
             {visibleAvatars.map((avatar, index) => (
-              <img
+              <div
                 key={index}
-                src={avatar}
-                alt={`Attendee ${index + 1}`}
                 className={cn(
-                  'rounded-full size-5 object-cover',
+                  'relative w-5 h-5 rounded-full overflow-hidden border-2 border-white',
                   index > 0 && '-ml-2'
                 )}
-              />
+              >
+                <Image
+                  src={avatar}
+                  alt={`Attendee ${index + 1}`}
+                  fill
+                  sizes="20px"
+                  className="object-cover"
+                />
+              </div>
             ))}
             {remainingCount > 0 && (
               <div className="relative -ml-2 rounded-full size-5 flex items-center justify-center bg-gray-400">

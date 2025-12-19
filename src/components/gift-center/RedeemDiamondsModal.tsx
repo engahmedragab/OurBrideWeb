@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import redeemImage from '@/assets/images/redeem.png'
@@ -71,9 +72,11 @@ export const RedeemDiamondsModal = ({
 
         {/* Illustration Image */}
         <div className="flex justify-center">
-          <img
+          <Image
             src={typeof redeemImage === 'string' ? redeemImage : redeemImage.src}
             alt="Redeem"
+            width={160}
+            height={160}
             className="w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] object-contain"
           />
         </div>
@@ -89,9 +92,11 @@ export const RedeemDiamondsModal = ({
           <div className="flex gap-3 sm:gap-4 items-center justify-center w-full">
             <div className="flex gap-1.5 sm:gap-2 items-center justify-center">
               <p className="text-18 sm:text-20 font-medium text-gray-900">{diamondsCount}</p>
-              <img
+              <Image
                 src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
                 alt="Diamond"
+                width={28}
+                height={28}
                 className="h-6 w-6 sm:h-7 sm:w-7"
               />
             </div>

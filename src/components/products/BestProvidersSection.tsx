@@ -100,14 +100,14 @@ export const BestProvidersSection = ({
             {/* Provider Info */}
             <div className="flex flex-col gap-2 items-center">
               <div className="flex gap-2 items-center">
-                <h3 className="text-20 md:text-24 font-semibold text-gray-900">
+                <h3 className="text-18 sm:text-20 md:text-24 font-semibold text-gray-900 leading-tight">
                   {provider.name}
                 </h3>
                 {provider.verified && (
-                  <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0" />
                 )}
               </div>
-              <p className="text-14 md:text-16 font-normal text-gray-600 text-center">
+              <p className="text-13 sm:text-14 md:text-16 font-normal text-gray-600 text-center leading-normal">
                 {provider.profession}
               </p>
               {/* Red Stars for Provider Rating */}
@@ -177,10 +177,10 @@ export const BestProvidersSection = ({
                 </div>
                 <Button
                   variant="ghost"
-                  className="text-14 md:text-16 font-normal text-brand-500 p-0 h-auto self-end hover:bg-transparent"
+                  className="text-13 sm:text-14 md:text-16 font-normal text-brand-500 p-0 h-auto self-end hover:bg-transparent"
                 >
                   {buttonText}
-                  <ChevronRight className="h-4 w-4 md:h-5 md:w-5 ml-1" />
+                  <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 ml-1" />
                 </Button>
               </div>
             </div>
