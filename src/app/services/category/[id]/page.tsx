@@ -4,7 +4,8 @@ import { ServiceDetailClient } from './ServiceDetailClient'
 export function generateStaticParams() {
   // Return array of service category IDs to pre-generate at build time
   // In a real app, this would fetch from an API
-  return [{ id: '1' }, { id: '2' }, { id: '3' }]
+  // Generate IDs 1-10 to cover common service IDs
+  return Array.from({ length: 10 }, (_, i) => ({ id: String(i + 1) }))
 }
 
 export default async function ServiceDetail({

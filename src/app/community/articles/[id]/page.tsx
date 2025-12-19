@@ -6,7 +6,8 @@ import { ArticleDetails } from '@/components/community'
 export function generateStaticParams() {
   // Return array of article IDs to pre-generate at build time
   // In a real app, this would fetch from an API
-  return [{ id: '1' }]
+  // Generate IDs 1-10 to cover common article IDs
+  return Array.from({ length: 10 }, (_, i) => ({ id: String(i + 1) }))
 }
 
 // Mock data - Replace with API call

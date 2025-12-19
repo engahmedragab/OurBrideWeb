@@ -1,4 +1,4 @@
-import { ProviderProfileClient } from './ProviderProfileClient'
+import { ProviderProfileClient } from '../../provider/[id]/ProviderProfileClient'
 
 // Generate static params for static export
 export function generateStaticParams() {

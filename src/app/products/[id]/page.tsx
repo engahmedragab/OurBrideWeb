@@ -1,8 +1,8 @@
-import { ProductDetailClient } from './ProductDetailClient'
+import { ProductDetailClient } from '../category/[id]/ProductDetailClient'
 
 // Generate static params for static export
 export function generateStaticParams() {
-  // Return array of product category IDs to pre-generate at build time
+  // Return array of product IDs to pre-generate at build time
   // In a real app, this would fetch from an API
   // Generate IDs 1-10 to cover common product IDs
   return Array.from({ length: 10 }, (_, i) => ({ id: String(i + 1) }))
