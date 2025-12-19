@@ -406,7 +406,8 @@ const INITIAL_ITEMS = [
 ];
 
 // CONSTANT ROUTES
-const ITEM_DETAILS_BASE_PATH = '/planning/items';
+const ADD_NEW_ITEM_PATH = '/events/planning/items/new';
+const ITEM_DETAILS_BASE_PATH = '/events/planning/items';
 
 
 export default function ItemsPage() {
@@ -524,16 +525,16 @@ const [items, setItems] = useState(INITIAL_ITEMS);
             <div className="w-full mx-auto">
                 
                 {/* ---------- FILTER BUTTONS ----------- */}
-              <NavigationMenu>
-                <NavigationMenuList className="flex space-x-2">
+              <NavigationMenu className="max-w-full justify-center">
+                <NavigationMenuList className="flex flex-wrap justify-center gap-2 md:gap-3 px-4 py-2">
                   {uniqueCategories.map((category: string) => {
                     const isActive = category === activeCategory;
                   return (
-                    <NavigationMenuItem key={category}>
+                    <NavigationMenuItem key={category} className="list-none">
                       <NavigationMenuLink
                         onClick={() => handleCategoryChange(category)}                         
                         className={cn(
-                          'px-5 py-2.5 text-14 md:text-16 font-normal rounded-full whitespace-nowrap transition-colors duration-200 cursor-pointer',
+                          'px-4 py-1.5 md:px-5 md:py-2.5 text-[12px] md:text-[14px]  rounded-full transition-all duration-200 block cursor-pointer',
                           isActive
                             ? 'bg-brand-500 text-white shadow-md'
                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
