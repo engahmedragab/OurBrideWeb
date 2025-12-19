@@ -98,7 +98,7 @@ export const RankUpModal = ({
         {/* Rank Badge */}
         <div className="flex items-center justify-center shrink-0">
           <NewRankIcon className="w-[80px] h-[80px]" />
-         
+
         </div>
 
         {/* Message Text */}

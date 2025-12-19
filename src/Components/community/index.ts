@@ -1,4 +1,4 @@
-// Export community components here
+// Export community components
 export { CommunitySidebar } from './CommunitySidebar'
 export { CommunityFeed } from './CommunityFeed'
 export { CommunityRightSidebar } from './CommunityRightSidebar'

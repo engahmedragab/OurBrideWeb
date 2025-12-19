@@ -1,3 +1,4 @@
+// Export product components and types
 export { ProductCategoriesSection } from './ProductCategoriesSection'
 export type {
   ProductCategoriesSectionProps,
@@ -19,5 +20,3 @@ export type {
   Provider,
   ProviderProduct,
 } from './BestProvidersSection'
-
-

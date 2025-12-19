@@ -447,7 +447,7 @@ export default function Home() {
   const currentMemberTestimonials = mockMemberTestimonials.slice(
     memberTestimonialsIndex * memberTestimonialsPerPage,
     memberTestimonialsIndex * memberTestimonialsPerPage +
-      memberTestimonialsPerPage
+    memberTestimonialsPerPage
   )
 
   return (
