@@ -18,12 +18,36 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
-import EditItemModal from '@/Components/ui/EditItemModal'
+import EditItemModal from '@/components/ui/EditItemModal'
+
+interface ItemData {
+  id: string
+  name: string
+  description: string
+  quantity: number
+  cost: number
+  totalCost: number
+  advancePayment: number
+  remaining: number
+  seller: string
+  buyDate: string
+  iscompleted: boolean
+  hasProvider: boolean
+  providerType: string
+  providerName: string
+  providerAddress: string
+  providerLink: string
+  hasReminder: boolean
+  reminderDate: string
+  reminderTime: string
+  reminderNote: string
+  notesContent: string
+}
 
 export default function ItemDetailsPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
-  const [itemData, setItemData] = useState({
+  const [itemData, setItemData] = useState<ItemData>({
     id: 'INV-2025-001',
     name: 'Sharp Inverter Refrigerator 18ft',
     description:
@@ -50,7 +74,7 @@ export default function ItemDetailsPage() {
       '10-year full warranty. Down payment paid via Credit Card. Remaining balance to be paid in cash upon delivery.',
   })
 
-  const handleSave = (updatedData: any) => {
+  const handleSave = (updatedData: ItemData) => {
     const total = (updatedData.cost || 0) * (updatedData.quantity || 0)
     const remain = total - (updatedData.advancePayment || 0)
 
