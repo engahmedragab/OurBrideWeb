@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { EventWeekHeader } from '@/components/events/calendar/EventWeekHeader'
-import { EventDayTimeline } from '@/components/events/calendar/EventDayTimeline'
-import { EventMiniMonth } from '@/components/events/calendar/EventMiniMonth'
+import {
+  EventWeekHeader,
+  EventDayTimeline,
+  EventMiniMonth,
+} from '@/components/events'
 
 /**
  * Calendar Page

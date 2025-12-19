@@ -3,7 +3,7 @@
 import { use } from 'react'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
-import { ArticleDetails } from '@/components/community/ArticleDetails'
+import { ArticleDetails } from '@/components/community'
 
 // Mock data - Replace with API call
 const mockArticle = {

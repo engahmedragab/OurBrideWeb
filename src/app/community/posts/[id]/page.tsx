@@ -3,7 +3,7 @@
 import { use } from 'react'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
-import { PostDetails } from '@/components/community/PostDetails'
+import { PostDetails } from '@/components/community'
 
 // Mock data - Replace with API call
 const mockPost = {

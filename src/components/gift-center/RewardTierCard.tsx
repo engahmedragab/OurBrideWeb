@@ -10,7 +10,7 @@ import {
   PinkRankIcon,
   RedRankIcon,
 } from '@/assets/rank/rankingIcons'
-import diamondSvg from '@/Assets/svg/Diamond.svg'
+import diamondSvg from '@/assets/svg/Diamond.svg'
 import type { RankType } from './RankUpModal'
 
 /**
@@ -120,11 +120,11 @@ export const RewardTierCard = ({
       onKeyDown={
         onClick
           ? e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                onClick()
-              }
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onClick()
             }
+          }
           : undefined
       }
     >

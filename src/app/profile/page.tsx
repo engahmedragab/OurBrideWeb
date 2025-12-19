@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { UserPageLayout } from '@/components/layout'
 import { Button } from '@/components/ui'
-import { PostCard } from '@/components/community/PostCard'
+import { PostCard } from '@/components/community'
 
 /**
  * User Profile Page

@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { EventWeekHeader } from '@/components/events/calendar/EventWeekHeader'
-import { PlanningMiniCalendar } from '@/components/events/calendar/PlanningMiniCalendar'
+import {
+  EventWeekHeader,
+  PlanningMiniCalendar,
+} from '@/components/events'
 import { DayDetailsView } from '@/components/planning/DayDetailsView'
 import { formatDateSafe, getToday } from '@/lib/date-utils'
 
@@ -26,11 +28,11 @@ export default function CalenderPage() {
 
   useEffect(() => {
     setBigDays(getBigDays())
-    
+
     const handleStorageChange = () => {
       setBigDays(getBigDays())
     }
-    
+
     window.addEventListener('storage', handleStorageChange)
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [])

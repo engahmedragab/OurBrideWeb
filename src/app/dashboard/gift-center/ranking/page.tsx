@@ -12,10 +12,10 @@ import {
 } from '@/assets/rank/rankingIcons'
 import { RankingProgressBar } from '@/components/ui'
 import { CheckCircle2, ChevronRight } from 'lucide-react'
-import verificationBadge from '@/Assets/svg/verification-badge.svg'
-import bronzeCrown from '@/Assets/svg/bronze-crown.svg'
-import goldCrown from '@/Assets/svg/gold-crown.svg'
-import blueCrown from '@/Assets/svg/blue-crown.svg'
+import verificationBadge from '@/assets/svg/verification-badge.svg'
+import bronzeCrown from '@/assets/svg/bronze-crown.svg'
+import goldCrown from '@/assets/svg/gold-crown.svg'
+import blueCrown from '@/assets/svg/blue-crown.svg'
 import { useRouter } from 'next/navigation'
 
 import { cn } from '@/lib'
@@ -26,10 +26,10 @@ import { cn } from '@/lib'
  */
 export default function RankingPage() {
   const router = useRouter()
-  
+
   // Mock data
   const currentStep = 0 // Current active step (0-indexed)
-  
+
   const rankingIcons = [
     { icon: BronzeIcon, label: 'Bronze', points: 200, rankKey: 'bronze' as const },
     { icon: SilverIcon, label: 'Silver', points: 200, rankKey: 'silver' as const },
@@ -117,7 +117,7 @@ export default function RankingPage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-4 sm:mb-5">
             <h2 className="text-16 sm:text-18 font-normal text-gray-900">Ranking System</h2>
-            <button 
+            <button
               onClick={() => router.push('/dashboard/gift-center/rewards')}
               className="text-12 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
             >
@@ -129,10 +129,10 @@ export default function RankingPage() {
           <div className="flex items-start justify-between mb-4 sm:mb-5 overflow-x-auto pb-2 -mx-2 px-2">
             {rankingIcons.map((rank, index) => (
               <div key={index} className="flex flex-col items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                 <p className="text-10 sm:text-12 font-semibold text-gray-900">{rank.label}</p>
+                <p className="text-10 sm:text-12 font-semibold text-gray-900">{rank.label}</p>
                 <rank.icon className="w-8 h-8 sm:w-10 sm:h-10" />
                 <div className="text-center">
-                 
+
                   <p className="text-8 sm:text-10 font-semibold text-gray-400">{rank.points} Points</p>
                 </div>
               </div>
@@ -169,40 +169,40 @@ export default function RankingPage() {
 
           {/* Tasks List */}
           <div className="space-y-3 lg:space-y-2">
-  {dailyTasks.map(task => (
-    <div
-      key={task.id}
-      className={cn(
-        "flex items-center justify-between px-4 py-3 rounded-xl",
-        "border border-gray-300 shadow-sm",
-        "transition-all"
-      )}
-    >
-      {/* Left side */}
-      <div className="flex flex-col">
-        <p className="text-12 sm:text-14 font-normal text-gray-900">
-          {task.title}
-        </p>
+            {dailyTasks.map(task => (
+              <div
+                key={task.id}
+                className={cn(
+                  "flex items-center justify-between px-4 py-3 rounded-xl",
+                  "border border-gray-300 shadow-sm",
+                  "transition-all"
+                )}
+              >
+                {/* Left side */}
+                <div className="flex flex-col">
+                  <p className="text-12 sm:text-14 font-normal text-gray-900">
+                    {task.title}
+                  </p>
 
-        <p className="text-10 sm:text-12 font-normal text-gray-500 mt-0.5">
-          {task.subtitle}
-        </p>
-      </div>
+                  <p className="text-10 sm:text-12 font-normal text-gray-500 mt-0.5">
+                    {task.subtitle}
+                  </p>
+                </div>
 
-      {/* Right side */}
-      <div className="flex items-center text-10 sm:text-12 lg:text-14 ">
-        <span
-          className={cn(
-            " font-semibold whitespace-nowrap",
-            task.completed ? "text-green-500 " : "text-gray-400"
-          )}
-        >
-          {task.completed ? `Done +${task.points} Points` : `${task.points} Points`}
-        </span>
-      </div>
-    </div>
-  ))}
-</div>
+                {/* Right side */}
+                <div className="flex items-center text-10 sm:text-12 lg:text-14 ">
+                  <span
+                    className={cn(
+                      " font-semibold whitespace-nowrap",
+                      task.completed ? "text-green-500 " : "text-gray-400"
+                    )}
+                  >
+                    {task.completed ? `Done +${task.points} Points` : `${task.points} Points`}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
 
         </div>
       </div>
@@ -211,59 +211,59 @@ export default function RankingPage() {
       <aside className="space-y-4 sm:space-y-6">
         {/* Current User Card */}
         <div className="relative bg-white  rounded-lg sm:rounded-xl border border-gray-300 p-3 sm:p-4 shadow-sm">
-  {/* Left section: avatar + name + icons */}
-  <div className="flex items-center gap-2.5  sm:gap-3  md:gap-2 pr-[110px] sm:pr-[100px]">
-    {/* Avatar */}
-    <img
-      src={currentUser.avatar}
-      alt={currentUser.name}
-      className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
-    />
+          {/* Left section: avatar + name + icons */}
+          <div className="flex items-center gap-2.5  sm:gap-3  md:gap-2 pr-[110px] sm:pr-[100px]">
+            {/* Avatar */}
+            <img
+              src={currentUser.avatar}
+              alt={currentUser.name}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
+            />
 
-    {/* Name and Badges */}
-    <div className="flex-1 min-w-0">
-      <div className="flex items-center gap-1.5 sm:gap-1.5">
-        <h4 className="text-12  lg:text-14 font-bold text-gray-900 truncate">
-          {currentUser.name}
-        </h4>
+            {/* Name and Badges */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-1.5">
+                <h4 className="text-12  lg:text-14 font-bold text-gray-900 truncate">
+                  {currentUser.name}
+                </h4>
 
-        {/* Bronze Rank Icon */}
-        <CurrentRankIcon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                {/* Bronze Rank Icon */}
+                <CurrentRankIcon className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
 
-        {/* Verification Badge */}
-        <img
-          src={
-            typeof verificationBadge === 'string'
-              ? verificationBadge
-              : verificationBadge.src
-          }
-          alt="Verified"
-          className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
-        />
-      </div>
+                {/* Verification Badge */}
+                <img
+                  src={
+                    typeof verificationBadge === 'string'
+                      ? verificationBadge
+                      : verificationBadge.src
+                  }
+                  alt="Verified"
+                  className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
+                />
+              </div>
 
-      <p className="text-10  md:text-12 text-gray-500 mt-0.5">
-        {currentUser.rankText}
-      </p>
-    </div>
-  </div>
+              <p className="text-10  md:text-12 text-gray-500 mt-0.5">
+                {currentUser.rankText}
+              </p>
+            </div>
+          </div>
 
-  {/* Right floating Rank Badge */}
-  <div className="absolute right-0 sm:right-0 top-1/2 -translate-y-1/2 ">
-    <RankBadge
-      rankKey={currentRank.rankKey}
-      rankingValue={currentUser.rankingValue}
-      className="w-[110px] md:w-[100px] lg:w-[130px] "
-    />
-  </div>
-</div>
+          {/* Right floating Rank Badge */}
+          <div className="absolute right-0 sm:right-0 top-1/2 -translate-y-1/2 ">
+            <RankBadge
+              rankKey={currentRank.rankKey}
+              rankingValue={currentUser.rankingValue}
+              className="w-[110px] md:w-[100px] lg:w-[130px] "
+            />
+          </div>
+        </div>
 
 
         {/* Top 10 Members */}
         <div className="  p-3 sm:p-4 shadow-sm">
           <div className="flex items-center justify-between mb-6 sm:mb-8">
             <h3 className="text-14 sm:text-16 font-normal text-gray-900">Top 10 Members</h3>
-           
+
           </div>
 
           {/* Top 3 Members - Podium Style: #3, #1, #2 */}
@@ -404,7 +404,7 @@ export default function RankingPage() {
                   <span className="text-12 sm:text-14 font-semibold text-gray-900 flex-shrink-0">
                     #{member.rank}
                   </span>
-                  
+
                   {/* Avatar */}
                   <div className="relative flex-shrink-0">
                     <img
@@ -413,7 +413,7 @@ export default function RankingPage() {
                       className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover"
                     />
                   </div>
-                  
+
                   {/* Name and rank text */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 sm:gap-2">
@@ -429,11 +429,11 @@ export default function RankingPage() {
                     <p className="text-10 sm:text-12 text-gray-500">{member.rankText}</p>
                   </div>
                 </div>
-                
+
                 {/* View Profile button */}
                 <Link href="/profile" className="text-10 lg:text-12 font-medium text-brand-500 hover:text-brand-600 flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
                   <span className="">View Profile</span>
-                 
+
                   <ChevronRight className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                 </Link>
               </div>

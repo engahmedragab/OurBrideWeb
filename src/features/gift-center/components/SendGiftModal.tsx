@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Gift, User, Mail } from 'lucide-react'
 import { Modal, Button, Input, Checkbox } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import phoneIconSvg from '@/Assets/svg/PhoneIcon.svg'
+import phoneIconSvg from '@/assets/svg/PhoneIcon.svg'
 
 /**
  * Send Gift Modal Component Props

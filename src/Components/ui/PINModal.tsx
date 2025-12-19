@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Modal } from './Modal'
 import { OTPInput } from './OTPInput'
 import { Button } from './Button'
-import pinLockSvg from '@/Assets/svg/Affiliate-pin.svg'
+import pinLockSvg from '@/assets/svg/Affiliate-pin.svg'
 
 export interface PINModalProps {
   isOpen: boolean

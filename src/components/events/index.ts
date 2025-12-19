@@ -19,6 +19,12 @@ export type { EventTopTabsProps } from './calendar/EventTopTabs'
 export { EventWeekHeader } from './calendar/EventWeekHeader'
 export type { EventWeekHeaderProps, WeekDay } from './calendar/EventWeekHeader'
 
+export { PlanningMiniCalendar } from './calendar/PlanningMiniCalendar'
+export type {
+  PlanningMiniCalendarProps,
+  PlanningMiniCalendarValue,
+} from './calendar/PlanningMiniCalendar'
+
 export { mockEvents } from './calendar/mockEvents'
 export type { MockEvent } from './calendar/mockEvents'
 

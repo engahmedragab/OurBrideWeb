@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { ProviderPageLayout } from '@/components/layout'
 import { Button } from '@/components/ui'
-import { PostCard } from '@/components/community/PostCard'
+import { PostCard } from '@/components/community'
 import { ServiceCard } from '@/components/ui/ServiceCard'
 import { RatingDisplay } from '@/components/ui/RatingDisplay'
 import { RatingInput } from '@/components/ui/RatingInput'
@@ -662,8 +662,8 @@ export default function ProviderProfilePage() {
                       sunday: true,
                     },
                   }}
-                  onWishlistToggle={() => {}}
-                  onBookNow={() => {}}
+                  onWishlistToggle={() => { }}
+                  onBookNow={() => { }}
                 />
               ))}
             </div>

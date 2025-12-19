@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Gift, User, Mail, CreditCard, Wallet } from 'lucide-react'
 import { Modal, Button, Input, Checkbox } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import phoneIconSvg from '@/Assets/svg/PhoneIcon.svg'
+import phoneIconSvg from '@/assets/svg/PhoneIcon.svg'
 
 /**
  * Get gift icon color based on coupon amount

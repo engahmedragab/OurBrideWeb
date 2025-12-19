@@ -2,7 +2,7 @@
 
 import { Gift } from 'lucide-react'
 import { cn } from '@/lib'
-import giftSentSuccessImage from '@/Assets/images/Giftsuccess.png'
+import giftSentSuccessImage from '@/assets/images/Giftsuccess.png'
 
 /**
  * Sent Gift Item Interface
