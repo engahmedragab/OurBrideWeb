@@ -385,33 +385,5 @@ export type { TabsProps, TabItem } from './Tabs'
 export { GiftSentSuccessModal } from './GiftSentSuccessModal'
 export type { GiftSentSuccessModalProps } from './GiftSentSuccessModal'
 
-export { PromoHero } from './PromoHero'
-export type { PromoHeroProps } from './PromoHero'
-
-export { CategoryCard } from './CategoryCard'
-export type { CategoryCardProps } from './CategoryCard'
-
-export { BottomSheet } from './BottomSheet'
-export type { BottomSheetProps } from './BottomSheet'
-
-export { BudgetCategoryCard } from './BudgetCategoryCard'
-export type {
-  BudgetCategoryCardProps,
-  BudgetCategory,
-  BudgetItem,
-} from './BudgetCategoryCard'
-
-export { SummaryMetricCard } from './SummaryMetricCard'
-export type { SummaryMetricCardProps } from './SummaryMetricCard'
-
-export { CategoryFilterChips } from './CategoryFilterChips'
-export type {
-  CategoryFilterChipsProps,
-  CategoryFilter,
-} from './CategoryFilterChips'
-
-export { AddBudgetItemModal } from './AddBudgetItemModal'
-export type { AddBudgetItemModalProps } from './AddBudgetItemModal'
-
-export { DeleteBudgetItemModal } from './DeleteBudgetItemModal'
-export type { DeleteBudgetItemModalProps } from './DeleteBudgetItemModal'
+export { CalendarEventBlock } from './CalendarEventBlock'
+export type { CalendarEventBlockProps, EventStatus } from './CalendarEventBlock'
