@@ -486,7 +486,7 @@ export default function Home() {
               </div>
 
               {/* Headline */}
-              <h1 className="text-30 md:text-40 lg:text-48 font-semibold text-gray-900 leading-tight mt-2">
+              <h1 className="text-24 sm:text-30 md:text-40 lg:text-48 font-semibold text-gray-900 leading-tight mt-2">
                 YOUR BRIDE ALWAYS IS <br />
                 <span className="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
                   OUR RESPONSIBILITY.
@@ -494,7 +494,7 @@ export default function Home() {
               </h1>
 
               {/* Description */}
-              <p className="text-16 md:text-18 text-gray-600 leading-relaxed max-w-lg">
+              <p className="text-14 sm:text-16 md:text-18 text-gray-600 leading-relaxed max-w-lg">
                 OurBride is your all-in-one platform for wedding planning and
                 shopping. Find everything you need to create your perfect day.
               </p>
@@ -747,7 +747,7 @@ export default function Home() {
         {/* Section 5: Suggested Products */}
         <section className="container-custom py-12 md:py-16">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-30 md:text-32 font-normal text-gray-900">
+            <h2 className="text-22 sm:text-26 md:text-30 lg:text-32 font-normal text-gray-900">
               Products Suggested for You
             </h2>
             <Link
@@ -771,7 +771,7 @@ export default function Home() {
         {/* Section 6: Suggested Services */}
         <section className="container-custom py-12 md:py-16">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-28 md:text-32 font-normal text-gray-900">
+            <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
               Services Suggested for You
             </h2>
             <Link
@@ -806,7 +806,7 @@ export default function Home() {
           </div>
           <div className="container-custom relative z-10">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-32 md:text-40 lg:text-48 font-black">
+              <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
                 <span className="font-normal text-gray-900">
                   Why{' '}
                   <span className="font-semibold text-gray-900">Brides</span>
@@ -847,7 +847,7 @@ export default function Home() {
         <section className="container-custom py-12 md:py-16">
           {/* Centered Heading Above Section */}
           <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-32 md:text-40 lg:text-48 font-black">
+            <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
               <span className="font-normal text-gray-900">
                 Read{' '}
                 <span className="font-semibold text-gray-900">Reviews</span>
@@ -865,8 +865,8 @@ export default function Home() {
             <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
               <div className="flex-1 lg:max-w-md">
                 <div className="mb-4 md:mb-6">
-                  <Quote className="h-12 w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
-                  <p className="text-20 md:text-24 lg:text-28 font-normal text-gray-900">
+                  <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
+                  <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
                     <span className="block">What Our</span>
                     <span className="block font-semibold text-gray-900">
                       Customers
@@ -923,7 +923,7 @@ export default function Home() {
         {/* Section 9: Providers */}
         <section className="container-custom py-12 md:py-16">
           <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-32 md:text-40 lg:text-48 font-black mb-4 md:mb-6">
+            <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
               <span className="font-normal text-gray-900">
                 Discover{' '}
                 <span className="font-semibold text-gray-900">Trusted</span>
@@ -959,7 +959,7 @@ export default function Home() {
           </div>
           <div className="container-custom relative z-10">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-32 md:text-40 lg:text-48 font-black mb-4 md:mb-6">
+              <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
                 <span className="font-normal text-gray-900">
                   Your Wedding{' '}
                   <span className="font-semibold text-gray-900">Journey</span>
@@ -997,7 +997,7 @@ export default function Home() {
         <section className="container-custom py-12 md:py-16">
           {/* Centered Heading Above Section */}
           <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-32 md:text-40 lg:text-48 font-black">
+            <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
               <span className="font-normal text-gray-900">
                 Our Bride{' '}
                 <span className="font-semibold text-gray-900">Members</span>
@@ -1014,8 +1014,8 @@ export default function Home() {
             <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
               <div className="flex-1 lg:max-w-md">
                 <div className="mb-4 md:mb-6">
-                  <Quote className="h-12 w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
-                  <p className="text-20 md:text-24 lg:text-28 font-normal text-gray-900">
+                  <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
+                  <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
                     <span className="block">Discover</span>
                     <span className="block font-semibold text-gray-900">
                       What
@@ -1076,7 +1076,7 @@ export default function Home() {
         <section className="relative py-16 md:py-24 overflow-hidden bg-white border-t border-gray-200">
           <div className="container-custom">
             <div className="text-center mb-8 md:mb-12">
-              <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900">
+              <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black text-gray-900">
                 <span className="font-normal">Find Your Wedding Journey</span>{' '}
                 <span className="font-semibold">Starts Here</span>
               </h2>
