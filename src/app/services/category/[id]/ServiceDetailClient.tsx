@@ -335,7 +335,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
             <div className="lg:col-span-5 space-y-4">
               {/* Service Header */}
               <div>
-                <h1 className="text-32 md:text-40 font-normal text-gray-900 mb-3">
+                <h1 className="text-24 sm:text-28 md:text-32 lg:text-40 font-normal text-gray-900 mb-3 leading-tight">
                   {service.title}
                 </h1>
                 <RatingDisplay
@@ -355,13 +355,13 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
               {/* Description */}
               <div className="space-y-2">
-                <p className="text-16 text-gray-500 leading-[1.6]">
+                <p className="text-14 sm:text-15 md:text-16 text-gray-500 leading-[1.6]">
                   {service.longDescription || service.description}
                 </p>
               </div>
 
               {/* Delivery Date */}
-              <div className="text-14 text-brand-500 font-normal">
+              <div className="text-13 sm:text-14 text-brand-500 font-normal">
                 Book now and get by <span className="text-gray-900">25 AUG 2025</span>
               </div>
             </div>
@@ -384,18 +384,18 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   {/* Pricing Section */}
                   <div className="mb-6 pb-6 border-b border-gray-200">
                     <div className="flex items-baseline gap-2 mb-4">
-                      <span className="text-14 text-gray-600">Start From</span>
-                      <span className="text-24 font-normal text-gray-900">
+                      <span className="text-13 sm:text-14 text-gray-600">Start From</span>
+                      <span className="text-20 sm:text-22 md:text-24 font-normal text-gray-900">
                         {service.price.discounted.toLocaleString()}
                       </span>
-                      <span className="text-14 text-gray-600">
+                      <span className="text-13 sm:text-14 text-gray-600">
                         {service.price.currency}
                       </span>
                     </div>
 
                     {/* Available Branches */}
                     <div className="mb-4">
-                      <h4 className="text-14 font-semibold text-gray-900 mb-2">
+                      <h4 className="text-13 sm:text-14 font-semibold text-gray-900 mb-2">
                         Available Branches
                       </h4>
                       <div
@@ -455,7 +455,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                       </div>
                       <button
                         onClick={() => setBranchesExpanded(!branchesExpanded)}
-                        className="text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
+                        className="text-13 sm:text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
                       >
                         {branchesExpanded ? 'See Less' : 'See More'}
                       </button>
@@ -464,7 +464,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
                   {/* Packages Details */}
                   <div className="mb-6 pb-6 border-b border-gray-200">
-                    <h4 className="text-14 font-semibold text-gray-900 mb-2">
+                    <h4 className="text-13 sm:text-14 font-semibold text-gray-900 mb-2">
                       Packages Details
                     </h4>
                     <div
@@ -512,7 +512,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                     </div>
                     <button
                       onClick={() => setPackagesExpanded(!packagesExpanded)}
-                      className="text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
+                      className="text-13 sm:text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
                     >
                       {packagesExpanded ? 'See Less' : 'See More'}
                     </button>
@@ -550,10 +550,10 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
             {/* Left: Reviews */}
             <div className="lg:col-span-9">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-24 md:text-30 font-semibold text-gray-900">
+                <h2 className="text-20 sm:text-24 md:text-30 font-semibold text-gray-900 leading-tight">
                   Reviews
                 </h2>
-                <span className="text-14 text-gray-600">
+                <span className="text-13 sm:text-14 text-gray-600">
                   {service.rating.count} reviews
                 </span>
               </div>
@@ -591,12 +591,12 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                         <div className="flex items-center justify-between mb-2">
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="text-16 font-semibold text-gray-900">
+                              <span className="text-15 sm:text-16 font-semibold text-gray-900">
                                 {review.userName}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="text-12 text-gray-500">
+                              <span className="text-11 sm:text-12 text-gray-500">
                                 {review.date}
                               </span>
                               <div className="flex items-center gap-0.5">
@@ -614,12 +614,12 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                               </div>
                             </div>
                           </div>
-                          <button className="flex items-center gap-1 text-12 text-gray-500 hover:text-gray-700">
-                            <ThumbsUp className="h-4 w-4" />
+                          <button className="flex items-center gap-1 text-11 sm:text-12 text-gray-500 hover:text-gray-700">
+                            <ThumbsUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                             <span>{review.helpful}</span>
                           </button>
                         </div>
-                        <p className="text-14 text-gray-600 leading-relaxed">
+                        <p className="text-13 sm:text-14 text-gray-600 leading-relaxed">
                           {review.text}
                         </p>
                       </div>
@@ -629,14 +629,14 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
               </div>
 
               <div className="mt-6 text-center">
-                <button className="text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
+                <button className="text-14 sm:text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
                   See more reviews
                 </button>
               </div>
 
               {/* Write Your Review Section */}
-              <div className="mt-8 p-6">
-                <h3 className="text-18 font-semibold text-gray-900 mb-4">
+              <div className="mt-8 p-4 sm:p-6">
+                <h3 className="text-16 sm:text-18 font-semibold text-gray-900 mb-4">
                   Write Your Review
                 </h3>
 
@@ -694,7 +694,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
               {/* Overall Rating Display */}
               <div className="bg-white border border-gray-200 rounded-lg p-6">
                 <div className="text-center mb-4">
-                  <div className="text-48 font-semibold text-gray-900 mb-2">
+                  <div className="text-36 sm:text-40 md:text-48 font-semibold text-gray-900 mb-2">
                     {service.rating.value.toFixed(1)}
                   </div>
                   <div className="mb-2 flex justify-center">
@@ -704,7 +704,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                       size="lg"
                     />
                   </div>
-                  <p className="text-14 text-gray-600">
+                  <p className="text-13 sm:text-14 text-gray-600">
                     {service.rating.count} Ratings
                   </p>
                 </div>
@@ -713,7 +713,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                 <div className="space-y-3 mt-6">
                   {ratingDistribution.map(item => (
                     <div key={item.stars} className="space-y-1">
-                      <div className="flex items-center justify-between text-12">
+                      <div className="flex items-center justify-between text-11 sm:text-12">
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-gray-900">
                             {item.stars}
@@ -750,16 +750,16 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
           {/* Suggested for You Section */}
           <section className="mb-12 max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-30 md:text-32 font-normal text-gray-900">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-8">
+              <h2 className="text-24 sm:text-28 md:text-30 lg:text-32 font-normal text-gray-900 leading-tight">
                 Suggested for You
               </h2>
               <Link
                 href="/services/category"
-                className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
+                className="flex items-center gap-2 text-14 sm:text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
               >
                 View All
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

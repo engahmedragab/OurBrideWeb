@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import brandLogo from '@/assets/svg/Brand-logo.svg'
@@ -85,7 +86,7 @@ export const ProviderHeader = ({ className }: ProviderHeaderProps) => {
             'focus:outline-none rounded-md'
           )}
         >
-          <img src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src} alt="OurBride Logo" className="h-12 w-auto" />
+          <Image src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src} alt="OurBride Logo" width={120} height={48} className="h-12 w-auto" />
         </Link> 
 
         {/* Navigation Menu - Centered */}

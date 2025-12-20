@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { ChevronRight, Copy, ExternalLink } from 'lucide-react'
@@ -167,9 +168,11 @@ export const HowPointsWorkModal = ({
                         <p className="text-18 sm:text-20 font-medium text-gray-900">
                           {mission.points}
                         </p>
-                        <img
+                        <Image
                           src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
                           alt="Diamond"
+                          width={24}
+                          height={24}
                           className="h-5 w-5 sm:h-6 sm:w-6"
                         />
                       </div>
@@ -234,9 +237,11 @@ export const HowPointsWorkModal = ({
                       <p className="text-14 sm:text-16 font-normal text-gray-900">
                         {task.points}
                       </p>
-                      <img
+                      <Image
                         src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
                         alt="Diamond"
+                        width={24}
+                        height={24}
                         className="h-5 w-5 sm:h-6 sm:w-6"
                       />
                     </div>
@@ -263,9 +268,11 @@ export const HowPointsWorkModal = ({
             <div className="flex flex-col gap-2 items-center justify-center">
               <div className="flex gap-3 sm:gap-4 items-center justify-center">
                 <p className="text-20 sm:text-24 font-medium text-gray-900">750</p>
-                <img
+                <Image
                   src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
                   alt="Diamond"
+                  width={32}
+                  height={32}
                   className="h-6 w-6 sm:h-8 sm:w-8"
                 />
                 <p className="text-20 sm:text-24 font-medium text-gray-900">= 1% Discount</p>

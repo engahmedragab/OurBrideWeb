@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, User, MessageSquare, BellOff, Ban, Phone } from 'lucide-react'
 import { BlockUserModal } from './BlockUserModal'
@@ -80,11 +81,15 @@ export const UserProfileView = ({
         <div className="flex flex-col items-center py-8 px-4">
           {/* Avatar */}
           <div className="relative mb-4">
-            <img
-              src={user.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200'}
-              alt={user.name}
-              className="w-32 h-32 rounded-full object-cover border-4 border-brand-500"
-            />
+            <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-brand-500">
+              <Image
+                src={user.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200'}
+                alt={user.name}
+                fill
+                sizes="128px"
+                className="object-cover"
+              />
+            </div>
             {user.isOnline && (
               <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-4 border-white rounded-full" />
             )}
@@ -166,11 +171,15 @@ export const UserProfileView = ({
                   className="aspect-square rounded-xl overflow-hidden bg-gray-100 cursor-pointer hover:opacity-90 transition-opacity"
                 >
                   {item.type === 'image' ? (
-                    <img
-                      src={item.url}
-                      alt="Media"
-                      className="w-full h-full object-cover"
-                    />
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={item.url}
+                        alt="Media"
+                        fill
+                        sizes="(max-width: 768px) 33vw, 20vw"
+                        className="object-cover"
+                      />
+                    </div>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-200">
                       <MessageSquare className="h-8 w-8 text-gray-400" />

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import orderPreparingSvg from '@/assets/svg/order-preparing.svg'
 import orderOnTheWaySvg from '@/assets/svg/order-ontheway.svg'
@@ -68,61 +69,71 @@ export const OrderProgressIndicator = ({
       {/* Illustration */}
       <div className="relative w-48 h-48 flex items-center justify-center">
         {status === 'preparing' && (
-          <img
+          <Image
             src={
               typeof orderPreparingSvg === 'string'
                 ? orderPreparingSvg
                 : orderPreparingSvg.src
             }
             alt="Order Preparing"
+            width={192}
+            height={192}
             className="w-full h-full object-contain"
           />
         )}
 
         {status === 'onTheWay' && (
-          <img
+          <Image
             src={
               typeof orderOnTheWaySvg === 'string'
                 ? orderOnTheWaySvg
                 : orderOnTheWaySvg.src
             }
             alt="Order On The Way"
+            width={192}
+            height={192}
             className="w-full h-full object-contain"
           />
         )}
 
         {status === 'received' && (
-          <img
+          <Image
             src={
               typeof orderReceivedSvg === 'string'
                 ? orderReceivedSvg
                 : orderReceivedSvg.src
             }
             alt="Order Received"
+            width={192}
+            height={192}
             className="w-full h-full object-contain"
           />
         )}
 
         {status === 'delivered' && (
-          <img
+          <Image
             src={
               typeof orderCompleteSvg === 'string'
                 ? orderCompleteSvg
                 : orderCompleteSvg.src
             }
             alt="Order Complete"
+            width={192}
+            height={192}
             className="w-full h-full object-contain"
           />
         )}
 
         {status === 'cancelled' && (
-          <img
+          <Image
             src={
               typeof orderCancelledSvg === 'string'
                 ? orderCancelledSvg
                 : orderCancelledSvg.src
             }
             alt="Order Cancelled"
+            width={192}
+            height={192}
             className="w-full h-full object-contain"
           />
         )}

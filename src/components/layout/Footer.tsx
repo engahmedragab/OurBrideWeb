@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import footerLogo from '@/assets/svg/Brand-logo.svg'
 import { Facebook, Instagram, Music2, Twitter } from 'lucide-react'
@@ -50,9 +51,11 @@ export const Footer = ({ className }: FooterProps) => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 md:mb-12">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0">
-              <img
+              <Image
                 src={typeof footerLogo === 'string' ? footerLogo : footerLogo.src}
                 alt="OurBride Logo"
+                width={160}
+                height={64}
                 className="h-12 md:h-16 w-auto"
               />
             </Link>

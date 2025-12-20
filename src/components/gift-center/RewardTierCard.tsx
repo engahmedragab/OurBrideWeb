@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import {
@@ -152,9 +153,11 @@ export const RewardTierCard = ({
             <p className="text-16 sm:text-18 font-normal text-gray-900 text-center">
               {rewardPoints}
             </p>
-            <img
+            <Image
               src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
               alt="Diamond"
+              width={32}
+              height={32}
               className="h-6 w-6 sm:h-8 sm:w-8"
             />
           </div>

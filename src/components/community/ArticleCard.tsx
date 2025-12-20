@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
@@ -39,20 +40,28 @@ export const ArticleCard = ({
         className
       )}
     >
-      <img
-        src={image}
-        alt={title}
-        className="w-full h-64 rounded-lg object-cover mb-4"
-      />
+      <div className="relative w-full h-64 rounded-lg overflow-hidden mb-4">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover"
+        />
+      </div>
       <h3 className="text-20 font-normal text-gray-900 mb-3">{title}</h3>
       <p className="text-14 text-gray-700 mb-4 line-clamp-3">{description}</p>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img
-            src={author.avatar}
-            alt={author.name}
-            className="w-8 h-8 rounded-full object-cover"
-          />
+          <div className="relative w-8 h-8 rounded-full overflow-hidden">
+            <Image
+              src={author.avatar}
+              alt={author.name}
+              fill
+              sizes="32px"
+              className="object-cover"
+            />
+          </div>
           <div>
             <p className="text-14 font-normal text-gray-900">{author.name}</p>
             <p className="text-12 text-gray-500">{date}</p>

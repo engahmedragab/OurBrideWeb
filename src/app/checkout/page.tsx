@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
   User,
@@ -781,11 +782,15 @@ export default function CheckoutPage() {
                       >
                         <div className="flex items-start gap-4">
                           {/* Product Image */}
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                          />
+                          <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                            <Image
+                              src={item.image}
+                              alt={item.title}
+                              fill
+                              sizes="64px"
+                              className="object-cover"
+                            />
+                          </div>
 
                           {/* Product Details */}
                           <div className="flex-1 min-w-0">

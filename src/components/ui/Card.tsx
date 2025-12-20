@@ -136,10 +136,12 @@ const ProductServiceCard = ({
     <div className="group relative bg-gray-50 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-        <img
+        <Image
           src={data.image}
           alt={data.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
         />
 
         {/* Top Offers Badge */}
@@ -280,11 +282,15 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
 
       {/* Author Info */}
       <div className="flex items-center gap-3">
-        <img
-          src={data.authorImage}
-          alt={data.authorName}
-          className="w-12 h-12 rounded-full object-cover grayscale"
-        />
+        <div className="relative w-12 h-12 rounded-full overflow-hidden">
+          <Image
+            src={data.authorImage}
+            alt={data.authorName}
+            fill
+            sizes="48px"
+            className="object-cover grayscale"
+          />
+        </div>
         <div>
           <p className="text-16 font-semibold text-gray-900">
             {data.authorName}

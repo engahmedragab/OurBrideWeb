@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Heart, MessageCircle, Share2, Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toaster'
@@ -125,11 +126,15 @@ export const ReelsSidebar = ({ className }: ReelsSidebarProps) => {
       {/* Post Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         <div className="flex items-center gap-3 mb-4">
-          <img
-            src={mockPost.author.avatar}
-            alt={mockPost.author.name}
-            className="w-10 h-10 rounded-full object-cover"
-          />
+          <div className="relative w-10 h-10 rounded-full overflow-hidden">
+            <Image
+              src={mockPost.author.avatar}
+              alt={mockPost.author.name}
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
+          </div>
           <div>
             <h4 className="text-16 font-normal text-gray-900">
               {mockPost.author.name}
@@ -181,11 +186,15 @@ export const ReelsSidebar = ({ className }: ReelsSidebarProps) => {
         {/* Add Comment Form */}
         <div className="pt-6 border-t border-gray-100">
           <div className="flex gap-3">
-            <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
-              alt="Your avatar"
-              className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-            />
+            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+              <Image
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
+                alt="Your avatar"
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
+            </div>
             <div className="flex-1">
               <input
                 type="text"

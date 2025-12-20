@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MessageBubble } from './MessageBubble'
@@ -98,10 +99,12 @@ export const ChatModal = ({
       >
         <div className="flex items-center gap-1.5 sm:gap-2">
           <div className="h-8 w-8 sm:h-10 sm:w-10 md:h-[60px] md:w-[60px] rounded-full bg-white border border-gray-200 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0">
-            <img
+            <Image
               src={avatarSrc}
               alt={supportName}
-              className="w-full h-full object-contain"
+              fill
+              sizes="(max-width: 640px) 32px, 40px"
+              className="object-contain"
             />
           </div>
           <div className="flex flex-col gap-0.5 sm:gap-1 min-w-0">
@@ -135,7 +138,7 @@ export const ChatModal = ({
               {msg.sender === 'support' && (
                 <div className="flex gap-1.5 items-end mb-1">
                   <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-white border border-gray-200 flex items-center justify-center p-0.5 sm:p-1 flex-shrink-0">
-                    <img
+                    <Image
                       src={avatarSrc}
                       alt="Support"
                       className="w-full h-full object-contain"

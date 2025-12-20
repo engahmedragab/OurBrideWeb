@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
@@ -48,12 +49,14 @@ export const ProductList = ({
               {/* Image */}
               <Link
                 href={`/products/${product.id}`}
-                className="block flex-shrink-0 w-full md:w-48 h-48 rounded-lg overflow-hidden bg-gray-100"
+                className="block flex-shrink-0 w-full md:w-48 h-48 rounded-lg overflow-hidden bg-gray-100 relative"
               >
-                <img
+                <Image
                   src={product.images[0]}
                   alt={product.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 192px"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </Link>
 

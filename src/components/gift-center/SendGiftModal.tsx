@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Gift, User, Mail, CreditCard, Wallet } from 'lucide-react'
 import { Modal, Button, Input, Checkbox } from '@/components/ui'
@@ -131,13 +132,15 @@ export const SendGiftModal = ({
               <Input
                 placeholder="Mobile Number"
                 prefixIcon={
-                  <img
+                  <Image
                     src={
                       typeof phoneIconSvg === 'string'
                         ? phoneIconSvg
                         : phoneIconSvg.src
                     }
                     alt="Phone"
+                    width={16}
+                    height={16}
                     className="h-4 w-4 text-gray-400"
                   />
                 }
@@ -177,7 +180,7 @@ export const SendGiftModal = ({
               <Input
                 placeholder="Mobile Number"
                 prefixIcon={
-                  <img
+                  <Image
                     src={
                       typeof phoneIconSvg === 'string'
                         ? phoneIconSvg

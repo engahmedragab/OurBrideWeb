@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
@@ -72,11 +73,15 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
               className="flex gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors -m-2"
               onClick={() => router.push(`/community/posts/${post.id}`)}
             >
-              <img
-                src={post.author.avatar}
-                alt={post.author.name}
-                className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-              />
+              <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                <Image
+                  src={post.author.avatar}
+                  alt={post.author.name}
+                  fill
+                  sizes="40px"
+                  className="object-cover"
+                />
+              </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-14 font-normal text-gray-900 mb-1">
                   {post.author.name}

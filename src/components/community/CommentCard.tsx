@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 export interface CommentCardProps {
@@ -22,11 +23,15 @@ export const CommentCard = ({
 }: CommentCardProps) => {
   return (
     <div className={cn('flex gap-3', className)}>
-      <img
-        src={author.avatar}
-        alt={author.name}
-        className="w-10 h-10 rounded-full object-cover flex-shrink-0"
-      />
+      <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+        <Image
+          src={author.avatar}
+          alt={author.name}
+          fill
+          sizes="40px"
+          className="object-cover"
+        />
+      </div>
       <div className="flex-1">
         <h4 className="text-14 font-normal text-gray-900 mb-1">
           {author.name}

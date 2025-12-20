@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Gift } from 'lucide-react'
 import { cn } from '@/lib'
 import giftSentSuccessImage from '@/assets/images/Giftsuccess.png'
@@ -134,13 +135,15 @@ export const SentGiftsCard = ({ gifts = [], isEmpty }: SentGiftsCardProps) => {
         <div className="flex flex-col items-center justify-center py-4 sm:py-5">
           {/* Empty State Illustration */}
           <div className="mb-2 sm:mb-3 flex justify-center">
-            <img
+            <Image
               src={
                 typeof giftSentSuccessImage === 'string'
                   ? giftSentSuccessImage
                   : giftSentSuccessImage.src
               }
               alt="No Sent Gifts"
+              width={112}
+              height={112}
               className="w-24 h-24 sm:w-28 sm:h-28 object-contain"
             />
           </div>

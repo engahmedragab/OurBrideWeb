@@ -1,5 +1,6 @@
 "use client"
 
+import Image from 'next/image'
 import pageNotFoundSvg from '@/assets/svg/page-not-found.svg'
 import { useRouter } from 'next/navigation'
 
@@ -10,9 +11,11 @@ export default function NotFoundPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
       <div className="flex flex-col items-center justify-center w-full">
         {/* SVG Illustration */}
-        <img
+        <Image
           src={typeof pageNotFoundSvg === 'string' ? pageNotFoundSvg : pageNotFoundSvg.src}
           alt="Page Not Found"
+          width={256}
+          height={256}
           className="w-64 h-64 object-contain mb-8"
         />
         {/* Heading */}

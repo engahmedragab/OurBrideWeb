@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 export interface OrderProduct {
@@ -47,11 +48,15 @@ export const OrderSummarySidebar = ({
             key={product.id}
             className="flex items-center gap-3 bg-white rounded-lg p-3 border border-gray-200"
           >
-            <img
-              src={product.image}
-              alt={product.title}
-              className="w-16 h-16 rounded-md object-cover flex-shrink-0"
-            />
+            <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
+              <Image
+                src={product.image}
+                alt={product.title}
+                fill
+                sizes="64px"
+                className="object-cover"
+              />
+            </div>
             <div className="flex-1 min-w-0">
               <p className="text-14 font-medium text-gray-900 truncate">
                 {product.title}

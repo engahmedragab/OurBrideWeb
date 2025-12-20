@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Typography } from '@/components/ui/Typography'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -56,13 +57,15 @@ export default function DownloadApp({ variant, className }: DownloadAppProps) {
           aria-label="Download on the App Store"
           type="button"
         >
-          <img
+          <Image
             src={
               typeof AppleIcon === 'string'
                 ? AppleIcon
                 : AppleIcon.src || AppleIcon
             }
             alt=""
+            width={20}
+            height={20}
             className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0"
             aria-hidden="true"
           />
@@ -88,13 +91,15 @@ export default function DownloadApp({ variant, className }: DownloadAppProps) {
           aria-label="GET IT ON Google Play"
           type="button"
         >
-          <img
+          <Image
             src={
               typeof PlaystoreIcon === 'string'
                 ? PlaystoreIcon
                 : PlaystoreIcon.src || PlaystoreIcon
             }
             alt=""
+            width={20}
+            height={20}
             className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0"
             aria-hidden="true"
           />

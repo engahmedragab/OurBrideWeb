@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Heart, MessageCircle, Share2, MoreVertical } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -85,11 +86,15 @@ export const PostCard = ({
       {/* Post Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <img
-            src={author.avatar}
-            alt={author.name}
-            className="w-10 h-10 rounded-full object-cover"
-          />
+          <div className="relative w-10 h-10 rounded-full overflow-hidden">
+            <Image
+              src={author.avatar}
+              alt={author.name}
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
+          </div>
           <div>
             <h4 className="text-16 font-normal text-gray-900">{author.name}</h4>
             <p className="text-12 text-gray-500">{timestamp}</p>
@@ -115,37 +120,51 @@ export const PostCard = ({
       {images && images.length > 0 && (
         <div className="mb-4">
           {images.length === 1 ? (
-            <img
-              src={images[0]}
-              alt="Post image"
-              className="w-full rounded-lg object-cover"
-            />
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+              <Image
+                src={images[0]}
+                alt="Post image"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
           ) : images.length === 2 ? (
             <div className="grid grid-cols-2 gap-2">
               {images.map((img, idx) => (
-                <img
-                  key={idx}
-                  src={img}
-                  alt={`Post image ${idx + 1}`}
-                  className="w-full h-48 rounded-lg object-cover"
-                />
+                <div key={idx} className="relative w-full h-48 rounded-lg overflow-hidden">
+                  <Image
+                    src={img}
+                    alt={`Post image ${idx + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    className="object-cover"
+                  />
+                </div>
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-2">
-              <img
-                src={images[0]}
-                alt="Post image 1"
-                className="col-span-1 row-span-2 w-full h-full rounded-lg object-cover"
-              />
+              <div className="col-span-1 row-span-2 relative w-full h-full rounded-lg overflow-hidden">
+                <Image
+                  src={images[0]}
+                  alt="Post image 1"
+                  fill
+                  sizes="(max-width: 768px) 33vw, 16vw"
+                  className="object-cover"
+                />
+              </div>
               <div className="col-span-2 flex flex-col gap-2">
                 {images.slice(1, 3).map((img, idx) => (
-                  <img
-                    key={idx}
-                    src={img}
-                    alt={`Post image ${idx + 2}`}
-                    className="w-full h-32 rounded-lg object-cover"
-                  />
+                  <div key={idx} className="relative w-full h-32 rounded-lg overflow-hidden">
+                    <Image
+                      src={img}
+                      alt={`Post image ${idx + 2}`}
+                      fill
+                      sizes="(max-width: 768px) 66vw, 33vw"
+                      className="object-cover"
+                    />
+                  </div>
                 ))}
               </div>
             </div>

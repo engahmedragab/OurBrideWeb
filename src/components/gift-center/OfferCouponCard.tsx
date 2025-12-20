@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Copy } from 'lucide-react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -55,9 +56,11 @@ export const OfferCouponCard = ({
     <div className={cn(offerCouponCardVariants({ status }), className)}>
       {/* Sale Icon */}
       <div className="flex items-center justify-center shrink-0">
-        <img
+        <Image
           src={typeof saleSvg === 'string' ? saleSvg : saleSvg.src}
           alt="Sale"
+          width={32}
+          height={32}
           className="h-7 w-7 sm:h-8 sm:w-8"
         />
       </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import {
   X,
   User,
@@ -398,11 +399,15 @@ export const BookingDetailsModal = ({
             {/* Service Card */}
             <div className="bg-white rounded-lg p-4 mb-6 border border-gray-200">
               <div className="flex items-start gap-4">
-                <img
-                  src={service.images[0]}
-                  alt={service.title}
-                  className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
-                />
+                <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                  <Image
+                    src={service.images[0]}
+                    alt={service.title}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                </div>
                 <div className="flex-1">
                   <h4 className="text-16 font-semibold text-gray-900 mb-2">
                     {service.title}

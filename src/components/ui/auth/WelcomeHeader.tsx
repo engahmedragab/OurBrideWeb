@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 import brandLogo from '@/assets/svg/Brand-logo.svg'
@@ -22,9 +23,11 @@ export const WelcomeHeader = ({
     <div className={cn('flex flex-col items-center space-y-1.5', className)}>
       {/* Logo */}
       <div className="flex items-center justify-center">
-        <img
+        <Image
           src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src}
           alt="OurBride Logo"
+          width={120}
+          height={48}
           className="h-10 w-auto sm:h-12"
         />
       </div>

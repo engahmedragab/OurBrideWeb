@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Button } from './Button'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'
@@ -43,13 +44,15 @@ export const BookingConfirmationModal = ({
       <div className="p-6">
         {/* Success Illustration */}
         <div className="flex justify-center mb-6">
-          <img
+          <Image
             src={
               typeof modalSuccessSvg === 'string'
                 ? modalSuccessSvg
                 : modalSuccessSvg.src
             }
             alt="Booking Confirmation"
+            width={281}
+            height={281}
             className="w-full max-w-[281px] h-auto"
           />
         </div>

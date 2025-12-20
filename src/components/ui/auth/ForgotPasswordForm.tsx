@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Input } from '../Input'
@@ -429,9 +430,11 @@ export const ForgotPasswordForm = ({
         <div className="space-y-4">
           {/* Illustration */}
           <div className="flex justify-center py-4">
-            <img
+            <Image
               src={typeof forgetIcon === 'string' ? forgetIcon : forgetIcon.src}
               alt="Forget Password"
+              width={128}
+              height={128}
               className="h-32 w-auto"
             />
           </div>
@@ -500,9 +503,11 @@ export const ForgotPasswordForm = ({
         <div className="space-y-4">
           {/* Illustration */}
           <div className="flex justify-center py-4">
-            <img
+            <Image
               src={typeof forgetIcon === 'string' ? forgetIcon : forgetIcon.src}
               alt="Forget Password"
+              width={128}
+              height={128}
               className="h-32 w-auto"
             />
           </div>
@@ -564,9 +569,11 @@ export const ForgotPasswordForm = ({
         <div className="space-y-4">
           {/* Illustration */}
           <div className="flex justify-center py-4">
-            <img
+            <Image
               src={typeof forgetIcon === 'string' ? forgetIcon : forgetIcon.src}
               alt="Forget Password"
+              width={128}
+              height={128}
               className="h-32 w-auto"
             />
           </div>

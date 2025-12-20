@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
@@ -32,11 +33,15 @@ export const ArticlePreview = ({
         className
       )}
     >
-      <img
-        src={thumbnail}
-        alt={title}
-        className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
-      />
+      <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+        <Image
+          src={thumbnail}
+          alt={title}
+          fill
+          sizes="80px"
+          className="object-cover"
+        />
+      </div>
       <div className="flex-1 min-w-0">
         <h4 className="text-14 font-normal text-gray-900 line-clamp-2 mb-1">
           {title}

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { X, ChevronRight } from 'lucide-react'
 import referralWelcomeSvg from '@/assets/svg/refferal-welcome.svg'
 import referralInviteSvg from '@/assets/svg/refferal-invite.svg'
@@ -87,9 +88,11 @@ export const ReferralOnboardingModal = ({
 
             {/* SVG Illustration */}
             <div className="mb-6 flex justify-center">
-              <img
+              <Image
                 src={currentStepData.svg}
                 alt={currentStepData.title}
+                width={160}
+                height={160}
                 className="w-40 h-40 object-contain"
               />
             </div>

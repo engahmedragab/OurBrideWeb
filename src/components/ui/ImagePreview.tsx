@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -22,11 +23,15 @@ export const ImagePreviewItem = ({
 }: ImagePreviewItemProps) => {
   return (
     <div className={cn('relative inline-block', className)}>
-      <img
-        src={preview}
-        alt={file.name}
-        className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border border-gray-200"
-      />
+      <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border border-gray-200">
+        <Image
+          src={preview}
+          alt={file.name}
+          fill
+          sizes="96px"
+          className="object-cover"
+        />
+      </div>
       <button
         type="button"
         onClick={onRemove}

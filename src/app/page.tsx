@@ -591,15 +591,17 @@ export default function Home() {
 
               {/* Products Card */}
               <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-                <div className="aspect-[5/2] overflow-hidden">
-                  <img
+                <div className="aspect-[5/2] overflow-hidden relative">
+                  <Image
                     src={
                       typeof heroCardBrideImage === 'string'
                         ? heroCardBrideImage
                         : heroCardBrideImage.src
                     }
                     alt="Explore Products"
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 192px, 224px"
+                    className="object-cover"
                   />
                 </div>
                 <div className="p-4">

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Copy } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
@@ -87,9 +88,11 @@ export const RedeemSuccessModal = ({
         >
           {/* Sale Icon */}
           <div className="absolute top-4 sm:top-5 left-1/2 -translate-x-1/2 z-10">
-            <img
+            <Image
               src={typeof saleSvg === 'string' ? saleSvg : saleSvg.src}
               alt="Sale"
+              width={72}
+              height={72}
               className="h-18 w-18"
             />
           </div>

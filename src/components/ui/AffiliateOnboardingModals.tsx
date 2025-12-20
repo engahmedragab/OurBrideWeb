@@ -499,9 +499,11 @@ export const AffiliateOnboardingModals = ({
               </p>
 
               <div className="mb-6 flex justify-center">
-                <img
+                <Image
                   src={typeof affiliatePinSvg === 'string' ? affiliatePinSvg : affiliatePinSvg.src}
                   alt="Create PIN"
+                  width={128}
+                  height={128}
                   className="w-32 h-32 object-contain"
                 />
               </div>
@@ -552,9 +554,11 @@ export const AffiliateOnboardingModals = ({
               </p>
 
               <div className="mb-6 flex justify-center">
-                <img
+                <Image
                   src={typeof affiliatePinSvg === 'string' ? affiliatePinSvg : affiliatePinSvg.src}
                   alt="Confirm PIN"
+                  width={128}
+                  height={128}
                   className="w-32 h-32 object-contain"
                 />
               </div>

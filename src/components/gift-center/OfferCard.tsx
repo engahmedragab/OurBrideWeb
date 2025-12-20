@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Copy } from 'lucide-react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -74,9 +75,11 @@ export const OfferCard = ({
     >
       {/* Sale Icon */}
       <div className="absolute  top-8 lg:top-5  left-1/2 -translate-x-1/2 z-10">
-        <img
+        <Image
           src={typeof saleSvg === 'string' ? saleSvg : saleSvg.src}
           alt="Sale"
+          width={52}
+          height={52}
           className="w-11 h-11 sm:w-12 sm:h-12 lg:w-[52px] lg:h-[52px]"
         />
       </div>

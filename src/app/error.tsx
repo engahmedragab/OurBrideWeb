@@ -1,5 +1,6 @@
 "use client"
 
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import orderEmptySvg from '@/assets/svg/something-wrong.svg'
 
@@ -10,9 +11,11 @@ export default function ErrorPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
       <div className="flex flex-col items-center justify-center w-full">
         {/* SVG Illustration */}
-        <img
+        <Image
           src={typeof orderEmptySvg === 'string' ? orderEmptySvg : orderEmptySvg.src}
           alt="Something went wrong"
+          width={256}
+          height={256}
           className="w-64 h-64 object-contain mb-8"
         />
         {/* Header */}

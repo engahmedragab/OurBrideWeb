@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { OTPInput } from '../OTPInput'
@@ -177,9 +178,11 @@ export const MobileVerificationForm = ({
 
       {/* Illustration */}
       <div className="flex justify-center py-4">
-        <img
+        <Image
           src={typeof forgetIcon === 'string' ? forgetIcon : forgetIcon.src}
           alt="Mobile Verification"
+          width={128}
+          height={128}
           className="h-32 w-auto"
         />
       </div>
