@@ -361,6 +361,7 @@ export default function Home() {
     setMemberTestimonialsIndex(index)
   }
 
+
   // Trust cards data
   const trustCards = [
     {
@@ -646,99 +647,122 @@ export default function Home() {
 
         {/* Section 2: Offer Banner */}
         <OfferBanner
-          heading="25% Offer On our products"
-          description="OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
-          ctaText="Start Shopping"
-          ctaLink="/products"
-          productImage={product}
+          offers={[
+            {
+              heading: '25% Offer On our products',
+              description:
+                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+              ctaText: 'Start Shopping',
+              ctaLink: '/products',
+              productImage: product,
+            },
+            {
+              heading: '25% Offer On our products',
+              description:
+                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+              ctaText: 'Start Shopping',
+              ctaLink: '/products',
+              productImage: product,
+            },
+            {
+              heading: '25% Offer On our products',
+              description:
+                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+              ctaText: 'Start Shopping',
+              ctaLink: '/products',
+              productImage: product,
+            },
+          ]}
         />
 
         {/* Section 3: Statistics */}
-        <section className="container-custom py-12 md:py-16">
+        <section className="container-custom pt-12 md:pt-16 pb-4 md:pb-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="text-center">
               <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +1200
               </div>
-              <div className="text-14 md:text-16 font-medium text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
                 Clients
               </div>
+              <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
             <div className="text-center">
               <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +600
               </div>
-              <div className="text-14 md:text-16 font-medium text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
                 Services Providers
               </div>
+              <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
             <div className="text-center">
               <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +30
               </div>
-              <div className="text-14 md:text-16 font-medium text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
                 Available Services
               </div>
+              <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
             <div className="text-center">
               <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
                 +2500
               </div>
-              <div className="text-14 md:text-16 font-medium text-gray-600">
+              <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
                 Products
               </div>
+              <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
           </div>
         </section>
 
         {/* Section 4: Benefits */}
-        <section className="container-custom py-12 md:py-16 bg-gray-50 rounded-2xl">
+        <section className="container-custom pt-4 md:pt-6 pb-12 md:pb-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 rounded-full bg-brand-500 flex items-center justify-center mb-4 relative">
-                <BadgeCheck className="h-8 w-8 text-white" />
-                <CheckCircle2 className="h-4 w-4 text-brand-500 absolute -bottom-0.5 -right-0.5 bg-white rounded-full border-2 border-white" />
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4">
+                <BadgeCheck className="h-12 w-12 text-brand-500" />
               </div>
-              <h3 className="text-16 md:text-18 font-normal text-gray-900 mb-2">
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
                 Verified Trusted Providers
               </h3>
-              <p className="text-14 text-gray-600">
-                All our service providers are carefully verified and trusted.
+              <p className="text-14 text-gray-600 leading-relaxed">
+                Every service is identity-checked for a safe and reliable experience.
               </p>
             </div>
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 rounded-full bg-brand-500 flex items-center justify-center mb-4">
-                <TargetIcon className="h-8 w-8 text-white" />
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4">
+                <TargetIcon className="h-12 w-12 text-brand-500" />
               </div>
-              <h3 className="text-16 md:text-18 font-normal text-gray-900 mb-2">
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
                 All-in-One Wedding Hub
               </h3>
-              <p className="text-14 text-gray-600">
-                Plan, book, shop, and celebrate everything in one place.
+              <p className="text-14 text-gray-600 leading-relaxed">
+                Plan, shop, book, and manage everything from one platform.
               </p>
             </div>
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 rounded-full bg-brand-500 flex items-center justify-center mb-4 relative">
-                <Shield className="h-8 w-8 text-white" />
-                <DollarSign className="h-4 w-4 text-white absolute" />
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4 relative inline-block">
+                <Shield className="h-12 w-12 text-brand-500" />
+                <CheckCircle2 className="h-4 w-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fill-brand-500" />
               </div>
-              <h3 className="text-16 md:text-18 font-normal text-gray-900 mb-2">
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
                 Secure Payments
               </h3>
-              <p className="text-14 text-gray-600">
-                Your payments are safe and secure with our trusted payment
-                system.
+              <p className="text-14 text-gray-600 leading-relaxed">
+                Safe transactions, transparent pricing, and guaranteed service delivery.
               </p>
             </div>
-            <div className="flex flex-col items-center text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 rounded-full bg-brand-500 flex items-center justify-center mb-4">
-                <Tag className="h-8 w-8 text-white" />
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4">
+                <Tag className="h-12 w-12 text-brand-500" />
               </div>
-              <h3 className="text-16 md:text-18 font-normal text-gray-900 mb-2">
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
                 Exclusive Offers & Rewards
               </h3>
-              <p className="text-14 text-gray-600">
-                Exclusive coupons and discounts designed for your budget.
+              <p className="text-14 text-gray-600 leading-relaxed">
+                Enjoy discounts, and gift options designed for your big day.
               </p>
             </div>
           </div>
@@ -755,7 +779,6 @@ export default function Home() {
               className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
             >
               View All
-              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -779,7 +802,6 @@ export default function Home() {
               className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
             >
               View All
-              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -1061,7 +1083,7 @@ export default function Home() {
             </div>
 
             {/* Right Side - Testimonial Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto items-stretch">
               {currentMemberTestimonials.map((testimonial, index) => (
                 <Card
                   key={`${memberTestimonialsIndex}-${index}`}
@@ -1072,35 +1094,40 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 12: App Download */}
-        <section className="relative py-16 md:py-24 overflow-hidden bg-white border-t border-gray-200">
+        {/* Section: App Download */}
+        <section className="relative overflow-hidden bg-white py-0">
           <div className="container-custom">
-            <div className="text-center mb-8 md:mb-12">
-              <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black text-gray-900">
-                <span className="font-normal">Find Your Wedding Journey</span>{' '}
-                <span className="font-semibold">Starts Here</span>
+            <div className="text-center mb-0">
+              <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900 leading-tight">
+                <span className="font-normal block">Make Wedding Planning Easier</span>
+                <span className="font-semibold">With OurBride</span>
               </h2>
             </div>
-            <div className="flex items-center justify-center mb-12 md:mb-16">
-              <StoreBadges size="lg" />
-            </div>
-            <div className="relative flex items-center justify-center">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-brand-500 rounded-full opacity-20 blur-3xl" />
-              <div className="relative z-10 transform rotate-6 md:rotate-12 w-[280px] md:w-[400px] lg:w-[500px] aspect-[9/16]">
-                <Image
-                  src={
-                    typeof phoneImage === 'string' ? phoneImage : phoneImage.src
-                  }
-                  alt="OurBride Mobile App"
-                  fill
-                  sizes="(max-width: 768px) 280px, (max-width: 1024px) 400px, 500px"
-                  className="object-contain drop-shadow-2xl"
-                />
+
+            <div className="flex flex-col items-center">
+              <div className="flex items-center justify-center mb-0">
+                <StoreBadges size="2xl" />
+              </div>
+
+              <div className="relative flex items-center justify-center w-full h-auto mt-0">
+                {/* Background Glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-brand-400 via-brand-300 to-brand-200 rounded-full opacity-30 blur-3xl" />
+
+                {/* Phone Image */}
+                <div className="relative z-10 w-[650px] md:w-[850px] lg:w-[1000px] aspect-[26/16]">
+                  <Image
+                    src={typeof phoneImage === 'string' ? phoneImage : phoneImage.src}
+                    alt="OurBride Mobile App"
+                    fill
+                    sizes="(max-width: 768px) 650px, (max-width: 1024px) 850px, 1000px"
+                    className="object-contain drop-shadow-2xl"
+                  />
+                </div>
               </div>
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-brand-500" />
         </section>
+
       </main>
       <Footer />
     </div>
