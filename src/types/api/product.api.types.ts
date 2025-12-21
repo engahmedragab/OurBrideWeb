@@ -36,8 +36,8 @@ export const mapProductResponseToProduct = (
 
   // Extract tags
   const tags: string[] = []
-  if (apiProduct.tags) {
-    tags.push(...apiProduct.tags.map(tag => tag.name || '').filter(Boolean))
+  if (Array.isArray(apiProduct.tags)) {
+    tags.push(...apiProduct.tags.map(tag => (tag && typeof tag === 'object' && 'name' in tag ? tag.name || '' : '')).filter(Boolean))
   }
   if (apiProduct.providerProductTags && apiProduct.providerProductTags.length > 0) {
     apiProduct.providerProductTags.forEach(tag => {

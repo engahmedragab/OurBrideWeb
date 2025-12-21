@@ -499,10 +499,12 @@ export default function ProductDetail({
 
           {/* Newsletter/Offer Banner Section */}
           <OfferBanner
-            heading="24% Offer On our product!"
-            description="Subscribe to our newsletter and get exclusive offers on premium wedding products."
-            variant="default"
-            productImage={productImage}
+            offers={[{
+              heading: "24% Offer On our product!",
+              description: "Subscribe to our newsletter and get exclusive offers on premium wedding products.",
+              variant: "default",
+              productImage: productImage,
+            }]}
             className="mb-12"
           />
 
