@@ -179,39 +179,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initializeAuth()
   }, [])
 
-  // Auto-refresh token before expiration
-  // Optimized: Check less frequently and only when token is close to expiring
+  // Auto-refresh token: schedule a single timeout for expiration minus buffer
   useEffect(() => {
     if (!state.isAuthenticated) return
 
-    const checkTokenExpiration = async () => {
-      if (isTokenExpired()) {
-        const refreshTokenValue = getRefreshToken()
-        if (refreshTokenValue) {
-          try {
-            const authData = await authApi.refreshToken()
-            // Note: authApi.refreshToken already calls setToken internally
-            // Convert null to undefined for type compatibility
-            const refreshedUser: AuthUser | undefined = authData.user ?? (state.user ? state.user : undefined)
-            dispatch({ type: 'REFRESH_TOKEN', payload: { ...authData, user: refreshedUser } })
-          } catch {
-            // Refresh failed, logout
-            dispatch({ type: 'LOGOUT' })
-          }
-        } else {
+    // Get the token expiration time (in localStorage)
+    const expiresAtStr = typeof window !== 'undefined' ? localStorage.getItem('token_expires_at') : null
+    if (!expiresAtStr) return
+    const expirationTime = new Date(expiresAtStr).getTime()
+    const bufferMs = 5 * 60 * 1000 // 5 min buffer before expire
+    const now = Date.now()
+    let delay = expirationTime - bufferMs - now
+
+    // If already past the buffer, refresh right away
+    if (delay <= 0) delay = 1000
+
+    let timeout: NodeJS.Timeout | number | null = null
+    let cancelled = false
+
+    const refreshTask = async () => {
+      if (cancelled) return
+      const refreshTokenValue = getRefreshToken()
+      if (refreshTokenValue) {
+        try {
+          const authData = await authApi.refreshToken()
+          // Note: authApi.refreshToken already calls setToken internally
+          const refreshedUser: AuthUser | undefined = authData.user ?? (state.user ? state.user : undefined)
+          dispatch({ type: 'REFRESH_TOKEN', payload: { ...authData, user: refreshedUser } })
+        } catch {
           dispatch({ type: 'LOGOUT' })
         }
+      } else {
+        dispatch({ type: 'LOGOUT' })
       }
     }
 
-    // Check immediately
-    checkTokenExpiration()
-    
-    // Then check every 5 minutes (optimized from 1 minute)
-    const interval = setInterval(checkTokenExpiration, 5 * 60 * 1000)
-
-    return () => clearInterval(interval)
-  }, [state.isAuthenticated, state.user])
+    timeout = setTimeout(refreshTask, delay)
+    return () => {
+      cancelled = true
+      if (timeout) clearTimeout(timeout as number)
+    }
+  }, [state.isAuthenticated, state.user && typeof window !== 'undefined' ? localStorage.getItem('token_expires_at') : null])
 
   const loginWithEmail = useCallback(async (credentials: LoginCredentials) => {
     dispatch({ type: 'LOGIN_START' })

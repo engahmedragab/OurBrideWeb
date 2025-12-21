@@ -45,19 +45,24 @@ export default function LoginPage() {
         password: loginCredentials.password,
       })
       
-      // Check if preferences are initialized after successful login
-      const { isPreferenceInit } = await import('@/auth/utils/token')
+      // After login, get planning preference init status from backend and update local user
+      const { getPlanningPreferenceInit } = await import('@/services/profile/profileApi')
+      const { setPreferenceInit, isPreferenceInit } = await import('@/auth/utils/token')
+      const backendPreferenceInit = await getPlanningPreferenceInit()
+      setPreferenceInit(backendPreferenceInit)
+
+      // Now check (from backend) if preferences are initialized
       const preferencesInitialized = isPreferenceInit()
-      
+
       // Get redirect URL from query params or default based on preferences
       let redirectUrl = searchParams.get('redirect') || '/dashboard'
-      
+
       // If preferences are not initialized, redirect to planning preferences
       // (unless user was trying to access a specific page - then let dashboard layout handle it)
       if (!preferencesInitialized) {
         redirectUrl = '/auth/planning-preferences'
       }
-      
+
       // Redirect to the original page, planning preferences, or dashboard
       router.push(redirectUrl)
     } catch (err) {
@@ -66,7 +71,7 @@ export default function LoginPage() {
     }
   }, [loginCredentials, loginWithEmail, router, clearError])
 
-  const handleSocialLogin = useCallback(async (provider: 'google' | 'facebook' | 'apple') => {
+  const handleSocialLogin = useCallback(async (provider: 'google' | 'facebook') => {
     try {
       clearError()
       
@@ -123,10 +128,7 @@ export default function LoginPage() {
             provider="facebook"
             onClick={() => handleSocialLogin('facebook')}
           />
-          <SocialMediaButton
-            provider="apple"
-            onClick={() => handleSocialLogin('apple')}
-          />
+
         </div>
 
         {/* Divider */}

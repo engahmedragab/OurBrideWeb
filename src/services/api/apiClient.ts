@@ -1,5 +1,6 @@
 import { Api, HttpClient } from '@/../client/common/api/gen/ourbride-api'
 import { getToken } from '@/auth/utils/token'
+import { getApiLanguage } from '@/utils/language'
 
 // Get base URL and ensure it doesn't duplicate /api/v1
 // Note: The generated API endpoints already include /api/v1 in their paths
@@ -35,13 +36,26 @@ const httpClient = new HttpClient({
   },
 })
 
-// Add request interceptor to inject token
+// Add request interceptor to inject token and language
 httpClient.instance.interceptors.request.use(
   (config) => {
     const token = getToken()
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    
+    // Add language support: query parameter and Accept-Language header
+    const language = getApiLanguage()
+    if (config.headers) {
+      config.headers['Accept-Language'] = language
+    }
+    
+    // Add lang as query parameter
+    if (!config.params) {
+      config.params = {}
+    }
+    config.params.lang = language
+    
     return config
   },
   (error) => Promise.reject(error)

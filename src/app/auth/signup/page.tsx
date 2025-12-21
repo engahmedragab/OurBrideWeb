@@ -106,14 +106,13 @@ export default function SignupPage() {
     }
   }, [signupCredentials, acceptedTerms, signupFull, router, clearError])
 
-  const handleSocialSignup = useCallback(async (provider: 'google' | 'facebook' | 'apple') => {
+  const handleSocialSignup = useCallback(async (provider: 'google' | 'facebook') => {
     try {
       clearError()
       
       const providerMap: Record<string, ExternalProvidersType | null> = {
         google: 'Google' as ExternalProvidersType,
         facebook: 'Facebook' as ExternalProvidersType,
-        apple: null,
       }
 
       const providerType = providerMap[provider]
@@ -149,10 +148,7 @@ export default function SignupPage() {
             provider="facebook"
             onClick={() => handleSocialSignup('facebook')}
           />
-          <SocialMediaButton
-            provider="apple"
-            onClick={() => handleSocialSignup('apple')}
-          />
+
         </div>
 
         {/* Divider */}
@@ -174,7 +170,16 @@ export default function SignupPage() {
         {/* Error Message */}
         {error && (
           <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">{error}</p>
+            {error.includes('\n') ? (
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-red-800 mb-1">Validation Errors:</p>
+                {error.split('\n').map((err, index) => (
+                  <p key={index} className="text-sm text-red-600">• {err}</p>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-red-600">{error}</p>
+            )}
           </div>
         )}
 

@@ -36,8 +36,24 @@ const getErrorMessage = (error: unknown, defaultMessage: string): string => {
   if (error && typeof error === 'object') {
     // Check for Axios error structure
     if ('response' in error && error.response && typeof error.response === 'object') {
-      const response = error.response as { data?: { message?: string; error?: string } }
+      const response = error.response as { 
+        status?: number
+        data?: { 
+          message?: string
+          error?: string
+          errors?: string[]
+          success?: boolean
+        } 
+      }
+      
       if (response.data) {
+        // Handle validation errors (400 status with errors array)
+        if (response.status === 400 && Array.isArray(response.data.errors) && response.data.errors.length > 0) {
+          // Join all validation errors with newlines or commas
+          return response.data.errors.join('\n')
+        }
+        
+        // Fallback to message or error field
         return response.data.message || response.data.error || defaultMessage
       }
     }

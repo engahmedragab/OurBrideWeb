@@ -188,7 +188,7 @@ export const PlanningPreferencesForm = ({
         setIsLoadingPreferences(true)
         setApiError(null)
         const preferences = await getPlanningPreferences()
-        setAvailablePreferences(preferences)
+        setAvailablePreferences(Array.isArray(preferences) ? preferences : [])
       } catch (error) {
         // On error, allow retry by resetting the ref
         preferencesFetchedRef.current = false

@@ -36,6 +36,7 @@ export default function DashboardLayout({
     // Allow users to access help center even if preferences aren't set
     const exemptPaths = [
       '/dashboard/help-center',
+      '/dashboard/settings', // allow access to settings without planning preferences
       // Add other exempt paths here if needed
     ]
     

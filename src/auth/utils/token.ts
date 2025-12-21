@@ -39,9 +39,18 @@ export const getUser = (): any | null => {
 /**
  * Check if user has initialized planning preferences
  */
+// This function is now updated on login from the backend
 export const isPreferenceInit = (): boolean => {
   const user = getUser()
   return user?.isPreferenceInit === true
+}
+
+// Utility to set isPreferenceInit state in user object
+export const setPreferenceInit = (value: boolean) => {
+  const user = getUser()
+  if (!user) return
+  user.isPreferenceInit = value
+  localStorage.setItem('user_data', JSON.stringify(user))
 }
 
 /**

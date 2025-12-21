@@ -17,78 +17,71 @@ export interface PlanningPreference {
 }
 
 /**
- * Get list of available planning preferences from /preparations endpoint
+ * Get user's planning preference init status
  */
-export const getPlanningPreferences = async (): Promise<PlanningPreference[]> => {
+export const getPlanningPreferenceInit = async (): Promise<boolean> => {
   try {
-    const response = await apiClient.api.getPreparationsGetAll()
-    
-    // The response is an AxiosResponse, so the actual data is in response.data
-    // Debug: Log the response structure
-    console.log('Preparations API Response:', response)
-    console.log('Response.data:', (response as { data?: unknown })?.data)
-    
-    // Handle different response structures
-    let preparations: Preparation[] = []
-    
-    // Axios response structure: response.data contains the actual API response
-    const responseData = (response as { data?: unknown })?.data
-    
-    // Check if responseData is directly an array (most common case)
-    if (Array.isArray(responseData)) {
-      preparations = responseData as Preparation[]
-    }
-    // Check if responseData has a nested data/items/result property
-    else if (responseData && typeof responseData === 'object' && responseData !== null) {
-      const dataObj = responseData as Record<string, unknown>
-      
-      // Try common property names
-      if (Array.isArray(dataObj.data)) {
-        preparations = dataObj.data as Preparation[]
-      } else if (Array.isArray(dataObj.items)) {
-        preparations = dataObj.items as Preparation[]
-      } else if (Array.isArray(dataObj.result)) {
-        preparations = dataObj.result as Preparation[]
-      } else if (Array.isArray(dataObj.results)) {
-        preparations = dataObj.results as Preparation[]
-      } else if (Array.isArray(dataObj.content)) {
-        preparations = dataObj.content as Preparation[]
+    // The GET endpoint will likely return the user's preferences/ids or an isInit field
+    const response = await apiClient.api.getProfileGetPlanningPreferences()
+    const data = response?.data ?? response
+
+    // Several possible patterns depending on backend:
+    if (typeof data === 'object' && data !== null) {
+      // Pattern 1: Has an explicit field for init status
+      if ('isPreferenceInit' in data) return !!data.isPreferenceInit
+      if ('isInit' in data) return !!data.isInit
+      // Pattern 2: User has actual preferences (array), treat as init if not empty
+      if ('planningPreferenceIds' in data && Array.isArray(data.planningPreferenceIds)) {
+        return data.planningPreferenceIds.length > 0
+      }
+      if ('preferences' in data && Array.isArray(data.preferences)) {
+        return data.preferences.length > 0
       }
     }
-    // Fallback: check if response itself is an array (shouldn't happen with axios, but just in case)
-    else if (Array.isArray(response)) {
-      preparations = response as Preparation[]
+    // Pattern 3: Array means already set (legacy)
+    if (Array.isArray(data)) {
+      return data.length > 0
     }
-    
-    console.log('Extracted preparations count:', preparations.length)
-    console.log('First preparation:', preparations[0])
-    
-    if (preparations.length === 0) {
-      console.warn('No preparations found in response.')
-      console.warn('Response type:', typeof response)
-      console.warn('Response.data type:', typeof responseData)
-      console.warn('Full response:', JSON.stringify(response, null, 2))
-    }
-    
-    return mapPreparationsToPreferences(preparations)
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch planning preferences'
-    console.error('Error fetching planning preferences:', error)
-    throw new Error(errorMessage)
+    // Fallback: treat unknown responses as not-init
+    return false
+  } catch (error) {
+    console.error('Error fetching planning preferences init status:', error)
+    // For safety, if the API fails, treat as not initialized
+    return false
   }
 }
 
-/**
- * Map Preparation objects to PlanningPreference format
- */
-function mapPreparationsToPreferences(preparations: Preparation[]): PlanningPreference[] {
-  return preparations.map((prep) => {
-    // Get image URL, handling null values
-    const imageUrl = prep.image?.url || prep.image?.thumbnailUrl || prep.image?.previewUrl
-    const iconName = prep.iconName
-    const colorName = prep.colorName
-    
-    return {
+// ...existing exports
+
+export const getPlanningPreferences = async (): Promise<PlanningPreference[]> => {
+  try {
+    const response = await apiClient.api.getPreparationsGetAll();
+
+    // The response is an AxiosResponse, so the actual data is in response.data 
+    let preparations: Preparation[] = [];
+    const responseData = (response as { data?: unknown })?.data;
+
+    // Check if responseData is directly an array
+    if (Array.isArray(responseData)) {
+      preparations = responseData as Preparation[];
+    } else if (responseData && typeof responseData === 'object') {
+      const dataObj = responseData as Record<string, unknown>;
+      if (Array.isArray(dataObj.data)) {
+        preparations = dataObj.data as Preparation[];
+      } else if (Array.isArray(dataObj.items)) {
+        preparations = dataObj.items as Preparation[];
+      } else if (Array.isArray(dataObj.result)) {
+        preparations = dataObj.result as Preparation[];
+      } else if (Array.isArray(dataObj.results)) {
+        preparations = dataObj.results as Preparation[];
+      } else if (Array.isArray(dataObj.content)) {
+        preparations = dataObj.content as Preparation[];
+      }
+    } else if (Array.isArray(response)) {
+      preparations = response as Preparation[];
+    }
+    // Map preparations to PlanningPreference type
+    return preparations.map((prep) => ({
       id: prep.id,
       name: prep.nameEn || prep.nameAr || 'Unknown',
       nameEn: prep.nameEn,
@@ -96,11 +89,13 @@ function mapPreparationsToPreferences(preparations: Preparation[]): PlanningPref
       description: prep.descriptionEn || prep.descriptionAr || prep.bioEn || prep.bioAr,
       descriptionEn: prep.descriptionEn || prep.bioEn,
       descriptionAr: prep.descriptionAr || prep.bioAr,
-      imageUrl: imageUrl ?? undefined,
-      iconName: iconName ?? undefined,
-      colorName: colorName ?? undefined,
-    }
-  })
+      imageUrl: prep.image?.url || prep.image?.thumbnailUrl || prep.image?.previewUrl || undefined,
+      iconName: prep.iconName ?? undefined,
+      colorName: prep.colorName ?? undefined,
+    }));
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch planning preferences');
+  }
 }
 
 /**
@@ -113,11 +108,9 @@ export const setPlanningPreferences = async (
     const request: UserPlanningPreferenceRequest = {
       preparationIds,
     }
-    
     await apiClient.api.postProfileSetPlanningPreferences(request)
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Failed to set planning preferences'
     throw new Error(errorMessage)
   }
 }
-
