@@ -1,3 +1,5 @@
+'use client'
+
 import { InputHTMLAttributes, forwardRef, useState } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -29,8 +31,8 @@ const passwordInputVariants = cva(
 
 export interface PasswordInputProps
   extends
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'>,
-    VariantProps<typeof passwordInputVariants> {
+  Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'>,
+  VariantProps<typeof passwordInputVariants> {
   errorMessage?: string
   showSuccessIcon?: boolean
   onStrengthChange?: (strength: 'weak' | 'medium' | 'strong') => void
@@ -79,11 +81,11 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
               'flex-1 bg-transparent outline-none focus:outline-none font-normal text-16 leading-6',
               variant === 'error' && 'text-red-500 placeholder:text-red-500',
               variant === 'default' &&
-                'text-gray-900 placeholder:text-gray-400',
+              'text-gray-900 placeholder:text-gray-400',
               variant === 'focused' &&
-                'text-gray-900 placeholder:text-gray-400',
+              'text-gray-900 placeholder:text-gray-400',
               variant === 'success' &&
-                'text-gray-900 placeholder:text-gray-400',
+              'text-gray-900 placeholder:text-gray-400',
               variant === 'fill' && 'text-gray-900 placeholder:text-gray-400'
             )}
             ref={ref}

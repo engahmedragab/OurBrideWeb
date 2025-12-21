@@ -23,7 +23,7 @@ import {
   useProductCategories,
   useFilteredProducts,
   useProducts,
-} from '@/hooks/products'
+} from '@/Hooks/products'
 
 const sortOptions: ProductSortOption[] = [
   { value: 'default', label: 'Default' },

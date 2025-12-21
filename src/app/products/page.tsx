@@ -18,7 +18,7 @@ import {
   useProductCategories,
   useProductOffers,
   useProducts,
-} from '@/hooks/products'
+} from '@/Hooks/products'
 import flowersImage from '@/assets/images/flowers.png'
 import perfumesIcon from '@/assets/category/perfumes.svg'
 import skinCareIcon from '@/assets/category/skin-care.svg'

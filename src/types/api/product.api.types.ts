@@ -41,8 +41,9 @@ export const mapProductResponseToProduct = (
   }
   if (apiProduct.providerProductTags && apiProduct.providerProductTags.length > 0) {
     apiProduct.providerProductTags.forEach(tag => {
-      if (tag.name && !tags.includes(tag.name)) {
-        tags.push(tag.name)
+      // Safely access name property, similar to how tags array is handled
+      if (tag && typeof tag === 'object' && 'name' in tag && tag.name && !tags.includes(tag.name as string)) {
+        tags.push(tag.name as string)
       }
     })
   }

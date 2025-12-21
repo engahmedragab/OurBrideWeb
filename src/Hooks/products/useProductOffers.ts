@@ -6,6 +6,7 @@ import {
 } from '@/services/api/products.api'
 import { mapProductResponsesToProducts } from '@/types/api/product.api.types'
 import type { Product } from '@/types/product'
+import type { ProductResponse } from '@/../client/common/api/gen/ourbride-api'
 
 /**
  * Hook to fetch product offers
@@ -14,24 +15,52 @@ export const useProductOffers = (enabled = true) => {
   return useQuery({
     queryKey: ['product-offers'],
     queryFn: async (): Promise<Product[]> => {
-      const result = await getProductOffers()
-      
-      // The API returns ApiResult, extract products from data
-      // Adjust this based on actual API response structure
-      if (result.data) {
-        if (Array.isArray(result.data)) {
-          return mapProductResponsesToProducts(result.data as any[])
-        }
+      try {
+        const result = await getProductOffers()
         
-        if (typeof result.data === 'object' && 'products' in result.data) {
-          const products = (result.data as any).products
-          if (Array.isArray(products)) {
-            return mapProductResponsesToProducts(products)
+        // The API returns ApiResult, but the actual response may have a data property
+        // Treat result as unknown to safely access potential data property
+        const resultAny = result as unknown as Record<string, unknown>
+        
+        // Check if result has a data property (common API pattern)
+        if (resultAny && 'data' in resultAny && resultAny.data) {
+          const data = resultAny.data
+          
+          // If data is an array of products
+          if (Array.isArray(data)) {
+            return mapProductResponsesToProducts(data as ProductResponse[])
+          }
+          
+          // If data is an object with products property
+          if (typeof data === 'object' && data !== null) {
+            const dataObj = data as Record<string, unknown>
+            
+            // Check for 'products' property
+            if ('products' in dataObj && Array.isArray(dataObj.products)) {
+              return mapProductResponsesToProducts(dataObj.products as ProductResponse[])
+            }
+            
+            // Check for 'items' or 'results' property (common API patterns)
+            if ('items' in dataObj && Array.isArray(dataObj.items)) {
+              return mapProductResponsesToProducts(dataObj.items as ProductResponse[])
+            }
+            
+            if ('results' in dataObj && Array.isArray(dataObj.results)) {
+              return mapProductResponsesToProducts(dataObj.results as ProductResponse[])
+            }
           }
         }
+        
+        // If result itself is an array (direct response)
+        if (Array.isArray(resultAny)) {
+          return mapProductResponsesToProducts(resultAny as ProductResponse[])
+        }
+        
+        return []
+      } catch (error) {
+        console.error('Error fetching product offers:', error)
+        throw error
       }
-      
-      return []
     },
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
