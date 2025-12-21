@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useRef, useEffect } from 'react'
 import { Play, Pause, Download } from 'lucide-react'
 import { cn } from '@/lib/utils'

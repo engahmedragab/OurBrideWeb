@@ -3,4 +3,5 @@ export * from './useProducts'
 export * from './useProductDetails'
 export * from './useProductCategories'
 export * from './useProductOffers'
+export { useRelatedProducts } from './useProductOffers'
 

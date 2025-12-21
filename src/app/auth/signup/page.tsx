@@ -13,7 +13,7 @@ import { SocialMediaButton } from '@/components/ui/SocialMediaButton'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { DownloadApp } from '@/components/common'
 import { useAuth } from '@/auth'
-import { Gender } from '@/../client/common/api/gen/ourbride-api'
+import { Gender, UserType } from '@/../client/common/api/gen/ourbride-api'
 import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-api'
 
 /**
@@ -73,7 +73,7 @@ export default function SignupPage() {
   const handleSignup = useCallback(async () => {
     try {
       clearError()
-      
+
       if (!acceptedTerms) {
         // Terms not accepted - this should be handled by the form validation
         return
@@ -85,7 +85,7 @@ export default function SignupPage() {
         email: signupCredentials.email,
         mobileNumber: signupCredentials.mobileNumber,
         password: signupCredentials.password,
-        userType: 'Bride', // Default user type, can be made configurable
+        userType: UserType.Bride, // Default user type, can be made configurable
       })
 
       // If we got tokens, user is logged in - redirect to dashboard
@@ -109,14 +109,14 @@ export default function SignupPage() {
   const handleSocialSignup = useCallback(async (provider: 'google' | 'facebook') => {
     try {
       clearError()
-      
+
       const providerMap: Record<string, ExternalProvidersType | null> = {
         google: 'Google' as ExternalProvidersType,
         facebook: 'Facebook' as ExternalProvidersType,
       }
 
       const providerType = providerMap[provider]
-      
+
       if (!providerType) {
         console.warn(`${provider} signup is not supported by the API`)
         return
@@ -193,7 +193,7 @@ export default function SignupPage() {
       <TermsAndConditionsModal
         isOpen={showTermsModal}
         onClose={() => setShowTermsModal(false)}
-        onAccept={() => {/* TODO: Handle terms acceptance */}}
+        onAccept={() => {/* TODO: Handle terms acceptance */ }}
       />
 
       {/* Loading Overlay */}

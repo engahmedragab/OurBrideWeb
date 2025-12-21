@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Modal } from '@/components/ui/Modal'
@@ -107,9 +109,8 @@ export const CallUserModal = ({
               aria-label="Toggle speaker"
               className="flex flex-col items-center gap-1.5 focus:outline-none"
             >
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
-                speakerOn ? 'bg-brand-500' : 'bg-gray-100'
-              }`}>
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${speakerOn ? 'bg-brand-500' : 'bg-gray-100'
+                }`}>
                 {speakerOn
                   ? <Volume2 className="w-6 h-6 text-white" />
                   : <VolumeX className="w-6 h-6 text-gray-400" />}
@@ -124,9 +125,8 @@ export const CallUserModal = ({
               aria-label="Toggle mic"
               className="flex flex-col items-center gap-1.5 focus:outline-none"
             >
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
-                micOn ? 'bg-brand-500' : 'bg-gray-100'
-              }`}>
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${micOn ? 'bg-brand-500' : 'bg-gray-100'
+                }`}>
                 {micOn
                   ? <Mic className="w-6 h-6 text-white" />
                   : <MicOff className="w-6 h-6 text-gray-400" />}

@@ -3,13 +3,13 @@
 // Auth context and provider
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react'
-import type { 
-  AuthState, 
-  AuthAction, 
+import type {
+  AuthState,
+  AuthAction,
   AuthResponse,
   AuthUser,
-  LoginCredentials, 
-  ExternalLoginCredentials, 
+  LoginCredentials,
+  ExternalLoginCredentials,
   GuestLoginCredentials,
   SignupCredentials,
   SignupEmailCredentials,
@@ -217,7 +217,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     timeout = setTimeout(refreshTask, delay)
     return () => {
       cancelled = true
-      if (timeout) clearTimeout(timeout as number)
+      if (timeout) clearTimeout(timeout)
     }
   }, [state.isAuthenticated, state.user && typeof window !== 'undefined' ? localStorage.getItem('token_expires_at') : null])
 

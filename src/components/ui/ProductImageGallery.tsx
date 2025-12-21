@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
@@ -18,7 +20,7 @@ export const ProductImageGallery = ({
   const validImages = images.filter(
     img => img && typeof img === 'string' && img.trim() !== ''
   )
-  
+
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   const goToPrevious = () => {

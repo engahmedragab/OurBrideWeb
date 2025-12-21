@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
 import { Trash2, Send } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -135,7 +137,7 @@ export const VoiceRecorderInput = ({
         </div>
 
         {/* Duration - Always visible */}
-        <span 
+        <span
           className={cn(
             "flex-shrink-0 text-12 sm:text-13 md:text-14 min-w-[45px] sm:min-w-[50px] text-right font-medium",
             isRecording ? "text-brand-500" : "text-gray-600"

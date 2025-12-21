@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   AuthTabs,
@@ -15,9 +15,9 @@ import { useAuth } from '@/auth'
 import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-api'
 
 /**
- * Login Page with authentication integration
+ * Login Form Component that uses search params
  */
-export default function LoginPage() {
+function LoginFormContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { loginWithEmail, loginWithExternalProvider, isLoading, error, clearError } = useAuth()
@@ -44,7 +44,7 @@ export default function LoginPage() {
         email: loginCredentials.email,
         password: loginCredentials.password,
       })
-      
+
       // After login, get planning preference init status from backend and update local user
       const { getPlanningPreferenceInit } = await import('@/services/profile/profileApi')
       const { setPreferenceInit, isPreferenceInit } = await import('@/auth/utils/token')
@@ -69,12 +69,12 @@ export default function LoginPage() {
       // Error is handled by auth context
       console.error('Login failed:', err)
     }
-  }, [loginCredentials, loginWithEmail, router, clearError])
+  }, [loginCredentials, loginWithEmail, router, searchParams, clearError])
 
   const handleSocialLogin = useCallback(async (provider: 'google' | 'facebook') => {
     try {
       clearError()
-      
+
       // Map provider names to ExternalProvidersType
       // Note: API only supports Google, Facebook, LinkedIn - Apple not in enum
       const providerMap: Record<string, ExternalProvidersType | null> = {
@@ -84,7 +84,7 @@ export default function LoginPage() {
       }
 
       const providerType = providerMap[provider]
-      
+
       if (!providerType) {
         console.warn(`${provider} login is not supported by the API`)
         // TODO: Show user-friendly message
@@ -95,14 +95,14 @@ export default function LoginPage() {
       // For now, this is a placeholder - you'll need to integrate with your OAuth provider
       // Example: Get access token from OAuth provider, then call loginWithExternalProvider
       console.log(`Social login with ${provider} - OAuth integration needed`)
-      
+
       // Placeholder - replace with actual OAuth implementation
       // const accessToken = await getOAuthToken(provider)
       // await loginWithExternalProvider({
       //   accessToken,
       //   provider: providerType,
       // })
-      
+
       // router.push('/dashboard')
     } catch (err) {
       console.error(`${provider} login failed:`, err)
@@ -160,5 +160,22 @@ export default function LoginPage() {
       {/* Loading Overlay */}
       <LoadingOverlay open={isLoading} />
     </>
+  )
+}
+
+/**
+ * Login Page with authentication integration
+ */
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
+        <WelcomeHeader welcomeText="Welcome To OurBride" />
+        <AuthTabs />
+        <div className="text-center text-gray-500">Loading...</div>
+      </div>
+    }>
+      <LoginFormContent />
+    </Suspense>
   )
 }

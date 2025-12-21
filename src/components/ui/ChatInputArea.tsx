@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, KeyboardEvent, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Input } from './Input'
@@ -141,7 +143,7 @@ export const ChatInputArea = ({
 
       mediaRecorder.start()
       setIsRecording(true)
-      
+
       // Start duration timer - update every second
       setRecordingDuration(0) // Reset to 0 first
       durationIntervalRef.current = setInterval(() => {
@@ -234,17 +236,17 @@ export const ChatInputArea = ({
     const files = e.target.files
     if (files && files.length > 0) {
       const newImages: Array<{ file: File; preview: string }> = []
-      
+
       Array.from(files).forEach(file => {
         const preview = URL.createObjectURL(file)
         newImages.push({ file, preview })
       })
-      
+
       setPendingImages(prev => [...prev, ...newImages])
       setIsAttachMenuOpen(false)
       // Update typing state to show send icon
       setIsTyping(true)
-      
+
       // Call the onAttachImage callback if provided
       if (onAttachImage && files[0]) {
         onAttachImage(files[0])
