@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Search, MapPin } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Search, MapPin, Loader2 } from 'lucide-react'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'
 
@@ -9,6 +9,22 @@ export interface LocationPickerModalProps {
   open: boolean
   onClose: () => void
   onSelect: (value: string) => void
+}
+
+interface SearchLocation {
+  display_name: string
+  lat: string
+  lon: string
+  address?: {
+    road?: string
+    suburb?: string
+    city?: string
+    town?: string
+    village?: string
+    state?: string
+    region?: string
+    country?: string
+  }
 }
 
 /**
@@ -21,40 +37,217 @@ export const LocationPickerModal = ({
   onSelect,
 }: LocationPickerModalProps) => {
   const [searchQuery, setSearchQuery] = useState('')
-
-  // Mock location data
-  const locations = [
-    {
-      id: 'giza',
-      name: 'Giza',
-      address: '1st District, First of October, Giza Governorate, October City',
-    },
-  ]
-
-  const filteredLocations = locations.filter(
-    location =>
-      location.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      location.address.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const [isGettingLocation, setIsGettingLocation] = useState(false)
+  const [locationError, setLocationError] = useState<string | null>(null)
+  const [searchResults, setSearchResults] = useState<SearchLocation[]>([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchError, setSearchError] = useState<string | null>(null)
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const handleSelectLocation = (location: string) => {
     onSelect(location)
+    setLocationError(null)
+    setSearchQuery('')
     onClose()
   }
 
-  const handleUseCurrentLocation = () => {
-    // Mock current location
-    onSelect('Current Location')
+  const handleClose = () => {
+    setLocationError(null)
+    setSearchQuery('')
+    setSearchResults([])
+    setSearchError(null)
+    setIsGettingLocation(false)
+    setIsSearching(false)
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+    }
     onClose()
   }
 
-  // Show filtered results if search query exists, otherwise show all
-  const displayLocations = searchQuery ? filteredLocations : locations
+  /**
+   * Search for locations using Nominatim API
+   */
+  const searchLocations = async (query: string): Promise<SearchLocation[]> => {
+    if (!query.trim()) {
+      return []
+    }
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=10&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'OurBrideWeb/1.0', // Required by Nominatim
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to search locations')
+      }
+
+      const data: SearchLocation[] = await response.json()
+      return data
+    } catch (error) {
+      console.error('Location search error:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Format location display name from search result
+   */
+  const formatLocationName = (location: SearchLocation): string => {
+    return location.display_name
+  }
+
+  /**
+   * Handle search query change with debouncing
+   */
+  useEffect(() => {
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+    }
+
+    // Clear results if query is empty
+    if (!searchQuery.trim()) {
+      setSearchResults([])
+      setSearchError(null)
+      setIsSearching(false)
+      return
+    }
+
+    // Debounce search by 500ms
+    setIsSearching(true)
+    setSearchError(null)
+
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const results = await searchLocations(searchQuery)
+        setSearchResults(results)
+        setSearchError(null)
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to search locations'
+        setSearchError(errorMessage)
+        setSearchResults([])
+      } finally {
+        setIsSearching(false)
+      }
+    }, 500)
+
+    // Cleanup timeout on unmount or query change
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+    }
+  }, [searchQuery])
+
+  /**
+   * Reverse geocode coordinates to get address
+   */
+  const reverseGeocode = async (latitude: number, longitude: number): Promise<string> => {
+    try {
+      // Using OpenStreetMap Nominatim (free, no API key required)
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'OurBrideWeb/1.0', // Required by Nominatim
+          },
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to get address')
+      }
+
+      const data = await response.json()
+      
+      // Format address from response
+      if (data.address) {
+        const address = data.address
+        const parts: string[] = []
+        
+        // Build address string from most specific to least specific
+        if (address.road) parts.push(address.road)
+        if (address.suburb || address.neighbourhood) parts.push(address.suburb || address.neighbourhood)
+        if (address.city || address.town || address.village) parts.push(address.city || address.town || address.village)
+        if (address.state || address.region) parts.push(address.state || address.region)
+        if (address.country) parts.push(address.country)
+        
+        return parts.length > 0 ? parts.join(', ') : data.display_name || `${latitude}, ${longitude}`
+      }
+      
+      return data.display_name || `${latitude}, ${longitude}`
+    } catch (error) {
+      console.error('Reverse geocoding error:', error)
+      // Fallback to coordinates if reverse geocoding fails
+      return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
+    }
+  }
+
+  const handleUseCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by your browser')
+      return
+    }
+
+    setIsGettingLocation(true)
+    setLocationError(null)
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords
+          
+          // Reverse geocode to get readable address
+          const address = await reverseGeocode(latitude, longitude)
+          
+          // Select the location
+          onSelect(address)
+          onClose()
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Failed to get location address'
+          setLocationError(errorMessage)
+        } finally {
+          setIsGettingLocation(false)
+        }
+      },
+      (error) => {
+        let errorMessage = 'Failed to get your location'
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location access denied. Please enable location permissions in your browser settings.'
+            break
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information is unavailable.'
+            break
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out. Please try again.'
+            break
+          default:
+            errorMessage = 'An error occurred while getting your location.'
+            break
+        }
+        
+        setLocationError(errorMessage)
+        setIsGettingLocation(false)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    )
+  }
 
   return (
     <Modal
       isOpen={open}
-      onClose={onClose}
+      onClose={handleClose}
       title="Set Location"
       maxWidth="sm"
       containerClassName="max-w-[400px]"
@@ -70,48 +263,100 @@ export const LocationPickerModal = ({
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full h-10 px-4 pr-10 rounded-lg border border-gray-200 text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-brand-500 transition-colors"
           />
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300 pointer-events-none" />
+          {isSearching ? (
+            <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 animate-spin" />
+          ) : (
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300 pointer-events-none" />
+          )}
         </div>
 
         {/* Use Current Location */}
-        <button
-          type="button"
-          onClick={handleUseCurrentLocation}
-          className="flex items-center gap-2 text-brand-500 hover:text-brand-600 transition-colors w-full"
-        >
-          <MapPin className="h-5 w-5 text-brand-500" />
-          <span className="text-14 font-medium">Use My Current location</span>
-        </button>
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={handleUseCurrentLocation}
+            disabled={isGettingLocation}
+            className={cn(
+              "flex items-center gap-2 text-brand-500 hover:text-brand-600 transition-colors w-full",
+              isGettingLocation && "opacity-50 cursor-not-allowed"
+            )}
+          >
+            {isGettingLocation ? (
+              <Loader2 className="h-5 w-5 text-brand-500 animate-spin" />
+            ) : (
+              <MapPin className="h-5 w-5 text-brand-500" />
+            )}
+            <span className="text-14 font-medium">
+              {isGettingLocation ? 'Getting your location...' : 'Use My Current location'}
+            </span>
+          </button>
+          
+          {/* Location Error */}
+          {locationError && (
+            <div className="p-2 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-12 text-red-600">{locationError}</p>
+            </div>
+          )}
+        </div>
 
         {/* Search Results */}
-        <div className="space-y-4">
-          <h3 className="text-14 font-semibold text-gray-900">
-            Search Results
-          </h3>
-          <div className="space-y-3">
-            {displayLocations.length > 0 ? (
-              displayLocations.map(location => (
-                <button
-                  key={location.id}
-                  type="button"
-                  onClick={() => handleSelectLocation(location.name)}
-                  className="w-full text-left p-0 hover:opacity-80 transition-opacity"
-                >
-                  <p className="text-16 font-regular text-gray-900">
-                    {location.name},
+        {searchQuery.trim() && (
+          <div className="space-y-4">
+            <h3 className="text-14 font-semibold text-gray-900">
+              Search Results
+            </h3>
+            
+            {/* Search Error */}
+            {searchError && (
+              <div className="p-2 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-12 text-red-600">{searchError}</p>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {isSearching && (
+              <div className="flex justify-center py-4">
+                <Loader2 className="h-5 w-5 text-gray-400 animate-spin" />
+              </div>
+            )}
+
+            {/* Search Results */}
+            {!isSearching && !searchError && (
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {searchResults.length > 0 ? (
+                  searchResults.map((location, index) => {
+                    const locationName = formatLocationName(location)
+                    return (
+                      <button
+                        key={`${location.lat}-${location.lon}-${index}`}
+                        type="button"
+                        onClick={() => handleSelectLocation(locationName)}
+                        className="w-full text-left p-2 hover:bg-gray-50 rounded-md transition-colors"
+                      >
+                        <p className="text-14 font-medium text-gray-900">
+                          {locationName}
+                        </p>
+                      </button>
+                    )
+                  })
+                ) : (
+                  <p className="text-14 text-gray-500 text-center py-4">
+                    No locations found. Try a different search term.
                   </p>
-                  <p className="text-12 text-gray-500 mt-0.5">
-                    {location.address}
-                  </p>
-                </button>
-              ))
-            ) : (
-              <p className="text-14 text-gray-500 text-center py-4">
-                No locations found
-              </p>
+                )}
+              </div>
             )}
           </div>
-        </div>
+        )}
+
+        {/* Empty State - Show when no search query */}
+        {!searchQuery.trim() && !isGettingLocation && (
+          <div className="text-center py-8">
+            <p className="text-14 text-gray-500">
+              Search for a location or use your current location
+            </p>
+          </div>
+        )}
       </div>
     </Modal>
   )

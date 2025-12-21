@@ -40,13 +40,19 @@ export const ProductCard = React.memo(({
       {/* Image Container */}
       <Link href={`/products/${product.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-          <Image
-            src={product.images[0]}
-            alt={product.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          {product.images && product.images.length > 0 && product.images[0] && product.images[0].trim() !== '' ? (
+            <Image
+              src={product.images[0]}
+              alt={product.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-14">
+              No image
+            </div>
+          )}
 
           {/* Discount Badge */}
           {hasDiscount && (

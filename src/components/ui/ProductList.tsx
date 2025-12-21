@@ -51,13 +51,17 @@ export const ProductList = ({
                 href={`/products/${product.id}`}
                 className="block flex-shrink-0 w-full md:w-48 h-48 rounded-lg overflow-hidden bg-gray-100 relative"
               >
-                <Image
-                  src={product.images[0]}
-                  alt={product.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 192px"
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {product.images && product.images.length > 0 && product.images[0] && product.images[0].trim() !== '' ? (
+                  <img
+                    src={product.images[0]}
+                    alt={product.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-14">
+                    No image
+                  </div>
+                )}
               </Link>
 
               {/* Content */}
