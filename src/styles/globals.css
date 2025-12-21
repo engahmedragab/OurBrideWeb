@@ -5,11 +5,13 @@
 @tailwind utilities;
 
 @keyframes waveform-pulse {
+
   0%,
   100% {
     transform: scaleY(0.5);
     opacity: 0.7;
   }
+
   50% {
     transform: scaleY(1);
     opacity: 1;
@@ -130,6 +132,7 @@
 }
 
 @layer components {
+
   /* Gradient Text */
   .text-gradient {
     @apply bg-gradient-to-r from-brand-500 via-primary to-brand-700 bg-clip-text text-transparent;
@@ -147,7 +150,7 @@
 
   /* Container */
   .container-custom {
-    @apply mx-auto max-w-7xl px-6 sm:px-10 ;
+    @apply mx-auto max-w-7xl px-6 sm:px-10;
   }
 
   /* Focus Styles */
@@ -157,6 +160,7 @@
 }
 
 @layer utilities {
+
   /* Scrollbar Styling */
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -216,6 +220,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -225,6 +230,7 @@
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
@@ -235,6 +241,7 @@
     transform: translateY(-10px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -246,6 +253,7 @@
     transform: translateY(0);
     opacity: 1;
   }
+
   to {
     transform: translateY(-10px);
     opacity: 0;
@@ -304,7 +312,7 @@
   text-align: center;
 }
 
-.react-calendar__month-view__weekdays > * {
+.react-calendar__month-view__weekdays>* {
   width: 100% !important;
   min-width: 0 !important;
 }
@@ -325,7 +333,7 @@
   gap: 0.5rem;
 }
 
-.react-calendar__month-view__days > * {
+.react-calendar__month-view__days>* {
   width: 100% !important;
   min-width: 0 !important;
 }
@@ -374,17 +382,18 @@
   pointer-events: none;
 }
 
-.react-calendar__tile--neighboringMonth > div {
+.react-calendar__tile--neighboringMonth>div {
   opacity: 0.5;
 }
 
 /* Responsive adjustments - maintain grid structure */
 @media (min-width: 640px) {
+
   .react-calendar__month-view__weekdays,
   .react-calendar__month-view__days {
     gap: 0.75rem;
   }
-  
+
   .react-calendar__tile {
     min-height: 72px;
     padding: 1.25rem 0.75rem;
@@ -395,12 +404,12 @@
   .react-calendar {
     padding: 2rem;
   }
-  
+
   .react-calendar__month-view__weekdays,
   .react-calendar__month-view__days {
     gap: 1rem;
   }
-  
+
   .react-calendar__tile {
     min-height: 80px;
     padding: 1.5rem 1rem;
@@ -408,11 +417,12 @@
 }
 
 @media (min-width: 1024px) {
+
   .react-calendar__month-view__weekdays,
   .react-calendar__month-view__days {
     gap: 1rem;
   }
-  
+
   .react-calendar__tile {
     min-height: 96px;
     padding: 2rem 1.25rem;
@@ -420,11 +430,12 @@
 }
 
 @media (min-width: 1280px) {
+
   .react-calendar__month-view__weekdays,
   .react-calendar__month-view__days {
     gap: 1rem;
   }
-  
+
   .react-calendar__tile {
     min-height: 112px;
     padding: 2.5rem 1.5rem;
@@ -436,6 +447,7 @@
     transform: translateY(100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -479,4 +491,10 @@ select#month-select::-webkit-scrollbar-thumb {
 select#year-select::-webkit-scrollbar-thumb:hover,
 select#month-select::-webkit-scrollbar-thumb:hover {
   background: #a3a3a3;
+}
+
+/* Custom shaped card image container - smooth circular cutout for heart button */
+.custom-shaped-card {
+  clip-path: url(#clipWithCircularNotch);
+  -webkit-clip-path: url(#clipWithCircularNotch);
 }

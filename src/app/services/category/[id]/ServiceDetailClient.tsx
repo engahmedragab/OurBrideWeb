@@ -741,10 +741,14 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
           {/* Newsletter/Offer Banner Section */}
           <OfferBanner
-            heading="25% Offer On our products"
-            description="OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
-            variant="default"
-            productImage={productImage}
+            offers={[
+              {
+                heading: "25% Offer On our products",
+                description: "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
+                variant: "default",
+                productImage: productImage,
+              },
+            ]}
             className="mb-12"
           />
 

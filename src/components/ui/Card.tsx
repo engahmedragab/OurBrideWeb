@@ -12,6 +12,8 @@ import {
   CheckCircle2,
   MessageCircle,
   ArrowRight,
+  Menu,
+  Share2,
 } from 'lucide-react'
 
 // Base card variants
@@ -91,6 +93,7 @@ export interface MemberTestimonialCardData {
   date: string
   likes: number
   comments: number
+  shares?: number
 }
 
 // Trust Card Props
@@ -133,9 +136,33 @@ const ProductServiceCard = ({
   const hasDiscount = data.discountedPrice < data.originalPrice
 
   return (
-    <div className="group relative bg-gray-50 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg shadow-sm transition-shadow">
+      {/* Wishlist Icon - Floating above the card */}
+      <button
+        onClick={data.onWishlistToggle}
+        className={cn(
+          'absolute top-3 right-6 translate-x-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border border-brand-500 bg-brand-500 flex items-center justify-center transition-all duration-200 shadow-lg',
+          'hover:scale-110',
+          data.isWishlisted
+            ? 'border-brand-500 bg-brand-500'
+            : 'hover:border-brand-600 hover:bg-brand-600'
+        )}
+        aria-label={
+          data.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
+        }
+      >
+        <Heart
+          className={cn(
+            'h-4 w-4 transition-colors text-white',
+            data.isWishlisted
+              ? 'fill-white text-white'
+              : 'text-white'
+          )}
+        />
+      </button>
+
       {/* Image Container */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 custom-shaped-card">
         <Image
           src={data.image}
           alt={data.title}
@@ -155,29 +182,6 @@ const ProductServiceCard = ({
             </Badge>
           </div>
         )}
-
-        {/* Wishlist Icon */}
-        <button
-          onClick={data.onWishlistToggle}
-          className={cn(
-            'absolute top-3 right-3 z-10 w-8 h-8 rounded-full border border-gray-300 bg-white flex items-center justify-center transition-colors',
-            data.isWishlisted
-              ? 'border-brand-500 bg-brand-50'
-              : 'hover:border-brand-300 hover:bg-gray-50'
-          )}
-          aria-label={
-            data.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
-          }
-        >
-          <Heart
-            className={cn(
-              'h-4 w-4 transition-colors',
-              data.isWishlisted
-                ? 'fill-brand-500 text-brand-500'
-                : 'text-gray-400'
-            )}
-          />
-        </button>
       </div>
 
       {/* Content */}
@@ -267,22 +271,25 @@ const ProductServiceCard = ({
 // Testimonial Card Component
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   return (
-    <div className="bg-white rounded-xl p-6 md:p-8 h-full flex flex-col border border-gray-100 shadow-md">
-      {/* Quote */}
-      <p className="text-16 text-gray-900 mb-6 flex-1 leading-relaxed">
-        &quot;{data.quote}&quot;
-      </p>
+    <div className="flex flex-col">
+      {/* Card */}
+      <div className="bg-white rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow">
+        {/* Quote */}
+        <p className="text-16 text-gray-900 mb-6 flex-1 leading-relaxed">
+          &quot;{data.quote}&quot;
+        </p>
 
-      {/* Stars - All red for 5-star rating */}
-      <div className="flex items-center gap-1 mb-6">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <Star key={index} className="h-5 w-5 fill-red-500 text-red-500" />
-        ))}
+        {/* Stars - All red for 5-star rating */}
+        <div className="flex items-center gap-1">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <Star key={index} className="h-5 w-5 fill-red-500 text-red-500" />
+          ))}
+        </div>
       </div>
 
-      {/* Author Info */}
-      <div className="flex items-center gap-3">
-        <div className="relative w-12 h-12 rounded-full overflow-hidden">
+      {/* Author Info - Below the card */}
+      <div className="flex items-center gap-3 mt-4 ml-4">
+        <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
           <Image
             src={data.authorImage}
             alt={data.authorName}
@@ -305,7 +312,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
 // Provider Card Component
 const ProviderCard = ({ data }: { data: ProviderCardData }) => {
   return (
-    <div className="bg-gray-100 rounded-xl p-6 md:p-8 text-center flex flex-col items-center">
+    <div className="bg-white rounded-xl p-6 md:p-8 text-center flex flex-col items-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       {/* Profile Image */}
       <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
         <Image
@@ -374,32 +381,42 @@ const MemberTestimonialCard = ({
   const thumbnailImages = data.productImages.slice(1, 3)
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+    <div className="h-full flex flex-col bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
       {/* Author Header */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="relative w-12 h-12">
-          <Image
-            src={data.authorImage}
-            alt={data.authorName}
-            fill
-            sizes="48px"
-            className="rounded-full object-cover"
-          />
+      <div className="flex items-center justify-between gap-3 mb-4 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+            <Image
+              src={data.authorImage}
+              alt={data.authorName}
+              fill
+              sizes="48px"
+              className="object-cover grayscale"
+            />
+          </div>
+          <div>
+            <h4 className="text-16 font-semibold text-gray-900">
+              {data.authorName}
+            </h4>
+            <p className="text-14 text-gray-500">{data.date}</p>
+          </div>
         </div>
-        <div>
-          <h4 className="text-16 font-semibold text-gray-900">
-            {data.authorName}
-          </h4>
-        </div>
+        <button
+          type="button"
+          className="text-gray-600 hover:text-gray-900 transition-colors"
+          aria-label="More options"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Review Text */}
-      <p className="text-14 md:text-16 text-gray-700 mb-4 line-clamp-3">
+      <p className="text-14 md:text-16 text-gray-700 mb-4 line-clamp-3 flex-shrink-0">
         {data.reviewText}
       </p>
 
       {/* Product Images */}
-      <div className="mb-4">
+      <div className="mb-4 flex-shrink-0">
         {data.productImages.length === 1 ? (
           <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
             <Image
@@ -443,19 +460,29 @@ const MemberTestimonialCard = ({
         )}
       </div>
 
-      {/* Date */}
-      <p className="text-12 text-gray-500 mb-3">{data.date}</p>
-
-      {/* Engagement Metrics */}
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
+      {/* Engagement Metrics - Pill-shaped buttons */}
+      <div className="flex items-center gap-4 mt-auto flex-shrink-0">
+        <button
+          type="button"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+        >
           <Heart className="h-4 w-4 text-gray-400" />
           <span className="text-14 text-gray-600">{data.likes}</span>
-        </div>
-        <div className="flex items-center gap-2">
+        </button>
+        <button
+          type="button"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+        >
           <MessageCircle className="h-4 w-4 text-gray-400" />
           <span className="text-14 text-gray-600">{data.comments}</span>
-        </div>
+        </button>
+        <button
+          type="button"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+        >
+          <Share2 className="h-4 w-4 text-gray-400" />
+          <span className="text-14 text-gray-600">{data.shares || 20}</span>
+        </button>
       </div>
     </div>
   )
