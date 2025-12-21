@@ -649,24 +649,27 @@ export default function Home() {
         <OfferBanner
           offers={[
             {
-              heading: "25% Offer On our products",
-              description: "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
-              ctaText: "Start Shopping",
-              ctaLink: "/products",
+              heading: '25% Offer On our products',
+              description:
+                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+              ctaText: 'Start Shopping',
+              ctaLink: '/products',
               productImage: product,
             },
             {
-              heading: "25% Offer On our products",
-              description: "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
-              ctaText: "Start Shopping",
-              ctaLink: "/products",
+              heading: '25% Offer On our products',
+              description:
+                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+              ctaText: 'Start Shopping',
+              ctaLink: '/products',
               productImage: product,
             },
             {
-              heading: "25% Offer On our products",
-              description: "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
-              ctaText: "Start Shopping",
-              ctaLink: "/products",
+              heading: '25% Offer On our products',
+              description:
+                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+              ctaText: 'Start Shopping',
+              ctaLink: '/products',
               productImage: product,
             },
           ]}

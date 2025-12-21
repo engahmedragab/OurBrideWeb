@@ -292,11 +292,16 @@ export default function Products() {
         {/* Newsletter Banner */}
         <div className="mb-12">
           <OfferBanner
-            heading="Ready To Get Our News ?"
-            description="OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
-            variant="newsletter"
-            ctaText="Submit"
-            productImage={flowersImage}
+            offers={[
+              {
+                heading: 'Ready To Get Our News ?',
+                description:
+                  'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+                variant: 'newsletter',
+                ctaText: 'Submit',
+                productImage: flowersImage,
+              },
+            ]}
             onSubscribe={_email => {
               // TODO: Implement newsletter subscription
             }}

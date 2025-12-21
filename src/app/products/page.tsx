@@ -339,11 +339,16 @@ export default function ProductIntroPage() {
           {/* 6) Newsletter Banner */}
           <div className="mb-12">
             <OfferBanner
-              heading="Get Products Updates & Offers"
-              description="Stay informed about new providers, offers, and wedding planning tips"
-              variant="newsletter"
-              ctaText="Subscribe"
-              productImage={flowersImage}
+              offers={[
+                {
+                  heading: 'Get Products Updates & Offers',
+                  description:
+                    'Stay informed about new providers, offers, and wedding planning tips',
+                  variant: 'newsletter',
+                  ctaText: 'Subscribe',
+                  productImage: flowersImage,
+                },
+              ]}
               onSubscribe={handleSubscribe}
             />
           </div>

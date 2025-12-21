@@ -470,21 +470,21 @@ function ServicesIntroPageContent() {
 
           {/* Today's Offers Section */}
           <section className="py-12 md:py-16">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
-            <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
-              Today&apos;s Offers
-            </h2>
-            <span className="text-14 sm:text-16 md:text-20 text-gray-500 whitespace-nowrap leading-normal sm:leading-[24px] md:leading-[32px]">
-              23 H 45 Min
-            </span>
-          </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
+              <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
+                Today&apos;s Offers
+              </h2>
+              <span className="text-14 sm:text-16 md:text-20 text-gray-500 whitespace-nowrap leading-normal sm:leading-[24px] md:leading-[32px]">
+                23 H 45 Min
+              </span>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {offersServiceCards.map(cardData => (
-              <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
-            ))}
-          </div>
-        </section>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {offersServiceCards.map(cardData => (
+                <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
+              ))}
+            </div>
+          </section>
 
           {/* Why Brides Trust OurBride - Features Section */}
           <section>
@@ -513,11 +513,16 @@ function ServicesIntroPageContent() {
           {/* Newsletter Banner */}
           <div className="mb-12">
             <OfferBanner
-              heading="Ready To Get Our News ?"
-              description="OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
-              variant="newsletter"
-              ctaText="Submit"
-              productImage={flowersImage}
+              offers={[
+                {
+                  heading: 'Ready To Get Our News ?',
+                  description:
+                    'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+                  variant: 'newsletter',
+                  ctaText: 'Submit',
+                  productImage: flowersImage,
+                },
+              ]}
               onSubscribe={_email => {
                 // TODO: Implement newsletter subscription
               }}
