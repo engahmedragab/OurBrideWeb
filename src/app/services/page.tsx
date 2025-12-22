@@ -8,6 +8,7 @@ import {
   HeroCarousel,
   OfferBanner,
   Card,
+  LoadingOverlay,
   type ServiceCardData,
   type HeroSlide,
 } from '@/components/ui'
@@ -545,7 +546,11 @@ export default function ServicesIntroPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-16 text-gray-600">Loading...</div>
+          <LoadingOverlay
+            open={true}
+            title="Loading..."
+            subtitle="Please wait a moment"
+          />
         </div>
       }
     >

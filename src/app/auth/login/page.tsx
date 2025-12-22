@@ -172,7 +172,11 @@ export default function LoginPage() {
       <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
         <WelcomeHeader welcomeText="Welcome To OurBride" />
         <AuthTabs />
-        <div className="text-center text-gray-500">Loading...</div>
+        <LoadingOverlay
+          open={true}
+          title="Loading..."
+          subtitle="Please wait a moment"
+        />
       </div>
     }>
       <LoginFormContent />

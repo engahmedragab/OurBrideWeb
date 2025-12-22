@@ -17,6 +17,7 @@ import {
   OrderSummaryCard,
   OfferBanner,
   BackButton,
+  LoadingOverlay,
 } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import productImage from '@/assets/svg/product-1.svg'
@@ -117,9 +118,11 @@ export function ProductCategoryDetailClient({
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-18 text-gray-600">Loading product...</div>
-          </div>
+          <LoadingOverlay
+            open={true}
+            title="Loading product..."
+            subtitle="Please wait a moment"
+          />
         </main>
         <Footer />
       </div>

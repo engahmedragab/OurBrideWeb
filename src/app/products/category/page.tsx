@@ -11,6 +11,7 @@ import {
   HeroCarousel,
   Button,
   OfferBanner,
+  LoadingOverlay,
 } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
@@ -175,9 +176,11 @@ export default function Products() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-18 text-gray-600">Loading products...</div>
-          </div>
+          <LoadingOverlay
+            open={true}
+            title="Loading products..."
+            subtitle="Please wait a moment"
+          />
         </main>
         <Footer />
       </div>

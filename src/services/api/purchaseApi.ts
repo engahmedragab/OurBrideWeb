@@ -117,7 +117,8 @@ export const getPurchasesByReservationId = async (reservationId: string): Promis
 export const getCart = async (): Promise<CartResponse> => {
   try {
     const response = await apiClient.api.getPurchaseGetCart()
-    return (response?.data ?? response) as unknown as CartResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch cart')
   }
@@ -152,7 +153,20 @@ export const getPurchasesByCart = async (): Promise<PurchaseResponse[]> => {
 export const getAllCartsWithProviders = async (): Promise<UserCartWithProviderResponse[]> => {
   try {
     const response = await apiClient.api.getPurchaseGetAllCartsWithProviders()
-    return (response?.data ?? response) as unknown as UserCartWithProviderResponse[]
+    const data = (response?.data ?? response) as unknown
+    
+    // Ensure we return an array
+    if (Array.isArray(data)) {
+      return data as UserCartWithProviderResponse[]
+    }
+    
+    // If data is not an array, return empty array or wrap it
+    if (data && typeof data === 'object') {
+      // Check if it's a single object that should be wrapped
+      return [data] as UserCartWithProviderResponse[]
+    }
+    
+    return []
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch carts with providers')
   }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
@@ -25,21 +25,16 @@ import { Checkbox } from '@/components/ui/Checkbox'
 import { QuantitySelector } from '@/components/ui/QuantitySelector'
 import { PaymentConfirmationModal } from '@/components/ui/PaymentConfirmationModal'
 import { OrderConfirmationModal } from '@/components/ui/OrderConfirmationModal'
+import { ErrorDisplay } from '@/components/ui/ErrorDisplay'
+import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
-
-export interface OrderItem {
-  id: string
-  title: string
-  image: string
-  originalPrice: number
-  discountedPrice: number
-  currency: string
-  quantity: number
-  discountPercentage?: number
-  deliveryDate?: string
-  maxQuantity?: number
-}
+import { useCart, useUpdatePurchase, useRemovePurchase, useCheckout, useValidateCoupon } from '@/Hooks'
+import { getProductById } from '@/services/api/products.api'
+import { useQueries } from '@tanstack/react-query'
+import type { PurchaseResponse, ProductResponse } from '@/types/responses'
+import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
+import type { CheckoutRequest } from '@/../client/common/api/gen/ourbride-api'
 
 export interface OrderFormData {
   fullName: string
@@ -60,69 +55,94 @@ export interface OrderFormData {
   acceptTerms: boolean
 }
 
+
 export default function CheckoutPage() {
   const router = useRouter()
   const { addToast } = useToast()
 
-  // Get items from query params or use default mock data
-  // In a real app, you'd fetch from cart/state management
-  const [items, setItems] = useState<OrderItem[]>([
-    {
-      id: '1',
-      title: 'Product Title',
-      image:
-        'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-      originalPrice: 360,
-      discountedPrice: 350,
-      currency: 'EGP',
-      quantity: 1,
-      discountPercentage: 20,
-      deliveryDate: '29/8/2025',
-      maxQuantity: 99,
-    },
-    {
-      id: '2',
-      title: 'Product Title',
-      image:
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-      originalPrice: 360,
-      discountedPrice: 350,
-      currency: 'EGP',
-      quantity: 1,
-      discountPercentage: 20,
-      deliveryDate: '29/8/2025',
-      maxQuantity: 99,
-    },
-    {
-      id: '3',
-      title: 'Product Title',
-      image:
-        'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-      originalPrice: 360,
-      discountedPrice: 350,
-      currency: 'EGP',
-      quantity: 1,
-      discountPercentage: 20,
-      deliveryDate: '25/8/2025',
-      maxQuantity: 99,
-    },
-    {
-      id: '4',
-      title: 'Product Title',
-      image:
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-      originalPrice: 360,
-      discountedPrice: 350,
-      currency: 'EGP',
-      quantity: 1,
-      discountPercentage: 20,
-      deliveryDate: '28/8/2026',
-      maxQuantity: 99,
-    },
-  ])
+  // Fetch cart data
+  const { data: cartData, isLoading: isLoadingCart, error: cartError } = useCart()
 
-  const [selectedItems, setSelectedItems] = useState<Set<string>>(
-    new Set(items.map(item => item.id))
+  // Mutations
+  const updatePurchaseMutation = useUpdatePurchase()
+  const removePurchaseMutation = useRemovePurchase()
+  const checkoutMutation = useCheckout()
+  const validateCouponMutation = useValidateCoupon()
+
+  // Filter product purchases
+  const productPurchases = useMemo(() => {
+    if (!cartData?.purchases) return []
+    return cartData.purchases.filter(
+      (p) => p.type === PurchaseType.Product && p.productId
+    )
+  }, [cartData])
+
+  // Get product IDs that need to be fetched (where product is null but productId exists)
+  const productIdsToFetch = useMemo(() => {
+    return productPurchases
+      .filter((p) => p.productId && !p.product)
+      .map((p) => p.productId!)
+  }, [productPurchases])
+
+  // Fetch product details for purchases that have productId but product is null
+  const productQueries = useQueries({
+    queries: productIdsToFetch.map((productId) => ({
+      queryKey: ['product', productId],
+      queryFn: async () => {
+        const product = await getProductById(productId)
+        return { productId, product }
+      },
+      enabled: productId > 0,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    })),
+  })
+
+  // Create a map of productId -> Product data for quick lookup
+  const productMap = useMemo(() => {
+    const map = new Map<
+      number,
+      {
+        nameEn: string | null
+        nameAr: string | null
+        image: string | null
+        regularPrice: number | null
+        price: number | null
+        salePrice: number | null
+        hasDiscount: boolean
+        stockQuantity: number | null
+      }
+    >()
+    productQueries.forEach((query) => {
+      if (query.data?.product) {
+        const product = query.data.product as ProductResponse
+        map.set(query.data.productId, {
+          nameEn: product.nameEn,
+          nameAr: product.nameAr,
+          image: product.image,
+          regularPrice: product.regularPrice,
+          price: product.price,
+          salePrice: product.salePrice,
+          hasDiscount: product.hasDiscount,
+          stockQuantity: product.stockQuantity,
+        })
+      }
+    })
+    return map
+  }, [productQueries])
+
+  // Local state for selected purchases (can be modified by user)
+  const [localItems, setLocalItems] = useState<PurchaseResponse[]>([])
+
+  // Initialize local items when cart data loads
+  useEffect(() => {
+    if (productPurchases.length > 0) {
+      setLocalItems(productPurchases)
+      setSelectedItems(new Set(productPurchases.map(p => p.id)))
+    }
+  }, [productPurchases])
+
+  const [selectedItems, setSelectedItems] = useState<Set<number>>(
+    new Set(localItems.map(p => p.id))
   )
   const [formData, setFormData] = useState<OrderFormData>({
     fullName: '',
@@ -147,8 +167,20 @@ export default function CheckoutPage() {
   const [showOrderConfirmation, setShowOrderConfirmation] = useState(false)
 
   const currency = 'EGP'
-  const taxes = 120
-  const deliveryFee = 90
+
+  // Calculate totals from cart summary if available, otherwise use defaults
+  const { taxes, deliveryFee } = useMemo(() => {
+    if (cartData?.cartSummary) {
+      return {
+        taxes: cartData.cartSummary.tax,
+        deliveryFee: cartData.cartSummary.shipping,
+      }
+    }
+    return {
+      taxes: 120, // Default fallback
+      deliveryFee: 90, // Default fallback
+    }
+  }, [cartData])
 
   const updateFormData = (
     field: keyof OrderFormData,
@@ -352,21 +384,47 @@ export default function CheckoutPage() {
   const handleConfirmPayment = async () => {
     setIsSubmitting(true)
     try {
-      // TODO: Replace with actual API call
-      // const orderData: OrderFormData = {
-      //   ...formData,
-      //   selectedItems: Array.from(selectedItems),
-      //   promoCode: showPromoInput && promoCode ? promoCode : undefined,
-      // }
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      if (!cartData) {
+        throw new Error('Cart data not available')
+      }
+
+      // Map payment method to API format
+      const paymentMethodMap: Record<string, string> = {
+        'debit-credit': 'Card',
+        'mobile-wallet': 'MobileWallet',
+        'cash-on-delivery': 'CashOnDelivery',
+      }
+
+      // Prepare checkout request
+      // Note: CheckoutRequest structure depends on the generated API
+      // Using a minimal structure with common fields
+      const checkoutRequest: CheckoutRequest = {
+        cartId: cartData.id,
+        paymentMethod: paymentMethodMap[formData.paymentMethod] || 'Card',
+        ...(showPromoInput && promoCode && { couponCode: promoCode }),
+        // Include other fields that might be in CheckoutRequest
+        // The API will determine which fields are actually used
+      } as CheckoutRequest
+
+      const checkoutResponse = await checkoutMutation.mutateAsync(checkoutRequest)
 
       setShowPaymentConfirmation(false)
-      setTimeout(() => {
-        setShowOrderConfirmation(true)
-      }, 300)
-    } catch {
+
+      // If there's a redirect URL, navigate to it
+      if (checkoutResponse.redirectUrl) {
+        window.location.href = checkoutResponse.redirectUrl
+      } else {
+        // Otherwise show order confirmation
+        setTimeout(() => {
+          setShowOrderConfirmation(true)
+        }, 300)
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
       addToast(
-        'An error occurred during checkout. Please try again.',
+        error instanceof Error
+          ? error.message
+          : 'An error occurred during checkout. Please try again.',
         'error'
       )
     } finally {
@@ -374,35 +432,70 @@ export default function CheckoutPage() {
     }
   }
 
-  const updateItemQuantity = (itemId: string, delta: number) => {
-    setItems(prev =>
-      prev.map(item => {
-        if (item.id === itemId) {
-          const newQuantity = Math.max(
-            1,
-            Math.min(item.quantity + delta, item.maxQuantity || 99)
-          )
-          return { ...item, quantity: newQuantity }
-        }
-        return item
+  const updateItemQuantity = async (purchaseId: number, delta: number) => {
+    const purchase = localItems.find(p => p.id === purchaseId)
+    if (!purchase) return
+
+    // Get product data (from purchase or fetched)
+    const product = purchase.product ?? (purchase.productId ? productMap.get(purchase.productId) : null)
+    const purchasePrice = purchase.totalPrice ?? purchase.price ?? 0
+    const pricePerUnit = purchasePrice / (purchase.quantity || 1)
+    const originalPrice = product?.regularPrice ?? product?.price ?? pricePerUnit
+    const discountedPrice = product?.salePrice ?? product?.price ?? originalPrice
+    const maxQuantity = product?.stockQuantity ?? 99
+
+    const newQuantity = Math.max(1, Math.min(purchase.quantity + delta, maxQuantity))
+
+    if (newQuantity === purchase.quantity) return
+
+    try {
+      await updatePurchaseMutation.mutateAsync({
+        id: purchase.id.toString(),
+        data: {
+          quantity: newQuantity,
+        },
       })
-    )
+      // Update local state optimistically
+      setLocalItems(prev =>
+        prev.map(p => (p.id === purchaseId ? { ...p, quantity: newQuantity } : p))
+      )
+    } catch (error) {
+      console.error('Failed to update quantity:', error)
+      addToast('Failed to update quantity. Please try again.', 'error')
+    }
   }
 
-  const removeItem = (itemId: string) => {
-    setItems(prev => prev.filter(item => item.id !== itemId))
-    setSelectedItems(prev => {
-      const newSet = new Set(prev)
-      newSet.delete(itemId)
-      return newSet
-    })
+  const removeItem = async (purchaseId: number) => {
+    const purchase = localItems.find(p => p.id === purchaseId)
+    if (!purchase) return
+
+    try {
+      await removePurchaseMutation.mutateAsync({
+        id: purchase.id.toString(),
+        data: {},
+      })
+      // Update local state
+      setLocalItems(prev => prev.filter(p => p.id !== purchaseId))
+      setSelectedItems(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(purchaseId)
+        return newSet
+      })
+    } catch (error) {
+      console.error('Failed to remove item:', error)
+      addToast('Failed to remove item. Please try again.', 'error')
+    }
   }
 
-  const selectedItemsList = items.filter(item => selectedItems.has(item.id))
-  const subtotal = selectedItemsList.reduce(
-    (sum, item) => sum + item.discountedPrice * item.quantity,
-    0
-  )
+  const selectedItemsList = localItems.filter(p => selectedItems.has(p.id))
+  const subtotal = selectedItemsList.reduce((sum, purchase) => {
+    // Get product data (from purchase or fetched)
+    const product = purchase.product ?? (purchase.productId ? productMap.get(purchase.productId) : null)
+    const purchasePrice = purchase.totalPrice ?? purchase.price ?? 0
+    const pricePerUnit = purchasePrice / (purchase.quantity || 1)
+    const discountedPrice = product?.salePrice ?? product?.price ?? pricePerUnit
+    return sum + discountedPrice * purchase.quantity
+  }, 0)
   const total = subtotal + taxes + deliveryFee
 
   const hasRelevantErrors =
@@ -415,6 +508,73 @@ export default function CheckoutPage() {
     hasRelevantErrors ||
     isSubmitting
 
+  // Show loading state
+  if (isLoadingCart) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <Header />
+        <main className="flex-1">
+          <div className="container-custom py-6 md:py-8">
+            <LoadingOverlay
+              open={true}
+              title="Loading checkout..."
+              subtitle="Please wait a moment"
+            />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Show error state
+  if (cartError) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <Header />
+        <main className="flex-1">
+          <div className="container-custom py-6 md:py-8">
+            <ErrorDisplay
+              title="Error loading cart"
+              message="Please try again later"
+              actionLabel="Back to Home"
+              actionHref="/"
+            />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Show empty cart state
+  if (!localItems || localItems.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col bg-white">
+        <Header />
+        <main className="flex-1">
+          <div className="container-custom py-6 md:py-8">
+            <h1 className="text-18 md:text-24 font-normal text-gray-900 mb-6 md:mb-8">
+              Order Checkout
+            </h1>
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <p className="text-16 text-gray-600 mb-4">Your cart is empty</p>
+                <Button
+                  variant="brand"
+                  onClick={() => router.push('/cart')}
+                >
+                  Go to Cart
+                </Button>
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
@@ -422,7 +582,7 @@ export default function CheckoutPage() {
       <main className="flex-1">
         <div className="container-custom py-6 md:py-8">
           <h1 className="text-18 md:text-24 font-normal text-gray-900 mb-6 md:mb-8">
-            Product Title / Order Checkout
+            Order Checkout
           </h1>
 
           <form onSubmit={handleSubmit}>
@@ -764,28 +924,43 @@ export default function CheckoutPage() {
 
                 {/* Product Items List */}
                 <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                  {items.map(item => {
-                    const discountPercentage =
-                      item.discountPercentage ||
-                      (item.originalPrice > item.discountedPrice
-                        ? Math.round(
-                            ((item.originalPrice - item.discountedPrice) /
-                              item.originalPrice) *
-                              100
-                          )
-                        : 0)
+                  {localItems.map((purchase) => {
+                    // Get product data (from purchase or fetched)
+                    const product = purchase.product ?? (purchase.productId ? productMap.get(purchase.productId) : null)
+                    const purchasePrice = purchase.totalPrice ?? purchase.price ?? 0
+                    const pricePerUnit = purchasePrice / (purchase.quantity || 1)
+                    const originalPrice = product?.regularPrice ?? product?.price ?? pricePerUnit
+                    const discountedPrice = product?.salePrice ?? product?.price ?? originalPrice
+                    const hasDiscount = product?.hasDiscount && product?.salePrice && product?.regularPrice
+                    const discountPercentage = hasDiscount
+                      ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+                      : 0
+
+                    // Format delivery date if available
+                    const deliveryDate = purchase.preferredDeliveryDate
+                      ? new Date(purchase.preferredDeliveryDate).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                      })
+                      : undefined
+
+                    const productImage = product?.image ?? '/placeholder-product.png'
+                    const productTitle = product?.nameEn ?? product?.nameAr ?? `Product #${purchase.productId}`
+                    const maxQuantity = product?.stockQuantity ?? 99
+                    const currency = 'EGP'
 
                     return (
                       <div
-                        key={item.id}
+                        key={purchase.id}
                         className="bg-white border border-gray-200 rounded-lg p-4"
                       >
                         <div className="flex items-start gap-4">
                           {/* Product Image */}
                           <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                             <Image
-                              src={item.image}
-                              alt={item.title}
+                              src={productImage}
+                              alt={productTitle}
                               fill
                               sizes="64px"
                               className="object-cover"
@@ -795,18 +970,16 @@ export default function CheckoutPage() {
                           {/* Product Details */}
                           <div className="flex-1 min-w-0">
                             <h4 className="text-16 font-normal text-gray-900 mb-1">
-                              {item.title}
+                              {productTitle}
                             </h4>
                             <div className="flex items-center gap-1 mb-2">
                               <span className="text-16 font-normal text-gray-900">
-                                {item.discountedPrice.toLocaleString()}{' '}
-                                {item.currency}
+                                {discountedPrice.toLocaleString()} {currency}
                               </span>
-                              {item.originalPrice > item.discountedPrice && (
+                              {originalPrice > discountedPrice && (
                                 <>
                                   <span className="text-12 text-gray-400 line-through">
-                                    {item.originalPrice.toLocaleString()}{' '}
-                                    {item.currency}
+                                    {originalPrice.toLocaleString()} {currency}
                                   </span>
                                   {discountPercentage > 0 && (
                                     <span className="text-12 font-normal text-green-600 ml-auto">
@@ -816,26 +989,26 @@ export default function CheckoutPage() {
                                 </>
                               )}
                             </div>
-                            {item.deliveryDate && (
+                            {deliveryDate && (
                               <p className="text-12 text-gray-500 mb-3">
-                                Get In By {item.deliveryDate}
+                                Get In By {deliveryDate}
                               </p>
                             )}
 
                             {/* Quantity Controls and Remove */}
                             <div className="flex items-center justify-between">
                               <QuantitySelector
-                                quantity={item.quantity}
+                                quantity={purchase.quantity}
                                 onQuantityChange={delta =>
-                                  updateItemQuantity(item.id, delta)
+                                  updateItemQuantity(purchase.id, delta)
                                 }
                                 min={1}
-                                max={item.maxQuantity || 99}
+                                max={maxQuantity}
                                 variant="coral"
                               />
                               <button
                                 type="button"
-                                onClick={() => removeItem(item.id)}
+                                onClick={() => removeItem(purchase.id)}
                                 className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                                 aria-label="Remove item"
                               >
@@ -993,10 +1166,10 @@ export default function CheckoutPage() {
                     type="submit"
                     variant="default"
                     size="xl"
-                    disabled={isCheckoutDisabled}
+                    disabled={isCheckoutDisabled || checkoutMutation.isPending}
                     className="w-full rounded-lg text-white"
                   >
-                    {isSubmitting ? 'Processing...' : 'Checkout'}
+                    {isSubmitting || checkoutMutation.isPending ? 'Processing...' : 'Checkout'}
                   </Button>
                 </div>
               </div>
@@ -1024,6 +1197,24 @@ export default function CheckoutPage() {
         onTrackOrder={() => {
           router.push('/orders')
         }}
+      />
+
+      {/* Loading Overlay for Mutations */}
+      <LoadingOverlay
+        open={
+          updatePurchaseMutation.isPending ||
+          removePurchaseMutation.isPending ||
+          checkoutMutation.isPending ||
+          validateCouponMutation.isPending
+        }
+        title={
+          checkoutMutation.isPending
+            ? 'Processing checkout...'
+            : updatePurchaseMutation.isPending || removePurchaseMutation.isPending
+              ? 'Updating cart...'
+              : 'Validating...'
+        }
+        subtitle="Please wait a moment"
       />
     </div>
   )

@@ -2,7 +2,7 @@
 
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
-import { HeroCarousel, OfferBanner } from '@/components/ui'
+import { HeroCarousel, OfferBanner, LoadingOverlay } from '@/components/ui'
 import {
   ProductCategoriesSection,
   ProductOffersSection,
@@ -189,9 +189,11 @@ export default function ProductIntroPage() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 bg-white flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-18 text-gray-600">Loading products...</div>
-          </div>
+          <LoadingOverlay
+            open={true}
+            title="Loading products..."
+            subtitle="Please wait a moment"
+          />
         </main>
         <Footer />
       </div>

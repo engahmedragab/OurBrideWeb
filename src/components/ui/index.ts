@@ -252,6 +252,9 @@ export type { PromotedCampaignCardProps } from './PromotedCampaignCard'
 export { EmptyState } from './EmptyState'
 export type { EmptyStateProps } from './EmptyState'
 
+export { ErrorDisplay } from './ErrorDisplay'
+export type { ErrorDisplayProps } from './ErrorDisplay'
+
 export { HistorySection } from './HistorySection'
 export type { HistorySectionProps } from './HistorySection'
 
