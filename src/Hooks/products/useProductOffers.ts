@@ -6,6 +6,7 @@ import {
 } from '@/services/api/products.api'
 import { mapProductResponsesToProducts } from '@/types/api/product.api.types'
 import type { Product } from '@/types/product'
+import type { ProductResponse } from '@/../client/common/api/gen/ourbride-api'
 
 /**
  * Hook to fetch product offers
@@ -27,7 +28,7 @@ export const useProductOffers = (enabled = true) => {
           
           // If data is an array of products
           if (Array.isArray(data)) {
-            return mapProductResponsesToProducts(data as any[])
+            return mapProductResponsesToProducts(data as ProductResponse[])
           }
           
           // If data is an object with products property
@@ -36,29 +37,29 @@ export const useProductOffers = (enabled = true) => {
             
             // Check for 'products' property
             if ('products' in dataObj && Array.isArray(dataObj.products)) {
-              return mapProductResponsesToProducts(dataObj.products as any[])
+              return mapProductResponsesToProducts(dataObj.products as ProductResponse[])
             }
             
             // Check for 'items' or 'results' property (common API patterns)
             if ('items' in dataObj && Array.isArray(dataObj.items)) {
-              return mapProductResponsesToProducts(dataObj.items as any[])
+              return mapProductResponsesToProducts(dataObj.items as ProductResponse[])
             }
             
             if ('results' in dataObj && Array.isArray(dataObj.results)) {
-              return mapProductResponsesToProducts(dataObj.results as any[])
+              return mapProductResponsesToProducts(dataObj.results as ProductResponse[])
             }
           }
         }
         
         // If result itself is an array (direct response)
         if (Array.isArray(resultAny)) {
-          return mapProductResponsesToProducts(resultAny as any[])
+          return mapProductResponsesToProducts(resultAny as ProductResponse[])
         }
         
         return []
       } catch (error) {
         console.error('Error fetching product offers:', error)
-        return []
+        throw error
       }
     },
     enabled,
