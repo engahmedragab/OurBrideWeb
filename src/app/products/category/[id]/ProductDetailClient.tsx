@@ -14,7 +14,12 @@ import {
   BackButton,
   Button,
 } from '@/components/ui'
-import { useProductDetails, useRelatedProducts } from '@/hooks/products'
+import {
+  useProductDetails,
+  useRelatedProducts,
+  useProductReviews,
+  useSubmitProductReview,
+} from '@/hooks/products'
 import type { ProductCardData } from '@/components/ui/Card'
 
 interface ProductDetailClientProps {
@@ -39,6 +44,14 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     productId ? parseInt(productId, 10) : null,
     4
   )
+
+  // Fetch product reviews
+  const { data: reviews = [] } = useProductReviews(
+    productId ? parseInt(productId, 10) : null
+  )
+
+  // Submit review mutation
+  const submitReviewMutation = useSubmitProductReview()
 
   // Show loading state
   if (productLoading) {
@@ -90,10 +103,20 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     router.push('/checkout')
   }
 
-  const handleSubmitReview = () => {
-    // TODO: Implement submit review
-    setUserRating(0)
-    setReviewComment('')
+  const handleSubmitReview = async () => {
+    if (!productId || !userRating || !reviewComment.trim()) return
+
+    try {
+      await submitReviewMutation.mutateAsync({
+        productId: parseInt(productId, 10),
+        rating: userRating,
+        comment: reviewComment,
+      })
+      setUserRating(0)
+      setReviewComment('')
+    } catch (error) {
+      console.error('Error submitting review:', error)
+    }
   }
 
   return (
@@ -201,10 +224,59 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           {/* Reviews Section */}
           <div className="mb-12">
             <h2 className="text-20 font-semibold text-gray-900 mb-6">
-              Reviews ({product.rating.count})
+              Reviews ({reviews.length || product.rating.count})
             </h2>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+            {/* Display Reviews */}
+            {reviews.length > 0 && (
+              <div className="space-y-4 mb-6">
+                {reviews.map(review => (
+                  <div
+                    key={review.id}
+                    className="bg-white border border-gray-200 rounded-lg p-4"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                        <span className="text-14 font-semibold text-gray-600">
+                          {review.userName.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-14 font-semibold text-gray-900">
+                            {review.userName}
+                          </span>
+                          {review.verified && (
+                            <Badge variant="success" size="sm">
+                              Verified
+                            </Badge>
+                          )}
+                          <span className="text-12 text-gray-500">
+                            {new Date(review.date).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <RatingDisplay
+                          rating={review.rating}
+                          size="sm"
+                          showCount={false}
+                        />
+                        <p className="text-14 text-gray-700 mt-2">
+                          {review.comment}
+                        </p>
+                        {review.helpful > 0 && (
+                          <div className="mt-2 text-12 text-gray-500">
+                            {review.helpful} people found this helpful
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Write Review Form */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
               <h3 className="text-16 font-semibold text-gray-900 mb-4">
                 Write Your Review
               </h3>
@@ -229,9 +301,15 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                 <Button
                   variant="brand"
                   onClick={handleSubmitReview}
-                  disabled={!userRating || !reviewComment.trim()}
+                  disabled={
+                    !userRating ||
+                    !reviewComment.trim() ||
+                    submitReviewMutation.isPending
+                  }
                 >
-                  Submit Review
+                  {submitReviewMutation.isPending
+                    ? 'Submitting...'
+                    : 'Submit Review'}
                 </Button>
               </div>
             </div>

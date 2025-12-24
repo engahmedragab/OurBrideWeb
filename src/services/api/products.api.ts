@@ -199,12 +199,53 @@ export const getRelatedProducts = async (
  * Get product reviews
  */
 export const getProductReviews = async (
-  productId: number
+  productId: number,
+  params?: {
+    page?: number
+    pageSize?: number
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
 ): Promise<ApiResult> => {
   const response = await apiClient.api.getProductGetProductReviews(
     String(productId),
-    { productId }
+    { productId, ...params }
   )
   return response.data
+}
+
+/**
+ * Submit product review
+ */
+export const submitProductReview = async (
+  productId: number,
+  reviewData: {
+    rating: number
+    comment: string
+    images?: string[]
+  },
+  params?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ApiResult> => {
+  try {
+    const response = await apiClient.api.postProductSubmitProductReview(
+      productId,
+      String(productId),
+      {
+        rating: reviewData.rating,
+        comment: reviewData.comment,
+        images: reviewData.images || [],
+      },
+      params
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error submitting product review:', error)
+    throw error
+  }
 }
 

@@ -5,4 +5,5 @@ export * from './useProductCategories'
 export * from './useProductOffers'
 export { useRelatedProducts } from './useProductOffers'
 export * from './useProductsHome'
+export * from './useProductReviews'
 
