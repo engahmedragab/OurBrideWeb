@@ -161,6 +161,14 @@ export type { CartOrderSummaryProps } from './CartOrderSummary'
 export { OfferBanner } from './OfferBanner'
 export type { OfferBannerProps } from './OfferBanner'
 
+export {
+  Skeleton,
+  CardSkeleton,
+  ProviderCardSkeleton,
+  TestimonialCardSkeleton,
+  MemberTestimonialCardSkeleton,
+} from './Skeleton'
+
 export { Modal } from './Modal'
 export type { ModalProps } from './Modal'
 

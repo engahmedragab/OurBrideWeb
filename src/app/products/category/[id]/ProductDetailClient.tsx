@@ -1,10 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Star, ArrowRight, ThumbsUp, Send } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import {
   Badge,
@@ -14,82 +11,11 @@ import {
   PriceDisplay,
   RatingDisplay,
   RatingInput,
-  OrderSummaryCard,
-  OfferBanner,
   BackButton,
   Button,
 } from '@/components/ui'
-import { cn } from '@/lib/utils'
-import productImage from '@/assets/svg/product-1.svg'
+import { useProductDetails, useRelatedProducts } from '@/hooks/products'
 import type { ProductCardData } from '@/components/ui/Card'
-import type { Product } from '@/types/product'
-
-// Mock data - Replace with API call
-const mockProduct: Product = {
-  id: '1',
-  title: 'Product Name : it could be that long so it will be in two Rows',
-  description:
-    'Premium quality wedding cream for bridal beauty. Perfect for your special day.',
-  longDescription:
-    'This essential wedding cream is specially formulated for brides who want to look their absolute best on their special day. Made with premium ingredients, it provides long-lasting hydration and a radiant glow. Perfect for all skin types, this cream ensures your skin looks flawless in photos and throughout your wedding celebration. The formula is lightweight yet deeply nourishing, creating a perfect base for makeup application. It contains natural extracts that help reduce inflammation and promote healthy, glowing skin. Regular use will leave your skin feeling soft, smooth, and ready for your special day.',
-  images: [
-    'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=800',
-    'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800',
-    'https://images.unsplash.com/photo-1583241801824-9055b66b9d29?w=800',
-    'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800',
-  ],
-  provider: {
-    id: '1',
-    name: 'Aroma & Co.',
-    verified: true,
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-  },
-  price: {
-    original: 6000,
-    discounted: 4800,
-    currency: 'LE',
-  },
-  rating: {
-    value: 4.5,
-    count: 120,
-  },
-  category: {
-    id: '1',
-    name: 'Makeup',
-    slug: 'makeup',
-  },
-  tags: ['Face', 'Cream'],
-  inStock: true,
-  stockQuantity: 50,
-  showTopOfferBadge: true,
-}
-
-const mockRelatedProducts: ProductCardData[] = [
-  {
-    id: '2',
-    title: 'Related Product 1',
-    image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-    providerName: 'Beauty Pro',
-    verified: true,
-    originalPrice: 5000,
-    discountedPrice: 4000,
-    rating: 4.2,
-    tags: ['Face', 'Cream'],
-    showTopOfferBadge: false,
-  },
-  {
-    id: '3',
-    title: 'Related Product 2',
-    image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-    providerName: 'Hair Studio',
-    verified: true,
-    originalPrice: 7000,
-    discountedPrice: 5500,
-    rating: 4.8,
-    tags: ['Face', 'Cream'],
-    showTopOfferBadge: true,
-  },
-]
 
 interface ProductDetailClientProps {
   productId: string
@@ -98,48 +24,77 @@ interface ProductDetailClientProps {
 export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   const router = useRouter()
   const [quantity, setQuantity] = useState(1)
-  const [product, setProduct] = useState(mockProduct)
   const [userRating, setUserRating] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
 
-  // Fetch product based on id - Replace with API call
-  useEffect(() => {
-    if (productId) {
-      // In a real app, fetch product data based on productId
-      setProduct(mockProduct)
-    }
-  }, [productId])
+  // Fetch product using hook
+  const {
+    data: product,
+    isLoading: productLoading,
+    error: productError,
+  } = useProductDetails(productId)
 
-  const handleQuantityChange = (newQuantity: number) => {
-    if (newQuantity >= 1 && newQuantity <= (product.stockQuantity || 99)) {
-      setQuantity(newQuantity)
-    }
+  // Fetch related products
+  const { data: relatedProducts = [] } = useRelatedProducts(
+    productId ? parseInt(productId, 10) : null,
+    4
+  )
+
+  // Show loading state
+  if (productLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-18 text-gray-600">Loading product...</div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Show error state
+  if (productError || !product) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-18 text-gray-600 mb-4">
+              Product not found
+            </div>
+            <BackButton href="/products" label="Back to Products" />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  const handleQuantityChange = (delta: number) => {
+    setQuantity(prev =>
+      Math.max(1, Math.min(prev + delta, product.stockQuantity || 99))
+    )
   }
 
   const handleAddToCart = () => {
-    // Add to cart logic
+    // TODO: Implement add to cart
     router.push('/cart')
   }
 
   const handleBuyNow = () => {
-    // Buy now logic
+    // Navigate to checkout page with product data
+    // TODO: Pass product data via query params or state management
     router.push('/checkout')
   }
 
   const handleSubmitReview = () => {
-    // Submit review logic
+    // TODO: Implement submit review
     setUserRating(0)
     setReviewComment('')
   }
-
-  const discountPercentage =
-    product.price.original > product.price.discounted
-      ? Math.round(
-        ((product.price.original - product.price.discounted) /
-          product.price.original) *
-        100
-      )
-      : 0
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -186,7 +141,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                 <span className="text-14 text-gray-600">Quantity:</span>
                 <div className="flex items-center gap-2 border border-gray-300 rounded-lg">
                   <button
-                    onClick={() => handleQuantityChange(quantity - 1)}
+                    onClick={() => handleQuantityChange(-1)}
                     className="px-3 py-1 text-gray-600 hover:text-gray-900"
                     disabled={quantity <= 1}
                   >
@@ -196,7 +151,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                     {quantity}
                   </span>
                   <button
-                    onClick={() => handleQuantityChange(quantity + 1)}
+                    onClick={() => handleQuantityChange(1)}
                     className="px-3 py-1 text-gray-600 hover:text-gray-900"
                     disabled={quantity >= (product.stockQuantity || 99)}
                   >
@@ -232,14 +187,16 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           </div>
 
           {/* Product Description */}
-          <div className="mb-12">
-            <h2 className="text-20 font-semibold text-gray-900 mb-4">
-              Description
-            </h2>
-            <p className="text-14 text-gray-700 leading-relaxed">
-              {product.longDescription}
-            </p>
-          </div>
+          {(product.longDescription || product.description) && (
+            <div className="mb-12">
+              <h2 className="text-20 font-semibold text-gray-900 mb-4">
+                Description
+              </h2>
+              <p className="text-14 text-gray-700 leading-relaxed">
+                {product.longDescription || product.description}
+              </p>
+            </div>
+          )}
 
           {/* Reviews Section */}
           <div className="mb-12">
@@ -281,23 +238,37 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           </div>
 
           {/* Related Products */}
-          <div>
-            <h2 className="text-20 font-semibold text-gray-900 mb-6">
-              Related Products
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {mockRelatedProducts.map(relatedProduct => (
-                <Card
-                  key={relatedProduct.id}
-                  cardData={{ type: 'product', ...relatedProduct }}
-                  onClick={() =>
-                    router.push(`/products/category/${relatedProduct.id}`)
-                  }
-                  className="cursor-pointer"
-                />
-              ))}
+          {relatedProducts.length > 0 && (
+            <div>
+              <h2 className="text-20 font-semibold text-gray-900 mb-6">
+                Related Products
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {relatedProducts.map(relatedProduct => (
+                  <Card
+                    key={relatedProduct.id}
+                    cardData={{
+                      type: 'product',
+                      id: relatedProduct.id,
+                      image: relatedProduct.images?.[0] || '',
+                      title: relatedProduct.title,
+                      providerName: relatedProduct.provider?.name || '',
+                      verified: relatedProduct.provider?.verified || false,
+                      originalPrice: relatedProduct.price?.original || 0,
+                      discountedPrice: relatedProduct.price?.discounted || 0,
+                      rating: relatedProduct.rating?.value || 0,
+                      tags: relatedProduct.tags || [],
+                      showTopOfferBadge: relatedProduct.showTopOfferBadge || false,
+                    }}
+                    onClick={() =>
+                      router.push(`/products/${relatedProduct.id}`)
+                    }
+                    className="cursor-pointer"
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
       <Footer />

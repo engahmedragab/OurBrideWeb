@@ -20,10 +20,10 @@ import type {
   ProductViewMode,
 } from '@/types/product'
 import {
-  useProductCategories,
+  useProductsHome,
   useFilteredProducts,
   useProducts,
-} from '@/Hooks/products'
+} from '@/hooks/products'
 
 const sortOptions: ProductSortOption[] = [
   { value: 'default', label: 'Default' },
@@ -67,9 +67,18 @@ export default function Products() {
   const [filters, setFilters] = useState<ProductFilter>({})
   const [sortBy, setSortBy] = useState('default')
 
-  // Fetch categories
-  const { data: categories = [], isLoading: categoriesLoading } =
-    useProductCategories()
+  // Fetch categories from products home endpoint
+  const { data: productsHomeData, isLoading: categoriesLoading } = useProductsHome()
+  
+  // Map categories to ProductCategory format (id as string)
+  const categories = useMemo(() => {
+    if (!productsHomeData?.categories) return []
+    return productsHomeData.categories.map(cat => ({
+      id: String(cat.id),
+      name: cat.name,
+      slug: cat.slug || '',
+    }))
+  }, [productsHomeData?.categories])
 
   // Build API query params from filters
   const apiQueryParams = useMemo(() => {

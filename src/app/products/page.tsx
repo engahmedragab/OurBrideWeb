@@ -15,10 +15,12 @@ import type {
   Provider,
 } from '@/components/products'
 import {
-  useProductCategories,
-  useProductOffers,
-  useProducts,
-} from '@/Hooks/products'
+  useStoreHome,
+} from '@/hooks/home'
+import {
+  useProductsHome,
+} from '@/hooks/products'
+import { extractStoreHomeData } from '@/utils/home-data.utils'
 import flowersImage from '@/assets/images/flowers.png'
 import perfumesIcon from '@/assets/category/perfumes.svg'
 import skinCareIcon from '@/assets/category/skin-care.svg'
@@ -150,26 +152,66 @@ const heroSlides = [
 ]
 
 export default function ProductIntroPage() {
-  // Fetch data using hooks
-  const { data: categories = [], isLoading: categoriesLoading } = useProductCategories()
-  const { data: offerProducts = [], isLoading: offersLoading } = useProductOffers()
-  const { data: allProducts = [], isLoading: productsLoading } = useProducts({
-    pageSize: 8,
-  })
+  // Fetch data from store home endpoint (getHomeGetStoreHome) - for banners
+  const { data: storeHomeData, isLoading: storeHomeLoading } = useStoreHome()
+  
+  // Fetch data from products home endpoint (getProductGetProductsHome) - for categories and products
+  const { data: productsHomeData, isLoading: productsHomeLoading } = useProductsHome()
+
+  // Extract and map data from store home API (for banners)
+  const storeData = useMemo(() => {
+    if (storeHomeData) {
+      return extractStoreHomeData(storeHomeData)
+    }
+    return {}
+  }, [storeHomeData])
+
+  // Use products home data for categories
+  const categories = useMemo(() => 
+    productsHomeData?.categories || [], 
+    [productsHomeData?.categories]
+  )
+  
+  const apiBanners = useMemo(() => storeData.banners || [], [storeData.banners])
+  // For now, use hardcoded providers as the API providers might not have the required product structure
+  // const apiProviders = useMemo(() => storeData.providers || [], [storeData.providers])
+  
+  const isLoading = storeHomeLoading || productsHomeLoading
 
   // Map API categories to component format
   const mappedCategories: CategoryType[] = useMemo(() => {
     return categories.map(category => ({
-      id: category.id,
+      id: String(category.id),
       title: category.name,
       description: 'Exclusive coupons and discounts designed for your budget.',
       href: `/products/category/${category.slug || category.id}`,
-      icon: categoryIconMap[category.slug] || defaultCategoryIcon,
+      icon: categoryIconMap[category.slug || ''] || defaultCategoryIcon,
     }))
   }, [categories])
 
-  // Use offer products if available, otherwise use regular products
-  const displayProducts = offerProducts.length > 0 ? offerProducts : allProducts.slice(0, 4)
+  // Map API banners to hero carousel format
+  const mappedHeroSlides = useMemo(() => {
+    if (apiBanners.length > 0) {
+      return apiBanners.slice(0, 5).map((banner, index) => ({
+        id: String(index + 1),
+        label: 'Featured',
+        title: banner.heading,
+        description: banner.description || '',
+        ctaText: banner.ctaText || 'Shop Now',
+        ctaLink: banner.ctaLink || '/products',
+        productImage: typeof banner.productImage === 'string' 
+          ? banner.productImage 
+          : 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=600',
+        discountText: '',
+      }))
+    }
+    return heroSlides // Fallback to hardcoded slides
+  }, [apiBanners])
+
+  // Use products from products home endpoint
+  const displayProducts = useMemo(() => {
+    return productsHomeData?.products?.slice(0, 4) || []
+  }, [productsHomeData?.products])
 
   const handleWishlistToggle = (_productId: string) => {
     // TODO: Implement wishlist toggle
@@ -184,7 +226,7 @@ export default function ProductIntroPage() {
   }
 
   // Show loading state
-  if (categoriesLoading || offersLoading || productsLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -204,7 +246,7 @@ export default function ProductIntroPage() {
       <main className="flex-1 bg-white">
         {/* Hero Carousel */}
         <HeroCarousel
-          slides={heroSlides}
+          slides={mappedHeroSlides}
           autoPlay={true}
           autoPlayInterval={5000}
           showBackground={false}

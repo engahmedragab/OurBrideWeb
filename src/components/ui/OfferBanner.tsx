@@ -56,7 +56,17 @@ export const OfferBanner = ({
     setCurrentIndex(index)
   }
 
+  // Early return if no offers
+  if (!offers || offers.length === 0) {
+    return null
+  }
+
   const currentOffer = offers[currentIndex]
+
+  // Safety check - return null if currentOffer is undefined
+  if (!currentOffer) {
+    return null
+  }
 
   return (
     <section className={cn('container-custom', className)}>

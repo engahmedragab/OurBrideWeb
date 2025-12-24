@@ -78,7 +78,6 @@ export const Pagination = ({
     e.preventDefault()
     if (currentPage > 1) {
       onPageChange(currentPage - 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -86,14 +85,12 @@ export const Pagination = ({
     e.preventDefault()
     if (currentPage < totalPages) {
       onPageChange(currentPage + 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   const handlePageClick = (page: number, e: React.MouseEvent) => {
     e.preventDefault()
     onPageChange(page)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (

@@ -17,35 +17,42 @@ export interface PlanningPreference {
 }
 
 /**
- * Get user's planning preference init status
+ * Get user's planning preference init status from profile endpoint
  */
 export const getPlanningPreferenceInit = async (): Promise<boolean> => {
   try {
-    // The GET endpoint will likely return the user's preferences/ids or an isInit field
-    const response = await apiClient.api.getProfileGetPlanningPreferences()
-    const data = response?.data ?? response
+    // Use profile endpoint to get user profile which includes isInit field
+    const response = await apiClient.api.getProfileGet()
+    const responseData = response as { data?: unknown }
+    const data = responseData?.data ?? response
 
-    // Several possible patterns depending on backend:
+    // Handle different response structures
     if (typeof data === 'object' && data !== null) {
-      // Pattern 1: Has an explicit field for init status
-      if ('isPreferenceInit' in data) return !!data.isPreferenceInit
-      if ('isInit' in data) return !!data.isInit
-      // Pattern 2: User has actual preferences (array), treat as init if not empty
-      if ('planningPreferenceIds' in data && Array.isArray(data.planningPreferenceIds)) {
-        return data.planningPreferenceIds.length > 0
+      const dataObj = data as Record<string, unknown>
+      
+      // Check for isInit field (from UserResponse type)
+      if ('isInit' in dataObj) {
+        return !!dataObj.isInit
       }
-      if ('preferences' in data && Array.isArray(data.preferences)) {
-        return data.preferences.length > 0
+      
+      // Fallback: check for isPreferenceInit field
+      if ('isPreferenceInit' in dataObj) {
+        return !!dataObj.isPreferenceInit
+      }
+      
+      // If data has a nested user object
+      if ('user' in dataObj && typeof dataObj.user === 'object' && dataObj.user !== null) {
+        const userObj = dataObj.user as Record<string, unknown>
+        if ('isInit' in userObj) {
+          return !!userObj.isInit
+        }
       }
     }
-    // Pattern 3: Array means already set (legacy)
-    if (Array.isArray(data)) {
-      return data.length > 0
-    }
+    
     // Fallback: treat unknown responses as not-init
     return false
   } catch (error) {
-    console.error('Error fetching planning preferences init status:', error)
+    console.error('Error fetching planning preferences init status from profile:', error)
     // For safety, if the API fails, treat as not initialized
     return false
   }
