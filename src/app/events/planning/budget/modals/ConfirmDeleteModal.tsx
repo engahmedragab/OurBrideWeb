@@ -33,28 +33,9 @@ export const ConfirmDeleteModal = ({
       onClose={onClose}
       title={title}
       maxWidth="sm"
-      footer={
-        <div className="flex flex-row gap-3">
-          <Button
-            variant="gray"
-            size="lg"
-            onClick={onClose}
-            className="flex-1 h-[52px] !rounded-full"
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
-            size="lg"
-            onClick={handleConfirm}
-            className="flex-1 h-[52px] !rounded-full text-white"
-          >
-            Delete
-          </Button>
-        </div>
-      }
     >
-      <div className="space-y-6">
+      <div className="flex flex-col">
+        <div className="space-y-6 pb-6">
         {/* Warning Icon */}
         <div className="flex items-center justify-center">
           <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
@@ -70,6 +51,29 @@ export const ConfirmDeleteModal = ({
             </p>
           )}
           <p className="text-14 text-gray-600">{message}</p>
+        </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="sticky bottom-0 pt-4 border-t border-gray-100 -mx-6 px-6 bg-white rounded-b-2xl">
+          <div className="flex flex-row gap-3">
+            <Button
+              variant="gray"
+              size="md"
+              onClick={onClose}
+              className="flex-1 h-[44px] !rounded-full"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              size="md"
+              onClick={handleConfirm}
+              className="flex-1 h-[44px] !rounded-full text-white"
+            >
+              Delete
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>

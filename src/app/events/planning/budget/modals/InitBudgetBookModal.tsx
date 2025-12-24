@@ -103,29 +103,9 @@ export const InitBudgetBookModal = ({
       onClose={onClose}
       title="Initialize Budget Book"
       maxWidth="md"
-      footer={
-        <div className="flex flex-row gap-3">
-          <Button
-            variant="gray"
-            size="lg"
-            onClick={onClose}
-            className="flex-1 h-[52px] !rounded-full"
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="brand"
-            size="lg"
-            onClick={handleCreate}
-            disabled={!isValid}
-            className="flex-1 h-[52px] !rounded-full text-white"
-          >
-            Create
-          </Button>
-        </div>
-      }
     >
-      <div className="space-y-6">
+      <div className="flex flex-col">
+        <div className="space-y-6 pb-6">
         {/* Title */}
         <div className="space-y-2">
           <label className="block text-14 font-semibold text-gray-900">
@@ -194,6 +174,30 @@ export const InitBudgetBookModal = ({
             placeholder="0 EGP"
             size="lg"
           />
+        </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="sticky bottom-0 pt-4 border-t border-gray-100 -mx-6 px-6 bg-white rounded-b-2xl">
+          <div className="flex flex-row gap-3">
+            <Button
+              variant="gray"
+              size="md"
+              onClick={onClose}
+              className="flex-1 h-[44px] !rounded-full"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="brand"
+              size="md"
+              onClick={handleCreate}
+              disabled={!isValid}
+              className="flex-1 h-[44px] !rounded-full text-white"
+            >
+              Create
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>

@@ -176,29 +176,9 @@ export const BudgetLineModal = ({
       onClose={onClose}
       title={editingLine ? 'Edit Budget Line' : 'Add Budget Line'}
       maxWidth="lg"
-      footer={
-        <div className="flex flex-row gap-3">
-          <Button
-            variant="gray"
-            size="lg"
-            onClick={onClose}
-            className="flex-1 h-[52px] !rounded-full"
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="brand"
-            size="lg"
-            onClick={handleSave}
-            disabled={!isValid}
-            className="flex-1 h-[52px] !rounded-full text-white"
-          >
-            Save
-          </Button>
-        </div>
-      }
     >
-      <div className="space-y-6">
+      <div className="flex flex-col max-h-[70vh]">
+        <div className="flex-1 space-y-6 pb-6 overflow-y-auto min-h-0">
         {/* Expense Name */}
         <div className="space-y-2">
           <label className="block text-14 font-semibold text-gray-900">
@@ -333,6 +313,30 @@ export const BudgetLineModal = ({
           <div className="flex items-center justify-between">
             <label className="text-14 font-semibold text-gray-900">Deleted</label>
             <Toggle checked={isDeleted} onChange={setIsDeleted} />
+          </div>
+        </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="sticky bottom-0 pt-4 border-t border-gray-100 -mx-6 px-6 bg-white rounded-b-2xl">
+          <div className="flex flex-row gap-3">
+            <Button
+              variant="gray"
+              size="md"
+              onClick={onClose}
+              className="flex-1 h-[44px] !rounded-full"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="brand"
+              size="md"
+              onClick={handleSave}
+              disabled={!isValid}
+              className="flex-1 h-[44px] !rounded-full text-white"
+            >
+              Save
+            </Button>
           </div>
         </div>
       </div>

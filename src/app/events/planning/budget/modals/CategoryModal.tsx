@@ -85,29 +85,9 @@ export const CategoryModal = ({
       onClose={onClose}
       title={editingCategory ? 'Edit Category' : 'Add Category'}
       maxWidth="md"
-      footer={
-        <div className="flex flex-row gap-3">
-          <Button
-            variant="gray"
-            size="lg"
-            onClick={onClose}
-            className="flex-1 h-[52px] !rounded-full"
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="brand"
-            size="lg"
-            onClick={handleSave}
-            disabled={!isValid}
-            className="flex-1 h-[52px] !rounded-full text-white"
-          >
-            Save
-          </Button>
-        </div>
-      }
     >
-      <div className="space-y-6">
+      <div className="flex flex-col">
+        <div className="space-y-6 pb-6">
         {/* Name */}
         <div className="space-y-2">
           <label className="block text-14 font-semibold text-gray-900">
@@ -160,6 +140,30 @@ export const CategoryModal = ({
             placeholder="Select color"
             size="lg"
           />
+        </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="sticky bottom-0 pt-4 border-t border-gray-100 -mx-6 px-6 bg-white rounded-b-2xl">
+          <div className="flex flex-row gap-3">
+            <Button
+              variant="gray"
+              size="md"
+              onClick={onClose}
+              className="flex-1 h-[44px] !rounded-full"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="brand"
+              size="md"
+              onClick={handleSave}
+              disabled={!isValid}
+              className="flex-1 h-[44px] !rounded-full text-white"
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>
