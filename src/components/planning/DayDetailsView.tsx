@@ -10,14 +10,32 @@ import {
   type ItineraryEvent,
 } from '@/components/planning'
 import { Button } from '@/components/ui/Button'
-import { parseDateSafe, formatDateSafe } from '@/lib/date-utils'
+import { parseDateSafe } from '@/lib/date-utils'
 
 const BIG_DAY_STORAGE_KEY = 'ourbride_big_days'
+const CUSTOM_TITLES_STORAGE_KEY = 'ourbride_custom_titles'
 
 const getBigDays = (): string[] => {
   if (typeof window === 'undefined') return []
   const stored = localStorage.getItem(BIG_DAY_STORAGE_KEY)
   return stored ? JSON.parse(stored) : []
+}
+
+const getCustomTitles = (): Record<string, string> => {
+  if (typeof window === 'undefined') return {}
+  const stored = localStorage.getItem(CUSTOM_TITLES_STORAGE_KEY)
+  return stored ? JSON.parse(stored) : {}
+}
+
+const saveCustomTitle = (dayId: string, title: string) => {
+  if (typeof window === 'undefined') return
+  const titles = getCustomTitles()
+  if (title.trim()) {
+    titles[dayId] = title.trim()
+  } else {
+    delete titles[dayId]
+  }
+  localStorage.setItem(CUSTOM_TITLES_STORAGE_KEY, JSON.stringify(titles))
 }
 
 const saveBigDay = (dayId: string, isBigDay: boolean) => {
@@ -90,6 +108,7 @@ export const DayDetailsView = ({
   className,
 }: DayDetailsViewProps) => {
   const [isBigDay, setIsBigDay] = useState(false)
+  const [customTitle, setCustomTitle] = useState<string>('')
   const [events, setEvents] = useState<ItineraryEvent[]>([])
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -101,6 +120,10 @@ export const DayDetailsView = ({
       const dayIsBigDay = bigDays.includes(dayId)
       setIsBigDay(dayIsBigDay)
       
+      // Load custom title if exists
+      const titles = getCustomTitles()
+      setCustomTitle(titles[dayId] || '')
+      
       if (dayIsBigDay) {
         setEvents(createMockEvents(dayId))
       }
@@ -108,7 +131,15 @@ export const DayDetailsView = ({
   }, [dayId])
 
   const eventDate = dayId ? parseDateSafe(dayId) : new Date()
-  const eventTitle = isBigDay ? 'The Big Day' : undefined
+  // Use custom title if exists, otherwise default to "Big Day" if it's a big day
+  const eventTitle = isBigDay ? (customTitle || 'Big Day') : undefined
+
+  const handleTitleEdit = (newTitle: string) => {
+    if (isBigDay && dayId) {
+      setCustomTitle(newTitle)
+      saveCustomTitle(dayId, newTitle)
+    }
+  }
 
   const handleToggleBigDay = () => {
     const newIsBigDay = !isBigDay
@@ -180,6 +211,7 @@ export const DayDetailsView = ({
         onRefresh={handleRefresh}
         onSave={handleSave}
         showBackButton={showBackButton}
+        onEditTitle={isBigDay ? handleTitleEdit : undefined}
       />
 
       {!isBigDay && (
