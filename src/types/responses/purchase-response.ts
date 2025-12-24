@@ -19,29 +19,46 @@ export interface PurchaseResponse {
   startDate: string | null // ISO DateTime string
   endDate: string | null // ISO DateTime string
   quantity: number
-  comment: string
+  comment: string | null
   cartId: number
+  
+  // Display properties (stored directly in Purchase for performance)
+  nameAr: string | null
+  nameEn: string | null
+  name: string | null // Computed property based on culture
+  imageUrl: string | null
+  
   productId: number | null // ulong
   product: ProductHeaderResponse | null
+  serviceId: number | null
+  providerId: number | null
+  
+  // Item IDs for different purchase types
+  membershipId: number | null
+  giftCardId: number | null
+  
+  depositAmount: number | null
+  isDepositRefunded: boolean | null
+  
+  // Service reservations
+  reservationId: string | null
+  
   isDeleted: boolean
   creationDate: string // ISO DateTime string
   lastModifiedDate: string // ISO DateTime string
-  slug: string
-  serviceId: number | null
-  providerId: number | null
-  membershipId: number | null
-  giftCardId: number | null
-  depositAmount: number | null
-  isDepositRefunded: boolean | null
-  reservationId: string
+  slug: string | null
+  
+  // Additional purchase type information
   service: ServiceHeaderResponse | null
   reservation: ReservationResponse | null
+  
+  // Multi-tenant information
   branchId: number | null
   providerUserId: string | null // Guid
   clientId: string | null // Guid
-  providerNotes: string
-  providerName: string
-  branchName: string
+  providerNotes: string | null
+  providerName: string | null
+  branchName: string | null
   isUrgent: boolean
   requireClientConfirmation: boolean
   preferredDeliveryDate: string | null // ISO DateTime string

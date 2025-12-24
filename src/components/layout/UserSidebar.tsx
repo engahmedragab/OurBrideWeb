@@ -1,9 +1,11 @@
 'use client'
 
+import { useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useCart } from '@/Hooks/cart'
 import {
   Grid3x3,
   ShoppingCart,
@@ -17,6 +19,8 @@ import {
   User,
   Settings,
   ThumbsUp,
+  Star,
+  Users,
 } from 'lucide-react'
 
 export interface UserSidebarProps {
@@ -33,6 +37,16 @@ export const UserSidebar = ({
   onLinkClick,
 }: UserSidebarProps) => {
   const pathname = usePathname()
+
+  // Fetch cart data
+  const { data: cartData } = useCart()
+
+  // Calculate cart count (number of unique items)
+  const cartCount = useMemo(() => {
+    if (!cartData) return 0
+    // Count unique items (purchases array length)
+    return cartData.purchases?.length || 0
+  }, [cartData])
 
   const menuSections = [
     {
@@ -51,6 +65,16 @@ export const UserSidebar = ({
           label: 'Wishlist',
           path: '/wishlist',
           icon: Heart,
+        },
+        {
+          label: 'Favorites',
+          path: '/favorites',
+          icon: Star,
+        },
+        {
+          label: 'Follows',
+          path: '/follows',
+          icon: Users,
         },
         {
           label: 'Orders List',
@@ -189,7 +213,17 @@ export const UserSidebar = ({
                           active ? 'text-white' : 'text-gray-900'
                         )}
                       />
-                      <span>{item.label}</span>
+                      <span className="flex-1">{item.label}</span>
+                      {item.path === '/cart' && cartCount > 0 && (
+                        <span
+                          className={cn(
+                            'flex min-w-[20px] h-5 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white px-1',
+                            active && 'bg-white text-brand-500'
+                          )}
+                        >
+                          {cartCount > 99 ? '99+' : cartCount}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 )

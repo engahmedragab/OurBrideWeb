@@ -491,7 +491,7 @@ export default function OrdersPage() {
                       requestDate={request.requestDate}
                       status={request.status}
                       service={request.service}
-                      assignedTo={request.assignedTo}
+                      assignedTo={request.assignedTo || undefined}
                       dueDate={request.dueDate}
                       dueTime={request.dueTime}
                       packages={request.packages}
@@ -558,7 +558,7 @@ export default function OrdersPage() {
                     requestDate={request.requestDate}
                     status={request.status}
                     service={request.service}
-                    assignedTo={request.assignedTo}
+                    assignedTo={request.assignedTo || undefined}
                     dueDate={request.dueDate}
                     dueTime={request.dueTime}
                     packages={request.packages}

@@ -4,6 +4,7 @@
 
 import type { BaseLookupResponse } from '@/types/responses/common'
 import type { ProviderResponse } from './provider-response'
+import type { ProviderInfoResponse } from './provider-info-response'
 import type { ReviewResponse } from './review-response'
 import type { LinkResponse } from './link-response'
 import type { WishlistResponse } from './wishlist-response'
@@ -29,7 +30,8 @@ export interface ServiceHeaderResponse extends BaseLookupResponse {
   imageUrl: string
   hasInstallment: boolean
   providerId: number | null
-  provider: ProviderResponse | null
+  provider: ProviderResponse | null // Kept for backward compatibility
+  providerInfo: ProviderInfoResponse | null // NEW: Added ProviderInfoResponse
   shortAddress: string
   startDate: string | null // ISO DateTime string
   endDate: string | null // ISO DateTime string

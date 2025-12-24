@@ -16,7 +16,30 @@ import { PostCard } from '@/components/community'
 import { ServiceCard } from '@/components/ui/ServiceCard'
 import { RatingDisplay } from '@/components/ui/RatingDisplay'
 import { RatingInput } from '@/components/ui/RatingInput'
+import { useServiceCardHandlers } from '@/Hooks/services'
 import { cn } from '@/lib/utils'
+import type { Service } from '@/types/service'
+
+// Wrapper component for service card with handlers
+const ServiceCardWithHandlers = ({
+  service,
+  onBookNow,
+}: {
+  service: Service
+  onBookNow?: (serviceId: string) => void
+}) => {
+  const handlers = useServiceCardHandlers(parseInt(service.id, 10))
+  return (
+    <ServiceCard
+      service={service}
+      onWishlistToggle={handlers.handleWishlistToggle}
+      onFavoriteToggle={handlers.handleFavoriteToggle}
+      isLoadingWishlist={handlers.isLoadingWishlist}
+      isLoadingFavorite={handlers.isLoadingFavorite}
+      onBookNow={onBookNow}
+    />
+  )
+}
 
 interface Review {
   id: string
@@ -638,7 +661,7 @@ export function ProviderProfileClient({
           {activeTab === 'store' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {storeItems.map(item => (
-                <ServiceCard
+                <ServiceCardWithHandlers
                   key={item.id}
                   service={{
                     id: item.id,
@@ -664,7 +687,6 @@ export function ProviderProfileClient({
                       sunday: true,
                     },
                   }}
-                  onWishlistToggle={() => { }}
                   onBookNow={() => { }}
                 />
               ))}

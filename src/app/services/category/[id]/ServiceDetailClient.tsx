@@ -27,7 +27,55 @@ import {
 } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { Service } from '@/types/service'
+import { useServiceCardHandlers } from '@/Hooks/services'
+import { useProviderCardHandlers } from '@/Hooks/providers'
 import productImage from '@/assets/svg/product-1.svg'
+
+// Wrapper component for service card with handlers
+const ServiceCardWithHandlers = ({
+  service,
+  onBookNow,
+}: {
+  service: Service
+  onBookNow?: (serviceId: string) => void
+}) => {
+  const handlers = useServiceCardHandlers(parseInt(service.id, 10))
+  return (
+    <ServiceCard
+      service={service}
+      onWishlistToggle={handlers.handleWishlistToggle}
+      onFavoriteToggle={handlers.handleFavoriteToggle}
+      isLoadingWishlist={handlers.isLoadingWishlist}
+      isLoadingFavorite={handlers.isLoadingFavorite}
+      onBookNow={onBookNow}
+    />
+  )
+}
+
+// Wrapper component for provider card with handlers
+const ProviderCardWithHandlers = ({
+  provider,
+}: {
+  provider: {
+    id: string
+    name: string
+    image?: string
+    verified?: boolean
+    rating?: number
+    profession?: string
+  }
+}) => {
+  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+  return (
+    <ProviderCard
+      provider={provider}
+      onFollowToggle={handlers.handleFollowToggle}
+      onFavoriteToggle={handlers.handleFavoriteToggle}
+      isLoadingFollow={handlers.isLoadingFollow}
+      isLoadingFavorite={handlers.isLoadingFavorite}
+    />
+  )
+}
 
 interface ServiceDetailClientProps {
   serviceId: string
@@ -278,9 +326,21 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
     router.push('/booking')
   }
 
-  const handleWishlistToggle = () => {
+  // Use API handlers for service cards
+  const serviceHandlers = useServiceCardHandlers(parseInt(serviceId, 10))
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    serviceHandlers.handleWishlistToggle(e)
+    // Update local state after API call
     setIsWishlisted(!isWishlisted)
-    // TODO: Implement wishlist toggle
+  }
+
+  const handleFavoriteToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    serviceHandlers.handleFavoriteToggle(e)
   }
 
   const getRatingLabel = (stars: number) => {
@@ -370,7 +430,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
             <div className="lg:col-span-3">
               <div className="space-y-6">
                 {/* Provider Card */}
-                <ProviderCard
+                <ProviderCardWithHandlers
                   provider={{
                     ...service.provider,
                     rating: service.rating.value,
@@ -770,10 +830,9 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {mockSuggestedServices.map(suggestedService => (
-                <ServiceCard
+                <ServiceCardWithHandlers
                   key={suggestedService.id}
                   service={suggestedService}
-                  onWishlistToggle={handleWishlistToggle}
                   onBookNow={handleBookNow}
                 />
               ))}

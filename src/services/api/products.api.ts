@@ -4,6 +4,7 @@ import type {
   ProductResponseApiResult,
   ProductResponseListApiResult,
   ApiResult,
+  CreateProductReviewRequest,
 } from '@/../client/common/api/gen/ourbride-api'
 
 /**
@@ -206,5 +207,84 @@ export const getProductReviews = async (
     { productId }
   )
   return response.data
+}
+
+/**
+ * Submit a review for a product
+ * POST /api/v1/products/{id}/review
+ */
+export const submitProductReview = async (
+  productId: number,
+  data: CreateProductReviewRequest,
+  query?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ApiResult> => {
+  try {
+    const response = await apiClient.api.postProductSubmitProductReview(
+      productId,
+      String(productId),
+      data,
+      query
+    )
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to submit product review'
+    )
+  }
+}
+
+/**
+ * Toggle favorite for a product
+ * POST /api/v1/products/{productId}/toggle-favorite
+ */
+export const toggleProductFavorite = async (
+  productId: number,
+  query?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<boolean> => {
+  try {
+    const response = await apiClient.api.postProductToggleFavorite(productId, query)
+    const responseAny = response as any
+    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as any
+    // Return true if favorited, false if removed
+    return result?.data ?? result?.success ?? true
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle product favorite'
+    )
+  }
+}
+
+/**
+ * Toggle wishlist for a product
+ * POST /api/v1/products/{productId}/toggle-wishlist
+ */
+export const toggleProductWishlist = async (
+  productId: number,
+  query?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<boolean> => {
+  try {
+    const response = await apiClient.api.postProductToggleWishlist(productId, query)
+    const responseAny = response as any
+    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as any
+    // Return true if added, false if removed
+    return result?.data ?? result?.success ?? true
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle product wishlist'
+    )
+  }
 }
 

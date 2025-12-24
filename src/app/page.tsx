@@ -14,7 +14,13 @@ import {
   type TestimonialCardData,
   type ProviderCardData,
   type MemberTestimonialCardData,
-} from '@/components/ui/Card'
+} from '@/components/ui'
+import {
+  useProductCardHandlers,
+  useServiceCardHandlers,
+  useProviderCardHandlers,
+  useAddProductToCart,
+} from '@/Hooks'
 import { OfferBanner } from '@/components/ui'
 import { StoreBadges } from '@/components/ui/StoreBadges'
 import {
@@ -45,6 +51,7 @@ const mockProducts: ProductCardData[] = [
     image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
     title: 'Essential Wedding Cream',
     providerName: 'YUNJAC',
+    providerId: '1',
     verified: true,
     rating: 4.5,
     originalPrice: 6000,
@@ -57,6 +64,7 @@ const mockProducts: ProductCardData[] = [
     image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
     title: 'Bridal Makeup Kit',
     providerName: 'Beauty Pro',
+    providerId: '2',
     verified: true,
     rating: 4.5,
     originalPrice: 5000,
@@ -69,6 +77,7 @@ const mockProducts: ProductCardData[] = [
     image: 'https://images.unsplash.com/photo-1583241801824-9055b66b9d29?w=400',
     title: 'Hair Care Essentials',
     providerName: 'Hair Studio',
+    providerId: '3',
     verified: true,
     rating: 4.5,
     originalPrice: 5500,
@@ -81,6 +90,7 @@ const mockProducts: ProductCardData[] = [
     image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
     title: 'Skin Care Bundle',
     providerName: 'Skincare Co',
+    providerId: '4',
     verified: true,
     rating: 4.5,
     originalPrice: 6000,
@@ -782,12 +792,45 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockProducts.map(product => (
-              <Card
-                key={product.id}
-                cardData={{ type: 'product', ...product }}
-              />
-            ))}
+            {mockProducts.map(product => {
+              // Inline component to use hooks properly
+              const ProductCardItem = () => {
+                const handlers = useProductCardHandlers(parseInt(product.id, 10))
+                const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+                const handleAddToCartClick = (e: React.MouseEvent) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  // Convert ProductCardData to the format expected by handleAddToCart
+                  handleAddToCart(
+                    {
+                      id: product.id,
+                      price: { discounted: product.discountedPrice },
+                      provider: { id: product.providerId || '' },
+                    },
+                    1
+                  )
+                }
+
+                return (
+                  <Card
+                    cardData={{
+                      type: 'product',
+                      ...product,
+                      providerId: product.providerId || '',
+                      inStock: true,
+                      onWishlistToggle: handlers.handleWishlistToggle,
+                      onFavoriteToggle: handlers.handleFavoriteToggle,
+                      onAddToCart: handleAddToCartClick,
+                      isLoadingWishlist: handlers.isLoadingWishlist,
+                      isLoadingFavorite: handlers.isLoadingFavorite,
+                      isLoadingAddToCart,
+                    }}
+                  />
+                )
+              }
+              return <ProductCardItem key={product.id} />
+            })}
           </div>
         </section>
 
@@ -805,12 +848,25 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockServices.map(service => (
-              <Card
-                key={service.id}
-                cardData={{ type: 'service', ...service }}
-              />
-            ))}
+            {mockServices.map(service => {
+              // Inline component to use hooks properly
+              const ServiceCardItem = () => {
+                const handlers = useServiceCardHandlers(parseInt(service.id, 10))
+                return (
+                  <Card
+                    cardData={{
+                      type: 'service',
+                      ...service,
+                      onWishlistToggle: handlers.handleWishlistToggle,
+                      onFavoriteToggle: handlers.handleFavoriteToggle,
+                      isLoadingWishlist: handlers.isLoadingWishlist,
+                      isLoadingFavorite: handlers.isLoadingFavorite,
+                    }}
+                  />
+                )
+              }
+              return <ServiceCardItem key={service.id} />
+            })}
           </div>
         </section>
 
@@ -958,12 +1014,25 @@ export default function Home() {
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockProviders.map(provider => (
-              <Card
-                key={provider.id}
-                cardData={{ type: 'provider', ...provider }}
-              />
-            ))}
+            {mockProviders.map(provider => {
+              // Inline component to use hooks properly
+              const ProviderCardItem = () => {
+                const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+                return (
+                  <Card
+                    cardData={{
+                      type: 'provider',
+                      ...provider,
+                      onFollowToggle: handlers.handleFollowToggle,
+                      onFavoriteToggle: handlers.handleFavoriteToggle,
+                      isLoadingFollow: handlers.isLoadingFollow,
+                      isLoadingFavorite: handlers.isLoadingFavorite,
+                    }}
+                  />
+                )
+              }
+              return <ProviderCardItem key={provider.id} />
+            })}
           </div>
         </section>
 

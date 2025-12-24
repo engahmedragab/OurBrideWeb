@@ -23,6 +23,8 @@ import { cn } from '@/lib/utils'
 import productImage from '@/assets/svg/product-1.svg'
 import type { ProductCardData } from '@/components/ui/Card'
 import type { Product } from '@/types/product'
+import { useProductCardHandlers, useAddProductToCart } from '@/Hooks/products'
+import { useProviderCardHandlers } from '@/Hooks/providers'
 
 // Mock data - Replace with API call
 const mockProduct: Product = {
@@ -95,6 +97,34 @@ interface ProductDetailClientProps {
   productId: string
 }
 
+// Wrapper component for provider card with handlers
+const ProviderCardWithHandlers = ({
+  provider,
+  onViewProfile,
+}: {
+  provider: {
+    id: string
+    name: string
+    image?: string
+    verified?: boolean
+    rating?: number
+    profession?: string
+  }
+  onViewProfile?: () => void
+}) => {
+  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+  return (
+    <ProviderCard
+      provider={provider}
+      onFollowToggle={handlers.handleFollowToggle}
+      onFavoriteToggle={handlers.handleFavoriteToggle}
+      isLoadingFollow={handlers.isLoadingFollow}
+      isLoadingFavorite={handlers.isLoadingFavorite}
+      onViewProfile={onViewProfile}
+    />
+  )
+}
+
 export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   const router = useRouter()
   const [quantity, setQuantity] = useState(1)
@@ -116,9 +146,17 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     }
   }
 
-  const handleAddToCart = () => {
-    // Add to cart logic
-    router.push('/cart')
+  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+  const handleAddToCart = async () => {
+    if (!product) return
+    try {
+      await addToCart(product, quantity)
+      // Optionally navigate to cart or show success message
+      // router.push('/cart')
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+    }
   }
 
   const handleBuyNow = () => {
@@ -210,9 +248,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                   variant="brand"
                   size="lg"
                   onClick={handleAddToCart}
+                  disabled={isLoadingAddToCart || !product.inStock}
                   className="flex-1"
                 >
-                  Add to Cart
+                  {isLoadingAddToCart ? 'Adding...' : 'Add to Cart'}
                 </Button>
                 <Button
                   variant="outline"
@@ -224,7 +263,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                 </Button>
               </div>
 
-              <ProviderCard
+              <ProviderCardWithHandlers
                 provider={product.provider}
                 onViewProfile={() => router.push(`/provider/${product.provider.id}`)}
               />
@@ -286,16 +325,29 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
               Related Products
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {mockRelatedProducts.map(relatedProduct => (
-                <Card
-                  key={relatedProduct.id}
-                  cardData={{ type: 'product', ...relatedProduct }}
-                  onClick={() =>
-                    router.push(`/products/category/${relatedProduct.id}`)
-                  }
-                  className="cursor-pointer"
-                />
-              ))}
+              {mockRelatedProducts.map(relatedProduct => {
+                // Inline component to use hooks properly
+                const ProductCardItem = () => {
+                  const handlers = useProductCardHandlers(parseInt(relatedProduct.id, 10))
+                  return (
+                    <Card
+                      cardData={{
+                        type: 'product',
+                        ...relatedProduct,
+                        onWishlistToggle: handlers.handleWishlistToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        isLoadingWishlist: handlers.isLoadingWishlist,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                      }}
+                      onClick={() =>
+                        router.push(`/products/category/${relatedProduct.id}`)
+                      }
+                      className="cursor-pointer"
+                    />
+                  )
+                }
+                return <ProductCardItem key={relatedProduct.id} />
+              })}
             </div>
           </div>
         </div>

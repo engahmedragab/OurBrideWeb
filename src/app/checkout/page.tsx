@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
-import Image from 'next/image'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   User,
@@ -12,29 +11,266 @@ import {
   CreditCard,
   Wallet,
   DollarSign,
-  Ticket,
-  Gift,
-  Diamond,
   AlertCircle,
-  Trash2,
+  Percent,
+  CheckCircle2,
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { Checkbox } from '@/components/ui/Checkbox'
-import { QuantitySelector } from '@/components/ui/QuantitySelector'
 import { PaymentConfirmationModal } from '@/components/ui/PaymentConfirmationModal'
 import { OrderConfirmationModal } from '@/components/ui/OrderConfirmationModal'
 import { ErrorDisplay } from '@/components/ui/ErrorDisplay'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+import { CartItem, Checkbox } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
-import { useCart, useUpdatePurchase, useRemovePurchase, useCheckout, useValidateCoupon } from '@/Hooks'
+import { useCart, useUpdatePurchase, useRemovePurchase, useCheckout, useValidateCoupon, usePaymentMethods } from '@/Hooks'
 import { getProductById } from '@/services/api/products.api'
 import { useQueries } from '@tanstack/react-query'
-import type { PurchaseResponse, ProductResponse } from '@/types/responses'
+import type { PurchaseResponse, ProductResponse, ReservationResponse } from '@/types/responses'
+import type { CartProduct, CartReservation, CartMembership, CartGiftCard } from '@/types/responses'
 import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
 import type { CheckoutRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { CartItemType } from '@/components/ui/CartItem'
+
+/**
+ * Map PurchaseResponse to CartProduct using display properties from PurchaseResponse
+ * Priority: purchase.name > purchase.product > fetchedProduct > fallback
+ */
+const mapPurchaseToCartProduct = (
+  purchase: PurchaseResponse,
+  fetchedProduct?: ProductResponse
+): CartProduct | null => {
+  if (purchase.type !== PurchaseType.Product) {
+    return null
+  }
+
+  const purchasePrice = purchase.totalPrice ?? purchase.price ?? 0
+  const pricePerUnit = purchasePrice / (purchase.quantity || 1)
+  const productId = purchase.productId ?? purchase.id
+
+  // Priority 1: Use display properties from PurchaseResponse (stored directly for performance)
+  const displayName = purchase.name ?? purchase.nameEn ?? purchase.nameAr
+  const displayImage = purchase.imageUrl
+
+  // Priority 2: Use ProductHeaderResponse from purchase.product if available
+  const productHeader = purchase.product
+
+  // Priority 3: Use fetched ProductResponse if available
+  // Priority 4: Fallback to type name
+
+  let title = displayName
+  let image = displayImage ?? '/placeholder-product.png'
+  let originalPrice = pricePerUnit
+  let discountedPrice = pricePerUnit
+  let discountPercentage: number | undefined = undefined
+
+  // If ProductHeaderResponse exists, use it for pricing
+  if (productHeader) {
+    originalPrice = productHeader.regularPrice ?? productHeader.price ?? pricePerUnit
+    discountedPrice = productHeader.salePrice ?? productHeader.price ?? originalPrice
+    const hasDiscount = productHeader.hasDiscount && productHeader.salePrice && productHeader.regularPrice
+    discountPercentage = hasDiscount
+      ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+      : undefined
+
+    // Use product header name/image if purchase display properties are not available
+    if (!title) {
+      title = productHeader.nameEn ?? productHeader.nameAr ?? null
+    }
+    if (!displayImage) {
+      image = productHeader.image ?? '/placeholder-product.png'
+    }
+  }
+
+  // Fallback: Use fetched ProductResponse if available
+  if (!title && fetchedProduct) {
+    title = fetchedProduct.nameEn ?? fetchedProduct.nameAr ?? null
+    if (!displayImage) {
+      image = fetchedProduct.image ?? '/placeholder-product.png'
+    }
+    if (!productHeader) {
+      originalPrice = fetchedProduct.regularPrice ?? fetchedProduct.price ?? pricePerUnit
+      discountedPrice = fetchedProduct.salePrice ?? fetchedProduct.price ?? originalPrice
+      const hasDiscount = fetchedProduct.hasDiscount && fetchedProduct.salePrice && fetchedProduct.regularPrice
+      discountPercentage = hasDiscount
+        ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
+        : undefined
+    }
+  }
+
+  // Final fallback: Use type name if name is still null
+  if (!title) {
+    title = 'Product'
+  }
+
+  // Format delivery date if available
+  const deliveryDate = purchase.preferredDeliveryDate
+    ? new Date(purchase.preferredDeliveryDate).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    : undefined
+
+  return {
+    id: productId.toString(),
+    title,
+    image,
+    originalPrice,
+    discountedPrice,
+    quantity: purchase.quantity,
+    deliveryDate,
+    discountPercentage,
+    purchaseId: purchase.id,
+    type: 'Product' as CartItemType,
+    purchasePrice: purchase.totalPrice ?? purchase.price ?? null,
+    purchaseDate: purchase.creationDate ?? purchase.buyDate ?? undefined,
+  }
+}
+
+/**
+ * Map PurchaseResponse to CartReservation using display properties from PurchaseResponse
+ * Priority: purchase.name > reservation.service > fallback to type name
+ */
+const mapPurchaseToCartReservation = (
+  purchase: PurchaseResponse
+): CartReservation | null => {
+  if (purchase.type !== PurchaseType.Reservation) {
+    return null
+  }
+
+  const price = purchase.totalPrice ?? purchase.price ?? 0
+
+  // Priority 1: Use display properties from PurchaseResponse
+  let title = purchase.name ?? purchase.nameEn ?? purchase.nameAr
+  let image = purchase.imageUrl ?? '/placeholder-service.png'
+
+  // Priority 2: Use ReservationResponse if available
+  if (purchase.reservation) {
+    const reservation: ReservationResponse = purchase.reservation
+    const service = reservation.service
+
+    // Use service name/image if purchase display properties are not available
+    if (!title) {
+      title = service?.nameEn ?? service?.nameAr ?? null
+    }
+    if (!purchase.imageUrl) {
+      image = service?.imageUrl ?? '/placeholder-service.png'
+    }
+
+    const reservationDate = reservation.reservationDate
+      ? new Date(reservation.reservationDate).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
+      : undefined
+
+    // Final fallback: Use type name if name is still null
+    if (!title) {
+      title = 'Reservation'
+    }
+
+    return {
+      id: purchase.id.toString(),
+      title,
+      image,
+      price,
+      quantity: purchase.quantity,
+      purchaseId: purchase.id,
+      reservationId: reservation.reservationId,
+      reservationDate,
+      status: reservation.status,
+      purchasePrice: purchase.totalPrice ?? purchase.price ?? null,
+      purchaseDate: purchase.creationDate ?? purchase.buyDate ?? undefined,
+      type: 'Reservation' as CartItemType,
+    }
+  }
+
+  // Fallback: Use type name if reservation is null
+  if (!title) {
+    title = 'Reservation'
+  }
+
+  return {
+    id: purchase.id.toString(),
+    title,
+    image,
+    price,
+    quantity: purchase.quantity,
+    purchaseId: purchase.id,
+    reservationId: purchase.reservationId ?? '',
+    reservationDate: undefined,
+    status: purchase.status as any,
+    purchasePrice: purchase.totalPrice ?? purchase.price ?? null,
+    purchaseDate: purchase.creationDate ?? purchase.buyDate ?? undefined,
+    type: 'Reservation' as CartItemType,
+  }
+}
+
+/**
+ * Map PurchaseResponse to CartMembership using display properties from PurchaseResponse
+ * Priority: purchase.name > fallback to type name
+ */
+const mapPurchaseToCartMembership = (
+  purchase: PurchaseResponse
+): CartMembership | null => {
+  if (purchase.type !== PurchaseType.Membership) {
+    return null
+  }
+
+  const price = purchase.totalPrice ?? purchase.price ?? 0
+
+  // Priority: Use display properties from PurchaseResponse, fallback to type name
+  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Membership'
+  const image = purchase.imageUrl ?? '/placeholder-membership.png'
+
+  return {
+    id: purchase.id.toString(),
+    title,
+    image,
+    price,
+    quantity: purchase.quantity,
+    purchaseId: purchase.id,
+    membershipId: purchase.membershipId,
+    purchasePrice: purchase.totalPrice ?? purchase.price ?? null,
+    purchaseDate: purchase.creationDate ?? purchase.buyDate ?? undefined,
+    type: 'Membership' as CartItemType,
+  }
+}
+
+/**
+ * Map PurchaseResponse to CartGiftCard using display properties from PurchaseResponse
+ * Priority: purchase.name > fallback to type name
+ */
+const mapPurchaseToCartGiftCard = (
+  purchase: PurchaseResponse
+): CartGiftCard | null => {
+  if (purchase.type !== PurchaseType.GiftCard) {
+    return null
+  }
+
+  const price = purchase.totalPrice ?? purchase.price ?? 0
+
+  // Priority: Use display properties from PurchaseResponse, fallback to type name
+  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Gift Card'
+  const image = purchase.imageUrl ?? '/placeholder-giftcard.png'
+
+  return {
+    id: purchase.id.toString(),
+    title,
+    image,
+    price,
+    quantity: purchase.quantity,
+    purchaseId: purchase.id,
+    giftCardId: purchase.giftCardId,
+    purchasePrice: purchase.totalPrice ?? purchase.price ?? null,
+    purchaseDate: purchase.creationDate ?? purchase.buyDate ?? undefined,
+    type: 'GiftCard' as CartItemType,
+  }
+}
 
 export interface OrderFormData {
   fullName: string
@@ -63,26 +299,44 @@ export default function CheckoutPage() {
   // Fetch cart data
   const { data: cartData, isLoading: isLoadingCart, error: cartError } = useCart()
 
+  // Fetch active payment methods
+  const { data: paymentMethods = [], isLoading: isLoadingPaymentMethods } = usePaymentMethods()
+
+  // Helper function to map payment method code to form value
+  const getPaymentMethodValue = (code: string): 'debit-credit' | 'mobile-wallet' | 'cash-on-delivery' => {
+    const codeLower = code.toLowerCase()
+    if (codeLower.includes('wallet') || codeLower.includes('mobile')) {
+      return 'mobile-wallet'
+    }
+    if (codeLower.includes('cash') || codeLower.includes('delivery')) {
+      return 'cash-on-delivery'
+    }
+    return 'debit-credit' // Default to card
+  }
+
   // Mutations
   const updatePurchaseMutation = useUpdatePurchase()
   const removePurchaseMutation = useRemovePurchase()
   const checkoutMutation = useCheckout()
   const validateCouponMutation = useValidateCoupon()
 
-  // Filter product purchases
-  const productPurchases = useMemo(() => {
-    if (!cartData?.purchases) return []
-    return cartData.purchases.filter(
-      (p) => p.type === PurchaseType.Product && p.productId
-    )
+  // Get all purchases from cart
+  const allPurchases = useMemo(() => {
+    return cartData?.purchases || []
   }, [cartData])
 
   // Get product IDs that need to be fetched (where product is null but productId exists)
   const productIdsToFetch = useMemo(() => {
-    return productPurchases
-      .filter((p) => p.productId && !p.product)
+    if (!allPurchases.length) return []
+    return allPurchases
+      .filter(
+        (p) =>
+          p.type === PurchaseType.Product &&
+          p.productId &&
+          !p.product
+      )
       .map((p) => p.productId!)
-  }, [productPurchases])
+  }, [allPurchases])
 
   // Fetch product details for purchases that have productId but product is null
   const productQueries = useQueries({
@@ -99,51 +353,95 @@ export default function CheckoutPage() {
 
   // Create a map of productId -> Product data for quick lookup
   const productMap = useMemo(() => {
-    const map = new Map<
-      number,
-      {
-        nameEn: string | null
-        nameAr: string | null
-        image: string | null
-        regularPrice: number | null
-        price: number | null
-        salePrice: number | null
-        hasDiscount: boolean
-        stockQuantity: number | null
-      }
-    >()
+    const map = new Map<number, ProductResponse>()
     productQueries.forEach((query) => {
       if (query.data?.product) {
         const product = query.data.product as ProductResponse
-        map.set(query.data.productId, {
-          nameEn: product.nameEn,
-          nameAr: product.nameAr,
-          image: product.image,
-          regularPrice: product.regularPrice,
-          price: product.price,
-          salePrice: product.salePrice,
-          hasDiscount: product.hasDiscount,
-          stockQuantity: product.stockQuantity,
-        })
+        map.set(query.data.productId, product)
       }
     })
     return map
   }, [productQueries])
 
+  // Map API data to component formats - extract products using ProductHeaderResponse
+  const cartProducts = useMemo(() => {
+    if (!allPurchases.length) return []
+    return allPurchases
+      .map((purchase) => {
+        // Only process Product type purchases
+        if (purchase.type !== PurchaseType.Product) {
+          return null
+        }
+
+        // If ProductHeaderResponse is null but productId exists, try to get ProductResponse from fetched products
+        if (purchase.productId && !purchase.product) {
+          const fetchedProduct = productMap.get(purchase.productId)
+          if (fetchedProduct) {
+            return mapPurchaseToCartProduct(purchase, fetchedProduct)
+          }
+        }
+        // Use ProductHeaderResponse from purchase.product, or fallback to purchase data
+        return mapPurchaseToCartProduct(purchase)
+      })
+      .filter((product): product is CartProduct => product !== null)
+  }, [allPurchases, productMap])
+
+  // Filter reservation purchases using ReservationResponse
+  const reservationPurchases = useMemo(() => {
+    if (!allPurchases.length) return []
+    return allPurchases
+      .map((purchase) => mapPurchaseToCartReservation(purchase))
+      .filter((reservation): reservation is CartReservation => reservation !== null)
+  }, [allPurchases])
+
+  // Filter membership purchases
+  const membershipPurchases = useMemo(() => {
+    if (!allPurchases.length) return []
+    return allPurchases
+      .map((purchase) => mapPurchaseToCartMembership(purchase))
+      .filter((membership): membership is CartMembership => membership !== null)
+  }, [allPurchases])
+
+  // Filter gift card purchases
+  const giftCardPurchases = useMemo(() => {
+    if (!allPurchases.length) return []
+    return allPurchases
+      .map((purchase) => mapPurchaseToCartGiftCard(purchase))
+      .filter((giftCard): giftCard is CartGiftCard => giftCard !== null)
+  }, [allPurchases])
+
   // Local state for selected purchases (can be modified by user)
-  const [localItems, setLocalItems] = useState<PurchaseResponse[]>([])
+  const [localItems, setLocalItems] = useState<CartProduct[]>([])
+  const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set())
+
+  // Track the last cart product IDs to avoid unnecessary updates
+  const lastCartProductIdsRef = useRef<string>('')
 
   // Initialize local items when cart data loads
   useEffect(() => {
-    if (productPurchases.length > 0) {
-      setLocalItems(productPurchases)
-      setSelectedItems(new Set(productPurchases.map(p => p.id)))
-    }
-  }, [productPurchases])
+    // Create a stable ID string from cart products
+    const currentIds = cartProducts.map(p => p.id).sort().join(',')
 
-  const [selectedItems, setSelectedItems] = useState<Set<number>>(
-    new Set(localItems.map(p => p.id))
-  )
+    // Only update if the IDs have actually changed
+    if (currentIds !== lastCartProductIdsRef.current) {
+      lastCartProductIdsRef.current = currentIds
+
+      if (cartProducts.length > 0) {
+        setLocalItems(cartProducts)
+        setSelectedItems(new Set(cartProducts.map(p => parseInt(p.id, 10))))
+      } else if (cartData?.purchases && cartData.purchases.length > 0) {
+        // If we have purchases but they're not products, log for debugging
+        console.log('Cart has purchases but none are products:', {
+          totalPurchases: cartData.purchases.length,
+          purchaseTypes: cartData.purchases.map(p => ({ id: p.id, type: p.type, productId: p.productId }))
+        })
+      } else {
+        // Cart is empty
+        setLocalItems([])
+        setSelectedItems(new Set())
+      }
+    }
+  }, [cartProducts, cartData])
   const [formData, setFormData] = useState<OrderFormData>({
     fullName: '',
     mobileNumber: '',
@@ -161,26 +459,10 @@ export default function CheckoutPage() {
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showPromoInput, setShowPromoInput] = useState(false)
-  const [promoCode, setPromoCode] = useState('')
   const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false)
   const [showOrderConfirmation, setShowOrderConfirmation] = useState(false)
 
   const currency = 'EGP'
-
-  // Calculate totals from cart summary if available, otherwise use defaults
-  const { taxes, deliveryFee } = useMemo(() => {
-    if (cartData?.cartSummary) {
-      return {
-        taxes: cartData.cartSummary.tax,
-        deliveryFee: cartData.cartSummary.shipping,
-      }
-    }
-    return {
-      taxes: 120, // Default fallback
-      deliveryFee: 90, // Default fallback
-    }
-  }, [cartData])
 
   const updateFormData = (
     field: keyof OrderFormData,
@@ -338,7 +620,13 @@ export default function CheckoutPage() {
       }
     }
 
-    if (formData.paymentMethod === 'debit-credit') {
+    // Validate card fields only if the selected payment method requires card info
+    const selectedPaymentMethod = paymentMethods.find(pm => {
+      const methodValue = getPaymentMethodValue(pm.code)
+      return methodValue === formData.paymentMethod
+    })
+
+    if (selectedPaymentMethod?.requiresCardInfo || formData.paymentMethod === 'debit-credit') {
       const cardFields: (keyof OrderFormData)[] = [
         'cardNumber',
         'cardExpiry',
@@ -356,7 +644,7 @@ export default function CheckoutPage() {
       })
     }
 
-    if (selectedItems.size === 0) {
+    if (localItems.length === 0 && reservationPurchases.length === 0 && membershipPurchases.length === 0 && giftCardPurchases.length === 0) {
       newErrors.items = 'Please select at least one item'
     }
 
@@ -364,9 +652,7 @@ export default function CheckoutPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
+  const handleSubmit = () => {
     if (!validateForm()) {
       const firstErrorField = Object.keys(errors)[0]
       if (firstErrorField) {
@@ -388,11 +674,24 @@ export default function CheckoutPage() {
         throw new Error('Cart data not available')
       }
 
-      // Map payment method to API format
-      const paymentMethodMap: Record<string, string> = {
-        'debit-credit': 'Card',
-        'mobile-wallet': 'MobileWallet',
-        'cash-on-delivery': 'CashOnDelivery',
+      // Get the selected payment method from the fetched payment methods
+      const selectedPaymentMethod = paymentMethods.find(pm => {
+        const methodValue = getPaymentMethodValue(pm.code)
+        return methodValue === formData.paymentMethod
+      })
+
+      // Use the payment method code from API response, or fallback to mapped value
+      let paymentMethodCode: string
+      if (selectedPaymentMethod?.code) {
+        paymentMethodCode = selectedPaymentMethod.code
+      } else {
+        // Fallback mapping for backward compatibility
+        const paymentMethodMap: Record<string, string> = {
+          'debit-credit': 'Card',
+          'mobile-wallet': 'MobileWallet',
+          'cash-on-delivery': 'CashOnDelivery',
+        }
+        paymentMethodCode = paymentMethodMap[formData.paymentMethod] || 'Card'
       }
 
       // Prepare checkout request
@@ -400,8 +699,7 @@ export default function CheckoutPage() {
       // Using a minimal structure with common fields
       const checkoutRequest: CheckoutRequest = {
         cartId: cartData.id,
-        paymentMethod: paymentMethodMap[formData.paymentMethod] || 'Card',
-        ...(showPromoInput && promoCode && { couponCode: promoCode }),
+        paymentMethod: paymentMethodCode,
         // Include other fields that might be in CheckoutRequest
         // The API will determine which fields are actually used
       } as CheckoutRequest
@@ -432,32 +730,24 @@ export default function CheckoutPage() {
     }
   }
 
-  const updateItemQuantity = async (purchaseId: number, delta: number) => {
-    const purchase = localItems.find(p => p.id === purchaseId)
-    if (!purchase) return
+  const handleQuantityChange = async (id: string, delta: number) => {
+    const product = localItems.find(p => p.id === id)
+    if (!product) return
 
-    // Get product data (from purchase or fetched)
-    const product = purchase.product ?? (purchase.productId ? productMap.get(purchase.productId) : null)
-    const purchasePrice = purchase.totalPrice ?? purchase.price ?? 0
-    const pricePerUnit = purchasePrice / (purchase.quantity || 1)
-    const originalPrice = product?.regularPrice ?? product?.price ?? pricePerUnit
-    const discountedPrice = product?.salePrice ?? product?.price ?? originalPrice
-    const maxQuantity = product?.stockQuantity ?? 99
+    const newQuantity = Math.max(1, product.quantity + delta)
 
-    const newQuantity = Math.max(1, Math.min(purchase.quantity + delta, maxQuantity))
-
-    if (newQuantity === purchase.quantity) return
+    if (newQuantity === product.quantity) return
 
     try {
       await updatePurchaseMutation.mutateAsync({
-        id: purchase.id.toString(),
+        id: product.purchaseId.toString(),
         data: {
           quantity: newQuantity,
         },
       })
       // Update local state optimistically
       setLocalItems(prev =>
-        prev.map(p => (p.id === purchaseId ? { ...p, quantity: newQuantity } : p))
+        prev.map(p => (p.id === id ? { ...p, quantity: newQuantity } : p))
       )
     } catch (error) {
       console.error('Failed to update quantity:', error)
@@ -465,20 +755,20 @@ export default function CheckoutPage() {
     }
   }
 
-  const removeItem = async (purchaseId: number) => {
-    const purchase = localItems.find(p => p.id === purchaseId)
-    if (!purchase) return
+  const handleRemoveItemClick = (id: string) => {
+    const product = localItems.find(p => p.id === id)
+    if (!product) return
 
     try {
-      await removePurchaseMutation.mutateAsync({
-        id: purchase.id.toString(),
+      removePurchaseMutation.mutateAsync({
+        id: product.purchaseId.toString(),
         data: {},
       })
       // Update local state
-      setLocalItems(prev => prev.filter(p => p.id !== purchaseId))
+      setLocalItems(prev => prev.filter(p => p.id !== id))
       setSelectedItems(prev => {
         const newSet = new Set(prev)
-        newSet.delete(purchaseId)
+        newSet.delete(parseInt(id, 10))
         return newSet
       })
     } catch (error) {
@@ -487,24 +777,75 @@ export default function CheckoutPage() {
     }
   }
 
-  const selectedItemsList = localItems.filter(p => selectedItems.has(p.id))
-  const subtotal = selectedItemsList.reduce((sum, purchase) => {
-    // Get product data (from purchase or fetched)
-    const product = purchase.product ?? (purchase.productId ? productMap.get(purchase.productId) : null)
-    const purchasePrice = purchase.totalPrice ?? purchase.price ?? 0
-    const pricePerUnit = purchasePrice / (purchase.quantity || 1)
-    const discountedPrice = product?.salePrice ?? product?.price ?? pricePerUnit
-    return sum + discountedPrice * purchase.quantity
-  }, 0)
-  const total = subtotal + taxes + deliveryFee
+  // Calculate totals from priceCalculation (most accurate), then cartSummary, otherwise calculate from all items
+  const { subtotal, taxesAndFees, deliveryFee, total, couponDiscount, appliedCouponCode } = useMemo(() => {
+    // Priority 1: Use priceCalculation if available (most detailed and accurate)
+    if (cartData?.priceCalculation) {
+      const calc = cartData.priceCalculation
+      return {
+        subtotal: calc.subtotal,
+        taxesAndFees: calc.tax,
+        deliveryFee: calc.shippingCost,
+        total: calc.total,
+        couponDiscount: calc.couponDiscount ?? 0,
+        appliedCouponCode: calc.couponCode ?? '',
+      }
+    }
+
+    // Priority 2: Use cartSummary if available
+    if (cartData?.cartSummary) {
+      const summary = cartData.cartSummary
+      return {
+        subtotal: summary.subtotal,
+        taxesAndFees: summary.tax,
+        deliveryFee: summary.shipping,
+        total: summary.total,
+        couponDiscount: summary.couponDiscount ?? 0,
+        appliedCouponCode: summary.couponCode ?? '',
+      }
+    }
+
+    // Fallback: calculate from all purchase types
+    const productsTotal = cartProducts.reduce(
+      (sum, product) => sum + product.discountedPrice * product.quantity,
+      0
+    )
+    const reservationsTotal = reservationPurchases.reduce(
+      (sum, reservation) => sum + reservation.price * reservation.quantity,
+      0
+    )
+    const membershipsTotal = membershipPurchases.reduce(
+      (sum, membership) => sum + membership.price * membership.quantity,
+      0
+    )
+    const giftCardsTotal = giftCardPurchases.reduce(
+      (sum, giftCard) => sum + giftCard.price * giftCard.quantity,
+      0
+    )
+    const sub = productsTotal + reservationsTotal + membershipsTotal + giftCardsTotal
+    const taxes = 0 // Will be calculated by API
+    const delivery = 0 // Will be calculated by API
+    const tot = sub + taxes + delivery
+
+    // Get coupon code from cart data
+    const couponCode = cartData?.couponCode ?? cartData?.cartSummary?.couponCode ?? ''
+
+    return {
+      subtotal: sub,
+      taxesAndFees: taxes,
+      deliveryFee: delivery,
+      total: tot,
+      couponDiscount: 0,
+      appliedCouponCode: couponCode,
+    }
+  }, [cartData, cartProducts, reservationPurchases, membershipPurchases, giftCardPurchases])
 
   const hasRelevantErrors =
     Object.keys(errors).length > 0 &&
     Object.values(errors).some(error => error !== '')
 
   const isCheckoutDisabled =
-    selectedItems.size === 0 ||
-    !formData.acceptTerms ||
+    (localItems.length === 0 && reservationPurchases.length === 0 && membershipPurchases.length === 0 && giftCardPurchases.length === 0) ||
     hasRelevantErrors ||
     isSubmitting
 
@@ -548,7 +889,9 @@ export default function CheckoutPage() {
   }
 
   // Show empty cart state
-  if (!localItems || localItems.length === 0) {
+  const hasItems = localItems.length > 0 || reservationPurchases.length > 0 || membershipPurchases.length > 0 || giftCardPurchases.length > 0
+
+  if (!hasItems) {
     return (
       <div className="min-h-screen flex flex-col bg-white">
         <Header />
@@ -575,6 +918,7 @@ export default function CheckoutPage() {
     )
   }
 
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
@@ -585,7 +929,7 @@ export default function CheckoutPage() {
             Order Checkout
           </h1>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
               {/* LEFT COLUMN - Form Section */}
               <div className="w-full lg:w-[40%] lg:flex-shrink-0 space-y-6">
@@ -690,85 +1034,115 @@ export default function CheckoutPage() {
                   <h3 className="text-18 font-normal text-gray-900">
                     Payment Method
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {(
-                      [
-                        {
-                          value: 'debit-credit',
-                          label: 'Debit / Credit',
-                          icon: CreditCard,
-                        },
-                        {
-                          value: 'mobile-wallet',
-                          label: 'Mobile Wallet',
-                          icon: Wallet,
-                        },
-                        {
-                          value: 'cash-on-delivery',
-                          label: 'Cash On Delivery',
-                          icon: DollarSign,
-                        },
-                      ] as const
-                    ).map(method => {
-                      const Icon = method.icon
-                      const isSelected = formData.paymentMethod === method.value
-                      return (
-                        <button
-                          key={method.value}
-                          type="button"
-                          onClick={() => {
-                            updateFormData('paymentMethod', method.value)
-                            if (method.value !== 'mobile-wallet') {
-                              updateFormData('walletMobileNumber', '')
-                              setErrors(prev => {
-                                const newErrors = { ...prev }
-                                delete newErrors.walletMobileNumber
-                                return newErrors
-                              })
-                            }
-                            if (method.value !== 'debit-credit') {
-                              updateFormData('cardNumber', '')
-                              updateFormData('cardExpiry', '')
-                              updateFormData('cardCVV', '')
-                              updateFormData('cardholderName', '')
-                              setErrors(prev => {
-                                const newErrors = { ...prev }
-                                delete newErrors.cardNumber
-                                delete newErrors.cardExpiry
-                                delete newErrors.cardCVV
-                                delete newErrors.cardholderName
-                                return newErrors
-                              })
-                            }
-                          }}
-                          className={cn(
-                            'flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all',
-                            'hover:bg-gray-50',
-                            isSelected
-                              ? 'border-brand-400 bg-white'
-                              : 'border-gray-300 bg-white'
-                          )}
-                        >
-                          <Icon
+                  {isLoadingPaymentMethods ? (
+                    <div className="flex items-center justify-center py-8">
+                      <p className="text-14 text-gray-500">Loading payment methods...</p>
+                    </div>
+                  ) : paymentMethods.length === 0 ? (
+                    <div className="flex items-center justify-center py-8">
+                      <p className="text-14 text-gray-500">No payment methods available</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {paymentMethods.map((method) => {
+                        // Map payment method code to icon
+                        const getPaymentMethodIcon = (code: string) => {
+                          const codeLower = code.toLowerCase()
+                          if (codeLower.includes('card') || codeLower.includes('credit') || codeLower.includes('debit')) {
+                            return CreditCard
+                          }
+                          if (codeLower.includes('wallet') || codeLower.includes('mobile')) {
+                            return Wallet
+                          }
+                          if (codeLower.includes('cash') || codeLower.includes('delivery')) {
+                            return DollarSign
+                          }
+                          return CreditCard // Default icon
+                        }
+
+                        const Icon = getPaymentMethodIcon(method.code)
+                        const methodValue = getPaymentMethodValue(method.code)
+                        const isSelected = formData.paymentMethod === methodValue
+                        const displayName = method.nameEn || method.nameAr || method.code
+
+                        return (
+                          <button
+                            key={method.id}
+                            type="button"
+                            onClick={() => {
+                              updateFormData('paymentMethod', methodValue)
+                              if (methodValue !== 'mobile-wallet') {
+                                updateFormData('walletMobileNumber', '')
+                                setErrors(prev => {
+                                  const newErrors = { ...prev }
+                                  delete newErrors.walletMobileNumber
+                                  return newErrors
+                                })
+                              }
+                              // Clear card info if payment method doesn't require it
+                              if (!method.requiresCardInfo) {
+                                updateFormData('cardNumber', '')
+                                updateFormData('cardExpiry', '')
+                                updateFormData('cardCVV', '')
+                                updateFormData('cardholderName', '')
+                                setErrors(prev => {
+                                  const newErrors = { ...prev }
+                                  delete newErrors.cardNumber
+                                  delete newErrors.cardExpiry
+                                  delete newErrors.cardCVV
+                                  delete newErrors.cardholderName
+                                  return newErrors
+                                })
+                              }
+                            }}
                             className={cn(
-                              'h-5 w-5',
-                              isSelected ? 'text-brand-400' : 'text-gray-400'
-                            )}
-                          />
-                          <span
-                            className={cn(
-                              'text-12 font-medium text-center',
+                              'flex flex-col items-center justify-center gap-2 p-4 rounded-lg border-2 transition-all',
+                              'hover:bg-gray-50',
                               isSelected
-                                ? 'text-brand-400 font-normal'
-                                : 'text-gray-600'
+                                ? 'border-brand-400 bg-white'
+                                : 'border-gray-300 bg-white'
                             )}
                           >
-                            {method.label}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
+                            {method.logoUrl ? (
+                              <img
+                                src={method.logoUrl}
+                                alt={displayName}
+                                className="h-8 w-auto object-contain max-w-[60px]"
+                              />
+                            ) : method.iconUrl ? (
+                              <img
+                                src={method.iconUrl}
+                                alt={displayName}
+                                className="h-5 w-5 object-contain"
+                              />
+                            ) : (
+                              <Icon
+                                className={cn(
+                                  'h-5 w-5',
+                                  isSelected ? 'text-brand-400' : 'text-gray-400'
+                                )}
+                              />
+                            )}
+                            <span
+                              className={cn(
+                                'text-12 font-medium text-center',
+                                isSelected
+                                  ? 'text-brand-400 font-normal'
+                                  : 'text-gray-600'
+                              )}
+                            >
+                              {displayName}
+                            </span>
+                            {method.supportsInstallments && method.maxInstallments && (
+                              <span className="text-10 text-gray-500">
+                                Up to {method.maxInstallments} installments
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
 
                   {/* Wallet Details Section (Conditional) */}
                   {formData.paymentMethod === 'mobile-wallet' && (
@@ -922,104 +1296,98 @@ export default function CheckoutPage() {
                   Order Summary
                 </h3>
 
-                {/* Product Items List */}
+                {/* Cart Items List */}
                 <div className="space-y-3 max-h-[400px] overflow-y-auto">
-                  {localItems.map((purchase) => {
-                    // Get product data (from purchase or fetched)
-                    const product = purchase.product ?? (purchase.productId ? productMap.get(purchase.productId) : null)
-                    const purchasePrice = purchase.totalPrice ?? purchase.price ?? 0
-                    const pricePerUnit = purchasePrice / (purchase.quantity || 1)
-                    const originalPrice = product?.regularPrice ?? product?.price ?? pricePerUnit
-                    const discountedPrice = product?.salePrice ?? product?.price ?? originalPrice
-                    const hasDiscount = product?.hasDiscount && product?.salePrice && product?.regularPrice
-                    const discountPercentage = hasDiscount
-                      ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
-                      : 0
+                  {/* Products Section */}
+                  {cartProducts.length > 0 && (
+                    <div className="space-y-3">
+                      {cartProducts.map(product => (
+                        <CartItem
+                          key={product.id}
+                          id={product.id}
+                          title={product.title}
+                          image={product.image}
+                          originalPrice={product.originalPrice}
+                          discountedPrice={product.discountedPrice}
+                          quantity={product.quantity}
+                          onQuantityChange={handleQuantityChange}
+                          onRemove={handleRemoveItemClick}
+                          deliveryDate={product.deliveryDate}
+                          discountPercentage={product.discountPercentage}
+                          purchasePrice={product.purchasePrice ?? undefined}
+                          purchaseDate={product.purchaseDate}
+                          type={product.type}
+                        />
+                      ))}
+                    </div>
+                  )}
 
-                    // Format delivery date if available
-                    const deliveryDate = purchase.preferredDeliveryDate
-                      ? new Date(purchase.preferredDeliveryDate).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                      })
-                      : undefined
+                  {/* Reservations Section */}
+                  {reservationPurchases.length > 0 && (
+                    <div className="space-y-3">
+                      {reservationPurchases.map((reservation) => (
+                        <CartItem
+                          key={reservation.id}
+                          id={reservation.id}
+                          title={reservation.title}
+                          image={reservation.image}
+                          originalPrice={reservation.price}
+                          discountedPrice={reservation.price}
+                          quantity={reservation.quantity}
+                          onQuantityChange={handleQuantityChange}
+                          onRemove={handleRemoveItemClick}
+                          deliveryDate={reservation.reservationDate}
+                          purchasePrice={reservation.purchasePrice ?? undefined}
+                          purchaseDate={reservation.purchaseDate}
+                          type={reservation.type}
+                        />
+                      ))}
+                    </div>
+                  )}
 
-                    const productImage = product?.image ?? '/placeholder-product.png'
-                    const productTitle = product?.nameEn ?? product?.nameAr ?? `Product #${purchase.productId}`
-                    const maxQuantity = product?.stockQuantity ?? 99
-                    const currency = 'EGP'
+                  {/* Memberships Section */}
+                  {membershipPurchases.length > 0 && (
+                    <div className="space-y-3">
+                      {membershipPurchases.map((membership) => (
+                        <CartItem
+                          key={membership.id}
+                          id={membership.id}
+                          title={membership.title}
+                          image={membership.image}
+                          originalPrice={membership.price}
+                          discountedPrice={membership.price}
+                          quantity={membership.quantity}
+                          onQuantityChange={handleQuantityChange}
+                          onRemove={handleRemoveItemClick}
+                          purchasePrice={membership.purchasePrice ?? undefined}
+                          purchaseDate={membership.purchaseDate}
+                          type={membership.type}
+                        />
+                      ))}
+                    </div>
+                  )}
 
-                    return (
-                      <div
-                        key={purchase.id}
-                        className="bg-white border border-gray-200 rounded-lg p-4"
-                      >
-                        <div className="flex items-start gap-4">
-                          {/* Product Image */}
-                          <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                            <Image
-                              src={productImage}
-                              alt={productTitle}
-                              fill
-                              sizes="64px"
-                              className="object-cover"
-                            />
-                          </div>
-
-                          {/* Product Details */}
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-16 font-normal text-gray-900 mb-1">
-                              {productTitle}
-                            </h4>
-                            <div className="flex items-center gap-1 mb-2">
-                              <span className="text-16 font-normal text-gray-900">
-                                {discountedPrice.toLocaleString()} {currency}
-                              </span>
-                              {originalPrice > discountedPrice && (
-                                <>
-                                  <span className="text-12 text-gray-400 line-through">
-                                    {originalPrice.toLocaleString()} {currency}
-                                  </span>
-                                  {discountPercentage > 0 && (
-                                    <span className="text-12 font-normal text-green-600 ml-auto">
-                                      {discountPercentage}% OFF
-                                    </span>
-                                  )}
-                                </>
-                              )}
-                            </div>
-                            {deliveryDate && (
-                              <p className="text-12 text-gray-500 mb-3">
-                                Get In By {deliveryDate}
-                              </p>
-                            )}
-
-                            {/* Quantity Controls and Remove */}
-                            <div className="flex items-center justify-between">
-                              <QuantitySelector
-                                quantity={purchase.quantity}
-                                onQuantityChange={delta =>
-                                  updateItemQuantity(purchase.id, delta)
-                                }
-                                min={1}
-                                max={maxQuantity}
-                                variant="coral"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => removeItem(purchase.id)}
-                                className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                                aria-label="Remove item"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
+                  {/* Gift Cards Section */}
+                  {giftCardPurchases.length > 0 && (
+                    <div className="space-y-3">
+                      {giftCardPurchases.map((giftCard) => (
+                        <CartItem
+                          key={giftCard.id}
+                          id={giftCard.id}
+                          title={giftCard.title}
+                          image={giftCard.image}
+                          originalPrice={giftCard.price}
+                          discountedPrice={giftCard.price}
+                          quantity={giftCard.quantity}
+                          onQuantityChange={handleQuantityChange}
+                          onRemove={handleRemoveItemClick}
+                          purchasePrice={giftCard.purchasePrice ?? undefined}
+                          purchaseDate={giftCard.purchaseDate}
+                          type={giftCard.type}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {errors.items && (
@@ -1029,106 +1397,74 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                {/* Divider */}
-                <div className="border-t border-gray-200" />
-
-                {/* Promo & Rewards Section */}
-                <div className="space-y-3">
-                  {/* Promo Code */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Ticket className="h-5 w-5 text-brand-400" />
-                      {showPromoInput ? (
-                        <Input
-                          type="text"
-                          placeholder="Enter promo code"
-                          value={promoCode}
-                          onChange={e => setPromoCode(e.target.value)}
-                          className="flex-1 max-w-[200px]"
-                          size="sm"
-                        />
-                      ) : (
-                        <span className="text-14">Enter Promo Code</span>
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setShowPromoInput(!showPromoInput)}
-                      className="text-14 font-normal text-brand-400 hover:text-brand-500 transition-colors"
-                    >
-                      Redeem
-                    </button>
-                  </div>
-
-                  {/* Diamonds */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Diamond className="h-5 w-5 text-brand-400" />
-                      <span className="text-14">Diamonds: 250 points</span>
-                    </div>
-                    <button
-                      type="button"
-                      className="text-14 font-normal text-brand-400 hover:text-brand-500 transition-colors"
-                    >
-                      Redeem
-                    </button>
-                  </div>
-
-                  {/* Gifts Cash */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Gift className="h-5 w-5 text-brand-400" />
-                      <span className="text-14">
-                        Gifts Cash: 500 {currency}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      className="text-14 font-normal text-brand-400 hover:text-brand-500 transition-colors"
-                    >
-                      Redeem
-                    </button>
-                  </div>
-                </div>
-
                 {/* Price Breakdown */}
-                <div className="space-y-3 pt-4">
-                  <div className="flex justify-between text-14 text-gray-600">
+                <div className="space-y-3 pt-4 border-t border-gray-200">
+                  <div className="flex justify-between text-14 text-gray-700">
                     <span>Subtotal</span>
-                    <span className="font-normal text-gray-900">
+                    <span className="font-semibold text-gray-900">
                       {subtotal.toLocaleString()} {currency}
                     </span>
                   </div>
-                  <div className="flex justify-between text-14 text-gray-600">
-                    <span>Taxes & Fees</span>
-                    <span className="text-gray-900">
-                      {taxes.toLocaleString()} {currency}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-14 text-gray-600">
-                    <span>Delivery Fee</span>
-                    <span className="text-gray-900">
-                      {deliveryFee.toLocaleString()} {currency}
-                    </span>
-                  </div>
-                  <div className="border-t border-gray-200 pt-3">
-                    <div className="flex justify-between">
-                      <span className="text-18 font-normal text-gray-900">
-                        Total
+
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between text-14 text-green-600">
+                      <span>Coupon Discount</span>
+                      <span className="font-semibold">
+                        -{couponDiscount.toLocaleString()} {currency}
                       </span>
-                      <span className="text-20 font-normal text-gray-900">
+                    </div>
+                  )}
+
+                  {taxesAndFees > 0 && (
+                    <div className="flex justify-between text-14 text-gray-700">
+                      <span>Taxes & Fees</span>
+                      <span className="font-semibold text-gray-900">
+                        {taxesAndFees.toLocaleString()} {currency}
+                      </span>
+                    </div>
+                  )}
+
+                  {deliveryFee > 0 && (
+                    <div className="flex justify-between text-14 text-gray-700">
+                      <span>Delivery Fee</span>
+                      <span className="font-semibold text-gray-900">
+                        {deliveryFee.toLocaleString()} {currency}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+                    <span className="text-18 font-semibold text-gray-900">Total</span>
+                    <div className="text-right">
+                      <div className="text-18 font-semibold text-gray-900">
                         {total.toLocaleString()} {currency}
-                      </span>
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                {/* Applied Coupon Code - Display under summary section */}
+                {appliedCouponCode && (
+                  <div className="pt-4 pb-4 border-t border-gray-200">
+                    <div className="flex items-center justify-center gap-2 px-2 py-2 bg-green-50 border border-green-200 rounded-lg">
+                      <Percent className="h-5 w-5 text-green-600 flex-shrink-0" />
+                      <span className="text-14 font-medium text-green-800">
+                        #{appliedCouponCode}
+                      </span>
+                      <div className="flex items-center gap-1 ml-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
+                        <span className="text-14 font-medium text-green-600">Redeemed</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Terms & Conditions */}
                 <div className="space-y-2 pt-4">
                   <div className="flex items-start gap-3">
                     <Checkbox
                       checked={formData.acceptTerms}
-                      onChange={checked =>
+                      onChange={(checked: boolean) =>
                         updateFormData('acceptTerms', checked)
                       }
                       variant="brand"
@@ -1166,12 +1502,13 @@ export default function CheckoutPage() {
                     type="submit"
                     variant="default"
                     size="xl"
-                    disabled={isCheckoutDisabled || checkoutMutation.isPending}
+                    disabled={isCheckoutDisabled || checkoutMutation.isPending || !formData.acceptTerms}
                     className="w-full rounded-lg text-white"
                   >
                     {isSubmitting || checkoutMutation.isPending ? 'Processing...' : 'Checkout'}
                   </Button>
                 </div>
+
               </div>
             </div>
           </form>

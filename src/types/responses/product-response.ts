@@ -160,6 +160,7 @@ export interface ProductResponse extends BaseLookupResponse {
   attributes: ProductAttributeResponse[] | null
   productTags: ProductTagResponse[] | null
   productAttributes: ProductAttributeResponse[] | null
+  providerProductTags: ProviderProductTagResponse[] | null
 
   // Brands
   brands: ProductBrandResponse[] | null

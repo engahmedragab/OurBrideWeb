@@ -18,6 +18,7 @@ import {
   useProductCategories,
   useProductOffers,
   useProducts,
+  useAddProductToCart,
 } from '@/Hooks/products'
 import flowersImage from '@/assets/images/flowers.png'
 import perfumesIcon from '@/assets/category/perfumes.svg'
@@ -175,8 +176,19 @@ export default function ProductIntroPage() {
     // TODO: Implement wishlist toggle
   }
 
-  const handleAddToCart = (_productId: string) => {
-    // TODO: Implement add to cart
+  const { handleAddToCart: addToCart } = useAddProductToCart()
+
+  const handleAddToCart = async (productId: string) => {
+    // Find the product from displayProducts
+    const product = displayProducts.find(p => p.id === productId)
+    if (!product) return
+
+    try {
+      await addToCart(product, 1)
+      // Optionally show success message
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+    }
   }
 
   const handleSubscribe = (_email: string) => {

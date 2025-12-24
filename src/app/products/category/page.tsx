@@ -24,6 +24,7 @@ import {
   useProductCategories,
   useFilteredProducts,
   useProducts,
+  useAddProductToCart,
 } from '@/Hooks/products'
 
 const sortOptions: ProductSortOption[] = [
@@ -166,8 +167,19 @@ export default function Products() {
     // TODO: Implement wishlist toggle
   }
 
-  const handleAddToCart = (_productId: string) => {
-    // TODO: Implement add to cart
+  const { handleAddToCart: addToCart } = useAddProductToCart()
+
+  const handleAddToCart = async (productId: string) => {
+    // Find the product from filteredAndSortedProducts
+    const product = filteredAndSortedProducts.find(p => p.id === productId)
+    if (!product) return
+
+    try {
+      await addToCart(product, 1)
+      // Optionally show success message
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+    }
   }
 
   // Show loading state

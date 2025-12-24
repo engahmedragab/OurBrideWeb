@@ -10,15 +10,18 @@ import {
   PageHeader,
   ErrorDisplay,
   LoadingOverlay,
+  SelectPopover,
 } from '@/components/ui'
 import type { Service } from '@/types/service'
 import type { Product } from '@/types/product'
-import { useWishlists, useDeleteWishlist } from '@/Hooks'
+import { useWishlists, useDeleteWishlist, useAddProductToCart } from '@/Hooks'
 import type { WishlistResponse } from '@/types/responses'
+import { Source } from '@/../client/common/api/gen/ourbride-api'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
 export default function WishlistPage() {
   const [wishlistType, setWishlistType] = useState<'services' | 'products'>('services')
+  const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
   // Fetch wishlists using WishlistResponse from API
   const {
@@ -39,34 +42,41 @@ export default function WishlistPage() {
     return wishlistsData?.items || []
   }, [wishlistsData])
 
-  // Filter wishlists by type (services or products)
-  // Note: WishlistResponse doesn't contain items array, so we filter by wishlistType field
+  // Filter wishlists by type (services or products) and source
   const filteredWishlists = useMemo(() => {
     if (!wishlists.length) return []
 
-    // Filter wishlists based on type field or category
-    // Since WishlistResponse doesn't have items, we'll work with wishlist metadata
     return wishlists.filter((wishlist: WishlistResponse) => {
+      // First filter by source if selected
+      if (selectedSource !== 'all' && wishlist.source !== selectedSource) {
+        return false
+      }
+
+      // Then filter by type (services or products) for backward compatibility
       const type = wishlist.wishlistType || wishlist.type || ''
       const category = wishlist.category || ''
 
       if (wishlistType === 'services') {
         // Filter for service-related wishlists
+        // Check source first, then fallback to type/category
         return (
+          wishlist.source === Source.Service ||
           type.toLowerCase().includes('service') ||
           category.toLowerCase().includes('service') ||
-          wishlist.itemCount > 0 // If it has items, assume it might have services
+          (wishlist.itemCount > 0 && selectedSource === 'all') // If it has items and no source filter, assume it might have services
         )
       } else {
         // Filter for product-related wishlists
+        // Check source first, then fallback to type/category
         return (
+          wishlist.source === Source.Product ||
           type.toLowerCase().includes('product') ||
           category.toLowerCase().includes('product') ||
-          wishlist.itemCount > 0 // If it has items, assume it might have products
+          (wishlist.itemCount > 0 && selectedSource === 'all') // If it has items and no source filter, assume it might have products
         )
       }
     })
-  }, [wishlists, wishlistType])
+  }, [wishlists, wishlistType, selectedSource])
 
   // For now, since WishlistResponse doesn't contain items array,
   // we'll use empty arrays for services and products
@@ -111,8 +121,19 @@ export default function WishlistPage() {
     // TODO: Implement book now
   }
 
-  const handleAddToCart = (_productId: string) => {
-    // TODO: Implement add to cart
+  const { handleAddToCart: addToCart } = useAddProductToCart()
+
+  const handleAddToCart = async (productId: string) => {
+    // Find the product from wishlistProducts
+    const product = wishlistProducts.find(p => p.id === productId)
+    if (!product) return
+
+    try {
+      await addToCart(product, 1)
+      // Optionally show success message
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+    }
   }
 
   // Calculate total items from wishlists
@@ -121,15 +142,43 @@ export default function WishlistPage() {
     return filteredWishlists.reduce((sum, wishlist) => sum + (wishlist.itemCount || 0), 0)
   }, [filteredWishlists])
 
+  // Source filter options - common sources for wishlists
+  const sourceOptions = useMemo(() => [
+    { value: 'all', label: 'All Sources' },
+    { value: Source.Product, label: 'Products' },
+    { value: Source.Service, label: 'Services' },
+    { value: Source.Membership, label: 'Memberships' },
+    { value: Source.GiftCard, label: 'Gift Cards' },
+    { value: Source.ServiceReservation, label: 'Service Reservations' },
+    { value: Source.Provider, label: 'Providers' },
+    { value: Source.Offer, label: 'Offers' },
+    { value: Source.Preparation, label: 'Preparations' },
+    { value: Source.Post, label: 'Posts' },
+    { value: Source.Blog, label: 'Blogs' },
+    { value: Source.Article, label: 'Articles' },
+    { value: Source.Reel, label: 'Reels' },
+  ], [])
+
+  const headerRightContent = (
+    <div className="flex items-center gap-2">
+      <SelectPopover
+        value={selectedSource}
+        onChange={(value) => setSelectedSource(value as Source | 'all')}
+        options={sourceOptions}
+        placeholder="Filter by source"
+        className="w-40"
+      />
+      <ServicesProductsFilter value={wishlistType} onChange={setWishlistType} />
+    </div>
+  )
+
   // Show loading state
   if (isLoadingWishlists) {
     return (
       <UserPageLayout>
         <PageHeader
           title="Wishlist"
-          rightContent={
-            <ServicesProductsFilter value={wishlistType} onChange={setWishlistType} />
-          }
+          rightContent={headerRightContent}
         />
         <LoadingOverlay
           open={true}
@@ -146,9 +195,7 @@ export default function WishlistPage() {
       <UserPageLayout>
         <PageHeader
           title="Wishlist"
-          rightContent={
-            <ServicesProductsFilter value={wishlistType} onChange={setWishlistType} />
-          }
+          rightContent={headerRightContent}
         />
         <ErrorDisplay
           title="Error loading wishlists"
@@ -170,9 +217,7 @@ export default function WishlistPage() {
             ? `${totalItems > 0 ? totalItems : filteredWishlists.length} ${totalItems === 1 ? 'Item' : 'Items'}`
             : undefined
         }
-        rightContent={
-          <ServicesProductsFilter value={wishlistType} onChange={setWishlistType} />
-        }
+        rightContent={headerRightContent}
       />
 
       {/* Content Area */}

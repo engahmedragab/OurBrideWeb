@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getProductCategories } from '@/services/api/products.api'
 import { mapCategoryResponseToProductCategory } from '@/types/api/product.api.types'
 import type { ProductCategory } from '@/types/product'
-import type { ProductCategoryLineResponse } from '@/../client/common/api/gen/ourbride-api'
+import type { ProductCategoryLineResponse } from '@/types/responses/product-category-line-response'
 
 /**
  * Hook to fetch product categories
@@ -70,6 +70,8 @@ export const useProductCategories = (enabled = true) => {
     },
     enabled,
     staleTime: 10 * 60 * 1000, // 10 minutes - categories don't change often
+    retry: 1, // Only retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
   })
 }
 

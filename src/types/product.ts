@@ -31,6 +31,7 @@ export interface Product {
   specifications?: ProductSpecification[]
   reviews?: ProductReview[]
   isWishlisted?: boolean
+  isFavorite?: boolean
   showTopOfferBadge?: boolean
   createdAt?: string
   updatedAt?: string
