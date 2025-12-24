@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Header, Footer } from '@/components/layout'
 import {
   Badge,
   ProductImageGallery,
@@ -13,6 +12,7 @@ import {
   RatingInput,
   BackButton,
   Button,
+  QuantitySelector,
 } from '@/components/ui'
 import {
   useProductDetails,
@@ -20,7 +20,10 @@ import {
   useProductReviews,
   useSubmitProductReview,
 } from '@/hooks/products'
-import type { ProductCardData } from '@/components/ui/Card'
+import { ProductPageLayout } from '../../components/ProductPageLayout'
+import { ProductErrorState } from '../../components/ProductErrorState'
+import { parseProductId } from '../../utils'
+import { RELATED_PRODUCTS_LIMIT } from '../../constants'
 
 interface ProductDetailClientProps {
   productId: string
@@ -40,15 +43,24 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   } = useProductDetails(productId)
 
   // Fetch related products
+  const parsedProductId = parseProductId(productId)
   const { data: relatedProducts = [] } = useRelatedProducts(
-    productId ? parseInt(productId, 10) : null,
-    4
+    parsedProductId,
+    RELATED_PRODUCTS_LIMIT
   )
 
   // Fetch product reviews
-  const { data: reviews = [] } = useProductReviews(
-    productId ? parseInt(productId, 10) : null
-  )
+  const { data: reviews = [] } = useProductReviews(parsedProductId)
+
+  // TODO: Use variations and attributes when implementing product variant selection
+  // const { data: variations = [] } = useProductVariations(parsedProductId)
+  // const { data: attributes = [] } = useProductAttributes(parsedProductId)
+
+  // TODO: Use related category products when implementing category-based recommendations
+  // const { data: relatedCategoryProducts = [] } = useRelatedCategoryProducts(
+  //   parsedProductId,
+  //   product?.category?.id ? String(product.category.id) : null
+  // )
 
   // Submit review mutation
   const submitReviewMutation = useSubmitProductReview()
@@ -56,33 +68,20 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   // Show loading state
   if (productLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-18 text-gray-600">Loading product...</div>
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <ProductPageLayout isLoading={true} loadingText="Loading product..." />
     )
   }
 
   // Show error state
   if (productError || !product) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-18 text-gray-600 mb-4">
-              Product not found
-            </div>
-            <BackButton href="/products" label="Back to Products" />
-          </div>
-        </main>
-        <Footer />
-      </div>
+      <ProductPageLayout>
+        <ProductErrorState
+          message="Product not found"
+          backHref="/products"
+          backLabel="Back to Products"
+        />
+      </ProductPageLayout>
     )
   }
 
@@ -107,10 +106,12 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     if (!productId || !userRating || !reviewComment.trim()) return
 
     try {
+      if (!parsedProductId) return
+
       await submitReviewMutation.mutateAsync({
-        productId: parseInt(productId, 10),
+        productId: parsedProductId,
         rating: userRating,
-        comment: reviewComment,
+        review: reviewComment,
       })
       setUserRating(0)
       setReviewComment('')
@@ -120,13 +121,11 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1">
-        <div className="container-custom py-6 md:py-8">
-          <BackButton onClick={() => router.back()} className="mb-6" />
+    <ProductPageLayout>
+      <div className="container-custom py-6 md:py-8">
+        <BackButton onClick={() => router.back()} className="mb-6" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             {/* Product Images */}
             <div>
               <ProductImageGallery
@@ -162,25 +161,13 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
 
               <div className="flex items-center gap-4">
                 <span className="text-14 text-gray-600">Quantity:</span>
-                <div className="flex items-center gap-2 border border-gray-300 rounded-lg">
-                  <button
-                    onClick={() => handleQuantityChange(-1)}
-                    className="px-3 py-1 text-gray-600 hover:text-gray-900"
-                    disabled={quantity <= 1}
-                  >
-                    −
-                  </button>
-                  <span className="px-4 py-1 text-16 font-medium">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={() => handleQuantityChange(1)}
-                    className="px-3 py-1 text-gray-600 hover:text-gray-900"
-                    disabled={quantity >= (product.stockQuantity || 99)}
-                  >
-                    +
-                  </button>
-                </div>
+                <QuantitySelector
+                  quantity={quantity}
+                  onQuantityChange={handleQuantityChange}
+                  min={1}
+                  max={product.stockQuantity || 99}
+                  variant="default"
+                />
               </div>
 
               <div className="flex gap-4">
@@ -212,25 +199,25 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           {/* Product Description */}
           {(product.longDescription || product.description) && (
             <div className="mb-12">
-              <h2 className="text-20 font-semibold text-gray-900 mb-4">
-                Description
-              </h2>
-              <p className="text-14 text-gray-700 leading-relaxed">
-                {product.longDescription || product.description}
-              </p>
-            </div>
-          )}
-
-          {/* Reviews Section */}
-          <div className="mb-12">
-            <h2 className="text-20 font-semibold text-gray-900 mb-6">
-              Reviews ({reviews.length || product.rating.count})
+            <h2 className="text-20 font-semibold text-gray-900 mb-4">
+              Description
             </h2>
+            <p className="text-14 text-gray-700 leading-relaxed">
+              {product.longDescription || product.description}
+            </p>
+          </div>
+        )}
 
-            {/* Display Reviews */}
-            {reviews.length > 0 && (
-              <div className="space-y-4 mb-6">
-                {reviews.map(review => (
+        {/* Reviews Section */}
+        <div className="mb-12">
+          <h2 className="text-20 font-semibold text-gray-900 mb-6">
+            Reviews ({reviews.length || product.rating.count})
+          </h2>
+
+          {/* Display Reviews */}
+          {reviews.length > 0 && (
+            <div className="space-y-4 mb-6">
+              {reviews.map(review => (
                   <div
                     key={review.id}
                     className="bg-white border border-gray-200 rounded-lg p-4"
@@ -270,59 +257,59 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                         )}
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
+          )}
 
-            {/* Write Review Form */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                Write Your Review
-              </h3>
+          {/* Write Review Form */}
+          <div className="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 className="text-16 font-semibold text-gray-900 mb-4">
+              Write Your Review
+            </h3>
 
-              {/* Star Rating - Centered */}
-              <div className="flex justify-center mb-4">
-                <RatingInput
-                  rating={userRating}
-                  onRatingChange={setUserRating}
-                  size="lg"
-                />
-              </div>
-
-              <textarea
-                value={reviewComment}
-                onChange={e => setReviewComment(e.target.value)}
-                placeholder="Write your review here..."
-                className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand-500"
+            {/* Star Rating - Centered */}
+            <div className="flex justify-center mb-4">
+              <RatingInput
+                rating={userRating}
+                onRatingChange={setUserRating}
+                size="lg"
               />
+            </div>
 
-              <div className="flex justify-end mt-4">
-                <Button
-                  variant="brand"
-                  onClick={handleSubmitReview}
-                  disabled={
-                    !userRating ||
-                    !reviewComment.trim() ||
-                    submitReviewMutation.isPending
-                  }
-                >
-                  {submitReviewMutation.isPending
-                    ? 'Submitting...'
-                    : 'Submit Review'}
-                </Button>
-              </div>
+            <textarea
+              value={reviewComment}
+              onChange={e => setReviewComment(e.target.value)}
+              placeholder="Write your review here..."
+              className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand-500"
+            />
+
+            <div className="flex justify-end mt-4">
+              <Button
+                variant="brand"
+                onClick={handleSubmitReview}
+                disabled={
+                  !userRating ||
+                  !reviewComment.trim() ||
+                  submitReviewMutation.isPending
+                }
+              >
+                {submitReviewMutation.isPending
+                  ? 'Submitting...'
+                  : 'Submit Review'}
+              </Button>
             </div>
           </div>
+        </div>
 
-          {/* Related Products */}
-          {relatedProducts.length > 0 && (
-            <div>
-              <h2 className="text-20 font-semibold text-gray-900 mb-6">
-                Related Products
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {relatedProducts.map(relatedProduct => (
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <div>
+            <h2 className="text-20 font-semibold text-gray-900 mb-6">
+              Related Products
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {relatedProducts.map(relatedProduct => (
                   <Card
                     key={relatedProduct.id}
                     cardData={{
@@ -342,14 +329,12 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                       router.push(`/products/${relatedProduct.id}`)
                     }
                     className="cursor-pointer"
-                  />
-                ))}
-              </div>
+                />
+              ))}
             </div>
-          )}
-        </div>
-      </main>
-      <Footer />
-    </div>
+          </div>
+        )}
+      </div>
+    </ProductPageLayout>
   )
 }

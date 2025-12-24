@@ -276,6 +276,9 @@ export type { PillTabsProps, PillTabItem } from './PillTabs'
 export { LoadingOverlay } from './LoadingOverlay'
 export type { LoadingOverlayProps } from './LoadingOverlay'
 
+export { LoadingSpinner } from './LoadingSpinner'
+export type { LoadingSpinnerProps } from './LoadingSpinner'
+
 export { StatusModal } from './StatusModal'
 export type { StatusModalProps } from './StatusModal'
 

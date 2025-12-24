@@ -1,0 +1,47 @@
+import { Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
+
+export interface LoadingSpinnerProps {
+  size?: 'sm' | 'md' | 'lg' | 'xl'
+  className?: string
+  text?: string
+  fullScreen?: boolean
+}
+
+const sizeClasses = {
+  sm: 'h-4 w-4',
+  md: 'h-6 w-6',
+  lg: 'h-8 w-8',
+  xl: 'h-12 w-12',
+}
+
+/**
+ * LoadingSpinner - Reusable loading spinner component
+ * Can be used inline or as a full-screen loader
+ */
+export const LoadingSpinner = ({
+  size = 'md',
+  className,
+  text,
+  fullScreen = false,
+}: LoadingSpinnerProps) => {
+  const spinner = (
+    <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
+      <Loader2 className={cn('animate-spin text-brand-500', sizeClasses[size])} />
+      {text && (
+        <p className="text-14 sm:text-16 text-gray-600 font-medium">{text}</p>
+      )}
+    </div>
+  )
+
+  if (fullScreen) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        {spinner}
+      </div>
+    )
+  }
+
+  return spinner
+}
+

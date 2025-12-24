@@ -16,7 +16,7 @@ const mapReviewResponseToProductReview = (
   rating: review.rate || 0,
   comment: review.comment || '',
   images: [],
-  date: review.dateCreated || '',
+  date: review.creationDate || '',
   verified: review.isVerified || false,
   helpful: review.likes || 0,
 })
@@ -70,18 +70,27 @@ export const useSubmitProductReview = () => {
     mutationFn: async ({
       productId,
       rating,
-      comment,
-      images,
+      review,
+      title,
+      reviewer,
+      reviewerEmail,
+      isAnonymous,
     }: {
       productId: number
       rating: number
-      comment: string
-      images?: string[]
+      review: string
+      title?: string
+      reviewer?: string
+      reviewerEmail?: string
+      isAnonymous?: boolean
     }) => {
       return await submitProductReview(productId, {
         rating,
-        comment,
-        images,
+        review,
+        title,
+        reviewer,
+        reviewerEmail,
+        isAnonymous,
       })
     },
     onSuccess: (_, variables) => {

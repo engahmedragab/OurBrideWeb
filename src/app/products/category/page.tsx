@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { Header } from '@/components/layout'
-import { Footer } from '@/components/layout'
+import { useState, useMemo, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import {
   ProductGrid,
   ProductList,
@@ -11,61 +10,42 @@ import {
   HeroCarousel,
   Button,
   OfferBanner,
+  LoadingSpinner,
 } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
-import type {
-  ProductFilter,
-  ProductSortOption,
-  ProductViewMode,
-} from '@/types/product'
+import type { ProductFilter, ProductViewMode } from '@/types/product'
 import {
   useProductsHome,
   useFilteredProducts,
   useProducts,
+  useProductSearch,
 } from '@/hooks/products'
+import { ProductPageLayout } from '../components/ProductPageLayout'
+import {
+  PRODUCT_SORT_OPTIONS,
+  DEFAULT_HERO_SLIDES,
+  DEFAULT_PRODUCT_GRID_COLUMNS,
+  DEFAULT_PAGE_SIZE,
+} from '../constants'
+import { buildProductQueryParams, applyClientSideFilters } from '../utils'
 
-const sortOptions: ProductSortOption[] = [
-  { value: 'default', label: 'Default' },
-  { value: 'price-low', label: 'Price: Low to High' },
-  { value: 'price-high', label: 'Price: High to Low' },
-  { value: 'rating', label: 'Highest Rated' },
-  { value: 'newest', label: 'Newest First' },
-  { value: 'popular', label: 'Most Popular' },
-]
-
-// Hero Carousel Slides
-const heroSlides = [
-  {
-    id: '1',
-    label: 'New Arrival',
-    title: 'Avca Sun Cream',
-    description:
-      'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
-    ctaText: 'Buy Now',
-    ctaLink: '/products/1',
-    productImage:
-      'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=600',
-    discountText: '50% OFF',
-  },
-  {
-    id: '2',
-    label: 'Top Seller',
-    title: 'Essential Wedding Cream',
-    description:
-      'Premium quality products for your special day. Discover our curated collection of wedding essentials.',
-    ctaText: 'Shop Now',
-    ctaLink: '/products',
-    productImage:
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=600',
-    discountText: '30% OFF',
-  },
-]
-
-export default function Products() {
+/**
+ * ProductsContent - Main content component
+ * Uses useSearchParams, so must be wrapped in Suspense
+ */
+function ProductsContent() {
+  const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<ProductViewMode>('grid')
   const [filters, setFilters] = useState<ProductFilter>({})
   const [sortBy, setSortBy] = useState('default')
+  const [searchQuery, setSearchQuery] = useState('')
+
+  // Read search query from URL params
+  useEffect(() => {
+    const query = searchParams.get('search') || ''
+    setSearchQuery(query)
+  }, [searchParams])
 
   // Fetch categories from products home endpoint
   const { data: productsHomeData, isLoading: categoriesLoading } = useProductsHome()
@@ -81,94 +61,45 @@ export default function Products() {
   }, [productsHomeData?.categories])
 
   // Build API query params from filters
-  const apiQueryParams = useMemo(() => {
-    const params: {
-      categoryId?: number
-      minPrice?: number
-      maxPrice?: number
-      rating?: number
-      sortBy?: string
-    } = {}
+  const apiQueryParams = useMemo(
+    () => buildProductQueryParams(filters, sortBy),
+    [filters, sortBy]
+  )
 
-    if (filters.category && filters.category.length > 0) {
-      // Use first category ID (API might need adjustment for multiple categories)
-      const categoryId = parseInt(filters.category[0], 10)
-      if (!isNaN(categoryId)) {
-        params.categoryId = categoryId
-      }
-    }
-
-    if (filters.priceRange) {
-      params.minPrice = filters.priceRange.min
-      params.maxPrice = filters.priceRange.max
-    }
-
-    if (filters.rating) {
-      params.rating = filters.rating
-    }
-
-    // Map sortBy to API sortBy format
-    if (sortBy !== 'default') {
-      const sortMap: Record<string, string> = {
-        'price-low': 'price_asc',
-        'price-high': 'price_desc',
-        rating: 'rating_desc',
-        newest: 'date_desc',
-        popular: 'popularity_desc',
-      }
-      params.sortBy = sortMap[sortBy] || sortBy
-    }
-
-    return params
-  }, [filters, sortBy])
+  // Fetch search results if search query exists
+  const { data: searchResults = [], isLoading: searchLoading } = useProductSearch(
+    searchQuery || null,
+    { enabled: !!searchQuery && searchQuery.trim().length > 0 }
+  )
 
   // Fetch filtered products from API
   const { data: apiProducts = [], isLoading: productsLoading } =
     useFilteredProducts({
       ...apiQueryParams,
-      enabled: true,
+      enabled: !searchQuery || searchQuery.trim().length === 0,
     })
 
   // Fallback to regular products if filtered products endpoint doesn't work
   const { data: allProducts = [] } = useProducts({
-    pageSize: 100,
-    enabled: apiProducts.length === 0 && !productsLoading,
+    pageSize: DEFAULT_PAGE_SIZE,
+    enabled:
+      apiProducts.length === 0 &&
+      !productsLoading &&
+      (!searchQuery || searchQuery.trim().length === 0),
   })
 
-  // Use API products if available, otherwise use all products
-  const products = apiProducts.length > 0 ? apiProducts : allProducts
+  // Use search results if search query exists, otherwise use API products or all products
+  const products = searchQuery && searchQuery.trim().length > 0
+    ? searchResults
+    : apiProducts.length > 0
+    ? apiProducts
+    : allProducts
 
   // Apply client-side filtering for filters not supported by API
-  const filteredAndSortedProducts = useMemo(() => {
-    let result = [...products]
-
-    // Apply inStock filter (if API doesn't support it)
-    if (filters.inStock !== undefined) {
-      result = result.filter(p => p.inStock === filters.inStock)
-    }
-
-    // Apply additional client-side sorting if needed
-    // (Most sorting should be done by API, but we can refine here)
-    switch (sortBy) {
-      case 'price-low':
-        result.sort((a, b) => a.price.discounted - b.price.discounted)
-        break
-      case 'price-high':
-        result.sort((a, b) => b.price.discounted - a.price.discounted)
-        break
-      case 'rating':
-        result.sort((a, b) => b.rating.value - a.rating.value)
-        break
-      case 'popular':
-        result.sort((a, b) => b.rating.count - a.rating.count)
-        break
-      default:
-        // Keep API order
-        break
-    }
-
-    return result
-  }, [products, filters, sortBy])
+  const filteredAndSortedProducts = useMemo(
+    () => applyClientSideFilters(products, filters, sortBy),
+    [products, filters, sortBy]
+  )
 
   const handleWishlistToggle = (_productId: string) => {
     // TODO: Implement wishlist toggle
@@ -178,28 +109,14 @@ export default function Products() {
     // TODO: Implement add to cart
   }
 
-  // Show loading state
-  if (categoriesLoading || productsLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-18 text-gray-600">Loading products...</div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1">
+    <ProductPageLayout
+      isLoading={categoriesLoading}
+      loadingText="Loading products..."
+    >
         {/* Hero Carousel */}
         <HeroCarousel
-          slides={heroSlides}
+          slides={DEFAULT_HERO_SLIDES}
           autoPlay={true}
           autoPlayInterval={5000}
           showBackground={false}
@@ -228,7 +145,7 @@ export default function Products() {
                 </div>
                 <div className="flex items-center gap-3">
                   <ProductSort
-                    sortOptions={sortOptions}
+                    sortOptions={PRODUCT_SORT_OPTIONS}
                     currentSort={sortBy}
                     onSortChange={setSortBy}
                   />
@@ -256,12 +173,19 @@ export default function Products() {
               </div>
 
               {/* Products */}
-              {viewMode === 'grid' ? (
+              {productsLoading || searchLoading ? (
+                <div className="py-12">
+                  <LoadingSpinner
+                    size="lg"
+                    text="Loading products..."
+                  />
+                </div>
+              ) : viewMode === 'grid' ? (
                 <ProductGrid
                   products={filteredAndSortedProducts}
                   onWishlistToggle={handleWishlistToggle}
                   onAddToCart={handleAddToCart}
-                  columns={3}
+                  columns={DEFAULT_PRODUCT_GRID_COLUMNS}
                 />
               ) : (
                 <ProductList
@@ -292,8 +216,23 @@ export default function Products() {
             }}
           />
         </div>
-      </main>
-      <Footer />
-    </div>
+    </ProductPageLayout>
+  )
+}
+
+/**
+ * Products - Product category page
+ * Wrapped in Suspense for useSearchParams compatibility
+ * Route: /products/category
+ */
+export default function Products() {
+  return (
+    <Suspense
+      fallback={
+        <ProductPageLayout isLoading={true} loadingText="Loading products..." />
+      }
+    >
+      <ProductsContent />
+    </Suspense>
   )
 }
