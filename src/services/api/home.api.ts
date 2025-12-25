@@ -38,3 +38,20 @@ export const getStoreHomeData = async (): Promise<unknown> => {
   }
 }
 
+/**
+ * Get services home page data
+ * @returns Services home page data including services, categories, banners, providers, hero slides, etc.
+ */
+export const getServicesHome = async (): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getHomeGetServiceHome()
+    // The API endpoint returns void, any, so we need to handle the response data
+    // The actual data might be in response.data or directly in response
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error fetching services home data:', error)
+    throw error
+  }
+}
+

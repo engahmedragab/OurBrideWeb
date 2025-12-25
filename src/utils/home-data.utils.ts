@@ -74,26 +74,50 @@ export const mapServiceToCardData = (
         nameEn?: string
         nameAr?: string
         providerStatus?: string
+        isVerified?: boolean
       }
     | null
   const providerName =
-    provider?.name || provider?.nameEn || provider?.nameAr || ''
+    provider?.nameEn || provider?.nameAr || provider?.name || ''
 
   // Determine if provider is verified
-  const verified = provider?.providerStatus === 'Active' || false
+  const verified =
+    provider?.isVerified === true ||
+    provider?.providerStatus === 'Active' ||
+    false
 
-  // Get rating
-  const rating = typeof serviceObj.rate === 'number' ? serviceObj.rate : 0
+  // Get rating - check both rating and rate fields
+  const rating =
+    typeof serviceObj.rating === 'number'
+      ? serviceObj.rating
+      : typeof serviceObj.rate === 'number'
+        ? serviceObj.rate
+        : 0
 
-  // Get prices - use rentPrice or buyPrice based on priceType
-  const priceType = serviceObj.priceType as string
+  // Get prices - check multiple fields: price, saleBuyPrice, saleRentPrice, rentPrice, buyPrice
+  const priceType = (serviceObj.priceType as string) || 'Fixed'
+  const directPrice =
+    typeof serviceObj.price === 'number' ? serviceObj.price : null
   const rentPrice =
     typeof serviceObj.rentPrice === 'number' ? serviceObj.rentPrice : null
   const buyPrice =
     typeof serviceObj.buyPrice === 'number' ? serviceObj.buyPrice : null
-  const originalPrice =
-    priceType === 'Rent' ? rentPrice || 0 : buyPrice || 0
-  const discountedPrice = originalPrice // Services might not have discounts, adjust if needed
+  const saleRentPrice =
+    typeof serviceObj.saleRentPrice === 'number' ? serviceObj.saleRentPrice : null
+  const saleBuyPrice =
+    typeof serviceObj.saleBuyPrice === 'number' ? serviceObj.saleBuyPrice : null
+  
+  // Determine original and discounted prices
+  let originalPrice = 0
+  let discountedPrice = 0
+  
+  if (priceType === 'Rent') {
+    originalPrice = rentPrice || directPrice || 0
+    discountedPrice = saleRentPrice || originalPrice
+  } else {
+    originalPrice = buyPrice || directPrice || 0
+    discountedPrice = saleBuyPrice || originalPrice
+  }
 
   // Get tags (if available)
   const tags: string[] = []
@@ -143,6 +167,13 @@ const extractProducts = (
 const extractServices = (
   data: Record<string, unknown>
 ): ServiceCardData[] | undefined => {
+  // Check for topRatedServices first (actual API field for services)
+  if (Array.isArray(data.topRatedServices)) {
+    return data.topRatedServices
+      .filter((s): s is Record<string, unknown> => isObject(s))
+      .map((s) => mapServiceToCardData(s))
+  }
+  
   // Extract services from preparations array for "Services Suggested for You"
   // Services are nested inside preparations[].services[]
   if (Array.isArray(data.preparations)) {
@@ -527,7 +558,7 @@ export const extractHomeData = (apiResponse: unknown) => {
 export const extractProductsHomeData = (apiResponse: unknown) => {
   const result: {
     products?: Product[]
-    categories?: Array<{ id: number; name: string; slug?: string }>
+    categories?: Array<{ id: number; name: string; slug?: string; description?: string }>
   } = {}
 
   // Handle different response structures
@@ -582,7 +613,7 @@ export const extractProductsHomeData = (apiResponse: unknown) => {
 export const extractStoreHomeData = (apiResponse: unknown) => {
   const result: {
     products?: ProductCardData[]
-    categories?: Array<{ id: number; name: string; slug?: string }>
+    categories?: Array<{ id: number; name: string; slug?: string; description?: string }>
     offers?: ProductCardData[]
     providers?: ProviderCardData[]
     banners?: OfferItem[]
@@ -624,6 +655,205 @@ export const extractStoreHomeData = (apiResponse: unknown) => {
   result.topBarTexts = extractTopBarTexts(data)
   result.testimonials = extractStoreTestimonials(data)
   result.faqs = extractFAQs(data)
+
+  return result
+}
+
+/**
+ * Extract service offers from API response
+ */
+const extractServiceOffers = (
+  data: Record<string, unknown>
+): ServiceCardData[] | undefined => {
+  // Check for topRatedServices (actual API field)
+  if (Array.isArray(data.topRatedServices)) {
+    return data.topRatedServices
+      .filter((s): s is Record<string, unknown> => isObject(s))
+      .map((s) => mapServiceToCardData(s))
+  }
+  // Check multiple possible locations for service offers
+  if (Array.isArray(data.topOffers)) {
+    return data.topOffers
+      .filter((s): s is Record<string, unknown> => isObject(s))
+      .map((s) => mapServiceToCardData(s))
+  }
+  if (Array.isArray(data.offers)) {
+    return data.offers
+      .filter((s): s is Record<string, unknown> => isObject(s))
+      .map((s) => mapServiceToCardData(s))
+  }
+  // If no offers array, try to get first few services
+  const allServices = extractServices(data)
+  if (allServices && allServices.length > 0) {
+    return allServices.slice(0, 4) // Return first 4 as offers
+  }
+  return undefined
+}
+
+/**
+ * Extract hero slides from API response
+ */
+const extractHeroSlides = (
+  data: Record<string, unknown>
+): Array<{
+  id: string
+  label: string
+  title: string
+  description: string
+  ctaText: string
+  ctaLink: string
+  productImage: string
+  discountText?: string
+}> | undefined => {
+  if (Array.isArray(data.banners)) {
+    return data.banners
+      .filter((b): b is Record<string, unknown> => isObject(b))
+      .filter((b) => b.isActive === true || b.isActive === undefined)
+      .sort((a, b) => {
+        // Sort by order if available
+        const orderA = typeof a.order === 'number' ? a.order : 0
+        const orderB = typeof b.order === 'number' ? b.order : 0
+        return orderA - orderB
+      })
+      .slice(0, 5) // Limit to 5 slides
+      .map((b, index) => {
+        const media = b.media as
+          | { url?: string; thumbnailUrl?: string; originalUrl?: string }
+          | null
+        const imageUrl =
+          media?.url || media?.thumbnailUrl || media?.originalUrl || ''
+        return {
+          id: String(b.id || index + 1),
+          label: (b.title || b.badge || '') as string,
+          title: (b.nameEn || b.nameAr || b.title || '') as string,
+          description:
+            (b.descriptionEn ||
+              b.descriptionAr ||
+              b.description ||
+              b.subtitle ||
+              '') as string,
+          ctaText: (b.buttonText || 'Book Now') as string,
+          ctaLink: (b.buttonLink || b.linkUrl || '/services') as string,
+          productImage: imageUrl,
+          discountText: (b.badge || '') as string,
+        }
+      })
+  }
+  return undefined
+}
+
+/**
+ * Extract trust features from API response
+ */
+const extractTrustFeatures = (
+  data: Record<string, unknown>
+): Array<{ title: string; description: string }> | undefined => {
+  if (Array.isArray(data.usps)) {
+    return data.usps
+      .filter((u): u is Record<string, unknown> => isObject(u))
+      .filter((u) => u.isActive === true || u.isActive === undefined)
+      .map((u) => ({
+        title: (u.title || u.nameEn || u.nameAr || '') as string,
+        description:
+          (u.description ||
+            u.descriptionEn ||
+            u.descriptionAr ||
+            '') as string,
+      }))
+      .slice(0, 4) // Limit to 4 features
+  }
+  return undefined
+}
+
+/**
+ * Helper function to extract data from services home API response
+ */
+export const extractServicesHomeData = (apiResponse: unknown) => {
+  const result: {
+    services?: ServiceCardData[]
+    offers?: ServiceCardData[]
+    categories?: Array<{ id: number; name: string; slug?: string; description?: string }>
+    banners?: OfferItem[]
+    providers?: ProviderCardData[]
+    heroSlides?: Array<{
+      id: string
+      label: string
+      title: string
+      description: string
+      ctaText: string
+      ctaLink: string
+      productImage: string
+      discountText?: string
+    }>
+    trustFeatures?: Array<{ title: string; description: string }>
+  } = {}
+
+  // Handle different response structures
+  const responseObj = isObject(apiResponse) ? apiResponse : {}
+  const data = (isObject(responseObj.data)
+    ? responseObj.data
+    : responseObj) as Record<string, unknown>
+
+  // Extract services
+  result.services = extractServices(data)
+
+  // Extract offers (top offers or first few services)
+  result.offers = extractServiceOffers(data)
+
+  // Extract categories (featuredPreparations) - handle the actual structure from API
+  if (Array.isArray(data.featuredPreparations)) {
+    result.categories = data.featuredPreparations
+      .filter((p): p is Record<string, unknown> => isObject(p))
+      .filter((p) => p.isActive === true || p.isActive === undefined)
+      .map((p) => ({
+        id: (typeof p.id === 'number' ? p.id : 0) as number,
+        name: (p.nameEn || p.nameAr || p.name || '') as string,
+        slug: (p.slug || String(p.id || '')) as string,
+        description: (p.bioEn || p.bioAr || p.description || '') as string,
+      }))
+  } else if (Array.isArray(data.preparations)) {
+    result.categories = data.preparations
+      .filter((p): p is Record<string, unknown> => isObject(p))
+      .map((p) => ({
+        id: (typeof p.id === 'number' ? p.id : 0) as number,
+        name: (p.name || p.nameEn || p.nameAr || '') as string,
+        slug: (p.slug || String(p.id || '')) as string,
+      }))
+  } else if (Array.isArray(data.categories)) {
+    result.categories = data.categories
+      .filter((c): c is Record<string, unknown> => isObject(c))
+      .map((c) => ({
+        id: (typeof c.id === 'number' ? c.id : 0) as number,
+        name: (c.name || c.nameEn || c.nameAr || '') as string,
+        slug: (c.slug || '') as string,
+      }))
+  }
+
+  // Extract banners
+  result.banners = extractBanners(data)
+
+  // Extract providers - check for featureProviders (actual API field)
+  if (Array.isArray(data.featureProviders)) {
+    result.providers = data.featureProviders
+      .filter((p): p is Record<string, unknown> => isObject(p))
+      .map((p) => ({
+        id: String(p.id || ''),
+        name: (p.nameEn || p.nameAr || p.name || '') as string,
+        image: (p.profileURL || p.image || '') as string,
+        profession: (p.serviceClasses || '') as string,
+        rating: (typeof p.rate === 'number' ? p.rate : 0) as number,
+        verified:
+          (p.isVerified === true || p.providerStatus === 'Active') as boolean,
+      }))
+  } else {
+    result.providers = extractProviders(data)
+  }
+
+  // Extract hero slides (from banners)
+  result.heroSlides = extractHeroSlides(data)
+
+  // Extract trust features (USPs)
+  result.trustFeatures = extractTrustFeatures(data)
 
   return result
 }

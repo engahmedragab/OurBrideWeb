@@ -98,16 +98,16 @@ export const BestProvidersSection = ({
             </div>
 
             {/* Provider Info */}
-            <div className="flex flex-col gap-2 items-center">
-              <div className="flex gap-2 items-center">
-                <h3 className="text-18 sm:text-20 md:text-24 font-semibold text-gray-900 leading-tight">
+            <div className="flex flex-col gap-2 items-center w-full px-2">
+              <div className="flex gap-2 items-center max-w-full">
+                <h3 className="text-18 sm:text-20 md:text-24 font-semibold text-gray-900 leading-tight truncate">
                   {provider.name}
                 </h3>
                 {provider.verified && (
                   <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0" />
                 )}
               </div>
-              <p className="text-13 sm:text-14 md:text-16 font-normal text-gray-600 text-center leading-normal">
+              <p className="text-13 sm:text-14 md:text-16 font-normal text-gray-600 text-center leading-normal w-full px-2 line-clamp-2">
                 {provider.profession}
               </p>
               {/* Red Stars for Provider Rating */}
