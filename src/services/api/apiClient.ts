@@ -7,7 +7,7 @@ import { getApiLanguage } from '@/utils/language'
 // So baseURL should be just the domain (e.g., https://preprod.our-bride.com)
 // NOT https://preprod.our-bride.com/api/v1
 const getBaseURL = (): string => {
-  const url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://preprod.our-bride.com'
+  const url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:5001'
   // Remove trailing slash if present
   let baseURL = url.replace(/\/$/, '')
   // Remove /api/v1 if it's at the end of the baseURL (since endpoints already include it)

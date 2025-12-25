@@ -157,6 +157,10 @@ export type { OrderSummaryCardProps } from './OrderSummaryCard'
 
 export { CartItem } from './CartItem'
 export type { CartItemProps, CartItemType } from './CartItem'
+export { CheckoutCartItem } from './CheckoutCartItem'
+export type { CheckoutCartItemProps } from './CheckoutCartItem'
+export { AddressModal } from './AddressModal'
+export type { AddressModalProps } from './AddressModal'
 
 export { CartOrderSummary } from './CartOrderSummary'
 export type { CartOrderSummaryProps } from './CartOrderSummary'
@@ -281,7 +285,7 @@ export { ServiceSelectCard } from './ServiceSelectCard'
 export type { ServiceSelectCardProps } from './ServiceSelectCard'
 
 export { LocationPickerModal } from './LocationPickerModal'
-export type { LocationPickerModalProps } from './LocationPickerModal'
+export type { LocationPickerModalProps, LocationData } from './LocationPickerModal'
 
 export { Textarea, textareaVariants } from './Textarea'
 export type { TextareaProps } from './Textarea'

@@ -22,16 +22,17 @@ import { PaymentConfirmationModal } from '@/components/ui/PaymentConfirmationMod
 import { OrderConfirmationModal } from '@/components/ui/OrderConfirmationModal'
 import { ErrorDisplay } from '@/components/ui/ErrorDisplay'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
-import { CartItem, Checkbox } from '@/components/ui'
+import { CheckoutCartItem, Checkbox, AddressModal } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
-import { useCart, useUpdatePurchase, useRemovePurchase, useCheckout, useValidateCoupon, usePaymentMethods } from '@/Hooks'
+import { useCart, useUpdatePurchase, useRemovePurchase, useCheckout, useValidateCoupon, usePaymentMethods, useAddresses } from '@/Hooks'
+import { getUser } from '@/auth/utils/token'
 import { getProductById } from '@/services/api/products.api'
 import { useQueries } from '@tanstack/react-query'
-import type { PurchaseResponse, ProductResponse, ReservationResponse } from '@/types/responses'
+import type { PurchaseResponse, ProductResponse, ReservationResponse, AddressResponse } from '@/types/responses'
 import type { CartProduct, CartReservation, CartMembership, CartGiftCard } from '@/types/responses'
 import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
-import type { CheckoutRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { CheckoutRequest, CustomerRequest } from '@/../client/common/api/gen/ourbride-api'
 import type { CartItemType } from '@/components/ui/CartItem'
 
 /**
@@ -302,6 +303,9 @@ export default function CheckoutPage() {
   // Fetch active payment methods
   const { data: paymentMethods = [], isLoading: isLoadingPaymentMethods } = usePaymentMethods()
 
+  // Fetch user addresses
+  const { data: addresses = [], isLoading: isLoadingAddresses } = useAddresses()
+
   // Helper function to map payment method code to form value
   const getPaymentMethodValue = (code: string): 'debit-credit' | 'mobile-wallet' | 'cash-on-delivery' => {
     const codeLower = code.toLowerCase()
@@ -442,25 +446,36 @@ export default function CheckoutPage() {
       }
     }
   }, [cartProducts, cartData])
-  const [formData, setFormData] = useState<OrderFormData>({
-    fullName: '',
-    mobileNumber: '',
-    location: '',
-    street: '',
-    notes: '',
-    paymentMethod: 'debit-credit',
-    walletMobileNumber: '',
-    cardNumber: '',
-    cardExpiry: '',
-    cardCVV: '',
-    cardholderName: '',
-    selectedItems: [],
-    acceptTerms: false,
-  })
+
+  // Initialize form data with user data from token
+  const initializeFormData = (): OrderFormData => {
+    const user = getUser()
+    return {
+      fullName: user?.fullName || (user?.firstName && user?.lastName
+        ? `${user.firstName} ${user.lastName}`.trim()
+        : ''),
+      mobileNumber: user?.phoneNumber || '',
+      location: user?.location || user?.address?.location || user?.address?.cityName || '',
+      street: user?.street || user?.address?.street || user?.address?.addressEn || user?.address?.addressAr || '',
+      notes: '',
+      paymentMethod: 'debit-credit',
+      walletMobileNumber: '',
+      cardNumber: '',
+      cardExpiry: '',
+      cardCVV: '',
+      cardholderName: '',
+      selectedItems: [],
+      acceptTerms: false,
+    }
+  }
+
+  const [formData, setFormData] = useState<OrderFormData>(initializeFormData())
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false)
   const [showOrderConfirmation, setShowOrderConfirmation] = useState(false)
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null)
+  const [showAddressModal, setShowAddressModal] = useState(false)
 
   const currency = 'EGP'
 
@@ -694,15 +709,49 @@ export default function CheckoutPage() {
         paymentMethodCode = paymentMethodMap[formData.paymentMethod] || 'Card'
       }
 
-      // Prepare checkout request
-      // Note: CheckoutRequest structure depends on the generated API
-      // Using a minimal structure with common fields
+      // Get user data for email if available
+      const user = getUser()
+      const userEmail = user?.email || ''
+
+      // Ensure we have a valid email (required by CustomerRequest)
+      // Use user's email if available, otherwise create a temporary email from phone number
+      const customerEmail = userEmail && userEmail.includes('@')
+        ? userEmail
+        : `${formData.mobileNumber.replace(/\s/g, '')}@temp.ourbride.com`
+
+      // Split full name into first and last name
+      const nameParts = formData.fullName.trim().split(/\s+/)
+      const firstName = nameParts[0] || formData.fullName || ''
+      const lastName = nameParts.slice(1).join(' ') || firstName
+
+      // Prepare customer request with all required fields
+      const customer: CustomerRequest = {
+        email: customerEmail,
+        firstName: firstName,
+        lastName: lastName,
+        address: formData.street || formData.location || '',
+        address2: null,
+        region: null,
+        city: formData.location || '',
+        country: 'Egypt', // Default to Egypt, can be made configurable
+        phone: formData.mobileNumber,
+        postCode: null,
+      }
+
+      // Get preferred delivery date from first purchase with delivery date, if any
+      // Check purchases directly as they have the ISO date format
+      const firstPurchaseWithDeliveryDate = allPurchases.find(p => p.preferredDeliveryDate)
+      const preferredDeliveryDate = firstPurchaseWithDeliveryDate?.preferredDeliveryDate || null
+
+      // Prepare checkout request with all required and optional fields
       const checkoutRequest: CheckoutRequest = {
         cartId: cartData.id,
+        customer: customer,
         paymentMethod: paymentMethodCode,
-        // Include other fields that might be in CheckoutRequest
-        // The API will determine which fields are actually used
-      } as CheckoutRequest
+        orderNotes: formData.notes || null,
+        couponCode: formData.promoCode || null,
+        preferredDeliveryDate: preferredDeliveryDate,
+      }
 
       const checkoutResponse = await checkoutMutation.mutateAsync(checkoutRequest)
 
@@ -979,37 +1028,73 @@ export default function CheckoutPage() {
                     Delivery Details
                   </h3>
 
-                  <Input
-                    type="text"
-                    placeholder="Location"
-                    prefixIcon={MapPin}
-                    value={formData.location}
-                    onChange={e => updateFormData('location', e.target.value)}
-                    onBlur={() => {
-                      const error = validateField('location', formData.location)
-                      if (error)
-                        setErrors(prev => ({ ...prev, location: error }))
-                    }}
-                    variant={errors.location ? 'error' : 'default'}
-                    errorMessage={errors.location}
-                    className="w-full"
-                  />
+                  {/* Address Selector */}
+                  {isLoadingAddresses ? (
+                    <div className="flex items-center justify-center py-8">
+                      <p className="text-14 text-gray-500">Loading addresses...</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {/* Horizontal Address Selector */}
+                      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                        {addresses.map((address) => (
+                          <button
+                            key={address.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedAddressId(address.id)
+                              // Update form data with selected address
+                              updateFormData('location', address.cityName || address.addressEn || '')
+                              updateFormData('street', address.street || address.addressEn || '')
+                            }}
+                            className={cn(
+                              'flex-shrink-0 px-4 py-3 rounded-lg border-2 transition-all text-left min-w-[200px]',
+                              'hover:bg-gray-50',
+                              selectedAddressId === address.id
+                                ? 'border-brand-400 bg-white'
+                                : 'border-gray-300 bg-white'
+                            )}
+                          >
+                            <div className="flex items-start gap-2">
+                              <MapPin className={cn(
+                                'h-5 w-5 flex-shrink-0 mt-0.5',
+                                selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-400'
+                              )} />
+                              <div className="flex-1 min-w-0">
+                                <p className={cn(
+                                  'text-14 font-medium truncate',
+                                  selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-900'
+                                )}>
+                                  {address.nameEn || address.nameAr || 'Address'}
+                                </p>
+                                <p className="text-12 text-gray-600 line-clamp-2 mt-1">
+                                  {address.street || address.addressEn || address.addressAr || ''}
+                                  {address.cityName && `, ${address.cityName}`}
+                                </p>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
 
-                  <Input
-                    type="text"
-                    placeholder="Street / Apartment"
-                    prefixIcon={Building2}
-                    value={formData.street}
-                    onChange={e => updateFormData('street', e.target.value)}
-                    onBlur={() => {
-                      const error = validateField('street', formData.street)
-                      if (error) setErrors(prev => ({ ...prev, street: error }))
-                    }}
-                    variant={errors.street ? 'error' : 'default'}
-                    errorMessage={errors.street}
-                    className="w-full"
-                  />
+                        {/* Add Address Button */}
+                        <button
+                          type="button"
+                          onClick={() => setShowAddressModal(true)}
+                          className={cn(
+                            'flex-shrink-0 px-4 py-3 rounded-lg border-2 border-dashed transition-all',
+                            'border-gray-300 bg-white hover:bg-gray-50 hover:border-brand-400',
+                            'flex items-center justify-center gap-2 min-w-[200px]'
+                          )}
+                        >
+                          <MapPin className="h-5 w-5 text-gray-400" />
+                          <span className="text-14 font-medium text-gray-600">Add Address</span>
+                        </button>
+                      </div>
 
+                    </div>
+
+                  )}
+                  {/* Notes */}
                   <div className="relative">
                     <textarea
                       placeholder="Notes to the delivery person..."
@@ -1178,6 +1263,7 @@ export default function CheckoutPage() {
                   )}
 
                   {/* Card Details Section (Conditional) */}
+                  {/* COMMENTED OUT - Card Details Section
                   {formData.paymentMethod === 'debit-credit' && (
                     <div className="space-y-4 pt-4 pb-6">
                       <h3 className="text-18 font-normal text-gray-900">
@@ -1286,6 +1372,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   )}
+                  */}
                 </div>
               </div>
 
@@ -1302,7 +1389,7 @@ export default function CheckoutPage() {
                   {cartProducts.length > 0 && (
                     <div className="space-y-3">
                       {cartProducts.map(product => (
-                        <CartItem
+                        <CheckoutCartItem
                           key={product.id}
                           id={product.id}
                           title={product.title}
@@ -1310,8 +1397,6 @@ export default function CheckoutPage() {
                           originalPrice={product.originalPrice}
                           discountedPrice={product.discountedPrice}
                           quantity={product.quantity}
-                          onQuantityChange={handleQuantityChange}
-                          onRemove={handleRemoveItemClick}
                           deliveryDate={product.deliveryDate}
                           discountPercentage={product.discountPercentage}
                           purchasePrice={product.purchasePrice ?? undefined}
@@ -1326,7 +1411,7 @@ export default function CheckoutPage() {
                   {reservationPurchases.length > 0 && (
                     <div className="space-y-3">
                       {reservationPurchases.map((reservation) => (
-                        <CartItem
+                        <CheckoutCartItem
                           key={reservation.id}
                           id={reservation.id}
                           title={reservation.title}
@@ -1334,8 +1419,6 @@ export default function CheckoutPage() {
                           originalPrice={reservation.price}
                           discountedPrice={reservation.price}
                           quantity={reservation.quantity}
-                          onQuantityChange={handleQuantityChange}
-                          onRemove={handleRemoveItemClick}
                           deliveryDate={reservation.reservationDate}
                           purchasePrice={reservation.purchasePrice ?? undefined}
                           purchaseDate={reservation.purchaseDate}
@@ -1349,7 +1432,7 @@ export default function CheckoutPage() {
                   {membershipPurchases.length > 0 && (
                     <div className="space-y-3">
                       {membershipPurchases.map((membership) => (
-                        <CartItem
+                        <CheckoutCartItem
                           key={membership.id}
                           id={membership.id}
                           title={membership.title}
@@ -1357,8 +1440,6 @@ export default function CheckoutPage() {
                           originalPrice={membership.price}
                           discountedPrice={membership.price}
                           quantity={membership.quantity}
-                          onQuantityChange={handleQuantityChange}
-                          onRemove={handleRemoveItemClick}
                           purchasePrice={membership.purchasePrice ?? undefined}
                           purchaseDate={membership.purchaseDate}
                           type={membership.type}
@@ -1371,7 +1452,7 @@ export default function CheckoutPage() {
                   {giftCardPurchases.length > 0 && (
                     <div className="space-y-3">
                       {giftCardPurchases.map((giftCard) => (
-                        <CartItem
+                        <CheckoutCartItem
                           key={giftCard.id}
                           id={giftCard.id}
                           title={giftCard.title}
@@ -1379,8 +1460,6 @@ export default function CheckoutPage() {
                           originalPrice={giftCard.price}
                           discountedPrice={giftCard.price}
                           quantity={giftCard.quantity}
-                          onQuantityChange={handleQuantityChange}
-                          onRemove={handleRemoveItemClick}
                           purchasePrice={giftCard.purchasePrice ?? undefined}
                           purchaseDate={giftCard.purchaseDate}
                           type={giftCard.type}
@@ -1552,6 +1631,15 @@ export default function CheckoutPage() {
               : 'Validating...'
         }
         subtitle="Please wait a moment"
+      />
+
+      {/* Address Modal */}
+      <AddressModal
+        isOpen={showAddressModal}
+        onClose={() => setShowAddressModal(false)}
+        onSuccess={() => {
+          setShowAddressModal(false)
+        }}
       />
     </div>
   )
