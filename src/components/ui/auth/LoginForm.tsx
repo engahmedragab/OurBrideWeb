@@ -72,7 +72,7 @@ export const LoginForm = ({
         message: "Password isn't correct, please try again",
       }
     }
-    if (value.length < 8) {
+    if (value.length < 7) {
       return {
         isValid: false,
         message: "Password isn't correct, please try again",

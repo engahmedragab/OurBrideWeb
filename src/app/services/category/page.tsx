@@ -13,6 +13,7 @@ import {
   OfferBanner,
   SearchInput,
   Pagination,
+  LoadingOverlay,
 } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
@@ -890,7 +891,11 @@ export default function ServicesCategoryPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-16 text-gray-600">Loading...</div>
+          <LoadingOverlay
+            open={true}
+            title="Loading..."
+            subtitle="Please wait a moment"
+          />
         </div>
       }
     >

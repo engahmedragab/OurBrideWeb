@@ -1,6 +1,7 @@
 'use client'
 
-import { ProductCard } from '@/components/ui/ProductCard'
+import { Card, type ProductCardData } from '@/components/ui'
+import { useProductCardHandlers, useAddProductToCart } from '@/Hooks/products'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
 
@@ -9,6 +10,7 @@ export interface ProductOffersSectionProps {
   timerText?: string
   className?: string
   onWishlistToggle?: (productId: string) => void
+  onFavoriteToggle?: (productId: string) => void
   onAddToCart?: (productId: string) => void
   // Header props
   title?: string
@@ -23,6 +25,7 @@ export const ProductOffersSection = ({
   timerText,
   className,
   onWishlistToggle,
+  onFavoriteToggle,
   onAddToCart,
   title = "Today's Best Product Offers",
 }: ProductOffersSectionProps) => {
@@ -44,14 +47,44 @@ export const ProductOffersSection = ({
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map(product => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onWishlistToggle={onWishlistToggle}
-            onAddToCart={onAddToCart}
-          />
-        ))}
+        {products.map(product => {
+          // Inline component to use hooks properly
+          const ProductCardItem = () => {
+            const handlers = useProductCardHandlers(parseInt(product.id, 10))
+            const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+            const handleAddToCartClick = (e: React.MouseEvent) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleAddToCart(product, 1)
+            }
+
+            const cardData: ProductCardData = {
+              id: product.id,
+              image: product.images?.[0]?.trim() || '',
+              title: product.title,
+              providerName: product.provider.name,
+              providerId: product.provider.id,
+              verified: product.provider.verified,
+              rating: product.rating.value,
+              originalPrice: product.price.original,
+              discountedPrice: product.price.discounted,
+              tags: product.tags,
+              showTopOfferBadge: product.showTopOfferBadge,
+              isWishlisted: product.isWishlisted,
+              isFavorite: product.isFavorite,
+              inStock: product.inStock,
+              onWishlistToggle: handlers.handleWishlistToggle,
+              onFavoriteToggle: handlers.handleFavoriteToggle,
+              onAddToCart: handleAddToCartClick,
+              isLoadingWishlist: handlers.isLoadingWishlist,
+              isLoadingFavorite: handlers.isLoadingFavorite,
+              isLoadingAddToCart,
+            }
+            return <Card cardData={{ type: 'product', ...cardData }} />
+          }
+          return <ProductCardItem key={product.id} />
+        })}
       </div>
     </section>
   )

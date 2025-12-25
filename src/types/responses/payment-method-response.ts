@@ -4,7 +4,7 @@
 
 import type { BaseLookupResponse } from '@/types/responses/common'
 
-export interface PaymentMethodResponse extends BaseLookupResponse {
+export interface PaymentMethodResponse extends Omit<BaseLookupResponse, 'lastModifiedDate'> {
   code: string
   type: number // PaymentMethodsType enum
   status: number // PaymentMethodStatus enum
@@ -18,4 +18,6 @@ export interface PaymentMethodResponse extends BaseLookupResponse {
   supportsInstallments: boolean
   maxInstallments: number | null
   configuration: string
+  creationDate: string // ISO DateTime string (overrides base)
+  lastModifiedDate: string | null // ISO DateTime string (overrides base)
 }

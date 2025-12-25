@@ -7,7 +7,20 @@ import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
+import {
+  Card,
+  type ProductCardData,
+  type ServiceCardData,
+  type TestimonialCardData,
+  type ProviderCardData,
+  type MemberTestimonialCardData,
+} from '@/components/ui'
+import {
+  useProductCardHandlers,
+  useServiceCardHandlers,
+  useProviderCardHandlers,
+  useAddProductToCart,
+} from '@/Hooks'
 import {
   OfferBanner,
   CardSkeleton,
@@ -15,6 +28,7 @@ import {
   TestimonialCardSkeleton,
   MemberTestimonialCardSkeleton,
 } from '@/components/ui'
+
 import { StoreBadges } from '@/components/ui/StoreBadges'
 import { Pagination } from '@/components/ui/Pagination'
 import {
@@ -136,13 +150,13 @@ export default function Home() {
   const currentTestimonials = testimonials.slice(
     testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE,
     testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE +
-      PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
+    PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
   )
 
   const currentMemberTestimonials = memberTestimonials.slice(
     memberTestimonialsIndex * PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE,
     memberTestimonialsIndex * PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE +
-      PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
+    PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
   )
 
   return (
@@ -429,28 +443,63 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              paginatedProducts.map(product => (
-                <Card
-                  key={product.id}
-                  cardData={{ type: 'product', ...product }}
-                />
-              ))
+              paginatedProducts.map(product => {
+                // Inline component to use hooks properly
+                const ProductCardItem = () => {
+                  const handlers = useProductCardHandlers(parseInt(product.id, 10))
+                  const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+                  const handleAddToCartClick = (e: React.MouseEvent) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    // Convert ProductCardData to the format expected by handleAddToCart
+                    handleAddToCart(
+                      {
+                        id: product.id,
+                        price: { discounted: product.discountedPrice },
+                        provider: { id: product.providerId || '' },
+                      },
+                      1
+                    )
+                  }
+
+                  return (
+                    <Card
+                      cardData={{
+                        type: 'product',
+                        ...product,
+                        providerId: product.providerId || '',
+                        inStock: true,
+                        onWishlistToggle: handlers.handleWishlistToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        onAddToCart: handleAddToCartClick,
+                        isLoadingWishlist: handlers.isLoadingWishlist,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                        isLoadingAddToCart,
+                      }}
+                    />
+                  )
+                }
+                return <ProductCardItem key={product.id} />
+              })
             )}
-          </div>
+          </div >
           {/* Products Pagination */}
-          {!isLoading && productsTotalPages > 1 && (
-            <div className="mt-8">
-              <Pagination
-                currentPage={productsPage}
-                totalPages={productsTotalPages}
-                onPageChange={setProductsPage}
-              />
-            </div>
-          )}
-        </section>
+          {
+            !isLoading && productsTotalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={productsPage}
+                  totalPages={productsTotalPages}
+                  onPageChange={setProductsPage}
+                />
+              </div>
+            )
+          }
+        </section >
 
         {/* Section 6: Suggested Services */}
-        <section className="container-custom py-12 md:py-16">
+        < section className="container-custom py-12 md:py-16" >
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
               Services Suggested for You
@@ -466,28 +515,43 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              paginatedServices.map(service => (
-                <Card
-                  key={service.id}
-                  cardData={{ type: 'service', ...service }}
-                />
-              ))
+              paginatedServices.map(service => {
+                // Inline component to use hooks properly
+                const ServiceCardItem = () => {
+                  const handlers = useServiceCardHandlers(parseInt(service.id, 10))
+                  return (
+                    <Card
+                      cardData={{
+                        type: 'service',
+                        ...service,
+                        onWishlistToggle: handlers.handleWishlistToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        isLoadingWishlist: handlers.isLoadingWishlist,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                      }}
+                    />
+                  )
+                }
+                return <ServiceCardItem key={service.id} />
+              })
             )}
-          </div>
+          </div >
           {/* Services Pagination */}
-          {!isLoading && servicesTotalPages > 1 && (
-            <div className="mt-8">
-              <Pagination
-                currentPage={servicesPage}
-                totalPages={servicesTotalPages}
-                onPageChange={setServicesPage}
-              />
-            </div>
-          )}
-        </section>
+          {
+            !isLoading && servicesTotalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={servicesPage}
+                  totalPages={servicesTotalPages}
+                  onPageChange={setServicesPage}
+                />
+              </div>
+            )
+          }
+        </section >
 
         {/* Section 7: Why Trust Section */}
-        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
+        < section className="relative py-16 md:py-24 overflow-hidden bg-white" >
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <Image
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
@@ -535,12 +599,12 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Section 8: Testimonials */}
-        <section className="container-custom py-12 md:py-16">
+        < section className="container-custom py-12 md:py-16" >
           {/* Centered Heading Above Section */}
-          <div className="text-center mb-8 md:mb-12">
+          < div className="text-center mb-8 md:mb-12" >
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
               <span className="font-normal text-gray-900">
                 Read{' '}
@@ -552,7 +616,7 @@ export default function Home() {
                 <span className="font-normal text-gray-900">Confidence</span>
               </span>
             </h2>
-          </div>
+          </div >
 
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
             {/* Left Side - Quote Icon and Heading */}
@@ -616,10 +680,10 @@ export default function Home() {
               )}
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Section 9: Providers */}
-        <section className="container-custom py-12 md:py-16">
+        < section className="container-custom py-12 md:py-16" >
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
               <span className="font-normal text-gray-900">
@@ -637,18 +701,31 @@ export default function Home() {
             {isLoading ? (
               <ProviderCardSkeleton count={4} />
             ) : (
-              providers.map(provider => (
-                <Card
-                  key={provider.id}
-                  cardData={{ type: 'provider', ...provider }}
-                />
-              ))
+              providers.map(provider => {
+                // Inline component to use hooks properly
+                const ProviderCardItem = () => {
+                  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+                  return (
+                    <Card
+                      cardData={{
+                        type: 'provider',
+                        ...provider,
+                        onFollowToggle: handlers.handleFollowToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        isLoadingFollow: handlers.isLoadingFollow,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                      }}
+                    />
+                  )
+                }
+                return <ProviderCardItem key={provider.id} />
+              })
             )}
-          </div>
-        </section>
+          </div >
+        </section >
 
         {/* Section 10: Wedding Journey */}
-        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
+        < section className="relative py-16 md:py-24 overflow-hidden bg-white" >
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <Image
               src={typeof lineS4Svg === 'string' ? lineS4Svg : lineS4Svg.src}
@@ -693,12 +770,12 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Section 11: Member Testimonials */}
-        <section className="container-custom py-12 md:py-16">
+        < section className="container-custom py-12 md:py-16" >
           {/* Centered Heading Above Section */}
-          <div className="text-center mb-8 md:mb-12">
+          < div className="text-center mb-8 md:mb-12" >
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
               <span className="font-normal text-gray-900">
                 Our Bride{' '}
@@ -709,7 +786,7 @@ export default function Home() {
                 Are <span className="font-normal text-gray-900">Loving</span>
               </span>
             </h2>
-          </div>
+          </div >
 
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
             {/* Left Side - Quote Icon and Heading */}
@@ -776,10 +853,10 @@ export default function Home() {
               )}
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Section: App Download */}
-        <section className="relative overflow-hidden bg-white py-0">
+        < section className="relative overflow-hidden bg-white py-0" >
           <div className="container-custom">
             <div className="text-center mb-0">
               <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900 leading-tight">
@@ -816,9 +893,9 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
-      </main>
+        </section >
+      </main >
       <Footer />
-    </div>
+    </div >
   )
 }

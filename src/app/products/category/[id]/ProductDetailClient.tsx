@@ -14,12 +14,19 @@ import {
   Button,
   QuantitySelector,
 } from '@/components/ui'
+import { cn } from '@/lib/utils'
+import productImage from '@/assets/svg/product-1.svg'
+import type { ProductCardData } from '@/components/ui/Card'
+import type { Product } from '@/types/product'
+import { useProductCardHandlers, useAddProductToCart } from '@/Hooks/products'
+import { useProviderCardHandlers } from '@/Hooks/providers'
+
 import {
   useProductDetails,
   useRelatedProducts,
   useProductReviews,
   useSubmitProductReview,
-} from '@/hooks/products'
+} from '@/Hooks/products'
 import { ProductPageLayout } from '../../components/ProductPageLayout'
 import { ProductErrorState } from '../../components/ProductErrorState'
 import { parseProductId } from '../../utils'
@@ -27,6 +34,34 @@ import { RELATED_PRODUCTS_LIMIT } from '../../constants'
 
 interface ProductDetailClientProps {
   productId: string
+}
+
+// Wrapper component for provider card with handlers
+const ProviderCardWithHandlers = ({
+  provider,
+  onViewProfile,
+}: {
+  provider: {
+    id: string
+    name: string
+    image?: string
+    verified?: boolean
+    rating?: number
+    profession?: string
+  }
+  onViewProfile?: () => void
+}) => {
+  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+  return (
+    <ProviderCard
+      provider={provider}
+      onFollowToggle={handlers.handleFollowToggle}
+      onFavoriteToggle={handlers.handleFavoriteToggle}
+      isLoadingFollow={handlers.isLoadingFollow}
+      isLoadingFavorite={handlers.isLoadingFavorite}
+      onViewProfile={onViewProfile}
+    />
+  )
 }
 
 export function ProductDetailClient({ productId }: ProductDetailClientProps) {
@@ -91,9 +126,17 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     )
   }
 
-  const handleAddToCart = () => {
-    // TODO: Implement add to cart
-    router.push('/cart')
+  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+  const handleAddToCart = async () => {
+    if (!product) return
+    try {
+      await addToCart(product, quantity)
+      // Optionally navigate to cart or show success message
+      // router.push('/cart')
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+    }
   }
 
   const handleBuyNow = () => {
@@ -126,79 +169,80 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
         <BackButton onClick={() => router.back()} className="mb-6" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {/* Product Images */}
-            <div>
-              <ProductImageGallery
-                images={product.images}
-                productName={product.title}
-              />
-            </div>
-
-            {/* Product Details */}
-            <div className="space-y-6">
-              {product.showTopOfferBadge && (
-                <Badge variant="success" className="inline-block">
-                  Top Offer
-                </Badge>
-              )}
-
-              <h1 className="text-24 md:text-28 font-semibold text-gray-900">
-                {product.title}
-              </h1>
-
-              <div className="flex items-center gap-4">
-                <RatingDisplay rating={product.rating.value} count={product.rating.count} />
-                <span className="text-14 text-gray-500">
-                  ({product.rating.count} reviews)
-                </span>
-              </div>
-
-              <PriceDisplay
-                original={product.price.original}
-                discounted={product.price.discounted}
-                currency={product.price.currency}
-              />
-
-              <div className="flex items-center gap-4">
-                <span className="text-14 text-gray-600">Quantity:</span>
-                <QuantitySelector
-                  quantity={quantity}
-                  onQuantityChange={handleQuantityChange}
-                  min={1}
-                  max={product.stockQuantity || 99}
-                  variant="default"
-                />
-              </div>
-
-              <div className="flex gap-4">
-                <Button
-                  variant="brand"
-                  size="lg"
-                  onClick={handleAddToCart}
-                  className="flex-1"
-                >
-                  Add to Cart
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={handleBuyNow}
-                  className="flex-1"
-                >
-                  Buy Now
-                </Button>
-              </div>
-
-              <ProviderCard
-                provider={product.provider}
-                onViewProfile={() => router.push(`/provider/${product.provider.id}`)}
-              />
-            </div>
+          {/* Product Images */}
+          <div>
+            <ProductImageGallery
+              images={product.images}
+              productName={product.title}
+            />
           </div>
 
-          {/* Product Description */}
-          {(product.longDescription || product.description) && (
-            <div className="mb-12">
+          {/* Product Details */}
+          <div className="space-y-6">
+            {product.showTopOfferBadge && (
+              <Badge variant="success" className="inline-block">
+                Top Offer
+              </Badge>
+            )}
+
+            <h1 className="text-24 md:text-28 font-semibold text-gray-900">
+              {product.title}
+            </h1>
+
+            <div className="flex items-center gap-4">
+              <RatingDisplay rating={product.rating.value} count={product.rating.count} />
+              <span className="text-14 text-gray-500">
+                ({product.rating.count} reviews)
+              </span>
+            </div>
+
+            <PriceDisplay
+              original={product.price.original}
+              discounted={product.price.discounted}
+              currency={product.price.currency}
+            />
+
+            <div className="flex items-center gap-4">
+              <span className="text-14 text-gray-600">Quantity:</span>
+              <QuantitySelector
+                quantity={quantity}
+                onQuantityChange={handleQuantityChange}
+                min={1}
+                max={product.stockQuantity || 99}
+                variant="default"
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <Button
+                variant="brand"
+                size="lg"
+                onClick={handleAddToCart}
+                disabled={isLoadingAddToCart || !product.inStock}
+                className="flex-1"
+              >
+                {isLoadingAddToCart ? 'Adding...' : 'Add to Cart'}
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleBuyNow}
+                className="flex-1"
+              >
+                Buy Now
+              </Button>
+            </div>
+
+            <ProviderCardWithHandlers
+              provider={product.provider}
+              onViewProfile={() => router.push(`/provider/${product.provider.id}`)}
+            />
+          </div>
+        </div>
+
+        {/* Product Description */}
+        {(product.longDescription || product.description) && (
+          <div className="mb-12">
             <h2 className="text-20 font-semibold text-gray-900 mb-4">
               Description
             </h2>
@@ -218,45 +262,45 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           {reviews.length > 0 && (
             <div className="space-y-4 mb-6">
               {reviews.map(review => (
-                  <div
-                    key={review.id}
-                    className="bg-white border border-gray-200 rounded-lg p-4"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                        <span className="text-14 font-semibold text-gray-600">
-                          {review.userName.charAt(0).toUpperCase()}
+                <div
+                  key={review.id}
+                  className="bg-white border border-gray-200 rounded-lg p-4"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+                      <span className="text-14 font-semibold text-gray-600">
+                        {review.userName.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-14 font-semibold text-gray-900">
+                          {review.userName}
+                        </span>
+                        {review.verified && (
+                          <Badge variant="success" size="sm">
+                            Verified
+                          </Badge>
+                        )}
+                        <span className="text-12 text-gray-500">
+                          {new Date(review.date).toLocaleDateString()}
                         </span>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-14 font-semibold text-gray-900">
-                            {review.userName}
-                          </span>
-                          {review.verified && (
-                            <Badge variant="success" size="sm">
-                              Verified
-                            </Badge>
-                          )}
-                          <span className="text-12 text-gray-500">
-                            {new Date(review.date).toLocaleDateString()}
-                          </span>
+                      <RatingDisplay
+                        rating={review.rating}
+                        size="sm"
+                        showCount={false}
+                      />
+                      <p className="text-14 text-gray-700 mt-2">
+                        {review.comment}
+                      </p>
+                      {review.helpful > 0 && (
+                        <div className="mt-2 text-12 text-gray-500">
+                          {review.helpful} people found this helpful
                         </div>
-                        <RatingDisplay
-                          rating={review.rating}
-                          size="sm"
-                          showCount={false}
-                        />
-                        <p className="text-14 text-gray-700 mt-2">
-                          {review.comment}
-                        </p>
-                        {review.helpful > 0 && (
-                          <div className="mt-2 text-12 text-gray-500">
-                            {review.helpful} people found this helpful
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -309,28 +353,39 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
               Related Products
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map(relatedProduct => (
-                  <Card
-                    key={relatedProduct.id}
-                    cardData={{
-                      type: 'product',
-                      id: relatedProduct.id,
-                      image: relatedProduct.images?.[0] || '',
-                      title: relatedProduct.title,
-                      providerName: relatedProduct.provider?.name || '',
-                      verified: relatedProduct.provider?.verified || false,
-                      originalPrice: relatedProduct.price?.original || 0,
-                      discountedPrice: relatedProduct.price?.discounted || 0,
-                      rating: relatedProduct.rating?.value || 0,
-                      tags: relatedProduct.tags || [],
-                      showTopOfferBadge: relatedProduct.showTopOfferBadge || false,
-                    }}
-                    onClick={() =>
-                      router.push(`/products/${relatedProduct.id}`)
-                    }
-                    className="cursor-pointer"
-                />
-              ))}
+              {relatedProducts.map(relatedProduct => {
+                // Inline component to use hooks properly
+                const ProductCardItem = () => {
+                  const handlers = useProductCardHandlers(parseInt(relatedProduct.id, 10))
+                  return (
+                    <Card
+                      key={relatedProduct.id}
+                      cardData={{
+                        type: 'product',
+                        id: relatedProduct.id,
+                        image: relatedProduct.images?.[0] || '',
+                        title: relatedProduct.title,
+                        providerName: relatedProduct.provider?.name || '',
+                        verified: relatedProduct.provider?.verified || false,
+                        originalPrice: relatedProduct.price?.original || 0,
+                        discountedPrice: relatedProduct.price?.discounted || 0,
+                        rating: relatedProduct.rating?.value || 0,
+                        tags: relatedProduct.tags || [],
+                        showTopOfferBadge: relatedProduct.showTopOfferBadge || false,
+                        onWishlistToggle: handlers.handleWishlistToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        isLoadingWishlist: handlers.isLoadingWishlist,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                      }}
+                      onClick={() =>
+                        router.push(`/products/${relatedProduct.id}`)
+                      }
+                      className="cursor-pointer"
+                    />
+                  )
+                }
+                return <ProductCardItem key={relatedProduct.id} />
+              })}
             </div>
           </div>
         )}

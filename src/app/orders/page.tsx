@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { UserPageLayout } from '@/components/layout'
 import {
@@ -13,320 +13,188 @@ import {
   PageHeader,
   OrderCard,
   RequestCard,
+  ErrorDisplay,
+  LoadingOverlay,
 } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import type { OrderStatus } from '@/components/ui/OrderProgressIndicator'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
+import {
+  useClientOrders,
+  useOrdersByStatus,
+  useCancelOrder,
+  useCartsWithProviders,
+} from '@/Hooks'
+import type { OrderResponse, PurchaseResponse } from '@/types/responses'
+import {
+  OrderStatus as ApiOrderStatus,
+  PurchaseType,
+  PurchaseStatus,
+} from '@/../client/common/api/gen/ourbride-api'
 
-// Mock data - Replace with actual API data later
-const mockOrdersInProgress = [
-  {
-    orderId: '2215689',
-    orderDate: '1/8/2025',
-    status: 'preparing' as OrderStatus,
-    arrivalDate: '10/8/2025',
-    arrivalTime: '5:30 PM',
-    products: [
-      {
-        id: '1',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-        price: 350,
-        quantity: 1,
-      },
-      {
-        id: '2',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-        price: 350,
-        quantity: 1,
-      },
-    ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    deliveryFee: 90,
-    total: 10460,
-  },
-  {
-    orderId: '2215690',
-    orderDate: '1/8/2025',
-    status: 'onTheWay' as OrderStatus,
-    arrivalDate: '10/8/2025',
-    arrivalTime: '5:30 PM',
-    products: [
-      {
-        id: '1',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-        price: 350,
-        quantity: 1,
-      },
-      {
-        id: '2',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-        price: 350,
-        quantity: 1,
-      },
-    ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    deliveryFee: 90,
-    total: 10460,
-  },
-  {
-    orderId: '2215691',
-    orderDate: '1/8/2025',
-    status: 'received' as OrderStatus,
-    arrivalDate: '10/8/2025',
-    arrivalTime: '5:30 PM',
-    products: [
-      {
-        id: '1',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-        price: 350,
-        quantity: 1,
-      },
-      {
-        id: '2',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-        price: 350,
-        quantity: 1,
-      },
-    ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    deliveryFee: 90,
-    total: 10460,
-  },
-]
+/**
+ * Map API OrderStatus to component OrderStatus
+ */
+const mapOrderStatus = (status: ApiOrderStatus | string): OrderStatus => {
+  const statusMap: Record<string, OrderStatus> = {
+    Preparing: 'preparing',
+    OnTheWay: 'onTheWay',
+    Shipped: 'onTheWay',
+    Received: 'received',
+    Delivered: 'delivered',
+    Completed: 'delivered',
+    Cancelled: 'cancelled',
+    Canceled: 'cancelled',
+  }
+  return statusMap[status] || 'preparing'
+}
 
-const mockOrdersHistory = [
-  {
-    orderId: '2215689',
-    orderDate: '1/8/2025',
-    status: 'delivered' as OrderStatus,
-    arrivalDate: '10/8/2025',
-    arrivalTime: '5:30 PM',
-    products: [
-      {
-        id: '1',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-        price: 350,
-        quantity: 1,
-      },
-      {
-        id: '2',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-        price: 350,
-        quantity: 1,
-      },
-    ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    deliveryFee: 90,
-    total: 10460,
-  },
-  {
-    orderId: '2215692',
-    orderDate: '1/8/2025',
-    status: 'cancelled' as OrderStatus,
-    arrivalDate: '10/8/2025',
-    arrivalTime: '5:30 PM',
-    products: [
-      {
-        id: '1',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-        price: 350,
-        quantity: 1,
-      },
-      {
-        id: '2',
-        title: 'Product Title',
-        image:
-          'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-        price: 350,
-        quantity: 1,
-      },
-    ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    deliveryFee: 90,
-    total: 10460,
-  },
-]
+/**
+ * Map OrderResponse to OrderCard format
+ */
+const mapOrderToOrderCard = (order: OrderResponse) => {
+  // Format order date
+  const orderDate = order.orderDate
+    ? new Date(order.orderDate).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    : new Date().toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
 
-// Mock service requests data
-const mockRequestsInProgress = [
-  {
-    requestId: '2215689',
-    requestDate: '1/8/2025',
-    status: 'requestReceived' as RequestStatus,
-    service: {
-      id: '1',
-      title: 'Service Title',
-      image:
-        'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-      rating: {
-        value: 4.5,
-        count: 24,
-      },
-      provider: {
-        name: 'Ali Mohamed',
-      },
-    },
-    assignedTo: 'Dashboard Name',
-    dueDate: '10/8/2025',
-    dueTime: '5:30 PM',
-    packages: [
-      { title: 'Package Detail', price: 10250 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
-    ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    total: 10460,
-  },
-  {
-    requestId: '2215690',
-    requestDate: '1/8/2025',
-    status: 'underReview' as RequestStatus,
-    service: {
-      id: '2',
-      title: 'Service Title',
-      image:
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-      rating: {
-        value: 4.5,
-        count: 24,
-      },
-      provider: {
-        name: 'Ali Mohamed',
-      },
-    },
-    assignedTo: 'Dashboard Name',
-    dueDate: '10/8/2025',
-    dueTime: '5:30 PM',
-    packages: [
-      { title: 'Package Detail', price: 10250 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
-    ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    total: 10460,
-  },
-  {
-    requestId: '2215691',
-    requestDate: '1/8/2025',
-    status: 'confirmed' as RequestStatus,
-    service: {
-      id: '3',
-      title: 'Service Title',
-      image:
-        'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-      rating: {
-        value: 4.5,
-        count: 24,
-      },
-      provider: {
-        name: 'Ali Mohamed',
-      },
-    },
-    assignedTo: 'Dashboard Name',
-    dueDate: '10/8/2025',
-    dueTime: '5:30 PM',
-    packages: [
-      { title: 'Package Detail', price: 10250 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
-    ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    total: 10460,
-  },
-]
+  // Format delivery date
+  const arrivalDate = order.deliveryDate
+    ? new Date(order.deliveryDate).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    : undefined
 
-// Mock requests history (completed and cancelled)
-const mockRequestsHistory = [
-  {
-    requestId: '2215692',
-    requestDate: '1/8/2025',
-    status: 'completed' as RequestStatus,
+  const arrivalTime = order.deliveryDate
+    ? new Date(order.deliveryDate).toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    })
+    : undefined
+
+  // Map purchases from OrderResponse to products
+  // OrderResponse.purchases contains PurchaseResponse[] with product information
+  const products = (order.purchases || [])
+    .filter((p: PurchaseResponse) => p.product)
+    .map((purchase: PurchaseResponse) => ({
+      id: purchase.productId?.toString() ?? purchase.id.toString(),
+      title: purchase.product?.nameEn ?? purchase.product?.nameAr ?? 'Product',
+      image: purchase.product?.image ?? '/placeholder-product.png',
+      price: purchase.totalPrice ?? purchase.price ?? 0,
+      quantity: purchase.quantity,
+    }))
+
+  // Use OrderResponse fields: prefer orderSummary if available, otherwise use direct fields
+  // OrderResponse.orderSummary contains OrderSummaryResponse with calculated totals
+  const subtotal =
+    order.orderSummary?.subtotal ??
+    order.totalAmount - (order.taxAmount ?? 0) - (order.shippingAmount ?? 0) - (order.discountAmount ?? 0)
+
+  return {
+    orderId: order.orderNumber || order.id.toString(),
+    orderDate,
+    status: mapOrderStatus(order.status),
+    products,
+    subtotal,
+    taxesAndFees: order.orderSummary?.tax ?? order.taxAmount ?? 0,
+    deliveryFee: order.orderSummary?.shipping ?? order.shippingAmount ?? 0,
+    total: order.orderSummary?.total ?? order.finalAmount ?? order.totalAmount,
+    arrivalDate,
+    arrivalTime,
+    orderResponse: order, // Store original OrderResponse for API calls
+  }
+}
+
+/**
+ * Map PurchaseResponse (service) to RequestCard format
+ */
+const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
+  if (!purchase.service) return null
+
+  const service = purchase.service
+  const price = purchase.totalPrice ?? purchase.price ?? 0
+
+  // Map PurchaseStatus to RequestStatus
+  const statusMap: Record<string, RequestStatus> = {
+    RequestReceived: 'requestReceived',
+    UnderReview: 'underReview',
+    Confirmed: 'confirmed',
+    Completed: 'completed',
+    Cancelled: 'cancelled',
+  }
+  const status = statusMap[purchase.status] ?? 'requestReceived'
+
+  // Format dates
+  const requestDate = purchase.creationDate
+    ? new Date(purchase.creationDate).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    : new Date().toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+
+  const dueDate = purchase.endDate
+    ? new Date(purchase.endDate).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    : undefined
+
+  const dueTime = purchase.endDate
+    ? new Date(purchase.endDate).toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    })
+    : undefined
+
+  return {
+    requestId: purchase.id.toString(),
+    requestDate,
+    status,
     service: {
-      id: '4',
-      title: 'Service Title',
-      image:
-        'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+      id: purchase.serviceId?.toString() ?? purchase.id.toString(),
+      title: service.nameEn ?? service.nameAr ?? 'Service',
+      image: service.imageUrl ?? '/placeholder-service.png',
       rating: {
-        value: 4.5,
-        count: 24,
+        value: service.rate ?? 0,
+        count: 0,
       },
       provider: {
-        name: 'Ali Mohamed',
+        name: purchase.providerName ?? service.provider?.nameEn ?? service.provider?.nameAr ?? 'Provider',
       },
     },
-    assignedTo: 'Dashboard Name',
-    dueDate: '10/8/2025',
-    dueTime: '5:30 PM',
+    assignedTo: purchase.providerName,
+    dueDate,
+    dueTime,
     packages: [
-      { title: 'Package Detail', price: 10250 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
-    ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    total: 10460,
-  },
-  {
-    requestId: '2215693',
-    requestDate: '1/8/2025',
-    status: 'cancelled' as RequestStatus,
-    service: {
-      id: '5',
-      title: 'Service Title',
-      image:
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-      rating: {
-        value: 4.5,
-        count: 24,
+      {
+        title: 'Service Package',
+        price: price,
       },
-      provider: {
-        name: 'Ali Mohamed',
-      },
-    },
-    assignedTo: 'Dashboard Name',
-    dueDate: '10/8/2025',
-    dueTime: '5:30 PM',
-    packages: [
-      { title: 'Package Detail', price: 10250 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
-      { title: 'Package Detail', price: 120 },
     ],
-    subtotal: 10250,
-    taxesAndFees: 120,
-    total: 10460,
-  },
-]
+    subtotal: price,
+    taxesAndFees: 0,
+    total: price,
+    purchaseResponse: purchase, // Store original for API calls
+  }
+}
 
 export default function OrdersPage() {
   const router = useRouter()
@@ -334,20 +202,159 @@ export default function OrdersPage() {
   const [successModalOpen, setSuccessModalOpen] = useState(false)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [filterType, setFilterType] = useState<'services' | 'products'>(
-    'services'
+    'products'
   )
+
+  // Fetch orders data
+  const {
+    data: clientOrdersData,
+    isLoading: isLoadingOrders,
+    error: ordersError,
+  } = useClientOrders({
+    enabled: filterType === 'products',
+  })
+
+  // Fetch in-progress orders (not delivered, not cancelled)
+  const {
+    data: inProgressOrders,
+    isLoading: isLoadingInProgress,
+  } = useOrdersByStatus('Preparing', {
+    enabled: filterType === 'products',
+  })
+
+  const {
+    data: onTheWayOrders,
+  } = useOrdersByStatus('OnTheWay', {
+    enabled: filterType === 'products',
+  })
+
+  // Fetch service orders from carts with providers
+  const {
+    data: cartsWithProviders,
+    isLoading: isLoadingServiceOrders,
+    error: serviceOrdersError,
+  } = useCartsWithProviders(filterType === 'services')
+
+  // Cancel order mutation
+  const cancelOrderMutation = useCancelOrder()
+
+  // Map orders to component format
+  const ordersInProgress = useMemo(() => {
+    if (!clientOrdersData?.items) return []
+
+    // Combine all orders and filter for in-progress
+    const allOrders = clientOrdersData.items
+    const inProgress = allOrders.filter(
+      (order: OrderResponse) =>
+        !order.isCompleted && !order.isCancelled && order.isActive
+    )
+
+    return inProgress.map(mapOrderToOrderCard)
+  }, [clientOrdersData])
+
+  const ordersHistory = useMemo(() => {
+    if (!clientOrdersData?.items) return []
+
+    // Filter for completed or cancelled orders
+    const allOrders = clientOrdersData.items
+    const history = allOrders.filter(
+      (order: OrderResponse) => order.isCompleted || order.isCancelled
+    )
+
+    return history.map(mapOrderToOrderCard)
+  }, [clientOrdersData])
+
+  // Map service orders to request cards
+  const requestsInProgress = useMemo(() => {
+    if (!cartsWithProviders) return []
+
+    // Ensure cartsWithProviders is an array
+    const cartsArray = Array.isArray(cartsWithProviders) ? cartsWithProviders : []
+    const allPurchases: PurchaseResponse[] = []
+    cartsArray.forEach((cart: { purchases?: PurchaseResponse[] }) => {
+      if (cart && cart.purchases && Array.isArray(cart.purchases)) {
+        allPurchases.push(...cart.purchases)
+      }
+    })
+
+    // Filter for service purchases that are in progress
+    // Using string comparison since PurchaseStatus enum values may vary
+    const inProgress = allPurchases.filter(
+      (purchase: PurchaseResponse) => {
+        const statusStr = String(purchase.status)
+        return (
+          purchase.type === PurchaseType.Service &&
+          statusStr !== 'Completed' &&
+          statusStr !== 'Cancelled' &&
+          statusStr !== 'Canceled' &&
+          !purchase.isDeleted
+        )
+      }
+    )
+
+    return inProgress
+      .map(mapServicePurchaseToRequestCard)
+      .filter((request): request is NonNullable<typeof request> => request !== null)
+  }, [cartsWithProviders])
+
+  const requestsHistory = useMemo(() => {
+    if (!cartsWithProviders) return []
+
+    // Ensure cartsWithProviders is an array
+    const cartsArray = Array.isArray(cartsWithProviders) ? cartsWithProviders : []
+    const allPurchases: PurchaseResponse[] = []
+    cartsArray.forEach((cart: { purchases?: PurchaseResponse[] }) => {
+      if (cart && cart.purchases && Array.isArray(cart.purchases)) {
+        allPurchases.push(...cart.purchases)
+      }
+    })
+
+    // Filter for service purchases that are completed or cancelled
+    // Using string comparison since PurchaseStatus enum values may vary
+    const history = allPurchases.filter(
+      (purchase: PurchaseResponse) => {
+        const statusStr = String(purchase.status)
+        return (
+          purchase.type === PurchaseType.Service &&
+          (statusStr === 'Completed' ||
+            statusStr === 'Cancelled' ||
+            statusStr === 'Canceled')
+        )
+      }
+    )
+
+    return history
+      .map(mapServicePurchaseToRequestCard)
+      .filter((request): request is NonNullable<typeof request> => request !== null)
+  }, [cartsWithProviders])
+
+  const isLoading = filterType === 'products'
+    ? isLoadingOrders || isLoadingInProgress
+    : isLoadingServiceOrders
+  const error = filterType === 'products' ? ordersError : serviceOrdersError
 
   const handleCancelOrder = (orderId: string) => {
     setSelectedOrderId(orderId)
     setCancelModalOpen(true)
   }
 
-  const handleConfirmCancel = (_reason?: string) => {
-    // TODO: Implement order cancellation API call
-    setCancelModalOpen(false)
-    // Here you would make an API call to cancel the order
-    // After successful cancellation, show success modal
-    setSuccessModalOpen(true)
+  const handleConfirmCancel = async (_reason?: string) => {
+    if (!selectedOrderId) return
+
+    try {
+      // Find the order to get its ID
+      const order = ordersInProgress.find(o => o.orderId === selectedOrderId) ||
+        ordersHistory.find(o => o.orderId === selectedOrderId)
+
+      if (order && order.orderResponse) {
+        await cancelOrderMutation.mutateAsync(order.orderResponse.id)
+        setCancelModalOpen(false)
+        setSuccessModalOpen(true)
+      }
+    } catch (error) {
+      console.error('Failed to cancel order:', error)
+      // You might want to show a toast notification here
+    }
   }
 
   const handleCloseCancelModal = () => {
@@ -385,11 +392,61 @@ export default function OrdersPage() {
     router.push('/checkout')
   }
 
-  const hasOrders =
-    mockOrdersInProgress.length > 0 || mockOrdersHistory.length > 0
-  const hasRequests = mockRequestsInProgress.length > 0
-  const hasRequestsHistory = mockRequestsHistory.length > 0
+  const hasOrders = ordersInProgress.length > 0 || ordersHistory.length > 0
+  const hasRequests = requestsInProgress.length > 0
+  const hasRequestsHistory = requestsHistory.length > 0
   const hasAnyContent = hasOrders || hasRequests || hasRequestsHistory
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <UserPageLayout>
+        <PageHeader
+          title="Order List"
+          rightContent={
+            hasRequests ? (
+              <ServicesProductsFilter
+                value={filterType}
+                onChange={setFilterType}
+                variant="outline"
+              />
+            ) : undefined
+          }
+        />
+        <LoadingOverlay
+          open={true}
+          title="Loading orders..."
+          subtitle="Please wait a moment"
+        />
+      </UserPageLayout>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <UserPageLayout>
+        <PageHeader
+          title="Order List"
+          rightContent={
+            hasRequests ? (
+              <ServicesProductsFilter
+                value={filterType}
+                onChange={setFilterType}
+                variant="outline"
+              />
+            ) : undefined
+          }
+        />
+        <ErrorDisplay
+          title="Error loading orders"
+          message="Please try again later"
+          actionLabel="Back to Home"
+          actionHref="/"
+        />
+      </UserPageLayout>
+    )
+  }
 
   return (
     <>
@@ -423,18 +480,18 @@ export default function OrdersPage() {
               <>
                 <SectionHeader
                   title="Request in Progress"
-                  count={mockRequestsInProgress.length}
+                  count={requestsInProgress.length}
                   suffix="Requests in Progress"
                 />
                 <div className="space-y-6 mb-12">
-                  {mockRequestsInProgress.map(request => (
+                  {requestsInProgress.map(request => (
                     <RequestCard
                       key={request.requestId}
                       requestId={request.requestId}
                       requestDate={request.requestDate}
                       status={request.status}
                       service={request.service}
-                      assignedTo={request.assignedTo}
+                      assignedTo={request.assignedTo || undefined}
                       dueDate={request.dueDate}
                       dueTime={request.dueTime}
                       packages={request.packages}
@@ -456,17 +513,17 @@ export default function OrdersPage() {
             )}
 
             {/* Product Orders Section */}
-            {mockOrdersInProgress.length > 0 && (
+            {ordersInProgress.length > 0 && (
               <>
                 <SectionHeader
                   title="Order In Progress"
-                  count={mockOrdersInProgress.length}
+                  count={ordersInProgress.length}
                   suffix="Orders In Progress"
                 />
 
                 {/* Order Cards */}
                 <div className="space-y-6">
-                  {mockOrdersInProgress.map(order => (
+                  {ordersInProgress.map(order => (
                     <OrderCard
                       key={order.orderId}
                       orderId={order.orderId}
@@ -490,18 +547,18 @@ export default function OrdersPage() {
             {hasRequestsHistory && (
               <HistorySection
                 title="Requests History"
-                itemCount={mockRequestsHistory.length}
+                itemCount={requestsHistory.length}
                 suffix="Requests"
                 onClearHistory={handleClearHistory}
               >
-                {mockRequestsHistory.map(request => (
+                {requestsHistory.map(request => (
                   <RequestCard
                     key={request.requestId}
                     requestId={request.requestId}
                     requestDate={request.requestDate}
                     status={request.status}
                     service={request.service}
-                    assignedTo={request.assignedTo}
+                    assignedTo={request.assignedTo || undefined}
                     dueDate={request.dueDate}
                     dueTime={request.dueTime}
                     packages={request.packages}
@@ -517,14 +574,14 @@ export default function OrdersPage() {
             )}
 
             {/* Orders History Section */}
-            {mockOrdersHistory.length > 0 && (
+            {ordersHistory.length > 0 && (
               <HistorySection
                 title="Orders History"
-                itemCount={mockOrdersHistory.length}
+                itemCount={ordersHistory.length}
                 suffix="Orders"
                 onClearHistory={handleClearHistory}
               >
-                {mockOrdersHistory.map(order => (
+                {ordersHistory.map(order => (
                   <OrderCard
                     key={order.orderId}
                     orderId={order.orderId}
@@ -559,6 +616,12 @@ export default function OrdersPage() {
         onBrowseMore={handleBrowseMore}
       />
 
+      {/* Loading Overlay for Mutations */}
+      <LoadingOverlay
+        open={cancelOrderMutation.isPending}
+        title="Cancelling order..."
+        subtitle="Please wait a moment"
+      />
     </>
   )
 }

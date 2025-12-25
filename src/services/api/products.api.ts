@@ -2,6 +2,7 @@ import { apiClient } from './apiClient'
 import type {
   ProductResponse,
   ApiResult,
+  CreateProductReviewRequest,
   ProductVariationResponse,
   ProductAttributeResponse,
   ProductBrandResponse,
@@ -218,19 +219,13 @@ export const getProductReviews = async (
 }
 
 /**
- * Submit product review
+ * Submit a review for a product
+ * POST /api/v1/products/{id}/review
  */
 export const submitProductReview = async (
   productId: number,
-  reviewData: {
-    rating: number
-    review: string
-    title?: string
-    reviewer?: string
-    reviewerEmail?: string
-    isAnonymous?: boolean
-  },
-  params?: {
+  data: CreateProductReviewRequest,
+  query?: {
     providerId?: number
     branchId?: number
     staffId?: string
@@ -240,21 +235,40 @@ export const submitProductReview = async (
     const response = await apiClient.api.postProductSubmitProductReview(
       productId,
       String(productId),
-      {
-        productId,
-        rating: reviewData.rating,
-        review: reviewData.review,
-        title: reviewData.title ?? null,
-        reviewer: reviewData.reviewer ?? null,
-        reviewerEmail: reviewData.reviewerEmail ?? null,
-        isAnonymous: reviewData.isAnonymous ?? false,
-      },
-      params
+      data,
+      query
     )
-    return response.data
-  } catch (error) {
-    console.error('Error submitting product review:', error)
-    throw error
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to submit product review'
+    )
+  }
+}
+
+/**
+ * Toggle favorite for a product
+ * POST /api/v1/products/{productId}/toggle-favorite
+ */
+export const toggleProductFavorite = async (
+  productId: number,
+  query?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<boolean> => {
+  try {
+    const response = await apiClient.api.postProductToggleFavorite(productId, query)
+    const responseAny = response as any
+    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as any
+    // Return true if favorited, false if removed
+    return result?.data ?? result?.success ?? true
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle product favorite'
+    )
   }
 }
 
@@ -287,6 +301,31 @@ export const searchProducts = async (
   } catch (error) {
     console.error('Error searching products:', error)
     return []
+  }
+}
+
+/**
+ * Toggle wishlist for a product
+ * POST /api/v1/products/{productId}/toggle-wishlist
+ */
+export const toggleProductWishlist = async (
+  productId: number,
+  query?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<boolean> => {
+  try {
+    const response = await apiClient.api.postProductToggleWishlist(productId, query)
+    const responseAny = response as any
+    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as any
+    // Return true if added, false if removed
+    return result?.data ?? result?.success ?? true
+  } catch (error: unknown) {
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle product wishlist'
+    )
   }
 }
 

@@ -5,29 +5,35 @@ import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
 import { RatingDisplay } from './RatingDisplay'
-import { Heart, ShoppingCart, CheckCircle2 } from 'lucide-react'
+import { Heart, ShoppingCart, CheckCircle2, Star } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export interface ProductCardProps {
   product: Product
-  onWishlistToggle?: (productId: string) => void
+  onWishlistToggle?: (e: React.MouseEvent) => void
+  onFavoriteToggle?: (e: React.MouseEvent) => void
   onAddToCart?: (productId: string) => void
+  isLoadingWishlist?: boolean
+  isLoadingFavorite?: boolean
   className?: string
 }
 
 export const ProductCard = React.memo(({
   product,
   onWishlistToggle,
+  onFavoriteToggle,
   onAddToCart,
+  isLoadingWishlist = false,
+  isLoadingFavorite = false,
   className,
 }: ProductCardProps) => {
   const hasDiscount = product.price.discounted < product.price.original
   const discountPercentage = hasDiscount
     ? Math.round(
-        ((product.price.original - product.price.discounted) /
-          product.price.original) *
-          100
-      )
+      ((product.price.original - product.price.discounted) /
+        product.price.original) *
+      100
+    )
     : 0
 
   return (
@@ -95,31 +101,62 @@ export const ProductCard = React.memo(({
             </div>
           )}
 
-          {/* Wishlist Icon */}
-          <button
-            onClick={e => {
-              e.preventDefault()
-              onWishlistToggle?.(product.id)
-            }}
-            className={cn(
-              'absolute top-3 right-3 z-10 w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center transition-all duration-200',
-              product.isWishlisted
-                ? 'border-brand-500 bg-brand-50'
-                : 'hover:border-brand-500 hover:bg-gray-50'
+          {/* Action Icons */}
+          <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+            {/* Favorite Icon */}
+            {onFavoriteToggle && (
+              <button
+                onClick={onFavoriteToggle}
+                disabled={isLoadingFavorite}
+                className={cn(
+                  'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  product.isFavorite
+                    ? 'border-brand-500 bg-brand-500'
+                    : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
+                )}
+                aria-label={
+                  product.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                }
+              >
+                <Star
+                  className={cn(
+                    'h-4 w-4 transition-colors',
+                    isLoadingFavorite && 'animate-pulse',
+                    product.isFavorite
+                      ? 'fill-white text-white'
+                      : 'fill-gray-300 text-gray-400'
+                  )}
+                />
+              </button>
             )}
-            aria-label={
-              product.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
-            }
-          >
-            <Heart
+
+            {/* Wishlist Icon */}
+            <button
+              onClick={onWishlistToggle}
+              disabled={isLoadingWishlist}
               className={cn(
-                'h-5 w-5 transition-colors',
+                'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
                 product.isWishlisted
-                  ? 'fill-brand-500 text-brand-500'
-                  : 'text-gray-400'
+                  ? 'border-brand-500 bg-brand-500'
+                  : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
               )}
-            />
-          </button>
+              aria-label={
+                product.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
+              }
+            >
+              <Heart
+                className={cn(
+                  'h-4 w-4 transition-colors',
+                  isLoadingWishlist && 'animate-pulse',
+                  product.isWishlisted
+                    ? 'fill-white text-white'
+                    : 'fill-gray-300 text-gray-400'
+                )}
+              />
+            </button>
+          </div>
         </div>
       </Link>
 
@@ -178,7 +215,7 @@ export const ProductCard = React.memo(({
             onClick={() => onAddToCart?.(product.id)}
             disabled={!product.inStock}
           >
-           Buy Now
+            Buy Now
           </Button>
         </div>
 

@@ -8,9 +8,11 @@ import {
   HeroCarousel,
   OfferBanner,
   Card,
+  LoadingOverlay,
   type ServiceCardData,
   type HeroSlide,
 } from '@/components/ui'
+import { useServiceCardHandlers } from '@/Hooks/services'
 import { WhyBridesChooseProductsSection } from '@/components/products/WhyBridesChooseProductsSection'
 import {
   ProductCategoriesSection,
@@ -439,8 +441,6 @@ function ServicesIntroPageContent() {
       discountedPrice: service.price.discounted,
       tags: service.tags,
       showTopOfferBadge: service.showTopOfferBadge,
-      onWishlistToggle: () => handleWishlistToggle(service.id),
-      onBookNow: () => handleBookNow(service.id),
     })
   )
 
@@ -480,9 +480,25 @@ function ServicesIntroPageContent() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {offersServiceCards.map(cardData => (
-                <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
-              ))}
+              {offersServiceCards.map(cardData => {
+                // Inline component to use hooks properly
+                const ServiceCardItem = () => {
+                  const handlers = useServiceCardHandlers(parseInt(cardData.id, 10))
+                  return (
+                    <Card
+                      cardData={{
+                        type: 'service',
+                        ...cardData,
+                        onWishlistToggle: handlers.handleWishlistToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        isLoadingWishlist: handlers.isLoadingWishlist,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                      }}
+                    />
+                  )
+                }
+                return <ServiceCardItem key={cardData.id} />
+              })}
             </div>
           </section>
 
@@ -545,7 +561,11 @@ export default function ServicesIntroPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-16 text-gray-600">Loading...</div>
+          <LoadingOverlay
+            open={true}
+            title="Loading..."
+            subtitle="Please wait a moment"
+          />
         </div>
       }
     >

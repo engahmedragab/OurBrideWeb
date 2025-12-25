@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { SearchInput } from '@/components/ui/SearchInput'
+import { useCart } from '@/Hooks/cart'
 import brandLogo from '@/assets/svg/Brand-logo.svg'
 import {
   NavigationMenu,
@@ -27,6 +28,8 @@ import {
   X,
   Search,
   ChevronRight,
+  Star,
+  UserPlus,
 } from 'lucide-react'
 
 export interface HeaderProps {
@@ -37,6 +40,17 @@ export const Header = ({ className }: HeaderProps) => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+
+  // Fetch cart data
+  const { data: cartData } = useCart()
+
+  // Calculate cart count (number of unique items)
+  const cartCount = useMemo(() => {
+    if (!cartData) return 0
+    // Count unique items (purchases array length)
+    return cartData.purchases?.length || 0
+  }, [cartData])
+
   const isActive = (path: string) => {
     if (path === '/') {
       return pathname === path
@@ -271,9 +285,11 @@ export const Header = ({ className }: HeaderProps) => {
               >
                 <Link href="/cart" className="relative">
                   <ShoppingCart className="h-5 w-5 text-brand-500" />
-                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white shadow-sm">
-                    0
-                  </span>
+                  {cartCount > 0 && (
+                    <span className="absolute -right-1 -top-1 flex min-w-[16px] h-4 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white shadow-sm px-1">
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
+                  )}
                 </Link>
               </Button>
             </div>
@@ -445,6 +461,36 @@ export const Header = ({ className }: HeaderProps) => {
             </Link>
 
             <Link
+              href="/favorites"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-semibold',
+                'transition-colors duration-150',
+                isActive('/favorites')
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-700 hover:bg-gray-50'
+              )}
+            >
+              <Star className="h-5 w-5" />
+              Favorites
+            </Link>
+
+            <Link
+              href="/follows"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-semibold',
+                'transition-colors duration-150',
+                isActive('/follows')
+                  ? 'bg-brand-50 text-brand-600'
+                  : 'text-gray-700 hover:bg-gray-50'
+              )}
+            >
+              <UserPlus className="h-5 w-5" />
+              Follows
+            </Link>
+
+            <Link
               href="/cart"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
@@ -457,9 +503,11 @@ export const Header = ({ className }: HeaderProps) => {
             >
               <ShoppingCart className="h-5 w-5" />
               <span className="flex-1">My Cart</span>
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="flex min-w-[20px] h-5 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white px-1">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
             </Link>
 
             <Link

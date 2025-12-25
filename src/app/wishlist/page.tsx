@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { UserPageLayout } from '@/components/layout'
 import {
   EmptyState,
@@ -8,337 +8,203 @@ import {
   ProductGrid,
   ServicesProductsFilter,
   PageHeader,
+  ErrorDisplay,
+  LoadingOverlay,
+  SelectPopover,
 } from '@/components/ui'
 import type { Service } from '@/types/service'
 import type { Product } from '@/types/product'
+import { useWishlists, useDeleteWishlist, useAddProductToCart } from '@/Hooks'
+import type { WishlistResponse } from '@/types/responses'
+import { Source } from '@/../client/common/api/gen/ourbride-api'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
-
-// Mock wishlist services data
-const mockWishlistServices: Service[] = [
-  {
-    id: '1',
-    title: 'Service Title',
-    description: 'Professional bridal makeup for your special day.',
-    images: [
-      'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
-    ],
-    provider: {
-      id: '1',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 24 },
-    category: { id: '1', name: 'Makeup', slug: 'makeup' },
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: false,
-    },
-    isWishlisted: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '2',
-    title: 'Service Title',
-    description: 'Expert hair styling and hairdo for weddings.',
-    images: [
-      'https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400',
-    ],
-    provider: {
-      id: '2',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 24 },
-    category: { id: '2', name: 'Hair Care', slug: 'hair-care' },
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-    isWishlisted: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '3',
-    title: 'Service Title',
-    description: 'Complete skincare routine for glowing bridal skin.',
-    images: [
-      'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
-    ],
-    provider: {
-      id: '3',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 24 },
-    category: { id: '3', name: 'Skin Care', slug: 'skin-care' },
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: false,
-    },
-    isWishlisted: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '4',
-    title: 'Service Title',
-    description: 'Full body spa treatment for pre-wedding relaxation.',
-    images: [
-      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
-    ],
-    provider: {
-      id: '4',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 24 },
-    category: { id: '4', name: 'Spa & Massage', slug: 'spa-massage' },
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-    isWishlisted: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '5',
-    title: 'Service Title',
-    description: 'Professional wedding photography services.',
-    images: [
-      'https://images.unsplash.com/photo-1519741497674-611481863552?w=400',
-    ],
-    provider: {
-      id: '5',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 24 },
-    category: { id: '5', name: 'Photography', slug: 'photography' },
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-    isWishlisted: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '6',
-    title: 'Service Title',
-    description: 'Cinematic wedding videography services.',
-    images: [
-      'https://images.unsplash.com/photo-1516035069371-29a1b244b32a?w=400',
-    ],
-    provider: {
-      id: '6',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 24 },
-    category: { id: '6', name: 'Videography', slug: 'videography' },
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-    isWishlisted: true,
-    showTopOfferBadge: true,
-  },
-]
-
-// Mock wishlist products data
-const mockWishlistProducts: Product[] = [
-  {
-    id: '1',
-    title: 'Product Title',
-    description: 'Premium quality wedding cream for bridal beauty.',
-    images: [
-      'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-    ],
-    provider: {
-      id: '1',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 6000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 128 },
-    category: { id: '1', name: 'Makeup', slug: 'makeup' },
-    tags: ['Makeup', 'Body Care'],
-    inStock: true,
-    isWishlisted: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '2',
-    title: 'Product Title',
-    description: 'Complete bridal makeup kit for your special day.',
-    images: [
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-    ],
-    provider: {
-      id: '2',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 89 },
-    category: { id: '1', name: 'Makeup', slug: 'makeup' },
-    tags: ['Makeup', 'Kit'],
-    inStock: true,
-    isWishlisted: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '3',
-    title: 'Product Title',
-    description: 'Professional hair care products for wedding styling.',
-    images: [
-      'https://images.unsplash.com/photo-1583241801824-9055b66b9d29?w=400',
-    ],
-    provider: {
-      id: '3',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 5500, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 67 },
-    category: { id: '2', name: 'Hair Care', slug: 'hair-care' },
-    tags: ['Hair', 'Care'],
-    inStock: true,
-    isWishlisted: true,
-  },
-  {
-    id: '4',
-    title: 'Product Title',
-    description: 'Complete skincare routine for glowing bridal skin.',
-    images: [
-      'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-    ],
-    provider: {
-      id: '4',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 6000, discounted: 4500, currency: 'egp' },
-    rating: { value: 4.5, count: 94 },
-    category: { id: '3', name: 'Skin Care', slug: 'skin-care' },
-    tags: ['Skin', 'Care'],
-    inStock: true,
-    isWishlisted: true,
-  },
-  {
-    id: '5',
-    title: 'Product Title',
-    description: 'Premium wedding accessories collection.',
-    images: [
-      'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-    ],
-    provider: {
-      id: '5',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 4000, discounted: 3500, currency: 'egp' },
-    rating: { value: 4.5, count: 56 },
-    category: { id: '4', name: 'Accessories', slug: 'accessories' },
-    tags: ['Accessories', 'Wedding'],
-    inStock: true,
-    isWishlisted: true,
-    showTopOfferBadge: true,
-  },
-  {
-    id: '6',
-    title: 'Product Title',
-    description: 'Luxury bridal beauty essentials set.',
-    images: [
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-    ],
-    provider: {
-      id: '6',
-      name: 'Provider Name',
-      verified: true,
-    },
-    price: { original: 7000, discounted: 5500, currency: 'egp' },
-    rating: { value: 4.5, count: 112 },
-    category: { id: '1', name: 'Makeup', slug: 'makeup' },
-    tags: ['Makeup', 'Beauty'],
-    inStock: true,
-    isWishlisted: true,
-  },
-]
 
 export default function WishlistPage() {
   const [wishlistType, setWishlistType] = useState<'services' | 'products'>('services')
-  const [wishlistServices, setWishlistServices] = useState<Service[]>(mockWishlistServices)
-  const [wishlistProducts, setWishlistProducts] = useState<Product[]>(mockWishlistProducts)
+  const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
+
+  // Fetch wishlists using WishlistResponse from API
+  const {
+    data: wishlistsData,
+    isLoading: isLoadingWishlists,
+    error: wishlistsError,
+  } = useWishlists({
+    enabled: true,
+    page: 1,
+    pageSize: 100,
+  })
+
+  // Delete wishlist mutation
+  const deleteWishlistMutation = useDeleteWishlist()
+
+  // Extract wishlists from paginated response
+  const wishlists = useMemo(() => {
+    return wishlistsData?.items || []
+  }, [wishlistsData])
+
+  // Filter wishlists by type (services or products) and source
+  const filteredWishlists = useMemo(() => {
+    if (!wishlists.length) return []
+
+    return wishlists.filter((wishlist: WishlistResponse) => {
+      // First filter by source if selected
+      if (selectedSource !== 'all' && wishlist.source !== selectedSource) {
+        return false
+      }
+
+      // Then filter by type (services or products) for backward compatibility
+      const type = wishlist.wishlistType || wishlist.type || ''
+      const category = wishlist.category || ''
+
+      if (wishlistType === 'services') {
+        // Filter for service-related wishlists
+        // Check source first, then fallback to type/category
+        return (
+          wishlist.source === Source.Service ||
+          type.toLowerCase().includes('service') ||
+          category.toLowerCase().includes('service') ||
+          (wishlist.itemCount > 0 && selectedSource === 'all') // If it has items and no source filter, assume it might have services
+        )
+      } else {
+        // Filter for product-related wishlists
+        // Check source first, then fallback to type/category
+        return (
+          wishlist.source === Source.Product ||
+          type.toLowerCase().includes('product') ||
+          category.toLowerCase().includes('product') ||
+          (wishlist.itemCount > 0 && selectedSource === 'all') // If it has items and no source filter, assume it might have products
+        )
+      }
+    })
+  }, [wishlists, wishlistType, selectedSource])
+
+  // For now, since WishlistResponse doesn't contain items array,
+  // we'll use empty arrays for services and products
+  // TODO: Implement wishlist items API or extend WishlistResponse to include items
+  const wishlistServices: Service[] = []
+  const wishlistProducts: Product[] = []
 
   const hasServices = wishlistServices.length > 0
   const hasProducts = wishlistProducts.length > 0
   const hasWishlistItems =
     (wishlistType === 'services' && hasServices) ||
     (wishlistType === 'products' && hasProducts)
+  const hasWishlists = filteredWishlists.length > 0
 
-  const handleServiceWishlistToggle = (serviceId: string) => {
-    // Remove from wishlist
-    setWishlistServices(prev => prev.filter(service => service.id !== serviceId))
+  const handleServiceWishlistToggle = async (serviceId: string) => {
+    // TODO: Find the wishlist containing this service and remove it
+    // For now, this would require wishlist items API
+    // Using deleteWishlist as placeholder - should be remove item from wishlist
+    try {
+      // Find wishlist by service ID (would need wishlist items API)
+      // await deleteWishlistMutation.mutateAsync({ id: wishlistId })
+      console.log('Remove service from wishlist:', serviceId)
+    } catch (error) {
+      console.error('Failed to remove service from wishlist:', error)
+    }
   }
 
-  const handleProductWishlistToggle = (productId: string) => {
-    // Remove from wishlist
-    setWishlistProducts(prev => prev.filter(product => product.id !== productId))
+  const handleProductWishlistToggle = async (productId: string) => {
+    // TODO: Find the wishlist containing this product and remove it
+    // For now, this would require wishlist items API
+    // Using deleteWishlist as placeholder - should be remove item from wishlist
+    try {
+      // Find wishlist by product ID (would need wishlist items API)
+      // await deleteWishlistMutation.mutateAsync({ id: wishlistId })
+      console.log('Remove product from wishlist:', productId)
+    } catch (error) {
+      console.error('Failed to remove product from wishlist:', error)
+    }
   }
 
   const handleBookNow = (_serviceId: string) => {
     // TODO: Implement book now
   }
 
-  const handleAddToCart = (_productId: string) => {
-    // TODO: Implement add to cart
+  const { handleAddToCart: addToCart } = useAddProductToCart()
+
+  const handleAddToCart = async (productId: string) => {
+    // Find the product from wishlistProducts
+    const product = wishlistProducts.find(p => p.id === productId)
+    if (!product) return
+
+    try {
+      await addToCart(product, 1)
+      // Optionally show success message
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+    }
+  }
+
+  // Calculate total items from wishlists
+  // NOTE: This hook must be called before any conditional returns to follow Rules of Hooks
+  const totalItems = useMemo(() => {
+    return filteredWishlists.reduce((sum, wishlist) => sum + (wishlist.itemCount || 0), 0)
+  }, [filteredWishlists])
+
+  // Source filter options - common sources for wishlists
+  const sourceOptions = useMemo(() => [
+    { value: 'all', label: 'All Sources' },
+    { value: Source.Product, label: 'Products' },
+    { value: Source.Service, label: 'Services' },
+    { value: Source.Membership, label: 'Memberships' },
+    { value: Source.GiftCard, label: 'Gift Cards' },
+    { value: Source.ServiceReservation, label: 'Service Reservations' },
+    { value: Source.Provider, label: 'Providers' },
+    { value: Source.Offer, label: 'Offers' },
+    { value: Source.Preparation, label: 'Preparations' },
+    { value: Source.Post, label: 'Posts' },
+    { value: Source.Blog, label: 'Blogs' },
+    { value: Source.Article, label: 'Articles' },
+    { value: Source.Reel, label: 'Reels' },
+  ], [])
+
+  const headerRightContent = (
+    <div className="flex items-center gap-2">
+      <SelectPopover
+        value={selectedSource}
+        onChange={(value) => setSelectedSource(value as Source | 'all')}
+        options={sourceOptions}
+        placeholder="Filter by source"
+        className="w-40"
+      />
+      <ServicesProductsFilter value={wishlistType} onChange={setWishlistType} />
+    </div>
+  )
+
+  // Show loading state
+  if (isLoadingWishlists) {
+    return (
+      <UserPageLayout>
+        <PageHeader
+          title="Wishlist"
+          rightContent={headerRightContent}
+        />
+        <LoadingOverlay
+          open={true}
+          title="Loading wishlists..."
+          subtitle="Please wait a moment"
+        />
+      </UserPageLayout>
+    )
+  }
+
+  // Show error state
+  if (wishlistsError) {
+    return (
+      <UserPageLayout>
+        <PageHeader
+          title="Wishlist"
+          rightContent={headerRightContent}
+        />
+        <ErrorDisplay
+          title="Error loading wishlists"
+          message="Please try again later"
+          actionLabel="Back to Home"
+          actionHref="/"
+        />
+      </UserPageLayout>
+    )
   }
 
   return (
@@ -347,13 +213,11 @@ export default function WishlistPage() {
       <PageHeader
         title="Wishlist"
         subtitle={
-          hasWishlistItems
-            ? `${wishlistType === 'services' ? wishlistServices.length : wishlistProducts.length} Items`
+          hasWishlistItems || hasWishlists
+            ? `${totalItems > 0 ? totalItems : filteredWishlists.length} ${totalItems === 1 ? 'Item' : 'Items'}`
             : undefined
         }
-        rightContent={
-          <ServicesProductsFilter value={wishlistType} onChange={setWishlistType} />
-        }
+        rightContent={headerRightContent}
       />
 
       {/* Content Area */}
@@ -380,6 +244,13 @@ export default function WishlistPage() {
           actionHref="/products"
         />
       )}
+
+      {/* Loading Overlay for Mutations */}
+      <LoadingOverlay
+        open={deleteWishlistMutation.isPending}
+        title="Updating wishlist..."
+        subtitle="Please wait a moment"
+      />
     </UserPageLayout>
   )
 }

@@ -19,6 +19,7 @@ import type {
   PriceCalculationResponse,
   CheckoutResponse,
   PaginatedList,
+  CartProviderResponse,
 } from '@/types/responses'
 
 /**
@@ -27,7 +28,8 @@ import type {
 export const addPurchase = async (data: PurchaseRequest): Promise<CartResponse> => {
   try {
     const response = await apiClient.api.postPurchasePurchase(data)
-    return (response?.data ?? response) as unknown as CartResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to add purchase')
   }
@@ -41,8 +43,14 @@ export const updatePurchase = async (
   data: PurchaseUpdateRequest
 ): Promise<CartResponse> => {
   try {
-    const response = await apiClient.api.putPurchaseUpdatePurchase(id, data)
-    return (response?.data ?? response) as unknown as CartResponse
+    // Ensure the purchase ID is included in the request body
+    const requestData: PurchaseUpdateRequest = {
+      ...data,
+      id: data.id ?? parseInt(id, 10),
+    }
+    const response = await apiClient.api.putPurchaseUpdatePurchase(id, requestData)
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to update purchase')
   }
@@ -68,7 +76,8 @@ export const removePurchase = async (
 export const getAllPurchases = async (): Promise<PurchaseResponse[]> => {
   try {
     const response = await apiClient.api.getPurchaseGetAll()
-    return (response?.data ?? response) as unknown as PurchaseResponse[]
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PurchaseResponse[]
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch purchases')
   }
@@ -80,7 +89,8 @@ export const getAllPurchases = async (): Promise<PurchaseResponse[]> => {
 export const getPurchaseById = async (id: number): Promise<PurchaseResponse> => {
   try {
     const response = await apiClient.api.getPurchaseGetById(id)
-    return (response?.data ?? response) as unknown as PurchaseResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PurchaseResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch purchase')
   }
@@ -92,7 +102,8 @@ export const getPurchaseById = async (id: number): Promise<PurchaseResponse> => 
 export const getPurchasesByReservationId = async (reservationId: string): Promise<PurchaseResponse[]> => {
   try {
     const response = await apiClient.api.getPurchaseGetPurchasesByReservationId(reservationId)
-    return (response?.data ?? response) as unknown as PurchaseResponse[]
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PurchaseResponse[]
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch purchases by reservation')
   }
@@ -117,7 +128,8 @@ export const getPurchasesByReservationId = async (reservationId: string): Promis
 export const getCart = async (): Promise<CartResponse> => {
   try {
     const response = await apiClient.api.getPurchaseGetCart()
-    return (response?.data ?? response) as unknown as CartResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch cart')
   }
@@ -140,7 +152,8 @@ export const clearCart = async (): Promise<void> => {
 export const getPurchasesByCart = async (): Promise<PurchaseResponse[]> => {
   try {
     const response = await apiClient.api.getPurchaseGetPurchasesByCart()
-    return (response?.data ?? response) as unknown as PurchaseResponse[]
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PurchaseResponse[]
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch purchases by cart')
   }
@@ -152,7 +165,21 @@ export const getPurchasesByCart = async (): Promise<PurchaseResponse[]> => {
 export const getAllCartsWithProviders = async (): Promise<UserCartWithProviderResponse[]> => {
   try {
     const response = await apiClient.api.getPurchaseGetAllCartsWithProviders()
-    return (response?.data ?? response) as unknown as UserCartWithProviderResponse[]
+    const responseAny = response as any
+    const data = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as unknown
+    
+    // Ensure we return an array
+    if (Array.isArray(data)) {
+      return data as UserCartWithProviderResponse[]
+    }
+    
+    // If data is not an array, return empty array or wrap it
+    if (data && typeof data === 'object') {
+      // Check if it's a single object that should be wrapped
+      return [data] as UserCartWithProviderResponse[]
+    }
+    
+    return []
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch carts with providers')
   }
@@ -164,7 +191,8 @@ export const getAllCartsWithProviders = async (): Promise<UserCartWithProviderRe
 export const getCartByProvider = async (providerId: number): Promise<CartResponse> => {
   try {
     const response = await apiClient.api.getPurchaseGetCartByProvider(providerId)
-    return (response?.data ?? response) as unknown as CartResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch cart by provider')
   }
@@ -187,7 +215,8 @@ export const clearCartByProvider = async (providerId: number): Promise<void> => 
 export const getPurchasesByProviderCart = async (providerId: number): Promise<PurchaseResponse[]> => {
   try {
     const response = await apiClient.api.getPurchaseGetPurchasesByProviderCart(providerId)
-    return (response?.data ?? response) as unknown as PurchaseResponse[]
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PurchaseResponse[]
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch purchases by provider cart')
   }
@@ -199,7 +228,8 @@ export const getPurchasesByProviderCart = async (providerId: number): Promise<Pu
 export const createOrder = async (data: CheckoutRequest): Promise<CheckoutResponse> => {
   try {
     const response = await apiClient.api.postPurchaseCreateOrder(data)
-    return (response?.data ?? response) as unknown as CheckoutResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CheckoutResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to create order')
   }
@@ -211,7 +241,8 @@ export const createOrder = async (data: CheckoutRequest): Promise<CheckoutRespon
 export const checkout = async (data: CheckoutRequest): Promise<CheckoutResponse> => {
   try {
     const response = await apiClient.api.postPurchaseCheckout(data)
-    return (response?.data ?? response) as unknown as CheckoutResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CheckoutResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to checkout')
   }
@@ -223,7 +254,8 @@ export const checkout = async (data: CheckoutRequest): Promise<CheckoutResponse>
 export const validateCoupon = async (couponCode: string): Promise<unknown> => {
   try {
     const response = await apiClient.api.postPurchaseValidateCoupon(couponCode)
-    return response?.data ?? response
+    const responseAny = response as any
+    return responseAny?.data?.data ?? responseAny?.data ?? responseAny
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to validate coupon')
   }
@@ -235,7 +267,8 @@ export const validateCoupon = async (couponCode: string): Promise<unknown> => {
 export const searchOrders = async (data: ServiceOrderSearchRequest): Promise<PaginatedList<ServiceOrderResponse>> => {
   try {
     const response = await apiClient.api.postPurchaseGetOrdersPaginated(data)
-    return (response?.data ?? response) as unknown as PaginatedList<ServiceOrderResponse>
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<ServiceOrderResponse>
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to search orders')
   }
@@ -247,7 +280,8 @@ export const searchOrders = async (data: ServiceOrderSearchRequest): Promise<Pag
 export const getPaymentsPaginated = async (data: PaymentSearchRequest): Promise<PaginatedList<PaymentResponse>> => {
   try {
     const response = await apiClient.api.postPurchaseGetPaymentsPaginated(data)
-    return (response?.data ?? response) as unknown as PaginatedList<PaymentResponse>
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<PaymentResponse>
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch payments')
   }
@@ -264,7 +298,8 @@ export const createOrderForGuest = async (
     const response = await apiClient.api.postPurchaseCreateOrderForGuest(data, {
       deviceId,
     })
-    return (response?.data ?? response) as unknown as CheckoutResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CheckoutResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to create order for guest')
   }
@@ -281,7 +316,8 @@ export const checkoutForGuest = async (
     const response = await apiClient.api.postPurchaseCheckoutForGuest(data, {
       deviceId,
     })
-    return (response?.data ?? response) as unknown as CheckoutResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CheckoutResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to checkout for guest')
   }
@@ -298,7 +334,8 @@ export const purchaseForGuest = async (
     const response = await apiClient.api.postPurchasePurchaseForGuest(data, {
       deviceId,
     })
-    return (response?.data ?? response) as unknown as CartResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to purchase for guest')
   }
@@ -315,8 +352,34 @@ export const calculatePricesForGuest = async (
     const response = await apiClient.api.postPurchaseCalculatePricesForGuest(data, {
       deviceId,
     })
-    return (response?.data ?? response) as unknown as PriceCalculationResponse
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PriceCalculationResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to calculate prices for guest')
+  }
+}
+
+/**
+ * Get cart providers (providers that have items in the user's cart)
+ */
+export const getCartProviders = async (): Promise<CartProviderResponse[]> => {
+  try {
+    const response = await apiClient.api.getPurchaseGetCartProviders()
+    const responseAny = response as any
+    const data = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as unknown
+    
+    // Ensure we return an array
+    if (Array.isArray(data)) {
+      return data as CartProviderResponse[]
+    }
+    
+    // If data is not an array, return empty array or wrap it
+    if (data && typeof data === 'object') {
+      return [data] as CartProviderResponse[]
+    }
+    
+    return []
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch cart providers')
   }
 }

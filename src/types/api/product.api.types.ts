@@ -1,11 +1,8 @@
 import type {
   ProductResponse,
-  ProductImageResponse,
-  ProductCategoryLineResponse,
-  ProductTagLineResponse,
   ProviderInfoResponse,
-  ProductReviewResponse,
 } from '@/../client/common/api/gen/ourbride-api'
+import type { ProductCategoryLineResponse } from '@/types/responses/product-category-line-response'
 import type { Product, ProductCategory } from '@/types/product'
 
 /**
@@ -21,8 +18,10 @@ export const mapProductResponseToProduct = (
   }
   if (apiProduct.images && apiProduct.images.length > 0) {
     apiProduct.images.forEach(img => {
-      if (img.src && typeof img.src === 'string' && img.src.trim() !== '' && !images.includes(img.src)) {
-        images.push(img.src)
+      // MediaResponse has 'url' property, not 'src'
+      const imageUrl = img.url || img.originalUrl || img.thumbnailUrl || img.previewUrl
+      if (imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '' && !images.includes(imageUrl)) {
+        images.push(imageUrl)
       }
     })
   }
@@ -39,8 +38,12 @@ export const mapProductResponseToProduct = (
   if (Array.isArray(apiProduct.tags)) {
     tags.push(...apiProduct.tags.map(tag => (tag && typeof tag === 'object' && 'name' in tag ? tag.name || '' : '')).filter(Boolean))
   }
-  if (apiProduct.providerProductTags && apiProduct.providerProductTags.length > 0) {
-    apiProduct.providerProductTags.forEach(tag => {
+  // Access providerProductTags using type assertion since it may exist in runtime but not in the generated type
+  const productWithProviderTags = apiProduct as typeof apiProduct & {
+    providerProductTags?: Array<{ name?: string | null }> | null
+  }
+  if (productWithProviderTags.providerProductTags && productWithProviderTags.providerProductTags.length > 0) {
+    productWithProviderTags.providerProductTags.forEach(tag => {
       // Safely access name property, similar to how tags array is handled
       if (tag && typeof tag === 'object' && 'name' in tag && tag.name && !tags.includes(tag.name as string)) {
         tags.push(tag.name as string)
@@ -55,11 +58,11 @@ export const mapProductResponseToProduct = (
     slug: '',
   }
 
-  if (apiProduct.categories && apiProduct.categories.length > 0) {
-    const firstCategory = apiProduct.categories[0]
-    category.id = String(firstCategory.id || category.id)
-    category.name = firstCategory.name || ''
-    category.slug = firstCategory.slug || ''
+  // Use category object if available, otherwise use categoryId
+  if (apiProduct.category) {
+    category.id = String(apiProduct.category.id || category.id)
+    category.name = apiProduct.category.nameEn || apiProduct.category.nameAr || apiProduct.category.name || ''
+    category.slug = apiProduct.category.slug || ''
   }
 
   // Extract provider
@@ -81,7 +84,7 @@ export const mapProductResponseToProduct = (
 
   // Extract rating
   const ratingValue = apiProduct.rate
-    ? parseFloat(apiProduct.rate)
+    ? (typeof apiProduct.rate === 'string' ? parseFloat(apiProduct.rate) : apiProduct.rate)
     : apiProduct.averageRating
     ? parseFloat(apiProduct.averageRating)
     : 0
@@ -90,15 +93,15 @@ export const mapProductResponseToProduct = (
   // Map reviews if available
   const reviews = apiProduct.reviews?.map(review => ({
     id: String(review.id || ''),
-    userId: review.reviewerEmail || '',
-    userName: review.reviewer || 'Anonymous',
+    userId: review.userId || '',
+    userName: review.title || 'Anonymous',
     userImage: '',
-    rating: review.rating || 0,
-    comment: review.review || '',
+    rating: review.rate || 0,
+    comment: review.comment || '',
     images: [],
-    date: review.dateCreated || '',
-    verified: false,
-    helpful: 0,
+    date: review.creationDate || '',
+    verified: review.isVerified || false,
+    helpful: review.likes || 0,
   }))
 
   return {
