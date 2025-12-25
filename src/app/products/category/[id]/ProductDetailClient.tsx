@@ -13,10 +13,8 @@ import {
   BackButton,
   Button,
   QuantitySelector,
+  useToast,
 } from '@/components/ui'
-import { cn } from '@/lib/utils'
-import productImage from '@/assets/svg/product-1.svg'
-import type { ProductCardData } from '@/components/ui/Card'
 import type { Product } from '@/types/product'
 import { useProductCardHandlers, useAddProductToCart } from '@/hooks/products'
 import { useProviderCardHandlers } from '@/hooks/providers'
@@ -26,11 +24,14 @@ import {
   useRelatedProducts,
   useProductReviews,
   useSubmitProductReview,
+  useProductVariations,
+  useProductAttributes,
 } from '@/hooks/products'
 import { ProductPageLayout } from '../../components/ProductPageLayout'
 import { ProductErrorState } from '../../components/ProductErrorState'
 import { parseProductId } from '../../utils'
 import { RELATED_PRODUCTS_LIMIT } from '../../constants'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 interface ProductDetailClientProps {
   productId: string
@@ -64,8 +65,62 @@ const ProviderCardWithHandlers = ({
   )
 }
 
+// Wrapper component for product card with handlers
+const ProductCardWithHandlers = ({
+  product,
+  onCardClick,
+  addToast,
+}: {
+  product: Product
+  onCardClick: () => void
+  addToast: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
+}) => {
+  const handlers = useProductCardHandlers(parseInt(product.id, 10), {
+    onFavoriteSuccess: (response) => {
+      const defaultMessage = response === true ? 'Added to favorites' : 'Removed from favorites'
+      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update favorite')
+      addToast(message, 'success')
+    },
+    onFavoriteError: (error) => {
+      addToast(error.message || 'Failed to update favorite. Please try again.', 'error')
+    },
+    onWishlistSuccess: (response) => {
+      const defaultMessage = response === true ? 'Added to wishlist' : 'Removed from wishlist'
+      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update wishlist')
+      addToast(message, 'success')
+    },
+    onWishlistError: (error) => {
+      addToast(error.message || 'Failed to update wishlist. Please try again.', 'error')
+    },
+  })
+  return (
+    <Card
+      cardData={{
+        type: 'product',
+        id: product.id,
+        image: product.images?.[0] || '',
+        title: product.title,
+        providerName: product.provider?.name || '',
+        verified: product.provider?.verified || false,
+        originalPrice: product.price?.original || 0,
+        discountedPrice: product.price?.discounted || 0,
+        rating: product.rating?.value || 0,
+        tags: product.tags || [],
+        showTopOfferBadge: product.showTopOfferBadge || false,
+        onWishlistToggle: handlers.handleWishlistToggle,
+        onFavoriteToggle: handlers.handleFavoriteToggle,
+        isLoadingWishlist: handlers.isLoadingWishlist,
+        isLoadingFavorite: handlers.isLoadingFavorite,
+      }}
+      onClick={onCardClick}
+      className="cursor-pointer"
+    />
+  )
+}
+
 export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   const router = useRouter()
+  const { addToast } = useToast()
   const [quantity, setQuantity] = useState(1)
   const [userRating, setUserRating] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
@@ -87,9 +142,9 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   // Fetch product reviews
   const { data: reviews = [] } = useProductReviews(parsedProductId)
 
-  // TODO: Use variations and attributes when implementing product variant selection
-  // const { data: variations = [] } = useProductVariations(parsedProductId)
-  // const { data: attributes = [] } = useProductAttributes(parsedProductId)
+  // Fetch product variations and attributes
+  const { data: variations = [] } = useProductVariations(parsedProductId)
+  const { data: attributes = [] } = useProductAttributes(parsedProductId)
 
   // TODO: Use related category products when implementing category-based recommendations
   // const { data: relatedCategoryProducts = [] } = useRelatedCategoryProducts(
@@ -99,6 +154,9 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
 
   // Submit review mutation
   const submitReviewMutation = useSubmitProductReview()
+
+  // Add to cart hook - MUST be called before any conditional returns
+  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
 
   // Show loading state
   if (productLoading) {
@@ -126,16 +184,20 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     )
   }
 
-  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
-
   const handleAddToCart = async () => {
     if (!product) return
     try {
-      await addToCart(product, quantity)
-      // Optionally navigate to cart or show success message
-      // router.push('/cart')
+      const response = await addToCart(product, quantity)
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Product added to cart successfully!',
+        'Failed to add product to cart'
+      )
+      addToast(message, type)
     } catch (error) {
       console.error('Failed to add product to cart:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      addToast(errorMessage, 'error')
     }
   }
 
@@ -151,15 +213,27 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     try {
       if (!parsedProductId) return
 
-      await submitReviewMutation.mutateAsync({
+      const response = await submitReviewMutation.mutateAsync({
         productId: parsedProductId,
         rating: userRating,
         review: reviewComment,
       })
-      setUserRating(0)
-      setReviewComment('')
+      
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Review submitted successfully!',
+        'Failed to submit review'
+      )
+      
+      if (type === 'success') {
+        setUserRating(0)
+        setReviewComment('')
+      }
+      addToast(message, type)
     } catch (error) {
       console.error('Error submitting review:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+      addToast(errorMessage, 'error')
     }
   }
 
@@ -201,6 +275,87 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
               discounted={product.price.discounted}
               currency={product.price.currency}
             />
+
+            {/* Product Attributes */}
+            {attributes.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-16 font-semibold text-gray-900">Attributes</h3>
+                <div className="flex flex-wrap gap-2">
+                  {attributes.map((attr, index) => {
+                    const attrName = attr.nameEn || attr.nameAr || attr.name || 'Attribute'
+                    
+                    // Handle attribute value - could be string, JSON string, or array
+                    let attrValue: string = 'N/A'
+                    const rawValue = attr.options || attr.attribute || attr.descriptionEn || attr.descriptionAr
+                    
+                    if (rawValue) {
+                      // Try to parse if it's a JSON string
+                      if (typeof rawValue === 'string') {
+                        try {
+                          const parsed = JSON.parse(rawValue)
+                          if (Array.isArray(parsed)) {
+                            attrValue = (parsed as string[]).join(', ')
+                          } else {
+                            attrValue = rawValue
+                          }
+                        } catch {
+                          // Not JSON, use as is
+                          attrValue = rawValue
+                        }
+                      } else if (Array.isArray(rawValue)) {
+                        attrValue = (rawValue as string[]).join(', ')
+                      } else {
+                        attrValue = String(rawValue)
+                      }
+                    }
+                    
+                    return (
+                      <div
+                        key={attr.id || index}
+                        className="px-3 py-1 bg-gray-100 rounded-full text-14 text-gray-700"
+                      >
+                        <span className="font-medium">{attrName}:</span>{' '}
+                        <span>{attrValue}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Product Variations */}
+            {variations.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-16 font-semibold text-gray-900">Available Options</h3>
+                <div className="space-y-2">
+                  {variations.map((variation, index) => (
+                    <div
+                      key={variation.id || index}
+                      className="p-3 border border-gray-200 rounded-lg"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-14 font-medium text-gray-900">
+                            {variation.name || `Option ${index + 1}`}
+                          </span>
+                          {variation.price && (
+                            <span className="text-14 text-gray-600 ml-2">
+                              - {variation.price.toLocaleString()} {product.price.currency}
+                            </span>
+                          )}
+                        </div>
+                        {variation.inStock !== false && (
+                          <Badge variant="success" size="sm">In Stock</Badge>
+                        )}
+                      </div>
+                      {variation.description && (
+                        <p className="text-12 text-gray-500 mt-1">{variation.description}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-4">
               <span className="text-14 text-gray-600">Quantity:</span>
@@ -353,39 +508,14 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
               Related Products
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map(relatedProduct => {
-                // Inline component to use hooks properly
-                const ProductCardItem = () => {
-                  const handlers = useProductCardHandlers(parseInt(relatedProduct.id, 10))
-                  return (
-                    <Card
-                      key={relatedProduct.id}
-                      cardData={{
-                        type: 'product',
-                        id: relatedProduct.id,
-                        image: relatedProduct.images?.[0] || '',
-                        title: relatedProduct.title,
-                        providerName: relatedProduct.provider?.name || '',
-                        verified: relatedProduct.provider?.verified || false,
-                        originalPrice: relatedProduct.price?.original || 0,
-                        discountedPrice: relatedProduct.price?.discounted || 0,
-                        rating: relatedProduct.rating?.value || 0,
-                        tags: relatedProduct.tags || [],
-                        showTopOfferBadge: relatedProduct.showTopOfferBadge || false,
-                        onWishlistToggle: handlers.handleWishlistToggle,
-                        onFavoriteToggle: handlers.handleFavoriteToggle,
-                        isLoadingWishlist: handlers.isLoadingWishlist,
-                        isLoadingFavorite: handlers.isLoadingFavorite,
-                      }}
-                      onClick={() =>
-                        router.push(`/products/${relatedProduct.id}`)
-                      }
-                      className="cursor-pointer"
-                    />
-                  )
-                }
-                return <ProductCardItem key={relatedProduct.id} />
-              })}
+              {relatedProducts.map(relatedProduct => (
+                <ProductCardWithHandlers
+                  key={relatedProduct.id}
+                  product={relatedProduct}
+                  onCardClick={() => router.push(`/products/${relatedProduct.id}`)}
+                  addToast={addToast}
+                />
+              ))}
             </div>
           </div>
         )}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, use } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -18,80 +18,21 @@ import {
   OfferBanner,
   BackButton,
   LoadingSpinner,
+  useToast,
 } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import productImage from '@/assets/svg/product-1.svg'
-import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
-import type { ProductCardData } from '@/components/ui/Card'
-import type { Product } from '@/types/product'
 import {
   useProductDetails,
   useRelatedProducts,
   useProductCardHandlers,
   useAddProductToCart,
+  useProductReviews,
+  useSubmitProductReview,
 } from '@/hooks/products'
 import { useProviderCardHandlers } from '@/hooks/providers'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
-// Mock reviews (TODO: Replace with API call when reviews endpoint is available)
-interface Review {
-  id: string
-  userName: string
-  userAvatar?: string
-  date: string
-  rating: number
-  text: string
-  helpful: number
-}
-
-const mockReviews: Review[] = [
-  {
-    id: '1',
-    userName: 'Sarah Johnson',
-    userAvatar:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    date: '2 months ago',
-    rating: 5,
-    text: 'Amazing product! My skin looks radiant and feels so smooth. Highly recommend for brides-to-be! The cream is lightweight and absorbs quickly without leaving any greasy residue.',
-    helpful: 24,
-  },
-  {
-    id: '2',
-    userName: 'Emily Chen',
-    userAvatar:
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
-    date: '3 months ago',
-    rating: 5,
-    text: 'Great quality and fast shipping. The cream is very hydrating and perfect for my skin type. I use it daily and my skin has never looked better!',
-    helpful: 18,
-  },
-  {
-    id: '3',
-    userName: 'Maria Garcia',
-    date: '1 month ago',
-    rating: 4,
-    text: 'Love this product! Will definitely order again. The packaging is beautiful and the product itself is excellent quality.',
-    helpful: 12,
-  },
-  {
-    id: '4',
-    userName: 'Jessica Williams',
-    userAvatar:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-    date: '2 weeks ago',
-    rating: 5,
-    text: 'Perfect for my wedding day! My makeup went on flawlessly and stayed all day. Highly recommend!',
-    helpful: 31,
-  },
-]
-
-// Mock rating distribution
-const ratingDistribution = [
-  { stars: 5, count: 5786, percentage: 70 },
-  { stars: 4, count: 1653, percentage: 20 },
-  { stars: 3, count: 495, percentage: 6 },
-  { stars: 2, count: 165, percentage: 2 },
-  { stars: 1, count: 165, percentage: 2 },
-]
 
 interface ProductCategoryDetailClientProps {
   productId: string
@@ -126,6 +67,7 @@ export function ProductCategoryDetailClient({
   productId,
 }: ProductCategoryDetailClientProps) {
   const router = useRouter()
+  const { addToast } = useToast()
   const [quantity, setQuantity] = useState(1)
   const [userRating, setUserRating] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
@@ -137,11 +79,43 @@ export function ProductCategoryDetailClient({
     error: productError,
   } = useProductDetails(productId)
 
+  const parsedProductId = productId ? parseInt(productId, 10) : null
+
+  // Fetch product reviews
+  const { data: reviews = [] } = useProductReviews(parsedProductId)
+
+  // Submit review mutation
+  const submitReviewMutation = useSubmitProductReview()
+
+  // Add to cart hook - MUST be called before any conditional returns
+  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
   // Fetch related products
   const { data: relatedProducts = [] } = useRelatedProducts(
-    productId ? parseInt(productId, 10) : null,
+    parsedProductId,
     4
   )
+
+  // Calculate rating distribution from actual reviews
+  const ratingDistribution = useMemo(() => {
+    if (!reviews || reviews.length === 0) {
+      return [
+        { stars: 5, count: 0, percentage: 0 },
+        { stars: 4, count: 0, percentage: 0 },
+        { stars: 3, count: 0, percentage: 0 },
+        { stars: 2, count: 0, percentage: 0 },
+        { stars: 1, count: 0, percentage: 0 },
+      ]
+    }
+
+    const distribution = [5, 4, 3, 2, 1].map(stars => {
+      const count = reviews.filter(r => Math.round(r.rating) === stars).length
+      const percentage = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0
+      return { stars, count, percentage }
+    })
+
+    return distribution
+  }, [reviews])
 
   // Show loading state
   if (productLoading) {
@@ -178,16 +152,20 @@ export function ProductCategoryDetailClient({
     )
   }
 
-  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
-
   const handleAddToCart = async () => {
     if (!product) return
     try {
-      await addToCart(product, quantity)
-      // Optionally show success message or navigate to cart
+      const response = await addToCart(product, quantity)
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Product added to cart successfully!',
+        'Failed to add product to cart'
+      )
+      addToast(message, type)
     } catch (error) {
       console.error('Failed to add product to cart:', error)
-      // Optionally show error message
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      addToast(errorMessage, 'error')
     }
   }
 
@@ -212,34 +190,6 @@ export function ProductCategoryDetailClient({
       1: 'Poor',
     }
     return labels[stars] || ''
-  }
-
-  // Convert product to OrderItem format for the modal
-  const getOrderItems = (): OrderItem[] => {
-    const discountPercentage =
-      product.price.original > product.price.discounted
-        ? Math.round(
-          ((product.price.original - product.price.discounted) /
-            product.price.original) *
-          100
-        )
-        : 0
-
-    return [
-      {
-        id: product.id,
-        title: product.title,
-        image: product.images?.[0]?.trim() || '',
-        originalPrice: product.price.original,
-        discountedPrice: product.price.discounted,
-        currency: product.price.currency,
-        quantity: quantity,
-        discountPercentage:
-          discountPercentage > 0 ? discountPercentage : undefined,
-        deliveryDate: '29/8/2025', // You can calculate this dynamically
-        maxQuantity: product.stockQuantity || 99,
-      },
-    ]
   }
 
   return (
@@ -329,7 +279,7 @@ export function ProductCategoryDetailClient({
                   deliveryLocation="Giza, 6 Of O..."
                   fullAddress="Giza, 6 Of October City, Building 15, Apartment 42"
                   maxQuantity={product.stockQuantity || 99}
-                  disabled={!product.inStock}
+                  disabled={!product.inStock || isLoadingAddToCart}
                 />
               </div>
             </div>
@@ -349,85 +299,82 @@ export function ProductCategoryDetailClient({
               </div>
 
               <div className="space-y-4">
-                {/* Use product reviews if available, otherwise show mock reviews */}
-                {(product.reviews && product.reviews.length > 0
-                  ? product.reviews.map(review => ({
-                    id: review.id,
-                    userName: review.userName,
-                    userAvatar: review.userImage,
-                    date: review.date,
-                    rating: review.rating,
-                    text: review.comment,
-                    helpful: review.helpful,
-                  }))
-                  : mockReviews
-                ).map(review => (
-                  <div
-                    key={review.id}
-                    className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
-                  >
-                    <div className="flex items-start gap-4">
-                      {/* User Avatar */}
-                      <div className="flex-shrink-0">
-                        {review.userAvatar ? (
-                          <div className="relative w-12 h-12">
-                            <Image
-                              src={review.userAvatar}
-                              alt={review.userName}
-                              fill
-                              sizes="48px"
-                              className="rounded-full object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                            <span className="text-16 font-semibold text-gray-600">
-                              {review.userName.charAt(0)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Review Content */}
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-16 font-semibold text-gray-900">
-                                {review.userName}
+                {/* Use API reviews if available, otherwise show empty state */}
+                {reviews.length > 0 ? (
+                  reviews.map(review => (
+                    <div
+                      key={review.id}
+                      className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                    >
+                      <div className="flex items-start gap-4">
+                        {/* User Avatar */}
+                        <div className="flex-shrink-0">
+                          {review.userImage ? (
+                            <div className="relative w-12 h-12">
+                              <Image
+                                src={review.userImage}
+                                alt={review.userName}
+                                fill
+                                sizes="48px"
+                                className="rounded-full object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                              <span className="text-16 font-semibold text-gray-600">
+                                {review.userName?.charAt(0) || 'U'}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-12 text-gray-500">
-                                {review.date}
-                              </span>
-                              <div className="flex items-center gap-0.5">
-                                {[1, 2, 3, 4, 5].map(star => (
-                                  <Star
-                                    key={star}
-                                    className={cn(
-                                      'h-4 w-4',
-                                      star <= review.rating
-                                        ? 'fill-brand-500 text-brand-500'
-                                        : 'fill-gray-200 text-gray-200'
-                                    )}
-                                  />
-                                ))}
+                          )}
+                        </div>
+
+                        {/* Review Content */}
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-16 font-semibold text-gray-900">
+                                  {review.userName || 'Anonymous'}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-12 text-gray-500">
+                                  {review.date ? new Date(review.date).toLocaleDateString() : 'Recently'}
+                                </span>
+                                <div className="flex items-center gap-0.5">
+                                  {[1, 2, 3, 4, 5].map(star => (
+                                    <Star
+                                      key={star}
+                                      className={cn(
+                                        'h-4 w-4',
+                                        star <= review.rating
+                                          ? 'fill-brand-500 text-brand-500'
+                                          : 'fill-gray-200 text-gray-200'
+                                      )}
+                                    />
+                                  ))}
+                                </div>
                               </div>
                             </div>
+                            {review.helpful !== undefined && review.helpful > 0 && (
+                              <button className="flex items-center gap-1 text-12 text-gray-500 hover:text-gray-700">
+                                <ThumbsUp className="h-4 w-4" />
+                                <span>{review.helpful}</span>
+                              </button>
+                            )}
                           </div>
-                          <button className="flex items-center gap-1 text-12 text-gray-500 hover:text-gray-700">
-                            <ThumbsUp className="h-4 w-4" />
-                            <span>{review.helpful}</span>
-                          </button>
+                          <p className="text-14 text-gray-600 leading-relaxed">
+                            {review.comment || ''}
+                          </p>
                         </div>
-                        <p className="text-14 text-gray-600 leading-relaxed">
-                          {review.text}
-                        </p>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No reviews yet. Be the first to review this product!
                   </div>
-                ))}
+                )}
               </div>
 
               <div className="mt-6 text-center">
@@ -474,18 +421,42 @@ export function ProductCategoryDetailClient({
 
                   {/* Send Button */}
                   <button
-                    onClick={() => {
-                      if (reviewComment.trim()) {
-                        // TODO: Implement review submission
-                        setReviewComment('')
-                        setUserRating(0)
+                    onClick={async () => {
+                      if (reviewComment.trim() && userRating > 0 && parsedProductId) {
+                        try {
+                          const response = await submitReviewMutation.mutateAsync({
+                            productId: parsedProductId,
+                            rating: userRating,
+                            review: reviewComment.trim(),
+                          })
+                          
+                          const { message, type } = handleApiResponseForToast(
+                            response,
+                            'Review submitted successfully!',
+                            'Failed to submit review'
+                          )
+                          
+                          if (type === 'success') {
+                            setReviewComment('')
+                            setUserRating(0)
+                          }
+                          addToast(message, type)
+                        } catch (error) {
+                          console.error('Error submitting review:', error)
+                          const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+                          addToast(errorMessage, 'error')
+                        }
                       }
                     }}
-                    disabled={!reviewComment.trim()}
+                    disabled={!reviewComment.trim() || userRating === 0 || submitReviewMutation.isPending || !parsedProductId}
                     className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
                     aria-label="Send review"
                   >
-                    <Send className="h-5 w-5 text-white flex-shrink-0" />
+                    {submitReviewMutation.isPending ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Send className="h-5 w-5 text-white flex-shrink-0" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -512,7 +483,6 @@ export function ProductCategoryDetailClient({
                 </div>
 
                 {/* Rating Breakdown */}
-                {/* TODO: Calculate rating distribution from product.reviews */}
                 <div className="space-y-3 mt-6">
                   {ratingDistribution.map(item => (
                     <div key={item.stars} className="space-y-1">

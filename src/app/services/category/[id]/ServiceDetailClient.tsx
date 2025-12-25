@@ -24,12 +24,23 @@ import {
   BookingConfirmationModal,
   BackButton,
   ProviderCard,
+  LoadingSpinner,
+  useToast,
 } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { Service } from '@/types/service'
-import { useServiceCardHandlers } from '@/hooks/services'
+import {
+  useServiceCardHandlers,
+  useServiceDetail,
+  useRelatedServicesByPreparation,
+  useServiceReviews,
+  useSubmitServiceReview,
+  useServicePackages,
+  type ServiceReview,
+} from '@/hooks/services'
 import { useProviderCardHandlers } from '@/hooks/providers'
 import productImage from '@/assets/svg/product-1.svg'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 // Wrapper component for service card with handlers
 const ServiceCardWithHandlers = ({
@@ -81,260 +92,149 @@ interface ServiceDetailClientProps {
   serviceId: string
 }
 
-// Mock data - Replace with API call
-const mockService: Service = {
-  id: '1',
-  title: 'Wedding Makeup Service',
-  description:
-    'Professional bridal makeup for your special day. Perfect for creating a flawless look.',
-  longDescription:
-    'Our professional wedding makeup service is designed to make you look absolutely stunning on your special day. Our experienced makeup artists use only premium, long-lasting products that are perfect for photography and will keep you looking beautiful throughout your entire celebration. We specialize in creating natural, radiant looks that enhance your features while maintaining your personal style. Our team will work with you to create the perfect look that matches your wedding theme and dress. We offer a trial session before your wedding day to ensure you are completely satisfied with your look. Our makeup artists are trained in various techniques including airbrush makeup, HD makeup, and traditional application methods.',
-  images: [
-    'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
-    'https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=800',
-    'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800',
-    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800',
-  ],
-  provider: {
-    id: '1',
-    name: 'Beauty Studio Pro',
-    verified: true,
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-  },
-  price: {
-    original: 5000,
-    discounted: 4500,
-    currency: 'egp',
-  },
-  rating: {
-    value: 4.0,
-    count: 250,
-  },
-  category: {
-    id: '1',
-    name: 'Makeup',
-    slug: 'makeup',
-  },
-  tags: ['Makeup', 'Bridal', 'Professional'],
-  available: true,
-  availabilityDays: {
-    monday: true,
-    tuesday: true,
-    wednesday: true,
-    thursday: true,
-    friday: true,
-    saturday: true,
-    sunday: false,
-  },
-  isWishlisted: false,
-  showTopOfferBadge: true,
+/**
+ * Format date to relative time (e.g., "2 months ago")
+ */
+const formatRelativeTime = (dateString: string): string => {
+  try {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+    if (diffInSeconds < 60) return 'Just now'
+    if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60)
+      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`
+    }
+    if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600)
+      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`
+    }
+    if (diffInSeconds < 2592000) {
+      const days = Math.floor(diffInSeconds / 86400)
+      return `${days} ${days === 1 ? 'day' : 'days'} ago`
+    }
+    if (diffInSeconds < 31536000) {
+      const months = Math.floor(diffInSeconds / 2592000)
+      return `${months} ${months === 1 ? 'month' : 'months'} ago`
+    }
+    const years = Math.floor(diffInSeconds / 31536000)
+    return `${years} ${years === 1 ? 'year' : 'years'} ago`
+  } catch {
+    return dateString
+  }
 }
 
-// Mock reviews
-interface Review {
-  id: string
-  userName: string
-  userAvatar?: string
-  date: string
-  rating: number
-  text: string
-  helpful: number
+/**
+ * Calculate rating distribution from reviews
+ */
+const calculateRatingDistribution = (reviews: ServiceReview[]) => {
+  const total = reviews.length
+  if (total === 0) {
+    return [
+      { stars: 5, count: 0, percentage: 0 },
+      { stars: 4, count: 0, percentage: 0 },
+      { stars: 3, count: 0, percentage: 0 },
+      { stars: 2, count: 0, percentage: 0 },
+      { stars: 1, count: 0, percentage: 0 },
+    ]
+  }
+
+  const distribution = [5, 4, 3, 2, 1].map(stars => {
+    const count = reviews.filter(r => r.rating === stars).length
+    return {
+      stars,
+      count,
+      percentage: Math.round((count / total) * 100),
+    }
+  })
+
+  return distribution
 }
-
-const mockReviews: Review[] = [
-  {
-    id: '1',
-    userName: 'aymanhany',
-    userAvatar:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    date: '2 months ago',
-    rating: 5,
-    text: 'Amazing service! The makeup artist was professional and created the perfect look for my wedding day. Highly recommend!',
-    helpful: 24,
-  },
-  {
-    id: '2',
-    userName: 'sarah_johnson',
-    userAvatar:
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
-    date: '3 months ago',
-    rating: 4,
-    text: 'Great experience! The makeup lasted all day and looked beautiful in photos. Very satisfied with the service.',
-    helpful: 18,
-  },
-  {
-    id: '3',
-    userName: 'emily_chen',
-    date: '1 month ago',
-    rating: 5,
-    text: 'Perfect makeup for my special day! The artist was skilled and made me feel comfortable throughout the process.',
-    helpful: 12,
-  },
-  {
-    id: '4',
-    userName: 'maria_garcia',
-    userAvatar:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-    date: '2 weeks ago',
-    rating: 4,
-    text: 'Excellent service! The makeup was flawless and stayed perfect throughout the entire wedding celebration.',
-    helpful: 31,
-  },
-]
-
-// Mock rating distribution
-const ratingDistribution = [
-  { stars: 5, count: 125, percentage: 50 },
-  { stars: 4, count: 75, percentage: 30 },
-  { stars: 3, count: 30, percentage: 12 },
-  { stars: 2, count: 15, percentage: 6 },
-  { stars: 1, count: 5, percentage: 2 },
-]
-
-// Mock suggested services
-const mockSuggestedServices: Service[] = [
-  {
-    id: '2',
-    title: 'Hair Styling Service',
-    description: 'Expert hair styling and hairdo for weddings.',
-    images: ['https://images.unsplash.com/photo-1560066984-10d1eeb6b2a5?w=400'],
-    provider: {
-      id: '2',
-      name: 'Hair Studio Elite',
-      verified: true,
-    },
-    price: { original: 4000, discounted: 3500, currency: 'egp' },
-    rating: { value: 4.0, count: 119 },
-    category: { id: '2', name: 'Hair Care', slug: 'hair-care' },
-    tags: ['Hair', 'Styling'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-    showTopOfferBadge: true,
-  },
-  {
-    id: '3',
-    title: 'Bridal Skincare Treatment',
-    description: 'Complete skincare routine for glowing bridal skin.',
-    images: [
-      'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400',
-    ],
-    provider: {
-      id: '3',
-      name: 'Skincare Co',
-      verified: true,
-    },
-    price: { original: 6000, discounted: 5000, currency: 'egp' },
-    rating: { value: 4.0, count: 119 },
-    category: { id: '3', name: 'Skin Care', slug: 'skin-care' },
-    tags: ['Skin', 'Care', 'Treatment'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: false,
-    },
-  },
-  {
-    id: '4',
-    title: 'Spa & Relaxation Package',
-    description: 'Full body spa treatment for pre-wedding relaxation.',
-    images: ['https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400'],
-    provider: {
-      id: '4',
-      name: 'Luxury Spa',
-      verified: true,
-    },
-    price: { original: 8000, discounted: 6500, currency: 'egp' },
-    rating: { value: 4.0, count: 119 },
-    category: { id: '4', name: 'Spa & Massage', slug: 'spa-massage' },
-    tags: ['Spa', 'Massage', 'Relaxation'],
-    available: true,
-    availabilityDays: {
-      monday: true,
-      tuesday: true,
-      wednesday: true,
-      thursday: true,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-    showTopOfferBadge: true,
-  },
-  {
-    id: '5',
-    title: 'Wedding Photography',
-    description: 'Professional wedding photography services.',
-    images: [
-      'https://images.unsplash.com/photo-1519741497674-611481863552?w=400',
-    ],
-    provider: {
-      id: '5',
-      name: 'Photo Studio Pro',
-      verified: true,
-    },
-    price: { original: 15000, discounted: 12000, currency: 'egp' },
-    rating: { value: 4.0, count: 119 },
-    category: { id: '5', name: 'Photography', slug: 'photography' },
-    tags: ['Photography', 'Wedding'],
-    available: true,
-    availabilityDays: {
-      monday: false,
-      tuesday: false,
-      wednesday: false,
-      thursday: false,
-      friday: true,
-      saturday: true,
-      sunday: true,
-    },
-  },
-]
 
 export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
   const router = useRouter()
-  const [service, setService] = useState(mockService)
+  const { addToast } = useToast()
   const [userRating, setUserRating] = useState(0)
-  const [isWishlisted, setIsWishlisted] = useState(
-    service.isWishlisted || false
-  )
   const [reviewComment, setReviewComment] = useState('')
   const [branchesExpanded, setBranchesExpanded] = useState(false)
   const [packagesExpanded, setPackagesExpanded] = useState(false)
   const [isBookingConfirmationModalOpen, setIsBookingConfirmationModalOpen] =
     useState(false)
 
-  // Fetch service based on id - Replace with API call
-  useEffect(() => {
-    if (serviceId) {
-      // TODO: Replace with actual API call
-      setService(mockService)
-    }
-  }, [serviceId])
+  // Fetch service detail from API
+  const {
+    data: serviceDetailData,
+    isLoading: serviceLoading,
+    error: serviceError,
+  } = useServiceDetail(serviceId)
+
+  const service = serviceDetailData?.service
+
+  // Fetch service packages
+  const {
+    data: packagesData,
+    isLoading: packagesLoading,
+  } = useServicePackages(serviceId)
+
+  // Fetch service reviews
+  const parsedServiceId = parseInt(serviceId, 10)
+  const { data: reviews = [] } = useServiceReviews(
+    parsedServiceId,
+    { page: 1, pageSize: 10 },
+    !isNaN(parsedServiceId)
+  )
+
+  // Calculate rating distribution from actual reviews
+  const ratingDistribution = calculateRatingDistribution(reviews)
+
+  // Fetch related services by preparation
+  const preparationId = service?.category?.id
+    ? parseInt(service.category.id, 10)
+    : null
+  const { data: relatedServicesData } = useRelatedServicesByPreparation(
+    preparationId,
+    !!preparationId
+  )
+
+  const relatedServices = relatedServicesData?.services || []
+
+  // Filter out current service from related services
+  const suggestedServices = relatedServices.filter(
+    s => s.id !== serviceId
+  ).slice(0, 4)
+
+  // Submit review mutation
+  const submitReviewMutation = useSubmitServiceReview()
 
   const handleBookNow = () => {
     router.push('/booking')
   }
 
-  // Use API handlers for service cards
-  const serviceHandlers = useServiceCardHandlers(parseInt(serviceId, 10))
+  // Use API handlers for service cards with toast callbacks
+  const serviceHandlers = useServiceCardHandlers(parseInt(serviceId, 10), {
+    onFavoriteSuccess: (response) => {
+      const defaultMessage = response === true ? 'Added to favorites' : 'Removed from favorites'
+      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update favorite')
+      addToast(message, 'success')
+    },
+    onFavoriteError: (error) => {
+      addToast(error.message || 'Failed to update favorite. Please try again.', 'error')
+    },
+    onWishlistSuccess: (response) => {
+      const defaultMessage = response === true ? 'Added to wishlist' : 'Removed from wishlist'
+      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update wishlist')
+      addToast(message, 'success')
+    },
+    onWishlistError: (error) => {
+      addToast(error.message || 'Failed to update wishlist. Please try again.', 'error')
+    },
+  })
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     serviceHandlers.handleWishlistToggle(e)
-    // Update local state after API call
-    setIsWishlisted(!isWishlisted)
   }
 
   const handleFavoriteToggle = (e: React.MouseEvent) => {
@@ -352,6 +252,43 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
       1: 'Poor',
     }
     return labels[stars] || ''
+  }
+
+  // Show loading state
+  if (serviceLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <LoadingSpinner
+            size="lg"
+            text="Loading service..."
+            fullScreen={true}
+          />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Show error state
+  if (serviceError || !service) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-16 text-red-600 mb-4">
+              Service not found. Please try again later.
+            </p>
+            <Button onClick={() => router.push('/services/category')}>
+              Back to Services
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   const hasDiscount = service.price.discounted < service.price.original
@@ -433,8 +370,8 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                 <ProviderCardWithHandlers
                   provider={{
                     ...service.provider,
-                    rating: service.rating.value,
-                    profession: 'Makeup Artist',
+                    rating: service.provider.rating ?? service.rating.value,
+                    profession: service.provider.profession,
                   }}
                 />
 
@@ -523,60 +460,60 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   </div>
 
                   {/* Packages Details */}
-                  <div className="mb-6 pb-6 border-b border-gray-200">
-                    <h4 className="text-13 sm:text-14 font-semibold text-gray-900 mb-2">
-                      Packages Details
-                    </h4>
-                    <div
-                      className={cn(
-                        'space-y-1',
-                        !packagesExpanded && 'line-clamp-2'
-                      )}
-                    >
-                      {packagesExpanded ? (
-                        <>
-                          <p className="text-14 text-gray-600">
-                            Package 1 ({' '}
-                            {service.price.discounted.toLocaleString()}{' '}
-                            {service.price.currency} ) : Type Some Details Here
-                          </p>
-                          <p className="text-14 text-gray-600">
-                            Package 2 ({' '}
-                            {service.price.original.toLocaleString()}{' '}
-                            {service.price.currency} ) : Type Some Details Here
-                            for Package 2. This package includes additional
-                            services and premium features.
-                          </p>
-                          <p className="text-14 text-gray-600">
-                            Package 3 ({' '}
-                            {(service.price.original * 1.5).toLocaleString()}{' '}
-                            {service.price.currency} ) : Premium package with
-                            all services included. This is our most
-                            comprehensive offering.
-                          </p>
-                        </>
+                  {packagesData && packagesData.packages.length > 0 && (
+                    <div className="mb-6 pb-6 border-b border-gray-200">
+                      <h4 className="text-13 sm:text-14 font-semibold text-gray-900 mb-2">
+                        Packages Details
+                      </h4>
+                      {packagesLoading ? (
+                        <LoadingSpinner size="sm" text="Loading packages..." />
                       ) : (
                         <>
-                          <p className="text-14 text-gray-600">
-                            Package 1 ({' '}
-                            {service.price.discounted.toLocaleString()}{' '}
-                            {service.price.currency} ) : Type Some Details Here
-                          </p>
-                          <p className="text-14 text-gray-600">
-                            Package 2 ({' '}
-                            {service.price.original.toLocaleString()}{' '}
-                            {service.price.currency} ) : Ty...
-                          </p>
+                          <div
+                            className={cn(
+                              'space-y-1',
+                              !packagesExpanded && 'line-clamp-2'
+                            )}
+                          >
+                            {packagesExpanded
+                              ? packagesData.packages.map((pkg) => (
+                                  <div key={pkg.id} className="text-14 text-gray-600">
+                                    <span className="font-medium">{pkg.name}</span>
+                                    {pkg.price > 0 && (
+                                      <span className="ml-2">
+                                        ({pkg.price.toLocaleString()} {pkg.currency.toUpperCase()})
+                                      </span>
+                                    )}
+                                    {pkg.description && (
+                                      <span className="block text-12 text-gray-500 mt-1">
+                                        {pkg.description}
+                                      </span>
+                                    )}
+                                  </div>
+                                ))
+                              : packagesData.packages.slice(0, 2).map((pkg) => (
+                                  <div key={pkg.id} className="text-14 text-gray-600">
+                                    <span className="font-medium">{pkg.name}</span>
+                                    {pkg.price > 0 && (
+                                      <span className="ml-2">
+                                        ({pkg.price.toLocaleString()} {pkg.currency.toUpperCase()})
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                          </div>
+                          {packagesData.packages.length > 2 && (
+                            <button
+                              onClick={() => setPackagesExpanded(!packagesExpanded)}
+                              className="text-13 sm:text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
+                            >
+                              {packagesExpanded ? 'See Less' : 'See More'}
+                            </button>
+                          )}
                         </>
                       )}
                     </div>
-                    <button
-                      onClick={() => setPackagesExpanded(!packagesExpanded)}
-                      className="text-13 sm:text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
-                    >
-                      {packagesExpanded ? 'See Less' : 'See More'}
-                    </button>
-                  </div>
+                  )}
 
                   {/* Action Buttons */}
                   <div className="flex items-center gap-3">
@@ -619,73 +556,88 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
               </div>
 
               <div className="space-y-4">
-                {mockReviews.map(review => (
-                  <div
-                    key={review.id}
-                    className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
-                  >
-                    <div className="flex items-start gap-4">
-                      {/* User Avatar */}
-                      <div className="flex-shrink-0">
-                        {review.userAvatar ? (
-                          <div className="relative w-12 h-12">
-                            <Image
-                              src={review.userAvatar}
-                              alt={review.userName}
-                              fill
-                              sizes="48px"
-                              className="rounded-full object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                            <span className="text-16 font-semibold text-gray-600">
-                              {review.userName.charAt(0)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Review Content */}
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-15 sm:text-16 font-semibold text-gray-900">
-                                {review.userName}
+                {reviews.length > 0 ? (
+                  reviews.map(review => (
+                    <div
+                      key={review.id}
+                      className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
+                    >
+                      <div className="flex items-start gap-4">
+                        {/* User Avatar */}
+                        <div className="flex-shrink-0">
+                          {review.userImage ? (
+                            <div className="relative w-12 h-12">
+                              <Image
+                                src={review.userImage}
+                                alt={review.userName}
+                                fill
+                                sizes="48px"
+                                className="rounded-full object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                              <span className="text-16 font-semibold text-gray-600">
+                                {review.userName.charAt(0).toUpperCase()}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-11 sm:text-12 text-gray-500">
-                                {review.date}
-                              </span>
-                              <div className="flex items-center gap-0.5">
-                                {[1, 2, 3, 4, 5].map(star => (
-                                  <Star
-                                    key={star}
-                                    className={cn(
-                                      'h-4 w-4',
-                                      star <= review.rating
-                                        ? 'fill-brand-500 text-brand-500'
-                                        : 'fill-gray-200 text-gray-200'
-                                    )}
-                                  />
-                                ))}
+                          )}
+                        </div>
+
+                        {/* Review Content */}
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-15 sm:text-16 font-semibold text-gray-900">
+                                  {review.userName}
+                                </span>
+                                {review.verified && (
+                                  <Badge variant="success" size="sm">
+                                    Verified
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-11 sm:text-12 text-gray-500">
+                                  {formatRelativeTime(review.date)}
+                                </span>
+                                <div className="flex items-center gap-0.5">
+                                  {[1, 2, 3, 4, 5].map(star => (
+                                    <Star
+                                      key={star}
+                                      className={cn(
+                                        'h-4 w-4',
+                                        star <= review.rating
+                                          ? 'fill-brand-500 text-brand-500'
+                                          : 'fill-gray-200 text-gray-200'
+                                      )}
+                                    />
+                                  ))}
+                                </div>
                               </div>
                             </div>
+                            {review.helpful > 0 && (
+                              <button className="flex items-center gap-1 text-11 sm:text-12 text-gray-500 hover:text-gray-700">
+                                <ThumbsUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                <span>{review.helpful}</span>
+                              </button>
+                            )}
                           </div>
-                          <button className="flex items-center gap-1 text-11 sm:text-12 text-gray-500 hover:text-gray-700">
-                            <ThumbsUp className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            <span>{review.helpful}</span>
-                          </button>
+                          <p className="text-13 sm:text-14 text-gray-600 leading-relaxed">
+                            {review.comment}
+                          </p>
                         </div>
-                        <p className="text-13 sm:text-14 text-gray-600 leading-relaxed">
-                          {review.text}
-                        </p>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                    <p className="text-14 text-gray-500">
+                      No reviews yet. Be the first to review this service!
+                    </p>
                   </div>
-                ))}
+                )}
               </div>
 
               <div className="mt-6 text-center">
@@ -732,18 +684,53 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
                   {/* Send Button */}
                   <button
-                    onClick={() => {
-                      if (reviewComment.trim()) {
-                        // TODO: Implement review submission
-                        setReviewComment('')
-                        setUserRating(0)
+                    onClick={async () => {
+                      if (reviewComment.trim() && userRating > 0 && !isNaN(parsedServiceId)) {
+                        try {
+                          const providerId = service?.provider?.id
+                            ? parseInt(service.provider.id, 10)
+                            : null
+
+                          const response = await submitReviewMutation.mutateAsync({
+                            serviceId: parsedServiceId,
+                            rating: userRating,
+                            review: reviewComment.trim(),
+                            title: '',
+                            providerId: providerId || null,
+                          })
+                          
+                          const { message, type } = handleApiResponseForToast(
+                            response,
+                            'Review submitted successfully!',
+                            'Failed to submit review'
+                          )
+                          
+                          if (type === 'success') {
+                            setReviewComment('')
+                            setUserRating(0)
+                          }
+                          addToast(message, type)
+                        } catch (error) {
+                          console.error('Error submitting review:', error)
+                          const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+                          addToast(errorMessage, 'error')
+                        }
                       }
                     }}
-                    disabled={!reviewComment.trim()}
+                    disabled={
+                      !reviewComment.trim() ||
+                      userRating === 0 ||
+                      submitReviewMutation.isPending ||
+                      isNaN(parsedServiceId)
+                    }
                     className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
                     aria-label="Send review"
                   >
-                    <Send className="h-5 w-5 text-white flex-shrink-0" />
+                    {submitReviewMutation.isPending ? (
+                      <LoadingSpinner size="sm" />
+                    ) : (
+                      <Send className="h-5 w-5 text-white flex-shrink-0" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -829,13 +816,19 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {mockSuggestedServices.map(suggestedService => (
-                <ServiceCardWithHandlers
-                  key={suggestedService.id}
-                  service={suggestedService}
-                  onBookNow={handleBookNow}
-                />
-              ))}
+              {suggestedServices.length > 0 ? (
+                suggestedServices.map(suggestedService => (
+                  <ServiceCardWithHandlers
+                    key={suggestedService.id}
+                    service={suggestedService}
+                    onBookNow={(id) => router.push(`/services/category/${id}`)}
+                  />
+                ))
+              ) : (
+                <p className="text-14 text-gray-500 col-span-full">
+                  No related services found.
+                </p>
+              )}
             </div>
           </section>
         </div>

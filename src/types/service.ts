@@ -9,6 +9,8 @@ export interface Service {
     name: string
     verified: boolean
     image?: string
+    profession?: string
+    rating?: number
   }
   price: {
     original: number

@@ -8,7 +8,7 @@ import {
   HeroCarousel,
   OfferBanner,
   Card,
-  LoadingOverlay,
+  LoadingSpinner,
   type ServiceCardData,
   type HeroSlide,
 } from '@/components/ui'
@@ -104,8 +104,8 @@ function ServicesIntroPageContent() {
     // TODO: Implement wishlist toggle
   }
 
-  const handleBookNow = (_serviceId: string) => {
-    // TODO: Implement book now
+  const handleBookNow = (serviceId: string) => {
+    router.push(`/services/category/${serviceId}`)
   }
 
   // Map API data to component props
@@ -132,6 +132,7 @@ function ServicesIntroPageContent() {
         ...service,
         onWishlistToggle: () => handleWishlistToggle(service.id),
         onBookNow: () => handleBookNow(service.id),
+
       }))
       : []
 
@@ -209,7 +210,7 @@ function ServicesIntroPageContent() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-16 text-gray-600">Loading...</div>
+          <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
         </main>
         <Footer />
       </div>
@@ -339,11 +340,7 @@ export default function ServicesIntroPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <LoadingOverlay
-            open={true}
-            title="Loading..."
-            subtitle="Please wait a moment"
-          />
+          <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
         </div>
       }
     >

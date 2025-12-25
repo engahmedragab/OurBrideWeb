@@ -2,7 +2,7 @@
 
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
-import { HeroCarousel, OfferBanner, LoadingOverlay } from '@/components/ui'
+import { HeroCarousel, OfferBanner, LoadingSpinner, useToast } from '@/components/ui'
 import { useMemo } from 'react'
 import {
   ProductCategoriesSection,
@@ -19,6 +19,7 @@ import { useAddProductToCart } from '@/hooks/products'
 import { useStoreHome } from '@/hooks/home'
 import { useProductsHome } from '@/hooks/products'
 import { extractStoreHomeData } from '@/utils/home-data.utils'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 import flowersImage from '@/assets/images/flowers.png'
 import whyBridesChooseProductsImage from '@/assets/images/bridProductSection.png'
 import { ProductPageLayout } from './components/ProductPageLayout'
@@ -31,6 +32,7 @@ import {
 import { getCategoryIconMap } from './utils/category-icons'
 
 export default function ProductIntroPage() {
+  const { addToast } = useToast()
   // Fetch data from store home endpoint (getHomeGetStoreHome) - for banners
   const { data: storeHomeData, isLoading: storeHomeLoading } = useStoreHome()
 
@@ -138,10 +140,17 @@ export default function ProductIntroPage() {
     if (!product) return
 
     try {
-      await addToCart(product, 1)
-      // Optionally show success message
+      const response = await addToCart(product, 1)
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Product added to cart successfully!',
+        'Failed to add product to cart'
+      )
+      addToast(message, type)
     } catch (error) {
       console.error('Failed to add product to cart:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      addToast(errorMessage, 'error')
     }
   }
 
@@ -155,11 +164,7 @@ export default function ProductIntroPage() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 bg-white flex items-center justify-center">
-          <LoadingOverlay
-            open={true}
-            title="Loading products..."
-            subtitle="Please wait a moment"
-          />
+          <LoadingSpinner size="lg" text="Loading products..." fullScreen={true} />
         </main>
         <Footer />
       </div>

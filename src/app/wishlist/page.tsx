@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { UserPageLayout } from '@/components/layout'
 import {
   EmptyState,
@@ -117,8 +118,9 @@ export default function WishlistPage() {
     }
   }
 
-  const handleBookNow = (_serviceId: string) => {
-    // TODO: Implement book now
+  const router = useRouter()
+  const handleBookNow = (serviceId: string) => {
+    router.push(`/services/category/${serviceId}`)
   }
 
   const { handleAddToCart: addToCart } = useAddProductToCart()
