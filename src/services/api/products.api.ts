@@ -238,7 +238,7 @@ export const submitProductReview = async (
       data,
       query
     )
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
   } catch (error: unknown) {
     throw new Error(
@@ -261,8 +261,8 @@ export const toggleProductFavorite = async (
 ): Promise<boolean> => {
   try {
     const response = await apiClient.api.postProductToggleFavorite(productId, query)
-    const responseAny = response as any
-    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as any
+    const responseAny = response as unknown
+    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as { data?: boolean; success?: boolean }
     // Return true if favorited, false if removed
     return result?.data ?? result?.success ?? true
   } catch (error: unknown) {
@@ -318,8 +318,8 @@ export const toggleProductWishlist = async (
 ): Promise<boolean> => {
   try {
     const response = await apiClient.api.postProductToggleWishlist(productId, query)
-    const responseAny = response as any
-    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as any
+    const responseAny = response as unknown
+    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as { data?: boolean; success?: boolean }
     // Return true if added, false if removed
     return result?.data ?? result?.success ?? true
   } catch (error: unknown) {

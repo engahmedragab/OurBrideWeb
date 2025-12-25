@@ -17,10 +17,10 @@ const getBigDays = (): string[] => {
 }
 
 /**
- * Calendar Page
+ * Events Page
  * Displays the planning calendar with day details rendered in-place
  */
-export default function CalenderPage() {
+export default function EventsPage() {
   const today = getToday()
   const [selectedDate, setSelectedDate] = useState(today)
   const [selectedDayId, setSelectedDayId] = useState(formatDateSafe(today))

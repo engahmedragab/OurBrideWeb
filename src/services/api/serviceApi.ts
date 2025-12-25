@@ -13,9 +13,10 @@ export const toggleServiceFavorite = async (
 ): Promise<boolean> => {
   try {
     const response = await apiClient.api.postServicesToggleFavorite(serviceId)
-    const responseAny = response as any
-    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as any
+    const responseAny = response as unknown
+    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as { data?: boolean; success?: boolean } | boolean
     // Return true if favorited, false if removed
+    if (typeof result === 'boolean') return result
     return result?.data ?? result?.success ?? true
   } catch (error: unknown) {
     throw new Error(
@@ -33,9 +34,10 @@ export const toggleServiceWishlist = async (
 ): Promise<boolean> => {
   try {
     const response = await apiClient.api.postServicesToggleWishlist(serviceId)
-    const responseAny = response as any
-    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as any
+    const responseAny = response as unknown
+    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as { data?: boolean; success?: boolean } | boolean
     // Return true if added, false if removed
+    if (typeof result === 'boolean') return result
     return result?.data ?? result?.success ?? true
   } catch (error: unknown) {
     throw new Error(
@@ -54,7 +56,7 @@ export const submitServiceReview = async (
 ): Promise<ApiResult> => {
   try {
     const response = await apiClient.api.postServicesAddReviews(serviceId, data)
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
   } catch (error: unknown) {
     throw new Error(
@@ -78,7 +80,7 @@ export const getServiceReviews = async (
 ): Promise<ApiResult> => {
   try {
     const response = await apiClient.api.getServicesGetReviews(serviceId, query)
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
   } catch (error: unknown) {
     throw new Error(
@@ -96,7 +98,7 @@ export const getServiceReviewSummary = async (
 ): Promise<ApiResult> => {
   try {
     const response = await apiClient.api.getServicesReviewSummary(serviceId)
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
   } catch (error: unknown) {
     throw new Error(

@@ -4,45 +4,79 @@ import { useState } from 'react'
 import { Modal } from '@/components/ui'
 import { Input } from '@/components/ui'
 import { Button } from '@/components/ui'
+import { Textarea } from '@/components/ui'
+import { DatePicker } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import type { WeddingEventCreateRequest } from '@/../client/common/api/gen/ourbride-api'
 
 export interface AddEventModalProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit?: (eventName: string, eventCode?: string) => void
+  onSubmit?: (data: WeddingEventCreateRequest) => void
 }
 
 /**
  * AddEventModal Component
- * Modal for creating a new event or joining with an event code
+ * Modal for creating a new wedding event
  */
 export const AddEventModal = ({
   isOpen,
   onClose,
   onSubmit,
 }: AddEventModalProps) => {
-  const [eventName, setEventName] = useState('')
-  const [eventCode, setEventCode] = useState('')
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
+  const [startTime, setStartTime] = useState('')
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined)
+  const [endTime, setEndTime] = useState('')
+  const [isDefault, setIsDefault] = useState(false)
 
-  const handleSubmit = () => {
-    if (eventName.trim() || eventCode.trim()) {
-      onSubmit?.(eventName.trim(), eventCode.trim() || undefined)
-      setEventName('')
-      setEventCode('')
-      onClose()
+  // Combine date and time into ISO string
+  const combineDateTime = (date: Date | undefined, time: string): string | null => {
+    if (!date) return null
+    if (!time) {
+      // If no time provided, use start of day
+      return date.toISOString()
     }
+
+    const [hours, minutes] = time.split(':').map(Number)
+    const combined = new Date(date)
+    combined.setHours(hours || 0, minutes || 0, 0, 0)
+    return combined.toISOString()
   }
 
-  const handleClose = () => {
-    setEventName('')
-    setEventCode('')
+  const handleSubmit = () => {
+    if (!title.trim()) {
+      return
+    }
+
+    const data: WeddingEventCreateRequest = {
+      title: title.trim(),
+      description: description.trim() || null,
+      startDate: combineDateTime(startDate, startTime),
+      endDate: combineDateTime(endDate, endTime),
+      isDefault: isDefault,
+    }
+
+    onSubmit?.(data)
+    handleReset()
     onClose()
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && (eventName.trim() || eventCode.trim())) {
-      handleSubmit()
-    }
+  const handleReset = () => {
+    setTitle('')
+    setDescription('')
+    setStartDate(undefined)
+    setStartTime('')
+    setEndDate(undefined)
+    setEndTime('')
+    setIsDefault(false)
+  }
+
+  const handleClose = () => {
+    handleReset()
+    onClose()
   }
 
   return (
@@ -56,41 +90,117 @@ export const AddEventModal = ({
       contentClassName="px-0 pt-4"
     >
       <div className="flex flex-col gap-4">
-        {/* Event Name Input */}
+        {/* Title Input - Required */}
         <div className="flex flex-col gap-2">
           <label className="text-14 font-normal text-gray-900">
-            Event Name
+            Event Title <span className="text-red-500">*</span>
           </label>
           <Input
-            placeholder="Enter Event Name"
-            value={eventName}
-            onChange={e => setEventName(e.target.value)}
-            onKeyDown={handleKeyDown}
+            placeholder="Enter Event Title"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
             className="h-auto px-4 py-3 text-14"
+            required
           />
         </div>
 
-        {/* Divider with "Or Use an invitation Code" */}
+        {/* Description Textarea - Optional */}
+        <div className="flex flex-col gap-2">
+          <label className="text-14 font-normal text-gray-900">
+            Description
+          </label>
+          <Textarea
+            placeholder="Enter event description (optional)"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            className="min-h-[100px] px-4 py-3 text-14 resize-none"
+            rows={4}
+          />
+        </div>
+
+        {/* Start Date and Time */}
+        <div className="flex flex-col gap-2">
+          <label className="text-14 font-normal text-gray-900">
+            Start Date & Time
+          </label>
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <DatePicker
+                value={startDate}
+                onChange={date => setStartDate(date instanceof Date ? date : undefined)}
+                placeholder="Select start date"
+                className="w-full"
+              />
+            </div>
+            <div className="w-32">
+              <Input
+                type="time"
+                value={startTime}
+                onChange={e => setStartTime(e.target.value)}
+                placeholder="HH:MM"
+                className="h-auto px-4 py-3 text-14"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* End Date and Time */}
+        <div className="flex flex-col gap-2">
+          <label className="text-14 font-normal text-gray-900">
+            End Date & Time
+          </label>
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <DatePicker
+                value={endDate}
+                onChange={date => setEndDate(date instanceof Date ? date : undefined)}
+                placeholder="Select end date"
+                className="w-full"
+              />
+            </div>
+            <div className="w-32">
+              <Input
+                type="time"
+                value={endTime}
+                onChange={e => setEndTime(e.target.value)}
+                placeholder="HH:MM"
+                className="h-auto px-4 py-3 text-14"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Is Default Checkbox */}
         <div className="flex items-center gap-2">
-          <div className="flex-1 h-px bg-gray-100" />
-          <p className="text-16 font-medium text-gray-500 text-center whitespace-nowrap px-2">
-            Or Use an invitation Code
-          </p>
-          <div className="flex-1 h-px bg-gray-100" />
+          <input
+            type="checkbox"
+            id="isDefault"
+            checked={isDefault}
+            onChange={e => setIsDefault(e.target.checked)}
+            className="w-4 h-4 text-brand-500 border-gray-300 rounded focus:ring-brand-500"
+          />
+          <label htmlFor="isDefault" className="text-14 font-normal text-gray-900 cursor-pointer">
+            Set as default event
+          </label>
         </div>
 
-        {/* Event Code Input */}
-        <div className="flex flex-col gap-2">
-          <label className="text-14 font-normal text-gray-900">
-            Event Code
-          </label>
-          <Input
-            placeholder="Enter Event Code"
-            value={eventCode}
-            onChange={e => setEventCode(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="h-auto px-4 py-3 text-14"
-          />
+        {/* Submit Button */}
+        <div className="flex justify-end gap-3 pt-2">
+          <Button
+            variant="outline"
+            onClick={handleClose}
+            className="px-6"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="brand"
+            onClick={handleSubmit}
+            disabled={!title.trim()}
+            className="px-6"
+          >
+            Create Event
+          </Button>
         </div>
       </div>
     </Modal>

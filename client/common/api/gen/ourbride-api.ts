@@ -24256,6 +24256,8 @@ export interface ProviderRequest {
   links?: LinkRequest[] | null;
   workingTimes?: WorkingTimeRequest[] | null;
   blockedTimes?: BlockedWorkingTimeRequest[] | null;
+  medias?: MediaRequest[] | null;
+  profileImageUrl?: string | null;
 }
 
 export interface ProviderShippingMethod {
@@ -24638,6 +24640,8 @@ export interface ProviderUpdateRequest {
   blockedTimeIds?: number[] | null;
   paymentMethodIds?: number[] | null;
   links?: LinkRequest[] | null;
+  medias?: MediaRequest[] | null;
+  profileImageUrl?: string | null;
 }
 
 export interface ProviderUser {
@@ -34289,6 +34293,7 @@ export interface UpdateProviderPublicProfileSettingsRequest {
   publicDescriptionEn?: string | null;
   publicBannerImageUrl?: string | null;
   publicLogoImageUrl?: string | null;
+  profileImageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 200
@@ -54374,6 +54379,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54399,6 +54406,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54507,6 +54516,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54562,6 +54573,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54588,6 +54601,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54614,6 +54629,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54638,6 +54655,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54662,6 +54681,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54686,6 +54707,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54710,6 +54733,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54819,6 +54844,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54845,6 +54872,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54871,6 +54900,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54897,6 +54928,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -54925,6 +54958,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64160,6 +64195,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64185,6 +64222,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64293,6 +64332,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64348,6 +64389,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64374,6 +64417,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64400,6 +64445,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64424,6 +64471,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64448,6 +64497,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64472,6 +64523,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64496,6 +64549,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64605,6 +64660,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64631,6 +64688,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64657,6 +64716,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64683,6 +64744,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -64711,6 +64774,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -71834,6 +71899,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -71859,6 +71926,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -71967,6 +72036,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72022,6 +72093,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72048,6 +72121,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72074,6 +72149,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72098,6 +72175,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72122,6 +72201,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72146,6 +72227,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72170,6 +72253,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72279,6 +72364,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72305,6 +72392,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72331,6 +72420,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72357,6 +72448,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -72385,6 +72478,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76253,6 +76348,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76278,6 +76375,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76386,6 +76485,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76441,6 +76542,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76467,6 +76570,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76493,6 +76598,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76517,6 +76624,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76541,6 +76650,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76565,6 +76676,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76589,6 +76702,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76698,6 +76813,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76724,6 +76841,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76750,6 +76869,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76776,6 +76897,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -76804,6 +76927,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83379,6 +83504,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83404,6 +83531,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83512,6 +83641,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83567,6 +83698,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83593,6 +83726,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83619,6 +83754,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83643,6 +83780,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83667,6 +83806,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83691,6 +83832,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83715,6 +83858,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83824,6 +83969,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83850,6 +83997,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83876,6 +84025,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83902,6 +84053,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -83930,6 +84083,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84461,6 +84616,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84486,6 +84643,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84594,6 +84753,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84649,6 +84810,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84675,6 +84838,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84701,6 +84866,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84725,6 +84892,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84749,6 +84918,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84773,6 +84944,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84797,6 +84970,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84906,6 +85081,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84932,6 +85109,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84958,6 +85137,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -84984,6 +85165,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -85012,6 +85195,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -91042,15 +91227,14 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductGetRelatedProducts: (
-      productId: number,
-      id: string,
+      id: number,
       query?: {
         /** @format int32 */
         providerId?: number;
         /** @format int32 */
         branchId?: number;
         /** @format uuid */
-        staffId?: string;   
+        staffId?: string;
       },
       params: RequestParams = {},
     ) =>
@@ -91072,8 +91256,7 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductGetRelatedCategoryProducts: (
-      productId: number,
-      id: string,
+      id: number,
       query?: {
         /** @format int32 */
         providerId?: number;
@@ -108749,6 +108932,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -108774,6 +108959,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -108882,6 +109069,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -108937,6 +109126,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -108963,6 +109154,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -108989,6 +109182,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -109013,6 +109208,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -109037,6 +109234,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -109061,6 +109260,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -109085,6 +109286,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -109194,6 +109397,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -109220,6 +109425,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -109246,6 +109453,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -109272,6 +109481,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -109300,6 +109511,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115230,6 +115443,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115255,6 +115470,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115363,6 +115580,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115418,6 +115637,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115444,6 +115665,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115470,6 +115693,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115494,6 +115719,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115518,6 +115745,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115542,6 +115771,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115566,6 +115797,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115675,6 +115908,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115701,6 +115936,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115727,6 +115964,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115753,6 +115992,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -115781,6 +116022,8 @@ export class Api<SecurityDataType extends unknown> {
         /** @format uuid */
         clientId?: string;
         userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
       },
       params: RequestParams = {},
     ) =>
@@ -121319,6 +121562,25 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<void, any>({
         path: `/api/v1/wedding-events/${eventId}/set-default`,
         method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags WeddingEvent
+     * @name GetWeddingEventGetEventInfo
+     * @request GET:/api/v1/wedding-events/{eventId}/info
+     * @secure
+     */
+    getWeddingEventGetEventInfo: (
+      eventId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/wedding-events/${eventId}/info`,
+        method: "GET",
         secure: true,
         ...params,
       }),

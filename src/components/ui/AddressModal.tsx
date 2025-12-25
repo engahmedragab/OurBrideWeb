@@ -143,7 +143,7 @@ export const AddressModal = ({
    */
   const handleLocationSelect = async (locationData: string | LocationData) => {
     try {
-      let address: any = {}
+      let address: Partial<LocationData['address']> & Record<string, string | undefined> = {}
       let displayName = ''
       let lat: number | null = null
       let lon: number | null = null
@@ -185,10 +185,10 @@ export const AddressModal = ({
       }
 
       // Extract address components
-      const street = address.road || address.street || address.pedestrian || ''
-      const city = address.city || address.town || address.village || address.municipality || ''
-      const country = address.country || ''
-      const building = address.house_number || ''
+      const street = (address?.road as string) || (address?.street as string) || (address?.pedestrian as string) || ''
+      const city = (address?.city as string) || (address?.town as string) || (address?.village as string) || (address?.municipality as string) || ''
+      const country = (address?.country as string) || ''
+      const building = (address?.house_number as string) || ''
 
       // Try to match country with our dropdown options
       let matchedCountryId = 0

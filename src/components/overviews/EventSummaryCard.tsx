@@ -17,7 +17,7 @@ export const EventSummaryCard = ({
   eventName,
   eventDate,
   imageSrc,
-  viewDetailsHref = '/events/planning/calender',
+  viewDetailsHref = '/events/planning/events',
 }: EventSummaryCardProps) => {
   const [timeRemaining, setTimeRemaining] = useState({
     days: 0,

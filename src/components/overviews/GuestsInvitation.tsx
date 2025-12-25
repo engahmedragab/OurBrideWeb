@@ -15,7 +15,7 @@ export const GuestsInvitation = ({
   invitedGuests,
   remainingSeats,
   imageSrc,
-  viewDetailsHref = '/events/planning/calender',
+  viewDetailsHref = '/events/planning/events',
 }: GuestsInvitationProps) => {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
@@ -28,7 +28,7 @@ export const GuestsInvitation = ({
           View Details
         </Link>
       </div>
-      
+
       <div className="space-y-3">
         {/* Guest Stats */}
         <div className="space-y-2">

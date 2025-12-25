@@ -20,7 +20,7 @@ export const BudgetPayments = ({
   total,
   remaining,
   chartData,
-  viewDetailsHref = '/events/planning/calender',
+  viewDetailsHref = '/events/planning/events',
 }: BudgetPaymentsProps) => {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">

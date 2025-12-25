@@ -37,9 +37,10 @@ export default function DashboardLayout({
     const exemptPaths = [
       '/dashboard/help-center',
       '/dashboard/settings', // allow access to settings without planning preferences
+      '/dashboard/my-events', // allow access to my events without planning preferences
       // Add other exempt paths here if needed
     ]
-    
+
     const isExemptPath = exemptPaths.some(path => pathname?.startsWith(path))
     if (isExemptPath) {
       return

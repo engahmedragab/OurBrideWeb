@@ -1,15 +1,34 @@
-import React from 'react'
+'use client'
 
-// Generate static params for static export
-export function generateStaticParams() {
-  // Return array of event IDs to pre-generate at build time
-  // In a real app, this would fetch from an API
-  // Generate IDs 1-10 to cover common event IDs
-  return Array.from({ length: 10 }, (_, i) => ({ id: String(i + 1) }))
-}
+import { useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 
+/**
+ * EventDetailsPage
+ * Redirects to the events/planning overview page with the event ID
+ * This integrates the event details page with the events/planning structure
+ * The planning pages will use the eventId from query params to load event-specific data
+ */
 export default function EventDetailsPage() {
+  const router = useRouter()
+  const params = useParams()
+  const eventId = params?.id as string
+
+  useEffect(() => {
+    if (eventId) {
+      // Redirect to my-events with the event ID selected
+      router.replace(`/dashboard/my-events?eventId=${eventId}`)
+    } else {
+      // If no event ID, redirect to my-events list
+      router.replace('/dashboard/my-events')
+    }
+  }, [eventId, router])
+
   return (
-    <div>EventDetailsPage</div>
+    <div className="w-full min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <p className="text-16 text-gray-600">Loading event planning...</p>
+      </div>
+    </div>
   )
 }

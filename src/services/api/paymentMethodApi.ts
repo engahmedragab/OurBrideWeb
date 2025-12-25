@@ -18,7 +18,7 @@ export const getActivePaymentMethods = async (): Promise<PaymentMethodResponse[]
     }
 
     const response = await apiClient.api.getPaymentMethodGetActive()
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaymentMethodResponse[]
   } catch (error: unknown) {
     // Handle 403 Forbidden - user might not have permission or not authenticated

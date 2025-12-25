@@ -15,9 +15,12 @@ import type {
 export const initEventBooks = async (params?: {
   clientId?: string
   userType?: UserType
+  eventId?: number
 }): Promise<void> => {
   try {
-    await apiClient.api.postEventBooksInit(params)
+    // Extract eventId and pass other params to API
+    const { eventId, ...apiParams } = params || {}
+    await apiClient.api.postEventBooksInit(apiParams)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to initialize event books')
   }

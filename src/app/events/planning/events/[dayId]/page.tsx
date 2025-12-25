@@ -18,10 +18,10 @@ export function generateStaticParams() {
 }
 
 /**
- * Calendar Day Page
+ * Events Day Page
  * Thin wrapper that renders DayDetailsView for a specific day
  */
-export default async function CalenderDayPage({
+export default async function EventsDayPage({
   params,
 }: {
   params: Promise<{ dayId: string }>

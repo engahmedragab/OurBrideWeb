@@ -3,6 +3,7 @@
 import React, { useRef } from 'react'
 import Image from 'next/image'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import type { SwiperRef } from 'swiper/react'
 import { Navigation } from 'swiper/modules'
 import { CheckCircle2, ChevronRight } from 'lucide-react'
 import { cva } from 'class-variance-authority'
@@ -59,7 +60,7 @@ export const ServicesProvidersSlider = ({
   providers,
   className,
 }: ServicesProvidersSliderProps) => {
-  const swiperRef = useRef<any>(null)
+  const swiperRef = useRef<SwiperRef | null>(null)
 
   if (providers.length === 0) {
     return null

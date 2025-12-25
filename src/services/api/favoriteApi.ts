@@ -25,7 +25,7 @@ export const getFavoriteById = async (
 ): Promise<FavoriteResponse> => {
   try {
     const response = await apiClient.api.getFavoriteGetById(id, query)
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FavoriteResponse
   } catch (error: unknown) {
     throw new Error(
@@ -46,7 +46,7 @@ export const updateFavorite = async (
 ): Promise<FavoriteResponse> => {
   try {
     const response = await apiClient.api.putFavoriteUpdate(id, data, query)
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FavoriteResponse
   } catch (error: unknown) {
     throw new Error(
@@ -94,7 +94,7 @@ export const getAllFavorites = async (query?: {
 }): Promise<PaginatedList<FavoriteResponse>> => {
   try {
     const response = await apiClient.api.getFavoriteGetAll(query)
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<FavoriteResponse>
   } catch (error: unknown) {
     throw new Error(
@@ -114,7 +114,7 @@ export const createFavorite = async (
 ): Promise<FavoriteResponse> => {
   try {
     const response = await apiClient.api.postFavoriteCreate(data, query)
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FavoriteResponse
   } catch (error: unknown) {
     throw new Error(
@@ -136,7 +136,7 @@ export const getFavoritesBySource = async (
 ): Promise<PaginatedList<FavoriteResponse>> => {
   try {
     const response = await apiClient.api.getFavoriteGetBySource(source, sourceId, query)
-    const responseAny = response as any
+    const responseAny = response as unknown
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<FavoriteResponse>
   } catch (error: unknown) {
     throw new Error(

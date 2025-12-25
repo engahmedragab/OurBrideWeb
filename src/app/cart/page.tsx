@@ -26,6 +26,7 @@ import { getProductById } from '@/services/api/products.api'
 import type { PurchaseResponse } from '@/types/responses'
 import type { ProductHeaderResponse, ProductResponse } from '@/types/responses'
 import type { ReservationResponse } from '@/types/responses'
+import type { PurchaseStatus } from '@/../client/common/api/gen/ourbride-api'
 import type {
   CartProduct,
   CartReservation,
@@ -205,7 +206,7 @@ const mapPurchaseToCartReservation = (
     purchaseId: purchase.id,
     reservationId: purchase.reservationId ?? '',
     reservationDate: undefined,
-    status: purchase.status as any,
+    status: purchase.status as PurchaseStatus,
     purchasePrice: purchase.totalPrice ?? purchase.price ?? null,
     purchaseDate: purchase.creationDate ?? purchase.buyDate ?? undefined,
     type: 'Reservation' as CartItemType,

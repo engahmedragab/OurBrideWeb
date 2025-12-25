@@ -45,12 +45,12 @@ export interface ProviderResponse extends BaseLookupResponse {
   place: PlaceResponse | null
   localGuiderId: string // Guid
   providersAreaId: number | null
-  providersArea: any // ProvidersArea type
+  providersArea: unknown // ProvidersArea type - to be defined when type is available
   branches: PlaceResponse[]
   isFavorite: boolean
   isFollowed: boolean
   currentUserId: string // Guid
-  providerUserAssignments: any[] // ProviderUserAssignment[]
+  providerUserAssignments: unknown[] // ProviderUserAssignment[] - to be defined when type is available
   resources: ResourceResponse[]
   isProfileComplete: boolean
   profileCompletionPercentage: number

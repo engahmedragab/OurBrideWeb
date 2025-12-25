@@ -1,5 +1,7 @@
 // Token management utilities
 
+import type { UserResponse } from '@/types/responses'
+
 const TOKEN_KEY = 'auth_token'
 const REFRESH_TOKEN_KEY = 'refresh_token'
 const USER_KEY = 'user_data'
@@ -8,7 +10,7 @@ export interface TokenData {
   accessToken: string
   refreshToken?: string
   expiresAt?: string
-  user?: any
+  user?: UserResponse
 }
 
 /**
@@ -30,7 +32,7 @@ export const getRefreshToken = (): string | null => {
 /**
  * Get user data from localStorage
  */
-export const getUser = (): any | null => {
+export const getUser = (): UserResponse | null => {
   if (typeof window === 'undefined') return null
   const userData = localStorage.getItem(USER_KEY)
   return userData ? JSON.parse(userData) : null

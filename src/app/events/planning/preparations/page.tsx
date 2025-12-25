@@ -62,7 +62,7 @@ const createInitialServices = (): PreparationService[] => [
   },
 ]
 
-export default function BookingsPage() {
+export default function PreparationsPage() {
   const [services, setServices] = useState<PreparationService[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
@@ -165,20 +165,20 @@ export default function BookingsPage() {
           initialValue={
             editingService
               ? {
-                  id: editingService.id,
-                  serviceKey:
-                    editingService.icon.kind === 'asset'
-                      ? editingService.icon.value
-                      : undefined,
-                  title: editingService.title,
-                  serviceType: editingService.serviceType,
-                  quantity: editingService.quantity,
-                  cost: editingService.cost,
-                  advancePayment: editingService.advancePayment,
-                  providerUserName: editingService.providerUserName,
-                  purchaseDate: editingService.purchaseDate || '',
-                  completed: editingService.completed,
-                }
+                id: editingService.id,
+                serviceKey:
+                  editingService.icon.kind === 'asset'
+                    ? editingService.icon.value
+                    : undefined,
+                title: editingService.title,
+                serviceType: editingService.serviceType,
+                quantity: editingService.quantity,
+                cost: editingService.cost,
+                advancePayment: editingService.advancePayment,
+                providerUserName: editingService.providerUserName,
+                purchaseDate: editingService.purchaseDate || '',
+                completed: editingService.completed,
+              }
               : undefined
           }
           onClose={() => {

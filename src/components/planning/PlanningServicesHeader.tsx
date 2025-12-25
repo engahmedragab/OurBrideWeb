@@ -16,7 +16,14 @@ export const PlanningServicesHeader = ({
   const router = useRouter()
 
   const handleBack = () => {
-    router.push('/events/planning/overview')
+    // Get eventId from URL if present
+    const urlParams = new URLSearchParams(window.location.search)
+    const eventId = urlParams.get('eventId')
+    if (eventId) {
+      router.push(`/dashboard/my-events?eventId=${eventId}`)
+    } else {
+      router.push('/dashboard/my-events')
+    }
   }
 
   return (
@@ -34,7 +41,7 @@ export const PlanningServicesHeader = ({
 
         {/* Section Header - Aligned with arrow */}
         <SectionHeader
-          title="Bookings"
+          title="Preparations"
           className="!mb-0 !pb-0 [&>div]:!mb-0 [&>div]:!pb-0 [&>div]:!justify-start [&>div>div]:!mb-0 [&_h2]:!mb-0 [&_h2]:!mt-0 [&_h2]:leading-none"
         />
       </div>

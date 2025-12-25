@@ -23,8 +23,8 @@ export interface ServiceOrderResponse {
   couponCode: string
   couponDiscount: number
   providerId: number | null
-  provider: any // ProviderInfoResponse | null
-  service: any // ServiceHeaderResponse | null
+  provider: unknown | null // ProviderInfoResponse | null - to be defined when type is available
+  service: unknown | null // ServiceHeaderResponse | null - to be defined when type is available
   providerName: string
   providerLogo: string
   providerPhone: string
@@ -47,5 +47,5 @@ export interface ServiceOrderResponse {
   lastModifiedDate: string // ISO DateTime string
   createdBy: string
   lastModifiedBy: string
-  reservation: any // ReservationResponse | null
+  reservation: unknown | null // ReservationResponse | null - to be defined when type is available
 }

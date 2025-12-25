@@ -32,6 +32,7 @@ import { useQueries } from '@tanstack/react-query'
 import type { PurchaseResponse, ProductResponse, ReservationResponse, AddressResponse } from '@/types/responses'
 import type { CartProduct, CartReservation, CartMembership, CartGiftCard } from '@/types/responses'
 import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
+import type { PurchaseStatus } from '@/../client/common/api/gen/ourbride-api'
 import type { CheckoutRequest, CustomerRequest } from '@/../client/common/api/gen/ourbride-api'
 import type { CartItemType } from '@/components/ui/CartItem'
 
@@ -204,7 +205,7 @@ const mapPurchaseToCartReservation = (
     purchaseId: purchase.id,
     reservationId: purchase.reservationId ?? '',
     reservationDate: undefined,
-    status: purchase.status as any,
+    status: purchase.status as PurchaseStatus,
     purchasePrice: purchase.totalPrice ?? purchase.price ?? null,
     purchaseDate: purchase.creationDate ?? purchase.buyDate ?? undefined,
     type: 'Reservation' as CartItemType,
