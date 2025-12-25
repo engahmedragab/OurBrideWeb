@@ -7,7 +7,7 @@ import { Input } from '../Input'
 import { Button } from '@/components/ui/Button'
 import { Typography } from '@/components/ui/Typography'
 import { ServiceSelectCard } from '../ServiceSelectCard'
-import { LocationPickerModal } from '../LocationPickerModal'
+import { LocationPickerModal, type LocationData } from '../LocationPickerModal'
 import { StatusModal } from '../StatusModal'
 import { WelcomeHeader } from './WelcomeHeader'
 import { 
@@ -223,8 +223,12 @@ export const PlanningPreferencesForm = ({
     }
   }
 
-  const handleLocationSelect = (selectedLocation: string) => {
-    setLocation(selectedLocation)
+  const handleLocationSelect = (selectedLocation: string | LocationData) => {
+    // Extract display name if LocationData, otherwise use string directly
+    const locationName = typeof selectedLocation === 'string' 
+      ? selectedLocation 
+      : selectedLocation.displayName
+    setLocation(locationName)
     setShowLocationModal(false)
     if (errors.location) {
       setErrors(prev => ({ ...prev, location: undefined }))

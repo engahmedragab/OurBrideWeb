@@ -34,9 +34,9 @@ export interface CartResponse {
   priceCalculation: PriceCalculationResponse | null
   paymentGateways: PaymentGatewayResponse[]
   createdBy: string // Guid
-  createdByUserName: string
-  createdByUserEmail: string
-  createdByUserPhone: string
+  createdByUserName: string | null
+  createdByUserEmail: string | null
+  createdByUserPhone: string | null
   orders: OrderResponse[]
   currentOrderId: number | null
   currentOrder: OrderResponse | null

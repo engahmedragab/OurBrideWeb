@@ -680,6 +680,13 @@ export enum ProviderCategoryStatus {
   Archived = "Archived",
 }
 
+export enum Pronouns {
+  HeHim = "HeHim",
+  SheHer = "SheHer",
+  TheyThem = "TheyThem",
+  Other = "Other",
+}
+
 export enum ProgramType {
   Loyalty = "Loyalty",
   Referral = "Referral",
@@ -1154,6 +1161,11 @@ export enum EventVendorStatus {
   Suspended = "Suspended",
 }
 
+export enum EmergencyContactType {
+  Primary = "Primary",
+  Secondary = "Secondary",
+}
+
 export enum DisplayType {
   TopBar = "TopBar",
   BottomBar = "BottomBar",
@@ -1371,6 +1383,14 @@ export enum ClockMethod {
   Automatic = "Automatic",
   QRCode = "QRCode",
   AdminCorrection = "AdminCorrection",
+}
+
+export enum ClientSource {
+  WalkIn = "WalkIn",
+  Online = "Online",
+  Referral = "Referral",
+  SocialMedia = "SocialMedia",
+  Other = "Other",
 }
 
 export enum CheckInKind {
@@ -3604,8 +3624,27 @@ export interface BeautyCenterServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -3687,8 +3726,27 @@ export interface BeautyCenterServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -5000,6 +5058,29 @@ export interface CategoryRequest {
   subCategories?: SubCategoryRequest[] | null;
 }
 
+export interface CategoryResponse {
+  /** @format int32 */
+  id?: number;
+  nameAr?: string | null;
+  nameEn?: string | null;
+  name?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
+  description?: string | null;
+  iconName?: string | null;
+  colorName?: string | null;
+  url?: string | null;
+  subCategories?: SubCategoryResponse[] | null;
+  items?: ItemResponse[] | null;
+  favoriteItems?: ItemFavoriteResponse[] | null;
+  isDeleted?: boolean;
+  /** @format date-time */
+  creationDate?: string;
+  /** @format date-time */
+  lastModifiedDate?: string;
+  slug?: string | null;
+}
+
 export interface CategorySales {
   /** @format int32 */
   categoryId?: number;
@@ -5378,6 +5459,10 @@ export interface CheckoutOrder {
   /** @format double */
   discountAmount?: number | null;
   /** @format double */
+  taxAmount?: number | null;
+  /** @format double */
+  shippingAmount?: number | null;
+  /** @format double */
   finalAmount?: number;
   /** @format double */
   depositAmount?: number | null;
@@ -5426,6 +5511,10 @@ export interface CheckoutRequest {
   couponCode?: string | null;
   /** @format double */
   discountAmount?: number | null;
+  /** @format double */
+  taxAmount?: number | null;
+  /** @format double */
+  shippingAmount?: number | null;
   postCode?: string | null;
   paymentPlan?: PaymentPlanRequest;
   payments?: PaymentRequest[] | null;
@@ -5501,54 +5590,6 @@ export interface CleanupPromotionHistoryRequest {
    * @max 1000
    */
   batchSize?: number;
-}
-
-export interface ClientAddressRequest {
-  /** @format int32 */
-  id?: number | null;
-  /** @minLength 1 */
-  type: string;
-  /**
-   * @minLength 0
-   * @maxLength 200
-   */
-  name: string;
-  /**
-   * @minLength 0
-   * @maxLength 500
-   */
-  address: string;
-  /**
-   * @minLength 0
-   * @maxLength 500
-   */
-  addressLine2?: string | null;
-  /**
-   * @minLength 0
-   * @maxLength 50
-   */
-  aptSuite?: string | null;
-  /**
-   * @minLength 0
-   * @maxLength 100
-   */
-  district?: string | null;
-  /**
-   * @minLength 0
-   * @maxLength 100
-   */
-  city?: string | null;
-  /**
-   * @minLength 0
-   * @maxLength 10
-   */
-  country?: string | null;
-  /**
-   * @minLength 0
-   * @maxLength 20
-   */
-  postalCode?: string | null;
-  isDefault?: boolean;
 }
 
 export interface ClientTestFeedbackRequest {
@@ -7648,18 +7689,17 @@ export interface CreateClientRequest {
    * @max 2100
    */
   birthdayYear?: number | null;
-  gender?: string | null;
-  pronouns?: string | null;
+  gender?: Gender;
+  pronouns?: Pronouns;
   /**
    * @minLength 0
    * @maxLength 500
    */
   profileImage?: string | null;
-  clientSource?: string | null;
+  clientSource?: ClientSource;
   /** @format uuid */
   referredBy?: string | null;
-  /** @format int32 */
-  preferredLanguage?: number | null;
+  preferredLanguage?: Language;
   /**
    * @minLength 0
    * @maxLength 255
@@ -7683,7 +7723,7 @@ export interface CreateClientRequest {
    * @maxLength 10
    */
   additionalPhoneCountryCode?: string | null;
-  addresses?: ClientAddressRequest[] | null;
+  addresses?: DeliveryAddressRequest[] | null;
   emergencyContacts?: EmergencyContactRequest[] | null;
   emailNotifications?: boolean | null;
   textMessageNotifications?: boolean | null;
@@ -9338,9 +9378,9 @@ export interface CreateProductRequest {
   shortDescriptionEn?: string | null;
   descriptionAr?: string | null;
   descriptionEn?: string | null;
-  isActive?: boolean;
-  isFeatured?: boolean;
-  published?: boolean;
+  isActive?: boolean | null;
+  isFeatured?: boolean | null;
+  published?: boolean | null;
   visibility?: Visibility;
   /** @format double */
   rate?: number | null;
@@ -9358,7 +9398,7 @@ export interface CreateProductRequest {
   salePrice?: number | null;
   /** @format double */
   regularPrice?: number | null;
-  hasDiscount?: boolean;
+  hasDiscount?: boolean | null;
   discountType?: DiscountType;
   /** @format date-time */
   discountDateStart?: string | null;
@@ -9379,7 +9419,7 @@ export interface CreateProductRequest {
   /** @format double */
   productProfit?: number | null;
   isTaagerProduct?: boolean | null;
-  inStock?: boolean;
+  inStock?: boolean | null;
   /** @format int32 */
   stock?: number | null;
   /** @format int32 */
@@ -9427,8 +9467,8 @@ export interface CreateProductRequest {
   relatedIds?: string | null;
   upsellIds?: string | null;
   crossSellIds?: string | null;
-  variationsJson?: string | null;
   groupedProducts?: string | null;
+  variationsJson?: string | null;
   /** @format int32 */
   menuOrder?: number | null;
   /** @format int32 */
@@ -9489,12 +9529,10 @@ export interface CreateProductRequest {
   errorMessage?: string | null;
   errorData?: string | null;
   productInformations?: ProductInformationRequest[] | null;
-  attributes?: ProductAttributeRequest[] | null;
-  variations?: ProductVariationRequest[] | null;
-  imageUrls?: string[] | null;
-  galleryImageUrls?: string[] | null;
-  tagList?: string[] | null;
-  categoryIds?: number[] | null;
+  attributeIds?: number[] | null;
+  tagIds?: number[] | null;
+  brandIds?: number[] | null;
+  medias?: MediaRequest[] | null;
 }
 
 export interface CreateProductReviewRequest {
@@ -11663,6 +11701,8 @@ export interface DeliveryAddress {
 }
 
 export interface DeliveryAddressRequest {
+  /** @format int32 */
+  id?: number | null;
   contactName?: string | null;
   contactNumber1?: string | null;
   contactNumber2?: string | null;
@@ -11856,8 +11896,7 @@ export interface EmailVarifyRequest {
 export interface EmergencyContactRequest {
   /** @format int32 */
   id?: number | null;
-  /** @minLength 1 */
-  type: string;
+  type: EmergencyContactType;
   /**
    * @minLength 0
    * @maxLength 200
@@ -12567,8 +12606,27 @@ export interface FlowerBouquetServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -12650,8 +12708,27 @@ export interface FlowerBouquetServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -15160,6 +15237,8 @@ export interface InventoryResponse {
   createdBy?: string | null;
   /** @format uuid */
   updatedBy?: string | null;
+  stockMovements?: StockMovementResponse[] | null;
+  reorderAlerts?: ReorderAlertResponse[] | null;
 }
 
 export interface InventoryResponseApiResult {
@@ -15721,6 +15800,28 @@ export interface ItemFavorite {
   /** @format int32 */
   subCategoryId: number;
   subCategory?: SubCategory;
+}
+
+export interface ItemFavoriteResponse {
+  /** @format int32 */
+  id?: number;
+  /** @format int32 */
+  categoryId?: number;
+  category?: CategoryResponse;
+  /** @format int32 */
+  subCategoryId?: number;
+  subCategory?: SubCategoryResponse;
+  /** @format int32 */
+  itemId?: number | null;
+  item?: ItemResponse;
+  createdBy?: string | null;
+  lastModifiedBy?: string | null;
+  isDeleted?: boolean;
+  /** @format date-time */
+  creationDate?: string;
+  /** @format date-time */
+  lastModifiedDate?: string;
+  slug?: string | null;
 }
 
 export interface ItemLine {
@@ -17030,8 +17131,27 @@ export interface MakeupArtistServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -17113,8 +17233,27 @@ export interface MakeupArtistServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -17218,8 +17357,27 @@ export interface MazoonsServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -17301,8 +17459,27 @@ export interface MazoonsServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -17634,6 +17811,99 @@ export interface MediaRequest {
   generateThumbnail?: boolean;
   generatePreview?: boolean;
   optimizeMedia?: boolean;
+}
+
+export interface MediaResponse {
+  /** @format int32 */
+  id?: number;
+  isDeleted?: boolean;
+  /** @format date-time */
+  creationDate?: string;
+  /** @format date-time */
+  lastModifiedDate?: string;
+  slug?: string | null;
+  /** @format int32 */
+  sourceId?: number;
+  source?: Source;
+  /** @format int32 */
+  providerId?: number | null;
+  /** @format int32 */
+  branchId?: number | null;
+  /** @format uuid */
+  staffId?: string | null;
+  /** @format uuid */
+  userId?: string | null;
+  scopeLevel?: TenantScopeLevel;
+  isGlobal?: boolean;
+  isInherited?: boolean;
+  /** @format int32 */
+  parentId?: number | null;
+  nameAr?: string | null;
+  nameEn?: string | null;
+  descriptionEn?: string | null;
+  descriptionAr?: string | null;
+  alt?: string | null;
+  /** @format int32 */
+  size?: number | null;
+  fileId?: string | null;
+  fileName?: string | null;
+  fileExtension?: string | null;
+  mimeType?: string | null;
+  url?: string | null;
+  thumbnailUrl?: string | null;
+  previewUrl?: string | null;
+  originalUrl?: string | null;
+  mediaType?: MediaType;
+  /** @format int32 */
+  width?: number | null;
+  /** @format int32 */
+  height?: number | null;
+  /** @format int32 */
+  duration?: number | null;
+  resolution?: string | null;
+  quality?: string | null;
+  status?: CommonEntityStatus;
+  isPublic?: boolean;
+  isFeatured?: boolean;
+  isDownloadable?: boolean;
+  title?: string | null;
+  caption?: string | null;
+  keywords?: string | null;
+  tags?: string | null;
+  metadata?: string | null;
+  /** @format int32 */
+  viewCount?: number;
+  /** @format int32 */
+  downloadCount?: number;
+  /** @format int32 */
+  likeCount?: number;
+  /** @format date-time */
+  lastViewedAt?: string | null;
+  /** @format date-time */
+  lastDownloadedAt?: string | null;
+  storageProvider?: string | null;
+  storagePath?: string | null;
+  storageBucket?: string | null;
+  storageRegion?: string | null;
+  isProcessed?: boolean;
+  processingStatus?: string | null;
+  processingError?: string | null;
+  /** @format date-time */
+  processedAt?: string | null;
+  /** @format date-time */
+  expiresAt?: string | null;
+  isTemporary?: boolean;
+  /** @format date-time */
+  cleanupAt?: string | null;
+  /** @format uuid */
+  createdBy?: string;
+  /** @format uuid */
+  lastModifiedBy?: string;
+  displayName?: string | null;
+  displayDescription?: string | null;
+  isExpired?: boolean;
+  formattedSize?: string | null;
+  formattedDuration?: string | null;
 }
 
 export interface MembershipReviewItem {
@@ -19010,6 +19280,10 @@ export interface Order {
   /** @format double */
   discountAmount?: number | null;
   /** @format double */
+  taxAmount?: number | null;
+  /** @format double */
+  shippingAmount?: number | null;
+  /** @format double */
   finalAmount?: number;
   /** @format double */
   depositAmount?: number | null;
@@ -20229,8 +20503,27 @@ export interface PhotoSetionServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -20312,8 +20605,27 @@ export interface PhotoSetionServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -20397,8 +20709,27 @@ export interface PhotographersServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -20480,8 +20811,27 @@ export interface PhotographersServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -21359,17 +21709,6 @@ export interface ProductAttribute {
   providerProductAttributes?: ProviderProductAttribute[] | null;
 }
 
-export interface ProductAttributeLineResponse {
-  /** @format int64 */
-  id?: number | null;
-  name?: string | null;
-  options?: string[] | null;
-  /** @format int32 */
-  position?: number | null;
-  visible?: boolean | null;
-  variation?: boolean | null;
-}
-
 export interface ProductAttributeMapping {
   /** @format int32 */
   id: number;
@@ -21710,26 +22049,6 @@ export interface ProductBrandResponseListApiResult {
   data?: ProductBrandResponse[] | null;
 }
 
-export interface ProductCategoryLineResponse {
-  /** @format int64 */
-  id?: number | null;
-  name?: string | null;
-  slug?: string | null;
-}
-
-export interface ProductDefaultAttributeResponse {
-  /** @format int64 */
-  id?: number | null;
-  name?: string | null;
-  option?: string | null;
-}
-
-export interface ProductDimensionResponse {
-  length?: string | null;
-  width?: string | null;
-  height?: string | null;
-}
-
 export interface ProductDimensions {
   /** @format int32 */
   id: number;
@@ -21751,12 +22070,6 @@ export interface ProductDimensions {
   width?: number | null;
   /** @format double */
   height?: number | null;
-}
-
-export interface ProductDownloadLineResponse {
-  id?: string | null;
-  name?: string | null;
-  file?: string | null;
 }
 
 export interface ProductErrorDataResponse {
@@ -21857,24 +22170,6 @@ export interface ProductHeaderResponseApiResult {
   data?: ProductHeaderResponse;
 }
 
-export interface ProductImageResponse {
-  /** @format int64 */
-  id?: number | null;
-  /** @format date-time */
-  dateCreated?: string | null;
-  src?: string | null;
-  name?: string | null;
-  alt?: string | null;
-  /** @format date-time */
-  dateCreatedGmt?: string | null;
-  /** @format date-time */
-  dateModified?: string | null;
-  /** @format date-time */
-  dateModifiedGmt?: string | null;
-  /** @format int32 */
-  position?: number | null;
-}
-
 export interface ProductImportResponse {
   /** @format int32 */
   totalRows?: number;
@@ -21951,10 +22246,13 @@ export interface ProductResponse {
   descriptionAr?: string | null;
   descriptionEn?: string | null;
   isActive?: boolean;
-  rate?: string | null;
+  /** @format double */
+  rate?: number | null;
   /** @format int32 */
   likes?: number | null;
   url?: string | null;
+  /** @format double */
+  price?: number | null;
   /** @format double */
   amount?: number | null;
   discountType?: DiscountType;
@@ -21969,10 +22267,6 @@ export interface ProductResponse {
   itemId?: number | null;
   item?: ItemResponse;
   productInformations?: ProductInformationResponse[] | null;
-  providerProductAttributes?: ProviderProductAttributeResponse[] | null;
-  providerProductTags?: ProviderProductTagResponse[] | null;
-  providerCategories?: ProviderCategoryResponse[] | null;
-  providerSubCategories?: ProviderSubCategoryResponse[] | null;
   /** @format int32 */
   productId?: number;
   shortDescriptionAr?: string | null;
@@ -21988,6 +22282,12 @@ export interface ProductResponse {
   discountDateStart?: string | null;
   /** @format date-time */
   discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  taxStatus?: TaxStatus;
+  taxClass?: TaxClass;
   /** @format double */
   productProfit?: number | null;
   isTaagerProduct?: boolean | null;
@@ -21996,6 +22296,10 @@ export interface ProductResponse {
   stock?: number | null;
   /** @format int32 */
   lowStockAmount?: number | null;
+  backordersAllowed?: boolean | null;
+  soldIndividually?: boolean | null;
+  /** @format double */
+  weight?: number | null;
   /** @format double */
   length?: number | null;
   /** @format double */
@@ -22003,12 +22307,19 @@ export interface ProductResponse {
   /** @format double */
   height?: number | null;
   allowCustomerReviews?: boolean | null;
+  purchaseNote?: string | null;
+  /** @format double */
+  salePrice?: number | null;
+  tagsString?: string | null;
+  shippingClass?: ShippingClass;
   /** @format int32 */
   parentProductId?: number | null;
   /** @format int32 */
   categoryId?: number;
+  category?: CategoryResponse;
   /** @format int32 */
   subCategoryId?: number;
+  subCategory?: SubCategoryResponse;
   /** @format int64 */
   id?: number | null;
   name?: string | null;
@@ -22032,11 +22343,7 @@ export interface ProductResponse {
   enableHtmlShortDescription?: string | null;
   sku?: string | null;
   /** @format double */
-  price?: number | null;
-  /** @format double */
   regularPrice?: number | null;
-  /** @format double */
-  salePrice?: number | null;
   /** @format date-time */
   dateOnSaleFrom?: string | null;
   /** @format date-time */
@@ -22052,50 +22359,57 @@ export interface ProductResponse {
   totalSales?: number | null;
   virtual?: boolean | null;
   downloadable?: boolean | null;
-  downloads?: ProductDownloadLineResponse[] | null;
   /** @format int32 */
   downloadLimit?: number | null;
   /** @format int32 */
   downloadExpiry?: number | null;
   externalUrl?: string | null;
   buttonText?: string | null;
-  taxStatus?: string | null;
-  taxClass?: string | null;
   /** @format int32 */
   stockQuantity?: number | null;
   stockStatus?: string | null;
-  backorders?: string | null;
-  backordersAllowed?: boolean | null;
+  backorders?: boolean | null;
   backordered?: boolean | null;
-  soldIndividually?: boolean | null;
-  /** @format double */
-  weight?: number | null;
-  dimensions?: ProductDimensionResponse;
   shippingRequired?: boolean | null;
   shippingTaxable?: boolean | null;
-  shippingClass?: string | null;
-  shippingClassId?: string | null;
+  /** @format int32 */
+  shippingClassId?: number | null;
   reviewsAllowed?: boolean | null;
   averageRating?: string | null;
   /** @format int32 */
   ratingCount?: number | null;
   relatedIds?: number[] | null;
+  relatedProducts?: ProductResponse[] | null;
   upsellIds?: number[] | null;
+  upsellProducts?: ProductResponse[] | null;
   crossSellIds?: number[] | null;
+  crossSellProducts?: ProductResponse[] | null;
+  groupedProducts?: number[] | null;
+  groupedProductsList?: ProductResponse[] | null;
   /** @format int64 */
   parentId?: number | null;
-  purchaseNote?: string | null;
-  categories?: ProductCategoryLineResponse[] | null;
-  tags?: ProductTagLineResponse[] | null;
-  images?: ProductImageResponse[] | null;
-  attributes?: ProductAttributeLineResponse[] | null;
-  defaultAttributes?: ProductDefaultAttributeResponse[] | null;
+  parentProduct?: ProductResponse;
+  tags?: ProductTagResponse[] | null;
+  images?: MediaResponse[] | null;
+  attributes?: ProductAttributeResponse[] | null;
+  brands?: ProductBrandResponse[] | null;
   variations?: number[] | null;
-  groupedProducts?: number[] | null;
   /** @format int32 */
   menuOrder?: number | null;
   error?: ProductErrorResponse;
-  reviews?: ProductReviewResponse[] | null;
+  reviews?: ReviewResponse[] | null;
+  externalId?: string | null;
+  externalHandle?: string | null;
+  vendor?: string | null;
+  productType?: string | null;
+  templateSuffix?: string | null;
+  onlyDefaultVariant?: boolean | null;
+  externalApiId?: string | null;
+  manageStock?: boolean | null;
+  providerData?: string | null;
+  sourceOfTruth?: SourceOfTruth;
+  /** @format date-time */
+  lastSyncedAt?: string | null;
 }
 
 export interface ProductResponseApiResult {
@@ -22131,24 +22445,6 @@ export interface ProductReviewItem {
    */
   comment?: string | null;
   isNull?: boolean;
-}
-
-export interface ProductReviewResponse {
-  /** @format int64 */
-  id?: number | null;
-  /** @format date-time */
-  dateCreated?: string | null;
-  /** @format date-time */
-  dateCreatedGmt?: string | null;
-  /** @format int64 */
-  productId?: number | null;
-  status?: string | null;
-  reviewer?: string | null;
-  reviewerEmail?: string | null;
-  review?: string | null;
-  /** @format int32 */
-  rating?: number | null;
-  verified?: boolean | null;
 }
 
 export interface ProductSalesReportResponse {
@@ -22277,13 +22573,6 @@ export interface ProductTag {
   count?: number | null;
   isActive?: boolean;
   providerProductTags?: ProviderProductTag[] | null;
-}
-
-export interface ProductTagLineResponse {
-  /** @format int64 */
-  id?: number | null;
-  name?: string | null;
-  slug?: string | null;
 }
 
 export interface ProductTagResponse {
@@ -23063,6 +23352,12 @@ export interface ProviderCheckoutRequest {
   /** @format date-time */
   preferredDeliveryDate?: string | null;
   sendNotificationToClient?: boolean;
+  /** @format double */
+  taxAmount?: number | null;
+  /** @format double */
+  shippingAmount?: number | null;
+  /** @format double */
+  discountAmount?: number | null;
 }
 
 export interface ProviderCommissionAnalyticsResponse {
@@ -24655,6 +24950,7 @@ export interface Purchase {
   providerUserId?: string | null;
   providerNotes?: string | null;
   reservationId?: string | null;
+  imageUrl?: string | null;
   isUrgent?: boolean;
   requireClientConfirmation?: boolean;
   /** @format date-time */
@@ -27630,8 +27926,27 @@ export interface Service {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   url?: string | null;
   type?: ServiceType;
   class?: ServiceClass;
@@ -28270,8 +28585,27 @@ export interface ServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -29159,6 +29493,27 @@ export interface SubCategoryRequest {
   descriptionEn?: string | null;
   /** @format int32 */
   categoryId?: number;
+}
+
+export interface SubCategoryResponse {
+  /** @format int32 */
+  id?: number;
+  nameAr?: string | null;
+  nameEn?: string | null;
+  name?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
+  /** @format int32 */
+  categoryId?: number;
+  url?: string | null;
+  iconName?: string | null;
+  colorName?: string | null;
+  isDeleted?: boolean;
+  /** @format date-time */
+  creationDate?: string;
+  /** @format date-time */
+  lastModifiedDate?: string;
+  slug?: string | null;
 }
 
 export interface SubmitContentRequest {
@@ -33533,9 +33888,9 @@ export interface UpdateProductRequest {
   shortDescriptionEn?: string | null;
   descriptionAr?: string | null;
   descriptionEn?: string | null;
-  isActive?: boolean;
-  isFeatured?: boolean;
-  published?: boolean;
+  isActive?: boolean | null;
+  isFeatured?: boolean | null;
+  published?: boolean | null;
   visibility?: Visibility;
   /** @format double */
   rate?: number | null;
@@ -33553,7 +33908,7 @@ export interface UpdateProductRequest {
   salePrice?: number | null;
   /** @format double */
   regularPrice?: number | null;
-  hasDiscount?: boolean;
+  hasDiscount?: boolean | null;
   discountType?: DiscountType;
   /** @format date-time */
   discountDateStart?: string | null;
@@ -33574,7 +33929,7 @@ export interface UpdateProductRequest {
   /** @format double */
   productProfit?: number | null;
   isTaagerProduct?: boolean | null;
-  inStock?: boolean;
+  inStock?: boolean | null;
   /** @format int32 */
   stock?: number | null;
   /** @format int32 */
@@ -33595,8 +33950,6 @@ export interface UpdateProductRequest {
   width?: number | null;
   /** @format double */
   height?: number | null;
-  weightUnit?: string | null;
-  dimensionUnit?: string | null;
   image?: string | null;
   specifications?: string | null;
   tags?: string | null;
@@ -33606,8 +33959,6 @@ export interface UpdateProductRequest {
   averageRating?: string | null;
   /** @format int32 */
   ratingCount?: number | null;
-  enableReviews?: boolean;
-  purchaseNoteText?: string | null;
   shippingClass?: ShippingClass;
   shippingRequired?: boolean | null;
   shippingTaxable?: boolean | null;
@@ -33631,9 +33982,9 @@ export interface UpdateProductRequest {
   /** @format int32 */
   menuOrder?: number | null;
   /** @format int32 */
-  categoryId?: number;
+  categoryId: number;
   /** @format int32 */
-  subCategoryId?: number;
+  subCategoryId: number;
   /** @format int32 */
   providerId?: number | null;
   /** @format int32 */
@@ -33656,6 +34007,7 @@ export interface UpdateProductRequest {
   shortDescription?: string | null;
   enableHtmlDescription?: boolean | null;
   enableHtmlShortDescription?: boolean | null;
+  featured?: boolean | null;
   /** @format date-time */
   dateCreated?: string | null;
   /** @format date-time */
@@ -33672,10 +34024,6 @@ export interface UpdateProductRequest {
   dateOnSaleTo?: string | null;
   /** @format date-time */
   dateOnSaleToGmt?: string | null;
-  /** @format date-time */
-  saleStartDate?: string | null;
-  /** @format date-time */
-  saleEndDate?: string | null;
   /** @format int32 */
   totalSales?: number | null;
   priceHtml?: string | null;
@@ -33693,8 +34041,10 @@ export interface UpdateProductRequest {
   productInformations?: ProductInformationRequest[] | null;
   attributes?: ProductAttributeRequest[] | null;
   variations?: ProductVariationRequest[] | null;
-  imageUrls?: string[] | null;
-  galleryImageUrls?: string[] | null;
+  attributeIds?: number[] | null;
+  tagIds?: number[] | null;
+  brandIds?: number[] | null;
+  medias?: MediaRequest[] | null;
   tagList?: string[] | null;
   categoryIds?: number[] | null;
 }
@@ -37772,8 +38122,27 @@ export interface WeddingCarServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -37855,8 +38224,27 @@ export interface WeddingCarServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -37940,8 +38328,27 @@ export interface WeddingDressServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -38023,8 +38430,27 @@ export interface WeddingDressServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -38188,8 +38614,27 @@ export interface WeddingHallServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -38273,8 +38718,27 @@ export interface WeddingHallServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -38367,8 +38831,27 @@ export interface WeddingInvitationsServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -38450,8 +38933,27 @@ export interface WeddingInvitationsServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -38641,8 +39143,27 @@ export interface WeddingPlannerServiceRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -38724,8 +39245,27 @@ export interface WeddingPlannerServiceUpdateRequest {
   /** @format double */
   rentPrice?: number | null;
   /** @format double */
+  saleBuyPrice?: number | null;
+  /** @format double */
+  saleRentPrice?: number | null;
+  /** @format double */
   deposit?: number | null;
   priceType?: PriceType;
+  hasDiscount?: boolean | null;
+  discountType?: DiscountType;
+  /** @format date-time */
+  discountDateStart?: string | null;
+  /** @format date-time */
+  discountDateEnd?: string | null;
+  /** @format date-time */
+  flashSaleStartDate?: string | null;
+  /** @format date-time */
+  flashSaleEndDate?: string | null;
+  onSale?: boolean | null;
+  /** @format date-time */
+  dateOnSaleFrom?: string | null;
+  /** @format date-time */
+  dateOnSaleTo?: string | null;
   hasInstallment?: boolean | null;
   hasPackages?: boolean | null;
   /**
@@ -68138,9 +68678,6 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     postFilesUploadFiles: (
-      data: {
-        files?: File[];
-      },
       query?: {
         prefix?: string;
       },
@@ -68150,9 +68687,7 @@ export class Api<SecurityDataType extends unknown> {
         path: `/api/v1/files/upload/multiple`,
         method: "POST",
         query: query,
-        body: data,
         secure: true,
-        type: ContentType.FormData,
         ...params,
       }),
 
@@ -71251,6 +71786,44 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
+     * @tags GiftCards
+     * @name PostGiftCardsToggleFollow
+     * @request POST:/api/v1/gift-cards/{giftCardId}/follow
+     * @secure
+     */
+    postGiftCardsToggleFollow: (
+      giftCardId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/gift-cards/${giftCardId}/follow`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags GiftCards
+     * @name PostGiftCardsToggleFavorite
+     * @request POST:/api/v1/gift-cards/{giftCardId}/favorite
+     * @secure
+     */
+    postGiftCardsToggleFavorite: (
+      giftCardId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/gift-cards/${giftCardId}/favorite`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags GuestBooks
      * @name PostGuestBooksInit
      * @request POST:/api/v1/books/guestbooks/init
@@ -72684,13 +73257,29 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Home
-     * @name GetHomemineInfo
+     * @name GetHomeGetHomeData
      * @request GET:/api/v1/home
+     * @secure
+     */
+    getHomeGetHomeData: (params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Home
+     * @name GetHomemineInfo
+     * @request GET:/api/v1/home/mine-info
      * @secure
      */
     getHomemineInfo: (params: RequestParams = {}) =>
       this.http.request<void, any>({
-        path: `/api/v1/home`,
+        path: `/api/v1/home/mine-info`,
         method: "GET",
         secure: true,
         ...params,
@@ -74231,11 +74820,20 @@ export class Api<SecurityDataType extends unknown> {
     putInventoryAdjustStock: (
       inventoryId: number,
       data: AdjustStockRequest,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+      },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<StockMovementResponseApiResult, any>({
         path: `/api/v1/management/inventory/${inventoryId}/adjust`,
         method: "PUT",
+        query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -74254,11 +74852,20 @@ export class Api<SecurityDataType extends unknown> {
     putInventoryReserveStock: (
       inventoryId: number,
       data: ReserveStockRequest,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+      },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<StockMovementResponseApiResult, any>({
         path: `/api/v1/management/inventory/${inventoryId}/reserve`,
         method: "PUT",
+        query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -74277,11 +74884,20 @@ export class Api<SecurityDataType extends unknown> {
     putInventoryReleaseReservedStock: (
       inventoryId: number,
       data: ReleaseStockRequest,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+      },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<StockMovementResponseApiResult, any>({
         path: `/api/v1/management/inventory/${inventoryId}/release`,
         method: "PUT",
+        query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -82699,6 +83315,44 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
+     * @tags Membership
+     * @name PostMembershipToggleFollow
+     * @request POST:/api/v1/memberships/{membershipId}/toggle-follow
+     * @secure
+     */
+    postMembershipToggleFollow: (
+      membershipId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/memberships/${membershipId}/toggle-follow`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Membership
+     * @name PostMembershipToggleFavorite
+     * @request POST:/api/v1/memberships/{membershipId}/toggle-favorite
+     * @secure
+     */
+    postMembershipToggleFavorite: (
+      membershipId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/memberships/${membershipId}/toggle-favorite`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags MineInfo
      * @name GetMineInfoUserOverview
      * @request GET:/api/v1/mineinfo
@@ -90607,6 +91261,64 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Product
+     * @name PostProductToggleFavorite
+     * @request POST:/api/v1/products/{productId}/toggle-favorite
+     * @secure
+     */
+    postProductToggleFavorite: (
+      productId: number,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<BooleanApiResult, any>({
+        path: `/api/v1/products/${productId}/toggle-favorite`,
+        method: "POST",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Product
+     * @name PostProductToggleWishlist
+     * @request POST:/api/v1/products/{productId}/toggle-wishlist
+     * @secure
+     */
+    postProductToggleWishlist: (
+      productId: number,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<BooleanApiResult, any>({
+        path: `/api/v1/products/${productId}/toggle-wishlist`,
+        method: "POST",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Product
      * @name GetProductGetFilteredProducts
      * @request GET:/api/v1/products/filtered
      * @secure
@@ -95010,17 +95722,35 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Provider
-     * @name PostProviderAddToFollow
-     * @request POST:/api/v1/services/providers/follow/{serviceId}
+     * @name PostProviderToggleFollow
+     * @request POST:/api/v1/services/providers/follow/{providerId}
      * @secure
      */
-    postProviderAddToFollow: (
+    postProviderToggleFollow: (
       providerId: number,
-      serviceId: string,
       params: RequestParams = {},
     ) =>
       this.http.request<void, any>({
-        path: `/api/v1/services/providers/follow/${serviceId}`,
+        path: `/api/v1/services/providers/follow/${providerId}`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Provider
+     * @name PostProviderToggleFavorite
+     * @request POST:/api/v1/services/providers/favorite/{providerId}
+     * @secure
+     */
+    postProviderToggleFavorite: (
+      providerId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/providers/favorite/${providerId}`,
         method: "POST",
         secure: true,
         ...params,
@@ -95031,17 +95761,16 @@ export class Api<SecurityDataType extends unknown> {
      *
      * @tags Provider
      * @name PostProviderAddReviews
-     * @request POST:/api/v1/services/providers/review/{serviceId}
+     * @request POST:/api/v1/services/providers/review/{providerId}
      * @secure
      */
     postProviderAddReviews: (
       providerId: number,
-      serviceId: string,
       data: ReviewRequest,
       params: RequestParams = {},
     ) =>
       this.http.request<void, any>({
-        path: `/api/v1/services/providers/review/${serviceId}`,
+        path: `/api/v1/services/providers/review/${providerId}`,
         method: "POST",
         body: data,
         secure: true,
@@ -95124,82 +95853,6 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<void, any>({
         path: `/api/v1/services/providers/assign`,
         method: "POST",
-        query: query,
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Provider
-     * @name GetProviderGetProviderClientsWithReservations
-     * @request GET:/api/v1/services/providers/{providerId}/clients/reservations
-     * @secure
-     */
-    getProviderGetProviderClientsWithReservations: (
-      providerId: number,
-      query?: {
-        /**
-         * @format int32
-         * @default 1
-         */
-        page?: number;
-        /**
-         * @format int32
-         * @default 10
-         */
-        pageSize?: number;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.http.request<void, any>({
-        path: `/api/v1/services/providers/${providerId}/clients/reservations`,
-        method: "GET",
-        query: query,
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Provider
-     * @name GetProviderGetClientsStats
-     * @request GET:/api/v1/services/providers/{providerId}/clients/stats
-     * @secure
-     */
-    getProviderGetClientsStats: (
-      providerId: number,
-      params: RequestParams = {},
-    ) =>
-      this.http.request<void, any>({
-        path: `/api/v1/services/providers/${providerId}/clients/stats`,
-        method: "GET",
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Provider
-     * @name GetProviderGetClientProfile
-     * @request GET:/api/v1/services/providers/client/profile
-     * @secure
-     */
-    getProviderGetClientProfile: (
-      query?: {
-        /** @format uuid */
-        clientId?: string;
-        /** @format int32 */
-        providerId?: number;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.http.request<void, any>({
-        path: `/api/v1/services/providers/client/profile`,
-        method: "GET",
         query: query,
         secure: true,
         ...params,
@@ -96811,6 +97464,166 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags ProviderClient
+     * @name GetProviderClientGetProviderClientAssignments
+     * @request GET:/api/v1/provider/clients/assignments
+     * @secure
+     */
+    getProviderClientGetProviderClientAssignments: (
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/provider/clients/assignments`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderClient
+     * @name GetProviderClientGetProviderClientsWithReservations
+     * @request GET:/api/v1/services/providers/{providerId}/clients/reservations
+     * @secure
+     */
+    getProviderClientGetProviderClientsWithReservations: (
+      providerId: number,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 10
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/providers/${providerId}/clients/reservations`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderClient
+     * @name GetProviderClientGetClientsStats
+     * @request GET:/api/v1/services/providers/{providerId}/clients/stats
+     * @secure
+     */
+    getProviderClientGetClientsStats: (
+      providerId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/providers/${providerId}/clients/stats`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderClient
+     * @name GetProviderClientGetProviderClientAssignmentsByProvider
+     * @request GET:/api/v1/services/providers/{providerId}/clients/assignments
+     * @secure
+     */
+    getProviderClientGetProviderClientAssignmentsByProvider: (
+      providerId: number,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/providers/${providerId}/clients/assignments`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderClient
+     * @name GetProviderClientGetClientAssignmentsStats
+     * @request GET:/api/v1/services/providers/{providerId}/clients/assignments/stats
+     * @secure
+     */
+    getProviderClientGetClientAssignmentsStats: (
+      providerId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/providers/${providerId}/clients/assignments/stats`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderClient
+     * @name GetProviderClientGetClientProfileDetails
+     * @request GET:/api/v1/services/providers/client/profile
+     * @secure
+     */
+    getProviderClientGetClientProfileDetails: (
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        /** @format int32 */
+        providerId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/providers/client/profile`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderClient
      * @name PostProviderClientCreateClient
      * @request POST:/api/v1/provider/clients
      * @secure
@@ -96857,6 +97670,78 @@ export class Api<SecurityDataType extends unknown> {
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderClient
+     * @name DeleteProviderClientDeleteClient
+     * @request DELETE:/api/v1/provider/clients/{clientId}
+     * @secure
+     */
+    deleteProviderClientDeleteClient: (
+      clientId: string,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/provider/clients/${clientId}`,
+        method: "DELETE",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderClient
+     * @name PutProviderClientBlockClient
+     * @request PUT:/api/v1/provider/clients/{clientId}/block
+     * @secure
+     */
+    putProviderClientBlockClient: (
+      clientId: string,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/provider/clients/${clientId}/block`,
+        method: "PUT",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderClient
+     * @name PutProviderClientUnblockClient
+     * @request PUT:/api/v1/provider/clients/{clientId}/unblock
+     * @secure
+     */
+    putProviderClientUnblockClient: (
+      clientId: string,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/provider/clients/${clientId}/unblock`,
+        method: "PUT",
+        query: query,
+        secure: true,
         ...params,
       }),
 
@@ -99050,15 +99935,16 @@ export class Api<SecurityDataType extends unknown> {
      *
      * @tags ProviderPurchase
      * @name GetProviderPurchaseGetCartForClient
-     * @request GET:/api/v1/provider/purchases/cart/client/{clientId}
+     * @request GET:/api/v1/provider/purchases/cart/provider/{providerId}/client/{clientId}
      * @secure
      */
     getProviderPurchaseGetCartForClient: (
+      providerId: number,
       clientId: string,
       params: RequestParams = {},
     ) =>
       this.http.request<void, any>({
-        path: `/api/v1/provider/purchases/cart/client/${clientId}`,
+        path: `/api/v1/provider/purchases/cart/provider/${providerId}/client/${clientId}`,
         method: "GET",
         secure: true,
         ...params,
@@ -99198,6 +100084,45 @@ export class Api<SecurityDataType extends unknown> {
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderPurchase
+     * @name GetProviderPurchaseGetOrderForClient
+     * @request GET:/api/v1/provider/purchases/order/provider/{providerId}/client/{clientId}
+     * @secure
+     */
+    getProviderPurchaseGetOrderForClient: (
+      providerId: number,
+      clientId: string,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/provider/purchases/order/provider/${providerId}/client/${clientId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderPurchase
+     * @name GetProviderPurchaseGetQueueItemStatus
+     * @request GET:/api/v1/provider/purchases/queue/{queueItemId}/status
+     * @secure
+     */
+    getProviderPurchaseGetQueueItemStatus: (
+      queueItemId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/provider/purchases/queue/${queueItemId}/status`,
+        method: "GET",
+        secure: true,
         ...params,
       }),
 
@@ -102013,6 +102938,22 @@ export class Api<SecurityDataType extends unknown> {
     getPurchaseGetAllCartsWithProviders: (params: RequestParams = {}) =>
       this.http.request<void, any>({
         path: `/api/v1/purchases/carts/with-providers`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Purchase
+     * @name GetPurchaseGetCartProviders
+     * @request GET:/api/v1/purchases/cart/providers
+     * @secure
+     */
+    getPurchaseGetCartProviders: (params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/purchases/cart/providers`,
         method: "GET",
         secure: true,
         ...params,
@@ -109076,6 +110017,25 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Services
+     * @name PostServicesToggleFavorite
+     * @request POST:/api/v1/services/toggle-favorite/{serviceId}
+     * @secure
+     */
+    postServicesToggleFavorite: (
+      serviceId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/toggle-favorite/${serviceId}`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Services
      * @name PostServicesAddReviews
      * @request POST:/api/v1/services/review/{serviceId}
      * @secure
@@ -109091,6 +110051,25 @@ export class Api<SecurityDataType extends unknown> {
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Services
+     * @name PostServicesToggleWishlist
+     * @request POST:/api/v1/services/toggle-wishlist/{serviceId}
+     * @secure
+     */
+    postServicesToggleWishlist: (
+      serviceId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/toggle-wishlist/${serviceId}`,
+        method: "POST",
+        secure: true,
         ...params,
       }),
 

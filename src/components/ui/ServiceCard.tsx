@@ -12,25 +12,31 @@ import type { Service } from '@/types/service'
 
 export interface ServiceCardProps {
   service: Service
-  onWishlistToggle?: (serviceId: string) => void
+  onWishlistToggle?: (e: React.MouseEvent) => void
+  onFavoriteToggle?: (e: React.MouseEvent) => void
   onBookNow?: (serviceId: string) => void
+  isLoadingWishlist?: boolean
+  isLoadingFavorite?: boolean
   className?: string
 }
 
 export const ServiceCard = React.memo(({
   service,
   onWishlistToggle,
+  onFavoriteToggle,
   onBookNow,
+  isLoadingWishlist = false,
+  isLoadingFavorite = false,
   className,
 }: ServiceCardProps) => {
   const router = useRouter()
   const hasDiscount = service.price.discounted < service.price.original
   const discountPercentage = hasDiscount
     ? Math.round(
-        ((service.price.original - service.price.discounted) /
-          service.price.original) *
-          100
-      )
+      ((service.price.original - service.price.discounted) /
+        service.price.original) *
+      100
+    )
     : 0
 
   return (
@@ -92,31 +98,62 @@ export const ServiceCard = React.memo(({
             </div>
           )}
 
-          {/* Wishlist Icon */}
-          <button
-            onClick={e => {
-              e.preventDefault()
-              onWishlistToggle?.(service.id)
-            }}
-            className={cn(
-              'absolute top-3 right-3 z-10 w-10 h-10 rounded-full border border-gray-300 bg-white flex items-center justify-center transition-all duration-200',
-              service.isWishlisted
-                ? 'border-brand-500 bg-brand-50'
-                : 'hover:border-brand-500 hover:bg-gray-50'
+          {/* Action Icons */}
+          <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+            {/* Favorite Icon */}
+            {onFavoriteToggle && (
+              <button
+                onClick={onFavoriteToggle}
+                disabled={isLoadingFavorite}
+                className={cn(
+                  'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  service.isFavorite
+                    ? 'border-brand-500 bg-brand-500'
+                    : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
+                )}
+                aria-label={
+                  service.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                }
+              >
+                <Star
+                  className={cn(
+                    'h-4 w-4 transition-colors',
+                    isLoadingFavorite && 'animate-pulse',
+                    service.isFavorite
+                      ? 'fill-white text-white'
+                      : 'fill-gray-300 text-gray-400'
+                  )}
+                />
+              </button>
             )}
-            aria-label={
-              service.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
-            }
-          >
-            <Heart
+
+            {/* Wishlist Icon */}
+            <button
+              onClick={onWishlistToggle}
+              disabled={isLoadingWishlist}
               className={cn(
-                'h-5 w-5 transition-colors',
+                'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
                 service.isWishlisted
-                  ? 'fill-brand-500 text-brand-500'
-                  : 'text-gray-400'
+                  ? 'border-brand-500 bg-brand-500'
+                  : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
               )}
-            />
-          </button>
+              aria-label={
+                service.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
+              }
+            >
+              <Heart
+                className={cn(
+                  'h-4 w-4 transition-colors',
+                  isLoadingWishlist && 'animate-pulse',
+                  service.isWishlisted
+                    ? 'fill-white text-white'
+                    : 'fill-gray-300 text-gray-400'
+                )}
+              />
+            </button>
+          </div>
         </div>
       </Link>
 

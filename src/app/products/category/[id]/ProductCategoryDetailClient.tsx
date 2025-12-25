@@ -24,7 +24,13 @@ import productImage from '@/assets/svg/product-1.svg'
 import type { OrderItem } from '@/components/ui/OrderCheckoutModal'
 import type { ProductCardData } from '@/components/ui/Card'
 import type { Product } from '@/types/product'
-import { useProductDetails, useRelatedProducts } from '@/hooks/products'
+import {
+  useProductDetails,
+  useRelatedProducts,
+  useProductCardHandlers,
+  useAddProductToCart,
+} from '@/hooks/products'
+import { useProviderCardHandlers } from '@/hooks/providers'
 
 // Mock reviews (TODO: Replace with API call when reviews endpoint is available)
 interface Review {
@@ -91,6 +97,31 @@ interface ProductCategoryDetailClientProps {
   productId: string
 }
 
+// Wrapper component for provider card with handlers
+const ProviderCardWithHandlers = ({
+  provider,
+}: {
+  provider: {
+    id: string
+    name: string
+    image?: string
+    verified?: boolean
+    rating?: number
+    profession?: string
+  }
+}) => {
+  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+  return (
+    <ProviderCard
+      provider={provider}
+      onFollowToggle={handlers.handleFollowToggle}
+      onFavoriteToggle={handlers.handleFavoriteToggle}
+      isLoadingFollow={handlers.isLoadingFollow}
+      isLoadingFavorite={handlers.isLoadingFavorite}
+    />
+  )
+}
+
 export function ProductCategoryDetailClient({
   productId,
 }: ProductCategoryDetailClientProps) {
@@ -147,8 +178,17 @@ export function ProductCategoryDetailClient({
     )
   }
 
-  const handleAddToCart = () => {
-    // TODO: Implement add to cart
+  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+  const handleAddToCart = async () => {
+    if (!product) return
+    try {
+      await addToCart(product, quantity)
+      // Optionally show success message or navigate to cart
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+      // Optionally show error message
+    }
   }
 
   const handleBuyNow = () => {
@@ -189,7 +229,7 @@ export function ProductCategoryDetailClient({
       {
         id: product.id,
         title: product.title,
-        image: product.images[0] || '',
+        image: product.images?.[0]?.trim() || '',
         originalPrice: product.price.original,
         discountedPrice: product.price.discounted,
         currency: product.price.currency,
@@ -272,7 +312,7 @@ export function ProductCategoryDetailClient({
             {/* Right: Provider & Purchase Card (3 columns) */}
             <div className="lg:col-span-3">
               <div className="space-y-6">
-                <ProviderCard
+                <ProviderCardWithHandlers
                   provider={{
                     ...product.provider,
                     rating: product.rating.value,
@@ -528,24 +568,48 @@ export function ProductCategoryDetailClient({
                 </Link>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {relatedProducts.map(product => (
-                  <Card
-                    key={product.id}
-                    cardData={{
-                      type: 'product',
-                      id: product.id,
-                      image: product.images[0] || '',
-                      title: product.title,
-                      providerName: product.provider.name,
-                      verified: product.provider.verified,
-                      rating: product.rating.value,
-                      originalPrice: product.price.original,
-                      discountedPrice: product.price.discounted,
-                      tags: product.tags,
-                      showTopOfferBadge: product.showTopOfferBadge,
-                    }}
-                  />
-                ))}
+                {relatedProducts.map(product => {
+                  // Inline component to use hooks properly
+                  const ProductCardItem = () => {
+                    const handlers = useProductCardHandlers(parseInt(product.id, 10))
+                    const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+                    const handleAddToCartClick = (e: React.MouseEvent) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleAddToCart(product, 1)
+                    }
+
+                    return (
+                      <Card
+                        cardData={{
+                          type: 'product',
+                          id: product.id,
+                          image: product.images?.[0]?.trim() || '',
+                          title: product.title,
+                          providerName: product.provider.name,
+                          providerId: product.provider.id,
+                          verified: product.provider.verified,
+                          rating: product.rating.value,
+                          originalPrice: product.price.original,
+                          discountedPrice: product.price.discounted,
+                          tags: product.tags,
+                          showTopOfferBadge: product.showTopOfferBadge,
+                          isWishlisted: product.isWishlisted,
+                          isFavorite: product.isFavorite,
+                          inStock: product.inStock,
+                          onWishlistToggle: handlers.handleWishlistToggle,
+                          onFavoriteToggle: handlers.handleFavoriteToggle,
+                          onAddToCart: handleAddToCartClick,
+                          isLoadingWishlist: handlers.isLoadingWishlist,
+                          isLoadingFavorite: handlers.isLoadingFavorite,
+                          isLoadingAddToCart,
+                        }}
+                      />
+                    )
+                  }
+                  return <ProductCardItem key={product.id} />
+                })}
               </div>
             </section>
           )}

@@ -1,9 +1,11 @@
-import { ServiceCard } from './ServiceCard'
+import { Card, type ServiceCardData } from './Card'
+import { useServiceCardHandlers } from '@/hooks/services'
 import type { Service } from '@/types/service'
 
 export interface ServiceGridProps {
   services: Service[]
   onWishlistToggle?: (serviceId: string) => void
+  onFavoriteToggle?: (serviceId: string) => void
   onBookNow?: (serviceId: string) => void
   columns?: 2 | 3 | 4
   className?: string
@@ -12,6 +14,7 @@ export interface ServiceGridProps {
 export const ServiceGrid = ({
   services,
   onWishlistToggle,
+  onFavoriteToggle,
   onBookNow,
   columns = 3,
   className,
@@ -32,14 +35,32 @@ export const ServiceGrid = ({
 
   return (
     <div className={`grid ${gridCols[columns]} gap-6 ${className || ''}`}>
-      {services.map(service => (
-        <ServiceCard
-          key={service.id}
-          service={service}
-          onWishlistToggle={onWishlistToggle}
-          onBookNow={onBookNow}
-        />
-      ))}
+      {services.map(service => {
+        // Inline component to use hooks properly
+        const ServiceCardItem = () => {
+          const handlers = useServiceCardHandlers(parseInt(service.id, 10))
+          const cardData: ServiceCardData = {
+            id: service.id,
+            image: service.images?.[0]?.trim() || '',
+            title: service.title,
+            providerName: service.provider.name,
+            verified: service.provider.verified,
+            rating: service.rating.value,
+            originalPrice: service.price.original,
+            discountedPrice: service.price.discounted,
+            tags: service.tags,
+            showTopOfferBadge: service.showTopOfferBadge,
+            isWishlisted: service.isWishlisted,
+            isFavorite: service.isFavorite,
+            onWishlistToggle: handlers.handleWishlistToggle,
+            onFavoriteToggle: handlers.handleFavoriteToggle,
+            isLoadingWishlist: handlers.isLoadingWishlist,
+            isLoadingFavorite: handlers.isLoadingFavorite,
+          }
+          return <Card cardData={{ type: 'service', ...cardData }} />
+        }
+        return <ServiceCardItem key={service.id} />
+      })}
     </div>
   )
 }

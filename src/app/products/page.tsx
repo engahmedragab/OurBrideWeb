@@ -1,18 +1,21 @@
 'use client'
 
+import { Header } from '@/components/layout'
+import { Footer } from '@/components/layout'
+import { HeroCarousel, OfferBanner, LoadingOverlay } from '@/components/ui'
 import { useMemo } from 'react'
-import { HeroCarousel, OfferBanner } from '@/components/ui'
 import {
   ProductCategoriesSection,
   ProductOffersSection,
   WhyBridesChooseProductsSection,
   BestProvidersSection,
 } from '@/components/products'
-import type { 
+import type {
   ProductCategory as CategoryType,
   Provider as BestProviderType,
   ProviderProduct as BestProviderProductType,
 } from '@/components/products'
+import { useAddProductToCart } from '@/hooks/products'
 import { useStoreHome } from '@/hooks/home'
 import { useProductsHome } from '@/hooks/products'
 import { extractStoreHomeData } from '@/utils/home-data.utils'
@@ -30,7 +33,7 @@ import { getCategoryIconMap } from './utils/category-icons'
 export default function ProductIntroPage() {
   // Fetch data from store home endpoint (getHomeGetStoreHome) - for banners
   const { data: storeHomeData, isLoading: storeHomeLoading } = useStoreHome()
-  
+
   // Fetch data from products home endpoint (getProductGetProductsHome) - for categories and products
   const { data: productsHomeData, isLoading: productsHomeLoading } = useProductsHome()
 
@@ -43,14 +46,14 @@ export default function ProductIntroPage() {
   }, [storeHomeData])
 
   // Use products home data for categories
-  const categories = useMemo(() => 
-    productsHomeData?.categories || [], 
+  const categories = useMemo(() =>
+    productsHomeData?.categories || [],
     [productsHomeData?.categories]
   )
-  
+
   const apiBanners = useMemo(() => storeData.banners || [], [storeData.banners])
   const apiProvidersData = useMemo(() => storeData.providers || [], [storeData.providers])
-  
+
   const isLoading = storeHomeLoading || productsHomeLoading
 
   // Map API categories to component format
@@ -127,90 +130,118 @@ export default function ProductIntroPage() {
     // TODO: Implement wishlist toggle
   }
 
-  const handleAddToCart = (_productId: string) => {
-    // TODO: Implement add to cart
+  const { handleAddToCart: addToCart } = useAddProductToCart()
+
+  const handleAddToCart = async (productId: string) => {
+    // Find the product from displayProducts
+    const product = displayProducts.find(p => p.id === productId)
+    if (!product) return
+
+    try {
+      await addToCart(product, 1)
+      // Optionally show success message
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+    }
   }
 
   const handleSubscribe = (_email: string) => {
     // TODO: Implement newsletter subscription
   }
 
+  // Show loading state
+  if (storeHomeLoading || productsHomeLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 bg-white flex items-center justify-center">
+          <LoadingOverlay
+            open={true}
+            title="Loading products..."
+            subtitle="Please wait a moment"
+          />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
   return (
     <ProductPageLayout isLoading={isLoading} loadingText="Loading products...">
-        {/* Hero Carousel */}
-        <HeroCarousel
-          slides={mappedHeroSlides}
-          autoPlay={true}
-          autoPlayInterval={5000}
-          showBackground={false}
-        />
+      {/* Hero Carousel */}
+      <HeroCarousel
+        slides={mappedHeroSlides}
+        autoPlay={true}
+        autoPlayInterval={5000}
+        showBackground={false}
+      />
 
-        {/* Consistent container wrapper for all other sections */}
-        <div className="container-custom">
-          {/* 2) ProductCategoriesSection */}
-          {mappedCategories.length > 0 && (
-            <ProductCategoriesSection
-              categories={mappedCategories}
-              topText="Choose"
-              highlightText="From"
-              bottomText="Our Product"
-              bottomHighlightText="Categories"
-              headerAlignment="center"
-            />
-          )}
-
-          {/* 3) ProductOffersSection */}
-          {displayProducts.length > 0 && (
-            <ProductOffersSection
-              products={displayProducts}
-              timerText="23 H 45 Min"
-              title="Today's Best Product Offers"
-              onWishlistToggle={handleWishlistToggle}
-              onAddToCart={handleAddToCart}
-            />
-          )}
-
-          {/* 4) WhyBridesChooseProductsSection */}
-          <WhyBridesChooseProductsSection
-            image={whyBridesChooseProductsImage}
-            features={PRODUCT_FEATURES}
-            topText="Why"
-            highlightText="Brides"
-            bottomText="Choose"
-            bottomHighlightText="OurBride Products"
+      {/* Consistent container wrapper for all other sections */}
+      <div className="container-custom">
+        {/* 2) ProductCategoriesSection */}
+        {mappedCategories.length > 0 && (
+          <ProductCategoriesSection
+            categories={mappedCategories}
+            topText="Choose"
+            highlightText="From"
+            bottomText="Our Product"
+            bottomHighlightText="Categories"
             headerAlignment="center"
           />
+        )}
 
-          {/* 5) BestProvidersSection */}
-          {mappedProviders.length > 0 && (
-            <BestProvidersSection
-              providers={mappedProviders}
-              topText="Best"
-              highlightText="Providers"
-              bottomText="With"
-              bottomHighlightText="Best Products"
-              headerAlignment="center"
-              buttonText="Explore Now"
-            />
-          )}
+        {/* 3) ProductOffersSection */}
+        {displayProducts.length > 0 && (
+          <ProductOffersSection
+            products={displayProducts}
+            timerText="23 H 45 Min"
+            title="Today's Best Product Offers"
+            onWishlistToggle={handleWishlistToggle}
+            onAddToCart={handleAddToCart}
+          />
+        )}
 
-          {/* 6) Newsletter Banner */}
-          <div className="mb-12">
-            <OfferBanner
-              offers={[
-                {
-                  heading: 'Get Products Updates & Offers',
-                  description:
-                    'Stay informed about new providers, offers, and wedding planning tips',
-                  variant: 'newsletter',
-                  ctaText: 'Subscribe',
-                  productImage: flowersImage,
-                },
-              ]}
-              onSubscribe={handleSubscribe}
-            />
-          </div>
+        {/* 4) WhyBridesChooseProductsSection */}
+        <WhyBridesChooseProductsSection
+          image={whyBridesChooseProductsImage}
+          features={PRODUCT_FEATURES}
+          topText="Why"
+          highlightText="Brides"
+          bottomText="Choose"
+          bottomHighlightText="OurBride Products"
+          headerAlignment="center"
+        />
+
+        {/* 5) BestProvidersSection */}
+        {mappedProviders.length > 0 && (
+          <BestProvidersSection
+            providers={mappedProviders}
+            topText="Best"
+            highlightText="Providers"
+            bottomText="With"
+            bottomHighlightText="Best Products"
+            headerAlignment="center"
+            buttonText="Explore Now"
+          />
+        )}
+
+        {/* 6) Newsletter Banner */}
+        <div className="mb-12">
+          <OfferBanner
+            offers={[
+              {
+                heading: 'Get Products Updates & Offers',
+                description:
+                  'Stay informed about new providers, offers, and wedding planning tips',
+                variant: 'newsletter',
+                ctaText: 'Subscribe',
+                productImage: flowersImage,
+              },
+            ]}
+            onSubscribe={handleSubscribe}
+          />
         </div>
+      </div>
     </ProductPageLayout>
   )
 }

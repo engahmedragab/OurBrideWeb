@@ -36,6 +36,7 @@ export interface Service {
     sunday: boolean
   }
   isWishlisted?: boolean
+  isFavorite?: boolean
   showTopOfferBadge?: boolean
   createdAt?: string
   updatedAt?: string

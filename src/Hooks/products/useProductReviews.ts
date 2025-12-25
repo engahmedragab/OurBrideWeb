@@ -85,6 +85,7 @@ export const useSubmitProductReview = () => {
       isAnonymous?: boolean
     }) => {
       return await submitProductReview(productId, {
+        productId,
         rating,
         review,
         title,

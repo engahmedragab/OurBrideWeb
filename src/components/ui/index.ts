@@ -41,6 +41,9 @@ export type { SelectProps } from './Select'
 export { SelectPopover } from './SelectPopover'
 export type { SelectPopoverProps, SelectOption } from './SelectPopover'
 
+export { ProviderMultiSelect } from './ProviderMultiSelect'
+export type { ProviderMultiSelectProps } from './ProviderMultiSelect'
+
 export { PasswordInput, passwordInputVariants } from './PasswordInput'
 export type { PasswordInputProps } from './PasswordInput'
 
@@ -153,7 +156,11 @@ export { OrderSummaryCard } from './OrderSummaryCard'
 export type { OrderSummaryCardProps } from './OrderSummaryCard'
 
 export { CartItem } from './CartItem'
-export type { CartItemProps } from './CartItem'
+export type { CartItemProps, CartItemType } from './CartItem'
+export { CheckoutCartItem } from './CheckoutCartItem'
+export type { CheckoutCartItemProps } from './CheckoutCartItem'
+export { AddressModal } from './AddressModal'
+export type { AddressModalProps } from './AddressModal'
 
 export { CartOrderSummary } from './CartOrderSummary'
 export type { CartOrderSummaryProps } from './CartOrderSummary'
@@ -260,6 +267,9 @@ export type { PromotedCampaignCardProps } from './PromotedCampaignCard'
 export { EmptyState } from './EmptyState'
 export type { EmptyStateProps } from './EmptyState'
 
+export { ErrorDisplay } from './ErrorDisplay'
+export type { ErrorDisplayProps } from './ErrorDisplay'
+
 export { HistorySection } from './HistorySection'
 export type { HistorySectionProps } from './HistorySection'
 
@@ -286,7 +296,7 @@ export { ServiceSelectCard } from './ServiceSelectCard'
 export type { ServiceSelectCardProps } from './ServiceSelectCard'
 
 export { LocationPickerModal } from './LocationPickerModal'
-export type { LocationPickerModalProps } from './LocationPickerModal'
+export type { LocationPickerModalProps, LocationData } from './LocationPickerModal'
 
 export { Textarea, textareaVariants } from './Textarea'
 export type { TextareaProps } from './Textarea'

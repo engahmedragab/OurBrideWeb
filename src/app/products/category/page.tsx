@@ -19,6 +19,7 @@ import {
   useProductsHome,
   useFilteredProducts,
   useProducts,
+  useAddProductToCart,
   useProductSearch,
 } from '@/hooks/products'
 import { ProductPageLayout } from '../components/ProductPageLayout'
@@ -49,7 +50,7 @@ function ProductsContent() {
 
   // Fetch categories from products home endpoint
   const { data: productsHomeData, isLoading: categoriesLoading } = useProductsHome()
-  
+
   // Map categories to ProductCategory format (id as string)
   const categories = useMemo(() => {
     if (!productsHomeData?.categories) return []
@@ -92,8 +93,8 @@ function ProductsContent() {
   const products = searchQuery && searchQuery.trim().length > 0
     ? searchResults
     : apiProducts.length > 0
-    ? apiProducts
-    : allProducts
+      ? apiProducts
+      : allProducts
 
   // Apply client-side filtering for filters not supported by API
   const filteredAndSortedProducts = useMemo(
@@ -105,8 +106,19 @@ function ProductsContent() {
     // TODO: Implement wishlist toggle
   }
 
-  const handleAddToCart = (_productId: string) => {
-    // TODO: Implement add to cart
+  const { handleAddToCart: addToCart } = useAddProductToCart()
+
+  const handleAddToCart = async (productId: string) => {
+    // Find the product from filteredAndSortedProducts
+    const product = filteredAndSortedProducts.find(p => p.id === productId)
+    if (!product) return
+
+    try {
+      await addToCart(product, 1)
+      // Optionally show success message
+    } catch (error) {
+      console.error('Failed to add product to cart:', error)
+    }
   }
 
   return (
@@ -114,108 +126,108 @@ function ProductsContent() {
       isLoading={categoriesLoading}
       loadingText="Loading products..."
     >
-        {/* Hero Carousel */}
-        <HeroCarousel
-          slides={DEFAULT_HERO_SLIDES}
-          autoPlay={true}
-          autoPlayInterval={5000}
-          showBackground={false}
-        />
+      {/* Hero Carousel */}
+      <HeroCarousel
+        slides={DEFAULT_HERO_SLIDES}
+        autoPlay={true}
+        autoPlayInterval={5000}
+        showBackground={false}
+      />
 
-        <div className="container-custom py-6 md:py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
-            {/* Sidebar: Filters */}
-            <aside className="lg:col-span-1">
-              <ProductFilters
-                categories={categories}
-                filters={filters}
-                onFiltersChange={setFilters}
-                onReset={() => setFilters({})}
-              />
-            </aside>
+      <div className="container-custom py-6 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+          {/* Sidebar: Filters */}
+          <aside className="lg:col-span-1">
+            <ProductFilters
+              categories={categories}
+              filters={filters}
+              onFiltersChange={setFilters}
+              onReset={() => setFilters({})}
+            />
+          </aside>
 
-            {/* Main Content */}
-            <div className="lg:col-span-3">
-              {/* Toolbar */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="text-14 text-gray-600">
-                    {filteredAndSortedProducts.length} products found
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <ProductSort
-                    sortOptions={PRODUCT_SORT_OPTIONS}
-                    currentSort={sortBy}
-                    onSortChange={setSortBy}
-                  />
-                  <div className="flex items-center gap-1 border border-gray-300 rounded-lg p-1">
-                    <Button
-                      variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => setViewMode('grid')}
-                      aria-label="Grid view"
-                    >
-                      <Grid3x3 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant={viewMode === 'list' ? 'default' : 'ghost'}
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => setViewMode('list')}
-                      aria-label="List view"
-                    >
-                      <List className="h-4 w-4" />
-                    </Button>
-                  </div>
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            {/* Toolbar */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-2">
+                <span className="text-14 text-gray-600">
+                  {filteredAndSortedProducts.length} products found
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <ProductSort
+                  sortOptions={PRODUCT_SORT_OPTIONS}
+                  currentSort={sortBy}
+                  onSortChange={setSortBy}
+                />
+                <div className="flex items-center gap-1 border border-gray-300 rounded-lg p-1">
+                  <Button
+                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setViewMode('grid')}
+                    aria-label="Grid view"
+                  >
+                    <Grid3x3 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'list' ? 'default' : 'ghost'}
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setViewMode('list')}
+                    aria-label="List view"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-
-              {/* Products */}
-              {productsLoading || searchLoading ? (
-                <div className="py-12">
-                  <LoadingSpinner
-                    size="lg"
-                    text="Loading products..."
-                  />
-                </div>
-              ) : viewMode === 'grid' ? (
-                <ProductGrid
-                  products={filteredAndSortedProducts}
-                  onWishlistToggle={handleWishlistToggle}
-                  onAddToCart={handleAddToCart}
-                  columns={DEFAULT_PRODUCT_GRID_COLUMNS}
-                />
-              ) : (
-                <ProductList
-                  products={filteredAndSortedProducts}
-                  onWishlistToggle={handleWishlistToggle}
-                  onAddToCart={handleAddToCart}
-                />
-              )}
             </div>
+
+            {/* Products */}
+            {productsLoading || searchLoading ? (
+              <div className="py-12">
+                <LoadingSpinner
+                  size="lg"
+                  text="Loading products..."
+                />
+              </div>
+            ) : viewMode === 'grid' ? (
+              <ProductGrid
+                products={filteredAndSortedProducts}
+                onWishlistToggle={handleWishlistToggle}
+                onAddToCart={handleAddToCart}
+                columns={DEFAULT_PRODUCT_GRID_COLUMNS}
+              />
+            ) : (
+              <ProductList
+                products={filteredAndSortedProducts}
+                onWishlistToggle={handleWishlistToggle}
+                onAddToCart={handleAddToCart}
+              />
+            )}
           </div>
         </div>
+      </div>
 
-        {/* Newsletter Banner */}
-        <div className="mb-12">
-          <OfferBanner
-            offers={[
-              {
-                heading: 'Ready To Get Our News ?',
-                description:
-                  'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
-                variant: 'newsletter',
-                ctaText: 'Submit',
-                productImage: flowersImage,
-              },
-            ]}
-            onSubscribe={_email => {
-              // TODO: Implement newsletter subscription
-            }}
-          />
-        </div>
+      {/* Newsletter Banner */}
+      <div className="mb-12">
+        <OfferBanner
+          offers={[
+            {
+              heading: 'Ready To Get Our News ?',
+              description:
+                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+              variant: 'newsletter',
+              ctaText: 'Submit',
+              productImage: flowersImage,
+            },
+          ]}
+          onSubscribe={_email => {
+            // TODO: Implement newsletter subscription
+          }}
+        />
+      </div>
     </ProductPageLayout>
   )
 }

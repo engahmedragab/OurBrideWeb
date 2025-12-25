@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
+import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import {
   CommunitySidebar,
   CommunityFeed,
@@ -121,7 +122,11 @@ export default function CommunityPage() {
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Header />
           <main className="flex-1 flex items-center justify-center">
-            <div className="text-gray-500">Loading...</div>
+            <LoadingOverlay
+              open={true}
+              title="Loading..."
+              subtitle="Please wait a moment"
+            />
           </main>
           <Footer />
         </div>

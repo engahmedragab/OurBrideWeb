@@ -1,11 +1,13 @@
 'use client'
 
 import Image from 'next/image'
-import { Trash2, Minus, Plus } from 'lucide-react'
+import { Trash2, Minus, Plus, Package, Calendar, Crown, Gift, Scissors } from 'lucide-react'
 import { PriceDisplay } from './PriceDisplay'
 import { Button } from './Button'
 import { Badge } from './Badge'
 import { cn } from '@/lib/utils'
+
+export type CartItemType = 'Product' | 'Service' | 'Reservation' | 'Membership' | 'GiftCard'
 
 export interface CartItemProps {
   id: string
@@ -20,7 +22,50 @@ export interface CartItemProps {
   onBuyNow?: (id: string) => void
   deliveryDate?: string
   discountPercentage?: number
+  purchasePrice?: number | null // Price from PurchaseResponse (price or totalPrice)
+  purchaseDate?: string // Date from PurchaseResponse (creationDate or buyDate)
   className?: string
+  type?: CartItemType
+}
+
+/**
+ * Get icon component for cart item type
+ */
+const getTypeIcon = (type?: CartItemType) => {
+  switch (type) {
+    case 'Product':
+      return Package
+    case 'Service':
+      return Scissors
+    case 'Reservation':
+      return Calendar
+    case 'Membership':
+      return Crown
+    case 'GiftCard':
+      return Gift
+    default:
+      return Package
+  }
+}
+
+/**
+ * Get type label for display
+ */
+const getTypeLabel = (type?: CartItemType): string => {
+  switch (type) {
+    case 'Product':
+      return 'Product'
+    case 'Service':
+      return 'Service'
+    case 'Reservation':
+      return 'Reservation'
+    case 'Membership':
+      return 'Membership'
+    case 'GiftCard':
+      return 'Gift Card'
+    default:
+      return 'Item'
+  }
 }
 
 /**
@@ -39,119 +84,157 @@ export const CartItem = ({
   onBuyNow,
   deliveryDate,
   discountPercentage,
+  purchasePrice,
+  purchaseDate,
   className,
+  type,
 }: CartItemProps) => {
   const totalPrice = discountedPrice * quantity
+  const TypeIcon = getTypeIcon(type)
+  const typeLabel = getTypeLabel(type)
+  // Check if image is valid (not empty, not a placeholder, and not just a slash)
+  const hasValidImage =
+    image &&
+    image.trim() !== '' &&
+    image !== '/' &&
+    !image.includes('placeholder') &&
+    image !== '/placeholder-product.png' &&
+    image !== '/placeholder-service.png' &&
+    image !== '/placeholder-membership.png' &&
+    image !== '/placeholder-giftcard.png'
+
+  const hasDiscount = originalPrice > discountedPrice
 
   return (
     <div
       className={cn(
-        'bg-white border border-gray-200 rounded-lg p-3 sm:p-4 flex items-start gap-3 sm:gap-4 relative',
+        'bg-white border border-gray-200 rounded-lg p-4 flex gap-4 relative',
         className
       )}
     >
-      {/* Product Image */}
-      <div className="relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          sizes="(max-width: 640px) 64px, 80px"
-          className="rounded-lg object-cover"
-        />
-      </div>
-
-      {/* Product Details and Bottom Actions */}
-      <div className="flex-1 min-w-0 flex flex-col">
-        {/* Top Section: Title, Price, Delivery */}
-        <div className="mb-2 sm:mb-3 pr-8 sm:pr-10">
-          <h3 className="text-14 sm:text-16 font-semibold text-gray-900 mb-1 sm:mb-2 line-clamp-2">{title}</h3>
-
-          {/* Price */}
-          <div className="mb-1 sm:mb-2">
-            <PriceDisplay
-              original={originalPrice}
-              discounted={discountedPrice}
-              currency={currency}
-              size="sm"
+      {/* Left: Product Image or Icon */}
+      <div className="relative flex-shrink-0 w-24 h-24">
+        {hasValidImage ? (
+          <div className="w-full h-full rounded-lg bg-gray-100 overflow-hidden">
+            <Image
+              src={image}
+              alt={title}
+              fill
+              sizes="96px"
+              className="object-cover"
             />
           </div>
+        ) : (
+          <div className="w-full h-full rounded-lg bg-gray-100 flex items-center justify-center">
+            <TypeIcon className="h-12 w-12 text-gray-400" />
+          </div>
+        )}
+      </div>
 
-          {/* Delivery Date */}
-          {deliveryDate && (
-            <p className="text-12 sm:text-14 text-gray-600">
-              Get In By {deliveryDate}
+      {/* Middle: Product Details */}
+      <div className="flex-1 min-w-0 flex flex-col pr-28">
+        {/* Title */}
+        <h3 className="text-18 font-semibold text-gray-900 line-clamp-2 mb-2">
+          {title || typeLabel}
+        </h3>
+
+        {/* Price Per Piece */}
+        <div className="mb-1">
+          <span className="text-14 text-gray-600 mr-2">Price Per Piece</span>
+          <span className="text-16 font-normal text-gray-900">
+            {discountedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
+          </span>
+          {hasDiscount && (
+            <span className="text-14 font-normal text-gray-400 line-through ml-2">
+              {originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
+            </span>
+          )}
+        </div>
+
+        {/* Delivery Date */}
+        {deliveryDate && (
+          <p className="text-14 text-gray-600 mb-2">
+            Get In By {deliveryDate}
+          </p>
+        )}
+
+        {/* Purchase Price and Date */}
+        <div className="flex flex-col gap-1 mb-3">
+          {purchasePrice !== undefined && purchasePrice !== null && (
+            <p className="text-14 text-gray-600">
+              <span className="font-medium">Purchase Price: </span>
+              <span>{purchasePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</span>
+            </p>
+          )}
+          {purchaseDate && (
+            <p className="text-14 text-gray-600">
+              <span className="font-medium">Added on: </span>
+              <span>{new Date(purchaseDate).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+              })}</span>
             </p>
           )}
         </div>
 
-        {/* Bottom Section: Quantity Selector, Total Price, and Buy Now */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mt-auto">
-          {/* Quantity Selector and Total Price Row */}
-          <div className="flex items-center justify-between sm:justify-start gap-3 sm:gap-4">
-            {/* Quantity Selector */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => onQuantityChange(id, -1)}
-                disabled={quantity <= 1}
-                className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-                aria-label="Decrease quantity"
-              >
-                <Minus className="h-4 w-4" />
-              </button>
-              <span className="text-14 sm:text-16 font-semibold text-gray-900 w-8 text-center">
-                {quantity}
-              </span>
-              <button
-                onClick={() => onQuantityChange(id, 1)}
-                className="w-8 h-8 rounded-full bg-brand-500 text-white hover:bg-brand-600 transition-colors flex items-center justify-center"
-                aria-label="Increase quantity"
-              >
-                <Plus className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Total Price */}
-            <div className="text-12 sm:text-14 text-gray-700 whitespace-nowrap">
-              <span className="hidden sm:inline">Total Price: </span>
-              <span className="sm:hidden">Total: </span>
-              {totalPrice.toLocaleString()} {currency}
-            </div>
+        {/* Bottom: Total Price */}
+        <div className="mt-auto pt-3 border-t border-gray-200">
+          <div className="text-16 font-semibold text-gray-900">
+            <span className="font-normal">Total Price : </span>
+            <span>{totalPrice.toLocaleString()} {currency}</span>
           </div>
-
-          {/* Buy Now Button */}
-          {onBuyNow && (
-            <Button
-              variant="brand"
-              size="md"
-              onClick={() => onBuyNow(id)}
-              className="w-full sm:w-auto sm:ml-auto text-white whitespace-nowrap"
-            >
-              Buy Now
-            </Button>
-          )}
         </div>
       </div>
 
-      {/* Top Right: Remove Button and Discount Badge */}
-      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex flex-col items-end gap-1.5 sm:gap-2">
-        {/* Remove Button */}
+      {/* Right: Remove Button, Discount Badge, Quantity Selector, and Checkout Button */}
+      <div className="flex flex-col items-end gap-3">
+        {/* Remove Button - Top Right Corner */}
         <button
           onClick={() => onRemove(id)}
-          className="p-1 text-red-400 hover:text-red-500 transition-colors"
+          className="p-1 text-red-500 hover:text-red-600 transition-colors"
           aria-label="Remove item"
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-5 w-5" />
         </button>
 
-        {/* Discount Badge */}
+        {/* Discount Badge - Below Remove Button */}
         {discountPercentage && (
-          <Badge
-            variant="success"
-            className="text-10 px-1.5 py-0.5 bg-green-500 text-white border-0"
-          >
+          <span className="text-14 font-medium text-green-500">
             {discountPercentage}% OFF
-          </Badge>
+          </span>
+        )}
+
+        {/* Quantity Selector */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onQuantityChange(id, -1)}
+            disabled={quantity <= 1}
+            className="w-8 h-8 rounded-full border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+            aria-label="Decrease quantity"
+          >
+            <Minus className="h-4 w-4" />
+          </button>
+          <span className="text-16 font-semibold text-gray-900 w-8 text-center">
+            {quantity}
+          </span>
+          <button
+            onClick={() => onQuantityChange(id, 1)}
+            className="w-8 h-8 rounded-full border-2 border-red-500 bg-white text-red-500 hover:bg-red-50 transition-colors flex items-center justify-center"
+            aria-label="Increase quantity"
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Checkout Button - Below Quantity Selector */}
+        {onBuyNow && (
+          <button
+            onClick={() => onBuyNow(id)}
+            className="px-4 py-2 text-14 font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors whitespace-nowrap"
+          >
+            Checkout
+          </button>
         )}
       </div>
     </div>

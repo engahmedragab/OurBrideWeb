@@ -5,10 +5,29 @@ import { Search, MapPin, Loader2 } from 'lucide-react'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'
 
+export interface LocationData {
+  displayName: string
+  lat?: string
+  lon?: string
+  address?: {
+    road?: string
+    street?: string
+    city?: string
+    town?: string
+    village?: string
+    municipality?: string
+    state?: string
+    region?: string
+    country?: string
+    house_number?: string
+    postcode?: string
+  }
+}
+
 export interface LocationPickerModalProps {
   open: boolean
   onClose: () => void
-  onSelect: (value: string) => void
+  onSelect: (value: string | LocationData) => void
 }
 
 interface SearchLocation {
@@ -44,8 +63,15 @@ export const LocationPickerModal = ({
   const [searchError, setSearchError] = useState<string | null>(null)
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const handleSelectLocation = (location: string) => {
-    onSelect(location)
+  const handleSelectLocation = (location: SearchLocation) => {
+    // Pass structured location data
+    const locationData: LocationData = {
+      displayName: location.display_name,
+      lat: location.lat,
+      lon: location.lon,
+      address: location.address,
+    }
+    onSelect(locationData)
     setLocationError(null)
     setSearchQuery('')
     onClose()
@@ -164,22 +190,22 @@ export const LocationPickerModal = ({
       }
 
       const data = await response.json()
-      
+
       // Format address from response
       if (data.address) {
         const address = data.address
         const parts: string[] = []
-        
+
         // Build address string from most specific to least specific
         if (address.road) parts.push(address.road)
         if (address.suburb || address.neighbourhood) parts.push(address.suburb || address.neighbourhood)
         if (address.city || address.town || address.village) parts.push(address.city || address.town || address.village)
         if (address.state || address.region) parts.push(address.state || address.region)
         if (address.country) parts.push(address.country)
-        
+
         return parts.length > 0 ? parts.join(', ') : data.display_name || `${latitude}, ${longitude}`
       }
-      
+
       return data.display_name || `${latitude}, ${longitude}`
     } catch (error) {
       console.error('Reverse geocoding error:', error)
@@ -201,12 +227,33 @@ export const LocationPickerModal = ({
       async (position) => {
         try {
           const { latitude, longitude } = position.coords
-          
+
           // Reverse geocode to get readable address
-          const address = await reverseGeocode(latitude, longitude)
-          
+          const addressString = await reverseGeocode(latitude, longitude)
+
+          // Also get structured address data
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+            {
+              headers: {
+                'User-Agent': 'OurBrideWeb/1.0',
+              },
+            }
+          )
+
+          let locationData: string | LocationData = addressString
+          if (response.ok) {
+            const data = await response.json()
+            locationData = {
+              displayName: addressString,
+              lat: latitude.toString(),
+              lon: longitude.toString(),
+              address: data.address || {},
+            }
+          }
+
           // Select the location
-          onSelect(address)
+          onSelect(locationData)
           onClose()
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Failed to get location address'
@@ -217,7 +264,7 @@ export const LocationPickerModal = ({
       },
       (error) => {
         let errorMessage = 'Failed to get your location'
-        
+
         switch (error.code) {
           case error.PERMISSION_DENIED:
             errorMessage = 'Location access denied. Please enable location permissions in your browser settings.'
@@ -232,7 +279,7 @@ export const LocationPickerModal = ({
             errorMessage = 'An error occurred while getting your location.'
             break
         }
-        
+
         setLocationError(errorMessage)
         setIsGettingLocation(false)
       },
@@ -290,7 +337,7 @@ export const LocationPickerModal = ({
               {isGettingLocation ? 'Getting your location...' : 'Use My Current location'}
             </span>
           </button>
-          
+
           {/* Location Error */}
           {locationError && (
             <div className="p-2 bg-red-50 border border-red-200 rounded-md">
@@ -305,7 +352,7 @@ export const LocationPickerModal = ({
             <h3 className="text-14 font-semibold text-gray-900">
               Search Results
             </h3>
-            
+
             {/* Search Error */}
             {searchError && (
               <div className="p-2 bg-red-50 border border-red-200 rounded-md">
@@ -330,7 +377,7 @@ export const LocationPickerModal = ({
                       <button
                         key={`${location.lat}-${location.lon}-${index}`}
                         type="button"
-                        onClick={() => handleSelectLocation(locationName)}
+                        onClick={() => handleSelectLocation(location)}
                         className="w-full text-left p-2 hover:bg-gray-50 rounded-md transition-colors"
                       >
                         <p className="text-14 font-medium text-gray-900">

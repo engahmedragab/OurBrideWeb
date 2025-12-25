@@ -14,6 +14,7 @@ import {
   ArrowRight,
   Menu,
   Share2,
+  UserPlus,
 } from 'lucide-react'
 
 // Base card variants
@@ -52,6 +53,7 @@ export interface ProductCardData {
   image: string
   title: string
   providerName: string
+  providerId?: string
   verified?: boolean
   rating: number
   originalPrice: number
@@ -59,7 +61,14 @@ export interface ProductCardData {
   tags?: string[]
   showTopOfferBadge?: boolean
   isWishlisted?: boolean
-  onWishlistToggle?: () => void
+  isFavorite?: boolean
+  inStock?: boolean
+  onWishlistToggle?: (e: React.MouseEvent) => void
+  onFavoriteToggle?: (e: React.MouseEvent) => void
+  onAddToCart?: (e: React.MouseEvent) => void
+  isLoadingWishlist?: boolean
+  isLoadingFavorite?: boolean
+  isLoadingAddToCart?: boolean
 }
 
 // Service Card Props (same as Product)
@@ -82,6 +91,12 @@ export interface ProviderCardData {
   profession: string
   rating: number
   verified?: boolean
+  isFollowed?: boolean
+  isFavorite?: boolean
+  onFollowToggle?: (e: React.MouseEvent) => void
+  onFavoriteToggle?: (e: React.MouseEvent) => void
+  isLoadingFollow?: boolean
+  isLoadingFavorite?: boolean
 }
 
 // Member Testimonial Card Props
@@ -135,41 +150,113 @@ const ProductServiceCard = ({
 }) => {
   const hasDiscount = data.discountedPrice < data.originalPrice
 
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    // Don't allow multiple clicks while loading
+    if (data.isLoadingWishlist) return
+
+    // Call the provided handler
+    data.onWishlistToggle?.(e)
+  }
+
+  const handleFavoriteToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    // Don't allow multiple clicks while loading
+    if (data.isLoadingFavorite) return
+
+    // Call the provided handler
+    data.onFavoriteToggle?.(e)
+  }
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    // Don't allow multiple clicks while loading
+    if (data.isLoadingAddToCart) return
+
+    // Call the provided handler
+    data.onAddToCart?.(e)
+  }
+
   return (
     <div className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg shadow-sm transition-shadow">
-      {/* Wishlist Icon - Floating above the card */}
-      <button
-        onClick={data.onWishlistToggle}
-        className={cn(
-          'absolute top-3 right-6 translate-x-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full border border-brand-500 bg-brand-500 flex items-center justify-center transition-all duration-200 shadow-lg',
-          'hover:scale-110',
-          data.isWishlisted
-            ? 'border-brand-500 bg-brand-500'
-            : 'hover:border-brand-600 hover:bg-brand-600'
-        )}
-        aria-label={
-          data.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
-        }
-      >
-        <Heart
+      {/* Action Icons - Floating above the card */}
+      <div className="absolute top-3 right-3 z-20 flex items-center gap-2 pointer-events-auto">
+        {/* Favorite Icon */}
+        <button
+          type="button"
+          onClick={handleFavoriteToggle}
+          disabled={data.isLoadingFavorite}
           className={cn(
-            'h-4 w-4 transition-colors text-white',
-            data.isWishlisted
-              ? 'fill-white text-white'
-              : 'text-white'
+            'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
+            data.isFavorite
+              ? 'border-brand-500 bg-brand-500'
+              : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
           )}
-        />
-      </button>
+          aria-label={
+            data.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+          }
+        >
+          <Star
+            className={cn(
+              'h-4 w-4 transition-colors',
+              data.isLoadingFavorite && 'animate-pulse',
+              data.isFavorite
+                ? 'fill-white text-white'
+                : 'fill-gray-300 text-gray-400'
+            )}
+          />
+        </button>
+
+        {/* Wishlist Icon */}
+        <button
+          type="button"
+          onClick={handleWishlistToggle}
+          disabled={data.isLoadingWishlist}
+          className={cn(
+            'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
+            data.isWishlisted
+              ? 'border-brand-500 bg-brand-500'
+              : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
+          )}
+          aria-label={
+            data.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
+          }
+        >
+          <Heart
+            className={cn(
+              'h-4 w-4 transition-colors',
+              data.isLoadingWishlist && 'animate-pulse',
+              data.isWishlisted
+                ? 'fill-white text-white'
+                : 'fill-gray-300 text-gray-400'
+            )}
+          />
+        </button>
+      </div>
 
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 custom-shaped-card">
-        <Image
-          src={data.image}
-          alt={data.title}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
-        />
+        {data.image && data.image.trim() !== '' ? (
+          <Image
+            src={data.image}
+            alt={data.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-400 text-14">
+            No image
+          </div>
+        )}
 
         {/* Top Offers Badge */}
         {data.showTopOfferBadge && (
@@ -222,14 +309,23 @@ const ProductServiceCard = ({
         {/* Action Buttons */}
         {cardType === 'product' ? (
           <div className="flex items-center gap-2 pt-1">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-10 w-10 rounded-full border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
-              aria-label="Add to cart"
-            >
-              <ShoppingCart className="h-4 w-4 text-brand-500" />
-            </Button>
+            {data.onAddToCart && (
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 rounded-full border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
+                aria-label="Add to cart"
+                onClick={handleAddToCart}
+                disabled={data.isLoadingAddToCart || data.inStock === false}
+              >
+                <ShoppingCart
+                  className={cn(
+                    'h-4 w-4 text-brand-500',
+                    data.isLoadingAddToCart && 'animate-pulse'
+                  )}
+                />
+              </Button>
+            )}
             <Button
               variant="brand"
               size="default"
@@ -311,8 +407,89 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
 
 // Provider Card Component
 const ProviderCard = ({ data }: { data: ProviderCardData }) => {
+  const handleFollowToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    // Don't allow multiple clicks while loading
+    if (data.isLoadingFollow) return
+
+    // Call the provided handler
+    data.onFollowToggle?.(e)
+  }
+
+  const handleFavoriteToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    // Don't allow multiple clicks while loading
+    if (data.isLoadingFavorite) return
+
+    // Call the provided handler
+    data.onFavoriteToggle?.(e)
+  }
+
   return (
-    <div className="bg-white rounded-xl p-6 md:p-8 text-center flex flex-col items-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+    <div className="group relative bg-white rounded-xl p-6 md:p-8 text-center flex flex-col items-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+      {/* Action Icons - Floating above the card */}
+      <div className="absolute top-3 right-3 z-20 flex items-center gap-2 pointer-events-auto">
+        {/* Favorite Icon */}
+        {data.onFavoriteToggle && (
+          <button
+            type="button"
+            onClick={handleFavoriteToggle}
+            disabled={data.isLoadingFavorite}
+            className={cn(
+              'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+              'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
+              data.isFavorite
+                ? 'border-brand-500 bg-brand-500'
+                : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
+            )}
+            aria-label={
+              data.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+            }
+          >
+            <Star
+              className={cn(
+                'h-4 w-4 transition-colors',
+                data.isLoadingFavorite && 'animate-pulse',
+                data.isFavorite
+                  ? 'fill-white text-white'
+                  : 'fill-gray-300 text-gray-400'
+              )}
+            />
+          </button>
+        )}
+
+        {/* Follow Icon */}
+        {data.onFollowToggle && (
+          <button
+            type="button"
+            onClick={handleFollowToggle}
+            disabled={data.isLoadingFollow}
+            className={cn(
+              'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+              'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
+              data.isFollowed
+                ? 'border-brand-500 bg-brand-500'
+                : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
+            )}
+            aria-label={data.isFollowed ? 'Unfollow' : 'Follow'}
+          >
+            <UserPlus
+              className={cn(
+                'h-4 w-4 transition-colors',
+                data.isLoadingFollow && 'animate-pulse',
+                data.isFollowed
+                  ? 'fill-white text-white'
+                  : 'fill-gray-300 text-gray-400'
+              )}
+            />
+          </button>
+        )}
+      </div>
+
       {/* Profile Image */}
       <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
         <Image

@@ -59,11 +59,14 @@ export const useProductOffers = (enabled = true) => {
         return []
       } catch (error) {
         console.error('Error fetching product offers:', error)
-        throw error
+        // Return empty array on error to prevent app from breaking
+        return []
       }
     },
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1, // Only retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
   })
 }
 

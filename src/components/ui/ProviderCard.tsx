@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { MessageCircle, CheckCircle2, Star } from 'lucide-react'
+import { MessageCircle, CheckCircle2, Star, UserPlus } from 'lucide-react'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
 
@@ -12,9 +12,15 @@ export interface ProviderCardProps {
     verified?: boolean
     rating?: number
     profession?: string
+    isFollowed?: boolean
+    isFavorite?: boolean
   }
   onMessageClick?: () => void
   onViewProfile?: () => void
+  onFollowToggle?: (e: React.MouseEvent) => void
+  onFavoriteToggle?: (e: React.MouseEvent) => void
+  isLoadingFollow?: boolean
+  isLoadingFavorite?: boolean
   className?: string
 }
 
@@ -26,18 +32,96 @@ export const ProviderCard = ({
   provider,
   onMessageClick,
   onViewProfile,
+  onFollowToggle,
+  onFavoriteToggle,
+  isLoadingFollow = false,
+  isLoadingFavorite = false,
   className,
 }: ProviderCardProps) => {
   const rating = provider.rating || 0
   const roundedRating = Math.round(rating)
 
+  const handleFollowToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (isLoadingFollow) return
+    onFollowToggle?.(e)
+  }
+
+  const handleFavoriteToggle = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (isLoadingFavorite) return
+    onFavoriteToggle?.(e)
+  }
+
   return (
     <div
       className={cn(
-        'bg-white border border-gray-200 rounded-lg p-6 flex flex-col items-center space-y-4',
+        'group relative bg-white border border-gray-200 rounded-lg p-6 flex flex-col items-center space-y-4',
         className
       )}
     >
+      {/* Action Icons - Floating above the card */}
+      {(onFollowToggle || onFavoriteToggle) && (
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-2 pointer-events-auto">
+          {/* Favorite Icon */}
+          {onFavoriteToggle && (
+            <button
+              type="button"
+              onClick={handleFavoriteToggle}
+              disabled={isLoadingFavorite}
+              className={cn(
+                'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+                'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
+                provider.isFavorite
+                  ? 'border-brand-500 bg-brand-500'
+                  : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
+              )}
+              aria-label={
+                provider.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+              }
+            >
+              <Star
+                className={cn(
+                  'h-4 w-4 transition-colors',
+                  isLoadingFavorite && 'animate-pulse',
+                  provider.isFavorite
+                    ? 'fill-white text-white'
+                    : 'fill-gray-300 text-gray-400'
+                )}
+              />
+            </button>
+          )}
+
+          {/* Follow Icon */}
+          {onFollowToggle && (
+            <button
+              type="button"
+              onClick={handleFollowToggle}
+              disabled={isLoadingFollow}
+              className={cn(
+                'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+                'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
+                provider.isFollowed
+                  ? 'border-brand-500 bg-brand-500'
+                  : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
+              )}
+              aria-label={provider.isFollowed ? 'Unfollow' : 'Follow'}
+            >
+              <UserPlus
+                className={cn(
+                  'h-4 w-4 transition-colors',
+                  isLoadingFollow && 'animate-pulse',
+                  provider.isFollowed
+                    ? 'fill-white text-white'
+                    : 'fill-gray-300 text-gray-400'
+                )}
+              />
+            </button>
+          )}
+        </div>
+      )}
       {/* Profile Picture */}
       {provider.image && (
         <div className="relative w-28 h-28">
