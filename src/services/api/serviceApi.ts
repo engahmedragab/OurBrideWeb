@@ -104,3 +104,172 @@ export const getServiceReviewSummary = async (
     )
   }
 }
+
+/**
+ * Get all services preparations (categories with services)
+ * GET /api/v1/services/preparations
+ */
+export const getServicesPreparations = async (): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getPreparationsGetAll()
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error fetching services preparations:', error)
+    throw error
+  }
+}
+
+/**
+ * Get services by preparation ID
+ * GET /api/v1/services/preparation/{preparationId}/services
+ */
+export const getServicesByPreparationId = async (
+  preparationId: number
+): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getServicesGetByPreparationId(preparationId)
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error fetching services by preparation ID:', error)
+    throw error
+  }
+}
+
+/**
+ * Get services by provider ID
+ * GET /api/v1/services/provider/{providerId}/services
+ */
+export const getServicesByProviderId = async (
+  providerId: number
+): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getServicesGeByProviderId(providerId)
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error fetching services by provider ID:', error)
+    throw error
+  }
+}
+
+/**
+ * Get paginated services by preparation ID
+ * GET /api/v1/services/preparation/{preparationId}/paged
+ */
+export const getServicesByPreparationIdPaged = async (
+  preparationId: number,
+  query?: {
+    page?: number
+    pageSize?: number
+    sortBy?: string
+    search?: string
+  }
+): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getServicesGetByPreparationIdPaged(
+      preparationId,
+      query
+    )
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error fetching paginated services by preparation ID:', error)
+    throw error
+  }
+}
+
+/**
+ * Get service by ID
+ * GET /api/v1/services/{id}
+ */
+export const getServiceById = async (serviceId: number): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getServicesGet(serviceId)
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error fetching service by ID:', error)
+    throw error
+  }
+}
+
+/**
+ * Search and filter services
+ * GET /api/v1/services
+ */
+export const searchServices = async (query?: {
+  Search?: string
+  ServiceClass?: number
+  ServiceType?: number
+  MinPrice?: number
+  MaxPrice?: number
+  MinRating?: number
+  IsOurBrideService?: boolean
+  HasPackages?: boolean
+  HasInstallment?: boolean
+  Page?: number
+  PageSize?: number
+}): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getServicesSearch(query)
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error searching services:', error)
+    throw error
+  }
+}
+
+/**
+ * Get all services with pagination
+ * GET /api/v1/services/all
+ */
+export const getAllServices = async (query?: {
+  page?: number
+  pageSize?: number
+}): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getServicesGetAll(query)
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error fetching all services:', error)
+    throw error
+  }
+}
+
+/**
+ * Search services by term
+ * GET /api/v1/services/search
+ */
+export const searchServicesByTerm = async (query?: {
+  term?: string
+  page?: number
+  pageSize?: number
+}): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getServicesSearchByTerm(query)
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error searching services by term:', error)
+    throw error
+  }
+}
+
+/**
+ * Get service packages
+ * GET /api/v1/services/{id}/packages
+ */
+export const getServicePackages = async (serviceId: number): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getServicesPackages(serviceId)
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error fetching service packages:', error)
+    throw error
+  }
+}

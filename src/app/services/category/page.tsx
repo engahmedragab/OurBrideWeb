@@ -13,27 +13,19 @@ import {
   OfferBanner,
   SearchInput,
   Pagination,
-  LoadingOverlay,
+  LoadingSpinner,
 } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
 import type {
-  Service,
   ServiceSortOption,
   ServiceViewMode,
 } from '@/types/service'
-import type { ProductCategory, ProductFilter } from '@/types/product'
+import type { ProductFilter } from '@/types/product'
+import { useServicesPreparations } from '@/hooks/services'
 
-// Mock data - Replace with API calls
-const mockCategories: ProductCategory[] = [
-  { id: '1', name: 'Makeup', slug: 'makeup', productCount: 45 },
-  { id: '2', name: 'Hair Care', slug: 'hair-care', productCount: 32 },
-  { id: '3', name: 'Skin Care', slug: 'skin-care', productCount: 28 },
-  { id: '4', name: 'Spa & Massage', slug: 'spa-massage', productCount: 20 },
-  { id: '5', name: 'Photography', slug: 'photography', productCount: 15 },
-  { id: '6', name: 'Videography', slug: 'videography', productCount: 12 },
-]
-
+// Removed mock data - using API data from useServicesPreparations hook
+/*
 const mockServices: Service[] = [
   {
     id: '1',
@@ -515,6 +507,7 @@ const mockServices: Service[] = [
     showTopOfferBadge: true,
   },
 ]
+*/
 
 const sortOptions: ServiceSortOption[] = [
   { value: 'default', label: 'Default' },
@@ -538,6 +531,13 @@ function ServicesCategoryPageContent() {
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const servicesPerPage = 9
+
+  // Fetch services and categories from API
+  const { data, isLoading, error } = useServicesPreparations()
+
+  // Extract services and categories from API data
+  const apiServices = useMemo(() => data?.services || [], [data?.services])
+  const apiCategories = useMemo(() => data?.categories || [], [data?.categories])
 
   // Read filters from URL on mount and when URL changes
   useEffect(() => {
@@ -639,7 +639,7 @@ function ServicesCategoryPageContent() {
 
   // Filter and sort services
   const filteredAndSortedServices = useMemo(() => {
-    let result = [...mockServices]
+    let result = [...apiServices]
 
     // Apply search query
     if (searchQuery.trim()) {
@@ -696,7 +696,7 @@ function ServicesCategoryPageContent() {
     }
 
     return result
-  }, [filters, sortBy, searchQuery])
+  }, [filters, sortBy, searchQuery, apiServices])
 
   // Calculate pagination
   const totalPages = Math.ceil(
@@ -736,8 +736,45 @@ function ServicesCategoryPageContent() {
     // TODO: Implement wishlist toggle
   }
 
-  const handleBookNow = (_serviceId: string) => {
-    // TODO: Implement book now
+  const handleBookNow = (serviceId: string) => {
+    router.push(`/services/category/${serviceId}`)
+  }
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <LoadingSpinner
+            size="lg"
+            text="Loading services..."
+            fullScreen={true}
+          />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-16 text-red-600 mb-4">
+              Failed to load services. Please try again later.
+            </p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
   }
 
   return (
@@ -749,7 +786,7 @@ function ServicesCategoryPageContent() {
             {/* Sidebar: Filters */}
             <aside className="lg:col-span-1">
               <ProductFilters
-                categories={mockCategories}
+                categories={apiCategories}
                 filters={filters}
                 onFiltersChange={handleFiltersChange}
                 onReset={() => {
@@ -891,10 +928,10 @@ export default function ServicesCategoryPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <LoadingOverlay
-            open={true}
-            title="Loading..."
-            subtitle="Please wait a moment"
+          <LoadingSpinner
+            size="lg"
+            text="Loading..."
+            fullScreen={true}
           />
         </div>
       }

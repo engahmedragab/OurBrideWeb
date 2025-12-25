@@ -6,6 +6,7 @@ import type {
   ProductVariationResponse,
   ProductAttributeResponse,
   ProductBrandResponse,
+  SearchProductsRequest,
 } from '@/../client/common/api/gen/ourbride-api'
 
 /**
@@ -273,7 +274,8 @@ export const toggleProductFavorite = async (
 }
 
 /**
- * Search products
+ * Search products (GET)
+ * GET /api/v1/products/search
  */
 export const searchProducts = async (
   query: string,
@@ -301,6 +303,28 @@ export const searchProducts = async (
   } catch (error) {
     console.error('Error searching products:', error)
     return []
+  }
+}
+
+/**
+ * Advanced search products (POST)
+ * POST /api/v1/products/search
+ */
+export const searchProductsAdvanced = async (
+  data: SearchProductsRequest,
+  query?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ApiResult> => {
+  try {
+    const response = await apiClient.api.postProductSearchProducts(data, query)
+    const responseAny = response as any
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
+  } catch (error) {
+    console.error('Error in advanced product search:', error)
+    throw error
   }
 }
 

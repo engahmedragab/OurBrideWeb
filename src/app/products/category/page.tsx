@@ -11,6 +11,7 @@ import {
   Button,
   OfferBanner,
   LoadingSpinner,
+  useToast,
 } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
@@ -21,6 +22,7 @@ import {
   useProducts,
   useAddProductToCart,
   useProductSearch,
+  useProductSearchAdvanced,
 } from '@/hooks/products'
 import { ProductPageLayout } from '../components/ProductPageLayout'
 import {
@@ -30,12 +32,14 @@ import {
   DEFAULT_PAGE_SIZE,
 } from '../constants'
 import { buildProductQueryParams, applyClientSideFilters } from '../utils'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 /**
  * ProductsContent - Main content component
  * Uses useSearchParams, so must be wrapped in Suspense
  */
 function ProductsContent() {
+  const { addToast } = useToast()
   const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<ProductViewMode>('grid')
   const [filters, setFilters] = useState<ProductFilter>({})
@@ -61,23 +65,95 @@ function ProductsContent() {
     }))
   }, [productsHomeData?.categories])
 
-  // Build API query params from filters
+  // Check if we have filters applied (beyond just search)
+  const hasFilters = useMemo(() => {
+    return !!(
+      (filters.category && filters.category.length > 0) ||
+      filters.priceRange ||
+      filters.rating ||
+      filters.inStock !== undefined
+    )
+  }, [filters])
+
+  // Build advanced search params if we have filters or search query
+  const advancedSearchParams = useMemo(() => {
+    if (!hasFilters && !searchQuery) return null
+    
+    const params: {
+      searchTerm?: string
+      categoryIds?: number[]
+      minPrice?: number
+      maxPrice?: number
+      inStock?: boolean
+      sortBy?: string
+      sortOrder?: string
+      page?: number
+      pageSize?: number
+    } = {
+      page: 1,
+      pageSize: DEFAULT_PAGE_SIZE,
+    }
+
+    if (searchQuery && searchQuery.trim().length > 0) {
+      params.searchTerm = searchQuery.trim()
+    }
+
+    if (filters.category && filters.category.length > 0) {
+      params.categoryIds = filters.category
+        .map(cat => parseInt(cat, 10))
+        .filter(id => !isNaN(id))
+    }
+
+    if (filters.priceRange) {
+      params.minPrice = filters.priceRange.min
+      params.maxPrice = filters.priceRange.max
+    }
+
+    if (filters.inStock !== undefined) {
+      params.inStock = filters.inStock
+    }
+
+    if (sortBy !== 'default') {
+      const sortMap: Record<string, { sortBy?: string; sortOrder?: string }> = {
+        'price-low': { sortBy: 'price', sortOrder: 'asc' },
+        'price-high': { sortBy: 'price', sortOrder: 'desc' },
+        'rating': { sortBy: 'rating', sortOrder: 'desc' },
+        'popular': { sortBy: 'popularity', sortOrder: 'desc' },
+      }
+      const sortConfig = sortMap[sortBy]
+      if (sortConfig) {
+        params.sortBy = sortConfig.sortBy
+        params.sortOrder = sortConfig.sortOrder
+      }
+    }
+
+    return params
+  }, [searchQuery, filters, sortBy, hasFilters])
+
+  // Use advanced search if we have filters or search query
+  const { data: advancedSearchResults = [], isLoading: advancedSearchLoading } =
+    useProductSearchAdvanced({
+      ...advancedSearchParams,
+      enabled: !!advancedSearchParams,
+    })
+
+  // Fetch simple search results (fallback for simple search only)
+  const { data: searchResults = [], isLoading: searchLoading } = useProductSearch(
+    searchQuery || null,
+    { enabled: !!searchQuery && searchQuery.trim().length > 0 && !hasFilters }
+  )
+
+  // Build API query params from filters (for filtered endpoint)
   const apiQueryParams = useMemo(
     () => buildProductQueryParams(filters, sortBy),
     [filters, sortBy]
   )
 
-  // Fetch search results if search query exists
-  const { data: searchResults = [], isLoading: searchLoading } = useProductSearch(
-    searchQuery || null,
-    { enabled: !!searchQuery && searchQuery.trim().length > 0 }
-  )
-
-  // Fetch filtered products from API
+  // Fetch filtered products from API (fallback when no search and no filters)
   const { data: apiProducts = [], isLoading: productsLoading } =
     useFilteredProducts({
       ...apiQueryParams,
-      enabled: !searchQuery || searchQuery.trim().length === 0,
+      enabled: !searchQuery && !hasFilters,
     })
 
   // Fallback to regular products if filtered products endpoint doesn't work
@@ -86,20 +162,39 @@ function ProductsContent() {
     enabled:
       apiProducts.length === 0 &&
       !productsLoading &&
-      (!searchQuery || searchQuery.trim().length === 0),
+      !searchQuery &&
+      !hasFilters,
   })
 
-  // Use search results if search query exists, otherwise use API products or all products
-  const products = searchQuery && searchQuery.trim().length > 0
-    ? searchResults
-    : apiProducts.length > 0
-      ? apiProducts
-      : allProducts
+  // Determine which products to use
+  const products = useMemo(() => {
+    if (advancedSearchParams && advancedSearchResults.length > 0) {
+      return advancedSearchResults
+    }
+    if (searchQuery && searchQuery.trim().length > 0 && !hasFilters && searchResults.length > 0) {
+      return searchResults
+    }
+    if (apiProducts.length > 0) {
+      return apiProducts
+    }
+    return allProducts
+  }, [advancedSearchResults, searchResults, apiProducts, allProducts, searchQuery, hasFilters, advancedSearchParams])
 
-  // Apply client-side filtering for filters not supported by API
+  // Determine loading state
+  const isLoading = advancedSearchLoading || searchLoading || productsLoading
+
+  // Apply client-side filtering only for filters not supported by API
+  // (Advanced search handles most filters, so minimal client-side filtering needed)
   const filteredAndSortedProducts = useMemo(
-    () => applyClientSideFilters(products, filters, sortBy),
-    [products, filters, sortBy]
+    () => {
+      // If we used advanced search, it already handled most filters
+      if (advancedSearchParams) {
+        return products
+      }
+      // Otherwise, apply client-side filters
+      return applyClientSideFilters(products, filters, sortBy)
+    },
+    [products, filters, sortBy, advancedSearchParams]
   )
 
   const handleWishlistToggle = (_productId: string) => {
@@ -114,16 +209,23 @@ function ProductsContent() {
     if (!product) return
 
     try {
-      await addToCart(product, 1)
-      // Optionally show success message
+      const response = await addToCart(product, 1)
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Product added to cart successfully!',
+        'Failed to add product to cart'
+      )
+      addToast(message, type)
     } catch (error) {
       console.error('Failed to add product to cart:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      addToast(errorMessage, 'error')
     }
   }
 
   return (
     <ProductPageLayout
-      isLoading={categoriesLoading}
+      isLoading={categoriesLoading || isLoading}
       loadingText="Loading products..."
     >
       {/* Hero Carousel */}

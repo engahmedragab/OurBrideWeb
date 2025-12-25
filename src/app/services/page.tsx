@@ -8,7 +8,7 @@ import {
   HeroCarousel,
   OfferBanner,
   Card,
-  LoadingOverlay,
+  LoadingSpinner,
   type ServiceCardData,
   type HeroSlide,
 } from '@/components/ui'
@@ -104,8 +104,8 @@ function ServicesIntroPageContent() {
     // TODO: Implement wishlist toggle
   }
 
-  const handleBookNow = (_serviceId: string) => {
-    // TODO: Implement book now
+  const handleBookNow = (serviceId: string) => {
+    router.push(`/services/category/${serviceId}`)
   }
 
   // Map API data to component props
@@ -130,8 +130,8 @@ function ServicesIntroPageContent() {
     data?.offers && data.offers.length > 0
       ? data.offers.map(service => ({
           ...service,
-          onWishlistToggle: () => handleWishlistToggle(service.id),
-          onBookNow: () => handleBookNow(service.id),
+      onWishlistToggle: () => handleWishlistToggle(service.id),
+      onBookNow: () => handleBookNow(service.id),
         }))
       : []
 
@@ -209,7 +209,7 @@ function ServicesIntroPageContent() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-16 text-gray-600">Loading...</div>
+          <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
         </main>
         <Footer />
       </div>
@@ -237,71 +237,71 @@ function ServicesIntroPageContent() {
       <main className="flex-1">
         {/* Hero Carousel */}
         {heroSlides.length > 0 && (
-          <HeroCarousel
-            slides={heroSlides}
-            autoPlay={true}
-            autoPlayInterval={5000}
-            showBackground={false}
-          />
+        <HeroCarousel
+          slides={heroSlides}
+          autoPlay={true}
+          autoPlayInterval={5000}
+          showBackground={false}
+        />
         )}
 
         {/* Consistent container wrapper for all sections */}
         <div className="container-custom">
           {/* Section 2: Why Brides Trust OurBride - ProductCategoriesSection */}
           {trustCategories.length > 0 && (
-            <ProductCategoriesSection
-              categories={trustCategories}
+          <ProductCategoriesSection
+            categories={trustCategories}
+            topText="Why"
+            highlightText="Brides"
+            bottomText="Trust"
+            bottomHighlightText="OurBride"
+            headerAlignment="center"
+          />
+          )}
+
+          {/* Today's Offers Section */}
+          {offersServiceCards.length > 0 && (
+          <section className="py-12 md:py-16">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
+              <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
+                Today&apos;s Offers
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {offersServiceCards.map(cardData => (
+                <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
+              ))}
+            </div>
+          </section>
+          )}
+
+          {/* Why Brides Trust OurBride - Features Section */}
+          {trustFeatures.length > 0 && (
+          <section>
+            <WhyBridesChooseProductsSection
+              image={why_trust_ourBrideImage}
+              features={trustFeatures}
               topText="Why"
               highlightText="Brides"
               bottomText="Trust"
               bottomHighlightText="OurBride"
               headerAlignment="center"
             />
-          )}
-
-          {/* Today's Offers Section */}
-          {offersServiceCards.length > 0 && (
-            <section className="py-12 md:py-16">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
-                <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
-                  Today&apos;s Offers
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {offersServiceCards.map(cardData => (
-                  <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Why Brides Trust OurBride - Features Section */}
-          {trustFeatures.length > 0 && (
-            <section>
-              <WhyBridesChooseProductsSection
-                image={why_trust_ourBrideImage}
-                features={trustFeatures}
-                topText="Why"
-                highlightText="Brides"
-                bottomText="Trust"
-                bottomHighlightText="OurBride"
-                headerAlignment="center"
-              />
-            </section>
+          </section>
           )}
 
           {/* Section 4: Best Providers With Best Products */}
           {bestProviders.length > 0 && (
-            <BestProvidersSection
-              providers={bestProviders}
-              topText="Best"
-              highlightText="Providers"
-              bottomText="With"
-              bottomHighlightText="Best Products"
-              headerAlignment="center"
-              buttonText="Explore Now"
-            />
+          <BestProvidersSection
+            providers={bestProviders}
+            topText="Best"
+            highlightText="Providers"
+            bottomText="With"
+            bottomHighlightText="Best Products"
+            headerAlignment="center"
+            buttonText="Explore Now"
+          />
           )}
 
           {/* Newsletter Banner */}
@@ -339,11 +339,7 @@ export default function ServicesIntroPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <LoadingOverlay
-            open={true}
-            title="Loading..."
-            subtitle="Please wait a moment"
-          />
+          <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
         </div>
       }
     >
