@@ -92,10 +92,10 @@ export const HeroCarousel = ({
           )}
 
           {/* Content Container */}
-          <div className="container-custom h-full">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8 items-center min-h-[280px] md:min-h-[350px] lg:min-h-[420px] py-6 md:py-8">
-              {/* Left Column - Content (40%) */}
-              <div className="lg:col-span-2 flex flex-col justify-center space-y-6 text-center lg:text-left">
+          <div className="w-full h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-center min-h-[280px] md:min-h-[350px] lg:min-h-[420px] py-0 lg:py-0 w-full h-full">
+              {/* Left Column - Content (50%) */}
+              <div className="container-custom flex flex-col justify-center space-y-6 text-center lg:text-left h-full w-full py-6 md:py-8 pl-16 md:pl-20 lg:pl-24">
                 {/* New Arrival Label */}
                 <div>
                   <span className="inline-block text-12 md:text-14 font-semibold uppercase tracking-wider text-brand-500">
@@ -127,8 +127,8 @@ export const HeroCarousel = ({
                 </div>
               </div>
 
-              {/* Right Column - Visual (60%) */}
-              <div className="lg:col-span-3 relative flex items-center justify-end h-full min-h-[200px] md:min-h-[280px] pr-4 md:pr-8">
+              {/* Right Column - Visual (50%) */}
+              <div className="relative flex items-center justify-center h-full w-full overflow-hidden">
                 {/* Discount Text Background */}
                 {currentSlide.discountText && (
                   <div className="absolute left-0 top-1/2 -translate-y-1/2 z-0">
@@ -138,14 +138,14 @@ export const HeroCarousel = ({
                   </div>
                 )}
 
-                {/* Product Image */}
-                <div className="relative z-10 transform rotate-[-8deg] md:rotate-[-6deg] hover:rotate-[-4deg] transition-transform duration-300 w-full max-w-[200px] md:max-w-[280px] lg:max-w-[350px] aspect-square">
+                {/* Product Image - Full Height, 50% Width */}
+                <div className="relative z-10 w-full h-full">
                   <Image
                     src={currentSlide.productImage}
                     alt={currentSlide.title}
                     fill
-                    sizes="(max-width: 768px) 200px, (max-width: 1024px) 280px, 350px"
-                    className="object-contain drop-shadow-2xl"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover w-full h-full"
                     priority={currentIndex === 0}
                   />
                 </div>

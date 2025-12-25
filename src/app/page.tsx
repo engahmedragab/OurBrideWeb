@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Header } from '@/components/layout'
@@ -21,14 +21,20 @@ import {
   useProviderCardHandlers,
   useAddProductToCart,
 } from '@/Hooks'
-import { OfferBanner } from '@/components/ui'
-import { StoreBadges } from '@/components/ui/StoreBadges'
 import {
-  ArrowRight,
+  OfferBanner,
+  CardSkeleton,
+  ProviderCardSkeleton,
+  TestimonialCardSkeleton,
+  MemberTestimonialCardSkeleton,
+} from '@/components/ui'
+
+import { StoreBadges } from '@/components/ui/StoreBadges'
+import { Pagination } from '@/components/ui/Pagination'
+import {
   Users,
   ChevronLeft,
   ChevronRight,
-  DollarSign,
   BadgeCheck,
   CheckCircle2,
   Tag,
@@ -41,297 +47,68 @@ import heroCardBrideImage from '@/assets/images/HeroCard-Bride.png'
 import heroCircularSvg from '@/assets/svg/Hero-circular.svg'
 import lineS2Svg from '@/assets/svg/Line-s2.svg'
 import lineS4Svg from '@/assets/svg/Line-s4.svg'
-import product from '@/assets/svg/product-1.svg'
 import phoneImage from '@/assets/images/phone.png'
-
-// Mock data - Replace with actual API data later
-const mockProducts: ProductCardData[] = [
-  {
-    id: '1',
-    image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-    title: 'Essential Wedding Cream',
-    providerName: 'YUNJAC',
-    providerId: '1',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 6000,
-    discountedPrice: 4500,
-    tags: ['Makeup', 'Body Care', 'Tag', 'Tag'],
-    showTopOfferBadge: true,
-  },
-  {
-    id: '2',
-    image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-    title: 'Bridal Makeup Kit',
-    providerName: 'Beauty Pro',
-    providerId: '2',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 5000,
-    discountedPrice: 4500,
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    showTopOfferBadge: true,
-  },
-  {
-    id: '3',
-    image: 'https://images.unsplash.com/photo-1583241801824-9055b66b9d29?w=400',
-    title: 'Hair Care Essentials',
-    providerName: 'Hair Studio',
-    providerId: '3',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 5500,
-    discountedPrice: 4500,
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    showTopOfferBadge: true,
-  },
-  {
-    id: '4',
-    image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-    title: 'Skin Care Bundle',
-    providerName: 'Skincare Co',
-    providerId: '4',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 6000,
-    discountedPrice: 4500,
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    showTopOfferBadge: true,
-  },
-]
-
-const mockServices: ServiceCardData[] = [
-  {
-    id: '1',
-    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
-    title: 'Professional Makeup Service',
-    providerName: 'Makeup Studio',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 6000,
-    discountedPrice: 4500,
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    showTopOfferBadge: true,
-  },
-  {
-    id: '2',
-    image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400',
-    title: 'Hair Styling Service',
-    providerName: 'Hair Salon',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 5000,
-    discountedPrice: 4500,
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    showTopOfferBadge: true,
-  },
-  {
-    id: '3',
-    image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=400',
-    title: 'Bridal Photo Session',
-    providerName: 'Photo Studio',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 5500,
-    discountedPrice: 4500,
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    showTopOfferBadge: true,
-  },
-  {
-    id: '4',
-    image: 'https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=400',
-    title: 'Wedding Planning Service',
-    providerName: 'Event Planner',
-    verified: true,
-    rating: 4.5,
-    originalPrice: 6000,
-    discountedPrice: 4500,
-    tags: ['Tag', 'Tag', 'Tag', 'Tag'],
-    showTopOfferBadge: true,
-  },
-]
-
-const mockTestimonials: TestimonialCardData[] = [
-  {
-    quote:
-      'OurBride is your all-in-one platform for wedding planning and shopping.',
-    rating: 5,
-    authorName: 'Sarah Mohamed',
-    authorImage:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    timeAgo: '10 Days Ago',
-  },
-  {
-    quote:
-      'OurBride is your all-in-one platform for wedding planning and shopping.',
-    rating: 5,
-    authorName: 'Sarah Mohamed',
-    authorImage:
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
-    timeAgo: '10 Days Ago',
-  },
-  {
-    quote:
-      'OurBride is your all-in-one platform for wedding planning and shopping.',
-    rating: 5,
-    authorName: 'Sarah Mohamed',
-    authorImage:
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100',
-    timeAgo: '10 Days Ago',
-  },
-  {
-    quote: 'Amazing platform! Made my wedding planning so much easier.',
-    rating: 5,
-    authorName: 'Fatima Ali',
-    authorImage:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-    timeAgo: '5 Days Ago',
-  },
-  {
-    quote: 'Great service and beautiful design. Highly recommend!',
-    rating: 5,
-    authorName: 'Mariam Hassan',
-    authorImage:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-    timeAgo: '3 Days Ago',
-  },
-  {
-    quote: 'Found everything I needed for my perfect wedding day.',
-    rating: 5,
-    authorName: 'Nour Ibrahim',
-    authorImage:
-      'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100',
-    timeAgo: '1 Day Ago',
-  },
-]
-
-const mockProviders: ProviderCardData[] = [
-  {
-    id: '1',
-    name: 'Hoda Mohamed',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-    profession: 'Makeup Artist',
-    rating: 5,
-    verified: true,
-  },
-  {
-    id: '2',
-    name: 'Hoda Mohamed',
-    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200',
-    profession: 'Makeup Artist',
-    rating: 5,
-    verified: true,
-  },
-  {
-    id: '3',
-    name: 'Hoda Mohamed',
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200',
-    profession: 'Makeup Artist',
-    rating: 5,
-    verified: true,
-  },
-  {
-    id: '4',
-    name: 'Hoda Mohamed',
-    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
-    profession: 'Makeup Artist',
-    rating: 5,
-    verified: true,
-  },
-]
-
-const mockMemberTestimonials: MemberTestimonialCardData[] = [
-  {
-    authorName: 'Aya Mohamed',
-    authorImage:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    reviewText:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.',
-    productImages: [
-      'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-      'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-    ],
-    date: '18 Aug 2025 12:45 PM',
-    likes: 20,
-    comments: 20,
-  },
-  {
-    authorName: 'Aya Mohamed',
-    authorImage:
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
-    reviewText:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.',
-    productImages: [
-      'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-    ],
-    date: '18 Aug 2025 12:45 PM',
-    likes: 20,
-    comments: 20,
-  },
-  {
-    authorName: 'Aya Mohamed',
-    authorImage:
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100',
-    reviewText:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.',
-    productImages: [
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-    ],
-    date: '18 Aug 2020',
-    likes: 20,
-    comments: 20,
-  },
-  {
-    authorName: 'Fatima Ali',
-    authorImage:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
-    reviewText:
-      'Amazing products and excellent service! The quality exceeded my expectations.',
-    productImages: [
-      'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-      'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-    ],
-    date: '15 Aug 2025 10:30 AM',
-    likes: 35,
-    comments: 12,
-  },
-  {
-    authorName: 'Mariam Hassan',
-    authorImage:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
-    reviewText:
-      'Great experience with OurBride! Found everything I needed for my special day.',
-    productImages: [
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-    ],
-    date: '12 Aug 2025 3:20 PM',
-    likes: 28,
-    comments: 8,
-  },
-  {
-    authorName: 'Nour Ibrahim',
-    authorImage:
-      'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100',
-    reviewText:
-      'Highly recommend! The platform made wedding planning so much easier.',
-    productImages: [
-      'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-      'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-    ],
-    date: '10 Aug 2025 9:15 AM',
-    likes: 42,
-    comments: 15,
-  },
-]
+import { useHome } from '@/hooks/home'
+import { extractHomeData } from '@/utils'
+import {
+  TRUST_CARDS,
+  JOURNEY_STEPS,
+  TRUST_CARD_POSITION_CLASSES,
+  PAGINATION_CONFIG,
+} from '@/constants'
 
 export default function Home() {
+  // Fetch home data from API
+  const { data: homeData, isLoading } = useHome()
+
+  // Extract and map API data
+  const apiData = useMemo(() => {
+    if (homeData) {
+      return extractHomeData(homeData)
+    }
+    return {}
+  }, [homeData])
+
+  // Use API data, return empty arrays if not available
+  const products = useMemo(() => apiData.products || [], [apiData.products])
+  const services = useMemo(() => apiData.services || [], [apiData.services])
+  const testimonials = useMemo(
+    () => apiData.testimonials || [],
+    [apiData.testimonials]
+  )
+  const providers = useMemo(() => apiData.providers || [], [apiData.providers])
+  const memberTestimonials = useMemo(
+    () => apiData.memberTestimonials || [],
+    [apiData.memberTestimonials]
+  )
+  const banners = useMemo(() => apiData.banners || [], [apiData.banners])
+
+  // Products pagination state
+  const [productsPage, setProductsPage] = useState(1)
+  const productsTotalPages = Math.ceil(
+    products.length / PAGINATION_CONFIG.PRODUCTS_PER_PAGE
+  )
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (productsPage - 1) * PAGINATION_CONFIG.PRODUCTS_PER_PAGE
+    const endIndex = startIndex + PAGINATION_CONFIG.PRODUCTS_PER_PAGE
+    return products.slice(startIndex, endIndex)
+  }, [products, productsPage])
+
+  // Services pagination state
+  const [servicesPage, setServicesPage] = useState(1)
+  const servicesTotalPages = Math.ceil(
+    services.length / PAGINATION_CONFIG.SERVICES_PER_PAGE
+  )
+  const paginatedServices = useMemo(() => {
+    const startIndex = (servicesPage - 1) * PAGINATION_CONFIG.SERVICES_PER_PAGE
+    const endIndex = startIndex + PAGINATION_CONFIG.SERVICES_PER_PAGE
+    return services.slice(startIndex, endIndex)
+  }, [services, servicesPage])
+
   // Testimonials carousel state
   const [testimonialsIndex, setTestimonialsIndex] = useState(0)
-  const testimonialsPerPage = 3
   const testimonialsTotalPages = Math.ceil(
-    mockTestimonials.length / testimonialsPerPage
+    testimonials.length / PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
   )
 
   const goToTestimonialsPrevious = () => {
@@ -350,9 +127,8 @@ export default function Home() {
 
   // Member testimonials carousel state
   const [memberTestimonialsIndex, setMemberTestimonialsIndex] = useState(0)
-  const memberTestimonialsPerPage = 3
   const memberTestimonialsTotalPages = Math.ceil(
-    mockMemberTestimonials.length / memberTestimonialsPerPage
+    memberTestimonials.length / PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
   )
 
   const goToMemberTestimonialsPrevious = () => {
@@ -371,94 +147,16 @@ export default function Home() {
     setMemberTestimonialsIndex(index)
   }
 
-
-  // Trust cards data
-  const trustCards = [
-    {
-      id: '1',
-      heading: 'Made for Local Brides',
-      description:
-        'Tailored for brides across Egypt — especially those outside the capital.',
-      rotation: -3,
-      background: 'gray',
-    },
-    {
-      id: '2',
-      heading: 'Simple & Beautiful Experience',
-      description:
-        'A feminine, easy-to-use design that makes planning delightful.',
-      rotation: 2,
-      background: 'white',
-    },
-    {
-      id: '3',
-      heading: 'Real Offers & Savings',
-      description: 'Exclusive coupons and discounts designed for your budget.',
-      rotation: -2,
-      background: 'gray',
-    },
-    {
-      id: '4',
-      heading: 'All-in-One Platform',
-      description: 'Plan, book, shop, and celebrate everything in one place.',
-      rotation: 3,
-      background: 'white',
-    },
-    {
-      id: '5',
-      heading: 'Verified Trusted Providers',
-      description:
-        'All our service providers are carefully verified and trusted.',
-      rotation: -1.5,
-      background: 'gray',
-    },
-    {
-      id: '6',
-      heading: 'Secure Payments',
-      description:
-        'Your payments are safe and secure with our trusted payment system.',
-      rotation: 2.5,
-      background: 'white',
-    },
-  ]
-
-  // Journey steps data
-  const journeySteps = [
-    {
-      stepNumber: 1,
-      title: 'Step #1',
-      description: 'Exclusive coupons and discounts designed for your budget.',
-    },
-    {
-      stepNumber: 2,
-      title: 'Step #2',
-      description: 'Exclusive coupons and discounts designed for your budget.',
-    },
-    {
-      stepNumber: 3,
-      title: 'Step #3',
-      description: 'Exclusive coupons and discounts designed for your budget.',
-    },
-  ]
-
-  const positionClasses = [
-    '',
-    'lg:translate-x-[10px] lg:translate-y-[15px]',
-    'lg:-translate-x-[5px] lg:-translate-y-[10px]',
-    'lg:translate-x-[8px] lg:-translate-y-[5px]',
-    'lg:-translate-x-[12px] lg:translate-y-[12px]',
-    'lg:translate-x-[15px] lg:translate-y-[8px]',
-  ]
-
-  const currentTestimonials = mockTestimonials.slice(
-    testimonialsIndex * testimonialsPerPage,
-    testimonialsIndex * testimonialsPerPage + testimonialsPerPage
+  const currentTestimonials = testimonials.slice(
+    testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE,
+    testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE +
+    PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
   )
 
-  const currentMemberTestimonials = mockMemberTestimonials.slice(
-    memberTestimonialsIndex * memberTestimonialsPerPage,
-    memberTestimonialsIndex * memberTestimonialsPerPage +
-    memberTestimonialsPerPage
+  const currentMemberTestimonials = memberTestimonials.slice(
+    memberTestimonialsIndex * PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE,
+    memberTestimonialsIndex * PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE +
+    PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
   )
 
   return (
@@ -626,64 +324,12 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-                <div className="relative aspect-[5/2] overflow-hidden">
-                  <Image
-                    src={
-                      typeof heroCardBrideImage === 'string'
-                        ? heroCardBrideImage
-                        : heroCardBrideImage.src
-                    }
-                    alt="Explore Products"
-                    fill
-                    sizes="(max-width: 768px) 192px, 224px"
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-14 font-semibold rounded-full"
-                    asChild
-                  >
-                    <Link href="/products">Explore Products</Link>
-                  </Button>
-                </div>
-              </div>
             </div>
           </div>
         </section>
 
         {/* Section 2: Offer Banner */}
-        <OfferBanner
-          offers={[
-            {
-              heading: '25% Offer On our products',
-              description:
-                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
-              ctaText: 'Start Shopping',
-              ctaLink: '/products',
-              productImage: product,
-            },
-            {
-              heading: '25% Offer On our products',
-              description:
-                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
-              ctaText: 'Start Shopping',
-              ctaLink: '/products',
-              productImage: product,
-            },
-            {
-              heading: '25% Offer On our products',
-              description:
-                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
-              ctaText: 'Start Shopping',
-              ctaLink: '/products',
-              productImage: product,
-            },
-          ]}
-        />
+        {banners.length > 0 && <OfferBanner offers={banners} />}
 
         {/* Section 3: Statistics */}
         <section className="container-custom pt-12 md:pt-16 pb-4 md:pb-6">
@@ -738,7 +384,8 @@ export default function Home() {
                 Verified Trusted Providers
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Every service is identity-checked for a safe and reliable experience.
+                Every service is identity-checked for a safe and reliable
+                experience.
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -761,7 +408,8 @@ export default function Home() {
                 Secure Payments
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Safe transactions, transparent pricing, and guaranteed service delivery.
+                Safe transactions, transparent pricing, and guaranteed service
+                delivery.
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -792,50 +440,66 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockProducts.map(product => {
-              // Inline component to use hooks properly
-              const ProductCardItem = () => {
-                const handlers = useProductCardHandlers(parseInt(product.id, 10))
-                const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+            {isLoading ? (
+              <CardSkeleton count={4} />
+            ) : (
+              paginatedProducts.map(product => {
+                // Inline component to use hooks properly
+                const ProductCardItem = () => {
+                  const handlers = useProductCardHandlers(parseInt(product.id, 10))
+                  const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
 
-                const handleAddToCartClick = (e: React.MouseEvent) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  // Convert ProductCardData to the format expected by handleAddToCart
-                  handleAddToCart(
-                    {
-                      id: product.id,
-                      price: { discounted: product.discountedPrice },
-                      provider: { id: product.providerId || '' },
-                    },
-                    1
+                  const handleAddToCartClick = (e: React.MouseEvent) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    // Convert ProductCardData to the format expected by handleAddToCart
+                    handleAddToCart(
+                      {
+                        id: product.id,
+                        price: { discounted: product.discountedPrice },
+                        provider: { id: product.providerId || '' },
+                      },
+                      1
+                    )
+                  }
+
+                  return (
+                    <Card
+                      cardData={{
+                        type: 'product',
+                        ...product,
+                        providerId: product.providerId || '',
+                        inStock: true,
+                        onWishlistToggle: handlers.handleWishlistToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        onAddToCart: handleAddToCartClick,
+                        isLoadingWishlist: handlers.isLoadingWishlist,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                        isLoadingAddToCart,
+                      }}
+                    />
                   )
                 }
-
-                return (
-                  <Card
-                    cardData={{
-                      type: 'product',
-                      ...product,
-                      providerId: product.providerId || '',
-                      inStock: true,
-                      onWishlistToggle: handlers.handleWishlistToggle,
-                      onFavoriteToggle: handlers.handleFavoriteToggle,
-                      onAddToCart: handleAddToCartClick,
-                      isLoadingWishlist: handlers.isLoadingWishlist,
-                      isLoadingFavorite: handlers.isLoadingFavorite,
-                      isLoadingAddToCart,
-                    }}
-                  />
-                )
-              }
-              return <ProductCardItem key={product.id} />
-            })}
-          </div>
-        </section>
+                return <ProductCardItem key={product.id} />
+              })
+            )}
+          </div >
+          {/* Products Pagination */}
+          {
+            !isLoading && productsTotalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={productsPage}
+                  totalPages={productsTotalPages}
+                  onPageChange={setProductsPage}
+                />
+              </div>
+            )
+          }
+        </section >
 
         {/* Section 6: Suggested Services */}
-        <section className="container-custom py-12 md:py-16">
+        < section className="container-custom py-12 md:py-16" >
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
               Services Suggested for You
@@ -848,30 +512,46 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockServices.map(service => {
-              // Inline component to use hooks properly
-              const ServiceCardItem = () => {
-                const handlers = useServiceCardHandlers(parseInt(service.id, 10))
-                return (
-                  <Card
-                    cardData={{
-                      type: 'service',
-                      ...service,
-                      onWishlistToggle: handlers.handleWishlistToggle,
-                      onFavoriteToggle: handlers.handleFavoriteToggle,
-                      isLoadingWishlist: handlers.isLoadingWishlist,
-                      isLoadingFavorite: handlers.isLoadingFavorite,
-                    }}
-                  />
-                )
-              }
-              return <ServiceCardItem key={service.id} />
-            })}
-          </div>
-        </section>
+            {isLoading ? (
+              <CardSkeleton count={4} />
+            ) : (
+              paginatedServices.map(service => {
+                // Inline component to use hooks properly
+                const ServiceCardItem = () => {
+                  const handlers = useServiceCardHandlers(parseInt(service.id, 10))
+                  return (
+                    <Card
+                      cardData={{
+                        type: 'service',
+                        ...service,
+                        onWishlistToggle: handlers.handleWishlistToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        isLoadingWishlist: handlers.isLoadingWishlist,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                      }}
+                    />
+                  )
+                }
+                return <ServiceCardItem key={service.id} />
+              })
+            )}
+          </div >
+          {/* Services Pagination */}
+          {
+            !isLoading && servicesTotalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={servicesPage}
+                  totalPages={servicesTotalPages}
+                  onPageChange={setServicesPage}
+                />
+              </div>
+            )
+          }
+        </section >
 
         {/* Section 7: Why Trust Section */}
-        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
+        < section className="relative py-16 md:py-24 overflow-hidden bg-white" >
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <Image
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
@@ -900,8 +580,8 @@ export default function Home() {
             </div>
             <div className="relative min-h-[600px] md:min-h-[700px]">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 relative">
-                {trustCards.map((card, index) => {
-                  const positionClass = positionClasses[index] || ''
+                {TRUST_CARDS.map((card, index) => {
+                  const positionClass = TRUST_CARD_POSITION_CLASSES[index] || ''
                   return (
                     <div key={card.id} className={`relative ${positionClass}`}>
                       <Card
@@ -919,12 +599,12 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Section 8: Testimonials */}
-        <section className="container-custom py-12 md:py-16">
+        < section className="container-custom py-12 md:py-16" >
           {/* Centered Heading Above Section */}
-          <div className="text-center mb-8 md:mb-12">
+          < div className="text-center mb-8 md:mb-12" >
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
               <span className="font-normal text-gray-900">
                 Read{' '}
@@ -936,7 +616,7 @@ export default function Home() {
                 <span className="font-normal text-gray-900">Confidence</span>
               </span>
             </h2>
-          </div>
+          </div >
 
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
             {/* Left Side - Quote Icon and Heading */}
@@ -988,18 +668,22 @@ export default function Home() {
 
             {/* Right Side - Testimonial Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto">
-              {currentTestimonials.map((testimonial, index) => (
-                <Card
-                  key={`${testimonialsIndex}-${index}`}
-                  cardData={{ type: 'testimonial', ...testimonial }}
-                />
-              ))}
+              {isLoading ? (
+                <TestimonialCardSkeleton count={3} />
+              ) : (
+                currentTestimonials.map((testimonial, index) => (
+                  <Card
+                    key={`${testimonialsIndex}-${index}`}
+                    cardData={{ type: 'testimonial', ...testimonial }}
+                  />
+                ))
+              )}
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Section 9: Providers */}
-        <section className="container-custom py-12 md:py-16">
+        < section className="container-custom py-12 md:py-16" >
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
               <span className="font-normal text-gray-900">
@@ -1014,30 +698,34 @@ export default function Home() {
             </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockProviders.map(provider => {
-              // Inline component to use hooks properly
-              const ProviderCardItem = () => {
-                const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
-                return (
-                  <Card
-                    cardData={{
-                      type: 'provider',
-                      ...provider,
-                      onFollowToggle: handlers.handleFollowToggle,
-                      onFavoriteToggle: handlers.handleFavoriteToggle,
-                      isLoadingFollow: handlers.isLoadingFollow,
-                      isLoadingFavorite: handlers.isLoadingFavorite,
-                    }}
-                  />
-                )
-              }
-              return <ProviderCardItem key={provider.id} />
-            })}
-          </div>
-        </section>
+            {isLoading ? (
+              <ProviderCardSkeleton count={4} />
+            ) : (
+              providers.map(provider => {
+                // Inline component to use hooks properly
+                const ProviderCardItem = () => {
+                  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+                  return (
+                    <Card
+                      cardData={{
+                        type: 'provider',
+                        ...provider,
+                        onFollowToggle: handlers.handleFollowToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        isLoadingFollow: handlers.isLoadingFollow,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                      }}
+                    />
+                  )
+                }
+                return <ProviderCardItem key={provider.id} />
+              })
+            )}
+          </div >
+        </section >
 
         {/* Section 10: Wedding Journey */}
-        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
+        < section className="relative py-16 md:py-24 overflow-hidden bg-white" >
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <Image
               src={typeof lineS4Svg === 'string' ? lineS4Svg : lineS4Svg.src}
@@ -1063,7 +751,7 @@ export default function Home() {
             </div>
             <div className="relative">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 items-start">
-                {journeySteps.map((step, index) => (
+                {JOURNEY_STEPS.map((step, index) => (
                   <Card
                     key={step.stepNumber}
                     cardData={{
@@ -1082,12 +770,12 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Section 11: Member Testimonials */}
-        <section className="container-custom py-12 md:py-16">
+        < section className="container-custom py-12 md:py-16" >
           {/* Centered Heading Above Section */}
-          <div className="text-center mb-8 md:mb-12">
+          < div className="text-center mb-8 md:mb-12" >
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
               <span className="font-normal text-gray-900">
                 Our Bride{' '}
@@ -1098,7 +786,7 @@ export default function Home() {
                 Are <span className="font-normal text-gray-900">Loving</span>
               </span>
             </h2>
-          </div>
+          </div >
 
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
             {/* Left Side - Quote Icon and Heading */}
@@ -1153,22 +841,28 @@ export default function Home() {
 
             {/* Right Side - Testimonial Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto items-stretch">
-              {currentMemberTestimonials.map((testimonial, index) => (
-                <Card
-                  key={`${memberTestimonialsIndex}-${index}`}
-                  cardData={{ type: 'member-testimonial', ...testimonial }}
-                />
-              ))}
+              {isLoading ? (
+                <MemberTestimonialCardSkeleton count={3} />
+              ) : (
+                currentMemberTestimonials.map((testimonial, index) => (
+                  <Card
+                    key={`${memberTestimonialsIndex}-${index}`}
+                    cardData={{ type: 'member-testimonial', ...testimonial }}
+                  />
+                ))
+              )}
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Section: App Download */}
-        <section className="relative overflow-hidden bg-white py-0">
+        < section className="relative overflow-hidden bg-white py-0" >
           <div className="container-custom">
             <div className="text-center mb-0">
               <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900 leading-tight">
-                <span className="font-normal block">Make Wedding Planning Easier</span>
+                <span className="font-normal block">
+                  Make Wedding Planning Easier
+                </span>
                 <span className="font-semibold">With OurBride</span>
               </h2>
             </div>
@@ -1185,7 +879,11 @@ export default function Home() {
                 {/* Phone Image */}
                 <div className="relative z-10 w-[650px] md:w-[850px] lg:w-[1000px] aspect-[26/16]">
                   <Image
-                    src={typeof phoneImage === 'string' ? phoneImage : phoneImage.src}
+                    src={
+                      typeof phoneImage === 'string'
+                        ? phoneImage
+                        : phoneImage.src
+                    }
                     alt="OurBride Mobile App"
                     fill
                     sizes="(max-width: 768px) 650px, (max-width: 1024px) 850px, 1000px"
@@ -1195,10 +893,9 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
-
-      </main>
+        </section >
+      </main >
       <Footer />
-    </div>
+    </div >
   )
 }

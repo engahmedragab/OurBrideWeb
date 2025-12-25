@@ -3,6 +3,7 @@
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { HeroCarousel, OfferBanner, LoadingOverlay } from '@/components/ui'
+import { useMemo } from 'react'
 import {
   ProductCategoriesSection,
   ProductOffersSection,
@@ -11,8 +12,8 @@ import {
 } from '@/components/products'
 import type {
   ProductCategory as CategoryType,
-  Feature,
-  Provider,
+  Provider as BestProviderType,
+  ProviderProduct as BestProviderProductType,
 } from '@/components/products'
 import {
   useProductCategories,
@@ -20,157 +21,115 @@ import {
   useProducts,
   useAddProductToCart,
 } from '@/Hooks/products'
+import { useStoreHome } from '@/hooks/home'
+import { useProductsHome } from '@/hooks/products'
+import { extractStoreHomeData } from '@/utils/home-data.utils'
 import flowersImage from '@/assets/images/flowers.png'
-import perfumesIcon from '@/assets/category/perfumes.svg'
-import skinCareIcon from '@/assets/category/skin-care.svg'
-import boxesIcon from '@/assets/category/boxes.svg'
-import hairCareIcon from '@/assets/category/hair-care.svg'
-import bodyCareIcon from '@/assets/category/body-soap.svg'
-import toolsDevicesIcon from '@/assets/category/tools-devices.svg'
-import hairDryerIcon from '@/assets/category/hair-dryer.svg'
 import whyBridesChooseProductsImage from '@/assets/images/bridProductSection.png'
-import { useMemo } from 'react'
-
-// Category icon mapping - maps category slugs to icons
-const categoryIconMap: Record<string, string> = {
-  perfumes: perfumesIcon,
-  makeup: toolsDevicesIcon,
-  'skin-care': skinCareIcon,
-  boxes: boxesIcon,
-  'hair-care': hairCareIcon,
-  'body-care': bodyCareIcon,
-  'tools-devices': toolsDevicesIcon,
-  'hair-dryer': hairDryerIcon,
-}
-
-// Default icon fallback
-const defaultCategoryIcon = toolsDevicesIcon
-
-const features: Feature[] = [
-  {
-    title: 'Premium Brands',
-    description:
-      'Handpicked items from trusted, high-quality wedding suppliers',
-  },
-  {
-    title: 'Bridal-Friendly Formulas',
-    description:
-      'Products selected to suit sensitive skin and long event days',
-  },
-  {
-    title: 'Exclusive Discounts',
-    description: "Special offers crafted to fit every bride's budget",
-  },
-  {
-    title: 'Verified Sellers',
-    description:
-      'We work only with reliable, vetted beauty providers',
-  },
-]
-
-const providers: Provider[] = [
-  {
-    id: '1',
-    name: 'Hoda Mohamed',
-    profession: 'Makeup Artist',
-    verified: true,
-    rating: 5,
-    product: {
-      id: '1',
-      title: 'Product Title',
-      image:
-        'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400',
-      rating: 4.5,
-      price: 4500,
-      currency: 'egp',
-      href: '/products/1',
-    },
-  },
-  {
-    id: '2',
-    name: 'Hoda Mohamed',
-    profession: 'Makeup Artist',
-    verified: true,
-    rating: 5,
-    product: {
-      id: '2',
-      title: 'Product Title',
-      image:
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400',
-      rating: 4.5,
-      price: 4500,
-      currency: 'egp',
-      href: '/products/2',
-    },
-  },
-  {
-    id: '3',
-    name: 'Hoda Mohamed',
-    profession: 'Makeup Artist',
-    verified: true,
-    rating: 5,
-    product: {
-      id: '3',
-      title: 'Product Title',
-      image:
-        'https://images.unsplash.com/photo-1583241801824-9055b66b9d29?w=400',
-      rating: 4.5,
-      price: 4500,
-      currency: 'egp',
-      href: '/products/3',
-    },
-  },
-]
-
-// Hero Carousel Slides
-const heroSlides = [
-  {
-    id: '1',
-    label: 'New Arrival',
-    title: 'Avca Sun Cream',
-    description:
-      'A lightweight, moisture-rich sun cream designed to protect your skin while keeping it soft, fresh, and radiating a dewy, ready glow for brides who want flawless, healthy skin under makeup.',
-    ctaText: 'Buy Now',
-    ctaLink: '/products/avca-sun-cream',
-    productImage:
-      'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=600',
-    discountText: '30% OFF',
-  },
-  {
-    id: '2',
-    label: 'Top Seller',
-    title: 'Essential Wedding Cream',
-    description:
-      'Premium quality products for your special day. Discover our curated collection of wedding essentials designed to make you look and feel your best.',
-    ctaText: 'Shop Now',
-    ctaLink: '/products',
-    productImage:
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=600',
-    discountText: '50% OFF',
-  },
-]
+import { ProductPageLayout } from './components/ProductPageLayout'
+import {
+  DEFAULT_HERO_SLIDES,
+  PRODUCT_FEATURES,
+  MAX_HERO_SLIDES,
+  DEFAULT_HOME_PRODUCTS_COUNT,
+} from './constants'
+import { getCategoryIconMap } from './utils/category-icons'
 
 export default function ProductIntroPage() {
-  // Fetch data using hooks
-  const { data: categories = [], isLoading: categoriesLoading } = useProductCategories()
-  const { data: offerProducts = [], isLoading: offersLoading } = useProductOffers()
-  const { data: allProducts = [], isLoading: productsLoading } = useProducts({
-    pageSize: 8,
-  })
+  // Fetch data from store home endpoint (getHomeGetStoreHome) - for banners
+  const { data: storeHomeData, isLoading: storeHomeLoading } = useStoreHome()
+
+  // Fetch data from products home endpoint (getProductGetProductsHome) - for categories and products
+  const { data: productsHomeData, isLoading: productsHomeLoading } = useProductsHome()
+
+  // Extract and map data from store home API (for banners)
+  const storeData = useMemo(() => {
+    if (storeHomeData) {
+      return extractStoreHomeData(storeHomeData)
+    }
+    return {}
+  }, [storeHomeData])
+
+  // Use products home data for categories
+  const categories = useMemo(() =>
+    productsHomeData?.categories || [],
+    [productsHomeData?.categories]
+  )
+
+  const apiBanners = useMemo(() => storeData.banners || [], [storeData.banners])
+  const apiProvidersData = useMemo(() => storeData.providers || [], [storeData.providers])
+
+  const isLoading = storeHomeLoading || productsHomeLoading
 
   // Map API categories to component format
+  const categoryIconMap = getCategoryIconMap()
   const mappedCategories: CategoryType[] = useMemo(() => {
     return categories.map(category => ({
-      id: category.id,
+      id: String(category.id),
       title: category.name,
       description: 'Exclusive coupons and discounts designed for your budget.',
       href: `/products/category/${category.slug || category.id}`,
-      icon: categoryIconMap[category.slug] || defaultCategoryIcon,
+      icon: categoryIconMap[category.slug || ''] || categoryIconMap.default,
     }))
-  }, [categories])
+  }, [categories, categoryIconMap])
 
-  // Use offer products if available, otherwise use regular products
-  const displayProducts = offerProducts.length > 0 ? offerProducts : allProducts.slice(0, 4)
+  // Map API banners to hero carousel format
+  const mappedHeroSlides = useMemo(() => {
+    if (apiBanners.length > 0) {
+      return apiBanners.slice(0, MAX_HERO_SLIDES).map((banner, index) => ({
+        id: String(index + 1),
+        label: 'Featured',
+        title: banner.heading,
+        description: banner.description || '',
+        ctaText: banner.ctaText || 'Shop Now',
+        ctaLink: banner.ctaLink || '/products',
+        productImage:
+          typeof banner.productImage === 'string'
+            ? banner.productImage
+            : 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=600',
+        discountText: '',
+      }))
+    }
+    return DEFAULT_HERO_SLIDES
+  }, [apiBanners])
+
+  // Use products from products home endpoint
+  const displayProducts = useMemo(() => {
+    return productsHomeData?.products?.slice(0, DEFAULT_HOME_PRODUCTS_COUNT) || []
+  }, [productsHomeData?.products])
+
+  // Map providers to BestProvidersSection format
+  const mappedProviders: BestProviderType[] = useMemo(() => {
+    if (apiProvidersData.length === 0 || displayProducts.length === 0) {
+      return []
+    }
+
+    return apiProvidersData.slice(0, 6).map((provider, index) => {
+      // Find a product for this provider (try to match by provider, or use a product from the list)
+      const productIndex = index % displayProducts.length
+      const featuredProduct = displayProducts[productIndex]
+
+      const providerProduct: BestProviderProductType = {
+        id: featuredProduct.id,
+        title: featuredProduct.title,
+        image: featuredProduct.images?.[0] || '',
+        rating: featuredProduct.rating?.value || 0,
+        price: featuredProduct.price?.discounted || featuredProduct.price?.original || 0,
+        currency: featuredProduct.price?.currency || 'USD',
+        href: `/products/${featuredProduct.id}`,
+      }
+
+      return {
+        id: provider.id,
+        name: provider.name,
+        image: provider.image,
+        profession: provider.profession,
+        verified: provider.verified || false,
+        rating: provider.rating,
+        product: providerProduct,
+      }
+    })
+  }, [apiProvidersData, displayProducts])
 
   const handleWishlistToggle = (_productId: string) => {
     // TODO: Implement wishlist toggle
@@ -196,7 +155,7 @@ export default function ProductIntroPage() {
   }
 
   // Show loading state
-  if (categoriesLoading || offersLoading || productsLoading) {
+  if (storeHomeLoading || productsHomeLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -213,56 +172,55 @@ export default function ProductIntroPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <main className="flex-1 bg-white">
-        {/* Hero Carousel */}
-        <HeroCarousel
-          slides={heroSlides}
-          autoPlay={true}
-          autoPlayInterval={5000}
-          showBackground={false}
-        />
+    <ProductPageLayout isLoading={isLoading} loadingText="Loading products...">
+      {/* Hero Carousel */}
+      <HeroCarousel
+        slides={mappedHeroSlides}
+        autoPlay={true}
+        autoPlayInterval={5000}
+        showBackground={false}
+      />
 
-        {/* Consistent container wrapper for all other sections */}
-        <div className="container-custom">
-          {/* 2) ProductCategoriesSection */}
-          {mappedCategories.length > 0 && (
-            <ProductCategoriesSection
-              categories={mappedCategories}
-              topText="Choose"
-              highlightText="From"
-              bottomText="Our Product"
-              bottomHighlightText="Categories"
-              headerAlignment="center"
-            />
-          )}
-
-          {/* 3) ProductOffersSection */}
-          {displayProducts.length > 0 && (
-            <ProductOffersSection
-              products={displayProducts}
-              timerText="23 H 45 Min"
-              title="Today's Best Product Offers"
-              onWishlistToggle={handleWishlistToggle}
-              onAddToCart={handleAddToCart}
-            />
-          )}
-
-          {/* 4) WhyBridesChooseProductsSection */}
-          <WhyBridesChooseProductsSection
-            image={whyBridesChooseProductsImage}
-            features={features}
-            topText="Why"
-            highlightText="Brides"
-            bottomText="Choose"
-            bottomHighlightText="OurBride Products"
+      {/* Consistent container wrapper for all other sections */}
+      <div className="container-custom">
+        {/* 2) ProductCategoriesSection */}
+        {mappedCategories.length > 0 && (
+          <ProductCategoriesSection
+            categories={mappedCategories}
+            topText="Choose"
+            highlightText="From"
+            bottomText="Our Product"
+            bottomHighlightText="Categories"
             headerAlignment="center"
           />
+        )}
 
-          {/* 5) BestProvidersSection */}
+        {/* 3) ProductOffersSection */}
+        {displayProducts.length > 0 && (
+          <ProductOffersSection
+            products={displayProducts}
+            timerText="23 H 45 Min"
+            title="Today's Best Product Offers"
+            onWishlistToggle={handleWishlistToggle}
+            onAddToCart={handleAddToCart}
+          />
+        )}
+
+        {/* 4) WhyBridesChooseProductsSection */}
+        <WhyBridesChooseProductsSection
+          image={whyBridesChooseProductsImage}
+          features={PRODUCT_FEATURES}
+          topText="Why"
+          highlightText="Brides"
+          bottomText="Choose"
+          bottomHighlightText="OurBride Products"
+          headerAlignment="center"
+        />
+
+        {/* 5) BestProvidersSection */}
+        {mappedProviders.length > 0 && (
           <BestProvidersSection
-            providers={providers}
+            providers={mappedProviders}
             topText="Best"
             highlightText="Providers"
             bottomText="With"
@@ -270,27 +228,26 @@ export default function ProductIntroPage() {
             headerAlignment="center"
             buttonText="Explore Now"
           />
+        )}
 
-          {/* 6) Newsletter Banner */}
-          <div className="mb-12">
-            <OfferBanner
-              offers={[
-                {
-                  heading: 'Get Products Updates & Offers',
-                  description:
-                    'Stay informed about new providers, offers, and wedding planning tips',
-                  variant: 'newsletter',
-                  ctaText: 'Subscribe',
-                  productImage: flowersImage,
-                },
-              ]}
-              onSubscribe={handleSubscribe}
-            />
-          </div>
+        {/* 6) Newsletter Banner */}
+        <div className="mb-12">
+          <OfferBanner
+            offers={[
+              {
+                heading: 'Get Products Updates & Offers',
+                description:
+                  'Stay informed about new providers, offers, and wedding planning tips',
+                variant: 'newsletter',
+                ctaText: 'Subscribe',
+                productImage: flowersImage,
+              },
+            ]}
+            onSubscribe={handleSubscribe}
+          />
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </ProductPageLayout>
   )
 }
 

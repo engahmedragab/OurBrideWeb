@@ -122,8 +122,10 @@ export const mapProductResponseToProduct = (
     },
     category,
     tags,
-    inStock: apiProduct.inStock ?? (apiProduct.stockQuantity ? apiProduct.stockQuantity > 0 : false),
-    stockQuantity: apiProduct.stockQuantity || undefined,
+    inStock: apiProduct.stockQuantity !== null && apiProduct.stockQuantity !== undefined 
+      ? apiProduct.stockQuantity > 0 
+      : (apiProduct.inStock ?? false),
+    stockQuantity: apiProduct.stockQuantity ?? undefined,
     sku: apiProduct.sku || undefined,
     isWishlisted: false, // This should come from a separate API call
     showTopOfferBadge: apiProduct.onSale || apiProduct.hasDiscount || false,

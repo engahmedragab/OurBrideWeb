@@ -91050,7 +91050,7 @@ export class Api<SecurityDataType extends unknown> {
         /** @format int32 */
         branchId?: number;
         /** @format uuid */
-        staffId?: string;
+        staffId?: string;   
       },
       params: RequestParams = {},
     ) =>

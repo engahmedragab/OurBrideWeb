@@ -1,10 +1,11 @@
 import { apiClient } from './apiClient'
 import type {
   ProductResponse,
-  ProductResponseApiResult,
-  ProductResponseListApiResult,
   ApiResult,
   CreateProductReviewRequest,
+  ProductVariationResponse,
+  ProductAttributeResponse,
+  ProductBrandResponse,
 } from '@/../client/common/api/gen/ourbride-api'
 
 /**
@@ -108,7 +109,7 @@ export const getFilteredProducts = async (
     sortBy?: string
   }
 ): Promise<ApiResult> => {
-    const response = await apiClient.api.getProductGetFilteredProducts(params)
+  const response = await apiClient.api.getProductGetFilteredProducts(params)
   return response.data
 }
 
@@ -171,7 +172,7 @@ export const getProductsByCategory = async (
  */
 export const getRelatedProducts = async (
   productId: number,
-  limit?: number
+  _limit?: number
 ): Promise<ProductResponse[]> => {
   try {
     // Note: The API endpoint expects both productId (number) and id (string)
@@ -183,9 +184,10 @@ export const getRelatedProducts = async (
     // The endpoint returns ApiResult, extract data from it
     // Adjust based on actual API response structure
     if (response.data && typeof response.data === 'object' && 'data' in response.data) {
-      const data = (response.data as any).data
+      const apiResult = response.data as { data?: unknown }
+      const data = apiResult.data
       if (Array.isArray(data)) {
-        return data
+        return data as ProductResponse[]
       }
     }
     
@@ -200,11 +202,18 @@ export const getRelatedProducts = async (
  * Get product reviews
  */
 export const getProductReviews = async (
-  productId: number
+  productId: number,
+  params?: {
+    page?: number
+    pageSize?: number
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
 ): Promise<ApiResult> => {
   const response = await apiClient.api.getProductGetProductReviews(
     String(productId),
-    { productId }
+    { productId, ...params }
   )
   return response.data
 }
@@ -264,6 +273,38 @@ export const toggleProductFavorite = async (
 }
 
 /**
+ * Search products
+ */
+export const searchProducts = async (
+  query: string,
+  _params?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ProductResponse[]> => {
+  try {
+    const response = await apiClient.api.getProductSearchProducts(
+      { query }
+    )
+    
+    // Handle ApiResult response structure
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      const apiResult = response.data as { data?: unknown }
+      const data = apiResult.data
+      if (Array.isArray(data)) {
+        return data as ProductResponse[]
+      }
+    }
+    
+    return []
+  } catch (error) {
+    console.error('Error searching products:', error)
+    return []
+  }
+}
+
+/**
  * Toggle wishlist for a product
  * POST /api/v1/products/{productId}/toggle-wishlist
  */
@@ -285,6 +326,170 @@ export const toggleProductWishlist = async (
     throw new Error(
       error instanceof Error ? error.message : 'Failed to toggle product wishlist'
     )
+  }
+}
+
+/**
+ * Get product by SKU
+ */
+export const getProductBySku = async (
+  sku: string,
+  params?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ProductResponse | null> => {
+  try {
+    const response = await apiClient.api.getProductGetProductBySku(sku, params)
+    
+    if (!response.data?.data) {
+      return null
+    }
+    
+    return response.data.data
+  } catch (error) {
+    console.error('Error fetching product by SKU:', error)
+    return null
+  }
+}
+
+/**
+ * Get product variations
+ */
+export const getProductVariations = async (
+  productId: number | string,
+  params?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ProductVariationResponse[]> => {
+  try {
+    const response = await apiClient.api.getProductGetProductVariations(
+      String(productId),
+      { productId: typeof productId === 'number' ? productId : parseInt(productId, 10), ...params }
+    )
+    
+    if (!response.data?.data) {
+      return []
+    }
+    
+    return response.data.data
+  } catch (error) {
+    console.error('Error fetching product variations:', error)
+    return []
+  }
+}
+
+/**
+ * Get product attributes
+ */
+export const getProductAttributes = async (
+  productId: number,
+  params?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ProductAttributeResponse[]> => {
+  try {
+    const response = await apiClient.api.getProductGetProductAttributes(
+      productId,
+      params
+    )
+    
+    if (!response.data?.data) {
+      return []
+    }
+    
+    return response.data.data
+  } catch (error) {
+    console.error('Error fetching product attributes:', error)
+    return []
+  }
+}
+
+/**
+ * Get all product brands
+ */
+export const getProductBrands = async (
+  params?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ProductBrandResponse[]> => {
+  try {
+    const response = await apiClient.api.getProductGetAllBrands(params)
+    
+    // Handle ApiResult response structure
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      const apiResult = response.data as { data?: unknown }
+      const data = apiResult.data
+      if (Array.isArray(data)) {
+        return data as ProductBrandResponse[]
+      }
+    }
+    
+    return []
+  } catch (error) {
+    console.error('Error fetching product brands:', error)
+    return []
+  }
+}
+
+/**
+ * Get flash sale grouped products
+ */
+export const getFlashSaleGrouped = async (
+  params?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ApiResult> => {
+  try {
+    const response = await apiClient.api.getProductGetFlashSaleGrouped(params)
+    return response.data
+  } catch (error) {
+    console.error('Error fetching flash sale grouped products:', error)
+    throw error
+  }
+}
+
+/**
+ * Get related category products
+ */
+export const getRelatedCategoryProducts = async (
+  productId: number,
+  categoryId: number | string,
+  params?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  }
+): Promise<ProductResponse[]> => {
+  try {
+    const response = await apiClient.api.getProductGetRelatedCategoryProducts(
+      productId,
+      String(categoryId),
+      params
+    )
+    
+    // Handle ApiResult response structure
+    if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+      const apiResult = response.data as { data?: unknown }
+      const data = apiResult.data
+      if (Array.isArray(data)) {
+        return data as ProductResponse[]
+      }
+    }
+    
+    return []
+  } catch (error) {
+    console.error('Error fetching related category products:', error)
+    return []
   }
 }
 
