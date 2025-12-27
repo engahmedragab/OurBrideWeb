@@ -89,7 +89,8 @@ export const updateOrder = async (
 ): Promise<ServiceOrderResponse> => {
   try {
     const response = await apiClient.api.putOrderUpdateOrder(id, data)
-    return response?.data ?? response
+    const responseAny: any = response
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to update order')
   }
@@ -118,7 +119,8 @@ export const getOrderDetails = async (
 export const confirmOrder = async (id: number): Promise<ServiceOrderResponse> => {
   try {
     const response = await apiClient.api.putOrderConfirmOrder(id)
-    return response?.data ?? response
+    const responseAny: any = response
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to confirm order')
   }
@@ -135,7 +137,8 @@ export const rejectOrder = async (
 ): Promise<ServiceOrderResponse> => {
   try {
     const response = await apiClient.api.putOrderRejectOrder(id, query)
-    return response?.data ?? response
+    const responseAny: any = response
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to reject order')
   }
@@ -147,7 +150,8 @@ export const rejectOrder = async (
 export const cancelOrder = async (id: number): Promise<ServiceOrderResponse> => {
   try {
     const response = await apiClient.api.putOrderCancelOrder(id)
-    return response?.data ?? response
+    const responseAny: any = response
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to cancel order')
   }
@@ -219,7 +223,8 @@ export const createPaymentPlanForOrder = async (
 ): Promise<ServiceOrderResponse> => {
   try {
     const response = await apiClient.api.postOrderCreatePaymentPlanForOrder(id, data, query)
-    return response?.data ?? response
+    const responseAny: any = response
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to create payment plan')
   }
@@ -254,7 +259,8 @@ export const cancelPaymentPlan = async (
 ): Promise<ServiceOrderResponse> => {
   try {
     const response = await apiClient.api.deleteOrderCancelPaymentPlan(id, query)
-    return response?.data ?? response
+    const responseAny: any = response
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to cancel payment plan')
   }
@@ -452,7 +458,8 @@ export const sendOrderConfirmation = async (
 ): Promise<ServiceOrderResponse> => {
   try {
     const response = await apiClient.api.postOrderSendOrderConfirmation(id, query)
-    return response?.data ?? response
+    const responseAny: any = response
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to send order confirmation')
   }
@@ -537,7 +544,8 @@ export const downloadOrderInvoice = async (
 ): Promise<ServiceOrderResponse> => {
   try {
     const response = await apiClient.api.getOrderDownloadOrderInvoice(id, query)
-    return response?.data ?? response
+    const responseAny: any = response
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to download order invoice')
   }
@@ -572,7 +580,8 @@ export const generateOrderReport = async (
 ): Promise<ServiceOrderResponse> => {
   try {
     const response = await apiClient.api.getOrderGenerateOrderReport(id, query)
-    return response?.data ?? response
+    const responseAny: any = response
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to generate order report')
   }

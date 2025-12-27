@@ -46191,6 +46191,29 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
+     * @tags Articles
+     * @name PostArticlesShare
+     * @request POST:/api/v1/community/articles/{id}/share
+     * @secure
+     */
+    postArticlesShare: (
+      id: number,
+      query?: {
+        shareSource?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/articles/${id}/share`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Attribution
      * @name PostAttributionRecordAttributionEvent
      * @request POST:/api/v1/guider/attribution/events
@@ -53523,6 +53546,29 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<void, any>({
         path: `/api/v1/community/blogs/${id}/view`,
         method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Blogs
+     * @name PostBlogsShare
+     * @request POST:/api/v1/community/blogs/{id}/share
+     * @secure
+     */
+    postBlogsShare: (
+      id: number,
+      query?: {
+        shareSource?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/blogs/${id}/share`,
+        method: "POST",
+        query: query,
         secure: true,
         ...params,
       }),
@@ -62573,6 +62619,29 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
+     * @tags Contests
+     * @name PostContestsShare
+     * @request POST:/api/v1/community/contests/{id}/share
+     * @secure
+     */
+    postContestsShare: (
+      id: number,
+      query?: {
+        shareSource?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/contests/${id}/share`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Coupons
      * @name GetCouponsGetAllCoupons
      * @request GET:/api/v1/coupons
@@ -63924,6 +63993,29 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<void, any>({
         path: `/api/v1/community/decision-groups/${id}/view`,
         method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DecisionGroups
+     * @name PostDecisionGroupsShare
+     * @request POST:/api/v1/community/decision-groups/{id}/share
+     * @secure
+     */
+    postDecisionGroupsShare: (
+      id: number,
+      query?: {
+        shareSource?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/decision-groups/${id}/share`,
+        method: "POST",
+        query: query,
         secure: true,
         ...params,
       }),
@@ -73408,6 +73500,53 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<void, any>({
         path: `/api/v1/home/service`,
         method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Home
+     * @name GetHomeGetCommunityHome
+     * @request GET:/api/v1/home/community
+     * @secure
+     */
+    getHomeGetCommunityHome: (
+      query?: {
+        /**
+         * @format int32
+         * @default 20
+         */
+        postsCount?: number;
+        /**
+         * @format int32
+         * @default 3
+         */
+        articlesCount?: number;
+        /**
+         * @format int32
+         * @default 3
+         */
+        suggestedUsersCount?: number;
+        /**
+         * @format int32
+         * @default 3
+         */
+        topProvidersCount?: number;
+        tagIds?: string;
+        /**
+         * @format int32
+         * @default 10
+         */
+        tagsCount?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home/community`,
+        method: "GET",
+        query: query,
         secure: true,
         ...params,
       }),
@@ -90292,6 +90431,29 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
+     * @tags Posts
+     * @name PostPostsShare
+     * @request POST:/api/v1/community/posts/{id}/share
+     * @secure
+     */
+    postPostsShare: (
+      id: number,
+      query?: {
+        shareSource?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/posts/${id}/share`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Preparations
      * @name GetPreparationsGetAll
      * @request GET:/api/v1/services/preparations
@@ -103788,6 +103950,29 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<void, any>({
         path: `/api/v1/community/reels/${id}/view`,
         method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Reels
+     * @name PostReelsShare
+     * @request POST:/api/v1/community/reels/{id}/share
+     * @secure
+     */
+    postReelsShare: (
+      id: number,
+      query?: {
+        shareSource?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/reels/${id}/share`,
+        method: "POST",
+        query: query,
         secure: true,
         ...params,
       }),
@@ -117471,6 +117656,48 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/community/unified/bazaar-event/${bazaarEventId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags UnifiedContent
+     * @name GetUnifiedContentSearch
+     * @request GET:/api/v1/community/unified/search
+     * @secure
+     */
+    getUnifiedContentSearch: (
+      query?: {
+        /** @format int32 */
+        categoryId?: number;
+        /** @format int32 */
+        itemId?: number;
+        /** @format int32 */
+        preparationId?: number;
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        bazaarEventId?: number;
+        tagIds?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/unified/search`,
         method: "GET",
         query: query,
         secure: true,

@@ -14,7 +14,7 @@ import {
   type OccasionBooksQuery,
 } from '@/services/api/occasionBooksApi'
 import type { OccasionBookResponse, OccasionLineResponse } from '@/types/responses'
-import type { OccasionLineRequest, OccasionLineUpdateRequest, OccasionBookRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { OccasionLineRequest, OccasionLineUpdateRequest, OccasionBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
 import { isAuthenticated } from '@/auth/utils/token'
 
 /**
@@ -138,7 +138,13 @@ export const useInitOccasionBooks = () => {
   return useMutation({
     mutationFn: async (params?: { clientId?: string | null; userType?: UserType | null; eventId?: number }) => {
       // Pass all params including eventId to initOccasionBooks
-      await initOccasionBooks(params)
+      // Convert null to undefined for clientId and userType
+      const normalizedParams = params ? {
+        clientId: params.clientId ?? undefined,
+        userType: params.userType ?? undefined,
+        eventId: params.eventId,
+      } : undefined
+      await initOccasionBooks(normalizedParams)
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['occasionBook'] })
@@ -147,5 +153,11 @@ export const useInitOccasionBooks = () => {
     },
   })
 }
+
+
+
+
+
+
 
 

@@ -10,6 +10,7 @@ export interface EngagementButtonProps {
   onClick?: () => void
   className?: string
   isActive?: boolean
+  disabled?: boolean
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 }
 
@@ -24,6 +25,7 @@ export const EngagementButton = ({
   onClick,
   className,
   isActive = false,
+  disabled = false,
   size = 'lg',
 }: EngagementButtonProps) => {
   // Responsive sizing: xs on mobile, specified size on desktop
@@ -46,15 +48,18 @@ export const EngagementButton = ({
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={cn(
         'flex items-center justify-center',
         'bg-white border',
         'font-normal',
         'transition-colors',
         responsiveSizeClasses[size],
-        isActive
-          ? 'text-brand-500 border-brand-500'
-          : 'text-gray-900 border-gray-200 hover:text-brand-500 hover:border-brand-500',
+        disabled
+          ? 'opacity-50 cursor-not-allowed'
+          : isActive
+            ? 'text-brand-500 border-brand-500'
+            : 'text-gray-900 border-gray-200 hover:text-brand-500 hover:border-brand-500',
         className
       )}
     >

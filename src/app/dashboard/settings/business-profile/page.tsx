@@ -22,6 +22,7 @@ export default function BusinessProfilePage() {
   const { addToast } = useToast()
   const logoInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
+  const profileImageInputRef = useRef<HTMLInputElement>(null)
 
   // TODO: Get providerId from auth context or route params
   // For now, using a placeholder - you'll need to get this from your auth system
@@ -58,6 +59,7 @@ export default function BusinessProfilePage() {
 
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [bannerPreview, setBannerPreview] = useState<string | null>(null)
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null)
 
   // Update form data when settings are loaded
   useEffect(() => {

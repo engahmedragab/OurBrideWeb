@@ -353,7 +353,7 @@ export const BookingDetailsModal = ({
                 <DatePicker
                   value={formData.selectedDate || undefined}
                   onChange={date =>
-                    handleInputChange('selectedDate', date || '')
+                    handleInputChange('selectedDate', date ? (typeof date === 'string' ? date : date.toISOString().split('T')[0]) : '')
                   }
                   placeholder="Select a date"
                   prefixIcon={Calendar}

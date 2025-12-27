@@ -3,7 +3,7 @@
  * Simplified book response for home/dashboard views
  */
 
-import type { BookClass } from '../book-enums'
+import type { BookClass, UserType } from '../book-enums'
 import type { MainLineResponse } from './main-line-response'
 
 export interface MainBookResponse<TLine extends MainLineResponse> {
@@ -11,6 +11,8 @@ export interface MainBookResponse<TLine extends MainLineResponse> {
   isModelsAdd: boolean
   isBookInit: boolean
   bookClass: BookClass
+  bookType: UserType
+  eventId?: number
   title: string
   description: string
   lines: TLine[]

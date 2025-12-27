@@ -11,6 +11,7 @@ export interface LineCategoryResponse extends BaseEntityResponse {
   descriptionAr: string
   descriptionEn: string
   description: string
+  eventId?: number
   createdBy: string // Guid
   lastModifiedBy: string // Guid
   isModelLine: boolean

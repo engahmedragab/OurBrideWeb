@@ -112,19 +112,67 @@ export default function ProfilePage() {
 
         {/* Posts Feed */}
         <div className="space-y-4">
-          {userPosts.map(post => (
-            <PostCard
-              key={post.id}
-              id={post.id}
-              author={post.author}
-              content={post.content}
-              images={post.images}
-              timestamp={post.timestamp}
-              likes={post.likes}
-              comments={post.comments}
-              shares={post.shares}
-            />
-          ))}
+          {userPosts.map(post => {
+            // Transform mock data to PostResponse format
+            const postResponse = {
+              // BaseEntityResponse fields
+              id: parseInt(post.id, 10),
+              isDeleted: false,
+              creationDate: post.timestamp,
+              lastModifiedDate: post.timestamp,
+              slug: null,
+              // PostResponse fields
+              title: '',
+              content: post.content,
+              summary: '',
+              isPublished: true,
+              isFeatured: false,
+              isPinned: false,
+              allowComments: true,
+              isAnonymous: false,
+              contentType: 'text',
+              metaTitle: '',
+              metaDescription: '',
+              keywords: '',
+              userId: '1',
+              user: {
+                id: '1',
+                userName: post.author.name,
+                firstName: post.author.name.split(' ')[0] || '',
+                lastName: post.author.name.split(' ').slice(1).join(' ') || '',
+                profileUrl: post.author.avatar,
+                email: null,
+              } as any,
+              viewCount: 0,
+              likeCount: post.likes || 0,
+              commentCount: post.comments || 0,
+              shareCount: post.shares || 0,
+              favoriteCount: 0,
+              reviewCount: post.comments || 0,
+              publishedAt: post.timestamp,
+              scheduledPublishDate: null,
+              rate: null,
+              reviews: [],
+              tags: [],
+              categories: [],
+              items: [],
+              preparations: [],
+              providers: [],
+              bazaarEvents: [],
+              medias: post.images?.map((img: string, idx: number) => ({
+                id: idx,
+                url: img,
+                thumbnailUrl: img,
+                mediaType: 'image',
+              })) || [],
+            } as any
+            return (
+              <PostCard
+                key={post.id}
+                post={postResponse}
+              />
+            )
+          })}
         </div>
       </div>
     </UserPageLayout>

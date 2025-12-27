@@ -8,6 +8,7 @@ import type { BookClass } from '../book-enums'
 export interface MainLineResponse {
   id: number
   bookClass: BookClass
+  eventId?: number
   isDone: boolean
   isFavorite: boolean
   isDeleted: boolean

@@ -3,49 +3,23 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { usePosts } from '@/hooks/community/useCommunityContent'
+import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+import { formatDateShort, getUserDisplayName, getUserAvatar } from './utils'
 
 export interface CommunityPostsListProps {
   className?: string
 }
 
-const mockPosts = [
-  {
-    id: '1',
-    author: {
-      name: 'Aya Mohamed',
-      avatar:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    },
-    content:
-      "Hello World, I'm using Ourbride !! It's AwsomeHello World, I'm Using Ourbride !! It's..",
-    date: '12 Sep, 2025',
-  },
-  {
-    id: '2',
-    author: {
-      name: 'Aya Mohamed',
-      avatar:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    },
-    content:
-      "Hello World, I'm using Ourbride !! It's AwsomeHello World, I'm Using Ourbride !! It's..",
-    date: '12 Sep, 2025',
-  },
-  {
-    id: '3',
-    author: {
-      name: 'Aya Mohamed',
-      avatar:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    },
-    content:
-      "Hello World, I'm using Ourbride !! It's AwsomeHello World, I'm Using Ourbride !! It's..",
-    date: '12 Sep, 2025',
-  },
-]
-
 export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
   const router = useRouter()
+
+  // Fetch posts for sidebar preview (limited to 3-4 posts)
+  const { data: posts, isLoading } = usePosts({
+    page: 1,
+    pageSize: 4, // Show 4 posts in sidebar
+    enabled: true,
+  })
 
   const handleSeeAllPosts = () => {
     router.push('/community?tab=posts')
@@ -66,34 +40,66 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
 
       {/* Posts Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-        <div className="space-y-4">
-          {mockPosts.map(post => (
-            <div
-              key={post.id}
-              className="flex gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors -m-2"
-              onClick={() => router.push(`/community/posts/${post.id}`)}
-            >
-              <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                <Image
-                  src={post.author.avatar}
-                  alt={post.author.name}
-                  fill
-                  sizes="40px"
-                  className="object-cover"
-                />
+        {isLoading ? (
+          <div className="flex justify-center items-center py-8 min-h-[200px]">
+            <LoadingOverlay open={true} title="Loading..." />
+          </div>
+        ) : posts && posts.length > 0 ? (
+          <div className="space-y-4">
+            {posts.map(post => (
+              <div
+                key={post.id}
+                className="flex gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors -m-2"
+                onClick={() => router.push(`/community/posts/${post.id}`)}
+              >
+                <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+                  {(() => {
+                    const avatar = getUserAvatar(post.user)
+                    const displayName = getUserDisplayName(post.user)
+                    return avatar && avatar !== 'https://via.placeholder.com/100' ? (
+                      <Image
+                        src={avatar}
+                        alt={displayName}
+                        fill
+                        sizes="40px"
+                        className="object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                        }}
+                      />
+                    ) : null
+                  })()}
+                  {(() => {
+                    const avatar = getUserAvatar(post.user)
+                    const displayName = getUserDisplayName(post.user)
+                    return (!avatar || avatar === 'https://via.placeholder.com/100') && (
+                      <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                        <span className="text-14 font-semibold text-brand-600">
+                          {displayName.charAt(0).toUpperCase() || 'U'}
+                        </span>
+                      </div>
+                    )
+                  })()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-14 font-normal text-gray-900 mb-1">
+                    {getUserDisplayName(post.user)}
+                  </h4>
+                  <p className="text-14 text-gray-700 mb-2 line-clamp-2">
+                    {post.content || post.summary || post.title || ''}
+                  </p>
+                  <p className="text-12 text-gray-500">
+                    {formatDateShort(post.publishedAt || post.creationDate)}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-14 font-normal text-gray-900 mb-1">
-                  {post.author.name}
-                </h4>
-                <p className="text-14 text-gray-700 mb-2 line-clamp-2">
-                  {post.content}
-                </p>
-                <p className="text-12 text-gray-500">{post.date}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-14 text-gray-500">No posts available</p>
+          </div>
+        )}
       </div>
     </div>
   )

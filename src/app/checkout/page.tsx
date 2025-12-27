@@ -451,13 +451,35 @@ export default function CheckoutPage() {
   // Initialize form data with user data from token
   const initializeFormData = (): OrderFormData => {
     const user = getUser()
+    // Type guard to check if user is UserResponse
+    const isUserResponse = (u: typeof user): u is import('@/types/responses').UserResponse => {
+      return u !== null && 'firstName' in u && 'lastName' in u
+    }
+    // Type guard to check if user is AuthUser
+    const isAuthUser = (u: typeof user): u is import('@/auth/types').AuthUser => {
+      return u !== null && 'fullName' in u && !('firstName' in u)
+    }
+
+    let fullName = ''
+    if (user) {
+      if (isUserResponse(user)) {
+        fullName = (user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`.trim()
+          : '') || user.userName || ''
+      } else if (isAuthUser(user)) {
+        fullName = user.fullName || ''
+      } else if ('userName' in user) {
+        fullName = (user as { userName?: string }).userName || ''
+      }
+    }
+
+    const phoneNumber = user && 'phoneNumber' in user ? user.phoneNumber : ''
+
     return {
-      fullName: user?.fullName || (user?.firstName && user?.lastName
-        ? `${user.firstName} ${user.lastName}`.trim()
-        : ''),
-      mobileNumber: user?.phoneNumber || '',
-      location: user?.location || user?.address?.location || user?.address?.cityName || '',
-      street: user?.street || user?.address?.street || user?.address?.addressEn || user?.address?.addressAr || '',
+      fullName,
+      mobileNumber: phoneNumber || '',
+      location: '', // Location will be filled from address selection or form input
+      street: '', // Street will be filled from address selection or form input
       notes: '',
       paymentMethod: 'debit-credit',
       walletMobileNumber: '',

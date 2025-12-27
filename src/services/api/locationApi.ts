@@ -9,7 +9,7 @@ import type { Country, City, Region } from '@/../client/common/api/gen/ourbride-
 export const getCountries = async (): Promise<Country[]> => {
   try {
     const response = await apiClient.api.getLocationGetCountries()
-    const responseAny = response as unknown
+    const responseAny: any = response
     // Handle different response structures
     if (Array.isArray(responseAny)) {
       return responseAny as Country[]
@@ -29,7 +29,7 @@ export const getCountries = async (): Promise<Country[]> => {
 export const getCities = async (): Promise<City[]> => {
   try {
     const response = await apiClient.api.getLocationGetCities()
-    const responseAny = response as unknown
+    const responseAny: any = response
     // Handle different response structures
     if (Array.isArray(responseAny)) {
       return responseAny as City[]
@@ -49,7 +49,7 @@ export const getCities = async (): Promise<City[]> => {
 export const getCitiesByCountry = async (countryId: number): Promise<City[]> => {
   try {
     const response = await apiClient.api.getLocationGetCitiesByCountry(countryId)
-    const responseAny = response as unknown
+    const responseAny: any = response
     // Handle different response structures
     if (Array.isArray(responseAny)) {
       return responseAny as City[]
@@ -69,7 +69,7 @@ export const getCitiesByCountry = async (countryId: number): Promise<City[]> => 
 export const getRegions = async (): Promise<Region[]> => {
   try {
     const response = await apiClient.api.getLocationGetRegions()
-    const responseAny = response as unknown
+    const responseAny: any = response
     // Handle different response structures
     if (Array.isArray(responseAny)) {
       return responseAny as Region[]
@@ -89,7 +89,7 @@ export const getRegions = async (): Promise<Region[]> => {
 export const getRegionsByCity = async (cityId: number): Promise<Region[]> => {
   try {
     const response = await apiClient.api.getLocationGetRegionsByCity(cityId)
-    const responseAny = response as unknown
+    const responseAny: any = response
     // Handle different response structures
     if (Array.isArray(responseAny)) {
       return responseAny as Region[]

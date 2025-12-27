@@ -19,7 +19,7 @@ export const getUserAddresses = async (query?: {
       throw new Error('User not authenticated')
     }
     const response = await apiClient.api.getAddressGetByUserId(user.id, query)
-    const responseAny = response as unknown
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<AddressResponse>
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch addresses')
@@ -32,7 +32,7 @@ export const getUserAddresses = async (query?: {
 export const getAddressById = async (id: number): Promise<AddressResponse> => {
   try {
     const response = await apiClient.api.getAddressGetById(id)
-    const responseAny = response as unknown
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as AddressResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch address')
@@ -45,7 +45,7 @@ export const getAddressById = async (id: number): Promise<AddressResponse> => {
 export const createAddress = async (data: CreateAddressRequest): Promise<AddressResponse> => {
   try {
     const response = await apiClient.api.postAddressCreate(data)
-    const responseAny = response as unknown
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as AddressResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to create address')
@@ -61,7 +61,7 @@ export const updateAddress = async (
 ): Promise<AddressResponse> => {
   try {
     const response = await apiClient.api.putAddressUpdate(id, data)
-    const responseAny = response as unknown
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as AddressResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to update address')

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, type MouseEvent } from 'react'
+import { useState, useMemo, useEffect, Suspense, type MouseEvent } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
@@ -14,6 +14,7 @@ import {
 } from '@/hooks/weddingEvents'
 import { useToast } from '@/components/ui/Toaster'
 import type { WeddingEventResponse } from '@/types/responses'
+import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 import {
   ItemBookCard,
   PreparationCard,
@@ -119,13 +120,19 @@ const mapWeddingEventToEventCard = (event: WeddingEventResponse) => {
  * My Events Page Component
  * Displays user's events and shared events with tabs
  */
-export default function MyEventsPage() {
+function MyEventsPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { addToast } = useToast()
   const [activeTab, setActiveTab] = useState<'my-events' | 'shared-events'>('my-events')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Track mount state to prevent hydration mismatch
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Get eventId from URL query params if present
   useEffect(() => {
@@ -140,14 +147,14 @@ export default function MyEventsPage() {
 
   // Fetch wedding events - disable during SSR to prevent hydration mismatch
   const { data: weddingEvents = [], isLoading, error } = useWeddingEvents({
-    enabled: typeof window !== 'undefined',
+    enabled: isMounted,
   })
   const createEventMutation = useCreateWeddingEvent()
 
   // Fetch event info for selected event
   const { data: eventInfo, isLoading: isLoadingEventInfo } = useEventInfo(
     selectedEventId,
-    typeof window !== 'undefined' && selectedEventId !== null
+    isMounted && selectedEventId !== null
   )
 
   // Init mutation hooks for all book types
@@ -166,7 +173,12 @@ export default function MyEventsPage() {
   ): Promise<void> => {
     if (!selectedEventId) return
 
-    const params = { eventId: selectedEventId }
+    // Normalize params: set clientId and userType to null, pass eventId
+    const params = {
+      eventId: selectedEventId,
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+    }
     switch (bookType) {
       case 'item':
         await initItemBooks.mutateAsync(params)
@@ -568,7 +580,7 @@ export default function MyEventsPage() {
         </div>
 
         {/* Loading State */}
-        {isLoadingEventInfo && (
+        {isMounted && isLoadingEventInfo && (
           <div className="flex items-center justify-center py-12">
             <LoadingSpinner size="lg" text="Loading event details..." />
           </div>
@@ -708,7 +720,7 @@ export default function MyEventsPage() {
         )}
 
         {/* Error State */}
-        {!eventInfo && !isLoadingEventInfo && (
+        {isMounted && !eventInfo && !isLoadingEventInfo && (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-16 text-red-600 mb-4">
               Failed to load event details. Please try again.
@@ -758,14 +770,14 @@ export default function MyEventsPage() {
       </div>
 
       {/* Loading State */}
-      {isLoading && (
+      {isMounted && isLoading && (
         <div className="flex items-center justify-center py-12">
           <LoadingSpinner size="lg" text="Loading events..." />
         </div>
       )}
 
       {/* Error State */}
-      {error && !isLoading && (
+      {isMounted && error && !isLoading && (
         <div className="flex flex-col items-center justify-center py-12">
           <p className="text-16 text-red-600 mb-4">
             Failed to load events. Please try again.
@@ -780,7 +792,7 @@ export default function MyEventsPage() {
       )}
 
       {/* Events Grid */}
-      {!isLoading && !error && (
+      {isMounted && !isLoading && !error && (
         <>
           {currentEvents.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
@@ -829,5 +841,21 @@ export default function MyEventsPage() {
         onSubmit={handleAddEvent}
       />
     </div>
+  )
+}
+
+export default function MyEventsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <LoadingSpinner size="lg" text="Loading events..." />
+          </div>
+        </div>
+      }
+    >
+      <MyEventsPageContent />
+    </Suspense>
   )
 }

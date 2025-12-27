@@ -10,6 +10,7 @@ import type {
   PriceType,
   ReminderInterval,
   CostType,
+  DiscountType,
 } from '@/types/responses/common'
 import type { ProviderResponse } from './provider-response'
 import type { AddressResponse } from './address-response'
@@ -28,47 +29,67 @@ import { ServicePlaceAssignmentResponse } from './service-place-assignment-respo
 import { ServiceStaffAssignmentResponse } from './service-staff-assignment-response'
 
 export interface ServiceResponse extends BaseLookupResponse {
+  // Service Status
   serviceStatus: ServiceStatus
+
+  // Flags
   isOurBrideService: boolean
+
+  // Ratings and Pricing
   rate: number | null
   likes: number | null
   buyPrice: number | null
   rentPrice: number | null
+  saleBuyPrice: number | null
+  saleRentPrice: number | null
   deposit: number | null
   priceType: PriceType
+
+  // Sale/Discount properties
+  hasDiscount: boolean
+  discountType: DiscountType | null
+  discountDateStart: string | null // ISO date string
+  discountDateEnd: string | null // ISO date string
+  flashSaleStartDate: string | null // ISO date string
+  flashSaleEndDate: string | null // ISO date string
+  onSale: boolean | null
+  dateOnSaleFrom: string | null // ISO date string
+  dateOnSaleTo: string | null // ISO date string
+
+  // Basic Information
   url: string | null
   type: ServiceType
   class: ServiceClass
   imageUrl: string | null
 
   // Availability Limitations
-  startDate: string | null // ISO DateTime string
-  endDate: string | null // ISO DateTime string
-  availableDaysOfWeek: number | null
-  availableStartTime: string | null // TimeSpan as string
-  availableEndTime: string | null // TimeSpan as string
+  startDate: string | null // ISO date string
+  endDate: string | null // ISO date string
+  availableDaysOfWeek: number | null // Bitmask: 0=Sunday, 1=Monday, etc.
+  availableStartTime: string | null // Time string (HH:mm:ss)
+  availableEndTime: string | null // Time string (HH:mm:ss)
 
+  // Features
   hasInstallment: boolean
   hasPackages: boolean
 
-  // Aftercare instructions
+  // Aftercare and Reminders
   aftercareInstructions: string | null
-
-  // Reminder to rebook notifications
   rebookReminderDelayValue: number | null
   rebookReminderInterval: ReminderInterval | null
 
-  // Sales tax settings
+  // Sales Tax Settings
   salesTaxIncludedInPrice: boolean
   hasCustomSalesTaxSettings: boolean
 
-  // Cost of service
-  costOfService: number | null // decimal?
+  // Cost of Service
+  costOfService: number | null // decimal in C# -> number in TS
   costOfServiceType: CostType | null
 
   // SKU
   sku: string | null
 
+  // Relations
   providerId: number | null
   provider: ProviderResponse | null
 
@@ -77,33 +98,39 @@ export interface ServiceResponse extends BaseLookupResponse {
 
   preparationId: number
 
-  reviews: ReviewResponse[] | null
-  medias: MediaResponse[] | null
-  links: LinkResponse[] | null
-  wishlists: WishlistResponse[] | null
-  views: ViewResponse[] | null
-  favorites: FavoriteResponse[] | null
+  // Collections
+  reviews: ReviewResponse[]
+  medias: MediaResponse[]
+  links: LinkResponse[]
+  wishlists: WishlistResponse[]
+  views: ViewResponse[]
+  favorites: FavoriteResponse[]
 
-  // Boolean flags for current user interactions
+  // Computed Properties (boolean flags for current user interactions)
   isFavorite: boolean
   isWishlist: boolean
   isFollowed: boolean
 
-  currentUserId: string // Guid
+  // Current User Context
+  currentUserId: string // Guid in C# -> string in TS
 
-  servicePaymentMethods: ServicePaymentMethodResponse[] | null
-  packages: ServicePackageResponse[] | null
-  timeSlots: TimeSlotResponse[] | null
-  serviceInfos: ServiceInfoResponse[] | null
+  // Service-specific Collections
+  servicePaymentMethods: ServicePaymentMethodResponse[]
+  packages: ServicePackageResponse[]
+  timeSlots: TimeSlotResponse[]
+  serviceInfos: ServiceInfoResponse[]
 
+  // Time Slot Configuration
   separatorIntervalMinutes: number
-  slotIntervalTicks: number
-  slotInterval: string // TimeSpan as string
+  slotIntervalTicks: number // long in C# -> number in TS
+  slotInterval: string // TimeSpan in C# -> string in TS
 
-  hasProductDetails: boolean
+  // Product Details
+  hasProductDetails: boolean // Computed: type == ServiceType.Buy
   productId: number | null
   product: ProductResponse | null
 
-  servicePlaceAssignments: ServicePlaceAssignmentResponse[] | null
-  serviceStaffAssignments: ServiceStaffAssignmentResponse[] | null
+  // Assignments
+  servicePlaceAssignments: ServicePlaceAssignmentResponse[]
+  serviceStaffAssignments: ServiceStaffAssignmentResponse[]
 }

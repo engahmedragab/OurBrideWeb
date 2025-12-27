@@ -21,6 +21,18 @@ export interface OccasionBooksQuery {
 }
 
 /**
+ * Normalize query parameters - set clientId and userType to null, keep eventId
+ */
+const normalizeQuery = (query?: OccasionBooksQuery) => {
+  if (!query) return undefined
+  return {
+    clientId: null as unknown as string | undefined,
+    userType: null as unknown as UserType | undefined,
+    eventId: query.eventId,
+  }
+}
+
+/**
  * Initialize occasion books for a client
  */
 export const initOccasionBooks = async (params?: {
@@ -29,9 +41,13 @@ export const initOccasionBooks = async (params?: {
   eventId?: number
 }): Promise<void> => {
   try {
-    // Extract eventId and pass other params to API
-    const { eventId, ...apiParams } = params || {}
-    await apiClient.api.postOccasionsBooksInit(apiParams)
+    // Normalize params: set clientId and userType to null, keep eventId
+    const normalizedParams = params ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: params.eventId,
+    } : undefined
+    await apiClient.api.postOccasionsBooksInit(normalizedParams)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to initialize occasion books')
   }
@@ -45,11 +61,7 @@ export const syncOccasionBook = async (
   query?: OccasionBooksQuery
 ): Promise<void> => {
   try {
-    const params = query ? {
-      clientId: query.clientId,
-      userType: query.userType,
-      eventId: query.eventId,
-    } : undefined
+    const params = normalizeQuery(query)
     await apiClient.api.postOccasionsBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync occasion book')
@@ -63,8 +75,9 @@ export const getOccasionBook = async (
   query?: OccasionBooksQuery
 ): Promise<OccasionBookResponse | null> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetBook(query)
-    const responseAny = response as unknown
+    const normalizedQuery = normalizeQuery(query)
+    const response = await apiClient.api.getOccasionsBooksGetBook(normalizedQuery)
+    const responseAny: any = response
     
     // Handle different response structures
     if (responseAny?.data?.data) {
@@ -89,8 +102,9 @@ export const getOccasionLines = async (
   query?: OccasionBooksQuery
 ): Promise<OccasionLineResponse[]> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetAll(query)
-    const responseAny = response as unknown
+    const normalizedQuery = normalizeQuery(query)
+    const response = await apiClient.api.getOccasionsBooksGetAll(normalizedQuery)
+    const responseAny: any = response
     
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
@@ -119,8 +133,13 @@ export const getOccasionLineById = async (
   query?: { clientId?: string; eventId?: number }
 ): Promise<OccasionLineResponse | null> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGet(lineId, String(lineId), query)
-    const responseAny = response as unknown
+    const normalizedQuery = query ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: query.eventId,
+    } : undefined
+    const response = await apiClient.api.getOccasionsBooksGet(lineId, String(lineId), normalizedQuery)
+    const responseAny: any = response
     
     // Handle different response structures
     if (responseAny?.data?.data) {
@@ -146,8 +165,9 @@ export const createOccasionLine = async (
   query?: OccasionBooksQuery
 ): Promise<OccasionLineResponse> => {
   try {
-    const response = await apiClient.api.postOccasionsBooksCreate(data, query)
-    const responseAny = response as unknown
+    const normalizedQuery = normalizeQuery(query)
+    const response = await apiClient.api.postOccasionsBooksCreate(data, normalizedQuery)
+    const responseAny: any = response
     
     // Handle different response structures
     if (responseAny?.data?.data) {
@@ -173,7 +193,8 @@ export const createOccasionLinesBulk = async (
   query?: OccasionBooksQuery
 ): Promise<void> => {
   try {
-    await apiClient.api.postOccasionsBooksCreateAll(data, query)
+    const normalizedQuery = normalizeQuery(query)
+    await apiClient.api.postOccasionsBooksCreateAll(data, normalizedQuery)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to create occasion lines')
   }
@@ -188,10 +209,14 @@ export const updateOccasionLine = async (
   query?: OccasionBooksQuery
 ): Promise<OccasionLineResponse> => {
   try {
-    // Extract eventId as putOccasionsBooksUpdate doesn't accept it in query
-    const { eventId, ...apiQuery } = query || {}
-    const response = await apiClient.api.putOccasionsBooksUpdate(lineId, String(lineId), data, apiQuery)
-    const responseAny = response as unknown
+    // Note: putOccasionsBooksUpdate may not accept eventId in query, but we normalize clientId and userType
+    const normalizedQuery = query ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      // eventId is excluded if the API doesn't accept it
+    } : undefined
+    const response = await apiClient.api.putOccasionsBooksUpdate(lineId, String(lineId), data, normalizedQuery)
+    const responseAny: any = response
     
     // Handle different response structures
     if (responseAny?.data?.data) {
@@ -214,10 +239,15 @@ export const updateOccasionLine = async (
  */
 export const updateOccasionLinesBulk = async (
   data: OccasionLineUpdateRequest[],
-  query?: { clientId?: string; userType?: UserType }
+  query?: { clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<void> => {
   try {
-    await apiClient.api.putOccasionsBooksUpdateAll(data, query)
+    const normalizedQuery = query ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: query.eventId,
+    } : undefined
+    await apiClient.api.putOccasionsBooksUpdateAll(data, normalizedQuery)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to update occasion lines')
   }
@@ -231,7 +261,8 @@ export const deleteOccasionLine = async (
   query?: OccasionBooksQuery
 ): Promise<void> => {
   try {
-    await apiClient.api.deleteOccasionsBooksDelete(lineId, String(lineId), query)
+    const normalizedQuery = normalizeQuery(query)
+    await apiClient.api.deleteOccasionsBooksDelete(lineId, String(lineId), normalizedQuery)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to delete occasion line')
   }
@@ -245,7 +276,13 @@ export const deleteOccasionLinesBulk = async (
   query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<void> => {
   try {
-    await apiClient.api.deleteOccasionsBooksDeleteAll(lineIds, query)
+    const normalizedQuery = query ? {
+      value: query.value,
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: query.eventId,
+    } : undefined
+    await apiClient.api.deleteOccasionsBooksDeleteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to delete occasion lines')
   }
@@ -259,7 +296,8 @@ export const toggleOccasionLineDone = async (
   query?: OccasionBooksQuery
 ): Promise<void> => {
   try {
-    await apiClient.api.putOccasionsBooksDone(lineId, String(lineId), query)
+    const normalizedQuery = normalizeQuery(query)
+    await apiClient.api.putOccasionsBooksDone(lineId, String(lineId), normalizedQuery)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to toggle occasion line done status')
   }
@@ -273,7 +311,8 @@ export const toggleOccasionLineFavorite = async (
   query?: OccasionBooksQuery
 ): Promise<void> => {
   try {
-    await apiClient.api.putOccasionsBooksFavorite(lineId, String(lineId), query)
+    const normalizedQuery = normalizeQuery(query)
+    await apiClient.api.putOccasionsBooksFavorite(lineId, String(lineId), normalizedQuery)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to toggle occasion line favorite status')
   }
@@ -289,8 +328,9 @@ export const getOccasionLinesCustom = async (
   query?: OccasionBooksQuery
 ): Promise<OccasionLineResponse[]> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetAllCustom(isDeleted, isDone, isFavorite, query)
-    const responseAny = response as unknown
+    const normalizedQuery = normalizeQuery(query)
+    const response = await apiClient.api.getOccasionsBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
+    const responseAny: any = response
     
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
@@ -311,8 +351,9 @@ export const getOccasionLinesDone = async (
   query?: OccasionBooksQuery
 ): Promise<OccasionLineResponse[]> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetAllDone(query)
-    const responseAny = response as unknown
+    const normalizedQuery = normalizeQuery(query)
+    const response = await apiClient.api.getOccasionsBooksGetAllDone(normalizedQuery)
+    const responseAny: any = response
     
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
@@ -330,11 +371,16 @@ export const getOccasionLinesDone = async (
  * Get not done occasion lines
  */
 export const getOccasionLinesNotDone = async (
-  query?: { clientId?: string; userType?: UserType }
+  query?: { clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<OccasionLineResponse[]> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetAllNotDone(query)
-    const responseAny = response as unknown
+    const normalizedQuery = query ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: query.eventId,
+    } : undefined
+    const response = await apiClient.api.getOccasionsBooksGetAllNotDone(normalizedQuery)
+    const responseAny: any = response
     
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
@@ -355,8 +401,9 @@ export const getOccasionLinesFavorite = async (
   query?: OccasionBooksQuery
 ): Promise<OccasionLineResponse[]> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetAllFavorite(query)
-    const responseAny = response as unknown
+    const normalizedQuery = normalizeQuery(query)
+    const response = await apiClient.api.getOccasionsBooksGetAllFavorite(normalizedQuery)
+    const responseAny: any = response
     
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
@@ -374,11 +421,16 @@ export const getOccasionLinesFavorite = async (
  * Get not favorite occasion lines
  */
 export const getOccasionLinesNotFavorite = async (
-  query?: { clientId?: string; userType?: UserType }
+  query?: { clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<OccasionLineResponse[]> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetAllNotFavorite(query)
-    const responseAny = response as unknown
+    const normalizedQuery = query ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: query.eventId,
+    } : undefined
+    const response = await apiClient.api.getOccasionsBooksGetAllNotFavorite(normalizedQuery)
+    const responseAny: any = response
     
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
@@ -399,8 +451,9 @@ export const getOccasionLinesDeleted = async (
   query?: OccasionBooksQuery
 ): Promise<OccasionLineResponse[]> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetAllDelete(query)
-    const responseAny = response as unknown
+    const normalizedQuery = normalizeQuery(query)
+    const response = await apiClient.api.getOccasionsBooksGetAllDelete(normalizedQuery)
+    const responseAny: any = response
     
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
@@ -421,8 +474,9 @@ export const getOccasionLinesNotDeleted = async (
   query?: OccasionBooksQuery
 ): Promise<OccasionLineResponse[]> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetAllNotDelete(query)
-    const responseAny = response as unknown
+    const normalizedQuery = normalizeQuery(query)
+    const response = await apiClient.api.getOccasionsBooksGetAllNotDelete(normalizedQuery)
+    const responseAny: any = response
     
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
@@ -441,10 +495,16 @@ export const getOccasionLinesNotDeleted = async (
  */
 export const markOccasionLinesDoneBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType }
+  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<void> => {
   try {
-    await apiClient.api.putOccasionsBooksDoneAll(lineIds, query)
+    const normalizedQuery = query ? {
+      value: query.value,
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: query.eventId,
+    } : undefined
+    await apiClient.api.putOccasionsBooksDoneAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to mark occasion lines as done')
   }
@@ -458,7 +518,13 @@ export const favoriteOccasionLinesBulk = async (
   query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<void> => {
   try {
-    await apiClient.api.putOccasionsBooksFavoriteAll(lineIds, query)
+    const normalizedQuery = query ? {
+      value: query.value,
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: query.eventId,
+    } : undefined
+    await apiClient.api.putOccasionsBooksFavoriteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to favorite occasion lines')
   }
@@ -472,7 +538,7 @@ export const getOccasionCategories = async (
 ): Promise<OccasionLineResponse[]> => {
   try {
     const response = await apiClient.api.getOccasionsBooksGetAllCategories(query)
-    const responseAny = response as unknown
+    const responseAny: any = response
     
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data
@@ -509,7 +575,7 @@ export const getOccasionCategory = async (
 ): Promise<OccasionLineCategoryResponse | null> => {
   try {
     const response = await apiClient.api.getOccasionsBooksGetCategory(categoryId, query)
-    const responseAny = response as unknown
+    const responseAny: any = response
     
     if (responseAny?.data?.data) {
       return responseAny.data.data

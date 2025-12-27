@@ -2,53 +2,22 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Globe, FileText, Monitor } from 'lucide-react'
+import { Home, Globe, FileText, Monitor, BookOpen, Users, Trophy } from 'lucide-react'
 import { SearchInput } from '@/components/ui/SearchInput'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { ArticlePreview } from './ArticlePreview'
 import { CommunityPostsList } from './CommunityPostsList'
+import { useArticles } from '@/hooks/community/useCommunityContent'
+import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+
+export type CommunityTab = 'community' | 'posts' | 'blogs' | 'articles' | 'reels' | 'decision-groups' | 'contests'
 
 export interface CommunitySidebarProps {
   className?: string
-  activeTab?: 'posts' | 'articles' | 'reels'
-  onTabChange?: (tab: 'posts' | 'articles' | 'reels') => void
+  activeTab?: CommunityTab
+  onTabChange?: (tab: CommunityTab) => void
 }
-
-const mockArticles = [
-  {
-    id: '1',
-    title: '5 Makeup Hacks Every Bride Needs Today',
-    description:
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    thumbnail:
-      'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=200',
-  },
-  {
-    id: '2',
-    title: '5 Makeup Hacks Every Bride Needs Today',
-    description:
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    thumbnail:
-      'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=200',
-  },
-  {
-    id: '3',
-    title: '5 Makeup Hacks Every Bride Needs Today',
-    description:
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    thumbnail:
-      'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=200',
-  },
-  {
-    id: '4',
-    title: '5 Makeup Hacks Every Bride Needs Today',
-    description:
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    thumbnail:
-      'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
-  },
-]
 
 export const CommunitySidebar = ({
   className,
@@ -56,12 +25,35 @@ export const CommunitySidebar = ({
   onTabChange,
 }: CommunitySidebarProps) => {
   const router = useRouter()
-  const [internalActiveTab, setInternalActiveTab] = useState<
-    'posts' | 'articles' | 'reels'
-  >('posts')
+  const [internalActiveTab, setInternalActiveTab] = useState<CommunityTab>('posts')
+  const [searchQuery, setSearchQuery] = useState('')
   const activeTab = externalActiveTab ?? internalActiveTab
 
-  const handleTabChange = (tab: 'posts' | 'articles' | 'reels') => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+  }
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/community/search?q=${encodeURIComponent(searchQuery.trim())}`)
+    }
+  }
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit(e)
+    }
+  }
+
+  // Fetch articles for sidebar preview (only when not on articles tab)
+  const { data: articles, isLoading: isLoadingArticles } = useArticles({
+    page: 1,
+    pageSize: 4, // Show 4 articles in sidebar
+    enabled: activeTab !== 'articles', // Don't fetch when articles tab is active
+  })
+
+  const handleTabChange = (tab: CommunityTab) => {
     if (onTabChange) {
       onTabChange(tab)
       router.push(`/community?tab=${tab}`)
@@ -88,18 +80,42 @@ export const CommunitySidebar = ({
       <h2 className="text-20 font-semibold text-gray-900">Community</h2>
 
       {/* Search Bar */}
-      <div>
+      <form onSubmit={handleSearchSubmit}>
         <SearchInput
           placeholder="Search Community"
           variant="default"
           size="md"
           className="w-full rounded-lg"
+          value={searchQuery}
+          onChange={handleSearch}
+          onKeyDown={handleSearchKeyDown}
         />
-      </div>
+      </form>
 
       {/* Navigation Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         <div className="space-y-2">
+          <button
+            onClick={() => handleTabChange('community')}
+            className={cn(
+              'w-full flex items-center gap-2 py-2 px-0 text-14 font-normal transition-colors relative',
+              activeTab === 'community'
+                ? 'text-brand-500'
+                : 'text-gray-900 hover:text-gray-700'
+            )}
+          >
+            <Home
+              className={cn(
+                'h-5 w-5 flex-shrink-0',
+                activeTab === 'community' ? 'text-brand-500' : 'text-gray-900'
+              )}
+            />
+            <span>Community</span>
+            {activeTab === 'community' && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+            )}
+          </button>
+
           <button
             onClick={() => handleTabChange('posts')}
             className={cn(
@@ -115,8 +131,29 @@ export const CommunitySidebar = ({
                 activeTab === 'posts' ? 'text-brand-500' : 'text-gray-900'
               )}
             />
-            <span>Community Posts</span>
+            <span>Posts</span>
             {activeTab === 'posts' && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+            )}
+          </button>
+
+          <button
+            onClick={() => handleTabChange('blogs')}
+            className={cn(
+              'w-full flex items-center gap-2 py-2 px-0 text-14 font-normal transition-colors relative',
+              activeTab === 'blogs'
+                ? 'text-brand-500'
+                : 'text-gray-900 hover:text-gray-700'
+            )}
+          >
+            <BookOpen
+              className={cn(
+                'h-5 w-5 flex-shrink-0',
+                activeTab === 'blogs' ? 'text-brand-500' : 'text-gray-900'
+              )}
+            />
+            <span>Blogs</span>
+            {activeTab === 'blogs' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
           </button>
@@ -162,6 +199,48 @@ export const CommunitySidebar = ({
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
           </button>
+
+          <button
+            onClick={() => handleTabChange('decision-groups')}
+            className={cn(
+              'w-full flex items-center gap-2 py-2 px-0 text-14 font-normal transition-colors relative',
+              activeTab === 'decision-groups'
+                ? 'text-brand-500'
+                : 'text-gray-900 hover:text-gray-700'
+            )}
+          >
+            <Users
+              className={cn(
+                'h-5 w-5 flex-shrink-0',
+                activeTab === 'decision-groups' ? 'text-brand-500' : 'text-gray-900'
+              )}
+            />
+            <span>Decision Groups</span>
+            {activeTab === 'decision-groups' && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+            )}
+          </button>
+
+          <button
+            onClick={() => handleTabChange('contests')}
+            className={cn(
+              'w-full flex items-center gap-2 py-2 px-0 text-14 font-normal transition-colors relative',
+              activeTab === 'contests'
+                ? 'text-brand-500'
+                : 'text-gray-900 hover:text-gray-700'
+            )}
+          >
+            <Trophy
+              className={cn(
+                'h-5 w-5 flex-shrink-0',
+                activeTab === 'contests' ? 'text-brand-500' : 'text-gray-900'
+              )}
+            />
+            <span>Contests</span>
+            {activeTab === 'contests' && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+            )}
+          </button>
         </div>
       </div>
 
@@ -183,11 +262,27 @@ export const CommunitySidebar = ({
 
           {/* Articles Card */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <div className="space-y-2">
-              {mockArticles.map(article => (
-                <ArticlePreview key={article.id} {...article} />
-              ))}
-            </div>
+            {isLoadingArticles ? (
+              <div className="flex justify-center items-center py-8 min-h-[200px]">
+                <LoadingOverlay open={true} title="Loading..." />
+              </div>
+            ) : articles && articles.length > 0 ? (
+              <div className="space-y-2">
+                {articles.map(article => (
+                  <ArticlePreview
+                    key={article.id}
+                    id={String(article.id)}
+                    title={article.title}
+                    description={article.summary || article.excerpt || article.content?.substring(0, 100) || ''}
+                    thumbnail={`https://via.placeholder.com/200?text=${encodeURIComponent(article.title?.charAt(0)?.toUpperCase() || 'A')}`}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-14 text-gray-500">No articles available</p>
+              </div>
+            )}
           </div>
         </>
       )}

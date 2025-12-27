@@ -22,9 +22,13 @@ const initBudgetBook = async (params?: {
   eventId?: number
 }): Promise<void> => {
   try {
-    // Extract eventId and pass other params to API
-    const { eventId, ...apiParams } = params || {}
-    await apiClient.api.postBudgetBooksInit(apiParams)
+    // Normalize params: set clientId and userType to null, keep eventId
+    const normalizedParams = params ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: params.eventId,
+    } : undefined
+    await apiClient.api.postBudgetBooksInit(normalizedParams)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to initialize budget book')
   }
@@ -164,5 +168,10 @@ export const useInitBudgetBooks = () => {
     },
   })
 }
+
+
+
+
+
 
 

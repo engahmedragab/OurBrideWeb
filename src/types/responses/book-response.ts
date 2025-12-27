@@ -15,6 +15,7 @@ export interface BookResponse<TLine extends LineResponse> extends BaseEntityResp
   bride?: BrideResponse
   bookType: UserType
   bookClass: BookClass
+  eventId?: number
   isModelsAdd: boolean
   title: string
   description: string

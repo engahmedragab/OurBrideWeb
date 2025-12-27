@@ -1,12 +1,11 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, Suspense } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
-
-export default function PlanningLayout({ children }: { children: ReactNode }) {
+function PlanningLayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const eventId = searchParams?.get('eventId')
@@ -83,6 +82,25 @@ export default function PlanningLayout({ children }: { children: ReactNode }) {
       {/* Nested Page Content */}
       {children}
     </div>
+  )
+}
+
+export default function PlanningLayout({ children }: { children: ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full">
+          <div className="mb-6 sm:mb-8 px-4 md:px-10">
+            <div className="flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full">
+              <div className="h-10 w-full animate-pulse bg-gray-200 rounded" />
+            </div>
+          </div>
+          {children}
+        </div>
+      }
+    >
+      <PlanningLayoutContent>{children}</PlanningLayoutContent>
+    </Suspense>
   )
 }
 

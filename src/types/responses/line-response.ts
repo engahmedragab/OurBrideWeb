@@ -10,6 +10,7 @@ export interface LineResponse extends BaseEntityResponse {
   brideId?: string // Guid
   lineType: UserType
   bookClass: BookClass
+  eventId?: number
   isDone: boolean
   isFavorite: boolean
   isModelLine: boolean

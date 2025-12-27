@@ -179,7 +179,7 @@ export const getRelatedProducts = async (
     // Note: The API endpoint expects both productId (number) and id (string)
     const response = await apiClient.api.getProductGetRelatedProducts(
       productId,
-      String(productId)
+      { providerId: undefined, branchId: undefined, staffId: undefined }
     )
     
     // The endpoint returns ApiResult, extract data from it
@@ -239,7 +239,7 @@ export const submitProductReview = async (
       data,
       query
     )
-    const responseAny = response as unknown
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
   } catch (error: unknown) {
     throw new Error(
@@ -262,7 +262,7 @@ export const toggleProductFavorite = async (
 ): Promise<boolean> => {
   try {
     const response = await apiClient.api.postProductToggleFavorite(productId, query)
-    const responseAny = response as unknown
+    const responseAny: any = response
     const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as { data?: boolean; success?: boolean }
     // Return true if favorited, false if removed
     return result?.data ?? result?.success ?? true
@@ -342,7 +342,7 @@ export const toggleProductWishlist = async (
 ): Promise<boolean> => {
   try {
     const response = await apiClient.api.postProductToggleWishlist(productId, query)
-    const responseAny = response as unknown
+    const responseAny: any = response
     const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as { data?: boolean; success?: boolean }
     // Return true if added, false if removed
     return result?.data ?? result?.success ?? true
@@ -495,10 +495,17 @@ export const getRelatedCategoryProducts = async (
   }
 ): Promise<ProductResponse[]> => {
   try {
+    // The API expects query object with providerId/branchId/staffId, not categoryId
+    // categoryId might need to be passed differently or this API doesn't support it
+    const query = params ? {
+      providerId: params.providerId,
+      branchId: params.branchId,
+      staffId: params.staffId,
+    } : undefined
     const response = await apiClient.api.getProductGetRelatedCategoryProducts(
       productId,
-      String(categoryId),
-      params
+      query,
+      {}
     )
     
     // Handle ApiResult response structure

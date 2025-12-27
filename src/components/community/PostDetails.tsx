@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
@@ -9,114 +9,159 @@ import {
   Share2,
   MoreVertical,
   ArrowLeft,
+  Star,
+  Bookmark,
+  UserPlus,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
 import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
+import type { PostResponse } from '@/types/responses/community'
+import type { ReviewResponse } from '@/types/responses/review-response'
+import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
+import Link from 'next/link'
+import {
+  addReview as addPostReview,
+  toggleLike as togglePostLike,
+  toggleFavorite as togglePostFavorite,
+  sharePost,
+} from '@/services/api/postsApi'
+import { toggleFollow } from '@/services/api/communityProfilesApi'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export interface PostDetailsProps {
-  id: string
-  author: {
-    name: string
-    avatar: string
-  }
-  content: string
-  images?: string[]
-  timestamp: string
-  likes: number
-  comments: number
-  shares: number
+  post: PostResponse
   className?: string
 }
 
-const mockComments = [
-  {
-    id: '1',
-    author: {
-      name: 'Aya Mohamed',
-      avatar:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    },
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    timestamp: '18 Aug 2025 12:45 PM',
-  },
-  {
-    id: '2',
-    author: {
-      name: 'Aya Mohamed',
-      avatar:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    },
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    timestamp: '18 Aug 2025 12:45 PM',
-  },
-]
-
-export const PostDetails = ({
-  id: _id,
-  author,
-  content,
-  images,
-  timestamp,
-  likes: initialLikes,
-  comments: _comments,
-  shares,
-  className,
-}: PostDetailsProps) => {
+export const PostDetails = ({ post, className }: PostDetailsProps) => {
   const router = useRouter()
   const { addToast } = useToast()
+  const queryClient = useQueryClient()
   const [commentText, setCommentText] = useState('')
-  const [comments, setComments] = useState(mockComments)
   const [isLiked, setIsLiked] = useState(false)
-  const [likes, setLikes] = useState(initialLikes)
+  const [isFavorited, setIsFavorited] = useState(false)
+  const [isFollowing, setIsFollowing] = useState(false)
+  const [likes, setLikes] = useState(post.likeCount || 0)
+  const [shares, setShares] = useState(post.shareCount || 0)
+  const [favorites, setFavorites] = useState(post.favoriteCount || 0)
+
+  const displayName = getUserDisplayName(post.user)
+  const avatar = getUserAvatar(post.user)
+  const timestamp = formatDate(post.publishedAt || post.creationDate)
+  const images: string[] = [] // TODO: Extract from post.media relations
+
+  // Map reviews to comments format
+  const comments = (post.reviews || []).map((review: ReviewResponse) => ({
+    id: String(review.id),
+    author: {
+      name: review.isAnonymous ? 'Anonymous' : 'User', // TODO: Get actual user name from review.userId
+      avatar: 'https://via.placeholder.com/100',
+    },
+    content: review.comment || review.summary || '',
+    timestamp: formatDate(review.creationDate),
+  }))
+
+  const addCommentMutation = useMutation({
+    mutationFn: async (content: string) => {
+      await addPostReview(post.id, { comment: content } as any)
+    },
+    onSuccess: () => {
+      setCommentText('')
+      addToast('Comment added successfully!', 'success')
+      // Invalidate queries to refresh comments/reviews
+      queryClient.invalidateQueries({ queryKey: ['post', post.id] })
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+    },
+  })
+
+  const toggleLikeMutation = useMutation({
+    mutationFn: async () => {
+      return await togglePostLike(post.id)
+    },
+    onSuccess: () => {
+      setIsLiked(!isLiked)
+      setLikes(prev => (isLiked ? prev - 1 : prev + 1))
+      queryClient.invalidateQueries({ queryKey: ['post', post.id] })
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    },
+  })
 
   const handleAddComment = () => {
     if (!commentText.trim()) return
-
-    const newComment = {
-      id: Date.now().toString(),
-      author: {
-        name: 'Aya Mohamed',
-        avatar:
-          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-      },
-      content: commentText,
-      timestamp: new Date().toLocaleString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    }
-
-    setComments([...comments, newComment])
-    setCommentText('')
+    addCommentMutation.mutate(commentText)
   }
 
   const handleLikeClick = () => {
-    setIsLiked(!isLiked)
-    setLikes(prev => (isLiked ? prev - 1 : prev + 1))
+    toggleLikeMutation.mutate()
   }
 
-  const handleShareClick = async () => {
-    const url = `${window.location.origin}/community/posts/${_id}`
-    try {
-      await navigator.clipboard.writeText(url)
-      addToast('Link copied to clipboard!', 'success')
-    } catch {
-      const textArea = document.createElement('textarea')
-      textArea.value = url
-      document.body.appendChild(textArea)
-      textArea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textArea)
-      addToast('Link copied to clipboard!', 'success')
-    }
+  const shareMutation = useMutation({
+    mutationFn: async (shareSource?: string) => {
+      return await sharePost(post.id, shareSource)
+    },
+    onSuccess: (data) => {
+      if (data) {
+        setShares(data.shareCount)
+        // Copy share URL to clipboard
+        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/posts/${post.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        addToast('Shared successfully! Link copied to clipboard.', 'success')
+      }
+      queryClient.invalidateQueries({ queryKey: ['post', post.id] })
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to share post', 'error')
+    },
+  })
+
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: async () => {
+      return await togglePostFavorite(post.id)
+    },
+    onSuccess: () => {
+      setIsFavorited(!isFavorited)
+      setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
+      queryClient.invalidateQueries({ queryKey: ['post', post.id] })
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    },
+  })
+
+  const toggleFollowMutation = useMutation({
+    mutationFn: async () => {
+      if (!post.userId) throw new Error('User ID not available')
+      await toggleFollow({
+        profileType: 'User',
+        profileUserId: post.userId,
+      })
+    },
+    onSuccess: () => {
+      setIsFollowing(!isFollowing)
+      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+    },
+  })
+
+  const handleShareClick = () => {
+    shareMutation.mutate('ShareButtonClick')
+  }
+
+  const handleFavoriteClick = () => {
+    toggleFavoriteMutation.mutate()
+  }
+
+  const handleFollowClick = () => {
+    toggleFollowMutation.mutate()
   }
 
   return (
@@ -142,7 +187,7 @@ export const PostDetails = ({
           <span>/</span>
           <span>Posts</span>
           <span>/</span>
-          <span className="text-gray-900">{author.name}&apos;s Post</span>
+          <span className="text-gray-900">{post.title || displayName + "'s Post"}</span>
         </div>
       </div>
 
@@ -151,35 +196,81 @@ export const PostDetails = ({
         {/* Post Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden">
-              <Image
-                src={author.avatar}
-                alt={author.name}
-                fill
-                sizes="40px"
-                className="object-cover"
-              />
+            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+              {avatar && avatar !== 'https://via.placeholder.com/100' ? (
+                <Image
+                  src={avatar}
+                  alt={displayName}
+                  fill
+                  sizes="40px"
+                  className="object-cover"
+                  onError={(e) => {
+                    // Hide image on error, show fallback
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              ) : null}
+              {(!avatar || avatar === 'https://via.placeholder.com/100') && (
+                <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                  <span className="text-14 font-semibold text-brand-600">
+                    {displayName.charAt(0).toUpperCase() || 'U'}
+                  </span>
+                </div>
+              )}
             </div>
-            <div>
-              <h4 className="text-16 font-normal text-gray-900">
-                {author.name}
-              </h4>
+            <div className="min-w-0">
+              {post.userId && getProfileUrl(post.userId, post.user?.type) ? (
+                <Link
+                  href={getProfileUrl(post.userId, post.user?.type)!}
+                  className="hover:text-brand-500 transition-colors"
+                >
+                  <h4 className="text-16 font-normal text-gray-900 truncate">
+                    {displayName}
+                  </h4>
+                </Link>
+              ) : (
+                <h4 className="text-16 font-normal text-gray-900 truncate">
+                  {displayName}
+                </h4>
+              )}
               <p className="text-12 text-gray-500">{timestamp}</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            aria-label="More options"
-          >
-            <MoreVertical className="h-5 w-5 text-gray-500" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* Follow Button */}
+            {post.userId && (
+              <Button
+                variant={isFollowing ? 'outline' : 'brand'}
+                size="sm"
+                onClick={handleFollowClick}
+                disabled={toggleFollowMutation.isPending}
+                className={cn(
+                  'text-12 flex-shrink-0',
+                  !isFollowing && 'text-white'
+                )}
+              >
+                <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
+                {toggleFollowMutation.isPending
+                  ? 'Loading...'
+                  : isFollowing
+                    ? 'Following'
+                    : 'Follow'}
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              aria-label="More options"
+            >
+              <MoreVertical className="h-5 w-5 text-gray-500" />
+            </Button>
+          </div>
         </div>
 
         {/* Post Content */}
         <p className="text-14 text-gray-700 mb-4 whitespace-pre-wrap">
-          {content}
+          {post.content}
         </p>
 
         {/* Post Images */}
@@ -239,25 +330,34 @@ export const PostDetails = ({
         )}
 
         {/* Engagement Metrics */}
-        <div className="flex items-center justify-center gap-3 pt-4 border-t border-gray-100">
-          <EngagementButton
-            icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
-            count={likes}
-            label="Likes"
-              onClick={handleLikeClick}
-            isActive={isLiked}
-          />
-          <EngagementButton
-            icon={<MessageCircle className="h-5 w-5" />}
-            count={comments.length}
-            label="Comments"
-          />
-          <EngagementButton
-            icon={<Share2 className="h-5 w-5" />}
-            count={shares}
-            label="Shares"
-            onClick={handleShareClick}
-          />
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-center gap-3">
+            <EngagementButton
+              icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+              count={likes}
+              label="Likes"
+              onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
+              isActive={isLiked}
+            />
+            <EngagementButton
+              icon={<MessageCircle className="h-5 w-5" />}
+              count={post.reviewCount || post.commentCount || 0}
+              label="Comments"
+            />
+            <EngagementButton
+              icon={<Share2 className="h-5 w-5" />}
+              count={shares}
+              label="Shares"
+              onClick={shareMutation.isPending ? undefined : handleShareClick}
+            />
+            <EngagementButton
+              icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+              count={favorites}
+              label="Favorites"
+              onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
+              isActive={isFavorited}
+            />
+          </div>
         </div>
       </div>
 
@@ -268,22 +368,26 @@ export const PostDetails = ({
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         {/* Comments List */}
         <div className="space-y-6 mb-6">
-          {comments.map(comment => (
-            <CommentCard key={comment.id} {...comment} />
-          ))}
+          {comments.length > 0 ? (
+            comments.map(comment => (
+              <CommentCard key={comment.id} {...comment} />
+            ))
+          ) : (
+            <p className="text-14 text-gray-500 text-center py-4">
+              No comments yet. Be the first to comment!
+            </p>
+          )}
         </div>
 
         {/* Add Comment Form */}
         <div className="pt-6 border-t border-gray-100">
           <div className="flex gap-3">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-              <Image
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
-                alt="Your avatar"
-                fill
-                sizes="40px"
-                className="object-cover"
-              />
+            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+              <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                <span className="text-14 font-semibold text-brand-600">
+                  {displayName.charAt(0).toUpperCase() || 'U'}
+                </span>
+              </div>
             </div>
             <div className="flex-1">
               <textarea
@@ -298,10 +402,10 @@ export const PostDetails = ({
                   variant="brand"
                   size="sm"
                   onClick={handleAddComment}
-                  disabled={!commentText.trim()}
-                  className="text-10 text-white font-normal "
+                  disabled={!commentText.trim() || addCommentMutation.isPending}
+                  className="text-10 text-white font-normal"
                 >
-                  Post Comment
+                  {addCommentMutation.isPending ? 'Posting...' : 'Post Comment'}
                 </Button>
               </div>
             </div>
