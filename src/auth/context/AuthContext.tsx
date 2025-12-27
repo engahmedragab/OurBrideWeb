@@ -150,7 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const authData = await authApi.refreshToken()
                 // Note: authApi.refreshToken already calls setToken internally
                 // Update user from refreshed token response (convert null to undefined for type compatibility)
-                const refreshedUser: AuthUser | undefined = authData.user ?? (user || undefined)
+                const refreshedUser: AuthUser | undefined = authData.user ?? (user ? (user as unknown as AuthUser) : undefined)
                 dispatch({ type: 'REFRESH_TOKEN', payload: { ...authData, user: refreshedUser } })
                 dispatch({ type: 'SET_LOADING', payload: false })
                 return
@@ -166,7 +166,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
           }
 
-          dispatch({ type: 'SET_USER', payload: user })
+          dispatch({ type: 'SET_USER', payload: user as unknown as AuthUser })
           dispatch({ type: 'SET_LOADING', payload: false })
         } else {
           dispatch({ type: 'SET_LOADING', payload: false })
@@ -225,7 +225,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'LOGIN_START' })
     try {
       const authData = await authApi.loginWithEmail(credentials)
-      setToken(authData)
+      setToken({
+        accessToken: authData.accessToken,
+        refreshToken: authData.refreshToken,
+        expiresAt: authData.expiresAt,
+        user: authData.user,
+      })
       dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed'
@@ -238,7 +243,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'LOGIN_START' })
     try {
       const authData = await authApi.loginWithPhone(credentials)
-      setToken(authData)
+      setToken({
+        accessToken: authData.accessToken,
+        refreshToken: authData.refreshToken,
+        expiresAt: authData.expiresAt,
+        user: authData.user,
+      })
       dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed'
@@ -251,7 +261,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'LOGIN_START' })
     try {
       const authData = await authApi.loginWithExternalProvider(credentials)
-      setToken(authData)
+      setToken({
+        accessToken: authData.accessToken,
+        refreshToken: authData.refreshToken,
+        expiresAt: authData.expiresAt,
+        user: authData.user,
+      })
       dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'External login failed'
@@ -264,7 +279,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'LOGIN_START' })
     try {
       const authData = await authApi.guestLogin(credentials)
-      setToken(authData)
+      setToken({
+        accessToken: authData.accessToken,
+        refreshToken: authData.refreshToken,
+        expiresAt: authData.expiresAt,
+        user: authData.user,
+      })
       dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Guest login failed'
@@ -278,7 +298,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const authData = await authApi.signupFull(credentials)
       if (authData.accessToken) {
-        setToken(authData)
+        setToken({
+          accessToken: authData.accessToken,
+          refreshToken: authData.refreshToken,
+          expiresAt: authData.expiresAt,
+          user: authData.user,
+        })
         dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
       } else {
         // Registration successful but verification required
@@ -297,7 +322,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const authData = await authApi.signupWithEmail(credentials)
       if (authData.accessToken) {
-        setToken(authData)
+        setToken({
+          accessToken: authData.accessToken,
+          refreshToken: authData.refreshToken,
+          expiresAt: authData.expiresAt,
+          user: authData.user,
+        })
         dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
       } else {
         dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
@@ -315,7 +345,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const authData = await authApi.signupWithPhone(credentials)
       if (authData.accessToken) {
-        setToken(authData)
+        setToken({
+          accessToken: authData.accessToken,
+          refreshToken: authData.refreshToken,
+          expiresAt: authData.expiresAt,
+          user: authData.user,
+        })
         dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
       } else {
         dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
@@ -348,7 +383,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const authData = await authApi.verifyPhoneOTP(credentials)
       if (authData.accessToken) {
-        setToken(authData)
+        setToken({
+          accessToken: authData.accessToken,
+          refreshToken: authData.refreshToken,
+          expiresAt: authData.expiresAt,
+          user: authData.user,
+        })
         dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
       }
       return authData
@@ -367,7 +407,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const authData = await authApi.confirmPhone(credentials)
       if (authData.accessToken) {
-        setToken(authData)
+        setToken({
+          accessToken: authData.accessToken,
+          refreshToken: authData.refreshToken,
+          expiresAt: authData.expiresAt,
+          user: authData.user,
+        })
         dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
       }
       return authData
@@ -407,7 +452,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const user = getUser()
       if (user) {
-        dispatch({ type: 'SET_USER', payload: user })
+        dispatch({ type: 'SET_USER', payload: user as unknown as AuthUser })
       }
     } catch {
       // If refresh fails, user data might be invalid

@@ -163,7 +163,7 @@ export const BookingDetailsModal = ({
   const deliveryFee = 90
   const total = subtotal + taxes + deliveryFee
 
-  const handleInputChange = (field: keyof BookingFormData, value: any) => {
+  const handleInputChange = (field: keyof BookingFormData, value: BookingFormData[keyof BookingFormData]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
@@ -353,7 +353,7 @@ export const BookingDetailsModal = ({
                 <DatePicker
                   value={formData.selectedDate || undefined}
                   onChange={date =>
-                    handleInputChange('selectedDate', date || '')
+                    handleInputChange('selectedDate', date ? (typeof date === 'string' ? date : date.toISOString().split('T')[0]) : '')
                   }
                   placeholder="Select a date"
                   prefixIcon={Calendar}
@@ -421,7 +421,7 @@ export const BookingDetailsModal = ({
                           star <= Math.floor(service.rating.value)
                             ? 'fill-brand-500 text-brand-500'
                             : star === Math.ceil(service.rating.value) &&
-                                service.rating.value % 1 !== 0
+                              service.rating.value % 1 !== 0
                               ? 'fill-brand-500/50 text-brand-500'
                               : 'fill-gray-200 text-gray-200'
                         )}

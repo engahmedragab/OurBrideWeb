@@ -36,6 +36,7 @@ export default tseslint.config(
         'warn',
         { argsIgnorePattern: '^_' },
       ],
+      '@typescript-eslint/no-explicit-any': 'error',
     },
     settings: {
       react: {

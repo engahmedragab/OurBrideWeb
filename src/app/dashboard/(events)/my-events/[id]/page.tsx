@@ -1,15 +1,37 @@
-import React from 'react'
+import { redirect } from 'next/navigation'
 
-// Generate static params for static export
-export function generateStaticParams() {
-  // Return array of event IDs to pre-generate at build time
-  // In a real app, this would fetch from an API
-  // Generate IDs 1-10 to cover common event IDs
-  return Array.from({ length: 10 }, (_, i) => ({ id: String(i + 1) }))
+/**
+ * Generate static params for static export
+ * Returns placeholder IDs to satisfy Next.js static export requirements
+ */
+export async function generateStaticParams() {
+  // Return a minimal set of placeholder IDs
+  // In a real app, you might fetch actual event IDs from an API
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
+  ]
 }
 
-export default function EventDetailsPage() {
-  return (
-    <div>EventDetailsPage</div>
-  )
+/**
+ * EventDetailsPage
+ * Redirects to the events/planning overview page with the event ID
+ * This integrates the event details page with the events/planning structure
+ * The planning pages will use the eventId from query params to load event-specific data
+ */
+export default async function EventDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  
+  if (id) {
+    // Redirect to my-events with the event ID selected
+    redirect(`/dashboard/my-events?eventId=${id}`)
+  } else {
+    // If no event ID, redirect to my-events list
+    redirect('/dashboard/my-events')
+  }
 }

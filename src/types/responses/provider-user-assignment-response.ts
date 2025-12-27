@@ -15,7 +15,7 @@ export interface ProviderUserAssignmentResponse extends BaseResponse {
   role: RoleResponse | null
   roleKey: string
   user: ProviderUserResponse | null
-  subscription: any // ProviderSubscriptionResponse
+  subscription: unknown // ProviderSubscriptionResponse - to be defined when type is available
   isActive: boolean
   branchId: number | null
   placeId: number | null

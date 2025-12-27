@@ -4,6 +4,7 @@ import React, { useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import type { SwiperRef } from 'swiper/react'
 import { Navigation } from 'swiper/modules'
 import { ChevronRight } from 'lucide-react'
 import { cva } from 'class-variance-authority'
@@ -82,7 +83,7 @@ export const ServicesProductsSlider = ({
   products,
   className,
 }: ServicesProductsSliderProps) => {
-  const swiperRef = useRef<any>(null)
+  const swiperRef = useRef<SwiperRef | null>(null)
 
   if (products.length === 0) {
     return null

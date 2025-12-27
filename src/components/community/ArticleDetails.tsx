@@ -9,118 +9,161 @@ import {
   Share2,
   MoreVertical,
   ArrowLeft,
+  Star,
+  UserPlus,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
 import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
+import type { ArticleResponse } from '@/types/responses/community'
+import type { ReviewResponse } from '@/types/responses/review-response'
+import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
+import Link from 'next/link'
+import {
+  addReview as addArticleReview,
+  toggleLike as toggleArticleLike,
+  toggleFavorite as toggleArticleFavorite,
+  shareArticle,
+} from '@/services/api/articlesApi'
+import { toggleFollow } from '@/services/api/communityProfilesApi'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export interface ArticleDetailsProps {
-  id: string
-  title: string
-  description: string
-  fullContent: string
-  image: string
-  author: {
-    name: string
-    avatar: string
-  }
-  date: string
-  likes: number
-  comments: number
-  shares: number
+  article: ArticleResponse
   className?: string
 }
 
-const mockComments = [
-  {
-    id: '1',
-    author: {
-      name: 'Aya Mohamed',
-      avatar:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    },
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    timestamp: '18 Aug 2025 12:45 PM',
-  },
-  {
-    id: '2',
-    author: {
-      name: 'Aya Mohamed',
-      avatar:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    },
-    content:
-      'Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    timestamp: '18 Aug 2025 12:45 PM',
-  },
-]
-
-export const ArticleDetails = ({
-  id: _id,
-  title,
-  description,
-  fullContent,
-  image,
-  author,
-  date,
-  likes: initialLikes,
-  comments: _comments,
-  shares,
-  className,
-}: ArticleDetailsProps) => {
+export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
   const router = useRouter()
   const { addToast } = useToast()
+  const queryClient = useQueryClient()
   const [commentText, setCommentText] = useState('')
-  const [comments, setComments] = useState(mockComments)
   const [isLiked, setIsLiked] = useState(false)
-  const [likes, setLikes] = useState(initialLikes)
+  const [isFavorited, setIsFavorited] = useState(false)
+  const [isFollowing, setIsFollowing] = useState(false)
+  const [likes, setLikes] = useState(article.likeCount || 0)
+  const [shares, setShares] = useState(article.shareCount || 0)
+  const [favorites, setFavorites] = useState(article.favoriteCount || 0)
+
+  const displayName = getUserDisplayName(article.user, article.authorName)
+  const avatar = getUserAvatar(article.user)
+  const date = formatDate(article.publishedAt || article.creationDate)
+  // Use placeholder - ArticleResponse doesn't have thumbnailUrl property
+  const imageUrl = 'https://via.placeholder.com/800'
+
+  // Map reviews to comments format
+  const comments = (article.reviews || []).map((review: ReviewResponse) => ({
+    id: String(review.id),
+    author: {
+      name: review.isAnonymous ? 'Anonymous' : 'User', // TODO: Get actual user name from review.userId
+      avatar: 'https://via.placeholder.com/100',
+    },
+    content: review.comment || review.summary || '',
+    timestamp: formatDate(review.creationDate),
+  }))
+
+  // Mutation for adding review/comment
+  const addCommentMutation = useMutation({
+    mutationFn: async (content: string) => {
+      await addArticleReview(article.id, { comment: content } as any)
+    },
+    onSuccess: () => {
+      setCommentText('')
+      addToast('Comment added successfully!', 'success')
+      // Invalidate queries to refresh comments/reviews
+      queryClient.invalidateQueries({ queryKey: ['article', article.id] })
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+    },
+  })
+
+  // Mutation for toggling like
+  const toggleLikeMutation = useMutation({
+    mutationFn: async () => {
+      return await toggleArticleLike(article.id)
+    },
+    onSuccess: () => {
+      setIsLiked(!isLiked)
+      setLikes(prev => (isLiked ? prev - 1 : prev + 1))
+      queryClient.invalidateQueries({ queryKey: ['article', article.id] })
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    },
+  })
 
   const handleAddComment = () => {
     if (!commentText.trim()) return
-
-    const newComment = {
-      id: Date.now().toString(),
-      author: {
-        name: 'Aya Mohamed',
-        avatar:
-          'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-      },
-      content: commentText,
-      timestamp: new Date().toLocaleString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    }
-
-    setComments([...comments, newComment])
-    setCommentText('')
+    addCommentMutation.mutate(commentText)
   }
 
   const handleLikeClick = () => {
-    setIsLiked(!isLiked)
-    setLikes(prev => (isLiked ? prev - 1 : prev + 1))
+    toggleLikeMutation.mutate()
   }
 
-  const handleShareClick = async () => {
-    const url = `${window.location.origin}/community/articles/${_id}`
-    try {
-      await navigator.clipboard.writeText(url)
-      addToast('Link copied to clipboard!', 'success')
-    } catch {
-      const textArea = document.createElement('textarea')
-      textArea.value = url
-      document.body.appendChild(textArea)
-      textArea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textArea)
-      addToast('Link copied to clipboard!', 'success')
-    }
+  const shareMutation = useMutation({
+    mutationFn: async (shareSource?: string) => {
+      return await shareArticle(article.id, shareSource)
+    },
+    onSuccess: (data) => {
+      if (data) {
+        setShares(data.shareCount)
+        // Copy share URL to clipboard
+        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/articles/${article.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        addToast('Shared successfully! Link copied to clipboard.', 'success')
+      }
+      queryClient.invalidateQueries({ queryKey: ['article', article.id] })
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to share article', 'error')
+    },
+  })
+
+  const toggleFavoriteMutation = useMutation({
+    mutationFn: async () => {
+      return await toggleArticleFavorite(article.id)
+    },
+    onSuccess: () => {
+      setIsFavorited(!isFavorited)
+      setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
+      queryClient.invalidateQueries({ queryKey: ['article', article.id] })
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    },
+  })
+
+  const toggleFollowMutation = useMutation({
+    mutationFn: async () => {
+      if (!article.userId) throw new Error('User ID not available')
+      await toggleFollow({
+        profileType: 'User',
+        profileUserId: article.userId,
+      })
+    },
+    onSuccess: () => {
+      setIsFollowing(!isFollowing)
+      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+    },
+    onError: (error) => {
+      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+    },
+  })
+
+  const handleShareClick = () => {
+    shareMutation.mutate('ShareButtonClick')
+  }
+
+  const handleFavoriteClick = () => {
+    toggleFavoriteMutation.mutate()
+  }
+
+  const handleFollowClick = () => {
+    toggleFollowMutation.mutate()
   }
 
   return (
@@ -146,7 +189,7 @@ export const ArticleDetails = ({
           <span>/</span>
           <span>Articles</span>
           <span>/</span>
-          <span className="text-gray-900">{title}</span>
+          <span className="text-gray-900">{article.title}</span>
         </div>
       </div>
 
@@ -155,37 +198,82 @@ export const ArticleDetails = ({
         {/* Article Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden">
-              <Image
-                src={author.avatar}
-                alt={author.name}
-                fill
-                sizes="40px"
-                className="object-cover"
-              />
+            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+              {avatar && avatar !== 'https://via.placeholder.com/100' ? (
+                <Image
+                  src={avatar}
+                  alt={displayName}
+                  fill
+                  sizes="40px"
+                  className="object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              ) : null}
+              {(!avatar || avatar === 'https://via.placeholder.com/100') && (
+                <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                  <span className="text-14 font-semibold text-brand-600">
+                    {displayName.charAt(0).toUpperCase() || 'U'}
+                  </span>
+                </div>
+              )}
             </div>
-            <div>
-              <h4 className="text-16 font-normal text-gray-900">
-                {author.name}
-              </h4>
+            <div className="min-w-0">
+              {article.userId && getProfileUrl(article.userId, article.user?.type) ? (
+                <Link
+                  href={getProfileUrl(article.userId, article.user?.type)!}
+                  className="hover:text-brand-500 transition-colors"
+                >
+                  <h4 className="text-16 font-normal text-gray-900 truncate">
+                    {displayName}
+                  </h4>
+                </Link>
+              ) : (
+                <h4 className="text-16 font-normal text-gray-900 truncate">
+                  {displayName}
+                </h4>
+              )}
               <p className="text-12 text-gray-500">{date}</p>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            aria-label="More options"
-          >
-            <MoreVertical className="h-5 w-5 text-gray-500" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* Follow Button */}
+            {article.userId && (
+              <Button
+                variant={isFollowing ? 'outline' : 'brand'}
+                size="sm"
+                onClick={handleFollowClick}
+                disabled={toggleFollowMutation.isPending}
+                className={cn(
+                  'text-12 flex-shrink-0',
+                  !isFollowing && 'text-white'
+                )}
+              >
+                <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
+                {toggleFollowMutation.isPending
+                  ? 'Loading...'
+                  : isFollowing
+                    ? 'Following'
+                    : 'Follow'}
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              aria-label="More options"
+            >
+              <MoreVertical className="h-5 w-5 text-gray-500" />
+            </Button>
+          </div>
         </div>
 
         {/* Article Image */}
         <div className="relative w-full h-96 rounded-lg overflow-hidden mb-4">
           <Image
-            src={image}
-            alt={title}
+            src={imageUrl}
+            alt={article.title}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
@@ -193,36 +281,45 @@ export const ArticleDetails = ({
         </div>
 
         {/* Article Title */}
-        <h1 className="text-24 font-normal text-gray-900 mb-4">{title}</h1>
+        <h1 className="text-24 font-normal text-gray-900 mb-4">{article.title}</h1>
 
         {/* Article Description */}
-        <p className="text-14 text-gray-700 mb-4">{description}</p>
+        <p className="text-14 text-gray-700 mb-4">{article.summary || article.excerpt}</p>
 
         {/* Full Article Content */}
         <div className="text-14 text-gray-700 mb-4 whitespace-pre-wrap">
-          {fullContent}
+          {article.content}
         </div>
 
         {/* Engagement Metrics */}
-        <div className="flex items-center justify-center gap-3 pt-4 border-t border-gray-100">
-          <EngagementButton
-            icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
-            count={likes}
-            label="Likes"
-              onClick={handleLikeClick}
-            isActive={isLiked}
-          />
-          <EngagementButton
-            icon={<MessageCircle className="h-5 w-5" />}
-            count={comments.length}
-            label="Comments"
-          />
-          <EngagementButton
-            icon={<Share2 className="h-5 w-5" />}
-            count={shares}
-            label="Shares"
-            onClick={handleShareClick}
-          />
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-center gap-3">
+            <EngagementButton
+              icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+              count={likes}
+              label="Likes"
+              onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
+              isActive={isLiked}
+            />
+            <EngagementButton
+              icon={<MessageCircle className="h-5 w-5" />}
+              count={article.reviewCount || article.commentCount || 0}
+              label="Comments"
+            />
+            <EngagementButton
+              icon={<Share2 className="h-5 w-5" />}
+              count={shares}
+              label="Shares"
+              onClick={shareMutation.isPending ? undefined : handleShareClick}
+            />
+            <EngagementButton
+              icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+              count={favorites}
+              label="Favorites"
+              onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
+              isActive={isFavorited}
+            />
+          </div>
         </div>
       </div>
 
@@ -232,22 +329,26 @@ export const ArticleDetails = ({
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         {/* Comments List */}
         <div className="space-y-6 mb-6">
-          {comments.map(comment => (
-            <CommentCard key={comment.id} {...comment} />
-          ))}
+          {comments.length > 0 ? (
+            comments.map(comment => (
+              <CommentCard key={comment.id} {...comment} />
+            ))
+          ) : (
+            <p className="text-14 text-gray-500 text-center py-4">
+              No comments yet. Be the first to comment!
+            </p>
+          )}
         </div>
 
         {/* Add Comment Form */}
         <div className="pt-6 border-t border-gray-100">
           <div className="flex gap-3">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-              <Image
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
-                alt="Your avatar"
-                fill
-                sizes="40px"
-                className="object-cover"
-              />
+            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+              <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                <span className="text-14 font-semibold text-brand-600">
+                  {displayName.charAt(0).toUpperCase() || 'U'}
+                </span>
+              </div>
             </div>
             <div className="flex-1">
               <textarea
@@ -262,10 +363,10 @@ export const ArticleDetails = ({
                   variant="brand"
                   size="sm"
                   onClick={handleAddComment}
-                  disabled={!commentText.trim()}
+                  disabled={!commentText.trim() || addCommentMutation.isPending}
                   className="text-10 text-white font-normal"
                 >
-                  Post Comment
+                  {addCommentMutation.isPending ? 'Posting...' : 'Post Comment'}
                 </Button>
               </div>
             </div>

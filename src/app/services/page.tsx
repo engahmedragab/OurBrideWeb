@@ -43,7 +43,7 @@ const getCategoryIcon = (categoryName: string): React.ReactNode => {
     'wedding-hall': <WeddingHallIcon className="w-20 h-20 text-brand-500" />,
     'wedding-suit': <WeddingSuitIcon className="w-20 h-20 text-brand-500" />,
   }
-  
+
   const normalizedName = categoryName.toLowerCase().replace(/\s+/g, '-')
   return iconMap[normalizedName] || iconMap[Object.keys(iconMap)[0]] || null
 }
@@ -113,37 +113,38 @@ function ServicesIntroPageContent() {
     data?.heroSlides && data.heroSlides.length > 0
       ? data.heroSlides
       : [
-          {
-            id: '1',
-            label: 'Limited Offer',
-            title: 'Services',
-            description:
-              'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
-            ctaText: 'Book Now',
-            ctaLink: '/services/category',
-            productImage: '',
-            discountText: '',
-          },
-        ]
+        {
+          id: '1',
+          label: 'Limited Offer',
+          title: 'Services',
+          description:
+            'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+          ctaText: 'Book Now',
+          ctaLink: '/services/category',
+          productImage: '',
+          discountText: '',
+        },
+      ]
 
   const offersServiceCards: ServiceCardData[] =
     data?.offers && data.offers.length > 0
       ? data.offers.map(service => ({
-          ...service,
-      onWishlistToggle: () => handleWishlistToggle(service.id),
-      onBookNow: () => handleBookNow(service.id),
-        }))
+        ...service,
+        onWishlistToggle: () => handleWishlistToggle(service.id),
+        onBookNow: () => handleBookNow(service.id),
+
+      }))
       : []
 
   const trustCategories: ProductCategory[] =
     data?.categories && data.categories.length > 0
       ? data.categories.map(category => ({
-          id: String(category.id),
-          title: category.name,
-          description: category.description || 'Exclusive coupons and discounts designed for your budget.',
-          href: `/services/category?category=${category.id}`,
-          icon: getCategoryIcon(category.name),
-        }))
+        id: String(category.id),
+        title: category.name,
+        description: category.description || 'Exclusive coupons and discounts designed for your budget.',
+        href: `/services/category?category=${category.id}`,
+        icon: getCategoryIcon(category.name),
+      }))
       : []
 
 
@@ -153,54 +154,54 @@ function ServicesIntroPageContent() {
   const bestProviders: BestProvider[] =
     data?.providers && data.providers.length > 0
       ? data.providers
-          .slice(0, 6) // Limit to 6 providers
-          .map((provider, index) => {
-            // Get a service from topRatedServices for each provider, or use first service
-            const providerService =
-              data?.offers?.find(
-                (service: ServiceCardData) =>
-                  service.providerName === provider.name
-              ) || data?.offers?.[index % (data?.offers?.length || 1)]
+        .slice(0, 6) // Limit to 6 providers
+        .map((provider, index) => {
+          // Get a service from topRatedServices for each provider, or use first service
+          const providerService =
+            data?.offers?.find(
+              (service: ServiceCardData) =>
+                service.providerName === provider.name
+            ) || data?.offers?.[index % (data?.offers?.length || 1)]
 
-            // Format profession/service classes - limit to first 2-3 services for display
-            const formatProfession = (profession: string): string => {
-              if (!profession) return 'Service Provider'
-              const services = profession.split(',').map(s => s.trim())
-              if (services.length <= 2) {
-                return profession
+          // Format profession/service classes - limit to first 2-3 services for display
+          const formatProfession = (profession: string): string => {
+            if (!profession) return 'Service Provider'
+            const services = profession.split(',').map(s => s.trim())
+            if (services.length <= 2) {
+              return profession
+            }
+            // Show first 2 services with ellipsis
+            return services.slice(0, 2).join(', ') + (services.length > 2 ? '...' : '')
+          }
+
+          return {
+            id: provider.id,
+            name: provider.name,
+            image: provider.image || '',
+            profession: formatProfession(provider.profession || 'Service Provider'),
+            verified: provider.verified || false,
+            rating: provider.rating || 0,
+            product: providerService
+              ? {
+                id: providerService.id,
+                title: providerService.title,
+                image: providerService.image,
+                rating: providerService.rating,
+                price: providerService.originalPrice,
+                currency: 'egp',
+                href: `/services/category/${providerService.id}`,
               }
-              // Show first 2 services with ellipsis
-              return services.slice(0, 2).join(', ') + (services.length > 2 ? '...' : '')
-            }
-
-            return {
-              id: provider.id,
-              name: provider.name,
-              image: provider.image || '',
-              profession: formatProfession(provider.profession || 'Service Provider'),
-              verified: provider.verified || false,
-              rating: provider.rating || 0,
-              product: providerService
-                ? {
-                    id: providerService.id,
-                    title: providerService.title,
-                    image: providerService.image,
-                    rating: providerService.rating,
-                    price: providerService.originalPrice,
-                    currency: 'egp',
-                    href: `/services/category/${providerService.id}`,
-                  }
-                : {
-                    id: provider.id,
-                    title: 'View Services',
-                    image: '',
-                    rating: provider.rating || 0,
-                    price: 0,
-                    currency: 'egp',
-                    href: `/services?provider=${provider.id}`,
-                  },
-            }
-          })
+              : {
+                id: provider.id,
+                title: 'View Services',
+                image: '',
+                rating: provider.rating || 0,
+                price: 0,
+                currency: 'egp',
+                href: `/services?provider=${provider.id}`,
+              },
+          }
+        })
       : []
 
   // Loading state
@@ -237,71 +238,71 @@ function ServicesIntroPageContent() {
       <main className="flex-1">
         {/* Hero Carousel */}
         {heroSlides.length > 0 && (
-        <HeroCarousel
-          slides={heroSlides}
-          autoPlay={true}
-          autoPlayInterval={5000}
-          showBackground={false}
-        />
+          <HeroCarousel
+            slides={heroSlides}
+            autoPlay={true}
+            autoPlayInterval={5000}
+            showBackground={false}
+          />
         )}
 
         {/* Consistent container wrapper for all sections */}
         <div className="container-custom">
           {/* Section 2: Why Brides Trust OurBride - ProductCategoriesSection */}
           {trustCategories.length > 0 && (
-          <ProductCategoriesSection
-            categories={trustCategories}
-            topText="Why"
-            highlightText="Brides"
-            bottomText="Trust"
-            bottomHighlightText="OurBride"
-            headerAlignment="center"
-          />
-          )}
-
-          {/* Today's Offers Section */}
-          {offersServiceCards.length > 0 && (
-          <section className="py-12 md:py-16">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
-              <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
-                Today&apos;s Offers
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {offersServiceCards.map(cardData => (
-                <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
-              ))}
-            </div>
-          </section>
-          )}
-
-          {/* Why Brides Trust OurBride - Features Section */}
-          {trustFeatures.length > 0 && (
-          <section>
-            <WhyBridesChooseProductsSection
-              image={why_trust_ourBrideImage}
-              features={trustFeatures}
+            <ProductCategoriesSection
+              categories={trustCategories}
               topText="Why"
               highlightText="Brides"
               bottomText="Trust"
               bottomHighlightText="OurBride"
               headerAlignment="center"
             />
-          </section>
+          )}
+
+          {/* Today's Offers Section */}
+          {offersServiceCards.length > 0 && (
+            <section className="py-12 md:py-16">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
+                <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
+                  Today&apos;s Offers
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {offersServiceCards.map(cardData => (
+                  <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Why Brides Trust OurBride - Features Section */}
+          {trustFeatures.length > 0 && (
+            <section>
+              <WhyBridesChooseProductsSection
+                image={why_trust_ourBrideImage}
+                features={trustFeatures}
+                topText="Why"
+                highlightText="Brides"
+                bottomText="Trust"
+                bottomHighlightText="OurBride"
+                headerAlignment="center"
+              />
+            </section>
           )}
 
           {/* Section 4: Best Providers With Best Products */}
           {bestProviders.length > 0 && (
-          <BestProvidersSection
-            providers={bestProviders}
-            topText="Best"
-            highlightText="Providers"
-            bottomText="With"
-            bottomHighlightText="Best Products"
-            headerAlignment="center"
-            buttonText="Explore Now"
-          />
+            <BestProvidersSection
+              providers={bestProviders}
+              topText="Best"
+              highlightText="Providers"
+              bottomText="With"
+              bottomHighlightText="Best Products"
+              headerAlignment="center"
+              buttonText="Explore Now"
+            />
           )}
 
           {/* Newsletter Banner */}

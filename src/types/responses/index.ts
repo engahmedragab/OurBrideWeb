@@ -4,6 +4,32 @@
  * This module exports all TypeScript type definitions for IPurchaseService responses.
  */
 
+import { ApiResult } from './api-result'
+import { BudgetBookResponse } from './budget-book-response'
+import { BudgetLineCategoryResponse } from './budget-line-category-response'
+import { BudgetLineResponse } from './budget-line-response'
+import { EventBookResponse } from './event-book-response'
+import { EventLineCategoryResponse } from './event-line-category-response'
+import { EventLineResponse } from './event-line-response'
+import { GuestBookResponse } from './guest-book-response'
+import { GuestLineCategoryResponse } from './guest-line-category-response'
+import { GuestLineResponse } from './guest-line-response'
+import { ItemBookResponse } from './item-book-response'
+import { ItemLineCategoryResponse } from './item-line-category-response'
+import { ItemLineResponse } from './item-line-response'
+import { NoteBookResponse } from './note-book-response'
+import { NoteLineCategoryResponse } from './note-line-category-response'
+import { NoteLineResponse } from './note-line-response'
+import { OccasionBookResponse } from './occasion-book-response'
+import { OccasionLineCategoryResponse } from './occasion-line-category-response'
+import { OccasionLineResponse } from './occasion-line-response'
+import { ServiceBookResponse } from './service-book-response'
+import { ServiceLineCategoryResponse } from './service-line-category-response'
+import { ServiceLineResponse } from './service-line-response'
+import { TodoBookResponse } from './todo-book-response'
+import { TodoLineCategoryResponse } from './todo-line-category-response'
+import { TodoLineResponse } from './todo-line-response'
+
 // Purchase-specific enums
 export {
   CartStatus,
@@ -21,6 +47,7 @@ export {
 export type { OwnerResponse } from './owner-response'
 export type { ProviderInfoResponse } from './provider-info-response'
 export type { ProviderResponse } from './provider-response'
+export type { FeaturedProviderResponse } from './featured-provider-response'
 export type { ProductHeaderResponse } from './product-header-response'
 export type { ProviderProductAttributeResponse } from './provider-product-attribute-response'
 export type { ProviderProductTagResponse } from './provider-product-tag-response'
@@ -73,6 +100,7 @@ export type { PlaceResponse } from './place-response'
 export type { ResourceResponse } from './resource-response'
 export type { UserResponse } from './user-response'
 export type { WeddingPlannerResponse } from './wedding-planner-response'
+export type { WeddingEventResponse } from './wedding-event-response'
 export type { TimeSlotResponse } from './time-slot-response'
 export type { ServicePaymentMethodResponse } from './service-payment-method-response'
 export type { ProviderUserAssignmentResponse } from './provider-user-assignment-response'
@@ -103,6 +131,14 @@ export type { PaymentStatisticsResponse } from './payment-statistics-response'
 export type { PaymentMethodStatistics } from './payment-method-statistics'
 export type { MonthlyPaymentStatistics } from './monthly-payment-statistics'
 export type { ProviderPaymentStatistics } from './provider-payment-statistics'
+export type { HomeStatisticsResponse } from './home-statistics-response'
+export type {
+  HomeResponse,
+  WalletAccountResponse,
+  BannerResponse,
+  TestimonialResponse,
+  HomeCenterUpdateResponse,
+} from './home-response'
 
 // Service types
 export type { PaginatedList } from './service-types'
@@ -143,3 +179,114 @@ export type { FeaturePreparationResponse } from './feature-preparation-response'
 export type { ServiceInfoResponse } from './service-info-response'
 export type { ServicePlaceAssignmentResponse } from './service-place-assignment-response'
 export type { ServiceStaffAssignmentResponse } from './service-staff-assignment-response'
+
+// Book response enums
+export {
+  UserType,
+  BookClass,
+  GuestStatus,
+  GuestRelevant,
+  GuestTitle,
+  ReminderType,
+  ProvidingType,
+  ServiceType,
+  ServiceClass,
+  ServiceStatus,
+  PriceType,
+  DiscountType,
+  ProviderStatus,
+  ProviderRate,
+  ReservationStatus,
+  OccasionType,
+  Gender,
+  SocialStatus,
+  PersonalType,
+} from './book-enums'
+
+// Book response base types
+export type { GroomResponse } from './groom-response'
+export type { BrideResponse } from './bride-response'
+export type { GuestResponse } from './guest-response'
+export type { LineCategoryResponse } from './line-category-response'
+export type { LineResponse } from './line-response'
+export type { BookResponse } from './book-response'
+export type { ItemDetailResponse } from './item-detail-response'
+export type { ApiResult } from './api-result'
+
+// Event book response types
+export type { EventLineCategoryResponse } from './event-line-category-response'
+export type { EventLineResponse } from './event-line-response'
+export type { EventBookResponse } from './event-book-response'
+
+// Budget book response types
+export type { BudgetLineCategoryResponse } from './budget-line-category-response'
+export type { BudgetLineResponse } from './budget-line-response'
+export type { BudgetBookResponse } from './budget-book-response'
+
+// Guest book response types
+export type { GuestLineCategoryResponse } from './guest-line-category-response'
+export type { GuestLineResponse } from './guest-line-response'
+export type { GuestBookResponse } from './guest-book-response'
+
+// Item book response types
+export type { ItemLineCategoryResponse } from './item-line-category-response'
+export type { ItemLineResponse } from './item-line-response'
+export type { ItemBookResponse } from './item-book-response'
+
+// Note book response types
+export type { NoteLineCategoryResponse } from './note-line-category-response'
+export type { NoteLineResponse } from './note-line-response'
+export type { NoteBookResponse } from './note-book-response'
+
+// Occasion book response types
+export type { OccasionLineCategoryResponse } from './occasion-line-category-response'
+export type { OccasionLineResponse } from './occasion-line-response'
+export type { OccasionBookResponse } from './occasion-book-response'
+
+// Service book response types
+export type { ServiceLineCategoryResponse } from './service-line-category-response'
+export type { ServiceLineResponse } from './service-line-response'
+export type { ServiceBookResponse } from './service-book-response'
+
+// Todo book response types
+export type { TodoLineCategoryResponse } from './todo-line-category-response'
+export type { TodoSubLineResponse } from './todo-sub-line-response'
+export type { TodoLineResponse } from './todo-line-response'
+export type { TodoBookResponse } from './todo-book-response'
+
+// API result types
+export type EventBookListResponse = ApiResult<EventBookResponse>
+export type BudgetBookListResponse = ApiResult<BudgetBookResponse>
+export type GuestBookListResponse = ApiResult<GuestBookResponse>
+export type ItemBookListResponse = ApiResult<ItemBookResponse>
+export type NoteBookListResponse = ApiResult<NoteBookResponse>
+export type OccasionBookListResponse = ApiResult<OccasionBookResponse>
+
+// Main Book Response Types
+export * from './main'
+
+// Event Info Response
+export * from './event-info-response'
+export type ServiceBookListResponse = ApiResult<ServiceBookResponse>
+export type TodoBookListResponse = ApiResult<TodoBookResponse>
+
+// Community Response Types
+export * from './community'
+
+export type EventLineListResponse = ApiResult<EventLineResponse[]>
+export type BudgetLineListResponse = ApiResult<BudgetLineResponse[]>
+export type GuestLineListResponse = ApiResult<GuestLineResponse[]>
+export type ItemLineListResponse = ApiResult<ItemLineResponse[]>
+export type NoteLineListResponse = ApiResult<NoteLineResponse[]>
+export type OccasionLineListResponse = ApiResult<OccasionLineResponse[]>
+export type ServiceLineListResponse = ApiResult<ServiceLineResponse[]>
+export type TodoLineListResponse = ApiResult<TodoLineResponse[]>
+
+export type EventLineCategoryListResponse = ApiResult<EventLineCategoryResponse[]>
+export type BudgetLineCategoryListResponse = ApiResult<BudgetLineCategoryResponse[]>
+export type GuestLineCategoryListResponse = ApiResult<GuestLineCategoryResponse[]>
+export type ItemLineCategoryListResponse = ApiResult<ItemLineCategoryResponse[]>
+export type NoteLineCategoryListResponse = ApiResult<NoteLineCategoryResponse[]>
+export type OccasionLineCategoryListResponse = ApiResult<OccasionLineCategoryResponse[]>
+export type ServiceLineCategoryListResponse = ApiResult<ServiceLineCategoryResponse[]>
+export type TodoLineCategoryListResponse = ApiResult<TodoLineCategoryResponse[]>

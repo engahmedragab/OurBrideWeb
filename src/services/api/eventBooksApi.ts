@@ -15,9 +15,16 @@ import type {
 export const initEventBooks = async (params?: {
   clientId?: string
   userType?: UserType
+  eventId?: number
 }): Promise<void> => {
   try {
-    await apiClient.api.postEventBooksInit(params)
+    // Normalize params: set clientId and userType to null, keep eventId
+    const normalizedParams = params ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: params.eventId,
+    } : undefined
+    await apiClient.api.postEventBooksInit(normalizedParams)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to initialize event books')
   }
@@ -85,7 +92,7 @@ export const getEventBooks = async (params?: {
   try {
     const response = await apiClient.api.getEventBooksGetBook(params)
     // Response unwrapping pattern: check response.data.data first, then response.data, then response
-    const responseAny = response as unknown as { data?: { data?: EventBook } | EventBook }
+    const responseAny: any = response as { data?: { data?: EventBook } | EventBook }
     if (responseAny?.data && typeof responseAny.data === 'object' && 'data' in responseAny.data) {
       return (responseAny.data as { data: EventBook }).data
     }

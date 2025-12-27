@@ -24,7 +24,7 @@ export interface UpcomingBookingsProps {
   viewAllHref?: string
 }
 
-export const UpcomingBookings = ({ bookings, imageSrc, viewAllHref = '/events/planning/bookings' }: UpcomingBookingsProps) => {
+export const UpcomingBookings = ({ bookings, imageSrc, viewAllHref = '/events/planning/preparations' }: UpcomingBookingsProps) => {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
@@ -49,7 +49,7 @@ export const UpcomingBookings = ({ bookings, imageSrc, viewAllHref = '/events/pl
                 className="object-cover"
               />
             </div>
-            
+
             {/* Content */}
             <div className="flex-1 min-w-0 py-2 sm:py-2 pl-3 sm:pl-4 pr-3 relative">
               <div className="flex flex-col gap-1.5 sm:gap-2">

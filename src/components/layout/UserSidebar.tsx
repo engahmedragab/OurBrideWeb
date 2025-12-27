@@ -21,6 +21,7 @@ import {
   ThumbsUp,
   Star,
   Users,
+  MapPin,
 } from 'lucide-react'
 
 export interface UserSidebarProps {
@@ -80,6 +81,11 @@ export const UserSidebar = ({
           label: 'Orders List',
           path: '/orders',
           icon: FileCheck,
+        },
+        {
+          label: 'Delivery Address',
+          path: '/addresses',
+          icon: MapPin,
         },
       ],
     },
@@ -150,6 +156,10 @@ export const UserSidebar = ({
     // Special handling for Events - should be active for /dashboard/my-events and all sub-pages
     if (path === '/dashboard/my-events') {
       return pathname === '/dashboard/my-events' || pathname.startsWith('/dashboard/my-events/')
+    }
+    // Special handling for Delivery Address
+    if (path === '/addresses') {
+      return pathname === '/addresses' || pathname.startsWith('/addresses/')
     }
     return pathname === path
   }

@@ -1,5 +1,8 @@
 // Token management utilities
 
+import type { UserResponse } from '@/types/responses'
+import type { AuthUser } from '../types'
+
 const TOKEN_KEY = 'auth_token'
 const REFRESH_TOKEN_KEY = 'refresh_token'
 const USER_KEY = 'user_data'
@@ -8,7 +11,7 @@ export interface TokenData {
   accessToken: string
   refreshToken?: string
   expiresAt?: string
-  user?: any
+  user?: UserResponse | AuthUser
 }
 
 /**
@@ -30,7 +33,7 @@ export const getRefreshToken = (): string | null => {
 /**
  * Get user data from localStorage
  */
-export const getUser = (): any | null => {
+export const getUser = (): UserResponse | AuthUser | null => {
   if (typeof window === 'undefined') return null
   const userData = localStorage.getItem(USER_KEY)
   return userData ? JSON.parse(userData) : null
@@ -42,15 +45,19 @@ export const getUser = (): any | null => {
 // This function is now updated on login from the backend
 export const isPreferenceInit = (): boolean => {
   const user = getUser()
-  return user?.isPreferenceInit === true
+  // Check if user is AuthUser type (has isPreferenceInit property)
+  return (user && 'isPreferenceInit' in user) ? user.isPreferenceInit === true : false
 }
 
 // Utility to set isPreferenceInit state in user object
 export const setPreferenceInit = (value: boolean) => {
   const user = getUser()
   if (!user) return
-  user.isPreferenceInit = value
-  localStorage.setItem('user_data', JSON.stringify(user))
+  // Only set if user is AuthUser type (has isPreferenceInit property)
+  if ('isPreferenceInit' in user) {
+    (user as AuthUser).isPreferenceInit = value
+    localStorage.setItem('user_data', JSON.stringify(user))
+  }
 }
 
 /**

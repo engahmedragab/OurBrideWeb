@@ -24,7 +24,7 @@ export const getFollowById = async (
 ): Promise<FollowResponse> => {
   try {
     const response = await apiClient.api.getFollowGetById(id, query)
-    const responseAny = response as any
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FollowResponse
   } catch (error: unknown) {
     throw new Error(
@@ -45,7 +45,7 @@ export const updateFollow = async (
 ): Promise<FollowResponse> => {
   try {
     const response = await apiClient.api.putFollowUpdate(id, data, query)
-    const responseAny = response as any
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FollowResponse
   } catch (error: unknown) {
     throw new Error(
@@ -93,7 +93,7 @@ export const getAllFollows = async (query?: {
 }): Promise<PaginatedList<FollowResponse>> => {
   try {
     const response = await apiClient.api.getFollowGetAll(query)
-    const responseAny = response as any
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<FollowResponse>
   } catch (error: unknown) {
     throw new Error(
@@ -113,7 +113,7 @@ export const createFollow = async (
 ): Promise<FollowResponse> => {
   try {
     const response = await apiClient.api.postFollowCreate(data, query)
-    const responseAny = response as any
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FollowResponse
   } catch (error: unknown) {
     throw new Error(
@@ -136,7 +136,7 @@ export const getFollowsBySource = async (
 ): Promise<PaginatedList<FollowResponse>> => {
   try {
     const response = await apiClient.api.getFollowGetBySource(source as any, sourceId, query)
-    const responseAny = response as any
+    const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<FollowResponse>
   } catch (error: unknown) {
     throw new Error(

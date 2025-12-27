@@ -641,19 +641,77 @@ export function ProviderProfileClient({
           {/* Posts Tab */}
           {activeTab === 'posts' && (
             <div className="space-y-4">
-              {providerPosts.map(post => (
-                <PostCard
-                  key={post.id}
-                  id={post.id}
-                  author={post.author}
-                  content={post.content}
-                  images={post.images}
-                  timestamp={post.timestamp}
-                  likes={post.likes}
-                  comments={post.comments}
-                  shares={post.shares}
-                />
-              ))}
+              {providerPosts.map(post => {
+                // Convert mock post data to PostResponse format
+                const nameParts = (post.author?.name || '').split(' ')
+                const firstName = nameParts[0] || ''
+                const lastName = nameParts.slice(1).join(' ') || ''
+
+                const postResponse: any = {
+                  id: parseInt(post.id, 10),
+                  title: '',
+                  content: post.content,
+                  summary: post.content.substring(0, 100),
+                  isPublished: true,
+                  isFeatured: false,
+                  isPinned: false,
+                  allowComments: true,
+                  isAnonymous: false,
+                  contentType: 'text',
+                  metaTitle: '',
+                  metaDescription: '',
+                  keywords: '',
+                  userId: post.id,
+                  user: {
+                    id: post.id,
+                    userId: 0,
+                    firstName,
+                    lastName,
+                    userName: post.author?.name || '',
+                    email: '',
+                    phoneNumber: '',
+                    profileUrl: post.author?.avatar || '',
+                    isDeleted: false,
+                    isActive: true,
+                    isInit: false,
+                    personal: '',
+                    personalType: null,
+                    birthDate: null,
+                    customTag: '',
+                    partnerName: '',
+                    type: 0,
+                    gender: 0,
+                    status: 0,
+                    creationDate: null,
+                    lastModifiedDate: null,
+                  },
+                  viewCount: 0,
+                  likeCount: post.likes || 0,
+                  commentCount: post.comments || 0,
+                  shareCount: post.shares || 0,
+                  favoriteCount: 0,
+                  reviewCount: 0,
+                  publishedAt: post.timestamp || new Date().toISOString(),
+                  scheduledPublishDate: null,
+                  rate: null,
+                  reviews: [],
+                  categories: [],
+                  items: [],
+                  preparations: [],
+                  providers: [],
+                  bazaarEvents: [],
+                  tags: [],
+                  creationDate: post.timestamp || new Date().toISOString(),
+                  lastModifiedDate: null,
+                }
+
+                return (
+                  <PostCard
+                    key={post.id}
+                    post={postResponse}
+                  />
+                )
+              })}
             </div>
           )}
 

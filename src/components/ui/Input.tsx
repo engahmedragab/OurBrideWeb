@@ -34,8 +34,8 @@ const inputVariants = cva(
 
 export interface InputProps
   extends
-    Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'suffix' | 'size'>,
-    VariantProps<typeof inputVariants> {
+  Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix' | 'suffix' | 'size'>,
+  VariantProps<typeof inputVariants> {
   prefixIcon?: LucideIcon | ReactNode
   suffix?: string | ReactNode
   errorMessage?: string
@@ -63,8 +63,7 @@ const renderPrefixIcon = (Icon: LucideIcon | ReactNode): ReactNode => {
 
   if (isComponent) {
     // Render as component - must use JSX, not return the component definition
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const IconComponent = Icon as React.ComponentType<any>
+    const IconComponent = Icon as React.ComponentType<{ className?: string }>
     return <IconComponent className="h-6 w-6" />
   }
 
@@ -133,11 +132,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               'flex-1 bg-transparent outline-none focus:outline-none font-normal text-16 leading-6',
               variant === 'error' && 'text-red-500 placeholder:text-red-500',
               variant === 'default' &&
-                'text-gray-900 placeholder:text-gray-400',
+              'text-gray-900 placeholder:text-gray-400',
               variant === 'focused' &&
-                'text-gray-900 placeholder:text-gray-400',
+              'text-gray-900 placeholder:text-gray-400',
               variant === 'success' &&
-                'text-gray-900 placeholder:text-gray-400',
+              'text-gray-900 placeholder:text-gray-400',
               variant === 'fill' && 'text-gray-900 placeholder:text-gray-400'
             )}
             ref={ref}
