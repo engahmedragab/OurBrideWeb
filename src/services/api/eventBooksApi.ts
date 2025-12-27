@@ -5,6 +5,7 @@ import type {
   EventBookRequest,
   EventLineRequest,
   EventLineCategoryRequest,
+  EventLineCategory,
   EventBook,
   UserType,
 } from '@/../client/common/api/gen/ourbride-api'
@@ -38,6 +39,7 @@ export const syncEventBooks = async (
   params?: {
     clientId?: string
     userType?: UserType
+    eventId?: number
   }
 ): Promise<void> => {
   try {
@@ -92,16 +94,58 @@ export const getEventBooks = async (params?: {
   try {
     const response = await apiClient.api.getEventBooksGetBook(params)
     // Response unwrapping pattern: check response.data.data first, then response.data, then response
-    const responseAny: any = response as { data?: { data?: EventBook } | EventBook }
-    if (responseAny?.data && typeof responseAny.data === 'object' && 'data' in responseAny.data) {
-      return (responseAny.data as { data: EventBook }).data
-    }
-    if (responseAny?.data) {
-      return responseAny.data as EventBook
+    const responseAny = response as { data?: { data?: EventBook } | EventBook } | EventBook
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return (data as { data: EventBook }).data
+      }
+      if (data) {
+        return data as EventBook
+      }
     }
     return (responseAny as unknown as EventBook) ?? null
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch event books')
+  }
+}
+
+/**
+ * Get all event book categories
+ */
+export const getEventBooksCategories = async (
+  query?: { clientId?: string }
+): Promise<EventLineCategory[]> => {
+  try {
+    const response = await apiClient.api.getEventBooksGetAllCategories(query)
+    const responseAny = response as { data?: EventLineCategory[] | { data?: EventLineCategory[] } }
+    
+    if (Array.isArray(responseAny?.data)) {
+      return responseAny.data
+    }
+    if (responseAny?.data && typeof responseAny.data === 'object' && 'data' in responseAny.data) {
+      const nestedData = (responseAny.data as { data?: EventLineCategory[] }).data
+      if (Array.isArray(nestedData)) {
+        return nestedData
+      }
+    }
+    return []
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch event book categories')
+  }
+}
+
+/**
+ * Delete event book category
+ */
+export const deleteEventBookCategory = async (
+  lineCategoryId: number,
+  query?: { clientId?: string }
+): Promise<void> => {
+  try {
+    await apiClient.api.deleteEventBooksDeleteCategory(lineCategoryId, query)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to delete event book category')
   }
 }
 

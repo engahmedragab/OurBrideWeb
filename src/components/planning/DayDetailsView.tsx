@@ -1,101 +1,191 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   ItineraryHeader,
-  ItineraryList,
   AddEventButton,
   AddEventModal,
   EditEventModal,
+  ConfirmDialog,
   type ItineraryEvent,
 } from '@/components/planning'
 import { Button } from '@/components/ui/Button'
-import { parseDateSafe } from '@/lib/date-utils'
+import { Clock, Trash2 } from 'lucide-react'
+import { parseDateSafe, formatDateSafe } from '@/lib/date-utils'
+import { format } from 'date-fns'
+import { useCreateEventBookCategory, useDeleteEventBookCategory, useGetEventBooksCategories } from '@/hooks/eventBooks'
+import { useToast } from '@/components/ui/Toaster'
+import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
+import type { UseMutationResult } from '@tanstack/react-query'
+import { cn } from '@/lib/utils'
 
-const BIG_DAY_STORAGE_KEY = 'ourbride_big_days'
-const CUSTOM_TITLES_STORAGE_KEY = 'ourbride_custom_titles'
-
-const getBigDays = (): string[] => {
-  if (typeof window === 'undefined') return []
-  const stored = localStorage.getItem(BIG_DAY_STORAGE_KEY)
-  return stored ? JSON.parse(stored) : []
+/**
+ * Extended EventBook type with categories for local state management
+ */
+interface EventBookWithCategories extends EventBook {
+  lineCategories?: EventLineCategory[] | null
 }
 
-const getCustomTitles = (): Record<string, string> => {
-  if (typeof window === 'undefined') return {}
-  const stored = localStorage.getItem(CUSTOM_TITLES_STORAGE_KEY)
-  return stored ? JSON.parse(stored) : {}
-}
-
-const saveCustomTitle = (dayId: string, title: string) => {
-  if (typeof window === 'undefined') return
-  const titles = getCustomTitles()
-  if (title.trim()) {
-    titles[dayId] = title.trim()
-  } else {
-    delete titles[dayId]
-  }
-  localStorage.setItem(CUSTOM_TITLES_STORAGE_KEY, JSON.stringify(titles))
-}
-
-const saveBigDay = (dayId: string, isBigDay: boolean) => {
-  if (typeof window === 'undefined') return
-  const bigDays = getBigDays()
-  if (isBigDay) {
-    if (!bigDays.includes(dayId)) {
-      localStorage.setItem(BIG_DAY_STORAGE_KEY, JSON.stringify([...bigDays, dayId]))
-    }
-  } else {
-    localStorage.setItem(BIG_DAY_STORAGE_KEY, JSON.stringify(bigDays.filter(d => d !== dayId)))
+/**
+ * Convert date-time to day key (YYYY-MM-DD)
+ */
+const toDayKey = (dateTime: string | null | undefined): string => {
+  if (!dateTime) return ''
+  try {
+    const date = new Date(dateTime)
+    return formatDateSafe(date)
+  } catch {
+    return ''
   }
 }
 
-const createMockEvents = (dayId: string): ItineraryEvent[] => {
-  const baseDate = parseDateSafe(dayId)
-  return [
-    {
-      id: '1',
-      startTime: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 8, 0, 0),
-      title: 'Wake Up, Shower',
-      duration: 40,
-    },
-    {
-      id: '2',
-      startTime: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 9, 10, 0),
-      title: 'Hair and makeup',
-      duration: 120,
-    },
-    {
-      id: '3',
-      startTime: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 11, 10, 0),
-      title: 'Everyone gets dressed',
-      duration: 30,
-    },
-    {
-      id: '4',
-      startTime: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 11, 40, 0),
-      title: 'Lunch or Snack',
-      duration: 20,
-    },
-    {
-      id: '5',
-      startTime: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 13, 15, 0),
-      title: 'Photographer Arrives',
-      duration: 15,
-    },
-    {
-      id: '6',
-      startTime: new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), 13, 30, 0),
-      title: 'Photo Session',
-      duration: 60,
-    },
-  ]
+/**
+ * Make category date from day key (midnight for that day)
+ */
+const makeCategoryDateFromDayKey = (dayKey: string): string => {
+  try {
+    const [year, month, day] = dayKey.split('-').map(Number)
+    const date = new Date(year, month - 1, day, 0, 0, 0, 0)
+    return date.toISOString()
+  } catch {
+    return new Date().toISOString()
+  }
+}
+
+/**
+ * Calculate minutes between two date-time strings
+ */
+const minutesBetween = (start: string | null | undefined, end: string | null | undefined): number => {
+  if (!start || !end) return 0
+  try {
+    const startDate = new Date(start)
+    const endDate = new Date(end)
+    const diffMs = endDate.getTime() - startDate.getTime()
+    return Math.round(diffMs / (1000 * 60))
+  } catch {
+    return 0
+  }
+}
+
+/**
+ * Hourly Timeline View Component
+ * Displays hourly slots from 7 AM to 12 AM (midnight)
+ */
+interface HourlyTimelineViewProps {
+  events: ItineraryEvent[]
+  eventDate: Date
+  onEmptySlotClick: (hour: number) => void
+  onEventClick: (event: ItineraryEvent) => void
+  onDelete: (event: ItineraryEvent) => void
+}
+
+const HourlyTimelineView = ({
+  events,
+  eventDate,
+  onEmptySlotClick,
+  onEventClick,
+  onDelete,
+}: HourlyTimelineViewProps) => {
+  // Generate hours from 7 AM (7) to 12 AM (midnight, which is 0)
+  // Hours: 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0
+  const hours = [...Array.from({ length: 17 }, (_, i) => i + 7), 0] // 7-23, then 0
+
+  // Map events to hour slots
+  const getEventForHour = (hour: number): ItineraryEvent | null => {
+    return events.find(event => {
+      const eventHour = event.startTime.getHours()
+      return eventHour === hour
+    }) || null
+  }
+
+  const formatHourLabel = (hour: number): string => {
+    const nextHour = hour === 23 ? 0 : hour + 1
+    const period1 = hour >= 12 ? 'PM' : 'AM'
+    const period2 = nextHour >= 12 ? 'PM' : 'AM'
+    const displayHour1 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+    const displayHour2 = nextHour > 12 ? nextHour - 12 : nextHour === 0 ? 12 : nextHour
+    return `${displayHour1} ${period1} - ${displayHour2} ${period2}`
+  }
+
+  const formatTimeRange = (startTime: Date, duration: number): string => {
+    const endTime = new Date(startTime.getTime() + duration * 60 * 1000)
+    return `${format(startTime, 'h:mm a')} - ${format(endTime, 'h:mm a')}`
+  }
+
+  return (
+    <div className="w-full space-y-3">
+      {hours.map(hour => {
+        const event = getEventForHour(hour)
+        const isEmpty = !event
+
+        return (
+          <div key={hour} className="flex gap-4 items-center">
+            {/* Left column: Hour label */}
+            <div className="w-32 flex-shrink-0">
+              <p className="text-12 text-gray-500">{formatHourLabel(hour)}</p>
+            </div>
+
+            {/* Right column: Event card slot */}
+            <div
+              className={cn(
+                'flex-1 rounded-lg border transition-colors cursor-pointer',
+                isEmpty
+                  ? 'bg-white border-gray-200 hover:border-gray-300'
+                  : 'bg-brand-50 border-brand-200 border-l-4 border-primary'
+              )}
+              onClick={() => {
+                if (isEmpty) {
+                  onEmptySlotClick(hour)
+                } else {
+                  onEventClick(event)
+                }
+              }}
+            >
+              {isEmpty ? (
+                <div className="p-4 min-h-[60px] flex items-center">
+                  <p className="text-14 text-gray-400">Click to add event</p>
+                </div>
+              ) : (
+                <div className="p-4 relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDelete(event)
+                    }}
+                    className="absolute top-3 right-3 p-1.5 rounded-md hover:bg-gray-100 transition-colors text-gray-500 hover:text-red-600"
+                    aria-label="Delete event"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                  <h3 className="text-16 font-semibold text-gray-900 mb-2 pr-8">
+                    {event.title}
+                  </h3>
+                  <div className="flex items-center gap-2 text-14 text-gray-600">
+                    <Clock className="h-4 w-4" />
+                    <span>{formatTimeRange(event.startTime, event.duration)}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 export interface DayDetailsViewProps {
   dayId: string
   showBackButton?: boolean
   className?: string
+  localEventBook: EventBookWithCategories | null
+  setLocalEventBook: (book: EventBookWithCategories | null | ((prev: EventBookWithCategories | null) => EventBookWithCategories | null)) => void
+  hasUnsavedChanges: boolean
+  setHasUnsavedChanges: (value: boolean) => void
+  onSync: () => Promise<void>
+  syncMutation: UseMutationResult<any, Error, any, unknown>
+  eventId?: number
+  onCategoriesRefetch?: () => void
 }
 
 /**
@@ -106,73 +196,246 @@ export const DayDetailsView = ({
   dayId,
   showBackButton = false,
   className,
+  localEventBook,
+  setLocalEventBook,
+  hasUnsavedChanges,
+  setHasUnsavedChanges,
+  onSync,
+  syncMutation,
+  eventId,
+  onCategoriesRefetch,
 }: DayDetailsViewProps) => {
-  const [isBigDay, setIsBigDay] = useState(false)
-  const [customTitle, setCustomTitle] = useState<string>('')
-  const [events, setEvents] = useState<ItineraryEvent[]>([])
+  const { addToast } = useToast()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingEvent, setEditingEvent] = useState<ItineraryEvent | null>(null)
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
+  const [prefilledTime, setPrefilledTime] = useState<string>('')
+  const [prefilledDuration, setPrefilledDuration] = useState<string>('')
+  
+  const createCategoryMutation = useCreateEventBookCategory()
+  const deleteCategoryMutation = useDeleteEventBookCategory()
 
-  useEffect(() => {
-    if (dayId) {
-      const bigDays = getBigDays()
-      const dayIsBigDay = bigDays.includes(dayId)
-      setIsBigDay(dayIsBigDay)
-      
-      // Load custom title if exists
-      const titles = getCustomTitles()
-      setCustomTitle(titles[dayId] || '')
-      
-      if (dayIsBigDay) {
-        setEvents(createMockEvents(dayId))
+  // Get active categories (not deleted, slug === "event-day" or "big day" for backward compatibility)
+  const activeCategories = useMemo(() => {
+    if (!localEventBook?.lineCategories) return []
+    return localEventBook.lineCategories.filter(
+      cat => !cat.isDeleted && (cat.slug === 'event-day' || cat.slug === 'big day')
+    )
+  }, [localEventBook])
+
+  // Get selected category for selected day
+  const selectedCategory = useMemo(() => {
+    return activeCategories.find(cat => toDayKey(cat.date) === dayId)
+  }, [activeCategories, dayId])
+
+  const isEventDay = Boolean(selectedCategory)
+  const customTitle = selectedCategory?.nameEn || selectedCategory?.nameAr || selectedCategory?.name || ''
+
+  // Get visible lines for selected category (sorted by time, exclude deleted)
+  const visibleLines = useMemo(() => {
+    if (!selectedCategory || !localEventBook?.lines) return []
+    const lines = localEventBook.lines.filter(
+      line => line.lineCategoryId === selectedCategory.id && !line.isDeleted
+    )
+    return lines.sort((a, b) => {
+      const timeA = a.time ? new Date(a.time).getTime() : 0
+      const timeB = b.time ? new Date(b.time).getTime() : 0
+      return timeA - timeB
+    })
+  }, [selectedCategory, localEventBook])
+
+  // Convert EventLine to ItineraryEvent
+  const events: ItineraryEvent[] = useMemo(() => {
+    return visibleLines.map(line => {
+      const startTime = line.time ? new Date(line.time) : new Date()
+      const duration = minutesBetween(line.time, line.duration)
+      return {
+        id: String(line.id),
+        startTime,
+        title: line.nameEn || line.nameAr || line.name || '',
+        duration,
       }
-    }
-  }, [dayId])
+    })
+  }, [visibleLines])
 
   const eventDate = dayId ? parseDateSafe(dayId) : new Date()
-  // Use custom title if exists, otherwise default to "Big Day" if it's a big day
-  const eventTitle = isBigDay ? (customTitle || 'Big Day') : undefined
+  const eventTitle = isEventDay ? (customTitle || 'Event Day') : undefined
 
   const handleTitleEdit = (newTitle: string) => {
-    if (isBigDay && dayId) {
-      setCustomTitle(newTitle)
-      saveCustomTitle(dayId, newTitle)
-    }
+    if (!localEventBook || !selectedCategory) return
+
+    setLocalEventBook(prev => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        lineCategories: prev.lineCategories?.map(cat =>
+          cat.id === selectedCategory.id
+            ? { ...cat, name: newTitle.trim(), nameEn: newTitle.trim() }
+            : cat
+        ) || [],
+      }
+    })
+    setHasUnsavedChanges(true)
   }
 
-  const handleToggleBigDay = () => {
-    const newIsBigDay = !isBigDay
-    setIsBigDay(newIsBigDay)
-    saveBigDay(dayId, newIsBigDay)
-    
-    if (newIsBigDay && dayId) {
-      setEvents(createMockEvents(dayId))
+  const handleDeleteEventDay = () => {
+    if (!selectedCategory) return
+    // Open confirmation dialog
+    setIsDeleteConfirmOpen(true)
+  }
+
+  const handleConfirmDelete = () => {
+    setIsDeleteConfirmOpen(false)
+    handleToggleEventDay()
+  }
+
+  const handleCancelDelete = () => {
+    setIsDeleteConfirmOpen(false)
+  }
+
+  const handleToggleEventDay = async () => {
+    if (!localEventBook) return
+
+    if (isEventDay && selectedCategory) {
+      // Unmark: delete category via DELETE endpoint
+      if (!selectedCategory.id || selectedCategory.id <= 0) {
+        // If category has no real ID, just remove from local state
+        setLocalEventBook(prev => {
+          if (!prev) return prev
+          return {
+            ...prev,
+            lineCategories: (prev.lineCategories || []).filter(cat => cat.id !== selectedCategory.id),
+          }
+        })
+        setHasUnsavedChanges(false)
+        return
+      }
+
+      try {
+        await deleteCategoryMutation.mutateAsync({
+          lineCategoryId: selectedCategory.id,
+          params: {
+            clientId: null as unknown as string | undefined,
+          },
+        })
+        // On success: refetch categories and update local state
+        if (onCategoriesRefetch) {
+          onCategoriesRefetch()
+        }
+        setHasUnsavedChanges(false)
+        addToast('Event Day deleted successfully', 'success')
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to delete Event Day'
+        addToast(errorMessage, 'error')
+      }
     } else {
-      setEvents([])
+      // Mark: check if category already exists for this day (prevent duplicates)
+      const existingCategory = (localEventBook.lineCategories || []).find(cat => {
+        const catDayKey = toDayKey(cat.date)
+        return (cat.slug === 'event-day' || cat.slug === 'big day') && catDayKey === dayId && cat.isDeleted !== true
+      })
+
+      if (existingCategory && existingCategory.id && existingCategory.id > 0) {
+        // Category already exists with real ID, just reactivate if needed
+        setLocalEventBook(prev => {
+          if (!prev) return prev
+          return {
+            ...prev,
+            lineCategories: (prev.lineCategories || []).map(cat =>
+              cat.id === existingCategory.id
+                ? { ...cat, isDeleted: false, name: 'Event Day', nameEn: 'Event Day', slug: 'event-day' }
+                : cat
+            ),
+          }
+        })
+        setHasUnsavedChanges(true)
+      } else {
+        // Mark: create new category via POST endpoint
+        const categoryDate = makeCategoryDateFromDayKey(dayId)
+        const categoryRequest = {
+          name: 'Event Day',
+          slug: 'event-day',
+          date: categoryDate,
+          isDeleted: false,
+        }
+
+        try {
+          await createCategoryMutation.mutateAsync({
+            category: categoryRequest,
+            params: {
+              clientId: null as unknown as string | undefined,
+            },
+          })
+          // On success: refetch categories to get the created category with real ID
+          if (onCategoriesRefetch) {
+            onCategoriesRefetch()
+          }
+          setHasUnsavedChanges(false)
+          addToast('Event Day marked successfully', 'success')
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Failed to mark Event Day'
+          addToast(errorMessage, 'error')
+        }
+      }
     }
   }
 
   const handleAddEvent = () => {
-    if (!isBigDay) {
-      handleToggleBigDay()
+    if (!isEventDay) {
+      handleToggleEventDay()
     } else {
+      setPrefilledTime('')
+      setPrefilledDuration('')
       setIsAddModalOpen(true)
     }
   }
 
-  const handleCreateEvent = (eventData: { startTime: Date; title: string; duration: number }) => {
-    const newEvent: ItineraryEvent = {
-      id: Date.now().toString(),
-      startTime: eventData.startTime,
-      title: eventData.title,
-      duration: eventData.duration,
+  const handleEmptySlotClick = (hour: number) => {
+    if (!isEventDay) {
+      handleToggleEventDay()
+      return
     }
-    
-    setEvents(prev => {
-      const updated = [...prev, newEvent]
-      return updated.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+    // Pre-fill time and duration for this hour slot
+    const timeString = `${hour.toString().padStart(2, '0')}:00`
+    setPrefilledTime(timeString)
+    setPrefilledDuration('60') // 1 hour = 60 minutes
+    setIsAddModalOpen(true)
+  }
+
+  const handleCreateEvent = (eventData: { startTime: Date; title: string; duration: number }) => {
+    if (!localEventBook || !selectedCategory) return
+
+    const endTime = new Date(eventData.startTime.getTime() + eventData.duration * 60 * 1000)
+    const newLine: EventLine = {
+      id: 0, // Temporary ID for new lines
+      bookId: localEventBook.id,
+      lineCategoryId: selectedCategory.id,
+      time: eventData.startTime.toISOString(),
+      duration: endTime.toISOString(),
+      name: eventData.title,
+      nameEn: eventData.title,
+      description: '',
+      descriptionEn: '',
+      highlighted: false,
+      isDone: false,
+      isFavorite: false,
+      isDeleted: false,
+      isModelLine: false,
+      creationDate: new Date().toISOString(),
+      lastModifiedDate: new Date().toISOString(),
+      createdBy: '',
+      lastModifiedBy: '',
+    }
+
+    setLocalEventBook(prev => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        lines: [...(prev.lines || []), newLine],
+      }
     })
+    setHasUnsavedChanges(true)
   }
 
   const handleEditEvent = (event: ItineraryEvent) => {
@@ -181,26 +444,57 @@ export const DayDetailsView = ({
   }
 
   const handleUpdateEvent = (eventId: string, eventData: { startTime: Date; title: string; duration: number }) => {
-    setEvents(prev => {
-      const updated = prev.map(e => 
-        e.id === eventId 
-          ? { ...e, ...eventData }
-          : e
-      )
-      return updated.sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+    if (!localEventBook) return
+
+    const lineId = parseInt(eventId, 10)
+    const endTime = new Date(eventData.startTime.getTime() + eventData.duration * 60 * 1000)
+
+    setLocalEventBook(prev => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        lines: prev.lines?.map(line => {
+          if (line.id === lineId) {
+            return {
+              ...line,
+              time: eventData.startTime.toISOString(),
+              duration: endTime.toISOString(),
+              name: eventData.title,
+              nameEn: eventData.title,
+              lastModifiedDate: new Date().toISOString(),
+            }
+          }
+          return line
+        }) || [],
+      }
     })
+    setHasUnsavedChanges(true)
   }
 
   const handleDeleteEvent = (event: ItineraryEvent) => {
-    setEvents(prev => prev.filter(e => e.id !== event.id))
+    if (!localEventBook) return
+
+    const lineId = parseInt(event.id, 10)
+    setLocalEventBook(prev => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        lines: prev.lines?.map(line =>
+          line.id === lineId ? { ...line, isDeleted: true } : line
+        ) || [],
+      }
+    })
+    setHasUnsavedChanges(true)
   }
 
   const handleRefresh = () => {
-    console.log('Refresh itinerary')
+    // Refresh handled by parent component
   }
 
-  const handleSave = () => {
-    console.log('Save itinerary')
+  const handleSave = async () => {
+    if (onSync) {
+      await onSync()
+    }
   }
 
   return (
@@ -209,54 +503,48 @@ export const DayDetailsView = ({
         date={eventDate}
         eventTitle={eventTitle}
         onRefresh={handleRefresh}
-        onSave={handleSave}
+        onSave={hasUnsavedChanges ? handleSave : undefined}
         showBackButton={showBackButton}
-        onEditTitle={isBigDay ? handleTitleEdit : undefined}
+        onEditTitle={isEventDay ? handleTitleEdit : undefined}
+        onDelete={isEventDay ? handleDeleteEventDay : undefined}
       />
 
-      {!isBigDay && (
+      {!isEventDay && (
         <div className="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 text-center">
           <p className="text-16 text-gray-700 mb-4">
-            This day is not marked as Big Day yet.
+            This day is not marked as Event Day yet.
           </p>
           <Button
-            onClick={handleToggleBigDay}
+            onClick={handleToggleEventDay}
             variant="brand"
             size="md"
             className='text-white'
+            disabled={!localEventBook}
           >
-            Mark as Big Day
+            Mark as Event Day
           </Button>
         </div>
       )}
 
-      {isBigDay && (
+      {isEventDay && (
         <div className="mt-6">
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-14 text-gray-600">Big Day is active</p>
-            <Button
-              onClick={handleToggleBigDay}
-              variant="outlineBrand"
-              size="sm"
-            >
-              Unmark Big Day
-            </Button>
-          </div>
-          <ItineraryList
+          <HourlyTimelineView
             events={events}
-            onEdit={handleEditEvent}
+            eventDate={eventDate}
+            onEmptySlotClick={handleEmptySlotClick}
+            onEventClick={handleEditEvent}
             onDelete={handleDeleteEvent}
           />
         </div>
       )}
-
-      {isBigDay && <AddEventButton onClick={handleAddEvent} className='lg:w-1/2 mx-auto py-4'/>}
       
       <AddEventModal
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
         baseDate={eventDate}
         onCreate={handleCreateEvent}
+        initialTime={prefilledTime}
+        initialDuration={prefilledDuration}
       />
       
       <EditEventModal
@@ -266,7 +554,16 @@ export const DayDetailsView = ({
         event={editingEvent}
         onUpdate={handleUpdateEvent}
       />
+
+      <ConfirmDialog
+        open={isDeleteConfirmOpen}
+        title="Delete Event Day?"
+        description="Are you sure you want to delete this Event Day? This will remove all events scheduled for this day."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   )
 }
-

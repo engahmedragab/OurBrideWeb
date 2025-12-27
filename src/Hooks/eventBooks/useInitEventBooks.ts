@@ -5,6 +5,7 @@ import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 export interface UseInitEventBooksParams {
   clientId?: string
   userType?: UserType
+  eventId?: number
 }
 
 /**

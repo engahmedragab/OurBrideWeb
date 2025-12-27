@@ -1,10 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, Pencil, Check, X } from 'lucide-react'
+import { ArrowLeft, Pencil, Check, X, Save, MoreVertical, Edit, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/Button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu'
 
 export interface ItineraryHeaderProps {
   date: Date
@@ -14,16 +21,18 @@ export interface ItineraryHeaderProps {
   className?: string
   showBackButton?: boolean
   onEditTitle?: (title: string) => void
+  onDelete?: () => void
 }
 
 export const ItineraryHeader = ({
   date,
   eventTitle,
   onRefresh: _onRefresh,
-  onSave: _onSave,
+  onSave,
   className,
   showBackButton = false,
   onEditTitle,
+  onDelete,
 }: ItineraryHeaderProps) => {
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
@@ -69,6 +78,21 @@ export const ItineraryHeader = ({
         </div>
       )}
 
+      {/* Save button (same style as Occasions) - only show when onSave is provided */}
+      {onSave && (
+        <div className="mb-4 flex justify-start">
+          <Button
+            className="text-white"
+            onClick={onSave}
+            variant="brand"
+            size="md"
+          >
+            <Save className="w-5 h-5 mr-2" />
+            Save Changes
+          </Button>
+        </div>
+      )}
+
       <div className="mb-4 flex flex-col items-center justify-center ">
         <p className="text-14 text-gray-500 mb-1">
           Event Date : {formattedDate}
@@ -109,14 +133,37 @@ export const ItineraryHeader = ({
             ) : (
               <div className="flex items-center gap-2">
                 <h2 className="text-24 text-gray-400 font-medium">{eventTitle}</h2>
-                {onEditTitle && (
-                  <button
-                    onClick={handleEditClick}
-                    className="p-1 hover:bg-gray-100 rounded transition-colors"
-                    aria-label="Edit title"
-                  >
-                    <Pencil className="h-4 w-4 text-brand-500" />
-                  </button>
+                {(onEditTitle || onDelete) && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="p-1 hover:bg-gray-100 rounded transition-colors"
+                        aria-label="Title options"
+                      >
+                        <MoreVertical className="h-4 w-4 text-gray-500" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-32">
+                      {onEditTitle && (
+                        <DropdownMenuItem
+                          onClick={handleEditClick}
+                          className="cursor-pointer flex items-center gap-2"
+                        >
+                          <Edit className="h-4 w-4" />
+                          <span>Edit</span>
+                        </DropdownMenuItem>
+                      )}
+                      {onDelete && (
+                        <DropdownMenuItem
+                          onClick={onDelete}
+                          className="cursor-pointer flex items-center gap-2 text-red-600 focus:text-red-600 focus:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span>Delete</span>
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 )}
               </div>
             )}

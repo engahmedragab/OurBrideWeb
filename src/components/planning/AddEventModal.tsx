@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
@@ -10,6 +10,8 @@ export interface AddEventModalProps {
   onOpenChange: (open: boolean) => void
   baseDate: Date
   onCreate: (event: { startTime: Date; title: string; duration: number }) => void
+  initialTime?: string
+  initialDuration?: string
 }
 
 export const AddEventModal = ({
@@ -17,10 +19,12 @@ export const AddEventModal = ({
   onOpenChange,
   baseDate,
   onCreate,
+  initialTime = '',
+  initialDuration = '',
 }: AddEventModalProps) => {
   const [title, setTitle] = useState('')
-  const [time, setTime] = useState('')
-  const [duration, setDuration] = useState('')
+  const [time, setTime] = useState(initialTime)
+  const [duration, setDuration] = useState(initialDuration)
   const [errors, setErrors] = useState<{
     title?: string
     time?: string
@@ -34,6 +38,14 @@ export const AddEventModal = ({
     setErrors({})
     onOpenChange(false)
   }
+
+  // Update time and duration when initial values change
+  useEffect(() => {
+    if (open) {
+      setTime(initialTime)
+      setDuration(initialDuration)
+    }
+  }, [open, initialTime, initialDuration])
 
   const validateForm = (): boolean => {
     const newErrors: typeof errors = {}

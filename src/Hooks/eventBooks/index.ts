@@ -4,4 +4,6 @@ export * from './useEventBooks'
 export * from './useSyncEventBooks'
 export * from './useCreateEventBookCategory'
 export * from './useCreateEventBookEventLine'
+export * from './useGetEventBooksCategories'
+export * from './useDeleteEventBookCategory'
 

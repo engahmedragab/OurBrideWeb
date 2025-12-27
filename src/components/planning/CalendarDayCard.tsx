@@ -9,7 +9,7 @@ export interface CalendarDayCardProps {
   eventsCount?: number
   variant?: 'default' | 'selected' | 'hasEvents'
   isSelected?: boolean
-  isBigDay?: boolean
+  isEventDay?: boolean
   onClick?: () => void
   className?: string
 }
@@ -20,7 +20,7 @@ export const CalendarDayCard = ({
   eventsCount = 0,
   variant = 'default',
   isSelected: propIsSelected,
-  isBigDay = false,
+  isEventDay = false,
   onClick,
   className,
 }: CalendarDayCardProps) => {
@@ -53,14 +53,14 @@ export const CalendarDayCard = ({
     >
       <p className="text-12 text-gray-900">{dayName}</p>
       <p className="text-20 font-normal text-gray-900">{dayNumber}</p>
-      {isBigDay && (
+      {isEventDay && (
         <div className="w-full">
           <div className="bg-brand-100 border-[0.5px] border-brand-400 rounded px-1 py-1">
-            <p className="text-10 text-brand-700 truncate">Big Day</p>
+            <p className="text-10 text-brand-700 truncate">Event Day</p>
           </div>
         </div>
       )}
-      {!isBigDay && hasEvents && eventsCount > 0 && (
+      {!isEventDay && hasEvents && eventsCount > 0 && (
         <div className="w-full flex flex-col gap-1">
           <div className="bg-green-100 border-[0.5px] border-green-500 rounded px-1 py-1">
             <p className="text-10 text-green-700 truncate">Event</p>

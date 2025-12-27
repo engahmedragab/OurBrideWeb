@@ -18,8 +18,9 @@ export const useCreateEventBookCategory = () => {
       params?: UseCreateEventBookCategoryParams
     }) => createEventBookCategory(data.category, data.params),
     onSuccess: () => {
-      // Invalidate event books query to refetch after category creation
+      // Invalidate event books and categories queries to refetch after category creation
       queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
+      queryClient.invalidateQueries({ queryKey: ['eventBooksCategories'] })
     },
   })
 }

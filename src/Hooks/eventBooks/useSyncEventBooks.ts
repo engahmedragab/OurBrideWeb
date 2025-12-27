@@ -5,6 +5,7 @@ import type { EventBookRequest, UserType } from '@/../client/common/api/gen/ourb
 export interface UseSyncEventBooksParams {
   clientId?: string
   userType?: UserType
+  eventId?: number
 }
 
 /**
