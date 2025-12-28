@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { MessageCircle, CheckCircle2, Star, UserPlus } from 'lucide-react'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
+import { useFavoriteItems, useFollowItems } from '@/hooks'
 
 export interface ProviderCardProps {
   provider: {
@@ -38,6 +39,11 @@ export const ProviderCard = ({
   isLoadingFavorite = false,
   className,
 }: ProviderCardProps) => {
+  const { isProviderInFavorite } = useFavoriteItems()
+  const { isProviderFollowed } = useFollowItems()
+  const providerId = parseInt(provider.id, 10)
+  const isInFavorite = isProviderInFavorite(providerId)
+  const isFollowed = isProviderFollowed(providerId)
   const rating = provider.rating || 0
   const roundedRating = Math.round(rating)
 
@@ -74,19 +80,19 @@ export const ProviderCard = ({
               className={cn(
                 'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
                 'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
-                provider.isFavorite
+                isInFavorite || provider.isFavorite
                   ? 'border-brand-500 bg-brand-500'
                   : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
               )}
               aria-label={
-                provider.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                isInFavorite || provider.isFavorite ? 'Remove from favorites' : 'Add to favorites'
               }
             >
               <Star
                 className={cn(
                   'h-4 w-4 transition-colors',
                   isLoadingFavorite && 'animate-pulse',
-                  provider.isFavorite
+                  isInFavorite || provider.isFavorite
                     ? 'fill-white text-white'
                     : 'fill-gray-300 text-gray-400'
                 )}
@@ -103,17 +109,17 @@ export const ProviderCard = ({
               className={cn(
                 'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
                 'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
-                provider.isFollowed
+                isFollowed || provider.isFollowed
                   ? 'border-brand-500 bg-brand-500'
                   : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
               )}
-              aria-label={provider.isFollowed ? 'Unfollow' : 'Follow'}
+              aria-label={isFollowed || provider.isFollowed ? 'Unfollow' : 'Follow'}
             >
               <UserPlus
                 className={cn(
                   'h-4 w-4 transition-colors',
                   isLoadingFollow && 'animate-pulse',
-                  provider.isFollowed
+                  isFollowed || provider.isFollowed
                     ? 'fill-white text-white'
                     : 'fill-gray-300 text-gray-400'
                 )}
@@ -123,10 +129,10 @@ export const ProviderCard = ({
         </div>
       )}
       {/* Profile Picture */}
-      {provider.image && (
-        <div className="relative w-28 h-28">
-          {/* Image with inner border */}
-          <div className="relative w-full h-full rounded-full border-2 border-pink-200 overflow-hidden shadow-[0_0_0_4px_rgba(251,207,232,0.4),0_0_0_6px_rgba(251,207,232,0.2)]">
+      <div className="relative w-28 h-28">
+        {/* Image with inner border */}
+        <div className="relative w-full h-full rounded-full border-2 border-pink-200 overflow-hidden shadow-[0_0_0_4px_rgba(251,207,232,0.4),0_0_0_6px_rgba(251,207,232,0.2)]">
+          {provider.image && provider.image.trim() !== '' ? (
             <Image
               src={provider.image}
               alt={provider.name}
@@ -134,9 +140,15 @@ export const ProviderCard = ({
               sizes="112px"
               className="object-cover"
             />
-          </div>
+          ) : (
+            <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
+              <span className="text-white text-32 font-semibold">
+                {provider.name.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Name with Verification */}
       <div className="flex items-center gap-2">

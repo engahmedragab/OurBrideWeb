@@ -793,7 +793,7 @@ export default function CartPage() {
                   <div className="space-y-3 sm:space-y-4">
                     {cartProducts.map(product => (
                       <CartItem
-                        key={product.id}
+                        key={product.purchaseId ?? `product-${product.id}`}
                         id={product.id}
                         title={product.title}
                         image={product.image}
@@ -914,7 +914,7 @@ export default function CartPage() {
               <div className="space-y-3 sm:space-y-4">
                 {reservationPurchases.map((reservation) => (
                   <CartItem
-                    key={reservation.id}
+                    key={reservation.purchaseId ?? `reservation-${reservation.id}`}
                     id={reservation.id}
                     title={reservation.title}
                     image={reservation.image}
@@ -937,7 +937,7 @@ export default function CartPage() {
               <div className="space-y-3 sm:space-y-4">
                 {membershipPurchases.map((membership) => (
                   <CartItem
-                    key={membership.id}
+                    key={membership.purchaseId ?? `membership-${membership.id}`}
                     id={membership.id}
                     title={membership.title}
                     image={membership.image}
@@ -959,7 +959,7 @@ export default function CartPage() {
               <div className="space-y-3 sm:space-y-4">
                 {giftCardPurchases.map((giftCard) => (
                   <CartItem
-                    key={giftCard.id}
+                    key={giftCard.purchaseId ?? `giftcard-${giftCard.id}`}
                     id={giftCard.id}
                     title={giftCard.title}
                     image={giftCard.image}

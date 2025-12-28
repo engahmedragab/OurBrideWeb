@@ -1,30 +1,32 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
 import { RatingDisplay } from './RatingDisplay'
-import { Heart, ShoppingCart, CheckCircle2, Star } from 'lucide-react'
+import { useCartItems, useAddToCart, useWishlistItems, useFollowItems } from '@/hooks'
+import { Heart, ShoppingCart, CheckCircle2, Check } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export interface ProductCardProps {
   product: Product
   onWishlistToggle?: (e: React.MouseEvent) => void
-  onFavoriteToggle?: (e: React.MouseEvent) => void
+  onFollowToggle?: (e: React.MouseEvent) => void
   onAddToCart?: (productId: string) => void
   isLoadingWishlist?: boolean
-  isLoadingFavorite?: boolean
+  isLoadingFollow?: boolean
   className?: string
 }
 
 export const ProductCard = React.memo(({
   product,
   onWishlistToggle,
-  onFavoriteToggle,
+  onFollowToggle,
   onAddToCart,
   isLoadingWishlist = false,
-  isLoadingFavorite = false,
+  isLoadingFollow = false,
   className,
 }: ProductCardProps) => {
   const hasDiscount = product.price.discounted < product.price.original
@@ -35,6 +37,48 @@ export const ProductCard = React.memo(({
       100
     )
     : 0
+
+  const router = useRouter()
+  const { isProductInCart } = useCartItems()
+  const { isProductInWishlist } = useWishlistItems()
+  const { isProductFollowed } = useFollowItems()
+  const addToCartMutation = useAddToCart()
+  const productId = parseInt(product.id, 10)
+  const providerId = product.provider?.id ? parseInt(product.provider.id, 10) : undefined
+  const isInCart = isProductInCart(productId, providerId)
+  const isInWishlist = isProductInWishlist(productId)
+  const isFollowed = isProductFollowed(productId)
+
+  const handleBuyNow = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!product.inStock) return
+
+    // If not in cart, add it first
+    if (!isInCart && onAddToCart) {
+      try {
+        await addToCartMutation.mutateAsync({
+          productId,
+          quantity: 1,
+          providerId,
+          price: product.price.discounted,
+        })
+      } catch (error) {
+        console.error('Failed to add product to cart:', error)
+        // Still navigate to cart even if add fails
+      }
+    }
+
+    // Navigate to cart
+    router.push('/cart')
+  }
+
+  const handleViewCart = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    router.push('/cart')
+  }
 
   return (
     <div
@@ -103,27 +147,27 @@ export const ProductCard = React.memo(({
 
           {/* Action Icons */}
           <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-            {/* Favorite Icon */}
-            {onFavoriteToggle && (
+            {/* Follow Icon */}
+            {onFollowToggle && (
               <button
-                onClick={onFavoriteToggle}
-                disabled={isLoadingFavorite}
+                onClick={onFollowToggle}
+                disabled={isLoadingFollow}
                 className={cn(
                   'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
                   'disabled:opacity-50 disabled:cursor-not-allowed',
-                  product.isFavorite
+                  isFollowed || product.isFollowed
                     ? 'border-brand-500 bg-brand-500'
                     : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
                 )}
                 aria-label={
-                  product.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                  isFollowed || product.isFollowed ? 'Unfollow' : 'Follow'
                 }
               >
-                <Star
+                <UserPlus
                   className={cn(
                     'h-4 w-4 transition-colors',
-                    isLoadingFavorite && 'animate-pulse',
-                    product.isFavorite
+                    isLoadingFollow && 'animate-pulse',
+                    isFollowed || product.isFollowed
                       ? 'fill-white text-white'
                       : 'fill-gray-300 text-gray-400'
                   )}
@@ -132,30 +176,32 @@ export const ProductCard = React.memo(({
             )}
 
             {/* Wishlist Icon */}
-            <button
-              onClick={onWishlistToggle}
-              disabled={isLoadingWishlist}
-              className={cn(
-                'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                product.isWishlisted
-                  ? 'border-brand-500 bg-brand-500'
-                  : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
-              )}
-              aria-label={
-                product.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
-              }
-            >
-              <Heart
+            {onWishlistToggle && (
+              <button
+                onClick={onWishlistToggle}
+                disabled={isLoadingWishlist}
                 className={cn(
-                  'h-4 w-4 transition-colors',
-                  isLoadingWishlist && 'animate-pulse',
-                  product.isWishlisted
-                    ? 'fill-white text-white'
-                    : 'fill-gray-300 text-gray-400'
+                  'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
+                  isInWishlist || product.isWishlisted
+                    ? 'border-brand-500 bg-brand-500'
+                    : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
                 )}
-              />
-            </button>
+                aria-label={
+                  isInWishlist || product.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
+                }
+              >
+                <Heart
+                  className={cn(
+                    'h-4 w-4 transition-colors',
+                    isLoadingWishlist && 'animate-pulse',
+                    isInWishlist || product.isWishlisted
+                      ? 'fill-white text-white'
+                      : 'fill-gray-300 text-gray-400'
+                  )}
+                />
+              </button>
+            )}
           </div>
         </div>
       </Link>
@@ -200,23 +246,42 @@ export const ProductCard = React.memo(({
         {/* Action Buttons */}
         <div className="flex items-center gap-2 pt-1">
           <Button
-            variant="outline"
+            variant={isInCart ? "default" : "outline"}
             size="icon"
-            className="h-10 w-10 rounded-full border-gray-300 bg-white hover:border-brand-500 hover:bg-white flex-shrink-0"
+            className={cn(
+              "h-10 w-10 rounded-full flex-shrink-0",
+              isInCart
+                ? "border-brand-500 bg-brand-500 hover:bg-brand-600"
+                : "border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
+            )}
             onClick={() => onAddToCart?.(product.id)}
-            disabled={!product.inStock}
-            aria-label="Add to cart"
+            disabled={!product.inStock || addToCartMutation.isPending}
+            aria-label={isInCart ? "Item in cart" : "Add to cart"}
           >
-            <ShoppingCart className="h-5 w-5 text-brand-500" />
+            {isInCart ? (
+              <Check className="h-5 w-5 text-white" />
+            ) : (
+              <ShoppingCart className="h-5 w-5 text-brand-500" />
+            )}
           </Button>
-          <Button
-            variant="default"
-            className="flex-1 h-10 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
-            onClick={() => onAddToCart?.(product.id)}
-            disabled={!product.inStock}
-          >
-            Buy Now
-          </Button>
+          {isInCart ? (
+            <Button
+              variant="default"
+              className="flex-1 h-10 rounded-full bg-green-500 hover:bg-green-600 text-white"
+              onClick={handleViewCart}
+            >
+              View in Cart
+            </Button>
+          ) : (
+            <Button
+              variant="default"
+              className="flex-1 h-10 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
+              onClick={handleBuyNow}
+              disabled={!product.inStock || addToCartMutation.isPending}
+            >
+              {addToCartMutation.isPending ? 'Adding...' : 'Buy Now'}
+            </Button>
+          )}
         </div>
 
         {/* Tags */}

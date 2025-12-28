@@ -12,12 +12,20 @@ import {
   ErrorDisplay,
   LoadingOverlay,
   SelectPopover,
+  Button,
 } from '@/components/ui'
+import { RefreshCw } from 'lucide-react'
 import type { Service } from '@/types/service'
 import type { Product } from '@/types/product'
-import { useFollows, useDeleteFollow, useAddProductToCart } from '@/hooks'
-import type { FollowResponse } from '@/types/responses'
+import { useFollows, useDeleteFollow, useAddProductToCart, useCartItems } from '@/hooks'
+import type { FollowResponse, ProductResponse, ServiceResponse, FeaturedProviderResponse } from '@/types/responses'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
+import { mapProductResponseToProduct } from '@/types/api/product.api.types'
+import { mapServiceResponseToService } from '@/utils/services-category.utils'
+import { useToggleServiceWishlist } from '@/hooks/services/useServiceInteractions'
+import { useToggleProductWishlist } from '@/hooks/products/useProductInteractions'
+import { useToggleProviderFollow } from '@/hooks/providers/useProviderInteractions'
+import { WishlistServiceCard, WishlistProductCard, WishlistProviderCard } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
 export default function FollowsPage() {
@@ -29,29 +37,65 @@ export default function FollowsPage() {
     data: followsData,
     isLoading: isLoadingFollows,
     error: followsError,
+    isFetching,
+    refetch: refetchFollows,
   } = useFollows({
     enabled: true,
     page: 1,
     pageSize: 100,
-    source: selectedSource !== 'all' ? selectedSource : undefined,
   })
 
   // Delete follow mutation
   const deleteFollowMutation = useDeleteFollow()
 
-  // Extract follows from paginated response
-  const follows = useMemo(() => {
-    return followsData?.items || []
+  // Toggle mutations
+  const toggleServiceWishlistMutation = useToggleServiceWishlist()
+  const toggleProductWishlistMutation = useToggleProductWishlist()
+  const toggleProviderFollowMutation = useToggleProviderFollow()
+
+  // Extract follows from response (handle both array and paginated response)
+  const follows: FollowResponse[] = useMemo(() => {
+    if (!followsData) {
+      return []
+    }
+    // Check if it's already an array
+    if (Array.isArray(followsData)) {
+      return followsData
+    }
+    // If it's a paginated response, extract the items array
+    const followsDataAny = followsData as any
+    if ('items' in followsDataAny && Array.isArray(followsDataAny.items)) {
+      return followsDataAny.items
+    }
+    // Fallback: try to extract data array
+    if ('data' in followsDataAny && Array.isArray(followsDataAny.data)) {
+      return followsDataAny.data
+    }
+    return []
   }, [followsData])
 
   // Filter follows by type (services or products) and source
   const filteredFollows = useMemo(() => {
-    if (!follows.length) return []
+    if (!follows.length) {
+      return []
+    }
 
     return follows.filter((follow: FollowResponse) => {
       // First filter by source if selected
       if (selectedSource !== 'all' && follow.source !== selectedSource) {
         return false
+      }
+
+      // If source filter is 'all', show all follows that have sourceObject
+      if (selectedSource === 'all') {
+        // Show all follows that have sourceObject (services, products, providers)
+        return !!follow.sourceObject
+      }
+
+      // When a specific source is selected, show that source
+      // Providers are always shown when source is Provider
+      if (follow.source === Source.Provider) {
+        return true
       }
 
       // Then filter by type (services or products) for backward compatibility
@@ -63,7 +107,7 @@ export default function FollowsPage() {
         return (
           follow.source === Source.Service ||
           type.toLowerCase().includes('service') ||
-          (follow.interactionCount > 0 && selectedSource === 'all') // If it has interactions and no source filter, assume it might have services
+          follow.interactionCount > 0 // If it has interactions, include it
         )
       } else {
         // Filter for product-related follows
@@ -71,46 +115,138 @@ export default function FollowsPage() {
         return (
           follow.source === Source.Product ||
           type.toLowerCase().includes('product') ||
-          (follow.interactionCount > 0 && selectedSource === 'all') // If it has interactions and no source filter, assume it might have products
+          follow.interactionCount > 0 // If it has interactions, include it
         )
       }
     })
   }, [follows, followType, selectedSource])
 
-  // For now, since FollowResponse doesn't contain items array,
-  // we'll use empty arrays for services and products
-  // TODO: Implement follow items API or extend FollowResponse to include items
-  const followServices: Service[] = []
-  const followProducts: Product[] = []
+  // Extract all services, products, and providers from sourceObject
+  const allFollowServices: Service[] = useMemo(() => {
+    return filteredFollows
+      .filter((follow) => {
+        return (
+          follow.source === Source.Service &&
+          follow.sourceObject &&
+          'serviceStatus' in follow.sourceObject
+        )
+      })
+      .map((follow) => {
+        const serviceResponse = follow.sourceObject as ServiceResponse
+        try {
+          return mapServiceResponseToService(serviceResponse)
+        } catch (error) {
+          return null
+        }
+      })
+      .filter((service): service is Service => service !== null)
+  }, [filteredFollows])
 
-  const hasServices = followServices.length > 0
-  const hasProducts = followProducts.length > 0
-  const hasFollowItems =
-    (followType === 'services' && hasServices) ||
-    (followType === 'products' && hasProducts)
+  const allFollowProducts: Product[] = useMemo(() => {
+    return filteredFollows
+      .filter((follow) => {
+        return (
+          follow.source === Source.Product &&
+          follow.sourceObject &&
+          'productId' in follow.sourceObject
+        )
+      })
+      .map((follow) => {
+        const productResponse = follow.sourceObject as unknown as import('@/../client/common/api/gen/ourbride-api').ProductResponse
+        try {
+          return mapProductResponseToProduct(productResponse)
+        } catch (error) {
+          return null
+        }
+      })
+      .filter((product): product is Product => product !== null)
+  }, [filteredFollows])
+
+  const allFollowProviders: FeaturedProviderResponse[] = useMemo(() => {
+    return filteredFollows
+      .filter((follow) => {
+        return (
+          follow.source === Source.Provider &&
+          follow.sourceObject &&
+          typeof follow.sourceObject === 'object' &&
+          'id' in follow.sourceObject &&
+          ('nameEn' in follow.sourceObject || 'nameAr' in follow.sourceObject)
+        )
+      })
+      .map((follow) => {
+        // Map the sourceObject to FeaturedProviderResponse format
+        const sourceObj = follow.sourceObject as any
+        const profileImage = sourceObj.profileURL || sourceObj.image || ''
+
+        return {
+          id: sourceObj.id,
+          nameEn: sourceObj.nameEn || sourceObj.name || '',
+          nameAr: sourceObj.nameAr || sourceObj.name || '',
+          descriptionEn: sourceObj.descriptionEn || sourceObj.description || '',
+          descriptionAr: sourceObj.descriptionAr || sourceObj.description || '',
+          publicLogoImageUrl: profileImage,
+          publicBannerImageUrl: profileImage,
+          rate: sourceObj.rate ?? null,
+          totalReviews: sourceObj.reviews?.length || 0,
+          isVerified: sourceObj.isVerified || false,
+          totalServices: sourceObj.servicesCount || 0,
+          totalProducts: sourceObj.productsCount || 0,
+          shortAddress: sourceObj.shortAddress || sourceObj.address || '',
+          publicProfileSlug: sourceObj.publicProfileSlug || `/providers/${sourceObj.id}`,
+          uniqueCode: sourceObj.uniqueCode || `PROV-${sourceObj.id}`,
+          topRatedService: sourceObj.topRatedService || null,
+        } as FeaturedProviderResponse
+      })
+      .filter((provider): provider is FeaturedProviderResponse =>
+        provider !== null &&
+        provider !== undefined &&
+        provider.id !== undefined &&
+        provider.id !== null
+      )
+  }, [filteredFollows])
+
+  const hasServices = allFollowServices.length > 0
+  const hasProducts = allFollowProducts.length > 0
+  const hasProviders = allFollowProviders.length > 0
+  const hasFollowItems = hasServices || hasProducts || hasProviders
   const hasFollows = filteredFollows.length > 0
 
   const handleServiceFollowToggle = async (serviceId: string) => {
-    // TODO: Find the follow containing this service and remove it
-    // For now, this would require follow items API
+    // Toggle follow for the service (services are typically followed via wishlist toggle)
     try {
-      // Find follow by service ID (would need follow items API)
-      // await deleteFollowMutation.mutateAsync({ id: followId })
-      console.log('Remove service from follows:', serviceId)
+      const serviceIdNum = parseInt(serviceId, 10)
+      if (!isNaN(serviceIdNum)) {
+        await toggleServiceWishlistMutation.mutateAsync(serviceIdNum)
+      }
     } catch (error) {
-      console.error('Failed to remove service from follows:', error)
+      // Handle error silently
     }
   }
 
   const handleProductFollowToggle = async (productId: string) => {
-    // TODO: Find the follow containing this product and remove it
-    // For now, this would require follow items API
+    // Toggle follow for the product (products are typically followed via wishlist toggle)
     try {
-      // Find follow by product ID (would need follow items API)
-      // await deleteFollowMutation.mutateAsync({ id: followId })
-      console.log('Remove product from follows:', productId)
+      const productIdNum = parseInt(productId, 10)
+      if (!isNaN(productIdNum)) {
+        const product = allFollowProducts.find(p => p.id === productId)
+        const providerId = product?.provider?.id ? parseInt(product.provider.id, 10) : undefined
+
+        await toggleProductWishlistMutation.mutateAsync({
+          productId: productIdNum,
+          query: providerId ? { providerId } : undefined,
+        })
+      }
     } catch (error) {
-      console.error('Failed to remove product from follows:', error)
+      // Handle error silently
+    }
+  }
+
+  const handleProviderFollowToggle = async (providerId: number) => {
+    // Toggle follow for the provider
+    try {
+      await toggleProviderFollowMutation.mutateAsync(providerId)
+    } catch (error) {
+      // Handle error silently
     }
   }
 
@@ -120,18 +256,31 @@ export default function FollowsPage() {
   }
 
   const { handleAddToCart: addToCart } = useAddProductToCart()
+  const { isProductInCart } = useCartItems()
 
   const handleAddToCart = async (productId: string) => {
-    // Find the product from followProducts
-    const product = followProducts.find(p => p.id === productId)
+    // Find the product from allFollowProducts
+    const product = allFollowProducts.find(p => p.id === productId)
     if (!product) return
 
     try {
-      await addToCart(product, 1)
-      // Optionally show success message
+      // Add to cart if not already in cart
+      const productIdNum = parseInt(product.id, 10)
+      const providerId = product.provider?.id ? parseInt(product.provider.id, 10) : undefined
+      const isInCart = isProductInCart(productIdNum, providerId)
+
+      if (!isInCart) {
+        await addToCart(product, 1)
+      }
+      // Navigate to cart screen
+      router.push('/cart')
     } catch (error) {
-      console.error('Failed to add product to cart:', error)
+      // Handle error silently
     }
+  }
+
+  const handleRefresh = () => {
+    refetchFollows()
   }
 
   // Calculate total items from follows
@@ -167,6 +316,15 @@ export default function FollowsPage() {
         className="w-40"
       />
       <ServicesProductsFilter value={followType} onChange={setFollowType} />
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleRefresh}
+        disabled={isFetching}
+        className="flex items-center gap-2"
+      >
+        <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+      </Button>
     </div>
   )
 
@@ -219,20 +377,94 @@ export default function FollowsPage() {
       />
 
       {/* Content Area */}
-      {followType === 'services' && hasServices ? (
-        <ServiceGrid
-          services={followServices}
-          onWishlistToggle={handleServiceFollowToggle}
-          onBookNow={handleBookNow}
-          columns={3}
-        />
-      ) : followType === 'products' && hasProducts ? (
-        <ProductGrid
-          products={followProducts}
-          onWishlistToggle={handleProductFollowToggle}
-          onAddToCart={handleAddToCart}
-          columns={3}
-        />
+      {hasFollowItems ? (
+        <div className="space-y-0">
+          {/* Show all services with sourceObject */}
+          {allFollowServices.length > 0 && allFollowServices.map((service) => (
+            <WishlistServiceCard
+              key={`service-${service.id}`}
+              service={service}
+              onRemove={handleServiceFollowToggle}
+              onBookNow={handleBookNow}
+            />
+          ))}
+
+          {/* Show all products with sourceObject */}
+          {allFollowProducts.length > 0 && allFollowProducts.map((product) => (
+            <WishlistProductCard
+              key={`product-${product.id}`}
+              product={product}
+              onRemove={handleProductFollowToggle}
+              onBuyNow={handleAddToCart}
+            />
+          ))}
+
+          {/* Show all providers with sourceObject */}
+          {allFollowProviders.length > 0 && allFollowProviders.map((provider) => (
+            <WishlistProviderCard
+              key={`provider-${provider.id}`}
+              provider={provider}
+              onRemove={handleProviderFollowToggle}
+            />
+          ))}
+        </div>
+      ) : hasFollows ? (
+        // Show follows list when we have follows but no items to display
+        <div className="space-y-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Your Follows ({filteredFollows.length})
+            </h3>
+            <div className="space-y-3">
+              {filteredFollows.map((follow: FollowResponse) => (
+                <div
+                  key={follow.id}
+                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="text-16 font-medium text-gray-900">
+                        {follow.displayName || follow.nameEn || follow.nameAr || `Follow #${follow.id}`}
+                      </h4>
+                      {follow.source && (
+                        <span className="text-12 px-2 py-1 bg-gray-100 text-gray-600 rounded">
+                          {follow.source}
+                        </span>
+                      )}
+                      {follow.sourceId && (
+                        <span className="text-12 px-2 py-1 bg-blue-100 text-blue-600 rounded">
+                          ID: {follow.sourceId}
+                        </span>
+                      )}
+                    </div>
+                    {follow.displayDescription && (
+                      <p className="text-14 text-gray-600 mb-2">
+                        {follow.displayDescription}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-4 text-12 text-gray-500">
+                      <span>{follow.interactionCount || 0} interactions</span>
+                      {follow.lastModifiedDate && (
+                        <span>
+                          Updated {new Date(follow.lastModifiedDate).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // TODO: Navigate to follow detail or delete
+                    }}
+                  >
+                    View
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       ) : (
         <EmptyState
           illustration={orderEmptySvg}
@@ -245,7 +477,7 @@ export default function FollowsPage() {
 
       {/* Loading Overlay for Mutations */}
       <LoadingOverlay
-        open={deleteFollowMutation.isPending}
+        open={deleteFollowMutation.isPending || toggleServiceWishlistMutation.isPending || toggleProductWishlistMutation.isPending || toggleProviderFollowMutation.isPending}
         title="Updating follows..."
         subtitle="Please wait a moment"
       />

@@ -53,7 +53,6 @@ export const getClientOrders = async (query?: {
   page?: number
   pageSize?: number
   clientId?: string
-  providerId?: number
 }): Promise<PaginatedList<OrderResponse>> => {
   try {
     const response = await apiClient.api.getOrderGetClientOrders(query)

@@ -55,13 +55,19 @@ export const ServiceList = ({
                 href={`/services/category/${service.id}`}
                 className="block flex-shrink-0 w-full md:w-48 h-48 rounded-lg overflow-hidden bg-gray-100 relative"
               >
-                <Image
-                  src={service.images[0]}
-                  alt={service.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 192px"
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {service.images && service.images.length > 0 && service.images[0] && service.images[0].trim() !== '' ? (
+                  <Image
+                    src={service.images[0]}
+                    alt={service.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 192px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-14">
+                    No image
+                  </div>
+                )}
                 {/* Top Offers Badge */}
                 {service.showTopOfferBadge && (
                   <div className="absolute top-3 left-3 z-10">
@@ -192,10 +198,9 @@ export const ServiceList = ({
                       variant="default"
                       className="h-10 px-6 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
                       onClick={() => {
-                        router.push(`/services/category/${service.id}`)
+                        router.push(`/booking/${service.id}`)
                         onBookNow?.(service.id)
                       }}
-                      disabled={!service.available}
                     >
                       Book Now
                     </Button>

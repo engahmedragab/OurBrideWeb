@@ -11,6 +11,9 @@ import type {
   TenantScopeLevel,
   CommonEntityStatus,
 } from '@/types/responses/common'
+import type { ProductResponse } from './product-response'
+import type { ServiceResponse } from './service-response'
+import type { FeaturedProviderResponse } from './featured-provider-response'
 
 export interface WishlistResponse extends BaseLookupResponse {
   // Source Information
@@ -102,4 +105,7 @@ export interface WishlistResponse extends BaseLookupResponse {
   isEventActive: boolean // Computed: IsEventBased && EventDate <= now && (EventEndDate == null || EventEndDate >= now)
   isEventUpcoming: boolean // Computed: IsEventBased && EventDate > DateTime.UtcNow
   isEventPast: boolean // Computed: IsEventBased && EventEndDate != null && EventEndDate < DateTime.UtcNow
+
+  // Source Object - contains the actual Product, Service, or Provider data
+  sourceObject?: ProductResponse | ServiceResponse | FeaturedProviderResponse
 }

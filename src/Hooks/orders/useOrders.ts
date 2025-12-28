@@ -39,7 +39,6 @@ export const useClientOrders = (params?: {
   page?: number
   pageSize?: number
   clientId?: string
-  providerId?: number
   enabled?: boolean
 }) => {
   const { enabled = true, ...queryParams } = params || {}

@@ -6,6 +6,7 @@ import type { Service } from '@/types/service'
 import type { ProductCategory } from '@/types/product'
 import type { ServiceResponse } from '@/types/responses/service-response'
 import type { PreparationResponse } from '@/types/responses/preparation-response'
+import { ServiceStatus } from '@/types/responses/book-enums'
 
 /**
  * Type guard to check if value is an object
@@ -139,8 +140,10 @@ export const mapServiceResponseToService = (
   }
 
   // Get availability
+  // serviceStatus is a number enum: 0=Pending, 1=Active, 2=Suspended
   const available =
-    serviceObj.serviceStatus === 'Active' ||
+    serviceObj.serviceStatus === ServiceStatus.Active ||
+    serviceObj.serviceStatus === 1 ||
     serviceObj.isAvailable === true ||
     false
 

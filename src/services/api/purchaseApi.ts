@@ -23,6 +23,48 @@ import type {
 } from '@/types/responses'
 
 /**
+ * Helper function to extract error details from API errors
+ */
+const getErrorMessage = (error: unknown, defaultMessage: string): string => {
+  if (error && typeof error === 'object') {
+    // Check if it's an Axios error with response
+    const axiosError = error as { response?: { status?: number; data?: unknown }; message?: string }
+    if (axiosError.response) {
+      const status = axiosError.response.status
+      const responseData = axiosError.response.data
+      
+      // Try to extract error message from response data
+      let errorMessage = defaultMessage
+      if (responseData && typeof responseData === 'object') {
+        const data = responseData as { message?: string; error?: string; errors?: unknown }
+        if (data.message) {
+          errorMessage = data.message
+        } else if (data.error) {
+          errorMessage = typeof data.error === 'string' ? data.error : defaultMessage
+        } else if (data.errors) {
+          // Handle validation errors
+          errorMessage = 'Validation error'
+        }
+      }
+      
+      return `Request failed with status code ${status}: ${errorMessage}`
+    }
+    
+    // Fallback to error message if available
+    if (axiosError.message) {
+      return axiosError.message
+    }
+  }
+  
+  // Final fallback
+  if (error instanceof Error) {
+    return error.message
+  }
+  
+  return defaultMessage
+}
+
+/**
  * Add a purchase (supports all purchase types: Product, Service, Reservation, Membership, GiftCard)
  */
 export const addPurchase = async (data: PurchaseRequest): Promise<CartResponse> => {
@@ -31,7 +73,13 @@ export const addPurchase = async (data: PurchaseRequest): Promise<CartResponse> 
     const responseAny: any = response
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add purchase')
+    const errorMessage = getErrorMessage(error, 'Failed to add purchase')
+    const enhancedError = new Error(errorMessage)
+    // Preserve original error for debugging
+    if (error && typeof error === 'object') {
+      (enhancedError as { originalError?: unknown }).originalError = error
+    }
+    throw enhancedError
   }
 }
 

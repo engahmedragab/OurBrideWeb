@@ -23,7 +23,20 @@ export default function AddressesPage() {
   const [editingAddress, setEditingAddress] = useState<AddressResponse | null>(null)
 
   // Fetch addresses
-  const { data: addresses = [], isLoading: isLoadingAddresses, error: addressesError } = useAddresses()
+  const addressesQuery = useAddresses()
+  const { data: addresses = [], isLoading: isLoadingAddresses, error: addressesError, isFetching, status, fetchStatus } = addressesQuery
+
+  // Debug logging
+  console.log('[AddressesPage] Component render', {
+    addressesCount: addresses.length,
+    addresses,
+    isLoading: isLoadingAddresses,
+    isFetching,
+    status,
+    fetchStatus,
+    error: addressesError,
+    queryEnabled: addressesQuery.isEnabled,
+  })
   const deleteAddressMutation = useDeleteAddress()
   const createAddressMutation = useCreateAddress()
   const updateAddressMutation = useUpdateAddress()

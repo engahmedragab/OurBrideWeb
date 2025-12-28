@@ -10,6 +10,9 @@ import type {
   TenantScopeLevel,
   CommonEntityStatus,
 } from '@/types/responses/common'
+import type { ProductResponse } from './product-response'
+import type { ServiceResponse } from './service-response'
+import type { FeaturedProviderResponse } from './featured-provider-response'
 
 export interface FavoriteResponse extends BaseLookupResponse {
   // Source Information
@@ -68,4 +71,7 @@ export interface FavoriteResponse extends BaseLookupResponse {
   displayName: string // Computed: !string.IsNullOrEmpty(NameEn) ? NameEn : NameAr
   displayDescription: string | null // Computed: !string.IsNullOrEmpty(DescriptionEn) ? DescriptionEn : DescriptionAr
   isExpired: boolean // Computed: ExpiresAt != null && ExpiresAt.Value < DateTime.UtcNow
+
+  // Source Object - contains the actual Product, Service, or Provider data
+  sourceObject?: ProductResponse | ServiceResponse | FeaturedProviderResponse
 }

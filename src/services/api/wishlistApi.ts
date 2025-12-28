@@ -98,7 +98,8 @@ export const checkWishlistExists = async (
 }
 
 /**
- * Get all wishlists (paginated)
+ * Get all wishlists
+ * Note: API returns { data: [...], success, statusCode, message, errors }
  */
 export const getAllWishlists = async (query?: {
   providerId?: number
@@ -107,10 +108,32 @@ export const getAllWishlists = async (query?: {
   userId?: string
   page?: number
   pageSize?: number
-}): Promise<PaginatedList<WishlistResponse>> => {
+}): Promise<WishlistResponse[]> => {
   try {
     const response = await apiClient.api.getWishlistGetAll(query)
-    return (response?.data ?? response) as unknown as PaginatedList<WishlistResponse>
+    const responseAny: any = response
+    
+    // Handle nested response structure: { data: { data: [...] } }
+    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
+      return responseAny.data.data as WishlistResponse[]
+    }
+    
+    // Handle the actual response structure: { data: [...], success, statusCode, message, errors }
+    if (responseAny?.data && Array.isArray(responseAny.data)) {
+      return responseAny.data as WishlistResponse[]
+    }
+    
+    // Fallback for paginated structure if API changes
+    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
+      return responseAny.data.items as WishlistResponse[]
+    }
+    
+    // Fallback for direct array
+    if (Array.isArray(responseAny)) {
+      return responseAny as WishlistResponse[]
+    }
+    
+    return []
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch wishlists'

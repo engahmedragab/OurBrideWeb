@@ -12,7 +12,9 @@ export interface ReservationInfoResponse extends BaseResponse {
   serviceName: string
   reservationId: number
   reservationCode: string
-  valueString: string
+  // Note: reservation property can cause circular dependency, use reservationId instead
+  // reservation: ReservationResponse | null
+  valueString: string | null
   valueInt: number | null
   valueBool: boolean | null
   valueDateTime: string | null // ISO DateTime string

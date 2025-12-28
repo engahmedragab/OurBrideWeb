@@ -51,6 +51,7 @@ export const useToggleProductWishlist = () => {
       // Invalidate product queries to refetch updated wishlist status
       queryClient.invalidateQueries({ queryKey: ['product', variables.productId] })
       queryClient.invalidateQueries({ queryKey: ['products'] })
+      // Invalidate wishlist items to update card indicators
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
     },
   })

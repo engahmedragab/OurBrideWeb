@@ -7,7 +7,7 @@ import {
   deleteFollow,
   getFollowsBySource,
 } from '@/services/api/followApi'
-import type { FollowResponse, PaginatedList } from '@/types/responses'
+import type { FollowResponse } from '@/types/responses'
 import type {
   CreateFollowRequest,
   UpdateFollowRequest,
@@ -37,8 +37,7 @@ export const useFollows = (query?: {
   return useQuery({
     queryKey: ['follows', queryParams],
     queryFn: async () => {
-      const follows = await getAllFollows(queryParams)
-      return follows
+      return await getAllFollows(queryParams)
     },
     enabled,
     staleTime: 1 * 60 * 1000, // 1 minute

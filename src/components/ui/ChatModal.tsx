@@ -99,13 +99,13 @@ export const ChatModal = ({
       >
         <div className="flex items-center gap-1.5 sm:gap-2">
           <div className="h-8 w-8 sm:h-10 sm:w-10 md:h-[60px] md:w-[60px] rounded-full bg-white border border-gray-200 flex items-center justify-center p-1.5 sm:p-2 flex-shrink-0">
-            <Image
+            {/* <Image
               src={avatarSrc}
               alt={supportName}
               fill
               sizes="(max-width: 640px) 32px, 40px"
               className="object-contain"
-            />
+            /> */}
           </div>
           <div className="flex flex-col gap-0.5 sm:gap-1 min-w-0">
             <h3 className="text-14 sm:text-16 md:text-20 font-medium leading-5 sm:leading-6 text-gray-900 truncate">
@@ -137,12 +137,14 @@ export const ChatModal = ({
             <div key={msg.id}>
               {msg.sender === 'support' && (
                 <div className="flex gap-1.5 items-end mb-1">
-                  <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-white border border-gray-200 flex items-center justify-center p-0.5 sm:p-1 flex-shrink-0">
-                    <Image
+                  <div className="relative h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-white border border-gray-200 flex items-center justify-center p-0.5 sm:p-1 flex-shrink-0">
+                    {/* <Image
                       src={avatarSrc}
                       alt="Support"
-                      className="w-full h-full object-contain"
-                    />
+                      fill
+                      sizes="(max-width: 640px) 20px, 24px"
+                      className="object-contain"
+                    /> */}
                   </div>
                   <div className="flex-1 max-w-[80%] sm:max-w-[350px] md:max-w-[400px]">
                     <MessageBubble

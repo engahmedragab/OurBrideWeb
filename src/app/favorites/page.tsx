@@ -12,12 +12,20 @@ import {
   ErrorDisplay,
   LoadingOverlay,
   SelectPopover,
+  Button,
 } from '@/components/ui'
+import { RefreshCw } from 'lucide-react'
 import type { Service } from '@/types/service'
 import type { Product } from '@/types/product'
-import { useFavorites, useDeleteFavorite, useAddProductToCart } from '@/hooks'
-import type { FavoriteResponse } from '@/types/responses'
+import { useFavorites, useDeleteFavorite, useAddProductToCart, useCartItems } from '@/hooks'
+import type { FavoriteResponse, ProductResponse, ServiceResponse, FeaturedProviderResponse } from '@/types/responses'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
+import { mapProductResponseToProduct } from '@/types/api/product.api.types'
+import { mapServiceResponseToService } from '@/utils/services-category.utils'
+import { useToggleServiceFavorite } from '@/hooks/services/useServiceInteractions'
+import { useToggleProductFavorite } from '@/hooks/products/useProductInteractions'
+import { useToggleProviderFavorite } from '@/hooks/providers/useProviderInteractions'
+import { WishlistServiceCard, WishlistProductCard, WishlistProviderCard } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
 export default function FavoritesPage() {
@@ -29,29 +37,62 @@ export default function FavoritesPage() {
     data: favoritesData,
     isLoading: isLoadingFavorites,
     error: favoritesError,
+    isFetching,
+    refetch: refetchFavorites,
   } = useFavorites({
     enabled: true,
     page: 1,
     pageSize: 100,
-    source: selectedSource !== 'all' ? selectedSource : undefined,
   })
 
   // Delete favorite mutation
   const deleteFavoriteMutation = useDeleteFavorite()
 
-  // Extract favorites from paginated response
-  const favorites = useMemo(() => {
-    return favoritesData?.items || []
+  // Toggle mutations
+  const toggleServiceFavoriteMutation = useToggleServiceFavorite()
+  const toggleProductFavoriteMutation = useToggleProductFavorite()
+  const toggleProviderFavoriteMutation = useToggleProviderFavorite()
+
+  // Extract favorites from response (handle both array and paginated response)
+  const favorites: FavoriteResponse[] = useMemo(() => {
+    if (!favoritesData) return []
+    // Check if it's already an array
+    if (Array.isArray(favoritesData)) {
+      return favoritesData
+    }
+    // If it's a paginated response, extract the items array
+    if ('items' in favoritesData && Array.isArray(favoritesData.items)) {
+      return favoritesData.items
+    }
+    // Fallback: try to extract data array
+    if ('data' in favoritesData && Array.isArray(favoritesData.data)) {
+      return favoritesData.data
+    }
+    return []
   }, [favoritesData])
 
   // Filter favorites by type (services or products) and source
   const filteredFavorites = useMemo(() => {
-    if (!favorites.length) return []
+    if (!favorites.length) {
+      return []
+    }
 
     return favorites.filter((favorite: FavoriteResponse) => {
       // First filter by source if selected
       if (selectedSource !== 'all' && favorite.source !== selectedSource) {
         return false
+      }
+
+      // If source filter is 'all', show all favorites that have sourceObject
+      if (selectedSource === 'all') {
+        // Show all favorites that have sourceObject (services, products, providers)
+        return !!favorite.sourceObject
+      }
+
+      // When a specific source is selected, show that source
+      // Providers are always shown when source is Provider
+      if (favorite.source === Source.Provider) {
+        return true
       }
 
       // Then filter by type (services or products) for backward compatibility
@@ -63,7 +104,7 @@ export default function FavoritesPage() {
         return (
           favorite.source === Source.Service ||
           type.toLowerCase().includes('service') ||
-          (favorite.viewCount > 0 && selectedSource === 'all') // If it has views and no source filter, assume it might have services
+          favorite.viewCount > 0 // If it has views, include it
         )
       } else {
         // Filter for product-related favorites
@@ -71,46 +112,138 @@ export default function FavoritesPage() {
         return (
           favorite.source === Source.Product ||
           type.toLowerCase().includes('product') ||
-          (favorite.viewCount > 0 && selectedSource === 'all') // If it has views and no source filter, assume it might have products
+          favorite.viewCount > 0 // If it has views, include it
         )
       }
     })
   }, [favorites, favoriteType, selectedSource])
 
-  // For now, since FavoriteResponse doesn't contain items array,
-  // we'll use empty arrays for services and products
-  // TODO: Implement favorite items API or extend FavoriteResponse to include items
-  const favoriteServices: Service[] = []
-  const favoriteProducts: Product[] = []
+  // Extract all services, products, and providers from sourceObject
+  const allFavoriteServices: Service[] = useMemo(() => {
+    return filteredFavorites
+      .filter((favorite) => {
+        return (
+          favorite.source === Source.Service &&
+          favorite.sourceObject &&
+          'serviceStatus' in favorite.sourceObject
+        )
+      })
+      .map((favorite) => {
+        const serviceResponse = favorite.sourceObject as ServiceResponse
+        try {
+          return mapServiceResponseToService(serviceResponse)
+        } catch (error) {
+          return null
+        }
+      })
+      .filter((service): service is Service => service !== null)
+  }, [filteredFavorites])
 
-  const hasServices = favoriteServices.length > 0
-  const hasProducts = favoriteProducts.length > 0
-  const hasFavoriteItems =
-    (favoriteType === 'services' && hasServices) ||
-    (favoriteType === 'products' && hasProducts)
+  const allFavoriteProducts: Product[] = useMemo(() => {
+    return filteredFavorites
+      .filter((favorite) => {
+        return (
+          favorite.source === Source.Product &&
+          favorite.sourceObject &&
+          'productId' in favorite.sourceObject
+        )
+      })
+      .map((favorite) => {
+        const productResponse = favorite.sourceObject as unknown as import('@/../client/common/api/gen/ourbride-api').ProductResponse
+        try {
+          return mapProductResponseToProduct(productResponse)
+        } catch (error) {
+          return null
+        }
+      })
+      .filter((product): product is Product => product !== null)
+  }, [filteredFavorites])
+
+  const allFavoriteProviders: FeaturedProviderResponse[] = useMemo(() => {
+    return filteredFavorites
+      .filter((favorite) => {
+        return (
+          favorite.source === Source.Provider &&
+          favorite.sourceObject &&
+          typeof favorite.sourceObject === 'object' &&
+          'id' in favorite.sourceObject &&
+          ('nameEn' in favorite.sourceObject || 'nameAr' in favorite.sourceObject)
+        )
+      })
+      .map((favorite) => {
+        // Map the sourceObject to FeaturedProviderResponse format
+        const sourceObj = favorite.sourceObject as any
+        const profileImage = sourceObj.profileURL || sourceObj.image || ''
+
+        return {
+          id: sourceObj.id,
+          nameEn: sourceObj.nameEn || sourceObj.name || '',
+          nameAr: sourceObj.nameAr || sourceObj.name || '',
+          descriptionEn: sourceObj.descriptionEn || sourceObj.description || '',
+          descriptionAr: sourceObj.descriptionAr || sourceObj.description || '',
+          publicLogoImageUrl: profileImage,
+          publicBannerImageUrl: profileImage,
+          rate: sourceObj.rate ?? null,
+          totalReviews: sourceObj.reviews?.length || 0,
+          isVerified: sourceObj.isVerified || false,
+          totalServices: sourceObj.servicesCount || 0,
+          totalProducts: sourceObj.productsCount || 0,
+          shortAddress: sourceObj.shortAddress || sourceObj.address || '',
+          publicProfileSlug: sourceObj.publicProfileSlug || `/providers/${sourceObj.id}`,
+          uniqueCode: sourceObj.uniqueCode || `PROV-${sourceObj.id}`,
+          topRatedService: sourceObj.topRatedService || null,
+        } as FeaturedProviderResponse
+      })
+      .filter((provider): provider is FeaturedProviderResponse =>
+        provider !== null &&
+        provider !== undefined &&
+        provider.id !== undefined &&
+        provider.id !== null
+      )
+  }, [filteredFavorites])
+
+  const hasServices = allFavoriteServices.length > 0
+  const hasProducts = allFavoriteProducts.length > 0
+  const hasProviders = allFavoriteProviders.length > 0
+  const hasFavoriteItems = hasServices || hasProducts || hasProviders
   const hasFavorites = filteredFavorites.length > 0
 
   const handleServiceFavoriteToggle = async (serviceId: string) => {
-    // TODO: Find the favorite containing this service and remove it
-    // For now, this would require favorite items API
+    // Toggle favorite for the service
     try {
-      // Find favorite by service ID (would need favorite items API)
-      // await deleteFavoriteMutation.mutateAsync({ id: favoriteId })
-      console.log('Remove service from favorites:', serviceId)
+      const serviceIdNum = parseInt(serviceId, 10)
+      if (!isNaN(serviceIdNum)) {
+        await toggleServiceFavoriteMutation.mutateAsync(serviceIdNum)
+      }
     } catch (error) {
-      console.error('Failed to remove service from favorites:', error)
+      // Handle error silently
     }
   }
 
   const handleProductFavoriteToggle = async (productId: string) => {
-    // TODO: Find the favorite containing this product and remove it
-    // For now, this would require favorite items API
+    // Toggle favorite for the product
     try {
-      // Find favorite by product ID (would need favorite items API)
-      // await deleteFavoriteMutation.mutateAsync({ id: favoriteId })
-      console.log('Remove product from favorites:', productId)
+      const productIdNum = parseInt(productId, 10)
+      if (!isNaN(productIdNum)) {
+        const product = allFavoriteProducts.find(p => p.id === productId)
+        const providerId = product?.provider?.id ? parseInt(product.provider.id, 10) : undefined
+
+        await toggleProductFavoriteMutation.mutateAsync({
+          productId: productIdNum,
+          query: providerId ? { providerId } : undefined,
+        })
+      }
     } catch (error) {
-      console.error('Failed to remove product from favorites:', error)
+      // Handle error silently
+    }
+  }
+
+  const handleProviderFavoriteToggle = async (providerId: number) => {
+    // Toggle favorite for the provider
+    try {
+      await toggleProviderFavoriteMutation.mutateAsync(providerId)
+    } catch (error) {
+      // Handle error silently
     }
   }
 
@@ -120,18 +253,31 @@ export default function FavoritesPage() {
   }
 
   const { handleAddToCart: addToCart } = useAddProductToCart()
+  const { isProductInCart } = useCartItems()
 
   const handleAddToCart = async (productId: string) => {
-    // Find the product from favoriteProducts
-    const product = favoriteProducts.find(p => p.id === productId)
+    // Find the product from allFavoriteProducts
+    const product = allFavoriteProducts.find(p => p.id === productId)
     if (!product) return
 
     try {
-      await addToCart(product, 1)
-      // Optionally show success message
+      // Add to cart if not already in cart
+      const productIdNum = parseInt(product.id, 10)
+      const providerId = product.provider?.id ? parseInt(product.provider.id, 10) : undefined
+      const isInCart = isProductInCart(productIdNum, providerId)
+
+      if (!isInCart) {
+        await addToCart(product, 1)
+      }
+      // Navigate to cart screen
+      router.push('/cart')
     } catch (error) {
-      console.error('Failed to add product to cart:', error)
+      // Handle error silently
     }
+  }
+
+  const handleRefresh = () => {
+    refetchFavorites()
   }
 
   // Calculate total items from favorites
@@ -167,6 +313,15 @@ export default function FavoritesPage() {
         className="w-40"
       />
       <ServicesProductsFilter value={favoriteType} onChange={setFavoriteType} />
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleRefresh}
+        disabled={isFetching}
+        className="flex items-center gap-2"
+      >
+        <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+      </Button>
     </div>
   )
 
@@ -219,20 +374,94 @@ export default function FavoritesPage() {
       />
 
       {/* Content Area */}
-      {favoriteType === 'services' && hasServices ? (
-        <ServiceGrid
-          services={favoriteServices}
-          onWishlistToggle={handleServiceFavoriteToggle}
-          onBookNow={handleBookNow}
-          columns={3}
-        />
-      ) : favoriteType === 'products' && hasProducts ? (
-        <ProductGrid
-          products={favoriteProducts}
-          onWishlistToggle={handleProductFavoriteToggle}
-          onAddToCart={handleAddToCart}
-          columns={3}
-        />
+      {hasFavoriteItems ? (
+        <div className="space-y-0">
+          {/* Show all services with sourceObject */}
+          {allFavoriteServices.length > 0 && allFavoriteServices.map((service) => (
+            <WishlistServiceCard
+              key={`service-${service.id}`}
+              service={service}
+              onRemove={handleServiceFavoriteToggle}
+              onBookNow={handleBookNow}
+            />
+          ))}
+
+          {/* Show all products with sourceObject */}
+          {allFavoriteProducts.length > 0 && allFavoriteProducts.map((product) => (
+            <WishlistProductCard
+              key={`product-${product.id}`}
+              product={product}
+              onRemove={handleProductFavoriteToggle}
+              onBuyNow={handleAddToCart}
+            />
+          ))}
+
+          {/* Show all providers with sourceObject */}
+          {allFavoriteProviders.length > 0 && allFavoriteProviders.map((provider) => (
+            <WishlistProviderCard
+              key={`provider-${provider.id}`}
+              provider={provider}
+              onRemove={handleProviderFavoriteToggle}
+            />
+          ))}
+        </div>
+      ) : hasFavorites ? (
+        // Show favorites list when we have favorites but no items to display
+        <div className="space-y-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Your Favorites ({filteredFavorites.length})
+            </h3>
+            <div className="space-y-3">
+              {filteredFavorites.map((favorite: FavoriteResponse) => (
+                <div
+                  key={favorite.id}
+                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="text-16 font-medium text-gray-900">
+                        {favorite.displayName || favorite.nameEn || favorite.nameAr || `Favorite #${favorite.id}`}
+                      </h4>
+                      {favorite.source && (
+                        <span className="text-12 px-2 py-1 bg-gray-100 text-gray-600 rounded">
+                          {favorite.source}
+                        </span>
+                      )}
+                      {favorite.sourceId && (
+                        <span className="text-12 px-2 py-1 bg-blue-100 text-blue-600 rounded">
+                          ID: {favorite.sourceId}
+                        </span>
+                      )}
+                    </div>
+                    {favorite.displayDescription && (
+                      <p className="text-14 text-gray-600 mb-2">
+                        {favorite.displayDescription}
+                      </p>
+                    )}
+                    <div className="flex items-center gap-4 text-12 text-gray-500">
+                      <span>{favorite.viewCount || 0} views</span>
+                      {favorite.lastModifiedDate && (
+                        <span>
+                          Updated {new Date(favorite.lastModifiedDate).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // TODO: Navigate to favorite detail or delete
+                    }}
+                  >
+                    View
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       ) : (
         <EmptyState
           illustration={orderEmptySvg}
@@ -245,7 +474,7 @@ export default function FavoritesPage() {
 
       {/* Loading Overlay for Mutations */}
       <LoadingOverlay
-        open={deleteFavoriteMutation.isPending}
+        open={deleteFavoriteMutation.isPending || toggleServiceFavoriteMutation.isPending || toggleProductFavoriteMutation.isPending || toggleProviderFavoriteMutation.isPending}
         title="Updating favorites..."
         subtitle="Please wait a moment"
       />

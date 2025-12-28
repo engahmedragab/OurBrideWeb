@@ -4,7 +4,8 @@ import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
 import { RatingDisplay } from './RatingDisplay'
-import { Heart, ShoppingCart, CheckCircle2 } from 'lucide-react'
+import { useCartItems } from '@/hooks/cart/useCart'
+import { Heart, ShoppingCart, CheckCircle2, Check } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export interface ProductListProps {
@@ -20,6 +21,8 @@ export const ProductList = ({
   onAddToCart,
   className,
 }: ProductListProps) => {
+  const { isProductInCart } = useCartItems()
+  
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
@@ -161,24 +164,49 @@ export const ProductList = ({
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-10 w-10 rounded-full border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
-                      onClick={() => onAddToCart?.(product.id)}
-                      disabled={!product.inStock}
-                      aria-label="Add to cart"
-                    >
-                      <ShoppingCart className="h-5 w-5 text-brand-500" />
-                    </Button>
-                    <Button
-                      variant="default"
-                      className="h-10 px-6 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
-                      onClick={() => onAddToCart?.(product.id)}
-                      disabled={!product.inStock}
-                    >
-                      Add to Cart
-                    </Button>
+                    {(() => {
+                      const productId = parseInt(product.id, 10)
+                      const providerId = product.provider?.id ? parseInt(product.provider.id, 10) : undefined
+                      const isInCart = isProductInCart(productId, providerId)
+                      
+                      return (
+                        <>
+                          <Button
+                            variant={isInCart ? "default" : "outline"}
+                            size="icon"
+                            className={cn(
+                              "h-10 w-10 rounded-full",
+                              isInCart
+                                ? "border-brand-500 bg-brand-500 hover:bg-brand-600"
+                                : "border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
+                            )}
+                            onClick={() => onAddToCart?.(product.id)}
+                            disabled={!product.inStock}
+                            aria-label={isInCart ? "Item in cart" : "Add to cart"}
+                          >
+                            {isInCart ? (
+                              <Check className="h-5 w-5 text-white" />
+                            ) : (
+                              <ShoppingCart className="h-5 w-5 text-brand-500" />
+                            )}
+                          </Button>
+                          <Button
+                            variant="default"
+                            className={cn(
+                              "h-10 px-6 rounded-full text-white",
+                              isInCart ? "bg-green-500 hover:bg-green-600" : "bg-brand-500 hover:bg-brand-600"
+                            )}
+                            onClick={() => onAddToCart?.(product.id)}
+                            disabled={!product.inStock}
+                            asChild
+                          >
+                            <Link href={isInCart ? "/cart" : `/products/${product.id}`}>
+                              {isInCart ? 'View in Cart' : 'Add to Cart'}
+                            </Link>
+                          </Button>
+                        </>
+                      )
+                    })()}
                   </div>
                 </div>
               </div>

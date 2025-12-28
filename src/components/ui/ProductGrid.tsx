@@ -5,7 +5,6 @@ import type { Product } from '@/types/product'
 export interface ProductGridProps {
   products: Product[]
   onWishlistToggle?: (productId: string) => void
-  onFavoriteToggle?: (productId: string) => void
   onAddToCart?: (productId: string) => void
   columns?: 2 | 3 | 4
   className?: string
@@ -14,7 +13,6 @@ export interface ProductGridProps {
 export const ProductGrid = ({
   products,
   onWishlistToggle,
-  onFavoriteToggle,
   onAddToCart,
   columns = 4,
   className,
@@ -60,13 +58,10 @@ export const ProductGrid = ({
             tags: product.tags,
             showTopOfferBadge: product.showTopOfferBadge,
             isWishlisted: product.isWishlisted,
-            isFavorite: product.isFavorite,
             inStock: product.inStock,
             onWishlistToggle: handlers.handleWishlistToggle,
-            onFavoriteToggle: handlers.handleFavoriteToggle,
             onAddToCart: handleAddToCartClick,
             isLoadingWishlist: handlers.isLoadingWishlist,
-            isLoadingFavorite: handlers.isLoadingFavorite,
             isLoadingAddToCart,
           }
           return <Card cardData={{ type: 'product', ...cardData }} />
