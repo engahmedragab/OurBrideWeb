@@ -5,7 +5,15 @@
 import type { MainLineResponse } from './main-line-response'
 
 export interface MainTodoLineResponse extends MainLineResponse {
-  parentLineId?: number
+  bookId?: number
+  lineCategoryId?: number
+  lineCategoryCountId?: number
+  lineCategorySlug?: string
+  parentLineId?: number | null
+  task: string
+  subTask: string
+  hasSubline: boolean
+  sublines?: MainTodoLineResponse[]
 }
 
 

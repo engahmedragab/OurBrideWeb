@@ -42,8 +42,9 @@ import {
   UpcomingBookings,
   BudgetPayments,
   GuestsInvitation,
-  type Task,
-  type Booking,
+  ItemsOverview,
+  NotesOverview,
+  OccasionsOverview,
 } from '@/components/overviews'
 import authHeroImage from '@/assets/images/authHero.jpg'
 
@@ -325,77 +326,19 @@ function MyEventsPageContent() {
     }
   }, [eventInfo])
 
-  // Budget statistics
-  const budgetStats = useMemo(() => {
-    if (!eventInfo?.budgetBook) {
-      return { total: 0, paid: 0, remaining: 0, pending: 0, other: 0, actualRemaining: 0 }
-    }
+  // Tasks from todoBook (not used, kept for future reference)
+  // const tasks = useMemo(() => {
+  //   if (!eventInfo?.todoBook?.lines) return []
+  //   // TODO: Map todoBook lines to Task format when API structure is available
+  //   return []
+  // }, [eventInfo])
 
-    const total = eventInfo.budgetBook.initialEstimated || 0
-    const paid = 0 // TODO: Get from API when available
-    const pending = 0 // TODO: Get from API when available
-    const other = 0 // TODO: Get from API when available
-    const remaining = total - paid
-    const actualRemaining = remaining - pending - other
-
-    return { total, paid, remaining, pending, other, actualRemaining }
-  }, [eventInfo])
-
-  // Budget chart data
-  const budgetChartData = useMemo(() => [
-    { label: 'Remaining', value: budgetStats.actualRemaining, color: '#E5E7EB' },
-    { label: 'Paid', value: budgetStats.paid, color: '#059669' },
-    { label: 'Pending', value: budgetStats.pending, color: '#F59E0B' },
-    { label: 'Other', value: budgetStats.other, color: '#60A5FA' },
-  ], [budgetStats])
-
-  // Mock tasks (TODO: Get from todoBook when available)
-  const mockTasks: Task[] = useMemo(() => [
-    {
-      id: '1',
-      description: 'You must Go To Home & Prepare Everything For Wedding. You must Organize all items and check everything is ready.',
-      dueDate: '2025-12-12',
-      completed: true,
-    },
-    {
-      id: '2',
-      description: 'Finalize guest list and send invitations to all confirmed guests.',
-      dueDate: '2025-12-10',
-      completed: true,
-    },
-    {
-      id: '3',
-      description: 'Confirm all bookings and make final payments for services.',
-      dueDate: '2025-12-15',
-      completed: false,
-    },
-  ], [])
-
-  // Mock bookings (TODO: Get from serviceBook when available)
-  const upcomingBookings: Booking[] = useMemo(() => [
-    {
-      id: '1',
-      title: 'Makeup Artist',
-      providerUserName: 'Asmaa Mohamed',
-      location: 'Olea, 6 Of October',
-      date: '2025-12-12',
-      time: '04:30 PM',
-      status: 'pending',
-      providerImage: '/placeholder-avatar.jpg',
-      imageSrc: authHeroImage,
-    },
-    {
-      id: '2',
-      title: 'Photography',
-      providerUserName: 'Photo Studio',
-      location: 'Cairo',
-      date: '2025-12-15',
-      time: '10:00 AM',
-      status: 'confirmed',
-      providerImage: '/placeholder-avatar.jpg',
-      imageSrc: authHeroImage,
-    },
-  ], [])
+  // Bookings from serviceBook (not used, kept for future reference)
+  // const upcomingBookings = useMemo(() => {
+  //   if (!eventInfo?.serviceBook?.lines) return []
+  //   // TODO: Map serviceBook lines to Booking format when API structure is available
+  //   return []
+  // }, [eventInfo])
 
   // Build href with eventId for planning tabs
   const buildPlanningHref = (path: string) => {
@@ -602,52 +545,90 @@ function MyEventsPageContent() {
             <div className="mb-6 sm:mb-8">
               <div className={cn('grid gap-3 sm:gap-4', 'grid-cols-1', 'sm:grid-cols-3')}>
                 <QuickStatsCard
-                  title="Confirmed Booking"
-                  current={stats.bookings.current}
-                  total={stats.bookings.total}
-                  percentage={stats.bookings.percentage}
+                  title="Completed services"
+                  book={eventInfo.serviceBook}
+                  eventId={selectedEventId || undefined}
                 />
                 <QuickStatsCard
                   title="Complete Lists"
-                  current={stats.items.current}
-                  total={stats.items.total}
-                  percentage={stats.items.percentage}
+                  book={eventInfo.todoBook}
+                  eventId={selectedEventId || undefined}
+            
                 />
                 <QuickStatsCard
                   title="Invite Your Guests"
-                  current={stats.guests.current}
-                  total={stats.guests.total}
-                  percentage={stats.guests.percentage}
+                  book={eventInfo.guestBook}
+                  eventId={selectedEventId || undefined}
                 />
               </div>
             </div>
 
             {/* SECTION 3: Tasks Reminder - Full Width */}
             <div className="mb-6 sm:mb-8">
-              <TasksReminder tasks={mockTasks} />
+              <TasksReminder     
+                     book={eventInfo.todoBook}
+                    onInit={() => handleBookInit('todo')}
+                    onNavigate={() => handleBookNavigate('todo')}
+                    eventId={selectedEventId || undefined}/>
             </div>
 
             {/* SECTION 4: Upcoming Bookings - Full Width */}
             <div className="mb-6 sm:mb-8">
-              <UpcomingBookings bookings={upcomingBookings} imageSrc={authHeroImage} />
+              <UpcomingBookings 
+               book={eventInfo.serviceBook}
+                    onInit={() => handleBookInit('service')}
+                    onNavigate={() => handleBookNavigate('service')}
+                    eventId={selectedEventId || undefined}
+                     imageSrc={authHeroImage} />
             </div>
 
             {/* SECTION 5: Budget & Guests - Two Columns */}
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 mb-6 sm:mb-8">
               <BudgetPayments
-                total={budgetStats.total}
-                remaining={budgetStats.remaining}
-                chartData={budgetChartData}
+                 book={eventInfo.budgetBook}
+                 onInit={() => handleBookInit('budget')}
+                 onNavigate={() => handleBookNavigate('budget')}
+                 eventId={selectedEventId || undefined}
               />
               <GuestsInvitation
-                invitedGuests={stats.guests.current}
-                remainingSeats={stats.guests.total}
+                 book={eventInfo.guestBook}
+                 onInit={() => handleBookInit('guest')}
+                 onNavigate={() => handleBookNavigate('guest')}
+                 eventId={selectedEventId || undefined}
                 imageSrc={authHeroImage}
               />
             </div>
 
+            {/* SECTION 6: Items, Notes & Occasions - Three Columns */}
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-3 mb-6 sm:mb-8">
+              
+                <ItemsOverview
+                  book={eventInfo.itemBook}
+                  onInit={() => handleBookInit('item')}
+                  onNavigate={() => handleBookNavigate('item')}
+                  eventId={selectedEventId || undefined}
+                />
+              
+             
+                <NotesOverview
+                  book={eventInfo.noteBook}
+                  onInit={() => handleBookInit('note')}
+                  onNavigate={() => handleBookNavigate('note')}
+                  eventId={selectedEventId || undefined}
+                />
+              
+              
+                <OccasionsOverview
+                  book={eventInfo.occasionBook}
+                  onInit={() => handleBookInit('occasion')}
+                  onNavigate={() => handleBookNavigate('occasion')}
+                  eventId={selectedEventId || undefined}
+                />
+             
+            </div>
+
             {/* SECTION 6: Book Cards */}
-            <div>
+            {/* <div>
               <h2 className="text-24 font-semibold text-gray-900 mb-6">Planning Books</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {eventInfo.itemBook && (
@@ -715,7 +696,7 @@ function MyEventsPageContent() {
                   />
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         )}
 
