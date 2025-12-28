@@ -10,6 +10,7 @@ export interface MainTodoBookResponse extends Omit<MainBookResponse<MainTodoLine
   completed?: number
   pending?: number
   isSubDone?: boolean
+  todos: MainTodoLineResponse[]
 }
 
 
