@@ -90,11 +90,32 @@ export const getAllFollows = async (query?: {
   priority?: number
   startDate?: string
   endDate?: string
-}): Promise<PaginatedList<FollowResponse>> => {
+}): Promise<FollowResponse[]> => {
   try {
     const response = await apiClient.api.getFollowGetAll(query)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<FollowResponse>
+    
+    // Handle the actual response structure: { data: [...], success, statusCode, message, errors }
+    // The API might return: response.data.data or response.data
+    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
+      return responseAny.data.data as FollowResponse[]
+    }
+    
+    if (responseAny?.data && Array.isArray(responseAny.data)) {
+      return responseAny.data as FollowResponse[]
+    }
+    
+    // Fallback for paginated structure if API changes
+    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
+      return responseAny.data.items as FollowResponse[]
+    }
+    
+    // Fallback for direct array
+    if (Array.isArray(responseAny)) {
+      return responseAny as FollowResponse[]
+    }
+    
+    return []
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch follows'

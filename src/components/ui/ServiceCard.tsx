@@ -7,29 +7,35 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
-import { Heart, CheckCircle2, Star } from 'lucide-react'
+import { Heart, CheckCircle2, Star, UserPlus } from 'lucide-react'
+import { useWishlistItems, useFollowItems } from '@/hooks'
 import type { Service } from '@/types/service'
 
 export interface ServiceCardProps {
   service: Service
   onWishlistToggle?: (e: React.MouseEvent) => void
-  onFavoriteToggle?: (e: React.MouseEvent) => void
+  onFollowToggle?: (e: React.MouseEvent) => void
   onBookNow?: (serviceId: string) => void
   isLoadingWishlist?: boolean
-  isLoadingFavorite?: boolean
+  isLoadingFollow?: boolean
   className?: string
 }
 
 export const ServiceCard = React.memo(({
   service,
   onWishlistToggle,
-  onFavoriteToggle,
+  onFollowToggle,
   onBookNow,
   isLoadingWishlist = false,
-  isLoadingFavorite = false,
+  isLoadingFollow = false,
   className,
 }: ServiceCardProps) => {
   const router = useRouter()
+  const { isServiceInWishlist } = useWishlistItems()
+  const { isServiceFollowed } = useFollowItems()
+  const serviceId = parseInt(service.id, 10)
+  const isInWishlist = isServiceInWishlist(serviceId)
+  const isFollowed = isServiceFollowed(serviceId)
   const hasDiscount = service.price.discounted < service.price.original
   const discountPercentage = hasDiscount
     ? Math.round(
@@ -49,13 +55,19 @@ export const ServiceCard = React.memo(({
       {/* Image Container */}
       <Link href={`/services/category/${service.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-          <Image
-            src={service.images[0]}
-            alt={service.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          {service.images && service.images.length > 0 && service.images[0] && service.images[0].trim() !== '' ? (
+            <Image
+              src={service.images[0]}
+              alt={service.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400 text-14">
+              No image
+            </div>
+          )}
 
           {/* Discount Badge */}
           {hasDiscount && (
@@ -100,59 +112,38 @@ export const ServiceCard = React.memo(({
 
           {/* Action Icons */}
           <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-            {/* Favorite Icon */}
-            {onFavoriteToggle && (
+            {/* Wishlist Icon */}
+            {onWishlistToggle && (
               <button
-                onClick={onFavoriteToggle}
-                disabled={isLoadingFavorite}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (isLoadingWishlist) return
+                  onWishlistToggle(e)
+                }}
+                disabled={isLoadingWishlist}
                 className={cn(
                   'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
                   'disabled:opacity-50 disabled:cursor-not-allowed',
-                  service.isFavorite
+                  isInWishlist || service.isWishlisted
                     ? 'border-brand-500 bg-brand-500'
                     : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
                 )}
                 aria-label={
-                  service.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                  isInWishlist || service.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
                 }
               >
-                <Star
+                <Heart
                   className={cn(
                     'h-4 w-4 transition-colors',
-                    isLoadingFavorite && 'animate-pulse',
-                    service.isFavorite
+                    isLoadingWishlist && 'animate-pulse',
+                    isInWishlist || service.isWishlisted
                       ? 'fill-white text-white'
                       : 'fill-gray-300 text-gray-400'
                   )}
                 />
               </button>
             )}
-
-            {/* Wishlist Icon */}
-            <button
-              onClick={onWishlistToggle}
-              disabled={isLoadingWishlist}
-              className={cn(
-                'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                service.isWishlisted
-                  ? 'border-brand-500 bg-brand-500'
-                  : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
-              )}
-              aria-label={
-                service.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
-              }
-            >
-              <Heart
-                className={cn(
-                  'h-4 w-4 transition-colors',
-                  isLoadingWishlist && 'animate-pulse',
-                  service.isWishlisted
-                    ? 'fill-white text-white'
-                    : 'fill-gray-300 text-gray-400'
-                )}
-              />
-            </button>
           </div>
         </div>
       </Link>
@@ -202,10 +193,9 @@ export const ServiceCard = React.memo(({
             variant="default"
             className="w-full h-10 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
             onClick={() => {
-              router.push(`/services/category/${service.id}`)
+              router.push(`/booking/${service.id}`)
               onBookNow?.(service.id)
             }}
-            disabled={!service.available}
           >
             Book Now
           </Button>

@@ -127,6 +127,12 @@ export type { ProductImageGalleryProps } from './ProductImageGallery'
 
 export { ServiceCard } from './ServiceCard'
 export type { ServiceCardProps } from './ServiceCard'
+export { WishlistServiceCard } from './WishlistServiceCard'
+export type { WishlistServiceCardProps } from './WishlistServiceCard'
+export { WishlistProductCard } from './WishlistProductCard'
+export type { WishlistProductCardProps } from './WishlistProductCard'
+export { WishlistProviderCard } from './WishlistProviderCard'
+export type { WishlistProviderCardProps } from './WishlistProviderCard'
 
 export { ServiceGrid } from './ServiceGrid'
 export type { ServiceGridProps } from './ServiceGrid'

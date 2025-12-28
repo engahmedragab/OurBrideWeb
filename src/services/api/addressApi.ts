@@ -12,16 +12,49 @@ import { getUser } from '@/auth/utils/token'
 export const getUserAddresses = async (query?: {
   page?: number
   pageSize?: number
-}): Promise<PaginatedList<AddressResponse>> => {
+}): Promise<PaginatedList<AddressResponse> | AddressResponse[]> => {
   try {
+    console.log('[getUserAddresses] Function called', { query })
     const user = getUser()
+    console.log('[getUserAddresses] User:', user ? { id: user.id, hasId: !!user.id } : 'null')
+    
     if (!user?.id) {
+      console.error('[getUserAddresses] User not authenticated')
       throw new Error('User not authenticated')
     }
+    
+    console.log('[getUserAddresses] Calling API with userId:', user.id, 'query:', query)
     const response = await apiClient.api.getAddressGetByUserId(user.id, query)
+    console.log('[getUserAddresses] Raw API response received:', response)
+    
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<AddressResponse>
+    console.log('[getUserAddresses] responseAny:', responseAny)
+    console.log('[getUserAddresses] responseAny.data:', responseAny?.data)
+    console.log('[getUserAddresses] responseAny.data?.data:', responseAny?.data?.data)
+    
+    // Try to extract data from nested structure
+    let data = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    console.log('[getUserAddresses] Extracted data:', data)
+    console.log('[getUserAddresses] Data type:', typeof data)
+    console.log('[getUserAddresses] Is data an array?', Array.isArray(data))
+    
+    // If it's already an array, return it directly
+    if (Array.isArray(data)) {
+      console.log('[getUserAddresses] Returning direct array, length:', data.length)
+      return data
+    }
+    
+    // If it's a paginated response, return it
+    if (data && typeof data === 'object' && 'items' in data) {
+      console.log('[getUserAddresses] Returning paginated response, items count:', (data as { items?: AddressResponse[] }).items?.length || 0)
+      return data as PaginatedList<AddressResponse>
+    }
+    
+    // Fallback: return empty array
+    console.warn('[getUserAddresses] Unexpected response structure, returning empty array')
+    return []
   } catch (error: unknown) {
+    console.error('[getUserAddresses] Error:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch addresses')
   }
 }

@@ -257,19 +257,28 @@ const extractProviders = (
   if (Array.isArray(data.providers)) {
     return data.providers
       .filter((p): p is Record<string, unknown> => isObject(p))
-      .map((p) => ({
-        id: String(p.id || ''),
-        name: (p.name || p.nameEn || p.nameAr || '') as string,
-        image: (p.image || p.profileURL || p.imageUrl || '') as string,
-        profession: (p.profession || p.serviceClass || '') as string,
-        rating: (typeof p.rating === 'number'
-          ? p.rating
-          : typeof p.rate === 'number'
-            ? p.rate
-            : 0) as number,
-        verified:
-          (p.verified === true || p.providerStatus === 'Active') as boolean,
-      }))
+      .map((p) => {
+        // Try multiple image properties, including publicLogoImageUrl from FeaturedProviderResponse
+        const image = (p.publicLogoImageUrl || 
+          p.image || 
+          p.profileURL || 
+          p.imageUrl || 
+          '') as string
+        
+        return {
+          id: String(p.id || ''),
+          name: (p.name || p.nameEn || p.nameAr || '') as string,
+          image: image,
+          profession: (p.profession || p.serviceClass || '') as string,
+          rating: (typeof p.rating === 'number'
+            ? p.rating
+            : typeof p.rate === 'number'
+              ? p.rate
+              : 0) as number,
+          verified:
+            (p.verified === true || p.isVerified === true || p.providerStatus === 'Active') as boolean,
+        }
+      })
   }
   return undefined
 }
@@ -836,15 +845,23 @@ export const extractServicesHomeData = (apiResponse: unknown) => {
   if (Array.isArray(data.featureProviders)) {
     result.providers = data.featureProviders
       .filter((p): p is Record<string, unknown> => isObject(p))
-      .map((p) => ({
-        id: String(p.id || ''),
-        name: (p.nameEn || p.nameAr || p.name || '') as string,
-        image: (p.profileURL || p.image || '') as string,
-        profession: (p.serviceClasses || '') as string,
-        rating: (typeof p.rate === 'number' ? p.rate : 0) as number,
-        verified:
-          (p.isVerified === true || p.providerStatus === 'Active') as boolean,
-      }))
+      .map((p) => {
+        // Try multiple image properties, including publicLogoImageUrl from FeaturedProviderResponse
+        const image = (p.publicLogoImageUrl || 
+          p.profileURL || 
+          p.image || 
+          '') as string
+        
+        return {
+          id: String(p.id || ''),
+          name: (p.nameEn || p.nameAr || p.name || '') as string,
+          image: image,
+          profession: (p.serviceClasses || '') as string,
+          rating: (typeof p.rate === 'number' ? p.rate : 0) as number,
+          verified:
+            (p.isVerified === true || p.providerStatus === 'Active') as boolean,
+        }
+      })
   } else {
     result.providers = extractProviders(data)
   }

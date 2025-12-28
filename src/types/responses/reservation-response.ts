@@ -37,6 +37,7 @@ export interface ReservationResponse extends BaseResponse {
   provider: ProviderResponse | null
   reservationSlotId: number | null
   reservationSlot: TimeSlotResponse | null
+  requestedStartTime: string | null // ISO DateTime string
   servicePaymentMethodId: number | null
   servicePaymentMethod: ServicePaymentMethodResponse | null
   branchId: number | null
@@ -48,6 +49,7 @@ export interface ReservationResponse extends BaseResponse {
   reservationInfos: ReservationInfoResponse[]
   resourceIds: number[]
   resources: ResourceResponse[]
+  quantity: number | null
   isTestRequested: boolean
   isTestAccepted: boolean | null
   clientFeedback: string

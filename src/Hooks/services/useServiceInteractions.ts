@@ -33,11 +33,14 @@ export const useToggleServiceWishlist = () => {
     mutationFn: async (serviceId: number) => {
       return await toggleServiceWishlist(serviceId)
     },
-    onSuccess: (_, serviceId) => {
+    onSuccess: async (_, serviceId) => {
       // Invalidate service queries to refetch updated wishlist status
-      queryClient.invalidateQueries({ queryKey: ['service', serviceId] })
-      queryClient.invalidateQueries({ queryKey: ['services'] })
-      queryClient.invalidateQueries({ queryKey: ['wishlists'] })
+      await queryClient.invalidateQueries({ queryKey: ['service', serviceId] })
+      await queryClient.invalidateQueries({ queryKey: ['services'] })
+      // Invalidate and refetch all wishlist queries to update card indicators and wishlist pages
+      // Since useWishlists has staleTime: Infinity, we need to explicitly refetch
+      await queryClient.invalidateQueries({ queryKey: ['wishlists'] })
+      await queryClient.refetchQueries({ queryKey: ['wishlists'] })
     },
   })
 }

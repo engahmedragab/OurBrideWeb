@@ -2,24 +2,27 @@
  * Resource Response
  */
 
-export interface ResourceResponse {
+import type { BaseResponse } from '@/types/responses/common'
+import type { ResourceType, ResourceStatus } from '@/types/responses/common'
+
+export interface ResourceResponse extends BaseResponse {
   id: number
   nameAr: string
   nameEn: string
-  descriptionAr: string
-  descriptionEn: string
+  descriptionAr: string | null
+  descriptionEn: string | null
   providerId: number
-  providerName: string
+  providerName: string | null
   branchId: number | null
-  branchName: string
-  type: number // ResourceType enum
-  typeName: string
-  status: number // ResourceStatus enum
-  statusName: string
+  branchName: string | null
+  type: ResourceType
+  typeName: string | null
+  status: ResourceStatus
+  statusName: string | null
   capacity: number | null
-  location: string
+  location: string | null
   isBookable: boolean
-  requiresMaintenance: boolean
+  requiresMaintenance: boolean | null
   lastMaintenanceDate: string | null // ISO DateTime string
   nextMaintenanceDate: string | null // ISO DateTime string
   isAvailable: boolean // Computed property

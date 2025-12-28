@@ -105,7 +105,7 @@ function ServicesIntroPageContent() {
   }
 
   const handleBookNow = (serviceId: string) => {
-    router.push(`/services/category/${serviceId}`)
+    router.push(`/booking/${serviceId}`)
   }
 
   // Map API data to component props

@@ -2,9 +2,11 @@ import { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
+import { useCartItems, useAddToCart, useWishlistItems, useFollowItems } from '@/hooks'
 import {
   Heart,
   ShoppingCart,
@@ -15,6 +17,7 @@ import {
   Menu,
   Share2,
   UserPlus,
+  Check,
 } from 'lucide-react'
 
 // Base card variants
@@ -61,13 +64,10 @@ export interface ProductCardData {
   tags?: string[]
   showTopOfferBadge?: boolean
   isWishlisted?: boolean
-  isFavorite?: boolean
   inStock?: boolean
   onWishlistToggle?: (e: React.MouseEvent) => void
-  onFavoriteToggle?: (e: React.MouseEvent) => void
   onAddToCart?: (e: React.MouseEvent) => void
   isLoadingWishlist?: boolean
-  isLoadingFavorite?: boolean
   isLoadingAddToCart?: boolean
 }
 
@@ -149,6 +149,26 @@ const ProductServiceCard = ({
   cardType: 'product' | 'service'
 }) => {
   const hasDiscount = data.discountedPrice < data.originalPrice
+  const { isProductInCart, isServiceInCart } = useCartItems()
+  const { isProductInWishlist, isServiceInWishlist } = useWishlistItems()
+  const { isProductFollowed, isServiceFollowed } = useFollowItems()
+
+  // Check if item is in cart
+  const productId = parseInt(data.id, 10)
+  const providerId = data.providerId ? parseInt(data.providerId, 10) : undefined
+  const isInCart = cardType === 'product'
+    ? isProductInCart(productId, providerId)
+    : isServiceInCart(productId, providerId)
+
+  // Check if item is in wishlist
+  const isInWishlist = cardType === 'product'
+    ? isProductInWishlist(productId)
+    : isServiceInWishlist(productId)
+
+  // Check if item is being followed
+  const isFollowed = cardType === 'product'
+    ? isProductFollowed(productId)
+    : isServiceFollowed(productId)
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -161,85 +181,87 @@ const ProductServiceCard = ({
     data.onWishlistToggle?.(e)
   }
 
-  const handleFavoriteToggle = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    // Don't allow multiple clicks while loading
-    if (data.isLoadingFavorite) return
-
-    // Call the provided handler
-    data.onFavoriteToggle?.(e)
-  }
+  const router = useRouter()
+  const addToCartMutation = useAddToCart()
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
     // Don't allow multiple clicks while loading
-    if (data.isLoadingAddToCart) return
+    if (data.isLoadingAddToCart || addToCartMutation.isPending) return
 
     // Call the provided handler
     data.onAddToCart?.(e)
+  }
+
+  const handleBuyNow = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (data.inStock === false || data.isLoadingAddToCart || addToCartMutation.isPending) return
+
+    // If not in cart, add it first
+    if (!isInCart && data.onAddToCart) {
+      try {
+        const productId = parseInt(data.id, 10)
+        const providerId = data.providerId ? parseInt(data.providerId, 10) : undefined
+        await addToCartMutation.mutateAsync({
+          productId,
+          quantity: 1,
+          providerId,
+          price: data.discountedPrice,
+        })
+        // Also call the provided handler if it exists
+        data.onAddToCart(e)
+      } catch (error) {
+        console.error('Failed to add product to cart:', error)
+        // Still navigate to cart even if add fails
+      }
+    }
+
+    // Navigate to cart
+    router.push('/cart')
+  }
+
+  const handleViewCart = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    router.push('/cart')
   }
 
   return (
     <div className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg shadow-sm transition-shadow">
       {/* Action Icons - Floating above the card */}
       <div className="absolute top-3 right-3 z-20 flex items-center gap-2 pointer-events-auto">
-        {/* Favorite Icon */}
-        <button
-          type="button"
-          onClick={handleFavoriteToggle}
-          disabled={data.isLoadingFavorite}
-          className={cn(
-            'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
-            data.isFavorite
-              ? 'border-brand-500 bg-brand-500'
-              : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
-          )}
-          aria-label={
-            data.isFavorite ? 'Remove from favorites' : 'Add to favorites'
-          }
-        >
-          <Star
-            className={cn(
-              'h-4 w-4 transition-colors',
-              data.isLoadingFavorite && 'animate-pulse',
-              data.isFavorite
-                ? 'fill-white text-white'
-                : 'fill-gray-300 text-gray-400'
-            )}
-          />
-        </button>
-
         {/* Wishlist Icon */}
-        <button
-          type="button"
-          onClick={handleWishlistToggle}
-          disabled={data.isLoadingWishlist}
-          className={cn(
-            'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
-            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
-            data.isWishlisted
-              ? 'border-brand-500 bg-brand-500'
-              : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
-          )}
-          aria-label={
-            data.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
-          }
-        >
-          <Heart
+        {data.onWishlistToggle && (
+          <button
+            type="button"
+            onClick={handleWishlistToggle}
+            disabled={data.isLoadingWishlist}
             className={cn(
-              'h-4 w-4 transition-colors',
-              data.isLoadingWishlist && 'animate-pulse',
-              data.isWishlisted
-                ? 'fill-white text-white'
-                : 'fill-gray-300 text-gray-400'
+              'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+              'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
+              isInWishlist || data.isWishlisted
+                ? 'border-brand-500 bg-brand-500'
+                : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
             )}
-          />
-        </button>
+            aria-label={
+              isInWishlist || data.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
+            }
+          >
+            <Heart
+              className={cn(
+                'h-4 w-4 transition-colors',
+                data.isLoadingWishlist && 'animate-pulse',
+                isInWishlist || data.isWishlisted
+                  ? 'fill-white text-white'
+                  : 'fill-gray-300 text-gray-400'
+              )}
+            />
+          </button>
+        )}
       </div>
 
       {/* Image Container */}
@@ -253,8 +275,10 @@ const ProductServiceCard = ({
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 text-14">
-            No image
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
+            <span className="text-white text-32 font-semibold">
+              {data.title.charAt(0).toUpperCase()}
+            </span>
           </div>
         )}
 
@@ -311,29 +335,55 @@ const ProductServiceCard = ({
           <div className="flex items-center gap-2 pt-1">
             {data.onAddToCart && (
               <Button
-                variant="outline"
+                variant={isInCart ? "default" : "outline"}
                 size="icon"
-                className="h-10 w-10 rounded-full border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
-                aria-label="Add to cart"
+                className={cn(
+                  "h-10 w-10 rounded-full",
+                  isInCart
+                    ? "border-brand-500 bg-brand-500 hover:bg-brand-600"
+                    : "border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
+                )}
+                aria-label={isInCart ? "Item in cart" : "Add to cart"}
                 onClick={handleAddToCart}
                 disabled={data.isLoadingAddToCart || data.inStock === false}
               >
-                <ShoppingCart
-                  className={cn(
-                    'h-4 w-4 text-brand-500',
-                    data.isLoadingAddToCart && 'animate-pulse'
-                  )}
-                />
+                {isInCart ? (
+                  <Check
+                    className={cn(
+                      'h-4 w-4 text-white',
+                      data.isLoadingAddToCart && 'animate-pulse'
+                    )}
+                  />
+                ) : (
+                  <ShoppingCart
+                    className={cn(
+                      'h-4 w-4 text-brand-500',
+                      data.isLoadingAddToCart && 'animate-pulse'
+                    )}
+                  />
+                )}
               </Button>
             )}
-            <Button
-              variant="brand"
-              size="default"
-              className="flex-1 rounded-full text-14 font-normal text-white"
-              asChild
-            >
-              <Link href={`/products/${data.id}`}>Buy Now</Link>
-            </Button>
+            {isInCart ? (
+              <Button
+                variant="brand"
+                size="default"
+                className="flex-1 rounded-full text-14 font-normal bg-green-500 hover:bg-green-600 text-white"
+                onClick={handleViewCart}
+              >
+                View in Cart
+              </Button>
+            ) : (
+              <Button
+                variant="brand"
+                size="default"
+                className="flex-1 rounded-full text-14 font-normal text-white"
+                onClick={handleBuyNow}
+                disabled={data.inStock === false || data.isLoadingAddToCart || addToCartMutation.isPending}
+              >
+                {addToCartMutation.isPending ? 'Adding...' : 'Buy Now'}
+              </Button>
+            )}
           </div>
         ) : (
           <Button
@@ -342,7 +392,7 @@ const ProductServiceCard = ({
             className="w-full rounded-full text-14 font-normal text-white"
             asChild
           >
-            <Link href={`/services/category/${data.id}`}>Book Now</Link>
+            <Link href={`/booking/${data.id}`}>Book Now</Link>
           </Button>
         )}
 
@@ -386,13 +436,21 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
       {/* Author Info - Below the card */}
       <div className="flex items-center gap-3 mt-4 ml-4">
         <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-          <Image
-            src={data.authorImage}
-            alt={data.authorName}
-            fill
-            sizes="48px"
-            className="object-cover grayscale"
-          />
+          {data.authorImage && data.authorImage.trim() !== '' ? (
+            <Image
+              src={data.authorImage}
+              alt={data.authorName}
+              fill
+              sizes="48px"
+              className="object-cover grayscale"
+            />
+          ) : (
+            <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
+              <span className="text-white text-16 font-semibold">
+                {data.authorName.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
         </div>
         <div>
           <p className="text-16 font-semibold text-gray-900">
@@ -492,13 +550,21 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
 
       {/* Profile Image */}
       <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
-        <Image
-          src={data.image}
-          alt={data.name}
-          fill
-          sizes="(max-width: 768px) 80px, 96px"
-          className="rounded-full object-cover"
-        />
+        {data.image && data.image.trim() !== '' ? (
+          <Image
+            src={data.image}
+            alt={data.name}
+            fill
+            sizes="(max-width: 768px) 80px, 96px"
+            className="rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-400 text-20 font-semibold">
+              {data.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Name with Verification */}
@@ -563,13 +629,21 @@ const MemberTestimonialCard = ({
       <div className="flex items-center justify-between gap-3 mb-4 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-            <Image
-              src={data.authorImage}
-              alt={data.authorName}
-              fill
-              sizes="48px"
-              className="object-cover grayscale"
-            />
+            {data.authorImage && data.authorImage.trim() !== '' ? (
+              <Image
+                src={data.authorImage}
+                alt={data.authorName}
+                fill
+                sizes="48px"
+                className="object-cover grayscale"
+              />
+            ) : (
+              <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
+                <span className="text-white text-16 font-semibold">
+                  {data.authorName.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
           </div>
           <div>
             <h4 className="text-16 font-semibold text-gray-900">
@@ -596,17 +670,7 @@ const MemberTestimonialCard = ({
       <div className="mb-4 flex-shrink-0">
         {data.productImages.length === 1 ? (
           <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-            <Image
-              src={mainImage}
-              alt="Product"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
-        ) : (
-          <div className="grid grid-cols-3 gap-2">
-            <div className="col-span-2 relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+            {mainImage && mainImage.trim() !== '' ? (
               <Image
                 src={mainImage}
                 alt="Product"
@@ -614,6 +678,32 @@ const MemberTestimonialCard = ({
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
               />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
+                <span className="text-white text-24 font-semibold">
+                  {data.authorName.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-2">
+            <div className="col-span-2 relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+              {mainImage && mainImage.trim() !== '' ? (
+                <Image
+                  src={mainImage}
+                  alt="Product"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
+                  <span className="text-white text-24 font-semibold">
+                    {data.authorName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
             </div>
             {thumbnailImages.length > 0 && (
               <div className="flex flex-col gap-2">
@@ -622,13 +712,21 @@ const MemberTestimonialCard = ({
                     key={index}
                     className="relative flex-1 rounded-lg overflow-hidden bg-gray-100"
                   >
-                    <Image
-                      src={image}
-                      alt={`Product ${index + 2}`}
-                      fill
-                      sizes="(max-width: 768px) 33vw, 25vw"
-                      className="object-cover"
-                    />
+                    {image && image.trim() !== '' ? (
+                      <Image
+                        src={image}
+                        alt={`Product ${index + 2}`}
+                        fill
+                        sizes="(max-width: 768px) 33vw, 25vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
+                        <span className="text-white text-14 font-semibold">
+                          {data.authorName.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

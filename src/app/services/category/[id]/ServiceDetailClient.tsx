@@ -208,7 +208,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
   const submitReviewMutation = useSubmitServiceReview()
 
   const handleBookNow = () => {
-    router.push('/booking')
+    router.push(`/booking/${serviceId}`)
   }
 
   // Use API handlers for service cards with toast callbacks
@@ -532,7 +532,6 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                       variant="default"
                       className="flex-1 h-12 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
                       onClick={handleBookNow}
-                      disabled={!service.available}
                     >
                       Book Now
                     </Button>
@@ -821,7 +820,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   <ServiceCardWithHandlers
                     key={suggestedService.id}
                     service={suggestedService}
-                    onBookNow={(id) => router.push(`/services/category/${id}`)}
+                    onBookNow={(id) => router.push(`/booking/${id}`)}
                   />
                 ))
               ) : (

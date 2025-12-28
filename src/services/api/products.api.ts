@@ -10,6 +10,42 @@ import type {
 } from '@/../client/common/api/gen/ourbride-api'
 
 /**
+ * Helper function to extract error details from API errors
+ */
+const getErrorMessage = (error: unknown, defaultMessage: string): string => {
+  if (error && typeof error === 'object') {
+    // Check if it's an Axios error with response
+    const axiosError = error as { response?: { status?: number; data?: unknown }; message?: string }
+    if (axiosError.response) {
+      const status = axiosError.response.status
+      const responseData = axiosError.response.data
+      
+      // Try to extract error message from response data
+      let errorMessage = defaultMessage
+      if (responseData && typeof responseData === 'object') {
+        const data = responseData as { message?: string; error?: string; errors?: unknown }
+        if (data.message) {
+          errorMessage = data.message
+        } else if (data.error) {
+          errorMessage = typeof data.error === 'string' ? data.error : defaultMessage
+        } else if (data.errors) {
+          // Handle validation errors
+          errorMessage = 'Validation error'
+        }
+      }
+      
+      return `Request failed with status code ${status}: ${errorMessage}`
+    }
+    
+    if (axiosError.message) {
+      return axiosError.message
+    }
+  }
+  
+  return error instanceof Error ? error.message : defaultMessage
+}
+
+/**
  * Product API endpoints
  * All endpoints return typed data from the backend
  */
@@ -71,8 +107,10 @@ export const getProductById = async (
     }
     
     return response.data.data
-  } catch (error) {
-    console.error('Error fetching product by ID:', error)
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error, 'Failed to fetch product by ID')
+    console.error(`Error fetching product by ID (${id}):`, errorMessage)
+    // Return null to allow the cart page to continue working even if some products fail to load
     return null
   }
 }

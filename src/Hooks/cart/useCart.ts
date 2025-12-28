@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import {
   getCart,
   getCartByProvider,
@@ -214,4 +215,130 @@ export const useAddToCart = () => {
       queryClient.invalidateQueries({ queryKey: ['cart-providers'] })
     },
   })
+}
+
+/**
+ * Hook to check if items are in the cart
+ * Returns helper functions to check cart status
+ */
+export const useCartItems = () => {
+  const { data: cart } = useCart()
+  const { data: cartsWithProviders } = useCartsWithProviders()
+
+  // Get all purchases from all carts
+  const allPurchases = useMemo(() => {
+    const purchases: PurchaseResponse[] = []
+    
+    if (cart?.purchases) {
+      purchases.push(...cart.purchases)
+    }
+    
+    if (cartsWithProviders) {
+      cartsWithProviders.forEach(cartWithProvider => {
+        if (cartWithProvider.purchases) {
+          purchases.push(...cartWithProvider.purchases)
+        }
+      })
+    }
+    
+    return purchases
+  }, [cart, cartsWithProviders])
+
+  /**
+   * Check if a product is in the cart
+   */
+  const isProductInCart = useMemo(() => {
+    return (productId: number, providerId?: number): boolean => {
+      return allPurchases.some(purchase => {
+        if (purchase.type !== PurchaseType.Product) return false
+        if (purchase.productId !== productId) return false
+        if (providerId !== undefined && purchase.providerId !== providerId) return false
+        return !purchase.isDeleted
+      })
+    }
+  }, [allPurchases])
+
+  /**
+   * Check if a service is in the cart
+   */
+  const isServiceInCart = useMemo(() => {
+    return (serviceId: number, providerId?: number): boolean => {
+      return allPurchases.some(purchase => {
+        if (purchase.type !== PurchaseType.Service) return false
+        if (purchase.serviceId !== serviceId) return false
+        if (providerId !== undefined && purchase.providerId !== providerId) return false
+        return !purchase.isDeleted
+      })
+    }
+  }, [allPurchases])
+
+  /**
+   * Get purchase quantity for a product
+   */
+  const getProductQuantity = useMemo(() => {
+    return (productId: number, providerId?: number): number => {
+      const purchase = allPurchases.find(p => {
+        if (p.type !== PurchaseType.Product) return false
+        if (p.productId !== productId) return false
+        if (providerId !== undefined && p.providerId !== providerId) return false
+        return !p.isDeleted
+      })
+      return purchase?.quantity || 0
+    }
+  }, [allPurchases])
+
+  /**
+   * Get purchase quantity for a service
+   */
+  const getServiceQuantity = useMemo(() => {
+    return (serviceId: number, providerId?: number): number => {
+      const purchase = allPurchases.find(p => {
+        if (p.type !== PurchaseType.Service) return false
+        if (p.serviceId !== serviceId) return false
+        if (providerId !== undefined && p.providerId !== providerId) return false
+        return !p.isDeleted
+      })
+      return purchase?.quantity || 0
+    }
+  }, [allPurchases])
+
+  /**
+   * Get purchase ID for a product (useful for removing/updating)
+   */
+  const getProductPurchaseId = useMemo(() => {
+    return (productId: number, providerId?: number): number | null => {
+      const purchase = allPurchases.find(p => {
+        if (p.type !== PurchaseType.Product) return false
+        if (p.productId !== productId) return false
+        if (providerId !== undefined && p.providerId !== providerId) return false
+        return !p.isDeleted
+      })
+      return purchase?.id || null
+    }
+  }, [allPurchases])
+
+  /**
+   * Get purchase ID for a service (useful for removing/updating)
+   */
+  const getServicePurchaseId = useMemo(() => {
+    return (serviceId: number, providerId?: number): number | null => {
+      const purchase = allPurchases.find(p => {
+        if (p.type !== PurchaseType.Service) return false
+        if (p.serviceId !== serviceId) return false
+        if (providerId !== undefined && p.providerId !== providerId) return false
+        return !p.isDeleted
+      })
+      return purchase?.id || null
+    }
+  }, [allPurchases])
+
+  return {
+    isProductInCart,
+    isServiceInCart,
+    getProductQuantity,
+    getServiceQuantity,
+    getProductPurchaseId,
+    getServicePurchaseId,
+    isLoading: !cart && !cartsWithProviders,
+  }
 }
