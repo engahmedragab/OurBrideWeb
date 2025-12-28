@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo } from 'react'
+import Link from 'next/link'
 import {
-  EventWeekHeader,
   PlanningMiniCalendar,
 } from '@/components/events'
 import { DayDetailsView } from '@/components/planning/DayDetailsView'
 import { formatDateSafe, getToday } from '@/lib/date-utils'
+import { ArrowLeft, Save } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
 import { useEventBooks, useSyncEventBooks, useGetEventBooksCategories } from '@/hooks/eventBooks'
 import { useInitEventBooks } from '@/hooks/eventBooks/useInitEventBooks'
 import { useEventId } from '@/hooks/planning'
@@ -210,7 +212,6 @@ export default function EventsPage() {
   const { addToast } = useToast()
   const eventId = useEventId()
   const today = getToday()
-  const [selectedDate, setSelectedDate] = useState(today)
   const [selectedDayId, setSelectedDayId] = useState(formatDateSafe(today))
 
   // Local state to keep the book in memory
@@ -392,37 +393,79 @@ export default function EventsPage() {
 
   const handleDateSelect = (date: Date) => {
     const safeDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)
-    setSelectedDate(safeDate)
     setSelectedDayId(formatDateSafe(safeDate))
   }
 
-  const getWeekDays = (date: Date) => {
-    const weekDays: Array<{ day: number; label: string; date: Date; isSelected: boolean }> = []
-    const startOfWeek = new Date(date)
-    const day = startOfWeek.getDay()
-    const diff = startOfWeek.getDate() - day
-
-    for (let i = 0; i < 7; i++) {
-      const currentDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), diff + i)
-      const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-      weekDays.push({
-        day: currentDate.getDate(),
-        label: dayLabels[currentDate.getDay()],
-        date: currentDate,
-        isSelected:
-          currentDate.getDate() === selectedDate.getDate() &&
-          currentDate.getMonth() === selectedDate.getMonth() &&
-          currentDate.getFullYear() === selectedDate.getFullYear(),
-      })
+  const handleSave = async () => {
+    if (!localEventBook) {
+      if (isLoading) {
+        addToast('Please wait while the event book is loading...', 'info')
+        return
+      }
+      addToast('Event book not found. Please refresh the page.', 'error')
+      return
     }
 
-    return weekDays
-  }
+    if (!hasActualChanges(localEventBook, lastSyncedRef.current)) {
+      addToast('No changes to save', 'info')
+      setHasUnsavedChanges(false)
+      return
+    }
 
-  const weekDays = getWeekDays(selectedDate)
+    try {
+      const bookRequest = buildEventBookRequestFromLocal(localEventBook)
+      await syncMutation.mutateAsync({
+        eventBook: bookRequest,
+        params: {
+          eventId: eventId || undefined,
+          userType: null as unknown as UserType | undefined,
+          clientId: null as unknown as string | undefined,
+        },
+      })
+      // On success: follow Occasions pattern exactly
+      setHasUnsavedChanges(false)
+      lastSyncedRef.current = localEventBook
+      addToast('Changes saved successfully', 'success')
+      // Refetch to get latest from server (same as Occasions)
+      refetch()
+      // Also refetch categories after sync (categories are managed separately)
+      refetchCategories()
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save changes'
+      addToast(errorMessage, 'error')
+    }
+  }
 
   return (
     <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8">
+      {/* Navigation Header */}
+      <div className="mb-4">
+        <Link
+          href="/dashboard/my-events"
+          className="flex items-center gap-3 text-gray-900 hover:opacity-80 transition-opacity"
+        >
+          <ArrowLeft className="h-5 w-5" />
+          <h1 className="text-20 font-semibold">Event</h1>
+        </Link>
+      </div>
+
+      {/* Save Row - directly under navigation */}
+      {hasUnsavedChanges && (
+        <div className="mb-4 flex items-center gap-3">
+          <Button
+            className="text-white rounded-xl"
+            onClick={handleSave}
+            variant="brand"
+            size="md"
+            disabled={syncMutation.isPending}
+          >
+            <Save className="w-5 h-5 mr-2" />
+            Save
+          </Button>
+          <span className="text-14 text-brand-500">Unsaved changes</span>
+        </div>
+      )}
+
       {/* Single Layout with Responsive Order */}
       <div className="flex flex-col lg:grid lg:grid-cols-[70%_30%] gap-2">
         {/* Mini Calendar - Mobile: order-1 (top), Desktop: right sidebar */}
@@ -434,18 +477,10 @@ export default function EventsPage() {
           />
         </div>
 
-        {/* Main Calendar Column - Mobile: order-2 & order-3, Desktop: left column */}
+        {/* Main Calendar Column - Mobile: order-2, Desktop: left column */}
         <div className="order-2 lg:order-1 flex flex-col gap-6">
-          {/* Week Header - Mobile: order-2 (after calendar), Desktop: top */}
-          <div className="order-2 lg:order-1">
-            <EventWeekHeader
-              weekDays={weekDays}
-              onDaySelect={handleDateSelect}
-            />
-          </div>
-
-          {/* Day Details - Mobile: order-3 (bottom), Desktop: below week header */}
-          <div className="order-3 lg:order-2 bg-white shadow-[0px_0px_9px_0px_rgba(143,144,166,0.15)] p-5">
+          {/* Day Details */}
+          <div className="bg-white shadow-[0px_0px_9px_0px_rgba(143,144,166,0.15)] p-5 rounded-3xl">
             <div className="overflow-x-auto">
               <DayDetailsView
                 dayId={selectedDayId}
@@ -466,45 +501,7 @@ export default function EventsPage() {
                     })
                   }
                 }}
-                onSync={async () => {
-                  if (!localEventBook) {
-                    if (isLoading) {
-                      addToast('Please wait while the event book is loading...', 'info')
-                      return
-                    }
-                    addToast('Event book not found. Please refresh the page.', 'error')
-                    return
-                  }
-
-                  if (!hasActualChanges(localEventBook, lastSyncedRef.current)) {
-                    addToast('No changes to save', 'info')
-                    setHasUnsavedChanges(false)
-                    return
-                  }
-
-                  try {
-                    const bookRequest = buildEventBookRequestFromLocal(localEventBook)
-                    await syncMutation.mutateAsync({
-                      eventBook: bookRequest,
-                      params: {
-                        eventId: eventId || undefined,
-                        userType: null as unknown as UserType | undefined,
-                        clientId: null as unknown as string | undefined,
-                      },
-                    })
-                    // On success: follow Occasions pattern exactly
-                    setHasUnsavedChanges(false)
-                    lastSyncedRef.current = localEventBook
-                    addToast('Changes saved successfully', 'success')
-                    // Refetch to get latest from server (same as Occasions)
-                    refetch()
-                    // Also refetch categories after sync (categories are managed separately)
-                    refetchCategories()
-                  } catch (error) {
-                    const errorMessage = error instanceof Error ? error.message : 'Failed to save changes'
-                    addToast(errorMessage, 'error')
-                  }
-                }}
+                onSync={handleSave}
                 syncMutation={syncMutation}
               />
             </div>

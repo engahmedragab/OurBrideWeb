@@ -503,8 +503,6 @@ export const DayDetailsView = ({
         date={eventDate}
         eventTitle={eventTitle}
         onRefresh={handleRefresh}
-        onSave={hasUnsavedChanges ? handleSave : undefined}
-        showBackButton={showBackButton}
         onEditTitle={isEventDay ? handleTitleEdit : undefined}
         onDelete={isEventDay ? handleDeleteEventDay : undefined}
       />

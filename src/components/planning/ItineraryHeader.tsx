@@ -1,11 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowLeft, Pencil, Check, X, Save, MoreVertical, Edit, Trash2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { Check, X, MoreVertical, Edit, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,9 +15,7 @@ export interface ItineraryHeaderProps {
   date: Date
   eventTitle?: string
   onRefresh?: () => void
-  onSave?: () => void
   className?: string
-  showBackButton?: boolean
   onEditTitle?: (title: string) => void
   onDelete?: () => void
 }
@@ -28,13 +24,10 @@ export const ItineraryHeader = ({
   date,
   eventTitle,
   onRefresh: _onRefresh,
-  onSave,
   className,
-  showBackButton = false,
   onEditTitle,
   onDelete,
 }: ItineraryHeaderProps) => {
-  const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [editedTitle, setEditedTitle] = useState(eventTitle || '')
 
@@ -65,33 +58,6 @@ export const ItineraryHeader = ({
 
   return (
     <div className={cn('w-full', className)}>
-      {showBackButton && (
-        <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={() => router.back()}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="h-5 w-5 text-gray-900" />
-          </button>
-          <h1 className="text-16 font-normal text-gray-900">Events Itinerary</h1>
-        </div>
-      )}
-
-      {/* Save button (same style as Occasions) - only show when onSave is provided */}
-      {onSave && (
-        <div className="mb-4 flex justify-start">
-          <Button
-            className="text-white"
-            onClick={onSave}
-            variant="brand"
-            size="md"
-          >
-            <Save className="w-5 h-5 mr-2" />
-            Save Changes
-          </Button>
-        </div>
-      )}
 
       <div className="mb-4 flex flex-col items-center justify-center ">
         <p className="text-14 text-gray-500 mb-1">
