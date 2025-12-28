@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Home, Globe, FileText, Monitor, BookOpen, Users, Trophy } from 'lucide-react'
+import { Home, Globe, FileText, Monitor, BookOpen, Users, Trophy, User } from 'lucide-react'
+import { useAuth } from '@/auth/hooks'
 import { SearchInput } from '@/components/ui/SearchInput'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
@@ -25,6 +26,7 @@ export const CommunitySidebar = ({
   onTabChange,
 }: CommunitySidebarProps) => {
   const router = useRouter()
+  const { user } = useAuth()
   const [internalActiveTab, setInternalActiveTab] = useState<CommunityTab>('posts')
   const [searchQuery, setSearchQuery] = useState('')
   const activeTab = externalActiveTab ?? internalActiveTab
@@ -241,6 +243,21 @@ export const CommunitySidebar = ({
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
           </button>
+
+          {user?.id && (
+            <button
+              onClick={() => router.push(`/community/profile?id=${user.id}&type=User`)}
+              className={cn(
+                'w-full flex items-center gap-2 py-2 px-0 text-14 font-normal transition-colors relative mt-2 pt-2 border-t border-gray-200',
+                'text-gray-900 hover:text-gray-700'
+              )}
+            >
+              <User
+                className="h-5 w-5 flex-shrink-0 text-gray-900"
+              />
+              <span>My Profile</span>
+            </button>
+          )}
         </div>
       </div>
 

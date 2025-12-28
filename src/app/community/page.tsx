@@ -208,7 +208,7 @@ function CommunityContent() {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
       <main className="flex-1">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 md:py-10 lg:py-12">
           {/* Mobile Tab Navigation */}
           <div className="lg:hidden mb-6">
             <div className="flex gap-2 p-1 bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
@@ -294,22 +294,28 @@ function CommunityContent() {
 
           <div
             className={cn(
-              'flex flex-col gap-6',
-              activeTab === 'reels'
-                ? 'lg:grid lg:grid-cols-[320px_1fr_450px]'
-                : 'lg:flex-row'
+              'flex flex-col gap-6 sm:gap-8 lg:gap-10 xl:gap-12 lg:flex-row lg:items-start',
+              activeTab === 'reels' && 'lg:grid lg:grid-cols-[320px_1fr_450px]'
             )}
           >
             {/* Left Sidebar */}
-            <div className="hidden lg:block">
-              <CommunitySidebar
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
-              />
-            </div>
+            <aside className={cn(
+              'hidden lg:block lg:w-64 xl:w-72 lg:flex-shrink-0',
+              activeTab === 'reels' && 'lg:w-auto'
+            )}>
+              <div className="sticky top-6">
+                <CommunitySidebar
+                  activeTab={activeTab}
+                  onTabChange={setActiveTab}
+                />
+              </div>
+            </aside>
 
             {/* Main Content */}
-            <div className="flex-1 min-w-0">
+            <div className={cn(
+              'flex-1 min-w-0',
+              activeTab !== 'reels' && 'w-full lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto lg:mx-0'
+            )}>
               {/* Search Bar - Only show for content tabs (not community tab) */}
               {activeTab !== 'community' && (
                 <div className="mb-6">
@@ -492,21 +498,26 @@ function CommunityContent() {
             </div>
 
             {/* Right Sidebar */}
-            <div className="hidden xl:block">
-              <CommunityRightSidebar
-                activeTab={activeTab}
-                currentUser={communityData?.currentUser ? {
-                  name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || 'User',
-                  email: communityData.currentUser.email || '',
-                  avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
-                } : undefined}
-                suggestedUsers={communityData?.suggestedUsers || []}
-                topProviders={communityData?.topProviders || []}
-                recentArticles={communityData?.recentArticles || []}
-                tags={communityData?.tags || []}
-                selectedReel={selectedReel}
-              />
-            </div>
+            <aside className={cn(
+              'hidden xl:block xl:w-80 2xl:w-96 xl:flex-shrink-0',
+              activeTab === 'reels' && 'xl:w-auto'
+            )}>
+              <div className="sticky top-6">
+                <CommunityRightSidebar
+                  activeTab={activeTab}
+                  currentUser={communityData?.currentUser ? {
+                    name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || 'User',
+                    email: communityData.currentUser.email || '',
+                    avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
+                  } : undefined}
+                  suggestedUsers={communityData?.suggestedUsers || []}
+                  topProviders={communityData?.topProviders || []}
+                  recentArticles={communityData?.recentArticles || []}
+                  tags={communityData?.tags || []}
+                  selectedReel={selectedReel}
+                />
+              </div>
+            </aside>
           </div>
         </div>
       </main>
@@ -536,3 +547,4 @@ export default function CommunityPage() {
     </Suspense>
   )
 }
+

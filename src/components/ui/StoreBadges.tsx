@@ -29,7 +29,12 @@ export const StoreBadges = ({
   }
 
   return (
-    <div className={cn('flex md:flex-col md:gap-2 lg:flex-row gap-4 lg:gap-4', className)}>
+    <div
+      className={cn(
+        'flex md:flex-col md:gap-2 lg:flex-row gap-4 lg:gap-4',
+        className
+      )}
+    >
       {/* Apple App Store */}
       <a
         href={appStoreUrl}
@@ -39,7 +44,7 @@ export const StoreBadges = ({
         className="inline-block hover:opacity-80 transition-opacity"
       >
         <svg
-          width="150"
+          width="120"
           height="112"
           viewBox="0 0 334 112"
           fill="none"
@@ -91,7 +96,7 @@ export const StoreBadges = ({
         className="inline-block hover:opacity-80 transition-opacity"
       >
         <svg
-          width="150"
+          width="120"
           height="112"
           viewBox="0 0 334 112"
           fill="none"

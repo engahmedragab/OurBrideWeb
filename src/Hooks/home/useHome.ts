@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getHomeData, getStoreHomeData, getCommunityHome } from '@/services/api/home.api'
+import { getHomeData, getStoreHomeData, getCommunityHome, getMineInfo } from '@/services/api/home.api'
 import type { CommunityHomeResponse } from '@/types/responses/community/community-home-response'
 
 /**
@@ -49,6 +49,22 @@ export const useCommunityHome = (query?: {
     queryKey: ['community-home', query],
     queryFn: async () => {
       const data = await getCommunityHome(query)
+      return data
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  })
+}
+
+/**
+ * Hook to fetch mine info (user profile information)
+ */
+export const useMineInfo = (enabled = true) => {
+  return useQuery({
+    queryKey: ['mine-info'],
+    queryFn: async () => {
+      const data = await getMineInfo()
       return data
     },
     enabled,
