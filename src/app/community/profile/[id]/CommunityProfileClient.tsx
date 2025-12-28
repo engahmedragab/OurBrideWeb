@@ -27,14 +27,16 @@ function CommunityProfileContent() {
     // If no ID provided, show error
     if (!id) {
         return (
-            <div className="min-h-[60vh] flex items-center justify-center">
-                <div className="text-center">
-                    <p className="text-18 font-semibold text-gray-900 mb-2">
-                        Profile ID required
-                    </p>
-                    <p className="text-14 text-gray-600">
-                        Please provide a profile ID in the URL.
-                    </p>
+            <div className="min-h-[60vh] flex items-center justify-center py-12">
+                <div className="w-full max-w-md mx-auto px-4">
+                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-10 text-center">
+                        <p className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+                            Profile ID required
+                        </p>
+                        <p className="text-sm sm:text-base text-gray-600">
+                            Please provide a profile ID in the URL.
+                        </p>
+                    </div>
                 </div>
             </div>
         )
@@ -78,7 +80,7 @@ function CommunityProfileContent() {
 
     if (isLoading) {
         return (
-            <div className="min-h-[60vh] flex items-center justify-center">
+            <div className="min-h-[60vh] flex items-center justify-center py-12">
                 <LoadingOverlay open={true} title="Loading profile..." />
             </div>
         )
@@ -86,16 +88,18 @@ function CommunityProfileContent() {
 
     if (error || !profile) {
         return (
-            <div className="min-h-[60vh] flex items-center justify-center">
-                <div className="text-center">
-                    <p className="text-18 font-semibold text-gray-900 mb-2">
-                        Profile not found
-                    </p>
-                    <p className="text-14 text-gray-600">
-                        {error instanceof Error
-                            ? error.message
-                            : 'The profile you are looking for does not exist.'}
-                    </p>
+            <div className="min-h-[60vh] flex items-center justify-center py-12">
+                <div className="w-full max-w-md mx-auto px-4">
+                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-10 text-center">
+                        <p className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+                            Profile not found
+                        </p>
+                        <p className="text-sm sm:text-base text-gray-600">
+                            {error instanceof Error
+                                ? error.message
+                                : 'The profile you are looking for does not exist or has been removed.'}
+                        </p>
+                    </div>
                 </div>
             </div>
         )
@@ -109,11 +113,11 @@ export function CommunityProfileClient() {
         <div className="min-h-screen flex flex-col bg-gray-50">
             <Header />
             <main className="flex-1">
-                <div className="container-custom py-6 md:py-8">
+                <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 md:py-10 lg:py-12">
                     <div className="max-w-7xl mx-auto">
                         <Suspense
                             fallback={
-                                <div className="min-h-[60vh] flex items-center justify-center min-h-[400px]">
+                                <div className="min-h-[60vh] flex items-center justify-center py-12">
                                     <LoadingOverlay open={true} title="Loading profile..." />
                                 </div>
                             }

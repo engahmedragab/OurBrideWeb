@@ -16,19 +16,19 @@ export const Footer = ({ className }: FooterProps) => {
     {
       name: 'Facebook',
       icon: Facebook,
-      href: 'https://facebook.com/ourbride',
+      href: 'https://facebook.com/OurBrideStores',
       ariaLabel: 'Visit our Facebook page',
     },
     {
       name: 'Instagram',
       icon: Instagram,
-      href: 'https://instagram.com/ourbride',
+      href: 'https://instagram.com/ourbridestore',
       ariaLabel: 'Visit our Instagram page',
     },
     {
       name: 'TikTok',
       icon: Music2,
-      href: 'https://tiktok.com/@ourbride',
+      href: 'https://tiktok.com/@our.bride.store',
       ariaLabel: 'Visit our TikTok page',
     },
     {
@@ -61,37 +61,42 @@ export const Footer = ({ className }: FooterProps) => {
             </Link>
 
             {/* Navigation Links */}
-            <nav className="flex items-center gap-4 md:gap-6 lg:gap-8 flex-wrap justify-center">
-              <Link
-                href="/"
-                className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
-              >
-                Home
-              </Link>
-              <Link
-                href="/products/intro"
-                className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
-              >
-                Products
-              </Link>
-              <Link
-                href="/services"
-                className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
-              >
-                Services
-              </Link>
-              <Link
-                href="/community"
-                className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
-              >
-                Community
-              </Link>
-              <Link
-                href="/help-center"
-                className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
-              >
-                Help Center
-              </Link>
+            <nav className="flex flex-col gap-3 md:gap-4 items-center">
+              <h3 className="text-18 font-normal text-gray-900">Quick Links</h3>
+              <div className="w-16 h-0.5 bg-brand-500" />
+              {/* Second Row */}
+              <div className="flex items-center gap-4 md:gap-6 lg:gap-8 flex-wrap justify-center">
+                <Link
+                  href="/about"
+                  className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
+                >
+                  About
+                </Link>
+                <Link
+                  href="/shipping"
+                  className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
+                >
+                  Shipping
+                </Link>
+                <Link
+                  href="/returns"
+                  className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
+                >
+                  Returns
+                </Link>
+                <Link
+                  href="/sitemap"
+                  className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
+                >
+                  Sitemap
+                </Link>
+                <Link
+                  href="/dashboard/help-center"
+                  className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
+                >
+                  Help Center
+                </Link>
+              </div>
             </nav>
           </div>
 

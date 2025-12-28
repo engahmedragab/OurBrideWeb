@@ -95,3 +95,19 @@ export const getCommunityHome = async (query?: {
   }
 }
 
+/**
+ * Get mine info (user profile information)
+ * GET /api/v1/home/mine-info
+ * @returns User profile information
+ */
+export const getMineInfo = async (): Promise<unknown> => {
+  try {
+    const response = await apiClient.api.getHomemineInfo()
+    const responseAny: any = response as { data?: unknown } | unknown
+    return responseAny.data ?? responseAny
+  } catch (error) {
+    console.error('Error fetching mine info:', error)
+    throw error instanceof Error ? error : new Error('Failed to fetch mine info')
+  }
+}
+

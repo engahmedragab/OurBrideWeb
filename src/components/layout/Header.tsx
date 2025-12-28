@@ -31,6 +31,8 @@ import {
   Star,
   UserPlus,
 } from 'lucide-react'
+import { NotificationDropdown } from '@/components/notifications'
+import { useNotifications } from '@/hooks/notifications/useNotifications'
 
 export interface HeaderProps {
   className?: string
@@ -43,6 +45,14 @@ export const Header = ({ className }: HeaderProps) => {
 
   // Fetch cart data
   const { data: cartData } = useCart()
+
+  // Fetch notifications
+  const {
+    notifications,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotifications()
 
   // Calculate cart count (number of unique items)
   const cartCount = useMemo(() => {
@@ -250,7 +260,7 @@ export const Header = ({ className }: HeaderProps) => {
             </Button>
 
 
-            {/* Wishlist and Cart Group */}
+            {/* Wishlist, Notifications, and Cart Group */}
             <div className="hidden md:flex items-center rounded-full border border-brand-500 bg-transparent px-1">
               {/* Wishlist */}
               <Button
@@ -269,6 +279,14 @@ export const Header = ({ className }: HeaderProps) => {
                   <Heart className="h-5 w-5 text-brand-500" />
                 </Link>
               </Button>
+
+              {/* Notifications */}
+              <NotificationDropdown
+                notifications={notifications}
+                onMarkAsRead={markAsRead}
+                onDelete={deleteNotification}
+                onMarkAllAsRead={markAllAsRead}
+              />
 
               {/* Cart */}
               <Button

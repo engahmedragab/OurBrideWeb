@@ -22,6 +22,7 @@ import {
   Star,
   Users,
   MapPin,
+  Ticket,
 } from 'lucide-react'
 
 export interface UserSidebarProps {
@@ -49,7 +50,14 @@ export const UserSidebar = ({
     return cartData.purchases?.length || 0
   }, [cartData])
 
-  const menuSections = [
+  type MenuItem = {
+    label: string
+    path: string
+    icon: React.ComponentType<{ className?: string }>
+    comingSoon?: boolean
+  }
+
+  const menuSections: Array<{ items: MenuItem[] }> = [
     {
       items: [
         {
@@ -95,6 +103,7 @@ export const UserSidebar = ({
           label: 'Messages',
           path: '/messages',
           icon: Mail,
+          comingSoon: true,
         },
         {
           label: 'Notifications',
@@ -105,16 +114,25 @@ export const UserSidebar = ({
           label: 'Gift Center',
           path: '/dashboard/gift-center',
           icon: Gift,
+          comingSoon: true,
         },
         {
           label: 'Affiliate Program',
           path: '/affiliate',
           icon: Volume2,
+          comingSoon: true,
         },
         {
           label: 'Referrals',
           path: '/referrals',
           icon: UserPlus,
+          comingSoon: true,
+        },
+        {
+          label: 'Coupons',
+          path: '/coupons',
+          icon: Ticket,
+          comingSoon: true,
         },
       ],
     },
@@ -152,6 +170,10 @@ export const UserSidebar = ({
     // Special handling for Gift Center
     if (path === '/dashboard/gift-center') {
       return pathname === '/dashboard/gift-center' || pathname.startsWith('/dashboard/gift-center/')
+    }
+    // Special handling for Coupons
+    if (path === '/coupons') {
+      return pathname === '/coupons'
     }
     // Special handling for Events - should be active for /dashboard/my-events and all sub-pages
     if (path === '/dashboard/my-events') {
@@ -206,7 +228,12 @@ export const UserSidebar = ({
                 const active = isActive(item.path)
 
                 return (
-                  <li key={item.path}>
+                  <li key={item.path} className="relative">
+                    {item.comingSoon && (
+                      <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full bg-gray-200 text-8 font-medium text-brand-500 px-1 h-3.5 min-w-[28px]">
+                        Coming Soon
+                      </span>
+                    )}
                     <Link
                       href={item.path}
                       onClick={onLinkClick}

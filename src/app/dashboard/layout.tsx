@@ -38,6 +38,7 @@ export default function DashboardLayout({
       '/dashboard/help-center',
       '/dashboard/settings', // allow access to settings without planning preferences
       '/dashboard/my-events', // allow access to my events without planning preferences
+      '/dashboard/gift-center', // allow access to gift center pages without planning preferences
       // Add other exempt paths here if needed
     ]
 
