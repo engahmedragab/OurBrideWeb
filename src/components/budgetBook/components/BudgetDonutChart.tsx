@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { getColorFromName } from '../state/mockBudgetData'
+import { getColorFromName } from '@/utils/budgetColors'
 
 interface Segment {
   label: string

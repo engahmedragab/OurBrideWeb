@@ -4,19 +4,19 @@ import { Plus } from 'lucide-react'
 import { cardVariants } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { BudgetLineRowActions } from './BudgetLineRowActions'
-import { getCategoryColor } from '../utils/budgetColors'
-import { formatEGP } from '../utils/formatCurrency'
+import { getCategoryColor } from '@/utils/budgetColors'
+import { formatEGP } from '@/utils/formatCurrency'
 import { cn } from '@/lib/utils'
-import type { MockBudgetLine, MockBudgetLineCategory } from '../state/mockBudgetData'
+import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
 
 interface BudgetLinesTableProps {
-  lines: MockBudgetLine[]
-  categories: MockBudgetLineCategory[]
+  lines: BudgetLineResponse[]
+  categories: BudgetLineCategoryResponse[]
   totalBudget: number
   onToggleDone?: (lineId: number) => void
   onToggleFavorite?: (lineId: number) => void
-  onEdit?: (line: MockBudgetLine) => void
-  onDelete?: (line: MockBudgetLine) => void
+  onEdit?: (line: BudgetLineResponse) => void
+  onDelete?: (line: BudgetLineResponse) => void
   onCreateLine?: () => void
   isLoading?: boolean
 }
@@ -58,6 +58,17 @@ export const BudgetLinesTable = ({
     return (
       <div className={cn(cardVariants({ variant: 'default', padding: 'lg' }), 'p-6')}>
         <div className="text-center py-12 text-gray-500">
+        <div className="flex items-center justify-center md:justify-end px-4 py-3 border-b border-gray-200 bg-white">
+          <Button
+            variant="brand"
+            size="sm"
+            onClick={onCreateLine}
+            className="text-white whitespace-nowrap !rounded-lg h-9 px-3 "
+          >
+            <Plus className="h-3.5 w-3.5 mr-1.5 text-white" />
+            Add New
+          </Button>
+        </div>
           <p className="text-14">No budget lines found</p>
         </div>
       </div>
@@ -68,7 +79,7 @@ export const BudgetLinesTable = ({
     <div className={cn(cardVariants({ variant: 'default' }), 'overflow-hidden shadow-sm border border-gray-200')}>
       {/* Table Header with Add New Button */}
       {onCreateLine && (
-        <div className="flex items-center justify-end px-4 py-3 border-b border-gray-200 bg-white">
+        <div className="flex items-center justify-center md:justify-end px-4 py-3 border-b border-gray-200 bg-white">
           <Button
             variant="brand"
             size="sm"
@@ -106,10 +117,12 @@ export const BudgetLinesTable = ({
           </thead>
           <tbody className="bg-white">
             {lines.map((line, index) => {
-              const category = getCategory(line.lineCategoryId)
-              const color = category ? getCategoryColor(category) : '#ccc' // fallback to default color string if category is undefined
-              const remaining = line.estimated - line.paid
-              const percentage = calculatePercentage(line.estimated)
+              const category = getCategory(line.lineCategoryId || null)
+              const color = category ? getCategoryColor(category) : '#ccc'
+              const estimated = line.estimated || 0
+              const paid = line.paid || 0
+              const remaining = estimated - paid
+              const percentage = calculatePercentage(estimated)
               const isEven = index % 2 === 0
 
               return (
@@ -120,7 +133,7 @@ export const BudgetLinesTable = ({
                     isEven ? 'bg-white' : 'bg-gray-50'
                   )}
                 >
-                  {/* Service with colored accent bar */}
+                  {/* Service with colored vertical bar */}
                   <td className="px-4 py-4 align-middle border-b border-gray-100">
                     <div className="flex items-center gap-3">
                       <div

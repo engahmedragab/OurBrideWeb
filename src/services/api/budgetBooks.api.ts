@@ -85,6 +85,7 @@ export const syncBudgetBook = async (
   query?: {
     clientId?: string
     userType?: UserType
+    eventId?: number
   },
   params?: RequestParams
 ): Promise<void> => {
@@ -109,7 +110,19 @@ export const getBudgetBook = async (
 ): Promise<GetBudgetBookResponse> => {
   try {
     const response = await apiClient.api.getBudgetBooksGetBook(query, params)
-    return (response?.data ?? response) as unknown as GetBudgetBookResponse
+    const responseAny: any = response
+    
+    // Handle different response structures (similar to occasion API)
+    if (responseAny?.data?.data) {
+      return responseAny.data.data as GetBudgetBookResponse
+    }
+    if (responseAny?.data) {
+      return responseAny.data as GetBudgetBookResponse
+    }
+    if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+      return responseAny as GetBudgetBookResponse
+    }
+    return null
   } catch (error: unknown) {
     const apiError: ApiError = {
       message: error instanceof Error ? error.message : 'Failed to fetch budget book',

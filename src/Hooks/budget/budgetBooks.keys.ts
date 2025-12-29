@@ -5,7 +5,7 @@
  * All keys are returned as arrays suitable for use with queryClient.invalidateQueries().
  */
 
-import type { BudgetBooksQuery, BudgetBooksBaseQuery } from './budgetBooks.types'
+import type { BudgetBooksQuery, BudgetBooksBaseQuery } from '@/services/api/budgetBooks.types'
 
 /**
  * Query key factory for budget book queries

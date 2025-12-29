@@ -4,12 +4,13 @@ import { Edit2, Trash2, Plus } from 'lucide-react'
 import { cardVariants } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
-import { getCategoryColor } from '../utils/budgetColors'
-import type { MockBudgetLineCategory } from '../state/mockBudgetData'
+import { getCategoryColor } from '@/utils/budgetColors'
+import { CategoryIcon } from './CategoryIcon'
+import type { BudgetLineCategoryResponse } from '@/types/responses'
 
 interface BudgetCategoryBreakdownListProps {
   categoryStats: Array<{
-    category: MockBudgetLineCategory
+    category: BudgetLineCategoryResponse
     total: number
     percentage: number
   }>
@@ -34,9 +35,6 @@ export const BudgetCategoryBreakdownList = ({
   totalEstimated,
   isLoading = false,
 }: BudgetCategoryBreakdownListProps) => {
-  // Calculate "All" percentage
-  const allPercentage = totalBudget > 0 ? (totalEstimated / totalBudget) * 100 : 0
-
   if (isLoading) {
     return (
       <div
@@ -80,39 +78,6 @@ export const BudgetCategoryBreakdownList = ({
       {/* Scrollable List Area */}
       <div className="flex-1 overflow-y-auto px-3 py-2">
         <div className="space-y-1.5">
-        {/* "All" item - first in list */}
-        <button
-          onClick={() => onCategoryClick(null)}
-          className={cn(
-            'w-full flex items-center gap-2 py-1.5 px-2 rounded-lg transition-all text-left relative group',
-            activeCategoryId === null
-              ? 'bg-white border border-gray-200 shadow-sm'
-              : 'hover:bg-gray-50 border border-transparent'
-          )}
-        >
-          {/* Neutral color bar for "All" */}
-          <div
-            className="w-0.5 h-6 rounded-full flex-shrink-0"
-            style={{ backgroundColor: '#737373' }} // gray-500
-          />
-          {/* Category name */}
-          <div className="flex-1 flex items-center justify-between min-w-0">
-            <span
-              className={cn(
-                'text-13 font-medium truncate',
-                activeCategoryId === null
-                  ? 'text-gray-900 font-semibold'
-                  : 'text-gray-600'
-              )}
-            >
-              All
-            </span>
-            <span className="text-13 font-medium text-gray-500 flex-shrink-0 ml-2">
-              {allPercentage.toFixed(0)}%
-            </span>
-          </div>
-        </button>
-
         {/* Category items */}
         {categoryStats.map(stat => {
           const color = getCategoryColor(stat.category)
@@ -121,17 +86,20 @@ export const BudgetCategoryBreakdownList = ({
             <div
               key={stat.category.id}
               className={cn(
-                'w-full flex items-center gap-2 py-1.5 px-2 rounded-lg transition-all relative group',
+                'w-full flex items-center gap-3 py-1.5 px-2 rounded-lg transition-all relative group',
                 isActive
                   ? 'bg-white border border-gray-200 shadow-sm'
                   : 'hover:bg-gray-50 border border-transparent'
               )}
+              style={isActive ? { borderColor: color + '40' } : undefined}
             >
-              {/* Colored vertical indicator */}
-              <div
-                className="w-0.5 h-6 rounded-full flex-shrink-0"
-                style={{ backgroundColor: color }}
+              {/* Icon badge with color */}
+              <CategoryIcon
+                iconName={stat.category.iconName}
+                colorName={stat.category.colorName}
+                size="sm"
               />
+              
               {/* Category name - clickable */}
               <div
                 onClick={() => onCategoryClick(stat.category.id)}
@@ -153,7 +121,7 @@ export const BudgetCategoryBreakdownList = ({
                 >
                   {stat.category.name || 'Unnamed Category'}
                 </span>
-                {/* Action buttons - where percentage was */}
+                {/* Action buttons */}
                 {(onEditCategory || onDeleteCategory) && (
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2">
                     {onEditCategory && (
@@ -187,7 +155,7 @@ export const BudgetCategoryBreakdownList = ({
                   </div>
                 )}
               </div>
-              {/* Percentage - where icons were */}
+              {/* Percentage */}
               <span className="text-13 font-medium text-gray-500 flex-shrink-0 ml-2">
                 {stat.percentage.toFixed(0)}%
               </span>

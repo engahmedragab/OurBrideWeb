@@ -6,12 +6,12 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { cardVariants } from '@/components/ui/Card'
 import { cn } from '@/lib/utils'
-import { getCategoryColor } from '../utils/budgetColors'
-import { formatEGP } from '../utils/formatCurrency'
-import type { MockBudgetLineCategory } from '../state/mockBudgetData'
+import { getCategoryColor } from '@/utils/budgetColors'
+import { formatEGP } from '@/utils/formatCurrency'
+import type { BudgetLineCategoryResponse } from '@/types/responses'
 
 interface CategoryStat {
-  category: MockBudgetLineCategory
+  category: BudgetLineCategoryResponse
   value: number // sum(paid ?? 0) per category
   percentage: number
 }
@@ -83,9 +83,9 @@ export const BudgetOverviewCard = ({
   const handleSave = () => {
     const numericValue = parseFloat(editingBudget.replace(/,/g, ''))
     if (!isNaN(numericValue) && numericValue >= 0 && onBudgetChange) {
-      onBudgetChange(numericValue)
+      onBudgetChange(numericValue) // Save to local state only
     }
-    setIsEditing(false)
+    // Don't change isEditing - keep it editable
   }
 
   const handleCancel = () => {
@@ -144,9 +144,9 @@ export const BudgetOverviewCard = ({
           </div>
         </div>
 
-        {/* Budget Input and Save */}
-        <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
-          <div className="flex-1">
+        {/* Budget Input with Save button inside */}
+        <div className="pt-3 border-t border-gray-200">
+          <div className="relative">
             <Input
               type="text"
               value={editingBudget}
@@ -155,9 +155,9 @@ export const BudgetOverviewCard = ({
                 setEditingBudget(value)
                 setIsEditing(true)
               }}
-              onBlur={handleCancel}
               onKeyDown={e => {
                 if (e.key === 'Enter') {
+                  e.preventDefault()
                   handleSave()
                 } else if (e.key === 'Escape') {
                   handleCancel()
@@ -165,19 +165,19 @@ export const BudgetOverviewCard = ({
               }}
               suffix="EGP"
               size="lg"
-              className="w-full"
+              placeholder='Enter Budget'
+              className="w-full pr-20"
             />
-          </div>
-          {isEditing && (
             <Button
-              variant="brand"
-              size="md"
+              type="button"
+             
+              size="sm"
               onClick={handleSave}
-              className="text-white whitespace-nowrap"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-3 text-brand-500 bg-white rounded-lg hover:bg-brand-500 hover:text-white hover:border-brand-500 hover:rounded-md"
             >
               Save
             </Button>
-          )}
+          </div>
         </div>
       </div>
     </div>

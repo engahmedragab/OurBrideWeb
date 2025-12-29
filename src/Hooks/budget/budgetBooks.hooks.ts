@@ -7,7 +7,7 @@
  */
 
 import { useQuery, useMutation, useQueryClient, type UseQueryOptions, type UseMutationOptions } from '@tanstack/react-query'
-import { budgetBookKeys } from '../api/budgetBooks.keys'
+import { budgetBookKeys } from './budgetBooks.keys'
 import {
   initBudgetBook,
   syncBudgetBook,
@@ -36,7 +36,7 @@ import {
   getBudgetCategory,
   updateBudgetCategory,
   deleteBudgetCategory,
-} from '../api/budgetBooks.api'
+} from '@/services/api/budgetBooks.api'
 import type {
   GetBudgetBookResponse,
   GetBudgetLinesResponse,
@@ -52,7 +52,7 @@ import type {
   BudgetLineCategoryUpdateRequest,
   ApiError,
   UserType,
-} from '../api/budgetBooks.types'
+} from '@/services/api/budgetBooks.types'
 
 // Helper functions for cache invalidation
 const invalidateBudgetBookQueries = (queryClient: ReturnType<typeof useQueryClient>) => {
@@ -268,11 +268,11 @@ export const useBudgetInitMutation = (
  * Hook to sync a budget book
  */
 export const useBudgetSyncMutation = (
-  options?: Omit<UseMutationOptions<void, ApiError, BudgetBookRequest & { query?: BudgetBooksBaseQuery }>, 'mutationFn'>
+  options?: Omit<UseMutationOptions<void, ApiError, BudgetBookRequest & { query?: BudgetBooksQuery }>, 'mutationFn'>
 ) => {
   const queryClient = useQueryClient()
 
-  return useMutation<void, ApiError, BudgetBookRequest & { query?: BudgetBooksBaseQuery }>({
+  return useMutation<void, ApiError, BudgetBookRequest & { query?: BudgetBooksQuery }>({
     mutationFn: ({ query, ...data }) => syncBudgetBook(data, query),
     onSuccess: () => {
       invalidateBudgetBookQueries(queryClient)

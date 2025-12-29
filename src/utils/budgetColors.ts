@@ -1,4 +1,4 @@
-import type { MockBudgetLineCategory } from '../state/mockBudgetData'
+import { argbToHex } from './iconUtils'
 
 // Color palette for fallback (stable colors based on category id)
 const COLOR_PALETTE = [
@@ -15,9 +15,18 @@ const COLOR_PALETTE = [
 ]
 
 /**
- * Maps colorName to design token color
+ * Maps colorName (ARGB format) to hex color
+ * Supports both old string format and new ARGB format
  */
-const getColorFromName = (colorName: string | null): string => {
+export const getColorFromName = (colorName: string | null): string => {
+  if (!colorName) return '#737373'
+  
+  // If it looks like ARGB format (starts with 0x and is 8+ chars), parse it
+  if (colorName.startsWith('0x') || colorName.startsWith('0X')) {
+    return argbToHex(colorName)
+  }
+  
+  // Legacy string format support (for backward compatibility)
   switch (colorName) {
     case 'green':
       return '#22C55E' // green-500
@@ -36,7 +45,8 @@ const getColorFromName = (colorName: string | null): string => {
     case 'cyan':
       return '#06B6D4' // cyan-500
     default:
-      return '#737373' // gray-500 (neutral fallback)
+      // Try parsing as ARGB if it's a hex string
+      return argbToHex(colorName)
   }
 }
 
