@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import Image from 'next/image'
 import { Badge } from '@/components/ui/Badge'
 import { 
-  Star, 
+  Clock, 
   CheckCircle2,
   Sparkles,
   Camera,
@@ -104,14 +104,10 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
     return lines.filter(line => !line.isDeleted)
   }, [book.services, book.lines])
 
-  // Sort: incomplete bookings first, then by creation date
+  // Sort by creation date (newest first)
+  // Note: All lines share the same book-level pending/completed status
   const sortedLines = useMemo(() => {
     return [...activeLines].sort((a, b) => {
-      // Incomplete bookings first
-      if (a.isDone !== b.isDone) {
-        return a.isDone ? 1 : -1
-      }
-      // Then sort by creation date (newest first)
       const dateA = new Date(a.creationDate).getTime()
       const dateB = new Date(b.creationDate).getTime()
       return dateB - dateA
@@ -159,60 +155,44 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
             const IconComponent = hasIconName ? getIconFromName(line.iconName) : null
 
             return (
-              <div key={line.id} className="bg-white rounded-lg border border-gray-200 flex items-stretch gap-0 relative">
-                {/* Icon/Image Container */}
-                <div className="w-24 sm:w-32 md:w-36 self-stretch rounded-l-lg rounded-r-none flex-shrink-0 overflow-hidden relative">
-                  {hasIconName && IconComponent && (
-                    <div className="w-full h-full flex items-center justify-start ">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg bg-brand-50 flex items-center justify-center">
-                        <IconComponent className="w-6 h-6 sm:w-8 sm:h-8 text-brand-500" />
+              <div key={line.id} className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4">
+                {/* Single horizontal row layout */}
+                <div className="flex items-center justify-between gap-4">
+                  {/* Left section: Icon + Title + Date grouped together */}
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {/* Icon */}
+                    {hasIconName && IconComponent && (
+                      <div className="w-12 h-12 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <IconComponent className="w-6 h-6 sm:w-6 sm:h-6 text-brand-500" />
                       </div>
-                    </div>
-                  
-                  )}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0 py-2 sm:py-2 pl-3 sm:pl-4 pr-3 relative">
-                  <div className="flex flex-col gap-1.5 sm:gap-2">
-                    {/* Mobile Layout: Badge first, then title below */}
-                    <div className="sm:hidden flex flex-col gap-2">
-                      {line.isFavorite && (
-                        <Badge variant="pending" className="text-8 flex items-center gap-0.5 w-fit px-1.5 py-0.5">
-                          <Star className="w-2 h-2" />
-                          <span className='text-[10px]'>Booking Favorite</span>
-                        </Badge>
-                      )}
-                      {line.isDone && (
-                        <Badge variant="confirmed" className="text-8 flex items-center gap-0.5 w-fit px-1.5 py-0.5">
-                          <CheckCircle2 className="w-2 h-2" />
-                          <span className='text-[10px]'>Booking Done</span>
-                        </Badge>
-                      )}
-                      <p className="text-14 font-semibold text-gray-900">{line.title}</p>
-                    </div>
-                    {/* Desktop Layout: Title and badge inline */}
-                    <div className="hidden sm:flex sm:items-start sm:justify-between sm:gap-2">
-                      <p className="text-16 font-semibold text-gray-900 flex-1">{line.title}</p>
-                      {line.isFavorite && (
-                        <Badge variant="default" className="text-12 flex items-center gap-1 flex-shrink-0 bg-brand/50">
-                          <Star className="w-4 h-4" />
-                          <span>Booking Favorite</span>
-                        </Badge>
-                      )}
-                      {line.isDone && (
-                        <Badge variant="confirmed" className="text-12 flex items-center gap-1 flex-shrink-0">
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>Booking Done</span>
-                        </Badge>
-                      )}
-                    </div>
-                    {date && date !== '0001-01-01T00:00:00' && (
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
-                        <p className="text-12 sm:text-14 text-gray-600">
+                    )}
+                    
+                    {/* Title and Date stack */}
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <p className="text-14 sm:text-16 font-semibold text-gray-900 truncate">
+                        {line.title}
+                      </p>
+                      {date && date !== '0001-01-01T00:00:00' && (
+                        <p className="text-12 sm:text-14 text-gray-600 truncate">
                           {format(new Date(date), 'dd/MM/yyyy')} {time}
                         </p>
-                      </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right section: Status badges */}
+                  <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
+                    {book.pending && book.pending > 0 && (
+                      <Badge variant="pending" className="md:text-12 text-[6px] flex items-center gap-1 whitespace-nowrap">
+                        <Clock className="w-3 h-3 md:w-4 md:h-4" />
+                        <span>Pending</span>
+                      </Badge>
+                    )}
+                    {((book.completed && book.completed > 0) || book.isSubDone) && (
+                      <Badge variant="confirmed" className="md:text-12 text-[6px] flex items-center gap-1 whitespace-nowrap">
+                        <CheckCircle2 className="w-3 h-3 md:w-4 md:h-4" />
+                        <span>Completed</span>
+                      </Badge>
                     )}
                   </div>
                 </div>

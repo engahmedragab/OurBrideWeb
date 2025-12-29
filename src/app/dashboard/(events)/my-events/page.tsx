@@ -5,7 +5,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { EventCard, AddEventModal } from '@/components/events'
-import { Button, LoadingSpinner } from '@/components/ui'
+import { Button, LoadingOverlay, LoadingSpinner } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import {
   useWeddingEvents,
@@ -525,7 +525,7 @@ function MyEventsPageContent() {
         {/* Loading State */}
         {isMounted && isLoadingEventInfo && (
           <div className="flex items-center justify-center py-12">
-            <LoadingSpinner size="lg" text="Loading event details..." />
+            <LoadingOverlay open={true} title="Loading event details..." />
           </div>
         )}
 
@@ -753,7 +753,7 @@ function MyEventsPageContent() {
       {/* Loading State */}
       {isMounted && isLoading && (
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Loading events..." />
+          <LoadingOverlay open={true} title="Loading events..." />
         </div>
       )}
 
@@ -830,9 +830,7 @@ export default function MyEventsPage() {
     <Suspense
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <LoadingSpinner size="lg" text="Loading events..." />
-          </div>
+          <LoadingOverlay open={true} title="Loading events..." />
         </div>
       }
     >
