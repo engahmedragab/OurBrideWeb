@@ -20,8 +20,6 @@ import { calculateBudgetStats } from '@/utils/budgetStats'
 import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 
-const STORAGE_KEY_PREFIX = 'budgetDraft:eventId='
-
 function BudgetPageContent() {
   const router = useRouter()
   const { addToast } = useToast()
@@ -68,24 +66,6 @@ function BudgetPageContent() {
 
   const syncMutation = useBudgetSyncMutation()
 
-  // Load draft from localStorage on mount
-  useEffect(() => {
-    if (!eventId || typeof window === 'undefined') return
-
-    const storageKey = `${STORAGE_KEY_PREFIX}${eventId}`
-    const savedDraft = localStorage.getItem(storageKey)
-    if (savedDraft) {
-      try {
-        const parsed = JSON.parse(savedDraft) as BudgetBookDraft
-        setLocalDraft(parsed)
-        setHasUnsavedChanges(true)
-      } catch (e) {
-        console.error('Failed to parse saved draft:', e)
-        localStorage.removeItem(storageKey)
-      }
-    }
-  }, [eventId])
-
   // On first load, use the book from GET endpoint immediately
   useEffect(() => {
     if (isInitialLoadRef.current && budgetBook && !localDraft) {
@@ -122,18 +102,6 @@ function BudgetPageContent() {
       }
     }
   }, [budgetBook, hasUnsavedChanges, syncMutation.isSuccess])
-
-  // Save draft to localStorage whenever it changes
-  useEffect(() => {
-    if (!eventId || !localDraft || typeof window === 'undefined') return
-
-    const storageKey = `${STORAGE_KEY_PREFIX}${eventId}`
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(localDraft))
-    } catch (e) {
-      console.error('Failed to save draft to localStorage:', e)
-    }
-  }, [localDraft, eventId])
 
   // Check if there are actual changes
   const hasActualChanges = useCallback((): boolean => {

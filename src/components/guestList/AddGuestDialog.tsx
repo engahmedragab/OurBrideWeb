@@ -12,7 +12,7 @@ interface AddGuestDialogProps {
   onClose: () => void
   onSubmit: (guest: {
     side: GuestSide
-    groupId: GuestGroupId
+    groupName: string // Changed from groupId to groupName
     name: string
     peopleCount: number
     registeredAt: string
@@ -21,8 +21,6 @@ interface AddGuestDialogProps {
   defaultSide: GuestSide
   defaultGroupId?: GuestGroupId
   availableGroups: GuestGroup[]
-  onAddNewGroup?: (groupTitle: string) => GuestGroupId
-  onGroupCreated?: (groupId: GuestGroupId) => void
   forcedGroupId?: GuestGroupId // When set, locks the group and hides group selection
   allowGroupCreation?: boolean // When false, hides group creation options
 }
@@ -34,19 +32,13 @@ export const AddGuestDialog = ({
   defaultSide,
   defaultGroupId,
   availableGroups,
-  onAddNewGroup,
-  onGroupCreated,
   forcedGroupId,
   allowGroupCreation = true,
 }: AddGuestDialogProps) => {
   const [side, setSide] = useState<GuestSide>(defaultSide)
-  const [groupId, setGroupId] = useState<GuestGroupId>(
-    forcedGroupId || defaultGroupId || availableGroups[0]?.id || 'friends'
-  )
   const [name, setName] = useState('')
   const [peopleCount, setPeopleCount] = useState(1)
   const [status, setStatus] = useState<GuestStatus>('none')
-  const [groupMode, setGroupMode] = useState<'existing' | 'new'>('existing')
   const [newGroupTitle, setNewGroupTitle] = useState('')
   const [errors, setErrors] = useState<{
     name?: string
@@ -57,15 +49,13 @@ export const AddGuestDialog = ({
   useEffect(() => {
     if (isOpen) {
       setSide(defaultSide)
-      setGroupId(forcedGroupId || defaultGroupId || availableGroups[0]?.id || 'friends')
       setName('')
       setPeopleCount(1)
       setStatus('none')
-      setGroupMode(forcedGroupId ? 'existing' : (defaultGroupId ? 'existing' : 'existing'))
       setNewGroupTitle('')
       setErrors({})
     }
-  }, [isOpen, defaultSide, defaultGroupId, availableGroups, forcedGroupId])
+  }, [isOpen, defaultSide])
 
   const handleSubmit = () => {
     const newErrors: typeof errors = {}
@@ -76,29 +66,18 @@ export const AddGuestDialog = ({
       newErrors.peopleCount = 'People count must be between 1 and 20'
     }
     
-    let finalGroupId = forcedGroupId || groupId
-    
-    // Handle new group creation (only if not forced and creation is allowed)
-    if (!forcedGroupId && allowGroupCreation && groupMode === 'new') {
+    // Always require group name
+    let groupName = ''
+    if (forcedGroupId) {
+      // If group is forced, use the existing group name
+      const existingGroup = availableGroups.find(g => g.id === forcedGroupId)
+      groupName = existingGroup?.title || ''
+    } else if (allowGroupCreation) {
+      // Use the new group name from input
       if (!newGroupTitle.trim()) {
         newErrors.newGroup = 'Group name is required'
       } else {
-        const trimmedTitle = newGroupTitle.trim()
-        // Check if group with same name (case-insensitive) already exists
-        const existingGroup = availableGroups.find(
-          g => g.title.toLowerCase() === trimmedTitle.toLowerCase()
-        )
-        
-        if (existingGroup) {
-          // Use existing group instead of creating duplicate
-          finalGroupId = existingGroup.id
-        } else if (onAddNewGroup) {
-          // Create new group
-          finalGroupId = onAddNewGroup(trimmedTitle)
-          if (onGroupCreated) {
-            onGroupCreated(finalGroupId)
-          }
-        }
+        groupName = newGroupTitle.trim()
       }
     }
 
@@ -107,9 +86,15 @@ export const AddGuestDialog = ({
       return
     }
 
+    if (!groupName) {
+      newErrors.newGroup = 'Group name is required'
+      setErrors(newErrors)
+      return
+    }
+
     onSubmit({
       side,
-      groupId: finalGroupId,
+      groupName: groupName, // Pass group name directly
       name: name.trim(),
       peopleCount,
       registeredAt: new Date().toISOString().split('T')[0],
@@ -118,14 +103,6 @@ export const AddGuestDialog = ({
     onClose()
   }
 
-
-  const groupOptions = availableGroups.map(group => ({
-    value: group.id,
-    label: group.title,
-  }))
-
-  const isGroupLocked = !!forcedGroupId
-  const showGroupSelection = !isGroupLocked && allowGroupCreation
 
   return (
     <Modal
@@ -153,71 +130,30 @@ export const AddGuestDialog = ({
           />
         </div>
 
-        {/* Group Selection - Only show if not locked */}
-        {showGroupSelection && (
+        {/* Group Name - Always create new group */}
+        {allowGroupCreation && (
           <div>
             <label className="block text-14 font-medium text-gray-700 mb-2">
-              Group
+              Group Name <span className="text-red-500">*</span>
             </label>
-            
-            {/* Toggle between existing and new group */}
-            <div className="flex gap-2 mb-3">
-              <Button
-                type="button"
-                variant={groupMode === 'existing' ? 'brand' : 'outline'}
-                size="sm"
-                onClick={() => {
-                  setGroupMode('existing')
-                  setNewGroupTitle('')
+            <Input
+              value={newGroupTitle}
+              onChange={e => {
+                setNewGroupTitle(e.target.value)
+                if (errors.newGroup) {
                   setErrors(prev => ({ ...prev, newGroup: undefined }))
-                }}
-                className={`flex-1 text-12 ${groupMode === 'existing' ? 'text-white' : ''}`}
-              >
-                Existing Group
-              </Button>
-              <Button
-                type="button"
-                variant={groupMode === 'new' ? 'brand' : 'outline'}
-                size="sm"
-                onClick={() => {
-                  setGroupMode('new')
-                  setNewGroupTitle('')
-                  setErrors(prev => ({ ...prev, newGroup: undefined }))
-                }}
-                className={`flex-1 text-12 ${groupMode === 'new' ? 'text-white' : ''}`}
-              >
-                New Group
-              </Button>
-            </div>
-
-            {groupMode === 'existing' ? (
-              <SelectPopover
-                value={groupId}
-                onChange={value => setGroupId(value as GuestGroupId)}
-                options={groupOptions.length > 0 ? groupOptions : [{ value: '', label: 'No groups available' }]}
-                placeholder="Select a group"
-                errorMessage={errors.newGroup}
-              />
-            ) : (
-              <Input
-                value={newGroupTitle}
-                onChange={e => {
-                  setNewGroupTitle(e.target.value)
-                  if (errors.newGroup) {
-                    setErrors(prev => ({ ...prev, newGroup: undefined }))
-                  }
-                }}
-                placeholder="Enter new group name"
-                variant={errors.newGroup ? 'error' : 'default'}
-                errorMessage={errors.newGroup}
-                size="md"
-              />
-            )}
+                }
+              }}
+              placeholder="Enter new group name"
+              variant={errors.newGroup ? 'error' : 'default'}
+              errorMessage={errors.newGroup}
+              size="md"
+            />
           </div>
         )}
 
         {/* Show locked group info if group is forced */}
-        {isGroupLocked && (
+        {forcedGroupId && (
           <div>
             <label className="block text-14 font-medium text-gray-700 mb-2">
               Group

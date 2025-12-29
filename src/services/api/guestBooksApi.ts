@@ -61,6 +61,15 @@ export const syncGuestBook = async (
 ): Promise<void> => {
   try {
     const params = normalizeQuery(query)
+    
+    // Log categories being sent (for debugging)
+    const newCategories = data.lineCategories?.filter(cat => cat.id === 0) || []
+    const existingCategories = data.lineCategories?.filter(cat => cat.id && cat.id > 0) || []
+    console.log(`[API] Syncing guest book - New categories: ${newCategories.length}, Existing categories: ${existingCategories.length}`)
+    if (newCategories.length > 0) {
+      console.log('[API] New categories details:', newCategories.map(c => ({ name: c.name, guestRelevant: c.guestRelevant })))
+    }
+    
     await apiClient.api.postGuestBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync guest book')
@@ -76,19 +85,30 @@ export const getGuestBook = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getGuestBooksGetBook(normalizedQuery)
-    const responseAny: any = response as { data?: { data?: GuestBookResponse } | GuestBookResponse } | GuestBookResponse
+    const responseAny: any = response as { 
+      data?: { 
+        data?: GuestBookResponse 
+      } | GuestBookResponse 
+    } | GuestBookResponse | {
+      data?: GuestBookResponse
+      success?: boolean
+      statusCode?: number
+    }
     
     // Handle different response structures
+    // Case 1: { data: { data: GuestBookResponse } }
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: GuestBookResponse }).data
       }
+      // Case 2: { data: GuestBookResponse } (nested in wrapper with success/statusCode)
       if (data && typeof data === 'object' && 'id' in data) {
         return data as GuestBookResponse
       }
     }
-    if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+    // Case 3: Direct GuestBookResponse
+    if (responseAny && typeof responseAny === 'object' && 'id' in responseAny && !('success' in responseAny)) {
       return responseAny as GuestBookResponse
     }
     return null
