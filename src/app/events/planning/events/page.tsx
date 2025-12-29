@@ -7,7 +7,7 @@ import {
 } from '@/components/events'
 import { DayDetailsView } from '@/components/planning/DayDetailsView'
 import { formatDateSafe, getToday } from '@/lib/date-utils'
-import { ArrowLeft, Save } from 'lucide-react'
+import { ChevronLeft, Save } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useEventBooks, useSyncEventBooks, useGetEventBooksCategories } from '@/hooks/eventBooks'
 import { useInitEventBooks } from '@/hooks/eventBooks/useInitEventBooks'
@@ -444,8 +444,8 @@ export default function EventsPage() {
           href="/dashboard/my-events"
           className="flex items-center gap-3 text-gray-900 hover:opacity-80 transition-opacity"
         >
-          <ArrowLeft className="h-5 w-5" />
-          <h1 className="text-20 font-semibold">Event</h1>
+          <ChevronLeft className="h-5 w-5" />
+          <h1 className="text-24 font-semibold text-gray-900">Event</h1>
         </Link>
       </div>
 

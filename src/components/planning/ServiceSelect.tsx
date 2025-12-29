@@ -1,40 +1,36 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { planningTypography } from './typography'
-import { WeddingDressIcon } from '@/assets/icons/WeddingDressIcon'
-import { WeddingHallIcon } from '@/assets/icons/WeddingHallIcon'
-import { PhotographyIcon } from '@/assets/icons/PhotographyIcon'
-import { BridalBeautyIcon } from '@/assets/icons/BridalBeautyIcon'
-import { WeddingCakeIcon } from '@/assets/icons/WeddingCakeIcon'
-import { BouquetIcon } from '@/assets/icons/BouquetIcon'
-import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
-import { AccessoriesIcon } from '@/assets/icons/AccessoriesIcon'
+import { getServiceIcon } from '@/utils/serviceIconMapper'
+import type { PlanningPreference } from '@/services/profile/profileApi'
+import type { LucideIcon } from 'lucide-react'
 
-// Service options with icons - single source of truth
-export const SERVICE_OPTIONS = [
-  { serviceKey: 'weddingDress', label: 'Wedding Dress', Icon: WeddingDressIcon },
-  { serviceKey: 'weddingHall', label: 'Wedding Hall', Icon: WeddingHallIcon },
-  { serviceKey: 'photography', label: 'Photography', Icon: PhotographyIcon },
-  { serviceKey: 'bridalBeauty', label: 'Bridal Beauty', Icon: BridalBeautyIcon },
-  { serviceKey: 'weddingCake', label: 'Wedding Cake', Icon: WeddingCakeIcon },
-  { serviceKey: 'bouquet', label: 'Bouquet', Icon: BouquetIcon },
-  { serviceKey: 'weddingSuit', label: 'Wedding Suit', Icon: WeddingSuitIcon },
-  { serviceKey: 'accessories', label: 'Accessories', Icon: AccessoriesIcon },
-] as const
+// Service option type for dropdown
+export interface ServiceOption {
+  serviceKey: string // Using preparation ID as key
+  label: string
+  Icon: LucideIcon | React.ComponentType<{ className?: string }>
+  imageUrl?: string
+}
+
+// Legacy SERVICE_OPTIONS for backward compatibility (if needed)
+export const SERVICE_OPTIONS: ServiceOption[] = []
 
 export interface ServiceSelectProps {
-  value: string
+  value: string // serviceKey (preparation ID as string)
   onChange: (serviceKey: string) => void
   required?: boolean
+  services?: PlanningPreference[] // Dynamic services from API
 }
 
 export const ServiceSelect = ({
   value,
   onChange,
   required = false,
+  services = [],
 }: ServiceSelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
@@ -42,7 +38,22 @@ export const ServiceSelect = ({
   const buttonRef = useRef<HTMLButtonElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
 
-  const selectedService = SERVICE_OPTIONS.find(s => s.serviceKey === value)
+  // Map services from API to ServiceOption format
+  const serviceOptions: ServiceOption[] = useMemo(() => {
+    return services.map((service) => {
+      // Use icon from API if available, otherwise use getServiceIcon fallback
+      const Icon = getServiceIcon(service.name)
+      
+      return {
+        serviceKey: String(service.id), // Use preparation ID as serviceKey
+        label: service.nameEn || service.nameAr || service.name || 'Unknown',
+        Icon,
+        imageUrl: service.imageUrl,
+      }
+    })
+  }, [services])
+
+  const selectedService = serviceOptions.find(s => s.serviceKey === value)
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -74,7 +85,7 @@ export const ServiceSelect = ({
         case 'ArrowDown':
           e.preventDefault()
           setFocusedIndex(prev => {
-            const next = prev < SERVICE_OPTIONS.length - 1 ? prev + 1 : 0
+            const next = prev < serviceOptions.length - 1 ? prev + 1 : 0
             // Scroll into view
             if (listRef.current) {
               const items = listRef.current.children
@@ -88,7 +99,7 @@ export const ServiceSelect = ({
         case 'ArrowUp':
           e.preventDefault()
           setFocusedIndex(prev => {
-            const next = prev > 0 ? prev - 1 : SERVICE_OPTIONS.length - 1
+            const next = prev > 0 ? prev - 1 : serviceOptions.length - 1
             // Scroll into view
             if (listRef.current) {
               const items = listRef.current.children
@@ -102,8 +113,8 @@ export const ServiceSelect = ({
         case 'Enter':
         case ' ':
           e.preventDefault()
-          if (focusedIndex >= 0 && focusedIndex < SERVICE_OPTIONS.length) {
-            onChange(SERVICE_OPTIONS[focusedIndex].serviceKey)
+          if (focusedIndex >= 0 && focusedIndex < serviceOptions.length) {
+            onChange(serviceOptions[focusedIndex].serviceKey)
             setIsOpen(false)
             setFocusedIndex(-1)
             buttonRef.current?.focus()
@@ -125,7 +136,7 @@ export const ServiceSelect = ({
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isOpen, focusedIndex, onChange])
+  }, [isOpen, focusedIndex, onChange, serviceOptions])
 
   const handleSelect = (serviceKey: string) => {
     onChange(serviceKey)
@@ -171,7 +182,15 @@ export const ServiceSelect = ({
           {selectedService ? (
             <>
               <div className="flex-shrink-0">
-                <selectedService.Icon className="h-5 w-5 text-primary" />
+                {selectedService.imageUrl ? (
+                  <img
+                    src={selectedService.imageUrl}
+                    alt={selectedService.label}
+                    className="h-5 w-5 object-contain"
+                  />
+                ) : (
+                  <selectedService.Icon className="h-5 w-5 text-primary" />
+                )}
               </div>
               <span className="text-gray-900 truncate">{selectedService.label}</span>
             </>
@@ -188,13 +207,13 @@ export const ServiceSelect = ({
       </button>
 
       {/* Dropdown List */}
-      {isOpen && (
+      {isOpen && serviceOptions.length > 0 && (
         <ul
           ref={listRef}
           role="listbox"
           className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-64 overflow-auto focus:outline-none"
         >
-          {SERVICE_OPTIONS.map((service, index) => {
+          {serviceOptions.map((service, index) => {
             const isSelected = service.serviceKey === value
             const isFocused = index === focusedIndex
 
@@ -213,7 +232,15 @@ export const ServiceSelect = ({
                 )}
               >
                 <div className="flex-shrink-0">
-                  <service.Icon className="h-5 w-5 text-primary" />
+                  {service.imageUrl ? (
+                    <img
+                      src={service.imageUrl}
+                      alt={service.label}
+                      className="h-5 w-5 object-contain"
+                    />
+                  ) : (
+                    <service.Icon className="h-5 w-5 text-primary" />
+                  )}
                 </div>
                 <span className="text-gray-900 text-16 font-normal leading-6 flex-1">
                   {service.label}
