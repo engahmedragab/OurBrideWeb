@@ -98,91 +98,41 @@ const normalizeGuestRelevant = (relevant: any): GuestRelevant => {
 
 /**
  * Convert API response to draft format
+ * IMPORTANT: Do NOT filter by activeSide - keep ALL lines and categories
+ * Filtering should only happen in the UI layer, not in data adapters
  */
 export const mapApiToDraft = (apiData: GuestBookResponse | null | any, activeSide?: 'bride' | 'groom'): GuestBookDraft | null => {
   if (!apiData) return null
 
   // Normalize lines - convert string enums to numbers
-  let normalizedLines = (apiData.lines || []).map((line: any) => ({
+  // DO NOT filter by activeSide - keep ALL lines
+  const normalizedLines = (apiData.lines || []).map((line: any) => ({
     ...line,
     title: normalizeGuestTitle(line.title),
     status: normalizeGuestStatus(line.status),
     guestRelevant: normalizeGuestRelevant(line.guestRelevant),
   }))
 
-  // Filter lines by activeSide if provided
-  if (activeSide) {
-    const targetGuestRelevant = activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom
-    normalizedLines = normalizedLines.filter((line: any) => {
-      // Check both guestRelevant and family field
-      const lineGuestRelevant = normalizeGuestRelevant(line.guestRelevant)
-      const family = line.family?.trim() || ''
-      const lineSide = family === 'Groom' ? 'groom' : 'bride'
-      
-      return lineGuestRelevant === targetGuestRelevant || lineSide === activeSide
-    })
-  }
-
-  // Get category IDs from filtered lines
-  const visibleCategoryIds = new Set<number>()
-  normalizedLines.forEach((line: any) => {
-    if (line.lineCategoryId) {
-      visibleCategoryIds.add(line.lineCategoryId)
-    }
-  })
-
-  // Filter categories - include only those used by filtered lines or matching activeSide
-  let filteredCategories = apiData.lineCategories || []
-  if (activeSide) {
-    const targetGuestRelevant = activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom
-    filteredCategories = filteredCategories.filter((cat: any) => {
-      const catGuestRelevant = normalizeGuestRelevant(cat.guestRelevant)
-      // Include category if it matches activeSide OR is used by visible lines
-      return catGuestRelevant === targetGuestRelevant || visibleCategoryIds.has(cat.id || 0)
-    })
-  }
+  // Keep ALL categories - do not filter by activeSide
+  const allCategories = apiData.lineCategories || []
 
   return {
     ...apiData,
     lines: normalizedLines,
-    lineCategories: filteredCategories,
+    lineCategories: allCategories,
   } as GuestBookDraft
 }
 
 /**
  * Convert draft to sync payload
+ * IMPORTANT: Do NOT filter by activeSide - send ALL lines and categories
+ * The filtering should only happen in the UI, not in the sync payload
  */
 export const mapDraftToSyncPayload = (draft: GuestBookDraft, activeSide?: 'bride' | 'groom'): GuestBookRequest => {
-  let categories = draft.lineCategories || []
-  let lines = draft.lines || []
-
-  // Filter by activeSide if provided
-  if (activeSide) {
-    const targetGuestRelevant = activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom
-    
-    // Filter lines by activeSide
-    lines = lines.filter(line => {
-      const lineGuestRelevant = normalizeGuestRelevant(line.guestRelevant)
-      const family = line.family?.trim() || ''
-      const lineSide = family === 'Groom' ? 'groom' : 'bride'
-      
-      return lineGuestRelevant === targetGuestRelevant || lineSide === activeSide
-    })
-
-    // Get category IDs from filtered lines
-    const visibleCategoryIds = new Set<number>()
-    lines.forEach(line => {
-      if (line.lineCategoryId) {
-        visibleCategoryIds.add(line.lineCategoryId)
-      }
-    })
-
-    // Filter categories - include only those matching activeSide or used by filtered lines
-    categories = categories.filter(cat => {
-      const catGuestRelevant = normalizeGuestRelevant(cat.guestRelevant)
-      return catGuestRelevant === targetGuestRelevant || visibleCategoryIds.has(cat.id || 0)
-    })
-  }
+  // DO NOT filter by activeSide - send ALL lines and categories
+  // The filtering should only happen in the UI, not in the sync payload
+  const categories = draft.lineCategories || []
+  const lines = draft.lines || []
   
   // Debug: Log all categories before processing
   const negativeCategories = categories.filter(cat => cat.id && cat.id < 0)

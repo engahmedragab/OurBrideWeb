@@ -385,15 +385,53 @@ function InvitationPageContent() {
     return Array.from(groupMap.values())
   }, [guests, groups])
 
-  const invitationsCount = useMemo(
-    () => getTotalInvitations(filteredGuests),
-    [filteredGuests]
-  )
+  // Calculate counts for bride and groom separately
+  const brideGuests = useMemo(() => {
+    if (!localDraft) return []
+    return guests.filter(guest => {
+      const line = (localDraft.lines || []).find(l => {
+        const lineIdStr = String(l.id || '')
+        const guestIdStr = String(guest.id || '')
+        if (lineIdStr === guestIdStr) return true
+        const lineIdNum = typeof l.id === 'number' ? l.id : parseInt(String(l.id || '0'), 10)
+        if (lineIdNum <= 0 && (l as any).clientId === guest.clientId) return true
+        return false
+      })
+      if (!line) return guest.side === 'bride'
+      const family = line.family?.trim() || ''
+      const lineSide: GuestSide = family === 'Groom' ? 'groom' : 'bride'
+      return lineSide === 'bride'
+    })
+  }, [guests, localDraft])
 
-  const peopleTotal = useMemo(
-    () => getTotalPeople(filteredGuests),
-    [filteredGuests]
-  )
+  const groomGuests = useMemo(() => {
+    if (!localDraft) return []
+    return guests.filter(guest => {
+      const line = (localDraft.lines || []).find(l => {
+        const lineIdStr = String(l.id || '')
+        const guestIdStr = String(guest.id || '')
+        if (lineIdStr === guestIdStr) return true
+        const lineIdNum = typeof l.id === 'number' ? l.id : parseInt(String(l.id || '0'), 10)
+        if (lineIdNum <= 0 && (l as any).clientId === guest.clientId) return true
+        return false
+      })
+      if (!line) return guest.side === 'groom'
+      const family = line.family?.trim() || ''
+      const lineSide: GuestSide = family === 'Groom' ? 'groom' : 'bride'
+      return lineSide === 'groom'
+    })
+  }, [guests, localDraft])
+
+  // Calculate counts based on active side
+  const invitationsCount = useMemo(() => {
+    const guestsForSide = activeSide === 'bride' ? brideGuests : groomGuests
+    return getTotalInvitations(guestsForSide)
+  }, [activeSide, brideGuests, groomGuests])
+
+  const peopleTotal = useMemo(() => {
+    const guestsForSide = activeSide === 'bride' ? brideGuests : groomGuests
+    return getTotalPeople(guestsForSide)
+  }, [activeSide, brideGuests, groomGuests])
 
 
   const handleSync = async () => {
@@ -671,30 +709,10 @@ function InvitationPageContent() {
       {filteredGuests.length === 0 && availableGroups.length === 0 ? (
         <div className="py-12 text-center">
           <p className="text-16 text-gray-500 mb-4">No guests yet</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button variant="brand" onClick={() => handleAddGuest()} className="text-white">
-              Add New Guest
-              <Plus className="h-4 w-4 ml-2 text-white" />
-            </Button>
-            <Button variant="outline" onClick={() => handleAddCategory()}>
-              Add Category
-              <Plus className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
         </div>
       ) : availableGroups.length === 0 ? (
         <div className="py-12 text-center">
           <p className="text-16 text-gray-500 mb-4">No groups available. Add a category to create a group.</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button variant="brand" onClick={() => handleAddGuest()} className="text-white">
-              Add New Guest
-              <Plus className="h-4 w-4 ml-2 text-white" />
-            </Button>
-            <Button variant="outline" onClick={() => handleAddCategory()}>
-              Add Category
-              <Plus className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
         </div>
       ) : (
         <div className="space-y-4 mb-20 sm:mb-6">
@@ -735,30 +753,29 @@ function InvitationPageContent() {
       )}
 
       {/* Add Guest and Add Category Buttons - Sticky on Mobile */}
-      {filteredGuests.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 sm:relative sm:bottom-auto sm:left-auto sm:right-auto bg-white border-t border-gray-200 sm:border-t-0 sm:bg-transparent p-4 sm:p-0 sm:mt-6 z-10 shadow-lg sm:shadow-none">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button
-              variant="brand"
-              size="lg"
-              onClick={() => handleAddGuest()}
-              className="w-full sm:w-auto sm:px-6 text-white"
-            >
-              Add new guest
-              <Plus className="h-4 w-4 ml-2" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => handleAddCategory()}
-              className="w-full sm:w-auto sm:px-6"
-            >
-              Add Category
-              <Plus className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
+      {/* Always show buttons, even when there are no guests */}
+      <div className="fixed bottom-0 left-0 right-0 sm:relative sm:bottom-auto sm:left-auto sm:right-auto bg-white border-t border-gray-200 sm:border-t-0 sm:bg-transparent p-4 sm:p-0 sm:mt-6 z-10 shadow-lg sm:shadow-none">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            variant="brand"
+            size="lg"
+            onClick={() => handleAddGuest()}
+            className="w-full sm:w-auto sm:px-6 text-white"
+          >
+            Add new guest
+            <Plus className="h-4 w-4 ml-2" />
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => handleAddCategory()}
+            className="w-full sm:w-auto sm:px-6"
+          >
+            Add Category
+            <Plus className="h-4 w-4 ml-2" />
+          </Button>
         </div>
-      )}
+      </div>
 
       {/* Add Guest Dialog */}
       <AddGuestDialog
