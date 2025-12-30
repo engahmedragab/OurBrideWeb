@@ -141,7 +141,7 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
                 height={42}
                 className="h-8 md:h-10 w-auto"
               />
-              <p className="text-12 md:text-14 text-gray-900 font-semibold">{groomFullName}</p>
+              <p className="text-12 md:text-16 italic text-gray-900 font-semibold">{groomFullName}</p>
             </div>
 
             {/* Heart */}
@@ -164,7 +164,7 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
                 height={38}
                 className="h-8 md:h-10 w-auto"
               />
-              <p className="text-12 md:text-14 text-gray-900 font-semibold">{brideFullName}</p>
+              <p className="text-12 md:text-16 italic text-gray-900 font-semibold">{brideFullName}</p>
             </div>
           </div>
 
@@ -173,16 +173,16 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
             <div className="text-center">
               <div className="flex items-baseline justify-center gap-4 md:gap-6">
                 <div className="text-center">
-                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight">{timeRemaining.days}</div>
-                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5">Days</div>
+                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">{timeRemaining.days}</div>
+                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">Days</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight">{timeRemaining.hours}</div>
-                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5">Hours</div>
+                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">{timeRemaining.hours}</div>
+                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">Hours</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight">{timeRemaining.minutes}</div>
-                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5">Minutes</div>
+                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">{timeRemaining.minutes}</div>
+                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">Minutes</div>
                 </div>
               </div>
             </div>
@@ -190,10 +190,8 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
 
           {/* Invitation Message */}
           <div className="text-center space-y-0.5">
-            <p className="text-14 md:text-16 text-gray-600">
-              We're delighted to invite you to our
-            </p>
-            <p className="text-16 md:text-18 font-semibold text-gray-900">
+          
+            <p className="text-16 md:text-24 italic font-semibold text-gray-900">
               {occasionTitle}
             </p>
           </div>
