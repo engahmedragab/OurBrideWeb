@@ -508,7 +508,7 @@ function OccasionsPageContent() {
   }
 
   const handleDelete = (lineId: number) => {
-    if (!confirm('Are you sure you want to delete this occasion?')) return
+    
 
     if (!localOccasionBook) {
       if (isLoading) {
@@ -561,28 +561,28 @@ function OccasionsPageContent() {
         {hasUnsavedChanges && (
           <div className="flex items-center gap-3">
           <Button
-              className="rounded-lg hover:bg-brand-500 hover:text-white"
+              className="rounded-lg text-10 md:text-14 lg hover:bg-brand-500 hover:text-white"
             onClick={handleSync}
               variant="outlineBrand"
             size="md"
             disabled={syncMutation.isPending || !localOccasionBook || isLoading}
           >
-            <Save className="w-5 h-5 mr-2" />
+            <Save className="w-4 h-4 " />
             {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
-            <span className="text-14 text-gray-600">Unsaved changes</span>
+            <span className="text-12 md:text-14 text-gray-600">Unsaved changes</span>
           </div>
         )}
         <div className={cn("flex items-center gap-2", !hasUnsavedChanges && "ml-auto")}>
           <Button
-            className="rounded-lg hover:bg-brand-500 hover:text-white"
+            className="rounded-lg text-10 md:text-14  hover:bg-brand-500 hover:text-white"
             onClick={handleAddNew}
             variant="outlineBrand"
             size="md"
             disabled={isFormOpen || !localOccasionBook || isLoading}
           >
             Add New Occasion
-            <Plus className="w-5 h-5 ml-2" />
+            <Plus className="w-4 h-4 " />
           </Button>
         </div>
       </div>
