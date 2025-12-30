@@ -7,6 +7,7 @@
 import type { GuestBookResponse, GuestLineResponse, GuestLineCategoryResponse } from '@/types/responses'
 import type { GuestBookRequest, GuestLineRequest, GuestLineCategoryRequest } from '@/../client/common/api/gen/ourbride-api'
 import { GuestRelevant, GuestStatus, GuestTitle } from '@/types/responses/book-enums'
+import { GuestRelevant as ApiGuestRelevant, GuestStatus as ApiGuestStatus, GuestTitle as ApiGuestTitle } from '@/../client/common/api/gen/ourbride-api'
 
 /**
  * Draft type for local state (matches API response structure)
@@ -97,6 +98,59 @@ const normalizeGuestRelevant = (relevant: any): GuestRelevant => {
 }
 
 /**
+ * Convert numeric GuestTitle enum to API string enum
+ */
+const convertTitleToApi = (title: GuestTitle | null | undefined): ApiGuestTitle | undefined => {
+  if (title === null || title === undefined) {
+    return undefined
+  }
+  
+  // Map numeric enum to string enum
+  const titleMap: Record<GuestTitle, ApiGuestTitle> = {
+    [GuestTitle.NoFormalities]: ApiGuestTitle.NoFormalities,
+    [GuestTitle.Rev]: ApiGuestTitle.Rev,
+    [GuestTitle.Sir]: ApiGuestTitle.Sir,
+    [GuestTitle.Mr]: ApiGuestTitle.Mr,
+    [GuestTitle.Mister]: ApiGuestTitle.Mister,
+    [GuestTitle.Mrs]: ApiGuestTitle.Mrs,
+    [GuestTitle.Ms]: ApiGuestTitle.Ms,
+    [GuestTitle.Miss]: ApiGuestTitle.Miss,
+    [GuestTitle.Madam]: ApiGuestTitle.Madam,
+  }
+  
+  return titleMap[title] ?? undefined
+}
+
+/**
+ * Convert numeric GuestStatus enum to API string enum
+ */
+const convertStatusToApi = (status: GuestStatus): ApiGuestStatus => {
+  const statusMap: Record<GuestStatus, ApiGuestStatus> = {
+    [GuestStatus.None]: ApiGuestStatus.None,
+    [GuestStatus.Pending]: ApiGuestStatus.Pending,
+    [GuestStatus.OnlyCeremony]: ApiGuestStatus.OnlyCeremony,
+    [GuestStatus.OnlyReception]: ApiGuestStatus.OnlyReception,
+    [GuestStatus.Confirmed]: ApiGuestStatus.Confirmed,
+    [GuestStatus.Canceled]: ApiGuestStatus.Canceled,
+  }
+  
+  return statusMap[status] ?? ApiGuestStatus.None
+}
+
+/**
+ * Convert numeric GuestRelevant enum to API string enum
+ */
+const convertGuestRelevantToApi = (relevant: GuestRelevant): ApiGuestRelevant => {
+  const relevantMap: Record<GuestRelevant, ApiGuestRelevant> = {
+    [GuestRelevant.Others]: ApiGuestRelevant.Others,
+    [GuestRelevant.Bride]: ApiGuestRelevant.Bride,
+    [GuestRelevant.Groom]: ApiGuestRelevant.Groom,
+  }
+  
+  return relevantMap[relevant] ?? ApiGuestRelevant.Others
+}
+
+/**
  * Convert API response to draft format
  * IMPORTANT: Do NOT filter by activeSide - keep ALL lines and categories
  * Filtering should only happen in the UI layer, not in data adapters
@@ -169,12 +223,10 @@ export const mapDraftToSyncPayload = (draft: GuestBookDraft, activeSide?: 'bride
         id: isNewCategory ? 0 : categoryId, // Use 0 for new categories, actual ID for existing
         name: cat.name || null,
         description: cat.description || null,
-        iconName: cat.iconName || null,
-        colorName: cat.colorName || null,
         count_id: (cat as any).count_id || null,
         isModelLine: cat.isModelLine || false,
         isDeleted: cat.isDeleted || false,
-        guestRelevant: normalizeGuestRelevant(cat.guestRelevant), // Normalize to enum
+        guestRelevant: convertGuestRelevantToApi(normalizeGuestRelevant(cat.guestRelevant)), // Convert to API enum
         // Include multilingual fields even though they're not in type definition
         nameAr: (cat as any).nameAr || (cat as any).name || null,
         nameEn: (cat as any).nameEn || (cat as any).name || null,
@@ -209,7 +261,11 @@ export const mapDraftToSyncPayload = (draft: GuestBookDraft, activeSide?: 'bride
       
       // Ensure isDone and status are synchronized: isDone true = confirmed, isDone false = none
       const isDone = line.isDone || false
-      const status = isDone ? GuestStatus.Confirmed : GuestStatus.None
+      const normalizedStatus = isDone ? GuestStatus.Confirmed : GuestStatus.None
+      const apiStatus = convertStatusToApi(normalizedStatus)
+      
+      const normalizedTitle = normalizeGuestTitle(line.title)
+      const apiTitle = convertTitleToApi(normalizedTitle)
       
       return {
         id: line.id || null,
@@ -218,11 +274,11 @@ export const mapDraftToSyncPayload = (draft: GuestBookDraft, activeSide?: 'bride
         lineCategoryCountId: (line as any).lineCategoryCountId || null,
         lineCategorySlug: lineCategorySlug, // Use slug/name for new categories
         nickName: line.nickName || null,
-        title: normalizeGuestTitle(line.title), // Normalize title to enum
+        title: apiTitle, // Convert to API string enum
         attended: line.attended || false,
         family: line.family || null,
-        status: status, // Synchronized with isDone
-        guestRelevant: normalizeGuestRelevant(line.guestRelevant), // Normalize guestRelevant to enum
+        status: apiStatus, // Convert to API string enum
+        guestRelevant: convertGuestRelevantToApi(normalizeGuestRelevant(line.guestRelevant)), // Convert to API enum
         isDone: isDone,
         isFavorite: line.isFavorite || false,
         isDeleted: line.isDeleted || false,
