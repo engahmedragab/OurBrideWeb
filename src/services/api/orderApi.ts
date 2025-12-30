@@ -367,9 +367,9 @@ export const calculatePrices = async (
 }
 
 /**
- * Validate coupon
+ * Validate coupon for orders
  */
-export const validateCoupon = async (query?: {
+export const validateOrderCoupon = async (query?: {
   couponCode?: string
   providerId?: number
 }): Promise<boolean> => {
@@ -377,7 +377,7 @@ export const validateCoupon = async (query?: {
     const response = await apiClient.api.getOrderValidateCoupon(query)
     return (response?.data ?? response) as unknown as boolean
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to validate coupon')
+    throw new Error(error instanceof Error ? error.message : 'Failed to validate order coupon')
   }
 }
 

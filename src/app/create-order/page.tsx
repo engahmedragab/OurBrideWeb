@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { UserPageLayout } from '@/components/layout'
@@ -24,7 +24,11 @@ type QueueStatus = 'idle' | 'queued' | 'processing' | 'completed' | 'failed'
 const POLL_INTERVAL = 2000 // 2 seconds
 const MAX_POLL_ATTEMPTS = 60 // 2 minutes total (60 * 2 seconds)
 
-export default function CreateOrderPage() {
+/**
+ * Create Order Content Component
+ * This component uses useSearchParams and must be wrapped in Suspense
+ */
+function CreateOrderContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const { addToast } = useToast()
@@ -415,6 +419,40 @@ export default function CreateOrderPage() {
                 subtitle="Please wait a moment"
             />
         </UserPageLayout>
+    )
+}
+
+/**
+ * Main page component with Suspense boundary
+ */
+export default function CreateOrderPage() {
+    return (
+        <Suspense
+            fallback={
+                <UserPageLayout>
+                    <PageHeader title="Processing Your Order" />
+                    <div className="container-custom py-8">
+                        <div className="max-w-2xl mx-auto">
+                            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+                                <div className="flex justify-center mb-6">
+                                    <Loader2 className="h-16 w-16 text-brand-500 animate-spin" />
+                                </div>
+                                <div className="text-center">
+                                    <h2 className="text-24 font-semibold text-gray-900 mb-2">
+                                        Loading...
+                                    </h2>
+                                    <p className="text-16 text-gray-600">
+                                        Please wait while we load your order information.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </UserPageLayout>
+            }
+        >
+            <CreateOrderContent />
+        </Suspense>
     )
 }
 
