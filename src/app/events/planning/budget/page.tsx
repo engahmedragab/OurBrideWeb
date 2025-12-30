@@ -537,12 +537,6 @@ function BudgetPageContent() {
       lastSyncedRef.current = localDraft
       addToast('Changes saved successfully', 'success')
 
-      // Clear localStorage draft
-      if (eventId && typeof window !== 'undefined') {
-        const storageKey = `${STORAGE_KEY_PREFIX}${eventId}`
-        localStorage.removeItem(storageKey)
-      }
-
       // Refetch to get latest from server
       refetch()
     } catch (error) {
