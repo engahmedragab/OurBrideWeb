@@ -1,15 +1,19 @@
 'use client'
 
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
-import { Button, Input, LoadingSpinner } from '@/components/ui'
+import { Button, Input, LoadingOverlay, LoadingSpinner } from '@/components/ui'
 import { Plus, Trash2, Edit2, Calendar, X, Save } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
+import occasionImage from '@/assets/images/occasion.png'
 import { useOccasionBook, useSyncOccasionBook } from '@/hooks/occasionBooks'
 import { useEventId } from '@/hooks/planning'
-import { useToast } from '@/components/ui/Toaster'
 import type { OccasionLineResponse, OccasionBookResponse } from '@/types/responses'
 import type { OccasionLineRequest, OccasionBookRequest, BookClass, UserType } from '@/../client/common/api/gen/ourbride-api'
 import { OccasionType } from '@/../client/common/api/gen/ourbride-api'
+import { OccasionDetailView } from '@/components/occasion/components/OccasionDetailView'
+import { OccasionForm } from '@/components/occasion/components/OccasionForm'
+import type { OccasionFormData } from './schemas/occasion.schema'
 
 /**
  * Format date from ISO string to readable format
@@ -37,36 +41,11 @@ const getOccasionTypeLabel = (type?: OccasionType): string => {
 }
 
 function OccasionsPageContent() {
-  const { addToast } = useToast()
   const eventId = useEventId()
   const [editingLineId, setEditingLineId] = useState<number | null>(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
-  const [formData, setFormData] = useState<{
-    titleEn?: string
-    titleAr?: string
-    subTitleEn?: string
-    subTitleAr?: string
-    caption?: string
-    date?: string
-    subDate?: string
-    brideFirstName?: string
-    brideLastName?: string
-    groomFirstName?: string
-    groomLastName?: string
-    type?: OccasionType
-  }>({
-    titleEn: '',
-    titleAr: '',
-    subTitleEn: '',
-    subTitleAr: '',
-    caption: '',
-    date: new Date().toISOString(),
-    brideFirstName: '',
-    brideLastName: '',
-    groomFirstName: '',
-    groomLastName: '',
-    type: OccasionType.Wedding,
-  })
+  const [selectedOccasion, setSelectedOccasion] = useState<OccasionLineResponse | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
 
   // Local state to keep the book in memory
   const [localOccasionBook, setLocalOccasionBook] = useState<OccasionBookResponse | null>(null)
@@ -152,44 +131,39 @@ function OccasionsPageContent() {
 
   const handleAddNew = () => {
     setIsAddingNew(true)
-    setFormData({
-      titleEn: '',
-      titleAr: '',
-      subTitleEn: '',
-      subTitleAr: '',
-      caption: '',
-      date: new Date().toISOString(),
-      brideFirstName: '',
-      brideLastName: '',
-      groomFirstName: '',
-      groomLastName: '',
-      type: OccasionType.Wedding,
-    })
+    setEditingLineId(null)
+    setIsFormOpen(true)
   }
 
   const handleEdit = (line: OccasionLineResponse) => {
+    setSelectedOccasion(null) // Close detail view if open
     setEditingLineId(line.id)
-    setFormData({
-      titleEn: line.titleEn,
-      titleAr: line.titleAr,
-      subTitleEn: line.subTitleEn,
-      subTitleAr: line.subTitleAr,
-      caption: line.caption,
-      date: line.date,
-      subDate: line.subDate,
-      brideFirstName: line.brideFirstName,
-      brideLastName: line.brideLastName,
-      groomFirstName: line.groomFirstName,
-      groomLastName: line.groomLastName,
-      type: line.type,
-    })
+    setIsAddingNew(false)
+    setIsFormOpen(true)
+  }
+
+  const handleOccasionClick = (line: OccasionLineResponse) => {
+    setSelectedOccasion(line)
+  }
+
+  const handleCloseDetail = () => {
+    setSelectedOccasion(null)
+  }
+
+  const handleEditFromDetail = (line: OccasionLineResponse) => {
+    setSelectedOccasion(null)
+    handleEdit(line)
   }
 
   const handleCancel = () => {
     setIsAddingNew(false)
     setEditingLineId(null)
-    setFormData({})
+    setIsFormOpen(false)
   }
+
+  const editingOccasion = editingLineId
+    ? (localOccasionBook?.lines || []).find(line => line.id === editingLineId) || null
+    : null
 
   /**
    * Convert OccasionLineResponse to OccasionLineRequest
@@ -226,7 +200,7 @@ function OccasionsPageContent() {
   /**
    * Convert form data to OccasionLineRequest
    */
-  const convertFormDataToLineRequest = (): OccasionLineRequest => {
+  const convertFormDataToLineRequest = (formData: OccasionFormData): OccasionLineRequest => {
     if (!localOccasionBook?.id) {
       throw new Error('Occasion book not found')
     }
@@ -234,7 +208,7 @@ function OccasionsPageContent() {
     return {
       id: editingLineId || null,
       bookId: localOccasionBook.id,
-      date: formData.date!,
+      date: formData.date,
       subDate: formData.subDate || null,
       brideFirstName: formData.brideFirstName || null,
       brideLastName: formData.brideLastName || null,
@@ -374,45 +348,12 @@ function OccasionsPageContent() {
     return false
   }
 
-  const handleSave = async () => {
+  const handleFormSubmit = async (formData: OccasionFormData) => {
     try {
       if (!localOccasionBook) {
         if (isLoading) {
-          addToast('Please wait while the occasion book is loading...', 'info')
           return
         }
-        addToast('Occasion book not found. Please refresh the page.', 'error')
-        return
-      }
-
-      // Validate required fields
-      if (!formData.titleEn && !formData.titleAr) {
-        addToast('Please enter a title (English or Arabic)', 'error')
-        return
-      }
-
-      if (!formData.date) {
-        addToast('Please select a date', 'error')
-        return
-      }
-
-      // Validate BrideFirstName: required, 2-15 characters
-      if (!formData.brideFirstName || formData.brideFirstName.trim().length === 0) {
-        addToast('Bride first name is required', 'error')
-        return
-      }
-      if (formData.brideFirstName.trim().length < 2 || formData.brideFirstName.trim().length > 15) {
-        addToast('Bride first name must be between 2 and 15 characters', 'error')
-        return
-      }
-
-      // Validate GroomFirstName: required, 2-15 characters
-      if (!formData.groomFirstName || formData.groomFirstName.trim().length === 0) {
-        addToast('Groom first name is required', 'error')
-        return
-      }
-      if (formData.groomFirstName.trim().length < 2 || formData.groomFirstName.trim().length > 15) {
-        addToast('Groom first name must be between 2 and 15 characters', 'error')
         return
       }
 
@@ -421,27 +362,15 @@ function OccasionsPageContent() {
       const currentLines = allLocalLines.map(convertLineToRequest)
 
       // Create or update the line
-      const lineRequest = convertFormDataToLineRequest()
-
-      let updatedLines: OccasionLineRequest[]
-      if (editingLineId) {
-        // Update existing line
-        updatedLines = currentLines.map(line =>
-          line.id === editingLineId ? lineRequest : line
-        )
-      } else {
-        // Add new line
-        updatedLines = [...currentLines, lineRequest]
-      }
+      const lineRequest = convertFormDataToLineRequest(formData)
 
       if (editingLineId) {
         // Update existing line in local state (check all lines including deleted)
-        const allLocalLines = localOccasionBook.lines || []
         const existingLine = allLocalLines.find(line => line.id === editingLineId)
         if (existingLine) {
           const updatedLine: OccasionLineResponse = {
             ...existingLine,
-            date: formData.date!,
+            date: formData.date,
             subDate: formData.subDate || existingLine.subDate,
             brideFirstName: formData.brideFirstName || existingLine.brideFirstName,
             brideLastName: formData.brideLastName || existingLine.brideLastName,
@@ -454,7 +383,7 @@ function OccasionsPageContent() {
             subTitleEn: formData.subTitleEn || existingLine.subTitleEn,
             subTitleAr: formData.subTitleAr || existingLine.subTitleAr,
             caption: formData.caption || existingLine.caption,
-            type: formData.type || existingLine.type || OccasionType.Wedding, // Ensure type is never null
+            type: formData.type || existingLine.type || OccasionType.Wedding,
             lastModifiedDate: new Date().toISOString(),
           }
           setLocalOccasionBook(prev => {
@@ -467,12 +396,11 @@ function OccasionsPageContent() {
         }
       } else {
         // Add new line to local state - use first existing line as template or create minimal structure
-        const allLocalLines = localOccasionBook.lines || []
         const templateLine = allLocalLines[0]
         const newLine: OccasionLineResponse = templateLine ? {
           ...templateLine,
           id: 0, // Temporary ID for new lines (0 indicates new, not yet saved)
-          date: formData.date!,
+          date: formData.date,
           subDate: formData.subDate || undefined,
           brideFirstName: formData.brideFirstName || '',
           brideLastName: formData.brideLastName || '',
@@ -495,7 +423,7 @@ function OccasionsPageContent() {
           // Fallback if no existing lines - this should rarely happen
           id: 0,
           bookId: localOccasionBook.id,
-          date: formData.date!,
+          date: formData.date,
           subDate: formData.subDate,
           brideFirstName: formData.brideFirstName || '',
           brideLastName: formData.brideLastName || '',
@@ -535,8 +463,8 @@ function OccasionsPageContent() {
       setHasUnsavedChanges(true)
       handleCancel()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save occasion'
-      addToast(errorMessage, 'error')
+      // Error handling - no toast
+      console.error('Failed to save occasion:', error)
     }
   }
 
@@ -544,16 +472,13 @@ function OccasionsPageContent() {
     try {
       if (!localOccasionBook) {
         if (isLoading) {
-          addToast('Please wait while the occasion book is loading...', 'info')
           return
         }
-        addToast('Occasion book not found. Please refresh the page.', 'error')
         return
       }
 
       // Check if there are actual changes before syncing
       if (!hasActualChanges()) {
-        addToast('No changes to save', 'info')
         setHasUnsavedChanges(false)
         return
       }
@@ -573,13 +498,12 @@ function OccasionsPageContent() {
 
       setHasUnsavedChanges(false)
       lastSyncedRef.current = localOccasionBook
-      addToast('Changes saved successfully', 'success')
 
       // Refetch to get latest from server
       refetch()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save changes'
-      addToast(errorMessage, 'error')
+      // Error handling - no toast
+      console.error('Failed to save changes:', error)
     }
   }
 
@@ -588,10 +512,8 @@ function OccasionsPageContent() {
 
     if (!localOccasionBook) {
       if (isLoading) {
-        addToast('Please wait while the occasion book is loading...', 'info')
         return
       }
-      addToast('Occasion book not found. Please refresh the page.', 'error')
       return
     }
 
@@ -609,10 +531,6 @@ function OccasionsPageContent() {
     })
 
     setHasUnsavedChanges(true)
-  }
-
-  const updateFormField = (field: string, value: string | Date | OccasionType | undefined) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
   }
 
   if (isLoading) {
@@ -641,24 +559,27 @@ function OccasionsPageContent() {
       {/* Header with Save and Add Buttons */}
       <div className="flex items-center justify-between">
         {hasUnsavedChanges && (
+          <div className="flex items-center gap-3">
           <Button
-            className="text-white"
+              className="rounded-lg hover:bg-brand-500 hover:text-white"
             onClick={handleSync}
-            variant="brand"
+              variant="outlineBrand"
             size="md"
             disabled={syncMutation.isPending || !localOccasionBook || isLoading}
           >
             <Save className="w-5 h-5 mr-2" />
             {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
+            <span className="text-14 text-gray-600">Unsaved changes</span>
+          </div>
         )}
         <div className={cn("flex items-center gap-2", !hasUnsavedChanges && "ml-auto")}>
           <Button
-            className="text-white"
+            className="rounded-lg hover:bg-brand-500 hover:text-white"
             onClick={handleAddNew}
-            variant="brand"
+            variant="outlineBrand"
             size="md"
-            disabled={isAddingNew || editingLineId !== null || !localOccasionBook || isLoading}
+            disabled={isFormOpen || !localOccasionBook || isLoading}
           >
             Add New Occasion
             <Plus className="w-5 h-5 ml-2" />
@@ -666,253 +587,93 @@ function OccasionsPageContent() {
         </div>
       </div>
 
-      {/* Add/Edit Form */}
-      {(isAddingNew || editingLineId !== null) && (
-        <div className="bg-white border rounded-2xl p-6 space-y-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-18 font-semibold text-gray-900">
-              {editingLineId ? 'Edit Occasion' : 'Add New Occasion'}
-            </h3>
-            <button
-              onClick={handleCancel}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Title (English) *
-              </label>
-              <Input
-                value={formData.titleEn || ''}
-                onChange={e => updateFormField('titleEn', e.target.value)}
-                placeholder="Enter title in English"
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Title (Arabic)
-              </label>
-              <Input
-                value={formData.titleAr || ''}
-                onChange={e => updateFormField('titleAr', e.target.value)}
-                placeholder="Enter title in Arabic"
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Sub Title (English)
-              </label>
-              <Input
-                value={formData.subTitleEn || ''}
-                onChange={e => updateFormField('subTitleEn', e.target.value)}
-                placeholder="Enter sub title in English"
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Sub Title (Arabic)
-              </label>
-              <Input
-                value={formData.subTitleAr || ''}
-                onChange={e => updateFormField('subTitleAr', e.target.value)}
-                placeholder="Enter sub title in Arabic"
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Date *
-              </label>
-              <Input
-                type="datetime-local"
-                value={formData.date ? new Date(formData.date).toISOString().slice(0, 16) : ''}
-                onChange={e => updateFormField('date', new Date(e.target.value).toISOString())}
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Sub Date (Optional)
-              </label>
-              <Input
-                type="datetime-local"
-                value={formData.subDate ? new Date(formData.subDate).toISOString().slice(0, 16) : ''}
-                onChange={e => updateFormField('subDate', e.target.value ? new Date(e.target.value).toISOString() : undefined)}
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Bride First Name
-              </label>
-              <Input
-                value={formData.brideFirstName || ''}
-                onChange={e => updateFormField('brideFirstName', e.target.value)}
-                placeholder="Enter bride first name"
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Bride Last Name
-              </label>
-              <Input
-                value={formData.brideLastName || ''}
-                onChange={e => updateFormField('brideLastName', e.target.value)}
-                placeholder="Enter bride last name"
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Groom First Name
-              </label>
-              <Input
-                value={formData.groomFirstName || ''}
-                onChange={e => updateFormField('groomFirstName', e.target.value)}
-                placeholder="Enter groom first name"
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div>
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Groom Last Name
-              </label>
-              <Input
-                value={formData.groomLastName || ''}
-                onChange={e => updateFormField('groomLastName', e.target.value)}
-                placeholder="Enter groom last name"
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="text-14 font-normal text-gray-900 mb-2 block">
-                Caption
-              </label>
-              <Input
-                value={formData.caption || ''}
-                onChange={e => updateFormField('caption', e.target.value)}
-                placeholder="Enter caption"
-                className="h-auto px-4 py-3 text-14"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button
-              variant="brand"
-              onClick={handleSave}
-              disabled={!formData.titleEn && !formData.titleAr || !formData.date || syncMutation.isPending}
-              className="text-white"
-            >
-              {editingLineId ? 'Update' : 'Create'} Occasion
-            </Button>
-          </div>
-        </div>
+      {/* Form Section - Separate from cards */}
+      {isFormOpen && (
+        <OccasionForm
+          isOpen={isFormOpen}
+          onClose={handleCancel}
+          onSubmit={handleFormSubmit}
+          editingOccasion={editingOccasion}
+          isSubmitting={syncMutation.isPending}
+        />
       )}
 
-      {/* Occasions List */}
-      {occasionLines.length === 0 && !isAddingNew && editingLineId === null ? (
+      {/* Occasions List - Only show when form is closed */}
+      {!isFormOpen && (
+        <>
+          {occasionLines.length === 0 ? (
         <div className="bg-white border rounded-2xl p-12 text-center">
           <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <p className="text-16 text-gray-600 mb-2">No occasions found</p>
           <p className="text-14 text-gray-500">Create your first occasion to get started</p>
         </div>
       ) : (
-        <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {occasionLines.map(line => (
             <div
               key={line.id}
-              className="bg-white border rounded-2xl p-6 space-y-3"
+              className="bg-white border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => handleOccasionClick(line)}
             >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Calendar className="w-5 h-5 text-brand-500" />
-                    <h3 className="text-18 font-semibold text-gray-900">
-                      {line.title || line.titleEn || 'Untitled Occasion'}
-                    </h3>
-                    {line.type !== undefined && (
-                      <span className="px-2 py-1 text-12 font-medium bg-brand-100 text-brand-700 rounded">
-                        {getOccasionTypeLabel(line.type)}
-                      </span>
-                    )}
-                  </div>
-
-                  {line.subTitle && (
-                    <p className="text-14 text-gray-600 mb-2">{line.subTitle}</p>
-                  )}
-
-                  <div className="flex flex-wrap gap-4 text-14 text-gray-600">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(line.date)}</span>
-                    </div>
-                    {line.subDate && (
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        <span>Sub: {formatDate(line.subDate)}</span>
-                      </div>
-                    )}
-                    {(line.brideFirstName || line.brideLastName) && (
-                      <div>
-                        <span className="font-medium">Bride:</span>{' '}
-                        {[line.brideFirstName, line.brideLastName].filter(Boolean).join(' ')}
-                      </div>
-                    )}
-                    {(line.groomFirstName || line.groomLastName) && (
-                      <div>
-                        <span className="font-medium">Groom:</span>{' '}
-                        {[line.groomFirstName, line.groomLastName].filter(Boolean).join(' ')}
-                      </div>
-                    )}
-                  </div>
-
-                  {line.caption && (
-                    <p className="text-14 text-gray-500 mt-2">{line.caption}</p>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
+              {/* Image Section - 50% of card */}
+              <div className="relative h-48 w-full">
+                <Image
+                  src={occasionImage}
+                  alt={line.title || line.titleEn || 'Occasion'}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+                {/* Dark overlay */}
+                <div className="absolute inset-0 bg-black/20"></div>
+                {/* Action Buttons Overlay */}
+                <div className="absolute top-3 right-3 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                   <button
                     onClick={() => handleEdit(line)}
-                    className="p-2 text-gray-500 hover:text-brand-500 transition-colors"
-                    disabled={isAddingNew || editingLineId !== null}
+                    className="p-2 bg-white/90 backdrop-blur-sm rounded-lg text-gray-600 hover:text-brand-500 hover:bg-white transition-all shadow-sm"
+                    disabled={isFormOpen}
+                    title="Edit"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(line.id)}
-                    className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                    className="p-2 bg-white/90 backdrop-blur-sm rounded-lg text-red-500 hover:text-red-700 hover:bg-white transition-all shadow-sm"
                     disabled={syncMutation.isPending}
+                    title="Delete"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
+
+              {/* Content Section - 50% of card */}
+              <div className="p-5 space-y-3">
+                {/* Occasion Title */}
+                <h3 className="text-18 font-semibold text-gray-900 line-clamp-2">
+                  {line.title || line.titleEn || 'Untitled Occasion'}
+                </h3>
+
+                {/* Date */}
+                <div className="flex items-center gap-2 text-14 text-gray-600">
+                  <Calendar className="w-4 h-4 text-brand-500 flex-shrink-0" />
+                  <span>{formatDate(line.date)}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
+          )}
+        </>
+      )}
+
+      {/* Occasion Detail View Modal */}
+      {selectedOccasion && (
+        <OccasionDetailView
+          occasion={selectedOccasion}
+          onClose={handleCloseDetail}
+          onEdit={() => handleEditFromDetail(selectedOccasion)}
+        />
       )}
     </div>
   )
@@ -924,7 +685,7 @@ export default function OccasionsPage() {
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingSpinner size="lg" text="Loading occasions..." />
+            <LoadingOverlay open={true} title="Loading occasions..." />
           </div>
         </div>
       }
