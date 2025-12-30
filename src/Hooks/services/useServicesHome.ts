@@ -37,7 +37,6 @@ export const useServicesHome = (enabled = true) => {
           trustFeatures: extractedData.trustFeatures,
         }
       } catch (error) {
-        console.error('Error fetching services home:', error)
         throw error
       }
     },

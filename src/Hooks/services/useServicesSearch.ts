@@ -60,7 +60,6 @@ export const useServicesSearch = (
           pageSize: params?.pageSize || 10,
         }
       } catch (error) {
-        console.error('Error searching services:', error)
         throw error
       }
     },

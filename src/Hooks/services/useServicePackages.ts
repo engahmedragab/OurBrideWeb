@@ -73,7 +73,6 @@ export const useServicePackages = (serviceId: string, enabled = true) => {
         
         return { packages }
       } catch (error) {
-        console.error(`Error fetching packages for service ${serviceId}:`, error)
         return { packages: [] }
       }
     },

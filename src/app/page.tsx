@@ -158,6 +158,7 @@ export default function Home() {
     [apiData.memberTestimonials]
   )
   const banners = useMemo(() => apiData.banners || [], [apiData.banners])
+  const statistics = useMemo(() => apiData.statistics, [apiData.statistics])
 
   // Testimonials carousel state
   const [testimonialsIndex, setTestimonialsIndex] = useState(0)
@@ -208,7 +209,9 @@ export default function Home() {
               {/* Active Users */}
               <div className="flex items-center gap-3 -mt-2">
                 <span className="text-14 font-semibold text-gray-700">
-                  <span className="text-gray-500 font-normal text-24">+6K</span>
+                  <span className="text-gray-500 font-normal text-24">
+                    {statistics?.activeUsers || '+0'}
+                  </span>
                   <span className="text-gray-500 font-normal text-14">
                     Active Users
                   </span>
@@ -377,7 +380,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="text-center">
               <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
-                +1200
+                {statistics?.clients || '+0'}
               </div>
               <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
                 Clients
@@ -386,7 +389,7 @@ export default function Home() {
             </div>
             <div className="text-center">
               <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
-                +600
+                {statistics?.serviceProviders || '+0'}
               </div>
               <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
                 Services Providers
@@ -395,7 +398,7 @@ export default function Home() {
             </div>
             <div className="text-center">
               <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
-                +30
+                {statistics?.availableServices || '+0'}
               </div>
               <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
                 Available Services
@@ -404,7 +407,7 @@ export default function Home() {
             </div>
             <div className="text-center">
               <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
-                +2500
+                {statistics?.products || '+0'}
               </div>
               <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
                 Products

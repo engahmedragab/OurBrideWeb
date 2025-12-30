@@ -64,10 +64,13 @@ export interface ProductCardData {
   tags?: string[]
   showTopOfferBadge?: boolean
   isWishlisted?: boolean
+  isFavorite?: boolean
   inStock?: boolean
   onWishlistToggle?: (e: React.MouseEvent) => void
+  onFavoriteToggle?: (e: React.MouseEvent) => void
   onAddToCart?: (e: React.MouseEvent) => void
   isLoadingWishlist?: boolean
+  isLoadingFavorite?: boolean
   isLoadingAddToCart?: boolean
 }
 
@@ -206,6 +209,12 @@ const ProductServiceCard = ({
       try {
         const productId = parseInt(data.id, 10)
         const providerId = data.providerId ? parseInt(data.providerId, 10) : undefined
+
+        // Ensure providerId is available
+        if (!providerId) {
+          return
+        }
+
         await addToCartMutation.mutateAsync({
           productId,
           quantity: 1,
@@ -215,7 +224,6 @@ const ProductServiceCard = ({
         // Also call the provided handler if it exists
         data.onAddToCart(e)
       } catch (error) {
-        console.error('Failed to add product to cart:', error)
         // Still navigate to cart even if add fails
       }
     }

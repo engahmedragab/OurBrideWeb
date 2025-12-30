@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getProducts, getFilteredProducts } from '@/services/api/products.api'
 import { mapProductResponsesToProducts } from '@/types/api/product.api.types'
 import type { GetProductsParams } from '@/services/api/products.api'
-import type { ProductResponse } from '@/../client/common/api/gen/ourbride-api'
+import type { ProductResponse } from '@/types/responses'
 
 export interface UseProductsParams extends GetProductsParams {
   enabled?: boolean
@@ -86,7 +86,6 @@ export const useFilteredProducts = (params?: {
         
         return []
       } catch (error) {
-        console.error('Error fetching filtered products:', error)
         return []
       }
     },

@@ -56,6 +56,10 @@ export const ProductOffersSection = ({
             const handleAddToCartClick = (e: React.MouseEvent) => {
               e.preventDefault()
               e.stopPropagation()
+              // Ensure providerId is available before adding to cart
+              if (!product.provider?.id) {
+                return
+              }
               handleAddToCart(product, 1)
             }
 

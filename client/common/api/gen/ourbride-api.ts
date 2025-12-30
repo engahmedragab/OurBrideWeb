@@ -48,14 +48,6 @@ export enum UserTier {
   Enterprise = "Enterprise",
 }
 
-export enum TransferStatus {
-  Pending = "Pending",
-  InProgress = "InProgress",
-  Completed = "Completed",
-  Cancelled = "Cancelled",
-  Failed = "Failed",
-}
-
 export enum TipSource {
   Online = "Online",
   InStore = "InStore",
@@ -453,13 +445,6 @@ export enum RegisterType {
   Admin = "Admin",
 }
 
-export enum RedemptionType {
-  Cashback = "Cashback",
-  DiscountVoucher = "DiscountVoucher",
-  Product = "Product",
-  Service = "Service",
-}
-
 export enum PurchaseType {
   Product = "Product",
   Service = "Service",
@@ -719,14 +704,6 @@ export enum PriceType {
 export enum PersonalType {
   National = "National",
   Passport = "Passport",
-}
-
-export enum PayoutStatus {
-  Pending = "Pending",
-  Approved = "Approved",
-  Rejected = "Rejected",
-  Processed = "Processed",
-  Failed = "Failed",
 }
 
 export enum PayoutMethod {
@@ -1000,14 +977,6 @@ export enum GuideTier {
   Gold = "Gold",
   Platinum = "Platinum",
   Diamond = "Diamond",
-}
-
-export enum GuideProfileStatus {
-  Pending = "Pending",
-  Active = "Active",
-  Suspended = "Suspended",
-  Inactive = "Inactive",
-  Rejected = "Rejected",
 }
 
 export enum GuestTitle {
@@ -1371,13 +1340,6 @@ export enum CommissionRuleType {
   Tiered = "Tiered",
 }
 
-export enum CommissionRuleStatus {
-  Active = "Active",
-  Inactive = "Inactive",
-  Expired = "Expired",
-  Suspended = "Suspended",
-}
-
 export enum ClockMethod {
   Manual = "Manual",
   Automatic = "Automatic",
@@ -1408,29 +1370,6 @@ export enum CartStatus {
   Closed = "Closed",
 }
 
-export enum BoothStatus {
-  Draft = "Draft",
-  Available = "Available",
-  Reserved = "Reserved",
-  Booked = "Booked",
-  CheckedIn = "CheckedIn",
-  Hidden = "Hidden",
-  Maintenance = "Maintenance",
-  Blocked = "Blocked",
-  Held = "Held",
-}
-
-export enum BoothReservationStatus {
-  OnHold = "OnHold",
-  Held = "Held",
-  Paid = "Paid",
-  Confirmed = "Confirmed",
-  PendingPayment = "PendingPayment",
-  Cancelled = "Cancelled",
-  Expired = "Expired",
-  Completed = "Completed",
-}
-
 export enum BookClass {
   Main = "Main",
   Item = "Item",
@@ -1442,15 +1381,6 @@ export enum BookClass {
   Budget = "Budget",
   Occasion = "Occasion",
   Invitation = "Invitation",
-}
-
-export enum BazaarEventStatus {
-  Draft = "Draft",
-  Published = "Published",
-  Active = "Active",
-  Completed = "Completed",
-  Cancelled = "Cancelled",
-  Suspended = "Suspended",
 }
 
 export enum BannerType {
@@ -1679,18 +1609,6 @@ export enum AddressGrade {
   High = "High",
   VeryHigh = "VeryHigh",
   Critical = "Critical",
-}
-
-export interface ActionTypeData {
-  actionType?: string | null;
-  /** @format int32 */
-  count?: number;
-  /** @format double */
-  amount?: number;
-  /** @format int32 */
-  points?: number;
-  /** @format double */
-  percentage?: number;
 }
 
 export interface ActivateGiftCardRequest {
@@ -1937,12 +1855,12 @@ export interface AddProviderRoleRequest {
 
 export interface AddReviewRequest {
   /** @format int32 */
-  contentId: number;
+  contentId?: number | null;
   /**
    * @minLength 0
    * @maxLength 50
    */
-  contentType: string;
+  contentType?: string | null;
   /**
    * @format double
    * @min 1
@@ -1954,6 +1872,11 @@ export interface AddReviewRequest {
    * @maxLength 2000
    */
   comment?: string | null;
+  /**
+   * @minLength 0
+   * @maxLength 2000
+   */
+  content?: string | null;
   /**
    * @minLength 0
    * @maxLength 200
@@ -1970,15 +1893,6 @@ export interface AddReviewRequest {
 export interface AddUserPlanningPreferenceRequest {
   /** @format int32 */
   preparationId: number;
-}
-
-export interface AdditionalDataResponse {
-  stringProperties?: Record<string, string | null>;
-  intProperties?: Record<string, number | null>;
-  longProperties?: Record<string, number | null>;
-  decimalProperties?: Record<string, number | null>;
-  boolProperties?: Record<string, boolean | null>;
-  additionalProperties?: Record<string, any>;
 }
 
 export interface Address {
@@ -2367,69 +2281,6 @@ export interface AdminUserRegistrationRequest {
   referralCode?: string | null;
 }
 
-export interface AffiliateLinkListResponse {
-  affiliateLinks?: AffiliateLinkResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  page?: number;
-  /** @format int32 */
-  pageSize?: number;
-  /** @format int32 */
-  totalPages?: number;
-}
-
-export interface AffiliateLinkListResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AffiliateLinkListResponse;
-}
-
-export interface AffiliateLinkResponse {
-  /** @format int32 */
-  affiliateLinkId?: number;
-  /** @format int32 */
-  guideProfileId?: number;
-  targetType?: AffiliateTargetType;
-  /** @format int32 */
-  targetId?: number;
-  code?: string | null;
-  url?: string | null;
-  title?: string | null;
-  utmSource?: string | null;
-  utmMedium?: string | null;
-  utmCampaign?: string | null;
-  utmContent?: string | null;
-  utmTerm?: string | null;
-  /** @format int32 */
-  commissionRuleId?: number | null;
-  isActive?: boolean;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  /** @format uuid */
-  createdBy?: string;
-  /** @format uuid */
-  lastModifiedBy?: string;
-  guideProfile?: GuideProfileSummaryResponse;
-  commissionRule?: CommissionRuleResponse;
-  attributionEvents?: AttributionEventResponse[] | null;
-}
-
-export interface AffiliateLinkResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AffiliateLinkResponse;
-}
-
 export interface AffiliateTrackEventRequest {
   /**
    * @minLength 0
@@ -2459,20 +2310,6 @@ export interface AffiliateTrackEventRequest {
    * @maxLength 3
    */
   currency?: string | null;
-}
-
-export interface ApiError {
-  error?: string | null;
-  /** @format int32 */
-  code?: number;
-}
-
-export interface ApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
 }
 
 export interface ApplyMembershipDiscountRequest {
@@ -2848,386 +2685,6 @@ export interface AssignVendorRequest {
   assignedBy?: string | null;
 }
 
-export interface AttributionAnalyticsResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format int32 */
-  totalEvents?: number;
-  /** @format double */
-  clickThroughRate?: number;
-  /** @format double */
-  conversionRate?: number;
-  topCountries?: string[] | null;
-  topSources?: string[] | null;
-  revenueBySource?: Record<string, number | null>;
-}
-
-export interface AttributionAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionAnalyticsResponse;
-}
-
-export interface AttributionConfigurationValidationResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  isValid?: boolean;
-  configurationErrors?: string[] | null;
-  configurationWarnings?: string[] | null;
-  /** @format int32 */
-  validationScore?: number;
-}
-
-export interface AttributionConfigurationValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionConfigurationValidationResponse;
-}
-
-export interface AttributionEligibilityResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  isEligible?: boolean;
-  /** @format int32 */
-  eligibilityScore?: number;
-  eligibilityFactors?: string[] | null;
-  restrictions?: string[] | null;
-}
-
-export interface AttributionEligibilityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionEligibilityResponse;
-}
-
-export interface AttributionEventListResponse {
-  attributionEvents?: AttributionEventResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-}
-
-export interface AttributionEventListResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionEventListResponse;
-}
-
-export interface AttributionEventResponse {
-  isDeleted?: boolean;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  slug?: string | null;
-  /** @format int32 */
-  attributionEventId?: number;
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  affiliateLinkId?: number;
-  eventTypeEnum?: AttributionEventType;
-  eventType?: string | null;
-  userAgent?: string | null;
-  ipHash?: string | null;
-  referrer?: string | null;
-  sessionId?: string | null;
-  deviceId?: string | null;
-  country?: string | null;
-  city?: string | null;
-  /** @format double */
-  amount?: number | null;
-  currency?: string | null;
-  /** @format int64 */
-  orderId?: number | null;
-  /** @format uuid */
-  buyerUserId?: string | null;
-  /** @format date-time */
-  occurredAt?: string | null;
-  isSuspicious?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  lastModifiedBy?: string | null;
-  affiliateLink?: AffiliateLinkResponse;
-}
-
-export interface AttributionEventResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionEventResponse;
-}
-
-export interface AttributionEventResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionEventResponse[] | null;
-}
-
-export interface AttributionEventSummaryResponse {
-  /** @format int32 */
-  attributionEventId?: number;
-  eventType?: AttributionEventType;
-  /** @format date-time */
-  eventDate?: string;
-  /** @format int32 */
-  affiliateLinkId?: number;
-}
-
-export interface AttributionNotificationResponse {
-  isDeleted?: boolean;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format int32 */
-  id?: number;
-  /** @format uuid */
-  userId?: string;
-  notificationType?: string | null;
-  message?: string | null;
-  notificationData?: string | null;
-  priority?: string | null;
-  isRead?: boolean;
-  /** @format date-time */
-  readDate?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-}
-
-export interface AttributionNotificationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionNotificationResponse[] | null;
-}
-
-export interface AttributionPerformanceReportResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format uuid */
-  reportId?: string;
-  /** @format date-time */
-  generatedDate?: string;
-  performanceData?: AttributionPerformanceResponse;
-  reportMetrics?: Record<string, number | null>;
-}
-
-export interface AttributionPerformanceReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionPerformanceReportResponse;
-}
-
-export interface AttributionPerformanceResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format int32 */
-  totalEvents?: number;
-  /** @format double */
-  clickThroughRate?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format double */
-  revenue?: number;
-  /** @format double */
-  averageOrderValue?: number;
-  topPerformingSources?: string[] | null;
-  performanceMetrics?: Record<string, number | null>;
-  revenueBySource?: Record<string, number | null>;
-  eventsBySource?: Record<string, number | null>;
-  performanceByDate?: Record<string, number | null>;
-  /** @format date-time */
-  periodStart?: string | null;
-  /** @format date-time */
-  periodEnd?: string | null;
-}
-
-export interface AttributionPerformanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionPerformanceResponse;
-}
-
-export interface AttributionSummaryDataResponse {
-  /** @format int32 */
-  totalEvents?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format int32 */
-  clickEvents?: number;
-  /** @format int32 */
-  conversionEvents?: number;
-  /** @format int32 */
-  suspiciousEvents?: number;
-  /** @format double */
-  clickThroughRate?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format double */
-  averageOrderValue?: number;
-  topCountries?: string[] | null;
-  eventTypes?: Record<string, number | null>;
-  revenueBySource?: Record<string, number | null>;
-  eventsBySource?: Record<string, number | null>;
-  conversionRates?: Record<string, number | null>;
-  additionalData?: AdditionalDataResponse;
-}
-
-export interface AttributionSummaryReportResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format uuid */
-  reportId?: string;
-  /** @format date-time */
-  generatedDate?: string;
-  /** @format int32 */
-  totalEvents?: number;
-  /** @format double */
-  totalRevenue?: number;
-  topSources?: string[] | null;
-  summaryData?: AttributionSummaryDataResponse;
-  reportFormat?: string | null;
-  /** @format date-time */
-  periodStart?: string | null;
-  /** @format date-time */
-  periodEnd?: string | null;
-  appliedFilters?: Record<string, string | null>;
-}
-
-export interface AttributionSummaryReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionSummaryReportResponse;
-}
-
-export interface AttributionTrendData {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  eventCount?: number;
-  /** @format double */
-  revenue?: number;
-  source?: string | null;
-  /** @format double */
-  clickThroughRate?: number;
-  /** @format double */
-  conversionRate?: number;
-  campaignId?: string | null;
-  additionalMetrics?: Record<string, number | null>;
-}
-
-export interface AttributionTrendsResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  trendData?: AttributionTrendData[] | null;
-  topTrendingSources?: string[] | null;
-  trendAnalysis?: Record<string, number | null>;
-}
-
-export interface AttributionTrendsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionTrendsResponse;
-}
-
-export interface AttributionValidationResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  isValid?: boolean;
-  validationErrors?: string[] | null;
-  validationWarnings?: string[] | null;
-  /** @format int32 */
-  validationScore?: number;
-}
-
-export interface AttributionValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AttributionValidationResponse;
-}
-
 export interface AuditLogFilterRequest {
   /** @format int32 */
   pageNumber?: number;
@@ -3258,19 +2715,6 @@ export interface AuditLogFilterRequest {
   tags?: string[] | null;
 }
 
-export interface AuditTrailItemResponse {
-  /** @format int32 */
-  auditId?: number;
-  /** @format uuid */
-  userId?: string;
-  action?: string | null;
-  details?: string | null;
-  /** @format date-time */
-  timestamp?: string;
-  /** @format uuid */
-  performedBy?: string;
-}
-
 export interface AutoModerationRuleRequest {
   /** @format int32 */
   ruleId: number;
@@ -3286,35 +2730,6 @@ export interface AutoModerationRuleRequest {
    * @max 100
    */
   threshold?: number;
-}
-
-export interface AutoModerationRuleResponse {
-  /** @format int32 */
-  ruleId?: number;
-  name?: string | null;
-  isActive?: boolean;
-  /** @format double */
-  threshold?: number;
-}
-
-export interface AutoModerationSettingsResponse {
-  isEnabled?: boolean;
-  rules?: AutoModerationRuleResponse[] | null;
-  /** @format double */
-  autoApproveThreshold?: number;
-  /** @format double */
-  autoRejectThreshold?: number;
-  /** @format date-time */
-  lastUpdated?: string;
-}
-
-export interface AutoModerationSettingsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: AutoModerationSettingsResponse;
 }
 
 export interface AwardCommissionBonusRequest {
@@ -3504,49 +2919,6 @@ export interface BazaarEventRequest {
   ownerId?: string | null;
 }
 
-export interface BazaarEventResponse {
-  /** @format int32 */
-  id?: number;
-  nameEn?: string | null;
-  nameAr?: string | null;
-  descriptionEn?: string | null;
-  descriptionAr?: string | null;
-  slug?: string | null;
-  /** @format date-time */
-  startDate?: string;
-  /** @format date-time */
-  endDate?: string;
-  location?: string | null;
-  address?: string | null;
-  city?: string | null;
-  country?: string | null;
-  /** @format double */
-  latitude?: number | null;
-  /** @format double */
-  longitude?: number | null;
-  imageUrl?: string | null;
-  coverImageUrl?: string | null;
-  isPublic?: boolean;
-  isActive?: boolean;
-  status?: BazaarEventStatus;
-  /** @format uuid */
-  organizerId?: string;
-  category?: string | null;
-  tags?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-  organizer?: UserResponse;
-  booths?: BoothResponse[] | null;
-  reservations?: BoothReservationResponse[] | null;
-}
-
 export interface BazaarFloorplanRequest {
   /** @format int32 */
   bazaarEventId: number;
@@ -3673,6 +3045,7 @@ export interface BeautyCenterServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -3775,6 +3148,7 @@ export interface BeautyCenterServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -3836,15 +3210,6 @@ export interface BlockedWorkingTimeRequest {
   blockedDate?: string;
   /** @format int32 */
   providerId?: number | null;
-}
-
-export interface BooleanApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: boolean;
 }
 
 export interface BoothRequest {
@@ -3930,89 +3295,6 @@ export interface BoothReservationRequest {
   /** @format int32 */
   daysReserved?: number | null;
   autoConfirm?: boolean;
-}
-
-export interface BoothReservationResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  boothId?: number;
-  /** @format int32 */
-  vendorId?: number;
-  vendorName?: string | null;
-  /** @format double */
-  amount?: number;
-  status?: BoothReservationStatus;
-  payRef?: string | null;
-  /** @format date-time */
-  paidAt?: string | null;
-  /** @format date-time */
-  expiresAt?: string | null;
-  notes?: string | null;
-  /** @format int32 */
-  daysReserved?: number | null;
-  /** @format date-time */
-  startDate?: string | null;
-  /** @format date-time */
-  endDate?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  isDeleted?: boolean;
-}
-
-export interface BoothResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  bazaarEventId?: number;
-  /** @format int32 */
-  floorplanId?: number | null;
-  code?: string | null;
-  size?: string | null;
-  /** @format double */
-  areaSqM?: number | null;
-  /** @format float */
-  x?: number;
-  /** @format float */
-  y?: number;
-  /** @format float */
-  width?: number;
-  /** @format float */
-  height?: number;
-  /** @format float */
-  rotation?: number;
-  /** @format double */
-  pricePerDay?: number;
-  /** @format double */
-  price?: number;
-  status?: BoothStatus;
-  /** @format int32 */
-  vendorId?: number | null;
-  vendorName?: string | null;
-  vendor?: VendorInfo;
-  /** @format int32 */
-  gridRow?: number | null;
-  /** @format int32 */
-  gridCol?: number | null;
-  polygon?: string | null;
-  description?: string | null;
-  fillColor?: string | null;
-  borderColor?: string | null;
-  showLabel?: boolean;
-  hasElectricity?: boolean;
-  hasWater?: boolean;
-  hasStorage?: boolean;
-  amenities?: string | null;
-  /** @format date-time */
-  holdUntilUtc?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  isDeleted?: boolean;
-  reservations?: BoothReservationResponse[] | null;
 }
 
 export interface Bride {
@@ -4584,308 +3866,11 @@ export interface CalculateCommissionRequest {
   description?: string | null;
 }
 
-export interface CalculateCommissionResponse {
-  /** @format double */
-  commissionAmount?: number;
-  currency?: string | null;
-  /** @format double */
-  commissionRate?: number;
-  calculationMethod?: string | null;
-  /** @format double */
-  tierMultiplier?: number | null;
-  /** @format double */
-  actionMultiplier?: number | null;
-  /** @format date-time */
-  calculatedAt?: string;
-}
-
-export interface CalculateCommissionResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CalculateCommissionResponse;
-}
-
 export interface CalculateStaffCommissionRequest {
   /** @format int32 */
   reservationId?: number;
   /** @format int32 */
   staffAssignmentId?: number;
-}
-
-export interface CampaignAnalyticsResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format int32 */
-  campaignId?: number;
-  /** @format date-time */
-  periodStart?: string | null;
-  /** @format date-time */
-  periodEnd?: string | null;
-  /** @format int32 */
-  totalInvitations?: number;
-  /** @format int32 */
-  acceptedAssignments?: number;
-  /** @format int32 */
-  declinedAssignments?: number;
-  /** @format int32 */
-  completedAssignments?: number;
-  /** @format double */
-  totalBudget?: number;
-  /** @format double */
-  utilizedBudget?: number;
-  /** @format double */
-  acceptanceRate?: number;
-  /** @format double */
-  budgetUtilizationRate?: number;
-  /** @format int32 */
-  totalMilestones?: number;
-  /** @format int32 */
-  completedMilestones?: number;
-  /** @format double */
-  milestoneCompletionRate?: number;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-}
-
-export interface CampaignAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CampaignAnalyticsResponse;
-}
-
-export interface CampaignAssignmentResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  slug?: string | null;
-  /** @format int32 */
-  assignmentId?: number;
-  /** @format int32 */
-  campaignId?: number;
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format double */
-  rate?: number;
-  status?: string | null;
-  deliverables?: string[] | null;
-  notes?: string | null;
-  /** @format date-time */
-  deadline?: string | null;
-  isActive?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-}
-
-export interface CampaignAssignmentResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CampaignAssignmentResponse;
-}
-
-export interface CampaignAssignmentResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CampaignAssignmentResponse[] | null;
-}
-
-export interface CampaignListResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  campaigns?: CampaignResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  page?: number;
-  /** @format int32 */
-  pageSize?: number;
-  /** @format int32 */
-  totalPages?: number;
-}
-
-export interface CampaignListResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CampaignListResponse;
-}
-
-export interface CampaignMilestoneResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  slug?: string | null;
-  /** @format int32 */
-  milestoneId?: number;
-  /** @format int32 */
-  campaignId?: number;
-  title?: string | null;
-  description?: string | null;
-  milestoneType?: string | null;
-  /** @format date-time */
-  targetDate?: string;
-  /** @format double */
-  value?: number | null;
-  requiredDeliverables?: string | null;
-  successCriteria?: string | null;
-  priority?: string | null;
-  isRequired?: boolean;
-  autoApprove?: boolean;
-  isCompleted?: boolean;
-  /** @format date-time */
-  completionDate?: string | null;
-  completionNotes?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-}
-
-export interface CampaignMilestoneResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CampaignMilestoneResponse;
-}
-
-export interface CampaignMilestoneResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CampaignMilestoneResponse[] | null;
-}
-
-export interface CampaignPerformanceResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format int32 */
-  campaignId?: number;
-  /** @format int32 */
-  totalViews?: number;
-  /** @format int32 */
-  totalApplications?: number;
-  /** @format int32 */
-  totalAcceptedApplications?: number;
-  /** @format double */
-  applicationConversionRate?: number;
-  /** @format int32 */
-  totalCompletedMilestones?: number;
-  /** @format int32 */
-  totalMilestones?: number;
-  /** @format double */
-  milestoneCompletionRate?: number;
-  /** @format double */
-  totalBudgetSpent?: number;
-  /** @format double */
-  totalBudgetAllocated?: number;
-  /** @format double */
-  budgetUtilizationRate?: number;
-  /** @format double */
-  averageMilestoneCompletionTime?: number;
-  /** @format double */
-  performanceScore?: number;
-  /** @format date-time */
-  periodStart?: string | null;
-  /** @format date-time */
-  periodEnd?: string | null;
-}
-
-export interface CampaignPerformanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CampaignPerformanceResponse;
-}
-
-export interface CampaignResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  slug?: string | null;
-  /** @format int32 */
-  campaignId?: number;
-  /** @format int32 */
-  providerId?: number;
-  name?: string | null;
-  brief?: string | null;
-  description?: string | null;
-  deliverables?: string[] | null;
-  /** @format double */
-  budget?: number;
-  /** @format date-time */
-  startAt?: string;
-  /** @format date-time */
-  endAt?: string;
-  /** @format int32 */
-  targetCityId?: number | null;
-  targetNiches?: string[] | null;
-  currency?: string | null;
-  status?: string | null;
-  isPublic?: boolean;
-  tags?: string[] | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-}
-
-export interface CampaignResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CampaignResponse;
-}
-
-export interface CampaignResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CampaignResponse[] | null;
 }
 
 export interface CanBookAtTimeRequest {
@@ -5038,65 +4023,12 @@ export interface Category {
   externalApiId?: string | null;
 }
 
-export interface CategoryBreakdownResponse {
-  category?: string | null;
-  /** @format int32 */
-  totalContent?: number;
-  /** @format int32 */
-  approvedContent?: number;
-  /** @format int32 */
-  rejectedContent?: number;
-  /** @format double */
-  approvalRate?: number;
-}
-
 export interface CategoryRequest {
   nameAr?: string | null;
   nameEn?: string | null;
   descriptionAr?: string | null;
   descriptionEn?: string | null;
   subCategories?: SubCategoryRequest[] | null;
-}
-
-export interface CategoryResponse {
-  /** @format int32 */
-  id?: number;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  description?: string | null;
-  iconName?: string | null;
-  colorName?: string | null;
-  url?: string | null;
-  subCategories?: SubCategoryResponse[] | null;
-  items?: ItemResponse[] | null;
-  favoriteItems?: ItemFavoriteResponse[] | null;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-}
-
-export interface CategorySales {
-  /** @format int32 */
-  categoryId?: number;
-  categoryName?: string | null;
-  /** @format int32 */
-  unitsSold?: number;
-  /** @format double */
-  revenue?: number;
-  /** @format int32 */
-  productCount?: number;
-}
-
-export interface ChartResponse {
-  chartType?: string | null;
-  title?: string | null;
-  data?: string | null;
 }
 
 export interface ChatUploadAttachmentRequest {
@@ -5783,289 +4715,6 @@ export interface CollaborativePaymentPlanRequest {
   isValid?: boolean;
 }
 
-export interface CommissionAnalyticsResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format date-time */
-  fromDate?: string | null;
-  /** @format date-time */
-  toDate?: string | null;
-  /** @format int32 */
-  totalCommissions?: number;
-  /** @format int32 */
-  pendingCommissions?: number;
-  /** @format int32 */
-  approvedCommissions?: number;
-  /** @format int32 */
-  reversedCommissions?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  pendingAmount?: number;
-  /** @format double */
-  approvedAmount?: number;
-  /** @format double */
-  canceledAmount?: number;
-  /** @format double */
-  averageCommission?: number;
-  commissionByStatus?: CommissionByStatusResponse[] | null;
-}
-
-export interface CommissionAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionAnalyticsResponse;
-}
-
-export interface CommissionByStatusResponse {
-  status?: string | null;
-  /** @format int32 */
-  count?: number;
-  /** @format double */
-  amount?: number;
-}
-
-export interface CommissionLedgerListResponse {
-  ledgers?: CommissionLedgerResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-}
-
-export interface CommissionLedgerListResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionLedgerListResponse;
-}
-
-export interface CommissionLedgerResponse {
-  /** @format int32 */
-  commissionLedgerId?: number;
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format int32 */
-  attributionEventId?: number | null;
-  /** @format double */
-  commissionAmount?: number;
-  currency?: string | null;
-  approvalNotes?: string | null;
-  status?: CommissionStatus;
-  /** @format double */
-  commissionRate?: number | null;
-  /** @format double */
-  tierMultiplier?: number | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string;
-  /** @format uuid */
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-  guideProfile?: GuideProfileSummaryResponse;
-  attributionEvent?: AttributionEventSummaryResponse;
-}
-
-export interface CommissionLedgerResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionLedgerResponse;
-}
-
-export interface CommissionLedgerResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionLedgerResponse[] | null;
-}
-
-export interface CommissionPreviewResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format double */
-  orderAmount?: number;
-  currency?: string | null;
-  /** @format double */
-  commissionAmount?: number;
-  /** @format double */
-  commissionRate?: number;
-  calculationMethod?: string | null;
-  /** @format date-time */
-  previewDate?: string;
-}
-
-export interface CommissionPreviewResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionPreviewResponse;
-}
-
-export interface CommissionReportResponse {
-  /** @format int32 */
-  guideProfileId?: number | null;
-  guideName?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  pendingAmount?: number;
-  /** @format double */
-  approvedAmount?: number;
-  /** @format double */
-  pendingCommissions?: number;
-  /** @format double */
-  approvedCommissions?: number;
-  /** @format int32 */
-  totalCommissions?: number;
-  /** @format int32 */
-  commissionCount?: number;
-  /** @format double */
-  averageCommission?: number;
-  /** @format int32 */
-  totalPayouts?: number | null;
-  /** @format double */
-  totalPayoutAmount?: number | null;
-  /** @format double */
-  netCommission?: number | null;
-  /** @format date-time */
-  generatedAt?: string;
-  reportType?: string | null;
-  /** @format int32 */
-  reversedCommissions?: number;
-  /** @format double */
-  averageAmount?: number;
-  /** @format double */
-  totalCommissionAmount?: number;
-  /** @format double */
-  pendingCommissionAmount?: number;
-  /** @format double */
-  approvedCommissionAmount?: number;
-  availableBalance?: any;
-}
-
-export interface CommissionReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionReportResponse;
-}
-
-export interface CommissionResponse {
-  /** @format int32 */
-  commissionId?: number;
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format int32 */
-  attributionEventId?: number | null;
-  /** @format double */
-  amount?: number;
-  currency?: string | null;
-  status?: CommissionStatus;
-  /** @format double */
-  rate?: number;
-  description?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  guideProfile?: GuideProfileSummaryResponse;
-  attributionEvent?: AttributionEventSummaryResponse;
-}
-
-export interface CommissionResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionResponse;
-}
-
-export interface CommissionResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionResponse[] | null;
-}
-
-export interface CommissionRuleResponse {
-  /** @format int32 */
-  commissionRuleId?: number;
-  /** @format int32 */
-  providerId?: number | null;
-  ruleType?: CommissionRuleType;
-  /** @format double */
-  value?: number;
-  currency?: string | null;
-  /** @format double */
-  maxCommission?: number | null;
-  /** @format double */
-  minCommission?: number | null;
-  /** @format date-time */
-  validFrom?: string | null;
-  /** @format date-time */
-  validTo?: string | null;
-  status?: CommissionRuleStatus;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string;
-  /** @format uuid */
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-}
-
-export interface CommissionRuleResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionRuleResponse;
-}
-
-export interface CommissionRuleResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: CommissionRuleResponse[] | null;
-}
-
-export interface CommonConfigurationSettingsResponse {
-  stringSettings?: Record<string, string | null>;
-  intSettings?: Record<string, number | null>;
-  decimalSettings?: Record<string, number | null>;
-  boolSettings?: Record<string, boolean | null>;
-  additionalSettings?: Record<string, any>;
-}
-
 export interface CompleteModerationWorkflowRequest {
   /** @format int32 */
   workflowId: number;
@@ -6106,39 +4755,6 @@ export interface CompletePromotionWorkflowRequest {
    * @maxLength 1000
    */
   notes?: string | null;
-}
-
-export interface ConfigurationError {
-  code?: string | null;
-  message?: string | null;
-  field?: string | null;
-  severity?: string | null;
-}
-
-export interface ConfigurationIssueResponse {
-  issueId?: string | null;
-  issueType?: string | null;
-  description?: string | null;
-  severityLevel?: string | null;
-  impactLevel?: string | null;
-  suggestedFix?: string | null;
-}
-
-export interface ConfigurationValidationResultResponse {
-  ruleName?: string | null;
-  passed?: boolean;
-  description?: string | null;
-  currentValue?: string | null;
-  expectedValue?: string | null;
-  severityLevel?: string | null;
-  errorMessage?: string | null;
-}
-
-export interface ConfigurationWarning {
-  code?: string | null;
-  message?: string | null;
-  field?: string | null;
-  severity?: string | null;
 }
 
 export interface ConfigureShopifyRequest {
@@ -6198,461 +4814,6 @@ export interface ContactFormRequest {
   category?: string | null;
   subscribeToNewsletter?: boolean;
   notes?: string | null;
-}
-
-export interface ContentAnalyticsResponse {
-  /** @format int32 */
-  contentId?: number;
-  /** @format int32 */
-  ugcContentId?: number;
-  /** @format date-time */
-  fromDate?: string | null;
-  /** @format date-time */
-  toDate?: string | null;
-  /** @format int64 */
-  views?: number;
-  /** @format int64 */
-  likes?: number;
-  /** @format int64 */
-  shares?: number;
-  /** @format int64 */
-  comments?: number;
-  /** @format int64 */
-  clicks?: number;
-  /** @format int64 */
-  conversions?: number;
-  /** @format double */
-  engagementRate?: number;
-  status?: string | null;
-  /** @format date-time */
-  publishedAt?: string | null;
-}
-
-export interface ContentAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentAnalyticsResponse;
-}
-
-export interface ContentCategoryResponse {
-  /** @format int32 */
-  categoryId?: number;
-  name?: string | null;
-  categoryName?: string | null;
-  categoryType?: string | null;
-  description?: string | null;
-  color?: string | null;
-  icon?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  sortOrder?: number;
-  rules?: ContentCategoryRuleResponse[] | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  /** @format int32 */
-  createdBy?: number;
-  /** @format int32 */
-  updatedBy?: number;
-}
-
-export interface ContentCategoryResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentCategoryResponse;
-}
-
-export interface ContentCategoryResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentCategoryResponse[] | null;
-}
-
-export interface ContentCategoryRuleResponse {
-  /** @format int32 */
-  ruleId?: number;
-  ruleName?: string | null;
-  ruleType?: string | null;
-  description?: string | null;
-}
-
-export interface ContentConfigurationValidationResponse {
-  /** @format int32 */
-  contentId?: number;
-  isValid?: boolean;
-  /** @format double */
-  validationScore?: number;
-  issues?: string[] | null;
-  warnings?: string[] | null;
-  recommendations?: string[] | null;
-}
-
-export interface ContentConfigurationValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentConfigurationValidationResponse;
-}
-
-export interface ContentEligibilityResponse {
-  /** @format int32 */
-  contentId?: number;
-  isEligible?: boolean;
-  /** @format double */
-  eligibilityScore?: number;
-  criteriaMet?: string[] | null;
-  criteriaNotMet?: string[] | null;
-  recommendations?: string[] | null;
-}
-
-export interface ContentEligibilityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentEligibilityResponse;
-}
-
-export interface ContentListResponse {
-  content?: UGCContentResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  page?: number;
-  /** @format int32 */
-  pageSize?: number;
-  /** @format int32 */
-  totalPages?: number;
-}
-
-export interface ContentListResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentListResponse;
-}
-
-export interface ContentMetricsResponse {
-  /** @format int64 */
-  views?: number;
-  /** @format int64 */
-  likes?: number;
-  /** @format int64 */
-  shares?: number;
-  /** @format int64 */
-  comments?: number;
-  /** @format int64 */
-  clicks?: number;
-  /** @format int64 */
-  conversions?: number;
-  /** @format double */
-  engagementRate?: number;
-  /** @format double */
-  conversionRate?: number;
-  additionalMetrics?: Record<string, number | null>;
-}
-
-export interface ContentModerationItemResponse {
-  /** @format int32 */
-  contentId?: number;
-  title?: string | null;
-  /** @format int32 */
-  authorId?: number;
-  authorName?: string | null;
-  category?: string | null;
-  priority?: string | null;
-  /** @format date-time */
-  submittedAt?: string;
-  status?: string | null;
-  /** @format uuid */
-  moderatorId?: string | null;
-  moderatorName?: string | null;
-}
-
-export interface ContentModerationReportResponse {
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalContentModerated?: number;
-  contentByStatus?: Record<string, number | null>;
-  moderationActions?: Record<string, number | null>;
-  averageModerationTime?: TimeSpan;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface ContentModerationReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentModerationReportResponse;
-}
-
-export interface ContentModerationResponse {
-  /** @format int32 */
-  moderationId?: number;
-  /** @format int32 */
-  ugcContentId?: number;
-  action?: string | null;
-  notes?: string | null;
-  /** @format uuid */
-  moderatedBy?: string;
-  /** @format date-time */
-  moderatedAt?: string;
-}
-
-export interface ContentNotificationResponse {
-  /** @format int32 */
-  notificationId?: number;
-  /** @format int32 */
-  contentId?: number;
-  notificationType?: string | null;
-  /** @format uuid */
-  recipientId?: string;
-  message?: string | null;
-  isRead?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  readAt?: string | null;
-}
-
-export interface ContentNotificationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentNotificationResponse[] | null;
-}
-
-export interface ContentPerformanceResponse {
-  /** @format int32 */
-  contentId?: number;
-  metrics?: ContentMetricsResponse;
-  /** @format double */
-  performanceScore?: number;
-  /** @format int32 */
-  ranking?: number;
-  trends?: PerformanceTrendResponse[] | null;
-}
-
-export interface ContentPerformanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentPerformanceResponse;
-}
-
-export interface ContentReportResponse {
-  /** @format int32 */
-  reportId?: number;
-  /** @format int32 */
-  contentId?: number;
-  /** @format uuid */
-  reporterId?: string;
-  reportReason?: string | null;
-  description?: string | null;
-  status?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  resolvedAt?: string | null;
-  /** @format uuid */
-  resolvedBy?: string | null;
-  resolutionNotes?: string | null;
-  /** @format int32 */
-  totalContent?: number;
-  /** @format int32 */
-  publishedContent?: number;
-  /** @format int32 */
-  draftContent?: number;
-  /** @format int32 */
-  submittedContent?: number;
-  /** @format int32 */
-  approvedContent?: number;
-  /** @format int32 */
-  rejectedContent?: number;
-  /** @format int64 */
-  totalViews?: number;
-  /** @format int64 */
-  totalLikes?: number;
-  /** @format int64 */
-  totalShares?: number;
-  /** @format int64 */
-  totalComments?: number;
-}
-
-export interface ContentReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentReportResponse;
-}
-
-export interface ContentReportResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentReportResponse[] | null;
-}
-
-export interface ContentSummaryReportResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalContent?: number;
-  /** @format int32 */
-  publishedContent?: number;
-  /** @format int64 */
-  totalViews?: number;
-  /** @format int64 */
-  totalEngagement?: number;
-  /** @format double */
-  averagePerformance?: number;
-  topContent?: UGCContentResponse[] | null;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface ContentSummaryReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentSummaryReportResponse;
-}
-
-export interface ContentTrendsResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  trendingTypes?: Record<string, number | null>;
-  popularNiches?: Record<string, number | null>;
-  performanceTrends?: PerformanceTrendResponse[] | null;
-  engagementTrends?: PerformanceTrendResponse[] | null;
-}
-
-export interface ContentTrendsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentTrendsResponse;
-}
-
-export interface ContentValidationBatchResponse {
-  results?: ContentValidationResponse[] | null;
-  /** @format int32 */
-  totalViolations?: number;
-  /** @format date-time */
-  validationDate?: string;
-}
-
-export interface ContentValidationBatchResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentValidationBatchResponse;
-}
-
-export interface ContentValidationResponse {
-  /** @format int32 */
-  contentId?: number;
-  isValid?: boolean;
-  /** @format double */
-  validationScore?: number;
-  issues?: string[] | null;
-  warnings?: string[] | null;
-  recommendations?: string[] | null;
-  violations?: ContentViolationResponse[] | null;
-  /** @format date-time */
-  validationDate?: string;
-}
-
-export interface ContentValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentValidationResponse;
-}
-
-export interface ContentViolationResponse {
-  /** @format int32 */
-  ruleId?: number;
-  ruleName?: string | null;
-  severity?: string | null;
-  description?: string | null;
-  /** @format int32 */
-  lineNumber?: number | null;
-  /** @format int32 */
-  columnNumber?: number | null;
-}
-
-export interface ContentViolationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ContentViolationResponse[] | null;
-}
-
-export interface ConversionFunnelResponse {
-  funnel?: ConversionFunnelStepResponse[] | null;
-}
-
-export interface ConversionFunnelResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ConversionFunnelResponse;
-}
-
-export interface ConversionFunnelStepResponse {
-  stage?: string | null;
-  /** @format int32 */
-  count?: number;
 }
 
 export interface ConversionRequest {
@@ -11487,34 +9648,6 @@ export interface CustomerRequest {
   deliveryAddressId?: number | null;
 }
 
-export interface DailyAnalytics {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  views?: number;
-  /** @format int32 */
-  sales?: number;
-  /** @format double */
-  revenue?: number;
-  /** @format int32 */
-  reviews?: number;
-  /** @format int32 */
-  wishlistAdds?: number;
-  /** @format int32 */
-  cartAdds?: number;
-}
-
-export interface DailySales {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  unitsSold?: number;
-  /** @format double */
-  revenue?: number;
-  /** @format int32 */
-  orderCount?: number;
-}
-
 export interface DeactivateGuideRequest {
   /** @format int32 */
   guideProfileId: number;
@@ -11523,16 +9656,6 @@ export interface DeactivateGuideRequest {
    * @maxLength 500
    */
   reason: string;
-}
-
-export interface DecimalApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  /** @format double */
-  data?: number;
 }
 
 export interface DecisionOptionRequest {
@@ -11740,15 +9863,6 @@ export interface DemoteTierRequest {
   effectiveDate?: string | null;
 }
 
-export interface DependencyStatusResponse {
-  dependencyName?: string | null;
-  dependencyType?: string | null;
-  isSatisfied?: boolean;
-  status?: string | null;
-  statusDescription?: string | null;
-  requiredActions?: string[] | null;
-}
-
 export interface DetectFraudulentActivityRequest {
   /** @format int32 */
   affiliateLinkId: number;
@@ -11757,22 +9871,6 @@ export interface DetectFraudulentActivityRequest {
    * @maxLength 45
    */
   ipAddress: string;
-}
-
-export interface DetectFraudulentActivityResponse {
-  isFraudulent?: boolean;
-  reason?: string | null;
-  /** @format int32 */
-  recentEventCount?: number;
-}
-
-export interface DetectFraudulentActivityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: DetectFraudulentActivityResponse;
 }
 
 export interface DeviceInfo {
@@ -11830,21 +9928,6 @@ export interface DistributeTipRequest {
   tipId?: number;
 }
 
-export interface DistributionSummary {
-  /** @format int32 */
-  totalProducts?: number;
-  /** @format int32 */
-  totalStock?: number;
-  /** @format double */
-  totalInventoryValue?: number;
-  /** @format double */
-  averageProductsPerPlace?: number;
-  /** @format double */
-  averageStockPerPlace?: number;
-  /** @format double */
-  averageValuePerPlace?: number;
-}
-
 export interface EditSupportMessageRequest {
   /** @format uuid */
   supportMessageId: string;
@@ -11854,23 +9937,6 @@ export interface EditSupportMessageRequest {
   newAttachmentType?: string | null;
   newMeta?: string | null;
   newInternalNotes?: string | null;
-}
-
-export interface EligibilityCriteriaResponse {
-  criteriaName?: string | null;
-  isMet?: boolean;
-  currentValue?: string | null;
-  requiredValue?: string | null;
-  description?: string | null;
-  priorityLevel?: string | null;
-}
-
-export interface EligibilityRequirement {
-  name?: string | null;
-  description?: string | null;
-  isMet?: boolean;
-  currentValue?: string | null;
-  requiredValue?: string | null;
 }
 
 export interface EmailBulkRequest {
@@ -12245,12 +10311,6 @@ export interface EventLineUpdateRequest {
   highlighted?: boolean;
 }
 
-export interface EventTypeCountResponse {
-  eventType?: string | null;
-  /** @format int32 */
-  count?: number;
-}
-
 export interface EventVendorBulkUpdateItem {
   /** @format int32 */
   id: number;
@@ -12522,24 +10582,6 @@ export interface FeatureServices {
   servicesToFeatureServices?: ServicesToFeatureServices[] | null;
 }
 
-export interface FilterAppliedInfo {
-  globalFilters?: FilterInfo[] | null;
-  providerFilters?: FilterInfo[] | null;
-  priceFilters?: FilterInfo[] | null;
-  availabilityFilters?: FilterInfo[] | null;
-}
-
-export interface FilterInfo {
-  filterType?: string | null;
-  filterName?: string | null;
-  filterValue?: string | null;
-  /** @format int32 */
-  filterId?: number | null;
-  isProviderSpecific?: boolean;
-  /** @format int32 */
-  providerId?: number | null;
-}
-
 export interface FlagContentRequest {
   /** @format int32 */
   contentId: number;
@@ -12560,20 +10602,6 @@ export interface FlagSuspiciousActivityRequest {
    * @maxLength 500
    */
   reason: string;
-}
-
-export interface FlagSuspiciousActivityResponse {
-  success?: boolean;
-  message?: string | null;
-}
-
-export interface FlagSuspiciousActivityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: FlagSuspiciousActivityResponse;
 }
 
 export interface FlowerBouquetServiceRequest {
@@ -12655,6 +10683,7 @@ export interface FlowerBouquetServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -12757,6 +10786,7 @@ export interface FlowerBouquetServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -12894,20 +10924,6 @@ export interface GenerateAffiliateUrlRequest {
    * @maxLength 500
    */
   customParams?: string | null;
-}
-
-export interface GenerateAffiliateUrlResponse {
-  url?: string | null;
-  utmParameters?: string | null;
-}
-
-export interface GenerateAffiliateUrlResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GenerateAffiliateUrlResponse;
 }
 
 export interface GenerateAttributionPerformanceReportRequest {
@@ -13590,128 +11606,6 @@ export interface GiftCardTemplateRequest {
   isActive?: boolean;
 }
 
-export interface GoalAnalysisResponse {
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  /** @format int32 */
-  totalAssignments?: number;
-  /** @format int32 */
-  totalCompletions?: number;
-  /** @format double */
-  completionRate?: number;
-  /** @format double */
-  averageCompletionTime?: number;
-}
-
-export interface GoalCompletionStatisticsResponse {
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  goalType?: string | null;
-  /** @format int32 */
-  totalAssignments?: number;
-  /** @format int32 */
-  totalCompletions?: number;
-  /** @format double */
-  completionRate?: number;
-  /** @format double */
-  averageCompletionTime?: number;
-  /** @format int32 */
-  pointsAwarded?: number;
-}
-
-export interface GoalEligibilityResponse {
-  /** @format uuid */
-  userId?: string;
-  /** @format int32 */
-  goalId?: number;
-  isEligible?: boolean;
-  /** @format double */
-  eligibilityScore?: number;
-  eligibilityCriteria?: EligibilityCriteriaResponse[] | null;
-  recommendations?: string[] | null;
-  blockingFactors?: string[] | null;
-  nextSteps?: string[] | null;
-}
-
-export interface GoalEligibilityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GoalEligibilityResponse;
-}
-
-export interface GoalPerformanceAnalysisResponse {
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  /** @format double */
-  performanceScore?: number;
-  engagementLevel?: string | null;
-  difficultyLevel?: string | null;
-  /** @format double */
-  userSatisfactionScore?: number;
-  recommendations?: string[] | null;
-}
-
-export interface GoalPerformanceTrend {
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  /** @format double */
-  completionRate?: number;
-  /** @format int32 */
-  completions?: number;
-  /** @format double */
-  averageCompletionTime?: number;
-}
-
-export interface GoalProgressSummaryResponse {
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  /** @format int32 */
-  currentProgress?: number;
-  /** @format int32 */
-  targetValue?: number;
-  /** @format double */
-  progressPercentage?: number;
-  isCompleted?: boolean;
-}
-
-export interface GoalTrendResponse {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  /** @format int32 */
-  assignmentsCount?: number;
-  /** @format int32 */
-  completionsCount?: number;
-  /** @format double */
-  completionRate?: number;
-}
-
-export interface GoalUserBreakdownResponse {
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  /** @format int32 */
-  totalUsersAssigned?: number;
-  /** @format int32 */
-  usersCompleted?: number;
-  /** @format int32 */
-  usersInProgress?: number;
-  /** @format int32 */
-  usersNotStarted?: number;
-  /** @format double */
-  completionRate?: number;
-}
-
 export interface Groom {
   /** @format uuid */
   id?: string;
@@ -14195,633 +12089,6 @@ export interface GuestTrackingData {
   lastVisit?: string;
 }
 
-export interface GuideAffiliateAnalyticsResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalViews?: number;
-  /** @format int32 */
-  totalClicks?: number;
-  /** @format int32 */
-  totalPurchases?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  totalCommission?: number;
-  /** @format double */
-  pendingCommission?: number;
-  /** @format double */
-  approvedCommission?: number;
-}
-
-export interface GuideAffiliateAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideAffiliateAnalyticsResponse;
-}
-
-export interface GuideAnalyticsResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format date-time */
-  fromDate?: string | null;
-  /** @format date-time */
-  toDate?: string | null;
-  /** @format int32 */
-  views?: number;
-  /** @format int32 */
-  clicks?: number;
-  /** @format int32 */
-  conversions?: number;
-  /** @format double */
-  rating?: number;
-  /** @format int32 */
-  ratingCount?: number;
-  tier?: string | null;
-  /** @format double */
-  totalEarnings?: number;
-  /** @format int32 */
-  totalCampaigns?: number;
-  /** @format int32 */
-  totalAffiliateLinks?: number;
-  /** @format double */
-  pendingCommissions?: number;
-  status?: string | null;
-  isActive?: boolean;
-}
-
-export interface GuideAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideAnalyticsResponse;
-}
-
-export interface GuideCampaignAnalyticsResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format int32 */
-  totalCampaignsParticipated?: number;
-  /** @format int32 */
-  totalCampaignsCompleted?: number;
-  /** @format double */
-  campaignCompletionRate?: number;
-  /** @format int32 */
-  totalMilestonesCompleted?: number;
-  /** @format int32 */
-  totalMilestonesAssigned?: number;
-  /** @format double */
-  milestoneCompletionRate?: number;
-  /** @format double */
-  totalEarnings?: number;
-  /** @format double */
-  averageEarningsPerCampaign?: number;
-  /** @format double */
-  averageEarningsPerMilestone?: number;
-  /** @format double */
-  averageMilestoneCompletionTime?: number;
-  /** @format double */
-  qualityScore?: number;
-  /** @format double */
-  performanceScore?: number;
-  /** @format date-time */
-  periodStart?: string | null;
-  /** @format date-time */
-  periodEnd?: string | null;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalInvitations?: number;
-  /** @format int32 */
-  acceptedAssignments?: number;
-  /** @format int32 */
-  completedAssignments?: number;
-  /** @format double */
-  acceptanceRate?: number;
-  /** @format int32 */
-  declinedAssignments?: number;
-}
-
-export interface GuideCampaignAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideCampaignAnalyticsResponse;
-}
-
-export interface GuideCommissionAnalyticsResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalCommissions?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  pendingAmount?: number;
-  /** @format double */
-  approvedAmount?: number;
-  /** @format double */
-  canceledAmount?: number;
-  /** @format double */
-  averageCommission?: number;
-}
-
-export interface GuideCommissionAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideCommissionAnalyticsResponse;
-}
-
-export interface GuideCommissionSummaryResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format int32 */
-  totalCommissions?: number;
-  /** @format double */
-  totalCommissionAmount?: number;
-  /** @format int32 */
-  pendingCommissions?: number;
-  /** @format int32 */
-  approvedCommissions?: number;
-  /** @format int32 */
-  totalPayouts?: number;
-  /** @format double */
-  totalPayoutAmount?: number;
-  /** @format double */
-  availableBalance?: number;
-  /** @format double */
-  averageCommission?: number;
-}
-
-export interface GuideCommissionSummaryResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideCommissionSummaryResponse;
-}
-
-export interface GuideContentAnalyticsResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format date-time */
-  fromDate?: string | null;
-  /** @format date-time */
-  toDate?: string | null;
-  /** @format int32 */
-  totalContent?: number;
-  /** @format int32 */
-  publishedContent?: number;
-  /** @format int32 */
-  draftContent?: number;
-  /** @format int32 */
-  submittedContent?: number;
-  /** @format int32 */
-  approvedContent?: number;
-  /** @format int32 */
-  rejectedContent?: number;
-  /** @format int64 */
-  totalViews?: number;
-  /** @format int64 */
-  totalLikes?: number;
-  /** @format int64 */
-  totalShares?: number;
-  /** @format int64 */
-  totalComments?: number;
-  /** @format int64 */
-  totalClicks?: number;
-  /** @format int64 */
-  totalConversions?: number;
-}
-
-export interface GuideContentAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideContentAnalyticsResponse;
-}
-
-export interface GuideContentReportResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalContent?: number;
-  /** @format int32 */
-  publishedContent?: number;
-  /** @format int32 */
-  draftContent?: number;
-  /** @format int32 */
-  submittedContent?: number;
-  /** @format int32 */
-  approvedContent?: number;
-  /** @format int32 */
-  rejectedContent?: number;
-  /** @format int32 */
-  totalViews?: number;
-  /** @format int32 */
-  totalLikes?: number;
-  /** @format int32 */
-  totalShares?: number;
-  /** @format int32 */
-  totalComments?: number;
-  guideProfile?: GuideProfileSummaryResponse;
-  performanceSummary?: PerformanceSummaryResponse;
-  contentByStatus?: Record<string, number | null>;
-  engagementMetrics?: Record<string, number | null>;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface GuideContentReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideContentReportResponse;
-}
-
-export interface GuideDetailedBreakdownResponse {
-  byPayoutMethod?: PayoutMethodBreakdownResponse[] | null;
-  byStatus?: PayoutStatusBreakdownResponse[] | null;
-  byMonth?: PayoutMonthlyBreakdownResponse[] | null;
-}
-
-export interface GuideListResponse {
-  guides?: GuideProfileResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  page?: number;
-  /** @format int32 */
-  pageSize?: number;
-  /** @format int32 */
-  totalPages?: number;
-}
-
-export interface GuideListResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideListResponse;
-}
-
-export interface GuideMonthlyPayoutTrendResponse {
-  month?: string | null;
-  /** @format int32 */
-  payoutCount?: number;
-  /** @format double */
-  payoutAmount?: number;
-  averageProcessingTime?: TimeSpan;
-}
-
-export interface GuidePayoutAnalyticsResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  guideName?: string | null;
-  /** @format int32 */
-  totalPayouts?: number;
-  /** @format double */
-  totalPayoutAmount?: number;
-  /** @format double */
-  averagePayoutAmount?: number;
-  /** @format int32 */
-  pendingPayouts?: number;
-  /** @format double */
-  pendingAmount?: number;
-  /** @format int32 */
-  completedPayouts?: number;
-  /** @format double */
-  completedAmount?: number;
-  /** @format double */
-  successRate?: number;
-  averageProcessingTime?: TimeSpan;
-  payoutMethodPreferences?: GuidePayoutMethodPreferenceResponse[] | null;
-  monthlyTrends?: GuideMonthlyPayoutTrendResponse[] | null;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-}
-
-export interface GuidePayoutAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuidePayoutAnalyticsResponse;
-}
-
-export interface GuidePayoutMethodPreferenceResponse {
-  payoutMethod?: string | null;
-  /** @format int32 */
-  usageCount?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  usagePercentage?: number;
-}
-
-export interface GuidePayoutReportResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  guideName?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  profileSummary?: GuideProfileSummaryResponse;
-  payoutSummary?: GuidePayoutSummaryResponse;
-  performanceMetrics?: GuidePerformanceMetricsResponse;
-  detailedBreakdown?: GuideDetailedBreakdownResponse;
-  trendAnalysis?: GuideTrendAnalysisResponse;
-  payoutHistory?: PayoutRequestResponse[] | null;
-}
-
-export interface GuidePayoutReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuidePayoutReportResponse;
-}
-
-export interface GuidePayoutSummaryResponse {
-  /** @format int32 */
-  totalPayouts?: number;
-  /** @format double */
-  totalPayoutAmount?: number;
-  /** @format double */
-  averagePayoutAmount?: number;
-  /** @format int32 */
-  pendingPayouts?: number;
-  /** @format double */
-  pendingAmount?: number;
-  /** @format int32 */
-  completedPayouts?: number;
-  /** @format double */
-  completedAmount?: number;
-  /** @format int32 */
-  failedPayouts?: number;
-  /** @format double */
-  failedAmount?: number;
-}
-
-export interface GuidePerformanceMetricsResponse {
-  /** @format double */
-  successRate?: number;
-  averageProcessingTime?: TimeSpan;
-  fastestProcessingTime?: TimeSpan;
-  slowestProcessingTime?: TimeSpan;
-  /** @format double */
-  totalVolumeProcessed?: number;
-  /** @format double */
-  averageVolumePerPayout?: number;
-}
-
-export interface GuidePortfolioItemResponse {
-  /** @format int32 */
-  portfolioItemId?: number;
-  /** @format int32 */
-  guideProfileId?: number;
-  title?: string | null;
-  type?: ContentType;
-  description?: string | null;
-  /** @format int32 */
-  contentId?: number | null;
-  mediaUrl?: string | null;
-  thumbnailUrl?: string | null;
-  tags?: string[] | null;
-  isPublic?: boolean;
-  isFeatured?: boolean;
-  /** @format int32 */
-  sortOrder?: number;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string;
-  /** @format uuid */
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-}
-
-export interface GuidePortfolioItemResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuidePortfolioItemResponse;
-}
-
-export interface GuideProfileResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format uuid */
-  userId?: string;
-  handle?: string | null;
-  displayName?: string | null;
-  avatarUrl?: string | null;
-  shortBio?: string | null;
-  instagramHandle?: string | null;
-  tikTokHandle?: string | null;
-  youTubeHandle?: string | null;
-  facebookHandle?: string | null;
-  languages?: string | null;
-  niches?: string | null;
-  tier?: GuideTier;
-  status?: GuideProfileStatus;
-  isVerified?: boolean;
-  /** @format date-time */
-  verifiedAt?: string | null;
-  /** @format uuid */
-  verifiedBy?: string | null;
-  /** @format int32 */
-  cityId?: number | null;
-  /** @format int32 */
-  views?: number;
-  /** @format int32 */
-  clicks?: number;
-  /** @format int32 */
-  conversions?: number;
-  /** @format double */
-  rating?: number;
-  /** @format int32 */
-  ratingCount?: number;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string;
-  /** @format uuid */
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-  user?: UserSummaryResponse;
-  portfolioItems?: GuidePortfolioItemResponse[] | null;
-}
-
-export interface GuideProfileResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideProfileResponse;
-}
-
-export interface GuideProfileSummaryResponse {
-  /** @format int32 */
-  guideProfileId?: number;
-  /** @format uuid */
-  userId?: string;
-  handle?: string | null;
-  displayName?: string | null;
-  guideName?: string | null;
-  guideEmail?: string | null;
-  guidePhone?: string | null;
-  tier?: GuideTier;
-  tierString?: string | null;
-  status?: GuideProfileStatus;
-  avatarUrl?: string | null;
-  niches?: string | null;
-  languages?: string | null;
-  instagramHandle?: string | null;
-  tikTokHandle?: string | null;
-  youTubeHandle?: string | null;
-  facebookHandle?: string | null;
-  shortBio?: string | null;
-  isVerified?: boolean | null;
-  /** @format date-time */
-  profileCreationDate?: string | null;
-}
-
-export interface GuideStatusResponse {
-  status?: GuideProfileStatus;
-}
-
-export interface GuideStatusResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: GuideStatusResponse;
-}
-
-export interface GuideTrendAnalysisResponse {
-  volumeTrends?: VolumeTrendResponse[] | null;
-  processingTimeTrends?: ProcessingTimeTrendResponse[] | null;
-  successRateTrends?: SuccessRateTrendResponse[] | null;
-}
-
-export interface HallResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  eventId?: number;
-  name?: string | null;
-  description?: string | null;
-  location?: string | null;
-  floor?: string | null;
-  building?: string | null;
-  /** @format int32 */
-  capacity?: number;
-  /** @format int32 */
-  seatingCapacity?: number | null;
-  /** @format int32 */
-  standingCapacity?: number | null;
-  layout?: string | null;
-  amenities?: string[] | null;
-  hasProjector?: boolean;
-  hasSoundSystem?: boolean;
-  hasLighting?: boolean;
-  hasAirConditioning?: boolean;
-  hasWifi?: boolean;
-  hasStage?: boolean;
-  hasPodium?: boolean;
-  hasWhiteboard?: boolean;
-  hasFlipchart?: boolean;
-  imageUrl?: string | null;
-  floorPlanUrl?: string | null;
-  virtualTourUrl?: string | null;
-  isAccessible?: boolean;
-  accessibilityNotes?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  sortOrder?: number;
-  tags?: string[] | null;
-  notes?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  isAvailable?: boolean;
-  fullLocation?: string | null;
-  capacityText?: string | null;
-}
-
-export interface HallResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: HallResponse;
-}
-
-export interface ImportError {
-  /** @format int32 */
-  rowNumber?: number;
-  sku?: string | null;
-  productName?: string | null;
-  errorMessage?: string | null;
-  errorCode?: string | null;
-}
-
 export interface ImportEventsRequest {
   /** @minLength 1 */
   filePath: string;
@@ -14835,32 +12102,12 @@ export interface ImportEventsRequest {
   importedBy?: string | null;
 }
 
-export interface ImportSuccess {
-  /** @format int32 */
-  rowNumber?: number;
-  /** @format int32 */
-  productId?: number;
-  sku?: string | null;
-  productName?: string | null;
-  action?: string | null;
-}
-
 export interface ImportTrackingNumbersRequest {
   items: TrackingNumberImportItem[];
 }
 
 export interface InitUserPlanningPreferenceRequest {
   planningPreferenceIds: number[];
-}
-
-export interface Int32ApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  /** @format int32 */
-  data?: number;
 }
 
 export interface Inventory {
@@ -14950,28 +12197,6 @@ export interface Inventory {
   movements?: InventoryMovement[] | null;
 }
 
-export interface InventoryDistributionResponse {
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  totalPlaces?: number;
-  /** @format int32 */
-  activePlaces?: number;
-  /** @format date-time */
-  distributionDate?: string;
-  placeDistributions?: PlaceDistributionItem[] | null;
-  summary?: DistributionSummary;
-}
-
-export interface InventoryDistributionResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: InventoryDistributionResponse;
-}
-
 export interface InventoryMovement {
   /** @format int32 */
   id: number;
@@ -15024,334 +12249,6 @@ export interface InventoryMovement {
   product?: Product;
   variant?: ProductVariation;
   place?: Place;
-}
-
-export interface InventoryMovementReportResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  inventoryId?: number;
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  productSKU?: string | null;
-  location?: string | null;
-  movementType?: MovementType;
-  movementTypeName?: string | null;
-  /** @format int32 */
-  quantity?: number;
-  reference?: string | null;
-  notes?: string | null;
-  /** @format date-time */
-  movementDate?: string;
-  /** @format double */
-  costPrice?: number | null;
-  /** @format double */
-  totalCost?: number | null;
-  currency?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-}
-
-export interface InventoryMovementReportResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: InventoryMovementReportResponse[] | null;
-}
-
-export interface InventoryMovementResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  inventoryId?: number;
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  productSKU?: string | null;
-  movementType?: MovementType;
-  movementTypeName?: string | null;
-  /** @format int32 */
-  quantity?: number;
-  reference?: string | null;
-  notes?: string | null;
-  /** @format date-time */
-  movementDate?: string;
-  /** @format int32 */
-  placeId?: number | null;
-  placeName?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-}
-
-export interface InventoryMovementResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: InventoryMovementResponse[] | null;
-}
-
-export interface InventoryReportItem {
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  productSKU?: string | null;
-  location?: string | null;
-  /** @format int32 */
-  currentStock?: number;
-  /** @format int32 */
-  reservedStock?: number;
-  /** @format int32 */
-  availableStock?: number;
-  /** @format double */
-  costPrice?: number | null;
-  /** @format double */
-  totalValue?: number;
-  status?: string | null;
-}
-
-export interface InventoryReportResponse {
-  /** @format date-time */
-  startDate?: string | null;
-  /** @format date-time */
-  endDate?: string | null;
-  /** @format int32 */
-  totalProducts?: number;
-  /** @format int32 */
-  totalLocations?: number;
-  /** @format int32 */
-  totalStockValue?: number;
-  /** @format int32 */
-  lowStockProducts?: number;
-  /** @format int32 */
-  outOfStockProducts?: number;
-  /** @format int32 */
-  overstockProducts?: number;
-  /** @format double */
-  totalInventoryValue?: number;
-  currency?: string | null;
-  items?: InventoryReportItem[] | null;
-  locationReports?: LocationReport[] | null;
-}
-
-export interface InventoryReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: InventoryReportResponse;
-}
-
-export interface InventoryResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  productSKU?: string | null;
-  /** @format int32 */
-  variantId?: number | null;
-  sku?: string | null;
-  location?: string | null;
-  /** @format int32 */
-  placeId?: number | null;
-  placeName?: string | null;
-  /** @format int32 */
-  currentStock?: number;
-  /** @format int32 */
-  reservedStock?: number;
-  /** @format int32 */
-  availableStock?: number;
-  /** @format int32 */
-  lowStockThreshold?: number;
-  /** @format int32 */
-  reorderPoint?: number;
-  /** @format int32 */
-  reorderQuantity?: number;
-  trackInventory?: boolean;
-  allowBackorders?: boolean;
-  allowPreorders?: boolean;
-  status?: InventoryStatus;
-  /** @format double */
-  costPrice?: number | null;
-  /** @format double */
-  averageCost?: number | null;
-  currency?: string | null;
-  /** @format int32 */
-  supplierId?: number | null;
-  supplierName?: string | null;
-  supplierSKU?: string | null;
-  /** @format int32 */
-  leadTimeDays?: number | null;
-  /** @format date-time */
-  lastStockUpdate?: string | null;
-  /** @format date-time */
-  lastRestockDate?: string | null;
-  /** @format date-time */
-  nextRestockDate?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  provider?: ProviderInfoResponse;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  providerProductAttributes?: ProviderProductAttributeResponse[] | null;
-  providerProductTags?: ProviderProductTagResponse[] | null;
-  providerCategories?: ProviderCategoryResponse[] | null;
-  providerSubCategories?: ProviderSubCategoryResponse[] | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-  stockMovements?: StockMovementResponse[] | null;
-  reorderAlerts?: ReorderAlertResponse[] | null;
-}
-
-export interface InventoryResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: InventoryResponse;
-}
-
-export interface InventoryResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: InventoryResponse[] | null;
-}
-
-export interface InventoryStatisticsResponse {
-  /** @format int32 */
-  totalProducts?: number;
-  /** @format int32 */
-  totalLocations?: number;
-  /** @format int32 */
-  totalStockValue?: number;
-  /** @format int32 */
-  lowStockProducts?: number;
-  /** @format int32 */
-  outOfStockProducts?: number;
-  /** @format int32 */
-  overstockProducts?: number;
-  /** @format int32 */
-  totalMovements?: number;
-  /** @format int32 */
-  pendingTransfers?: number;
-  /** @format int32 */
-  activeSuppliers?: number;
-  /** @format double */
-  totalInventoryValue?: number;
-  currency?: string | null;
-  /** @format int32 */
-  inboundMovements?: number;
-  /** @format int32 */
-  outboundMovements?: number;
-  /** @format int32 */
-  adjustmentMovements?: number;
-  /** @format int32 */
-  transferMovements?: number;
-  /** @format int32 */
-  movementsToday?: number;
-  /** @format int32 */
-  movementsThisWeek?: number;
-  /** @format int32 */
-  movementsThisMonth?: number;
-  /** @format int32 */
-  totalItems?: number;
-  /** @format int32 */
-  lowStockItems?: number;
-  /** @format int32 */
-  outOfStockItems?: number;
-  /** @format double */
-  totalValue?: number;
-}
-
-export interface InventoryStatisticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: InventoryStatisticsResponse;
-}
-
-export interface InventorySummaryResponse {
-  /** @format int32 */
-  totalProducts?: number;
-  /** @format int32 */
-  totalLocations?: number;
-  /** @format int32 */
-  totalStockValue?: number;
-  /** @format int32 */
-  lowStockProducts?: number;
-  /** @format int32 */
-  outOfStockProducts?: number;
-  /** @format int32 */
-  overstockProducts?: number;
-  /** @format int32 */
-  totalMovements?: number;
-  /** @format int32 */
-  pendingTransfers?: number;
-  /** @format int32 */
-  activeSuppliers?: number;
-  /** @format double */
-  totalInventoryValue?: number;
-  currency?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  locationSummaries?: LocationSummaryResponse[] | null;
-}
-
-export interface InventorySummaryResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: InventorySummaryResponse;
 }
 
 export interface Invitation {
@@ -15719,40 +12616,6 @@ export interface ItemDetailRequest {
   additions?: string | null;
 }
 
-export interface ItemDetailResponse {
-  /** @format int32 */
-  id?: number;
-  utilization?: string | null;
-  importance?: Importance;
-  priority?: Priority;
-  usage?: string | null;
-  /** @format int32 */
-  quantity?: number | null;
-  represent?: string | null;
-  representType?: RepresentType;
-  availableTypes?: string | null;
-  popularBrands?: string | null;
-  places?: string | null;
-  /** @format double */
-  lowPrice?: number | null;
-  /** @format double */
-  highPrice?: number | null;
-  /** @format double */
-  price?: number | null;
-  additions?: string | null;
-  /** @format int32 */
-  itemId?: number;
-  item?: ItemResponse;
-  createdBy?: string | null;
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-}
-
 export interface ItemDetailUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -15800,28 +12663,6 @@ export interface ItemFavorite {
   /** @format int32 */
   subCategoryId: number;
   subCategory?: SubCategory;
-}
-
-export interface ItemFavoriteResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  categoryId?: number;
-  category?: CategoryResponse;
-  /** @format int32 */
-  subCategoryId?: number;
-  subCategory?: SubCategoryResponse;
-  /** @format int32 */
-  itemId?: number | null;
-  item?: ItemResponse;
-  createdBy?: string | null;
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
 }
 
 export interface ItemLine {
@@ -16073,30 +12914,6 @@ export interface ItemRequest {
   itemDetail?: ItemDetailRequest;
 }
 
-export interface ItemResponse {
-  /** @format int32 */
-  id?: number;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  /** @format int32 */
-  categoryId?: number;
-  /** @format int32 */
-  subCategoryId?: number;
-  /** @format int32 */
-  itemDetailId?: number | null;
-  itemDetail?: ItemDetailResponse;
-  createdBy?: string | null;
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-}
-
 export interface KnowledgeBaseItemResponse {
   /** @format int32 */
   id?: number;
@@ -16122,60 +12939,6 @@ export interface KnowledgeBaseItemResponse {
   keywords?: string[] | null;
   relatedQuestions?: string[] | null;
   language?: string | null;
-}
-
-export interface LevelDistributionResponse {
-  levelName?: string | null;
-  /** @format int32 */
-  userCount?: number;
-  /** @format double */
-  percentage?: number;
-  /** @format double */
-  averagePoints?: number;
-  /** @format double */
-  averageCommission?: number;
-}
-
-export interface LevelDistributionTrend {
-  /** @format date-time */
-  date?: string;
-  levelName?: string | null;
-  /** @format int32 */
-  userCount?: number;
-  /** @format double */
-  percentage?: number;
-}
-
-export interface LevelEngagementTrend {
-  levelName?: string | null;
-  /** @format double */
-  engagementScore?: number;
-  /** @format double */
-  averagePointsEarned?: number;
-  /** @format double */
-  goalCompletionRate?: number;
-  /** @format double */
-  activityFrequency?: number;
-}
-
-export interface LevelPerformanceResponse {
-  levelName?: string | null;
-  /** @format int32 */
-  userCount?: number;
-  /** @format double */
-  averagePoints?: number;
-  /** @format double */
-  goalCompletionRate?: number;
-  /** @format double */
-  averageCommission?: number;
-}
-
-export interface LevelUserCountResponse {
-  levelName?: string | null;
-  /** @format int32 */
-  userCount?: number;
-  /** @format double */
-  percentage?: number;
 }
 
 export interface LineCategoryRequest {
@@ -16322,38 +13085,6 @@ export interface Link {
   /** @format date-time */
   expiresAt?: string | null;
   isTemporary?: boolean;
-}
-
-export interface LinkAnalyticsResponse {
-  /** @format int32 */
-  affiliateLinkId?: number;
-  /** @format date-time */
-  fromDate?: string | null;
-  /** @format date-time */
-  toDate?: string | null;
-  /** @format int32 */
-  totalViews?: number;
-  /** @format int32 */
-  totalClicks?: number;
-  /** @format int32 */
-  totalConversions?: number;
-  /** @format int32 */
-  totalPurchases?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format double */
-  clickThroughRate?: number;
-}
-
-export interface LinkAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LinkAnalyticsResponse;
 }
 
 export interface LinkBrideAndGroomRequest {
@@ -16510,19 +13241,6 @@ export interface LinkSettingsRequest {
   sendNotification?: boolean;
 }
 
-export interface LocalGuideUsersResponse {
-  users?: UserSummaryResponse[] | null;
-}
-
-export interface LocalGuideUsersResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LocalGuideUsersResponse;
-}
-
 export interface LocalGuider {
   /** @format uuid */
   id?: string;
@@ -16619,481 +13337,9 @@ export interface LocalGuider {
   isSuspended?: boolean;
 }
 
-export interface LocationReport {
-  location?: string | null;
-  /** @format int32 */
-  productCount?: number;
-  /** @format int32 */
-  totalStock?: number;
-  /** @format double */
-  totalValue?: number;
-  /** @format int32 */
-  lowStockCount?: number;
-  /** @format int32 */
-  outOfStockCount?: number;
-}
-
-export interface LocationSummaryResponse {
-  location?: string | null;
-  /** @format int32 */
-  productCount?: number;
-  /** @format int32 */
-  totalStock?: number;
-  /** @format int32 */
-  lowStockCount?: number;
-  /** @format int32 */
-  outOfStockCount?: number;
-  /** @format double */
-  totalValue?: number;
-}
-
 export interface LockFieldRequest {
   lockedBy?: string | null;
   reason?: string | null;
-}
-
-export interface LowStockAlertResponse {
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  productSKU?: string | null;
-  /** @format int32 */
-  supplierId?: number;
-  supplierName?: string | null;
-  supplierSKU?: string | null;
-  /** @format int32 */
-  currentStock?: number;
-  /** @format int32 */
-  lowStockThreshold?: number;
-  /** @format int32 */
-  reorderPoint?: number;
-  /** @format int32 */
-  reorderQuantity?: number;
-  /** @format int32 */
-  leadTimeDays?: number | null;
-  /** @format date-time */
-  lastRestockDate?: string | null;
-  /** @format date-time */
-  nextRestockDate?: string | null;
-  location?: string | null;
-  alertLevel?: string | null;
-  /** @format date-time */
-  alertDate?: string;
-  isUrgent?: boolean;
-  recommendedAction?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-}
-
-export interface LowStockAlertResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LowStockAlertResponse[] | null;
-}
-
-export interface LoyaltyAnalyticsResponse {
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  activeUsers?: number;
-  /** @format int64 */
-  totalPointsEarned?: number;
-  /** @format int64 */
-  totalPointsRedeemed?: number;
-  /** @format double */
-  averagePointsPerUser?: number;
-  /** @format double */
-  redemptionRate?: number;
-  levelDistribution?: Record<string, number | null>;
-  /** @format double */
-  goalCompletionRate?: number;
-  topPerformers?: LoyaltyUserProfileResponse[] | null;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-}
-
-export interface LoyaltyAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyAnalyticsResponse;
-}
-
-export interface LoyaltyCommissionResponse {
-  /** @format int32 */
-  commissionId?: number;
-  /** @format uuid */
-  userId?: string;
-  /** @format double */
-  amount?: number;
-  source?: string | null;
-  actionType?: string | null;
-  status?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  transactionReference?: string | null;
-  notes?: string | null;
-}
-
-export interface LoyaltyConfigurationValidationResponse {
-  configurationType?: string | null;
-  /** @format int32 */
-  configurationId?: number | null;
-  isValid?: boolean;
-  /** @format double */
-  validationScore?: number;
-  validationResults?: ConfigurationValidationResultResponse[] | null;
-  issues?: ConfigurationIssueResponse[] | null;
-  recommendations?: string[] | null;
-  dependenciesStatus?: DependencyStatusResponse[] | null;
-  requiredFixes?: string[] | null;
-}
-
-export interface LoyaltyConfigurationValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyConfigurationValidationResponse;
-}
-
-export interface LoyaltyGoalResponse {
-  /** @format int32 */
-  id?: number;
-  name?: string | null;
-  description?: string | null;
-  goalType?: string | null;
-  /** @format int32 */
-  targetValue?: number;
-  /** @format int32 */
-  rewardPoints?: number;
-  isActive?: boolean;
-  /** @format date-time */
-  startDate?: string | null;
-  /** @format date-time */
-  endDate?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface LoyaltyGoalResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyGoalResponse;
-}
-
-export interface LoyaltyGoalResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyGoalResponse[] | null;
-}
-
-export interface LoyaltyGoalsReportResponse {
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalGoals?: number;
-  /** @format int32 */
-  activeGoals?: number;
-  /** @format int32 */
-  completedGoals?: number;
-  /** @format double */
-  overallCompletionRate?: number;
-  completionStatistics?: GoalCompletionStatisticsResponse[] | null;
-  userBreakdown?: GoalUserBreakdownResponse[] | null;
-  performanceAnalysis?: GoalPerformanceAnalysisResponse[] | null;
-  topPerformingGoals?: TopPerformingGoalResponse[] | null;
-  goalTrends?: GoalTrendResponse[] | null;
-}
-
-export interface LoyaltyGoalsReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyGoalsReportResponse;
-}
-
-export interface LoyaltyNotificationResponse {
-  /** @format int32 */
-  notificationId?: number;
-  /** @format uuid */
-  userId?: string;
-  title?: string | null;
-  message?: string | null;
-  notificationType?: string | null;
-  priority?: string | null;
-  isRead?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  readAt?: string | null;
-  additionalData?: string | null;
-  source?: string | null;
-  actionUrl?: string | null;
-  /** @format date-time */
-  expiresAt?: string | null;
-}
-
-export interface LoyaltyNotificationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyNotificationResponse[] | null;
-}
-
-export interface LoyaltyPerformanceMetricsResponse {
-  /** @format double */
-  userEngagementRate?: number;
-  /** @format double */
-  goalCompletionRate?: number;
-  /** @format double */
-  pointsRedemptionRate?: number;
-  /** @format double */
-  averageSessionDuration?: number;
-  /** @format double */
-  retentionRate?: number;
-}
-
-export interface LoyaltyPerformanceResponse {
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  activeUsers?: number;
-  /** @format double */
-  userEngagementRate?: number;
-  /** @format double */
-  averagePointsPerUser?: number;
-  /** @format int64 */
-  totalPointsEarned?: number;
-  /** @format int64 */
-  totalPointsRedeemed?: number;
-  /** @format double */
-  redemptionRate?: number;
-  /** @format double */
-  goalCompletionRate?: number;
-  topPerformers?: TopPerformerResponse[] | null;
-  levelPerformance?: LevelPerformanceResponse[] | null;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-}
-
-export interface LoyaltyPerformanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyPerformanceResponse;
-}
-
-export interface LoyaltySummaryReportResponse {
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  activeUsers?: number;
-  /** @format int32 */
-  newUsers?: number;
-  /** @format int64 */
-  totalPointsEarned?: number;
-  /** @format int64 */
-  totalPointsRedeemed?: number;
-  /** @format double */
-  averagePointsPerUser?: number;
-  /** @format double */
-  redemptionRate?: number;
-  /** @format double */
-  goalCompletionRate?: number;
-  userBreakdownByLevel?: LevelUserCountResponse[] | null;
-  goalAnalysis?: GoalAnalysisResponse[] | null;
-  levelDistribution?: LevelDistributionResponse[] | null;
-  performanceMetrics?: LoyaltyPerformanceMetricsResponse;
-}
-
-export interface LoyaltySummaryReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltySummaryReportResponse;
-}
-
-export interface LoyaltyTrendsResponse {
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  userGrowthTrend?: TrendDataPoint[] | null;
-  pointsEarnedTrend?: TrendDataPoint[] | null;
-  pointsRedeemedTrend?: TrendDataPoint[] | null;
-  goalCompletionTrend?: TrendDataPoint[] | null;
-  levelDistributionTrend?: LevelDistributionTrend[] | null;
-  topPerformingGoals?: GoalPerformanceTrend[] | null;
-  levelEngagementTrends?: LevelEngagementTrend[] | null;
-}
-
-export interface LoyaltyTrendsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyTrendsResponse;
-}
-
-export interface LoyaltyUserGoalResponse {
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  goalType?: string | null;
-  /** @format int32 */
-  targetValue?: number;
-  /** @format int32 */
-  currentValue?: number;
-  /** @format double */
-  progress?: number;
-  status?: string | null;
-  /** @format date-time */
-  startDate?: string | null;
-  /** @format date-time */
-  endDate?: string | null;
-  /** @format date-time */
-  completedAt?: string | null;
-  /** @format int32 */
-  rewardPoints?: number;
-}
-
-export interface LoyaltyUserGoalResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyUserGoalResponse;
-}
-
-export interface LoyaltyUserGoalResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyUserGoalResponse[] | null;
-}
-
-export interface LoyaltyUserLevelResponse {
-  levelName?: string | null;
-  /** @format int32 */
-  pointsRequired?: number;
-  /** @format int32 */
-  currentPoints?: number;
-  /** @format double */
-  progress?: number;
-  /** @format date-time */
-  achievedAt?: string | null;
-  isCurrent?: boolean;
-}
-
-export interface LoyaltyUserProfileResponse {
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  email?: string | null;
-  /** @format int32 */
-  totalPoints?: number;
-  /** @format int32 */
-  availablePoints?: number;
-  /** @format int32 */
-  redeemedPoints?: number;
-  currentLevel?: string | null;
-  /** @format double */
-  levelProgress?: number;
-  /** @format int32 */
-  assignedGoals?: number;
-  /** @format int32 */
-  completedGoals?: number;
-  /** @format int32 */
-  activeGoals?: number;
-  /** @format double */
-  goalCompletionRate?: number;
-  /** @format date-time */
-  lastActivityDate?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  levelHistory?: LoyaltyUserLevelResponse[] | null;
-  recentGoals?: LoyaltyUserGoalResponse[] | null;
-}
-
-export interface LoyaltyUserProfileResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyUserProfileResponse;
-}
-
-export interface LoyaltyValidationResponse {
-  /** @format uuid */
-  userId?: string;
-  operationType?: string | null;
-  isValid?: boolean;
-  /** @format double */
-  validationScore?: number;
-  validationDetails?: ValidationDetailResponse[] | null;
-  warnings?: string[] | null;
-  errors?: string[] | null;
-  recommendations?: string[] | null;
-  requiredActions?: string[] | null;
-}
-
-export interface LoyaltyValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: LoyaltyValidationResponse;
 }
 
 export interface MailConfirmationRequest {
@@ -17180,6 +13426,7 @@ export interface MakeupArtistServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -17282,6 +13529,7 @@ export interface MakeupArtistServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -17406,6 +13654,7 @@ export interface MazoonsServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -17508,6 +13757,7 @@ export interface MazoonsServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -17813,99 +14063,6 @@ export interface MediaRequest {
   optimizeMedia?: boolean;
 }
 
-export interface MediaResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format int32 */
-  sourceId?: number;
-  source?: Source;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  /** @format uuid */
-  userId?: string | null;
-  scopeLevel?: TenantScopeLevel;
-  isGlobal?: boolean;
-  isInherited?: boolean;
-  /** @format int32 */
-  parentId?: number | null;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  descriptionEn?: string | null;
-  descriptionAr?: string | null;
-  alt?: string | null;
-  /** @format int32 */
-  size?: number | null;
-  fileId?: string | null;
-  fileName?: string | null;
-  fileExtension?: string | null;
-  mimeType?: string | null;
-  url?: string | null;
-  thumbnailUrl?: string | null;
-  previewUrl?: string | null;
-  originalUrl?: string | null;
-  mediaType?: MediaType;
-  /** @format int32 */
-  width?: number | null;
-  /** @format int32 */
-  height?: number | null;
-  /** @format int32 */
-  duration?: number | null;
-  resolution?: string | null;
-  quality?: string | null;
-  status?: CommonEntityStatus;
-  isPublic?: boolean;
-  isFeatured?: boolean;
-  isDownloadable?: boolean;
-  title?: string | null;
-  caption?: string | null;
-  keywords?: string | null;
-  tags?: string | null;
-  metadata?: string | null;
-  /** @format int32 */
-  viewCount?: number;
-  /** @format int32 */
-  downloadCount?: number;
-  /** @format int32 */
-  likeCount?: number;
-  /** @format date-time */
-  lastViewedAt?: string | null;
-  /** @format date-time */
-  lastDownloadedAt?: string | null;
-  storageProvider?: string | null;
-  storagePath?: string | null;
-  storageBucket?: string | null;
-  storageRegion?: string | null;
-  isProcessed?: boolean;
-  processingStatus?: string | null;
-  processingError?: string | null;
-  /** @format date-time */
-  processedAt?: string | null;
-  /** @format date-time */
-  expiresAt?: string | null;
-  isTemporary?: boolean;
-  /** @format date-time */
-  cleanupAt?: string | null;
-  /** @format uuid */
-  createdBy?: string;
-  /** @format uuid */
-  lastModifiedBy?: string;
-  displayName?: string | null;
-  displayDescription?: string | null;
-  isExpired?: boolean;
-  formattedSize?: string | null;
-  formattedDuration?: string | null;
-}
-
 export interface MembershipReviewItem {
   /** @format int32 */
   membershipId: number;
@@ -17923,340 +14080,6 @@ export interface MembershipReviewItem {
   isNull?: boolean;
 }
 
-export interface ModerationAnalyticsResponse {
-  /** @format int32 */
-  totalContent?: number;
-  /** @format int32 */
-  approvedContent?: number;
-  /** @format int32 */
-  rejectedContent?: number;
-  /** @format int32 */
-  flaggedContent?: number;
-  averageProcessingTime?: TimeSpan;
-  moderatorPerformance?: ModeratorPerformanceResponse[] | null;
-  categoryBreakdown?: CategoryBreakdownResponse[] | null;
-}
-
-export interface ModerationAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModerationAnalyticsResponse;
-}
-
-export interface ModerationHistoryItemResponse {
-  /** @format int32 */
-  actionId?: number;
-  /** @format int32 */
-  contentId?: number;
-  /** @format uuid */
-  moderatorId?: string;
-  moderatorName?: string | null;
-  action?: string | null;
-  notes?: string | null;
-  /** @format date-time */
-  actionDate?: string;
-}
-
-export interface ModerationHistoryResponse {
-  moderationHistory?: ContentModerationResponse[] | null;
-  history?: ModerationHistoryItemResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  pageNumber?: number;
-  /** @format int32 */
-  pageSize?: number;
-}
-
-export interface ModerationHistoryResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModerationHistoryResponse;
-}
-
-export interface ModerationItemResponse {
-  /** @format int32 */
-  moderationItemId?: number;
-  /** @format int32 */
-  contentId?: number;
-  contentTitle?: string | null;
-  contentType?: string | null;
-  /** @format int32 */
-  authorId?: number;
-  authorName?: string | null;
-  status?: string | null;
-  priority?: string | null;
-  /** @format uuid */
-  assignedModeratorId?: string | null;
-  assignedModeratorName?: string | null;
-  /** @format date-time */
-  submittedAt?: string;
-  /** @format date-time */
-  assignedAt?: string | null;
-  /** @format date-time */
-  completedAt?: string | null;
-  notes?: string | null;
-  violations?: ContentViolationResponse[] | null;
-}
-
-export interface ModerationItemResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModerationItemResponse;
-}
-
-export interface ModerationQueueResponse {
-  content?: ContentModerationItemResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  pageNumber?: number;
-  /** @format int32 */
-  pageSize?: number;
-}
-
-export interface ModerationQueueResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModerationQueueResponse;
-}
-
-export interface ModerationRuleResponse {
-  /** @format int32 */
-  ruleId?: number;
-  name?: string | null;
-  ruleType?: string | null;
-  category?: string | null;
-  description?: string | null;
-  severity?: string | null;
-  isActive?: boolean;
-  conditions?: RuleConditionResponse[] | null;
-  actions?: RuleActionResponse[] | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  /** @format int32 */
-  createdBy?: number;
-  /** @format int32 */
-  updatedBy?: number;
-}
-
-export interface ModerationRuleResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModerationRuleResponse;
-}
-
-export interface ModerationRuleResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModerationRuleResponse[] | null;
-}
-
-export interface ModerationTrendResponse {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  totalContent?: number;
-  /** @format int32 */
-  approvedContent?: number;
-  /** @format int32 */
-  rejectedContent?: number;
-  /** @format int32 */
-  flaggedContent?: number;
-  averageProcessingTime?: TimeSpan;
-}
-
-export interface ModerationTrendsResponse {
-  trends?: ModerationTrendResponse[] | null;
-  granularity?: string | null;
-  /** @format date-time */
-  startDate?: string;
-  /** @format date-time */
-  endDate?: string;
-}
-
-export interface ModerationTrendsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModerationTrendsResponse;
-}
-
-export interface ModerationWorkflowResponse {
-  /** @format int32 */
-  workflowId?: number;
-  /** @format int32 */
-  contentId?: number;
-  /** @format uuid */
-  moderatorId?: string;
-  status?: string | null;
-  priority?: string | null;
-  /** @format date-time */
-  startedAt?: string;
-  /** @format date-time */
-  completedAt?: string | null;
-  result?: string | null;
-  notes?: string | null;
-}
-
-export interface ModerationWorkflowResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModerationWorkflowResponse;
-}
-
-export interface ModerationWorkflowResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModerationWorkflowResponse[] | null;
-}
-
-export interface ModeratorPerformanceResponse {
-  /** @format uuid */
-  moderatorId?: string;
-  moderatorName?: string | null;
-  /** @format int32 */
-  contentProcessed?: number;
-  /** @format double */
-  approvalRate?: number;
-  averageProcessingTime?: TimeSpan;
-  /** @format date-time */
-  fromDate?: string | null;
-  /** @format date-time */
-  toDate?: string | null;
-  /** @format int32 */
-  totalReviews?: number;
-  /** @format int32 */
-  approvedReviews?: number;
-  /** @format int32 */
-  rejectedReviews?: number;
-  /** @format double */
-  averageReviewTime?: number;
-}
-
-export interface ModeratorResponse {
-  /** @format uuid */
-  moderatorId?: string;
-  /** @format uuid */
-  userId?: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  displayName?: string | null;
-  email?: string | null;
-  role?: string | null;
-  status?: string | null;
-  permissions?: string[] | null;
-  specializations?: string[] | null;
-  /** @format int32 */
-  assignedContentCount?: number;
-  /** @format int32 */
-  processedContentCount?: number;
-  /** @format int32 */
-  totalContentModerated?: number;
-  averageProcessingTime?: TimeSpan;
-  /** @format double */
-  approvalRate?: number;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastActiveAt?: string | null;
-  isActive?: boolean;
-}
-
-export interface ModeratorResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModeratorResponse;
-}
-
-export interface ModeratorResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ModeratorResponse[] | null;
-}
-
-export interface MonthlyBreakdownResponse {
-  month?: string | null;
-  /** @format int32 */
-  promotions?: number;
-  /** @format int32 */
-  demotions?: number;
-  /** @format int32 */
-  netChange?: number;
-}
-
-export interface MonthlyPerformanceData {
-  /** @format int32 */
-  year?: number;
-  /** @format int32 */
-  month?: number;
-  monthName?: string | null;
-  /** @format int32 */
-  orders?: number;
-  /** @format double */
-  orderValue?: number;
-  /** @format int32 */
-  onTimeDeliveries?: number;
-  /** @format int32 */
-  totalDeliveries?: number;
-  /** @format double */
-  onTimeRate?: number;
-  /** @format double */
-  performanceScore?: number;
-}
-
-export interface MonthlyPointsResponse {
-  month?: string | null;
-  /** @format int32 */
-  pointsEarned?: number;
-  /** @format int32 */
-  pointsRedeemed?: number;
-}
-
-export interface MonthlyTrendResponse {
-  month?: string | null;
-  /** @format int32 */
-  promotions?: number;
-  /** @format int32 */
-  demotions?: number;
-  /** @format int32 */
-  netChange?: number;
-}
-
 export interface MovementItem {
   /** @format int32 */
   inventoryId: number;
@@ -18267,22 +14090,6 @@ export interface MovementItem {
   quantity: number;
   reference?: string | null;
   notes?: string | null;
-}
-
-export interface MultiFilterMetadata {
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  page?: number;
-  /** @format int32 */
-  pageSize?: number;
-  /** @format int32 */
-  totalPages?: number;
-  hasNextPage?: boolean;
-  hasPreviousPage?: boolean;
-  sortBy?: string | null;
-  sortOrder?: string | null;
-  combinationMode?: FilterCombinationMode;
 }
 
 export interface MultiFilterProductsRequest {
@@ -18317,21 +14124,6 @@ export interface MultiFilterProductsRequest {
   /** @format int32 */
   pageSize?: number;
   combinationMode?: FilterCombinationMode;
-}
-
-export interface MultiFilterProductsResponse {
-  products?: ProductHeaderResponse[] | null;
-  metadata?: MultiFilterMetadata;
-  appliedFilters?: FilterAppliedInfo;
-}
-
-export interface MultiFilterProductsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: MultiFilterProductsResponse;
 }
 
 export interface NewsletterSubscriptionRequest {
@@ -19322,37 +15114,6 @@ export interface Order {
   fixedFeeAmount?: number | null;
 }
 
-export interface OwnerResponse {
-  /** @format int32 */
-  userId?: number;
-  firstName?: string | null;
-  lastName?: string | null;
-  isDeleted?: boolean;
-  isActive?: boolean;
-  isInit?: boolean;
-  personal?: string | null;
-  personalType?: PersonalType;
-  /** @format date-time */
-  birthDate?: string | null;
-  customTag?: string | null;
-  partnerName?: string | null;
-  type?: UserType;
-  gender?: Gender;
-  status?: SocialStatus;
-  /** @format date-time */
-  creationDate?: string | null;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  phoneNumber?: string | null;
-  email?: string | null;
-  userName?: string | null;
-  profileUrl?: string | null;
-  /** @format uuid */
-  id?: string;
-  /** @format int32 */
-  ownerId?: number;
-}
-
 export interface PasswordRequest {
   password?: string | null;
   newPassword?: string | null;
@@ -19939,524 +15700,6 @@ export interface PaymobWebhookPayload {
   obj?: PaymobObj;
 }
 
-export interface PayoutAlternativeOptionResponse {
-  payoutMethod?: string | null;
-  isAvailable?: boolean;
-  /** @format double */
-  feePercentage?: number;
-  estimatedProcessingTime?: TimeSpan;
-  description?: string | null;
-  requirements?: string[] | null;
-}
-
-export interface PayoutAnalyticsResponse {
-  /** @format uuid */
-  userId?: string | null;
-  /** @format date-time */
-  fromDate?: string | null;
-  /** @format date-time */
-  toDate?: string | null;
-  /** @format int32 */
-  totalRequests?: number;
-  /** @format int32 */
-  totalPayouts?: number;
-  /** @format int32 */
-  pendingRequests?: number;
-  /** @format int32 */
-  pendingPayouts?: number;
-  /** @format int32 */
-  approvedRequests?: number;
-  /** @format int32 */
-  processedRequests?: number;
-  /** @format int32 */
-  completedPayouts?: number;
-  /** @format int32 */
-  rejectedRequests?: number;
-  /** @format int32 */
-  failedPayouts?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  pendingAmount?: number;
-  /** @format double */
-  processedAmount?: number;
-  /** @format double */
-  completedAmount?: number;
-  /** @format double */
-  failedAmount?: number;
-  /** @format double */
-  averagePayoutAmount?: number;
-  /** @format double */
-  successRate?: number;
-  averageProcessingTime?: TimeSpan;
-  payoutMethodBreakdown?: PayoutMethodBreakdownResponse[] | null;
-  statusBreakdown?: PayoutStatusBreakdownResponse[] | null;
-}
-
-export interface PayoutAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutAnalyticsResponse;
-}
-
-export interface PayoutConfigurationIssueResponse {
-  issueId?: string | null;
-  issueType?: string | null;
-  description?: string | null;
-  severityLevel?: string | null;
-  impactLevel?: string | null;
-  suggestedFix?: string | null;
-}
-
-export interface PayoutConfigurationValidationResponse {
-  configurationType?: string | null;
-  /** @format int32 */
-  configurationId?: number | null;
-  isValid?: boolean;
-  /** @format double */
-  validationScore?: number;
-  validationResults?: PayoutConfigurationValidationResultResponse[] | null;
-  issues?: PayoutConfigurationIssueResponse[] | null;
-  recommendations?: string[] | null;
-  dependenciesStatus?: PayoutDependencyStatusResponse[] | null;
-  requiredFixes?: string[] | null;
-}
-
-export interface PayoutConfigurationValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutConfigurationValidationResponse;
-}
-
-export interface PayoutConfigurationValidationResultResponse {
-  ruleName?: string | null;
-  passed?: boolean;
-  description?: string | null;
-  currentValue?: string | null;
-  expectedValue?: string | null;
-  severityLevel?: string | null;
-  errorMessage?: string | null;
-}
-
-export interface PayoutDependencyStatusResponse {
-  dependencyName?: string | null;
-  dependencyType?: string | null;
-  isSatisfied?: boolean;
-  status?: string | null;
-  statusDescription?: string | null;
-  requiredActions?: string[] | null;
-}
-
-export interface PayoutDetailedBreakdownResponse {
-  byPayoutMethod?: PayoutMethodBreakdownResponse[] | null;
-  byStatus?: PayoutStatusBreakdownResponse[] | null;
-  byMonth?: PayoutMonthlyBreakdownResponse[] | null;
-}
-
-export interface PayoutEligibilityCriteriaResponse {
-  criteriaName?: string | null;
-  isMet?: boolean;
-  currentValue?: string | null;
-  requiredValue?: string | null;
-  description?: string | null;
-  priorityLevel?: string | null;
-}
-
-export interface PayoutEligibilityResponse {
-  /** @format uuid */
-  userId?: string;
-  /** @format double */
-  availableBalance?: number;
-  /** @format double */
-  amount?: number;
-  /** @format double */
-  minimumPayoutAmount?: number;
-  /** @format double */
-  maximumPayoutAmount?: number;
-  isEligible?: boolean;
-  payoutMethod?: string | null;
-  /** @format double */
-  eligibilityScore?: number;
-  eligibilityCriteria?: PayoutEligibilityCriteriaResponse[] | null;
-  recommendations?: string[] | null;
-  blockingFactors?: string[] | null;
-  alternativeOptions?: PayoutAlternativeOptionResponse[] | null;
-  nextSteps?: string[] | null;
-}
-
-export interface PayoutEligibilityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutEligibilityResponse;
-}
-
-export interface PayoutMethodBreakdownResponse {
-  payoutMethod?: string | null;
-  /** @format int32 */
-  count?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  percentage?: number;
-}
-
-export interface PayoutMethodPerformanceResponse {
-  payoutMethod?: string | null;
-  /** @format double */
-  successRate?: number;
-  averageProcessingTime?: TimeSpan;
-  /** @format double */
-  totalVolume?: number;
-  /** @format int32 */
-  payoutCount?: number;
-}
-
-export interface PayoutMethodResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  guideProfileId?: number | null;
-  method?: string | null;
-  accountHolderName?: string | null;
-  accountDetails?: string | null;
-  bankName?: string | null;
-  accountNumber?: string | null;
-  routingNumber?: string | null;
-  isDefault?: boolean;
-  isActive?: boolean;
-  isEnabled?: boolean;
-  /** @format double */
-  minimumAmount?: number;
-  /** @format double */
-  maximumAmount?: number;
-  /** @format double */
-  processingFee?: number;
-  /** @format double */
-  feePercentage?: number;
-  notes?: string | null;
-  /** @format date-time */
-  creationDate?: string | null;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface PayoutMethodResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutMethodResponse;
-}
-
-export interface PayoutMethodResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutMethodResponse[] | null;
-}
-
-export interface PayoutMonthlyBreakdownResponse {
-  month?: string | null;
-  /** @format int32 */
-  payoutCount?: number;
-  /** @format double */
-  payoutAmount?: number;
-  averageProcessingTime?: TimeSpan;
-  /** @format double */
-  successRate?: number;
-}
-
-export interface PayoutNotificationResponse {
-  /** @format int32 */
-  notificationId?: number;
-  /** @format uuid */
-  userId?: string;
-  /** @format int32 */
-  payoutRequestId?: number | null;
-  title?: string | null;
-  message?: string | null;
-  notificationType?: string | null;
-  priority?: string | null;
-  isRead?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  readAt?: string | null;
-  additionalData?: string | null;
-  source?: string | null;
-  actionUrl?: string | null;
-  /** @format date-time */
-  expiresAt?: string | null;
-}
-
-export interface PayoutNotificationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutNotificationResponse[] | null;
-}
-
-export interface PayoutPerformanceMetricsResponse {
-  /** @format double */
-  overallSuccessRate?: number;
-  averageProcessingTime?: TimeSpan;
-  fastestProcessingTime?: TimeSpan;
-  slowestProcessingTime?: TimeSpan;
-  /** @format double */
-  totalVolumeProcessed?: number;
-  /** @format double */
-  averageVolumePerPayout?: number;
-}
-
-export interface PayoutPerformanceResponse {
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format double */
-  overallSuccessRate?: number;
-  averageProcessingTime?: TimeSpan;
-  fastestProcessingTime?: TimeSpan;
-  slowestProcessingTime?: TimeSpan;
-  /** @format double */
-  totalVolumeProcessed?: number;
-  /** @format double */
-  averageVolumePerPayout?: number;
-  performanceByMethod?: PayoutMethodPerformanceResponse[] | null;
-  performanceByStatus?: PayoutStatusPerformanceResponse[] | null;
-  processingTimeTrends?: ProcessingTimeTrendResponse[] | null;
-  volumeTrends?: VolumeTrendResponse[] | null;
-}
-
-export interface PayoutPerformanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutPerformanceResponse;
-}
-
-export interface PayoutRequestResponse {
-  /** @format int32 */
-  payoutRequestId?: number;
-  /** @format int32 */
-  id?: number;
-  /** @format uuid */
-  userId?: string;
-  /** @format double */
-  amount?: number;
-  /** @format double */
-  netAmount?: number;
-  /** @format double */
-  fees?: number;
-  currency?: string | null;
-  method?: PayoutMethod;
-  payoutMethod?: string | null;
-  accountReference?: string | null;
-  accountDetails?: string | null;
-  status?: PayoutStatus;
-  statusString?: string | null;
-  /** @format date-time */
-  requestedAt?: string | null;
-  /** @format date-time */
-  reviewedAt?: string | null;
-  /** @format date-time */
-  approvalDate?: string | null;
-  /** @format uuid */
-  reviewedBy?: string | null;
-  /** @format uuid */
-  approvedBy?: string | null;
-  reviewNotes?: string | null;
-  notes?: string | null;
-  /** @format date-time */
-  processedAt?: string | null;
-  /** @format uuid */
-  processedBy?: string | null;
-  transactionReference?: string | null;
-  processingNotes?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string;
-  /** @format uuid */
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-  user?: UserSummaryResponse;
-}
-
-export interface PayoutRequestResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutRequestResponse;
-}
-
-export interface PayoutRequestResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutRequestResponse[] | null;
-}
-
-export interface PayoutStatusBreakdownResponse {
-  status?: string | null;
-  /** @format int32 */
-  count?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  percentage?: number;
-}
-
-export interface PayoutStatusPerformanceResponse {
-  status?: string | null;
-  /** @format int32 */
-  count?: number;
-  /** @format double */
-  totalAmount?: number;
-  averageProcessingTime?: TimeSpan;
-  /** @format double */
-  percentage?: number;
-}
-
-export interface PayoutSummaryReportResponse {
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalPayouts?: number;
-  /** @format double */
-  totalPayoutAmount?: number;
-  /** @format double */
-  averagePayoutAmount?: number;
-  /** @format int32 */
-  pendingPayouts?: number;
-  /** @format double */
-  pendingAmount?: number;
-  /** @format int32 */
-  completedPayouts?: number;
-  /** @format double */
-  completedAmount?: number;
-  /** @format int32 */
-  failedPayouts?: number;
-  /** @format double */
-  failedAmount?: number;
-  /** @format double */
-  successRate?: number;
-  averageProcessingTime?: TimeSpan;
-  detailedBreakdown?: PayoutDetailedBreakdownResponse;
-  performanceMetrics?: PayoutPerformanceMetricsResponse;
-  trendAnalysis?: PayoutTrendAnalysisResponse;
-  topPerformers?: TopPerformerResponse[] | null;
-}
-
-export interface PayoutSummaryReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutSummaryReportResponse;
-}
-
-export interface PayoutTrendAnalysisResponse {
-  volumeTrends?: VolumeTrendResponse[] | null;
-  processingTimeTrends?: ProcessingTimeTrendResponse[] | null;
-  successRateTrends?: SuccessRateTrendResponse[] | null;
-}
-
-export interface PayoutValidationDetailResponse {
-  ruleName?: string | null;
-  passed?: boolean;
-  description?: string | null;
-  currentValue?: string | null;
-  expectedValue?: string | null;
-  severityLevel?: string | null;
-  errorMessage?: string | null;
-}
-
-export interface PayoutValidationResponse {
-  /** @format uuid */
-  userId?: string;
-  /** @format double */
-  amount?: number;
-  payoutMethod?: string | null;
-  isValid?: boolean;
-  /** @format double */
-  validationScore?: number;
-  validationDetails?: PayoutValidationDetailResponse[] | null;
-  warnings?: string[] | null;
-  errors?: string[] | null;
-  recommendations?: string[] | null;
-  requiredActions?: string[] | null;
-}
-
-export interface PayoutValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PayoutValidationResponse;
-}
-
-export interface PerformanceSummaryResponse {
-  /** @format int64 */
-  totalViews?: number;
-  /** @format int64 */
-  totalLikes?: number;
-  /** @format int64 */
-  totalShares?: number;
-  /** @format int64 */
-  totalComments?: number;
-  /** @format double */
-  averageRating?: number;
-  viewsByContentType?: Record<string, number | null>;
-  engagementByContentType?: Record<string, number | null>;
-  /** @format int32 */
-  totalContent?: number;
-  /** @format int32 */
-  publishedContent?: number;
-  /** @format int32 */
-  draftContent?: number;
-  /** @format int64 */
-  totalClicks?: number;
-  /** @format int64 */
-  totalConversions?: number;
-}
-
-export interface PerformanceTrendResponse {
-  /** @format date-time */
-  date?: string;
-  /** @format double */
-  value?: number;
-  metricType?: string | null;
-}
-
 export interface PhoneConfirmationRequest {
   /** @format int32 */
   countryCode?: number;
@@ -20552,6 +15795,7 @@ export interface PhotoSetionServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -20654,6 +15898,7 @@ export interface PhotoSetionServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -20758,6 +16003,7 @@ export interface PhotographersServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -20860,6 +16106,7 @@ export interface PhotographersServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -20926,139 +16173,6 @@ export interface Place {
   reservations?: Reservation[] | null;
 }
 
-export interface PlaceComparisonItem {
-  /** @format int32 */
-  placeId?: number;
-  placeNameAr?: string | null;
-  placeNameEn?: string | null;
-  /** @format int32 */
-  totalProducts?: number;
-  /** @format int32 */
-  totalStock?: number;
-  /** @format int32 */
-  totalAvailableStock?: number;
-  /** @format int32 */
-  lowStockProducts?: number;
-  /** @format int32 */
-  outOfStockProducts?: number;
-  /** @format double */
-  totalInventoryValue?: number;
-  /** @format double */
-  averageStockPerProduct?: number;
-  /** @format double */
-  stockEfficiency?: number;
-}
-
-export interface PlaceDistributionItem {
-  /** @format int32 */
-  placeId?: number;
-  placeNameAr?: string | null;
-  placeNameEn?: string | null;
-  isActive?: boolean;
-  isMain?: boolean;
-  /** @format int32 */
-  productCount?: number;
-  /** @format int32 */
-  totalStock?: number;
-  /** @format int32 */
-  availableStock?: number;
-  /** @format double */
-  inventoryValue?: number;
-  /** @format int32 */
-  lowStockCount?: number;
-  /** @format int32 */
-  outOfStockCount?: number;
-}
-
-export interface PlaceInventoryComparisonResponse {
-  placeIds?: number[] | null;
-  /** @format date-time */
-  comparisonDate?: string;
-  placeComparisons?: PlaceComparisonItem[] | null;
-}
-
-export interface PlaceInventoryComparisonResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PlaceInventoryComparisonResponse;
-}
-
-export interface PlaceInventoryDetailResponse {
-  /** @format int32 */
-  placeId?: number;
-  placeNameAr?: string | null;
-  placeNameEn?: string | null;
-  placePhoneNumber?: string | null;
-  isActive?: boolean;
-  isMain?: boolean;
-  /** @format int32 */
-  totalProducts?: number;
-  /** @format int32 */
-  totalStock?: number;
-  /** @format int32 */
-  totalReservedStock?: number;
-  /** @format int32 */
-  totalAvailableStock?: number;
-  /** @format int32 */
-  lowStockProducts?: number;
-  /** @format int32 */
-  outOfStockProducts?: number;
-  /** @format double */
-  totalInventoryValue?: number;
-  /** @format date-time */
-  lastUpdated?: string | null;
-  inventoryItems?: InventoryResponse[] | null;
-  stockMovements?: StockMovementResponse[] | null;
-  reorderAlerts?: ReorderAlertResponse[] | null;
-}
-
-export interface PlaceInventoryDetailResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PlaceInventoryDetailResponse;
-}
-
-export interface PlaceInventorySummaryResponse {
-  /** @format int32 */
-  placeId?: number;
-  placeNameAr?: string | null;
-  placeNameEn?: string | null;
-  placePhoneNumber?: string | null;
-  isActive?: boolean;
-  isMain?: boolean;
-  /** @format int32 */
-  totalProducts?: number;
-  /** @format int32 */
-  totalStock?: number;
-  /** @format int32 */
-  totalReservedStock?: number;
-  /** @format int32 */
-  totalAvailableStock?: number;
-  /** @format int32 */
-  lowStockProducts?: number;
-  /** @format int32 */
-  outOfStockProducts?: number;
-  /** @format double */
-  totalInventoryValue?: number;
-  /** @format date-time */
-  lastUpdated?: string | null;
-}
-
-export interface PlaceInventorySummaryResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PlaceInventorySummaryResponse[] | null;
-}
-
 export interface PlaceRequest {
   /** @format int32 */
   id?: number | null;
@@ -21074,19 +16188,6 @@ export interface PlaceRequest {
   providerId?: number;
   address?: AddressRequest;
   links?: LinkRequest[] | null;
-}
-
-export interface PortfolioItemListResponse {
-  portfolioItems?: GuidePortfolioItemResponse[] | null;
-}
-
-export interface PortfolioItemListResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PortfolioItemListResponse;
 }
 
 export interface Preparation {
@@ -21334,14 +16435,6 @@ export interface ProcessTypingIndicatorRequest {
   isTyping?: boolean;
   /** @format int32 */
   duration?: number;
-}
-
-export interface ProcessingTimeTrendResponse {
-  /** @format date-time */
-  date?: string;
-  averageProcessingTime?: TimeSpan;
-  /** @format int32 */
-  payoutCount?: number;
 }
 
 export interface Product {
@@ -21627,54 +16720,6 @@ export interface ProductAnalytics {
   product?: Product;
 }
 
-export interface ProductAnalyticsResponse {
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  sku?: string | null;
-  /** @format int32 */
-  totalViews?: number;
-  /** @format int32 */
-  totalSales?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  averageRating?: number;
-  /** @format int32 */
-  totalReviews?: number;
-  /** @format int32 */
-  totalWishlistAdds?: number;
-  /** @format int32 */
-  totalCartAdds?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format date-time */
-  startDate?: string;
-  /** @format date-time */
-  endDate?: string;
-  /** @format date-time */
-  generatedAt?: string;
-  dailyBreakdown?: DailyAnalytics[] | null;
-}
-
-export interface ProductAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAnalyticsResponse;
-}
-
-export interface ProductAnalyticsResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAnalyticsResponse[] | null;
-}
-
 export interface ProductAttribute {
   /** @format int32 */
   id: number;
@@ -21750,52 +16795,6 @@ export interface ProductAttributeMapping {
   productAttributeValue?: ProductAttributeValue;
 }
 
-export interface ProductAttributeMappingResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  productId?: number;
-  /** @format int32 */
-  productAttributeId?: number;
-  /** @format int32 */
-  productAttributeValueId?: number | null;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  customValue?: string | null;
-  /** @format double */
-  numericValue?: number | null;
-  /** @format date-time */
-  dateValue?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  /** @format int32 */
-  sortOrder?: number;
-  isVisible?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface ProductAttributeMappingResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAttributeMappingResponse;
-}
-
-export interface ProductAttributeMappingResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAttributeMappingResponse[] | null;
-}
-
 export interface ProductAttributeRequest {
   /** @format int32 */
   id?: number;
@@ -21816,88 +16815,6 @@ export interface ProductAttributeRequest {
   descriptionAr?: string | null;
   descriptionEn?: string | null;
   optionList?: string[] | null;
-}
-
-export interface ProductAttributeResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  wooCommerceId?: number | null;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  attribute?: string | null;
-  /** @format int32 */
-  position?: number | null;
-  visible?: boolean | null;
-  variation?: boolean | null;
-  isActive?: boolean;
-  options?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface ProductAttributeResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAttributeResponse;
-}
-
-export interface ProductAttributeResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAttributeResponse[] | null;
-}
-
-export interface ProductAttributeTermResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  wooCommerceId?: number | null;
-  /** @format int32 */
-  productAttributeId?: number;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  slug?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  /** @format int32 */
-  menuOrder?: number | null;
-  /** @format int32 */
-  count?: number | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface ProductAttributeTermResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAttributeTermResponse;
-}
-
-export interface ProductAttributeTermResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAttributeTermResponse[] | null;
 }
 
 export interface ProductAttributeValue {
@@ -21937,47 +16854,6 @@ export interface ProductAttributeValue {
   providerProductAttributeValues?: ProviderProductAttributeValue[] | null;
 }
 
-export interface ProductAttributeValueResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  productAttributeId?: number;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  value?: string | null;
-  displayValue?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  color?: string | null;
-  imageUrl?: string | null;
-  /** @format int32 */
-  sortOrder?: number;
-  isActive?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface ProductAttributeValueResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAttributeValueResponse;
-}
-
-export interface ProductAttributeValueResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductAttributeValueResponse[] | null;
-}
-
 export interface ProductBrand {
   /** @format int32 */
   id: number;
@@ -22009,46 +16885,6 @@ export interface ProductBrand {
   providerProductBrands?: ProviderProductBrand[] | null;
 }
 
-export interface ProductBrandResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  wooCommerceId?: number | null;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  description?: string | null;
-  brand?: string | null;
-  slug?: string | null;
-  /** @format int32 */
-  count?: number | null;
-  isActive?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface ProductBrandResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductBrandResponse;
-}
-
-export interface ProductBrandResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductBrandResponse[] | null;
-}
-
 export interface ProductDimensions {
   /** @format int32 */
   id: number;
@@ -22070,129 +16906,6 @@ export interface ProductDimensions {
   width?: number | null;
   /** @format double */
   height?: number | null;
-}
-
-export interface ProductErrorDataResponse {
-  resource?: string | null;
-  /** @format int32 */
-  id?: number | null;
-  additionalInfo?: AdditionalDataResponse;
-}
-
-export interface ProductErrorResponse {
-  code?: string | null;
-  message?: string | null;
-  data?: ProductErrorDataResponse;
-}
-
-export interface ProductHeaderResponse {
-  /** @format int32 */
-  id?: number;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  bioAr?: string | null;
-  bioEn?: string | null;
-  bio?: string | null;
-  slug?: string | null;
-  isActive?: boolean;
-  rate?: string | null;
-  /** @format double */
-  ratingCount?: number | null;
-  /** @format int32 */
-  likes?: number | null;
-  url?: string | null;
-  /** @format double */
-  price?: number | null;
-  /** @format double */
-  amount?: number | null;
-  /** @format int32 */
-  stockQuantity?: number | null;
-  /** @format int32 */
-  productId?: number;
-  sku?: string | null;
-  shortDescriptionAr?: string | null;
-  shortDescriptionEn?: string | null;
-  shortDescription?: string | null;
-  isFeatured?: boolean;
-  published?: boolean;
-  visibility?: Visibility;
-  buttonText?: string | null;
-  youtubeUrl?: string | null;
-  image?: string | null;
-  hasDiscount?: boolean;
-  /** @format date-time */
-  discountDateStart?: string | null;
-  /** @format date-time */
-  discountDateEnd?: string | null;
-  isTaagerProduct?: boolean | null;
-  inStock?: boolean;
-  tags?: string | null;
-  attributes?: string | null;
-  categories?: string | null;
-  /** @format int32 */
-  categoryId?: number;
-  /** @format int32 */
-  subCategoryId?: number;
-  /** @format int32 */
-  providerId?: number | null;
-  provider?: ProviderInfoResponse;
-  providerProductAttributes?: ProviderProductAttributeResponse[] | null;
-  providerProductTags?: ProviderProductTagResponse[] | null;
-  providerCategories?: ProviderCategoryResponse[] | null;
-  providerSubCategories?: ProviderSubCategoryResponse[] | null;
-  /** @format double */
-  regularPrice?: number | null;
-  /** @format double */
-  salePrice?: number | null;
-  /** @format date-time */
-  dateOnSaleFrom?: string | null;
-  /** @format date-time */
-  dateOnSaleFromGmt?: string | null;
-  /** @format date-time */
-  dateOnSaleTo?: string | null;
-  /** @format date-time */
-  dateOnSaleToGmt?: string | null;
-  priceHtml?: string | null;
-  onSale?: boolean | null;
-  purchasable?: boolean | null;
-  /** @format int64 */
-  totalSales?: number | null;
-  conflictInfo?: SkuConflictInfo;
-}
-
-export interface ProductHeaderResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductHeaderResponse;
-}
-
-export interface ProductImportResponse {
-  /** @format int32 */
-  totalRows?: number;
-  /** @format int32 */
-  successCount?: number;
-  /** @format int32 */
-  errorCount?: number;
-  /** @format int32 */
-  skippedCount?: number;
-  /** @format date-time */
-  importDate?: string;
-  importedBy?: string | null;
-  errors?: ImportError[] | null;
-  successes?: ImportSuccess[] | null;
-}
-
-export interface ProductImportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductImportResponse;
 }
 
 export interface ProductInformation {
@@ -22225,211 +16938,6 @@ export interface ProductInformationRequest {
   productId?: number;
 }
 
-export interface ProductInformationResponse {
-  category?: ProductInfoCategory;
-  subCategory?: string | null;
-  name?: string | null;
-  value?: string | null;
-  visible?: boolean;
-  global?: boolean;
-  default?: string | null;
-  /** @format int32 */
-  productId?: number;
-}
-
-export interface ProductResponse {
-  nameAr?: string | null;
-  nameEn?: string | null;
-  bioAr?: string | null;
-  bioEn?: string | null;
-  bio?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  isActive?: boolean;
-  /** @format double */
-  rate?: number | null;
-  /** @format int32 */
-  likes?: number | null;
-  url?: string | null;
-  /** @format double */
-  price?: number | null;
-  /** @format double */
-  amount?: number | null;
-  discountType?: DiscountType;
-  /** @format int32 */
-  buysNumber?: number | null;
-  /** @format int32 */
-  getsNumber?: number | null;
-  /** @format int32 */
-  providerId?: number | null;
-  provider?: ProviderInfoResponse;
-  /** @format int32 */
-  itemId?: number | null;
-  item?: ItemResponse;
-  productInformations?: ProductInformationResponse[] | null;
-  /** @format int32 */
-  productId?: number;
-  shortDescriptionAr?: string | null;
-  shortDescriptionEn?: string | null;
-  isFeatured?: boolean;
-  published?: boolean;
-  visibility?: Visibility;
-  specifications?: string | null;
-  youtubeUrl?: string | null;
-  image?: string | null;
-  hasDiscount?: boolean;
-  /** @format date-time */
-  discountDateStart?: string | null;
-  /** @format date-time */
-  discountDateEnd?: string | null;
-  /** @format date-time */
-  flashSaleStartDate?: string | null;
-  /** @format date-time */
-  flashSaleEndDate?: string | null;
-  taxStatus?: TaxStatus;
-  taxClass?: TaxClass;
-  /** @format double */
-  productProfit?: number | null;
-  isTaagerProduct?: boolean | null;
-  inStock?: boolean;
-  /** @format int32 */
-  stock?: number | null;
-  /** @format int32 */
-  lowStockAmount?: number | null;
-  backordersAllowed?: boolean | null;
-  soldIndividually?: boolean | null;
-  /** @format double */
-  weight?: number | null;
-  /** @format double */
-  length?: number | null;
-  /** @format double */
-  width?: number | null;
-  /** @format double */
-  height?: number | null;
-  allowCustomerReviews?: boolean | null;
-  purchaseNote?: string | null;
-  /** @format double */
-  salePrice?: number | null;
-  tagsString?: string | null;
-  shippingClass?: ShippingClass;
-  /** @format int32 */
-  parentProductId?: number | null;
-  /** @format int32 */
-  categoryId?: number;
-  category?: CategoryResponse;
-  /** @format int32 */
-  subCategoryId?: number;
-  subCategory?: SubCategoryResponse;
-  /** @format int64 */
-  id?: number | null;
-  name?: string | null;
-  slug?: string | null;
-  permalink?: string | null;
-  /** @format date-time */
-  dateCreated?: string | null;
-  /** @format date-time */
-  dateCreatedGmt?: string | null;
-  /** @format date-time */
-  dateModified?: string | null;
-  /** @format date-time */
-  dateModifiedGmt?: string | null;
-  type?: string | null;
-  status?: string | null;
-  featured?: boolean | null;
-  catalogVisibility?: string | null;
-  description?: string | null;
-  enableHtmlDescription?: boolean | null;
-  shortDescription?: string | null;
-  enableHtmlShortDescription?: string | null;
-  sku?: string | null;
-  /** @format double */
-  regularPrice?: number | null;
-  /** @format date-time */
-  dateOnSaleFrom?: string | null;
-  /** @format date-time */
-  dateOnSaleFromGmt?: string | null;
-  /** @format date-time */
-  dateOnSaleTo?: string | null;
-  /** @format date-time */
-  dateOnSaleToGmt?: string | null;
-  priceHtml?: string | null;
-  onSale?: boolean | null;
-  purchasable?: boolean | null;
-  /** @format int64 */
-  totalSales?: number | null;
-  virtual?: boolean | null;
-  downloadable?: boolean | null;
-  /** @format int32 */
-  downloadLimit?: number | null;
-  /** @format int32 */
-  downloadExpiry?: number | null;
-  externalUrl?: string | null;
-  buttonText?: string | null;
-  /** @format int32 */
-  stockQuantity?: number | null;
-  stockStatus?: string | null;
-  backorders?: boolean | null;
-  backordered?: boolean | null;
-  shippingRequired?: boolean | null;
-  shippingTaxable?: boolean | null;
-  /** @format int32 */
-  shippingClassId?: number | null;
-  reviewsAllowed?: boolean | null;
-  averageRating?: string | null;
-  /** @format int32 */
-  ratingCount?: number | null;
-  relatedIds?: number[] | null;
-  relatedProducts?: ProductResponse[] | null;
-  upsellIds?: number[] | null;
-  upsellProducts?: ProductResponse[] | null;
-  crossSellIds?: number[] | null;
-  crossSellProducts?: ProductResponse[] | null;
-  groupedProducts?: number[] | null;
-  groupedProductsList?: ProductResponse[] | null;
-  /** @format int64 */
-  parentId?: number | null;
-  parentProduct?: ProductResponse;
-  tags?: ProductTagResponse[] | null;
-  images?: MediaResponse[] | null;
-  attributes?: ProductAttributeResponse[] | null;
-  brands?: ProductBrandResponse[] | null;
-  variations?: number[] | null;
-  /** @format int32 */
-  menuOrder?: number | null;
-  error?: ProductErrorResponse;
-  reviews?: ReviewResponse[] | null;
-  externalId?: string | null;
-  externalHandle?: string | null;
-  vendor?: string | null;
-  productType?: string | null;
-  templateSuffix?: string | null;
-  onlyDefaultVariant?: boolean | null;
-  externalApiId?: string | null;
-  manageStock?: boolean | null;
-  providerData?: string | null;
-  sourceOfTruth?: SourceOfTruth;
-  /** @format date-time */
-  lastSyncedAt?: string | null;
-}
-
-export interface ProductResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductResponse;
-}
-
-export interface ProductResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductResponse[] | null;
-}
-
 export interface ProductReviewItem {
   /** @format int64 */
   productId: number;
@@ -22445,103 +16953,6 @@ export interface ProductReviewItem {
    */
   comment?: string | null;
   isNull?: boolean;
-}
-
-export interface ProductSalesReportResponse {
-  /** @format date-time */
-  startDate?: string;
-  /** @format date-time */
-  endDate?: string;
-  /** @format int32 */
-  totalProducts?: number;
-  /** @format int32 */
-  productsWithSales?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format int32 */
-  totalUnitsSold?: number;
-  /** @format double */
-  averageOrderValue?: number;
-  /** @format date-time */
-  generatedAt?: string;
-  topProducts?: TopProduct[] | null;
-  salesByCategory?: CategorySales[] | null;
-  dailySales?: DailySales[] | null;
-}
-
-export interface ProductSalesReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductSalesReportResponse;
-}
-
-export interface ProductSalesReportResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductSalesReportResponse[] | null;
-}
-
-export interface ProductSupplierResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  supplierId?: number;
-  supplierName?: string | null;
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  productSKU?: string | null;
-  supplierSKU?: string | null;
-  /** @format double */
-  supplierPrice?: number | null;
-  currency?: string | null;
-  /** @format int32 */
-  leadTimeDays?: number | null;
-  isActive?: boolean;
-  notes?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  provider?: ProviderInfoResponse;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  providerProductAttributes?: ProviderProductAttributeResponse[] | null;
-  providerProductTags?: ProviderProductTagResponse[] | null;
-  providerCategories?: ProviderCategoryResponse[] | null;
-  providerSubCategories?: ProviderSubCategoryResponse[] | null;
-}
-
-export interface ProductSupplierResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductSupplierResponse;
-}
-
-export interface ProductSupplierResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductSupplierResponse[] | null;
 }
 
 export interface ProductTag {
@@ -22573,46 +16984,6 @@ export interface ProductTag {
   count?: number | null;
   isActive?: boolean;
   providerProductTags?: ProviderProductTag[] | null;
-}
-
-export interface ProductTagResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  wooCommerceId?: number | null;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  description?: string | null;
-  tag?: string | null;
-  slug?: string | null;
-  /** @format int32 */
-  count?: number | null;
-  isActive?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface ProductTagResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductTagResponse;
-}
-
-export interface ProductTagResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductTagResponse[] | null;
 }
 
 export interface ProductVariation {
@@ -22732,75 +17103,6 @@ export interface ProductVariationRequest {
   description?: string | null;
 }
 
-export interface ProductVariationResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  sku?: string | null;
-  name?: string | null;
-  description?: string | null;
-  /** @format double */
-  price?: number | null;
-  /** @format double */
-  regularPrice?: number | null;
-  /** @format double */
-  salePrice?: number | null;
-  isActive?: boolean;
-  inStock?: boolean;
-  /** @format int32 */
-  stockQuantity?: number | null;
-  stockStatus?: string | null;
-  manageStock?: boolean;
-  attributes?: string | null;
-  /** @format int32 */
-  wooCommerceId?: number | null;
-  needsSync?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-}
-
-export interface ProductVariationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductVariationResponse;
-}
-
-export interface ProductVariationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProductVariationResponse[] | null;
-}
-
-export interface ProductWithProviderInfo {
-  /** @format int32 */
-  id?: number;
-  nameEn?: string | null;
-  nameAr?: string | null;
-  sku?: string | null;
-  /** @format double */
-  price?: number | null;
-  inStock?: boolean;
-  /** @format int32 */
-  providerId?: number | null;
-  providerName?: string | null;
-  providerNameEn?: string | null;
-  providerNameAr?: string | null;
-}
-
 export interface PromoteGuideTierRequest {
   /** @format int32 */
   guideProfileId: number;
@@ -22822,331 +17124,6 @@ export interface PromoteTierRequest {
   overrideEligibility?: boolean;
   /** @format date-time */
   effectiveDate?: string | null;
-}
-
-export interface PromotionAnalyticsResponse {
-  /** @format int32 */
-  totalPromotions?: number;
-  /** @format int32 */
-  totalDemotions?: number;
-  /** @format int32 */
-  totalManualChanges?: number;
-  /** @format double */
-  averagePromotionTime?: number;
-  /** @format double */
-  promotionRate?: number;
-  /** @format double */
-  demotionRate?: number;
-  tierBreakdown?: TierBreakdownResponse[] | null;
-  monthlyTrends?: MonthlyTrendResponse[] | null;
-}
-
-export interface PromotionAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionAnalyticsResponse;
-}
-
-export interface PromotionAuditResponse {
-  auditTrail?: AuditTrailItemResponse[] | null;
-  /** @format int32 */
-  totalChanges?: number;
-  /** @format int32 */
-  totalPromotions?: number;
-  /** @format int32 */
-  totalDemotions?: number;
-  /** @format int32 */
-  totalManualChanges?: number;
-}
-
-export interface PromotionAuditResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionAuditResponse[] | null;
-}
-
-export interface PromotionBreakdownResponse {
-  tierBreakdown?: TierBreakdownResponse[] | null;
-  reasonBreakdown?: ReasonBreakdownResponse[] | null;
-  monthlyBreakdown?: MonthlyBreakdownResponse[] | null;
-}
-
-export interface PromotionBreakdownResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionBreakdownResponse;
-}
-
-export interface PromotionCleanupResponse {
-  /** @format int32 */
-  totalRecords?: number;
-  /** @format int32 */
-  archivedRecords?: number;
-  /** @format int32 */
-  cleanedRecords?: number;
-  /** @format int32 */
-  pendingArchival?: number;
-  /** @format int32 */
-  pendingCleanup?: number;
-  /** @format date-time */
-  lastArchivalDate?: string | null;
-  /** @format date-time */
-  lastCleanupDate?: string | null;
-}
-
-export interface PromotionCleanupResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionCleanupResponse;
-}
-
-export interface PromotionExportResponse {
-  /** @format int32 */
-  exportId?: number;
-  format?: string | null;
-  fileName?: string | null;
-  /** @format int64 */
-  fileSize?: number;
-  downloadUrl?: string | null;
-  /** @format date-time */
-  expiresAt?: string;
-  /** @format date-time */
-  creationDate?: string;
-}
-
-export interface PromotionExportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionExportResponse;
-}
-
-export interface PromotionHistoryItemResponse {
-  /** @format int32 */
-  historyId?: number;
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  fromTierCode?: string | null;
-  toTierCode?: string | null;
-  changeType?: string | null;
-  changeReason?: string | null;
-  /** @format int32 */
-  pointsAtChange?: number;
-  /** @format uuid */
-  approvedBy?: string | null;
-  approvedByName?: string | null;
-  /** @format date-time */
-  changeDate?: string;
-  notes?: string | null;
-  isActive?: boolean;
-}
-
-export interface PromotionHistoryResponse {
-  history?: PromotionHistoryItemResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  pageNumber?: number;
-  /** @format int32 */
-  pageSize?: number;
-}
-
-export interface PromotionHistoryResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionHistoryResponse[] | null;
-}
-
-export interface PromotionNotificationResponse {
-  /** @format int32 */
-  notificationId?: number;
-  /** @format uuid */
-  userId?: string;
-  notificationType?: string | null;
-  title?: string | null;
-  message?: string | null;
-  /** @format date-time */
-  sentAt?: string;
-  isRead?: boolean;
-  /** @format date-time */
-  readAt?: string | null;
-}
-
-export interface PromotionNotificationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionNotificationResponse[] | null;
-}
-
-export interface PromotionReportResponse {
-  /** @format int32 */
-  reportId?: number;
-  reportType?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  data?: string | null;
-  summary?: string | null;
-  charts?: ChartResponse[] | null;
-}
-
-export interface PromotionReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionReportResponse;
-}
-
-export interface PromotionRuleResponse {
-  /** @format int32 */
-  ruleId?: number;
-  name?: string | null;
-  description?: string | null;
-  tierCode?: string | null;
-  ruleType?: string | null;
-  isActive?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-}
-
-export interface PromotionRuleResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionRuleResponse;
-}
-
-export interface PromotionRuleResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionRuleResponse[] | null;
-}
-
-export interface PromotionStatsResponse {
-  /** @format int32 */
-  totalPromotions?: number;
-  /** @format int32 */
-  totalDemotions?: number;
-  /** @format int32 */
-  totalManualChanges?: number;
-  /** @format double */
-  averagePromotionTime?: number;
-  /** @format double */
-  promotionRate?: number;
-  /** @format double */
-  demotionRate?: number;
-  mostPromotedTier?: string | null;
-  mostDemotedTier?: string | null;
-  /** @format int32 */
-  averagePointsAtPromotion?: number;
-  /** @format int32 */
-  averagePointsAtDemotion?: number;
-}
-
-export interface PromotionStatsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionStatsResponse;
-}
-
-export interface PromotionTrendResponse {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  promotions?: number;
-  /** @format int32 */
-  demotions?: number;
-  /** @format int32 */
-  netChange?: number;
-  /** @format int32 */
-  totalUsers?: number;
-}
-
-export interface PromotionTrendsResponse {
-  trends?: PromotionTrendResponse[] | null;
-  granularity?: string | null;
-  /** @format date-time */
-  startDate?: string;
-  /** @format date-time */
-  endDate?: string;
-}
-
-export interface PromotionTrendsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionTrendsResponse;
-}
-
-export interface PromotionWorkflowResponse {
-  /** @format int32 */
-  workflowId?: number;
-  /** @format uuid */
-  userId?: string;
-  fromTierCode?: string | null;
-  toTierCode?: string | null;
-  status?: string | null;
-  priority?: string | null;
-  /** @format date-time */
-  startedAt?: string;
-  /** @format date-time */
-  completedAt?: string | null;
-  /** @format date-time */
-  cancelledAt?: string | null;
-  result?: string | null;
-  notes?: string | null;
-}
-
-export interface PromotionWorkflowResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionWorkflowResponse;
-}
-
-export interface PromotionWorkflowResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: PromotionWorkflowResponse[] | null;
 }
 
 export interface Provider {
@@ -23277,40 +17254,6 @@ export interface ProviderCategory {
   providerSubCategories?: ProviderSubCategory[] | null;
 }
 
-export interface ProviderCategoryResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  providerId?: number;
-  /** @format int32 */
-  categoryId?: number;
-  customName?: string | null;
-  customDescription?: string | null;
-  customImageUrl?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  displayOrder?: number;
-  status?: ProviderCategoryStatus;
-}
-
-export interface ProviderCategoryResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderCategoryResponse;
-}
-
-export interface ProviderCategoryResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderCategoryResponse[] | null;
-}
-
 export interface ProviderCheckoutItem {
   /** @format int32 */
   productId: number;
@@ -23360,119 +17303,10 @@ export interface ProviderCheckoutRequest {
   discountAmount?: number | null;
 }
 
-export interface ProviderCommissionAnalyticsResponse {
-  /** @format int32 */
-  providerId?: number;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalCommissions?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  averageCommission?: number;
-  commissionByStatus?: CommissionByStatusResponse[] | null;
-}
-
-export interface ProviderCommissionAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderCommissionAnalyticsResponse;
-}
-
-export interface ProviderCommissionSummaryResponse {
-  /** @format int32 */
-  providerId?: number;
-  /** @format int32 */
-  totalCommissions?: number;
-  /** @format double */
-  totalCommissionAmount?: number;
-  /** @format int32 */
-  pendingCommissions?: number;
-  /** @format int32 */
-  approvedCommissions?: number;
-  /** @format double */
-  averageCommission?: number;
-}
-
-export interface ProviderCommissionSummaryResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderCommissionSummaryResponse;
-}
-
-export interface ProviderConflictInfo {
-  /** @format int32 */
-  id?: number | null;
-  name?: string | null;
-  nameEn?: string | null;
-  nameAr?: string | null;
-  /** @format int32 */
-  productId?: number;
-  /** @format double */
-  price?: number | null;
-  inStock?: boolean;
-}
-
 export interface ProviderDeductBalanceRequest {
   /** @format double */
   amount?: number;
   description?: string | null;
-}
-
-export interface ProviderDetailedBreakdownResponse {
-  byPayoutMethod?: PayoutMethodBreakdownResponse[] | null;
-  byStatus?: PayoutStatusBreakdownResponse[] | null;
-  byMonth?: PayoutMonthlyBreakdownResponse[] | null;
-}
-
-export interface ProviderInfoResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  phoneNumber?: string | null;
-  profileURL?: string | null;
-  /** @format double */
-  rate?: number | null;
-  /** @format int32 */
-  likes?: number | null;
-  shortAddress?: string | null;
-  providerStatus?: ProviderStatus;
-  providerRate?: ProviderRate;
-  placeName?: string | null;
-  providersAreaName?: string | null;
-  /** @format int32 */
-  servicesCount?: number;
-  /** @format int32 */
-  productsCount?: number;
-  serviceClasses?: string | null;
-  serviceClassIds?: number[] | null;
-  /** @format uuid */
-  ownerId?: string;
-  owner?: OwnerResponse;
-  /** @format uuid */
-  localGuiderId?: string;
-  isVerified?: boolean;
-  isProfileComplete?: boolean;
-  /** @format int32 */
-  profileCompletionPercentage?: number;
 }
 
 export interface ProviderInvitation {
@@ -23499,15 +17333,6 @@ export interface ProviderInvitation {
   providerRegistration?: ProviderRegistration;
   /** @format date-time */
   expirationDate?: string;
-}
-
-export interface ProviderMonthlyPayoutTrendResponse {
-  month?: string | null;
-  /** @format int32 */
-  payoutCount?: number;
-  /** @format double */
-  payoutAmount?: number;
-  averageProcessingTime?: TimeSpan;
 }
 
 export interface ProviderPaymentMethod {
@@ -23648,114 +17473,6 @@ export interface ProviderPaymentPlanRequest {
   providerId?: number;
 }
 
-export interface ProviderPayoutAnalyticsResponse {
-  /** @format int32 */
-  providerId?: number;
-  providerName?: string | null;
-  /** @format int32 */
-  totalPayouts?: number;
-  /** @format double */
-  totalPayoutAmount?: number;
-  /** @format double */
-  averagePayoutAmount?: number;
-  /** @format int32 */
-  pendingPayouts?: number;
-  /** @format double */
-  pendingAmount?: number;
-  /** @format int32 */
-  completedPayouts?: number;
-  /** @format double */
-  completedAmount?: number;
-  /** @format double */
-  successRate?: number;
-  averageProcessingTime?: TimeSpan;
-  payoutMethodBreakdown?: ProviderPayoutMethodBreakdownResponse[] | null;
-  monthlyTrends?: ProviderMonthlyPayoutTrendResponse[] | null;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-}
-
-export interface ProviderPayoutAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderPayoutAnalyticsResponse;
-}
-
-export interface ProviderPayoutMethodBreakdownResponse {
-  payoutMethod?: string | null;
-  /** @format int32 */
-  usageCount?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  usagePercentage?: number;
-}
-
-export interface ProviderPayoutReportResponse {
-  /** @format int32 */
-  providerId?: number;
-  providerName?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  profileSummary?: ProviderProfileSummaryResponse;
-  payoutSummary?: ProviderPayoutSummaryResponse;
-  performanceMetrics?: ProviderPerformanceMetricsResponse;
-  detailedBreakdown?: ProviderDetailedBreakdownResponse;
-  trendAnalysis?: ProviderTrendAnalysisResponse;
-  payoutHistory?: PayoutRequestResponse[] | null;
-}
-
-export interface ProviderPayoutReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderPayoutReportResponse;
-}
-
-export interface ProviderPayoutSummaryResponse {
-  /** @format int32 */
-  totalPayouts?: number;
-  /** @format double */
-  totalPayoutAmount?: number;
-  /** @format double */
-  averagePayoutAmount?: number;
-  /** @format int32 */
-  pendingPayouts?: number;
-  /** @format double */
-  pendingAmount?: number;
-  /** @format int32 */
-  completedPayouts?: number;
-  /** @format double */
-  completedAmount?: number;
-  /** @format int32 */
-  failedPayouts?: number;
-  /** @format double */
-  failedAmount?: number;
-}
-
-export interface ProviderPerformanceMetricsResponse {
-  /** @format double */
-  successRate?: number;
-  averageProcessingTime?: TimeSpan;
-  fastestProcessingTime?: TimeSpan;
-  slowestProcessingTime?: TimeSpan;
-  /** @format double */
-  totalVolumeProcessed?: number;
-  /** @format double */
-  averageVolumePerPayout?: number;
-}
-
 export interface ProviderProductAttribute {
   /** @format int32 */
   id: number;
@@ -23800,40 +17517,6 @@ export interface ProviderProductAttribute {
   provider?: Provider;
   productAttribute?: ProductAttribute;
   providerAttributeValues?: ProviderProductAttributeValue[] | null;
-}
-
-export interface ProviderProductAttributeResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  providerId?: number;
-  /** @format int32 */
-  productAttributeId?: number;
-  customName?: string | null;
-  customDescription?: string | null;
-  isActive?: boolean;
-  isRequired?: boolean;
-  /** @format int32 */
-  displayOrder?: number;
-  status?: ProviderProductAttributeStatus;
-}
-
-export interface ProviderProductAttributeResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderProductAttributeResponse;
-}
-
-export interface ProviderProductAttributeResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderProductAttributeResponse[] | null;
 }
 
 export interface ProviderProductAttributeValue {
@@ -23914,41 +17597,6 @@ export interface ProviderProductBrand {
   productBrand?: ProductBrand;
 }
 
-export interface ProviderProductBrandResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  providerId?: number;
-  /** @format int32 */
-  productBrandId?: number;
-  customName?: string | null;
-  customDescription?: string | null;
-  customColor?: string | null;
-  customIcon?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  displayOrder?: number;
-  status?: ProviderProductBrandStatus;
-}
-
-export interface ProviderProductBrandResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderProductBrandResponse;
-}
-
-export interface ProviderProductBrandResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderProductBrandResponse[] | null;
-}
-
 export interface ProviderProductTag {
   /** @format int32 */
   id: number;
@@ -24022,54 +17670,6 @@ export interface ProviderProductTagMapping {
   provider?: Provider;
   product?: Product;
   providerProductTag?: ProviderProductTag;
-}
-
-export interface ProviderProductTagResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  providerId?: number;
-  /** @format int32 */
-  productTagId?: number;
-  customName?: string | null;
-  customDescription?: string | null;
-  customColor?: string | null;
-  customIcon?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  displayOrder?: number;
-  status?: ProviderProductTagStatus;
-}
-
-export interface ProviderProductTagResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderProductTagResponse;
-}
-
-export interface ProviderProductTagResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderProductTagResponse[] | null;
-}
-
-export interface ProviderProfileSummaryResponse {
-  /** @format int32 */
-  providerId?: number;
-  providerName?: string | null;
-  providerEmail?: string | null;
-  providerPhone?: string | null;
-  providerType?: string | null;
-  /** @format date-time */
-  profileCreatedAt?: string;
-  /** @format date-time */
-  lastActivityDate?: string | null;
 }
 
 export interface ProviderPurchaseRequest {
@@ -24303,48 +17903,6 @@ export interface ProviderShippingMethod {
   providerShippingZones?: ProviderShippingZone[] | null;
 }
 
-export interface ProviderShippingMethodResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  providerId?: number;
-  providerName?: string | null;
-  /** @format int32 */
-  shippingMethodId?: number;
-  shippingMethodName?: string | null;
-  shippingMethodDescription?: string | null;
-  customName?: string | null;
-  customDescription?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  displayOrder?: number;
-  status?: ProviderShippingMethodStatus;
-  statusName?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  shippingZones?: ProviderShippingZoneResponse[] | null;
-}
-
-export interface ProviderShippingMethodResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderShippingMethodResponse;
-}
-
-export interface ProviderShippingMethodResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderShippingMethodResponse[] | null;
-}
-
 export interface ProviderShippingZone {
   /** @format int32 */
   id: number;
@@ -24390,32 +17948,6 @@ export interface ProviderShippingZone {
   providerShippingMethod?: ProviderShippingMethod;
 }
 
-export interface ProviderShippingZoneResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  providerId?: number;
-  providerName?: string | null;
-  /** @format int32 */
-  shippingZoneId?: number;
-  shippingZoneName?: string | null;
-  shippingZoneDescription?: string | null;
-  /** @format int32 */
-  providerShippingMethodId?: number;
-  providerShippingMethodName?: string | null;
-  customName?: string | null;
-  customDescription?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  displayOrder?: number;
-  status?: ProviderShippingZoneStatus;
-  statusName?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
 export interface ProviderSubCategory {
   /** @format int32 */
   id: number;
@@ -24447,42 +17979,6 @@ export interface ProviderSubCategory {
   provider?: Provider;
   subCategory?: SubCategory;
   providerCategory?: ProviderCategory;
-}
-
-export interface ProviderSubCategoryResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  providerId?: number;
-  /** @format int32 */
-  subCategoryId?: number;
-  /** @format int32 */
-  providerCategoryId?: number;
-  customName?: string | null;
-  customDescription?: string | null;
-  customImageUrl?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  displayOrder?: number;
-  status?: ProviderSubCategoryStatus;
-}
-
-export interface ProviderSubCategoryResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderSubCategoryResponse;
-}
-
-export interface ProviderSubCategoryResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ProviderSubCategoryResponse[] | null;
 }
 
 export interface ProviderTeamMemberAddressRequest {
@@ -24604,12 +18100,6 @@ export interface ProviderTeamMemberWagesRequest {
 export interface ProviderTestDecisionRequest {
   reservationId?: string | null;
   accept?: boolean;
-}
-
-export interface ProviderTrendAnalysisResponse {
-  volumeTrends?: VolumeTrendResponse[] | null;
-  processingTimeTrends?: ProcessingTimeTrendResponse[] | null;
-  successRateTrends?: SuccessRateTrendResponse[] | null;
 }
 
 export interface ProviderUpdateRequest {
@@ -25103,14 +18593,6 @@ export interface RateSessionRequest {
   feedback?: string | null;
 }
 
-export interface ReasonBreakdownResponse {
-  reason?: string | null;
-  /** @format int32 */
-  count?: number;
-  /** @format double */
-  percentage?: number;
-}
-
 export interface RecalculateCommissionsRequest {
   /** @format date-time */
   fromDate: string;
@@ -25461,440 +18943,6 @@ export interface RedeemedCoupon {
   redeemedAmount?: number;
 }
 
-export interface ReferralAnalyticsResponse {
-  /** @format int32 */
-  totalReferrals?: number;
-  /** @format int32 */
-  totalShares?: number;
-  /** @format int32 */
-  totalConversions?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  averageSharesPerReferral?: number;
-  /** @format double */
-  averageConversionsPerReferral?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format date-time */
-  periodStart?: string;
-  /** @format date-time */
-  periodEnd?: string;
-  trends?: ReferralTrendData[] | null;
-  topReferrers?: TopReferrerData[] | null;
-  shareSources?: ShareSourceData[] | null;
-}
-
-export interface ReferralAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralAnalyticsResponse;
-}
-
-export interface ReferralCodeResponse {
-  code?: string | null;
-  /** @format uuid */
-  userId?: string;
-  isActive?: boolean;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  expiresAt?: string | null;
-  /** @format int32 */
-  usageCount?: number;
-  /** @format int32 */
-  maxUsage?: number | null;
-}
-
-export interface ReferralCodeResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralCodeResponse;
-}
-
-export interface ReferralCodeResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralCodeResponse[] | null;
-}
-
-export interface ReferralCodeValidationResponse {
-  code?: string | null;
-  isValid?: boolean;
-  /** @format uuid */
-  userId?: string | null;
-  isActive?: boolean;
-  /** @format date-time */
-  createdAt?: string | null;
-  /** @format date-time */
-  expiresAt?: string | null;
-  /** @format int32 */
-  usageCount?: number;
-  /** @format int32 */
-  maxUsage?: number | null;
-  validationErrors?: string[] | null;
-}
-
-export interface ReferralCodeValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralCodeValidationResponse;
-}
-
-export interface ReferralConfigurationDetails {
-  configuration?: string | null;
-  isConfigurationValid?: boolean;
-  supportedFeatures?: string[] | null;
-  requiredFields?: string[] | null;
-  settings?: ReferralConfigurationSettingsResponse;
-}
-
-export interface ReferralConfigurationSettingsResponse {
-  settings?: CommonConfigurationSettingsResponse;
-}
-
-export interface ReferralConfigurationValidationResponse {
-  isValid?: boolean;
-  configuration?: string | null;
-  errors?: ConfigurationError[] | null;
-  warnings?: ConfigurationWarning[] | null;
-  details?: ReferralConfigurationDetails;
-}
-
-export interface ReferralConfigurationValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralConfigurationValidationResponse;
-}
-
-export interface ReferralEligibilityDetails {
-  /** @format uuid */
-  userId?: string;
-  referralCode?: string | null;
-  isUserEligible?: boolean;
-  isReferralCodeEligible?: boolean;
-  isReferralEligible?: boolean;
-  /** @format date-time */
-  nextEligibleDate?: string | null;
-  /** @format int32 */
-  pendingReferrals?: number;
-}
-
-export interface ReferralEligibilityResponse {
-  isEligible?: boolean;
-  reason?: string | null;
-  requirements?: EligibilityRequirement[] | null;
-  details?: ReferralEligibilityDetails;
-}
-
-export interface ReferralEligibilityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralEligibilityResponse;
-}
-
-export interface ReferralNotificationResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format uuid */
-  userId?: string;
-  notificationType?: string | null;
-  title?: string | null;
-  message?: string | null;
-  referralCode?: string | null;
-  isRead?: boolean;
-  priority?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  readAt?: string | null;
-  data?: string | null;
-}
-
-export interface ReferralNotificationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralNotificationResponse[] | null;
-}
-
-export interface ReferralPerformanceMetric {
-  metricName?: string | null;
-  /** @format double */
-  value?: number;
-  unit?: string | null;
-  description?: string | null;
-  isPositive?: boolean;
-}
-
-export interface ReferralPerformanceReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  format?: string | null;
-  downloadUrl?: string | null;
-  emailSentTo?: string | null;
-  summary?: ReferralPerformanceSummaryData;
-  sections?: ReferralReportSection[] | null;
-}
-
-export interface ReferralPerformanceReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralPerformanceReportResponse;
-}
-
-export interface ReferralPerformanceResponse {
-  /** @format int32 */
-  totalReferrals?: number;
-  /** @format int32 */
-  totalShares?: number;
-  /** @format int32 */
-  totalConversions?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  averageSharesPerReferral?: number;
-  /** @format double */
-  averageConversionsPerReferral?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format double */
-  successRate?: number;
-  /** @format double */
-  failureRate?: number;
-  /** @format date-time */
-  periodStart?: string;
-  /** @format date-time */
-  periodEnd?: string;
-  metrics?: ReferralPerformanceMetric[] | null;
-  trends?: ReferralTrendData[] | null;
-}
-
-export interface ReferralPerformanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralPerformanceResponse;
-}
-
-export interface ReferralPerformanceSummaryData {
-  /** @format int32 */
-  totalReferrals?: number;
-  /** @format int32 */
-  totalShares?: number;
-  /** @format int32 */
-  totalConversions?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  averageSharesPerReferral?: number;
-  /** @format double */
-  averageConversionsPerReferral?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format double */
-  successRate?: number;
-  /** @format double */
-  failureRate?: number;
-  topReferrers?: TopReferrerData[] | null;
-}
-
-export interface ReferralReportSection {
-  title?: string | null;
-  content?: string | null;
-  data?: ReportSectionDataResponse;
-  /** @format int32 */
-  order?: number;
-}
-
-export interface ReferralResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format uuid */
-  userId?: string;
-  code?: string | null;
-  isActive?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  notes?: string | null;
-}
-
-export interface ReferralResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralResponse;
-}
-
-export interface ReferralResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralResponse[] | null;
-}
-
-export interface ReferralSummaryData {
-  /** @format int32 */
-  totalReferrals?: number;
-  /** @format int32 */
-  totalShares?: number;
-  /** @format int32 */
-  totalConversions?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  averageSharesPerReferral?: number;
-  /** @format double */
-  averageConversionsPerReferral?: number;
-  /** @format double */
-  conversionRate?: number;
-}
-
-export interface ReferralSummaryReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  format?: string | null;
-  downloadUrl?: string | null;
-  emailSentTo?: string | null;
-  summary?: ReferralSummaryData;
-  sections?: ReferralReportSection[] | null;
-}
-
-export interface ReferralSummaryReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralSummaryReportResponse;
-}
-
-export interface ReferralTrendData {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  referrals?: number;
-  /** @format int32 */
-  shares?: number;
-  /** @format int32 */
-  conversions?: number;
-  /** @format double */
-  revenue?: number;
-}
-
-export interface ReferralTrendSummary {
-  /** @format double */
-  totalValue?: number;
-  /** @format double */
-  averageValue?: number;
-  /** @format double */
-  growthRate?: number;
-  /** @format double */
-  peakValue?: number;
-  /** @format date-time */
-  peakDate?: string | null;
-  /** @format double */
-  lowestValue?: number;
-  /** @format date-time */
-  lowestDate?: string | null;
-}
-
-export interface ReferralTrendsResponse {
-  metric?: string | null;
-  period?: string | null;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  trends?: ReferralTrendData[] | null;
-  summary?: ReferralTrendSummary;
-}
-
-export interface ReferralTrendsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralTrendsResponse;
-}
-
-export interface ReferralValidationDetails {
-  /** @format uuid */
-  userId?: string;
-  operation?: string | null;
-  referralCode?: string | null;
-  isOperationAllowed?: boolean;
-  isReferralCodeValid?: boolean;
-  isReferralValid?: boolean;
-  allowedOperations?: string[] | null;
-}
-
-export interface ReferralValidationResponse {
-  isValid?: boolean;
-  errors?: ValidationError[] | null;
-  warnings?: ValidationWarning[] | null;
-  details?: ReferralValidationDetails;
-}
-
-export interface ReferralValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReferralValidationResponse;
-}
-
-export interface ReferrerCountResponse {
-  referrer?: string | null;
-  /** @format int32 */
-  count?: number;
-}
-
 export interface RefreshTokenRequest {
   token?: string | null;
   refreshToken?: string | null;
@@ -26114,95 +19162,6 @@ export interface RemoveRoleRequest {
   roleName?: string | null;
 }
 
-export interface ReorderAlertResponse {
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  sku?: string | null;
-  /** @format int32 */
-  currentStock?: number;
-  /** @format int32 */
-  reorderPoint?: number;
-  /** @format int32 */
-  reorderQuantity?: number;
-  /** @format int32 */
-  supplierId?: number | null;
-  supplierName?: string | null;
-}
-
-export interface ReorderRequestResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  productSKU?: string | null;
-  /** @format int32 */
-  supplierId?: number | null;
-  supplierName?: string | null;
-  /** @format int32 */
-  requestedQuantity?: number;
-  status?: ReorderStatus;
-  statusName?: string | null;
-  /** @format uuid */
-  requestedBy?: string;
-  requestedByName?: string | null;
-  /** @format date-time */
-  requestedDate?: string;
-  notes?: string | null;
-  /** @format date-time */
-  requestedDeliveryDate?: string | null;
-  /** @format date-time */
-  expectedDeliveryDate?: string | null;
-  /** @format double */
-  estimatedCost?: number | null;
-  /** @format double */
-  actualCost?: number | null;
-  currency?: string | null;
-  /** @format uuid */
-  approvedBy?: string | null;
-  approvedByName?: string | null;
-  /** @format date-time */
-  approvedDate?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  provider?: ProviderInfoResponse;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  providerProductAttributes?: ProviderProductAttributeResponse[] | null;
-  providerProductTags?: ProviderProductTagResponse[] | null;
-  providerCategories?: ProviderCategoryResponse[] | null;
-  providerSubCategories?: ProviderSubCategoryResponse[] | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-}
-
-export interface ReorderRequestResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReorderRequestResponse;
-}
-
-export interface ReorderRequestResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReorderRequestResponse[] | null;
-}
-
 export interface ReportContentRequest {
   /** @format int32 */
   contentId: number;
@@ -26220,49 +19179,12 @@ export interface ReportContentRequest {
   description: string;
 }
 
-export interface ReportDataItemResponse {
-  key?: string | null;
-  value?: ReportValueResponse;
-  label?: string | null;
-  format?: string | null;
-}
-
-export interface ReportDataMetadataResponse {
-  stringProperties?: Record<string, string | null>;
-  intProperties?: Record<string, number | null>;
-  longProperties?: Record<string, number | null>;
-  decimalProperties?: Record<string, number | null>;
-  boolProperties?: Record<string, boolean | null>;
-  additionalProperties?: Record<string, any>;
-}
-
 export interface ReportReviewRequest {
   /**
    * @minLength 0
    * @maxLength 500
    */
   reason: string;
-}
-
-export interface ReportSectionDataResponse {
-  data?: ReportDataMetadataResponse;
-  items?: ReportDataItemResponse[] | null;
-  totals?: Record<string, number | null>;
-  counts?: Record<string, number | null>;
-}
-
-export interface ReportValueResponse {
-  stringValue?: string | null;
-  /** @format int32 */
-  intValue?: number | null;
-  /** @format int64 */
-  longValue?: number | null;
-  /** @format double */
-  decimalValue?: number | null;
-  boolValue?: boolean | null;
-  valueType?: string | null;
-  jsonValue?: string | null;
-  rawValue?: any;
 }
 
 export interface RequestRevisionRequest {
@@ -26828,560 +19750,6 @@ export interface ReviewRequest {
   autoModerate?: boolean;
 }
 
-export interface ReviewResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  slug?: string | null;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  /** @format int32 */
-  sourceId?: number;
-  source?: Source;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  /** @format uuid */
-  userId?: string | null;
-  scopeLevel?: TenantScopeLevel;
-  isGlobal?: boolean;
-  isInherited?: boolean;
-  /** @format int32 */
-  parentId?: number | null;
-  /** @format double */
-  rate?: number | null;
-  /** @format int32 */
-  likes?: number | null;
-  /** @format int32 */
-  dislikes?: number | null;
-  comment?: string | null;
-  isActive?: boolean;
-  title?: string | null;
-  summary?: string | null;
-  status?: ReviewStatus;
-  isVerified?: boolean;
-  isAnonymous?: boolean;
-  isFeatured?: boolean;
-  reviewType?: string | null;
-  category?: string | null;
-  tags?: string | null;
-  language?: string | null;
-  isModerated?: boolean;
-  /** @format uuid */
-  moderatedBy?: string | null;
-  /** @format date-time */
-  moderatedAt?: string | null;
-  moderationNotes?: string | null;
-  moderationReason?: string | null;
-  /** @format int32 */
-  viewCount?: number;
-  /** @format int32 */
-  shareCount?: number;
-  /** @format int32 */
-  reportCount?: number;
-  /** @format date-time */
-  lastViewedAt?: string | null;
-  /** @format date-time */
-  lastSharedAt?: string | null;
-  response?: string | null;
-  /** @format date-time */
-  responseDate?: string | null;
-  /** @format uuid */
-  respondedBy?: string | null;
-  hasResponse?: boolean;
-  /** @format int32 */
-  helpfulCount?: number;
-  /** @format int32 */
-  notHelpfulCount?: number;
-  /** @format double */
-  helpfulnessScore?: number;
-  isReported?: boolean;
-  reportReason?: string | null;
-  /** @format date-time */
-  reportedAt?: string | null;
-  /** @format uuid */
-  reportedBy?: string | null;
-  reviewSource?: string | null;
-  userAgent?: string | null;
-  ipAddress?: string | null;
-  referrer?: string | null;
-  /** @format date-time */
-  expiresAt?: string | null;
-  isTemporary?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  /** @format uuid */
-  createdBy?: string;
-  /** @format uuid */
-  lastModifiedBy?: string;
-  /** @format double */
-  overallRating?: number;
-  isPositive?: boolean;
-  isNegative?: boolean;
-  isExpired?: boolean;
-  ratingText?: string | null;
-  statusText?: string | null;
-  helpfulnessText?: string | null;
-}
-
-export interface ReviewResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ReviewResponse[] | null;
-}
-
-export interface RewardActionMappingResponse {
-  /** @format int32 */
-  id?: number;
-  actionType?: string | null;
-  shareSource?: string | null;
-  /** @format int32 */
-  points?: number;
-  /** @format double */
-  balance?: number;
-  nameEn?: string | null;
-  nameAr?: string | null;
-  descriptionEn?: string | null;
-  descriptionAr?: string | null;
-  description?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  sortOrder?: number;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface RewardActionMappingResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardActionMappingResponse;
-}
-
-export interface RewardActionMappingResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardActionMappingResponse[] | null;
-}
-
-export interface RewardAnalyticsResponse {
-  /** @format int32 */
-  totalRewards?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format int32 */
-  totalPoints?: number;
-  /** @format double */
-  averageRewardAmount?: number;
-  /** @format double */
-  averagePointsPerReward?: number;
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  activeUsers?: number;
-  /** @format date-time */
-  periodStart?: string;
-  /** @format date-time */
-  periodEnd?: string;
-  trends?: RewardTrendData[] | null;
-  rewardTypes?: RewardTypeData[] | null;
-  actionTypes?: ActionTypeData[] | null;
-}
-
-export interface RewardAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardAnalyticsResponse;
-}
-
-export interface RewardConfigurationDetails {
-  configuration?: string | null;
-  isConfigurationValid?: boolean;
-  supportedFeatures?: string[] | null;
-  requiredFields?: string[] | null;
-  settings?: RewardConfigurationSettingsResponse;
-}
-
-export interface RewardConfigurationSettingsResponse {
-  settings?: CommonConfigurationSettingsResponse;
-}
-
-export interface RewardConfigurationValidationResponse {
-  isValid?: boolean;
-  configuration?: string | null;
-  errors?: ConfigurationError[] | null;
-  warnings?: ConfigurationWarning[] | null;
-  details?: RewardConfigurationDetails;
-}
-
-export interface RewardConfigurationValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardConfigurationValidationResponse;
-}
-
-export interface RewardEligibilityDetails {
-  /** @format uuid */
-  userId?: string;
-  actionType?: string | null;
-  rewardType?: string | null;
-  /** @format double */
-  amount?: number | null;
-  /** @format int32 */
-  points?: number | null;
-  isUserEligible?: boolean;
-  isActionTypeEligible?: boolean;
-  isRewardTypeEligible?: boolean;
-  isAmountEligible?: boolean;
-  isPointsEligible?: boolean;
-  /** @format date-time */
-  nextEligibleDate?: string | null;
-  /** @format int32 */
-  pendingRewards?: number;
-  /** @format double */
-  pendingAmount?: number;
-}
-
-export interface RewardEligibilityResponse {
-  isEligible?: boolean;
-  reason?: string | null;
-  requirements?: EligibilityRequirement[] | null;
-  details?: RewardEligibilityDetails;
-}
-
-export interface RewardEligibilityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardEligibilityResponse;
-}
-
-export interface RewardNotificationResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format uuid */
-  userId?: string;
-  notificationType?: string | null;
-  title?: string | null;
-  message?: string | null;
-  /** @format double */
-  amount?: number | null;
-  /** @format int32 */
-  points?: number | null;
-  isRead?: boolean;
-  priority?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  readAt?: string | null;
-  data?: string | null;
-}
-
-export interface RewardNotificationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardNotificationResponse[] | null;
-}
-
-export interface RewardPerformanceMetric {
-  metricName?: string | null;
-  /** @format double */
-  value?: number;
-  unit?: string | null;
-  description?: string | null;
-  isPositive?: boolean;
-}
-
-export interface RewardPerformanceReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  format?: string | null;
-  downloadUrl?: string | null;
-  emailSentTo?: string | null;
-  summary?: RewardPerformanceSummaryData;
-  sections?: RewardReportSection[] | null;
-}
-
-export interface RewardPerformanceReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardPerformanceReportResponse;
-}
-
-export interface RewardPerformanceResponse {
-  /** @format int32 */
-  totalRewards?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format int32 */
-  totalPoints?: number;
-  /** @format double */
-  averageRewardAmount?: number;
-  /** @format double */
-  averagePointsPerReward?: number;
-  /** @format double */
-  successRate?: number;
-  /** @format double */
-  failureRate?: number;
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  activeUsers?: number;
-  /** @format date-time */
-  periodStart?: string;
-  /** @format date-time */
-  periodEnd?: string;
-  metrics?: RewardPerformanceMetric[] | null;
-  trends?: RewardTrendData[] | null;
-}
-
-export interface RewardPerformanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardPerformanceResponse;
-}
-
-export interface RewardPerformanceSummaryData {
-  /** @format int32 */
-  totalRewards?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format int32 */
-  totalPoints?: number;
-  /** @format double */
-  averageRewardAmount?: number;
-  /** @format double */
-  averagePointsPerReward?: number;
-  /** @format double */
-  successRate?: number;
-  /** @format double */
-  failureRate?: number;
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  activeUsers?: number;
-  topUsers?: TopRewardUserData[] | null;
-}
-
-export interface RewardProcessingResponse {
-  success?: boolean;
-  transactionId?: string | null;
-  /** @format uuid */
-  userId?: string;
-  actionType?: string | null;
-  rewardType?: string | null;
-  /** @format double */
-  amount?: number;
-  /** @format int32 */
-  points?: number;
-  status?: string | null;
-  /** @format date-time */
-  processedAt?: string;
-  description?: string | null;
-  metadata?: string | null;
-  errors?: string[] | null;
-  errorMessage?: string | null;
-  tierPromoted?: boolean;
-  newTier?: string | null;
-}
-
-export interface RewardProcessingResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardProcessingResponse;
-}
-
-export interface RewardReportSection {
-  title?: string | null;
-  content?: string | null;
-  data?: ReportSectionDataResponse;
-  /** @format int32 */
-  order?: number;
-}
-
-export interface RewardSummaryData {
-  /** @format int32 */
-  totalRewards?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format int32 */
-  totalPoints?: number;
-  /** @format double */
-  averageRewardAmount?: number;
-  /** @format double */
-  averagePointsPerReward?: number;
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  activeUsers?: number;
-  /** @format double */
-  successRate?: number;
-}
-
-export interface RewardSummaryReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  format?: string | null;
-  downloadUrl?: string | null;
-  emailSentTo?: string | null;
-  summary?: RewardSummaryData;
-  sections?: RewardReportSection[] | null;
-}
-
-export interface RewardSummaryReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardSummaryReportResponse;
-}
-
-export interface RewardTrendData {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  rewards?: number;
-  /** @format double */
-  amount?: number;
-  /** @format int32 */
-  points?: number;
-  /** @format int32 */
-  users?: number;
-}
-
-export interface RewardTrendSummary {
-  /** @format double */
-  totalValue?: number;
-  /** @format double */
-  averageValue?: number;
-  /** @format double */
-  growthRate?: number;
-  /** @format double */
-  peakValue?: number;
-  /** @format date-time */
-  peakDate?: string | null;
-  /** @format double */
-  lowestValue?: number;
-  /** @format date-time */
-  lowestDate?: string | null;
-}
-
-export interface RewardTrendsResponse {
-  metric?: string | null;
-  period?: string | null;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  trends?: RewardTrendData[] | null;
-  summary?: RewardTrendSummary;
-}
-
-export interface RewardTrendsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardTrendsResponse;
-}
-
-export interface RewardTypeData {
-  rewardType?: string | null;
-  /** @format int32 */
-  count?: number;
-  /** @format double */
-  amount?: number;
-  /** @format int32 */
-  points?: number;
-  /** @format double */
-  percentage?: number;
-}
-
-export interface RewardValidationDetails {
-  /** @format uuid */
-  userId?: string;
-  operation?: string | null;
-  actionType?: string | null;
-  rewardType?: string | null;
-  /** @format double */
-  amount?: number | null;
-  /** @format int32 */
-  points?: number | null;
-  isOperationAllowed?: boolean;
-  isActionTypeValid?: boolean;
-  isRewardTypeValid?: boolean;
-  isAmountValid?: boolean;
-  isPointsValid?: boolean;
-  allowedOperations?: string[] | null;
-}
-
-export interface RewardValidationResponse {
-  isValid?: boolean;
-  errors?: ValidationError[] | null;
-  warnings?: ValidationWarning[] | null;
-  details?: RewardValidationDetails;
-}
-
-export interface RewardValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: RewardValidationResponse;
-}
-
 export interface Role {
   /** @format uuid */
   id?: string;
@@ -27396,32 +19764,6 @@ export interface Role {
   providerId?: number | null;
   /** @format int32 */
   eventId?: number | null;
-}
-
-export interface RuleActionParametersResponse {
-  /** @format int32 */
-  duration?: number | null;
-  reason?: string | null;
-  notifyUser?: boolean | null;
-  notificationMessage?: string | null;
-  additionalParameters?: AdditionalDataResponse;
-}
-
-export interface RuleActionResponse {
-  /** @format int32 */
-  actionId?: number;
-  actionType?: string | null;
-  description?: string | null;
-  parameters?: RuleActionParametersResponse;
-}
-
-export interface RuleConditionResponse {
-  /** @format int32 */
-  conditionId?: number;
-  field?: string | null;
-  operator?: string | null;
-  value?: string | null;
-  description?: string | null;
 }
 
 export interface RunDailySettlementsRequest {
@@ -28638,6 +20980,7 @@ export interface ServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -28871,57 +21214,6 @@ export interface SettlementRequest {
   reference?: string | null;
 }
 
-export interface ShareEventResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format uuid */
-  userId?: string;
-  referralCode?: string | null;
-  shareSource?: string | null;
-  eventType?: string | null;
-  shareLink?: string | null;
-  /** @format int64 */
-  orderId?: number | null;
-  /** @format double */
-  orderAmount?: number | null;
-  /** @format int64 */
-  customerId?: number | null;
-  /** @format date-time */
-  creationDate?: string;
-  context?: string | null;
-  metadata?: string | null;
-}
-
-export interface ShareEventResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ShareEventResponse;
-}
-
-export interface ShareEventResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ShareEventResponse[] | null;
-}
-
-export interface ShareSourceData {
-  shareSource?: string | null;
-  /** @format int32 */
-  shareCount?: number;
-  /** @format int32 */
-  conversionCount?: number;
-  /** @format double */
-  revenue?: number;
-  /** @format double */
-  conversionRate?: number;
-}
-
 export interface ShareWishlistRequest {
   isPublic: boolean;
   /**
@@ -29033,76 +21325,6 @@ export interface ShippingMethod {
   providerShippingMethods?: ProviderShippingMethod[] | null;
 }
 
-export interface ShippingMethodResponse {
-  /** @format int32 */
-  id?: number;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  title?: string | null;
-  description?: string | null;
-  code?: string | null;
-  provider?: string | null;
-  providerServiceCode?: string | null;
-  trackingUrl?: string | null;
-  rateType?: string | null;
-  /** @format double */
-  baseRate?: number;
-  /** @format double */
-  perItemRate?: number | null;
-  /** @format double */
-  perWeightRate?: number | null;
-  /** @format double */
-  freeShippingThreshold?: number | null;
-  currency?: string | null;
-  /** @format int32 */
-  minDeliveryDays?: number | null;
-  /** @format int32 */
-  maxDeliveryDays?: number | null;
-  deliveryTimeDescription?: string | null;
-  allowedCountries?: string | null;
-  excludedCountries?: string | null;
-  allowedStates?: string | null;
-  excludedStates?: string | null;
-  /** @format double */
-  maxWeight?: number | null;
-  /** @format double */
-  maxLength?: number | null;
-  /** @format double */
-  maxWidth?: number | null;
-  /** @format double */
-  maxHeight?: number | null;
-  isActive?: boolean;
-  isDefault?: boolean;
-  /** @format int32 */
-  sortOrder?: number;
-  requiresSignature?: boolean;
-  isInsured?: boolean;
-  /** @format double */
-  insuranceValue?: number | null;
-  methodType?: string | null;
-}
-
-export interface ShippingMethodResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ShippingMethodResponse;
-}
-
-export interface ShippingMethodResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ShippingMethodResponse[] | null;
-}
-
 export interface ShippingRateImportItem {
   /** @minLength 1 */
   destination: string;
@@ -29163,107 +21385,11 @@ export interface ShippingZone {
   providerShippingZones?: ProviderShippingZone[] | null;
 }
 
-export interface ShippingZoneResponse {
-  /** @format int32 */
-  id?: number;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  /** @format int32 */
-  shippingMethodId?: number;
-  countries?: string | null;
-  states?: string | null;
-  cities?: string | null;
-  postalCodes?: string | null;
-  /** @format double */
-  baseRate?: number;
-  /** @format double */
-  perItemRate?: number | null;
-  /** @format double */
-  perWeightRate?: number | null;
-  /** @format double */
-  freeShippingThreshold?: number | null;
-  isActive?: boolean;
-  /** @format int32 */
-  sortOrder?: number;
-  /** @format int32 */
-  order?: number | null;
-}
-
-export interface ShippingZoneResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ShippingZoneResponse;
-}
-
-export interface ShippingZoneResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ShippingZoneResponse[] | null;
-}
-
 export interface SimulatedPaymentRequest {
   /** @format int32 */
   providerId?: number;
   /** @format int32 */
   planId?: number;
-}
-
-export interface SkuConflictInfo {
-  sku?: string | null;
-  /** @format int32 */
-  providerCount?: number;
-  providers?: ProviderConflictInfo[] | null;
-}
-
-export interface SkuConflictResponse {
-  sku?: string | null;
-  /** @format int32 */
-  conflictCount?: number;
-  conflictingProducts?: ProductWithProviderInfo[] | null;
-}
-
-export interface SkuConflictResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: SkuConflictResponse;
-}
-
-export interface SkuConflictResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: SkuConflictResponse[] | null;
-}
-
-export interface SkuValidationResult {
-  sku?: string | null;
-  isValid?: boolean;
-  errorMessage?: string | null;
-  /** @format int32 */
-  existingProductId?: number | null;
-}
-
-export interface SkuValidationResultListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: SkuValidationResult[] | null;
 }
 
 export interface SmsBulkRequest {
@@ -29356,57 +21482,6 @@ export interface StartPromotionWorkflowRequest {
   notes?: string | null;
 }
 
-export interface StockMovementResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  inventoryId?: number;
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  productSKU?: string | null;
-  movementType?: MovementType;
-  movementTypeName?: string | null;
-  /** @format int32 */
-  quantity?: number;
-  reference?: string | null;
-  notes?: string | null;
-  /** @format date-time */
-  movementDate?: string;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-}
-
-export interface StockMovementResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: StockMovementResponse;
-}
-
-export interface StockMovementResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: StockMovementResponse[] | null;
-}
-
 export interface StockUpdateItem {
   /** @format int32 */
   inventoryId: number;
@@ -29428,33 +21503,6 @@ export interface StoreWishlistUpdateRequest {
   nameEn?: string | null;
   default?: boolean;
   publicSharing?: boolean;
-}
-
-export interface StringApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: string | null;
-}
-
-export interface StringInt32DictionaryApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: Record<string, number | null>;
-}
-
-export interface StringListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: string[] | null;
 }
 
 export interface SubCategory {
@@ -29497,27 +21545,6 @@ export interface SubCategoryRequest {
   descriptionEn?: string | null;
   /** @format int32 */
   categoryId?: number;
-}
-
-export interface SubCategoryResponse {
-  /** @format int32 */
-  id?: number;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  /** @format int32 */
-  categoryId?: number;
-  url?: string | null;
-  iconName?: string | null;
-  colorName?: string | null;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
 }
 
 export interface SubmitContentRequest {
@@ -29588,15 +21615,6 @@ export interface SubscribeRequest {
   params?: Record<string, string | null>;
 }
 
-export interface SuccessRateTrendResponse {
-  /** @format date-time */
-  date?: string;
-  /** @format double */
-  successRate?: number;
-  /** @format int32 */
-  payoutCount?: number;
-}
-
 export interface Supplier {
   /** @format int32 */
   id: number;
@@ -29663,193 +21681,6 @@ export interface Supplier {
   purchaseOrders?: Order[] | null;
 }
 
-export interface SupplierLocationResponse {
-  /** @format int32 */
-  id?: number;
-  name?: string | null;
-  code?: string | null;
-  contactPerson?: string | null;
-  email?: string | null;
-  phone?: string | null;
-  address?: string | null;
-  city?: string | null;
-  state?: string | null;
-  country?: string | null;
-  postalCode?: string | null;
-  /** @format double */
-  latitude?: number | null;
-  /** @format double */
-  longitude?: number | null;
-  /** @format double */
-  distanceKm?: number | null;
-  isActive?: boolean;
-  isPreferred?: boolean;
-  type?: string | null;
-  /** @format int32 */
-  leadTimeDays?: number | null;
-  /** @format date-time */
-  lastOrderDate?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  /** @format int32 */
-  productCount?: number;
-}
-
-export interface SupplierLocationResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: SupplierLocationResponse[] | null;
-}
-
-export interface SupplierPerformanceResponse {
-  /** @format int32 */
-  supplierId?: number;
-  supplierName?: string | null;
-  /** @format date-time */
-  startDate?: string | null;
-  /** @format date-time */
-  endDate?: string | null;
-  /** @format int32 */
-  totalOrders?: number;
-  /** @format int32 */
-  completedOrders?: number;
-  /** @format int32 */
-  pendingOrders?: number;
-  /** @format int32 */
-  cancelledOrders?: number;
-  /** @format double */
-  totalOrderValue?: number;
-  /** @format double */
-  averageOrderValue?: number;
-  /** @format int32 */
-  onTimeDeliveries?: number;
-  /** @format int32 */
-  lateDeliveries?: number;
-  /** @format double */
-  onTimeDeliveryRate?: number;
-  /** @format double */
-  averageDeliveryTime?: number;
-  /** @format int32 */
-  totalProductsReceived?: number;
-  /** @format int32 */
-  defectiveProducts?: number;
-  /** @format int32 */
-  returnedProducts?: number;
-  /** @format double */
-  qualityRate?: number;
-  /** @format double */
-  returnRate?: number;
-  /** @format double */
-  totalCost?: number;
-  /** @format double */
-  averageCostPerProduct?: number;
-  /** @format double */
-  costSavings?: number;
-  /** @format double */
-  overallPerformanceScore?: number;
-  performanceGrade?: string | null;
-  performanceNotes?: string | null;
-  /** @format date-time */
-  lastOrderDate?: string | null;
-  /** @format date-time */
-  lastDeliveryDate?: string | null;
-  /** @format int32 */
-  activeProducts?: number;
-  /** @format int32 */
-  lowStockProducts?: number;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  monthlyData?: MonthlyPerformanceData[] | null;
-}
-
-export interface SupplierPerformanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: SupplierPerformanceResponse;
-}
-
-export interface SupplierResponse {
-  /** @format int32 */
-  id?: number;
-  name?: string | null;
-  code?: string | null;
-  description?: string | null;
-  contactPerson?: string | null;
-  email?: string | null;
-  phone?: string | null;
-  address?: string | null;
-  city?: string | null;
-  state?: string | null;
-  country?: string | null;
-  postalCode?: string | null;
-  /** @format double */
-  latitude?: number | null;
-  /** @format double */
-  longitude?: number | null;
-  website?: string | null;
-  type?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  productCount?: number;
-  /** @format int32 */
-  inventoryCount?: number;
-  /** @format int32 */
-  lowStockCount?: number;
-  /** @format int32 */
-  pendingOrders?: number;
-  /** @format int32 */
-  providerId?: number | null;
-  provider?: ProviderInfoResponse;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  providerProductAttributes?: ProviderProductAttributeResponse[] | null;
-  providerProductTags?: ProviderProductTagResponse[] | null;
-  providerCategories?: ProviderCategoryResponse[] | null;
-  providerSubCategories?: ProviderSubCategoryResponse[] | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-}
-
-export interface SupplierResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: SupplierResponse;
-}
-
-export interface SupplierResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: SupplierResponse[] | null;
-}
-
 export interface SuspendAffiliateLinkRequest {
   /** @format int32 */
   affiliateLinkId: number;
@@ -29886,21 +21717,6 @@ export interface SuspendGuideRequest {
 
 export interface SuspendWalletRequest {
   reason?: string | null;
-}
-
-export interface SuspiciousEventsResponse {
-  suspiciousEvents?: AttributionEventResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-}
-
-export interface SuspiciousEventsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: SuspiciousEventsResponse;
 }
 
 export interface Tag {
@@ -30041,637 +21857,6 @@ export interface TicketValidationRequest {
   gateId: string;
   deviceId?: string | null;
   notes?: string | null;
-}
-
-export interface TierAnalyticsResponse {
-  /** @format int32 */
-  totalUsers?: number;
-  tierDistribution?: TierDistributionResponse[] | null;
-  averagePointsPerTier?: Record<string, number | null>;
-  /** @format double */
-  promotionRate?: number;
-  /** @format double */
-  demotionRate?: number;
-  /** @format double */
-  retentionRate?: number;
-  /** @format date-time */
-  periodStart?: string;
-  /** @format date-time */
-  periodEnd?: string;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface TierAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierAnalyticsResponse;
-}
-
-export interface TierBenefitResponse {
-  benefitType?: string | null;
-  value?: string | null;
-  description?: string | null;
-  isActive?: boolean;
-  isNew?: boolean;
-  /** @format int32 */
-  priority?: number;
-  metadata?: string | null;
-}
-
-export interface TierBenefitsComparison {
-  currentTierBenefits?: TierBenefitResponse[] | null;
-  targetTierBenefits?: TierBenefitResponse[] | null;
-  newBenefits?: TierBenefitResponse[] | null;
-  lostBenefits?: TierBenefitResponse[] | null;
-}
-
-export interface TierBreakdownResponse {
-  tierCode?: string | null;
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  promotions?: number;
-  /** @format int32 */
-  demotions?: number;
-  /** @format int32 */
-  netChange?: number;
-}
-
-export interface TierCalculationResponse {
-  /** @format uuid */
-  userId?: string;
-  currentTierCode?: string | null;
-  calculatedTierCode?: string | null;
-  /** @format int32 */
-  points?: number;
-  /** @format double */
-  balance?: number;
-  requirementsMet?: boolean;
-  nextTierCode?: string | null;
-  /** @format int32 */
-  pointsToNextTier?: number;
-  /** @format date-time */
-  calculatedAt?: string;
-  warnings?: string[] | null;
-}
-
-export interface TierCalculationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierCalculationResponse;
-}
-
-export interface TierChangeEligibilityResponse {
-  isEligible?: boolean;
-  /** @format int32 */
-  eligibilityScore?: number;
-  /** @format int32 */
-  requiredPoints?: number;
-  /** @format int32 */
-  currentPoints?: number;
-  /** @format int32 */
-  missingPoints?: number;
-  /** @format date-time */
-  eligibilityDate?: string | null;
-  requirements?: string[] | null;
-}
-
-export interface TierChangeEligibilityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierChangeEligibilityResponse;
-}
-
-export interface TierChangeImpact {
-  /** @format int32 */
-  pointsChange?: number;
-  benefitsGained?: string[] | null;
-  benefitsLost?: string[] | null;
-  /** @format double */
-  revenueImpact?: number;
-  userExperienceImpact?: string | null;
-}
-
-export interface TierChangeNotification {
-  notificationType?: string | null;
-  title?: string | null;
-  message?: string | null;
-  /** @format date-time */
-  effectiveDate?: string;
-  includeBenefits?: boolean;
-  includeNextSteps?: boolean;
-}
-
-export interface TierChangePreviewResponse {
-  /** @format uuid */
-  userId?: string;
-  currentTier?: string | null;
-  fromTierCode?: string | null;
-  toTierCode?: string | null;
-  /** @format int32 */
-  pointsAtChange?: number | null;
-  currentTierName?: string | null;
-  targetTier?: string | null;
-  targetTierName?: string | null;
-  changeType?: string | null;
-  reason?: string | null;
-  /** @format date-time */
-  effectiveDate?: string;
-  impactAnalysis?: TierChangeImpact;
-  benefitsComparison?: TierBenefitsComparison;
-  benefits?: TierBenefitResponse[] | null;
-  requirements?: TierRequirementResponse[] | null;
-  /** @format date-time */
-  estimatedChangeDate?: string | null;
-  notificationPreview?: TierChangeNotification;
-  canProceed?: boolean;
-  validationErrors?: string[] | null;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface TierChangePreviewResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierChangePreviewResponse;
-}
-
-export interface TierChangeValidationResponse {
-  isValid?: boolean;
-  validationErrors?: string[] | null;
-  warnings?: string[] | null;
-  recommendations?: string[] | null;
-  /** @format int32 */
-  eligibilityScore?: number;
-  /** @format int32 */
-  requiredPoints?: number;
-  /** @format int32 */
-  currentPoints?: number;
-}
-
-export interface TierChangeValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierChangeValidationResponse;
-}
-
-export interface TierConfigurationValidationResponse {
-  validationId?: string | null;
-  validatedTiers?: string[] | null;
-  validationResults?: TierValidationResult[] | null;
-  recommendations?: string[] | null;
-  isValid?: boolean;
-  /** @format date-time */
-  validationDate?: string;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface TierConfigurationValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierConfigurationValidationResponse;
-}
-
-export interface TierDistributionReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  reportPeriod?: string | null;
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  totalTiers?: number;
-  distributionData?: TierDistributionResponse[] | null;
-  /** @format uuid */
-  generatedBy?: string;
-  /** @format date-time */
-  generatedAt?: string;
-  format?: string | null;
-  emailTo?: string | null;
-}
-
-export interface TierDistributionReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierDistributionReportResponse;
-}
-
-export interface TierDistributionResponse {
-  tierCode?: string | null;
-  tierName?: string | null;
-  /** @format int32 */
-  userCount?: number;
-  /** @format double */
-  percentage?: number;
-  /** @format double */
-  averagePoints?: number;
-  /** @format double */
-  averageBalance?: number;
-  /** @format int32 */
-  minPoints?: number;
-  /** @format int32 */
-  maxPoints?: number;
-  isActive?: boolean;
-  /** @format int32 */
-  sortOrder?: number;
-  tierDistribution?: TierDistributionResponse[] | null;
-}
-
-export interface TierDistributionResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierDistributionResponse;
-}
-
-export interface TierEligibilityDetails {
-  /** @format uuid */
-  userId?: string;
-  targetTierCode?: string | null;
-  currentTierCode?: string | null;
-  /** @format int32 */
-  currentPoints?: number;
-  /** @format double */
-  currentBalance?: number;
-  /** @format int32 */
-  requiredPoints?: number;
-  /** @format double */
-  requiredBalance?: number;
-  /** @format int32 */
-  pointsGap?: number;
-  /** @format double */
-  balanceGap?: number;
-  allRequirementsMet?: boolean;
-  estimatedTimeToEligibility?: string | null;
-}
-
-export interface TierEligibilityResponse {
-  /** @format uuid */
-  userId?: string;
-  currentTier?: string | null;
-  currentTierName?: string | null;
-  targetTier?: string | null;
-  targetTierName?: string | null;
-  isEligible?: boolean;
-  /** @format int32 */
-  pointsNeeded?: number;
-  /** @format int32 */
-  pointsExcess?: number;
-  /** @format int32 */
-  currentPoints?: number;
-  reason?: string | null;
-  requirements?: TierRequirementResponse[] | null;
-  details?: TierEligibilityDetails;
-  progress?: TierProgressResponse;
-  nextTier?: TierResponse;
-  estimatedTimeToAchieve?: TimeSpan;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface TierEligibilityResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierEligibilityResponse;
-}
-
-export interface TierHistoryResponse {
-  tierCode?: string | null;
-  tierName?: string | null;
-  previousTierCode?: string | null;
-  previousTierName?: string | null;
-  changeType?: string | null;
-  /** @format date-time */
-  changeDate?: string;
-  /** @format int32 */
-  pointsAtChange?: number;
-  reason?: string | null;
-  isActive?: boolean;
-}
-
-export interface TierHistoryResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierHistoryResponse[] | null;
-}
-
-export interface TierPerformanceMetric {
-  tierCode?: string | null;
-  tierName?: string | null;
-  /** @format int32 */
-  userCount?: number;
-  /** @format int32 */
-  promotions?: number;
-  /** @format int32 */
-  demotions?: number;
-  /** @format double */
-  retentionRate?: number;
-  /** @format double */
-  averageTimeInTier?: number;
-  /** @format double */
-  engagementRate?: number;
-  /** @format double */
-  averageSessionDuration?: number;
-  /** @format double */
-  revenuePerUser?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format double */
-  upgradeRate?: number;
-  /** @format double */
-  churnRate?: number;
-}
-
-export interface TierPerformanceResponse {
-  /** @format int32 */
-  totalPromotions?: number;
-  /** @format int32 */
-  totalDemotions?: number;
-  /** @format double */
-  promotionRate?: number;
-  /** @format double */
-  demotionRate?: number;
-  /** @format double */
-  retentionRate?: number;
-  /** @format double */
-  averageTimeInTier?: number;
-  /** @format date-time */
-  periodStart?: string;
-  /** @format date-time */
-  periodEnd?: string;
-  /** @format int32 */
-  totalTiers?: number;
-  performanceMetrics?: TierPerformanceMetric[] | null;
-  trends?: TierPerformanceTrend[] | null;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface TierPerformanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierPerformanceResponse;
-}
-
-export interface TierPerformanceTrend {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  promotions?: number;
-  /** @format int32 */
-  demotions?: number;
-  /** @format int32 */
-  netChange?: number;
-  /** @format double */
-  retentionRate?: number;
-}
-
-export interface TierProgressResponse {
-  /** @format uuid */
-  userId?: string;
-  targetTierCode?: string | null;
-  /** @format int32 */
-  currentPoints?: number;
-  /** @format int32 */
-  requiredPoints?: number;
-  /** @format double */
-  progressPercentage?: number;
-  /** @format int32 */
-  pointsRemaining?: number;
-  currentTierCode?: string | null;
-  nextTierCode?: string | null;
-  estimatedTimeToNextTier?: string | null;
-  /** @format date-time */
-  updatedAt?: string;
-}
-
-export interface TierPromotionResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format uuid */
-  userId?: string;
-  fromTierCode?: string | null;
-  toTierCode?: string | null;
-  reason?: string | null;
-  /** @format date-time */
-  promotedAt?: string;
-  /** @format uuid */
-  promotedBy?: string | null;
-  promotionType?: string | null;
-  /** @format int32 */
-  pointsAtPromotion?: number;
-  /** @format double */
-  balanceAtPromotion?: number;
-  notes?: string | null;
-}
-
-export interface TierPromotionResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierPromotionResponse;
-}
-
-export interface TierReportSection {
-  title?: string | null;
-  content?: string | null;
-  data?: ReportSectionDataResponse;
-  /** @format int32 */
-  order?: number;
-}
-
-export interface TierRequirementResponse {
-  requirementType?: string | null;
-  /** @format double */
-  requiredValueDecimal?: number;
-  /** @format double */
-  currentValueDecimal?: number;
-  requiredValue?: string | null;
-  currentValue?: string | null;
-  isMet?: boolean;
-  description?: string | null;
-  /** @format double */
-  progressPercentage?: number;
-  /** @format double */
-  remainingValue?: number;
-}
-
-export interface TierResponse {
-  /** @format int32 */
-  id?: number;
-  code?: string | null;
-  nameEn?: string | null;
-  nameAr?: string | null;
-  descriptionEn?: string | null;
-  descriptionAr?: string | null;
-  /** @format int32 */
-  minPoints?: number;
-  /** @format int32 */
-  maxPoints?: number;
-  benefits?: string | null;
-  color?: string | null;
-  icon?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  sortOrder?: number;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface TierResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierResponse;
-}
-
-export interface TierResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierResponse[] | null;
-}
-
-export interface TierRuleResponse {
-  tierCode?: string | null;
-  name?: string | null;
-  /** @format int32 */
-  minPoints?: number;
-  /** @format int32 */
-  maxPoints?: number;
-  benefits?: string | null;
-  isActive?: boolean;
-  /** @format int32 */
-  sortOrder?: number;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface TierRuleResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierRuleResponse;
-}
-
-export interface TierRuleResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierRuleResponse[] | null;
-}
-
-export interface TierSummaryData {
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  totalTiers?: number;
-  /** @format int32 */
-  totalPromotions?: number;
-  /** @format int32 */
-  totalDemotions?: number;
-  /** @format double */
-  averagePromotionRate?: number;
-  /** @format double */
-  averageDemotionRate?: number;
-  /** @format double */
-  averageRetentionRate?: number;
-}
-
-export interface TierSummaryReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  reportPeriod?: string | null;
-  /** @format int32 */
-  totalUsers?: number;
-  /** @format int32 */
-  totalTiers?: number;
-  /** @format double */
-  promotionRate?: number;
-  /** @format double */
-  demotionRate?: number;
-  /** @format double */
-  retentionRate?: number;
-  /** @format uuid */
-  generatedBy?: string;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  format?: string | null;
-  downloadUrl?: string | null;
-  emailTo?: string | null;
-  summary?: TierSummaryData;
-  sections?: TierReportSection[] | null;
-}
-
-export interface TierSummaryReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TierSummaryReportResponse;
-}
-
-export interface TierValidationResult {
-  validationType?: string | null;
-  isValid?: boolean;
-  message?: string | null;
-  severity?: string | null;
-  affectedTiers?: string[] | null;
-  suggestedFixes?: string[] | null;
 }
 
 export interface TimeSlot {
@@ -30967,119 +22152,6 @@ export interface TodoLineUpdateRequest {
   sublines?: TodoLineRequest[] | null;
 }
 
-export interface TopPerformerResponse {
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  /** @format int32 */
-  totalPoints?: number | null;
-  /** @format int32 */
-  goalsCompleted?: number | null;
-  /** @format double */
-  commissionEarned?: number | null;
-  /** @format int32 */
-  totalPayouts?: number | null;
-  /** @format double */
-  totalPayoutAmount?: number | null;
-  /** @format double */
-  successRate?: number | null;
-  averageProcessingTime?: TimeSpan;
-}
-
-export interface TopPerformingGoalResponse {
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  /** @format double */
-  completionRate?: number;
-  /** @format int32 */
-  totalCompletions?: number;
-  /** @format double */
-  averageCompletionTime?: number;
-  /** @format double */
-  userSatisfactionScore?: number;
-}
-
-export interface TopPerformingLinkResponse {
-  /** @format int32 */
-  affiliateLinkId?: number;
-  code?: string | null;
-  title?: string | null;
-  targetType?: AffiliateTargetType;
-  /** @format int32 */
-  targetId?: number | null;
-  /** @format int32 */
-  views?: number;
-  /** @format int32 */
-  clicks?: number;
-  /** @format int32 */
-  purchases?: number;
-  /** @format double */
-  revenue?: number;
-  /** @format int32 */
-  totalEvents?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format double */
-  conversionRate?: number;
-}
-
-export interface TopPerformingLinksResponse {
-  links?: TopPerformingLinkResponse[] | null;
-  /** @format int32 */
-  totalCount?: number;
-}
-
-export interface TopPerformingLinksResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TopPerformingLinksResponse;
-}
-
-export interface TopProduct {
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  sku?: string | null;
-  /** @format int32 */
-  unitsSold?: number;
-  /** @format double */
-  revenue?: number;
-  /** @format double */
-  averagePrice?: number;
-}
-
-export interface TopReferrerData {
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  /** @format int32 */
-  referrals?: number;
-  /** @format int32 */
-  shares?: number;
-  /** @format int32 */
-  conversions?: number;
-  /** @format double */
-  revenue?: number;
-}
-
-export interface TopRewardUserData {
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  /** @format int32 */
-  rewards?: number;
-  /** @format double */
-  amount?: number;
-  /** @format int32 */
-  points?: number;
-  /** @format int32 */
-  rank?: number;
-}
-
 export interface TrackCampaignAttributionRequest {
   /**
    * @minLength 0
@@ -31344,53 +22416,6 @@ export interface TransferPointsRequest {
   validateBalance?: boolean;
 }
 
-export interface TransferResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  productId?: number;
-  productName?: string | null;
-  productSKU?: string | null;
-  fromLocation?: string | null;
-  toLocation?: string | null;
-  /** @format int32 */
-  fromPlaceId?: number | null;
-  /** @format int32 */
-  toPlaceId?: number | null;
-  fromPlaceName?: string | null;
-  toPlaceName?: string | null;
-  /** @format int32 */
-  quantity?: number;
-  /** @format date-time */
-  transferDate?: string;
-  notes?: string | null;
-  status?: TransferStatus;
-  statusName?: string | null;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-}
-
-export interface TransferResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: TransferResponse;
-}
-
 export interface TransferSupplierOwnershipRequest {
   /** @format int32 */
   newProviderId: number;
@@ -31419,77 +22444,6 @@ export interface TransferVariantInventoryRequest {
   toPlaceId?: number | null;
   reference?: string | null;
   notes?: string | null;
-}
-
-export interface TrendDataPoint {
-  /** @format date-time */
-  date?: string;
-  /** @format double */
-  value?: number;
-  /** @format double */
-  changePercentage?: number;
-}
-
-export interface UGCContentResponse {
-  /** @format int32 */
-  ugcContentId?: number;
-  /** @format int32 */
-  guideProfileId?: number;
-  slug?: string | null;
-  title?: string | null;
-  type?: ContentType;
-  caption?: string | null;
-  metaDescription?: string | null;
-  tags?: string | null;
-  /** @format int32 */
-  primaryMediaId?: number | null;
-  mediaUrl?: string | null;
-  /** @format int32 */
-  durationSeconds?: number | null;
-  /** @format int32 */
-  cityId?: number | null;
-  niches?: string | null;
-  linkedProviderIds?: number[] | null;
-  linkedOfferIds?: number[] | null;
-  language?: string | null;
-  status?: ContentStatus;
-  visibility?: ContentVisibility;
-  /** @format date-time */
-  scheduledAt?: string | null;
-  /** @format date-time */
-  publishedAt?: string | null;
-  /** @format int64 */
-  views?: number;
-  /** @format int64 */
-  likes?: number;
-  /** @format int64 */
-  shares?: number;
-  /** @format int64 */
-  comments?: number;
-  /** @format int64 */
-  clicks?: number;
-  /** @format int64 */
-  conversions?: number;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  /** @format uuid */
-  createdBy?: string;
-  /** @format uuid */
-  lastModifiedBy?: string | null;
-  isDeleted?: boolean;
-  guideProfile?: GuideProfileSummaryResponse;
-  moderationHistory?: ContentModerationResponse[] | null;
-}
-
-export interface UGCContentResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UGCContentResponse;
 }
 
 export interface UnassignUserFromEventRequest {
@@ -34969,6 +25923,14 @@ export interface UpdateScheduleItemRequest {
   recordingUrl?: string | null;
 }
 
+export interface UpdateServiceImageUrlRequest {
+  /**
+   * @minLength 0
+   * @maxLength 500
+   */
+  imageUrl: string;
+}
+
 export interface UpdateSessionRequest {
   /** @minLength 1 */
   sessionId: string;
@@ -36171,93 +27133,6 @@ export interface User {
   guestTrackingData?: GuestTrackingData;
 }
 
-export interface UserAchievementResponse {
-  /** @format int32 */
-  achievementId?: number;
-  achievementName?: string | null;
-  description?: string | null;
-  /** @format date-time */
-  achievementDate?: string;
-  /** @format int32 */
-  pointsAwarded?: number;
-  achievementType?: string | null;
-}
-
-export interface UserActivityResponse {
-  /** @format date-time */
-  activityDate?: string;
-  activityType?: string | null;
-  description?: string | null;
-  /** @format int32 */
-  pointsEarned?: number;
-  additionalData?: string | null;
-}
-
-export interface UserAgentCountResponse {
-  userAgent?: string | null;
-  /** @format int32 */
-  count?: number;
-}
-
-export interface UserAttributionAnalyticsResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format uuid */
-  userId?: string;
-  /** @format int32 */
-  totalEvents?: number;
-  /** @format double */
-  clickThroughRate?: number;
-  /** @format double */
-  conversionRate?: number;
-  topCountries?: string[] | null;
-  topSources?: string[] | null;
-  revenueBySource?: Record<string, number | null>;
-}
-
-export interface UserAttributionAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UserAttributionAnalyticsResponse;
-}
-
-export interface UserAttributionReportResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string;
-  slug?: string | null;
-  /** @format uuid */
-  userId?: string;
-  /** @format uuid */
-  reportId?: string;
-  /** @format date-time */
-  generatedDate?: string;
-  userEvents?: AttributionEventResponse[] | null;
-  userAnalytics?: UserAttributionAnalyticsResponse;
-}
-
-export interface UserAttributionReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UserAttributionReportResponse;
-}
-
 export interface UserCreateRequest {
   /**
    * @format email
@@ -36396,184 +27271,8 @@ export interface UserLoginRequest {
   isRestoreDeletedUser?: boolean | null;
 }
 
-export interface UserLoyaltyAnalyticsResponse {
-  /** @format uuid */
-  userId?: string;
-  /** @format int32 */
-  totalPointsEarned?: number;
-  /** @format int32 */
-  totalPointsRedeemed?: number;
-  /** @format int32 */
-  availablePoints?: number;
-  currentLevel?: string | null;
-  /** @format int32 */
-  totalGoalsAssigned?: number;
-  /** @format int32 */
-  totalGoalsCompleted?: number;
-  /** @format double */
-  goalCompletionRate?: number;
-  /** @format double */
-  totalCommissionEarned?: number;
-  /** @format double */
-  averagePointsPerMonth?: number;
-  /** @format date-time */
-  lastActivityDate?: string | null;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  monthlyPoints?: MonthlyPointsResponse[] | null;
-  goalProgress?: GoalProgressSummaryResponse[] | null;
-}
-
-export interface UserLoyaltyAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UserLoyaltyAnalyticsResponse;
-}
-
-export interface UserLoyaltyGoalResponse {
-  /** @format int32 */
-  userGoalId?: number;
-  /** @format uuid */
-  userId?: string;
-  /** @format int32 */
-  goalId?: number;
-  goalName?: string | null;
-  goalType?: string | null;
-  /** @format int32 */
-  targetValue?: number;
-  /** @format int32 */
-  currentProgress?: number;
-  /** @format double */
-  progressPercentage?: number;
-  isCompleted?: boolean;
-  /** @format date-time */
-  completedDate?: string | null;
-  completionNotes?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-}
-
-export interface UserLoyaltyReportResponse {
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  userProfile?: LoyaltyUserProfileResponse;
-  goalProgress?: UserLoyaltyGoalResponse[] | null;
-  commissionHistory?: LoyaltyCommissionResponse[] | null;
-  levelHistory?: LoyaltyUserLevelResponse[] | null;
-  performanceMetrics?: UserLoyaltyAnalyticsResponse;
-  recentActivities?: UserActivityResponse[] | null;
-  achievements?: UserAchievementResponse[] | null;
-}
-
-export interface UserLoyaltyReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UserLoyaltyReportResponse;
-}
-
 export interface UserPlanningPreferenceRequest {
   preparationIds: number[];
-}
-
-export interface UserReferralAnalyticsResponse {
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  /** @format int32 */
-  totalReferrals?: number;
-  /** @format int32 */
-  totalShares?: number;
-  /** @format int32 */
-  totalConversions?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  averageSharesPerReferral?: number;
-  /** @format double */
-  averageConversionsPerReferral?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format date-time */
-  lastShareDate?: string | null;
-  /** @format date-time */
-  lastConversionDate?: string | null;
-  trends?: ReferralTrendData[] | null;
-  shareSources?: ShareSourceData[] | null;
-}
-
-export interface UserReferralAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UserReferralAnalyticsResponse;
-}
-
-export interface UserReferralReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  format?: string | null;
-  downloadUrl?: string | null;
-  emailSentTo?: string | null;
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  summary?: UserReferralSummaryData;
-  sections?: ReferralReportSection[] | null;
-}
-
-export interface UserReferralReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UserReferralReportResponse;
-}
-
-export interface UserReferralSummaryData {
-  /** @format int32 */
-  totalReferrals?: number;
-  /** @format int32 */
-  totalShares?: number;
-  /** @format int32 */
-  totalConversions?: number;
-  /** @format double */
-  totalRevenue?: number;
-  /** @format double */
-  averageSharesPerReferral?: number;
-  /** @format double */
-  averageConversionsPerReferral?: number;
-  /** @format double */
-  conversionRate?: number;
-  /** @format date-time */
-  lastShareDate?: string | null;
-  /** @format date-time */
-  lastConversionDate?: string | null;
 }
 
 export interface UserRegistrationPhoneRequest {
@@ -36621,147 +27320,6 @@ export interface UserRequest {
   countryId?: number | null;
 }
 
-export interface UserResponse {
-  /** @format uuid */
-  id?: string;
-  /** @format int32 */
-  userId?: number;
-  firstName?: string | null;
-  lastName?: string | null;
-  isDeleted?: boolean;
-  isActive?: boolean;
-  isInit?: boolean;
-  personal?: string | null;
-  personalType?: PersonalType;
-  /** @format date-time */
-  birthDate?: string | null;
-  customTag?: string | null;
-  partnerName?: string | null;
-  type?: UserType;
-  gender?: Gender;
-  status?: SocialStatus;
-  /** @format date-time */
-  creationDate?: string | null;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  phoneNumber?: string | null;
-  email?: string | null;
-  userName?: string | null;
-  profileUrl?: string | null;
-}
-
-export interface UserRewardAnalyticsResponse {
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  /** @format int32 */
-  totalRewards?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format int32 */
-  totalPoints?: number;
-  /** @format double */
-  averageRewardAmount?: number;
-  /** @format double */
-  averagePointsPerReward?: number;
-  /** @format double */
-  largestReward?: number;
-  /** @format double */
-  smallestReward?: number;
-  /** @format int32 */
-  largestPoints?: number;
-  /** @format int32 */
-  smallestPoints?: number;
-  /** @format date-time */
-  lastRewardDate?: string | null;
-  /** @format date-time */
-  nextExpectedRewardDate?: string | null;
-  trends?: RewardTrendData[] | null;
-  rewardTypes?: RewardTypeData[] | null;
-  actionTypes?: ActionTypeData[] | null;
-}
-
-export interface UserRewardAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UserRewardAnalyticsResponse;
-}
-
-export interface UserRewardReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  format?: string | null;
-  downloadUrl?: string | null;
-  emailSentTo?: string | null;
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  summary?: UserRewardSummaryData;
-  sections?: RewardReportSection[] | null;
-}
-
-export interface UserRewardReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UserRewardReportResponse;
-}
-
-export interface UserRewardSummaryData {
-  /** @format int32 */
-  totalRewards?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format int32 */
-  totalPoints?: number;
-  /** @format double */
-  averageRewardAmount?: number;
-  /** @format double */
-  averagePointsPerReward?: number;
-  /** @format double */
-  largestReward?: number;
-  /** @format double */
-  smallestReward?: number;
-  /** @format int32 */
-  largestPoints?: number;
-  /** @format int32 */
-  smallestPoints?: number;
-  /** @format date-time */
-  lastRewardDate?: string | null;
-  /** @format date-time */
-  nextExpectedRewardDate?: string | null;
-}
-
-export interface UserSummaryResponse {
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  email?: string | null;
-  firstName?: string | null;
-  lastName?: string | null;
-  phoneNumber?: string | null;
-  emailConfirmed?: boolean;
-  phoneNumberConfirmed?: boolean;
-  /** @format date-time */
-  lockoutEnd?: string | null;
-  /** @format date-time */
-  lockoutEndOffset?: string | null;
-  lockoutEnabled?: boolean;
-  /** @format int32 */
-  accessFailedCount?: number;
-}
-
 export interface UserTag {
   /** @format int32 */
   id: number;
@@ -36779,78 +27337,12 @@ export interface UserTag {
   tag?: Tag;
 }
 
-export interface UserTierReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  /** @format uuid */
-  userId?: string;
-  currentTier?: string | null;
-  currentTierName?: string | null;
-  /** @format int32 */
-  currentPoints?: number;
-  tierHistory?: TierHistoryResponse[] | null;
-  tierBenefits?: string[] | null;
-  recommendations?: string[] | null;
-  /** @format uuid */
-  generatedBy?: string;
-  /** @format date-time */
-  generatedAt?: string;
-  format?: string | null;
-  emailTo?: string | null;
-}
-
-export interface UserTierReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UserTierReportResponse;
-}
-
-export interface UtmAnalyticsResponse {
-  /** @format int32 */
-  affiliateLinkId?: number;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  /** @format int32 */
-  totalEvents?: number;
-  eventsByType?: EventTypeCountResponse[] | null;
-  topUserAgents?: UserAgentCountResponse[] | null;
-  topReferrers?: ReferrerCountResponse[] | null;
-}
-
-export interface UtmAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: UtmAnalyticsResponse;
-}
-
 export interface ValidateAffiliateLinkRequest {
   /**
    * @minLength 0
    * @maxLength 50
    */
   linkCode: string;
-}
-
-export interface ValidateAffiliateLinkResponse {
-  isValid?: boolean;
-  message?: string | null;
-}
-
-export interface ValidateAffiliateLinkResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: ValidateAffiliateLinkResponse;
 }
 
 export interface ValidateAttributionConfigurationRequest {
@@ -37175,23 +27667,6 @@ export interface ValidateWithdrawalRequest {
   method?: ProviderWalletWithdrawalMethod;
 }
 
-export interface ValidationDetailResponse {
-  ruleName?: string | null;
-  passed?: boolean;
-  description?: string | null;
-  currentValue?: string | null;
-  expectedValue?: string | null;
-  severityLevel?: string | null;
-  errorMessage?: string | null;
-}
-
-export interface ValidationError {
-  code?: string | null;
-  message?: string | null;
-  field?: string | null;
-  severity?: string | null;
-}
-
 export interface ValidationResultRequest {
   /** @format int32 */
   linkId: number;
@@ -37208,22 +27683,6 @@ export interface ValidationResultRequest {
   /** @format date-time */
   validatedAt?: string;
   sendNotification?: boolean;
-}
-
-export interface ValidationWarning {
-  code?: string | null;
-  message?: string | null;
-  field?: string | null;
-  severity?: string | null;
-}
-
-export interface VendorInfo {
-  /** @format int32 */
-  id?: number;
-  name?: string | null;
-  category?: string | null;
-  logoUrl?: string | null;
-  slug?: string | null;
 }
 
 export interface VerifyGuideRequest {
@@ -37394,17 +27853,6 @@ export interface View {
   isTemporary?: boolean;
 }
 
-export interface VolumeTrendResponse {
-  /** @format date-time */
-  date?: string;
-  /** @format double */
-  totalVolume?: number;
-  /** @format int32 */
-  payoutCount?: number;
-  /** @format double */
-  averageVolumePerPayout?: number;
-}
-
 export interface WalkInGroupReservationRequest {
   /** @format uuid */
   clientId?: string;
@@ -37449,627 +27897,6 @@ export interface WalkInReservationRequest {
   referralCode?: string | null;
   resourceIds?: number[] | null;
   customer?: CustomerRequest;
-}
-
-export interface WalletAccountResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format uuid */
-  userId?: string;
-  /** @format double */
-  balance?: number;
-  /** @format int32 */
-  points?: number;
-  currency?: string | null;
-  tierCode?: string | null;
-  isActive?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  metadata?: string | null;
-}
-
-export interface WalletAccountResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletAccountResponse;
-}
-
-export interface WalletAnalyticsResponse {
-  /** @format int32 */
-  walletId?: number;
-  period?: string | null;
-  /** @format int32 */
-  totalTransactions?: number;
-  /** @format double */
-  totalCredits?: number;
-  /** @format double */
-  totalDebits?: number;
-  /** @format int32 */
-  totalPointsEarned?: number;
-  /** @format int32 */
-  totalPointsSpent?: number;
-  /** @format double */
-  averageTransactionAmount?: number;
-  /** @format date-time */
-  mostActiveDay?: string;
-  transactionAnalytics?: WalletTransactionAnalytics;
-  balanceAnalytics?: WalletBalanceAnalytics;
-  pointsAnalytics?: WalletPointsAnalytics;
-  tierAnalytics?: WalletTierAnalytics;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface WalletAnalyticsResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletAnalyticsResponse;
-}
-
-export interface WalletAnalyticsSummaryResponse {
-  period?: string | null;
-  /** @format int32 */
-  totalWallets?: number;
-  /** @format int32 */
-  activeWallets?: number;
-  /** @format int32 */
-  totalTransactions?: number;
-  /** @format double */
-  totalVolume?: number;
-  /** @format int32 */
-  totalPointsIssued?: number;
-  /** @format int32 */
-  totalPointsRedeemed?: number;
-  /** @format double */
-  averageWalletBalance?: number;
-  /** @format double */
-  averageWalletPoints?: number;
-  /** @format date-time */
-  generatedAt?: string;
-}
-
-export interface WalletAnalyticsSummaryResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletAnalyticsSummaryResponse;
-}
-
-export interface WalletBalanceAnalytics {
-  /** @format double */
-  highestBalance?: number;
-  /** @format double */
-  lowestBalance?: number;
-  /** @format double */
-  medianBalance?: number;
-  distribution?: WalletBalanceDistribution[] | null;
-  trends?: WalletBalanceTrend[] | null;
-}
-
-export interface WalletBalanceCheckResponse {
-  /** @format int32 */
-  walletId?: number;
-  /** @format uuid */
-  userId?: string;
-  hasSufficientBalance?: boolean;
-  hasSufficientPoints?: boolean;
-  /** @format double */
-  currentBalance?: number;
-  /** @format double */
-  availableBalance?: number;
-  /** @format int32 */
-  currentPoints?: number;
-  /** @format int32 */
-  availablePoints?: number;
-  /** @format double */
-  requiredAmount?: number;
-  /** @format int32 */
-  requiredPoints?: number | null;
-  /** @format double */
-  balanceShortfall?: number;
-  /** @format int32 */
-  pointsShortfall?: number;
-  canProceed?: boolean;
-  checkType?: string | null;
-  message?: string | null;
-  /** @format date-time */
-  checkedAt?: string;
-}
-
-export interface WalletBalanceCheckResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletBalanceCheckResponse;
-}
-
-export interface WalletBalanceDistribution {
-  range?: string | null;
-  /** @format int32 */
-  walletCount?: number;
-  /** @format double */
-  percentage?: number;
-}
-
-export interface WalletBalanceResponse {
-  /** @format int32 */
-  walletId?: number;
-  /** @format double */
-  balance?: number;
-  /** @format double */
-  availableBalance?: number;
-  /** @format double */
-  frozenBalance?: number;
-  /** @format double */
-  pendingBalance?: number;
-  /** @format int32 */
-  points?: number;
-  /** @format int32 */
-  availablePoints?: number;
-  /** @format int32 */
-  frozenPoints?: number;
-  /** @format int32 */
-  pendingPoints?: number;
-  currency?: string | null;
-  /** @format date-time */
-  lastUpdated?: string;
-}
-
-export interface WalletBalanceResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletBalanceResponse;
-}
-
-export interface WalletBalanceSummary {
-  /** @format double */
-  openingBalance?: number;
-  /** @format double */
-  closingBalance?: number;
-  /** @format double */
-  balanceChange?: number;
-  /** @format int32 */
-  openingPoints?: number;
-  /** @format int32 */
-  closingPoints?: number;
-  /** @format int32 */
-  pointsChange?: number;
-  /** @format double */
-  averageBalance?: number;
-  /** @format double */
-  averagePoints?: number;
-  /** @format double */
-  highestBalance?: number;
-  /** @format int32 */
-  highestPoints?: number;
-  /** @format double */
-  lowestBalance?: number;
-  /** @format int32 */
-  lowestPoints?: number;
-}
-
-export interface WalletBalanceTrend {
-  /** @format date-time */
-  date?: string;
-  /** @format double */
-  averageBalance?: number;
-  /** @format double */
-  totalBalance?: number;
-  /** @format int32 */
-  walletCount?: number;
-}
-
-export interface WalletLedgerResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format int32 */
-  walletId?: number;
-  /** @format uuid */
-  userId?: string;
-  type?: string | null;
-  domain?: string | null;
-  /** @format double */
-  amount?: number | null;
-  /** @format int32 */
-  points?: number | null;
-  description?: string | null;
-  referenceId?: string | null;
-  /** @format uuid */
-  actorId?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-  metadata?: string | null;
-  isProcessed?: boolean;
-  /** @format date-time */
-  processedAt?: string | null;
-}
-
-export interface WalletLedgerResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletLedgerResponse;
-}
-
-export interface WalletLedgerResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletLedgerResponse[] | null;
-}
-
-export interface WalletPointsAnalytics {
-  /** @format int32 */
-  highestPoints?: number;
-  /** @format int32 */
-  lowestPoints?: number;
-  /** @format double */
-  medianPoints?: number;
-  distribution?: WalletPointsDistribution[] | null;
-  trends?: WalletPointsTrend[] | null;
-}
-
-export interface WalletPointsDistribution {
-  range?: string | null;
-  /** @format int32 */
-  walletCount?: number;
-  /** @format double */
-  percentage?: number;
-}
-
-export interface WalletPointsTrend {
-  /** @format date-time */
-  date?: string;
-  /** @format double */
-  averagePoints?: number;
-  /** @format int32 */
-  totalPoints?: number;
-  /** @format int32 */
-  walletCount?: number;
-}
-
-export interface WalletReportSection {
-  title?: string | null;
-  content?: string | null;
-  data?: ReportSectionDataResponse;
-  /** @format int32 */
-  order?: number;
-}
-
-export interface WalletStatementResponse {
-  statementId?: string | null;
-  statementName?: string | null;
-  statementPeriod?: string | null;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  format?: string | null;
-  downloadUrl?: string | null;
-  emailSentTo?: string | null;
-  /** @format int32 */
-  walletId?: number;
-  /** @format uuid */
-  userId?: string;
-  userName?: string | null;
-  /** @format double */
-  openingBalance?: number;
-  /** @format double */
-  closingBalance?: number;
-  /** @format int32 */
-  openingPoints?: number;
-  /** @format int32 */
-  closingPoints?: number;
-  transactionSummary?: WalletTransactionSummary;
-  transactions?: WalletTransactionResponse[] | null;
-  balanceSummary?: WalletBalanceSummary;
-  tierInfo?: WalletTierResponse;
-}
-
-export interface WalletStatementResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletStatementResponse;
-}
-
-export interface WalletSummaryData {
-  /** @format int32 */
-  totalWallets?: number;
-  /** @format int32 */
-  activeWallets?: number;
-  /** @format double */
-  totalBalance?: number;
-  /** @format int32 */
-  totalPoints?: number;
-  /** @format int32 */
-  totalTransactions?: number;
-  /** @format double */
-  averageBalance?: number;
-  /** @format double */
-  averagePoints?: number;
-  /** @format double */
-  averageTransactions?: number;
-}
-
-export interface WalletSummaryReportResponse {
-  reportId?: string | null;
-  reportName?: string | null;
-  reportPeriod?: string | null;
-  /** @format int32 */
-  totalWallets?: number;
-  /** @format int32 */
-  activeWallets?: number;
-  /** @format int32 */
-  totalTransactions?: number;
-  /** @format double */
-  totalVolume?: number;
-  /** @format int32 */
-  totalPointsIssued?: number;
-  /** @format int32 */
-  totalPointsRedeemed?: number;
-  /** @format double */
-  averageWalletBalance?: number;
-  /** @format double */
-  averageWalletPoints?: number;
-  /** @format uuid */
-  generatedBy?: string;
-  /** @format date-time */
-  generatedAt?: string;
-  /** @format date-time */
-  fromDate?: string;
-  /** @format date-time */
-  toDate?: string;
-  format?: string | null;
-  downloadUrl?: string | null;
-  emailSentTo?: string | null;
-  summary?: WalletSummaryData;
-  sections?: WalletReportSection[] | null;
-}
-
-export interface WalletSummaryReportResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletSummaryReportResponse;
-}
-
-export interface WalletTierAnalytics {
-  distribution?: WalletTierDistribution[] | null;
-  trends?: WalletTierTrend[] | null;
-  /** @format double */
-  promotionRate?: number;
-  /** @format double */
-  demotionRate?: number;
-}
-
-export interface WalletTierCalculationResponse {
-  /** @format int32 */
-  walletId?: number;
-  currentTierCode?: string | null;
-  currentTier?: string | null;
-  calculatedTierCode?: string | null;
-  calculatedTier?: string | null;
-  tierUpgradeAvailable?: boolean;
-  /** @format double */
-  currentBalance?: number;
-  /** @format int32 */
-  currentPoints?: number;
-  shouldChangeTier?: boolean;
-  nextTierCode?: string | null;
-  /** @format int32 */
-  pointsToNextTier?: number;
-  recommendedTier?: string | null;
-  /** @format double */
-  balanceToNextTier?: number;
-  /** @format date-time */
-  calculatedAt?: string;
-  warnings?: string[] | null;
-}
-
-export interface WalletTierCalculationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletTierCalculationResponse;
-}
-
-export interface WalletTierDistribution {
-  tierCode?: string | null;
-  /** @format int32 */
-  walletCount?: number;
-  /** @format double */
-  percentage?: number;
-  /** @format double */
-  averageBalance?: number;
-  /** @format double */
-  averagePoints?: number;
-}
-
-export interface WalletTierResponse {
-  /** @format int32 */
-  walletId?: number;
-  tierCode?: string | null;
-  tierName?: string | null;
-  tierDescription?: string | null;
-  /** @format int32 */
-  minPoints?: number;
-  /** @format int32 */
-  maxPoints?: number;
-  /** @format double */
-  discountRate?: number;
-  /** @format double */
-  commissionRate?: number;
-  /** @format double */
-  multiplier?: number;
-  benefits?: string | null;
-  /** @format date-time */
-  assignedAt?: string;
-  /** @format date-time */
-  expiresAt?: string | null;
-  isActive?: boolean;
-  requirementsMet?: boolean;
-}
-
-export interface WalletTierResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletTierResponse;
-}
-
-export interface WalletTierTrend {
-  /** @format date-time */
-  date?: string;
-  distribution?: WalletTierDistribution[] | null;
-  /** @format int32 */
-  promotions?: number;
-  /** @format int32 */
-  demotions?: number;
-}
-
-export interface WalletTransactionAnalytics {
-  /** @format int32 */
-  totalCredits?: number;
-  /** @format int32 */
-  totalDebits?: number;
-  /** @format double */
-  totalCreditAmount?: number;
-  /** @format double */
-  totalDebitAmount?: number;
-  /** @format double */
-  averageTransactionAmount?: number;
-  trends?: WalletTransactionTrend[] | null;
-}
-
-export interface WalletTransactionResponse {
-  /** @format int32 */
-  id?: number;
-  /** @format double */
-  amount?: number | null;
-  /** @format int32 */
-  points?: number | null;
-  type?: string | null;
-  redemptionType?: RedemptionType;
-  description?: string | null;
-  /** @format uuid */
-  actorId?: string | null;
-  /** @format date-time */
-  creationDate?: string;
-}
-
-export interface WalletTransactionResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletTransactionResponse[] | null;
-}
-
-export interface WalletTransactionSummary {
-  /** @format int32 */
-  totalTransactions?: number;
-  /** @format int32 */
-  totalCredits?: number;
-  /** @format int32 */
-  totalDebits?: number;
-  /** @format double */
-  totalCreditAmount?: number;
-  /** @format double */
-  totalDebitAmount?: number;
-  /** @format double */
-  netAmount?: number;
-  /** @format int32 */
-  totalCreditPoints?: number;
-  /** @format int32 */
-  totalDebitPoints?: number;
-  /** @format int32 */
-  netPoints?: number;
-}
-
-export interface WalletTransactionTrend {
-  /** @format date-time */
-  date?: string;
-  /** @format int32 */
-  transactionCount?: number;
-  /** @format double */
-  totalAmount?: number;
-  /** @format int32 */
-  credits?: number;
-  /** @format int32 */
-  debits?: number;
-}
-
-export interface WalletValidationDetails {
-  /** @format int32 */
-  walletId?: number;
-  operation?: string | null;
-  type?: string | null;
-  domain?: string | null;
-  /** @format double */
-  amount?: number | null;
-  /** @format int32 */
-  points?: number | null;
-  isOperationAllowed?: boolean;
-  isWalletActive?: boolean;
-  hasSufficientBalance?: boolean;
-  hasSufficientPoints?: boolean;
-  /** @format double */
-  currentBalance?: number;
-  /** @format int32 */
-  currentPoints?: number;
-  allowedOperations?: string[] | null;
-}
-
-export interface WalletValidationResponse {
-  isValid?: boolean;
-  validationErrors?: string[] | null;
-  /** @format double */
-  currentBalance?: number;
-  /** @format int32 */
-  currentPoints?: number;
-  walletStatus?: string | null;
-  warnings?: ValidationWarning[] | null;
-  details?: WalletValidationDetails;
-}
-
-export interface WalletValidationResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WalletValidationResponse;
 }
 
 export interface WebhookSpecResponse {
@@ -38176,6 +28003,7 @@ export interface WeddingCarServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -38278,6 +28106,7 @@ export interface WeddingCarServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -38382,6 +28211,7 @@ export interface WeddingDressServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -38484,6 +28314,7 @@ export interface WeddingDressServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -38668,6 +28499,7 @@ export interface WeddingHallServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -38772,6 +28604,7 @@ export interface WeddingHallServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -38885,6 +28718,7 @@ export interface WeddingInvitationsServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -38987,6 +28821,7 @@ export interface WeddingInvitationsServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -39197,6 +29032,7 @@ export interface WeddingPlannerServiceRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -39299,6 +29135,7 @@ export interface WeddingPlannerServiceUpdateRequest {
   availableDaysOfWeek?: number | null;
   availableStartTime?: TimeSpan;
   availableEndTime?: TimeSpan;
+  imageUrl?: string | null;
   /**
    * @minLength 0
    * @maxLength 250
@@ -39545,97 +29382,6 @@ export interface Wishlist {
   isTemporary?: boolean;
 }
 
-export interface WishlistItemResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  slug?: string | null;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  descriptionAr?: string | null;
-  descriptionEn?: string | null;
-  /** @format int32 */
-  wishlistId?: number;
-  wishlist?: WishlistResponse;
-  /** @format int32 */
-  productId?: number | null;
-  /** @format int32 */
-  serviceId?: number | null;
-  /** @format int32 */
-  eventId?: number | null;
-  itemType?: string | null;
-  itemName?: string | null;
-  itemDescription?: string | null;
-  itemImageUrl?: string | null;
-  /** @format double */
-  price?: number | null;
-  /** @format double */
-  originalPrice?: number | null;
-  /** @format double */
-  discountAmount?: number | null;
-  /** @format double */
-  discountPercentage?: number | null;
-  isAvailable?: boolean;
-  isOnSale?: boolean;
-  sku?: string | null;
-  brand?: string | null;
-  category?: string | null;
-  tags?: string | null;
-  specifications?: string | null;
-  /** @format int32 */
-  quantity?: number;
-  /** @format int32 */
-  priority?: number;
-  notes?: string | null;
-  size?: string | null;
-  color?: string | null;
-  variant?: string | null;
-  isPurchased?: boolean;
-  /** @format date-time */
-  purchasedAt?: string | null;
-  isGift?: boolean;
-  giftMessage?: string | null;
-  giftFrom?: string | null;
-  /** @format date-time */
-  addedAt?: string | null;
-  event?: BazaarEventResponse;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  /** @format uuid */
-  userId?: string | null;
-  scopeLevel?: TenantScopeLevel;
-  isGlobal?: boolean;
-  isInherited?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-  /** @format double */
-  totalPrice?: number;
-  /** @format double */
-  savingsAmount?: number;
-  hasDiscount?: boolean;
-  displayPrice?: string | null;
-  displayOriginalPrice?: string | null;
-}
-
-export interface WishlistItemResponseListApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WishlistItemResponse[] | null;
-}
-
 export interface WishlistProductUpdateRequest {
   /** @format int64 */
   productId?: number | null;
@@ -39644,122 +29390,6 @@ export interface WishlistProductUpdateRequest {
   /** @format int32 */
   wishlistId?: number;
   added?: boolean;
-}
-
-export interface WishlistResponse {
-  /** @format int32 */
-  id?: number;
-  isDeleted?: boolean;
-  /** @format date-time */
-  lastModifiedDate?: string | null;
-  slug?: string | null;
-  /** @format int32 */
-  sourceId?: number;
-  source?: Source;
-  /** @format int32 */
-  providerId?: number | null;
-  /** @format int32 */
-  branchId?: number | null;
-  /** @format uuid */
-  staffId?: string | null;
-  /** @format uuid */
-  userId?: string | null;
-  scopeLevel?: TenantScopeLevel;
-  isGlobal?: boolean;
-  isInherited?: boolean;
-  /** @format int32 */
-  parentId?: number | null;
-  nameAr?: string | null;
-  nameEn?: string | null;
-  name?: string | null;
-  descriptionEn?: string | null;
-  descriptionAr?: string | null;
-  description?: string | null;
-  wishlistType?: string | null;
-  type?: string | null;
-  category?: string | null;
-  tags?: string | null;
-  status?: CommonEntityStatus;
-  isPublic?: boolean;
-  isShared?: boolean;
-  isDefault?: boolean;
-  isCollaborative?: boolean;
-  allowComments?: boolean;
-  allowSuggestions?: boolean;
-  notifyOnPriceDrop?: boolean;
-  notifyOnAvailability?: boolean;
-  autoRemovePurchased?: boolean;
-  /** @format int32 */
-  itemCount?: number;
-  /** @format int32 */
-  purchasedCount?: number;
-  /** @format int32 */
-  sharedCount?: number;
-  /** @format int32 */
-  viewCount?: number;
-  /** @format double */
-  totalEstimatedValue?: number | null;
-  /** @format double */
-  totalPurchasedValue?: number | null;
-  /** @format date-time */
-  lastModified?: string | null;
-  /** @format int32 */
-  priority?: number;
-  /** @format int32 */
-  sortOrder?: number;
-  sortBy?: string | null;
-  sortDirection?: string | null;
-  eventName?: string | null;
-  /** @format date-time */
-  eventDate?: string | null;
-  /** @format date-time */
-  eventEndDate?: string | null;
-  eventLocation?: string | null;
-  allowOthersToAdd?: boolean;
-  allowOthersToRemove?: boolean;
-  allowOthersToEdit?: boolean;
-  /** @format int32 */
-  maxCollaborators?: number;
-  requireApproval?: boolean;
-  isPasswordProtected?: boolean;
-  /** @format date-time */
-  expiresAt?: string | null;
-  isTemporary?: boolean;
-  /** @format date-time */
-  creationDate?: string;
-  /** @format uuid */
-  createdBy?: string | null;
-  /** @format uuid */
-  updatedBy?: string | null;
-  displayName?: string | null;
-  displayDescription?: string | null;
-  isExpired?: boolean;
-  /** @format double */
-  completionPercentage?: number;
-  /** @format double */
-  remainingValue?: number;
-  isEventBased?: boolean;
-  isEventActive?: boolean;
-  isEventUpcoming?: boolean;
-  isEventPast?: boolean;
-}
-
-export interface WishlistResponseApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WishlistResponse;
-}
-
-export interface WishlistResponseIEnumerableApiResult {
-  success?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  errors?: ApiError[] | null;
-  data?: WishlistResponse[] | null;
 }
 
 export interface WorkflowComment {
@@ -42309,13 +31939,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateAffiliateLinkRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AffiliateLinkResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42332,13 +31961,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateAffiliateLinkRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AffiliateLinkResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42354,11 +31982,10 @@ export class Api<SecurityDataType extends unknown> {
       linkId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42374,11 +32001,10 @@ export class Api<SecurityDataType extends unknown> {
       linkId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<AffiliateLinkResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42399,12 +32025,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AffiliateLinkListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/guide/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42420,11 +32045,10 @@ export class Api<SecurityDataType extends unknown> {
       linkCode: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<AffiliateLinkResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/code/${linkCode}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42440,11 +32064,10 @@ export class Api<SecurityDataType extends unknown> {
       linkId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}/activate`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42461,13 +32084,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SuspendAffiliateLinkRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}/suspend`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42483,13 +32105,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AffiliateTrackEventRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionEventResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/track`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42514,12 +32135,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionEventListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}/events`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42543,12 +32163,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionEventListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/guide/${guideProfileId}/events`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42564,13 +32183,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ProcessCommissionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/commission/process`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42595,12 +32213,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionLedgerListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/guide/${guideProfileId}/commission-ledger`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42616,13 +32233,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CalculateAffiliateCommissionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CalculateCommissionResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/commission/calculate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42646,12 +32262,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<LinkAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42675,12 +32290,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideAffiliateAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/guide/${guideProfileId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42706,12 +32320,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TopPerformingLinksResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/guide/${guideProfileId}/top-links`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42735,12 +32348,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ConversionFunnelResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}/conversion-funnel`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42757,13 +32369,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateAffiliateUrlRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GenerateAffiliateUrlResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}/generate-url`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42779,13 +32390,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateAffiliateLinkRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ValidateAffiliateLinkResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/validate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42818,12 +32428,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AffiliateLinkListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42840,13 +32449,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateUtmParametersRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AffiliateLinkResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}/utm`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42870,12 +32478,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<UtmAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}/utm-analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42891,13 +32498,12 @@ export class Api<SecurityDataType extends unknown> {
       data: DetectFraudulentActivityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<DetectFraudulentActivityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/fraud/detect`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -42921,12 +32527,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SuspiciousEventsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/links/${linkId}/suspicious-events`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -42943,13 +32548,12 @@ export class Api<SecurityDataType extends unknown> {
       data: FlagSuspiciousActivityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<FlagSuspiciousActivityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/affiliate/events/${eventId}/flag`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46223,13 +35827,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RecordAttributionEventRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionEventResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/events`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46258,12 +35861,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionEventResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/events`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -46292,12 +35894,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionEventResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/events/user/${userId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -46313,11 +35914,10 @@ export class Api<SecurityDataType extends unknown> {
       eventId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionEventResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/events/${eventId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -46334,13 +35934,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateAttributionEventRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionEventResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/events/${eventId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46356,11 +35955,10 @@ export class Api<SecurityDataType extends unknown> {
       eventId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/events/${eventId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -46376,13 +35974,12 @@ export class Api<SecurityDataType extends unknown> {
       data: TrackUserActionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/track`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46398,13 +35995,12 @@ export class Api<SecurityDataType extends unknown> {
       data: TrackConversionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/track-conversion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46420,13 +36016,12 @@ export class Api<SecurityDataType extends unknown> {
       data: TrackCampaignAttributionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/track-campaign`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46442,13 +36037,12 @@ export class Api<SecurityDataType extends unknown> {
       data: TrackReferralAttributionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/track-referral`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46473,12 +36067,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -46503,12 +36096,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<UserAttributionAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/user/${userId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -46533,12 +36125,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionPerformanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/performance`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -46564,12 +36155,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionTrendsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/trends`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -46585,13 +36175,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateAttributionSummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionSummaryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46608,13 +36197,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateUserAttributionReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<UserAttributionReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/user/${userId}/report`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46630,13 +36218,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateAttributionPerformanceReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionPerformanceReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/reports/performance`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46653,13 +36240,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateAttributionOperationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/user/${userId}/validate-operation`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46675,16 +36261,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateAttributionConfigurationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<
-        AttributionConfigurationValidationResponseApiResult,
-        any
-      >({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/validate-configuration`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46701,13 +36283,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CheckAttributionEligibilityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionEligibilityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/user/${userId}/check-eligibility`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46723,13 +36304,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SendAttributionNotificationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/notifications/send`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -46755,12 +36335,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<AttributionNotificationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/user/${userId}/notifications`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -46776,11 +36355,10 @@ export class Api<SecurityDataType extends unknown> {
       notificationId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/attribution/notifications/${notificationId}/read`,
         method: "PUT",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -49806,13 +39384,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateHallRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<HallResponseApiResult, HallResponseApiResult>({
+      this.http.request<void, any>({
         path: `/api/v1/bazaar/halls`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -52492,11 +42069,10 @@ export class Api<SecurityDataType extends unknown> {
       wishlistId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<WishlistItemResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/bazaar/public/wishlists/${wishlistId}/events`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -52599,12 +42175,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<WishlistResponseIEnumerableApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/bazaar/public/wishlists/shared`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -53034,13 +42609,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SetDefaultRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<WishlistResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/bazaar/public/wishlists/${wishlistId}/default`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55515,13 +45089,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateCampaignRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55534,11 +45107,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getCampaignGetCampaign: (campaignId: number, params: RequestParams = {}) =>
-      this.http.request<CampaignResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55555,13 +45127,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateCampaignRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55577,11 +45148,10 @@ export class Api<SecurityDataType extends unknown> {
       campaignId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55600,12 +45170,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55625,12 +45194,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/available`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55646,11 +45214,10 @@ export class Api<SecurityDataType extends unknown> {
       campaignId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}/activate`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55667,13 +45234,12 @@ export class Api<SecurityDataType extends unknown> {
       data: PauseCampaignRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}/pause`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55689,11 +45255,10 @@ export class Api<SecurityDataType extends unknown> {
       campaignId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}/complete`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55710,13 +45275,12 @@ export class Api<SecurityDataType extends unknown> {
       data: InviteGuideToCampaignRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignAssignmentResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}/invite-guide`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55732,11 +45296,10 @@ export class Api<SecurityDataType extends unknown> {
       assignmentId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/assignments/${assignmentId}/accept`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55753,13 +45316,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RejectCampaignInvitationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/assignments/${assignmentId}/reject`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55775,11 +45337,10 @@ export class Api<SecurityDataType extends unknown> {
       assignmentId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignAssignmentResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/assignments/${assignmentId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55796,13 +45357,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateCampaignAssignmentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignAssignmentResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/assignments/${assignmentId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55818,11 +45378,10 @@ export class Api<SecurityDataType extends unknown> {
       assignmentId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/assignments/${assignmentId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55838,11 +45397,10 @@ export class Api<SecurityDataType extends unknown> {
       campaignId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignAssignmentResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}/assignments`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55861,12 +45419,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignAssignmentResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/guide/${guideProfileId}/assignments`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55883,13 +45440,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateCampaignMilestoneRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignMilestoneResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}/milestones`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55905,11 +45461,10 @@ export class Api<SecurityDataType extends unknown> {
       campaignId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignMilestoneResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}/milestones`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55926,13 +45481,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateCampaignMilestoneRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignMilestoneResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/milestones/${milestoneId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55948,11 +45502,10 @@ export class Api<SecurityDataType extends unknown> {
       milestoneId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/milestones/${milestoneId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -55969,13 +45522,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SubmitMilestoneCompletionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/milestones/${milestoneId}/submit-completion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -55992,13 +45544,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ApproveMilestoneCompletionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/milestones/${milestoneId}/approve-completion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -56015,13 +45566,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RejectMilestoneCompletionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/milestones/${milestoneId}/reject-completion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -56048,12 +45598,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -56080,12 +45629,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignPerformanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/${campaignId}/performance`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -56112,12 +45660,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideCampaignAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/guide/${guideProfileId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -56133,13 +45680,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SearchCampaignsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/search`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -56171,12 +45717,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/trending`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -56217,12 +45762,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CampaignListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/campaigns/recommended/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -59686,13 +49230,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RecordCommissionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/record`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -59729,12 +49272,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/guide/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -59771,12 +49313,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -59814,12 +49355,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -59835,11 +49375,10 @@ export class Api<SecurityDataType extends unknown> {
       commissionId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/${commissionId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -59855,13 +49394,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateCommissionRuleRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/rules`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -59897,12 +49435,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionRuleResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/rules`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -59919,13 +49456,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateCommissionRuleRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/rules/${ruleId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -59941,11 +49477,10 @@ export class Api<SecurityDataType extends unknown> {
       ruleId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/rules/${ruleId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -59961,11 +49496,10 @@ export class Api<SecurityDataType extends unknown> {
       ruleId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/rules/${ruleId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -59981,11 +49515,10 @@ export class Api<SecurityDataType extends unknown> {
       ruleId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/rules/${ruleId}/activate`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60001,11 +49534,10 @@ export class Api<SecurityDataType extends unknown> {
       ruleId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/rules/${ruleId}/deactivate`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60021,13 +49553,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AddCommissionToLedgerRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionLedgerResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/ledger/add`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -60064,12 +49595,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionLedgerResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/ledger/guide/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60106,12 +49636,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionLedgerResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/ledger/provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60149,12 +49678,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionLedgerResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/ledger`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60170,11 +49698,10 @@ export class Api<SecurityDataType extends unknown> {
       ledgerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionLedgerResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/ledger/${ledgerId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60198,12 +49725,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideCommissionAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/analytics/guide/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60227,12 +49753,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCommissionAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/analytics/provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60255,12 +49780,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60276,11 +49800,10 @@ export class Api<SecurityDataType extends unknown> {
       guideProfileId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideCommissionSummaryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/summary/guide/${guideProfileId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60296,11 +49819,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCommissionSummaryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/summary/provider/${providerId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -60316,13 +49838,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CalculateCommissionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CalculateCommissionResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/calculate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -60338,13 +49859,12 @@ export class Api<SecurityDataType extends unknown> {
       data: PreviewCommissionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionPreviewResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/preview`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -60360,13 +49880,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RecalculateCommissionsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/recalculate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -60383,13 +49902,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateGuideCommissionReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/reports/guide/${guideProfileId}`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -60406,13 +49924,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateProviderCommissionReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/reports/provider/${providerId}`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -60428,13 +49945,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateCommissionSummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<CommissionReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/commissions/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61219,12 +50735,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationQueueResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/queue`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61240,11 +50755,10 @@ export class Api<SecurityDataType extends unknown> {
       moderationItemId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationItemResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/queue/${moderationItemId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61261,13 +50775,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AssignModeratorRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/queue/${moderationItemId}/assign`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61284,13 +50797,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ApproveContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/queue/${moderationItemId}/approve`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61307,13 +50819,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RejectContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/queue/${moderationItemId}/reject`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61330,13 +50841,12 @@ export class Api<SecurityDataType extends unknown> {
       data: FlagContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/queue/${moderationItemId}/flag`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61353,13 +50863,12 @@ export class Api<SecurityDataType extends unknown> {
       data: EscalateContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/queue/${moderationItemId}/escalate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61376,13 +50885,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RequestRevisionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/queue/${moderationItemId}/request-revision`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61398,13 +50906,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/validate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61420,13 +50927,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateContentBatchRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentValidationBatchResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/validate-batch`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61446,12 +50952,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentViolationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/violations/${contentId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61467,13 +50972,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateModerationRuleRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/rules`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61505,12 +51009,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationRuleResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/rules`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61527,13 +51030,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateModerationRuleRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/rules/${ruleId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61549,11 +51051,10 @@ export class Api<SecurityDataType extends unknown> {
       ruleId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/rules/${ruleId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61569,11 +51070,10 @@ export class Api<SecurityDataType extends unknown> {
       ruleId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/rules/${ruleId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61610,12 +51110,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationHistoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/history`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61638,12 +51137,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61665,12 +51163,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationTrendsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/trends`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61686,13 +51183,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateModeratorRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ModeratorResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/moderators`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61727,12 +51223,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ModeratorResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/moderators`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61749,13 +51244,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateModeratorRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ModeratorResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/moderators/${moderatorId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61771,11 +51265,10 @@ export class Api<SecurityDataType extends unknown> {
       moderatorId: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<ModeratorResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/moderators/${moderatorId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61791,13 +51284,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateContentCategoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/categories`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61828,12 +51320,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/categories`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61850,13 +51341,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateContentCategoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/categories/${categoryId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61872,11 +51362,10 @@ export class Api<SecurityDataType extends unknown> {
       categoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/categories/${categoryId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61892,13 +51381,12 @@ export class Api<SecurityDataType extends unknown> {
       data: EnableAutoModerationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/auto-moderation/enable`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61914,13 +51402,12 @@ export class Api<SecurityDataType extends unknown> {
       data: DisableAutoModerationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/auto-moderation/disable`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61936,13 +51423,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateAutoModerationSettingsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<AutoModerationSettingsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/auto-moderation/settings`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -61957,11 +51443,10 @@ export class Api<SecurityDataType extends unknown> {
     getContentModerationGetAutoModerationSettings: (
       params: RequestParams = {},
     ) =>
-      this.http.request<AutoModerationSettingsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/auto-moderation/settings`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -61977,13 +51462,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ReportContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/reports`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -62015,12 +51499,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentReportResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/reports`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -62037,13 +51520,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ResolveContentReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/reports/${reportId}/resolve`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -62059,13 +51541,12 @@ export class Api<SecurityDataType extends unknown> {
       data: StartModerationWorkflowRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationWorkflowResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/workflows/start`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -62082,13 +51563,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CompleteModerationWorkflowRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/workflows/${workflowId}/complete`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -62120,12 +51600,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationWorkflowResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/workflows`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -62141,11 +51620,10 @@ export class Api<SecurityDataType extends unknown> {
       workflowId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ModerationWorkflowResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/content-moderation/workflows/${workflowId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -72721,13 +62199,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateGuideProfileRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideProfileResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -72743,11 +62220,10 @@ export class Api<SecurityDataType extends unknown> {
       guideProfileId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideProfileResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -72764,13 +62240,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateGuideProfileRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideProfileResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -72786,11 +62261,10 @@ export class Api<SecurityDataType extends unknown> {
       guideProfileId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -72806,11 +62280,10 @@ export class Api<SecurityDataType extends unknown> {
       userId: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideProfileResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/user/${userId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -72826,11 +62299,10 @@ export class Api<SecurityDataType extends unknown> {
       handle: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideProfileResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/handle/${handle}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -72847,13 +62319,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SubmitForApprovalRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/submit-approval`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -72870,13 +62341,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ApproveGuideRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/approve`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -72893,13 +62363,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RejectGuideRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/reject`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -72916,13 +62385,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SuspendGuideRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/suspend`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -72939,13 +62407,12 @@ export class Api<SecurityDataType extends unknown> {
       data: PromoteGuideTierRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/promote-tier`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -72962,13 +62429,12 @@ export class Api<SecurityDataType extends unknown> {
       data: DemoteGuideTierRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/demote-tier`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -72984,13 +62450,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SearchGuidesRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/search`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73015,12 +62480,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/top`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -73047,12 +62511,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/niche/${niche}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -73069,13 +62532,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateGuideMetricsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/metrics`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73099,12 +62561,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -73121,13 +62582,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AddPortfolioItemRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuidePortfolioItemResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/portfolio`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73148,12 +62608,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PortfolioItemListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/portfolio`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -73171,13 +62630,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdatePortfolioItemRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuidePortfolioItemResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/portfolio/${portfolioItemId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73194,11 +62652,10 @@ export class Api<SecurityDataType extends unknown> {
       portfolioItemId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/portfolio/${portfolioItemId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -73216,13 +62673,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SetFeaturedPortfolioItemRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/portfolio/${portfolioItemId}/featured`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73239,13 +62695,12 @@ export class Api<SecurityDataType extends unknown> {
       data: VerifyGuideRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/verify`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73262,13 +62717,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UnverifyGuideRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/unverify`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73285,13 +62739,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ActivateGuideRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/activate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73308,13 +62761,12 @@ export class Api<SecurityDataType extends unknown> {
       data: DeactivateGuideRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/deactivate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73330,11 +62782,10 @@ export class Api<SecurityDataType extends unknown> {
       guideProfileId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideStatusResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/status`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -73351,13 +62802,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AssignLocalGuideRoleRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideProfileResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/assign-role`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -73373,11 +62823,10 @@ export class Api<SecurityDataType extends unknown> {
       guideProfileId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/remove-role`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -73393,11 +62842,10 @@ export class Api<SecurityDataType extends unknown> {
       guideProfileId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/${guideProfileId}/has-role`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -73410,11 +62858,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getGuideGetLocalGuideUsers: (params: RequestParams = {}) =>
-      this.http.request<LocalGuideUsersResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/local-guide-users`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -73430,13 +62877,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateGuideProfileForUserRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideProfileResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/guides/create-for-user`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -74874,12 +64320,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -74899,14 +64344,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -74926,12 +64370,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${id}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -74952,14 +64395,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${id}`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -74979,12 +64421,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${id}`,
         method: "DELETE",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75006,12 +64447,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/product/${productId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75032,14 +64472,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${productId}/stock`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75064,14 +64503,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<StockMovementResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${inventoryId}/adjust`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75096,14 +64534,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<StockMovementResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${inventoryId}/reserve`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75128,14 +64565,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<StockMovementResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${inventoryId}/release`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75165,12 +64601,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryMovementResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${productId}/movements`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75198,12 +64633,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryMovementResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${inventoryId}/movements`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75226,12 +64660,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryMovementResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/movements/date-range`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75249,12 +64682,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryMovementResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/movements/type`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75283,12 +64715,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/low-stock`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75307,12 +64738,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/out-of-stock`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75331,12 +64761,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/reorder-suggestions`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75359,12 +64788,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/out-of-stock/provider`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75387,12 +64815,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/reorder-suggestions/provider`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75415,12 +64842,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/reports`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75439,12 +64865,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryStatisticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/statistics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75471,12 +64896,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/reports/provider`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75499,12 +64923,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryStatisticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/statistics/provider`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75527,12 +64950,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryMovementReportResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/movement-reports`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75548,13 +64970,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateReorderRequestRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReorderRequestResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/reorder-request`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75583,12 +65004,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReorderRequestResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/reorder-requests`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75604,11 +65024,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReorderRequestResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/reorder-requests/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75625,13 +65044,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateReorderRequestStatusRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/reorder-requests/${id}/status`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75647,13 +65065,12 @@ export class Api<SecurityDataType extends unknown> {
       data: BulkUpdateStockRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/bulk-update-stock`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75669,13 +65086,12 @@ export class Api<SecurityDataType extends unknown> {
       data: BulkCreateMovementsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/bulk-create-movements`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75705,12 +65121,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75730,12 +65145,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/location`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75755,12 +65169,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/status`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75781,12 +65194,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/supplier`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75810,12 +65222,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/product/${productId}/inventory`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75839,12 +65250,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/location/${location}/inventory`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -75868,14 +65278,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/create`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75902,14 +65311,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/${id}/update`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75933,14 +65341,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<StockMovementResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/reserve-stock`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75964,14 +65371,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<StockMovementResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/release-stock`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -75995,14 +65401,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<StockMovementResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/adjust-stock`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -76025,12 +65430,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<LowStockAlertResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/low-stock-alerts`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76053,12 +65457,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventorySummaryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/summary`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76088,12 +65491,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<StockMovementResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/movement-history`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76117,14 +65519,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TransferResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/transfer`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -76148,12 +65549,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/place/${placeId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76177,12 +65577,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventorySummaryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/place/${placeId}/summary`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76206,14 +65605,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TransferResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/transfer-between-places`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -76236,12 +65634,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PlaceInventorySummaryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/places-with-inventory`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76265,12 +65662,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PlaceInventoryDetailResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/place/${placeId}/detail`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76294,14 +65690,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PlaceInventoryComparisonResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/places/compare`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -76324,12 +65719,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryDistributionResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/inventory-distribution`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76349,12 +65743,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductVariationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/product/${productId}/variants`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76374,12 +65767,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductVariationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/variant/${variantId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76403,12 +65795,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/variant/${variantId}/inventory`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -76432,14 +65823,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<InventoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/variant/inventory`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -76463,14 +65853,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TransferResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/inventory/variant/transfer-between-places`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -79956,13 +69345,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateUserPointsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/points/update`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -79978,11 +69366,10 @@ export class Api<SecurityDataType extends unknown> {
       userId: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/points`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -79995,11 +69382,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getLoyaltyGetUserProfile: (userId: string, params: RequestParams = {}) =>
-      this.http.request<LoyaltyUserProfileResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/profile`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80015,11 +69401,10 @@ export class Api<SecurityDataType extends unknown> {
       userId: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/init-profile`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80035,13 +69420,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateLoyaltyGoalRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyGoalResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/goals`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80073,12 +69457,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyGoalResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/goals`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80095,13 +69478,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateLoyaltyGoalRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyGoalResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/goals/${goalId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80117,11 +69499,10 @@ export class Api<SecurityDataType extends unknown> {
       goalId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/goals/${goalId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80134,11 +69515,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getLoyaltyGetLoyaltyGoal: (goalId: number, params: RequestParams = {}) =>
-      this.http.request<LoyaltyGoalResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/goals/${goalId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80155,13 +69535,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AssignGoalToUserRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyUserGoalResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/goals`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80195,12 +69574,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyUserGoalResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/goals`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80218,13 +69596,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateUserGoalProgressRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyUserGoalResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/goals/${userGoalId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80241,11 +69618,10 @@ export class Api<SecurityDataType extends unknown> {
       userGoalId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyUserGoalResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/goals/${userGoalId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80262,11 +69638,10 @@ export class Api<SecurityDataType extends unknown> {
       userGoalId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/goals/${userGoalId}/complete`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80289,12 +69664,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80320,12 +69694,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<UserLoyaltyAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80354,12 +69727,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyPerformanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/performance`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80384,12 +69756,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyTrendsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/trends`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80405,13 +69776,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateLoyaltySummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltySummaryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80428,13 +69798,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateUserLoyaltyReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<UserLoyaltyReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/report`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80450,13 +69819,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateLoyaltyGoalsReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyGoalsReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/reports/goals`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80473,13 +69841,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CheckGoalEligibilityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GoalEligibilityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/check-goal-eligibility`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80496,13 +69863,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateLoyaltyOperationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/validate-operation`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80518,13 +69884,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateLoyaltyConfigurationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyConfigurationValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/validate-configuration`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80540,13 +69905,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SendLoyaltyNotificationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/notifications/send`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -80584,12 +69948,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<LoyaltyNotificationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/user/${userId}/notifications`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -80605,11 +69968,10 @@ export class Api<SecurityDataType extends unknown> {
       notificationId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/loyalty/notifications/${notificationId}/read`,
         method: "PUT",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -88894,13 +78256,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreatePayoutRequestRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutRequestResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -88943,12 +78304,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutRequestResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -88964,11 +78324,10 @@ export class Api<SecurityDataType extends unknown> {
       requestId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutRequestResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/${requestId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -88985,13 +78344,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdatePayoutRequestRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutRequestResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/${requestId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89029,12 +78387,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutRequestResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/guide/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89072,12 +78429,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutRequestResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89093,11 +78449,10 @@ export class Api<SecurityDataType extends unknown> {
       requestId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/${requestId}/cancel`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89114,13 +78469,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ApprovePayoutRequestRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/${requestId}/approve`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89137,13 +78491,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RejectPayoutRequestRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/${requestId}/reject`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89160,13 +78513,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ProcessPayoutRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/${requestId}/process`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89183,13 +78535,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CompletePayoutRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/${requestId}/complete`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89206,13 +78557,12 @@ export class Api<SecurityDataType extends unknown> {
       data: FailPayoutRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/requests/${requestId}/fail`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89228,13 +78578,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AddPayoutMethodRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutMethodResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/methods`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89251,13 +78600,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdatePayoutMethodRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutMethodResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/methods/${methodId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89273,11 +78621,10 @@ export class Api<SecurityDataType extends unknown> {
       methodId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/methods/${methodId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89290,11 +78637,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getPayoutGetPayoutMethod: (methodId: number, params: RequestParams = {}) =>
-      this.http.request<PayoutMethodResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/methods/${methodId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89310,11 +78656,10 @@ export class Api<SecurityDataType extends unknown> {
       guideProfileId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutMethodResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/methods/guide/${guideProfileId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89339,12 +78684,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89372,12 +78716,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<GuidePayoutAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/analytics/guide/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89405,12 +78748,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderPayoutAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/analytics/provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89439,12 +78781,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutPerformanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/performance`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89460,13 +78801,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GeneratePayoutSummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutSummaryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89483,13 +78823,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateGuidePayoutReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuidePayoutReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/reports/guide/${guideProfileId}`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89506,13 +78845,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateProviderPayoutReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderPayoutReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/reports/provider/${providerId}`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89528,13 +78866,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidatePayoutRequestRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/validate-request`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89550,13 +78887,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CheckPayoutEligibilityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutEligibilityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/check-eligibility`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89572,13 +78908,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidatePayoutConfigurationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutConfigurationValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/validate-configuration`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89594,13 +78929,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SendPayoutNotificationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/notifications/send`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -89639,12 +78973,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PayoutNotificationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/notifications/guide/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -89660,11 +78993,10 @@ export class Api<SecurityDataType extends unknown> {
       notificationId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/payouts/notifications/${notificationId}/read`,
         method: "PUT",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -90648,12 +79980,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -90677,14 +80008,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -90708,12 +80038,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/selected/${id}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -90737,12 +80066,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sku/${sku}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -90766,12 +80094,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/slug/${slug}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -90796,14 +80123,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -90827,12 +80153,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}`,
         method: "DELETE",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -90856,14 +80181,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/search`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -90881,12 +80205,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -90912,12 +80235,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductVariationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/variations`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -90941,12 +80263,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/attributes`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -90982,12 +80303,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReviewResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/reviews`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91013,14 +80333,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/review`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -91050,12 +80369,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91083,12 +80401,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSalesReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/sales-report`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91115,14 +80432,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductImportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/import`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.FormData,
-        format: "json",
         ...params,
       }),
 
@@ -91145,12 +80461,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/info`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91173,12 +80488,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/home`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91201,12 +80515,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/offers`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91229,12 +80542,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/boxes`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91257,12 +80569,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/headers`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91285,12 +80596,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/tags`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91313,12 +80623,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/attributes`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91342,12 +80651,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/tags/${tag}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91371,12 +80679,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/attributes/${attribute}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91400,12 +80707,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/related`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91429,12 +80735,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/category-related`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91457,12 +80762,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/flash-sale-grouped`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91485,12 +80789,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/brands`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91503,11 +80806,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductGetAllItem: (itemId: number, params: RequestParams = {}) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/items/${itemId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91530,12 +80832,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/categories`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91552,11 +80853,10 @@ export class Api<SecurityDataType extends unknown> {
       subCategoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/categories/all`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91573,11 +80873,10 @@ export class Api<SecurityDataType extends unknown> {
       subCategoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/categories/all-null`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91594,11 +80893,10 @@ export class Api<SecurityDataType extends unknown> {
       id: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/favorites`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91622,12 +80920,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${productId}/toggle-favorite`,
         method: "POST",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91651,12 +80948,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${productId}/toggle-wishlist`,
         method: "POST",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91683,12 +80979,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/filtered`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91704,13 +80999,12 @@ export class Api<SecurityDataType extends unknown> {
       data: MultiFilterProductsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<MultiFilterProductsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/multi-filtered`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -91723,11 +81017,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductGet: (productId: number, params: RequestParams = {}) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${productId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91740,11 +81033,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductGetHeader: (productId: number, params: RequestParams = {}) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${productId}/header`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91757,11 +81049,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductGetHeaderById: (id: number, params: RequestParams = {}) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/headers/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91774,11 +81065,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductGetProductId: (productId: number, params: RequestParams = {}) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/by-product-id/${productId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91791,11 +81081,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductGetProductSku: (sku: string, params: RequestParams = {}) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/by-sku/${sku}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91808,11 +81097,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductGetProductDetail: (id: number, params: RequestParams = {}) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/detail`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91835,12 +81123,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SkuConflictResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sku-conflicts`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91864,12 +81151,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SkuConflictResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sku-conflicts/${sku}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91893,14 +81179,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SkuValidationResultListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/validate-skus`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -91922,12 +81207,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<StringListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/providers/${providerId}/skus`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -91951,14 +81235,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/create-with-validation`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -91983,14 +81266,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/update-with-validation`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -92012,12 +81294,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/providers/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92041,12 +81322,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/with-provider`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92070,12 +81350,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductHeaderResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sku/${sku}/with-provider`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92099,12 +81378,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${id}/delete-with-provider`,
         method: "DELETE",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92127,12 +81405,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<StringApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/count`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92155,12 +81432,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/active`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92184,12 +81460,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/category/${categoryId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92213,14 +81488,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/bulk-update`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -92244,14 +81518,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/bulk-delete`,
         method: "DELETE",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -92275,12 +81548,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics/${id}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92305,14 +81577,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics/${id}`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -92336,12 +81607,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics/${id}`,
         method: "DELETE",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92375,12 +81645,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAnalyticsResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92404,14 +81673,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -92435,12 +81703,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAnalyticsResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${productId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92467,12 +81734,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAnalyticsResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics/date-range`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92500,12 +81766,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAnalyticsResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics/top-products`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92533,12 +81798,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAnalyticsResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics/low-performing-products`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92561,12 +81825,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics/count`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92589,12 +81852,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<DecimalApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics/total-revenue`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92617,12 +81879,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/analytics/total-sales`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92650,12 +81911,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92671,13 +81931,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProductAttributeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -92693,11 +81952,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92714,13 +81972,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProductAttributeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/${id}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -92736,11 +81993,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92755,11 +82011,10 @@ export class Api<SecurityDataType extends unknown> {
     getProductAttributeGetActiveProductAttributes: (
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92775,11 +82030,10 @@ export class Api<SecurityDataType extends unknown> {
       productId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/product/${productId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92795,11 +82049,10 @@ export class Api<SecurityDataType extends unknown> {
       wooCommerceId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/woocommerce/${wooCommerceId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92812,11 +82065,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductAttributeGetProductAttributeCount: (params: RequestParams = {}) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92832,11 +82084,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/${id}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92864,12 +82115,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeValueResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92885,13 +82135,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProductAttributeValueRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeValueResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -92907,11 +82156,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeValueResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92928,13 +82176,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProductAttributeValueRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeValueResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/${id}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -92950,11 +82197,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92970,11 +82216,10 @@ export class Api<SecurityDataType extends unknown> {
       attributeId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeValueResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/attribute/${attributeId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -92989,11 +82234,10 @@ export class Api<SecurityDataType extends unknown> {
     getProductAttributeGetActiveProductAttributeValues: (
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeValueResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93011,12 +82255,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeValueResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/color`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93031,11 +82274,10 @@ export class Api<SecurityDataType extends unknown> {
     getProductAttributeGetProductAttributeValueCount: (
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93051,11 +82293,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/${id}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93083,12 +82324,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeTermResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-terms`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93104,13 +82344,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProductAttributeTermRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeTermResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-terms`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93126,11 +82365,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeTermResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-terms/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93147,13 +82385,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProductAttributeTermRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeTermResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-terms/${id}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93169,11 +82406,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-terms/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93189,11 +82425,10 @@ export class Api<SecurityDataType extends unknown> {
       attributeId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeTermResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-terms/attribute/${attributeId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93209,11 +82444,10 @@ export class Api<SecurityDataType extends unknown> {
       wooCommerceId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeTermResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-terms/woocommerce/${wooCommerceId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93228,11 +82462,10 @@ export class Api<SecurityDataType extends unknown> {
     getProductAttributeGetProductAttributeTermCount: (
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-terms/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93260,12 +82493,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93281,13 +82513,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProductAttributeMappingRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93303,11 +82534,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93324,13 +82554,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProductAttributeMappingRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/${id}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93346,11 +82575,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93366,11 +82594,10 @@ export class Api<SecurityDataType extends unknown> {
       productId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/product/${productId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93386,11 +82613,10 @@ export class Api<SecurityDataType extends unknown> {
       attributeId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/attribute/${attributeId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93406,11 +82632,10 @@ export class Api<SecurityDataType extends unknown> {
       productId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/product/${productId}/visible`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93427,11 +82652,10 @@ export class Api<SecurityDataType extends unknown> {
       attributeId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/product/${productId}/attribute/${attributeId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93446,11 +82670,10 @@ export class Api<SecurityDataType extends unknown> {
     getProductAttributeGetProductAttributeMappingCount: (
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93466,11 +82689,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/${id}/toggle-visibility`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93486,13 +82708,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProductAttributeValueRequest[],
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeValueResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/bulk`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93508,13 +82729,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProductAttributeMappingRequest[],
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/bulk`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93530,13 +82750,12 @@ export class Api<SecurityDataType extends unknown> {
       data: Record<string, number>,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/bulk/sort-order`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93552,13 +82771,12 @@ export class Api<SecurityDataType extends unknown> {
       data: Record<string, number>,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/bulk/sort-order`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93576,12 +82794,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93599,12 +82816,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeValueResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-values/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93622,12 +82838,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductAttributeMappingResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attribute-mappings/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93642,11 +82857,10 @@ export class Api<SecurityDataType extends unknown> {
     getProductAttributeGetProductAttributeStatistics: (
       params: RequestParams = {},
     ) =>
-      this.http.request<StringInt32DictionaryApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-attributes/statistics`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93674,12 +82888,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93695,13 +82908,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProductBrandRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductBrandResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93714,11 +82926,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductBrandGetProductBrand: (id: number, params: RequestParams = {}) =>
-      this.http.request<ProductBrandResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93735,13 +82946,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProductBrandRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductBrandResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/${id}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -93757,11 +82967,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93774,11 +82983,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductBrandGetActiveProductBrands: (params: RequestParams = {}) =>
-      this.http.request<ProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93794,11 +83002,10 @@ export class Api<SecurityDataType extends unknown> {
       productId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/product/${productId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93814,11 +83021,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/provider/${providerId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93834,11 +83040,10 @@ export class Api<SecurityDataType extends unknown> {
       wooCommerceId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductBrandResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/woocommerce/${wooCommerceId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93856,12 +83061,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93874,11 +83078,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductBrandGetProductBrandCount: (params: RequestParams = {}) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93894,11 +83097,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/${id}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93916,12 +83118,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/name`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93939,12 +83140,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-brands/slug`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93968,12 +83168,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSalesReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports/${id}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -93998,14 +83197,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSalesReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports/${id}`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -94029,12 +83227,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports/${id}`,
         method: "DELETE",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94068,12 +83265,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSalesReportResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94097,14 +83293,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSalesReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -94128,12 +83323,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSalesReportResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/${productId}/sales-reports`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94160,12 +83354,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSalesReportResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports/date-range`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94189,12 +83382,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSalesReportResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports/type`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94222,12 +83414,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSalesReportResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports/top-selling`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94250,12 +83441,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports/count`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94278,12 +83468,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<DecimalApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports/total-revenue`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94306,12 +83495,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/products/sales-reports/total-units-sold`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94339,12 +83527,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94360,13 +83547,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProductTagRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductTagResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -94379,11 +83565,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductTagGetProductTag: (id: number, params: RequestParams = {}) =>
-      this.http.request<ProductTagResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94400,13 +83585,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProductTagRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductTagResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/${id}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -94422,11 +83606,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94439,11 +83622,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductTagGetActiveProductTags: (params: RequestParams = {}) =>
-      this.http.request<ProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94459,11 +83641,10 @@ export class Api<SecurityDataType extends unknown> {
       productId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/product/${productId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94479,11 +83660,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/provider/${providerId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94499,11 +83679,10 @@ export class Api<SecurityDataType extends unknown> {
       wooCommerceId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductTagResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/woocommerce/${wooCommerceId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94521,12 +83700,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94539,11 +83717,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getProductTagGetProductTagCount: (params: RequestParams = {}) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94559,11 +83736,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/${id}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94581,12 +83757,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/name`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94604,12 +83779,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/product-tags/slug`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94855,12 +84029,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionHistoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94892,12 +84065,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionHistoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/user/${userId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94932,12 +84104,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionHistoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/tier/${tierCode}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94970,12 +84141,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionHistoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/date-range`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -94991,13 +84161,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RecordPromotionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/record-promotion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95013,13 +84182,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RecordDemotionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/record-demotion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95035,13 +84203,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RecordTierChangeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/record-tier-change`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95057,13 +84224,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RecordManualTierChangeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/record-manual-tier-change`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95089,12 +84255,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95120,12 +84285,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionTrendsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/trends`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95151,12 +84315,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionStatsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/stats`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95182,12 +84345,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionBreakdownResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/breakdown`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95203,13 +84365,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateTierChangeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierChangeValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/validate-tier-change`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95226,13 +84387,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CheckTierChangeEligibilityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierChangeEligibilityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/user/${userId}/check-tier-change-eligibility`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95249,13 +84409,12 @@ export class Api<SecurityDataType extends unknown> {
       data: PreviewTierChangeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierChangePreviewResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/user/${userId}/preview-tier-change`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95271,13 +84430,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreatePromotionRuleRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/rules`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95321,12 +84479,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionRuleResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/rules`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95343,13 +84500,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdatePromotionRuleRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/rules/${ruleId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95365,11 +84521,10 @@ export class Api<SecurityDataType extends unknown> {
       ruleId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/rules/${ruleId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95385,11 +84540,10 @@ export class Api<SecurityDataType extends unknown> {
       ruleId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/rules/${ruleId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95405,13 +84559,12 @@ export class Api<SecurityDataType extends unknown> {
       data: StartPromotionWorkflowRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionWorkflowResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/workflows/start`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95428,13 +84581,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CompletePromotionWorkflowRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/workflows/${workflowId}/complete`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95451,13 +84603,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CancelPromotionWorkflowRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/workflows/${workflowId}/cancel`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95493,12 +84644,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionWorkflowResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/workflows`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95514,11 +84664,10 @@ export class Api<SecurityDataType extends unknown> {
       workflowId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionWorkflowResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/workflows/${workflowId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95534,13 +84683,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SendPromotionNotificationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/notifications/send-promotion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95556,13 +84704,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SendDemotionNotificationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/notifications/send-demotion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95578,13 +84725,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SendTierChangeNotificationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/notifications/send-tier-change`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95621,12 +84767,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionNotificationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/notifications/user/${userId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95654,12 +84799,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionAuditResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/audit`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95683,12 +84827,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionAuditResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/audit/user/${userId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95715,12 +84858,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionAuditResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/audit/tier/${tierCode}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95741,12 +84883,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionAuditResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/audit/date-range`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -95762,13 +84903,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GeneratePromotionReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/reports/promotion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95784,13 +84924,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateTierChangeReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/reports/tier-change`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95806,13 +84945,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GeneratePromotionSummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95828,13 +84966,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GeneratePromotionTrendsReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/reports/trends`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95850,13 +84987,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ExportPromotionHistoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionExportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/export/history`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95872,13 +85008,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ExportPromotionAnalyticsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionExportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/export/analytics`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95894,13 +85029,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ExportPromotionAuditRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionExportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/export/audit`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95916,13 +85050,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ArchiveOldPromotionHistoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionCleanupResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/archive-old-history`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95938,13 +85071,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CleanupPromotionHistoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<PromotionCleanupResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/cleanup`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -95960,13 +85092,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RestorePromotionHistoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/promotion-history/restore`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -97076,12 +86207,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97098,13 +86228,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProviderCategoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -97121,11 +86250,10 @@ export class Api<SecurityDataType extends unknown> {
       categoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/${categoryId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97143,13 +86271,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProviderCategoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/${categoryId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -97166,11 +86293,10 @@ export class Api<SecurityDataType extends unknown> {
       categoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/${categoryId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97186,11 +86312,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97207,11 +86332,10 @@ export class Api<SecurityDataType extends unknown> {
       status: ProviderCategoryStatus,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/status/${status}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97228,13 +86352,12 @@ export class Api<SecurityDataType extends unknown> {
       data: number[],
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/bulk`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -97251,13 +86374,12 @@ export class Api<SecurityDataType extends unknown> {
       data: Record<string, number>,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/display-order`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -97274,11 +86396,10 @@ export class Api<SecurityDataType extends unknown> {
       categoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/${categoryId}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97296,13 +86417,12 @@ export class Api<SecurityDataType extends unknown> {
       data: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/${categoryId}/display-order`,
         method: "PATCH",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -97321,12 +86441,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97342,11 +86461,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97362,11 +86480,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/with-subcategories`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97383,11 +86500,10 @@ export class Api<SecurityDataType extends unknown> {
       categoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/${categoryId}/with-subcategories`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -97594,7 +86710,7 @@ export class Api<SecurityDataType extends unknown> {
      *
      * @tags ProviderClient
      * @name GetProviderClientGetQuickSaleItems
-     * @request GET:/api/v1/provider/quick-sell/items
+     * @request GET:/api/v1/provider/clients/quick-sell-items
      * @secure
      */
     getProviderClientGetQuickSaleItems: (
@@ -97605,7 +86721,7 @@ export class Api<SecurityDataType extends unknown> {
       params: RequestParams = {},
     ) =>
       this.http.request<void, any>({
-        path: `/api/v1/provider/quick-sell/items`,
+        path: `/api/v1/provider/clients/quick-sell-items`,
         method: "GET",
         query: query,
         secure: true,
@@ -98994,12 +88110,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99016,13 +88131,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProviderProductAttributeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99039,11 +88153,10 @@ export class Api<SecurityDataType extends unknown> {
       productAttributeId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/${productAttributeId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99061,13 +88174,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProviderProductAttributeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/${productAttributeId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99084,11 +88196,10 @@ export class Api<SecurityDataType extends unknown> {
       productAttributeId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/${productAttributeId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99104,11 +88215,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99124,11 +88234,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/required`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99145,11 +88254,10 @@ export class Api<SecurityDataType extends unknown> {
       productAttributeId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/${productAttributeId}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99166,11 +88274,10 @@ export class Api<SecurityDataType extends unknown> {
       productAttributeId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/${productAttributeId}/toggle-required`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99189,12 +88296,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99210,11 +88316,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99231,13 +88336,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProviderItemAttributeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-attributes/create-item`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99256,12 +88360,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/product-attributes/pending-approval`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99278,13 +88381,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ApproveProviderItemRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductAttributeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/product-attributes/${id}/approve`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99301,13 +88403,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RejectProviderItemRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/product-attributes/${id}/reject`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99336,12 +88437,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99358,13 +88458,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProviderProductBrandRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductBrandResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99381,11 +88480,10 @@ export class Api<SecurityDataType extends unknown> {
       productBrandId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductBrandResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands/${productBrandId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99403,13 +88501,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProviderProductBrandRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductBrandResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands/${productBrandId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99426,11 +88523,10 @@ export class Api<SecurityDataType extends unknown> {
       productBrandId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands/${productBrandId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99446,11 +88542,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99467,11 +88562,10 @@ export class Api<SecurityDataType extends unknown> {
       productBrandId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands/${productBrandId}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99490,12 +88584,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99511,11 +88604,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99532,13 +88624,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProviderItemBrandRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductBrandResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-brands/create-item`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99557,12 +88648,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductBrandResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/product-brands/pending-approval`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99579,13 +88669,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ApproveProviderItemRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductBrandResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/product-brands/${id}/approve`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99602,13 +88691,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RejectProviderItemRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/product-brands/${id}/reject`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99637,12 +88725,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99659,13 +88746,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProviderProductTagRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductTagResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99682,11 +88768,10 @@ export class Api<SecurityDataType extends unknown> {
       productTagId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductTagResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags/${productTagId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99704,13 +88789,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProviderProductTagRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductTagResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags/${productTagId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99727,11 +88811,10 @@ export class Api<SecurityDataType extends unknown> {
       productTagId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags/${productTagId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99747,11 +88830,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99768,11 +88850,10 @@ export class Api<SecurityDataType extends unknown> {
       productTagId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags/${productTagId}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99791,12 +88872,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99812,11 +88892,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99833,13 +88912,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProviderItemTagRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductTagResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/product-tags/create-item`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99858,12 +88936,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductTagResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/product-tags/pending-approval`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -99880,13 +88957,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ApproveProviderItemRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderProductTagResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/product-tags/${id}/approve`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -99903,13 +88979,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RejectProviderItemRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/product-tags/${id}/reject`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -100730,12 +89805,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderShippingMethodResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/shipping-methods`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -100752,13 +89826,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProviderShippingMethodRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderShippingMethodResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/shipping-methods`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -100775,11 +89848,10 @@ export class Api<SecurityDataType extends unknown> {
       shippingMethodId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderShippingMethodResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/shipping-methods/${shippingMethodId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -100797,13 +89869,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProviderShippingMethodRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderShippingMethodResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/shipping-methods/${shippingMethodId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -100820,11 +89891,10 @@ export class Api<SecurityDataType extends unknown> {
       shippingMethodId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/shipping-methods/${shippingMethodId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -100840,11 +89910,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderShippingMethodResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/shipping-methods/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -100861,11 +89930,10 @@ export class Api<SecurityDataType extends unknown> {
       shippingMethodId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/shipping-methods/${shippingMethodId}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -100884,12 +89952,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderShippingMethodResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/shipping-methods/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -100905,11 +89972,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/shipping-methods/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -100938,12 +90004,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderSubCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/subcategories`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -100960,13 +90025,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateProviderSubCategoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderSubCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/subcategories`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -100983,11 +90047,10 @@ export class Api<SecurityDataType extends unknown> {
       subCategoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderSubCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/subcategories/${subCategoryId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -101005,13 +90068,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateProviderSubCategoryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderSubCategoryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/subcategories/${subCategoryId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -101028,11 +90090,10 @@ export class Api<SecurityDataType extends unknown> {
       subCategoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/subcategories/${subCategoryId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -101049,11 +90110,10 @@ export class Api<SecurityDataType extends unknown> {
       providerCategoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderSubCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/${providerCategoryId}/subcategories`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -101069,11 +90129,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderSubCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/subcategories/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -101091,13 +90150,12 @@ export class Api<SecurityDataType extends unknown> {
       data: number[],
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderSubCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/categories/${providerCategoryId}/subcategories/bulk`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -101114,11 +90172,10 @@ export class Api<SecurityDataType extends unknown> {
       subCategoryId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/subcategories/${subCategoryId}/toggle-status`,
         method: "PATCH",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -101137,12 +90194,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProviderSubCategoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/subcategories/search`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -101158,11 +90214,10 @@ export class Api<SecurityDataType extends unknown> {
       providerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/providers/${providerId}/subcategories/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -103989,13 +93044,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateReferralRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104048,12 +93102,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104066,11 +93119,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getReferralGetReferral: (referralId: number, params: RequestParams = {}) =>
-      this.http.request<ReferralResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/${referralId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104086,11 +93138,10 @@ export class Api<SecurityDataType extends unknown> {
       referralId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/${referralId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104127,12 +93178,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/referrer/${referrerId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104169,12 +93219,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/referee/${refereeId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104191,13 +93240,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateReferralStatusRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/${referralId}/status`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104213,13 +93261,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateReferralCodeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralCodeResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/codes/generate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104256,12 +93303,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralCodeResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/codes/user/${userId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104277,11 +93323,10 @@ export class Api<SecurityDataType extends unknown> {
       code: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralCodeValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/codes/validate/${code}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104297,13 +93342,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UseReferralCodeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/codes/use`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104319,11 +93363,10 @@ export class Api<SecurityDataType extends unknown> {
       codeId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/codes/${codeId}/deactivate`,
         method: "PUT",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104339,13 +93382,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RecordShareEventRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShareEventResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/share-events`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104402,12 +93444,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ShareEventResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/share-events`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104455,12 +93496,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ShareEventResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/share-events/user/${userId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104473,11 +93513,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getReferralGetShareEvent: (eventId: number, params: RequestParams = {}) =>
-      this.http.request<ShareEventResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/share-events/${eventId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104514,12 +93553,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104556,12 +93594,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<UserReferralAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/user/${userId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104598,12 +93635,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralPerformanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/performance`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104644,12 +93680,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralTrendsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/trends`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104665,13 +93700,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateReferralSummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralSummaryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104688,13 +93722,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateUserReferralReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<UserReferralReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/user/${userId}/report`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104710,13 +93743,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateReferralPerformanceReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralPerformanceReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/reports/performance`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104733,13 +93765,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CheckReferralEligibilityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralEligibilityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/user/${userId}/check-eligibility`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104756,13 +93787,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateReferralOperationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/user/${userId}/validate-operation`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104778,13 +93808,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateReferralConfigurationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralConfigurationValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/validate-configuration`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104800,13 +93829,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SendReferralNotificationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/notifications/send`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -104863,12 +93891,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReferralNotificationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/user/${userId}/notifications`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -104884,11 +93911,10 @@ export class Api<SecurityDataType extends unknown> {
       notificationId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/referrals/notifications/${notificationId}/read`,
         method: "PUT",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -108102,13 +97128,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateRewardActionMappingRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardActionMappingResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/action-mappings`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108158,12 +97183,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardActionMappingResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/action-mappings`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -108180,13 +97204,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateRewardActionMappingRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardActionMappingResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/action-mappings/${mappingId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108202,11 +97225,10 @@ export class Api<SecurityDataType extends unknown> {
       mappingId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/action-mappings/${mappingId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -108222,11 +97244,10 @@ export class Api<SecurityDataType extends unknown> {
       mappingId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardActionMappingResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/action-mappings/${mappingId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -108242,13 +97263,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ProcessRewardRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardProcessingResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/process`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108264,13 +97284,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AwardPointsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/award-points`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108286,13 +97305,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AwardTierPromotionRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/award-tier-promotion`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108308,13 +97326,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AwardCommissionBonusRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/award-commission-bonus`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108355,12 +97372,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -108402,12 +97418,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<UserRewardAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/user/${userId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -108448,12 +97463,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardPerformanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/performance`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -108498,12 +97512,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardTrendsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/trends`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -108519,13 +97532,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateRewardSummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardSummaryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108542,13 +97554,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateUserRewardReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<UserRewardReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/user/${userId}/report`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108564,13 +97575,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateRewardPerformanceReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardPerformanceReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/reports/performance`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108587,13 +97597,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateRewardOperationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/user/${userId}/validate-operation`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108610,13 +97619,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CheckRewardEligibilityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardEligibilityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/user/${userId}/check-eligibility`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108632,13 +97640,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateRewardConfigurationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardConfigurationValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/validate-configuration`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108654,13 +97661,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SendRewardNotificationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/notifications/send`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -108717,12 +97723,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<RewardNotificationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/user/${userId}/notifications`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -108738,11 +97743,10 @@ export class Api<SecurityDataType extends unknown> {
       notificationId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/rewards/notifications/${notificationId}/read`,
         method: "PUT",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -110635,6 +99639,28 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
+     * @tags Services
+     * @name PutServicesUpdateImageUrl
+     * @request PUT:/api/v1/services/{id}/image-url
+     * @secure
+     */
+    putServicesUpdateImageUrl: (
+      id: number,
+      data: UpdateServiceImageUrlRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/${id}/image-url`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Settings
      * @name GetSettingsGetAll
      * @request GET:/api/v1/provider/settings
@@ -111168,12 +100194,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingMethodResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111189,13 +100214,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateShippingMethodRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingMethodResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -111211,11 +100235,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingMethodResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111232,13 +100255,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateShippingMethodRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingMethodResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/${id}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -111254,11 +100276,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111271,11 +100292,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getShippingMethodGetActiveShippingMethods: (params: RequestParams = {}) =>
-      this.http.request<ShippingMethodResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111291,11 +100311,10 @@ export class Api<SecurityDataType extends unknown> {
       zoneId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingMethodResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zone/${zoneId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111311,11 +100330,10 @@ export class Api<SecurityDataType extends unknown> {
       type: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingMethodResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/type/${type}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111328,11 +100346,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getShippingMethodGetShippingMethodCount: (params: RequestParams = {}) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111360,12 +100377,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingZoneResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zones`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111381,13 +100397,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateShippingZoneRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingZoneResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zones`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -111403,11 +100418,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingZoneResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zones/${id}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111424,13 +100438,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateShippingZoneRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingZoneResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zones/${id}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -111446,11 +100459,10 @@ export class Api<SecurityDataType extends unknown> {
       id: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zones/${id}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111463,11 +100475,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getShippingMethodGetActiveShippingZones: (params: RequestParams = {}) =>
-      this.http.request<ShippingZoneResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zones/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111483,11 +100494,10 @@ export class Api<SecurityDataType extends unknown> {
       name: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<ShippingZoneResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zones/name/${name}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111500,11 +100510,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getShippingMethodGetShippingZoneCount: (params: RequestParams = {}) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zones/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -111520,11 +100529,10 @@ export class Api<SecurityDataType extends unknown> {
       zoneId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/shipping-methods/zones/${zoneId}/methods/count`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113470,12 +102478,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113495,14 +102502,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -113522,12 +102528,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113548,14 +102553,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -113575,12 +102579,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}`,
         method: "DELETE",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113604,12 +102607,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/by-code`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113632,12 +102634,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/active`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113661,12 +102662,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/by-type`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113689,12 +102689,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/count`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113720,12 +102719,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<Int32ApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/product-count`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113751,12 +102749,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSupplierResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/products`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113783,14 +102780,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSupplierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/products`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -113817,12 +102813,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/products/${productId}`,
         method: "DELETE",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113850,14 +102845,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ProductSupplierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/products/${productId}`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -113883,12 +102877,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<LowStockAlertResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/low-stock-alerts`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113915,14 +102908,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ReorderRequestResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/reorder-requests`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -113948,12 +102940,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/by-location`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -113982,12 +102973,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierLocationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/by-radius`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -114014,14 +103004,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/location`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -114045,12 +103034,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/for-provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -114077,14 +103065,13 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/transfer-ownership`,
         method: "PUT",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -114114,12 +103101,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<SupplierPerformanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/management/suppliers/${id}/performance`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115002,11 +103988,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getTierGetActiveTiers: (params: RequestParams = {}) =>
-      this.http.request<TierResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/active`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115019,11 +104004,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getTierGetTierByCode: (tierCode: string, params: RequestParams = {}) =>
-      this.http.request<TierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/code/${tierCode}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115036,11 +104020,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getTierGetTierForPoints: (points: number, params: RequestParams = {}) =>
-      this.http.request<TierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/for-points/${points}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115061,12 +104044,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TierResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/range`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115079,11 +104061,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getTierValidateTierCode: (tierCode: string, params: RequestParams = {}) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/validate/${tierCode}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115096,11 +104077,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getTierGetTiersBySortOrder: (params: RequestParams = {}) =>
-      this.http.request<TierResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/sorted`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115113,13 +104093,12 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     postTierCreateTier: (data: CreateTierRequest, params: RequestParams = {}) =>
-      this.http.request<TierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115136,13 +104115,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateTierRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/${tierId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115155,11 +104133,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     deleteTierDeleteTier: (tierId: number, params: RequestParams = {}) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/${tierId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115172,11 +104149,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getTierGetCurrentTierCode: (userId: string, params: RequestParams = {}) =>
-      this.http.request<StringApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/user/${userId}/current`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115189,11 +104165,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     postTierCalculateTier: (userId: string, params: RequestParams = {}) =>
-      this.http.request<TierCalculationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/user/${userId}/calculate`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115210,13 +104185,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RecalculateTierRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierPromotionResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/user/${userId}/recalculate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115233,13 +104207,12 @@ export class Api<SecurityDataType extends unknown> {
       data: PromoteTierRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierPromotionResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/user/${userId}/promote`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115256,13 +104229,12 @@ export class Api<SecurityDataType extends unknown> {
       data: DemoteTierRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierPromotionResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/user/${userId}/demote`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115275,11 +104247,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getTierGetTierRules: (params: RequestParams = {}) =>
-      this.http.request<TierRuleResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/rules`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115292,11 +104263,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getTierGetTierRule: (tierCode: string, params: RequestParams = {}) =>
-      this.http.request<TierRuleResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/rules/${tierCode}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115315,12 +104285,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/validate-transition`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115354,12 +104323,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TierAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115393,12 +104361,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TierDistributionResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/distribution`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115433,12 +104400,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TierPerformanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/performance`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115471,12 +104437,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<TierHistoryResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/user/${userId}/history`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -115492,13 +104457,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateTierSummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierSummaryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115514,13 +104478,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateTierDistributionReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierDistributionReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/reports/distribution`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115537,13 +104500,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateUserTierReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<UserTierReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/user/${userId}/report`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115560,13 +104522,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CheckTierEligibilityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierEligibilityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/user/${userId}/check-eligibility`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115583,13 +104544,12 @@ export class Api<SecurityDataType extends unknown> {
       data: PreviewTierChangeRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierChangePreviewResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/user/${userId}/preview-change`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -115605,13 +104565,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateTierConfigurationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<TierConfigurationValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/tiers/validate-configuration`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -116765,13 +105724,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<UGCContentResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -116784,11 +105742,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getUgcContentGetContent: (contentId: number, params: RequestParams = {}) =>
-      this.http.request<UGCContentResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -116805,13 +105762,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<UGCContentResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -116827,11 +105783,10 @@ export class Api<SecurityDataType extends unknown> {
       contentId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -116844,11 +105799,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getUgcContentGetContentBySlug: (slug: string, params: RequestParams = {}) =>
-      this.http.request<UGCContentResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/slug/${slug}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -116865,13 +105819,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SubmitContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}/submit`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -116888,13 +105841,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ApproveUGCContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}/approve`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -116911,13 +105863,12 @@ export class Api<SecurityDataType extends unknown> {
       data: RejectContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}/reject`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -116934,13 +105885,12 @@ export class Api<SecurityDataType extends unknown> {
       data: PublishContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}/publish`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -116957,13 +105907,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SuspendContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}/suspend`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -116979,13 +105928,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SearchContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/search`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117006,12 +105954,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/guide/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117036,12 +105983,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/featured`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117066,12 +106012,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/trending`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117101,12 +106046,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentListResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/moderation/queue`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117122,11 +106066,10 @@ export class Api<SecurityDataType extends unknown> {
       contentId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<UGCContentResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/moderation/${contentId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117143,13 +106086,12 @@ export class Api<SecurityDataType extends unknown> {
       data: FlagContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}/flag`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117166,13 +106108,12 @@ export class Api<SecurityDataType extends unknown> {
       data: EscalateContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}/escalate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117196,12 +106137,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/${contentId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117225,12 +106165,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideContentAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/guide/${guideProfileId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117253,12 +106192,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentPerformanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/performance`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117281,12 +106219,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentTrendsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/trends`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117302,13 +106239,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateContentSummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentSummaryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117325,13 +106261,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateGuideContentReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<GuideContentReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/guide/${guideProfileId}/report`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117347,13 +106282,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateContentModerationReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentModerationReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/reports/moderation`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117369,13 +106303,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateContentRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/validate`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117391,13 +106324,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CheckContentEligibilityRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentEligibilityResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/check-eligibility`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117413,13 +106345,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateContentConfigurationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentConfigurationValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/validate-configuration`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117435,13 +106366,12 @@ export class Api<SecurityDataType extends unknown> {
       data: SendContentNotificationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/notifications/send`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -117473,12 +106403,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<ContentNotificationResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/notifications/guide/${guideProfileId}`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -117494,11 +106423,10 @@ export class Api<SecurityDataType extends unknown> {
       notificationId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/ugc-content/notifications/${notificationId}/read`,
         method: "PUT",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120561,13 +109489,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CreateWalletRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletAccountResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -120580,11 +109507,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getWalletGetWalletByUserId: (userId: string, params: RequestParams = {}) =>
-      this.http.request<WalletAccountResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/user/${userId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120597,11 +109523,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getWalletGetWallet: (walletId: number, params: RequestParams = {}) =>
-      this.http.request<WalletAccountResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120618,13 +109543,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateWalletRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletAccountResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -120637,11 +109561,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     deleteWalletDeleteWallet: (walletId: number, params: RequestParams = {}) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120657,11 +109580,10 @@ export class Api<SecurityDataType extends unknown> {
       userId: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletAccountResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/ensure/${userId}`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120678,13 +109600,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AddPointsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/add-points`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -120701,13 +109622,12 @@ export class Api<SecurityDataType extends unknown> {
       data: DeductPointsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/deduct-points`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -120723,13 +109643,12 @@ export class Api<SecurityDataType extends unknown> {
       data: TransferPointsRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/transfer-points`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -120742,11 +109661,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getWalletGetWalletBalance: (walletId: number, params: RequestParams = {}) =>
-      this.http.request<WalletBalanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/balance`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120762,11 +109680,10 @@ export class Api<SecurityDataType extends unknown> {
       userId: string,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletBalanceResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/user/${userId}/balance`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120782,13 +109699,12 @@ export class Api<SecurityDataType extends unknown> {
       data: AddLedgerEntryRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletLedgerResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/ledger`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -120845,12 +109761,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletLedgerResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/ledger`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120908,12 +109823,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletLedgerResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/ledger`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120969,12 +109883,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletLedgerResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/user/${userId}/ledger`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -120990,11 +109903,10 @@ export class Api<SecurityDataType extends unknown> {
       ledgerId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletLedgerResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/ledger/${ledgerId}`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -121011,13 +109923,12 @@ export class Api<SecurityDataType extends unknown> {
       data: UpdateWalletTierRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<BooleanApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/tier`,
         method: "PUT",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -121030,11 +109941,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getWalletGetWalletTier: (walletId: number, params: RequestParams = {}) =>
-      this.http.request<WalletTierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/tier`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -121047,11 +109957,10 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     getWalletGetUserWalletTier: (userId: string, params: RequestParams = {}) =>
-      this.http.request<WalletTierResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/user/${userId}/tier`,
         method: "GET",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -121067,11 +109976,10 @@ export class Api<SecurityDataType extends unknown> {
       walletId: number,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletTierCalculationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/calculate-tier`,
         method: "POST",
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -121111,12 +110019,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -121150,12 +110057,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletAnalyticsResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/user/${userId}/analytics`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -121185,12 +110091,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletAnalyticsSummaryResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/analytics/summary`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -121258,12 +110163,11 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletTransactionResponseListApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/transactions`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -121280,13 +110184,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateWalletStatementRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletStatementResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/statement`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -121303,13 +110206,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateUserWalletStatementRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletStatementResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/user/${userId}/statement`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -121325,13 +110227,12 @@ export class Api<SecurityDataType extends unknown> {
       data: GenerateWalletSummaryReportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletSummaryReportResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/reports/summary`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -121347,13 +110248,12 @@ export class Api<SecurityDataType extends unknown> {
       data: ValidateWalletOperationRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletValidationResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/validate-operation`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -121370,13 +110270,12 @@ export class Api<SecurityDataType extends unknown> {
       data: CheckWalletBalanceRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<WalletBalanceCheckResponseApiResult, any>({
+      this.http.request<void, any>({
         path: `/api/v1/guider/wallets/${walletId}/check-balance`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 

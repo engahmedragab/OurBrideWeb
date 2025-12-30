@@ -1,7 +1,4 @@
-import type {
-  ProductResponse,
-  ProviderInfoResponse,
-} from '@/../client/common/api/gen/ourbride-api'
+import type { ProductResponse, ProviderInfoResponse } from '@/types/responses'
 import type { ProductCategoryLineResponse } from '@/types/responses/product-category-line-response'
 import type { Product, ProductCategory } from '@/types/product'
 
@@ -61,7 +58,8 @@ export const mapProductResponseToProduct = (
   // Use category object if available, otherwise use categoryId
   if (apiProduct.category) {
     category.id = String(apiProduct.category.id || category.id)
-    category.name = apiProduct.category.nameEn || apiProduct.category.nameAr || apiProduct.category.name || ''
+    const categoryWithName = apiProduct.category as typeof apiProduct.category & { nameEn?: string; nameAr?: string; name?: string }
+    category.name = categoryWithName.nameEn || categoryWithName.nameAr || categoryWithName.name || ''
     category.slug = apiProduct.category.slug || ''
   }
 

@@ -177,7 +177,24 @@ export const getCart = async (): Promise<CartResponse> => {
   try {
     const response = await apiClient.api.getPurchaseGetCart()
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
+    
+    // Handle different response structures
+    // Structure 1: { data: { id: ..., purchases: ... }, success: true }
+    // Structure 2: { data: { data: { id: ... } } }
+    // Structure 3: Direct cart object
+    let cartData = responseAny
+    
+    if (responseAny?.data) {
+      // Check if data.data exists (nested structure)
+      if (responseAny.data.data && typeof responseAny.data.data === 'object' && 'id' in responseAny.data.data) {
+        cartData = responseAny.data.data
+      } else if (typeof responseAny.data === 'object' && 'id' in responseAny.data) {
+        // Direct cart in data property
+        cartData = responseAny.data
+      }
+    }
+    
+    return cartData as CartResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch cart')
   }
@@ -240,9 +257,54 @@ export const getCartByProvider = async (providerId: number): Promise<CartRespons
   try {
     const response = await apiClient.api.getPurchaseGetCartByProvider(providerId)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
+    
+    // Handle different response structures
+    let cartData = responseAny
+    
+    if (responseAny?.data) {
+      // Check if data.data exists (nested structure)
+      if (responseAny.data.data && typeof responseAny.data.data === 'object' && 'id' in responseAny.data.data) {
+        cartData = responseAny.data.data
+      } else if (typeof responseAny.data === 'object' && 'id' in responseAny.data) {
+        // Direct cart in data property
+        cartData = responseAny.data
+      }
+    }
+    
+    return cartData as CartResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch cart by provider')
+  }
+}
+
+/**
+ * Get cart by cart ID
+ * For general cart (providerId is null), use getCart() instead
+ * For provider-specific carts, use getCartByProvider(providerId)
+ */
+export const getCartByCartId = async (cartId: number): Promise<CartResponse> => {
+  try {
+    // Since there's no direct getCartById API, we'll use getCart() for general cart
+    // and getCartByProvider for provider carts based on the cartId
+    // This is a workaround - ideally the API should have getCartById
+    const response = await apiClient.api.getPurchaseGetCart()
+    const responseAny: any = response
+    const allCarts = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse | CartResponse[]
+    
+    // If it's an array, find the cart with matching ID
+    if (Array.isArray(allCarts)) {
+      const cart = allCarts.find(c => c.id === cartId)
+      if (cart) return cart
+    } else if (allCarts && typeof allCarts === 'object' && 'id' in allCarts) {
+      // If it's a single cart object, check if ID matches
+      if (allCarts.id === cartId) {
+        return allCarts as CartResponse
+      }
+    }
+    
+    throw new Error(`Cart with ID ${cartId} not found`)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch cart by cart ID')
   }
 }
 
@@ -414,7 +476,22 @@ export const getCartProviders = async (): Promise<CartProviderResponse[]> => {
   try {
     const response = await apiClient.api.getPurchaseGetCartProviders()
     const responseAny: any = response
-    const data = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as unknown
+    
+    // Handle different response structures
+    let data = responseAny
+    
+    if (responseAny?.data) {
+      // Check if data.data exists (nested structure)
+      if (Array.isArray(responseAny.data.data)) {
+        data = responseAny.data.data
+      } else if (Array.isArray(responseAny.data)) {
+        data = responseAny.data
+      } else if (responseAny.data.data && typeof responseAny.data.data === 'object') {
+        data = [responseAny.data.data]
+      } else if (typeof responseAny.data === 'object' && 'providerId' in responseAny.data) {
+        data = [responseAny.data]
+      }
+    }
     
     // Ensure we return an array
     if (Array.isArray(data)) {

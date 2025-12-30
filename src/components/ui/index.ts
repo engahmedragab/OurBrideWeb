@@ -250,6 +250,9 @@ export type { DatePickerProps } from './DatePicker'
 export { RequestCard } from './RequestCard'
 export type { RequestCardProps, ServiceRequest } from './RequestCard'
 
+export { ReservationCard } from './ReservationCard'
+export type { ReservationCardProps } from './ReservationCard'
+
 export { RequestProgressIndicator } from './RequestProgressIndicator'
 export type {
   RequestProgressIndicatorProps,
@@ -298,6 +301,9 @@ export type { LoadingSpinnerProps } from './LoadingSpinner'
 
 export { StatusModal } from './StatusModal'
 export type { StatusModalProps } from './StatusModal'
+
+export { ProcessingModal } from './ProcessingModal'
+export type { ProcessingModalProps } from './ProcessingModal'
 
 export { ServiceSelectCard } from './ServiceSelectCard'
 export type { ServiceSelectCardProps } from './ServiceSelectCard'

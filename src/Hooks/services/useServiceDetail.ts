@@ -29,7 +29,6 @@ export const useServiceDetail = (serviceId: string, enabled = true) => {
         const service = mapServiceResponseToService(serviceResponse)
         return { service }
       } catch (error) {
-        console.error('Error fetching service detail:', error)
         throw error
       }
     },

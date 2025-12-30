@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getUserAddresses, getAddressById, createAddress, updateAddress, deleteAddress } from '@/services/api/addressApi'
-import type { AddressResponse } from '@/types/responses'
-import type { CreateAddressRequest, UpdateAddressRequest } from '@/../client/common/api/gen/ourbride-api'
-import { isAuthenticated, getToken, getUser } from '@/auth/utils/token'
-import { useToast } from '@/components/ui/Toaster'
+import { getUserDeliveryaddresses, getDeliveryaddressById, createDeliveryaddress, updateDeliveryaddress, deleteDeliveryaddress, setDefaultDeliveryaddress } from '@/services/api/addressApi'
+import type { DeliveryAddressResponse } from '@/types/responses'
+import type { DeliveryAddressRequest } from '@/../client/common/api/gen/ourbride-api'
+import { isAuthenticated } from '@/auth/utils/token'
+import { useToast } from '@/components/ui'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 /**
- * Hook to fetch user addresses
+ * Hook to fetch user deliveryaddresses
  */
 export const useAddresses = (query?: {
   page?: number
@@ -16,103 +16,42 @@ export const useAddresses = (query?: {
 }) => {
   const { enabled = true, ...queryParams } = query || {}
   const authenticated = isAuthenticated()
-  const token = getToken()
-  const user = getUser()
-  
   const queryEnabled = enabled && authenticated
   
-  console.log('[useAddresses] Hook called', { 
-    enabled, 
-    queryParams, 
-    authenticated,
-    queryEnabled,
-    'willQueryRun': queryEnabled,
-    'enabledValue': enabled,
-    'authenticatedValue': authenticated,
-    'hasToken': !!token,
-    'hasUser': !!user,
-    'userId': user?.id,
-    'tokenLength': token?.length,
-  })
-  
-  const { addToast } = useToast()
-  
-  const queryResult = useQuery<AddressResponse[]>({
+  const queryResult = useQuery<DeliveryAddressResponse[]>({
     queryKey: ['addresses', 'user', queryParams],
     queryFn: async () => {
-      console.log('[useAddresses] ✅ queryFn EXECUTED - API call starting', { queryParams })
-      try {
-        const response = await getUserAddresses(queryParams)
-        console.log('[useAddresses] Raw API response:', response)
-        console.log('[useAddresses] Response type:', typeof response)
-        console.log('[useAddresses] Is array?', Array.isArray(response))
-        console.log('[useAddresses] Has items property?', response && typeof response === 'object' && 'items' in response)
-        
-        // Handle both paginated response and direct array
-        let addresses: AddressResponse[] = []
-        
-        if (Array.isArray(response)) {
-          console.log('[useAddresses] Response is direct array, length:', response.length)
-          addresses = response
-        } else if (response && typeof response === 'object' && 'items' in response) {
-          console.log('[useAddresses] Response is paginated, items:', (response as { items?: AddressResponse[] }).items)
-          addresses = (response as { items?: AddressResponse[] }).items || []
-        } else {
-          console.warn('[useAddresses] Unexpected response structure:', response)
-          addresses = []
-        }
-        
-        console.log('[useAddresses] Final addresses array:', addresses)
-        console.log('[useAddresses] Addresses count:', addresses.length)
-        return addresses
-      } catch (error) {
-        console.error('[useAddresses] Error in queryFn:', error)
-        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch addresses'
-        addToast(errorMessage, 'error')
-        throw error
+      const response = await getUserDeliveryaddresses(queryParams)
+      
+      // Handle both paginated response and direct array
+      let addresses: DeliveryAddressResponse[] = []
+      
+      if (Array.isArray(response)) {
+        addresses = response
+      } else if (response && typeof response === 'object' && 'items' in response) {
+        addresses = (response as { items?: DeliveryAddressResponse[] }).items || []
       }
+      
+      return addresses
     },
     enabled: queryEnabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
   })
   
-  // Log query state to understand why it might not be running
-  console.log('[useAddresses] Query state:', {
-    status: queryResult.status,
-    fetchStatus: queryResult.fetchStatus,
-    isLoading: queryResult.isLoading,
-    isFetching: queryResult.isFetching,
-    isEnabled: queryResult.isEnabled,
-    isError: queryResult.isError,
-    error: queryResult.error,
-    dataLength: queryResult.data?.length || 0,
-    'queryEnabled': queryEnabled,
-    'whyDisabled': !queryEnabled ? (!enabled ? 'enabled=false' : !authenticated ? 'not authenticated' : 'unknown') : 'enabled',
-  })
-  
-  if (!queryEnabled) {
-    console.warn('[useAddresses] ⚠️ Query is DISABLED. Reason:', {
-      enabled,
-      authenticated,
-      hasToken: !!token,
-      hasUser: !!user,
-    })
-  }
-  
   return queryResult
 }
 
 /**
- * Hook to create a new address
+ * Hook to create a new deliveryaddress
  */
 export const useCreateAddress = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
   
   return useMutation({
-    mutationFn: async (data: CreateAddressRequest) => {
-      return await createAddress(data)
+    mutationFn: async (data: DeliveryAddressRequest) => {
+      return await createDeliveryaddress(data)
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
@@ -131,15 +70,15 @@ export const useCreateAddress = () => {
 }
 
 /**
- * Hook to update an address
+ * Hook to update a deliveryaddress
  */
 export const useUpdateAddress = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
   
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: UpdateAddressRequest }) => {
-      return await updateAddress(id, data)
+    mutationFn: async ({ id, data }: { id: number; data: DeliveryAddressRequest }) => {
+      return await updateDeliveryaddress(id, data)
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
@@ -158,13 +97,13 @@ export const useUpdateAddress = () => {
 }
 
 /**
- * Hook to get a single address by ID
+ * Hook to get a single deliveryaddress by ID
  */
 export const useAddress = (id: number, enabled: boolean = true) => {
-  return useQuery<AddressResponse>({
+  return useQuery<DeliveryAddressResponse>({
     queryKey: ['address', id],
     queryFn: async () => {
-      return await getAddressById(id)
+      return await getDeliveryaddressById(id)
     },
     enabled: enabled && id > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -172,7 +111,7 @@ export const useAddress = (id: number, enabled: boolean = true) => {
 }
 
 /**
- * Hook to delete an address
+ * Hook to delete a deliveryaddress
  */
 export const useDeleteAddress = () => {
   const queryClient = useQueryClient()
@@ -180,7 +119,23 @@ export const useDeleteAddress = () => {
   
   return useMutation({
     mutationFn: async (id: number) => {
-      return await deleteAddress(id)
+      return await deleteDeliveryaddress(id)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['addresses'] })
+    },
+  })
+}
+
+/**
+ * Hook to set a deliveryaddress as default
+ */
+export const useSetDefaultAddress = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async (id: number) => {
+      return await setDefaultDeliveryaddress(id)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
@@ -191,5 +146,9 @@ export const useDeleteAddress = () => {
       addToast(errorMessage, 'error')
     },
   })
+}
+
+function addToast(arg0: string, arg1: string) {
+  throw new Error('Function not implemented.')
 }
 

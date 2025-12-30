@@ -64,7 +64,6 @@ export const useProductCategories = (enabled = true) => {
         
         return []
       } catch (error) {
-        console.error('Error fetching product categories:', error)
         return []
       }
     },

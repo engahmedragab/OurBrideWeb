@@ -29,7 +29,7 @@ import { useCart, useUpdatePurchase, useRemovePurchase, useCheckout, useValidate
 import { getUser } from '@/auth/utils/token'
 import { getProductById } from '@/services/api/products.api'
 import { useQueries } from '@tanstack/react-query'
-import type { PurchaseResponse, ProductResponse, ReservationResponse, AddressResponse } from '@/types/responses'
+import type { PurchaseResponse, ProductResponse, ReservationResponse, DeliveryAddressResponse } from '@/types/responses'
 import type { CartProduct, CartReservation, CartMembership, CartGiftCard } from '@/types/responses'
 import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
 import type { PurchaseStatus } from '@/../client/common/api/gen/ourbride-api'
@@ -435,11 +435,7 @@ export default function CheckoutPage() {
         setLocalItems(cartProducts)
         setSelectedItems(new Set(cartProducts.map(p => parseInt(p.id, 10))))
       } else if (cartData?.purchases && cartData.purchases.length > 0) {
-        // If we have purchases but they're not products, log for debugging
-        console.log('Cart has purchases but none are products:', {
-          totalPurchases: cartData.purchases.length,
-          purchaseTypes: cartData.purchases.map(p => ({ id: p.id, type: p.type, productId: p.productId }))
-        })
+        // If we have purchases but they're not products
       } else {
         // Cart is empty
         setLocalItems([])
@@ -747,18 +743,26 @@ export default function CheckoutPage() {
       const firstName = nameParts[0] || formData.fullName || ''
       const lastName = nameParts.slice(1).join(' ') || firstName
 
+      // Get selected address data if an address was selected
+      const selectedAddress = selectedAddressId
+        ? addresses.find(addr => addr.id === selectedAddressId)
+        : null
+
       // Prepare customer request with all required fields
       const customer: CustomerRequest = {
         email: customerEmail,
         firstName: firstName,
         lastName: lastName,
-        address: formData.street || formData.location || '',
-        address2: null,
-        region: null,
-        city: formData.location || '',
-        country: 'Egypt', // Default to Egypt, can be made configurable
+        address: selectedAddress
+          ? (selectedAddress.address1 || formData.street || formData.location || '')
+          : (formData.street || formData.location || ''),
+        address2: selectedAddress?.address2 || null,
+        region: selectedAddress?.state || null,
+        city: selectedAddress?.city || formData.location || '',
+        country: selectedAddress?.country || 'Egypt',
         phone: formData.mobileNumber,
-        postCode: null,
+        postCode: selectedAddress?.postcode || null,
+        deliveryAddressId: selectedAddressId || null, // Include DeliveryAddressId if address is selected
       }
 
       // Get preferred delivery date from first purchase with delivery date, if any
@@ -776,6 +780,12 @@ export default function CheckoutPage() {
         preferredDeliveryDate: preferredDeliveryDate,
       }
 
+      // Validate cart is active before proceeding
+      if (!cartData.active) {
+        throw new Error('Cart is not active. Please refresh your cart and try again.')
+      }
+
+      // Step 1: Call checkout API first
       const checkoutResponse = await checkoutMutation.mutateAsync(checkoutRequest)
 
       setShowPaymentConfirmation(false)
@@ -783,14 +793,26 @@ export default function CheckoutPage() {
       // If there's a redirect URL, navigate to it
       if (checkoutResponse.redirectUrl) {
         window.location.href = checkoutResponse.redirectUrl
-      } else {
-        // Otherwise show order confirmation
-        setTimeout(() => {
-          setShowOrderConfirmation(true)
-        }, 300)
+        return
       }
+
+      // Store checkout data in sessionStorage for create-order page
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('checkoutRequest', JSON.stringify(checkoutRequest))
+        sessionStorage.setItem('checkoutResponse', JSON.stringify(checkoutResponse))
+        sessionStorage.setItem('cartData', JSON.stringify(cartData))
+      }
+
+      // Step 2: Navigate to create-order page to complete the order creation
+      // The create-order page will handle polling (if needed) and call create order API
+      const params = new URLSearchParams({
+        checkoutOrderNumber: checkoutResponse.checkoutOrderNumber || '',
+        orderId: checkoutResponse.orderId?.toString() || '',
+        cartId: checkoutResponse.cartId?.toString() || '',
+        status: checkoutResponse.status || '',
+      })
+      router.push(`/create-order?${params.toString()}`)
     } catch (error) {
-      console.error('Checkout error:', error)
       addToast(
         error instanceof Error
           ? error.message
@@ -822,7 +844,6 @@ export default function CheckoutPage() {
         prev.map(p => (p.id === id ? { ...p, quantity: newQuantity } : p))
       )
     } catch (error) {
-      console.error('Failed to update quantity:', error)
       addToast('Failed to update quantity. Please try again.', 'error')
     }
   }
@@ -844,7 +865,6 @@ export default function CheckoutPage() {
         return newSet
       })
     } catch (error) {
-      console.error('Failed to remove item:', error)
       addToast('Failed to remove item. Please try again.', 'error')
     }
   }
@@ -1067,8 +1087,8 @@ export default function CheckoutPage() {
                             onClick={() => {
                               setSelectedAddressId(address.id)
                               // Update form data with selected address
-                              updateFormData('location', address.cityName || address.addressEn || '')
-                              updateFormData('street', address.street || address.addressEn || '')
+                              updateFormData('location', address.city || address.address1 || '')
+                              updateFormData('street', address.address1 || address.address2 || '')
                             }}
                             className={cn(
                               'flex-shrink-0 px-4 py-3 rounded-lg border-2 transition-all text-left min-w-[200px]',
@@ -1088,11 +1108,11 @@ export default function CheckoutPage() {
                                   'text-14 font-medium truncate',
                                   selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-900'
                                 )}>
-                                  {address.nameEn || address.nameAr || 'Address'}
+                                  {address.contactName || 'Address'}
                                 </p>
                                 <p className="text-12 text-gray-600 line-clamp-2 mt-1">
-                                  {address.street || address.addressEn || address.addressAr || ''}
-                                  {address.cityName && `, ${address.cityName}`}
+                                  {address.address1 || ''} {address.address2 || ''}
+                                  {address.city && `, ${address.city}`}
                                 </p>
                               </div>
                             </div>
@@ -1413,7 +1433,7 @@ export default function CheckoutPage() {
                     <div className="space-y-3">
                       {cartProducts.map(product => (
                         <CheckoutCartItem
-                          key={product.id}
+                          key={`product-${product.purchaseId ?? product.id}`}
                           id={product.id}
                           title={product.title}
                           image={product.image}
@@ -1435,7 +1455,7 @@ export default function CheckoutPage() {
                     <div className="space-y-3">
                       {reservationPurchases.map((reservation) => (
                         <CheckoutCartItem
-                          key={reservation.id}
+                          key={`reservation-${reservation.purchaseId ?? reservation.id}`}
                           id={reservation.id}
                           title={reservation.title}
                           image={reservation.image}
@@ -1456,7 +1476,7 @@ export default function CheckoutPage() {
                     <div className="space-y-3">
                       {membershipPurchases.map((membership) => (
                         <CheckoutCartItem
-                          key={membership.id}
+                          key={`membership-${membership.purchaseId ?? membership.id}`}
                           id={membership.id}
                           title={membership.title}
                           image={membership.image}
@@ -1476,7 +1496,7 @@ export default function CheckoutPage() {
                     <div className="space-y-3">
                       {giftCardPurchases.map((giftCard) => (
                         <CheckoutCartItem
-                          key={giftCard.id}
+                          key={`giftcard-${giftCard.purchaseId ?? giftCard.id}`}
                           id={giftCard.id}
                           title={giftCard.title}
                           image={giftCard.image}
@@ -1604,10 +1624,10 @@ export default function CheckoutPage() {
                     type="submit"
                     variant="default"
                     size="xl"
-                    disabled={isCheckoutDisabled || checkoutMutation.isPending || !formData.acceptTerms}
+                    disabled={isCheckoutDisabled || checkoutMutation.isPending || isSubmitting || !formData.acceptTerms}
                     className="w-full rounded-lg text-white"
                   >
-                    {isSubmitting || checkoutMutation.isPending ? 'Processing...' : 'Checkout'}
+                    {isSubmitting || checkoutMutation.isPending ? 'Processing...' : 'Create Order'}
                   </Button>
                 </div>
 
@@ -1644,10 +1664,11 @@ export default function CheckoutPage() {
           updatePurchaseMutation.isPending ||
           removePurchaseMutation.isPending ||
           checkoutMutation.isPending ||
+          isSubmitting ||
           validateCouponMutation.isPending
         }
         title={
-          checkoutMutation.isPending
+          checkoutMutation.isPending || isSubmitting
             ? 'Processing checkout...'
             : updatePurchaseMutation.isPending || removePurchaseMutation.isPending
               ? 'Updating cart...'

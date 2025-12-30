@@ -1,7 +1,7 @@
 // Service API service functions
 
 import { apiClient } from '@/services/api/apiClient'
-import type { ApiResult } from '@/../client/common/api/gen/ourbride-api'
+import type { ApiResult } from '@/types/responses'
 import type { ReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import type { ServiceResponse } from '@/types/responses/service-response'
 
@@ -14,11 +14,27 @@ export const toggleServiceFavorite = async (
 ): Promise<boolean> => {
   try {
     const response = await apiClient.api.postServicesToggleFavorite(serviceId)
-    const responseAny: any = response
-    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as { data?: boolean; success?: boolean } | boolean
-    // Return true if favorited, false if removed
-    if (typeof result === 'boolean') return result
-    return result?.data ?? result?.success ?? true
+    const responseData = response as unknown as { data?: { data?: boolean } | { success?: boolean } | boolean } | { success?: boolean } | boolean
+    if (typeof responseData === 'boolean') {
+      return responseData
+    }
+    if (responseData && typeof responseData === 'object') {
+      if ('data' in responseData && responseData.data) {
+        if (typeof responseData.data === 'boolean') {
+          return responseData.data
+        }
+        if (typeof responseData.data === 'object' && 'data' in responseData.data) {
+          return responseData.data.data ?? true
+        }
+        if (typeof responseData.data === 'object' && 'success' in responseData.data) {
+          return responseData.data.success ?? true
+        }
+      }
+      if ('success' in responseData) {
+        return responseData.success ?? true
+      }
+    }
+    return true
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to toggle service favorite'
@@ -35,11 +51,27 @@ export const toggleServiceWishlist = async (
 ): Promise<boolean> => {
   try {
     const response = await apiClient.api.postServicesToggleWishlist(serviceId)
-    const responseAny: any = response
-    const result = (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as { data?: boolean; success?: boolean } | boolean
-    // Return true if added, false if removed
-    if (typeof result === 'boolean') return result
-    return result?.data ?? result?.success ?? true
+    const responseData = response as unknown as { data?: { data?: boolean } | { success?: boolean } | boolean } | { success?: boolean } | boolean
+    if (typeof responseData === 'boolean') {
+      return responseData
+    }
+    if (responseData && typeof responseData === 'object') {
+      if ('data' in responseData && responseData.data) {
+        if (typeof responseData.data === 'boolean') {
+          return responseData.data
+        }
+        if (typeof responseData.data === 'object' && 'data' in responseData.data) {
+          return responseData.data.data ?? true
+        }
+        if (typeof responseData.data === 'object' && 'success' in responseData.data) {
+          return responseData.data.success ?? true
+        }
+      }
+      if ('success' in responseData) {
+        return responseData.success ?? true
+      }
+    }
+    return true
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to toggle service wishlist'
@@ -54,11 +86,25 @@ export const toggleServiceWishlist = async (
 export const submitServiceReview = async (
   serviceId: number,
   data: ReviewRequest
-): Promise<ApiResult> => {
+): Promise<ApiResult<unknown>> => {
   try {
     const response = await apiClient.api.postServicesAddReviews(serviceId, data)
-    const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
+    const responseData = response as unknown as { data?: { data?: ApiResult<unknown> } | ApiResult<unknown> } | ApiResult<unknown>
+    if (responseData && typeof responseData === 'object') {
+      if ('data' in responseData && responseData.data) {
+        if (typeof responseData.data === 'object' && 'success' in responseData.data) {
+          return responseData.data as ApiResult<unknown>
+        }
+        if (typeof responseData.data === 'object' && 'data' in responseData.data && responseData.data.data) {
+          return responseData.data.data as ApiResult<unknown>
+        }
+      }
+      if ('success' in responseData && 'statusCode' in responseData) {
+        return responseData as ApiResult<unknown>
+      }
+    }
+    const defaultResult: ApiResult<unknown> = { data: null, success: false, statusCode: 0, message: '' }
+    return defaultResult
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to submit service review'
@@ -78,11 +124,25 @@ export const getServiceReviews = async (
     Page?: number
     PageSize?: number
   }
-): Promise<ApiResult> => {
+): Promise<ApiResult<unknown>> => {
   try {
     const response = await apiClient.api.getServicesGetReviews(serviceId, query)
-    const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
+    const responseData = response as unknown as { data?: { data?: ApiResult<unknown> } | ApiResult<unknown> } | ApiResult<unknown>
+    if (responseData && typeof responseData === 'object') {
+      if ('data' in responseData && responseData.data) {
+        if (typeof responseData.data === 'object' && 'success' in responseData.data) {
+          return responseData.data as ApiResult<unknown>
+        }
+        if (typeof responseData.data === 'object' && 'data' in responseData.data && responseData.data.data) {
+          return responseData.data.data as ApiResult<unknown>
+        }
+      }
+      if ('success' in responseData && 'statusCode' in responseData) {
+        return responseData as ApiResult<unknown>
+      }
+    }
+    const defaultResult: ApiResult<unknown> = { data: null, success: false, statusCode: 0, message: '' }
+    return defaultResult
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch service reviews'
@@ -96,11 +156,25 @@ export const getServiceReviews = async (
  */
 export const getServiceReviewSummary = async (
   serviceId: number
-): Promise<ApiResult> => {
+): Promise<ApiResult<unknown>> => {
   try {
     const response = await apiClient.api.getServicesReviewSummary(serviceId)
-    const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ApiResult
+    const responseData = response as unknown as { data?: { data?: ApiResult<unknown> } | ApiResult<unknown> } | ApiResult<unknown>
+    if (responseData && typeof responseData === 'object') {
+      if ('data' in responseData && responseData.data) {
+        if (typeof responseData.data === 'object' && 'success' in responseData.data) {
+          return responseData.data as ApiResult<unknown>
+        }
+        if (typeof responseData.data === 'object' && 'data' in responseData.data && responseData.data.data) {
+          return responseData.data.data as ApiResult<unknown>
+        }
+      }
+      if ('success' in responseData && 'statusCode' in responseData) {
+        return responseData as ApiResult<unknown>
+      }
+    }
+    const defaultResult: ApiResult<unknown> = { data: null, success: false, statusCode: 0, message: '' }
+    return defaultResult
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch service review summary'
@@ -190,20 +264,20 @@ export const getServicesByPreparationIdPaged = async (
 export const getServiceById = async (serviceId: number): Promise<ServiceResponse | null> => {
   try {
     const response = await apiClient.api.getServicesGet(serviceId)
-    const responseAny: any = response
+    const responseData = response as unknown as { data?: { data?: ServiceResponse } | ServiceResponse } | ServiceResponse
     
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
-      const data = (responseAny as { data?: unknown }).data
-      if (data && typeof data === 'object' && 'data' in data) {
-        return (data as { data: ServiceResponse }).data
+    if (responseData && typeof responseData === 'object' && 'data' in responseData && responseData.data) {
+      const data = responseData.data
+      if (typeof data === 'object' && 'data' in data && data.data) {
+        return data.data
       }
-      if (data && typeof data === 'object' && 'id' in data) {
+      if (typeof data === 'object' && 'id' in data) {
         return data as ServiceResponse
       }
     }
-    if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as ServiceResponse
+    if (responseData && typeof responseData === 'object' && 'id' in responseData) {
+      return responseData as ServiceResponse
     }
     
     return null

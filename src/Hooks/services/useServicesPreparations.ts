@@ -22,7 +22,6 @@ export const useServicesPreparations = (enabled = true) => {
           categories: extractedData.categories || [],
         }
       } catch (error) {
-        console.error('Error fetching services preparations:', error)
         throw error
       }
     },

@@ -10,13 +10,16 @@ import type {
   TaxClass,
   ShippingClass,
   SourceOfTruth,
+
+} from '@/../client/common/api/gen/ourbride-api'
+import type {
   ProductAttributeResponse,
   ItemResponse,
   ProductAnalyticsResponse,
   InventoryResponse,
   ProductBrandResponse,
   ProviderProductBrandResponse,
-} from '@/../client/common/api/gen/ourbride-api'
+} from '@/types/responses'
 import type { ReviewResponse } from './review-response'
 import type { MediaResponse } from './media-response'
 import type { ProductInformationResponse } from './product-information-response'

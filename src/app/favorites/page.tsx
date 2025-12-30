@@ -149,7 +149,7 @@ export default function FavoritesPage() {
         )
       })
       .map((favorite) => {
-        const productResponse = favorite.sourceObject as unknown as import('@/../client/common/api/gen/ourbride-api').ProductResponse
+        const productResponse = favorite.sourceObject as ProductResponse
         try {
           return mapProductResponseToProduct(productResponse)
         } catch (error) {
