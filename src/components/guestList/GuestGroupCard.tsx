@@ -92,15 +92,24 @@ export const GuestGroupCard = ({
           ) : (
             <>
               <div className="divide-y divide-gray-100">
-                {groupGuests.map(guest => (
-                  <GuestRow
-                    key={guest.id}
-                    guest={guest}
-                    onToggleSelect={onToggleSelect}
-                    onToggleStatus={onToggleStatus}
-                    onDelete={onDelete}
-                  />
-                ))}
+                {groupGuests.map(guest => {
+                  // Use stable key: server-synced items use id, draft items use clientId
+                  const guestIdNum = parseInt(guest.id, 10)
+                  const rowKey = (!isNaN(guestIdNum) && guestIdNum > 0)
+                    ? `srv-${guest.id}`
+                    : guest.clientId 
+                      ? `tmp-${guest.clientId}` 
+                      : `tmp-${guest.id}-${Math.random()}` // Fallback (shouldn't happen)
+                  return (
+                    <GuestRow
+                      key={rowKey}
+                      guest={guest}
+                      onToggleSelect={onToggleSelect}
+                      onToggleStatus={onToggleStatus}
+                      onDelete={onDelete}
+                    />
+                  )
+                })}
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-50 border-t border-gray-100">
                 <Button

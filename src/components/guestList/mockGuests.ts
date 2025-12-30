@@ -11,6 +11,7 @@ export interface Guest {
   registeredAt: string // ISO date string
   status: GuestStatus
   selected: boolean
+  clientId?: string // Client-side UUID for stable React keys (draft items)
 }
 
 export interface GuestGroup {

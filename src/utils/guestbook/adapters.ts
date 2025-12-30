@@ -99,29 +99,90 @@ const normalizeGuestRelevant = (relevant: any): GuestRelevant => {
 /**
  * Convert API response to draft format
  */
-export const mapApiToDraft = (apiData: GuestBookResponse | null | any): GuestBookDraft | null => {
+export const mapApiToDraft = (apiData: GuestBookResponse | null | any, activeSide?: 'bride' | 'groom'): GuestBookDraft | null => {
   if (!apiData) return null
 
   // Normalize lines - convert string enums to numbers
-  const normalizedLines = (apiData.lines || []).map((line: any) => ({
+  let normalizedLines = (apiData.lines || []).map((line: any) => ({
     ...line,
     title: normalizeGuestTitle(line.title),
     status: normalizeGuestStatus(line.status),
     guestRelevant: normalizeGuestRelevant(line.guestRelevant),
   }))
 
+  // Filter lines by activeSide if provided
+  if (activeSide) {
+    const targetGuestRelevant = activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom
+    normalizedLines = normalizedLines.filter((line: any) => {
+      // Check both guestRelevant and family field
+      const lineGuestRelevant = normalizeGuestRelevant(line.guestRelevant)
+      const family = line.family?.trim() || ''
+      const lineSide = family === 'Groom' ? 'groom' : 'bride'
+      
+      return lineGuestRelevant === targetGuestRelevant || lineSide === activeSide
+    })
+  }
+
+  // Get category IDs from filtered lines
+  const visibleCategoryIds = new Set<number>()
+  normalizedLines.forEach((line: any) => {
+    if (line.lineCategoryId) {
+      visibleCategoryIds.add(line.lineCategoryId)
+    }
+  })
+
+  // Filter categories - include only those used by filtered lines or matching activeSide
+  let filteredCategories = apiData.lineCategories || []
+  if (activeSide) {
+    const targetGuestRelevant = activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom
+    filteredCategories = filteredCategories.filter((cat: any) => {
+      const catGuestRelevant = normalizeGuestRelevant(cat.guestRelevant)
+      // Include category if it matches activeSide OR is used by visible lines
+      return catGuestRelevant === targetGuestRelevant || visibleCategoryIds.has(cat.id || 0)
+    })
+  }
+
   return {
     ...apiData,
     lines: normalizedLines,
-    lineCategories: apiData.lineCategories || [],
+    lineCategories: filteredCategories,
   } as GuestBookDraft
 }
 
 /**
  * Convert draft to sync payload
  */
-export const mapDraftToSyncPayload = (draft: GuestBookDraft): GuestBookRequest => {
-  const categories = draft.lineCategories || []
+export const mapDraftToSyncPayload = (draft: GuestBookDraft, activeSide?: 'bride' | 'groom'): GuestBookRequest => {
+  let categories = draft.lineCategories || []
+  let lines = draft.lines || []
+
+  // Filter by activeSide if provided
+  if (activeSide) {
+    const targetGuestRelevant = activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom
+    
+    // Filter lines by activeSide
+    lines = lines.filter(line => {
+      const lineGuestRelevant = normalizeGuestRelevant(line.guestRelevant)
+      const family = line.family?.trim() || ''
+      const lineSide = family === 'Groom' ? 'groom' : 'bride'
+      
+      return lineGuestRelevant === targetGuestRelevant || lineSide === activeSide
+    })
+
+    // Get category IDs from filtered lines
+    const visibleCategoryIds = new Set<number>()
+    lines.forEach(line => {
+      if (line.lineCategoryId) {
+        visibleCategoryIds.add(line.lineCategoryId)
+      }
+    })
+
+    // Filter categories - include only those matching activeSide or used by filtered lines
+    categories = categories.filter(cat => {
+      const catGuestRelevant = normalizeGuestRelevant(cat.guestRelevant)
+      return catGuestRelevant === targetGuestRelevant || visibleCategoryIds.has(cat.id || 0)
+    })
+  }
   
   // Debug: Log all categories before processing
   const negativeCategories = categories.filter(cat => cat.id && cat.id < 0)
@@ -150,9 +211,9 @@ export const mapDraftToSyncPayload = (draft: GuestBookDraft): GuestBookRequest =
   // IMPORTANT: Include all categories, not just non-deleted ones, so API can process them
   const lineCategories: GuestLineCategoryRequest[] = categories
     .map(cat => {
-      // If category has negative ID, it's new - set id: 0 for API to create it
+      // If category has negative ID or id: 0, it's new - set id: 0 for API to create it
       const categoryId = cat.id || 0
-      const isNewCategory = categoryId < 0
+      const isNewCategory = categoryId <= 0
       
       return {
         id: isNewCategory ? 0 : categoryId, // Use 0 for new categories, actual ID for existing
@@ -175,7 +236,7 @@ export const mapDraftToSyncPayload = (draft: GuestBookDraft): GuestBookRequest =
   // Convert lines - include all lines (including deleted) for sync
   // If line has lineCategorySlug, use it and set lineCategoryId to null
   // If line has lineCategoryId (positive), use it and set lineCategorySlug to null
-  const lines: GuestLineRequest[] = (draft.lines || [])
+  const convertedLines: GuestLineRequest[] = lines
     .map(line => {
       let lineCategoryId = line.lineCategoryId || null
       let lineCategorySlug = (line as any).lineCategorySlug || null
@@ -234,7 +295,7 @@ export const mapDraftToSyncPayload = (draft: GuestBookDraft): GuestBookRequest =
     clientName: null,
     weddingDate: null,
     eventLocation: null,
-    lines,
+    lines: convertedLines,
     lineCategories, // Ensure new categories (with id: 0) are included
     lastModifiedDate: new Date().toISOString(),
     brideNumber: draft.brideNumber || null,
