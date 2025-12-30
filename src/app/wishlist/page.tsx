@@ -135,7 +135,7 @@ export default function WishlistPage() {
         )
       })
       .map((wishlist) => {
-        const productResponse = wishlist.sourceObject as unknown as import('@/../client/common/api/gen/ourbride-api').ProductResponse
+        const productResponse = wishlist.sourceObject as ProductResponse
         try {
           return mapProductResponseToProduct(productResponse)
         } catch (error) {

@@ -2,7 +2,7 @@
  * Utility functions for home page data transformation
  */
 
-import type { ProductResponse } from '@/../client/common/api/gen/ourbride-api'
+import type { ProductResponse } from '@/types/responses'
 import { mapProductResponseToProduct } from '@/types/api/product.api.types'
 import type { Product } from '@/types/product'
 import type { ServiceResponse } from '@/types/responses/service-response'
@@ -542,6 +542,14 @@ export const extractHomeData = (apiResponse: unknown) => {
     providers?: ProviderCardData[]
     memberTestimonials?: MemberTestimonialCardData[]
     banners?: OfferItem[]
+    statistics?: {
+      clients: string
+      serviceProviders: string
+      availableServices: string
+      products: string
+      activeUsers: string
+      reservations: string
+    }
   } = {}
 
   // Handle different response structures
@@ -557,6 +565,19 @@ export const extractHomeData = (apiResponse: unknown) => {
   result.providers = extractProviders(data)
   result.memberTestimonials = extractMemberTestimonials(data)
   result.banners = extractBanners(data)
+
+  // Extract statistics
+  if (isObject(data.statistics)) {
+    const stats = data.statistics as Record<string, unknown>
+    result.statistics = {
+      clients: String(stats.clients || '+0'),
+      serviceProviders: String(stats.serviceProviders || '+0'),
+      availableServices: String(stats.availableServices || '+0'),
+      products: String(stats.products || '+0'),
+      activeUsers: String(stats.activeUsers || '+0'),
+      reservations: String(stats.reservations || '+0'),
+    }
+  }
 
   return result
 }

@@ -14,9 +14,11 @@ import type { Service } from '@/types/service'
 export interface ServiceCardProps {
   service: Service
   onWishlistToggle?: (e: React.MouseEvent) => void
+  onFavoriteToggle?: (e: React.MouseEvent) => void
   onFollowToggle?: (e: React.MouseEvent) => void
   onBookNow?: (serviceId: string) => void
   isLoadingWishlist?: boolean
+  isLoadingFavorite?: boolean
   isLoadingFollow?: boolean
   className?: string
 }
@@ -24,9 +26,11 @@ export interface ServiceCardProps {
 export const ServiceCard = React.memo(({
   service,
   onWishlistToggle,
+  onFavoriteToggle,
   onFollowToggle,
   onBookNow,
   isLoadingWishlist = false,
+  isLoadingFavorite = false,
   isLoadingFollow = false,
   className,
 }: ServiceCardProps) => {

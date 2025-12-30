@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getProductBrands } from '@/services/api/products.api'
-import type { ProductBrandResponse } from '@/../client/common/api/gen/ourbride-api'
+import type { ProductBrandResponse } from '@/types/responses'
 
 /**
  * Hook to fetch all product brands

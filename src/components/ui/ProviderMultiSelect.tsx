@@ -35,17 +35,35 @@ export const ProviderMultiSelect = ({
     }
     const query = searchQuery.toLowerCase()
     return providers.filter(
-      (provider) =>
-        provider.providerNameEn?.toLowerCase().includes(query) ||
-        provider.providerNameAr?.toLowerCase().includes(query)
+      (provider) => {
+        // General cart (providerId is null) - search by "general"
+        if (provider.providerId === null || provider.providerId === undefined) {
+          return 'general'.includes(query)
+        }
+        return (
+          provider.providerNameEn?.toLowerCase().includes(query) ||
+          provider.providerNameAr?.toLowerCase().includes(query)
+        )
+      }
     )
   }, [providers, searchQuery])
 
   const selectedProviders = useMemo(() => {
-    return providers.filter((p) => selectedProviderIds.includes(p.providerId))
+    // Filter providers that are selected (by providerId)
+    // Note: General cart (providerId is null) is handled separately by parent via cartId
+    return providers.filter((p) => {
+      if (p.providerId === null || p.providerId === undefined) {
+        return false // General cart selection is handled by parent component
+      }
+      return selectedProviderIds.includes(p.providerId)
+    })
   }, [providers, selectedProviderIds])
 
-  const handleToggleProvider = (providerId: number) => {
+  const handleToggleProvider = (providerId: number | null) => {
+    if (providerId === null || providerId === undefined) {
+      // General cart - handled separately by parent
+      return
+    }
     if (selectedProviderIds.includes(providerId)) {
       onChange(selectedProviderIds.filter((id) => id !== providerId))
     } else {
@@ -54,10 +72,14 @@ export const ProviderMultiSelect = ({
   }
 
   const handleSelectAll = () => {
-    if (selectedProviderIds.length === providers.length) {
+    // Filter out general cart (providerId is null) for select all
+    const providerCarts = providers.filter(p => p.providerId !== null && p.providerId !== undefined)
+    const providerIds = providerCarts.map((p) => p.providerId!).filter((id): id is number => id !== null)
+    
+    if (selectedProviderIds.length === providerIds.length) {
       onChange([])
     } else {
-      onChange(providers.map((p) => p.providerId))
+      onChange(providerIds)
     }
   }
 
@@ -107,23 +129,43 @@ export const ProviderMultiSelect = ({
               {selectedProviders.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-1 min-w-0">
                   <div className="flex items-center gap-1 flex-wrap">
-                    {selectedProviders.slice(0, 2).map((provider) => (
+                    {selectedProviders.slice(0, 2).map((provider) => {
+                      const displayName = provider.providerId === null || provider.providerId === undefined
+                        ? 'General'
+                        : (provider.providerNameEn || provider.providerNameAr)
+                      return (
                       <span
-                        key={provider.providerId}
+                        key={provider.providerId ?? `general-${provider.cartId}`}
                         className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-brand-100 text-brand-700 rounded text-11 font-medium"
                       >
                         <span className="truncate max-w-[60px]">
-                          {provider.providerNameEn || provider.providerNameAr}
+                          {displayName}
                         </span>
-                        <button
-                          type="button"
-                          onClick={(e) => handleRemoveProvider(provider.providerId, e)}
-                          className="hover:text-brand-900 flex-shrink-0"
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (provider.providerId !== null && provider.providerId !== undefined) {
+                              handleRemoveProvider(provider.providerId, e)
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              if (provider.providerId !== null && provider.providerId !== undefined) {
+                                handleRemoveProvider(provider.providerId, e as any)
+                              }
+                            }
+                          }}
+                          className="hover:text-brand-900 flex-shrink-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-brand-500 rounded"
                         >
                           <X className="h-2.5 w-2.5" />
-                        </button>
+                        </span>
                       </span>
-                    ))}
+                      )
+                    })}
                     {selectedProviders.length > 2 && (
                       <span className="text-11 text-gray-600 font-medium">
                         +{selectedProviders.length - 2}
@@ -137,14 +179,21 @@ export const ProviderMultiSelect = ({
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
               {selectedProviders.length > 0 && (
-                <button
-                  type="button"
+                <span
+                  role="button"
+                  tabIndex={0}
                   onClick={handleClearAll}
-                  className="p-0.5 text-gray-400 hover:text-gray-600"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleClearAll(e as any)
+                    }
+                  }}
+                  className="p-0.5 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-1 focus:ring-brand-500 rounded"
                   aria-label="Clear all"
                 >
                   <X className="h-3 w-3" />
-                </button>
+                </span>
               )}
               <ChevronDown
                 className={cn(
@@ -194,12 +243,14 @@ export const ProviderMultiSelect = ({
               </div>
             ) : (
               filteredProviders.map((provider) => {
-                const isSelected = selectedProviderIds.includes(provider.providerId)
+                const isSelected = provider.providerId !== null && provider.providerId !== undefined
+                  ? selectedProviderIds.includes(provider.providerId)
+                  : false
                 return (
                   <button
-                    key={provider.providerId}
+                    key={provider.providerId ?? `general-${provider.cartId}`}
                     type="button"
-                    onClick={() => handleToggleProvider(provider.providerId)}
+                    onClick={() => handleToggleProvider(provider.providerId ?? null)}
                     className={cn(
                       'w-full flex items-center gap-3 px-3 py-2.5 text-16 font-normal transition-colors',
                       'hover:bg-gray-50',
@@ -227,7 +278,9 @@ export const ProviderMultiSelect = ({
                     {/* Provider Info */}
                     <div className="flex-1 min-w-0 text-left">
                       <div className="text-14 font-medium text-gray-900 truncate">
-                        {provider.providerNameEn || provider.providerNameAr || 'Provider'}
+                        {provider.providerId === null || provider.providerId === undefined
+                          ? 'General'
+                          : (provider.providerNameEn || provider.providerNameAr || 'Provider')}
                       </div>
                       <div className="text-12 text-gray-500">
                         {provider.itemCount} {provider.itemCount === 1 ? 'item' : 'items'}

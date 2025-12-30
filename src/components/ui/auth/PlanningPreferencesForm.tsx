@@ -194,7 +194,6 @@ export const PlanningPreferencesForm = ({
         preferencesFetchedRef.current = false
         const errorMessage = error instanceof Error ? error.message : 'Failed to load planning preferences'
         setApiError(errorMessage)
-        console.error('Error fetching planning preferences:', error)
       } finally {
         setIsLoadingPreferences(false)
       }
@@ -306,7 +305,6 @@ export const PlanningPreferencesForm = ({
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to save planning preferences'
       setApiError(errorMessage)
-      console.error('Error setting planning preferences:', error)
     } finally {
       setIsSubmitting(false)
     }

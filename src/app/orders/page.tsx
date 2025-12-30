@@ -21,7 +21,6 @@ import type { OrderStatus } from '@/components/ui/OrderProgressIndicator'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
 import {
   useClientOrders,
-  useOrdersByStatus,
   useCancelOrder,
   useCartsWithProviders,
 } from '@/hooks'
@@ -53,18 +52,15 @@ const mapOrderStatus = (status: ApiOrderStatus | string): OrderStatus => {
  * Map OrderResponse to OrderCard format
  */
 const mapOrderToOrderCard = (order: OrderResponse) => {
-  // Format order date
+
+  // Format order date - use a static fallback to avoid hydration mismatch
   const orderDate = order.orderDate
     ? new Date(order.orderDate).toLocaleDateString('en-GB', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
     })
-    : new Date().toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
+    : 'N/A'
 
   // Format delivery date
   const arrivalDate = order.deliveryDate
@@ -85,15 +81,30 @@ const mapOrderToOrderCard = (order: OrderResponse) => {
 
   // Map purchases from OrderResponse to products
   // OrderResponse.purchases contains PurchaseResponse[] with product information
-  const products = (order.purchases || [])
-    .filter((p: PurchaseResponse) => p.product)
-    .map((purchase: PurchaseResponse) => ({
-      id: purchase.productId?.toString() ?? purchase.id.toString(),
-      title: purchase.product?.nameEn ?? purchase.product?.nameAr ?? 'Product',
-      image: purchase.product?.image ?? '/placeholder-product.png',
-      price: purchase.totalPrice ?? purchase.price ?? 0,
-      quantity: purchase.quantity,
-    }))
+  // Include both products (with productId) and services (with serviceId) that have name/image data
+  const purchases = order.purchases || []
+
+  const products = purchases
+    .filter((p: PurchaseResponse) => {
+      // Include purchases that have a product, OR have name/image data (for display purposes)
+      const hasProduct = !!p.product
+      const hasName = !!(p.name || p.nameEn || p.nameAr)
+      const hasId = !!(p.productId || p.serviceId)
+      return hasProduct || hasName || hasId
+    })
+    .map((purchase: PurchaseResponse) => {
+      // Use product data if available, otherwise use purchase name/image
+      const productName = purchase.product?.nameEn ?? purchase.product?.nameAr ?? purchase.nameEn ?? purchase.nameAr ?? purchase.name ?? 'Item'
+      const productImage = purchase.product?.image ?? purchase.imageUrl ?? '/images/placeholder-product.png'
+
+      return {
+        id: purchase.productId?.toString() ?? purchase.serviceId?.toString() ?? purchase.id.toString(),
+        title: productName,
+        image: productImage,
+        price: purchase.totalPrice ?? purchase.price ?? 0,
+        quantity: purchase.quantity,
+      }
+    })
 
   // Use OrderResponse fields: prefer orderSummary if available, otherwise use direct fields
   // OrderResponse.orderSummary contains OrderSummaryResponse with calculated totals
@@ -112,6 +123,17 @@ const mapOrderToOrderCard = (order: OrderResponse) => {
     total: order.orderSummary?.total ?? order.finalAmount ?? order.totalAmount,
     arrivalDate,
     arrivalTime,
+    providerName: order.providerName || undefined,
+    providerLogo: order.providerLogo || undefined,
+    providerId: order.providerId || undefined,
+    paymentStatus: order.paymentStatusText || order.paymentStatus || undefined,
+    paymentMethod: order.paymentMethod || undefined,
+    totalPaidAmount: order.totalPaidAmount || 0,
+    totalRemainingAmount: order.totalRemainingAmount || 0,
+    paymentProgressPercentage: order.paymentProgressPercentage || 0,
+    discountAmount: order.orderSummary?.discount ?? order.discountAmount ?? 0,
+    depositAmount: order.depositAmount ?? 0,
+    itemCount: products.length,
     orderResponse: order, // Store original OrderResponse for API calls
   }
 }
@@ -142,11 +164,7 @@ const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
       month: '2-digit',
       year: 'numeric',
     })
-    : new Date().toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
+    : 'N/A'
 
   const dueDate = purchase.endDate
     ? new Date(purchase.endDate).toLocaleDateString('en-GB', {
@@ -205,7 +223,7 @@ export default function OrdersPage() {
     'products'
   )
 
-  // Fetch orders data
+  // Fetch orders data - use single endpoint for all orders
   const {
     data: clientOrdersData,
     isLoading: isLoadingOrders,
@@ -214,19 +232,6 @@ export default function OrdersPage() {
     enabled: filterType === 'products',
   })
 
-  // Fetch in-progress orders (not delivered, not cancelled)
-  const {
-    data: inProgressOrders,
-    isLoading: isLoadingInProgress,
-  } = useOrdersByStatus('Preparing', {
-    enabled: filterType === 'products',
-  })
-
-  const {
-    data: onTheWayOrders,
-  } = useOrdersByStatus('OnTheWay', {
-    enabled: filterType === 'products',
-  })
 
   // Fetch service orders from carts with providers
   const {
@@ -235,28 +240,45 @@ export default function OrdersPage() {
     error: serviceOrdersError,
   } = useCartsWithProviders(filterType === 'services')
 
+
   // Cancel order mutation
   const cancelOrderMutation = useCancelOrder()
 
   // Map orders to component format
   const ordersInProgress = useMemo(() => {
-    if (!clientOrdersData?.items) return []
+    // Check for nested data structure (data.items vs items)
+    let allOrders: OrderResponse[] = []
 
-    // Combine all orders and filter for in-progress
-    const allOrders = clientOrdersData.items
+    if (clientOrdersData?.items && Array.isArray(clientOrdersData.items)) {
+      allOrders = clientOrdersData.items
+    } else if ((clientOrdersData as any)?.data?.items && Array.isArray((clientOrdersData as any).data.items)) {
+      allOrders = (clientOrdersData as any).data.items
+    } else {
+      return []
+    }
+
+    // Filter for orders that are not completed and not cancelled
+    // Don't require isActive to be true, as some orders may have isActive: false but are still in progress
     const inProgress = allOrders.filter(
-      (order: OrderResponse) =>
-        !order.isCompleted && !order.isCancelled && order.isActive
+      (order: OrderResponse) => !order.isCompleted && !order.isCancelled
     )
 
     return inProgress.map(mapOrderToOrderCard)
   }, [clientOrdersData])
 
   const ordersHistory = useMemo(() => {
-    if (!clientOrdersData?.items) return []
+    // Check for nested data structure (data.items vs items)
+    let allOrders: OrderResponse[] = []
+
+    if (clientOrdersData?.items && Array.isArray(clientOrdersData.items)) {
+      allOrders = clientOrdersData.items
+    } else if ((clientOrdersData as any)?.data?.items && Array.isArray((clientOrdersData as any).data.items)) {
+      allOrders = (clientOrdersData as any).data.items
+    } else {
+      return []
+    }
 
     // Filter for completed or cancelled orders
-    const allOrders = clientOrdersData.items
     const history = allOrders.filter(
       (order: OrderResponse) => order.isCompleted || order.isCancelled
     )
@@ -329,7 +351,7 @@ export default function OrdersPage() {
   }, [cartsWithProviders])
 
   const isLoading = filterType === 'products'
-    ? isLoadingOrders || isLoadingInProgress
+    ? isLoadingOrders
     : isLoadingServiceOrders
   const error = filterType === 'products' ? ordersError : serviceOrdersError
 
@@ -352,8 +374,7 @@ export default function OrdersPage() {
         setSuccessModalOpen(true)
       }
     } catch (error) {
-      console.error('Failed to cancel order:', error)
-      // You might want to show a toast notification here
+      // Error handling
     }
   }
 
@@ -372,6 +393,11 @@ export default function OrdersPage() {
     setSelectedOrderId(null)
     // Navigate to home or products page
     window.location.href = '/'
+  }
+
+  const handleViewDetails = (orderId: string) => {
+    // Navigate to order details page
+    router.push(`/orders/${orderId}`)
   }
 
   const handleReorder = (_orderId: string) => {
@@ -536,7 +562,23 @@ export default function OrdersPage() {
                       total={order.total}
                       arrivalDate={order.arrivalDate}
                       arrivalTime={order.arrivalTime}
+                      providerName={order.providerName}
+                      providerLogo={order.providerLogo}
+                      providerId={order.providerId}
+                      paymentStatus={order.paymentStatus}
+                      paymentMethod={order.paymentMethod}
+                      totalPaidAmount={order.totalPaidAmount}
+                      totalRemainingAmount={order.totalRemainingAmount}
+                      paymentProgressPercentage={order.paymentProgressPercentage}
+                      discountAmount={order.discountAmount}
+                      depositAmount={order.depositAmount}
+                      itemCount={order.itemCount}
                       onCancelOrder={() => handleCancelOrder(order.orderId)}
+                      onViewDetails={() => {
+                        const orderResponse = order.orderResponse
+                        const actualOrderId = orderResponse?.id || order.orderId
+                        handleViewDetails(actualOrderId.toString())
+                      }}
                     />
                   ))}
                 </div>
@@ -594,7 +636,23 @@ export default function OrdersPage() {
                     total={order.total}
                     arrivalDate={order.arrivalDate}
                     arrivalTime={order.arrivalTime}
+                    providerName={order.providerName}
+                    providerLogo={order.providerLogo}
+                    providerId={order.providerId}
+                    paymentStatus={order.paymentStatus}
+                    paymentMethod={order.paymentMethod}
+                    totalPaidAmount={order.totalPaidAmount}
+                    totalRemainingAmount={order.totalRemainingAmount}
+                    paymentProgressPercentage={order.paymentProgressPercentage}
+                    discountAmount={order.discountAmount}
+                    depositAmount={order.depositAmount}
+                    itemCount={order.itemCount}
                     onReorder={() => handleReorder(order.orderId)}
+                    onViewDetails={() => {
+                      const orderResponse = order.orderResponse
+                      const actualOrderId = orderResponse?.id || order.orderId
+                      handleViewDetails(actualOrderId.toString())
+                    }}
                   />
                 ))}
               </HistorySection>

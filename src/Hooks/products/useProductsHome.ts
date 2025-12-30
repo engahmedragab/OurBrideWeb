@@ -24,7 +24,6 @@ export const useProductsHome = (enabled = true) => {
           categories: extractedData.categories || [],
         }
       } catch (error) {
-        console.error('Error fetching products home:', error)
         throw error
       }
     },

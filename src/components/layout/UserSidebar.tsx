@@ -23,6 +23,7 @@ import {
   Users,
   MapPin,
   Ticket,
+  Calendar,
 } from 'lucide-react'
 
 export interface UserSidebarProps {
@@ -69,6 +70,11 @@ export const UserSidebar = ({
           label: 'My Cart',
           path: '/cart',
           icon: ShoppingCart,
+        },
+        {
+          label: 'Reservations',
+          path: '/reservations',
+          icon: Calendar,
         },
         {
           label: 'Wishlist',

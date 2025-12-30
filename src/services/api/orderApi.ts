@@ -1,6 +1,9 @@
 // Order API service functions
 
 import { apiClient } from '@/services/api/apiClient'
+import { getToken } from '@/auth/utils/token'
+import { getApiLanguage } from '@/utils/language'
+import axios from 'axios'
 import type {
   ServiceOrderUpdateRequest,
   ServiceOrderSearchRequest,
@@ -56,7 +59,22 @@ export const getClientOrders = async (query?: {
 }): Promise<PaginatedList<OrderResponse>> => {
   try {
     const response = await apiClient.api.getOrderGetClientOrders(query)
-    return (response?.data ?? response) as unknown as PaginatedList<OrderResponse>
+    const responseAny: any = response
+    
+    // Handle different response structures - check for nested data.data first
+    if (responseAny?.data?.data && typeof responseAny.data.data === 'object' && 'items' in responseAny.data.data) {
+      return responseAny.data.data as PaginatedList<OrderResponse>
+    }
+    // Check for data property with items
+    if (responseAny?.data && typeof responseAny.data === 'object' && 'items' in responseAny.data) {
+      return responseAny.data as PaginatedList<OrderResponse>
+    }
+    // Check if response itself is the paginated list
+    if (responseAny && typeof responseAny === 'object' && 'items' in responseAny) {
+      return responseAny as PaginatedList<OrderResponse>
+    }
+    
+    throw new Error('Failed to extract orders data from API response.')
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch client orders')
   }
@@ -73,7 +91,22 @@ export const getOrderById = async (
 ): Promise<OrderResponse> => {
   try {
     const response = await apiClient.api.getOrderGetOrderById(id, query)
-    return (response?.data ?? response) as unknown as OrderResponse
+    const responseAny: any = response
+    
+    // Handle different response structures - check for nested data.data first
+    if (responseAny?.data?.data && typeof responseAny.data.data === 'object' && 'id' in responseAny.data.data) {
+      return responseAny.data.data as OrderResponse
+    }
+    // Check for data property
+    if (responseAny?.data && typeof responseAny.data === 'object' && 'id' in responseAny.data) {
+      return responseAny.data as OrderResponse
+    }
+    // Check if response itself is the order
+    if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+      return responseAny as OrderResponse
+    }
+    
+    throw new Error('Failed to extract order data from API response.')
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch order')
   }
@@ -334,9 +367,9 @@ export const calculatePrices = async (
 }
 
 /**
- * Validate coupon
+ * Validate coupon for orders
  */
-export const validateCoupon = async (query?: {
+export const validateOrderCoupon = async (query?: {
   couponCode?: string
   providerId?: number
 }): Promise<boolean> => {
@@ -344,14 +377,14 @@ export const validateCoupon = async (query?: {
     const response = await apiClient.api.getOrderValidateCoupon(query)
     return (response?.data ?? response) as unknown as boolean
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to validate coupon')
+    throw new Error(error instanceof Error ? error.message : 'Failed to validate order coupon')
   }
 }
 
 /**
  * Search orders
  */
-export const searchOrders = async (
+export const searchOrderList = async (
   data: ServiceOrderSearchRequest,
   query?: {
     providerId?: number
@@ -508,7 +541,20 @@ export const generateOrderInvoice = async (
 ): Promise<ServiceInvoiceResponse> => {
   try {
     const response = await apiClient.api.getOrderGenerateOrderInvoice(id, query)
-    return (response?.data ?? response) as unknown as ServiceInvoiceResponse
+    const responseAny: any = response
+    
+    // Handle different response structures
+    if (responseAny?.data?.data && typeof responseAny.data.data === 'object' && 'orderId' in responseAny.data.data) {
+      return responseAny.data.data as ServiceInvoiceResponse
+    }
+    if (responseAny?.data && typeof responseAny.data === 'object' && 'orderId' in responseAny.data) {
+      return responseAny.data as ServiceInvoiceResponse
+    }
+    if (responseAny && typeof responseAny === 'object' && 'orderId' in responseAny) {
+      return responseAny as ServiceInvoiceResponse
+    }
+    
+    throw new Error('Failed to extract invoice data from API response.')
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to generate order invoice')
   }
@@ -533,25 +579,65 @@ export const generatePaymentReceipt = async (
 }
 
 /**
- * Download order invoice
+ * Download order invoice as PDF blob
+ * Uses the download endpoint: /api/v1/orders/{id}/documents/invoice/download
+ * This endpoint returns a PDF document blob for download
  */
 export const downloadOrderInvoice = async (
   id: number,
   query?: {
     providerId?: number
   }
-): Promise<ServiceOrderResponse> => {
+): Promise<Blob> => {
   try {
-    const response = await apiClient.api.getOrderDownloadOrderInvoice(id, query)
-    const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as ServiceOrderResponse
+    // Get base URL
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:5001'
+    const baseUrl = baseURL.replace(/\/$/, '').replace(/\/api\/v1$/, '')
+    
+    // Build query string
+    const queryParams = new URLSearchParams()
+    if (query?.providerId) {
+      queryParams.append('providerId', query.providerId.toString())
+    }
+    const language = getApiLanguage()
+    queryParams.append('lang', language)
+    const queryString = queryParams.toString()
+    
+    // Build full URL
+    const url = `${baseUrl}/api/v1/orders/${id}/documents/invoice/download${queryString ? `?${queryString}` : ''}`
+    
+    // Get token for authorization
+    const token = getToken()
+    
+    // Make request with blob response type using axios directly
+    const response = await axios.get(url, {
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/pdf',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        'Accept-Language': language,
+      },
+    })
+    
+    // Extract blob from response
+    if (response.data instanceof Blob) {
+      return response.data
+    }
+    
+    // If response.data is an ArrayBuffer, convert to Blob
+    if (response.data instanceof ArrayBuffer) {
+      return new Blob([response.data], { type: 'application/pdf' })
+    }
+    
+    // Fallback: try to create blob from response data
+    return new Blob([response.data], { type: 'application/pdf' })
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to download order invoice')
   }
 }
 
 /**
- * Download payment receipt
+ * Download payment receipt as PDF blob
  */
 export const downloadPaymentReceipt = async (
   id: number,
@@ -561,8 +647,47 @@ export const downloadPaymentReceipt = async (
   }
 ): Promise<Blob> => {
   try {
-    const response = await apiClient.api.getOrderDownloadPaymentReceipt(id, paymentId, query)
-    return (response?.data ?? response) as unknown as Blob
+    // Get base URL
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:5001'
+    const baseUrl = baseURL.replace(/\/$/, '').replace(/\/api\/v1$/, '')
+    
+    // Build query string
+    const queryParams = new URLSearchParams()
+    if (query?.providerId) {
+      queryParams.append('providerId', query.providerId.toString())
+    }
+    const language = getApiLanguage()
+    queryParams.append('lang', language)
+    const queryString = queryParams.toString()
+    
+    // Build full URL
+    const url = `${baseUrl}/api/v1/orders/${id}/payments/${paymentId}/documents/receipt/download${queryString ? `?${queryString}` : ''}`
+    
+    // Get token for authorization
+    const token = getToken()
+    
+    // Make request with blob response type using axios directly
+    const response = await axios.get(url, {
+      responseType: 'blob',
+      headers: {
+        'Accept': 'application/pdf',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        'Accept-Language': language,
+      },
+    })
+    
+    // Extract blob from response
+    if (response.data instanceof Blob) {
+      return response.data
+    }
+    
+    // If response.data is an ArrayBuffer, convert to Blob
+    if (response.data instanceof ArrayBuffer) {
+      return new Blob([response.data], { type: 'application/pdf' })
+    }
+    
+    // Fallback: try to create blob from response data
+    return new Blob([response.data], { type: 'application/pdf' })
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to download payment receipt')
   }
@@ -611,7 +736,24 @@ export const submitOrderReview = async (
 export const getOrderReviews = async (orderId: number): Promise<ReviewResponse[]> => {
   try {
     const response = await apiClient.api.getOrderReviewGetOrderReviews(orderId)
-    return (response?.data ?? response) as unknown as ReviewResponse[]
+    const responseAny: any = response
+    
+    // Handle different response structures
+    if (Array.isArray(responseAny?.data?.data)) {
+      return responseAny.data.data as ReviewResponse[]
+    }
+    if (Array.isArray(responseAny?.data)) {
+      return responseAny.data as ReviewResponse[]
+    }
+    if (Array.isArray(responseAny)) {
+      return responseAny as ReviewResponse[]
+    }
+    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
+      return responseAny.data.items as ReviewResponse[]
+    }
+    
+    // Return empty array if no reviews found
+    return []
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch order reviews')
   }

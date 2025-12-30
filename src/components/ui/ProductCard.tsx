@@ -7,7 +7,7 @@ import { Button } from './Button'
 import { Badge } from './Badge'
 import { RatingDisplay } from './RatingDisplay'
 import { useCartItems, useAddToCart, useWishlistItems, useFollowItems } from '@/hooks'
-import { Heart, ShoppingCart, CheckCircle2, Check } from 'lucide-react'
+import { Heart, ShoppingCart, CheckCircle2, Check, UserPlus } from 'lucide-react'
 import type { Product } from '@/types/product'
 
 export interface ProductCardProps {
@@ -58,6 +58,10 @@ export const ProductCard = React.memo(({
     // If not in cart, add it first
     if (!isInCart && onAddToCart) {
       try {
+        // Ensure providerId is available
+        if (!providerId) {
+          return
+        }
         await addToCartMutation.mutateAsync({
           productId,
           quantity: 1,
@@ -65,7 +69,7 @@ export const ProductCard = React.memo(({
           price: product.price.discounted,
         })
       } catch (error) {
-        console.error('Failed to add product to cart:', error)
+        // Error adding product to cart
         // Still navigate to cart even if add fails
       }
     }
@@ -155,19 +159,19 @@ export const ProductCard = React.memo(({
                 className={cn(
                   'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg',
                   'disabled:opacity-50 disabled:cursor-not-allowed',
-                  isFollowed || product.isFollowed
+                  isFollowed
                     ? 'border-brand-500 bg-brand-500'
                     : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
                 )}
                 aria-label={
-                  isFollowed || product.isFollowed ? 'Unfollow' : 'Follow'
+                  isFollowed ? 'Unfollow' : 'Follow'
                 }
               >
                 <UserPlus
                   className={cn(
                     'h-4 w-4 transition-colors',
                     isLoadingFollow && 'animate-pulse',
-                    isFollowed || product.isFollowed
+                    isFollowed
                       ? 'fill-white text-white'
                       : 'fill-gray-300 text-gray-400'
                   )}

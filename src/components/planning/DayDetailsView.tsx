@@ -196,11 +196,11 @@ export const DayDetailsView = ({
   }
 
   const handleRefresh = () => {
-    console.log('Refresh itinerary')
+    // Refresh itinerary
   }
 
   const handleSave = () => {
-    console.log('Save itinerary')
+    // Save itinerary
   }
 
   return (

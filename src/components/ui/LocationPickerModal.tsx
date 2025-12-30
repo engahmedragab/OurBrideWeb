@@ -115,7 +115,6 @@ export const LocationPickerModal = ({
       const data: SearchLocation[] = await response.json()
       return data
     } catch (error) {
-      console.error('Location search error:', error)
       throw error
     }
   }
@@ -208,7 +207,6 @@ export const LocationPickerModal = ({
 
       return data.display_name || `${latitude}, ${longitude}`
     } catch (error) {
-      console.error('Reverse geocoding error:', error)
       // Fallback to coordinates if reverse geocoding fails
       return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`
     }

@@ -154,7 +154,6 @@ export const ChatInputArea = ({
         onRecord()
       }
     } catch (error) {
-      console.error('Error starting recording:', error)
       alert(
         'Microphone access denied. Please allow microphone access to record voice messages.'
       )

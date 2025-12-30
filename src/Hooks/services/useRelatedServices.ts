@@ -29,7 +29,6 @@ export const useRelatedServicesByPreparation = (
           services: extractedData.services || [],
         }
       } catch (error) {
-        console.error('Error fetching related services by preparation:', error)
         throw error
       }
     },
@@ -58,7 +57,6 @@ export const useRelatedServicesByProvider = (
           services: extractedData.services || [],
         }
       } catch (error) {
-        console.error('Error fetching related services by provider:', error)
         throw error
       }
     },
