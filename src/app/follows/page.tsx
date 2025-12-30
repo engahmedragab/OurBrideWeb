@@ -152,7 +152,7 @@ export default function FollowsPage() {
         )
       })
       .map((follow) => {
-        const productResponse = follow.sourceObject as unknown as import('@/../client/common/api/gen/ourbride-api').ProductResponse
+        const productResponse = follow.sourceObject as ProductResponse
         try {
           return mapProductResponseToProduct(productResponse)
         } catch (error) {

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getProductAttributes } from '@/services/api/products.api'
-import type { ProductAttributeResponse } from '@/../client/common/api/gen/ourbride-api'
+import type { ProductAttributeResponse } from '@/types/responses'
 
 /**
  * Hook to fetch product attributes

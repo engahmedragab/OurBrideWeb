@@ -18,9 +18,11 @@ export const useFavoriteItems = (enabled = true) => {
     pageSize: 1000, // Fetch a large number to get all favorites
   })
 
-  // Extract all favorites from response (direct array, not paginated)
+  // Extract all favorites from response (PaginatedList has items property)
   const favorites = useMemo(() => {
-    return favoritesData || []
+    if (!favoritesData) return []
+    // Handle both array and PaginatedList types
+    return Array.isArray(favoritesData) ? favoritesData : favoritesData.items || []
   }, [favoritesData])
 
   // Extract product IDs from favorites

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
@@ -19,20 +19,22 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { DatePicker } from '@/components/ui/DatePicker'
-import { LoadingSpinner, ErrorDisplay } from '@/components/ui'
+import { LoadingSpinner, ErrorDisplay, ProcessingModal } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { Service } from '@/types/service'
 import { useServiceDetail, useServicePackages } from '@/hooks/services'
 import { getServiceById } from '@/services/api/serviceApi'
-import { createReservation, getAvailableTimeSlots } from '@/services/api/reservationApi'
-import type { ReservationRequest } from '@/../client/common/api/gen/ourbride-api'
+import { createReservation, getAvailableTimeSlots, getReservationById, getClientReservationsPaginated } from '@/services/api/reservationApi'
+import { addPurchase } from '@/services/api/purchaseApi'
+import type { ReservationRequest, PurchaseRequest } from '@/../client/common/api/gen/ourbride-api'
+import { PurchaseType, ServiceType } from '@/../client/common/api/gen/ourbride-api'
 import type { ServiceResponse } from '@/types/responses/service-response'
 import type { ServicePlaceAssignmentResponse } from '@/types/responses/service-place-assignment-response'
 import type { ServiceStaffAssignmentResponse } from '@/types/responses/service-staff-assignment-response'
 import type { TimeSlotResponse } from '@/types/responses/time-slot-response'
-import { AvailabilityStatus } from '@/types/responses/common'
-import { useAuthContext } from '@/auth/context/AuthContext'
-import { getUser } from '@/auth/utils/token'
+import type { ReservationResponse } from '@/types/responses'
+import { AvailabilityStatus, ReservationStatus } from '@/types/responses/common'
+import { useUserFromToken } from '@/hooks/auth'
 
 export interface Branch {
     id: string
@@ -91,7 +93,7 @@ interface BookingPageClientProps {
 
 export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     const router = useRouter()
-    const { user } = useAuthContext()
+    const userInfo = useUserFromToken()
 
     // Fetch raw service response for full data access
     const [rawServiceResponse, setRawServiceResponse] = useState<ServiceResponse | null>(null)
@@ -116,8 +118,8 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                             setRawServiceResponse(response)
                         }
                     })
-                    .catch((error: unknown) => {
-                        console.error('Error fetching raw service response:', error)
+                    .catch(() => {
+                        // Error fetching service
                     })
             }
         }
@@ -185,36 +187,13 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     const [timeSlotsLoading, setTimeSlotsLoading] = useState(false)
     const [timeSlotsError, setTimeSlotsError] = useState<Error | null>(null)
 
-    // Get user data from both context and localStorage (fallback)
-    const userFromStorage = typeof window !== 'undefined' ? getUser() : null
-    const currentUser = user || userFromStorage
+    // User info is now extracted from token using the hook
 
-    // Helper function to extract user name
-    const getUserName = (userData: typeof currentUser): string => {
-        if (!userData) return ''
-        const userAny = userData as any
-        // Check for fullName (AuthUser)
-        if (userAny.fullName) return userAny.fullName
-        // Check for firstName + lastName (UserResponse)
-        if (userAny.firstName && userAny.lastName) {
-            return `${userAny.firstName} ${userAny.lastName}`.trim()
-        }
-        // Fallback to userName
-        return userAny.userName || ''
-    }
-
-    // Helper function to extract phone number
-    const getUserPhone = (userData: typeof currentUser): string => {
-        if (!userData) return ''
-        const userAny = userData as any
-        return userAny.phoneNumber || ''
-    }
-
-    // Initialize form data with user data if available
+    // Initialize form data with empty values (will be populated by useEffect)
     const getInitialFormData = (): BookingFormData => {
         return {
-            fullName: getUserName(currentUser),
-            mobileNumber: getUserPhone(currentUser),
+            fullName: '',
+            mobileNumber: '',
             selectedBranch: '',
             selectedStaff: '',
             selectedPackage: '',
@@ -230,23 +209,41 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [formData, setFormData] = useState<BookingFormData>(getInitialFormData())
+    const [queueStatus, setQueueStatus] = useState<'idle' | 'queued' | 'processing' | 'completed' | 'failed'>('idle')
+    const [pendingReservationId, setPendingReservationId] = useState<string | null>(null)
+    const pollingIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const [isMounted, setIsMounted] = useState(false)
+    const [showProcessingModal, setShowProcessingModal] = useState(false)
 
-    // Update form data when user changes
+    // Set mounted state
     useEffect(() => {
-        const updatedUser = user || (typeof window !== 'undefined' ? getUser() : null)
-        if (updatedUser) {
-            const fullName = getUserName(updatedUser)
-            const phoneNumber = getUserPhone(updatedUser)
+        setIsMounted(true)
+    }, [])
 
-            if (fullName || phoneNumber) {
-                setFormData(prev => ({
-                    ...prev,
-                    fullName: fullName || prev.fullName,
-                    mobileNumber: phoneNumber || prev.mobileNumber,
-                }))
-            }
+    // Update form data when user info changes or component mounts
+    useEffect(() => {
+        if (!isMounted) {
+            return
         }
-    }, [user])
+
+        // Use userInfo from hook (already extracted from token)
+        const fullName = userInfo.name || userInfo.fullName || ''
+        const phoneNumber = userInfo.phoneNumber || ''
+
+        // Only update if we have valid data
+        if (fullName || phoneNumber) {
+            const newFormData = {
+                ...formData,
+            }
+            if (fullName) {
+                newFormData.fullName = fullName
+            }
+            if (phoneNumber) {
+                newFormData.mobileNumber = phoneNumber
+            }
+            setFormData(newFormData)
+        }
+    }, [userInfo, isMounted])
 
     // Fetch time slots when service, branch, staff, or date changes
     useEffect(() => {
@@ -321,7 +318,6 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
                 setTimeSlots(mappedSlots)
             } catch (error) {
-                console.error('Error fetching time slots:', error)
                 setTimeSlotsError(error instanceof Error ? error : new Error('Failed to fetch time slots'))
                 setTimeSlots([])
             } finally {
@@ -536,6 +532,249 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         return Object.keys(newErrors).length === 0
     }
 
+    // Stop polling function (handles both setInterval and setTimeout)
+    const stopPolling = () => {
+        if (pollingIntervalRef.current) {
+            clearTimeout(pollingIntervalRef.current)
+            clearInterval(pollingIntervalRef.current)
+            pollingIntervalRef.current = null
+        }
+    }
+
+    // Start polling for reservation status using production-ready API pattern
+    // Poll GET /api/v1/services/reservations/{reservationId} until status changes from "Pending"
+    // API now returns "Pending" (2) as initial status after creation
+    const startPolling = (
+        reservationId: string | null,
+        providerId: number | undefined,
+        clientId: string | undefined,
+        serviceIdParam: string,
+        requestedStartTimeParam: string | undefined,
+        notesParam: string
+    ) => {
+        if (!reservationId) {
+            setQueueStatus('failed')
+            setShowProcessingModal(false)
+            setIsSubmitting(false)
+            alert('Reservation ID is missing. Please check your reservations page.')
+            return
+        }
+
+        setQueueStatus('queued')
+        setShowProcessingModal(true)
+        let pollCount = 0
+        const maxPolls = 30 // Maximum 30 polls (about 2 minutes with exponential backoff)
+        let delay = 2000 // Start with 2 seconds (exponential backoff: 2s, 3s, 4s, 5s, 6s...)
+
+        const poll = async () => {
+            pollCount++
+
+            try {
+                // Poll reservation by ID (production-ready pattern)
+                const reservation = await getReservationById(reservationId)
+
+                if (!reservation) {
+                    if (pollCount >= maxPolls) {
+                        handlePollingTimeout(reservationId)
+                        return
+                    }
+
+                    // Continue polling with exponential backoff
+                    delay = Math.min(delay + 1000, 6000) // Max 6 seconds
+                    pollingIntervalRef.current = setTimeout(poll, delay)
+                    return
+                }
+
+                const status = reservation.status
+
+                // Check if status changed from "Pending" (2) - processing complete
+                // API now returns "Pending" as initial status, poll until it changes to another status
+                const isProcessing = status === ReservationStatus.Pending
+
+                if (!isProcessing) {
+                    // Status changed from "Pending" - processing complete
+                    handleReservationStatusUpdate(reservation, providerId, clientId, serviceIdParam, requestedStartTimeParam, notesParam)
+                    return
+                }
+
+                // Still processing (status is "Pending"), continue polling
+                if (pollCount >= maxPolls) {
+                    handlePollingTimeout(reservationId)
+                    return
+                }
+
+                // Exponential backoff: 2s, 3s, 4s, 5s, 6s...
+                delay = Math.min(delay + 1000, 6000)
+                pollingIntervalRef.current = setTimeout(poll, delay)
+
+            } catch (error: any) {
+                // If reservation not found (404), continue polling (might not be created yet)
+                if (error?.response?.status === 404 || error?.statusCode === 404) {
+                    if (pollCount >= maxPolls) {
+                        handlePollingTimeout(reservationId)
+                        return
+                    }
+
+                    delay = Math.min(delay + 1000, 6000)
+                    pollingIntervalRef.current = setTimeout(poll, delay)
+                    return
+                }
+
+                // Other errors - retry with backoff
+                if (pollCount >= maxPolls) {
+                    handlePollingTimeout(reservationId)
+                    return
+                }
+
+                delay = Math.min(delay + 1000, 6000)
+                pollingIntervalRef.current = setTimeout(poll, delay)
+            }
+        }
+
+        // Start polling after initial delay
+        pollingIntervalRef.current = setTimeout(poll, delay)
+    }
+
+    // Handle reservation status update after processing completes
+    const handleReservationStatusUpdate = (
+        reservation: ReservationResponse,
+        providerId: number | undefined,
+        clientId: string | undefined,
+        serviceIdParam: string,
+        requestedStartTimeParam: string | undefined,
+        notesParam: string
+    ) => {
+        const finalReservationId = reservation.reservationId
+
+        if (!finalReservationId) {
+            setQueueStatus('failed')
+            setShowProcessingModal(false)
+            stopPolling()
+            setIsSubmitting(false)
+            alert('Reservation found but missing ID. Please check your reservations page.')
+            return
+        }
+
+        // Stop polling
+        stopPolling()
+
+        // Handle different statuses
+        // Note: Status should not be "Pending" here since we poll until it changes
+        // But keeping as fallback in case of edge cases
+        const status = reservation.status
+        switch (status) {
+            case ReservationStatus.Pending:
+                // Status is still "Pending" - this shouldn't happen after polling, but proceed anyway
+                // Reservation was created successfully, proceed with purchase creation
+                setQueueStatus('completed')
+                setShowProcessingModal(false)
+                setIsSubmitting(false)
+                // Create purchase and navigate
+                createPurchaseAndNavigate(finalReservationId, providerId, clientId, serviceIdParam, requestedStartTimeParam, notesParam)
+                break
+
+            case ReservationStatus.Confirmed:
+                setQueueStatus('completed')
+                setShowProcessingModal(false)
+                setIsSubmitting(false)
+                // Create purchase and navigate
+                createPurchaseAndNavigate(finalReservationId, providerId, clientId, serviceIdParam, requestedStartTimeParam, notesParam)
+                break
+
+            case ReservationStatus.Rejected:
+                setQueueStatus('failed')
+                setShowProcessingModal(false)
+                stopPolling()
+                setIsSubmitting(false)
+                alert('Reservation was rejected. Please check your reservations page for details.')
+                break
+
+            case ReservationStatus.TestRequested:
+                setQueueStatus('completed')
+                setShowProcessingModal(false)
+                setIsSubmitting(false)
+                // Create purchase and navigate
+                createPurchaseAndNavigate(finalReservationId, providerId, clientId, serviceIdParam, requestedStartTimeParam, notesParam)
+                break
+
+            case ReservationStatus.None:
+                // "None" status - reservation created successfully (some APIs return "None" for created reservations)
+                setQueueStatus('completed')
+                setShowProcessingModal(false)
+                setIsSubmitting(false)
+                // Create purchase and navigate
+                createPurchaseAndNavigate(finalReservationId, providerId, clientId, serviceIdParam, requestedStartTimeParam, notesParam)
+                break
+
+            default:
+                setQueueStatus('completed')
+                setShowProcessingModal(false)
+                setIsSubmitting(false)
+                // Create purchase and navigate for other statuses
+                createPurchaseAndNavigate(finalReservationId, providerId, clientId, serviceIdParam, requestedStartTimeParam, notesParam)
+        }
+    }
+
+    // Create purchase record and navigate to reservation details
+    const createPurchaseAndNavigate = async (
+        reservationId: string,
+        providerId: number | undefined,
+        clientId: string | undefined,
+        serviceIdParam: string,
+        requestedStartTimeParam: string | undefined,
+        notesParam: string
+    ) => {
+        // Create purchase record after successful reservation
+        try {
+            const servicePrice = service?.price?.original || service?.price?.discounted || 0
+
+            // Ensure providerId is available - try multiple sources
+            const finalProviderId = providerId ||
+                rawServiceResponse?.providerId ||
+                (service?.provider?.id ? parseInt(service.provider.id, 10) : undefined)
+
+            const purchasePayload: PurchaseRequest = {
+                purchaseType: PurchaseType.Service,
+                serviceId: parseInt(serviceIdParam, 10),
+                providerId: finalProviderId || undefined,
+                serviceType: rawServiceResponse?.type as ServiceType || ServiceType.Rent,
+                totalPrice: servicePrice,
+                quantity: 1,
+                reservationId: reservationId,
+                comment: notesParam,
+                startDate: requestedStartTimeParam || undefined,
+                endDate: requestedStartTimeParam
+                    ? new Date(new Date(requestedStartTimeParam).getTime() + 60 * 60 * 1000).toISOString()
+                    : undefined, // 1 hour default
+                depositAmount: rawServiceResponse?.deposit || undefined,
+                clientId: clientId || undefined,
+            }
+
+            await addPurchase(purchasePayload)
+        } catch (purchaseError) {
+            // Don't fail the reservation creation if purchase creation fails
+        }
+
+        // Navigate to reservation details page (always navigate, even if purchase creation failed)
+        //router.push(`/reservations/${reservationId}`)
+    }
+
+    // Handle polling timeout
+    const handlePollingTimeout = (reservationId: string) => {
+        setQueueStatus('failed')
+        setShowProcessingModal(false)
+        stopPolling()
+        setIsSubmitting(false)
+        alert('Reservation is taking longer than expected. Please check your reservations page.')
+    }
+
+    // Cleanup polling on unmount
+    useEffect(() => {
+        return () => {
+            stopPolling()
+        }
+    }, [])
+
     const handleConfirm = async () => {
         if (!validateForm()) {
             return
@@ -611,16 +850,81 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 depositAmount: rawServiceResponse?.deposit || undefined,
             }
 
-            // Create reservation
-            await createReservation(reservationRequest)
+            // Get client ID from user info
+            const clientId = userInfo.id || undefined
 
-            // Navigate to cart
-            router.push('/cart')
+            // Store notes for purchase creation
+            const notes = `Name: ${formData.fullName}, Phone: ${formData.mobileNumber}${formData.promoCode ? `, Promo Code: ${formData.promoCode}` : ''}`
+
+            // Create reservation (production-ready API pattern)
+            // API returns 201 Created with reservationId immediately, status will be "Created" (1)
+            try {
+                const apiResponse = await createReservation(reservationRequest)
+
+                // Extract reservation ID from response
+                // API returns 201 Created with reservationId immediately
+                const reservationId = apiResponse?.reservationId || (apiResponse as any)?.id || (apiResponse as any)?.reservationId
+
+                if (!reservationId) {
+                    throw new Error('Reservation ID not found in response. Please try again.')
+                }
+
+                // Check initial status
+                // API now returns "Pending" (2) as initial status after creation
+                const initialStatus = apiResponse?.status ?? ReservationStatus.Pending
+
+                // Always start polling
+                // Poll GET /api/v1/services/reservations/{reservationId} until status changes from "Pending" (2)
+                // "Pending" indicates the reservation is being validated/processed in the queue
+                setIsSubmitting(false)
+                setPendingReservationId(reservationId)
+                setShowProcessingModal(true)
+                setQueueStatus('queued')
+
+                // Start polling by reservation ID (production-ready pattern)
+                // Poll until status changes from "Pending" to "Confirmed", "Rejected", etc.
+                startPolling(reservationId, providerId, clientId, serviceId, requestedStartTime, notes)
+
+            } catch (error: any) {
+
+                // Check if error response has reservation ID (some APIs return 202/201 with ID)
+                const errorStatus = error?.response?.status || error?.response?.data?.statusCode
+                if (errorStatus === 202 || errorStatus === 201) {
+                    const reservationId = error.response?.data?.reservationId ||
+                        error.response?.data?.data?.reservationId ||
+                        error.response?.data?.id ||
+                        null
+
+                    if (reservationId) {
+                        setIsSubmitting(false)
+                        setPendingReservationId(reservationId)
+                        setShowProcessingModal(true)
+                        setQueueStatus('queued')
+                        startPolling(reservationId, providerId, clientId, serviceId, requestedStartTime, notes)
+                        return
+                    }
+                }
+
+                // Handle validation errors (400)
+                if (errorStatus === 400) {
+                    const errorMessage = error?.response?.data?.message ||
+                        error?.response?.data?.errors?.[0]?.error ||
+                        'Invalid request. Please check your input.'
+                    setQueueStatus('failed')
+                    setShowProcessingModal(false)
+                    setIsSubmitting(false)
+                    alert(errorMessage)
+                    return
+                }
+
+                throw error
+            }
         } catch (error) {
-            console.error('Error creating reservation:', error)
-            alert(error instanceof Error ? error.message : 'Failed to create reservation. Please try again.')
-        } finally {
+            setQueueStatus('failed')
+            setShowProcessingModal(false)
             setIsSubmitting(false)
+            stopPolling()
+            alert(error instanceof Error ? error.message : 'Failed to create reservation. Please try again.')
         }
     }
 
@@ -1155,6 +1459,20 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             </main>
 
             <Footer />
+
+            {/* Processing Modal */}
+            <ProcessingModal
+                isOpen={showProcessingModal}
+                title="Processing Reservation"
+                message="Reservation creation queued. Processing..."
+                onClose={() => {
+                    // Only allow closing if not actively processing
+                    if (queueStatus === 'failed' || queueStatus === 'completed') {
+                        setShowProcessingModal(false)
+                    }
+                }}
+                closeOnOverlayClick={false}
+            />
         </div>
     )
 }

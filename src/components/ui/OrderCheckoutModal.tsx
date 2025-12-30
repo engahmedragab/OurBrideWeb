@@ -430,7 +430,6 @@ export const OrderCheckoutModal = ({
         setShowOrderConfirmation(true)
       }, 300)
     } catch (error) {
-      console.error('Checkout error:', error)
       // Don't close modals on error - let user fix issues
     } finally {
       setIsSubmitting(false)

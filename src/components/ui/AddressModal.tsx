@@ -5,11 +5,10 @@ import { Modal } from './Modal'
 import { Button } from './Button'
 import { Input } from './Input'
 import { MapPin, Building2, Navigation } from 'lucide-react'
-import { useCreateAddress, useUpdateAddress, useCountries, useCitiesByCountry, useRegionsByCity } from '@/hooks'
-import { getCitiesByCountry } from '@/services/api/locationApi'
+import { useCreateAddress, useUpdateAddress } from '@/hooks'
 import { useToast } from './Toaster'
-import type { AddressResponse } from '@/types/responses'
-import type { CreateAddressRequest, UpdateAddressRequest, Source } from '@/../client/common/api/gen/ourbride-api'
+import type { DeliveryAddressResponse } from '@/types/responses'
+import type { DeliveryAddressRequest } from '@/../client/common/api/gen/ourbride-api'
 import { getUser } from '@/auth/utils/token'
 import { cn } from '@/lib/utils'
 import { SelectPopover } from './SelectPopover'
@@ -19,7 +18,7 @@ import { LocationPickerModal, type LocationData } from './LocationPickerModal'
 export interface AddressModalProps {
   isOpen: boolean
   onClose: () => void
-  address?: AddressResponse | null
+  address?: DeliveryAddressResponse | null
   onSuccess?: () => void
 }
 
@@ -34,108 +33,59 @@ export const AddressModal = ({
   const updateAddressMutation = useUpdateAddress()
 
   const [formData, setFormData] = useState({
-    nameEn: '',
-    nameAr: '',
-    addressEn: '',
-    addressAr: '',
-    street: '',
-    building: '',
-    floor: '',
-    apartment: '',
-    cityName: '',
-    countryName: '',
-    cityId: 0,
-    countryId: 0,
-    regionId: null as number | null,
-    contactPhone: '',
-    contactPerson: '',
-    landmark: '',
-    directions: '',
+    contactName: '',
+    contactNumber1: '',
+    contactNumber2: '',
+    email: '',
+    address1: '',
+    address2: '',
+    city: '',
+    state: '',
+    postcode: '',
+    country: '',
+    addressComment: '',
+    isDefault: false,
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showLocationPicker, setShowLocationPicker] = useState(false)
 
-  // Fetch location data (after formData state is declared)
-  const { data: countries = [], isLoading: isLoadingCountries } = useCountries()
-  const { data: cities = [], isLoading: isLoadingCities } = useCitiesByCountry(
-    formData.countryId > 0 ? formData.countryId : null
-  )
-  const { data: regions = [], isLoading: isLoadingRegions } = useRegionsByCity(
-    formData.cityId > 0 ? formData.cityId : null
-  )
-
   // Initialize form data when address is provided (edit mode)
   useEffect(() => {
     if (address) {
       setFormData({
-        nameEn: address.nameEn || '',
-        nameAr: address.nameAr || '',
-        addressEn: address.addressEn || '',
-        addressAr: address.addressAr || '',
-        street: address.street || '',
-        building: address.building || '',
-        floor: address.floor || '',
-        apartment: address.apartment || '',
-        cityName: address.cityName || '',
-        countryName: address.countryName || '',
-        cityId: address.cityId || 0,
-        countryId: address.countryId || 0,
-        regionId: address.regionId || null,
-        contactPhone: address.contactPhone || '',
-        contactPerson: address.contactPerson || '',
-        landmark: address.landmark || '',
-        directions: address.directions || '',
+        contactName: address.contactName || '',
+        contactNumber1: address.contactNumber1 || '',
+        contactNumber2: address.contactNumber2 || '',
+        email: address.email || '',
+        address1: address.address1 || '',
+        address2: address.address2 || '',
+        city: address.city || '',
+        state: address.state || '',
+        postcode: address.postcode || '',
+        country: address.country || '',
+        addressComment: address.addressComment || '',
+        isDefault: address.isDefault || false,
       })
     } else {
       // Reset form for new address
       setFormData({
-        nameEn: '',
-        nameAr: '',
-        addressEn: '',
-        addressAr: '',
-        street: '',
-        building: '',
-        floor: '',
-        apartment: '',
-        cityName: '',
-        countryName: '',
-        cityId: 0,
-        countryId: 0,
-        regionId: null,
-        contactPhone: '',
-        contactPerson: '',
-        landmark: '',
-        directions: '',
+        contactName: '',
+        contactNumber1: '',
+        contactNumber2: '',
+        email: '',
+        address1: '',
+        address2: '',
+        city: '',
+        state: '',
+        postcode: '',
+        country: '',
+        addressComment: '',
+        isDefault: false,
       })
     }
     setErrors({})
   }, [address, isOpen])
-
-  // Update cityName and countryName when IDs change
-  useEffect(() => {
-    if (formData.countryId > 0) {
-      const selectedCountry = countries.find(c => c.id === formData.countryId)
-      if (selectedCountry) {
-        setFormData(prev => ({
-          ...prev,
-          countryName: selectedCountry.nameEn || selectedCountry.nameAr || selectedCountry.name || '',
-        }))
-      }
-    }
-  }, [formData.countryId, countries])
-
-  useEffect(() => {
-    if (formData.cityId > 0) {
-      const selectedCity = cities.find(c => c.id === formData.cityId)
-      if (selectedCity) {
-        setFormData(prev => ({
-          ...prev,
-          cityName: selectedCity.nameEn || selectedCity.nameAr || selectedCity.name || '',
-        }))
-      }
-    }
-  }, [formData.cityId, cities])
 
   /**
    * Handle location selection from LocationPickerModal
@@ -190,83 +140,32 @@ export const AddressModal = ({
       const country = (address?.country as string) || ''
       const building = (address?.house_number as string) || ''
 
-      // Try to match country with our dropdown options
-      let matchedCountryId = 0
-
-      if (country) {
-        const matchedCountry = countries.find(
-          c => c.nameEn?.toLowerCase().includes(country.toLowerCase()) ||
-            c.nameAr?.toLowerCase().includes(country.toLowerCase()) ||
-            c.name?.toLowerCase().includes(country.toLowerCase()) ||
-            country.toLowerCase().includes(c.nameEn?.toLowerCase() || '') ||
-            country.toLowerCase().includes(c.nameAr?.toLowerCase() || '')
-        )
-        if (matchedCountry) {
-          matchedCountryId = matchedCountry.id
-        }
-      }
-
       // Update form data
       setFormData(prev => ({
         ...prev,
-        street: street || displayName.split(',')[0] || displayName,
-        cityName: city,
-        countryName: country,
-        countryId: matchedCountryId,
-        building: building || prev.building,
+        address1: street || displayName.split(',')[0] || displayName,
+        city: city,
+        country: country,
+        address2: building || prev.address2,
       }))
-
-      // If we found a country, fetch cities and try to match city
-      if (matchedCountryId > 0 && city) {
-        // Fetch cities for the selected country
-        getCitiesByCountry(matchedCountryId)
-          .then(loadedCities => {
-            const matchedCity = loadedCities.find(
-              c => c.nameEn?.toLowerCase().includes(city.toLowerCase()) ||
-                c.nameAr?.toLowerCase().includes(city.toLowerCase()) ||
-                c.name?.toLowerCase().includes(city.toLowerCase()) ||
-                city.toLowerCase().includes(c.nameEn?.toLowerCase() || '') ||
-                city.toLowerCase().includes(c.nameAr?.toLowerCase() || '')
-            )
-            if (matchedCity) {
-              setFormData(prev => ({
-                ...prev,
-                cityId: matchedCity.id,
-                cityName: matchedCity.nameEn || matchedCity.nameAr || matchedCity.name || city,
-              }))
-            }
-          })
-          .catch(console.error)
-      }
 
       addToast('Location selected successfully', 'success')
     } catch (error) {
-      console.error('Error parsing location:', error)
-      // Fallback: just set the street address
+      // Fallback: just set the address
       const displayName = typeof locationData === 'string' ? locationData : locationData.displayName || ''
       setFormData(prev => ({
         ...prev,
-        street: displayName.split(',')[0] || displayName,
+        address1: displayName.split(',')[0] || displayName,
       }))
       addToast('Location selected. Please verify and complete the address details.', 'info')
     }
   }
 
-  const updateField = (field: string, value: string | number | null) => {
-    setFormData(prev => {
-      const newData = { ...prev, [field]: value }
-
-      // Reset dependent fields when parent changes
-      if (field === 'countryId') {
-        newData.cityId = 0
-        newData.cityName = ''
-        newData.regionId = null
-      } else if (field === 'cityId') {
-        newData.regionId = null
-      }
-
-      return newData
-    })
+  const updateField = (field: string, value: string | number | boolean | null) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value,
+    }))
     if (errors[field]) {
       setErrors(prev => {
         const newErrors = { ...prev }
@@ -279,14 +178,20 @@ export const AddressModal = ({
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.street.trim()) {
-      newErrors.street = 'Street is required'
+    if (!formData.address1.trim()) {
+      newErrors.address1 = 'Address is required'
     }
-    if (!formData.countryId || formData.countryId === 0) {
-      newErrors.countryId = 'Country is required'
+    if (!formData.city.trim()) {
+      newErrors.city = 'City is required'
     }
-    if (!formData.cityId || formData.cityId === 0) {
-      newErrors.cityId = 'City is required'
+    if (!formData.country.trim()) {
+      newErrors.country = 'Country is required'
+    }
+    if (!formData.contactName.trim()) {
+      newErrors.contactName = 'Contact name is required'
+    }
+    if (!formData.contactNumber1.trim()) {
+      newErrors.contactNumber1 = 'Contact number is required'
     }
 
     setErrors(newErrors)
@@ -305,54 +210,40 @@ export const AddressModal = ({
         return
       }
 
-      // Get selected country and city names for display
-      const selectedCountry = countries.find(c => c.id === formData.countryId)
-      const selectedCity = cities.find(c => c.id === formData.cityId)
-      const selectedRegion = regions.find(r => r.id === formData.regionId)
-
       if (address) {
-        // Update existing address - include all fields that can be updated
-        const updateData: UpdateAddressRequest = {
+        // Update existing deliveryaddress
+        const updateData: DeliveryAddressRequest = {
           id: address.id,
-          street: formData.street || null,
-          addressEn: formData.addressEn || formData.street || null,
-          addressAr: formData.addressAr || formData.street || null,
-          nameEn: formData.nameEn || formData.street || null,
-          nameAr: formData.nameAr || formData.street || null,
-          building: formData.building || null,
-          floor: formData.floor || null,
-          apartment: formData.apartment || null,
-          countryId: formData.countryId > 0 ? formData.countryId : address.countryId,
-          cityId: formData.cityId > 0 ? formData.cityId : address.cityId,
-          regionId: formData.regionId,
-          contactPhone: formData.contactPhone || null,
-          contactPerson: formData.contactPerson || null,
-          landmark: formData.landmark || null,
-          directions: formData.directions || null,
+          contactName: formData.contactName,
+          contactNumber1: formData.contactNumber1,
+          contactNumber2: formData.contactNumber2 || null,
+          email: formData.email || null,
+          address1: formData.address1,
+          address2: formData.address2 || null,
+          city: formData.city,
+          state: formData.state || null,
+          postcode: formData.postcode || null,
+          country: formData.country,
+          addressComment: formData.addressComment || null,
+          isDefault: formData.isDefault,
         }
         await updateAddressMutation.mutateAsync({ id: address.id, data: updateData })
         addToast('Address updated successfully', 'success')
       } else {
-        // Create new address - include all required and optional fields
-        const createData: CreateAddressRequest = {
-          sourceId: 0, // Will be set by backend
-          source: 'User' as Source,
-          userId: user.id,
-          countryId: formData.countryId > 0 ? formData.countryId : 1, // Default to Egypt if not set
-          cityId: formData.cityId > 0 ? formData.cityId : 1, // Default if not set
-          street: formData.street || null,
-          addressEn: formData.addressEn || formData.street || (selectedCity?.nameEn || selectedCountry?.nameEn) || null,
-          addressAr: formData.addressAr || formData.street || (selectedCity?.nameAr || selectedCountry?.nameAr) || null,
-          nameEn: formData.nameEn || formData.street || (selectedCity?.nameEn || selectedCountry?.nameEn) || null,
-          nameAr: formData.nameAr || formData.street || (selectedCity?.nameAr || selectedCountry?.nameAr) || null,
-          building: formData.building || null,
-          floor: formData.floor || null,
-          apartment: formData.apartment || null,
-          regionId: formData.regionId,
-          contactPhone: formData.contactPhone || null,
-          contactPerson: formData.contactPerson || null,
-          landmark: formData.landmark || null,
-          directions: formData.directions || null,
+        // Create new deliveryaddress
+        const createData: DeliveryAddressRequest = {
+          contactName: formData.contactName,
+          contactNumber1: formData.contactNumber1,
+          contactNumber2: formData.contactNumber2 || null,
+          email: formData.email || null,
+          address1: formData.address1,
+          address2: formData.address2 || null,
+          city: formData.city,
+          state: formData.state || null,
+          postcode: formData.postcode || null,
+          country: formData.country,
+          addressComment: formData.addressComment || null,
+          isDefault: formData.isDefault,
         }
         await createAddressMutation.mutateAsync(createData)
         addToast('Address added successfully', 'success')
@@ -361,7 +252,6 @@ export const AddressModal = ({
       onSuccess?.()
       onClose()
     } catch (error) {
-      console.error('Address save error:', error)
       addToast(
         error instanceof Error
           ? error.message
@@ -396,136 +286,112 @@ export const AddressModal = ({
           <span>Pick Location from Map</span>
         </button>
 
-        {/* Street Address */}
+        {/* Contact Name */}
         <Input
           type="text"
-          placeholder="Street Address"
-          prefixIcon={MapPin}
-          value={formData.street}
-          onChange={e => updateField('street', e.target.value)}
-          variant={errors.street ? 'error' : 'default'}
-          errorMessage={errors.street}
+          placeholder="Contact Name *"
+          value={formData.contactName}
+          onChange={e => updateField('contactName', e.target.value)}
+          variant={errors.contactName ? 'error' : 'default'}
+          errorMessage={errors.contactName}
           className="w-full"
         />
 
-        {/* Building, Floor, Apartment */}
+        {/* Contact Numbers */}
+        <div className="grid grid-cols-2 gap-3">
+          <Input
+            type="tel"
+            placeholder="Contact Number *"
+            value={formData.contactNumber1}
+            onChange={e => updateField('contactNumber1', e.target.value)}
+            variant={errors.contactNumber1 ? 'error' : 'default'}
+            errorMessage={errors.contactNumber1}
+            className="w-full"
+          />
+          <Input
+            type="tel"
+            placeholder="Alternative Number (Optional)"
+            value={formData.contactNumber2}
+            onChange={e => updateField('contactNumber2', e.target.value)}
+            className="w-full"
+          />
+        </div>
+
+        {/* Email */}
+        <Input
+          type="email"
+          placeholder="Email (Optional)"
+          value={formData.email}
+          onChange={e => updateField('email', e.target.value)}
+          className="w-full"
+        />
+
+        {/* Address Line 1 */}
+        <Input
+          type="text"
+          placeholder="Address Line 1 *"
+          prefixIcon={MapPin}
+          value={formData.address1}
+          onChange={e => updateField('address1', e.target.value)}
+          variant={errors.address1 ? 'error' : 'default'}
+          errorMessage={errors.address1}
+          className="w-full"
+        />
+
+        {/* Address Line 2 */}
+        <Input
+          type="text"
+          placeholder="Address Line 2 (Optional)"
+          prefixIcon={Building2}
+          value={formData.address2}
+          onChange={e => updateField('address2', e.target.value)}
+          className="w-full"
+        />
+
+        {/* City, State, Postcode */}
         <div className="grid grid-cols-3 gap-3">
           <Input
             type="text"
-            placeholder="Building"
-            prefixIcon={Building2}
-            value={formData.building}
-            onChange={e => updateField('building', e.target.value)}
+            placeholder="City *"
+            value={formData.city}
+            onChange={e => updateField('city', e.target.value)}
+            variant={errors.city ? 'error' : 'default'}
+            errorMessage={errors.city}
             className="w-full"
           />
           <Input
             type="text"
-            placeholder="Floor"
-            value={formData.floor}
-            onChange={e => updateField('floor', e.target.value)}
+            placeholder="State (Optional)"
+            value={formData.state}
+            onChange={e => updateField('state', e.target.value)}
             className="w-full"
           />
           <Input
             type="text"
-            placeholder="Apartment"
-            value={formData.apartment}
-            onChange={e => updateField('apartment', e.target.value)}
+            placeholder="Postcode (Optional)"
+            value={formData.postcode}
+            onChange={e => updateField('postcode', e.target.value)}
             className="w-full"
           />
         </div>
 
         {/* Country */}
-        <div>
-          <SelectPopover
-            value={formData.countryId > 0 ? formData.countryId.toString() : ''}
-            onChange={(value) => updateField('countryId', value ? parseInt(value, 10) : 0)}
-            options={countries.map(country => ({
-              value: country.id.toString(),
-              label: country.nameEn || country.nameAr || country.name || `Country ${country.id}`,
-            }))}
-            placeholder={isLoadingCountries ? 'Loading countries...' : 'Select Country'}
-            errorMessage={errors.countryId}
-            disabled={isLoadingCountries}
-            className="w-full"
-          />
-        </div>
-
-        {/* City */}
-        <div>
-          <SelectPopover
-            value={formData.cityId > 0 ? formData.cityId.toString() : ''}
-            onChange={(value) => updateField('cityId', value ? parseInt(value, 10) : 0)}
-            options={cities.map(city => ({
-              value: city.id.toString(),
-              label: city.nameEn || city.nameAr || city.name || `City ${city.id}`,
-            }))}
-            placeholder={
-              !formData.countryId || formData.countryId === 0
-                ? 'Select country first'
-                : isLoadingCities
-                  ? 'Loading cities...'
-                  : 'Select City'
-            }
-            errorMessage={errors.cityId}
-            disabled={!formData.countryId || formData.countryId === 0 || isLoadingCities}
-            className="w-full"
-          />
-        </div>
-
-        {/* Region */}
-        <div>
-          <SelectPopover
-            value={formData.regionId ? formData.regionId.toString() : ''}
-            onChange={(value) => updateField('regionId', value ? parseInt(value, 10) : null)}
-            options={regions.map(region => ({
-              value: region.id.toString(),
-              label: region.nameEn || region.nameAr || region.name || `Region ${region.id}`,
-            }))}
-            placeholder={
-              !formData.cityId || formData.cityId === 0
-                ? 'Select city first'
-                : isLoadingRegions
-                  ? 'Loading regions...'
-                  : 'Select Region (Optional)'
-            }
-            disabled={!formData.cityId || formData.cityId === 0 || isLoadingRegions}
-            className="w-full"
-          />
-        </div>
-
-        {/* Contact Person */}
         <Input
           type="text"
-          placeholder="Contact Person (Optional)"
-          value={formData.contactPerson}
-          onChange={e => updateField('contactPerson', e.target.value)}
+          placeholder="Country *"
+          value={formData.country}
+          onChange={e => updateField('country', e.target.value)}
+          variant={errors.country ? 'error' : 'default'}
+          errorMessage={errors.country}
           className="w-full"
         />
 
-        {/* Contact Phone */}
-        <Input
-          type="tel"
-          placeholder="Contact Phone (Optional)"
-          value={formData.contactPhone}
-          onChange={e => updateField('contactPhone', e.target.value)}
-          className="w-full"
-        />
-
-        {/* Landmark */}
-        <Input
-          type="text"
-          placeholder="Landmark (Optional)"
-          value={formData.landmark}
-          onChange={e => updateField('landmark', e.target.value)}
-          className="w-full"
-        />
-
-        {/* Directions */}
+        {/* Address Comment */}
         <div className="relative">
           <textarea
-            placeholder="Additional Directions (Optional)"
-            value={formData.directions}
-            onChange={e => updateField('directions', e.target.value)}
+            placeholder="Additional Notes (Optional)"
+            value={formData.addressComment}
+            onChange={e => updateField('addressComment', e.target.value)}
             rows={3}
             className={cn(
               'w-full px-4 py-3 rounded-md border bg-background text-16',
@@ -536,6 +402,20 @@ export const AddressModal = ({
               'resize-none'
             )}
           />
+        </div>
+
+        {/* Default Address Checkbox */}
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="isDefault"
+            checked={formData.isDefault}
+            onChange={e => updateField('isDefault', e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+          />
+          <label htmlFor="isDefault" className="text-14 text-gray-700">
+            Set as default delivery address
+          </label>
         </div>
 
         {/* Action Buttons */}

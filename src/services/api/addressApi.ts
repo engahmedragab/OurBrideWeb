@@ -1,114 +1,144 @@
-// Address API service functions
+// Deliveryaddresses API service functions
 
 import { apiClient } from '@/services/api/apiClient'
-import type { AddressResponse } from '@/types/responses'
-import type { CreateAddressRequest, UpdateAddressRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { DeliveryAddressResponse } from '@/types/responses'
+import type { DeliveryAddressRequest } from '@/../client/common/api/gen/ourbride-api'
 import type { PaginatedList } from '@/types/responses'
-import { getUser } from '@/auth/utils/token'
 
 /**
- * Get all addresses for the current user
+ * Get all deliveryaddresses for the current user
+ * Uses the authentication token to identify the user
  */
-export const getUserAddresses = async (query?: {
+export const getUserDeliveryaddresses = async (query?: {
   page?: number
   pageSize?: number
-}): Promise<PaginatedList<AddressResponse> | AddressResponse[]> => {
+}): Promise<PaginatedList<DeliveryAddressResponse> | DeliveryAddressResponse[]> => {
   try {
-    console.log('[getUserAddresses] Function called', { query })
-    const user = getUser()
-    console.log('[getUserAddresses] User:', user ? { id: user.id, hasId: !!user.id } : 'null')
-    
-    if (!user?.id) {
-      console.error('[getUserAddresses] User not authenticated')
-      throw new Error('User not authenticated')
-    }
-    
-    console.log('[getUserAddresses] Calling API with userId:', user.id, 'query:', query)
-    const response = await apiClient.api.getAddressGetByUserId(user.id, query)
-    console.log('[getUserAddresses] Raw API response received:', response)
-    
+    // Use the correct API method from generated API
+    const response = await apiClient.api.getDeliveryAddressGetAll()
     const responseAny: any = response
-    console.log('[getUserAddresses] responseAny:', responseAny)
-    console.log('[getUserAddresses] responseAny.data:', responseAny?.data)
-    console.log('[getUserAddresses] responseAny.data?.data:', responseAny?.data?.data)
     
-    // Try to extract data from nested structure
+    // Extract data from response structure: { data: [...], success: true, statusCode: 200, ... }
+    // Check for responseAny?.data?.data first (nested structure)
+    // Then responseAny?.data (direct array)
+    // Then responseAny (fallback)
     let data = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    console.log('[getUserAddresses] Extracted data:', data)
-    console.log('[getUserAddresses] Data type:', typeof data)
-    console.log('[getUserAddresses] Is data an array?', Array.isArray(data))
     
     // If it's already an array, return it directly
     if (Array.isArray(data)) {
-      console.log('[getUserAddresses] Returning direct array, length:', data.length)
       return data
     }
     
     // If it's a paginated response, return it
     if (data && typeof data === 'object' && 'items' in data) {
-      console.log('[getUserAddresses] Returning paginated response, items count:', (data as { items?: AddressResponse[] }).items?.length || 0)
-      return data as PaginatedList<AddressResponse>
+      return data as PaginatedList<DeliveryAddressResponse>
     }
     
     // Fallback: return empty array
-    console.warn('[getUserAddresses] Unexpected response structure, returning empty array')
     return []
   } catch (error: unknown) {
-    console.error('[getUserAddresses] Error:', error)
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch addresses')
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch deliveryaddresses')
   }
 }
 
 /**
- * Get address by ID
+ * Get deliveryaddress by ID
  */
-export const getAddressById = async (id: number): Promise<AddressResponse> => {
+export const getDeliveryaddressById = async (id: number): Promise<DeliveryAddressResponse> => {
   try {
-    const response = await apiClient.api.getAddressGetById(id)
+    const response = await apiClient.api.getDeliveryAddressGetById(id)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as AddressResponse
+    // Extract data from response structure: { data: {...}, success: true, ... }
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as DeliveryAddressResponse
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch address')
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch deliveryaddress')
   }
 }
 
 /**
- * Create a new address
+ * Create a new deliveryaddress
  */
-export const createAddress = async (data: CreateAddressRequest): Promise<AddressResponse> => {
+export const createDeliveryaddress = async (data: DeliveryAddressRequest): Promise<DeliveryAddressResponse> => {
   try {
-    const response = await apiClient.api.postAddressCreate(data)
+    const response = await apiClient.api.postDeliveryAddressCreate(data)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as AddressResponse
+    // Extract data from response structure: { data: {...}, success: true, ... }
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as DeliveryAddressResponse
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create address')
+    throw new Error(error instanceof Error ? error.message : 'Failed to create deliveryaddress')
   }
 }
 
 /**
- * Update an existing address
+ * Update an existing deliveryaddress
  */
-export const updateAddress = async (
+export const updateDeliveryaddress = async (
   id: number,
-  data: UpdateAddressRequest
-): Promise<AddressResponse> => {
+  data: DeliveryAddressRequest
+): Promise<DeliveryAddressResponse> => {
   try {
-    const response = await apiClient.api.putAddressUpdate(id, data)
+    const response = await apiClient.api.putDeliveryAddressUpdate(id, data)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as AddressResponse
+    // Extract data from response structure: { data: {...}, success: true, ... }
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as DeliveryAddressResponse
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update address')
+    throw new Error(error instanceof Error ? error.message : 'Failed to update deliveryaddress')
   }
 }
 
 /**
- * Delete an address
+ * Delete a deliveryaddress
  */
-export const deleteAddress = async (id: number): Promise<void> => {
+export const deleteDeliveryaddress = async (id: number): Promise<void> => {
   try {
-    await apiClient.api.deleteAddressDelete(id)
+    await apiClient.api.deleteDeliveryAddressDelete(id)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete address')
+    throw new Error(error instanceof Error ? error.message : 'Failed to delete deliveryaddress')
+  }
+}
+
+/**
+ * Get default deliveryaddress
+ */
+export const getDefaultDeliveryaddress = async (): Promise<DeliveryAddressResponse | null> => {
+  try {
+    const response = await apiClient.api.getDeliveryAddressGetDefaultAddress()
+    const responseAny: any = response
+    // Extract data from response structure: { data: {...}, success: true, ... }
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as DeliveryAddressResponse | null
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch default deliveryaddress')
+  }
+}
+
+/**
+ * Set a deliveryaddress as default
+ */
+export const setDefaultDeliveryaddress = async (id: number): Promise<DeliveryAddressResponse> => {
+  try {
+    // Get the current deliveryaddress first to preserve other fields
+    const currentDeliveryaddress = await getDeliveryaddressById(id)
+    const updateData: DeliveryAddressRequest = {
+      ...currentDeliveryaddress,
+      isDefault: true,
+    }
+    const response = await apiClient.api.putDeliveryAddressUpdate(id, updateData)
+    const responseAny: any = response
+    // Extract data from response structure: { data: {...}, success: true, ... }
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as DeliveryAddressResponse
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to set default deliveryaddress')
+  }
+}
+
+/**
+ * Clear all deliveryaddresses
+ */
+export const clearDeliveryaddresses = async (): Promise<void> => {
+  try {
+    await apiClient.api.deleteDeliveryAddressClear()
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to clear deliveryaddresses')
   }
 }
 

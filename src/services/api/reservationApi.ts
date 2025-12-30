@@ -57,26 +57,39 @@ export const getAvailableTimeSlots = async (
 /**
  * Create a reservation (Client)
  * Endpoint: POST /api/v1/services/reservations/client
- * Returns a CartResponse with reservation information
+ * Returns a ReservationResponse or queued response
  */
 export const createReservation = async (
   data: ReservationRequest
-): Promise<CartResponse> => {
+): Promise<ReservationResponse & { queued?: boolean }> => {
   try {
     // Use the client reservation creation endpoint
     const response = await apiClient.api.postReservationCreateByClient(data)
     const responseAny: any = response
     
     // Check if response indicates queued status (202)
+    // Check both the response status and the data statusCode
     const responseStatus = responseAny?.status || responseAny?.statusCode
+    const dataStatusCode = responseAny?.data?.statusCode
+    const isQueued = responseStatus === 202 || dataStatusCode === 202
     
     // Extract response data
     const responseData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
     
-    // The API returns ReservationResponse, but we need CartResponse
-    // The reservation will be added to the cart automatically by the backend
-    // Return the response data as-is - it should be handled by the caller
-    return responseData as unknown as CartResponse
+    if (isQueued) {
+      // Operation queued - return with queued flag
+      // Note: When queued, data might be null, so reservationId might not be available
+      const reservationId = responseData?.reservationId || responseData?.data?.reservationId || responseData?.id
+      return {
+        ...responseData,
+        reservationId: reservationId || undefined,
+        statusCode: 202,
+        queued: true,
+      } as ReservationResponse & { queued?: boolean; statusCode?: number }
+    }
+    
+    // Immediate completion (200)
+    return responseData as ReservationResponse
   } catch (error: unknown) {
     // Check if error response has 202 status (queued)
     if (error && typeof error === 'object' && 'response' in error) {
@@ -86,12 +99,12 @@ export const createReservation = async (
         const queuedData = axiosError.response.data as any
         const reservationId = queuedData?.reservationId || queuedData?.data?.reservationId
         
-        // Return a cart response indicating the reservation was queued
+        // Return a response indicating the reservation was queued
         return {
           ...queuedData,
           reservationId,
           queued: true,
-        } as unknown as CartResponse & { queued?: boolean; reservationId?: string }
+        } as ReservationResponse & { queued?: boolean }
       }
     }
     
@@ -147,9 +160,11 @@ export const getClientReservationsPaginated = async (options?: {
     const responseData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
     
     // Extract reservations and total count
+    // Handle both 'reservations' and 'items' field names
     if (responseData && typeof responseData === 'object') {
+      const reservations = responseData.reservations ?? responseData.items ?? []
       return {
-        reservations: responseData.reservations ?? [],
+        reservations: Array.isArray(reservations) ? reservations : [],
         totalCount: responseData.totalCount ?? 0,
       }
     }

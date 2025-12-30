@@ -6,7 +6,7 @@ import {
 } from '@/services/api/products.api'
 import { mapProductResponsesToProducts } from '@/types/api/product.api.types'
 import type { Product } from '@/types/product'
-import type { ProductResponse } from '@/../client/common/api/gen/ourbride-api'
+import type { ProductResponse } from '@/types/responses'
 
 /**
  * Hook to fetch product offers
@@ -58,7 +58,6 @@ export const useProductOffers = (enabled = true) => {
         
         return []
       } catch (error) {
-        console.error('Error fetching product offers:', error)
         // Return empty array on error to prevent app from breaking
         return []
       }

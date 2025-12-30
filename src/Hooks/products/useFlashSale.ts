@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getFlashSaleGrouped } from '@/services/api/products.api'
 import { mapProductResponsesToProducts } from '@/types/api/product.api.types'
 import type { Product } from '@/types/product'
-import type { ProductResponse } from '@/../client/common/api/gen/ourbride-api'
+import type { ProductResponse } from '@/types/responses'
 
 /**
  * Hook to fetch flash sale grouped products
@@ -50,7 +50,6 @@ export const useFlashSaleGrouped = (params?: {
         
         return []
       } catch (error) {
-        console.error('Error fetching flash sale grouped products:', error)
         return []
       }
     },

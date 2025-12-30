@@ -12,14 +12,21 @@ export const useAddProductToCart = () => {
   const handleAddToCart = useCallback(
     async (product: Product | { id: string; price: { discounted: number }; provider: { id: string } }, quantity: number = 1) => {
       try {
+        // Extract providerId - handle both Product type and generic object
+        const providerId = product.provider?.id 
+          ? parseInt(product.provider.id, 10)
+          : undefined
+
+        // ProviderId check
+
         await addToCartMutation.mutateAsync({
           productId: parseInt(product.id, 10),
           quantity,
-          providerId: parseInt(product.provider.id, 10),
+          providerId: providerId,
           price: product.price?.discounted,
         })
       } catch (error) {
-        console.error('Failed to add product to cart:', error)
+        // Error adding product to cart
         throw error
       }
     },

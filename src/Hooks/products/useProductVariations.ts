@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getProductVariations } from '@/services/api/products.api'
-import type { ProductVariationResponse } from '@/../client/common/api/gen/ourbride-api'
+import type { ProductVariationResponse } from '@/types/responses'
 
 /**
  * Hook to fetch product variations
