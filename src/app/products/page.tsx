@@ -3,7 +3,7 @@
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { HeroCarousel, OfferBanner, LoadingSpinner, useToast } from '@/components/ui'
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import {
   ProductCategoriesSection,
   ProductOffersSection,
@@ -58,8 +58,8 @@ export default function ProductIntroPage() {
 
   const isLoading = storeHomeLoading || productsHomeLoading
 
-  // Map API categories to component format
-  const categoryIconMap = getCategoryIconMap()
+  // Map API categories to component format - memoize icon map
+  const categoryIconMap = useMemo(() => getCategoryIconMap(), [])
   const mappedCategories: CategoryType[] = useMemo(() => {
     return categories.map(category => ({
       id: String(category.id),
@@ -134,25 +134,31 @@ export default function ProductIntroPage() {
 
   const { handleAddToCart: addToCart } = useAddProductToCart()
 
-  const handleAddToCart = async (productId: string) => {
-    // Find the product from displayProducts
-    const product = displayProducts.find(p => p.id === productId)
-    if (!product) return
+  const handleAddToCart = useCallback(
+    async (productId: string) => {
+      // Find the product from displayProducts
+      const product = displayProducts.find(p => p.id === productId)
+      if (!product) return
 
-    try {
-      const response = await addToCart(product, 1)
-      const { message, type } = handleApiResponseForToast(
-        response,
-        'Product added to cart successfully!',
-        'Failed to add product to cart'
-      )
-      addToast(message, type)
-    } catch (error) {
-      console.error('Failed to add product to cart:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
-      addToast(errorMessage, 'error')
-    }
-  }
+      try {
+        const response = await addToCart(product, 1)
+        const { message, type } = handleApiResponseForToast(
+          response,
+          'Product added to cart successfully!',
+          'Failed to add product to cart'
+        )
+        addToast(message, type)
+      } catch (error) {
+        console.error('Failed to add product to cart:', error)
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : 'Failed to add product to cart. Please try again.'
+        addToast(errorMessage, 'error')
+      }
+    },
+    [displayProducts, addToCart, addToast]
+  )
 
   const handleSubscribe = (_email: string) => {
     // TODO: Implement newsletter subscription

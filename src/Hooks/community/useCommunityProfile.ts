@@ -16,6 +16,8 @@ import {
 } from '@/services/api/communityProfilesApi'
 import type { CommunityProfileResponse } from '@/types/responses/community'
 import { isAuthenticated } from '@/auth/utils/token'
+import { useToast } from '@/components/ui/Toaster'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 /**
  * Hook to fetch user profile
@@ -107,6 +109,7 @@ export const useCommunityProfile = (
  */
 export const useToggleProfileLike = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
 
   return useMutation({
     mutationFn: async (params: {
@@ -116,11 +119,22 @@ export const useToggleProfileLike = () => {
     }) => {
       return await toggleLike(params)
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       // Invalidate profile queries to refetch updated like status
       queryClient.invalidateQueries({
         queryKey: ['communityProfile'],
       })
+      
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Like toggled successfully',
+        'Failed to toggle like'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle like'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -130,6 +144,7 @@ export const useToggleProfileLike = () => {
  */
 export const useToggleProfileFollow = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
 
   return useMutation({
     mutationFn: async (params: {
@@ -139,11 +154,22 @@ export const useToggleProfileFollow = () => {
     }) => {
       return await toggleFollow(params)
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       // Invalidate profile queries to refetch updated follow status
       queryClient.invalidateQueries({
         queryKey: ['communityProfile'],
       })
+      
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Follow toggled successfully',
+        'Failed to toggle follow'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle follow'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -153,6 +179,7 @@ export const useToggleProfileFollow = () => {
  */
 export const useToggleProfileFavorite = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
 
   return useMutation({
     mutationFn: async (params: {
@@ -162,11 +189,22 @@ export const useToggleProfileFavorite = () => {
     }) => {
       return await toggleFavorite(params)
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       // Invalidate profile queries to refetch updated favorite status
       queryClient.invalidateQueries({
         queryKey: ['communityProfile'],
       })
+      
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Favorite toggled successfully',
+        'Failed to toggle favorite'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle favorite'
+      addToast(errorMessage, 'error')
     },
   })
 }

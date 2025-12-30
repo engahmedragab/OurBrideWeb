@@ -52,6 +52,7 @@ export const Header = ({ className }: HeaderProps) => {
     markAsRead,
     markAllAsRead,
     deleteNotification,
+    isLoading: isLoadingNotifications,
   } = useNotifications()
 
   // Calculate cart count (number of unique items)
@@ -66,6 +67,38 @@ export const Header = ({ className }: HeaderProps) => {
       return pathname === path
     }
     return pathname === path || pathname.startsWith(path + '/')
+  }
+
+  // More specific active check for dropdown items to avoid conflicts
+  // This ensures only the most specific matching path is highlighted
+  const isDropdownItemActive = (path: string, allDropdownPaths: Array<{ path: string }>) => {
+    if (pathname === path) {
+      return true
+    }
+    
+    // Check if pathname starts with this dropdown item's path
+    if (pathname.startsWith(path + '/')) {
+      // Find if there's a more specific dropdown path that matches
+      const moreSpecificMatch = allDropdownPaths.find(otherPath => {
+        if (otherPath.path === path) return false // Skip self
+        if (otherPath.path.length <= path.length) return false // Must be longer/more specific
+        // Check if the other path starts with this path and the pathname matches that other path
+        return otherPath.path.startsWith(path + '/') && 
+               (pathname === otherPath.path || pathname.startsWith(otherPath.path + '/'))
+      })
+      
+      // Only return true if there's no more specific match
+      return !moreSpecificMatch
+    }
+    return false
+  }
+
+  // Check if parent menu item should be active (only if dropdown item is active)
+  const isParentActive = (itemPath: string, dropdownItems: Array<{ path: string }>) => {
+    // Check if any dropdown item is active
+    return dropdownItems.some(dropdownItem => 
+      isDropdownItemActive(dropdownItem.path, dropdownItems)
+    )
   }
 
   const navigationItems = [
@@ -135,7 +168,10 @@ export const Header = ({ className }: HeaderProps) => {
             <NavigationMenuList className="gap-0.5 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm h-12">
               {navigationItems.map(item => {
                 const Icon = item.icon
-                const active = isActive(item.path)
+                // For dropdown items, check if any dropdown item is active instead of the parent path
+                const active = item.hasDropdown 
+                  ? isParentActive(item.path, item.dropdownItems || [])
+                  : isActive(item.path)
 
                 if (item.hasDropdown) {
                   return (
@@ -163,7 +199,7 @@ export const Header = ({ className }: HeaderProps) => {
                       <NavigationMenuContent>
                         <div className="w-56 p-1.5 bg-white rounded-lg shadow-lg border border-gray-100">
                           {item.dropdownItems?.map(dropdownItem => {
-                            const isDropdownActive = isActive(dropdownItem.path)
+                            const isDropdownActive = isDropdownItemActive(dropdownItem.path, item.dropdownItems || [])
                             return (
                               <Link
                                 key={dropdownItem.path}
@@ -286,6 +322,7 @@ export const Header = ({ className }: HeaderProps) => {
                 onMarkAsRead={markAsRead}
                 onDelete={deleteNotification}
                 onMarkAllAsRead={markAllAsRead}
+                isLoading={isLoadingNotifications}
               />
 
               {/* Cart */}
@@ -397,7 +434,10 @@ export const Header = ({ className }: HeaderProps) => {
           {/* Main Navigation Items */}
           {navigationItems.map(item => {
             const Icon = item.icon
-            const active = isActive(item.path)
+            // For dropdown items, check if any dropdown item is active instead of the parent path
+            const active = item.hasDropdown 
+              ? isParentActive(item.path, item.dropdownItems || [])
+              : isActive(item.path)
 
             if (item.hasDropdown) {
               return (
@@ -419,7 +459,7 @@ export const Header = ({ className }: HeaderProps) => {
                   </Link>
                   <div className="ml-7 space-y-1">
                     {item.dropdownItems?.map(dropdownItem => {
-                      const isDropdownActive = isActive(dropdownItem.path)
+                      const isDropdownActive = isDropdownItemActive(dropdownItem.path, item.dropdownItems || [])
                       return (
                         <Link
                           key={dropdownItem.path}

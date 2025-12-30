@@ -16,6 +16,7 @@ import {
   PageHeader,
   ErrorDisplay,
   LoadingOverlay,
+  LoadingSpinner,
   type OrderItem,
 } from '@/components/ui'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
@@ -707,6 +708,8 @@ export default function CartPage() {
 
   // Check if any provider cart queries are loading
   const isLoadingProviderCarts = providerCartQueries.some((query) => query.isLoading)
+  // Check if any product queries are loading
+  const isLoadingProducts = productQueries.some((query) => query.isLoading || query.isFetching)
   const isLoadingData = isLoading || isLoadingProviderCarts
 
   // Show loading state
@@ -789,7 +792,11 @@ export default function CartPage() {
             {/* Products Section */}
             {hasProducts && (
               <>
-                {cartProducts.length > 0 && (
+                {isLoadingProducts && productIdsToFetch.length > 0 ? (
+                  <div className="flex items-center justify-center py-8">
+                    <LoadingSpinner size="md" text="Loading product details..." />
+                  </div>
+                ) : cartProducts.length > 0 ? (
                   <div className="space-y-3 sm:space-y-4">
                     {cartProducts.map(product => (
                       <CartItem
@@ -811,7 +818,7 @@ export default function CartPage() {
                       />
                     ))}
                   </div>
-                )}
+                ) : null}
               </>
             )}
 

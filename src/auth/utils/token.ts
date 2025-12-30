@@ -45,17 +45,23 @@ export const getUser = (): UserResponse | AuthUser | null => {
 // This function is now updated on login from the backend
 export const isPreferenceInit = (): boolean => {
   const user = getUser()
-  // Check if user is AuthUser type (has isPreferenceInit property)
-  return (user && 'isPreferenceInit' in user) ? user.isPreferenceInit === true : false
+  // Check if user has isInit property (from UserResponse or AuthUser)
+  if (user && typeof user === 'object') {
+    // Check for isInit field (from UserResponse type)
+    if ('isInit' in user) {
+      return user.isInit === true
+    }
+  }
+  return false
 }
 
-// Utility to set isPreferenceInit state in user object
+// Utility to set isInit state in user object
 export const setPreferenceInit = (value: boolean) => {
   const user = getUser()
   if (!user) return
-  // Only set if user is AuthUser type (has isPreferenceInit property)
-  if ('isPreferenceInit' in user) {
-    (user as AuthUser).isPreferenceInit = value
+  // Update isInit property in user object
+  if (typeof user === 'object') {
+    (user as AuthUser).isInit = value
     localStorage.setItem('user_data', JSON.stringify(user))
   }
 }

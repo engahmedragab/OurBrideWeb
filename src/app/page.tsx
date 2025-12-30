@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback, memo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Header } from '@/components/layout'
@@ -23,6 +23,7 @@ import {
 } from '@/hooks'
 import {
   OfferBanner,
+  OfferBannerSkeleton,
   CardSkeleton,
   ProviderCardSkeleton,
   TestimonialCardSkeleton,
@@ -30,7 +31,6 @@ import {
 } from '@/components/ui'
 
 import { StoreBadges } from '@/components/ui/StoreBadges'
-import { Pagination } from '@/components/ui/Pagination'
 import {
   Users,
   ChevronLeft,
@@ -56,6 +56,82 @@ import {
   TRUST_CARD_POSITION_CLASSES,
   PAGINATION_CONFIG,
 } from '@/constants'
+
+// Memoized Product Card Component
+const ProductCardItem = memo(({ product }: { product: ProductCardData }) => {
+  const handlers = useProductCardHandlers(parseInt(product.id, 10))
+  const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+  const handleAddToCartClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      handleAddToCart(
+        {
+          id: product.id,
+          price: { discounted: product.discountedPrice },
+          provider: { id: product.providerId || '' },
+        },
+        1
+      )
+    },
+    [product.id, product.discountedPrice, product.providerId, handleAddToCart]
+  )
+
+  return (
+    <Card
+      cardData={{
+        type: 'product',
+        ...product,
+        providerId: product.providerId || '',
+        inStock: true,
+        onWishlistToggle: handlers.handleWishlistToggle,
+        onFavoriteToggle: handlers.handleFavoriteToggle,
+        onAddToCart: handleAddToCartClick,
+        isLoadingWishlist: handlers.isLoadingWishlist,
+        isLoadingFavorite: handlers.isLoadingFavorite,
+        isLoadingAddToCart,
+      }}
+    />
+  )
+})
+ProductCardItem.displayName = 'ProductCardItem'
+
+// Memoized Service Card Component
+const ServiceCardItem = memo(({ service }: { service: ServiceCardData }) => {
+  const handlers = useServiceCardHandlers(parseInt(service.id, 10))
+  return (
+    <Card
+      cardData={{
+        type: 'service',
+        ...service,
+        onWishlistToggle: handlers.handleWishlistToggle,
+        onFavoriteToggle: handlers.handleFavoriteToggle,
+        isLoadingWishlist: handlers.isLoadingWishlist,
+        isLoadingFavorite: handlers.isLoadingFavorite,
+      }}
+    />
+  )
+})
+ServiceCardItem.displayName = 'ServiceCardItem'
+
+// Memoized Provider Card Component
+const ProviderCardItem = memo(({ provider }: { provider: ProviderCardData }) => {
+  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+  return (
+    <Card
+      cardData={{
+        type: 'provider',
+        ...provider,
+        onFollowToggle: handlers.handleFollowToggle,
+        onFavoriteToggle: handlers.handleFavoriteToggle,
+        isLoadingFollow: handlers.isLoadingFollow,
+        isLoadingFavorite: handlers.isLoadingFavorite,
+      }}
+    />
+  )
+})
+ProviderCardItem.displayName = 'ProviderCardItem'
 
 export default function Home() {
   // Fetch home data from API
@@ -83,81 +159,42 @@ export default function Home() {
   )
   const banners = useMemo(() => apiData.banners || [], [apiData.banners])
 
-  // Products pagination state
-  const [productsPage, setProductsPage] = useState(1)
-  const productsTotalPages = Math.ceil(
-    products.length / PAGINATION_CONFIG.PRODUCTS_PER_PAGE
-  )
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (productsPage - 1) * PAGINATION_CONFIG.PRODUCTS_PER_PAGE
-    const endIndex = startIndex + PAGINATION_CONFIG.PRODUCTS_PER_PAGE
-    return products.slice(startIndex, endIndex)
-  }, [products, productsPage])
-
-  // Services pagination state
-  const [servicesPage, setServicesPage] = useState(1)
-  const servicesTotalPages = Math.ceil(
-    services.length / PAGINATION_CONFIG.SERVICES_PER_PAGE
-  )
-  const paginatedServices = useMemo(() => {
-    const startIndex = (servicesPage - 1) * PAGINATION_CONFIG.SERVICES_PER_PAGE
-    const endIndex = startIndex + PAGINATION_CONFIG.SERVICES_PER_PAGE
-    return services.slice(startIndex, endIndex)
-  }, [services, servicesPage])
-
   // Testimonials carousel state
   const [testimonialsIndex, setTestimonialsIndex] = useState(0)
   const testimonialsTotalPages = Math.ceil(
     testimonials.length / PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
   )
 
-  const goToTestimonialsPrevious = () => {
+  // Member testimonials carousel state - kept for potential future use
+  // const [memberTestimonialsIndex, setMemberTestimonialsIndex] = useState(0)
+  // const memberTestimonialsTotalPages = Math.ceil(
+  //   memberTestimonials.length / PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
+  // )
+
+  const currentTestimonials = useMemo(
+    () =>
+      testimonials.slice(
+        testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE,
+        testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE +
+          PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
+      ),
+    [testimonials, testimonialsIndex]
+  )
+
+  // Memoize carousel navigation handlers
+  const goToTestimonialsPrevious = useCallback(() => {
     setTestimonialsIndex(prev =>
       prev === 0 ? testimonialsTotalPages - 1 : prev - 1
     )
-  }
+  }, [testimonialsTotalPages])
 
-  const goToTestimonialsNext = () => {
+  const goToTestimonialsNext = useCallback(() => {
     setTestimonialsIndex(prev => (prev + 1) % testimonialsTotalPages)
-  }
+  }, [testimonialsTotalPages])
 
-  const goToTestimonialsPage = (index: number) => {
+  const goToTestimonialsPage = useCallback((index: number) => {
     setTestimonialsIndex(index)
-  }
-
-  // Member testimonials carousel state
-  const [memberTestimonialsIndex, setMemberTestimonialsIndex] = useState(0)
-  const memberTestimonialsTotalPages = Math.ceil(
-    memberTestimonials.length / PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
-  )
-
-  const goToMemberTestimonialsPrevious = () => {
-    setMemberTestimonialsIndex(prev =>
-      prev === 0 ? memberTestimonialsTotalPages - 1 : prev - 1
-    )
-  }
-
-  const goToMemberTestimonialsNext = () => {
-    setMemberTestimonialsIndex(
-      prev => (prev + 1) % memberTestimonialsTotalPages
-    )
-  }
-
-  const goToMemberTestimonialsPage = (index: number) => {
-    setMemberTestimonialsIndex(index)
-  }
-
-  const currentTestimonials = testimonials.slice(
-    testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE,
-    testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE +
-    PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
-  )
-
-  const currentMemberTestimonials = memberTestimonials.slice(
-    memberTestimonialsIndex * PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE,
-    memberTestimonialsIndex * PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE +
-    PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
-  )
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -329,7 +366,11 @@ export default function Home() {
         </section>
 
         {/* Section 2: Offer Banner */}
-        {banners.length > 0 && <OfferBanner offers={banners} />}
+        {isLoading ? (
+          <OfferBannerSkeleton />
+        ) : (
+          banners.length > 0 && <OfferBanner offers={banners} />
+        )}
 
         {/* Section 3: Statistics */}
         <section className="container-custom pt-12 md:pt-16 pb-4 md:pb-6">
@@ -443,63 +484,15 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              paginatedProducts.map(product => {
-                // Inline component to use hooks properly
-                const ProductCardItem = () => {
-                  const handlers = useProductCardHandlers(parseInt(product.id, 10))
-                  const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
-
-                  const handleAddToCartClick = (e: React.MouseEvent) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    // Convert ProductCardData to the format expected by handleAddToCart
-                    handleAddToCart(
-                      {
-                        id: product.id,
-                        price: { discounted: product.discountedPrice },
-                        provider: { id: product.providerId || '' },
-                      },
-                      1
-                    )
-                  }
-
-                  return (
-                    <Card
-                      cardData={{
-                        type: 'product',
-                        ...product,
-                        providerId: product.providerId || '',
-                        inStock: true,
-                        onWishlistToggle: handlers.handleWishlistToggle,
-                        onFavoriteToggle: handlers.handleFavoriteToggle,
-                        onAddToCart: handleAddToCartClick,
-                        isLoadingWishlist: handlers.isLoadingWishlist,
-                        isLoadingFavorite: handlers.isLoadingFavorite,
-                        isLoadingAddToCart,
-                      }}
-                    />
-                  )
-                }
-                return <ProductCardItem key={product.id} />
-              })
+              products.map(product => (
+                <ProductCardItem key={product.id} product={product} />
+              ))
             )}
-          </div >
-          {/* Products Pagination */}
-          {
-            !isLoading && productsTotalPages > 1 && (
-              <div className="mt-8">
-                <Pagination
-                  currentPage={productsPage}
-                  totalPages={productsTotalPages}
-                  onPageChange={setProductsPage}
-                />
-              </div>
-            )
-          }
-        </section >
+          </div>
+        </section>
 
         {/* Section 6: Suggested Services */}
-        < section className="container-custom py-12 md:py-16" >
+        <section className="container-custom py-12 md:py-16">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
               Services Suggested for You
@@ -515,43 +508,15 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              paginatedServices.map(service => {
-                // Inline component to use hooks properly
-                const ServiceCardItem = () => {
-                  const handlers = useServiceCardHandlers(parseInt(service.id, 10))
-                  return (
-                    <Card
-                      cardData={{
-                        type: 'service',
-                        ...service,
-                        onWishlistToggle: handlers.handleWishlistToggle,
-                        onFavoriteToggle: handlers.handleFavoriteToggle,
-                        isLoadingWishlist: handlers.isLoadingWishlist,
-                        isLoadingFavorite: handlers.isLoadingFavorite,
-                      }}
-                    />
-                  )
-                }
-                return <ServiceCardItem key={service.id} />
-              })
+              services.map(service => (
+                <ServiceCardItem key={service.id} service={service} />
+              ))
             )}
-          </div >
-          {/* Services Pagination */}
-          {
-            !isLoading && servicesTotalPages > 1 && (
-              <div className="mt-8">
-                <Pagination
-                  currentPage={servicesPage}
-                  totalPages={servicesTotalPages}
-                  onPageChange={setServicesPage}
-                />
-              </div>
-            )
-          }
-        </section >
+          </div>
+        </section>
 
         {/* Section 7: Why Trust Section */}
-        < section className="relative py-16 md:py-24 overflow-hidden bg-white" >
+        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <Image
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
@@ -599,12 +564,12 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section >
+        </section>
 
         {/* Section 8: Testimonials */}
-        < section className="container-custom py-12 md:py-16" >
+        <section className="container-custom py-12 md:py-16">
           {/* Centered Heading Above Section */}
-          < div className="text-center mb-8 md:mb-12" >
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
               <span className="font-normal text-gray-900">
                 Read{' '}
@@ -616,7 +581,7 @@ export default function Home() {
                 <span className="font-normal text-gray-900">Confidence</span>
               </span>
             </h2>
-          </div >
+          </div>
 
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
             {/* Left Side - Quote Icon and Heading */}
@@ -680,10 +645,10 @@ export default function Home() {
               )}
             </div>
           </div>
-        </section >
+        </section>
 
         {/* Section 9: Providers */}
-        < section className="container-custom py-12 md:py-16" >
+        <section className="container-custom py-12 md:py-16">
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
               <span className="font-normal text-gray-900">
@@ -701,28 +666,12 @@ export default function Home() {
             {isLoading ? (
               <ProviderCardSkeleton count={4} />
             ) : (
-              providers.map(provider => {
-                // Inline component to use hooks properly
-                const ProviderCardItem = () => {
-                  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
-                  return (
-                    <Card
-                      cardData={{
-                        type: 'provider',
-                        ...provider,
-                        onFollowToggle: handlers.handleFollowToggle,
-                        onFavoriteToggle: handlers.handleFavoriteToggle,
-                        isLoadingFollow: handlers.isLoadingFollow,
-                        isLoadingFavorite: handlers.isLoadingFavorite,
-                      }}
-                    />
-                  )
-                }
-                return <ProviderCardItem key={provider.id} />
-              })
+              providers.map(provider => (
+                <ProviderCardItem key={provider.id} provider={provider} />
+              ))
             )}
-          </div >
-        </section >
+          </div>
+        </section>
 
         {/* Section 10: Wedding Journey */}
         < section className="relative py-16 md:py-24 overflow-hidden bg-white" >
@@ -770,12 +719,12 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section >
+        </section>
 
-        {/* Section 11: Member Testimonials */}
-        < section className="container-custom py-12 md:py-16" >
-          {/* Centered Heading Above Section */}
-          < div className="text-center mb-8 md:mb-12" >
+        {/* Section 11: Member Testimonials - Commented Out */}
+        {/*
+        <section className="container-custom py-12 md:py-16">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
               <span className="font-normal text-gray-900">
                 Our Bride{' '}
@@ -786,10 +735,9 @@ export default function Home() {
                 Are <span className="font-normal text-gray-900">Loving</span>
               </span>
             </h2>
-          </div >
+          </div>
 
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
-            {/* Left Side - Quote Icon and Heading */}
             <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
               <div className="flex-1 lg:max-w-md">
                 <div className="mb-4 md:mb-6">
@@ -839,7 +787,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Side - Testimonial Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto items-stretch">
               {isLoading ? (
                 <MemberTestimonialCardSkeleton count={3} />
@@ -853,10 +800,11 @@ export default function Home() {
               )}
             </div>
           </div>
-        </section >
+        </section>
+        */}
 
         {/* Section: App Download */}
-        < section className="relative overflow-hidden bg-white py-0" >
+        <section className="relative overflow-hidden bg-white py-0">
           <div className="container-custom">
             <div className="text-center mb-0">
               <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900 leading-tight">
@@ -893,9 +841,9 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section >
-      </main >
+        </section>
+      </main>
       <Footer />
-    </div >
+    </div>
   )
 }

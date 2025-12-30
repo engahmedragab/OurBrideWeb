@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { getProductReviews, submitProductReview } from '@/services/api/products.api'
 import type { ProductReview } from '@/types/product'
 import type { ReviewResponse } from '@/types/responses/review-response'
+import { useToast } from '@/components/ui/Toaster'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 /**
  * Map API review response to ProductReview type
@@ -65,6 +67,7 @@ export const useProductReviews = (
  */
 export const useSubmitProductReview = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
 
   return useMutation({
     mutationFn: async ({
@@ -94,7 +97,7 @@ export const useSubmitProductReview = () => {
         isAnonymous,
       })
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       // Invalidate and refetch product reviews
       queryClient.invalidateQueries({
         queryKey: ['product-reviews', variables.productId],
@@ -103,6 +106,17 @@ export const useSubmitProductReview = () => {
       queryClient.invalidateQueries({
         queryKey: ['product', variables.productId],
       })
+      
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Review submitted successfully',
+        'Failed to submit review'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit review'
+      addToast(errorMessage, 'error')
     },
   })
 }

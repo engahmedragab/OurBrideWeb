@@ -15,6 +15,8 @@ import { initEventBooks } from '@/services/api/eventBooksApi'
 // We'll import it dynamically or create a wrapper
 import { apiClient } from '@/services/api/apiClient'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
+import { useToast } from '@/components/ui/Toaster'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 const initBudgetBook = async (params?: {
   clientId?: string
@@ -45,13 +47,24 @@ export interface InitBookParams {
  */
 export const useInitItemBooks = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (params?: InitBookParams) => {
       await initItemBooks(params)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['eventInfo'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Item books initialized successfully',
+        'Failed to initialize item books'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize item books'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -61,13 +74,24 @@ export const useInitItemBooks = () => {
  */
 export const useInitServiceBooks = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (params?: InitBookParams) => {
       await initServiceBooks(params)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['eventInfo'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Service books initialized successfully',
+        'Failed to initialize service books'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize service books'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -77,13 +101,24 @@ export const useInitServiceBooks = () => {
  */
 export const useInitGuestBooks = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (params?: InitBookParams) => {
       await initGuestBooks(params)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['eventInfo'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Guest books initialized successfully',
+        'Failed to initialize guest books'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize guest books'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -93,13 +128,24 @@ export const useInitGuestBooks = () => {
  */
 export const useInitNoteBooks = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (params?: InitBookParams) => {
       await initNoteBooks(params)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['eventInfo'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Note books initialized successfully',
+        'Failed to initialize note books'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize note books'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -109,13 +155,24 @@ export const useInitNoteBooks = () => {
  */
 export const useInitTodoBooks = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (params?: InitBookParams) => {
       await initTodoBooks(params)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['eventInfo'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Todo books initialized successfully',
+        'Failed to initialize todo books'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize todo books'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -125,14 +182,25 @@ export const useInitTodoBooks = () => {
  */
 export const useInitOccasionBooks = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (params?: InitBookParams) => {
       await initOccasionBooks(params)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['eventInfo'] })
       queryClient.invalidateQueries({ queryKey: ['occasionBook'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Occasion books initialized successfully',
+        'Failed to initialize occasion books'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize occasion books'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -142,13 +210,24 @@ export const useInitOccasionBooks = () => {
  */
 export const useInitEventBooks = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (params?: InitBookParams) => {
       await initEventBooks(params)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['eventInfo'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Event books initialized successfully',
+        'Failed to initialize event books'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize event books'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -158,13 +237,24 @@ export const useInitEventBooks = () => {
  */
 export const useInitBudgetBooks = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (params?: InitBookParams) => {
       await initBudgetBook(params)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['eventInfo'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Budget books initialized successfully',
+        'Failed to initialize budget books'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize budget books'
+      addToast(errorMessage, 'error')
     },
   })
 }

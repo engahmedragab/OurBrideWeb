@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
@@ -35,9 +35,10 @@ import {
 import { CommunityHomeFeed } from '@/components/community/CommunityHomeFeed'
 
 function CommunityContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams?.get('tab')
-  const validTabs: CommunityTab[] = ['community', 'posts', 'blogs', 'articles', 'reels', 'decision-groups', 'contests']
+  const validTabs: CommunityTab[] = ['community', 'posts', 'blogs', 'articles', 'reels', 'decision-groups', 'contests', 'profile']
   const [activeTab, setActiveTab] = useState<CommunityTab>(
     (tabParam && validTabs.includes(tabParam as CommunityTab))
       ? (tabParam as CommunityTab)
@@ -155,6 +156,16 @@ function CommunityContent() {
     }
   }, [tabParam])
 
+  // Handle tab change - redirect profile tab to edit page
+  const handleTabChange = (tab: CommunityTab) => {
+    if (tab === 'profile') {
+      router.push('/profile/edit')
+      return
+    }
+    setActiveTab(tab)
+    router.push(`/community?tab=${tab}`)
+  }
+
   // Determine loading state
   const isLoading = (activeTab === 'community' && isLoadingHome) ||
     (activeTab === 'posts' && (isLoadingPosts || isLoadingSearch)) ||
@@ -162,7 +173,8 @@ function CommunityContent() {
     (activeTab === 'blogs' && (isLoadingBlogs || isLoadingSearch)) ||
     (activeTab === 'reels' && (isLoadingReels || isLoadingSearch)) ||
     (activeTab === 'decision-groups' && (isLoadingDecisionGroups || isLoadingSearch)) ||
-    (activeTab === 'contests' && (isLoadingContests || isLoadingSearch))
+    (activeTab === 'contests' && (isLoadingContests || isLoadingSearch)) ||
+    (activeTab === 'profile' && false) // Profile tab redirects, so no loading needed
 
   // Handle search
   const handleSearch = (query: string) => {
@@ -213,7 +225,7 @@ function CommunityContent() {
           <div className="lg:hidden mb-6">
             <div className="flex gap-2 p-1 bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
               <button
-                onClick={() => setActiveTab('community')}
+                onClick={() => handleTabChange('community')}
                 className={cn(
                   'flex-shrink-0 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
                   activeTab === 'community'
@@ -224,7 +236,7 @@ function CommunityContent() {
                 Community
               </button>
               <button
-                onClick={() => setActiveTab('posts')}
+                onClick={() => handleTabChange('posts')}
                 className={cn(
                   'flex-shrink-0 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
                   activeTab === 'posts'
@@ -235,7 +247,7 @@ function CommunityContent() {
                 Posts
               </button>
               <button
-                onClick={() => setActiveTab('blogs')}
+                onClick={() => handleTabChange('blogs')}
                 className={cn(
                   'flex-shrink-0 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
                   activeTab === 'blogs'
@@ -246,7 +258,7 @@ function CommunityContent() {
                 Blogs
               </button>
               <button
-                onClick={() => setActiveTab('articles')}
+                onClick={() => handleTabChange('articles')}
                 className={cn(
                   'flex-shrink-0 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
                   activeTab === 'articles'
@@ -257,7 +269,7 @@ function CommunityContent() {
                 Articles
               </button>
               <button
-                onClick={() => setActiveTab('reels')}
+                onClick={() => handleTabChange('reels')}
                 className={cn(
                   'flex-shrink-0 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
                   activeTab === 'reels'
@@ -268,7 +280,7 @@ function CommunityContent() {
                 Reels
               </button>
               <button
-                onClick={() => setActiveTab('decision-groups')}
+                onClick={() => handleTabChange('decision-groups')}
                 className={cn(
                   'flex-shrink-0 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
                   activeTab === 'decision-groups'
@@ -279,7 +291,7 @@ function CommunityContent() {
                 Decisions
               </button>
               <button
-                onClick={() => setActiveTab('contests')}
+                onClick={() => handleTabChange('contests')}
                 className={cn(
                   'flex-shrink-0 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
                   activeTab === 'contests'
@@ -289,6 +301,19 @@ function CommunityContent() {
               >
                 Contests
               </button>
+              {communityData?.currentUser?.id && (
+                <button
+                  onClick={() => handleTabChange('profile')}
+                  className={cn(
+                    'flex-shrink-0 py-2.5 px-4 rounded-lg text-14 font-semibold transition-colors',
+                    activeTab === 'profile'
+                      ? 'bg-brand-500 text-white'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  )}
+                >
+                  Profile
+                </button>
+              )}
             </div>
           </div>
 

@@ -1,7 +1,8 @@
 // Profile API service functions
 
 import { apiClient } from '@/services/api/apiClient'
-import type { UserPlanningPreferenceRequest, Preparation } from '@/../client/common/api/gen/ourbride-api'
+import type { UserPlanningPreferenceRequest, Preparation, UserRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { UserResponse } from '@/types/responses'
 
 export interface PlanningPreference {
   id: number
@@ -33,11 +34,6 @@ export const getPlanningPreferenceInit = async (): Promise<boolean> => {
       // Check for isInit field (from UserResponse type)
       if ('isInit' in dataObj) {
         return !!dataObj.isInit
-      }
-      
-      // Fallback: check for isPreferenceInit field
-      if ('isPreferenceInit' in dataObj) {
-        return !!dataObj.isPreferenceInit
       }
       
       // If data has a nested user object
@@ -119,5 +115,39 @@ export const setPlanningPreferences = async (
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Failed to set planning preferences'
     throw new Error(errorMessage)
+  }
+}
+
+/**
+ * Get user profile
+ */
+export const getUserProfile = async (): Promise<UserResponse | null> => {
+  try {
+    const response = await apiClient.api.getProfileGet()
+    const responseAny: any = response as { data?: unknown } | unknown
+    
+    // Handle different response structures
+    const data = responseAny?.data ?? responseAny
+    
+    if (data && typeof data === 'object' && 'id' in data) {
+      return data as UserResponse
+    }
+    
+    return null
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch user profile')
+  }
+}
+
+/**
+ * Update user profile
+ */
+export const updateUserProfile = async (
+  data: UserRequest
+): Promise<void> => {
+  try {
+    await apiClient.api.postProfileUpdate(data)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to update user profile')
   }
 }

@@ -39,13 +39,15 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
       </div>
 
       {/* Posts Card */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm overflow-hidden flex flex-col">
         {isLoading ? (
           <div className="flex justify-center items-center py-8 min-h-[200px]">
             <LoadingOverlay open={true} title="Loading..." />
           </div>
         ) : posts && posts.length > 0 ? (
-          <div className="space-y-4">
+          <div 
+            className="space-y-4 max-h-[600px] overflow-y-auto pr-2 -mr-2 scrollbar-custom"
+          >
             {posts.map(post => (
               <div
                 key={post.id}

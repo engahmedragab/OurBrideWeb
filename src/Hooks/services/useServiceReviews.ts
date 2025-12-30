@@ -3,6 +3,8 @@ import { getServiceReviews, submitServiceReview } from '@/services/api/serviceAp
 import type { ReviewResponse } from '@/types/responses/review-response'
 import type { ReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
+import { useToast } from '@/components/ui/Toaster'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 export interface ServiceReview {
   id: string
@@ -91,6 +93,7 @@ export const useServiceReviews = (
  */
 export const useSubmitServiceReview = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
 
   return useMutation({
     mutationFn: async ({
@@ -124,7 +127,7 @@ export const useSubmitServiceReview = () => {
       }
       return await submitServiceReview(serviceId, reviewRequest)
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       // Invalidate and refetch service reviews
       queryClient.invalidateQueries({
         queryKey: ['service-reviews', variables.serviceId],
@@ -133,6 +136,17 @@ export const useSubmitServiceReview = () => {
       queryClient.invalidateQueries({
         queryKey: ['service-detail', String(variables.serviceId)],
       })
+      
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Review submitted successfully',
+        'Failed to submit review'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit review'
+      addToast(errorMessage, 'error')
     },
   })
 }

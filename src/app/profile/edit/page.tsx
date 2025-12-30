@@ -1,10 +1,13 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { UserPageLayout } from '@/components/layout'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, LoadingSpinner } from '@/components/ui'
+import { useUserProfileData, useUpdateUserProfile } from '@/hooks/profile/useProfile'
+import { useMineInfo } from '@/hooks/home'
+import { useAuth } from '@/auth'
 
 /**
  * Profile Edit Page
@@ -12,27 +15,70 @@ import { Button, Input } from '@/components/ui'
  */
 export default function ProfileEditPage() {
   const router = useRouter()
+  const { user: authUser } = useAuth()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  // Fetch profile data
+  const { data: profileData, isLoading: isLoadingProfile } = useUserProfileData()
+  const { data: mineInfo } = useMineInfo()
+  const updateMutation = useUpdateUserProfile()
+
+  // Extract user data from mineInfo (fallback to profileData)
+  const userData = mineInfo?.data?.userProfile?.user || profileData || authUser
 
   const [formData, setFormData] = useState({
-    firstName: 'Aya',
-    lastName: 'Mohamed',
-    gender: 'Female',
-    mobileNumber: '+212533658879',
-    email: 'example@example.com',
+    firstName: '',
+    lastName: '',
+    gender: '',
+    mobileNumber: '',
+    email: '',
+    profileUrl: '',
   })
 
-  const [profileImage, setProfileImage] = useState(
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200'
-  )
+  const [profileImage, setProfileImage] = useState('https://via.placeholder.com/200')
+
+  // Initialize form data when user data is loaded
+  useEffect(() => {
+    if (userData) {
+      setFormData({
+        firstName: userData.firstName || '',
+        lastName: userData.lastName || '',
+        gender: typeof userData.gender === 'string' ? userData.gender : String(userData.gender || ''),
+        mobileNumber: userData.phoneNumber || '',
+        email: userData.email || '',
+        profileUrl: userData.profileUrl || '',
+      })
+      if (userData.profileUrl) {
+        setProfileImage(userData.profileUrl)
+      }
+    }
+  }, [userData])
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSave = () => {
-    // TODO: Implement save logic
-    router.push('/profile')
+  const handleSave = async () => {
+    try {
+      // Convert gender to number if needed (API might expect number)
+      const genderValue = formData.gender
+      
+      await updateMutation.mutateAsync({
+        id: userData?.id || undefined,
+        firstName: formData.firstName || null,
+        lastName: formData.lastName || null,
+        gender: genderValue || null,
+        phoneNumber: formData.mobileNumber || null,
+        email: formData.email || null,
+        profileUrl: profileImage !== 'https://via.placeholder.com/200' ? profileImage : null,
+      })
+      
+      // Navigate back to profile page after successful save
+      router.push('/profile')
+    } catch (error) {
+      // Error is handled by the mutation's onError handler
+      console.error('Failed to save profile:', error)
+    }
   }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +86,10 @@ export default function ProfileEditPage() {
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        setProfileImage(reader.result as string)
+        const result = reader.result as string
+        setProfileImage(result)
+        // Update formData profileUrl
+        setFormData(prev => ({ ...prev, profileUrl: result }))
       }
       reader.readAsDataURL(file)
     }
@@ -48,6 +97,16 @@ export default function ProfileEditPage() {
 
   const handleUploadClick = () => {
     fileInputRef.current?.click()
+  }
+
+  if (isLoadingProfile) {
+    return (
+      <UserPageLayout>
+        <div className="flex items-center justify-center py-12">
+          <LoadingSpinner size="lg" text="Loading profile..." />
+        </div>
+      </UserPageLayout>
+    )
   }
 
   return (
@@ -62,8 +121,9 @@ export default function ProfileEditPage() {
             variant="ghost"
             className="text-14 font-normal text-brand-500 hover:text-brand-600 hover:bg-transparent p-0 h-auto"
             onClick={handleSave}
+            disabled={updateMutation.isPending}
           >
-            Save Changes
+            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
 

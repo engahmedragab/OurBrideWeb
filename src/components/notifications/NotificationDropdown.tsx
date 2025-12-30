@@ -8,14 +8,16 @@ import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { NotificationCard } from './NotificationCard'
 import { cn } from '@/lib/utils'
-import { Bell } from 'lucide-react'
+import { Bell, Loader2 } from 'lucide-react'
 import type { Notification } from '@/types/notification'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 
 export interface NotificationDropdownProps {
   notifications: Notification[]
   onMarkAsRead: (id: string) => void
   onDelete: (id: string) => void
   onMarkAllAsRead?: () => void
+  isLoading?: boolean
 }
 
 export const NotificationDropdown = ({
@@ -23,6 +25,7 @@ export const NotificationDropdown = ({
   onMarkAsRead,
   onDelete,
   onMarkAllAsRead,
+  isLoading = false,
 }: NotificationDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
@@ -92,7 +95,11 @@ export const NotificationDropdown = ({
 
         {/* Notifications List */}
         <div className="overflow-y-auto flex-1">
-          {recentNotifications.length === 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-12 px-4">
+              <LoadingSpinner size="md" text="Loading notifications..." />
+            </div>
+          ) : recentNotifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-4">
               <Bell className="h-12 w-12 text-gray-400 mb-3" />
               <p className="text-14 text-gray-600 text-center">

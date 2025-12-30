@@ -50,15 +50,23 @@ export const Footer = ({ className }: FooterProps) => {
           {/* Top Section - Logo and Navigation */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 md:mb-12">
             {/* Logo */}
-            <Link href="/" className="flex-shrink-0">
-              <Image
-                src={typeof footerLogo === 'string' ? footerLogo : footerLogo.src}
-                alt="OurBride Logo"
-                width={160}
-                height={64}
-                className="h-12 md:h-16 w-auto"
-              />
-            </Link>
+            <div className="flex flex-col items-center md:items-start gap-3 flex-shrink-0">
+              <Link href="/" className="flex-shrink-0">
+                <Image
+                  src={
+                    typeof footerLogo === 'string' ? footerLogo : footerLogo.src
+                  }
+                  alt="OurBride Logo"
+                  width={160}
+                  height={64}
+                  className="h-12 md:h-16 w-auto"
+                />
+              </Link>
+              <p className="text-14 text-gray-600 text-center md:text-left max-w-xs">
+                Your all-in-one platform for wedding planning and shopping. Find
+                everything you need to create your perfect day.
+              </p>
+            </div>
 
             {/* Navigation Links */}
             <nav className="flex flex-col gap-3 md:gap-4 items-center">
@@ -104,7 +112,9 @@ export const Footer = ({ className }: FooterProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-8 md:mb-12">
             {/* Left: Social Links */}
             <div className="flex flex-col gap-4 items-center md:items-start">
-              <h3 className="text-20 font-normal text-gray-700">Social Links</h3>
+              <h3 className="text-20 font-normal text-gray-700">
+                Social Links
+              </h3>
               <div className="flex items-center gap-4 justify-center md:justify-start">
                 {socialLinks.map(social => {
                   const Icon = social.icon
@@ -125,10 +135,14 @@ export const Footer = ({ className }: FooterProps) => {
             </div>
 
             {/* Right: App Download */}
-            <div className="flex flex-col gap-4 items-center md:items-start">
-              <h3 className="text-20 font-normal text-gray-700">Download Ourbride App</h3>
-              <div className="flex justify-center md:justify-start">
-                <StoreBadges size="md" />
+            <div className="flex flex-col gap-4 items-end">
+              <div className='flex flex-col gap-4 items-start'>
+                <h3 className="text-20 font-normal text-gray-700">
+                  Download Ourbride App
+                </h3>
+                <div className="flex justify-center">
+                  <StoreBadges size="md" />
+                </div>
               </div>
             </div>
           </div>

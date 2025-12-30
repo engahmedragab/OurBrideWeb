@@ -180,6 +180,7 @@ export {
   ProviderCardSkeleton,
   TestimonialCardSkeleton,
   MemberTestimonialCardSkeleton,
+  OfferBannerSkeleton,
 } from './Skeleton'
 
 export { Modal } from './Modal'

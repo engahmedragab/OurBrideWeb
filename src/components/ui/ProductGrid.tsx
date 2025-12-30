@@ -1,6 +1,7 @@
 import { Card, type ProductCardData } from './Card'
 import { useProductCardHandlers, useAddProductToCart } from '@/hooks/products'
 import type { Product } from '@/types/product'
+import { LoadingSpinner } from './LoadingSpinner'
 
 export interface ProductGridProps {
   products: Product[]
@@ -8,6 +9,7 @@ export interface ProductGridProps {
   onAddToCart?: (productId: string) => void
   columns?: 2 | 3 | 4
   className?: string
+  isLoading?: boolean
 }
 
 export const ProductGrid = ({
@@ -16,11 +18,20 @@ export const ProductGrid = ({
   onAddToCart,
   columns = 4,
   className,
+  isLoading = false,
 }: ProductGridProps) => {
   const gridCols = {
     2: 'grid-cols-1 md:grid-cols-2',
     3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
     4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingSpinner size="lg" text="Loading products..." />
+      </div>
+    )
   }
 
   if (products.length === 0) {

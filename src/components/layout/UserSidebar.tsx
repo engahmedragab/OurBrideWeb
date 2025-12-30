@@ -6,6 +6,8 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { useCart } from '@/hooks/cart'
+import { useAuth } from '@/auth'
+import { useMineInfo } from '@/hooks/home'
 import {
   Grid3x3,
   ShoppingCart,
@@ -34,11 +36,37 @@ export interface UserSidebarProps {
 
 export const UserSidebar = ({
   className,
-  userName = 'Aya Mohamed',
-  userImage = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+  userName: propUserName,
+  userImage: propUserImage,
   onLinkClick,
 }: UserSidebarProps) => {
   const pathname = usePathname()
+  const { user: authUser } = useAuth()
+  const { data: mineInfo } = useMineInfo()
+
+  // Extract user data from mineInfo (fallback to authUser)
+  const userData = mineInfo?.data?.userProfile?.user || authUser
+
+  // Get user name - prioritize prop, then API data, then fallback
+  const userName = useMemo(() => {
+    if (propUserName) return propUserName
+    if (userData) {
+      if (userData.firstName && userData.lastName) {
+        return `${userData.firstName} ${userData.lastName}`
+      }
+      if (userData.fullName) return userData.fullName
+      if (userData.userName) return userData.userName
+      if (userData.email) return userData.email
+    }
+    return 'User'
+  }, [propUserName, userData])
+
+  // Get user image - prioritize prop, then API data, then fallback
+  const userImage = useMemo(() => {
+    if (propUserImage) return propUserImage
+    if (userData?.profileUrl) return userData.profileUrl
+    return 'https://via.placeholder.com/100'
+  }, [propUserImage, userData])
 
   // Fetch cart data
   const { data: cartData } = useCart()
@@ -196,14 +224,26 @@ export const UserSidebar = ({
       {/* User Profile Card */}
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
         <div className="flex items-center gap-3">
-          <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-            <Image
-              src={userImage}
-              alt={userName}
-              fill
-              sizes="48px"
-              className="object-cover"
-            />
+          <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+            {userImage && userImage !== 'https://via.placeholder.com/100' ? (
+              <Image
+                src={userImage}
+                alt={userName}
+                fill
+                sizes="48px"
+                className="object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            ) : null}
+            {(!userImage || userImage === 'https://via.placeholder.com/100') && (
+              <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                <span className="text-14 font-semibold text-brand-600">
+                  {userName.charAt(0).toUpperCase() || 'U'}
+                </span>
+              </div>
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-12 text-gray-500 font-medium">Welcome Back</p>

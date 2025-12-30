@@ -23,7 +23,7 @@ export interface AuthUser {
   phoneNumber?: string
   fullName?: string
   userType?: UserType
-  isPreferenceInit?: boolean
+  isInit?: boolean
   [key: string]: unknown
 }
 

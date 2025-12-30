@@ -14,6 +14,8 @@ import type {
   UpdateWishlistRequest,
 } from '@/../client/common/api/gen/ourbride-api'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
+import { useToast } from '@/components/ui/Toaster'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 /**
  * Hook to fetch all wishlists
@@ -101,6 +103,8 @@ export const useWishlistExists = (
  */
 export const useCreateWishlist = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
+  
   return useMutation({
     mutationFn: async (data: {
       data: CreateWishlistRequest
@@ -108,8 +112,18 @@ export const useCreateWishlist = () => {
     }): Promise<WishlistResponse> => {
       return await createWishlist(data.data, data.query)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Wishlist created successfully',
+        'Failed to create wishlist'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create wishlist'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -119,6 +133,8 @@ export const useCreateWishlist = () => {
  */
 export const useUpdateWishlist = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
+  
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -127,9 +143,19 @@ export const useUpdateWishlist = () => {
     }): Promise<WishlistResponse> => {
       return await updateWishlist(data.id, data.data, data.query)
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
       queryClient.invalidateQueries({ queryKey: ['wishlist', variables.id] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Wishlist updated successfully',
+        'Failed to update wishlist'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update wishlist'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -139,6 +165,8 @@ export const useUpdateWishlist = () => {
  */
 export const useDeleteWishlist = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
+  
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -150,6 +178,11 @@ export const useDeleteWishlist = () => {
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
       queryClient.invalidateQueries({ queryKey: ['wishlist', variables.id] })
       queryClient.removeQueries({ queryKey: ['wishlist', variables.id] })
+      addToast('Wishlist deleted successfully', 'success')
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete wishlist'
+      addToast(errorMessage, 'error')
     },
   })
 }

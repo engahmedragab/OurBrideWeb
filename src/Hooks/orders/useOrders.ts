@@ -9,6 +9,8 @@ import type { OrderResponse, PaginatedList } from '@/types/responses'
 import { searchOrders as searchPurchaseOrders } from '@/services/api/purchaseApi'
 import type { ServiceOrderResponse } from '@/types/responses'
 import type { ServiceOrderSearchRequest } from '@/../client/common/api/gen/ourbride-api'
+import { useToast } from '@/components/ui/Toaster'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 /**
  * Hook to fetch orders
@@ -106,16 +108,29 @@ export const useServiceOrders = (params?: {
  */
 export const useCancelOrder = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
 
   return useMutation({
     mutationFn: async (orderId: number) => {
       return await cancelOrder(orderId)
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       // Invalidate orders queries to refetch
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['client-orders'] })
       queryClient.invalidateQueries({ queryKey: ['orders-by-status'] })
+      
+      // Show success toast
+      const { message, type } = handleApiResponseForToast(
+        data,
+        'Order cancelled successfully',
+        'Failed to cancel order'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order'
+      addToast(errorMessage, 'error')
     },
   })
 }

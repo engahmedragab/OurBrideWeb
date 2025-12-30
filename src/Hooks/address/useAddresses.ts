@@ -3,6 +3,8 @@ import { getUserAddresses, getAddressById, createAddress, updateAddress, deleteA
 import type { AddressResponse } from '@/types/responses'
 import type { CreateAddressRequest, UpdateAddressRequest } from '@/../client/common/api/gen/ourbride-api'
 import { isAuthenticated, getToken, getUser } from '@/auth/utils/token'
+import { useToast } from '@/components/ui/Toaster'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 /**
  * Hook to fetch user addresses
@@ -32,6 +34,8 @@ export const useAddresses = (query?: {
     'userId': user?.id,
     'tokenLength': token?.length,
   })
+  
+  const { addToast } = useToast()
   
   const queryResult = useQuery<AddressResponse[]>({
     queryKey: ['addresses', 'user', queryParams],
@@ -63,6 +67,8 @@ export const useAddresses = (query?: {
         return addresses
       } catch (error) {
         console.error('[useAddresses] Error in queryFn:', error)
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch addresses'
+        addToast(errorMessage, 'error')
         throw error
       }
     },
@@ -102,13 +108,24 @@ export const useAddresses = (query?: {
  */
 export const useCreateAddress = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (data: CreateAddressRequest) => {
       return await createAddress(data)
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
+      const { message, type } = handleApiResponseForToast(
+        data,
+        'Address created successfully',
+        'Failed to create address'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create address'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -118,13 +135,24 @@ export const useCreateAddress = () => {
  */
 export const useUpdateAddress = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: UpdateAddressRequest }) => {
       return await updateAddress(id, data)
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
+      const { message, type } = handleApiResponseForToast(
+        data,
+        'Address updated successfully',
+        'Failed to update address'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update address'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -148,6 +176,7 @@ export const useAddress = (id: number, enabled: boolean = true) => {
  */
 export const useDeleteAddress = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (id: number) => {
@@ -155,6 +184,11 @@ export const useDeleteAddress = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
+      addToast('Address deleted successfully', 'success')
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete address'
+      addToast(errorMessage, 'error')
     },
   })
 }

@@ -13,6 +13,8 @@ import type {
   UpdateFavoriteRequest,
   Source,
 } from '@/../client/common/api/gen/ourbride-api'
+import { useToast } from '@/components/ui/Toaster'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 /**
  * Hook to fetch all favorites
@@ -99,6 +101,8 @@ export const useFavoritesBySource = (
  */
 export const useCreateFavorite = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
+  
   return useMutation({
     mutationFn: async (data: {
       data: CreateFavoriteRequest
@@ -106,8 +110,18 @@ export const useCreateFavorite = () => {
     }): Promise<FavoriteResponse> => {
       return await createFavorite(data.data, data.query)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Added to favorites successfully',
+        'Failed to add to favorites'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add to favorites'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -117,6 +131,8 @@ export const useCreateFavorite = () => {
  */
 export const useUpdateFavorite = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
+  
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -125,9 +141,19 @@ export const useUpdateFavorite = () => {
     }): Promise<FavoriteResponse> => {
       return await updateFavorite(data.id, data.data, data.query)
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
       queryClient.invalidateQueries({ queryKey: ['favorite', variables.id] })
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Favorite updated successfully',
+        'Failed to update favorite'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update favorite'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -137,6 +163,8 @@ export const useUpdateFavorite = () => {
  */
 export const useDeleteFavorite = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
+  
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -148,6 +176,11 @@ export const useDeleteFavorite = () => {
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
       queryClient.invalidateQueries({ queryKey: ['favorite', variables.id] })
       queryClient.removeQueries({ queryKey: ['favorite', variables.id] })
+      addToast('Removed from favorites successfully', 'success')
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to remove from favorites'
+      addToast(errorMessage, 'error')
     },
   })
 }

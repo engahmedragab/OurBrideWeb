@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, Suspense } from 'react'
+import React, { useEffect, Suspense, useCallback, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
@@ -31,25 +31,26 @@ import flowersImage from '@/assets/images/flowers.png'
 import why_trust_ourBrideImage from '@/assets/images/why_trust_ourBride.svg'
 import { useServicesHome } from '@/hooks/services/useServicesHome'
 
+// Icon map - created once to avoid recreation
+const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
+  accessories: <AccessoriesIcon className="w-20 h-20 text-brand-500" />,
+  bouquet: <BouquetIcon className="w-20 h-20 text-brand-500" />,
+  'bridal-beauty': <BridalBeautyIcon className="w-20 h-20 text-brand-500" />,
+  photography: <PhotographyIcon className="w-20 h-20 text-brand-500" />,
+  'wedding-cake': <WeddingCakeIcon className="w-20 h-20 text-brand-500" />,
+  'wedding-dress': <WeddingDressIcon className="w-20 h-20 text-brand-500" />,
+  'wedding-hall': <WeddingHallIcon className="w-20 h-20 text-brand-500" />,
+  'wedding-suit': <WeddingSuitIcon className="w-20 h-20 text-brand-500" />,
+}
+
 // Helper function to map category name to icon
 const getCategoryIcon = (categoryName: string): React.ReactNode => {
-  const iconMap: Record<string, React.ReactNode> = {
-    accessories: <AccessoriesIcon className="w-20 h-20 text-brand-500" />,
-    bouquet: <BouquetIcon className="w-20 h-20 text-brand-500" />,
-    'bridal-beauty': <BridalBeautyIcon className="w-20 h-20 text-brand-500" />,
-    photography: <PhotographyIcon className="w-20 h-20 text-brand-500" />,
-    'wedding-cake': <WeddingCakeIcon className="w-20 h-20 text-brand-500" />,
-    'wedding-dress': <WeddingDressIcon className="w-20 h-20 text-brand-500" />,
-    'wedding-hall': <WeddingHallIcon className="w-20 h-20 text-brand-500" />,
-    'wedding-suit': <WeddingSuitIcon className="w-20 h-20 text-brand-500" />,
-  }
-
   const normalizedName = categoryName.toLowerCase().replace(/\s+/g, '-')
-  return iconMap[normalizedName] || iconMap[Object.keys(iconMap)[0]] || null
+  return CATEGORY_ICON_MAP[normalizedName] || CATEGORY_ICON_MAP[Object.keys(CATEGORY_ICON_MAP)[0]] || null
 }
 
 // Static features for "Why Brides Trust OurBride" section
-const trustFeatures = [
+const TRUST_FEATURES = [
   {
     title: 'Usp Title',
     description:
@@ -100,89 +101,100 @@ function ServicesIntroPageContent() {
     }
   }, [searchParams, router])
 
-  const handleWishlistToggle = (_serviceId: string) => {
+  const handleWishlistToggle = useCallback((_serviceId: string) => {
     // TODO: Implement wishlist toggle
-  }
+  }, [])
 
-  const handleBookNow = (serviceId: string) => {
-    router.push(`/booking/${serviceId}`)
-  }
+  const handleBookNow = useCallback(
+    (serviceId: string) => {
+      router.push(`/booking/${serviceId}`)
+    },
+    [router]
+  )
 
-  // Map API data to component props
-  const heroSlides: HeroSlide[] =
-    data?.heroSlides && data.heroSlides.length > 0
-      ? data.heroSlides
-      : [
-        {
-          id: '1',
-          label: 'Limited Offer',
-          title: 'Services',
-          description:
-            'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
-          ctaText: 'Book Now',
-          ctaLink: '/services/category',
-          productImage: '',
-          discountText: '',
-        },
-      ]
+  // Map API data to component props - memoized
+  const heroSlides: HeroSlide[] = useMemo(
+    () =>
+      data?.heroSlides && data.heroSlides.length > 0
+        ? data.heroSlides
+        : [
+            {
+              id: '1',
+              label: 'Limited Offer',
+              title: 'Services',
+              description:
+                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+              ctaText: 'Book Now',
+              ctaLink: '/services/category',
+              productImage: '',
+              discountText: '',
+            },
+          ],
+    [data?.heroSlides]
+  )
 
-  const offersServiceCards: ServiceCardData[] =
-    data?.offers && data.offers.length > 0
-      ? data.offers.map(service => ({
-        ...service,
-        onWishlistToggle: () => handleWishlistToggle(service.id),
-        onBookNow: () => handleBookNow(service.id),
+  const offersServiceCards: ServiceCardData[] = useMemo(
+    () =>
+      data?.offers && data.offers.length > 0
+        ? data.offers.map(service => ({
+            ...service,
+            onWishlistToggle: () => handleWishlistToggle(service.id),
+            onBookNow: () => handleBookNow(service.id),
+          }))
+        : [],
+    [data?.offers, handleWishlistToggle, handleBookNow]
+  )
 
-      }))
-      : []
+  const trustCategories: ProductCategory[] = useMemo(
+    () =>
+      data?.categories && data.categories.length > 0
+        ? data.categories.map(category => ({
+            id: String(category.id),
+            title: category.name,
+            description:
+              category.description ||
+              'Exclusive coupons and discounts designed for your budget.',
+            href: `/services/category?category=${category.id}`,
+            icon: getCategoryIcon(category.name),
+          }))
+        : [],
+    [data?.categories]
+  )
 
-  const trustCategories: ProductCategory[] =
-    data?.categories && data.categories.length > 0
-      ? data.categories.map(category => ({
-        id: String(category.id),
-        title: category.name,
-        description: category.description || 'Exclusive coupons and discounts designed for your budget.',
-        href: `/services/category?category=${category.id}`,
-        icon: getCategoryIcon(category.name),
-      }))
-      : []
 
+  // Map providers to BestProvider format - memoized
+  const bestProviders: BestProvider[] = useMemo(() => {
+    if (!data?.providers || data.providers.length === 0) return []
 
-  // Map providers to BestProvider format
-  // BestProvidersSection expects providers with products
-  // For now, we'll create a placeholder product or use the first service from topRatedServices
-  const bestProviders: BestProvider[] =
-    data?.providers && data.providers.length > 0
-      ? data.providers
-        .slice(0, 6) // Limit to 6 providers
-        .map((provider, index) => {
-          // Get a service from topRatedServices for each provider, or use first service
-          const providerService =
-            data?.offers?.find(
-              (service: ServiceCardData) =>
-                service.providerName === provider.name
-            ) || data?.offers?.[index % (data?.offers?.length || 1)]
+    // Format profession helper - moved outside map for better performance
+    const formatProfession = (profession: string): string => {
+      if (!profession) return 'Service Provider'
+      const services = profession.split(',').map(s => s.trim())
+      if (services.length <= 2) {
+        return profession
+      }
+      // Show first 2 services with ellipsis
+      return services.slice(0, 2).join(', ') + (services.length > 2 ? '...' : '')
+    }
 
-          // Format profession/service classes - limit to first 2-3 services for display
-          const formatProfession = (profession: string): string => {
-            if (!profession) return 'Service Provider'
-            const services = profession.split(',').map(s => s.trim())
-            if (services.length <= 2) {
-              return profession
-            }
-            // Show first 2 services with ellipsis
-            return services.slice(0, 2).join(', ') + (services.length > 2 ? '...' : '')
-          }
+    return data.providers
+      .slice(0, 6) // Limit to 6 providers
+      .map((provider, index) => {
+        // Get a service from offers for each provider, or use first service
+        const providerService =
+          data?.offers?.find(
+            (service: ServiceCardData) => service.providerName === provider.name
+          ) || data?.offers?.[index % (data?.offers?.length || 1)]
 
-          return {
-            id: provider.id,
-            name: provider.name,
-            image: provider.image || '',
-            profession: formatProfession(provider.profession || 'Service Provider'),
-            verified: provider.verified || false,
-            rating: provider.rating || 0,
-            product: providerService
-              ? {
+        return {
+          id: provider.id,
+          name: provider.name,
+          image: provider.image || '',
+          profession: formatProfession(provider.profession || 'Service Provider'),
+          verified: provider.verified || false,
+          rating: provider.rating || 0,
+          product: providerService
+            ? {
                 id: providerService.id,
                 title: providerService.title,
                 image: providerService.image,
@@ -191,7 +203,7 @@ function ServicesIntroPageContent() {
                 currency: 'egp',
                 href: `/services/category/${providerService.id}`,
               }
-              : {
+            : {
                 id: provider.id,
                 title: 'View Services',
                 image: '',
@@ -200,9 +212,9 @@ function ServicesIntroPageContent() {
                 currency: 'egp',
                 href: `/services?provider=${provider.id}`,
               },
-          }
-        })
-      : []
+        }
+      })
+  }, [data?.providers, data?.offers])
 
   // Loading state
   if (isLoading) {
@@ -278,11 +290,11 @@ function ServicesIntroPageContent() {
           )}
 
           {/* Why Brides Trust OurBride - Features Section */}
-          {trustFeatures.length > 0 && (
+          {TRUST_FEATURES.length > 0 && (
             <section>
               <WhyBridesChooseProductsSection
                 image={why_trust_ourBrideImage}
-                features={trustFeatures}
+                features={TRUST_FEATURES}
                 topText="Why"
                 highlightText="Brides"
                 bottomText="Trust"

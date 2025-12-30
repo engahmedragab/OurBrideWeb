@@ -13,6 +13,8 @@ import type {
 } from '@/../client/common/api/gen/ourbride-api'
 import type { WeddingEventResponse, EventInfoResponse } from '@/types/responses'
 import { isAuthenticated } from '@/auth/utils/token'
+import { useToast } from '@/components/ui/Toaster'
+import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
 /**
  * Hook to fetch all wedding events
@@ -59,13 +61,25 @@ export const useWeddingEvent = (eventId: number | null, enabled: boolean = true)
  */
 export const useCreateWeddingEvent = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (data: WeddingEventCreateRequest) => {
       return await createWeddingEvent(data)
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['weddingEvents'] })
+      
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Wedding event created successfully',
+        'Failed to create wedding event'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create wedding event'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -75,14 +89,26 @@ export const useCreateWeddingEvent = () => {
  */
 export const useUpdateWeddingEvent = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async ({ eventId, data }: { eventId: number; data: WeddingEventUpdateRequest }) => {
       return await updateWeddingEvent(eventId, data)
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: ['weddingEvents'] })
       queryClient.invalidateQueries({ queryKey: ['weddingEvent', variables.eventId] })
+      
+      const { message, type } = handleApiResponseForToast(
+        response,
+        'Wedding event updated successfully',
+        'Failed to update wedding event'
+      )
+      addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update wedding event'
+      addToast(errorMessage, 'error')
     },
   })
 }
@@ -92,6 +118,7 @@ export const useUpdateWeddingEvent = () => {
  */
 export const useDeleteWeddingEvent = () => {
   const queryClient = useQueryClient()
+  const { addToast } = useToast()
   
   return useMutation({
     mutationFn: async (eventId: number) => {
@@ -99,6 +126,11 @@ export const useDeleteWeddingEvent = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['weddingEvents'] })
+      addToast('Wedding event deleted successfully', 'success')
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete wedding event'
+      addToast(errorMessage, 'error')
     },
   })
 }

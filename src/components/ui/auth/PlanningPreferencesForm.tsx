@@ -284,9 +284,9 @@ export const PlanningPreferencesForm = ({
       // Submit selected preferences
       await setPlanningPreferences(selectedPreferenceIds)
       
-      // Update user's isPreferenceInit to true after successful submission
+      // Update user's isInit to true after successful submission
       if (typeof window !== 'undefined' && user) {
-        const updatedUser = { ...user, isPreferenceInit: true }
+        const updatedUser = { ...user, isInit: true }
         localStorage.setItem('user_data', JSON.stringify(updatedUser))
         
         // Also update the cookie so middleware and other parts can access it

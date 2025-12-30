@@ -174,3 +174,47 @@ export const MemberTestimonialCardSkeleton = ({
   )
 }
 
+/**
+ * Offer Banner Skeleton
+ */
+export const OfferBannerSkeleton = () => {
+  return (
+    <section className="container-custom">
+      <div className="relative">
+        <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 relative w-full">
+            {/* Left Content - Text and Buttons */}
+            <div className="text-center lg:text-left px-4 md:px-5 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center">
+              {/* Heading Skeleton */}
+              <Skeleton className="h-6 w-3/4 mx-auto lg:mx-0 mb-2" />
+              
+              {/* Description Skeleton */}
+              <Skeleton className="h-4 w-full max-w-lg mx-auto lg:mx-0 mb-2" />
+              <Skeleton className="h-4 w-5/6 max-w-lg mx-auto lg:mx-0 mb-4" />
+              
+              {/* Button Skeleton */}
+              <div className="flex justify-center lg:justify-start">
+                <Skeleton className="h-10 w-40 rounded-full" />
+              </div>
+            </div>
+            
+            {/* Product Image Skeleton - Right side */}
+            <div className="flex justify-end items-end order-1 lg:order-2 relative overflow-hidden">
+              <div className="relative w-full h-full flex items-end justify-end">
+                <Skeleton className="w-full h-[140px] md:h-[170px] lg:h-[200px] xl:h-[230px] rounded-lg" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Dash Indicators Skeleton */}
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <Skeleton className="h-1.5 w-12 rounded-full" />
+          <Skeleton className="h-1.5 w-4 rounded-full" />
+          <Skeleton className="h-1.5 w-4 rounded-full" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
