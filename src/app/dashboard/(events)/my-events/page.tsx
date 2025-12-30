@@ -600,32 +600,35 @@ function MyEventsPageContent() {
             </div>
 
             {/* SECTION 6: Items, Notes & Occasions - Three Columns */}
-            <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-3 mb-6 sm:mb-8">
-              
-                <ItemsOverview
-                  book={eventInfo.itemBook}
-                  onInit={() => handleBookInit('item')}
-                  onNavigate={() => handleBookNavigate('item')}
-                  eventId={selectedEventId || undefined}
-                />
-              
-             
-                <NotesOverview
-                  book={eventInfo.noteBook}
-                  onInit={() => handleBookInit('note')}
-                  onNavigate={() => handleBookNavigate('note')}
-                  eventId={selectedEventId || undefined}
-                />
-              
-              
-                <OccasionsOverview
-                  book={eventInfo.occasionBook}
-                  onInit={() => handleBookInit('occasion')}
-                  onNavigate={() => handleBookNavigate('occasion')}
-                  eventId={selectedEventId || undefined}
-                />
-             
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
+  <div className="self-start h-fit">
+    <ItemsOverview
+      book={eventInfo.itemBook}
+      onInit={() => handleBookInit('item')}
+      onNavigate={() => handleBookNavigate('item')}
+      eventId={selectedEventId || undefined}
+    />
+  </div>
+
+  <div className="self-start h-fit">
+    <NotesOverview
+      book={eventInfo.noteBook}
+      onInit={() => handleBookInit('note')}
+      onNavigate={() => handleBookNavigate('note')}
+      eventId={selectedEventId || undefined}
+    />
+  </div>
+
+  <div className="self-start h-fit">
+    <OccasionsOverview
+      book={eventInfo.occasionBook}
+      onInit={() => handleBookInit('occasion')}
+      onNavigate={() => handleBookNavigate('occasion')}
+      eventId={selectedEventId || undefined}
+    />
+  </div>
+</div>
+
 
             {/* SECTION 6: Book Cards */}
             {/* <div>
