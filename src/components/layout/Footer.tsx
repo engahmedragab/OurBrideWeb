@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import footerLogo from '@/assets/svg/Brand-logo.svg'
-import { Facebook, Instagram, Music2, Twitter } from 'lucide-react'
+import { Facebook, Instagram, Music2 } from 'lucide-react'
 import { StoreBadges } from '@/components/ui/StoreBadges'
 
 export interface FooterProps {
@@ -30,12 +30,6 @@ export const Footer = ({ className }: FooterProps) => {
       icon: Music2,
       href: 'https://tiktok.com/@our.bride.store',
       ariaLabel: 'Visit our TikTok page',
-    },
-    {
-      name: 'X (Twitter)',
-      icon: Twitter,
-      href: 'https://twitter.com/ourbride',
-      ariaLabel: 'Visit our X (Twitter) page',
     },
   ]
 

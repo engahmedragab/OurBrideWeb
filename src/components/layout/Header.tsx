@@ -26,10 +26,10 @@ import {
   User,
   Menu,
   X,
-  Search,
   ChevronRight,
   Star,
   UserPlus,
+  Building2,
 } from 'lucide-react'
 import { NotificationDropdown } from '@/components/notifications'
 import { useNotifications } from '@/hooks/notifications/useNotifications'
@@ -126,6 +126,11 @@ export const Header = ({ className }: HeaderProps) => {
         { label: 'All Services', path: '/services' },
         { label: 'Category', path: '/services/category' },
       ],
+    },
+    {
+      label: 'Providers',
+      path: '/providers',
+      icon: Building2,
     },
     {
       label: 'Community',

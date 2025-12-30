@@ -115,7 +115,7 @@ export const useAddress = (id: number, enabled: boolean = true) => {
  */
 export const useDeleteAddress = () => {
   const queryClient = useQueryClient()
-  const { addToast } = useToast()
+  useToast()
   
   return useMutation({
     mutationFn: async (id: number) => {
@@ -148,7 +148,7 @@ export const useSetDefaultAddress = () => {
   })
 }
 
-function addToast(arg0: string, arg1: string) {
+function addToast(_arg0: string, _arg1: string) {
   throw new Error('Function not implemented.')
 }
 

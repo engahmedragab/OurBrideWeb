@@ -13,6 +13,9 @@ import {
     Calendar,
     Star,
     Users,
+    ArrowLeft,
+    X,
+    Check,
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
@@ -175,6 +178,10 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     // Package upgrades - removed as not available in API
     // If needed in future, can be added as a separate API call
     const packageUpgrades: PackageUpgrade[] = []
+
+    // Step management
+    type BookingStep = 'personal' | 'details' | 'datetime' | 'confirm'
+    const [step, setStep] = useState<BookingStep>('personal')
 
     // State for time slot selector
     const [is12Hour, setIs12Hour] = useState(true)
@@ -775,6 +782,56 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         }
     }, [])
 
+    // Step navigation handlers
+    const handleContinue = () => {
+        if (step === 'personal') {
+            // Validate personal info
+            if (!formData.fullName || !formData.mobileNumber) {
+                setErrors({
+                    ...errors,
+                    fullName: !formData.fullName ? 'Full name is required' : '',
+                    mobileNumber: !formData.mobileNumber ? 'Mobile number is required' : '',
+                })
+                return
+            }
+            // Skip details step if no branches, staff, or packages
+            if (branches.length === 0 && staff.length === 0 && packages.length === 0) {
+                setStep('datetime')
+            } else {
+                setStep('details')
+            }
+        } else if (step === 'details') {
+            // Validate details (branch, staff, package if required)
+            if (branches.length > 0 && !formData.selectedBranch) {
+                setErrors({ ...errors, selectedBranch: 'Please select a branch' })
+                return
+            }
+            setStep('datetime')
+        } else if (step === 'datetime') {
+            // Validate date/time selection
+            if (!formData.selectedTime) {
+                setErrors({ ...errors, selectedTime: 'Please select a date and time' })
+                return
+            }
+            setStep('confirm')
+        }
+    }
+
+    const handleBack = () => {
+        if (step === 'details') {
+            setStep('personal')
+        } else if (step === 'datetime') {
+            // Skip details step if no branches, staff, or packages
+            if (branches.length === 0 && staff.length === 0 && packages.length === 0) {
+                setStep('personal')
+            } else {
+                setStep('details')
+            }
+        } else if (step === 'confirm') {
+            setStep('datetime')
+        }
+    }
+
     const handleConfirm = async () => {
         if (!validateForm()) {
             return
@@ -988,471 +1045,571 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-white">
+        <div className="min-h-screen flex flex-col bg-gray-50">
             <Header />
 
             <main className="flex-1">
-                <div className="container-custom py-6 md:py-8">
-                    <h1 className="text-24 md:text-32 font-semibold text-gray-900 mb-6 md:mb-8">
-                        Booking Details
-                    </h1>
-
-                    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-                        {/* Left Column - Booking Details */}
-                        <div className="w-full lg:w-[60%] lg:flex-shrink-0 space-y-6">
-                            {/* Personal Information */}
+                <div className="container-custom py-6 md:py-8 max-w-7xl">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => {
+                                    if (step === 'personal') {
+                                        router.back()
+                                    } else {
+                                        handleBack()
+                                    }
+                                }}
+                                className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                            >
+                                <ArrowLeft className="h-5 w-5 text-gray-700" />
+                            </button>
                             <div>
-                                <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                                    Personal Information
-                                </h3>
-                                <div className="space-y-4">
-                                    <Input
-                                        prefixIcon={User}
-                                        placeholder="Full Name"
-                                        value={formData.fullName}
-                                        onChange={e =>
-                                            handleInputChange('fullName', e.target.value)
-                                        }
-                                        errorMessage={errors.fullName}
-                                        variant={errors.fullName ? 'error' : 'default'}
-                                    />
-                                    <Input
-                                        prefixIcon={Phone}
-                                        placeholder="Mobile Number"
-                                        value={formData.mobileNumber}
-                                        onChange={e =>
-                                            handleInputChange('mobileNumber', e.target.value)
-                                        }
-                                        errorMessage={errors.mobileNumber}
-                                        variant={errors.mobileNumber ? 'error' : 'default'}
-                                    />
-                                </div>
+                                <h1 className="text-24 font-semibold text-gray-900">Book Appointment</h1>
+                                <p className="text-14 text-gray-600">
+                                    {step === 'personal' && 'Personal Information'}
+                                    {step === 'details' && 'Booking Details'}
+                                    {step === 'datetime' && 'Select Date & Time'}
+                                    {step === 'confirm' && 'Confirm Booking'}
+                                </p>
                             </div>
+                        </div>
+                        <button
+                            onClick={() => router.back()}
+                            className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                        >
+                            <X className="h-5 w-5 text-gray-700" />
+                        </button>
+                    </div>
 
-                            {/* Available Branches */}
-                            {branches.length > 0 && (
-                                <div>
-                                    <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                                        Available Branches
-                                    </h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                        {branches.map(branch => (
-                                            <button
-                                                key={branch.id}
-                                                type="button"
-                                                onClick={() =>
-                                                    handleInputChange('selectedBranch', branch.id)
+                    {/* Progress Steps */}
+                    <div className="flex items-center gap-2 mb-8">
+                        {['personal', 'details', 'datetime', 'confirm'].map((s, index) => (
+                            <React.Fragment key={s}>
+                                <div
+                                    className={cn(
+                                        "flex-1 h-2 rounded-full transition-colors",
+                                        ['personal', 'details', 'datetime', 'confirm'].indexOf(step) >= index
+                                            ? "bg-brand-600"
+                                            : "bg-gray-200"
+                                    )}
+                                />
+                            </React.Fragment>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Left Column - Booking Details */}
+                        <div className="lg:col-span-2">
+                            {/* Main Content Card */}
+                            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                                {/* Personal Information Step */}
+                                {step === 'personal' && (
+                                    <div>
+                                        <h2 className="text-20 font-semibold text-gray-900 mb-4">
+                                            Personal Information
+                                        </h2>
+                                        <div className="space-y-4">
+                                            <Input
+                                                prefixIcon={User}
+                                                placeholder="Full Name"
+                                                value={formData.fullName}
+                                                onChange={e =>
+                                                    handleInputChange('fullName', e.target.value)
                                                 }
-                                                className={cn(
-                                                    'px-4 py-3 rounded-lg border-2 text-14 font-medium text-gray-900 transition-colors',
-                                                    formData.selectedBranch === branch.id
-                                                        ? 'border-brand-500 bg-brand-50'
-                                                        : 'border-gray-300 hover:border-gray-400'
-                                                )}
-                                            >
-                                                {branch.name}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Available Staff */}
-                            {staff.length > 0 && (
-                                <div>
-                                    <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                                        Select Staff
-                                    </h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                        {staff.map(staffMember => (
-                                            <button
-                                                key={staffMember.id}
-                                                type="button"
-                                                onClick={() =>
-                                                    handleInputChange('selectedStaff', staffMember.id)
+                                                errorMessage={errors.fullName}
+                                                variant={errors.fullName ? 'error' : 'default'}
+                                            />
+                                            <Input
+                                                prefixIcon={Phone}
+                                                placeholder="Mobile Number"
+                                                value={formData.mobileNumber}
+                                                onChange={e =>
+                                                    handleInputChange('mobileNumber', e.target.value)
                                                 }
-                                                className={cn(
-                                                    'px-4 py-3 rounded-lg border-2 text-14 font-medium text-gray-900 transition-colors text-left',
-                                                    formData.selectedStaff === staffMember.id
-                                                        ? 'border-brand-500 bg-brand-50'
-                                                        : 'border-gray-300 hover:border-gray-400'
-                                                )}
-                                            >
-                                                <div className="flex items-center gap-2">
-                                                    <Users className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="font-medium truncate">{staffMember.name}</div>
-                                                        {staffMember.role && (
-                                                            <div className="text-12 text-gray-500 truncate">{staffMember.role}</div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Select Your Package */}
-                            {packages.length > 0 && (
-                                <div>
-                                    <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                                        Select Your Package
-                                    </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                        {packages.map(pkg => (
-                                            <button
-                                                key={pkg.id}
-                                                type="button"
-                                                onClick={() =>
-                                                    handleInputChange('selectedPackage', pkg.id)
-                                                }
-                                                className={cn(
-                                                    'px-4 py-4 rounded-lg border-2 text-left transition-colors',
-                                                    formData.selectedPackage === pkg.id
-                                                        ? 'border-brand-500 bg-brand-50'
-                                                        : 'border-gray-300 hover:border-gray-400'
-                                                )}
-                                            >
-                                                <div className="text-14 font-semibold text-gray-900 mb-1">
-                                                    {pkg.title}
-                                                </div>
-                                                <div className="text-14 text-gray-600">
-                                                    Price | {pkg.price.toLocaleString()}{' '}
-                                                    {service.price.currency.toUpperCase()}
-                                                </div>
-                                                {pkg.description && (
-                                                    <div className="text-12 text-gray-500 mt-1">
-                                                        {pkg.description}
-                                                    </div>
-                                                )}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Package Details - Only show if upgrades are available */}
-                            {packageUpgrades.length > 0 && (
-                                <div>
-                                    <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                                        Package Details
-                                    </h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                        {packageUpgrades.map(upgrade => (
-                                            <button
-                                                key={upgrade.id}
-                                                type="button"
-                                                onClick={() => handleUpgradeToggle(upgrade.id)}
-                                                className={cn(
-                                                    'px-4 py-4 rounded-lg border-2 text-left transition-colors',
-                                                    formData.selectedUpgrades.includes(upgrade.id)
-                                                        ? 'border-brand-500 bg-brand-50'
-                                                        : 'border-gray-300 hover:border-gray-400'
-                                                )}
-                                            >
-                                                <div className="text-14 font-semibold text-gray-900 mb-1">
-                                                    {upgrade.title}
-                                                </div>
-                                                <div className="text-14 text-gray-600">
-                                                    Price | {upgrade.price.toLocaleString()}{' '}
-                                                    {service.price.currency.toUpperCase()}
-                                                </div>
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Available Times */}
-                            <div className="flex flex-col gap-3 border rounded-lg p-4 bg-white">
-                                <div className="border-b pb-2">
-                                    <h3 className="text-16 font-semibold text-gray-900">
-                                        Available Times
-                                    </h3>
-                                </div>
-
-                                {/* Time Format Toggle */}
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-14 font-medium text-gray-700">
-                                        Time Format
-                                    </label>
-                                    <div className="flex gap-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => setIs12Hour(true)}
-                                            className={cn(
-                                                'px-4 py-2 rounded-lg text-14 font-medium transition-colors',
-                                                is12Hour
-                                                    ? 'bg-brand-500 text-white'
-                                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                            )}
-                                        >
-                                            12 Hour
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setIs12Hour(false)}
-                                            className={cn(
-                                                'px-4 py-2 rounded-lg text-14 font-medium transition-colors',
-                                                !is12Hour
-                                                    ? 'bg-brand-500 text-white'
-                                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                            )}
-                                        >
-                                            24 Hour
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Select a Day */}
-                                {uniqueDates.length > 0 && (
-                                    <div className="flex flex-col gap-2">
-                                        <label className="text-14 font-medium text-gray-700">
-                                            Select a Day
-                                        </label>
-                                        <div className="flex gap-2 overflow-x-auto pb-2">
-                                            <Button
-                                                variant="outline"
-                                                onClick={fetchPreviousDays}
-                                                className="flex-shrink-0"
-                                            >
-                                                Back
-                                            </Button>
-                                            {uniqueDates.map((dateLabel) => (
-                                                <Button
-                                                    key={dateLabel}
-                                                    variant={dateLabel === selectedDate ? 'default' : 'outline'}
-                                                    onClick={() => handleDateSelect(dateLabel)}
-                                                    className="flex-shrink-0"
-                                                >
-                                                    {dateLabel}
-                                                </Button>
-                                            ))}
-                                            <Button
-                                                variant="outline"
-                                                onClick={fetchNextDays}
-                                                className="flex-shrink-0"
-                                            >
-                                                Next
-                                            </Button>
+                                                errorMessage={errors.mobileNumber}
+                                                variant={errors.mobileNumber ? 'error' : 'default'}
+                                            />
                                         </div>
                                     </div>
                                 )}
 
-                                {/* Available Time Slots */}
-                                {timeSlotsLoading ? (
-                                    <div className="flex justify-center items-center py-8">
-                                        <LoadingSpinner size="md" text="Loading time slots..." />
-                                    </div>
-                                ) : timeSlotsError ? (
-                                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                                        <p className="text-14 text-red-800">
-                                            {timeSlotsError.message || 'Failed to load time slots'}
-                                        </p>
-                                    </div>
-                                ) : timeSlots.length === 0 ? (
-                                    <div className="flex justify-center items-center py-8">
-                                        <div className="text-center">
-                                            <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                                            <p className="text-14 text-gray-600">
-                                                No time slots available
-                                            </p>
-                                        </div>
-                                    </div>
-                                ) : !hasAvailableSlots ? (
-                                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                                        <p className="text-14 text-yellow-800">
-                                            No available slots for this date
-                                        </p>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col gap-3">
-                                        <label className="text-14 font-medium text-gray-700">
-                                            Available Slots
-                                        </label>
-                                        {Object.entries(groupedByPeriod).map(([periodLabel, slots]) => (
-                                            <div key={periodLabel} className="flex flex-col gap-2">
-                                                <h6 className="text-14 font-semibold text-gray-900">
-                                                    {periodLabel}
-                                                </h6>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {slots.map((slot) => {
-                                                        const isSelected = selectedSlotId === slot.id
-                                                        const isAvailable = slot.available
+                                {/* Booking Details Step */}
+                                {step === 'details' && (
+                                    <div className="space-y-6">
+                                        <h2 className="text-20 font-semibold text-gray-900 mb-4">
+                                            Booking Details
+                                        </h2>
 
+                                        {/* Available Branches */}
+                                        {branches.length > 0 && (
+                                            <div>
+                                                <h3 className="text-16 font-semibold text-gray-900 mb-4">
+                                                    Available Branches
+                                                </h3>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                    {branches.map(branch => (
+                                                        <button
+                                                            key={branch.id}
+                                                            type="button"
+                                                            onClick={() =>
+                                                                handleInputChange('selectedBranch', branch.id)
+                                                            }
+                                                            className={cn(
+                                                                'px-4 py-3 rounded-xl border-2 text-14 font-medium text-gray-900 transition-colors',
+                                                                formData.selectedBranch === branch.id
+                                                                    ? 'border-brand-600 bg-brand-50'
+                                                                    : 'border-gray-200 hover:border-gray-300'
+                                                            )}
+                                                        >
+                                                            {branch.name}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Available Staff */}
+                                        {staff.length > 0 && (
+                                            <div>
+                                                <h3 className="text-16 font-semibold text-gray-900 mb-4">
+                                                    Select Staff
+                                                </h3>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                    {staff.map(staffMember => (
+                                                        <button
+                                                            key={staffMember.id}
+                                                            type="button"
+                                                            onClick={() =>
+                                                                handleInputChange('selectedStaff', staffMember.id)
+                                                            }
+                                                            className={cn(
+                                                                'px-4 py-3 rounded-xl border-2 text-14 font-medium text-gray-900 transition-colors text-left',
+                                                                formData.selectedStaff === staffMember.id
+                                                                    ? 'border-brand-600 bg-brand-50'
+                                                                    : 'border-gray-200 hover:border-gray-300'
+                                                            )}
+                                                        >
+                                                            <div className="flex items-center gap-2">
+                                                                <Users className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                                                                <div className="flex-1 min-w-0">
+                                                                    <div className="font-medium truncate">{staffMember.name}</div>
+                                                                    {staffMember.role && (
+                                                                        <div className="text-12 text-gray-500 truncate">{staffMember.role}</div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Select Your Package */}
+                                        {packages.length > 0 && (
+                                            <div>
+                                                <h3 className="text-16 font-semibold text-gray-900 mb-4">
+                                                    Select Your Package
+                                                </h3>
+                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                    {packages.map(pkg => (
+                                                        <button
+                                                            key={pkg.id}
+                                                            type="button"
+                                                            onClick={() =>
+                                                                handleInputChange('selectedPackage', pkg.id)
+                                                            }
+                                                            className={cn(
+                                                                'px-4 py-4 rounded-xl border-2 text-left transition-colors',
+                                                                formData.selectedPackage === pkg.id
+                                                                    ? 'border-brand-600 bg-brand-50'
+                                                                    : 'border-gray-200 hover:border-gray-300'
+                                                            )}
+                                                        >
+                                                            <div className="text-14 font-semibold text-gray-900 mb-1">
+                                                                {pkg.title}
+                                                            </div>
+                                                            <div className="text-14 text-gray-600">
+                                                                Price | {pkg.price.toLocaleString()}{' '}
+                                                                {service.price.currency.toUpperCase()}
+                                                            </div>
+                                                            {pkg.description && (
+                                                                <div className="text-12 text-gray-500 mt-1">
+                                                                    {pkg.description}
+                                                                </div>
+                                                            )}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Package Details - Only show if upgrades are available */}
+                                        {packageUpgrades.length > 0 && (
+                                            <div>
+                                                <h3 className="text-16 font-semibold text-gray-900 mb-4">
+                                                    Package Details
+                                                </h3>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                    {packageUpgrades.map(upgrade => (
+                                                        <button
+                                                            key={upgrade.id}
+                                                            type="button"
+                                                            onClick={() => handleUpgradeToggle(upgrade.id)}
+                                                            className={cn(
+                                                                'px-4 py-4 rounded-xl border-2 text-left transition-colors',
+                                                                formData.selectedUpgrades.includes(upgrade.id)
+                                                                    ? 'border-brand-600 bg-brand-50'
+                                                                    : 'border-gray-200 hover:border-gray-300'
+                                                            )}
+                                                        >
+                                                            <div className="text-14 font-semibold text-gray-900 mb-1">
+                                                                {upgrade.title}
+                                                            </div>
+                                                            <div className="text-14 text-gray-600">
+                                                                Price | {upgrade.price.toLocaleString()}{' '}
+                                                                {service.price.currency.toUpperCase()}
+                                                            </div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Date & Time Selection Step */}
+                                {step === 'datetime' && (
+                                    <div className="space-y-6">
+                                        {/* Date Selection */}
+                                        <div>
+                                            <h2 className="text-20 font-semibold text-gray-900 mb-4">Select Date</h2>
+                                            {uniqueDates.length > 0 ? (
+                                                <div className="flex gap-2 overflow-x-auto pb-2">
+                                                    {uniqueDates.map((dateLabel) => {
+                                                        const dateObj = new Date(dateLabel)
+                                                        const isSelected = selectedDate === dateLabel
+                                                        const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' })
+                                                        const dayNum = dateObj.getDate()
+                                                        const monthName = dateObj.toLocaleDateString('en-US', { month: 'short' })
+                                                        
                                                         return (
                                                             <button
-                                                                key={`${slot.id}-${slot.start}`}
-                                                                type="button"
-                                                                disabled={!isAvailable}
-                                                                onClick={() => handleTimeSlotSelect(slot)}
+                                                                key={dateLabel}
+                                                                onClick={() => handleDateSelect(dateLabel)}
                                                                 className={cn(
-                                                                    'px-4 py-2 rounded-lg text-14 font-medium transition-colors',
+                                                                    "flex-shrink-0 w-20 border-2 rounded-xl p-3 text-center transition-all",
                                                                     isSelected
-                                                                        ? 'bg-brand-500 text-white border-2 border-brand-600'
-                                                                        : isAvailable
-                                                                            ? 'bg-white border-2 border-gray-300 text-gray-900 hover:border-brand-500'
-                                                                            : 'bg-gray-100 border-2 border-gray-200 text-gray-400 cursor-not-allowed'
+                                                                        ? "border-brand-600 bg-brand-50"
+                                                                        : "border-gray-200 hover:border-gray-300"
                                                                 )}
                                                             >
-                                                                {formatTime(new Date(slot.start))}
-                                                                {isSelected && (
-                                                                    <span className="ml-2">✓</span>
-                                                                )}
+                                                                <div className="text-12 text-gray-600 mb-1">{dayName}</div>
+                                                                <div className="text-20 font-semibold text-gray-900">{dayNum}</div>
+                                                                <div className="text-12 text-gray-600">{monthName}</div>
                                                             </button>
                                                         )
                                                     })}
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ) : (
+                                                <div className="flex justify-center items-center py-8">
+                                                    <LoadingSpinner size="md" text="Loading dates..." />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Time Selection */}
+                                        <div>
+                                            <h2 className="text-20 font-semibold text-gray-900 mb-4">Select Time</h2>
+                                            {timeSlotsLoading ? (
+                                                <div className="flex justify-center items-center py-8">
+                                                    <LoadingSpinner size="md" text="Loading time slots..." />
+                                                </div>
+                                            ) : timeSlotsError ? (
+                                                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                                                    <p className="text-14 text-red-800">
+                                                        {timeSlotsError.message || 'Failed to load time slots'}
+                                                    </p>
+                                                </div>
+                                            ) : timeSlots.length === 0 || !hasAvailableSlots ? (
+                                                <div className="flex justify-center items-center py-8">
+                                                    <div className="text-center">
+                                                        <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                                                        <p className="text-14 text-gray-600">
+                                                            No time slots available for this date
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                                                    {timeSlots.filter(slot => slot.available).map((slot) => {
+                                                        const isSelected = selectedSlotId === slot.id
+                                                        return (
+                                                            <button
+                                                                key={`${slot.id}-${slot.start}`}
+                                                                type="button"
+                                                                onClick={() => handleTimeSlotSelect(slot)}
+                                                                className={cn(
+                                                                    'border-2 rounded-xl p-3 text-center transition-all text-14 font-medium',
+                                                                    isSelected
+                                                                        ? 'border-brand-600 bg-brand-50 text-brand-600'
+                                                                        : 'border-gray-200 hover:border-gray-300 text-gray-900'
+                                                                )}
+                                                            >
+                                                                {formatTime(new Date(slot.start))}
+                                                            </button>
+                                                        )
+                                                    })}
+                                                </div>
+                                            )}
+                                            {errors.selectedTime && (
+                                                <p className="text-12 text-red-500 mt-2">
+                                                    {errors.selectedTime}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
 
-                                {errors.selectedTime && (
-                                    <p className="text-12 text-red-500 mt-2">
-                                        {errors.selectedTime}
-                                    </p>
+                                {/* Confirmation Step */}
+                                {step === 'confirm' && (
+                                    <div className="space-y-6">
+                                        <h2 className="text-20 font-semibold text-gray-900 mb-4">Review Your Booking</h2>
+                                        <p className="text-14 text-gray-600">
+                                            Please review your booking details on the right. Once you're ready, click "Confirm Booking" below to complete your appointment.
+                                        </p>
+                                        
+                                        <div className="bg-brand-50 border border-brand-200 rounded-xl p-4">
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
+                                                    <Check className="h-5 w-5 text-brand-600" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-16 font-semibold text-gray-900 mb-1">Almost Done!</h3>
+                                                    <p className="text-14 text-gray-600">
+                                                        Your appointment will be confirmed and you'll receive a confirmation message.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
-                        </div>
 
-                        {/* Right Column - Booking Summary */}
-                        <div className="w-full lg:w-[40%] lg:flex-shrink-0 space-y-6">
-                            <h3 className="text-20 font-semibold text-gray-900">
-                                Booking Summary
-                            </h3>
-
-                            {/* Service Card */}
-                            <div className="bg-white rounded-lg p-4 border border-gray-200">
-                                <div className="flex items-start gap-4">
-                                    <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                                        {service.images && service.images.length > 0 && service.images[0] && service.images[0].trim() !== '' ? (
-                                            <Image
-                                                src={service.images[0]}
-                                                alt={service.title}
-                                                fill
-                                                sizes="80px"
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
-                                                <span className="text-white text-2xl font-semibold">
-                                                    {service.title.charAt(0).toUpperCase()}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="flex-1">
-                                        <h4 className="text-16 font-semibold text-gray-900 mb-2">
-                                            {service.title}
-                                        </h4>
-                                        <div className="flex items-center gap-1 mb-2">
-                                            {[1, 2, 3, 4, 5].map(star => (
-                                                <Star
-                                                    key={star}
-                                                    className={cn(
-                                                        'h-4 w-4',
-                                                        star <= Math.floor(service.rating.value)
-                                                            ? 'fill-brand-500 text-brand-500'
-                                                            : star === Math.ceil(service.rating.value) &&
-                                                                service.rating.value % 1 !== 0
-                                                                ? 'fill-brand-500/50 text-brand-500'
-                                                                : 'fill-gray-200 text-gray-200'
-                                                    )}
-                                                />
-                                            ))}
-                                            <span className="text-14 text-gray-600 ml-1">
-                                                {service.rating.value} Rated By ({service.rating.count}
-                                                ) Users
-                                            </span>
-                                        </div>
-                                        <p className="text-14 text-gray-600">
-                                            Provider: {service.provider.name}
+                            {/* Footer - Continue/Confirm Button */}
+                            <div className="bg-white rounded-xl border border-gray-200 p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div>
+                                        <p className="text-14 text-gray-600">Total Price</p>
+                                        <p className="text-24 font-semibold text-brand-600">
+                                            {total.toLocaleString()}{' '}
+                                            {service.price.currency.toUpperCase()}
                                         </p>
                                     </div>
                                 </div>
+                                <Button
+                                    variant="brand"
+                                    size="lg"
+                                    onClick={step === 'confirm' ? handleConfirm : handleContinue}
+                                    disabled={
+                                        isSubmitting ||
+                                        (step === 'personal' && (!formData.fullName || !formData.mobileNumber)) ||
+                                        (step === 'datetime' && !formData.selectedTime)
+                                    }
+                                    className="w-full !text-white"
+                                >
+                                    {isSubmitting ? 'Processing...' : step === 'confirm' ? 'Confirm Booking' : 'Continue'}
+                                </Button>
                             </div>
+                        </div>
 
+                        {/* Right Column - Booking Summary (Sticky) */}
+                        <div className="lg:col-span-1">
+                            <div className="sticky top-8 space-y-6">
+                                <h3 className="text-20 font-semibold text-gray-900">
+                                    Booking Summary
+                                </h3>
 
-                            {/* Price Breakdown */}
-                            <div className="bg-white rounded-lg p-4 border border-gray-200">
-                                <div className="space-y-3">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-14 text-gray-600">Subtotal</span>
-                                        <span className="text-14 font-semibold text-gray-900">
-                                            {subtotal.toLocaleString()}{' '}
-                                            {service.price.currency.toUpperCase()}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-14 text-gray-600">Taxes & Fees</span>
-                                        <span className="text-14 font-semibold text-gray-900">
-                                            {taxes.toLocaleString()}{' '}
-                                            {service.price.currency.toUpperCase()}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-14 text-gray-600">Delivery Fee</span>
-                                        <span className="text-14 font-semibold text-gray-900">
-                                            {deliveryFee.toLocaleString()}{' '}
-                                            {service.price.currency.toUpperCase()}
-                                        </span>
-                                    </div>
-                                    <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
-                                        <span className="text-16 font-semibold text-gray-900">
-                                            Total
-                                        </span>
-                                        <span className="text-16 font-semibold text-gray-900">
-                                            {total.toLocaleString()}{' '}
-                                            {service.price.currency.toUpperCase()}
-                                        </span>
+                                {/* Service Card */}
+                                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                                    <p className="text-14 font-medium text-gray-700 mb-3">Service</p>
+                                    <div className="flex items-start gap-4">
+                                        <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                                            {service.images && service.images.length > 0 && service.images[0] && service.images[0].trim() !== '' ? (
+                                                <Image
+                                                    src={service.images[0]}
+                                                    alt={service.title}
+                                                    fill
+                                                    sizes="80px"
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
+                                                    <span className="text-white text-2xl font-semibold">
+                                                        {service.title.charAt(0).toUpperCase()}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4 className="text-16 font-semibold text-gray-900 mb-2">
+                                                {service.title}
+                                            </h4>
+                                            <div className="flex items-center gap-1 mb-2">
+                                                {[1, 2, 3, 4, 5].map(star => (
+                                                    <Star
+                                                        key={star}
+                                                        className={cn(
+                                                            'h-4 w-4',
+                                                            star <= Math.floor(service.rating.value)
+                                                                ? 'fill-brand-500 text-brand-500'
+                                                                : star === Math.ceil(service.rating.value) &&
+                                                                    service.rating.value % 1 !== 0
+                                                                    ? 'fill-brand-500/50 text-brand-500'
+                                                                    : 'fill-gray-200 text-gray-200'
+                                                        )}
+                                                    />
+                                                ))}
+                                                <span className="text-14 text-gray-600 ml-1">
+                                                    {service.rating.value} ({service.rating.count})
+                                                </span>
+                                            </div>
+                                            <p className="text-14 text-gray-600">
+                                                {service.provider.name}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Terms & Conditions */}
-                            <div>
-                                <div className="flex items-start gap-3 mb-3">
-                                    <Checkbox
-                                        checked={formData.acceptTerms}
-                                        onChange={checked =>
-                                            handleInputChange('acceptTerms', checked)
-                                        }
-                                        variant={errors.acceptTerms ? 'error' : 'default'}
-                                    />
-                                    <label className="text-14 text-gray-900 cursor-pointer">
-                                        I Accept Terms & Conditions
-                                    </label>
+
+                                {/* Selected Details - Show progressively based on step */}
+                                {(step !== 'personal' && (formData.fullName || formData.mobileNumber || formData.selectedBranch || formData.selectedStaff || formData.selectedPackage || formData.selectedTime)) && (
+                                    <div className="bg-white rounded-xl p-6 border border-gray-200">
+                                        <p className="text-14 font-medium text-gray-700 mb-3">Booking Details</p>
+                                        <div className="space-y-3">
+                                            {/* Personal Info - Show from details step onwards */}
+                                            {(step === 'details' || step === 'datetime' || step === 'confirm') && formData.fullName && (
+                                                <div className="pb-3 border-b border-gray-100">
+                                                    <p className="text-12 text-gray-600 mb-1">Name</p>
+                                                    <p className="text-14 text-gray-900">{formData.fullName}</p>
+                                                </div>
+                                            )}
+                                            {(step === 'details' || step === 'datetime' || step === 'confirm') && formData.mobileNumber && (
+                                                <div className="pb-3 border-b border-gray-100">
+                                                    <p className="text-12 text-gray-600 mb-1">Mobile</p>
+                                                    <p className="text-14 text-gray-900">{formData.mobileNumber}</p>
+                                                </div>
+                                            )}
+                                            {/* Branch - Show from datetime step onwards */}
+                                            {(step === 'datetime' || step === 'confirm') && formData.selectedBranch && (
+                                                <div className="pb-3 border-b border-gray-100">
+                                                    <p className="text-12 text-gray-600 mb-1">Branch</p>
+                                                    <p className="text-14 text-gray-900">
+                                                        {branches.find(b => b.id === formData.selectedBranch)?.name}
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {/* Staff - Show from datetime step onwards */}
+                                            {(step === 'datetime' || step === 'confirm') && formData.selectedStaff && (
+                                                <div className="pb-3 border-b border-gray-100">
+                                                    <p className="text-12 text-gray-600 mb-1">Staff Member</p>
+                                                    <p className="text-14 text-gray-900">
+                                                        {staff.find(s => s.id === formData.selectedStaff)?.name}
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {/* Package - Show from datetime step onwards */}
+                                            {(step === 'datetime' || step === 'confirm') && formData.selectedPackage && (
+                                                <div className="pb-3 border-b border-gray-100">
+                                                    <p className="text-12 text-gray-600 mb-1">Package</p>
+                                                    <p className="text-14 text-gray-900">
+                                                        {packages.find(p => p.id === formData.selectedPackage)?.title}
+                                                    </p>
+                                                </div>
+                                            )}
+                                            {/* Date & Time - Show on confirm step */}
+                                            {step === 'confirm' && formData.selectedTime && (
+                                                <div>
+                                                    <p className="text-12 text-gray-600 mb-1">Date & Time</p>
+                                                    <p className="text-14 text-gray-900">
+                                                        {new Date(formData.selectedTime.split('T')[0]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    </p>
+                                                    <p className="text-14 text-gray-600">
+                                                        {formData.selectedTime.split('T')[1]}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Price Breakdown */}
+                                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                                    <p className="text-14 font-medium text-gray-700 mb-3">Price Summary</p>
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-14 text-gray-600">Subtotal</span>
+                                            <span className="text-14 font-semibold text-gray-900">
+                                                {subtotal.toLocaleString()}{' '}
+                                                {service.price.currency.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-14 text-gray-600">Taxes & Fees</span>
+                                            <span className="text-14 font-semibold text-gray-900">
+                                                {taxes.toLocaleString()}{' '}
+                                                {service.price.currency.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-14 text-gray-600">Delivery Fee</span>
+                                            <span className="text-14 font-semibold text-gray-900">
+                                                {deliveryFee.toLocaleString()}{' '}
+                                                {service.price.currency.toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
+                                            <span className="text-14 font-medium text-gray-900">
+                                                Total
+                                            </span>
+                                            <span className="text-18 font-semibold text-brand-600">
+                                                {total.toLocaleString()}{' '}
+                                                {service.price.currency.toUpperCase()}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                {errors.acceptTerms && (
-                                    <p className="text-12 text-red-500 ml-8">
-                                        {errors.acceptTerms}
-                                    </p>
-                                )}
-                                <p className="text-12 text-gray-600 leading-relaxed">
-                                    If you are not around when the delivery person arrives, they
-                                    will leave your order at the door. by placing your order, you
-                                    agree to take full responsibility for it once it&apos;s
-                                    delivered.
-                                </p>
-                            </div>
 
-                            {/* Confirm Booking Button */}
-                            <Button
-                                variant="default"
-                                size="lg"
-                                onClick={handleConfirm}
-                                disabled={isSubmitting}
-                                className={cn(
-                                    'w-full h-12 rounded-lg font-normal text-white',
-                                    'bg-brand-500 hover:bg-brand-600',
-                                    'transition-colors',
-                                    isSubmitting && 'opacity-50 cursor-not-allowed'
+                                {/* Terms & Conditions - Only show on confirm step */}
+                                {step === 'confirm' && (
+                                    <div className="bg-white rounded-xl p-6 border border-gray-200">
+                                        <div className="flex items-start gap-3 mb-3">
+                                            <Checkbox
+                                                checked={formData.acceptTerms}
+                                                onChange={checked =>
+                                                    handleInputChange('acceptTerms', checked)
+                                                }
+                                                variant={errors.acceptTerms ? 'error' : 'default'}
+                                            />
+                                            <label className="text-14 text-gray-900 cursor-pointer">
+                                                I Accept Terms & Conditions
+                                            </label>
+                                        </div>
+                                        {errors.acceptTerms && (
+                                            <p className="text-12 text-red-500 ml-8 mb-2">
+                                                {errors.acceptTerms}
+                                            </p>
+                                        )}
+                                        <p className="text-12 text-gray-600 leading-relaxed ml-8">
+                                            If you are not around when the delivery person arrives, they
+                                            will leave your order at the door. by placing your order, you
+                                            agree to take full responsibility for it once it&apos;s
+                                            delivered.
+                                        </p>
+                                    </div>
                                 )}
-                            >
-                                {isSubmitting ? 'Processing...' : 'Confirm Booking'}
-                            </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
