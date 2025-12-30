@@ -11,7 +11,7 @@ export interface StoreBadgesProps {
 const APP_PACKAGE = 'com.ourbride.app'
 const IOS_APP_ID = '6747453812'
 
-const defaultAppStoreUrl = `https://apps.apple.com/app/id${IOS_APP_ID}`
+const defaultAppStoreUrl = `https://apps.apple.com/eg/app/id${IOS_APP_ID}`
 const defaultPlayStoreUrl = `https://play.google.com/store/apps/details?id=${APP_PACKAGE}`
 
 export const StoreBadges = ({
