@@ -498,21 +498,33 @@ function MyEventsPageContent() {
                 >
                   <span>{tab.label}</span>
                   {tab.needsInit && (
-                    <span className={cn(
-                      "px-1.5 py-0.5 text-10 font-medium rounded",
-                      "bg-yellow-100 text-yellow-700"
-                    )}>
-                      Init
-                    </span>
-                  )}
-                  {!tab.needsInit && tab.value !== 'overview' && tab.value !== 'events' && (
-                    <span className={cn(
-                      "px-1.5 py-0.5 text-10 font-medium rounded",
-                      "bg-green-100 text-green-700"
-                    )}>
-                      ✓
-                    </span>
-                  )}
+  <span
+    className={cn(
+      "ml-2 inline-flex items-center justify-center",
+      "h-4 w-4 rounded-full",
+      "bg-yellow-100 text-yellow-700 ring-1 ring-yellow-200",
+      "relative"
+    )}
+    title="Needs init"
+  >
+    <span className="absolute inset-0 rounded-full bg-yellow-200/60 animate-ping" />
+    <span className="relative h-1.5 w-1.5 rounded-full bg-yellow-600" />
+  </span>
+)}
+
+{!tab.needsInit && tab.value !== "overview" && tab.value !== "events" && (
+  <span
+    className={cn(
+      "ml-2 inline-flex items-center justify-center",
+      "h-4 w-4 rounded-full",
+      "bg-green-100 text-green-700 ring-1 ring-green-200"
+    )}
+    title="Ready"
+  >
+    <span className="text-[10px] leading-none">✓</span>
+  </span>
+)}
+
                   {isActive && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full animate-in fade-in slide-in-from-bottom-1" />
                   )}
