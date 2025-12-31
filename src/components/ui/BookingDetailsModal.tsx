@@ -566,7 +566,7 @@ export const BookingDetailsModal = ({
             {/* Confirm Booking Button */}
             <Button
               variant="default"
-              size="lg"
+              size="md"
               onClick={handleConfirm}
               className={cn(
                 'w-full h-12 rounded-lg font-normal text-white',

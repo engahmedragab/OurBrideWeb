@@ -3,13 +3,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { format } from 'date-fns'
 import {
     User,
     Phone,
-    Tag,
-    Diamond,
-    Gift,
     Calendar,
     Star,
     Users,
@@ -21,13 +17,11 @@ import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
-import { DatePicker } from '@/components/ui/DatePicker'
 import { LoadingSpinner, ErrorDisplay, ProcessingModal } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import type { Service } from '@/types/service'
 import { useServiceDetail, useServicePackages } from '@/hooks/services'
 import { getServiceById } from '@/services/api/serviceApi'
-import { createReservation, getAvailableTimeSlots, getReservationById, getClientReservationsPaginated } from '@/services/api/reservationApi'
+import { createReservation, getAvailableTimeSlots, getReservationById } from '@/services/api/reservationApi'
 import { addPurchase } from '@/services/api/purchaseApi'
 import type { ReservationRequest, PurchaseRequest } from '@/../client/common/api/gen/ourbride-api'
 import { PurchaseType, ServiceType } from '@/../client/common/api/gen/ourbride-api'
@@ -36,7 +30,7 @@ import type { ServicePlaceAssignmentResponse } from '@/types/responses/service-p
 import type { ServiceStaffAssignmentResponse } from '@/types/responses/service-staff-assignment-response'
 import type { TimeSlotResponse } from '@/types/responses/time-slot-response'
 import type { ReservationResponse } from '@/types/responses'
-import { AvailabilityStatus, ReservationStatus } from '@/types/responses/common'
+import { ReservationStatus } from '@/types/responses/common'
 import { useUserFromToken } from '@/hooks/auth'
 
 export interface Branch {
@@ -134,17 +128,16 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         isLoading: packagesLoading,
     } = useServicePackages(serviceId, !!serviceId)
 
-    const servicePackages = packagesData?.packages || []
-
     // Map service packages to Package format
     const packages: Package[] = useMemo(() => {
+        const servicePackages = packagesData?.packages || []
         return servicePackages.map((pkg) => ({
             id: pkg.id,
             title: pkg.name,
             price: pkg.price,
             description: pkg.description,
         }))
-    }, [servicePackages])
+    }, [packagesData?.packages])
 
     // Extract branches from service place assignments
     const branches: Branch[] = useMemo(() => {
@@ -184,7 +177,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     const [step, setStep] = useState<BookingStep>('personal')
 
     // State for time slot selector
-    const [is12Hour, setIs12Hour] = useState(true)
+    const [is12Hour] = useState(true)
     const [selectedDate, setSelectedDate] = useState<string | null>(null)
     const [currentDate, setCurrentDate] = useState(new Date())
     const [selectedSlotId, setSelectedSlotId] = useState<number | undefined>(undefined)
@@ -217,7 +210,6 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [formData, setFormData] = useState<BookingFormData>(getInitialFormData())
     const [queueStatus, setQueueStatus] = useState<'idle' | 'queued' | 'processing' | 'completed' | 'failed'>('idle')
-    const [pendingReservationId, setPendingReservationId] = useState<string | null>(null)
     const pollingIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const [isMounted, setIsMounted] = useState(false)
     const [showProcessingModal, setShowProcessingModal] = useState(false)
@@ -237,18 +229,23 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         const fullName = userInfo.name || userInfo.fullName || ''
         const phoneNumber = userInfo.phoneNumber || ''
 
-        // Only update if we have valid data
-        if (fullName || phoneNumber) {
-            const newFormData = {
-                ...formData,
-            }
-            if (fullName) {
-                newFormData.fullName = fullName
-            }
-            if (phoneNumber) {
-                newFormData.mobileNumber = phoneNumber
-            }
-            setFormData(newFormData)
+        // Only update if we have valid data and form is empty
+        if ((fullName || phoneNumber)) {
+            setFormData(prev => {
+                // Only update if the fields are currently empty to avoid overwriting user input
+                const updates: Partial<BookingFormData> = {}
+                if (fullName && !prev.fullName) {
+                    updates.fullName = fullName
+                }
+                if (phoneNumber && !prev.mobileNumber) {
+                    updates.mobileNumber = phoneNumber
+                }
+                // Only update if there are changes
+                if (Object.keys(updates).length > 0) {
+                    return { ...prev, ...updates }
+                }
+                return prev
+            })
         }
     }, [userInfo, isMounted])
 
@@ -358,13 +355,13 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         })
     }
 
-    // Get period label (morning, afternoon, evening)
-    const getPeriodLabel = (date: Date) => {
-        const hour = date.getHours()
-        if (hour < 12) return 'Morning'
-        if (hour < 17) return 'Afternoon'
-        return 'Evening'
-    }
+    // Get period label (morning, afternoon, evening) - kept for potential future use
+    // const getPeriodLabel = (date: Date) => {
+    //     const hour = date.getHours()
+    //     if (hour < 12) return 'Morning'
+    //     if (hour < 17) return 'Afternoon'
+    //     return 'Evening'
+    // }
 
     // Get unique dates from time slots
     const uniqueDates = useMemo(() => {
@@ -387,17 +384,6 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             (slot) => formatDate(new Date(slot.start)) === selectedDate
         )
     }, [timeSlots, selectedDate])
-
-    // Group slots by period
-    const groupedByPeriod = useMemo(() => {
-        const grouped: Record<string, TimeSlot[]> = {}
-        filteredSlots.forEach((slot) => {
-            const label = getPeriodLabel(new Date(slot.start))
-            if (!grouped[label]) grouped[label] = []
-            grouped[label].push(slot)
-        })
-        return grouped
-    }, [filteredSlots])
 
     // Check if there are available slots
     const hasAvailableSlots = useMemo(() => {
@@ -442,47 +428,55 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     }
 
     // Navigation handlers - time slots will be fetched automatically via useEffect
-    const fetchNextDays = () => {
-        const nextDate = new Date(currentDate)
-        nextDate.setDate(nextDate.getDate() + 7)
-        setCurrentDate(nextDate)
-    }
-
-    const fetchPreviousDays = () => {
-        const prevDate = new Date(currentDate)
-        prevDate.setDate(prevDate.getDate() - 7)
-        setCurrentDate(prevDate)
-    }
+    // These functions are kept for potential future use with navigation buttons
 
     // Update form data when packages are loaded
     useEffect(() => {
-        if (packages.length > 0 && !formData.selectedPackage) {
-            setFormData(prev => ({
-                ...prev,
-                selectedPackage: packages[0]?.id || '',
-            }))
+        if (packages.length > 0) {
+            setFormData(prev => {
+                // Only set if not already selected
+                if (!prev.selectedPackage) {
+                    return {
+                        ...prev,
+                        selectedPackage: packages[0]?.id || '',
+                    }
+                }
+                return prev
+            })
         }
-    }, [packages, formData.selectedPackage])
+    }, [packages])
 
     // Update form data when branches are loaded
     useEffect(() => {
-        if (branches.length > 0 && !formData.selectedBranch) {
-            setFormData(prev => ({
-                ...prev,
-                selectedBranch: branches[0]?.id || '',
-            }))
+        if (branches.length > 0) {
+            setFormData(prev => {
+                // Only set if not already selected
+                if (!prev.selectedBranch) {
+                    return {
+                        ...prev,
+                        selectedBranch: branches[0]?.id || '',
+                    }
+                }
+                return prev
+            })
         }
-    }, [branches, formData.selectedBranch])
+    }, [branches])
 
     // Update form data when staff are loaded
     useEffect(() => {
-        if (staff.length > 0 && !formData.selectedStaff) {
-            setFormData(prev => ({
-                ...prev,
-                selectedStaff: staff[0]?.id || '',
-            }))
+        if (staff.length > 0) {
+            setFormData(prev => {
+                // Only set if not already selected
+                if (!prev.selectedStaff) {
+                    return {
+                        ...prev,
+                        selectedStaff: staff[0]?.id || '',
+                    }
+                }
+                return prev
+            })
         }
-    }, [staff, formData.selectedStaff])
+    }, [staff])
 
     const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -582,7 +576,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
                 if (!reservation) {
                     if (pollCount >= maxPolls) {
-                        handlePollingTimeout(reservationId)
+                        handlePollingTimeout()
                         return
                     }
 
@@ -606,7 +600,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
                 // Still processing (status is "Pending"), continue polling
                 if (pollCount >= maxPolls) {
-                    handlePollingTimeout(reservationId)
+                    handlePollingTimeout()
                     return
                 }
 
@@ -614,11 +608,12 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 delay = Math.min(delay + 1000, 6000)
                 pollingIntervalRef.current = setTimeout(poll, delay)
 
-            } catch (error: any) {
+            } catch (error: unknown) {
                 // If reservation not found (404), continue polling (might not be created yet)
-                if (error?.response?.status === 404 || error?.statusCode === 404) {
+                const err = error as { response?: { status?: number }; statusCode?: number }
+                if (err?.response?.status === 404 || err?.statusCode === 404) {
                     if (pollCount >= maxPolls) {
-                        handlePollingTimeout(reservationId)
+                        handlePollingTimeout()
                         return
                     }
 
@@ -629,7 +624,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
                 // Other errors - retry with backoff
                 if (pollCount >= maxPolls) {
-                    handlePollingTimeout(reservationId)
+                    handlePollingTimeout()
                     return
                 }
 
@@ -758,7 +753,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             }
 
             await addPurchase(purchasePayload)
-        } catch (purchaseError) {
+        } catch {
             // Don't fail the reservation creation if purchase creation fails
         }
 
@@ -767,7 +762,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     }
 
     // Handle polling timeout
-    const handlePollingTimeout = (reservationId: string) => {
+    const handlePollingTimeout = () => {
         setQueueStatus('failed')
         setShowProcessingModal(false)
         stopPolling()
@@ -868,7 +863,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                     const monthIndex = monthNames.indexOf(monthName)
 
                     if (monthIndex !== -1) {
-                        let selectedDateObj = new Date(currentYear, monthIndex, parseInt(day))
+                        const selectedDateObj = new Date(currentYear, monthIndex, parseInt(day))
                         if (selectedDateObj < new Date()) {
                             selectedDateObj.setFullYear(currentYear + 1)
                         }
@@ -920,21 +915,19 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
                 // Extract reservation ID from response
                 // API returns 201 Created with reservationId immediately
-                const reservationId = apiResponse?.reservationId || (apiResponse as any)?.id || (apiResponse as any)?.reservationId
+                const responseData = apiResponse as unknown as { reservationId?: string; id?: string | number; status?: ReservationStatus }
+                const reservationId = apiResponse?.reservationId || 
+                    (typeof responseData?.id === 'string' ? responseData.id : responseData?.id?.toString()) || 
+                    responseData?.reservationId
 
                 if (!reservationId) {
                     throw new Error('Reservation ID not found in response. Please try again.')
                 }
 
-                // Check initial status
-                // API now returns "Pending" (2) as initial status after creation
-                const initialStatus = apiResponse?.status ?? ReservationStatus.Pending
-
                 // Always start polling
                 // Poll GET /api/v1/services/reservations/{reservationId} until status changes from "Pending" (2)
                 // "Pending" indicates the reservation is being validated/processed in the queue
                 setIsSubmitting(false)
-                setPendingReservationId(reservationId)
                 setShowProcessingModal(true)
                 setQueueStatus('queued')
 
@@ -942,19 +935,31 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 // Poll until status changes from "Pending" to "Confirmed", "Rejected", etc.
                 startPolling(reservationId, providerId, clientId, serviceId, requestedStartTime, notes)
 
-            } catch (error: any) {
+            } catch (error: unknown) {
+                const err = error as { 
+                    response?: { 
+                        status?: number; 
+                        data?: { 
+                            statusCode?: number; 
+                            reservationId?: string; 
+                            data?: { reservationId?: string }; 
+                            id?: string;
+                            message?: string;
+                            errors?: Array<{ error?: string }>;
+                        } 
+                    } 
+                }
 
                 // Check if error response has reservation ID (some APIs return 202/201 with ID)
-                const errorStatus = error?.response?.status || error?.response?.data?.statusCode
+                const errorStatus = err?.response?.status || err?.response?.data?.statusCode
                 if (errorStatus === 202 || errorStatus === 201) {
-                    const reservationId = error.response?.data?.reservationId ||
-                        error.response?.data?.data?.reservationId ||
-                        error.response?.data?.id ||
+                    const reservationId = err.response?.data?.reservationId ||
+                        err.response?.data?.data?.reservationId ||
+                        err.response?.data?.id ||
                         null
 
                     if (reservationId) {
                         setIsSubmitting(false)
-                        setPendingReservationId(reservationId)
                         setShowProcessingModal(true)
                         setQueueStatus('queued')
                         startPolling(reservationId, providerId, clientId, serviceId, requestedStartTime, notes)
@@ -964,8 +969,8 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
                 // Handle validation errors (400)
                 if (errorStatus === 400) {
-                    const errorMessage = error?.response?.data?.message ||
-                        error?.response?.data?.errors?.[0]?.error ||
+                    const errorMessage = err?.response?.data?.message ||
+                        err?.response?.data?.errors?.[0]?.error ||
                         'Invalid request. Please check your input.'
                     setQueueStatus('failed')
                     setShowProcessingModal(false)
@@ -1377,7 +1382,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                     <div className="space-y-6">
                                         <h2 className="text-20 font-semibold text-gray-900 mb-4">Review Your Booking</h2>
                                         <p className="text-14 text-gray-600">
-                                            Please review your booking details on the right. Once you're ready, click "Confirm Booking" below to complete your appointment.
+                                            Please review your booking details on the right. Once you&apos;re ready, click &quot;Confirm Booking&quot; below to complete your appointment.
                                         </p>
                                         
                                         <div className="bg-brand-50 border border-brand-200 rounded-xl p-4">
@@ -1388,7 +1393,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                 <div>
                                                     <h3 className="text-16 font-semibold text-gray-900 mb-1">Almost Done!</h3>
                                                     <p className="text-14 text-gray-600">
-                                                        Your appointment will be confirmed and you'll receive a confirmation message.
+                                                        Your appointment will be confirmed and you&apos;ll receive a confirmation message.
                                                     </p>
                                                 </div>
                                             </div>
@@ -1603,7 +1608,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                         )}
                                         <p className="text-12 text-gray-600 leading-relaxed ml-8">
                                             If you are not around when the delivery person arrives, they
-                                            will leave your order at the door. by placing your order, you
+                                            will leave your order at the door. By placing your order, you
                                             agree to take full responsibility for it once it&apos;s
                                             delivered.
                                         </p>

@@ -335,7 +335,7 @@ export function BookingClient({ providerId: _providerId, preSelectedServiceId }:
               <div className="space-y-6">
                 <h2 className="text-20 font-semibold text-gray-900 mb-4">Review Your Booking</h2>
                 <p className="text-14 text-gray-600">
-                  Please review your booking details on the right. Once you're ready, click "Confirm Booking" below to complete your appointment.
+                  Please review your booking details on the right. Once you&apos;re ready, click &quot;Confirm Booking&quot; below to complete your appointment.
                 </p>
                 
                 <div className="bg-brand-50 border border-brand-200 rounded-xl p-4">
