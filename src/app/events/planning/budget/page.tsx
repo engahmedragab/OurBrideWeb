@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect, useCallback, useRef, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft, Save } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LoadingOverlay, LoadingSpinner } from '@/components/ui'
@@ -15,7 +15,12 @@ import { BudgetLinesTable } from '@/components/budgetBook/components/BudgetLines
 import { BudgetLineModal } from '@/components/budgetBook/components/modals/BudgetLineModal'
 import { CategoryModal } from '@/components/budgetBook/components/modals/CategoryModal'
 import { ConfirmDeleteModal } from '@/components/budgetBook/components/modals/ConfirmDeleteModal'
-import { mapApiToDraft, mapDraftToSyncPayload, generateTempId, type BudgetBookDraft } from '@/utils/budgetAdapters'
+import {
+  mapApiToDraft,
+  mapDraftToSyncPayload,
+  generateTempId,
+  type BudgetBookDraft,
+} from '@/utils/budgetAdapters'
 import { calculateBudgetStats } from '@/utils/budgetStats'
 import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
@@ -105,9 +110,7 @@ function BudgetPageContent() {
 
   // Check if there are actual changes
   const hasActualChanges = useCallback((): boolean => {
-    if (!localDraft || !lastSyncedRef.current) {
-      return !!localDraft
-    }
+    if (!localDraft || !lastSyncedRef.current) return !!localDraft
 
     const current = localDraft
     const lastSynced = lastSyncedRef.current
@@ -125,28 +128,22 @@ function BudgetPageContent() {
     const currentCategories = current.lineCategories || []
     const lastSyncedCategories = lastSynced.lineCategories || []
 
-    // Check if any category was added, removed, or has isDeleted changed
     for (const currentCat of currentCategories) {
       const lastSyncedCat = lastSyncedCategories.find(c => c.id === currentCat.id)
-      
-      // If category doesn't exist in lastSynced, it's new or was deleted
       if (!lastSyncedCat) return true
-
-      // Check if isDeleted status changed
       if (currentCat.isDeleted !== lastSyncedCat.isDeleted) return true
 
-      // Check other properties (only if not deleted)
-      if (!currentCat.isDeleted && (
-        currentCat.name !== lastSyncedCat.name ||
-        currentCat.description !== lastSyncedCat.description ||
-        currentCat.iconName !== lastSyncedCat.iconName ||
-        currentCat.colorName !== lastSyncedCat.colorName
-      )) {
+      if (
+        !currentCat.isDeleted &&
+        (currentCat.name !== lastSyncedCat.name ||
+          currentCat.description !== lastSyncedCat.description ||
+          currentCat.iconName !== lastSyncedCat.iconName ||
+          currentCat.colorName !== lastSyncedCat.colorName)
+      ) {
         return true
       }
     }
 
-    // Check if any category was removed (exists in lastSynced but not in current)
     for (const lastSyncedCat of lastSyncedCategories) {
       const currentCat = currentCategories.find(c => c.id === lastSyncedCat.id)
       if (!currentCat) return true
@@ -156,14 +153,10 @@ function BudgetPageContent() {
     const currentLines = current.lines || []
     const lastSyncedLines = lastSynced.lines || []
 
-    if (currentLines.length !== lastSyncedLines.length) {
-      return true
-    }
+    if (currentLines.length !== lastSyncedLines.length) return true
 
-    for (let i = 0; i < currentLines.length; i++) {
-      const currentLine = currentLines[i]
+    for (const currentLine of currentLines) {
       const lastSyncedLine = lastSyncedLines.find(l => l.id === currentLine.id)
-
       if (!lastSyncedLine) return true
 
       if (
@@ -192,18 +185,17 @@ function BudgetPageContent() {
   }, [localDraft, hasActualChanges])
 
   // Handle category selection with toggle behavior
-  const handleCategoryClick = useCallback((categoryId: number | null) => {
-    if (categoryId === activeCategoryId) {
-      setActiveCategoryId(null)
-    } else {
-      setActiveCategoryId(categoryId)
-    }
-  }, [activeCategoryId])
+  const handleCategoryClick = useCallback(
+    (categoryId: number | null) => {
+      setActiveCategoryId(prev => (categoryId === prev ? null : categoryId))
+    },
+    []
+  )
 
-  // Calculate stats based on active category
+  // Calculate stats based on active category (لو calculateBudgetStats بتدعمها)
   const stats = useMemo(() => {
     if (!localDraft) return null
-    return calculateBudgetStats(localDraft, activeCategoryId)
+    return calculateBudgetStats(localDraft, activeCategoryId as any)
   }, [localDraft, activeCategoryId])
 
   // Filter lines based on active category and status filters
@@ -211,16 +203,11 @@ function BudgetPageContent() {
     if (!localDraft || !stats) return []
 
     let lines = (localDraft.lines || []).filter(line => {
-      // Filter by active category
-      if (activeCategoryId !== null) {
-        if (line.lineCategoryId !== activeCategoryId) return false
-      }
-      // Exclude deleted lines (unless filterType is 'deleted')
+      if (activeCategoryId !== null && line.lineCategoryId !== activeCategoryId) return false
       if (filterType !== 'deleted' && line.isDeleted) return false
       return true
     })
 
-    // Apply status filter
     switch (filterType) {
       case 'done':
         lines = lines.filter(line => line.isDone)
@@ -248,14 +235,16 @@ function BudgetPageContent() {
   }, [localDraft, activeCategoryId, filterType, stats])
 
   // Handlers
-  const handleBudgetChange = useCallback((newBudget: number) => {
-    if (!localDraft) return
-    setLocalDraft({
-      ...localDraft,
-      initialEstimated: newBudget,
-      estimated: newBudget,
-    })
-  }, [localDraft])
+  const handleBudgetChange = useCallback(
+    (newBudget: number) => {
+      if (!localDraft) return
+      setLocalDraft({
+        ...localDraft,
+        initialEstimated: newBudget,
+      })
+    },
+    [localDraft]
+  )
 
   const handleCreateLine = useCallback(() => {
     setEditingLine(null)
@@ -267,107 +256,118 @@ function BudgetPageContent() {
     setIsBudgetLineModalOpen(true)
   }, [])
 
-  const handleSaveLine = useCallback((data: {
-    id?: number
-    expense: string
-    lineCategoryId: number | null
-    estimated: number
-    paid: number
-    final: number | null
-    count: number | null
-    payer: string | null
-    note: string | null
-    isDone: boolean
-    isFavorite: boolean
-    isDeleted: boolean
-  }) => {
-    if (!localDraft) return
+  const handleSaveLine = useCallback(
+    (data: {
+      id?: number
+      expense: string
+      lineCategoryId: number | null
+      estimated: number
+      paid: number
+      final: number | null
+      count: number | null
+      payer: string | null
+      note: string | null
+      isDone: boolean
+      isFavorite: boolean
+      isDeleted: boolean
+    }) => {
+      if (!localDraft) return
 
-    const finalCategoryId = data.lineCategoryId ?? (activeCategoryId !== null ? activeCategoryId : null)
+      const finalCategoryId =
+        data.lineCategoryId ?? (activeCategoryId !== null ? activeCategoryId : null)
 
-    if (data.id && data.id > 0) {
-      // Update existing line
+      if (data.id && data.id > 0) {
+        // Update existing line
+        setLocalDraft({
+          ...localDraft,
+          lines: (localDraft.lines || []).map(line =>
+            line.id === data.id
+              ? ({
+                  ...line,
+                  expense: data.expense,
+                  lineCategoryId: finalCategoryId,
+                  estimated: data.estimated,
+                  paid: data.paid,
+                  final: data.final ?? 0,
+                  dueDate: (line as any).dueDate ?? null, // ✅ حافظي على القديم أو null
+                  count: data.count ?? 0,
+                  payer: data.payer,
+                  note: data.note,
+                  isDone: data.isDone,
+                  isFavorite: data.isFavorite,
+                  isDeleted: data.isDeleted,
+                } as BudgetLineResponse)
+              : line
+          ),
+        })
+      } else {
+        // Create new line
+        const newLine: BudgetLineResponse = {
+          id: generateTempId(),
+          bookId: localDraft.id || 0,
+          expense: data.expense,
+          lineCategoryId: finalCategoryId,
+          estimated: data.estimated,
+          paid: data.paid,
+          final: data.final ?? 0,
+          dueDate: null as any, // ✅ مهم جدًا: null مش ''
+          count: data.count ?? 0,
+          payer: data.payer || null,
+          note: data.note || null,
+          isDone: data.isDone,
+          isFavorite: data.isFavorite,
+          isDeleted: data.isDeleted,
+          isModelLine: false,
+          iconName: '',
+          colorName: '',
+          expenseAr: '',
+          expenseEn: '',
+          lineType: localDraft.bookType,
+          bookClass: localDraft.bookClass,
+          createdBy: '',
+          lastModifiedBy: '',
+          creationDate: new Date().toISOString(),
+          lastModifiedDate: new Date().toISOString(),
+          slug: '',
+        } as BudgetLineResponse
+
+        setLocalDraft({
+          ...localDraft,
+          lines: [...(localDraft.lines || []), newLine],
+        })
+      }
+
+      setIsBudgetLineModalOpen(false)
+      setEditingLine(null)
+    },
+    [localDraft, activeCategoryId]
+  )
+
+  const handleToggleDone = useCallback(
+    (lineId: number) => {
+      if (!localDraft) return
       setLocalDraft({
         ...localDraft,
         lines: (localDraft.lines || []).map(line =>
-          line.id === data.id
-            ? {
-                ...line,
-                expense: data.expense,
-                lineCategoryId: finalCategoryId,
-                estimated: data.estimated,
-                paid: data.paid,
-                final: data.final ?? 0,
-                dueDate: '', // Due date removed from UI
-                count: data.count ?? 0,
-                payer: data.payer,
-                note: data.note,
-                isDone: data.isDone,
-                isFavorite: data.isFavorite,
-                isDeleted: data.isDeleted,
-              } as BudgetLineResponse
-            : line
+          line.id === lineId ? { ...line, isDone: !line.isDone } : line
         ),
       })
-    } else {
-      // Create new line
-      const newLine: BudgetLineResponse = {
-        id: generateTempId(),
-        bookId: localDraft.id || 0,
-        expense: data.expense,
-        lineCategoryId: finalCategoryId,
-        estimated: data.estimated,
-        paid: data.paid,
-        final: data.final ?? 0,
-        dueDate: '', // Due date removed from UI
-        count: data.count ?? 0,
-        payer: data.payer || null,
-        note: data.note || null,
-        isDone: data.isDone,
-        isFavorite: data.isFavorite,
-        isDeleted: data.isDeleted,
-        isModelLine: false,
-        iconName: '',
-        colorName: '',
-        expenseAr: '',
-        expenseEn: '',
-        lineType: localDraft.bookType,
-        bookClass: localDraft.bookClass,
-        createdBy: '',
-        lastModifiedBy: '',
-        creationDate: new Date().toISOString(),
-        lastModifiedDate: new Date().toISOString(),
-        slug: '',
-      } as BudgetLineResponse
+    },
+    [localDraft]
+  )
 
+  const handleToggleFavorite = useCallback(
+    (lineId: number) => {
+      if (!localDraft) return
       setLocalDraft({
         ...localDraft,
-        lines: [...(localDraft.lines || []), newLine],
+        lines: (localDraft.lines || []).map(line =>
+          line.id === lineId ? { ...line, isFavorite: !line.isFavorite } : line
+        ),
       })
-    }
-    setIsBudgetLineModalOpen(false)
-    setEditingLine(null)
-  }, [localDraft, activeCategoryId])
-
-  const handleToggleDone = useCallback((lineId: number) => {
-    if (!localDraft) return
-    setLocalDraft({
-      ...localDraft,
-      lines: (localDraft.lines || []).map(line =>
-        line.id === lineId ? { ...line, isDone: !line.isDone } : line
-      ),
-    })
-  }, [localDraft])
-
-  const handleToggleFavorite = useCallback((lineId: number) => {
-    if (!localDraft) return
-    setLocalDraft({
-      ...localDraft,
-      lines: (localDraft.lines || []).map(line =>
-        line.id === lineId ? { ...line, isFavorite: !line.isFavorite } : line
-      ),
-    })
-  }, [localDraft])
+    },
+    [localDraft]
+  )
 
   const handleDeleteLine = useCallback((line: BudgetLineResponse) => {
     setItemToDelete({ type: 'line', item: line })
@@ -379,9 +379,7 @@ function BudgetPageContent() {
     const line = itemToDelete.item as BudgetLineResponse
     setLocalDraft({
       ...localDraft,
-      lines: (localDraft.lines || []).map(l =>
-        l.id === line.id ? { ...l, isDeleted: true } : l
-      ),
+      lines: (localDraft.lines || []).map(l => (l.id === line.id ? { ...l, isDeleted: true } : l)),
     })
     setIsDeleteModalOpen(false)
     setItemToDelete(null)
@@ -393,91 +391,94 @@ function BudgetPageContent() {
     setIsCategoryModalOpen(true)
   }, [])
 
-  const handleSaveCategory = useCallback((data: {
-    id?: number
-    name: string
-    nameAr: string
-    nameEn: string
-    description: string
-    estimated: number
-    iconName: string | null
-    colorName: string | null
-  }) => {
-    if (!localDraft) return
+  const handleSaveCategory = useCallback(
+    (data: {
+      id?: number
+      name: string
+      nameAr: string
+      nameEn: string
+      description: string
+      estimated: number
+      iconName: string | null
+      colorName: string | null
+    }) => {
+      if (!localDraft) return
 
-    if (data.id && data.id > 0) {
-      // Update existing category
-      setLocalDraft({
-        ...localDraft,
-        lineCategories: (localDraft.lineCategories || []).map(cat =>
-          cat.id === data.id
-            ? {
-                ...cat,
-                name: data.name,
-                nameAr: data.nameAr,
-                nameEn: data.nameEn,
-                description: data.description,
-                descriptionAr: data.description || '',
-                descriptionEn: data.description || '',
-                estimated: data.estimated,
-                iconName: data.iconName || '',
-                colorName: data.colorName || '',
-              } as BudgetLineCategoryResponse
-            : cat
-        ),
-      })
-    } else {
-      // Create new category
-      const newCategory: BudgetLineCategoryResponse = {
-        id: generateTempId(),
-        name: data.name,
-        nameAr: data.nameAr,
-        nameEn: data.nameEn,
-        description: data.description,
-        descriptionAr: data.description || '',
-        descriptionEn: data.description || '',
-        iconName: data.iconName || '',
-        colorName: data.colorName || '',
-        isModelLine: false,
-        estimated: data.estimated,
-        pending: 0,
-        paid: 0,
-        final: 0,
-        count: 0,
-        createdBy: '',
-        lastModifiedBy: '',
-        creationDate: new Date().toISOString(),
-        lastModifiedDate: new Date().toISOString(),
-        slug: '',
-        isDeleted: false,
-        eventId: undefined,
-      } as BudgetLineCategoryResponse
+      if (data.id && data.id > 0) {
+        setLocalDraft({
+          ...localDraft,
+          lineCategories: (localDraft.lineCategories || []).map(cat =>
+            cat.id === data.id
+              ? ({
+                  ...cat,
+                  name: data.name,
+                  nameAr: data.nameAr,
+                  nameEn: data.nameEn,
+                  description: data.description,
+                  descriptionAr: data.description || '',
+                  descriptionEn: data.description || '',
+                  estimated: data.estimated,
+                  iconName: data.iconName || '',
+                  colorName: data.colorName || '',
+                } as BudgetLineCategoryResponse)
+              : cat
+          ),
+        })
+      } else {
+        const newCategory: BudgetLineCategoryResponse = {
+          id: generateTempId(),
+          name: data.name,
+          nameAr: data.nameAr,
+          nameEn: data.nameEn,
+          description: data.description,
+          descriptionAr: data.description || '',
+          descriptionEn: data.description || '',
+          iconName: data.iconName || '',
+          colorName: data.colorName || '',
+          isModelLine: false,
+          estimated: data.estimated,
+          pending: 0,
+          paid: 0,
+          final: 0,
+          count: 0,
+          createdBy: '',
+          lastModifiedBy: '',
+          creationDate: new Date().toISOString(),
+          lastModifiedDate: new Date().toISOString(),
+          slug: '',
+          isDeleted: false,
+          eventId: undefined,
+        } as BudgetLineCategoryResponse
 
-      setLocalDraft({
-        ...localDraft,
-        lineCategories: [...(localDraft.lineCategories || []), newCategory],
-      })
-      // Auto-select the newly created category
-      setActiveCategoryId(newCategory.id)
-    }
-    setIsCategoryModalOpen(false)
-    setEditingCategory(null)
-  }, [localDraft])
+        setLocalDraft({
+          ...localDraft,
+          lineCategories: [...(localDraft.lineCategories || []), newCategory],
+        })
+        setActiveCategoryId(newCategory.id)
+      }
 
-  const handleDeleteCategory = useCallback((categoryId: number) => {
-    const category = localDraft?.lineCategories?.find(c => c.id === categoryId)
-    if (category) {
-      setItemToDelete({ type: 'category', item: category })
-      setIsDeleteModalOpen(true)
-    }
-  }, [localDraft])
+      setIsCategoryModalOpen(false)
+      setEditingCategory(null)
+    },
+    [localDraft]
+  )
+
+  const handleDeleteCategory = useCallback(
+    (categoryId: number) => {
+      const category = localDraft?.lineCategories?.find(c => c.id === categoryId)
+      if (category) {
+        setItemToDelete({ type: 'category', item: category })
+        setIsDeleteModalOpen(true)
+      }
+    },
+    [localDraft]
+  )
 
   const confirmDeleteCategory = useCallback(() => {
     if (!localDraft || !itemToDelete || itemToDelete.type !== 'category') return
     const category = itemToDelete.item as BudgetLineCategoryResponse
     const categoryId = category.id
-    
-    // Soft-delete category and its lines
+
     setLocalDraft({
       ...localDraft,
       lineCategories: (localDraft.lineCategories || []).map(c =>
@@ -487,10 +488,9 @@ function BudgetPageContent() {
         line.lineCategoryId === categoryId ? { ...line, isDeleted: true } : line
       ),
     })
-    // If deleting active category, clear selection
-    if (activeCategoryId === categoryId) {
-      setActiveCategoryId(null)
-    }
+
+    if (activeCategoryId === categoryId) setActiveCategoryId(null)
+
     setIsDeleteModalOpen(false)
     setItemToDelete(null)
     addToast(`Category "${category.name}" deleted successfully`, 'success')
@@ -507,7 +507,6 @@ function BudgetPageContent() {
       return
     }
 
-    // Check if there are actual changes
     if (!hasActualChanges()) {
       addToast('No changes to save', 'info')
       setHasUnsavedChanges(false)
@@ -515,29 +514,21 @@ function BudgetPageContent() {
     }
 
     try {
-      // Build sync payload
       const payload = mapDraftToSyncPayload(localDraft)
 
-      // Log payload in dev mode
       if (process.env.NODE_ENV === 'development') {
         console.log('[Budget] Sync payload:', payload)
       }
 
-      // Sync
       await syncMutation.mutateAsync({
         ...payload,
-        query: {
-          eventId: eventId || undefined,
-          userType: null as unknown as UserType | undefined,
-          clientId: null as unknown as string | undefined,
-        },
+        id: payload.id ?? localDraft?.id ?? 0,
+        query: { eventId },
       })
 
       setHasUnsavedChanges(false)
       lastSyncedRef.current = localDraft
       addToast('Changes saved successfully', 'success')
-
-      // Refetch to get latest from server
       refetch()
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to save changes'
@@ -561,9 +552,7 @@ function BudgetPageContent() {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
         <div className="flex flex-col items-center justify-center py-12">
-          <p className="text-16 text-red-600 mb-4">
-            Failed to load budget. Please try again.
-          </p>
+          <p className="text-16 text-red-600 mb-4">Failed to load budget. Please try again.</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
             Retry
           </Button>
@@ -596,23 +585,15 @@ function BudgetPageContent() {
             >
               <ArrowLeft className="h-4 w-4 text-gray-700" />
             </button>
-            <h1 className="text-20 font-semibold text-gray-900">
-              Budget
-            </h1>
+            <h1 className="text-20 font-semibold text-gray-900">Budget</h1>
           </div>
 
-          {/* Filter Dropdown */}
           {localDraft && (
-            <BudgetFiltersBar
-              filterType={filterType}
-              onFilterChange={setFilterType}
-            />
+            <BudgetFiltersBar filterType={filterType} onFilterChange={setFilterType} />
           )}
         </div>
 
-        {/* Save Button and Unsaved Changes - Under Budget */}
         <div className="flex items-center gap-3 ml-2 mt-3">
-          
           <Button
             variant="brand"
             size="md"
@@ -623,10 +604,9 @@ function BudgetPageContent() {
             <Save className="h-4 w-4" />
             {syncMutation.isPending ? 'Saving...' : 'Save'}
           </Button>
+
           {hasUnsavedChanges && (
-            <span className="!text-16 text-brand-500 font-medium">
-              Unsaved changes
-            </span>
+            <span className="!text-16 text-brand-500 font-medium">Unsaved changes</span>
           )}
         </div>
       </div>
@@ -634,24 +614,23 @@ function BudgetPageContent() {
       {/* Main Content */}
       {stats ? (
         <div className="flex flex-col space-y-4">
-          {/* Top Section: Overview Card + Category List */}
           <div className="grid grid-cols-1 md:grid-cols-[55%_45%] gap-4">
-            {/* Budget Overview Card */}
             <BudgetOverviewCard
               totalBudget={stats.totalBudget}
               totalPaid={stats.totalPaid}
+              totalEstimated={stats.totalEstimated}
               remaining={stats.remaining}
+              totalFinal={stats.totalFinal}
               savedPercentage={stats.savedPercentage}
               categoryStats={stats.categoryStats}
               onBudgetChange={handleBudgetChange}
             />
 
-            {/* Category Breakdown List */}
             <BudgetCategoryBreakdownList
               categoryStats={stats.categoryStats}
               activeCategoryId={activeCategoryId}
               onCategoryClick={handleCategoryClick}
-              onEditCategory={(categoryId) => {
+              onEditCategory={categoryId => {
                 const category = localDraft?.lineCategories?.find(c => c.id === categoryId)
                 if (category) {
                   setEditingCategory(category)
@@ -665,7 +644,6 @@ function BudgetPageContent() {
             />
           </div>
 
-          {/* Budget Lines Table */}
           <div className="order-last sm:order-none">
             <BudgetLinesTable
               lines={filteredLines}
@@ -676,6 +654,7 @@ function BudgetPageContent() {
               onEdit={handleEditLine}
               onDelete={handleDeleteLine}
               onCreateLine={handleCreateLine}
+              activeCategoryId={activeCategoryId} 
             />
           </div>
         </div>
@@ -717,11 +696,8 @@ function BudgetPageContent() {
               setItemToDelete(null)
             }}
             onConfirm={() => {
-              if (itemToDelete?.type === 'line') {
-                confirmDeleteLine()
-              } else if (itemToDelete?.type === 'category') {
-                confirmDeleteCategory()
-              }
+              if (itemToDelete?.type === 'line') confirmDeleteLine()
+              else if (itemToDelete?.type === 'category') confirmDeleteCategory()
             }}
             title="Confirm Delete"
             message={
@@ -747,7 +723,7 @@ export default function BudgetPage() {
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingSpinner size="lg" text="Loading budget..." />
+            <LoadingOverlay open={true} title="Loading budget..." subtitle="Please wait a moment" />
           </div>
         </div>
       }

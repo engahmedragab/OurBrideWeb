@@ -1,102 +1,123 @@
-/**
- * Budget Adapters
- * 
- * Functions to convert between API response format and local draft format
- */
+import { GetBudgetBookResponse } from '@/services/api/budgetBooks.types'
+import type {
+  BudgetLineResponse,
+  BudgetLineCategoryResponse,
+  BudgetBookResponse,
+} from '@/types/responses'
+// لو عندك BudgetBookRequest من gen استورديه بدل any
+// import type { BudgetBookRequest } from '@/../client/common/api/gen/ourbride-api'
 
-import type { BudgetBookResponse, BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
-import type { BudgetBookRequest, BudgetLineRequest, BudgetLineCategoryRequest } from '@/../client/common/api/gen/ourbride-api'
-
-/**
- * Draft type for local state (matches API response structure)
- */
-export type BudgetBookDraft = BudgetBookResponse
-
-/**
- * Convert API response to draft format
- */
-export const mapApiToDraft = (apiData: BudgetBookResponse | null | any): BudgetBookDraft | null => {
-  if (!apiData) return null
-
-  return {
-    ...apiData,
-    lines: apiData.lines || [],
-    lineCategories: apiData.lineCategories || [],
-    initialEstimated: apiData.initialEstimated ?? apiData.estimated ?? undefined,
-  } as BudgetBookDraft
+export type BudgetBookDraft = {
+  id?: number
+  bookType: any
+  bookClass: any
+  initialEstimated?: number | null // ✅ budget من المستخدم
+  estimated?: number | null        // ✅ مجموع lines (مش input)
+  lines?: BudgetLineResponse[]
+  lineCategories?: BudgetLineCategoryResponse[]
 }
 
-/**
- * Convert draft to sync payload
- */
-export const mapDraftToSyncPayload = (draft: BudgetBookDraft): BudgetBookRequest => {
-  // Convert lines
-  const lines: BudgetLineRequest[] = (draft.lines || [])
-    .filter(line => !line.isDeleted) // Exclude soft-deleted lines
-    .map(line => ({
-      id: line.id || 0,
-      bookId: draft.id || 0,
-      expense: line.expense || null,
-      lineCategoryId: line.lineCategoryId || null,
-      estimated: line.estimated || 0,
-      paid: line.paid || 0,
-      final: line.final || null,
-      dueDate: line.dueDate || null,
-      count: line.count || null,
-      payer: line.payer || null,
-      note: line.note || null,
-      isDone: line.isDone || false,
-      isFavorite: line.isFavorite || false,
-      isDeleted: line.isDeleted || false,
-      isModelLine: line.isModelLine || false,
-      iconName: line.iconName || null,
-      colorName: line.colorName || null,
-      brideId: line.brideId || null,
-      groomId: line.groomId || null,
-    }))
+export const generateTempId = () => Math.floor(Date.now() + Math.random() * 1000)
 
-  // Convert categories
-  // Include all categories (even deleted ones) so API can update isDeleted flag
-  const lineCategories: BudgetLineCategoryRequest[] = (draft.lineCategories || [])
-    .map(cat => ({
-      id: cat.id || 0,
-      name: cat.name || null,
-      description: cat.description || null,
-      iconName: cat.iconName || null,
-      colorName: cat.colorName || null,
-      count_id: (cat as any).count_id || null,
-      isModelLine: cat.isModelLine || false,
-      isDeleted: cat.isDeleted || false, // Include isDeleted flag
-      // Include multilingual fields even though they're not in type definition
-      // API may accept them
-      nameAr: (cat as any).nameAr || null,
-      nameEn: (cat as any).nameEn || null,
-      descriptionAr: (cat as any).descriptionAr || null,
-      descriptionEn: (cat as any).descriptionEn || null,
-    } as any))
+export function mapApiToDraft(api: GetBudgetBookResponse | null): BudgetBookDraft | null {
+  if (!api) return null
 
   return {
-    id: draft.id || 0,
-    groomId: draft.groomId || null,
-    brideId: draft.brideId || null,
-    weddingPlannerId: undefined,
-    bookType: draft.bookType as any,
-    bookClass: draft.bookClass as any,
-    title: draft.title || null,
-    clientName: null,
-    weddingDate: null,
-    eventLocation: null,
-    lines,
-    lineCategories,
-    initialEstimated: draft.initialEstimated || draft.estimated || 0,
+    id: api.id,
+    bookType: api.bookType,
+    bookClass: api.bookClass,
+    // ✅ هنا المفتاح: budget ييجي من initialEstimated
+    initialEstimated: api.initialEstimated ?? 0,
+    // ✅ estimated ده مجموع المصروفات اللي راجع من السيرفر
+    estimated: api.estimated ?? 0,
+    lineCategories: (api.lineCategories || []) as any,
+    lines: (api.lines || []).map((l: any) => ({
+      ...l,
+      // لو API ساعات بيرجع category جوه line
+      lineCategoryId: l.lineCategoryId ?? l.budgetLineCategory?.id ?? null,
+    })) as any,
   }
 }
 
-/**
- * Generate temporary ID for new items
- */
-export const generateTempId = (): number => {
-  // Use negative timestamp to ensure uniqueness and indicate it's temporary
-  return -Date.now()
-}
+export function mapDraftToSyncPayload(draft: BudgetBookDraft) {
+  const lines = (draft.lines || []).map(l => ({
+    id: l.id,
+    bookId: (draft.id || l.bookId || 0),
+    expense: l.expense,
+    expenseAr: l.expenseAr ?? l.expense ?? '',
+    expenseEn: l.expenseEn ?? l.expense ?? '',
+    lineCategoryId: l.lineCategoryId ?? null,
 
+    estimated: Number(l.estimated) || 0,
+    paid: Number(l.paid) || 0,
+    final: Number(l.final) || 0,
+
+    count: Number(l.count) || 0,
+    payer: l.payer ?? null,
+    note: l.note ?? null,
+
+    isDone: !!l.isDone,
+    isFavorite: !!l.isFavorite,
+    isDeleted: !!l.isDeleted,
+    isModelLine: !!l.isModelLine,
+
+    iconName: l.iconName ?? null,
+    colorName: l.colorName ?? null,
+
+    dueDate: l.dueDate ?? '0001-01-01T00:00:00',
+    lineType: l.lineType,
+    bookClass: l.bookClass,
+    slug: l.slug ?? '',
+    createdBy: l.createdBy ?? '',
+    lastModifiedBy: l.lastModifiedBy ?? '',
+    creationDate: l.creationDate ?? new Date().toISOString(),
+    lastModifiedDate: l.lastModifiedDate ?? new Date().toISOString(),
+  }))
+
+  const lineCategories = (draft.lineCategories || []).map(c => ({
+    id: c.id,
+    name: c.name,
+    nameAr: c.nameAr ?? c.name ?? '',
+    nameEn: c.nameEn ?? c.name ?? '',
+    description: c.description ?? null,
+    descriptionAr: c.descriptionAr ?? c.description ?? null,
+    descriptionEn: c.descriptionEn ?? c.description ?? null,
+
+    iconName: c.iconName ?? '',
+    colorName: c.colorName ?? '',
+    isDeleted: !!c.isDeleted,
+    isModelLine: !!c.isModelLine,
+    slug: c.slug ?? null,
+    createdBy: c.createdBy ?? '',
+    lastModifiedBy: c.lastModifiedBy ?? '',
+    creationDate: c.creationDate ?? new Date().toISOString(),
+    lastModifiedDate: c.lastModifiedDate ?? new Date().toISOString(),
+
+    // ⚠️ مهم: ما تبعتش totals المحسوبة (estimated/paid/pending) لو السيرفر هو اللي بيحسبها
+  }))
+  
+
+
+
+
+  
+  // ✅ estimated الحقيقي كمصروفات (اختياري تبعًا للـ API) — محسوب من lines
+  const computedEstimated = lines
+    .filter(l => !l.isDeleted)
+    .reduce((sum, l) => sum + (Number(l.estimated) || 0), 0)
+
+  return {
+    id: draft.id,
+    bookType: draft.bookType,
+    bookClass: draft.bookClass,
+
+    // ✅ ده اللي كان ناقصك غالبًا (عشان initialEstimated عندك راجع null)
+    initialEstimated: Number(draft.initialEstimated) || 0,
+
+    // ✅ سيبيه computed (مش input budget)
+    estimated: computedEstimated,
+
+    lineCategories,
+    lines,
+  } /* satisfies BudgetBookRequest */
+}

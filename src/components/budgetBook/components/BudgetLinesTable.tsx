@@ -19,6 +19,7 @@ interface BudgetLinesTableProps {
   onDelete?: (line: BudgetLineResponse) => void
   onCreateLine?: () => void
   isLoading?: boolean
+  activeCategoryId?: number | null
 }
 
 export const BudgetLinesTable = ({
@@ -31,6 +32,7 @@ export const BudgetLinesTable = ({
   onDelete,
   onCreateLine,
   isLoading = false,
+  activeCategoryId
 }: BudgetLinesTableProps) => {
   const getCategory = (categoryId: number | null) => {
     return categories.find(cat => cat.id === categoryId)
@@ -74,23 +76,50 @@ export const BudgetLinesTable = ({
       </div>
     )
   }
+  const selectedCategory =
+  activeCategoryId != null
+    ? categories.find(c => c.id === activeCategoryId)
+    : null
+
+const selectedEstimated = selectedCategory?.estimated ?? null
 
   return (
     <div className={cn(cardVariants({ variant: 'default' }), 'overflow-hidden shadow-sm border border-gray-200')}>
       {/* Table Header with Add New Button */}
       {onCreateLine && (
-        <div className="flex items-center justify-center md:justify-end px-4 py-3 border-b border-gray-200 bg-white">
-          <Button
-            variant="brand"
-            size="sm"
-            onClick={onCreateLine}
-            className="text-white whitespace-nowrap !rounded-lg h-9 px-3 "
-          >
-            <Plus className="h-3.5 w-3.5 mr-1.5 text-white" />
-            Add New
-          </Button>
-        </div>
+  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
+    {/* ✅ Left: يظهر بس لما يكون فيه category مختارة */}
+    <div className="flex items-center gap-2">
+      {selectedCategory ? (
+        <>
+          <span className="text-12 font-medium text-gray-500 uppercase tracking-wider">
+            Estimated:
+          </span>
+          <span className="text-14 font-semibold text-gray-900">
+            {selectedEstimated !== null ? formatEGP(selectedEstimated) : '--'}
+          </span>
+        </>
+      ) : (
+        <span className="text-12 text-gray-400">
+          Select a category to see its estimated
+        </span>
       )}
+    </div>
+
+    {/* Right: Add New */}
+    <Button
+      variant="brand"
+      size="sm"
+      onClick={onCreateLine}
+      type="button"
+      className="text-white whitespace-nowrap !rounded-lg h-9 px-3"
+    >
+      <Plus className="h-3.5 w-3.5 mr-1.5 text-white" />
+      Add New
+    </Button>
+  </div>
+)}
+
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead className="bg-white">

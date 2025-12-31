@@ -16,6 +16,7 @@ export type GuestBookDraft = GuestBookResponse
 
 /**
  * Convert title to enum - handle both string and number
+ * 
  */
 const normalizeGuestTitle = (title: any): GuestTitle | null => {
   if (title === null || title === undefined) {

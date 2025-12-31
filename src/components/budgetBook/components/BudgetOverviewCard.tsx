@@ -12,13 +12,15 @@ import type { BudgetLineCategoryResponse } from '@/types/responses'
 
 interface CategoryStat {
   category: BudgetLineCategoryResponse
-  value: number // sum(paid ?? 0) per category
+  value: number
   percentage: number
 }
 
 interface BudgetOverviewCardProps {
   totalBudget: number
   totalPaid: number
+  totalEstimated: number
+  totalFinal: number
   remaining: number
   savedPercentage: number
   categoryStats: CategoryStat[]
@@ -26,9 +28,20 @@ interface BudgetOverviewCardProps {
   isLoading?: boolean
 }
 
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-13 text-gray-600">{label}</span>
+      <span className="text-14 font-semibold text-gray-900">{value}</span>
+    </div>
+  )
+}
+
 export const BudgetOverviewCard = ({
   totalBudget,
   totalPaid,
+  totalEstimated,
+  totalFinal,
   remaining,
   savedPercentage,
   categoryStats,
@@ -36,60 +49,45 @@ export const BudgetOverviewCard = ({
   isLoading = false,
 }: BudgetOverviewCardProps) => {
   const [editingBudget, setEditingBudget] = useState<string>(
-    totalBudget.toLocaleString('en-US')
+    Number(totalBudget || 0).toLocaleString('en-US')
   )
   const [isEditing, setIsEditing] = useState(false)
 
-  // Calculate donut chart segments from category stats
-  // Rule: value = sum(paid ?? 0) per category
-  // Sort by value desc so large segments show first
-  // Percentage is calculated based on total value of all segments
   const donutSegments = useMemo(() => {
-    // Filter categories with value > 0
     const segmentsWithValue = categoryStats
       .filter(stat => stat.value > 0)
       .map(stat => ({
         label: stat.category.name || 'Unnamed Category',
         value: stat.value,
         color: getCategoryColor(stat.category),
-        percentage: 0, // Will be calculated below
+        percentage: 0,
       }))
 
     if (segmentsWithValue.length === 0) return []
 
-    // Calculate total value of all segments
     const totalValue = segmentsWithValue.reduce((sum, seg) => sum + seg.value, 0)
     if (totalValue === 0) return []
 
-    // Calculate percentage for each segment relative to total value
-    // and sort by value desc
-    const segments = segmentsWithValue
-      .map(seg => ({
-        ...seg,
-        percentage: (seg.value / totalValue) * 100,
-      }))
-      .sort((a, b) => b.value - a.value) // Sort desc by value
-
-    return segments
+    return segmentsWithValue
+      .map(seg => ({ ...seg, percentage: (seg.value / totalValue) * 100 }))
+      .sort((a, b) => b.value - a.value)
   }, [categoryStats])
 
-  // Sync editingBudget when totalBudget changes externally
   useEffect(() => {
     if (!isEditing) {
-      setEditingBudget(totalBudget.toLocaleString('en-US'))
+      setEditingBudget(Number(totalBudget || 0).toLocaleString('en-US'))
     }
   }, [totalBudget, isEditing])
 
   const handleSave = () => {
     const numericValue = parseFloat(editingBudget.replace(/,/g, ''))
     if (!isNaN(numericValue) && numericValue >= 0 && onBudgetChange) {
-      onBudgetChange(numericValue) // Save to local state only
+      onBudgetChange(numericValue)
     }
-    // Don't change isEditing - keep it editable
   }
 
   const handleCancel = () => {
-    setEditingBudget(totalBudget.toLocaleString('en-US'))
+    setEditingBudget(Number(totalBudget || 0).toLocaleString('en-US'))
     setIsEditing(false)
   }
 
@@ -108,7 +106,7 @@ export const BudgetOverviewCard = ({
   return (
     <div className={cn(cardVariants({ variant: 'default', padding: 'lg' }), 'p-4 shadow-sm border border-gray-200')}>
       <div className="p-0 space-y-4">
-        {/* Header with Saved % */}
+        {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-14 font-semibold text-gray-900">Budget Overview</h2>
           <span className="text-12 font-medium text-green-500">
@@ -116,7 +114,7 @@ export const BudgetOverviewCard = ({
           </span>
         </div>
 
-        {/* Donut Chart */}
+        {/* Donut */}
         <div className="flex items-center justify-center py-2">
           <BudgetDonutChart
             segments={donutSegments}
@@ -128,23 +126,16 @@ export const BudgetOverviewCard = ({
           />
         </div>
 
-        {/* Budget Info - Under donut */}
+        {/* Info */}
         <div className="space-y-2.5 px-4">
-          <div className="flex items-center justify-between">
-            <span className="text-13 text-gray-600">Budget</span>
-            <span className="text-14 font-semibold text-gray-900">
-              {formatEGP(totalBudget)}
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-13 text-gray-600">Remaining Budget</span>
-            <span className="text-14 font-semibold text-gray-900">
-              {formatEGP(remaining)}
-            </span>
-          </div>
+          <InfoRow label="Budget" value={formatEGP(totalBudget)} />
+          {/* <InfoRow label="Remaining Budget" value={formatEGP(remaining)} /> */}
+          <InfoRow label="Estimated Cost" value={formatEGP(totalEstimated)} />
+          <InfoRow label="Paid" value={formatEGP(totalPaid)} />
+          <InfoRow label="Final Cost" value={formatEGP(totalFinal)} />
         </div>
 
-        {/* Budget Input with Save button inside */}
+        {/* Input */}
         <div className="pt-3 border-t border-gray-200">
           <div className="relative">
             <Input
@@ -165,15 +156,15 @@ export const BudgetOverviewCard = ({
               }}
               suffix="EGP"
               size="lg"
-              placeholder='Enter Budget'
+              placeholder="Enter Budget"
               className="w-full pr-20"
             />
+
             <Button
               type="button"
-             
               size="sm"
               onClick={handleSave}
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-3 text-brand-500 bg-white rounded-lg hover:bg-brand-500 hover:text-white hover:border-brand-500 hover:rounded-md"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-3 text-brand-500 bg-white rounded-lg hover:bg-brand-500 hover:text-white hover:border-brand-500"
             >
               Save
             </Button>
@@ -183,4 +174,3 @@ export const BudgetOverviewCard = ({
     </div>
   )
 }
-
