@@ -11,7 +11,7 @@ import { StoreBadges } from '@/components/ui/StoreBadges'
 import { cn } from '@/lib/utils'
 
 // Google Maps API Key
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyBxNWOYMYWLFE__dL87xc7yhfIVgRTgPjA'
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
 export default function ProvidersPage() {
   const router = useRouter()

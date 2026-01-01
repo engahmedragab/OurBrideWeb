@@ -15,6 +15,46 @@ export interface GetProvidersMapParams {
 }
 
 /**
+ * Provider Map Response - simplified response from map endpoint
+ */
+export interface ProviderMapResponse {
+  id: number
+  name: string
+  latitude: number
+  longitude: number
+  address: string
+  rate: number | null
+}
+
+/**
+ * Map ProviderMapResponse to FeaturedProviderResponse
+ * Also attach coordinates as a custom property for map display
+ */
+const mapProviderMapToFeatured = (provider: ProviderMapResponse): FeaturedProviderResponse & { latitude?: number; longitude?: number } => {
+  return {
+    id: provider.id,
+    nameEn: provider.name,
+    nameAr: provider.name,
+    descriptionEn: '',
+    descriptionAr: '',
+    publicLogoImageUrl: '',
+    publicBannerImageUrl: '',
+    rate: provider.rate,
+    totalReviews: 0,
+    isVerified: false,
+    totalServices: 0,
+    totalProducts: 0,
+    shortAddress: provider.address || '',
+    publicProfileSlug: `/provider/${provider.id}`,
+    uniqueCode: `provider-${provider.id}`,
+    topRatedService: null,
+    // Add coordinates for map display
+    latitude: provider.latitude,
+    longitude: provider.longitude,
+  }
+}
+
+/**
  * Get providers for map view with location-based filtering
  * GET /api/v1/services/providers/map
  */
@@ -54,7 +94,8 @@ export const getProvidersMap = async (
       queryParams.append('AcceptsGroups', params.acceptsGroups.toString())
     }
 
-    const url = `/api/v1/services/providers/map${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
+    // Add language parameter
+    queryParams.append('lang', getApiLanguage())
     
     // Use fetch API with proper headers
     const token = getToken()
@@ -70,7 +111,14 @@ export const getProvidersMap = async (
       headers['Authorization'] = `Bearer ${token}`
     }
     
-    const fullUrl = `${baseURL.replace(/\/$/, '')}${url}&lang=${language}`
+    // Construct URL - remove /api/v1 from baseURL if it exists to avoid duplication
+    const cleanBaseURL = baseURL.replace(/\/$/, '').replace(/\/api\/v1$/, '')
+    const endpoint = `/api/v1/services/providers/map`
+    const queryString = queryParams.toString()
+    const fullUrl = `${cleanBaseURL}${endpoint}${queryString ? `?${queryString}` : ''}`
+    
+    console.log('Fetching providers map:', fullUrl)
+    
     const fetchResponse = await fetch(fullUrl, {
       method: 'GET',
       headers,
@@ -82,36 +130,39 @@ export const getProvidersMap = async (
     
     const responseData = await fetchResponse.json() as Record<string, unknown>
     
-    // Handle different response structures
-    let data: unknown = responseData
+    console.log('Map API response:', responseData)
+    
+    // Handle response structure: { data: { providers: [...] } }
+    let providersData: unknown = responseData
     
     if (responseData && typeof responseData === 'object') {
       if ('data' in responseData) {
         const nestedData = responseData.data
         if (Array.isArray(nestedData)) {
-          data = nestedData
+          providersData = nestedData
         } else if (nestedData && typeof nestedData === 'object') {
-          if ('data' in nestedData && Array.isArray(nestedData.data)) {
-            data = nestedData.data
-          } else if ('providers' in nestedData && Array.isArray(nestedData.providers)) {
-            data = nestedData.providers
+          if ('providers' in nestedData && Array.isArray(nestedData.providers)) {
+            providersData = nestedData.providers
+          } else if ('data' in nestedData && Array.isArray(nestedData.data)) {
+            providersData = nestedData.data
           } else if ('items' in nestedData && Array.isArray(nestedData.items)) {
-            data = nestedData.items
+            providersData = nestedData.items
           }
         }
       } else if ('providers' in responseData && Array.isArray(responseData.providers)) {
-        data = responseData.providers
-      } else if ('items' in responseData && Array.isArray(responseData.items)) {
-        data = responseData.items
+        providersData = responseData.providers
       }
     }
     
-    // Ensure we return an array
-    if (Array.isArray(data)) {
-      return data as FeaturedProviderResponse[]
+    // Ensure we have an array
+    if (!Array.isArray(providersData)) {
+      console.warn('Providers data is not an array:', providersData)
+      return []
     }
     
-    return []
+    // Map ProviderMapResponse[] to FeaturedProviderResponse[]
+    const providers = providersData as ProviderMapResponse[]
+    return providers.map(mapProviderMapToFeatured)
   } catch (error: unknown) {
     console.error('Error fetching providers map:', error)
     throw new Error(

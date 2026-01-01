@@ -7,13 +7,15 @@ import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
 import { DatePicker } from '@/components/ui/DatePicker'
 import { Input } from '@/components/ui/Input'
-import { WishlistProviderCard, EmptyState } from '@/components/ui'
+import { WishlistProviderCard, EmptyState, LoadingSpinner } from '@/components/ui'
 import type { FeaturedProviderResponse } from '@/types/responses'
 import { cn } from '@/lib/utils'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
+import { useProvidersFilter } from '@/hooks/providers/useProvidersFilter'
+import { useProvidersMap } from '@/hooks/providers/useProvidersMap'
 
 // Google Maps API Key from environment variables
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyBxNWOYMYWLFE__dL87xc7yhfIVgRTgPjA'
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
 // Extend Window interface for Google Maps
 declare global {
@@ -23,104 +25,42 @@ declare global {
         Map: new (element: HTMLElement, options?: unknown) => unknown
         Marker: new (options?: unknown) => unknown
         LatLng: new (lat: number, lng: number) => unknown
+        OverlayView: new () => unknown
+        InfoWindow: new (options?: unknown) => unknown
+        Animation: {
+          DROP: unknown
+        }
+        SymbolPath: {
+          CIRCLE: unknown
+        }
       }
     }
   }
 }
 
-// Static mock providers data
-const MOCK_PROVIDERS: FeaturedProviderResponse[] = [
-  {
-    id: 1,
-    nameEn: 'Elegant Wedding Hall',
-    nameAr: 'قاعة الأفراح الأنيقة',
-    descriptionEn: 'Premium wedding venue with elegant decor',
-    descriptionAr: 'قاعة أفراح راقية بتصميم أنيق',
-    publicLogoImageUrl: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400',
-    publicBannerImageUrl: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800',
-    rate: 4.8,
-    totalReviews: 125,
-    isVerified: true,
-    totalServices: 15,
-    totalProducts: 8,
-    shortAddress: 'Riyadh, Al Olaya',
-    publicProfileSlug: '/provider/1',
-    uniqueCode: 'PROV-1',
-    topRatedService: null,
-  },
-  {
-    id: 2,
-    nameEn: 'Royal Photography Studio',
-    nameAr: 'استوديو التصوير الملكي',
-    descriptionEn: 'Professional wedding photography services',
-    descriptionAr: 'خدمات تصوير أفراح احترافية',
-    publicLogoImageUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400',
-    publicBannerImageUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
-    rate: 4.9,
-    totalReviews: 89,
-    isVerified: true,
-    totalServices: 12,
-    totalProducts: 5,
-    shortAddress: 'Jeddah, Al Hamra',
-    publicProfileSlug: '/provider/2',
-    uniqueCode: 'PROV-2',
-    topRatedService: null,
-  },
-  {
-    id: 3,
-    nameEn: 'Bridal Beauty Salon',
-    nameAr: 'صالون العروس للجمال',
-    descriptionEn: 'Complete bridal makeup and styling',
-    descriptionAr: 'مكياج وتصفيف كامل للعروس',
-    publicLogoImageUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
-    publicBannerImageUrl: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800',
-    rate: 4.7,
-    totalReviews: 203,
-    isVerified: true,
-    totalServices: 20,
-    totalProducts: 12,
-    shortAddress: 'Riyadh, Al Malaz',
-    publicProfileSlug: '/provider/3',
-    uniqueCode: 'PROV-3',
-    topRatedService: null,
-  },
-  {
-    id: 4,
-    nameEn: 'Gourmet Catering Services',
-    nameAr: 'خدمات التموين الفاخرة',
-    descriptionEn: 'Fine dining catering for special occasions',
-    descriptionAr: 'تموين فاخر للمناسبات الخاصة',
-    publicLogoImageUrl: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=400',
-    publicBannerImageUrl: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=800',
-    rate: 4.6,
-    totalReviews: 156,
-    isVerified: true,
-    totalServices: 18,
-    totalProducts: 0,
-    shortAddress: 'Dammam, Al Khobar',
-    publicProfileSlug: '/provider/4',
-    uniqueCode: 'PROV-4',
-    topRatedService: null,
-  },
-  {
-    id: 5,
-    nameEn: 'Floral Design Studio',
-    nameAr: 'استوديو التصميم الزهري',
-    descriptionEn: 'Beautiful flower arrangements and decorations',
-    descriptionAr: 'ترتيبات زهور وتزيينات جميلة',
-    publicLogoImageUrl: 'https://images.unsplash.com/photo-1563241527-3004b6e53e88?w=400',
-    publicBannerImageUrl: 'https://images.unsplash.com/photo-1563241527-3004b6e53e88?w=800',
-    rate: 4.5,
-    totalReviews: 94,
-    isVerified: false,
-    totalServices: 10,
-    totalProducts: 3,
-    shortAddress: 'Riyadh, Al Nakheel',
-    publicProfileSlug: '/provider/5',
-    uniqueCode: 'PROV-5',
-    topRatedService: null,
-  },
-]
+// Add custom marker styles
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style')
+  style.textContent = `
+    .custom-map-marker {
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .custom-map-marker:hover {
+      transform: scale(1.1);
+      z-index: 1000 !important;
+    }
+    .custom-map-marker:hover .marker-badge {
+      box-shadow: 0 4px 12px rgba(241, 72, 54, 0.5);
+    }
+  `
+  if (!document.head.querySelector('style[data-marker-styles]')) {
+    style.setAttribute('data-marker-styles', 'true')
+    document.head.appendChild(style)
+  }
+}
+
+// All provider data now comes from API - no mock data needed
 
 function ProvidersSearchContent() {
   const router = useRouter()
@@ -136,6 +76,41 @@ function ProvidersSearchContent() {
   const [isLocationPopoverOpen, setIsLocationPopoverOpen] = useState(false)
   const [isGettingLocation, setIsGettingLocation] = useState(false)
   const [userCoordinates, setUserCoordinates] = useState<{ lat: number; lng: number } | null>(null)
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery)
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  // Fetch providers from API - use different endpoints based on view mode
+  // For map view, use the map-specific endpoint with location data
+  const { data: mapProviders, isLoading: isLoadingMapProviders } = useProvidersMap({
+    latitude: userCoordinates?.lat,
+    longitude: userCoordinates?.lng,
+    radius: userCoordinates ? 50 : undefined, // 50km radius when location is available
+    enabled: viewMode === 'map', // Always enabled in map view, even without user coordinates
+  })
+
+  // For list view, use the filter endpoint with search
+  const { data: filterProviders, isLoading: isLoadingFilterProviders } = useProvidersFilter({
+    search: debouncedSearchQuery || undefined,
+    latitude: userCoordinates?.lat,
+    longitude: userCoordinates?.lng,
+    radius: userCoordinates ? 50 : undefined,
+    pageSize: 100,
+  }, {
+    enabled: viewMode === 'list', // Only enabled in list view
+  })
+
+  // Combine loading states
+  const isLoadingProviders = viewMode === 'map' ? isLoadingMapProviders : isLoadingFilterProviders
+
+  // Select the appropriate API data based on view mode
+  const apiProviders = viewMode === 'map' ? mapProviders : filterProviders
 
   // Load Google Maps script
   useEffect(() => {
@@ -177,28 +152,17 @@ function ProvidersSearchContent() {
     document.head.appendChild(script)
   }, [])
 
-  // Filter providers
+  // Use API providers - no fallback needed
+  const providers = useMemo(() => {
+    return apiProviders || []
+  }, [apiProviders])
+
+  // Filter providers (additional client-side filtering if needed)
   const filteredProviders = useMemo(() => {
-    let filtered = MOCK_PROVIDERS
+    let filtered = providers
 
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(provider => {
-        const nameEn = provider.nameEn?.toLowerCase() || ''
-        const nameAr = provider.nameAr?.toLowerCase() || ''
-        const descriptionEn = provider.descriptionEn?.toLowerCase() || ''
-        const descriptionAr = provider.descriptionAr?.toLowerCase() || ''
-
-        return (
-          nameEn.includes(query) ||
-          nameAr.includes(query) ||
-          descriptionEn.includes(query) ||
-          descriptionAr.includes(query)
-        )
-      })
-    }
-
-    if (location.trim() && viewMode !== 'map') {
+    // Additional location filtering for non-map view
+    if (location.trim() && viewMode !== 'map' && !userCoordinates) {
       const loc = location.toLowerCase()
       filtered = filtered.filter(provider => {
         const address = provider.shortAddress?.toLowerCase() || ''
@@ -207,7 +171,7 @@ function ProvidersSearchContent() {
     }
 
     return filtered
-  }, [searchQuery, location, viewMode])
+  }, [providers, location, viewMode, userCoordinates])
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -320,14 +284,14 @@ function ProvidersSearchContent() {
 
       const defaultCenter = userCoordinates 
         ? { lat: userCoordinates.lat, lng: userCoordinates.lng }
-        : { lat: 24.7136, lng: 46.6753 } // Riyadh, Saudi Arabia as default
+        : { lat: 30.0444, lng: 31.2357 } // Cairo, Egypt as default (from API data)
 
       try {
         if (!window.google?.maps?.Map) return
         
         const map = new window.google.maps.Map(mapElement, {
           center: defaultCenter,
-          zoom: userCoordinates ? 12 : 10,
+          zoom: userCoordinates ? 12 : 11,
           styles: [
             {
               featureType: 'poi',
@@ -335,13 +299,193 @@ function ProvidersSearchContent() {
               stylers: [{ visibility: 'off' }]
             }
           ],
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: true,
         })
-        console.log('Map created successfully:', map)
+        
+        console.log('Map created successfully, adding markers...')
+
+        // Create info window for marker clicks
+        const infoWindow = new window.google.maps.InfoWindow()
+        
+        // Add markers for each provider
+        filteredProviders.forEach((provider) => {
+          // Get coordinates from provider data (map API includes latitude/longitude)
+          const providerWithCoords = provider as typeof provider & { latitude?: number; longitude?: number }
+          
+          // Skip if no coordinates available
+          if (!providerWithCoords.latitude || !providerWithCoords.longitude) {
+            console.warn(`Provider ${provider.id} has no coordinates, skipping marker`)
+            return
+          }
+          
+          const lat = providerWithCoords.latitude
+          const lng = providerWithCoords.longitude
+          const rating = provider.rate || 0
+          
+          // Create custom marker with rating badge
+          const markerDiv = document.createElement('div')
+          markerDiv.className = 'custom-map-marker'
+          markerDiv.innerHTML = `
+            <div style="
+              position: relative;
+              transform: translate(-50%, -100%);
+            ">
+              <!-- Rating Badge -->
+              <div class="marker-badge" style="
+                background: #F14836;
+                color: white;
+                padding: 6px 14px;
+                border-radius: 20px;
+                font-weight: 600;
+                font-size: 14px;
+                box-shadow: 0 2px 8px rgba(241, 72, 54, 0.4);
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                border: 2px solid white;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              ">
+                ${rating > 0 ? rating.toFixed(1) : 'New'}
+              </div>
+              <!-- Pointer Triangle -->
+              <div style="
+                width: 0;
+                height: 0;
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-top: 10px solid #F14836;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: -8px;
+                filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+              "></div>
+            </div>
+          `
+          
+          // Use OverlayView for custom HTML marker
+          class CustomMarker extends window.google.maps.OverlayView {
+            position: typeof window.google.maps.LatLng.prototype
+            div?: HTMLElement
+            map: typeof window.google.maps.Map.prototype
+            
+            constructor(position: typeof window.google.maps.LatLng.prototype, map: typeof window.google.maps.Map.prototype) {
+              super()
+              this.position = position
+              this.map = map
+            }
+            
+            onAdd() {
+              this.div = markerDiv
+              const panes = this.getPanes()
+              if (panes) {
+                panes.overlayMouseTarget.appendChild(this.div)
+              }
+              
+              // Add click listener
+              if (this.div) {
+                this.div.addEventListener('click', () => {
+                  setSelectedProvider(provider)
+                  
+                  // Create info window content
+                  const content = `
+                    <div style="padding: 12px; max-width: 250px;">
+                      <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #111;">
+                        ${provider.nameEn || provider.nameAr}
+                      </h3>
+                      <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">
+                        ${provider.shortAddress || 'No address available'}
+                      </p>
+                      ${provider.rate ? `
+                        <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
+                          <span style="color: #f59e0b; font-size: 14px;">★</span>
+                          <span style="font-size: 14px; font-weight: 600;">${provider.rate.toFixed(1)}</span>
+                          ${provider.totalReviews ? `<span style="font-size: 12px; color: #666;">(${provider.totalReviews})</span>` : ''}
+                        </div>
+                      ` : ''}
+                      <button 
+                        onclick="window.location.href='/provider/${provider.id}'"
+                        style="
+                          background: #F14836; 
+                          color: white; 
+                          border: none; 
+                          padding: 8px 16px; 
+                          border-radius: 8px; 
+                          font-size: 14px; 
+                          font-weight: 500;
+                          cursor: pointer;
+                          width: 100%;
+                        "
+                      >
+                        View Profile
+                      </button>
+                    </div>
+                  `
+                  
+                  infoWindow.setContent(content)
+                  infoWindow.setPosition(this.position)
+                  infoWindow.open(this.map)
+                  
+                  // Center map on marker
+                  this.map.panTo(this.position)
+                })
+              }
+              
+              // Listen to map events to redraw marker position
+              const listener = this.map.addListener('bounds_changed', () => {
+                this.draw()
+              })
+              
+              // Store listener for cleanup
+              if (this.div) {
+                (this.div as any).__listener = listener
+              }
+            }
+            
+            draw() {
+              if (this.div) {
+                const projection = this.getProjection()
+                if (!projection) return
+                
+                const point = projection.fromLatLngToDivPixel(this.position)
+                if (point) {
+                  this.div.style.position = 'absolute'
+                  this.div.style.left = point.x + 'px'
+                  this.div.style.top = point.y + 'px'
+                }
+              }
+            }
+            
+            onRemove() {
+              if (this.div) {
+                // Remove event listener
+                const listener = (this.div as any).__listener
+                if (listener) {
+                  window.google?.maps?.event?.removeListener(listener)
+                }
+                
+                // Remove from DOM
+                if (this.div.parentNode) {
+                  this.div.parentNode.removeChild(this.div)
+                }
+                this.div = undefined
+              }
+            }
+          }
+          
+          const customMarker = new CustomMarker(new window.google.maps.LatLng(lat, lng), map)
+          customMarker.setMap(map)
+        })
+        
+        console.log(`Added ${filteredProviders.length} markers to map`)
       } catch (error) {
         console.error('Error creating map:', error)
       }
     }
-  }, [viewMode, filteredProviders, userCoordinates])
+  }, [viewMode, filteredProviders, userCoordinates, apiProviders])
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -473,7 +617,12 @@ function ProvidersSearchContent() {
           </div>
 
           {/* Content Area */}
-          {viewMode === 'list' ? (
+          {isLoadingProviders ? (
+            // Loading State
+            <div className="flex items-center justify-center py-16">
+              <LoadingSpinner size="lg" />
+            </div>
+          ) : viewMode === 'list' ? (
             // List View
             filteredProviders.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -500,22 +649,28 @@ function ProvidersSearchContent() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-300px)]">
                 {/* Left: Provider List */}
                 <div className="overflow-y-auto space-y-4 pr-2">
-                  {filteredProviders.map((provider) => (
-                    <div
-                      key={provider.id}
-                      onClick={() => setSelectedProvider(provider)}
-                      className={`cursor-pointer transition-all duration-200 ${
-                        selectedProvider?.id === provider.id
-                          ? 'ring-2 ring-brand-500 rounded-lg'
-                          : ''
-                      }`}
-                    >
-                      <WishlistProviderCard
-                        provider={provider}
-                        onViewProfile={() => handleProviderClick(provider.id)}
-                      />
+                  {filteredProviders.length > 0 ? (
+                    filteredProviders.map((provider) => (
+                      <div
+                        key={provider.id}
+                        onClick={() => setSelectedProvider(provider)}
+                        className={`cursor-pointer transition-all duration-200 ${
+                          selectedProvider?.id === provider.id
+                            ? 'ring-2 ring-brand-500 rounded-lg'
+                            : ''
+                        }`}
+                      >
+                        <WishlistProviderCard
+                          provider={provider}
+                          onViewProfile={() => handleProviderClick(provider.id)}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex items-center justify-center py-16">
+                      <p className="text-gray-500">No providers found</p>
                     </div>
-                  ))}
+                  )}
                 </div>
 
                 {/* Right: Google Map */}

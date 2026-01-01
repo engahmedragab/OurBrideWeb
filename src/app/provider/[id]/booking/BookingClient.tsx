@@ -12,33 +12,16 @@ import {
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
+import { LoadingSpinner, ErrorDisplay } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { useProviderDetail } from '@/hooks/providers/useProviderDetail'
 
 interface BookingClientProps {
   providerId: string
   preSelectedServiceId?: string
 }
 
-// Mock wedding services data
-const MOCK_SERVICES = [
-  { id: '1', name: 'Bridal Makeup Package | باقة مكياج العروس', duration: 180, price: 1500, currency: 'SAR' },
-  { id: '2', name: 'Bridal Hair Styling | تصفيف شعر العروس', duration: 120, price: 800, currency: 'SAR' },
-  { id: '3', name: 'Pre-Wedding Facial Treatment | علاج الوجه قبل الزفاف', duration: 90, price: 600, currency: 'SAR' },
-  { id: '4', name: 'Henna Design | نقش الحناء', duration: 120, price: 500, currency: 'SAR' },
-  { id: '5', name: 'Engagement Makeup | مكياج الخطوبة', duration: 90, price: 700, currency: 'SAR' },
-  { id: '6', name: 'Bridal Nail Art | فن الأظافر للعروس', duration: 60, price: 350, currency: 'SAR' },
-  { id: '7', name: 'Complete Bridal Package | الباقة الكاملة للعروس', duration: 300, price: 2800, currency: 'SAR' },
-  { id: '8', name: 'Bridesmaid Makeup | مكياج وصيفات العروس', duration: 60, price: 400, currency: 'SAR' },
-]
-
-const MOCK_TEAM = [
-  { id: 'any', name: 'Any Available', rating: null },
-  { id: '1', name: 'Layla Al-Rashid', rating: 4.9 },
-  { id: '2', name: 'Fatima Hassan', rating: 4.8 },
-  { id: '3', name: 'Noor Abdullah', rating: 5.0 },
-  { id: '4', name: 'Sara Mohammed', rating: 5.0 },
-  { id: '5', name: 'Aisha Ahmed', rating: 4.9 },
-]
+// All data now comes from API - no mock data needed
 
 // Generate time slots for bridal salon (10 AM - 10 PM)
 const generateTimeSlots = () => {
@@ -68,7 +51,7 @@ const generateDates = () => {
   return dates
 }
 
-export function BookingClient({ providerId: _providerId, preSelectedServiceId }: BookingClientProps) {
+export function BookingClient({ providerId, preSelectedServiceId }: BookingClientProps) {
   const router = useRouter()
   const [step, setStep] = useState<'service' | 'team' | 'datetime' | 'confirm'>('service')
   const [selectedServices, setSelectedServices] = useState<string[]>(
@@ -80,6 +63,48 @@ export function BookingClient({ providerId: _providerId, preSelectedServiceId }:
   const [dates] = useState(generateDates())
   const [timeSlots] = useState(generateTimeSlots())
 
+  // Fetch provider data from API
+  const { data: providerData, isLoading, error } = useProviderDetail(parseInt(providerId))
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <LoadingSpinner size="lg" />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error || !providerData) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <ErrorDisplay
+            title="Provider not found"
+            message="Unable to load booking information. Please try again later."
+            actionLabel="Back to Providers"
+            actionHref="/providers"
+          />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  // Map services from API (currently empty, will be populated when services endpoint is integrated)
+  const services = [] as Array<{ id: string; name: string; duration: number; price: number; currency: string }>
+  
+  // Map team members from API (currently empty, will be populated when team endpoint is integrated)
+  const team = [
+    { id: 'any', name: 'Any Available', rating: null as number | null },
+  ] as Array<{ id: string; name: string; rating: number | null }>
+
   const toggleService = (serviceId: string) => {
     setSelectedServices((prev) =>
       prev.includes(serviceId)
@@ -90,14 +115,14 @@ export function BookingClient({ providerId: _providerId, preSelectedServiceId }:
 
   const calculateTotal = () => {
     return selectedServices.reduce((total, serviceId) => {
-      const service = MOCK_SERVICES.find((s) => s.id === serviceId)
+      const service = services.find((s) => s.id === serviceId)
       return total + (service?.price || 0)
     }, 0)
   }
 
   const calculateDuration = () => {
     return selectedServices.reduce((total, serviceId) => {
-      const service = MOCK_SERVICES.find((s) => s.id === serviceId)
+      const service = services.find((s) => s.id === serviceId)
       return total + (service?.duration || 0)
     }, 0)
   }
@@ -199,8 +224,9 @@ export function BookingClient({ providerId: _providerId, preSelectedServiceId }:
             {step === 'service' && (
               <div>
                 <h2 className="text-20 font-semibold text-gray-900 mb-4">Select Services</h2>
-                <div className="space-y-3">
-                  {MOCK_SERVICES.map((service) => (
+                {services.length > 0 ? (
+                  <div className="space-y-3">
+                    {services.map((service) => (
                     <button
                       key={service.id}
                       onClick={() => toggleService(service.id)}
@@ -250,7 +276,7 @@ export function BookingClient({ providerId: _providerId, preSelectedServiceId }:
               <div>
                 <h2 className="text-20 font-semibold text-gray-900 mb-4">Choose Team Member</h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {MOCK_TEAM.map((member) => (
+                  {team.map((member) => (
                     <button
                       key={member.id}
                       onClick={() => setSelectedTeamMember(member.id)}
@@ -364,7 +390,7 @@ export function BookingClient({ providerId: _providerId, preSelectedServiceId }:
                   </div>
                   <div className="text-right">
                     <p className="text-14 text-gray-600">Total Price</p>
-                    <p className="text-24 font-semibold text-brand-600">SAR {calculateTotal()}</p>
+                    <p className="text-24 font-semibold text-brand-600">{services[0]?.currency || 'SAR'} {calculateTotal()}</p>
                   </div>
                 </div>
                 <Button
@@ -394,7 +420,7 @@ export function BookingClient({ providerId: _providerId, preSelectedServiceId }:
                       <p className="text-14 font-medium text-gray-700 mb-3">Services</p>
                       <div className="space-y-3">
                         {selectedServices.map((serviceId) => {
-                          const service = MOCK_SERVICES.find((s) => s.id === serviceId)
+                          const service = services.find((s) => s.id === serviceId)
                           return service ? (
                             <div key={serviceId} className="pb-3 border-b border-gray-100 last:border-0">
                               <p className="text-14 font-medium text-gray-900 mb-1">
@@ -420,7 +446,7 @@ export function BookingClient({ providerId: _providerId, preSelectedServiceId }:
                       <div className="pt-4 border-t border-gray-200">
                         <p className="text-14 font-medium text-gray-700 mb-2">Team Member</p>
                         <p className="text-14 text-gray-900">
-                          {MOCK_TEAM.find(m => m.id === selectedTeamMember)?.name}
+                          {team.find(m => m.id === selectedTeamMember)?.name}
                         </p>
                       </div>
                     )}
@@ -445,10 +471,10 @@ export function BookingClient({ providerId: _providerId, preSelectedServiceId }:
                       <span className="text-14 text-gray-600">Duration</span>
                       <span className="text-14 font-medium text-gray-900">{calculateDuration()} min</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-14 font-medium text-gray-900">Total</span>
-                      <span className="text-18 font-semibold text-brand-600">SAR {calculateTotal()}</span>
-                    </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-14 font-medium text-gray-900">Total</span>
+                    <span className="text-18 font-semibold text-brand-600">{services[0]?.currency || 'SAR'} {calculateTotal()}</span>
+                  </div>
                   </div>
                 </div>
               </div>
