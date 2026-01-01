@@ -56,6 +56,23 @@ export function ProviderProfileClient({
     { enabled: !!selectedTeamMemberForPortfolio }
   )
 
+  // Calculate photos array from providerData (before early returns to avoid hook order issues)
+  const photos = providerData?.media
+    ? (providerData.media || [])
+      .map(m => {
+        const url = m?.url || m?.thumbnailUrl
+        return typeof url === 'string' ? url : null
+      })
+      .filter((url): url is string => url !== null && url.trim() !== '')
+    : []
+
+  // Reset photo index if current index is out of bounds
+  React.useEffect(() => {
+    if (photos.length > 0 && currentPhotoIndex >= photos.length) {
+      setCurrentPhotoIndex(0)
+    }
+  }, [photos.length, currentPhotoIndex])
+
   // Show loading state
   if (isLoading) {
     return (
@@ -100,7 +117,7 @@ export function ProviderProfileClient({
     isVerified: providerData.providerStatus === 'Active',
     openUntil: '10:00 PM', // Not in API
     isOpen: true, // Not in API
-    photos: providerData.media?.map(m => m.url || m.thumbnailUrl).filter(Boolean) || [],
+    photos,
     description: providerData.descriptionEn || providerData.descriptionAr || '',
     phoneNumber: providerData.phoneNumber || '',
     phoneNumber2: providerData.phoneNumber2 || '',
@@ -141,12 +158,14 @@ export function ProviderProfileClient({
   }
 
   const nextPhoto = () => {
-    setCurrentPhotoIndex(prev => (prev + 1) % provider.photos.length)
+    if (photos.length === 0) return
+    setCurrentPhotoIndex(prev => (prev + 1) % photos.length)
   }
 
   const prevPhoto = () => {
+    if (photos.length === 0) return
     setCurrentPhotoIndex(
-      prev => (prev - 1 + provider.photos.length) % provider.photos.length
+      prev => (prev - 1 + photos.length) % photos.length
     )
   }
 
@@ -232,16 +251,28 @@ export function ProviderProfileClient({
 
             {/* Photo Gallery */}
             <div className="relative rounded-xl overflow-hidden bg-gray-100 h-[400px] md:h-[500px]">
-              <Image
-                src={provider.photos[currentPhotoIndex]}
-                alt={`${provider.name} - Photo ${currentPhotoIndex + 1}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 1200px"
-              />
+              {(() => {
+                const isValidIndex = currentPhotoIndex >= 0 && currentPhotoIndex < photos.length
+                const currentPhoto = isValidIndex ? photos[currentPhotoIndex] : null
+                const isValidPhoto = currentPhoto && typeof currentPhoto === 'string' && currentPhoto.trim() !== ''
+
+                return isValidPhoto ? (
+                  <Image
+                    src={currentPhoto}
+                    alt={`${provider.name} - Photo ${currentPhotoIndex + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 1200px"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <ImageIcon className="h-24 w-24 text-gray-400" />
+                  </div>
+                )
+              })()}
 
               {/* Navigation Arrows */}
-              {provider.photos.length > 1 && (
+              {photos.length > 1 && photos[currentPhotoIndex] && (
                 <>
                   <button
                     onClick={prevPhoto}
@@ -259,25 +290,29 @@ export function ProviderProfileClient({
               )}
 
               {/* Photo Counter */}
-              <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-black/60 text-white text-12 font-medium">
-                {currentPhotoIndex + 1} / {provider.photos.length}
-              </div>
+              {photos.length > 0 && (
+                <div className="absolute bottom-4 right-4 px-3 py-1.5 rounded-full bg-black/60 text-white text-12 font-medium">
+                  {currentPhotoIndex + 1} / {photos.length}
+                </div>
+              )}
 
               {/* Thumbnail Indicators */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                {provider.photos.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentPhotoIndex(index)}
-                    className={cn(
-                      'w-2 h-2 rounded-full transition-all',
-                      index === currentPhotoIndex
-                        ? 'bg-white w-6'
-                        : 'bg-white/60'
-                    )}
-                  />
-                ))}
-              </div>
+              {photos.length > 0 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {photos.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentPhotoIndex(index)}
+                      className={cn(
+                        'w-2 h-2 rounded-full transition-all',
+                        index === currentPhotoIndex
+                          ? 'bg-white w-6'
+                          : 'bg-white/60'
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
