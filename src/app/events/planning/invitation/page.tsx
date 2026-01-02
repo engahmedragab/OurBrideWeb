@@ -641,7 +641,7 @@ function InvitationPageContent() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Loading guests..." />
+        <LoadingOverlay open={true}  title="Loading guests..." />
       </div>
     )
   }
@@ -806,7 +806,7 @@ export default function InvitationPage() {
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Loading..." />
+        <LoadingOverlay open={true}  title="Loading..." />
       </div>
     }>
       <InvitationPageContent />
