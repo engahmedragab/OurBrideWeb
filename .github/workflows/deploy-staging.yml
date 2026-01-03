@@ -25,28 +25,53 @@ jobs:
       - name: 🧹 Clean Build Cache
         run: |
           rm -rf .next
-          rm -rf out
           rm -rf .turbo
           npm cache clean --force
 
       - name: 🏗️ Build Next.js App (Staging)
-        run: |
-          npm run build
-          npx next export
+        run: npm run build
         env:
           NODE_ENV: production
 
-      - name: 🚀 Deploy Static Export to DigitalOcean (Staging)
+      - name: 🚀 Deploy Next.js App to DigitalOcean (Staging)
         uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USER }}
           password: ${{ secrets.DO_PASSWORD }}
           port: 22
-          source: "out/*"
-          target: "/var/www/OurBrideWeb-staging/build"
-          rm: true
-          strip_components: 1
+          source: ".next/**,package.json,package-lock.json,next.config.js,public/**,.env.production,.env.local"
+          target: "/var/www/OurBrideWeb-staging"
+          rm: false
+
+      - name: 📦 Install Dependencies on Server
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/OurBrideWeb-staging
+            npm ci --production
+
+      - name: 🔄 Restart Next.js App
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/OurBrideWeb-staging
+            # Restart the app using PM2 or systemd (adjust based on your setup)
+            # If using PM2:
+            # pm2 restart ourbride-staging || pm2 start npm --name "ourbride-staging" -- start
+            # If using systemd:
+            sudo systemctl restart ourbride-staging || sudo systemctl start ourbride-staging
+            # If using a simple process manager, you might need to:
+            # pkill -f "next start" || true
+            # nohup npm start > /var/log/ourbride-staging.log 2>&1 &
 
       - name: 🔧 Fix Permissions
         uses: appleboy/ssh-action@v0.1.3
@@ -56,7 +81,7 @@ jobs:
           password: ${{ secrets.DO_PASSWORD }}
           port: 22
           script: |
-            sudo chown -R www-data:www-data /var/www/OurBrideWeb-staging
+            sudo chown -R ${{ secrets.DO_USER }}:${{ secrets.DO_USER }} /var/www/OurBrideWeb-staging
             sudo chmod -R 755 /var/www/OurBrideWeb-staging
 
       - name: 🔄 Reload Nginx
