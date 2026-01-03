@@ -1,7 +1,6 @@
 'use client'
 
 import { useMemo } from 'react'
-import Link from 'next/link'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
@@ -17,20 +16,20 @@ export interface TasksReminderProps {
 export const TasksReminder = ({ book, onInit, onNavigate, eventId }: TasksReminderProps) => {
   // Get active lines (not deleted) - use todos if available, otherwise use lines
   const activeLines = useMemo(() => {
-    const lines = book.todos || book.lines || []
-    return lines.filter(line => !line.isDeleted)
+    const lines = (book.todos || book.lines || []) as any[]
+    return lines.filter((line: any) => !line?.isDeleted)
   }, [book.todos, book.lines])
 
-  // Sort: incomplete tasks first, then by creation date
+  // Sort: incomplete tasks first, then by lastModifiedDate (newest first)
   const sortedLines = useMemo(() => {
-    return [...activeLines].sort((a, b) => {
+    return [...activeLines].sort((a: any, b: any) => {
       // Incomplete tasks first
       if (a.isDone !== b.isDone) {
         return a.isDone ? 1 : -1
       }
-      // Then sort by creation date (newest first)
-      const dateA = new Date(a.creationDate).getTime()
-      const dateB = new Date(b.creationDate).getTime()
+      // Then sort by lastModifiedDate (newest first), fallback to creationDate
+      const dateA = new Date(a.lastModifiedDate || a.creationDate || 0).getTime()
+      const dateB = new Date(b.lastModifiedDate || b.creationDate || 0).getTime()
       return dateB - dateA
     })
   }, [activeLines])
@@ -52,33 +51,32 @@ export const TasksReminder = ({ book, onInit, onNavigate, eventId }: TasksRemind
     }
   }
 
-  // Build href for navigation
-  const href = {onNavigate}
-
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-18 font-semibold text-gray-900">Tasks Reminder</h2>
         <button
-         
           className="text-12 text-brand-500 hover:text-brand-600 font-medium"
           onClick={handleClick}
+          type="button"
         >
-          View All Tasks
+          View All
         </button>
       </div>
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-3">
         {displayTasks.length > 0 ? (
-          displayTasks.map(line => {
+          displayTasks.map((line: any) => {
             // Use task field as the task name/description
-            const taskName = line.task
-            // Use creationDate as dueDate fallback, or lastModifiedDate
+            const taskName = line.task || 'Untitled Task'
+            // Use lastModifiedDate, fallback to creationDate
             const dueDate = line.lastModifiedDate || line.creationDate
 
             return (
-              <div
+              <button
                 key={line.id}
-                className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 sm:p-5 flex items-start gap-2 sm:gap-3"
+                type="button"
+                onClick={handleClick}
+                className="w-full text-left bg-white rounded-lg border border-gray-200 p-3 hover:bg-gray-50 hover:border-gray-300 transition-colors flex items-start gap-3"
               >
                 <Checkbox
                   checked={line.isDone}
@@ -88,26 +86,26 @@ export const TasksReminder = ({ book, onInit, onNavigate, eventId }: TasksRemind
                   size="sm"
                   className="flex-shrink-0 mt-0.5"
                 />
-                <div className="flex-1 min-w-0 flex flex-col gap-2">
+                <div className="flex-1 min-w-0 flex flex-col gap-1.5">
                   <p
                     className={cn(
-                      'text-12 sm:text-13 md:text-14',
+                      'text-13 font-semibold',
                       line.isDone ? 'line-through text-gray-400' : 'text-gray-900'
                     )}
                   >
                     {taskName}
                   </p>
                   {dueDate && dueDate !== '0001-01-01T00:00:00' && (
-                    <p className="text-12 text-gray-500">
-                      Due : {format(new Date(dueDate), 'dd/MM/yyyy')}
+                    <p className="text-11 text-gray-500">
+                      {format(new Date(dueDate), 'dd MMM, yyyy')}
                     </p>
                   )}
                 </div>
-              </div>
+              </button>
             )
           })
         ) : (
-          <p className="text-14 text-gray-500 text-center py-4">No tasks yet</p>
+          <p className="text-13 text-gray-500 text-center py-6">No tasks yet</p>
         )}
       </div>
     </div>
