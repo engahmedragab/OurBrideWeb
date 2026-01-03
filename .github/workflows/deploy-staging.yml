@@ -53,7 +53,7 @@ jobs:
           port: 22
           script: |
             cd /var/www/OurBrideWeb-staging
-            npm ci --production
+            npm ci --omit=dev
 
       - name: 🔄 Restart Next.js App
         uses: appleboy/ssh-action@v0.1.3
