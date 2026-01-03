@@ -215,11 +215,15 @@ export default function RankingPage() {
           {/* Left section: avatar + name + icons */}
           <div className="flex items-center gap-2.5  sm:gap-3  md:gap-2 pr-[110px] sm:pr-[100px]">
             {/* Avatar */}
-            <Image
-              src={currentUser.avatar}
-              alt={currentUser.name}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
-            />
+            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden flex-shrink-0">
+              <Image
+                src={currentUser.avatar}
+                alt={currentUser.name}
+                fill
+                sizes="(max-width: 640px) 40px, 48px"
+                className="object-cover"
+              />
+            </div>
 
             {/* Name and Badges */}
             <div className="flex-1 min-w-0">
@@ -288,6 +292,8 @@ export default function RankingPage() {
                               : (typeof bronzeCrown === 'string' ? bronzeCrown : bronzeCrown.src)
                         }
                         alt={`${member.crown} crown`}
+                        width={32}
+                        height={32}
                         className="absolute -top-6 sm:-top-10 left-1/2 -translate-x-1/2 w-6 h-6 sm:w-8 sm:h-8 z-10"
                       />
                     )}
@@ -333,14 +339,20 @@ export default function RankingPage() {
                               : (typeof bronzeCrown === 'string' ? bronzeCrown : bronzeCrown.src)
                         }
                         alt={`${member.crown} crown`}
+                        width={32}
+                        height={32}
                         className="absolute -top-6 sm:-top-10 left-1/2 -translate-x-1/2 w-6 h-6 sm:w-8 sm:h-8 z-10"
                       />
                     )}
-                    <Image
-                      src={member.avatar}
-                      alt={member.name}
-                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover"
-                    />
+                    <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden">
+                      <Image
+                        src={member.avatar}
+                        alt={member.name}
+                        fill
+                        sizes="(max-width: 640px) 56px, 64px"
+                        className="object-cover"
+                      />
+                    </div>
                   </div>
                   <p className="text-10 sm:text-12 font-semibold text-gray-900 text-center">
                     {member.name}
@@ -374,6 +386,8 @@ export default function RankingPage() {
                               : (typeof bronzeCrown === 'string' ? bronzeCrown : bronzeCrown.src)
                         }
                         alt={`${member.crown} crown`}
+                        width={32}
+                        height={32}
                         className="absolute -top-6 sm:-top-10 left-1/2 -translate-x-1/2 w-6 h-6 sm:w-8 sm:h-8 z-10"
                       />
                     )}

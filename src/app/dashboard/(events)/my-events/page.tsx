@@ -618,7 +618,7 @@ function MyEventsPageContent() {
             </div>
 
             {/* SECTION 6: Items, Notes & Occasions - Three Columns */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
   {/* <div className="self-start h-fit">
     <ItemsOverview
       book={eventInfo.itemBook}

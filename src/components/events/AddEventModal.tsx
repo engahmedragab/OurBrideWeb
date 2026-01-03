@@ -197,7 +197,7 @@ export const AddEventModal = ({
             variant="brand"
             onClick={handleSubmit}
             disabled={!title.trim()}
-            className="px-6"
+            className="px-6 text-white"
           >
             Create Event
           </Button>
