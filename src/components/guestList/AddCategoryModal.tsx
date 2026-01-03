@@ -8,13 +8,6 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { addCategoryFormSchema, type AddCategoryFormData } from '@/app/events/planning/invitation/schemas/category.schema'
 
-/**
- * Slugify helper: converts a string to a URL-friendly slug
- * - lowercase
- * - trim
- * - replace spaces with "-"
- * - remove non-alphanumeric and "-"
- */
 const slugify = (text: string): string => {
   return text
     .toLowerCase()
@@ -29,12 +22,14 @@ interface AddCategoryModalProps {
   isOpen: boolean
   onClose: () => void
   onSubmit: (data: { name: string; slug?: string; description?: string }) => void
+  isSubmitting?: boolean
 }
 
 export const AddCategoryModal = ({
   isOpen,
   onClose,
   onSubmit,
+  isSubmitting = false,
 }: AddCategoryModalProps) => {
   const {
     register,
@@ -52,24 +47,18 @@ export const AddCategoryModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      reset({
-        name: '',
-        slug: '',
-        description: '',
-      })
+      reset({ name: '', slug: '', description: '' })
     }
   }, [isOpen, reset])
 
   const onSubmitForm = (data: AddCategoryFormData) => {
-    // Auto-generate slug from name if slug is empty
     const finalSlug = data.slug?.trim() || slugify(data.name)
-    
+
     onSubmit({
       name: data.name,
       slug: finalSlug || undefined,
       description: data.description || undefined,
     })
-    onClose()
   }
 
   return (
@@ -83,7 +72,6 @@ export const AddCategoryModal = ({
     >
       <form onSubmit={handleSubmit(onSubmitForm)}>
         <div className="space-y-4">
-          {/* Name Input */}
           <div>
             <label className="block text-14 font-medium text-gray-700 mb-2">
               Category Name <span className="text-red-500">*</span>
@@ -97,11 +85,8 @@ export const AddCategoryModal = ({
             />
           </div>
 
-          {/* Slug Input (Optional) */}
           <div>
-            <label className="block text-14 font-medium text-gray-700 mb-2">
-              Slug (Optional)
-            </label>
+            <label className="block text-14 font-medium text-gray-700 mb-2">Slug (Optional)</label>
             <Input
               {...register('slug')}
               placeholder="Auto-generated if empty"
@@ -111,11 +96,8 @@ export const AddCategoryModal = ({
             />
           </div>
 
-          {/* Description Input (Optional) */}
           <div>
-            <label className="block text-14 font-medium text-gray-700 mb-2">
-              Description (Optional)
-            </label>
+            <label className="block text-14 font-medium text-gray-700 mb-2">Description (Optional)</label>
             <Input
               {...register('description')}
               placeholder="Enter category description"
@@ -125,15 +107,8 @@ export const AddCategoryModal = ({
             />
           </div>
 
-          {/* Actions */}
           <div className="flex flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-gray-200">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              size="md"
-              className="w-full sm:w-auto"
-            >
+            <Button type="button" variant="outline" onClick={onClose} size="md" className="w-full sm:w-auto">
               Cancel
             </Button>
             <Button
@@ -141,8 +116,9 @@ export const AddCategoryModal = ({
               variant="brand"
               size="md"
               className="w-full sm:w-auto text-white"
+              disabled={isSubmitting}
             >
-              Add Category
+              {isSubmitting ? 'Saving...' : 'Add Category'}
             </Button>
           </div>
         </div>
@@ -150,4 +126,3 @@ export const AddCategoryModal = ({
     </Modal>
   )
 }
-
