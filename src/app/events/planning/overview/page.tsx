@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { LoadingSpinner } from '@/components/ui'
+import { LoadingOverlay, LoadingSpinner } from '@/components/ui'
 
 function OverviewPageContent() {
   const router = useRouter()
@@ -22,7 +22,7 @@ function OverviewPageContent() {
   return (
     <div className="w-full min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <LoadingSpinner size="lg" text="Redirecting to event overview..." />
+        <LoadingOverlay open={true} title="Redirecting to event overview..." />
       </div>
     </div>
   )
