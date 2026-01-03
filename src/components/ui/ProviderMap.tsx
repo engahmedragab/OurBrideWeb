@@ -86,11 +86,28 @@ export const ProviderMap = ({
             position: any
             div: HTMLDivElement | null = null
             provider: FeaturedProviderResponse
+            private visible: boolean = true
 
             constructor(position: any, provider: FeaturedProviderResponse) {
                 super()
                 this.position = position
                 this.provider = provider
+            }
+
+            // Required methods for MarkerClusterer compatibility
+            getPosition(): any {
+                return this.position
+            }
+
+            getVisible(): boolean {
+                return this.visible
+            }
+
+            setVisible(visible: boolean): void {
+                this.visible = visible
+                if (this.div) {
+                    this.div.style.display = visible ? 'block' : 'none'
+                }
             }
 
             onAdd() {
@@ -178,13 +195,37 @@ export const ProviderMap = ({
 
         /* ---------------- Clusterer (OurBride style) ---------------- */
         try {
-            clustererRef.current = new MarkerClusterer({
-                map,
-                markers: overlays as any,
-                renderer: {
-                    render({ count, position }: { count: number; position: any }) {
-                        const div = document.createElement('div')
-                        div.innerHTML = `
+            // Custom cluster marker class that extends OverlayView
+            class ClusterMarker extends window.google.maps.OverlayView {
+                position: any
+                div: HTMLDivElement | null = null
+                count: number
+                private visible: boolean = true
+
+                constructor(position: any, count: number) {
+                    super()
+                    this.position = position
+                    this.count = count
+                }
+
+                getPosition(): any {
+                    return this.position
+                }
+
+                getVisible(): boolean {
+                    return this.visible
+                }
+
+                setVisible(visible: boolean): void {
+                    this.visible = visible
+                    if (this.div) {
+                        this.div.style.display = visible ? 'block' : 'none'
+                    }
+                }
+
+                onAdd() {
+                    this.div = document.createElement('div')
+                    this.div.innerHTML = `
             <div style="
               width:48px;height:48px;
               border-radius:50%;
@@ -194,13 +235,37 @@ export const ProviderMap = ({
               box-shadow:0 6px 18px rgba(252,74,26,.55);
               border:3px solid white;
             ">
-              ${count}
+              ${this.count}
             </div>
           `
-                        return new window.google.maps.marker.AdvancedMarkerElement({
-                            position,
-                            content: div,
-                        }) as any
+                    this.getPanes().overlayLayer.appendChild(this.div)
+                }
+
+                draw() {
+                    if (!this.div) return
+                    const point = this.getProjection().fromLatLngToDivPixel(this.position)
+                    if (!point) return
+                    this.div.style.left = `${point.x}px`
+                    this.div.style.top = `${point.y}px`
+                    this.div.style.position = 'absolute'
+                    this.div.style.transform = 'translate(-50%, -50%)'
+                }
+
+                onRemove() {
+                    this.div?.remove()
+                    this.div = null
+                }
+            }
+
+            clustererRef.current = new MarkerClusterer({
+                map,
+                markers: overlays as any,
+                renderer: {
+                    render({ count, position }: { count: number; position: any }) {
+                        // Use custom ClusterMarker instead of AdvancedMarkerElement
+                        const clusterMarker = new ClusterMarker(position, count)
+                        clusterMarker.setMap(map)
+                        return clusterMarker as any
                     },
                 },
             })

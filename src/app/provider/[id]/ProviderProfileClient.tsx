@@ -17,6 +17,8 @@ import {
   ChevronLeft,
   ChevronRight,
   ImageIcon,
+  Store,
+  ThumbsUp,
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
@@ -358,7 +360,8 @@ export function ProviderProfileClient({
     })),
     team: (providerData.teamMembers || []).map(member => ({
       id: member.id?.toString() || '',
-      name: member.providerName || 'Team Member',
+      name: member.providerName || member.user?.email || 'Team Member',
+      email: member.user?.email || '',
       role: formatRole(member.role?.name || member.roleKey || '') || '',
       roleKey: member.roleKey || '',
       isActive: member.isActive ?? true,
@@ -933,12 +936,12 @@ export function ProviderProfileClient({
                         <div className="flex items-start gap-3 mb-3">
                           <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-full flex items-center justify-center">
                             <span className="text-20 font-semibold text-gray-600">
-                              {member.name.charAt(0).toUpperCase()}
+                              {(member.name || member.email || 'T').charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="text-16 font-semibold text-gray-900 mb-1 truncate">
-                              {member.name}
+                              {member.name || member.email || 'Team Member'}
                             </h3>
                             <p className="text-14 text-gray-600 mb-2 truncate">
                               {formatRole(member.role)}
@@ -953,7 +956,7 @@ export function ProviderProfileClient({
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setSelectedTeamMemberForPortfolio({ id: member.id, name: member.name, role: member.role })}
+                          onClick={() => setSelectedTeamMemberForPortfolio({ id: member.id, name: member.name || member.email || 'Team Member', role: member.role })}
                           className="w-full flex items-center justify-center gap-1"
                         >
                           <ImageIcon className="h-4 w-4" />
@@ -1338,10 +1341,31 @@ export function ProviderProfileClient({
                     variant="default"
                     size="lg"
                     onClick={() => router.push(`/provider/${providerId}/booking`)}
-                    className="w-full mb-6 !bg-brand-600 hover:!bg-brand-700 !text-white font-semibold"
+                    className="w-full mb-3 !bg-brand-600 hover:!bg-brand-700 !text-white font-semibold"
                   >
                     Book now
                   </Button>
+
+                  {/* Open Store and Likes Buttons */}
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    <Button
+                      variant="outline"
+                      size="md"
+                      onClick={() => router.push(`/provider/${providerId}/store`)}
+                      className="flex items-center justify-center gap-2"
+                    >
+                      <Store className="h-4 w-4" />
+                      Open Store
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="md"
+                      onClick={() => router.push(`/provider/${providerId}/links`)}
+                      className="flex items-center justify-center gap-2"
+                    >
+                      <span>Linkee</span>
+                    </Button>
+                  </div>
 
                   {/* Operating Hours */}
                   {provider.openingHours.length > 0 && (

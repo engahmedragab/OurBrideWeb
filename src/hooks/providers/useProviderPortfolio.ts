@@ -8,6 +8,7 @@ import {
 import type { MediaResponse } from '@/types/responses'
 import type { BranchPortfolioResponse } from '@/types/responses/branch-portfolio-response'
 import type { PlaceResponse } from '@/types/responses'
+import type { ProviderUserAssignmentResponse } from '@/types/responses/provider-user-assignment-response'
 
 /**
  * Hook to fetch portfolio for a provider branch
@@ -54,7 +55,7 @@ export const useProviderTeamUsers = (
     enabled?: boolean
   }
 ) => {
-  return useQuery<any[], Error>({
+  return useQuery<ProviderUserAssignmentResponse[], Error>({
     queryKey: ['provider-team-users', providerId],
     queryFn: () => getProviderTeamUsers(providerId),
     enabled: options?.enabled !== false && !!providerId && providerId > 0,

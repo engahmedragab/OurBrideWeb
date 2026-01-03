@@ -14,9 +14,17 @@ import {
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
-import { LoadingSpinner, ErrorDisplay } from '@/components/ui'
-import { getAvailableTimeSlots, getAvailableTimeSlotsForMultipleServices } from '@/services/api/reservationApi'
+import { LoadingSpinner, ErrorDisplay, ProcessingModal } from '@/components/ui'
+import { useToast } from '@/components/ui/Toaster'
+import { ErrorModal } from '@/components/ui/ErrorModal'
+import { getAvailableTimeSlots, getAvailableTimeSlotsForMultipleServices, createGroupReservation, getReservationsByIds, type GroupReservationResponse } from '@/services/api/reservationApi'
+import { addPurchase, addBulkPurchases, getCart, getCartByProvider } from '@/services/api/purchaseApi'
 import type { TimeSlotResponse } from '@/types/responses'
+import type { GroupReservationRequest, PurchaseRequest, ReservationRequest, BulkPurchaseRequest } from '@/../client/common/api/gen/ourbride-api'
+import { PurchaseType, ServiceType } from '@/../client/common/api/gen/ourbride-api'
+import type { ReservationResponse } from '@/types/responses'
+import { ReservationStatus } from '@/types/responses/common'
+import { useUserFromToken } from '@/hooks/auth'
 import { cn } from '@/lib/utils'
 import { formatRole } from '@/utils/role'
 import { useServicesByProviderId } from '@/hooks/services/useServicesByProviderId'
@@ -26,6 +34,8 @@ import { RatingDisplay } from '@/components/ui/RatingDisplay'
 import Image from 'next/image'
 import type { ServiceResponse } from '@/types/responses'
 import type { PlaceResponse } from '@/types/responses'
+import type { ProviderUserResponse } from '@/types/responses/provider-user-response'
+import type { ProviderUserAssignmentResponse } from '@/types/responses/provider-user-assignment-response'
 
 interface BookingClientProps {
   providerId: string
@@ -62,6 +72,14 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
   const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState(false)
   const [timeSlotsError, setTimeSlotsError] = useState<Error | null>(null)
   const [serviceDurations, setServiceDurations] = useState<Map<string, number>>(new Map())
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showProcessingModal, setShowProcessingModal] = useState(false)
+  const [queueStatus, setQueueStatus] = useState<'queued' | 'processing' | 'completed' | 'failed'>('queued')
+  const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({ isOpen: false, message: '' })
+  const pollingIntervalRef = React.useRef<NodeJS.Timeout | null>(null)
+  const reservationIdsRef = React.useRef<string[]>([])
+  const userInfo = useUserFromToken()
+  const { addToast } = useToast()
 
   // Fetch services by provider ID from API
   const { data: servicesData, isLoading: isLoadingServices, error: servicesError } = useServicesByProviderId(parseInt(providerId))
@@ -108,10 +126,23 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
 
     // If more than one service is selected, use all provider team users
     if (selectedServices.length > 1 && allTeamUsers && allTeamUsers.length > 0) {
-      allTeamUsers.forEach((user: any) => {
-        const userId = user.id?.toString() || user.providerUserAssignmentId?.toString() || user.userId || ''
-        const userName = user.providerName || user.name || user.user?.name || user.staffName || `Staff ${user.id || ''}`
-        const userRole = user.role?.name || user.roleKey || user.staffRole || null
+      allTeamUsers.forEach((assignment: ProviderUserAssignmentResponse) => {
+        // Extract ProviderUserResponse from assignment
+        const user: ProviderUserResponse | null = assignment.user
+
+        if (!user) return
+
+        // Use providerUserId as the unique identifier
+        const userId = user.providerUserId?.toString() || user.userId?.toString() || user.id || ''
+
+        // Get name from ProviderUserResponse (firstName + lastName) or fallback to email
+        const firstName = user.firstName || ''
+        const lastName = user.lastName || ''
+        const fullName = `${firstName} ${lastName}`.trim()
+        const userName = fullName || user.email || `Staff ${user.providerUserId || user.userId || ''}`
+
+        // Get role from assignment (RoleResponse) or use role number from ProviderUserResponse
+        const userRole = assignment.role?.name || assignment.roleKey || (user.role ? String(user.role) : null)
 
         if (userId && !teamMembersMap.has(userId)) {
           teamMembersMap.set(userId, {
@@ -344,11 +375,25 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
           return updated
         })
 
-        // Use slots directly from backend (all calculations done in backend)
-        // Sort by start time
-        slots.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+        // Deduplicate slots - remove duplicates based on ID or start time
+        const uniqueSlotsMap = new Map<string, TimeSlotResponse>()
+        slots.forEach((slot) => {
+          // Use ID as primary key if available, otherwise use start time
+          const key = slot.id && slot.id !== 0
+            ? `id-${slot.id}`
+            : `start-${slot.start}`
 
-        setTimeSlots(slots)
+          // Only add if not already in map
+          if (!uniqueSlotsMap.has(key)) {
+            uniqueSlotsMap.set(key, slot)
+          }
+        })
+
+        // Convert map back to array and sort by start time
+        const uniqueSlots = Array.from(uniqueSlotsMap.values())
+        uniqueSlots.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+
+        setTimeSlots(uniqueSlots)
       } catch (error) {
         console.error('Error fetching time slots:', error)
         setTimeSlotsError(error instanceof Error ? error : new Error('Failed to fetch time slots'))
@@ -385,6 +430,9 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
   }
 
   const handleContinue = () => {
+    // Scroll to top when navigating between steps
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+
     if (step === 'service' && selectedServices.length > 0) {
       setStep('team')
       // Reset team member selection when moving to team step
@@ -401,9 +449,395 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
     }
   }
 
-  const handleConfirmBooking = () => {
-    // Add to cart or proceed to checkout
-    router.push('/cart')
+  // Stop polling
+  const stopPolling = () => {
+    if (pollingIntervalRef.current) {
+      clearTimeout(pollingIntervalRef.current)
+      pollingIntervalRef.current = null
+    }
+  }
+
+  // Start polling for group reservations
+  const startPolling = (reservationIds: string[], providerId: number | undefined, clientId: string | undefined) => {
+    console.log('🟢 Starting polling for reservations:', reservationIds)
+    reservationIdsRef.current = reservationIds
+
+    let pollCount = 0
+    const maxPolls = 30 // Max 30 polls (about 2-3 minutes)
+    let delay = 2000 // Start with 2 seconds
+
+    const poll = async () => {
+      try {
+        pollCount++
+        console.log(`🟡 Polling attempt ${pollCount} for reservations:`, reservationIds)
+
+        // Poll all reservations using bulk endpoint for better performance
+        const reservations = await getReservationsByIds(reservationIds)
+
+        // Check if all reservations are confirmed
+        const allConfirmed = reservations.every(reservation => {
+          const status = reservation?.status
+          return status && status !== ReservationStatus.Pending && status !== ReservationStatus.Created
+        })
+
+        if (allConfirmed) {
+          // All reservations confirmed, create bulk purchases
+          console.log('✅ All reservations confirmed, creating bulk purchases')
+          stopPolling()
+          setQueueStatus('completed')
+          setShowProcessingModal(false)
+          setIsSubmitting(false)
+          await createBulkPurchases(reservationIds, providerId, clientId)
+          return
+        }
+
+        // Check if any reservation was rejected
+        const anyRejected = reservations.some(reservation => {
+          const status = reservation?.status
+          return status === ReservationStatus.Rejected
+        })
+
+        if (anyRejected) {
+          console.error('❌ Some reservations were rejected')
+          setQueueStatus('failed')
+          setShowProcessingModal(false)
+          stopPolling()
+          setIsSubmitting(false)
+          setErrorModal({
+            isOpen: true,
+            message: 'Some reservations were rejected. Please check your reservations page for details.'
+          })
+          return
+        }
+
+        // Still processing, continue polling
+        if (pollCount >= maxPolls) {
+          console.error('❌ Polling timeout')
+          setQueueStatus('failed')
+          setShowProcessingModal(false)
+          stopPolling()
+          setIsSubmitting(false)
+          setErrorModal({
+            isOpen: true,
+            message: 'Reservations are taking longer than expected. Please check your reservations page.'
+          })
+          return
+        }
+
+        // Exponential backoff: 2s, 3s, 4s, 5s, 6s...
+        delay = Math.min(delay + 1000, 6000)
+        pollingIntervalRef.current = setTimeout(poll, delay)
+
+      } catch (error: unknown) {
+        console.error('❌ Error polling reservations:', error)
+        const err = error as { response?: { status?: number }; statusCode?: number }
+
+        // If reservations not found (404), continue polling
+        if (err?.response?.status === 404 || err?.statusCode === 404) {
+          if (pollCount >= maxPolls) {
+            setQueueStatus('failed')
+            setShowProcessingModal(false)
+            stopPolling()
+            setIsSubmitting(false)
+            setErrorModal({
+              isOpen: true,
+              message: 'Reservations are taking longer than expected. Please check your reservations page.'
+            })
+            return
+          }
+          delay = Math.min(delay + 1000, 6000)
+          pollingIntervalRef.current = setTimeout(poll, delay)
+          return
+        }
+
+        // Other errors - retry with backoff
+        if (pollCount >= maxPolls) {
+          setQueueStatus('failed')
+          setShowProcessingModal(false)
+          stopPolling()
+          setIsSubmitting(false)
+          setErrorModal({
+            isOpen: true,
+            message: 'Failed to check reservation status. Please try again.'
+          })
+          return
+        }
+
+        delay = Math.min(delay + 1000, 6000)
+        pollingIntervalRef.current = setTimeout(poll, delay)
+      }
+    }
+
+    // Start polling after initial delay
+    pollingIntervalRef.current = setTimeout(poll, delay)
+  }
+
+  // Create bulk purchases for all confirmed reservations
+  const createBulkPurchases = async (
+    reservationIds: string[],
+    providerId: number | undefined,
+    clientId: string | undefined
+  ) => {
+    try {
+      console.log('🟢 Creating bulk purchases for reservations:', reservationIds)
+
+      // Get all reservations using bulk endpoint for better performance
+      const reservations = await getReservationsByIds(reservationIds)
+      if (reservations.length === 0) {
+        console.error('❌ No reservations found')
+        return
+      }
+
+      // Create purchase requests for all reservations
+      const purchaseRequests: PurchaseRequest[] = reservations
+        .map((reservation) => {
+          if (!reservation || !reservation.reservationId) {
+            console.error(`❌ Invalid reservation:`, reservation)
+            return null
+          }
+
+          const reservationId = reservation.reservationId
+
+          // Find the service for this reservation
+          const service = services.find(s => s.id === reservation.serviceId?.toString())
+          if (!service) {
+            console.error(`❌ Service not found for reservation ${reservationId}`)
+            return null
+          }
+
+          const serviceData = servicesMap.get(reservation.serviceId?.toString() || '')
+          const servicePrice = service.price || 0
+
+          return {
+            purchaseType: PurchaseType.Service,
+            serviceId: reservation.serviceId || 0,
+            providerId: providerId || undefined,
+            serviceType: ServiceType.Rent, // Default, adjust if available in service data
+            totalPrice: servicePrice,
+            quantity: 1,
+            reservationId: reservationId,
+            comment: '',
+            startDate: reservation.requestedStartTime || selectedTime || undefined,
+            endDate: reservation.requestedStartTime
+              ? new Date(new Date(reservation.requestedStartTime).getTime() + (service.duration * 60 * 1000)).toISOString()
+              : undefined,
+            depositAmount: serviceData?.deposit || undefined,
+            clientId: clientId || undefined,
+          } as PurchaseRequest
+        })
+        .filter((req): req is PurchaseRequest => req !== null)
+
+      if (purchaseRequests.length === 0) {
+        console.error('❌ No valid purchase requests to create')
+        return
+      }
+
+      console.log('🟢 Creating bulk purchases:', purchaseRequests.length, 'items')
+
+      // Create bulk purchase request
+      const bulkPurchaseRequest: BulkPurchaseRequest = {
+        items: purchaseRequests,
+        stopOnFirstError: false,
+      }
+
+      // Call bulk purchase API
+      const bulkResponse = await addBulkPurchases(bulkPurchaseRequest)
+
+      console.log('✅ Bulk purchases created successfully:', {
+        totalItems: bulkResponse.totalItems,
+        successCount: bulkResponse.successCount,
+        failureCount: bulkResponse.failureCount,
+        failedItems: bulkResponse.failedItems,
+      })
+
+      // Check if there were any failures
+      if (bulkResponse.failureCount > 0) {
+        console.warn('⚠️ Some purchases failed:', bulkResponse.failedItems)
+        // Show error modal for failed items
+        const failedMessages = Object.entries(bulkResponse.failedItems)
+          .map(([index, message]) => `Item ${parseInt(index) + 1}: ${message}`)
+          .join('\n')
+        setErrorModal({
+          isOpen: true,
+          message: `Some purchases failed:\n${failedMessages}`
+        })
+      }
+
+      // Navigate to reservations page on success
+      if (bulkResponse.successCount > 0) {
+        router.push('/reservations')
+      }
+    } catch (error) {
+      console.error('❌ Error creating bulk purchases:', error)
+      const err = error as { response?: { status?: number; data?: { message?: string } }; message?: string }
+      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to create purchases. Please try again.'
+      setErrorModal({
+        isOpen: true,
+        message: errorMessage
+      })
+    }
+  }
+
+  // Cleanup polling on unmount
+  React.useEffect(() => {
+    return () => {
+      stopPolling()
+    }
+  }, [])
+
+  const handleConfirmBooking = async () => {
+    if (!selectedTime || selectedServices.length === 0) {
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      console.log('🟢 Starting group reservation creation...')
+
+      // Get branchId and staffId from selections
+      const branchId = selectedBranch !== 'any' ? parseInt(selectedBranch, 10) : undefined
+      const staffId = selectedTeamMember !== 'any' ? parseInt(selectedTeamMember, 10) : undefined
+
+      // Get provider ID from provider data
+      const finalProviderId = providerData?.id || parseInt(providerId, 10)
+
+      // Prepare group reservation request - create individual reservation requests for each service
+      const reservationRequests = selectedServices.map(serviceId => {
+        const service = servicesMap.get(serviceId)
+        return {
+          serviceId: parseInt(serviceId, 10),
+          providerId: finalProviderId || undefined,
+          branchId: branchId || undefined,
+          staffId: staffId || undefined,
+          requestedStartTime: selectedTime || undefined,
+          reservationDate: selectedTime ? new Date(selectedTime).toISOString().split('T')[0] : undefined,
+          notes: '',
+          depositAmount: service?.deposit || undefined,
+        } as ReservationRequest
+      })
+
+      const groupReservationRequest: GroupReservationRequest = {
+        clientId: userInfo?.id || undefined,
+        providerId: finalProviderId || undefined,
+        reservations: reservationRequests,
+        failOnFirstError: false,
+      }
+
+      console.log('🟢 Group reservation request:', groupReservationRequest)
+
+      // Create group reservations
+      const groupResponse: GroupReservationResponse = await createGroupReservation(groupReservationRequest)
+      console.log('🟢 Group reservation response:', groupResponse)
+
+      // Extract reservation IDs from response
+      // New structure: response.data.createdReservations contains array of ReservationResponse
+      const reservationIds: string[] = []
+
+      // First try createdReservations (new structure)
+      if (groupResponse.createdReservations && Array.isArray(groupResponse.createdReservations)) {
+        groupResponse.createdReservations.forEach((reservation: ReservationResponse) => {
+          if (reservation.reservationId) {
+            reservationIds.push(reservation.reservationId)
+          }
+        })
+      }
+
+      // Fallback to reservations array (old structure)
+      if (reservationIds.length === 0 && groupResponse.reservations && Array.isArray(groupResponse.reservations)) {
+        groupResponse.reservations.forEach((reservation: ReservationResponse) => {
+          if (reservation.reservationId) {
+            reservationIds.push(reservation.reservationId)
+          }
+        })
+      }
+
+      // If queued and no reservations yet, poll cart to get reservation IDs
+      if ((groupResponse.queued || groupResponse.statusCode === 202) && reservationIds.length === 0) {
+        console.log('🟡 Group reservation queued, polling cart to get reservation IDs...')
+
+        // When queued, poll the cart to get reservation IDs
+        // The reservations are created asynchronously and added to the cart
+        const pollCartForReservations = async (): Promise<string[]> => {
+          let attempts = 0
+          const maxAttempts = 10
+          const pollDelay = 2000 // 2 seconds
+
+          while (attempts < maxAttempts) {
+            try {
+              await new Promise(resolve => setTimeout(resolve, pollDelay))
+              const cart = await getCart()
+              console.log('🟡 Polled cart:', cart)
+
+              // Extract reservation IDs from cart purchases
+              const ids: string[] = []
+              if (cart?.purchases) {
+                cart.purchases.forEach((purchase: any) => {
+                  if (purchase.reservationId && purchase.type === 'Service') {
+                    ids.push(purchase.reservationId)
+                  }
+                })
+              }
+
+              // Also check provider-specific cart if providerId exists
+              if (finalProviderId && ids.length === 0) {
+                const providerCart = await getCartByProvider(finalProviderId)
+                if (providerCart?.purchases) {
+                  providerCart.purchases.forEach((purchase: any) => {
+                    if (purchase.reservationId && purchase.type === 'Service') {
+                      ids.push(purchase.reservationId)
+                    }
+                  })
+                }
+              }
+
+              if (ids.length > 0) {
+                console.log('✅ Found reservation IDs in cart:', ids)
+                return ids
+              }
+
+              attempts++
+            } catch (error) {
+              console.error('❌ Error polling cart:', error)
+              attempts++
+            }
+          }
+
+          throw new Error('Could not find reservation IDs in cart after polling')
+        }
+
+        const polledIds = await pollCartForReservations()
+        reservationIds.push(...polledIds)
+      }
+
+      if (reservationIds.length === 0) {
+        throw new Error('No reservation IDs found in response')
+      }
+
+      console.log('🟢 Extracted reservation IDs:', reservationIds)
+
+      // Start polling
+      setIsSubmitting(false)
+      setShowProcessingModal(true)
+      setQueueStatus('queued')
+
+      const clientId = userInfo?.id || undefined
+      startPolling(reservationIds, finalProviderId, clientId)
+
+    } catch (error: unknown) {
+      console.error('❌ Error creating group reservations:', error)
+      setQueueStatus('failed')
+      setShowProcessingModal(false)
+      setIsSubmitting(false)
+      stopPolling()
+
+      const err = error as { response?: { status?: number; data?: { message?: string } }; message?: string }
+      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to create reservations. Please try again.'
+      setErrorModal({
+        isOpen: true,
+        message: errorMessage
+      })
+    }
   }
 
   const formatDate = (date: Date) => {
@@ -571,52 +1005,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
                         <p className="text-14 text-gray-500 text-center py-8">No services available</p>
                       )}
                     </div>
-
-                    {/* Branch Selection - Show when services are selected and we have branches (more than just "Any Available") */}
-                    {selectedServices.length > 0 && branches.some(b => b.id !== 'any') && (
-                      <div>
-                        <h2 className="text-20 font-semibold text-gray-900 mb-4">Select Branch</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {branches.map((branch) => (
-                            <button
-                              key={branch.id}
-                              onClick={() => setSelectedBranch(branch.id)}
-                              className={cn(
-                                "border-2 rounded-xl p-4 text-left transition-all",
-                                selectedBranch === branch.id
-                                  ? "border-brand-600 bg-brand-50"
-                                  : "border-gray-200 hover:border-gray-300"
-                              )}
-                            >
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                  <h3 className="text-16 font-semibold text-gray-900 mb-1">
-                                    {branch.name}
-                                  </h3>
-                                  {branch.address && (
-                                    <p className="text-14 text-gray-600 line-clamp-2">
-                                      {branch.address}
-                                    </p>
-                                  )}
-                                </div>
-                                <div
-                                  className={cn(
-                                    "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ml-2",
-                                    selectedBranch === branch.id
-                                      ? "border-brand-600 bg-brand-600"
-                                      : "border-gray-300"
-                                  )}
-                                >
-                                  {selectedBranch === branch.id && (
-                                    <Check className="h-3 w-3 text-white" />
-                                  )}
-                                </div>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
 
@@ -811,9 +1199,14 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
                               (slot.status === 'Available' ? 1 : slot.status === 'Unknown' ? 0 : 2)
                             const available = statusStr === 'Available' || statusValue === 1
 
+                            // Generate unique key for React
+                            const uniqueKey = slot.id && slot.id !== 0
+                              ? `slot-${slot.id}`
+                              : `slot-${slot.start}-${index}`
+
                             return (
                               <button
-                                key={slot.id || index}
+                                key={uniqueKey}
                                 onClick={() => available && setSelectedTime(slot.start)}
                                 disabled={!available}
                                 className={cn(
@@ -1065,6 +1458,38 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
       </main>
 
       <Footer />
+
+      {/* Processing Modal */}
+      {showProcessingModal && (
+        <ProcessingModal
+          isOpen={showProcessingModal}
+          title={queueStatus === 'queued' ? 'Processing Reservations' : queueStatus === 'completed' ? 'Reservations Confirmed' : queueStatus === 'failed' ? 'Reservation Failed' : 'Processing'}
+          message={
+            queueStatus === 'queued'
+              ? 'Your reservations are being processed. Please wait...'
+              : queueStatus === 'processing'
+                ? 'Processing your reservations...'
+                : queueStatus === 'completed'
+                  ? 'Reservations confirmed! Creating purchases...'
+                  : 'An error occurred. Please try again.'
+          }
+          onClose={() => {
+            if (queueStatus === 'completed' || queueStatus === 'failed') {
+              setShowProcessingModal(false)
+            }
+          }}
+          closeOnOverlayClick={queueStatus === 'completed' || queueStatus === 'failed'}
+        />
+      )}
+
+      {/* Error Modal */}
+      <ErrorModal
+        open={errorModal.isOpen}
+        title="Error"
+        message={errorModal.message}
+        onClose={() => setErrorModal({ isOpen: false, message: '' })}
+        showRetry={false}
+      />
     </div>
   )
 }

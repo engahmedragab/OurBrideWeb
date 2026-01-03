@@ -95211,6 +95211,27 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Reservation
+     * @name PostReservationGetReservationsByIds
+     * @request POST:/api/v1/services/reservations/by-ids
+     * @secure
+     */
+    postReservationGetReservationsByIds: (
+      data: string[],
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/reservations/by-ids`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Reservation
      * @name PostReservationCreateByClient
      * @request POST:/api/v1/services/reservations/client
      * @secure

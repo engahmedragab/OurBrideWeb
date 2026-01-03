@@ -22,8 +22,7 @@ import { LoadingSpinner, ErrorDisplay, ProcessingModal } from '@/components/ui'
 import { ErrorModal } from '@/components/ui/ErrorModal'
 import { cn } from '@/lib/utils'
 import { formatRole } from '@/utils/role'
-import { useServiceDetail, useServicePackages } from '@/hooks/services'
-import { getServiceById } from '@/services/api/serviceApi'
+import { useServiceDetail } from '@/hooks/services'
 import { createReservation, getAvailableTimeSlots, getReservationById } from '@/services/api/reservationApi'
 import { addPurchase } from '@/services/api/purchaseApi'
 import type { ReservationRequest, PurchaseRequest } from '@/../client/common/api/gen/ourbride-api'
@@ -95,10 +94,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     const router = useRouter()
     const userInfo = useUserFromToken()
 
-    // Fetch raw service response for full data access
-    const [rawServiceResponse, setRawServiceResponse] = useState<ServiceResponse | null>(null)
-
-    // Fetch service detail
+    // Fetch service detail (includes both transformed service and raw response)
     const {
         data: serviceDetailData,
         isLoading: serviceLoading,
@@ -106,41 +102,22 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     } = useServiceDetail(serviceId, !!serviceId)
 
     const service = serviceDetailData?.service
+    // Use raw service response from the hook instead of making a duplicate API call
+    const rawServiceResponse = serviceDetailData?.rawServiceResponse || null
 
-    // Fetch raw service response in parallel
-    useEffect(() => {
-        if (serviceId) {
-            const parsedId = parseInt(serviceId, 10)
-            if (!isNaN(parsedId)) {
-                getServiceById(parsedId)
-                    .then((response: ServiceResponse | null) => {
-                        if (response) {
-                            setRawServiceResponse(response)
-                        }
-                    })
-                    .catch(() => {
-                        // Error fetching service
-                    })
-            }
-        }
-    }, [serviceId])
-
-    // Fetch service packages
-    const {
-        data: packagesData,
-        isLoading: packagesLoading,
-    } = useServicePackages(serviceId, !!serviceId)
-
-    // Map service packages to Package format
+    // Extract packages from service response (packages are included in the service response)
     const packages: Package[] = useMemo(() => {
-        const servicePackages = packagesData?.packages || []
-        return servicePackages.map((pkg) => ({
-            id: pkg.id,
-            title: pkg.name,
+        if (!rawServiceResponse?.packages || rawServiceResponse.packages.length === 0) {
+            return []
+        }
+
+        return rawServiceResponse.packages.map((pkg) => ({
+            id: String(pkg.id),
+            title: pkg.nameEn || pkg.nameAr || '',
             price: pkg.price,
-            description: pkg.description,
+            description: pkg.descriptionEn || pkg.descriptionAr || undefined,
         }))
-    }, [packagesData?.packages])
+    }, [rawServiceResponse?.packages])
 
     // Extract branches from service place assignments
     const branches: Branch[] = useMemo(() => {
@@ -177,16 +154,18 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
     // Step management
     type BookingStep = 'details' | 'datetime' | 'confirm'
-    // Start with 'details' step, or skip to 'datetime' if no branches/staff/packages
-    const [step, setStep] = useState<BookingStep>(() => {
-        // Will be set properly after data loads via useEffect
-        return 'details'
-    })
+    // Always start with 'details' step
+    const [step, setStep] = useState<BookingStep>('details')
 
     // State for time slot selector
     const [is12Hour] = useState(true)
     const [selectedDate, setSelectedDate] = useState<string | null>(null)
-    const [currentDate, setCurrentDate] = useState(new Date())
+    // Initialize currentDate to today at midnight to ensure consistent date handling
+    const [currentDate, setCurrentDate] = useState<Date>(() => {
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        return today
+    })
     const [selectedSlotId, setSelectedSlotId] = useState<number | undefined>(undefined)
 
     // State for dynamically fetched time slots
@@ -232,9 +211,14 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             return
         }
 
+        console.log('🟡 UserInfo data:', userInfo)
+
         // Use userInfo from hook (already extracted from token)
         const fullName = userInfo.name || userInfo.fullName || ''
         const phoneNumber = userInfo.phoneNumber || ''
+
+        console.log('🟡 Extracted fullName:', fullName)
+        console.log('🟡 Extracted phoneNumber:', phoneNumber)
 
         // Only update if we have valid data and form is empty
         if ((fullName || phoneNumber)) {
@@ -249,15 +233,23 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 }
                 // Only update if there are changes
                 if (Object.keys(updates).length > 0) {
+                    console.log('🟡 Updating form data with:', updates)
                     return { ...prev, ...updates }
                 }
                 return prev
             })
+        } else {
+            console.log('🟡 No userInfo data available to populate form')
         }
     }, [userInfo, isMounted])
 
-    // Fetch time slots when service, branch, staff, or date changes
+    // Fetch time slots only when on datetime step and when service, branch, staff, or date changes
     useEffect(() => {
+        // Only fetch time slots when we're on the datetime step
+        if (step !== 'datetime') {
+            return
+        }
+
         const fetchTimeSlots = async () => {
             if (!serviceId) return
 
@@ -288,10 +280,13 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                     }
                 }
 
-                // Use currentDate for startDate if available
-                if (currentDate) {
-                    options.startDate = currentDate.toISOString()
-                }
+                // Use currentDate for startDate - ensure it's set to today if not already set
+                const dateToUse = currentDate || (() => {
+                    const today = new Date()
+                    today.setHours(0, 0, 0, 0)
+                    return today
+                })()
+                options.startDate = dateToUse.toISOString()
 
                 const slots = await getAvailableTimeSlots(parsedServiceId, options)
 
@@ -337,7 +332,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         }
 
         fetchTimeSlots()
-    }, [serviceId, formData.selectedBranch, formData.selectedStaff, currentDate])
+    }, [step, serviceId, formData.selectedBranch, formData.selectedStaff, currentDate])
 
     // Format time helper
     const formatTime = (date: Date) =>
@@ -400,7 +395,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     // Handle date selection
     const handleDateSelect = (dateLabel: string) => {
         setSelectedDate(dateLabel)
-        // Parse date and update currentDate if needed
+        // Parse date and update currentDate to trigger time slot refetch
         const currentYear = new Date().getFullYear()
         const dateMatch = dateLabel.match(/(\w+), (\w+) (\d+)/)
 
@@ -414,9 +409,14 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
             if (monthIndex !== -1) {
                 const selectedDateObj = new Date(currentYear, monthIndex, parseInt(day))
-                if (selectedDateObj < new Date()) {
+                // If the date is in the past, assume it's next year
+                const now = new Date()
+                now.setHours(0, 0, 0, 0)
+                if (selectedDateObj < now) {
                     selectedDateObj.setFullYear(currentYear + 1)
                 }
+                // Set time to midnight to ensure consistent date handling
+                selectedDateObj.setHours(0, 0, 0, 0)
                 setCurrentDate(selectedDateObj)
             }
         }
@@ -485,14 +485,6 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         }
     }, [staff])
 
-    // Set initial step based on available data (skip details if no branches/staff/packages)
-    useEffect(() => {
-        if (branches.length === 0 && staff.length === 0 && packages.length === 0) {
-            setStep('datetime')
-        } else {
-            setStep('details')
-        }
-    }, [branches.length, staff.length, packages.length])
 
     const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -551,12 +543,6 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     const validateForm = (): boolean => {
         const newErrors: Record<string, string> = {}
 
-        if (!formData.fullName.trim()) {
-            newErrors.fullName = 'Full name is required'
-        }
-        if (!formData.mobileNumber.trim()) {
-            newErrors.mobileNumber = 'Mobile number is required'
-        }
         if (!formData.selectedDate) {
             newErrors.selectedDate = 'Please select a date'
         }
@@ -755,7 +741,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         }
     }
 
-    // Create purchase record and navigate to reservation details
+    // Create purchase record and navigate to cart
     const createPurchaseAndNavigate = async (
         reservationId: string,
         providerId: number | undefined,
@@ -766,6 +752,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     ) => {
         // Create purchase record after successful reservation
         try {
+            console.log('🟢 Creating purchase record...')
             const servicePrice = service?.price?.original || service?.price?.discounted || 0
 
             // Ensure providerId is available - try multiple sources
@@ -790,13 +777,19 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 clientId: clientId || undefined,
             }
 
-            await addPurchase(purchasePayload)
-        } catch {
-            // Don't fail the reservation creation if purchase creation fails
-        }
+            console.log('🟢 Purchase payload:', JSON.stringify(purchasePayload, null, 2))
+            const purchaseResponse = await addPurchase(purchasePayload)
+            console.log('✅ Purchase created successfully:', purchaseResponse)
 
-        // Navigate to reservation details page (always navigate, even if purchase creation failed)
-        //router.push(`/reservations/${reservationId}`)
+            // Navigate to reservation details page after successful purchase creation
+            console.log('🟢 Navigating to reservation details page...')
+            router.push(`/reservations/${reservationId}`)
+        } catch (error) {
+            console.error('❌ Error creating purchase:', error)
+            // Even if purchase creation fails, navigate to reservation details
+            console.log('🟡 Purchase creation failed, but navigating to reservation details anyway...')
+            router.push(`/reservations/${reservationId}`)
+        }
     }
 
     // Handle polling timeout
@@ -823,6 +816,13 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 setErrors({ ...errors, selectedBranch: 'Please select a branch' })
                 return
             }
+            // Reset currentDate to today when moving to datetime step
+            const today = new Date()
+            today.setHours(0, 0, 0, 0)
+            setCurrentDate(today)
+            // Clear previous time slot selection
+            setSelectedSlotId(undefined)
+            setSelectedDate(null)
             setStep('datetime')
         } else if (step === 'datetime') {
             // Validate date/time selection
@@ -836,12 +836,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
     const handleBack = () => {
         if (step === 'datetime') {
-            // Skip details step if no branches, staff, or packages
-            if (branches.length === 0 && staff.length === 0 && packages.length === 0) {
-                router.back()
-            } else {
-                setStep('details')
-            }
+            setStep('details')
         } else if (step === 'confirm') {
             setStep('datetime')
         } else if (step === 'details') {
@@ -850,22 +845,45 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     }
 
     const handleConfirm = async () => {
-        if (!validateForm()) {
+        console.log('🔵 handleConfirm called')
+        console.log('🔵 Form data:', formData)
+        console.log('🔵 Selected slot ID:', selectedSlotId)
+        console.log('🔵 Service:', service)
+        console.log('🔵 Service ID:', serviceId)
+
+        const isValid = validateForm()
+        console.log('🔵 Form validation result:', isValid)
+        console.log('🔵 Validation errors:', errors)
+
+        if (!isValid) {
+            console.log('❌ Form validation failed, returning early')
             return
         }
 
         if (!service || !serviceId) {
+            console.log('❌ Service or serviceId missing, returning early')
+            console.log('❌ Service:', service)
+            console.log('❌ ServiceId:', serviceId)
             return
         }
 
+        console.log('✅ Validation passed, setting isSubmitting to true')
         setIsSubmitting(true)
 
         try {
+            console.log('🟢 Starting reservation creation process')
+
             // Prepare reservation request
             const providerId = rawServiceResponse?.providerId || (service.provider?.id ? parseInt(service.provider.id, 10) : undefined)
+            console.log('🟢 Provider ID:', providerId)
+            console.log('🟢 Raw service response:', rawServiceResponse)
 
             // Get selected time slot to extract proper date/time
             const selectedSlot = timeSlots.find(slot => slot.id === selectedSlotId)
+            console.log('🟢 Selected slot:', selectedSlot)
+            console.log('🟢 All time slots:', timeSlots)
+            console.log('🟢 Selected slot ID:', selectedSlotId)
+
             let requestedStartTime: string | undefined
             let reservationDate: string | undefined
 
@@ -911,6 +929,10 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 }
             }
 
+            console.log('🟢 Preparing reservation request')
+            console.log('🟢 Requested start time:', requestedStartTime)
+            console.log('🟢 Reservation date:', reservationDate)
+
             const reservationRequest: ReservationRequest = {
                 serviceId: parseInt(serviceId, 10),
                 providerId: providerId || undefined,
@@ -920,20 +942,24 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 reservationSlotId: selectedSlotId ? Number(selectedSlotId) : undefined,
                 requestedStartTime,
                 reservationDate,
-                notes: `Name: ${formData.fullName}, Phone: ${formData.mobileNumber}${formData.promoCode ? `, Promo Code: ${formData.promoCode}` : ''}`,
+                notes: formData.promoCode ? `Promo Code: ${formData.promoCode}` : '',
                 depositAmount: rawServiceResponse?.deposit || undefined,
             }
+
+            console.log('🟢 Reservation request payload:', JSON.stringify(reservationRequest, null, 2))
 
             // Get client ID from user info
             const clientId = userInfo.id || undefined
 
             // Store notes for purchase creation
-            const notes = `Name: ${formData.fullName}, Phone: ${formData.mobileNumber}${formData.promoCode ? `, Promo Code: ${formData.promoCode}` : ''}`
+            const notes = formData.promoCode ? `Promo Code: ${formData.promoCode}` : ''
 
             // Create reservation (production-ready API pattern)
             // API returns 201 Created with reservationId immediately, status will be "Created" (1)
             try {
+                console.log('🟡 Calling createReservation API...')
                 const apiResponse = await createReservation(reservationRequest)
+                console.log('🟡 API Response received:', apiResponse)
 
                 // Extract reservation ID from response
                 // API returns 201 Created with reservationId immediately
@@ -942,22 +968,28 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                     (typeof responseData?.id === 'string' ? responseData.id : responseData?.id?.toString()) ||
                     responseData?.reservationId
 
+                console.log('🟡 Extracted reservation ID:', reservationId)
+
                 if (!reservationId) {
+                    console.error('❌ Reservation ID not found in response')
                     throw new Error('Reservation ID not found in response. Please try again.')
                 }
 
                 // Always start polling
                 // Poll GET /api/v1/services/reservations/{reservationId} until status changes from "Pending" (2)
                 // "Pending" indicates the reservation is being validated/processed in the queue
+                console.log('✅ Reservation created successfully, starting polling...')
                 setIsSubmitting(false)
                 setShowProcessingModal(true)
                 setQueueStatus('queued')
 
                 // Start polling by reservation ID (production-ready pattern)
                 // Poll until status changes from "Pending" to "Confirmed", "Rejected", etc.
+                console.log('🟢 Starting polling with reservation ID:', reservationId)
                 startPolling(reservationId, providerId, clientId, serviceId, requestedStartTime, notes)
 
             } catch (error: unknown) {
+                console.error('❌ Error in createReservation try block:', error)
                 const err = error as {
                     response?: {
                         status?: number;
@@ -1004,6 +1036,11 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 throw error
             }
         } catch (error) {
+            console.error('❌ Error in handleConfirm catch block:', error)
+            console.error('❌ Error details:', {
+                message: error instanceof Error ? error.message : 'Unknown error',
+                stack: error instanceof Error ? error.stack : undefined,
+            })
             setQueueStatus('failed')
             setShowProcessingModal(false)
             setIsSubmitting(false)
@@ -1013,7 +1050,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     }
 
     // Show loading state
-    if (serviceLoading || packagesLoading) {
+    if (serviceLoading) {
         return (
             <div className="min-h-screen flex flex-col bg-white">
                 <Header />
@@ -1399,15 +1436,37 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                 <Button
                                     variant="brand"
                                     size="lg"
-                                    onClick={step === 'confirm' ? handleConfirm : handleContinue}
+                                    onClick={() => {
+                                        console.log('🔵 Button clicked!')
+                                        console.log('🔵 Current step:', step)
+                                        console.log('🔵 Is submitting:', isSubmitting)
+                                        if (step === 'confirm') {
+                                            console.log('🔵 Calling handleConfirm...')
+                                            handleConfirm()
+                                        } else {
+                                            console.log('🔵 Calling handleContinue...')
+                                            handleContinue()
+                                        }
+                                    }}
                                     disabled={
                                         isSubmitting ||
-                                        (step === 'datetime' && !formData.selectedTime)
+                                        (step === 'datetime' && !formData.selectedTime) ||
+                                        (step === 'confirm' && (!formData.selectedTime || !formData.acceptTerms))
                                     }
                                     className="w-full !text-white"
                                 >
                                     {isSubmitting ? 'Processing...' : step === 'confirm' ? 'Confirm Booking' : 'Continue'}
                                 </Button>
+                                {step === 'confirm' && errors.selectedTime && (
+                                    <p className="text-12 text-red-500 mt-2 text-center">
+                                        {errors.selectedTime}
+                                    </p>
+                                )}
+                                {step === 'confirm' && errors.acceptTerms && (
+                                    <p className="text-12 text-red-500 mt-2 text-center">
+                                        {errors.acceptTerms}
+                                    </p>
+                                )}
                             </div>
                         </div>
 

@@ -9,6 +9,7 @@ import type {
   ServiceOrderSearchRequest,
   PaymentSearchRequest,
   PriceCalculationRequest,
+  BulkPurchaseRequest,
 } from '@/../client/common/api/gen/ourbride-api'
 import type {
   CartResponse,
@@ -74,6 +75,49 @@ export const addPurchase = async (data: PurchaseRequest): Promise<CartResponse> 
     return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as CartResponse
   } catch (error: unknown) {
     const errorMessage = getErrorMessage(error, 'Failed to add purchase')
+    const enhancedError = new Error(errorMessage)
+    // Preserve original error for debugging
+    if (error && typeof error === 'object') {
+      (enhancedError as { originalError?: unknown }).originalError = error
+    }
+    throw enhancedError
+  }
+}
+
+/**
+ * Bulk purchase response interface
+ */
+export interface BulkPurchaseResponse {
+  totalItems: number
+  successCount: number
+  failureCount: number
+  successfulItems: Record<number, PurchaseResponse>
+  failedItems: Record<number, string>
+  cart: CartResponse
+}
+
+/**
+ * Add multiple purchases in bulk (supports all purchase types)
+ */
+export const addBulkPurchases = async (data: BulkPurchaseRequest): Promise<BulkPurchaseResponse> => {
+  try {
+    const response = await apiClient.api.postPurchasePurchaseBulk(data)
+    const responseAny: any = response
+    
+    // Extract response data - handle different response structures
+    const responseData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    
+    // Handle both camelCase and PascalCase property names
+    return {
+      totalItems: responseData?.totalItems ?? responseData?.TotalItems ?? 0,
+      successCount: responseData?.successCount ?? responseData?.SuccessCount ?? 0,
+      failureCount: responseData?.failureCount ?? responseData?.FailureCount ?? 0,
+      successfulItems: responseData?.successfulItems ?? responseData?.SuccessfulItems ?? {},
+      failedItems: responseData?.failedItems ?? responseData?.FailedItems ?? {},
+      cart: responseData?.cart ?? responseData?.Cart ?? responseData,
+    } as BulkPurchaseResponse
+  } catch (error: unknown) {
+    const errorMessage = getErrorMessage(error, 'Failed to add bulk purchases')
     const enhancedError = new Error(errorMessage)
     // Preserve original error for debugging
     if (error && typeof error === 'object') {

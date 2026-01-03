@@ -6,6 +6,7 @@ import type { ServiceResponse } from '@/types/responses/service-response'
 
 export interface ServiceDetailData {
   service: Service | null
+  rawServiceResponse: ServiceResponse | null
 }
 
 export const useServiceDetail = (serviceId: string, enabled = true) => {
@@ -22,12 +23,12 @@ export const useServiceDetail = (serviceId: string, enabled = true) => {
         const serviceResponse: ServiceResponse | null = await getServiceById(parsedId)
         
         if (!serviceResponse) {
-          return { service: null }
+          return { service: null, rawServiceResponse: null }
         }
 
         // Map ServiceResponse to Service type for component usage
         const service = mapServiceResponseToService(serviceResponse)
-        return { service }
+        return { service, rawServiceResponse: serviceResponse }
       } catch (error) {
         throw error
       }

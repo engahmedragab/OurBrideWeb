@@ -140,19 +140,94 @@ export const createReservation = async (
  * Create a group reservation
  * Endpoint: POST /api/v1/services/reservations/group
  */
+export interface GroupReservationResponse {
+  reservations: ReservationResponse[]
+  createdReservations?: ReservationResponse[]
+  failedReservations?: ReservationResponse[]
+  totalRequested?: number
+  successCount?: number
+  failureCount?: number
+  allSucceeded?: boolean
+  queued?: boolean
+  statusCode?: number
+  message?: string
+}
+
 export const createGroupReservation = async (
   data: GroupReservationRequest
-): Promise<CartResponse> => {
+): Promise<GroupReservationResponse> => {
   try {
     const response = await apiClient.api.postReservationCreateGroupReservations(data)
     const responseAny: any = response
     
+    // Check if response indicates queued status (202)
+    const responseStatus = responseAny?.status || responseAny?.statusCode
+    const dataStatusCode = responseAny?.data?.statusCode
+    const isQueued = responseStatus === 202 || dataStatusCode === 202
+    
+    // Extract response data - new structure: data.createdReservations contains array of ReservationResponse
     const responseData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
     
-    // Group reservation response might have different structure
-    // Return the response data as-is, it should match CartResponse structure
-    return responseData as CartResponse
+    // Handle queued response (202)
+    if (isQueued) {
+      // When queued, data might be null or have createdReservations
+      const reservations = responseData?.createdReservations || (Array.isArray(responseData) ? responseData : [])
+      return {
+        reservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
+        createdReservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
+        failedReservations: responseData?.failedReservations || [],
+        totalRequested: responseData?.totalRequested,
+        successCount: responseData?.successCount,
+        failureCount: responseData?.failureCount,
+        allSucceeded: responseData?.allSucceeded,
+        queued: true,
+        statusCode: 202,
+        message: responseAny?.data?.message || responseAny?.message || 'Group reservation queued for processing',
+      }
+    }
+    
+    // Immediate completion (200) - data.createdReservations contains array of ReservationResponse
+    const reservations = responseData?.createdReservations || 
+      (Array.isArray(responseData) ? responseData : []) ||
+      (responseData?.reservations || [])
+    
+    return {
+      reservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
+      createdReservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
+      failedReservations: responseData?.failedReservations || [],
+      totalRequested: responseData?.totalRequested,
+      successCount: responseData?.successCount,
+      failureCount: responseData?.failureCount,
+      allSucceeded: responseData?.allSucceeded,
+      queued: false,
+      statusCode: 200,
+      message: responseAny?.data?.message || responseAny?.message,
+    }
   } catch (error: unknown) {
+    // Check if error response has 202 status (queued)
+    const axiosError = error as { response?: { status?: number; data?: unknown }; message?: string }
+    if (axiosError.response?.status === 202) {
+      // Reservation was queued
+      const queuedData = axiosError.response.data as any
+      const responseData = queuedData?.data ?? queuedData
+      const reservations = responseData?.createdReservations || 
+        (Array.isArray(responseData) ? responseData : []) ||
+        (responseData?.reservations || [])
+      
+      return {
+        reservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
+        createdReservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
+        failedReservations: responseData?.failedReservations || [],
+        totalRequested: responseData?.totalRequested,
+        successCount: responseData?.successCount,
+        failureCount: responseData?.failureCount,
+        allSucceeded: responseData?.allSucceeded,
+        queued: true,
+        statusCode: 202,
+        message: queuedData?.message || responseData?.message || 'Group reservation queued for processing',
+      }
+    }
+    
     console.error('Error creating group reservation:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to create group reservation')
   }
@@ -233,6 +308,43 @@ export const getReservationById = async (
   } catch (error: unknown) {
     console.error('Error fetching reservation:', error)
     return null
+  }
+}
+
+/**
+ * Get multiple reservations by IDs (bulk)
+ * Endpoint: POST /api/v1/services/reservations/by-ids
+ * More efficient than calling getReservationById multiple times
+ */
+export const getReservationsByIds = async (
+  reservationIds: string[]
+): Promise<ReservationResponse[]> => {
+  try {
+    if (!reservationIds || reservationIds.length === 0) {
+      return []
+    }
+
+    const response = await apiClient.api.postReservationGetReservationsByIds(reservationIds)
+    const responseAny: any = response
+    
+    // Extract reservations from response
+    // Response structure might be: { data: ReservationResponse[] } or direct array
+    const reservations = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    
+    // Ensure we return an array
+    if (Array.isArray(reservations)) {
+      return reservations as ReservationResponse[]
+    }
+    
+    // If single reservation, wrap in array
+    if (reservations && typeof reservations === 'object' && 'reservationId' in reservations) {
+      return [reservations as ReservationResponse]
+    }
+    
+    return []
+  } catch (error: unknown) {
+    console.error('Error fetching reservations by IDs:', error)
+    return []
   }
 }
 
