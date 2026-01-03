@@ -10,42 +10,81 @@ jobs:
     environment: DO_HOST
 
     steps:
+      # 1️⃣ Checkout
       - name: 📥 Checkout Repository
         uses: actions/checkout@v3
 
+      # 2️⃣ Node 20 (REQUIRED for Next 16)
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
+      # 3️⃣ Install deps (CI machine)
       - name: 📦 Install Dependencies
         run: npm ci
 
+      # 4️⃣ Clean cache
       - name: 🧹 Clean Build Cache
         run: |
           rm -rf .next
-          rm -rf out
           rm -rf .turbo
           npm cache clean --force
 
+      # 5️⃣ Build (SERVER build, NOT export)
       - name: 🏗️ Build Next.js App (Staging)
         run: npm run build
         env:
           NODE_ENV: production
 
-      - name: 🚀 Deploy Static Export to DigitalOcean (Staging)
+      # 6️⃣ Upload ONLY required files
+      - name: 🚀 Deploy Next.js Server Build to DigitalOcean
         uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USER }}
           password: ${{ secrets.DO_PASSWORD }}
           port: 22
-          source: ".next/*"
-          target: "/var/www/OurBrideWeb-staging/build"
-          rm: true
-          strip_components: 1
+          source: |
+            .next/**
+            public/**
+            package.json
+            package-lock.json
+            next.config.js
+            .env.production
+          target: /var/www/OurBrideWeb-staging
+          rm: false
 
+      # 7️⃣ Install deps + start with PM2 on server
+      - name: 🔁 Install & Restart App (PM2)
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/OurBrideWeb-staging
+
+            # Ensure Node 20
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install 20
+            nvm use 20
+
+            # Install deps (DO NOT omit dev for Next server)
+            npm ci
+
+            # Kill anything on 3001
+            sudo ss -ltnp | grep :3001 && sudo fuser -k 3001/tcp || true
+
+            # Restart app
+            pm2 delete ourbride-staging || true
+            PORT=3001 pm2 start npm --name ourbride-staging -- start
+            pm2 save
+
+      # 8️⃣ Permissions
       - name: 🔧 Fix Permissions
         uses: appleboy/ssh-action@v0.1.3
         with:
@@ -57,6 +96,7 @@ jobs:
             sudo chown -R www-data:www-data /var/www/OurBrideWeb-staging
             sudo chmod -R 755 /var/www/OurBrideWeb-staging
 
+      # 9️⃣ Reload Nginx
       - name: 🔄 Reload Nginx
         uses: appleboy/ssh-action@v0.1.3
         with:
@@ -65,4 +105,5 @@ jobs:
           password: ${{ secrets.DO_PASSWORD }}
           port: 22
           script: |
+            sudo nginx -t
             sudo systemctl reload nginx
