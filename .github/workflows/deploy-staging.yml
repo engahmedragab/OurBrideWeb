@@ -30,7 +30,9 @@ jobs:
           npm cache clean --force
 
       - name: 🏗️ Build Next.js App (Staging)
-        run: npm run build
+        run: |
+          npm run build
+          npx next export
         env:
           NODE_ENV: production
 
