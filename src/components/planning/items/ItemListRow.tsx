@@ -5,6 +5,19 @@ import { cn } from '@/lib/utils'
 import { ChevronRight, Trash2 } from 'lucide-react'
 import type { UiCategory } from '@/app/events/planning/items/page'
 
+const STYLE_BY_COLOR: Record<
+  string,
+  { bg: string; border: string }
+> = {
+  gray: { bg: 'bg-gray-50', border: 'border-gray-200' },
+  red: { bg: 'bg-red-50', border: 'border-red-200' },
+  orange: { bg: 'bg-orange-50', border: 'border-orange-200' },
+  yellow: { bg: 'bg-yellow-50', border: 'border-yellow-200' },
+  green: { bg: 'bg-green-50', border: 'border-green-200' },
+  blue: { bg: 'bg-blue-50', border: 'border-blue-200' },
+  purple: { bg: 'bg-purple-50', border: 'border-purple-200' },
+}
+
 export function ItemListRow({
   category,
   active,
@@ -16,18 +29,30 @@ export function ItemListRow({
   onClick?: () => void
   onDelete?: () => void
 }) {
+  const colorKey = category.color ?? 'gray'
+  const style = STYLE_BY_COLOR[colorKey] ?? STYLE_BY_COLOR.gray
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        'w-full rounded-lg border px-3 py-3 text-left transition hover:bg-gray-50',
-        active ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white',
+        'w-full rounded-lg border px-3 py-3 text-left transition',
+        style.bg,
+        style.border,
+
+        // تفاعل خفيف جدًا
+        'hover:brightness-[0.98] focus:outline-none',
+
+        // active بدون border تقيل
+        active ? 'brightness-[0.97]' : '',
       )}
     >
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <div className="truncate text-sm font-medium text-gray-900">{category.name}</div>
+          <div className="truncate text-sm font-medium text-gray-900">
+            {category.name}
+          </div>
         </div>
 
         <div className="flex items-center gap-1">
@@ -38,7 +63,7 @@ export function ItemListRow({
                 e.stopPropagation()
                 onDelete()
               }}
-              className="rounded-md p-2 hover:bg-gray-100"
+              className="rounded-md p-2 hover:bg-white/60"
               role="button"
               aria-label="Delete list"
             >

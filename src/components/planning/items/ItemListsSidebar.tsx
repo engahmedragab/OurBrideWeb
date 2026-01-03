@@ -34,7 +34,8 @@ export function ItemListsSidebar({
         {actionLabel ? (
           <Button
             variant="ghost"
-            className="h-8 px-2 text-xs text-primary hover:text-primary"
+             className="h-9 rounded-xl px-3 text-xs text-primary
+            hover:text-white hover:bg-brand-500"
             onClick={onAction}
           >
             <Plus className="mr-1 h-4 w-4" />

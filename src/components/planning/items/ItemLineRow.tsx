@@ -9,17 +9,32 @@ export function ItemLineRow({
   item,
   onToggleDone,
   onDelete,
+  onEdit,
 }: {
   item: UiItem
   onToggleDone: () => void
   onDelete: () => void
+  onEdit: () => void
 }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl border bg-white p-4">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onEdit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') onEdit()
+      }}
+      className={cn('flex items-start gap-3 rounded-xl border bg-white p-4 transition hover:bg-gray-50')}
+    >
+      {/* Toggle Done */}
       <button
         type="button"
-        onClick={onToggleDone}
-        className="mt-0.5 rounded-full p-1 hover:bg-gray-100"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          onToggleDone()
+        }}
+        className="mt-1 rounded-full p-1 hover:bg-gray-100"
         aria-label="Toggle done"
       >
         {item.isDone ? (
@@ -29,8 +44,9 @@ export function ItemLineRow({
         )}
       </button>
 
+      {/* Content */}
       <div className="min-w-0 flex-1">
-        <div className={cn('text-sm font-medium', item.isDone && 'line-through text-gray-400')}>
+        <div className={cn('text-sm font-medium text-gray-900', item.isDone && 'line-through text-gray-400')}>
           {item.title}
         </div>
 
@@ -38,12 +54,39 @@ export function ItemLineRow({
           <div className="mt-1 line-clamp-2 text-xs text-gray-500">{item.description}</div>
         ) : null}
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500">
-          {item.dueDate ? <span>Due : {item.dueDate}</span> : null}
-          {item.dueTime ? <span>{item.dueTime}</span> : null}
+        {/* Meta: label dark, value gray */}
+        <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs">
+          {item.quantity !== undefined ? (
+            <span className="inline-flex items-center gap-1">
+              <span className=" text-gray-900">Quantity :</span>
+              <span className="text-gray-500">{item.quantity}</span>
+            </span>
+          ) : null}
+
+          {item.totalPrice !== undefined ? (
+            <span className="inline-flex items-center gap-1">
+              <span className=" text-gray-900">Price :</span>
+              <span className="text-gray-500">{item.totalPrice}</span>
+            </span>
+          ) : null}
+
+          {item.providerName ? (
+            <span className="inline-flex items-center gap-1">
+              <span className=" text-gray-900">Provider :</span>
+              <span className="text-gray-500">{item.providerName}</span>
+            </span>
+          ) : null}
+
+          {item.buyDate ? (
+            <span className="inline-flex items-center gap-1">
+              <span className=" text-gray-900">Buy date :</span>
+              <span className="text-gray-500">{item.buyDate}</span>
+            </span>
+          ) : null}
         </div>
       </div>
 
+      {/* Actions */}
       <div className="flex items-center gap-2">
         <span
           className={cn(
@@ -56,7 +99,11 @@ export function ItemLineRow({
 
         <button
           type="button"
-          onClick={onDelete}
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            onDelete()
+          }}
           className="rounded-lg p-2 hover:bg-gray-100"
           aria-label="Delete item"
         >

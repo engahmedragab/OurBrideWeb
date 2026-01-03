@@ -1,38 +1,40 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { Plus } from 'lucide-react'
 
-import { Button } from '@/components/ui/Button'
 import { ItemListsSidebar } from '@/components/planning/items/ItemListsSidebar'
 import { ItemLinesPanel } from '@/components/planning/items/ItemLinesPanel'
+import type { ItemFormData } from '@/components/planning/items/ItemLinesPanel'
+import { CreateItemListModal } from '@/components/planning/items/CreateItemListModal'
+import type { ColorKey } from '@/components/planning/items/CreateItemListModal'
 
 export type UiItem = {
   id: number
   title: string
   description?: string
-  dueDate?: string
-  dueTime?: string
+  quantity?: number
+  totalPrice?: number
+  providerName?: string
+  buyDate?: string
   categoryId: number
   categoryName: string
   isDone: boolean
   isDeleted?: boolean
-  price?: number
-  paid?: number
 }
 
 export type UiCategory = {
   id: number
   name: string
+  color?: string
 }
 
 const INITIAL_CATEGORIES: UiCategory[] = [
-  { id: 0, name: 'Untitled List' },
-  { id: 1, name: 'Furniture' },
-  { id: 2, name: 'Home Appliances' },
-  { id: 3, name: 'Kitchen Appliances' },
-  { id: 4, name: 'Kitchen Tools' },
-  { id: 5, name: 'Home Decor' },
+  { id: 0, name: 'Untitled List', color: 'gray' },
+  { id: 1, name: 'Furniture', color: 'orange' },
+  { id: 2, name: 'Home Appliances', color: 'blue' },
+  { id: 3, name: 'Kitchen Appliances', color: 'green' },
+  { id: 4, name: 'Kitchen Tools', color: 'purple' },
+  { id: 5, name: 'Home Decor', color: 'red' },
 ]
 
 const INITIAL_ITEMS: UiItem[] = [
@@ -40,37 +42,41 @@ const INITIAL_ITEMS: UiItem[] = [
     id: 101,
     title: 'Refrigerator',
     description: 'No-frost 14ft refrigerator',
-    dueDate: '12/12/2025',
-    dueTime: '4:00 PM',
-    categoryId: 2,
-    categoryName: 'Home Appliances',
+    quantity: 4,
+    totalPrice: 44,
+    providerName: '888',
+    buyDate: '2026-02-05',
+    categoryId: 0,
+    categoryName: 'Untitled List',
     isDone: false,
   },
   {
     id: 102,
-    title: 'Washing Machine',
-    description: 'Automatic front-load washing machine',
-    dueDate: '12/12/2025',
-    dueTime: '4:00 PM',
-    categoryId: 2,
-    categoryName: 'Home Appliances',
+    title: '66',
+    description: '66',
+    quantity: 66,
+    totalPrice: 66,
+    providerName: '6',
+    buyDate: '2026-01-14',
+    categoryId: 0,
+    categoryName: 'Untitled List',
     isDone: true,
   },
 ]
 
 export default function ItemsPage() {
   const [items, setItems] = useState<UiItem[]>(INITIAL_ITEMS)
-  const [categories] = useState<UiCategory[]>(INITIAL_CATEGORIES)
-
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(categories[0]?.id ?? 0)
-
-  const visibleItems = useMemo(() => {
-    return items.filter((i) => !i.isDeleted && i.categoryId === selectedCategoryId)
-  }, [items, selectedCategoryId])
+  const [categories, setCategories] = useState<UiCategory[]>(INITIAL_CATEGORIES)
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(INITIAL_CATEGORIES[0]?.id ?? 0)
+  const [createListOpen, setCreateListOpen] = useState(false)
 
   const selectedCategory = useMemo(() => {
     return categories.find((c) => c.id === selectedCategoryId) ?? null
   }, [categories, selectedCategoryId])
+
+  const visibleItems = useMemo(() => {
+    return items.filter((i) => !i.isDeleted && i.categoryId === selectedCategoryId)
+  }, [items, selectedCategoryId])
 
   const stats = useMemo(() => {
     const total = visibleItems.length
@@ -87,27 +93,70 @@ export default function ItemsPage() {
     setItems((prev) => prev.map((it) => (it.id === itemId ? { ...it, isDeleted: true } : it)))
   }
 
+  const handleAddNewLine = async (data: ItemFormData) => {
+    if (!selectedCategory) return
+
+    setItems((prev) => {
+      const nextId = prev.length ? Math.max(...prev.map((i) => i.id)) + 1 : 1
+
+      const newItem: UiItem = {
+        id: nextId,
+        title: data.name,
+        description: data.description,
+        quantity: data.quantity,
+        totalPrice: data.totalPrice,
+        providerName: data.providerName,
+        buyDate: data.buyDate,
+        isDone: !!data.isDone,
+        categoryId: selectedCategory.id,
+        categoryName: selectedCategory.name,
+      }
+
+      return [newItem, ...prev]
+    })
+  }
+
+  const handleEditItem = async (itemId: number, data: ItemFormData) => {
+    setItems((prev) =>
+      prev.map((it) => {
+        if (it.id !== itemId) return it
+        return {
+          ...it,
+          title: data.name,
+          description: data.description,
+          quantity: data.quantity,
+          totalPrice: data.totalPrice,
+          providerName: data.providerName,
+          buyDate: data.buyDate,
+          isDone: !!data.isDone,
+        }
+      }),
+    )
+  }
+
   const handleAddNewList = () => {
-    console.log('Add new list')
+    setCreateListOpen(true)
+  }
+
+  const handleCreateList = async (data: { name: string; color: ColorKey }) => {
+    const nextId = categories.length ? Math.max(...categories.map((c) => c.id)) + 1 : 0
+    const newCategory: UiCategory = { id: nextId, name: data.name, color: data.color }
+    setCategories((prev) => [newCategory, ...prev])
+    setSelectedCategoryId(nextId)
+    setCreateListOpen(false)
   }
 
   const handleDeleteList = (categoryId: number) => {
     console.log('Delete list', categoryId)
   }
 
-  const handleAddNewLine = () => {
-    console.log('Add new line')
-  }
-
   return (
     <div className="w-full">
-      {/* Header (بدون زرار Add New الكبير) */}
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-xl font-semibold">Items</h1>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        {/* MAIN (left) */}
         <ItemLinesPanel
           categoryName={selectedCategory?.name ?? 'Untitled List'}
           stats={stats}
@@ -115,9 +164,9 @@ export default function ItemsPage() {
           onToggleDone={handleToggleDone}
           onDeleteItem={handleDeleteItem}
           onAddNewLine={handleAddNewLine}
+          onEditItem={handleEditItem}
         />
 
-        {/* SIDEBAR (right) */}
         <ItemListsSidebar
           title="Your Lists"
           actionLabel="Add New"
@@ -128,6 +177,8 @@ export default function ItemsPage() {
           onDeleteCategory={handleDeleteList}
         />
       </div>
+
+      <CreateItemListModal open={createListOpen} onClose={() => setCreateListOpen(false)} onSubmit={handleCreateList} />
     </div>
   )
 }
