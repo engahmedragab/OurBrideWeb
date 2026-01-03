@@ -38,7 +38,6 @@ jobs:
         env:
           NODE_ENV: production
 
-      # 6️⃣ Upload ONLY required files
       - name: 🚀 Deploy Next.js Server Build to DigitalOcean
         uses: appleboy/scp-action@v0.1.3
         with:
@@ -46,15 +45,10 @@ jobs:
           username: ${{ secrets.DO_USER }}
           password: ${{ secrets.DO_PASSWORD }}
           port: 22
-          source: |
-            .next/**
-            public/**
-            package.json
-            package-lock.json
-            next.config.js
-            .env.production
+          source: ".next/**,public/**,package.json,package-lock.json,next.config.js,.env.production"
           target: /var/www/OurBrideWeb-staging
           rm: false
+
 
       # 7️⃣ Install deps + start with PM2 on server
       - name: 🔁 Install & Restart App (PM2)
