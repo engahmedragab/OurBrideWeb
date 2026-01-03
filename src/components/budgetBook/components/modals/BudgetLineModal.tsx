@@ -18,13 +18,18 @@ interface BudgetLineModalProps {
   onSave: (data: {
     id?: number
     expense: string
+    expenseAr: string
+    expenseEn: string
     lineCategoryId: number | null
     estimated: number
     paid: number
     final: number | null
+    dueDate: string | null
     count: number | null
     payer: string | null
     note: string | null
+    iconName: string | null
+    colorName: string | null
     isDone: boolean
     isFavorite: boolean
     isDeleted: boolean
@@ -60,13 +65,18 @@ export const BudgetLineModal = ({
     mode: 'onChange',
     defaultValues: {
       expense: '',
+      expenseAr: '',
+      expenseEn: '',
       lineCategoryId: null,
       estimated: 0,
       paid: 0,
       final: null,
+      dueDate: null,
       count: null,
       payer: null,
       note: null,
+      iconName: null,
+      colorName: null,
       isDone: false,
       isFavorite: false,
     },
@@ -87,13 +97,18 @@ export const BudgetLineModal = ({
       
       reset({
         expense: editingLine.expense || '',
+        expenseAr: editingLine.expenseAr || editingLine.expense || '',
+        expenseEn: editingLine.expenseEn || editingLine.expense || '',
         lineCategoryId: editingLine.lineCategoryId || null,
         estimated: estimated,
         paid: paid,
         final: final,
+        dueDate: editingLine.dueDate || null,
         count: count,
         payer: editingLine.payer || null,
         note: editingLine.note || null,
+        iconName: editingLine.iconName || null,
+        colorName: editingLine.colorName || null,
         isDone: editingLine.isDone || false,
         isFavorite: editingLine.isFavorite || false,
       })
@@ -105,13 +120,18 @@ export const BudgetLineModal = ({
     } else if (!isOpen) {
       reset({
         expense: '',
+        expenseAr: '',
+        expenseEn: '',
         lineCategoryId: defaultCategoryId ?? null,
         estimated: 0,
         paid: 0,
         final: null,
+        dueDate: null,
         count: null,
         payer: null,
         note: null,
+        iconName: null,
+        colorName: null,
         isDone: false,
         isFavorite: false,
       })
@@ -168,13 +188,18 @@ export const BudgetLineModal = ({
       onSave({
         id: editingLine?.id,
         expense: data.expense,
+        expenseAr: data.expenseAr || data.expense,
+        expenseEn: data.expenseEn || data.expense,
         lineCategoryId: data.lineCategoryId,
         estimated: data.estimated,
         paid: data.paid || 0,
         final: data.final,
+        dueDate: data.dueDate || null,
         count: data.count,
         payer: data.payer || null,
         note: data.note || null,
+        iconName: data.iconName || null,
+        colorName: data.colorName || null,
         isDone: data.isDone,
         isFavorite: data.isFavorite,
         isDeleted: false,

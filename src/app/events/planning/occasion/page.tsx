@@ -536,7 +536,7 @@ function OccasionsPageContent() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Loading occasions..." />
+        <LoadingOverlay open={true} title="Loading occasions..." />
       </div>
     )
   }

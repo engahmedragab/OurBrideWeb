@@ -18,7 +18,6 @@ import {
   Phone,
   Clock,
   Flag,
-  
   Snowflake,
   Plane,
   Settings,
@@ -28,10 +27,30 @@ import {
   Volume2,
   type LucideIcon,
 } from 'lucide-react'
+import { WeddingHallIcon } from '@/assets/icons/WeddingHallIcon'
+import { WeddingDressIcon } from '@/assets/icons/WeddingDressIcon'
+import { WeddingCakeIcon } from '@/assets/icons/WeddingCakeIcon'
+import { BridalBeautyIcon } from '@/assets/icons/BridalBeautyIcon'
+import { PhotographyIcon } from '@/assets/icons/PhotographyIcon'
+import { AccessoriesIcon } from '@/assets/icons/AccessoriesIcon'
+import { BouquetIcon } from '@/assets/icons/BouquetIcon'
+import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
 
 // Icon options with codepoint strings (backend format)
 // Codepoints are mapped to Material Icons approximate values
+// Wedding icons use custom codepoints (0xf0001 - 0xf0008)
 const ICON_OPTIONS = [
+  // Wedding-specific icons (custom)
+  { codepoint: '0xf0001', icon: WeddingHallIcon, label: 'Wedding Hall' },
+  { codepoint: '0xf0002', icon: WeddingDressIcon, label: 'Wedding Dress' },
+  { codepoint: '0xf0003', icon: WeddingCakeIcon, label: 'Wedding Cake' },
+  { codepoint: '0xf0004', icon: BridalBeautyIcon, label: 'Bridal Beauty' },
+  { codepoint: '0xf0005', icon: PhotographyIcon, label: 'Photography' },
+  { codepoint: '0xf0006', icon: AccessoriesIcon, label: 'Accessories' },
+  { codepoint: '0xf0007', icon: BouquetIcon, label: 'Bouquet' },
+  { codepoint: '0xf0008', icon: WeddingSuitIcon, label: 'Wedding Suit' },
+
+  // Standard Lucide icons
   { codepoint: '0xe333', icon: Camera, label: 'Camera' },
   { codepoint: '0xe88a', icon: Home, label: 'Home' },
   { codepoint: '0xe8c6', icon: Cake, label: 'Cake' },
@@ -47,7 +66,6 @@ const ICON_OPTIONS = [
   { codepoint: '0xe0cd', icon: Phone, label: 'Phone' },
   { codepoint: '0xe192', icon: Clock, label: 'Clock' },
   { codepoint: '0xe153', icon: Flag, label: 'Flag' },
-
   { codepoint: '0xe2dc', icon: Snowflake, label: 'Snowflake' },
   { codepoint: '0xe195', icon: Plane, label: 'Plane' },
   { codepoint: '0xe8b8', icon: Settings, label: 'Settings' },
@@ -100,6 +118,7 @@ export const IconPickerModal = ({
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 )}
                 aria-label={`Select ${option.label} icon`}
+                title={option.label}
               >
                 <IconComponent className="h-5 w-5" />
               </button>

@@ -4,10 +4,11 @@ import { useState, useMemo, useEffect, useCallback, useRef, Suspense } from 'rea
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Save } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { LoadingOverlay, LoadingSpinner } from '@/components/ui'
+import { LoadingOverlay } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
 import { useBudgetBook, useBudgetSyncMutation } from '../../../../hooks/budget/budgetBooks.hooks'
+
 import { BudgetFiltersBar, type FilterType } from '@/components/budgetBook/components/filters/BudgetFiltersBar'
 import { BudgetOverviewCard } from '@/components/budgetBook/components/BudgetOverviewCard'
 import { BudgetCategoryBreakdownList } from '@/components/budgetBook/components/BudgetCategoryBreakdownList'
@@ -15,12 +16,11 @@ import { BudgetLinesTable } from '@/components/budgetBook/components/BudgetLines
 import { BudgetLineModal } from '@/components/budgetBook/components/modals/BudgetLineModal'
 import { CategoryModal } from '@/components/budgetBook/components/modals/CategoryModal'
 import { ConfirmDeleteModal } from '@/components/budgetBook/components/modals/ConfirmDeleteModal'
-import {
-  mapApiToDraft,
-  mapDraftToSyncPayload,
-  generateTempId,
-  type BudgetBookDraft,
-} from '@/utils/budgetAdapters'
+
+import { generateTempId, slugify } from '@/utils/budgetAdapters'
+import type { BudgetBookDraft } from '@/utils/budgetAdapters'
+import type { BudgetBookRequest } from '@/../client/common/api/gen/ourbride-api'
+
 import { calculateBudgetStats } from '@/utils/budgetStats'
 import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
@@ -71,179 +71,283 @@ function BudgetPageContent() {
 
   const syncMutation = useBudgetSyncMutation()
 
-  // On first load, use the book from GET endpoint immediately
+  /**
+   * Build FULL sync payload snapshot.
+   * Key points:
+   * - Local temp ids are NEGATIVE (<=0). In payload they must become id=0 (API create).
+   * - For lines pointing to a temp category, lineCategoryId must be 0 AND we must send
+   *   lineCategoryCountId + lineCategorySlug so server can link in the same snapshot.
+   * - Keep nulls as null (don’t convert to 0), because null != 0.
+   */
+  const buildSyncPayload = useCallback((draft: BudgetBookDraft): BudgetBookRequest => {
+    const now = new Date().toISOString()
+    const d: any = draft as any
+
+    const findCategoryByLocalId = (localId: number | null | undefined) => {
+      if (localId == null) return null
+      return (d.lineCategories || []).find((c: any) => c.id === localId) ?? null
+    }
+
+    const lineCategories = (d.lineCategories || []).map((c: any) => {
+      const isTemp = typeof c.id === 'number' && c.id <= 0
+
+      return {
+        id: isTemp ? 0 : c.id,
+
+        name: c.name ?? '',
+        nameAr: c.nameAr ?? c.name ?? '',
+        nameEn: c.nameEn ?? c.name ?? '',
+
+        description: c.description ?? null,
+        descriptionAr: c.descriptionAr ?? c.description ?? null,
+        descriptionEn: c.descriptionEn ?? c.description ?? null,
+
+        // summary fields (send them even if null)
+        estimated: c.estimated ?? 0,
+        pending: c.pending ?? null,
+        paid: c.paid ?? null,
+        final: c.final ?? null,
+        count: c.count ?? null,
+
+        iconName: c.iconName ?? null,
+        colorName: c.colorName ?? null,
+
+        slug: c.slug ?? null,
+        count_id: c.count_id ?? null,
+
+        isDeleted: c.isDeleted ?? false,
+        isModelLine: c.isModelLine ?? false,
+        creationDate: c.creationDate ?? now,
+        lastModifiedDate: c.lastModifiedDate ?? now,
+      }
+    })
+
+    const lines = (d.lines || []).map((l: any) => {
+      const isTempLine = typeof l.id === 'number' && l.id <= 0
+
+      const localCategoryId: number | null = l.lineCategoryId ?? null
+      const category = findCategoryByLocalId(localCategoryId)
+
+      const categoryIsTemp = typeof localCategoryId === 'number' && localCategoryId <= 0
+
+      // if category is temp: payload category id must be 0, but we send slug + countId
+      const payloadLineCategoryId =
+        localCategoryId == null ? null : categoryIsTemp ? 0 : localCategoryId
+
+      const payloadLineCategoryCountId = l.lineCategoryCountId ?? category?.count_id ?? null
+      const payloadLineCategorySlug = l.lineCategorySlug ?? category?.slug ?? null
+
+      return {
+        id: isTempLine ? 0 : (l.id ?? 0),
+
+        isDone: l.isDone ?? false,
+        isFavorite: l.isFavorite ?? false,
+        isDeleted: l.isDeleted ?? false,
+        isModelLine: l.isModelLine ?? false,
+
+        brideId: l.brideId ?? d.brideId ?? null,
+        groomId: l.groomId ?? d.groomId ?? null,
+
+        bookId: d.id ?? l.bookId ?? 0,
+
+        lineCategoryId: payloadLineCategoryId,
+        lineCategoryCountId: payloadLineCategoryCountId,
+        lineCategorySlug: payloadLineCategorySlug,
+
+        creationDate: l.creationDate ?? now,
+        lastModifiedDate: l.lastModifiedDate ?? now,
+
+        expense: l.expense ?? '',
+        expenseAr: l.expenseAr ?? l.expense ?? '',
+        expenseEn: l.expenseEn ?? l.expense ?? '',
+
+        estimated: l.estimated ?? 0,
+        paid: l.paid ?? 0,
+        final: l.final ?? null,
+
+        dueDate: l.dueDate ?? null,
+        count: l.count ?? null,
+
+        payer: l.payer ?? null,
+        note: l.note ?? null,
+
+        iconName: l.iconName ?? null,
+        colorName: l.colorName ?? null,
+      }
+    })
+
+    // NOTE: cast at end to avoid fighting generated types if they’re stricter than backend reality
+    return {
+      id: d.id ?? 0,
+
+      groomId: d.groomId ?? null,
+      brideId: d.brideId ?? null,
+      weddingPlannerId: d.weddingPlannerId ?? null,
+
+      bookType: d.bookType,
+      bookClass: d.bookClass,
+
+      title: d.title ?? null,
+      clientName: d.clientName ?? null,
+      weddingDate: d.weddingDate ?? null,
+      eventLocation: d.eventLocation ?? null,
+
+      lines,
+      lineCategories,
+
+      lastModifiedDate: now,
+      initialEstimated: d.initialEstimated ?? null,
+    } as any as BudgetBookRequest
+  }, [])
+
+  // Helper to sync draft immediately after any change
+  const syncDraft = useCallback(
+    async (draft: BudgetBookDraft) => {
+      if (!eventId || !draft) return
+
+      try {
+        const payload = buildSyncPayload(draft)
+        await syncMutation.mutateAsync({
+          ...payload,
+          query: { eventId },
+        })
+        await refetch() // get real ids from server
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Failed to sync changes'
+        addToast(msg, 'error')
+        throw e
+      }
+    },
+    [eventId, buildSyncPayload, syncMutation, refetch, addToast]
+  )
+
+  // Initial load
   useEffect(() => {
     if (isInitialLoadRef.current && budgetBook && !localDraft) {
-      const draft = mapApiToDraft(budgetBook)
-      if (draft) {
-        setLocalDraft(draft)
-        lastSyncedRef.current = draft
-        isInitialLoadRef.current = false
-      }
+      const draft = budgetBook as any as BudgetBookDraft
+      setLocalDraft(draft)
+      lastSyncedRef.current = draft
+      isInitialLoadRef.current = false
     }
   }, [budgetBook, localDraft])
 
   // Sync fetched data to local state when it changes (only if no unsaved changes)
   useEffect(() => {
     if (budgetBook && !hasUnsavedChanges && !isInitialLoadRef.current) {
-      const draft = mapApiToDraft(budgetBook)
-      if (draft) {
-        setLocalDraft(draft)
-        lastSyncedRef.current = draft
-      }
+      const draft = budgetBook as any as BudgetBookDraft
+      setLocalDraft(draft)
+      lastSyncedRef.current = draft
     } else if (budgetBook === null && !isLoading && !hasUnsavedChanges) {
       setLocalDraft(null)
     }
   }, [budgetBook, hasUnsavedChanges, isLoading])
 
-  // After sync, update local state from refetched data
-  useEffect(() => {
-    if (budgetBook && !hasUnsavedChanges && syncMutation.isSuccess) {
-      const draft = mapApiToDraft(budgetBook)
-      if (draft) {
-        setLocalDraft(draft)
-        lastSyncedRef.current = draft
-        isInitialLoadRef.current = false
-      }
-    }
-  }, [budgetBook, hasUnsavedChanges, syncMutation.isSuccess])
-
-  // Check if there are actual changes
+  // Detect changes (lightweight)
   const hasActualChanges = useCallback((): boolean => {
     if (!localDraft || !lastSyncedRef.current) return !!localDraft
 
-    const current = localDraft
-    const lastSynced = lastSyncedRef.current
+    const a: any = localDraft
+    const b: any = lastSyncedRef.current
 
-    // Compare basic book properties
-    if (
-      current.id !== lastSynced.id ||
-      current.initialEstimated !== lastSynced.initialEstimated ||
-      current.estimated !== lastSynced.estimated
-    ) {
-      return true
+    // Basic props
+    if ((a.initialEstimated ?? null) !== (b.initialEstimated ?? null)) return true
+
+    // Categories: compare by id (including temp ids) + key fields
+    const aCats: any[] = a.lineCategories || []
+    const bCats: any[] = b.lineCategories || []
+    if (aCats.length !== bCats.length) return true
+
+    for (const c of aCats) {
+      const match = bCats.find(x => x.id === c.id)
+      if (!match) return true
+      if ((c.isDeleted ?? false) !== (match.isDeleted ?? false)) return true
+      if ((c.name ?? '') !== (match.name ?? '')) return true
+      if ((c.description ?? null) !== (match.description ?? null)) return true
+      if ((c.estimated ?? 0) !== (match.estimated ?? 0)) return true
+      if ((c.iconName ?? null) !== (match.iconName ?? null)) return true
+      if ((c.colorName ?? null) !== (match.colorName ?? null)) return true
     }
 
-    // Compare categories
-    const currentCategories = current.lineCategories || []
-    const lastSyncedCategories = lastSynced.lineCategories || []
+    // Lines
+    const aLines: any[] = a.lines || []
+    const bLines: any[] = b.lines || []
+    if (aLines.length !== bLines.length) return true
 
-    for (const currentCat of currentCategories) {
-      const lastSyncedCat = lastSyncedCategories.find(c => c.id === currentCat.id)
-      if (!lastSyncedCat) return true
-      if (currentCat.isDeleted !== lastSyncedCat.isDeleted) return true
-
-      if (
-        !currentCat.isDeleted &&
-        (currentCat.name !== lastSyncedCat.name ||
-          currentCat.description !== lastSyncedCat.description ||
-          currentCat.iconName !== lastSyncedCat.iconName ||
-          currentCat.colorName !== lastSyncedCat.colorName)
-      ) {
-        return true
-      }
-    }
-
-    for (const lastSyncedCat of lastSyncedCategories) {
-      const currentCat = currentCategories.find(c => c.id === lastSyncedCat.id)
-      if (!currentCat) return true
-    }
-
-    // Compare lines
-    const currentLines = current.lines || []
-    const lastSyncedLines = lastSynced.lines || []
-
-    if (currentLines.length !== lastSyncedLines.length) return true
-
-    for (const currentLine of currentLines) {
-      const lastSyncedLine = lastSyncedLines.find(l => l.id === currentLine.id)
-      if (!lastSyncedLine) return true
-
-      if (
-        currentLine.expense !== lastSyncedLine.expense ||
-        currentLine.lineCategoryId !== lastSyncedLine.lineCategoryId ||
-        currentLine.estimated !== lastSyncedLine.estimated ||
-        currentLine.paid !== lastSyncedLine.paid ||
-        currentLine.final !== lastSyncedLine.final ||
-        currentLine.note !== lastSyncedLine.note ||
-        currentLine.isDeleted !== lastSyncedLine.isDeleted ||
-        currentLine.isDone !== lastSyncedLine.isDone ||
-        currentLine.isFavorite !== lastSyncedLine.isFavorite
-      ) {
-        return true
-      }
+    for (const l of aLines) {
+      const match = bLines.find(x => x.id === l.id)
+      if (!match) return true
+      if ((l.isDeleted ?? false) !== (match.isDeleted ?? false)) return true
+      if ((l.expense ?? '') !== (match.expense ?? '')) return true
+      if ((l.lineCategoryId ?? null) !== (match.lineCategoryId ?? null)) return true
+      if ((l.estimated ?? 0) !== (match.estimated ?? 0)) return true
+      if ((l.paid ?? 0) !== (match.paid ?? 0)) return true
+      if ((l.final ?? null) !== (match.final ?? null)) return true
+      if ((l.isDone ?? false) !== (match.isDone ?? false)) return true
+      if ((l.isFavorite ?? false) !== (match.isFavorite ?? false)) return true
     }
 
     return false
   }, [localDraft])
 
-  // Update hasUnsavedChanges when draft changes
   useEffect(() => {
     if (localDraft && lastSyncedRef.current) {
       setHasUnsavedChanges(hasActualChanges())
     }
   }, [localDraft, hasActualChanges])
 
-  // Handle category selection with toggle behavior
-  const handleCategoryClick = useCallback(
-    (categoryId: number | null) => {
-      setActiveCategoryId(prev => (categoryId === prev ? null : categoryId))
-    },
-    []
-  )
+  // Category selection toggle
+  const handleCategoryClick = useCallback((categoryId: number | null) => {
+    setActiveCategoryId(prev => (categoryId === prev ? null : categoryId))
+  }, [])
 
-  // Calculate stats based on active category (لو calculateBudgetStats بتدعمها)
+  // Stats
   const stats = useMemo(() => {
     if (!localDraft) return null
-    return calculateBudgetStats(localDraft, activeCategoryId as any)
+    return calculateBudgetStats(localDraft as any, activeCategoryId as any)
   }, [localDraft, activeCategoryId])
 
-  // Filter lines based on active category and status filters
+  // Filter lines
   const filteredLines = useMemo(() => {
-    if (!localDraft || !stats) return []
+    if (!localDraft) return []
+    let lines = (localDraft.lines || []) as any[]
 
-    let lines = (localDraft.lines || []).filter(line => {
+    lines = lines.filter(line => {
       if (activeCategoryId !== null && line.lineCategoryId !== activeCategoryId) return false
-      if (filterType !== 'deleted' && line.isDeleted) return false
+      
       return true
     })
 
     switch (filterType) {
       case 'done':
-        lines = lines.filter(line => line.isDone)
-        break
+        return lines.filter(l => l.isDone)
       case 'not-done':
-        lines = lines.filter(line => !line.isDone)
-        break
+        return lines.filter(l => !l.isDone)
       case 'favorite':
-        lines = lines.filter(line => line.isFavorite)
-        break
+        return lines.filter(l => l.isFavorite)
       case 'not-favorite':
-        lines = lines.filter(line => !line.isFavorite)
-        break
-      case 'deleted':
-        lines = lines.filter(line => line.isDeleted)
-        break
-      case 'not-deleted':
-        lines = lines.filter(line => !line.isDeleted)
-        break
+        return lines.filter(l => !l.isFavorite)
+ 
       default:
-        break
+        return lines
     }
-
-    return lines
-  }, [localDraft, activeCategoryId, filterType, stats])
+  }, [localDraft, activeCategoryId, filterType])
 
   // Handlers
   const handleBudgetChange = useCallback(
-    (newBudget: number) => {
+    async (newBudget: number) => {
       if (!localDraft) return
-      setLocalDraft({
-        ...localDraft,
+      const now = new Date().toISOString()
+
+      const nextDraft: any = {
+        ...(localDraft as any),
         initialEstimated: newBudget,
-      })
+        lastModifiedDate: now,
+      }
+
+      setLocalDraft(nextDraft)
+      await syncDraft(nextDraft)
     },
-    [localDraft]
+    [localDraft, syncDraft]
   )
 
   const handleCreateLine = useCallback(() => {
@@ -257,116 +361,168 @@ function BudgetPageContent() {
   }, [])
 
   const handleSaveLine = useCallback(
-    (data: {
+    async (data: {
       id?: number
       expense: string
+      expenseAr: string
+      expenseEn: string
       lineCategoryId: number | null
       estimated: number
       paid: number
       final: number | null
+      dueDate: string | null
       count: number | null
       payer: string | null
       note: string | null
+      iconName: string | null
+      colorName: string | null
       isDone: boolean
       isFavorite: boolean
       isDeleted: boolean
     }) => {
       if (!localDraft) return
 
+      const now = new Date().toISOString()
       const finalCategoryId =
         data.lineCategoryId ?? (activeCategoryId !== null ? activeCategoryId : null)
 
+      const selectedCategory: any =
+        finalCategoryId != null
+          ? (localDraft as any).lineCategories?.find((c: any) => c.id === finalCategoryId)
+          : null
+
+      const lineCategorySlug = selectedCategory?.slug ?? null
+      const lineCategoryCountId = selectedCategory?.count_id ?? null
+
+      let nextDraft: any
+
       if (data.id && data.id > 0) {
-        // Update existing line
-        setLocalDraft({
-          ...localDraft,
-          lines: (localDraft.lines || []).map(line =>
+        // Update existing
+        nextDraft = {
+          ...(localDraft as any),
+          lines: ((localDraft as any).lines || []).map((line: any) =>
             line.id === data.id
-              ? ({
+              ? {
                   ...line,
                   expense: data.expense,
+                  expenseAr: data.expenseAr,
+                  expenseEn: data.expenseEn,
+
                   lineCategoryId: finalCategoryId,
+                  lineCategorySlug,
+                  lineCategoryCountId,
+
                   estimated: data.estimated,
                   paid: data.paid,
-                  final: data.final ?? 0,
-                  dueDate: (line as any).dueDate ?? null, // ✅ حافظي على القديم أو null
-                  count: data.count ?? 0,
+                  final: data.final,
+                  dueDate: data.dueDate,
+                  count: data.count,
+
                   payer: data.payer,
                   note: data.note,
+                  iconName: data.iconName,
+                  colorName: data.colorName,
+
                   isDone: data.isDone,
                   isFavorite: data.isFavorite,
                   isDeleted: data.isDeleted,
-                } as BudgetLineResponse)
+
+                  lastModifiedDate: now,
+                }
               : line
           ),
-        })
+        }
       } else {
-        // Create new line
-        const newLine: BudgetLineResponse = {
-          id: generateTempId(),
-          bookId: localDraft.id || 0,
+        // Create new (local temp id; payload converts to 0)
+        const tempLineId = generateTempId()
+
+        const newLine: any = {
+          id: tempLineId,
+          bookId: (localDraft as any).id || 0,
+
           expense: data.expense,
+          expenseAr: data.expenseAr,
+          expenseEn: data.expenseEn,
+
           lineCategoryId: finalCategoryId,
+          lineCategorySlug,
+          lineCategoryCountId,
+
           estimated: data.estimated,
           paid: data.paid,
-          final: data.final ?? 0,
-          dueDate: null as any, // ✅ مهم جدًا: null مش ''
-          count: data.count ?? 0,
-          payer: data.payer || null,
-          note: data.note || null,
+          final: data.final,
+          dueDate: data.dueDate,
+          count: data.count,
+
+          payer: data.payer,
+          note: data.note,
+          iconName: data.iconName,
+          colorName: data.colorName,
+
           isDone: data.isDone,
           isFavorite: data.isFavorite,
-          isDeleted: data.isDeleted,
+          isDeleted: false,
           isModelLine: false,
-          iconName: '',
-          colorName: '',
-          expenseAr: '',
-          expenseEn: '',
-          lineType: localDraft.bookType,
-          bookClass: localDraft.bookClass,
-          createdBy: '',
-          lastModifiedBy: '',
-          creationDate: new Date().toISOString(),
-          lastModifiedDate: new Date().toISOString(),
-          slug: '',
-        } as BudgetLineResponse
 
-        setLocalDraft({
-          ...localDraft,
-          lines: [...(localDraft.lines || []), newLine],
-        })
+          brideId: (localDraft as any).brideId ?? null,
+          groomId: (localDraft as any).groomId ?? null,
+
+          creationDate: now,
+          lastModifiedDate: now,
+        }
+
+        nextDraft = {
+          ...(localDraft as any),
+          lines: [...(((localDraft as any).lines as any[]) || []), newLine],
+        }
       }
 
+      setLocalDraft(nextDraft)
       setIsBudgetLineModalOpen(false)
       setEditingLine(null)
+
+      await syncDraft(nextDraft)
+      addToast('Budget line saved', 'success')
     },
-    [localDraft, activeCategoryId]
+    [localDraft, activeCategoryId, syncDraft, addToast]
   )
 
   const handleToggleDone = useCallback(
-    (lineId: number) => {
+    async (lineId: number) => {
       if (!localDraft) return
-      setLocalDraft({
-        ...localDraft,
-        lines: (localDraft.lines || []).map(line =>
-          line.id === lineId ? { ...line, isDone: !line.isDone } : line
+      const now = new Date().toISOString()
+
+      const nextDraft: any = {
+        ...(localDraft as any),
+        lines: ((localDraft as any).lines || []).map((line: any) =>
+          line.id === lineId ? { ...line, isDone: !line.isDone, lastModifiedDate: now } : line
         ),
-      })
+      }
+
+      setLocalDraft(nextDraft)
+      await syncDraft(nextDraft)
     },
-    [localDraft]
+    [localDraft, syncDraft]
   )
 
   const handleToggleFavorite = useCallback(
-    (lineId: number) => {
+    async (lineId: number) => {
       if (!localDraft) return
-      setLocalDraft({
-        ...localDraft,
-        lines: (localDraft.lines || []).map(line =>
-          line.id === lineId ? { ...line, isFavorite: !line.isFavorite } : line
+      const now = new Date().toISOString()
+
+      const nextDraft: any = {
+        ...(localDraft as any),
+        lines: ((localDraft as any).lines || []).map((line: any) =>
+          line.id === lineId
+            ? { ...line, isFavorite: !line.isFavorite, lastModifiedDate: now }
+            : line
         ),
-      })
+      }
+
+      setLocalDraft(nextDraft)
+      await syncDraft(nextDraft)
     },
-    [localDraft]
+    [localDraft, syncDraft]
   )
 
   const handleDeleteLine = useCallback((line: BudgetLineResponse) => {
@@ -374,17 +530,25 @@ function BudgetPageContent() {
     setIsDeleteModalOpen(true)
   }, [])
 
-  const confirmDeleteLine = useCallback(() => {
+  const confirmDeleteLine = useCallback(async () => {
     if (!localDraft || !itemToDelete || itemToDelete.type !== 'line') return
     const line = itemToDelete.item as BudgetLineResponse
-    setLocalDraft({
-      ...localDraft,
-      lines: (localDraft.lines || []).map(l => (l.id === line.id ? { ...l, isDeleted: true } : l)),
-    })
+    const now = new Date().toISOString()
+
+    const nextDraft: any = {
+      ...(localDraft as any),
+      lines: ((localDraft as any).lines || []).map((l: any) =>
+        l.id === line.id ? { ...l, isDeleted: true, lastModifiedDate: now } : l
+      ),
+    }
+
+    setLocalDraft(nextDraft)
     setIsDeleteModalOpen(false)
     setItemToDelete(null)
+
+    await syncDraft(nextDraft)
     addToast(`"${line.expense}" deleted successfully`, 'success')
-  }, [localDraft, itemToDelete, addToast])
+  }, [localDraft, itemToDelete, syncDraft, addToast])
 
   const handleCreateCategory = useCallback(() => {
     setEditingCategory(null)
@@ -392,80 +556,149 @@ function BudgetPageContent() {
   }, [])
 
   const handleSaveCategory = useCallback(
-    (data: {
+    async (data: {
       id?: number
       name: string
       nameAr: string
       nameEn: string
       description: string
+      descriptionAr: string
+      descriptionEn: string
       estimated: number
       iconName: string | null
       colorName: string | null
+      // Line data (required when creating new category)
+      lineData?: {
+        expense: string
+        expenseAr: string
+        expenseEn: string
+        estimated: number
+        paid: number
+        final: number | null
+        dueDate: string | null
+        count: number | null
+        payer: string | null
+        note: string | null
+        iconName: string | null
+        colorName: string | null
+        isDone: boolean
+        isFavorite: boolean
+      }
     }) => {
       if (!localDraft) return
 
+      const now = new Date().toISOString()
+      let nextDraft: any
+
       if (data.id && data.id > 0) {
-        setLocalDraft({
-          ...localDraft,
-          lineCategories: (localDraft.lineCategories || []).map(cat =>
+        // Update existing category (no line data)
+        nextDraft = {
+          ...(localDraft as any),
+          lineCategories: ((localDraft as any).lineCategories || []).map((cat: any) =>
             cat.id === data.id
-              ? ({
+              ? {
                   ...cat,
                   name: data.name,
                   nameAr: data.nameAr,
                   nameEn: data.nameEn,
-                  description: data.description,
-                  descriptionAr: data.description || '',
-                  descriptionEn: data.description || '',
-                  estimated: data.estimated,
-                  iconName: data.iconName || '',
-                  colorName: data.colorName || '',
-                } as BudgetLineCategoryResponse)
+                  description: data.description ?? null,
+                  descriptionAr: data.descriptionAr ?? null,
+                  descriptionEn: data.descriptionEn ?? null,
+                  estimated: data.estimated ?? 0,
+                  iconName: data.iconName ?? null,
+                  colorName: data.colorName ?? null,
+                  lastModifiedDate: now,
+                }
               : cat
           ),
-        })
+        }
       } else {
-        const newCategory: BudgetLineCategoryResponse = {
-          id: generateTempId(),
-          name: data.name,
-          nameAr: data.nameAr,
-          nameEn: data.nameEn,
-          description: data.description,
-          descriptionAr: data.description || '',
-          descriptionEn: data.description || '',
-          iconName: data.iconName || '',
-          colorName: data.colorName || '',
-          isModelLine: false,
-          estimated: data.estimated,
-          pending: 0,
-          paid: 0,
-          final: 0,
-          count: 0,
-          createdBy: '',
-          lastModifiedBy: '',
-          creationDate: new Date().toISOString(),
-          lastModifiedDate: new Date().toISOString(),
-          slug: '',
-          isDeleted: false,
-          eventId: undefined,
-        } as BudgetLineCategoryResponse
+        // Create new category + line together
+        if (!data.lineData) {
+          addToast('Line data is required when creating a new category', 'error')
+          return
+        }
 
-        setLocalDraft({
-          ...localDraft,
-          lineCategories: [...(localDraft.lineCategories || []), newCategory],
-        })
-        setActiveCategoryId(newCategory.id)
+        const tempId = generateTempId()
+        const tempCountId = Date.now()
+        const slug = slugify(data.name)
+
+        const newCategory: any = {
+          id: tempId,
+          name: data.name,
+          nameAr: data.nameAr || data.name,
+          nameEn: data.nameEn || data.name,
+          description: data.description || null,
+          descriptionAr: data.descriptionAr || data.description || null,
+          descriptionEn: data.descriptionEn || data.description || null,
+          estimated: 0, // Category estimated not used
+          pending: null,
+          paid: null,
+          final: null,
+          count: null,
+          iconName: data.iconName ?? null,
+          colorName: data.colorName ?? null,
+          slug,
+          count_id: tempCountId,
+          isDeleted: false,
+          isModelLine: false,
+          creationDate: now,
+          lastModifiedDate: now,
+        }
+
+        // Create line linked to the new category
+        const tempLineId = generateTempId()
+        const newLine: any = {
+          id: tempLineId,
+          bookId: (localDraft as any).id || 0,
+          expense: data.lineData.expense,
+          expenseAr: data.lineData.expenseAr,
+          expenseEn: data.lineData.expenseEn,
+          lineCategoryId: tempId, // Link to temp category
+          lineCategorySlug: slug,
+          lineCategoryCountId: tempCountId,
+          estimated: data.lineData.estimated,
+          paid: data.lineData.paid || 0,
+          final: data.lineData.final,
+          dueDate: data.lineData.dueDate || null,
+          count: data.lineData.count,
+          payer: data.lineData.payer || null,
+          note: data.lineData.note || null,
+          iconName: data.lineData.iconName ?? null,
+          colorName: data.lineData.colorName ?? null,
+          isDone: data.lineData.isDone || false,
+          isFavorite: data.lineData.isFavorite || false,
+          isDeleted: false,
+          isModelLine: false,
+          brideId: (localDraft as any).brideId ?? null,
+          groomId: (localDraft as any).groomId ?? null,
+          creationDate: now,
+          lastModifiedDate: now,
+        }
+
+        nextDraft = {
+          ...(localDraft as any),
+          lineCategories: [...(((localDraft as any).lineCategories as any[]) || []), newCategory],
+          lines: [...(((localDraft as any).lines as any[]) || []), newLine],
+        }
+
+        // Select new category immediately
+        setActiveCategoryId(tempId)
       }
 
+      setLocalDraft(nextDraft)
       setIsCategoryModalOpen(false)
       setEditingCategory(null)
+
+      await syncDraft(nextDraft)
+      addToast(data.id ? 'Category saved' : 'Category and line added', 'success')
     },
-    [localDraft]
+    [localDraft, syncDraft, addToast]
   )
 
   const handleDeleteCategory = useCallback(
     (categoryId: number) => {
-      const category = localDraft?.lineCategories?.find(c => c.id === categoryId)
+      const category = (localDraft as any)?.lineCategories?.find((c: any) => c.id === categoryId)
       if (category) {
         setItemToDelete({ type: 'category', item: category })
         setIsDeleteModalOpen(true)
@@ -474,29 +707,35 @@ function BudgetPageContent() {
     [localDraft]
   )
 
-  const confirmDeleteCategory = useCallback(() => {
+  const confirmDeleteCategory = useCallback(async () => {
     if (!localDraft || !itemToDelete || itemToDelete.type !== 'category') return
     const category = itemToDelete.item as BudgetLineCategoryResponse
     const categoryId = category.id
+    const now = new Date().toISOString()
 
-    setLocalDraft({
-      ...localDraft,
-      lineCategories: (localDraft.lineCategories || []).map(c =>
-        c.id === categoryId ? { ...c, isDeleted: true } : c
+    const nextDraft: any = {
+      ...(localDraft as any),
+      lineCategories: ((localDraft as any).lineCategories || []).map((c: any) =>
+        c.id === categoryId ? { ...c, isDeleted: true, lastModifiedDate: now } : c
       ),
-      lines: (localDraft.lines || []).map(line =>
-        line.lineCategoryId === categoryId ? { ...line, isDeleted: true } : line
+      lines: ((localDraft as any).lines || []).map((line: any) =>
+        line.lineCategoryId === categoryId
+          ? { ...line, isDeleted: true, lastModifiedDate: now }
+          : line
       ),
-    })
+    }
 
+    setLocalDraft(nextDraft)
     if (activeCategoryId === categoryId) setActiveCategoryId(null)
 
     setIsDeleteModalOpen(false)
     setItemToDelete(null)
-    addToast(`Category "${category.name}" deleted successfully`, 'success')
-  }, [localDraft, itemToDelete, activeCategoryId, addToast])
 
-  // Save handler
+    await syncDraft(nextDraft)
+    addToast(`Category "${category.name}" deleted successfully`, 'success')
+  }, [localDraft, itemToDelete, activeCategoryId, syncDraft, addToast])
+
+  // Manual Save (optional, you already sync on each action)
   const handleSave = useCallback(async () => {
     if (!localDraft || !eventId) {
       if (isLoading) {
@@ -514,29 +753,30 @@ function BudgetPageContent() {
     }
 
     try {
-      const payload = mapDraftToSyncPayload(localDraft)
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Budget] Sync payload:', payload)
-      }
-
-      await syncMutation.mutateAsync({
-        ...payload,
-        id: payload.id ?? localDraft?.id ?? 0,
-        query: { eventId },
-      })
+      const payload = buildSyncPayload(localDraft)
+      await syncMutation.mutateAsync({ ...payload, query: { eventId } })
 
       setHasUnsavedChanges(false)
       lastSyncedRef.current = localDraft
+
       addToast('Changes saved successfully', 'success')
       refetch()
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save changes'
-      addToast(errorMessage, 'error')
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Failed to save changes'
+      addToast(msg, 'error')
     }
-  }, [localDraft, eventId, hasActualChanges, syncMutation, refetch, isLoading, addToast])
+  }, [
+    localDraft,
+    eventId,
+    isLoading,
+    hasActualChanges,
+    buildSyncPayload,
+    syncMutation,
+    refetch,
+    addToast,
+  ])
 
-  // Loading state
+  // Loading
   if (isLoading) {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
@@ -547,7 +787,7 @@ function BudgetPageContent() {
     )
   }
 
-  // Error state
+  // Error
   if (error) {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
@@ -561,7 +801,7 @@ function BudgetPageContent() {
     )
   }
 
-  // Empty state
+  // Missing event
   if (!eventId) {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
@@ -631,7 +871,7 @@ function BudgetPageContent() {
               activeCategoryId={activeCategoryId}
               onCategoryClick={handleCategoryClick}
               onEditCategory={categoryId => {
-                const category = localDraft?.lineCategories?.find(c => c.id === categoryId)
+                const category = (localDraft as any)?.lineCategories?.find((c: any) => c.id === categoryId)
                 if (category) {
                   setEditingCategory(category)
                   setIsCategoryModalOpen(true)
@@ -646,15 +886,15 @@ function BudgetPageContent() {
 
           <div className="order-last sm:order-none">
             <BudgetLinesTable
-              lines={filteredLines}
-              categories={localDraft?.lineCategories || []}
+              lines={filteredLines as any}
+              categories={((localDraft as any)?.lineCategories || []) as any}
               totalBudget={stats.totalBudget}
               onToggleDone={handleToggleDone}
               onToggleFavorite={handleToggleFavorite}
               onEdit={handleEditLine}
               onDelete={handleDeleteLine}
               onCreateLine={handleCreateLine}
-              activeCategoryId={activeCategoryId} 
+              activeCategoryId={activeCategoryId}
             />
           </div>
         </div>
@@ -675,7 +915,9 @@ function BudgetPageContent() {
             }}
             onSave={handleSaveLine}
             editingLine={editingLine}
-            categories={localDraft.lineCategories || []}
+            categories={(((localDraft as any).lineCategories || []) as BudgetLineCategoryResponse[]).filter(
+              c => !c.isDeleted
+            )}
             defaultCategoryId={activeCategoryId}
           />
 
