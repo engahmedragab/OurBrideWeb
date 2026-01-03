@@ -53,7 +53,21 @@ jobs:
           port: 22
           script: |
             cd /var/www/OurBrideWeb-staging
-            npm ci --omit=dev
+            # Ensure Node.js 20 is used (using nvm if available)
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
+            if command -v nvm &> /dev/null || [ -s "$NVM_DIR/nvm.sh" ]; then
+              nvm use 20 || nvm install 20 || true
+            fi
+            # Verify Node version (must be >=20.9.0 for Next.js 16)
+            NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
+            if [ "$NODE_VERSION" -lt 20 ]; then
+              echo "ERROR: Node.js version must be >=20.9.0. Current: $(node --version)"
+              echo "Please install Node.js 20 on the server"
+              exit 1
+            fi
+            # Install dependencies - use npm install if lock file is out of sync
+            npm install --omit=dev || npm ci --omit=dev
 
       - name: 🔄 Restart Next.js App
         uses: appleboy/ssh-action@v0.1.3
