@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { Button, Input, LoadingSpinner } from '@/components/ui'
+import { ErrorModal } from '@/components/ui/ErrorModal'
 import { Plus, Trash2, Edit2, Calendar, X, Save } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useOccasionBook, useSyncOccasionBook } from '@/hooks/occasionBooks'
@@ -626,12 +627,13 @@ function OccasionsPageContent() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-16 text-red-600 mb-4">
-          Failed to load occasions. Please try again.
-        </p>
-        <Button variant="outline" onClick={() => window.location.reload()}>
-          Retry
-        </Button>
+        <ErrorModal
+          open={true}
+          title="Failed to Load Occasions"
+          message="Failed to load occasions. Please try again."
+          onRetry={() => window.location.reload()}
+          onClose={() => {}}
+        />
       </div>
     )
   }

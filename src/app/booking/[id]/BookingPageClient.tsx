@@ -12,13 +12,16 @@ import {
     ArrowLeft,
     X,
     Check,
+    Clock,
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { LoadingSpinner, ErrorDisplay, ProcessingModal } from '@/components/ui'
+import { ErrorModal } from '@/components/ui/ErrorModal'
 import { cn } from '@/lib/utils'
+import { formatRole } from '@/utils/role'
 import { useServiceDetail, useServicePackages } from '@/hooks/services'
 import { getServiceById } from '@/services/api/serviceApi'
 import { createReservation, getAvailableTimeSlots, getReservationById } from '@/services/api/reservationApi'
@@ -164,7 +167,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             id: String(assignment.staffId || assignment.id),
             name: assignment.staffName || assignment.staffEmail || `Staff ${assignment.id}`,
             email: assignment.staffEmail,
-            role: assignment.staffRole,
+            role: formatRole(assignment.staffRole),
         }))
     }, [rawServiceResponse])
 
@@ -173,8 +176,12 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     const packageUpgrades: PackageUpgrade[] = []
 
     // Step management
-    type BookingStep = 'personal' | 'details' | 'datetime' | 'confirm'
-    const [step, setStep] = useState<BookingStep>('personal')
+    type BookingStep = 'details' | 'datetime' | 'confirm'
+    // Start with 'details' step, or skip to 'datetime' if no branches/staff/packages
+    const [step, setStep] = useState<BookingStep>(() => {
+        // Will be set properly after data loads via useEffect
+        return 'details'
+    })
 
     // State for time slot selector
     const [is12Hour] = useState(true)
@@ -478,6 +485,15 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         }
     }, [staff])
 
+    // Set initial step based on available data (skip details if no branches/staff/packages)
+    useEffect(() => {
+        if (branches.length === 0 && staff.length === 0 && packages.length === 0) {
+            setStep('datetime')
+        } else {
+            setStep('details')
+        }
+    }, [branches.length, staff.length, packages.length])
+
     const [errors, setErrors] = useState<Record<string, string>>({})
 
     const selectedPackageData = packages.find(
@@ -487,12 +503,34 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         formData.selectedUpgrades.includes(u.id)
     )
 
+    // Calculate total price (package price + upgrades, no taxes or delivery fees)
     const subtotal =
         (selectedPackageData?.price || 0) +
         selectedUpgradesData.reduce((sum, u) => sum + u.price, 0)
-    const taxes = 120
-    const deliveryFee = 90
-    const total = subtotal + taxes + deliveryFee
+    const total = subtotal
+
+    // Calculate service duration from selected time slot, package, or use default
+    const serviceDuration = useMemo(() => {
+        if (selectedSlotId) {
+            const selectedSlot = timeSlots.find(slot => slot.id === selectedSlotId)
+            if (selectedSlot) {
+                const startTime = new Date(selectedSlot.start)
+                const endTime = new Date(selectedSlot.end)
+                const durationMinutes = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60))
+                return durationMinutes
+            }
+        }
+        // Fallback: try to get duration from selected package
+        if (selectedPackageData?.description) {
+            // Try to parse duration from package description if available
+            const durationMatch = selectedPackageData.description.match(/(\d+)\s*min/i)
+            if (durationMatch) {
+                return parseInt(durationMatch[1], 10)
+            }
+        }
+        // Default duration if not available
+        return 60
+    }, [selectedSlotId, timeSlots, selectedPackageData])
 
     const handleInputChange = (field: keyof BookingFormData, value: string | boolean | string[]) => {
         setFormData(prev => ({ ...prev, [field]: value }))
@@ -779,23 +817,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
     // Step navigation handlers
     const handleContinue = () => {
-        if (step === 'personal') {
-            // Validate personal info
-            if (!formData.fullName || !formData.mobileNumber) {
-                setErrors({
-                    ...errors,
-                    fullName: !formData.fullName ? 'Full name is required' : '',
-                    mobileNumber: !formData.mobileNumber ? 'Mobile number is required' : '',
-                })
-                return
-            }
-            // Skip details step if no branches, staff, or packages
-            if (branches.length === 0 && staff.length === 0 && packages.length === 0) {
-                setStep('datetime')
-            } else {
-                setStep('details')
-            }
-        } else if (step === 'details') {
+        if (step === 'details') {
             // Validate details (branch, staff, package if required)
             if (branches.length > 0 && !formData.selectedBranch) {
                 setErrors({ ...errors, selectedBranch: 'Please select a branch' })
@@ -813,17 +835,17 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     }
 
     const handleBack = () => {
-        if (step === 'details') {
-            setStep('personal')
-        } else if (step === 'datetime') {
+        if (step === 'datetime') {
             // Skip details step if no branches, staff, or packages
             if (branches.length === 0 && staff.length === 0 && packages.length === 0) {
-                setStep('personal')
+                router.back()
             } else {
                 setStep('details')
             }
         } else if (step === 'confirm') {
             setStep('datetime')
+        } else if (step === 'details') {
+            router.back()
         }
     }
 
@@ -916,8 +938,8 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 // Extract reservation ID from response
                 // API returns 201 Created with reservationId immediately
                 const responseData = apiResponse as unknown as { reservationId?: string; id?: string | number; status?: ReservationStatus }
-                const reservationId = apiResponse?.reservationId || 
-                    (typeof responseData?.id === 'string' ? responseData.id : responseData?.id?.toString()) || 
+                const reservationId = apiResponse?.reservationId ||
+                    (typeof responseData?.id === 'string' ? responseData.id : responseData?.id?.toString()) ||
                     responseData?.reservationId
 
                 if (!reservationId) {
@@ -936,18 +958,18 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 startPolling(reservationId, providerId, clientId, serviceId, requestedStartTime, notes)
 
             } catch (error: unknown) {
-                const err = error as { 
-                    response?: { 
-                        status?: number; 
-                        data?: { 
-                            statusCode?: number; 
-                            reservationId?: string; 
-                            data?: { reservationId?: string }; 
+                const err = error as {
+                    response?: {
+                        status?: number;
+                        data?: {
+                            statusCode?: number;
+                            reservationId?: string;
+                            data?: { reservationId?: string };
                             id?: string;
                             message?: string;
                             errors?: Array<{ error?: string }>;
-                        } 
-                    } 
+                        }
+                    }
                 }
 
                 // Check if error response has reservation ID (some APIs return 202/201 with ID)
@@ -1009,20 +1031,19 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             <div className="min-h-screen flex flex-col bg-white">
                 <Header />
                 <main className="flex-1">
-                    <div className="container-custom py-6 md:py-8">
-                        <ErrorDisplay
-                            title="Service Not Found"
-                            message={
-                                !serviceId
-                                    ? 'Please provide a service ID in the URL'
-                                    : serviceError instanceof Error
-                                        ? serviceError.message
-                                        : 'Failed to load service details. Please try again.'
-                            }
-                            actionLabel="Reload"
-                            onAction={() => window.location.reload()}
-                        />
-                    </div>
+                    <ErrorModal
+                        open={true}
+                        title="Failed to Load Service Details"
+                        message={
+                            !serviceId
+                                ? 'Please provide a service ID in the URL'
+                                : serviceError instanceof Error
+                                    ? serviceError.message
+                                    : 'Failed to load service details. Please try again.'
+                        }
+                        onRetry={() => window.location.reload()}
+                        onClose={() => router.push('/services')}
+                    />
                 </main>
                 <Footer />
             </div>
@@ -1059,13 +1080,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-4">
                             <button
-                                onClick={() => {
-                                    if (step === 'personal') {
-                                        router.back()
-                                    } else {
-                                        handleBack()
-                                    }
-                                }}
+                                onClick={handleBack}
                                 className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
                             >
                                 <ArrowLeft className="h-5 w-5 text-gray-700" />
@@ -1073,7 +1088,6 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                             <div>
                                 <h1 className="text-24 font-semibold text-gray-900">Book Appointment</h1>
                                 <p className="text-14 text-gray-600">
-                                    {step === 'personal' && 'Personal Information'}
                                     {step === 'details' && 'Booking Details'}
                                     {step === 'datetime' && 'Select Date & Time'}
                                     {step === 'confirm' && 'Confirm Booking'}
@@ -1090,12 +1104,12 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
                     {/* Progress Steps */}
                     <div className="flex items-center gap-2 mb-8">
-                        {['personal', 'details', 'datetime', 'confirm'].map((s, index) => (
+                        {['details', 'datetime', 'confirm'].map((s, index) => (
                             <React.Fragment key={s}>
                                 <div
                                     className={cn(
                                         "flex-1 h-2 rounded-full transition-colors",
-                                        ['personal', 'details', 'datetime', 'confirm'].indexOf(step) >= index
+                                        ['details', 'datetime', 'confirm'].indexOf(step) >= index
                                             ? "bg-brand-600"
                                             : "bg-gray-200"
                                     )}
@@ -1109,37 +1123,6 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                         <div className="lg:col-span-2">
                             {/* Main Content Card */}
                             <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-                                {/* Personal Information Step */}
-                                {step === 'personal' && (
-                                    <div>
-                                        <h2 className="text-20 font-semibold text-gray-900 mb-4">
-                                            Personal Information
-                                        </h2>
-                                        <div className="space-y-4">
-                                            <Input
-                                                prefixIcon={User}
-                                                placeholder="Full Name"
-                                                value={formData.fullName}
-                                                onChange={e =>
-                                                    handleInputChange('fullName', e.target.value)
-                                                }
-                                                errorMessage={errors.fullName}
-                                                variant={errors.fullName ? 'error' : 'default'}
-                                            />
-                                            <Input
-                                                prefixIcon={Phone}
-                                                placeholder="Mobile Number"
-                                                value={formData.mobileNumber}
-                                                onChange={e =>
-                                                    handleInputChange('mobileNumber', e.target.value)
-                                                }
-                                                errorMessage={errors.mobileNumber}
-                                                variant={errors.mobileNumber ? 'error' : 'default'}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-
                                 {/* Booking Details Step */}
                                 {step === 'details' && (
                                     <div className="space-y-6">
@@ -1201,7 +1184,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                                 <div className="flex-1 min-w-0">
                                                                     <div className="font-medium truncate">{staffMember.name}</div>
                                                                     {staffMember.role && (
-                                                                        <div className="text-12 text-gray-500 truncate">{staffMember.role}</div>
+                                                                        <div className="text-12 text-gray-500 truncate">{formatRole(staffMember.role)}</div>
                                                                     )}
                                                                 </div>
                                                             </div>
@@ -1298,7 +1281,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                         const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' })
                                                         const dayNum = dateObj.getDate()
                                                         const monthName = dateObj.toLocaleDateString('en-US', { month: 'short' })
-                                                        
+
                                                         return (
                                                             <button
                                                                 key={dateLabel}
@@ -1384,7 +1367,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                         <p className="text-14 text-gray-600">
                                             Please review your booking details on the right. Once you&apos;re ready, click &quot;Confirm Booking&quot; below to complete your appointment.
                                         </p>
-                                        
+
                                         <div className="bg-brand-50 border border-brand-200 rounded-xl p-4">
                                             <div className="flex items-start gap-3">
                                                 <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center flex-shrink-0">
@@ -1419,7 +1402,6 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                     onClick={step === 'confirm' ? handleConfirm : handleContinue}
                                     disabled={
                                         isSubmitting ||
-                                        (step === 'personal' && (!formData.fullName || !formData.mobileNumber)) ||
                                         (step === 'datetime' && !formData.selectedTime)
                                     }
                                     className="w-full !text-white"
@@ -1487,100 +1469,103 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                     </div>
                                 </div>
 
+                                {/* Booking Summary - Services and Totals */}
+                                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                                    {/* Service count indicator */}
+                                    <p className="text-12 text-gray-500 mb-4">1 service selected</p>
 
-                                {/* Selected Details - Show progressively based on step */}
-                                {(step !== 'personal' && (formData.fullName || formData.mobileNumber || formData.selectedBranch || formData.selectedStaff || formData.selectedPackage || formData.selectedTime)) && (
-                                    <div className="bg-white rounded-xl p-6 border border-gray-200">
-                                        <p className="text-14 font-medium text-gray-700 mb-3">Booking Details</p>
-                                        <div className="space-y-3">
-                                            {/* Personal Info - Show from details step onwards */}
-                                            {(step === 'details' || step === 'datetime' || step === 'confirm') && formData.fullName && (
-                                                <div className="pb-3 border-b border-gray-100">
-                                                    <p className="text-12 text-gray-600 mb-1">Name</p>
-                                                    <p className="text-14 text-gray-900">{formData.fullName}</p>
-                                                </div>
-                                            )}
-                                            {(step === 'details' || step === 'datetime' || step === 'confirm') && formData.mobileNumber && (
-                                                <div className="pb-3 border-b border-gray-100">
-                                                    <p className="text-12 text-gray-600 mb-1">Mobile</p>
-                                                    <p className="text-14 text-gray-900">{formData.mobileNumber}</p>
-                                                </div>
-                                            )}
-                                            {/* Branch - Show from datetime step onwards */}
-                                            {(step === 'datetime' || step === 'confirm') && formData.selectedBranch && (
-                                                <div className="pb-3 border-b border-gray-100">
-                                                    <p className="text-12 text-gray-600 mb-1">Branch</p>
-                                                    <p className="text-14 text-gray-900">
-                                                        {branches.find(b => b.id === formData.selectedBranch)?.name}
+                                    <h3 className="text-18 font-semibold text-gray-900 mb-4">Booking Summary</h3>
+
+                                    {/* Services Section */}
+                                    <div className="mb-4">
+                                        <p className="text-14 font-medium text-gray-700 mb-3">Services</p>
+                                        <div className="space-y-2">
+                                            <div className="flex items-start justify-between">
+                                                <div className="flex-1">
+                                                    <p className="text-14 text-gray-900 mb-1">
+                                                        {service.title}
                                                     </p>
+                                                    <div className="flex items-center gap-1.5 text-12 text-gray-600">
+                                                        <Clock className="w-3.5 h-3.5" />
+                                                        <span>{serviceDuration} min</span>
+                                                    </div>
                                                 </div>
-                                            )}
-                                            {/* Staff - Show from datetime step onwards */}
-                                            {(step === 'datetime' || step === 'confirm') && formData.selectedStaff && (
-                                                <div className="pb-3 border-b border-gray-100">
-                                                    <p className="text-12 text-gray-600 mb-1">Staff Member</p>
-                                                    <p className="text-14 text-gray-900">
-                                                        {staff.find(s => s.id === formData.selectedStaff)?.name}
-                                                    </p>
+                                                <div className="text-14 font-semibold text-gray-900 ml-4">
+                                                    {service.price.currency.toUpperCase()} {subtotal.toLocaleString()}
                                                 </div>
-                                            )}
-                                            {/* Package - Show from datetime step onwards */}
-                                            {(step === 'datetime' || step === 'confirm') && formData.selectedPackage && (
-                                                <div className="pb-3 border-b border-gray-100">
-                                                    <p className="text-12 text-gray-600 mb-1">Package</p>
-                                                    <p className="text-14 text-gray-900">
-                                                        {packages.find(p => p.id === formData.selectedPackage)?.title}
-                                                    </p>
-                                                </div>
-                                            )}
-                                            {/* Date & Time - Show on confirm step */}
-                                            {step === 'confirm' && formData.selectedTime && (
-                                                <div>
-                                                    <p className="text-12 text-gray-600 mb-1">Date & Time</p>
-                                                    <p className="text-14 text-gray-900">
-                                                        {new Date(formData.selectedTime.split('T')[0]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                                    </p>
-                                                    <p className="text-14 text-gray-600">
-                                                        {formData.selectedTime.split('T')[1]}
-                                                    </p>
-                                                </div>
-                                            )}
+                                            </div>
                                         </div>
                                     </div>
-                                )}
 
-                                {/* Price Breakdown */}
-                                <div className="bg-white rounded-xl p-6 border border-gray-200">
-                                    <p className="text-14 font-medium text-gray-700 mb-3">Price Summary</p>
-                                    <div className="space-y-3">
+                                    {/* Selected Details - Show when staff, branch, package, or time slot is selected */}
+                                    {(formData.selectedBranch || formData.selectedStaff || formData.selectedPackage || formData.selectedTime || selectedSlotId) && (
+                                        <div className="mb-4 pt-4 border-t border-gray-200">
+                                            <p className="text-14 font-medium text-gray-700 mb-3">Booking Details</p>
+                                            <div className="space-y-2">
+                                                {/* Branch */}
+                                                {formData.selectedBranch && (
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-12 text-gray-600">Branch</span>
+                                                        <span className="text-12 text-gray-900 font-medium">
+                                                            {branches.find(b => b.id === formData.selectedBranch)?.name || 'N/A'}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {/* Staff */}
+                                                {formData.selectedStaff && (
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-12 text-gray-600">Staff</span>
+                                                        <span className="text-12 text-gray-900 font-medium">
+                                                            {staff.find(s => s.id === formData.selectedStaff)?.name || 'N/A'}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {/* Package */}
+                                                {formData.selectedPackage && (
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-12 text-gray-600">Package</span>
+                                                        <span className="text-12 text-gray-900 font-medium">
+                                                            {packages.find(p => p.id === formData.selectedPackage)?.title || 'N/A'}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {/* Date & Time */}
+                                                {(formData.selectedTime || selectedSlotId) && (() => {
+                                                    const selectedSlot = selectedSlotId ? timeSlots.find(slot => slot.id === selectedSlotId) : null
+                                                    const slotDate = selectedSlot ? new Date(selectedSlot.start) : (formData.selectedDate ? new Date(formData.selectedDate) : null)
+                                                    const slotTime = selectedSlot ? formatTime(new Date(selectedSlot.start)) : formData.selectedTime
+                                                    const formattedDate = slotDate ? formatDate(slotDate) : formData.selectedDate
+
+                                                    return (
+                                                        <div className="flex justify-between items-center">
+                                                            <span className="text-12 text-gray-600">Date & Time</span>
+                                                            <div className="text-right">
+                                                                {formattedDate && (
+                                                                    <span className="text-12 text-gray-900 font-medium block">{formattedDate}</span>
+                                                                )}
+                                                                {slotTime && (
+                                                                    <span className="text-12 text-gray-600">{slotTime}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })()}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Summary Totals */}
+                                    <div className="pt-4 border-t border-gray-200 space-y-3">
                                         <div className="flex justify-between items-center">
-                                            <span className="text-14 text-gray-600">Subtotal</span>
+                                            <span className="text-14 text-gray-600">Duration</span>
                                             <span className="text-14 font-semibold text-gray-900">
-                                                {subtotal.toLocaleString()}{' '}
-                                                {service.price.currency.toUpperCase()}
+                                                {serviceDuration} min
                                             </span>
                                         </div>
                                         <div className="flex justify-between items-center">
-                                            <span className="text-14 text-gray-600">Taxes & Fees</span>
-                                            <span className="text-14 font-semibold text-gray-900">
-                                                {taxes.toLocaleString()}{' '}
-                                                {service.price.currency.toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-14 text-gray-600">Delivery Fee</span>
-                                            <span className="text-14 font-semibold text-gray-900">
-                                                {deliveryFee.toLocaleString()}{' '}
-                                                {service.price.currency.toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <div className="pt-3 border-t border-gray-200 flex justify-between items-center">
-                                            <span className="text-14 font-medium text-gray-900">
-                                                Total
-                                            </span>
-                                            <span className="text-18 font-semibold text-brand-600">
-                                                {total.toLocaleString()}{' '}
-                                                {service.price.currency.toUpperCase()}
+                                            <span className="text-14 font-medium text-gray-900">Total</span>
+                                            <span className="text-18 font-semibold text-red-600">
+                                                {service.price.currency.toUpperCase()} {total.toLocaleString()}
                                             </span>
                                         </div>
                                     </div>

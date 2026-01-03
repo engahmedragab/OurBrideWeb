@@ -13,6 +13,7 @@ import type { CommunityTab } from './CommunitySidebar'
 import type { SuggestedUserResponse } from '@/types/responses/community/suggested-user-response'
 import type { SuggestedProviderResponse } from '@/types/responses/community/suggested-provider-response'
 import type { ArticleResponse } from '@/types/responses/community'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 import type { TagResponse } from '@/types/responses/community'
 import type { ReelResponse } from '@/types/responses/community'
 import { formatDate, getUserDisplayName, getUserAvatar } from './utils'
@@ -126,8 +127,8 @@ export const CommunityRightSidebar = ({
               <h4 className="text-16 font-normal text-gray-900 truncate">
                 {currentUser.name}
               </h4>
-              <p className="text-12 text-gray-500 truncate" title={currentUser.email}>
-                {currentUser.email}
+              <p className="text-12 text-gray-500 truncate">
+                OurBride
               </p>
             </div>
           </div>
@@ -140,14 +141,26 @@ export const CommunityRightSidebar = ({
           {/* Reel Details Card */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden">
-                <Image
-                  src={getUserAvatar(selectedReel.user)}
-                  alt={getUserDisplayName(selectedReel.user)}
-                  fill
-                  sizes="40px"
-                  className="object-cover"
-                />
+              <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200">
+                {getUserAvatar(selectedReel.user) ? (
+                  <Image
+                    src={getUserAvatar(selectedReel.user)!}
+                    alt={getUserDisplayName(selectedReel.user)}
+                    fill
+                    sizes="40px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-white">
+                    <Image
+                      src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                      alt="OurBride"
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
+                  </div>
+                )}
               </div>
               <div>
                 <h4 className="text-16 font-normal text-gray-900">
@@ -302,7 +315,7 @@ export const CommunityRightSidebar = ({
                           {suggestion.displayName || suggestion.userName || 'User'}
                         </h4>
                         <p className="text-12 text-gray-500 truncate">
-                          {suggestion.email || ''}
+                          OurBride
                         </p>
                       </div>
                     </div>

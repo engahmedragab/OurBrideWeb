@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { ArticlePreview } from './ArticlePreview'
 import { CommunityPostsList } from './CommunityPostsList'
+import { CommunityEmptyState } from './CommunityEmptyState'
 import { useArticles } from '@/hooks/community/useCommunityContent'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export type CommunityTab = 'community' | 'posts' | 'blogs' | 'articles' | 'reels' | 'decision-groups' | 'contests' | 'profile'
 
@@ -61,7 +63,7 @@ export const CommunitySidebar = ({
       router.push('/profile/edit')
       return
     }
-    
+
     if (onTabChange) {
       onTabChange(tab)
       router.push(`/community?tab=${tab}`)
@@ -319,13 +321,17 @@ export const CommunitySidebar = ({
                     id={String(article.id)}
                     title={article.title}
                     description={article.summary || article.excerpt || article.content?.substring(0, 100) || ''}
-                    thumbnail={`https://via.placeholder.com/200?text=${encodeURIComponent(article.title?.charAt(0)?.toUpperCase() || 'A')}`}
+                    thumbnail={COMMUNITY_IMAGES.DEFAULT_ARTICLE_IMAGE}
                   />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8">
-                <p className="text-14 text-gray-500">No articles available</p>
+              <div className="py-4">
+                <CommunityEmptyState
+                  title="No Articles Available"
+                  message="There are no articles to display at the moment."
+                  compact
+                />
               </div>
             )}
           </div>

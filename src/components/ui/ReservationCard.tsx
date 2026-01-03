@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDown, ChevronUp, Star, MapPin, Calendar, Clock, User, X } from 'lucide-react'
+import { ChevronDown, ChevronUp, MapPin, Calendar, Clock, User, X } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
 import { Button } from './Button'
 import { StatusBadge } from './StatusBadge'
 import { cn } from '@/lib/utils'
@@ -142,25 +143,29 @@ export const ReservationCard = ({
                   {serviceName}
                 </Link>
                 {serviceRating > 0 && (
-                  <div className="flex items-center gap-1 mb-1">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <Star
-                        key={star}
-                        className={cn(
-                          'h-3 w-3',
-                          star <= Math.floor(serviceRating)
-                            ? 'fill-brand-500 text-brand-500'
-                            : 'fill-gray-200 text-gray-200'
-                        )}
-                      />
-                    ))}
-                    <span className="text-12 text-gray-600 ml-1">
-                      {serviceRating.toFixed(1)}
-                    </span>
+                  <div className="mb-1">
+                    <RatingDisplay
+                      rating={serviceRating}
+                      size="xs"
+                      format="value-only"
+                      variant="compact"
+                      showValue={true}
+                    />
                   </div>
                 )}
                 <p className="text-14 text-gray-600">
-                  Provider: {providerName}
+                  Provider:{' '}
+                  {reservation.providerId ? (
+                    <Link 
+                      href={`/provider/${reservation.providerId}`}
+                      className="hover:text-brand-500 transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {providerName}
+                    </Link>
+                  ) : (
+                    providerName
+                  )}
                 </p>
               </div>
             </div>

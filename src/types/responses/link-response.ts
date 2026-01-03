@@ -22,7 +22,7 @@ export interface LinkResponse extends BaseLookupResponse {
   isInherited: boolean
   parentId: number | null
   alt: string | null
-  url: string
+  url: string | null
   urlSubnailEn: string | null
   urlSubnailAr: string | null
   type: LinkType

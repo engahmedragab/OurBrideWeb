@@ -7,7 +7,9 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
-import { CheckCircle2, Star, X } from 'lucide-react'
+import { CheckCircle2, X } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
+import { PriceDisplay } from './PriceDisplay'
 import type { Product } from '@/types/product'
 
 export interface WishlistProductCardProps {
@@ -25,8 +27,6 @@ export const WishlistProductCard = React.memo(({
 }: WishlistProductCardProps) => {
   const router = useRouter()
   const rating = product.rating.value || 0
-  const fullStars = Math.floor(rating)
-  const hasHalfStar = rating % 1 >= 0.5
   const hasDiscount = product.price.discounted < product.price.original
 
   const handleBuyNow = () => {
@@ -81,42 +81,28 @@ export const WishlistProductCard = React.memo(({
 
             {/* Provider Name with Verified Badge */}
             <div className="flex items-center gap-1.5">
-              <span className="text-sm text-gray-600">{product.provider.name}</span>
+              <Link 
+                href={`/provider/${product.provider.id}`}
+                className="text-sm text-gray-600 hover:text-brand-500 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {product.provider.name}
+              </Link>
               {product.provider.verified && (
                 <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
               )}
             </div>
 
             {/* Rating */}
-            <div className="flex items-center gap-0.5">
-              {[...Array(5)].map((_, index) => {
-                if (index < fullStars) {
-                  return (
-                    <Star
-                      key={index}
-                      className="h-4 w-4 fill-red-500 text-red-500"
-                    />
-                  )
-                } else if (index === fullStars && hasHalfStar) {
-                  return (
-                    <div key={index} className="relative h-4 w-4">
-                      <Star className="h-4 w-4 fill-gray-300 text-gray-300 absolute" />
-                      <div className="absolute overflow-hidden w-1/2 h-full">
-                        <Star className="h-4 w-4 fill-red-500 text-red-500" />
-                      </div>
-                    </div>
-                  )
-                } else {
-                  return (
-                    <Star
-                      key={index}
-                      className="h-4 w-4 fill-gray-300 text-gray-300"
-                    />
-                  )
-                }
-              })}
-              <span className="text-sm text-gray-600 ml-1">{rating.toFixed(1)}</span>
-            </div>
+            <RatingDisplay
+              rating={rating}
+              size="sm"
+              format="value-only"
+              variant="compact"
+              showHalfStars={true}
+              starColor="red"
+              showValue={true}
+            />
 
             {/* Tags */}
             {product.tags && product.tags.length > 0 && (
@@ -136,14 +122,15 @@ export const WishlistProductCard = React.memo(({
             {/* Price */}
             <div className="flex items-baseline gap-2">
               <span className="text-sm text-gray-500">Price</span>
-              {hasDiscount && (
-                <span className="text-sm text-gray-400 line-through">
-                  {product.price.original.toLocaleString()} {product.price.currency.toUpperCase()}
-                </span>
-              )}
-              <span className="text-lg font-bold text-gray-900">
-                {product.price.discounted.toLocaleString()} {product.price.currency.toUpperCase()}
-              </span>
+              <PriceDisplay
+                original={product.price.original}
+                discounted={product.price.discounted}
+                currency={product.price.currency}
+                size="lg"
+                variant="compact"
+                showOriginal={hasDiscount}
+                discountedClassName="text-lg font-bold text-gray-900"
+              />
             </div>
           </div>
 

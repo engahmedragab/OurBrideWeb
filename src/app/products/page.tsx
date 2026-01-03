@@ -20,6 +20,7 @@ import { useStoreHome } from '@/hooks/home'
 import { useProductsHome } from '@/hooks/products'
 import { extractStoreHomeData } from '@/utils/home-data.utils'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import type { Product } from '@/types/product'
 import flowersImage from '@/assets/images/flowers.png'
 import whyBridesChooseProductsImage from '@/assets/images/bridProductSection.png'
 import { ProductPageLayout } from './components/ProductPageLayout'
@@ -63,7 +64,7 @@ export default function ProductIntroPage() {
   const mappedCategories: CategoryType[] = useMemo(() => {
     return categories.map(category => ({
       id: String(category.id),
-      title: category.name,
+      title: category.nameEn || category.nameAr || '',
       description: 'Exclusive coupons and discounts designed for your budget.',
       href: `/products/category/${category.slug || category.id}`,
       icon: categoryIconMap[category.slug || ''] || categoryIconMap.default,
@@ -90,10 +91,42 @@ export default function ProductIntroPage() {
     return DEFAULT_HERO_SLIDES
   }, [apiBanners])
 
-  // Use products from products home endpoint
+  // Use products from products home endpoint (headers contains ProductHeaderResponse[])
+  // Map ProductHeaderResponse to Product type
   const displayProducts = useMemo(() => {
-    return productsHomeData?.products?.slice(0, DEFAULT_HOME_PRODUCTS_COUNT) || []
-  }, [productsHomeData?.products])
+    if (!productsHomeData?.headers) return []
+    
+    return productsHomeData.headers.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map((header): Product => ({
+      id: String(header.id),
+      title: header.name || header.nameEn || header.nameAr || '',
+      description: header.shortDescription || header.bio || '',
+      images: header.image ? [header.image] : [],
+      provider: {
+        id: header.providerId ? String(header.providerId) : '',
+        name: header.provider?.nameEn || header.provider?.nameAr || '',
+        verified: false,
+        image: header.provider?.profileURL || undefined,
+      },
+      price: {
+        original: header.regularPrice || header.price || 0,
+        discounted: header.salePrice || header.price || 0,
+        currency: 'USD', // Default currency, adjust if available in response
+      },
+      rating: {
+        value: parseFloat(header.rate) || 0,
+        count: header.ratingCount || 0,
+      },
+      category: {
+        id: String(header.categoryId),
+        name: '',
+        slug: '',
+      },
+      tags: [],
+      inStock: header.inStock,
+      stockQuantity: header.stockQuantity || undefined,
+      sku: header.sku,
+    }))
+  }, [productsHomeData?.headers])
 
   // Map providers to BestProvidersSection format
   const mappedProviders: BestProviderType[] = useMemo(() => {

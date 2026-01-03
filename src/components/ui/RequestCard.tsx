@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { ChevronDown, ChevronUp, ChevronRight, Star } from 'lucide-react'
+import Link from 'next/link'
+import { ChevronDown, ChevronUp, ChevronRight } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
 import { Button } from './Button'
 import { StatusBadge } from './StatusBadge'
 import {
@@ -20,6 +22,7 @@ export interface ServiceRequest {
     count: number
   }
   provider: {
+    id?: string
     name: string
   }
 }
@@ -203,25 +206,26 @@ export const RequestCard = ({
                     <p className="text-14 font-semibold text-gray-900 mb-1">
                       {service.title}
                     </p>
-                    <div className="flex items-center gap-1 mb-1">
-                      {[1, 2, 3, 4, 5].map(star => (
-                        <Star
-                          key={star}
-                          className={cn(
-                            'h-3 w-3',
-                            star <= Math.floor(service.rating.value)
-                              ? 'fill-brand-500 text-brand-500'
-                              : 'fill-gray-200 text-gray-200'
-                          )}
-                        />
-                      ))}
-                      <span className="text-12 text-gray-600 ml-1">
-                        {service.rating.value} Rated By ({service.rating.count})
-                        Users
-                      </span>
-                    </div>
+                    <RatingDisplay
+                      rating={service.rating.value}
+                      count={service.rating.count}
+                      size="xs"
+                      format="rated-by"
+                      variant="compact"
+                    />
                     <p className="text-12 text-gray-600">
-                      Provider: {service.provider.name}
+                      Provider:{' '}
+                      {service.provider.id ? (
+                        <Link 
+                          href={`/provider/${service.provider.id}`}
+                          className="hover:text-brand-500 transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {service.provider.name}
+                        </Link>
+                      ) : (
+                        service.provider.name
+                      )}
                     </p>
                   </div>
                 </div>

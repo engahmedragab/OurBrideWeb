@@ -46,7 +46,11 @@ export const UserSidebar = ({
   const { data: mineInfo } = useMineInfo()
 
   // Extract user data from mineInfo (fallback to authUser)
-  const userData = mineInfo?.data?.userProfile?.user || authUser
+  // Handle different response structures: mineInfo.data.userProfile.user or mineInfo.userProfile.user
+  const mineInfoAny = mineInfo as any
+  const data: any = mineInfoAny?.data || mineInfoAny || {}
+  const userProfile: any = data?.userProfile || {}
+  const userData = userProfile?.user || authUser
 
   // Get user name - prioritize prop, then API data, then fallback
   const userName = useMemo(() => {

@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Image, Video, List } from 'lucide-react'
 import { PostCard } from './PostCard'
 import { CreatePostModal } from './CreatePostModal'
+import { CommunityEmptyState } from './CommunityEmptyState'
 import type { PostResponse } from '@/types/responses/community'
 
 export interface CommunityFeedProps {
@@ -113,9 +114,11 @@ export const CommunityFeed = ({
             <PostCard key={post.id} post={post} />
           ))
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-            <p className="text-gray-500">No posts available yet</p>
-          </div>
+          <CommunityEmptyState
+            title="No Posts Available"
+            message="There are no posts to display at the moment. Be the first to share something!"
+            compact
+          />
         )}
       </div>
     </div>

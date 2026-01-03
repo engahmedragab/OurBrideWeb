@@ -2,12 +2,13 @@
 
 import { useState, useMemo, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Search, MapPin, Calendar, Map, List, X, Navigation } from 'lucide-react'
+import { Search, MapPin, Calendar, Map, List, X, Navigation, Filter } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
 import { DatePicker } from '@/components/ui/DatePicker'
 import { Input } from '@/components/ui/Input'
-import { WishlistProviderCard, EmptyState, LoadingSpinner } from '@/components/ui'
+import { EmptyState, LoadingSpinner, ProviderSearchCard, ProviderMap } from '@/components/ui'
+import { ProviderFiltersModal, type ProviderFilters, type SortOption } from '@/components/ui/ProviderFiltersModal'
 import type { FeaturedProviderResponse } from '@/types/responses'
 import { cn } from '@/lib/utils'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
@@ -15,30 +16,9 @@ import { useProvidersFilter } from '@/hooks/providers/useProvidersFilter'
 import { useProvidersMap } from '@/hooks/providers/useProvidersMap'
 
 // Google Maps API Key from environment variables
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyDAwJZexZRlbt9nAwu2Kr8wWaJnMdtblfE'
 
-// Extend Window interface for Google Maps
-declare global {
-  interface Window {
-    google?: {
-      maps: {
-        Map: new (element: HTMLElement, options?: unknown) => unknown
-        Marker: new (options?: unknown) => unknown
-        LatLng: new (lat: number, lng: number) => unknown
-        OverlayView: new () => unknown
-        InfoWindow: new (options?: unknown) => unknown
-        Animation: {
-          DROP: unknown
-        }
-        SymbolPath: {
-          CIRCLE: unknown
-        }
-      }
-    }
-  }
-}
-
-// Add custom marker styles
+// Add custom marker styles for black teardrop markers
 if (typeof document !== 'undefined') {
   const style = document.createElement('style')
   style.textContent = `
@@ -47,11 +27,11 @@ if (typeof document !== 'undefined') {
       cursor: pointer;
     }
     .custom-map-marker:hover {
-      transform: scale(1.1);
+      transform: translate(-50%, -100%) scale(1.15);
       z-index: 1000 !important;
     }
-    .custom-map-marker:hover .marker-badge {
-      box-shadow: 0 4px 12px rgba(241, 72, 54, 0.5);
+    .custom-map-marker:hover .marker-teardrop {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
   `
   if (!document.head.querySelector('style[data-marker-styles]')) {
@@ -65,7 +45,7 @@ if (typeof document !== 'undefined') {
 function ProvidersSearchContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
+
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
   const [location, setLocation] = useState(searchParams.get('location') || '')
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
@@ -77,6 +57,14 @@ function ProvidersSearchContent() {
   const [isGettingLocation, setIsGettingLocation] = useState(false)
   const [userCoordinates, setUserCoordinates] = useState<{ lat: number; lng: number } | null>(null)
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery)
+  const [showFilters, setShowFilters] = useState(false)
+  const [filters, setFilters] = useState<ProviderFilters>({
+    sortBy: 'best-match',
+    maxPrice: 2000,
+    venueType: 'everyone',
+    offersDeals: false,
+    acceptsGroups: false,
+  })
 
   // Debounce search query
   useEffect(() => {
@@ -87,11 +75,29 @@ function ProvidersSearchContent() {
   }, [searchQuery])
 
   // Fetch providers from API - use different endpoints based on view mode
+  // Map sort option to API sortBy parameter
+  const getSortByParam = (sortOption: SortOption): string | undefined => {
+    switch (sortOption) {
+      case 'best-match':
+        return undefined // Default
+      case 'nearest':
+        return 'distance'
+      case 'top-rated':
+        return 'rating'
+      default:
+        return undefined
+    }
+  }
+
   // For map view, use the map-specific endpoint with location data
   const { data: mapProviders, isLoading: isLoadingMapProviders } = useProvidersMap({
     latitude: userCoordinates?.lat,
     longitude: userCoordinates?.lng,
     radius: userCoordinates ? 50 : undefined, // 50km radius when location is available
+    sortBy: getSortByParam(filters.sortBy),
+    venueType: filters.venueType !== 'everyone' ? filters.venueType : undefined,
+    offersDeals: filters.offersDeals || undefined,
+    acceptsGroups: filters.acceptsGroups || undefined,
     enabled: viewMode === 'map', // Always enabled in map view, even without user coordinates
   })
 
@@ -101,6 +107,10 @@ function ProvidersSearchContent() {
     latitude: userCoordinates?.lat,
     longitude: userCoordinates?.lng,
     radius: userCoordinates ? 50 : undefined,
+    sortBy: getSortByParam(filters.sortBy),
+    venueType: filters.venueType !== 'everyone' ? filters.venueType : undefined,
+    offersDeals: filters.offersDeals || undefined,
+    acceptsGroups: filters.acceptsGroups || undefined,
     pageSize: 100,
   }, {
     enabled: viewMode === 'list', // Only enabled in list view
@@ -115,7 +125,7 @@ function ProvidersSearchContent() {
   // Load Google Maps script
   useEffect(() => {
     if (typeof window === 'undefined') return
-    
+
     console.log('Checking Google Maps...', {
       hasGoogle: !!window.google,
       hasApiKey: !!GOOGLE_MAPS_API_KEY,
@@ -134,7 +144,8 @@ function ProvidersSearchContent() {
     }
 
     if (!GOOGLE_MAPS_API_KEY) {
-      console.error('Google Maps API key is missing')
+      // Silently skip loading Google Maps if API key is not configured
+      // This is expected in development environments without a key
       return
     }
 
@@ -154,6 +165,17 @@ function ProvidersSearchContent() {
 
   // Use API providers - no fallback needed
   const providers = useMemo(() => {
+    console.log('[ProvidersSearchContent] apiProviders:', apiProviders)
+    console.log('[ProvidersSearchContent] apiProviders length:', apiProviders?.length || 0)
+    if (apiProviders && apiProviders.length > 0) {
+      console.log('[ProvidersSearchContent] Sample provider:', apiProviders[0])
+      console.log('[ProvidersSearchContent] Provider with coords:', {
+        id: apiProviders[0].id,
+        name: apiProviders[0].nameEn,
+        latitude: (apiProviders[0] as any).latitude,
+        longitude: (apiProviders[0] as any).longitude,
+      })
+    }
     return apiProviders || []
   }, [apiProviders])
 
@@ -178,12 +200,12 @@ function ProvidersSearchContent() {
     if (searchQuery) params.append('q', searchQuery)
     if (location) params.append('location', location)
     if (selectedDate) {
-      const dateStr = selectedDate instanceof Date 
+      const dateStr = selectedDate instanceof Date
         ? selectedDate.toISOString().split('T')[0]
         : selectedDate
       params.append('date', dateStr)
     }
-    
+
     router.push(`/providers/search?${params.toString()}`)
   }
 
@@ -204,19 +226,19 @@ function ProvidersSearchContent() {
     }
 
     setIsGettingLocation(true)
-    
+
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords
-        
+
         setUserCoordinates({ lat: latitude, lng: longitude })
-        
+
         try {
           const response = await fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`
           )
           const data = await response.json()
-          
+
           if (data.results && data.results.length > 0) {
             const address = data.results[0].formatted_address
             setLocation(address)
@@ -227,7 +249,7 @@ function ProvidersSearchContent() {
           console.error('Error getting address:', error)
           setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
         }
-        
+
         setIsGettingLocation(false)
         setIsLocationPopoverOpen(false)
       },
@@ -239,258 +261,33 @@ function ProvidersSearchContent() {
     )
   }
 
-  // Initialize Google Map when in map view
-  useEffect(() => {
-    console.log('Map initialization check:', {
-      viewMode,
-      hasGoogle: !!window.google,
-      hasMaps: !!window.google?.maps,
-      hasMap: !!window.google?.maps?.Map,
-      providersCount: filteredProviders.length
-    })
-
-    if (viewMode !== 'map') {
-      console.log('Not in map view, skipping initialization')
-      return
+  // Calculate map center based on user coordinates or providers
+  const mapCenter = useMemo(() => {
+    if (userCoordinates) {
+      return { lat: userCoordinates.lat, lng: userCoordinates.lng }
     }
+    // If we have providers, calculate center from their coordinates
+    if (filteredProviders.length > 0) {
+      const providersWithCoords = filteredProviders.filter(
+        p => (p as any).latitude && (p as any).longitude
+      ) as Array<typeof filteredProviders[0] & { latitude: number; longitude: number }>
 
-    if (!window.google?.maps?.Map) {
-      console.log('Google Maps not ready yet, waiting...')
-      // Retry after a short delay
-      const timer = setTimeout(() => {
-        if (window.google?.maps?.Map) {
-          console.log('Google Maps now ready, initializing...')
-          initializeMap()
-        }
-      }, 500)
-      return () => clearTimeout(timer)
-    }
-
-    if (!filteredProviders.length) {
-      console.log('No providers to display')
-      return
-    }
-
-    initializeMap()
-
-    function initializeMap() {
-      const mapElement = document.getElementById('google-map')
-      if (!mapElement) {
-        console.error('Map element not found')
-        return
-      }
-
-      console.log('Map element found, creating map...')
-
-      const defaultCenter = userCoordinates 
-        ? { lat: userCoordinates.lat, lng: userCoordinates.lng }
-        : { lat: 30.0444, lng: 31.2357 } // Cairo, Egypt as default (from API data)
-
-      try {
-        if (!window.google?.maps?.Map) return
-        
-        const map = new window.google.maps.Map(mapElement, {
-          center: defaultCenter,
-          zoom: userCoordinates ? 12 : 11,
-          styles: [
-            {
-              featureType: 'poi',
-              elementType: 'labels',
-              stylers: [{ visibility: 'off' }]
-            }
-          ],
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: true,
-        })
-        
-        console.log('Map created successfully, adding markers...')
-
-        // Create info window for marker clicks
-        const infoWindow = new window.google.maps.InfoWindow()
-        
-        // Add markers for each provider
-        filteredProviders.forEach((provider) => {
-          // Get coordinates from provider data (map API includes latitude/longitude)
-          const providerWithCoords = provider as typeof provider & { latitude?: number; longitude?: number }
-          
-          // Skip if no coordinates available
-          if (!providerWithCoords.latitude || !providerWithCoords.longitude) {
-            console.warn(`Provider ${provider.id} has no coordinates, skipping marker`)
-            return
-          }
-          
-          const lat = providerWithCoords.latitude
-          const lng = providerWithCoords.longitude
-          const rating = provider.rate || 0
-          
-          // Create custom marker with rating badge
-          const markerDiv = document.createElement('div')
-          markerDiv.className = 'custom-map-marker'
-          markerDiv.innerHTML = `
-            <div style="
-              position: relative;
-              transform: translate(-50%, -100%);
-            ">
-              <!-- Rating Badge -->
-              <div class="marker-badge" style="
-                background: #F14836;
-                color: white;
-                padding: 6px 14px;
-                border-radius: 20px;
-                font-weight: 600;
-                font-size: 14px;
-                box-shadow: 0 2px 8px rgba(241, 72, 54, 0.4);
-                white-space: nowrap;
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                border: 2px solid white;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              ">
-                ${rating > 0 ? rating.toFixed(1) : 'New'}
-              </div>
-              <!-- Pointer Triangle -->
-              <div style="
-                width: 0;
-                height: 0;
-                border-left: 8px solid transparent;
-                border-right: 8px solid transparent;
-                border-top: 10px solid #F14836;
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-                bottom: -8px;
-                filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-              "></div>
-            </div>
-          `
-          
-          // Use OverlayView for custom HTML marker
-          class CustomMarker extends window.google.maps.OverlayView {
-            position: typeof window.google.maps.LatLng.prototype
-            div?: HTMLElement
-            map: typeof window.google.maps.Map.prototype
-            
-            constructor(position: typeof window.google.maps.LatLng.prototype, map: typeof window.google.maps.Map.prototype) {
-              super()
-              this.position = position
-              this.map = map
-            }
-            
-            onAdd() {
-              this.div = markerDiv
-              const panes = this.getPanes()
-              if (panes) {
-                panes.overlayMouseTarget.appendChild(this.div)
-              }
-              
-              // Add click listener
-              if (this.div) {
-                this.div.addEventListener('click', () => {
-                  setSelectedProvider(provider)
-                  
-                  // Create info window content
-                  const content = `
-                    <div style="padding: 12px; max-width: 250px;">
-                      <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: #111;">
-                        ${provider.nameEn || provider.nameAr}
-                      </h3>
-                      <p style="margin: 0 0 8px 0; font-size: 14px; color: #666;">
-                        ${provider.shortAddress || 'No address available'}
-                      </p>
-                      ${provider.rate ? `
-                        <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
-                          <span style="color: #f59e0b; font-size: 14px;">★</span>
-                          <span style="font-size: 14px; font-weight: 600;">${provider.rate.toFixed(1)}</span>
-                          ${provider.totalReviews ? `<span style="font-size: 12px; color: #666;">(${provider.totalReviews})</span>` : ''}
-                        </div>
-                      ` : ''}
-                      <button 
-                        onclick="window.location.href='/provider/${provider.id}'"
-                        style="
-                          background: #F14836; 
-                          color: white; 
-                          border: none; 
-                          padding: 8px 16px; 
-                          border-radius: 8px; 
-                          font-size: 14px; 
-                          font-weight: 500;
-                          cursor: pointer;
-                          width: 100%;
-                        "
-                      >
-                        View Profile
-                      </button>
-                    </div>
-                  `
-                  
-                  infoWindow.setContent(content)
-                  infoWindow.setPosition(this.position)
-                  infoWindow.open(this.map)
-                  
-                  // Center map on marker
-                  this.map.panTo(this.position)
-                })
-              }
-              
-              // Listen to map events to redraw marker position
-              const listener = this.map.addListener('bounds_changed', () => {
-                this.draw()
-              })
-              
-              // Store listener for cleanup
-              if (this.div) {
-                (this.div as any).__listener = listener
-              }
-            }
-            
-            draw() {
-              if (this.div) {
-                const projection = this.getProjection()
-                if (!projection) return
-                
-                const point = projection.fromLatLngToDivPixel(this.position)
-                if (point) {
-                  this.div.style.position = 'absolute'
-                  this.div.style.left = point.x + 'px'
-                  this.div.style.top = point.y + 'px'
-                }
-              }
-            }
-            
-            onRemove() {
-              if (this.div) {
-                // Remove event listener
-                const listener = (this.div as any).__listener
-                if (listener) {
-                  window.google?.maps?.event?.removeListener(listener)
-                }
-                
-                // Remove from DOM
-                if (this.div.parentNode) {
-                  this.div.parentNode.removeChild(this.div)
-                }
-                this.div = undefined
-              }
-            }
-          }
-          
-          const customMarker = new CustomMarker(new window.google.maps.LatLng(lat, lng), map)
-          customMarker.setMap(map)
-        })
-        
-        console.log(`Added ${filteredProviders.length} markers to map`)
-      } catch (error) {
-        console.error('Error creating map:', error)
+      if (providersWithCoords.length > 0) {
+        const avgLat = providersWithCoords.reduce((sum, p) => sum + p.latitude, 0) / providersWithCoords.length
+        const avgLng = providersWithCoords.reduce((sum, p) => sum + p.longitude, 0) / providersWithCoords.length
+        return { lat: avgLat, lng: avgLng }
       }
     }
-  }, [viewMode, filteredProviders, userCoordinates, apiProviders])
+    // Default to Cairo, Egypt
+    return { lat: 30.0444, lng: 31.2357 }
+  }, [userCoordinates, filteredProviders])
+
+  const mapZoom = userCoordinates ? 12 : 11
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
-      
+
       <main className="flex-1">
         {/* Search Bar Section */}
         <div className="sticky top-16 z-40 bg-white border-b border-gray-200 shadow-sm">
@@ -527,15 +324,15 @@ function ProvidersSearchContent() {
                 />
                 {isLocationPopoverOpen && (
                   <>
-                    <div 
-                      className="fixed inset-0 z-40" 
+                    <div
+                      className="fixed inset-0 z-40"
                       onClick={() => setIsLocationPopoverOpen(false)}
                     />
                     <div className="absolute top-full left-0 right-0 mt-2 p-0 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
                       <button
                         onClick={handleGetCurrentLocation}
                         disabled={isGettingLocation}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed rounded-xl !text-white"
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
                       >
                         <Navigation className={cn(
                           "h-5 w-5 text-brand-600 flex-shrink-0",
@@ -580,41 +377,60 @@ function ProvidersSearchContent() {
           </div>
         </div>
 
-        {/* View Toggle and Results */}
-        <div className="container-custom py-6">
-          {/* View Mode Toggle and Results Count */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="text-16 text-gray-700">
-              <span className="font-semibold">{filteredProviders.length}</span> providers found
-            </div>
-            
-            <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setViewMode('list')}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-md text-14 font-medium transition-colors",
-                  viewMode === 'list'
-                    ? 'bg-white text-brand-600 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                )}
-              >
-                <List className="h-4 w-4" />
-                List
-              </button>
-              <button
-                onClick={() => setViewMode('map')}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-md text-14 font-medium transition-colors",
-                  viewMode === 'map'
-                    ? 'bg-white text-brand-600 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
-                )}
-              >
-                <Map className="h-4 w-4" />
-                Map
-              </button>
+        {/* Header with Count and Action Buttons */}
+        <div className="sticky top-[calc(4rem+1px)] z-30 bg-white border-b border-gray-200">
+          <div className="container-custom py-4">
+            <div className="flex items-center justify-between">
+              {/* Results Count */}
+              <div className="text-16 text-gray-900">
+                <span className="font-semibold">{filteredProviders.length}</span> providers nearby
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3">
+                {/* Filters Button */}
+                <button
+                  onClick={() => setShowFilters(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full text-14 font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Filter className="h-4 w-4" />
+                  Filters
+                </button>
+
+                {/* View Toggle */}
+                <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-2 rounded-md text-14 font-medium transition-colors",
+                      viewMode === 'list'
+                        ? 'bg-white text-brand-600 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    )}
+                  >
+                    <List className="h-4 w-4" />
+                    List
+                  </button>
+                  <button
+                    onClick={() => setViewMode('map')}
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-2 rounded-md text-14 font-medium transition-colors",
+                      viewMode === 'map'
+                        ? 'bg-white text-brand-600 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                    )}
+                  >
+                    <Map className="h-4 w-4" />
+                    Map
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* View Toggle and Results */}
+        <div className="container-custom py-6">
 
           {/* Content Area */}
           {isLoadingProviders ? (
@@ -626,13 +442,65 @@ function ProvidersSearchContent() {
             // List View
             filteredProviders.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                {filteredProviders.map((provider) => (
-                  <WishlistProviderCard
-                    key={provider.id}
-                    provider={provider}
-                    onViewProfile={() => handleProviderClick(provider.id)}
-                  />
-                ))}
+                {filteredProviders.map((provider) => {
+                  // Use topRatedServices from provider (now part of FeaturedProviderResponse)
+                  const services = provider.topRatedServices || []
+                  const totalServices = provider.totalServices || 0
+
+                  return (
+                    <ProviderSearchCard
+                      key={provider.id}
+                      provider={provider}
+                      services={services.map(svc => {
+                        // Determine price based on priceType (0 = Buy, 1 = Rent, etc.)
+                        // PriceType enum: 0=Fixed, 1=Free, 2=From
+                        // But backend uses: 0=Buy, 1=Rent
+                        const priceTypeNum = typeof svc.priceType === 'number' ? svc.priceType : 0
+                        const price = priceTypeNum === 1 ? (svc.rentPrice ?? 0) : (svc.buyPrice ?? 0)
+                        const salePrice = priceTypeNum === 1 ? (svc.saleRentPrice ?? null) : (svc.saleBuyPrice ?? null)
+                        const finalPrice = salePrice ?? price
+                        const hasDiscount = svc.hasDiscount || (salePrice !== null && salePrice < price)
+
+                        // Parse duration from durationDisplay or duration field
+                        let durationMin: number | undefined
+                        let durationMax: number | undefined
+                        if (svc.durationDisplay) {
+                          // Parse "30 min - 45 min" format
+                          const match = svc.durationDisplay.match(/(\d+)\s*-\s*(\d+)/)
+                          if (match) {
+                            durationMin = parseInt(match[1])
+                            durationMax = parseInt(match[2])
+                          } else {
+                            const singleMatch = svc.durationDisplay.match(/(\d+)/)
+                            if (singleMatch) {
+                              durationMin = parseInt(singleMatch[1])
+                            }
+                          }
+                        } else if (typeof svc.duration === 'number') {
+                          durationMin = svc.duration
+                        } else if (svc.durationMin) {
+                          durationMin = svc.durationMin
+                          durationMax = svc.durationMax
+                        }
+
+                        return {
+                          id: svc.id,
+                          name: svc.name,
+                          nameEn: svc.nameEn || svc.name,
+                          nameAr: svc.nameAr,
+                          duration: durationMin,
+                          durationMin,
+                          durationMax,
+                          price: finalPrice,
+                          salePrice: salePrice ?? undefined,
+                          hasDiscount,
+                        }
+                      })}
+                      totalServices={totalServices}
+                      onClick={() => handleProviderClick(provider.id)}
+                    />
+                  )
+                })}
               </div>
             ) : (
               <EmptyState
@@ -648,38 +516,122 @@ function ProvidersSearchContent() {
             <div className="relative">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-300px)]">
                 {/* Left: Provider List */}
-                <div className="overflow-y-auto space-y-4 pr-2">
+                <div className="overflow-y-auto pr-2">
                   {filteredProviders.length > 0 ? (
-                    filteredProviders.map((provider) => (
-                      <div
-                        key={provider.id}
-                        onClick={() => setSelectedProvider(provider)}
-                        className={`cursor-pointer transition-all duration-200 ${
-                          selectedProvider?.id === provider.id
-                            ? 'ring-2 ring-brand-500 rounded-lg'
-                            : ''
-                        }`}
-                      >
-                        <WishlistProviderCard
-                          provider={provider}
-                          onViewProfile={() => handleProviderClick(provider.id)}
-                        />
-                      </div>
-                    ))
-                  ) : (
-                    <div className="flex items-center justify-center py-16">
-                      <p className="text-gray-500">No providers found</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      {filteredProviders.map((provider) => {
+                        // Use topRatedServices from provider (now part of FeaturedProviderResponse)
+                        const services = provider.topRatedServices || []
+                        const totalServices = provider.totalServices || 0
+
+                        return (
+                          <div
+                            key={provider.id}
+                            onClick={() => setSelectedProvider(provider)}
+                            className={`cursor-pointer transition-all duration-200 ${selectedProvider?.id === provider.id
+                              ? 'ring-2 ring-brand-500 rounded-lg'
+                              : ''
+                              }`}
+                          >
+                            <ProviderSearchCard
+                              provider={provider}
+                              services={services.map(svc => {
+                                // Determine price based on priceType (0 = Buy, 1 = Rent, etc.)
+                                const priceType = svc.priceType ?? 0
+                                const price = priceType === 1 ? (svc.rentPrice ?? 0) : (svc.buyPrice ?? 0)
+                                const salePrice = priceType === 1 ? (svc.saleRentPrice ?? null) : (svc.saleBuyPrice ?? null)
+                                const finalPrice = salePrice ?? price
+                                const hasDiscount = svc.hasDiscount || (salePrice !== null && salePrice < price)
+
+                                // Parse duration from durationDisplay or duration field
+                                let durationMin: number | undefined
+                                let durationMax: number | undefined
+                                if (svc.durationDisplay) {
+                                  // Parse "30 min - 45 min" format
+                                  const match = svc.durationDisplay.match(/(\d+)\s*-\s*(\d+)/)
+                                  if (match) {
+                                    durationMin = parseInt(match[1])
+                                    durationMax = parseInt(match[2])
+                                  } else {
+                                    const singleMatch = svc.durationDisplay.match(/(\d+)/)
+                                    if (singleMatch) {
+                                      durationMin = parseInt(singleMatch[1])
+                                    }
+                                  }
+                                } else if (typeof svc.duration === 'number') {
+                                  durationMin = svc.duration
+                                } else if (svc.durationMin) {
+                                  durationMin = svc.durationMin
+                                  durationMax = svc.durationMax
+                                }
+
+                                return {
+                                  id: svc.id,
+                                  name: svc.name,
+                                  nameEn: svc.nameEn || svc.name,
+                                  nameAr: svc.nameAr,
+                                  duration: durationMin,
+                                  durationMin,
+                                  durationMax,
+                                  price: finalPrice,
+                                  salePrice: salePrice ?? undefined,
+                                  hasDiscount,
+                                }
+                              })}
+                              totalServices={totalServices}
+                            />
+                          </div>
+                        )
+                      })}
                     </div>
+                  ) : (
+                    <EmptyState
+                      illustration={orderEmptySvg}
+                      title="No providers found"
+                      description="Try adjusting your search terms or location"
+                      actionLabel="Clear Filters"
+                      actionHref="/providers"
+                    />
                   )}
                 </div>
 
                 {/* Right: Google Map */}
                 <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-lg">
-                  <div id="google-map" className="w-full h-full min-h-[500px] bg-gray-100"></div>
-                  
+                  {window.google?.maps?.Map ? (
+                    (() => {
+                      console.log('[ProvidersSearchContent] Rendering ProviderMap with:', {
+                        providersCount: filteredProviders.length,
+                        mapCenter,
+                        mapZoom,
+                        selectedProviderId: selectedProvider?.id,
+                        providers: filteredProviders.map(p => ({
+                          id: p.id,
+                          name: p.nameEn || p.nameAr,
+                          latitude: (p as any).latitude,
+                          longitude: (p as any).longitude,
+                          hasCoords: !!(p as any).latitude && (p as any).longitude,
+                        })),
+                      })
+                      return (
+                        <ProviderMap
+                          providers={filteredProviders}
+                          center={mapCenter}
+                          zoom={mapZoom}
+                          onMarkerClick={setSelectedProvider}
+                          selectedProviderId={selectedProvider?.id}
+                          className="rounded-xl"
+                        />
+                      )
+                    })()
+                  ) : (
+                    <div className="w-full h-full min-h-[500px] bg-gray-100 flex items-center justify-center">
+                      <p className="text-gray-500">Loading map...</p>
+                    </div>
+                  )}
+
                   {/* Selected Provider Info Overlay */}
                   {selectedProvider && (
-                    <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-xl p-4">
+                    <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-xl p-4 z-10">
                       <button
                         onClick={() => setSelectedProvider(null)}
                         className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
@@ -717,6 +669,19 @@ function ProvidersSearchContent() {
       </main>
 
       <Footer />
+
+      {/* Filters Modal */}
+      <ProviderFiltersModal
+        isOpen={showFilters}
+        onClose={() => setShowFilters(false)}
+        onApply={(newFilters) => {
+          setFilters(newFilters)
+          setShowFilters(false)
+        }}
+        initialFilters={filters}
+        maxPriceRange={{ min: 0, max: 5000 }}
+        currency="SAR"
+      />
     </div>
   )
 }

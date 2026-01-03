@@ -7,7 +7,9 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
-import { CheckCircle2, Star, X } from 'lucide-react'
+import { CheckCircle2, X } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
+import { PriceDisplay } from './PriceDisplay'
 import type { Service } from '@/types/service'
 
 export interface WishlistServiceCardProps {
@@ -25,8 +27,6 @@ export const WishlistServiceCard = React.memo(({
 }: WishlistServiceCardProps) => {
   const router = useRouter()
   const rating = service.rating.value || 0
-  const fullStars = Math.floor(rating)
-  const hasHalfStar = rating % 1 >= 0.5
 
   const handleBookNow = () => {
     router.push(`/booking/${service.id}`)
@@ -80,41 +80,27 @@ export const WishlistServiceCard = React.memo(({
 
             {/* Provider Name with Verified Badge */}
             <div className="flex items-center gap-1.5">
-              <span className="text-sm text-gray-600">{service.provider.name}</span>
+              <Link 
+                href={`/provider/${service.provider.id}`}
+                className="text-sm text-gray-600 hover:text-brand-500 transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {service.provider.name}
+              </Link>
               {service.provider.verified && (
                 <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
               )}
             </div>
 
             {/* Rating */}
-            <div className="flex items-center gap-0.5">
-              {[...Array(5)].map((_, index) => {
-                if (index < fullStars) {
-                  return (
-                    <Star
-                      key={index}
-                      className="h-4 w-4 fill-red-500 text-red-500"
-                    />
-                  )
-                } else if (index === fullStars && hasHalfStar) {
-                  return (
-                    <div key={index} className="relative h-4 w-4">
-                      <Star className="h-4 w-4 fill-gray-300 text-gray-300 absolute" />
-                      <div className="absolute overflow-hidden w-1/2 h-full">
-                        <Star className="h-4 w-4 fill-red-500 text-red-500" />
-                      </div>
-                    </div>
-                  )
-                } else {
-                  return (
-                    <Star
-                      key={index}
-                      className="h-4 w-4 fill-gray-300 text-gray-300"
-                    />
-                  )
-                }
-              })}
-            </div>
+            <RatingDisplay
+              rating={rating}
+              size="sm"
+              format="stars-only"
+              variant="compact"
+              showHalfStars={true}
+              starColor="red"
+            />
 
             {/* Tags */}
             {service.tags && service.tags.length > 0 && (
@@ -134,9 +120,14 @@ export const WishlistServiceCard = React.memo(({
             {/* Price */}
             <div className="flex items-baseline gap-2">
               <span className="text-sm text-gray-500">Start From</span>
-              <span className="text-lg font-bold text-gray-900">
-                {service.price.discounted.toLocaleString()} {service.price.currency.toUpperCase()}
-              </span>
+              <PriceDisplay
+                discounted={service.price.discounted}
+                currency={service.price.currency}
+                size="lg"
+                variant="inline"
+                showOriginal={false}
+                discountedClassName="text-lg font-bold text-gray-900"
+              />
             </div>
           </div>
 

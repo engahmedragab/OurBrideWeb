@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import {
   X,
   User,
@@ -11,8 +12,8 @@ import {
   Gift,
   ChevronDown,
   Calendar,
-  Star,
 } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
 import { Button } from './Button'
 import { Input } from './Input'
 import { Checkbox } from './Checkbox'
@@ -412,28 +413,24 @@ export const BookingDetailsModal = ({
                   <h4 className="text-16 font-semibold text-gray-900 mb-2">
                     {service.title}
                   </h4>
-                  <div className="flex items-center gap-1 mb-2">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <Star
-                        key={star}
-                        className={cn(
-                          'h-4 w-4',
-                          star <= Math.floor(service.rating.value)
-                            ? 'fill-brand-500 text-brand-500'
-                            : star === Math.ceil(service.rating.value) &&
-                              service.rating.value % 1 !== 0
-                              ? 'fill-brand-500/50 text-brand-500'
-                              : 'fill-gray-200 text-gray-200'
-                        )}
-                      />
-                    ))}
-                    <span className="text-14 text-gray-600 ml-1">
-                      {service.rating.value} Rated By ({service.rating.count})
-                      Users
-                    </span>
+                  <div className="mb-2">
+                    <RatingDisplay
+                      rating={service.rating.value}
+                      count={service.rating.count}
+                      size="sm"
+                      format="rated-by"
+                      variant="default"
+                    />
                   </div>
                   <p className="text-14 text-gray-600">
-                    Provider: {service.provider.name}
+                    Provider:{' '}
+                    <Link 
+                      href={`/provider/${service.provider.id}`}
+                      className="hover:text-brand-500 transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {service.provider.name}
+                    </Link>
                   </p>
                 </div>
               </div>

@@ -6,11 +6,13 @@ import Link from 'next/link'
 import { ChevronDown, ChevronUp, ExternalLink, FileText } from 'lucide-react'
 import { Button } from './Button'
 import { StatusBadge } from './StatusBadge'
+import { DeliveryStatusBadge } from './DeliveryStatusBadge'
 import {
   OrderProgressIndicator,
   type OrderStatus,
 } from './OrderProgressIndicator'
 import { cn } from '@/lib/utils'
+import type { DeliveryStatus } from '@/../client/common/api/gen/ourbride-api'
 
 export interface OrderProduct {
   id: string
@@ -42,6 +44,7 @@ export interface OrderCardProps {
   discountAmount?: number
   depositAmount?: number
   itemCount?: number
+  deliveryStatus?: DeliveryStatus | string | null
   onCancelOrder?: () => void
   onReorder?: () => void
   onViewDetails?: () => void
@@ -70,6 +73,7 @@ export const OrderCard = ({
   discountAmount = 0,
   depositAmount = 0,
   itemCount,
+  deliveryStatus,
   onCancelOrder,
   onReorder,
   onViewDetails,
@@ -132,6 +136,13 @@ export const OrderCard = ({
               Order #{orderId}
             </h3>
             <p className="text-14 text-gray-600 mb-2">Placed: {orderDate}</p>
+            
+            {/* Delivery Status */}
+            {deliveryStatus && (
+              <div className="mb-2">
+                <DeliveryStatusBadge status={deliveryStatus} />
+              </div>
+            )}
             
             {/* Provider Info */}
             {providerName && (

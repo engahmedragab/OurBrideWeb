@@ -139,16 +139,16 @@ export const CartItem = ({
         </h3>
 
         {/* Price Per Piece */}
-        <div className="mb-1">
-          <span className="text-14 text-gray-600 mr-2">Price Per Piece</span>
-          <span className="text-16 font-normal text-gray-900">
-            {discountedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
-          </span>
-          {hasDiscount && (
-            <span className="text-14 font-normal text-gray-400 line-through ml-2">
-              {originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
-            </span>
-          )}
+        <div className="mb-1 flex items-center gap-2">
+          <span className="text-14 text-gray-600">Price Per Piece</span>
+          <PriceDisplay
+            original={originalPrice}
+            discounted={discountedPrice}
+            currency={currency || 'EGP'}
+            size="md"
+            variant="compact"
+            showOriginal={hasDiscount}
+          />
         </div>
 
         {/* Delivery Date */}
@@ -163,7 +163,13 @@ export const CartItem = ({
           {purchasePrice !== undefined && purchasePrice !== null && (
             <p className="text-14 text-gray-600">
               <span className="font-medium">Purchase Price: </span>
-              <span>{purchasePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</span>
+              <PriceDisplay
+                discounted={purchasePrice}
+                currency={currency || 'EGP'}
+                size="sm"
+                variant="inline"
+                showOriginal={false}
+              />
             </p>
           )}
           {purchaseDate && (
@@ -182,7 +188,14 @@ export const CartItem = ({
         <div className="mt-auto pt-3 border-t border-gray-200">
           <div className="text-16 font-semibold text-gray-900">
             <span className="font-normal">Total Price : </span>
-            <span>{totalPrice.toLocaleString()} {currency}</span>
+            <PriceDisplay
+              discounted={totalPrice}
+              currency={currency || 'EGP'}
+              size="md"
+              variant="inline"
+              showOriginal={false}
+              discountedClassName="font-semibold"
+            />
           </div>
         </div>
       </div>

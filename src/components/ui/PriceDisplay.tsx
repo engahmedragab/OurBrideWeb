@@ -1,12 +1,16 @@
 import { cn } from '@/lib/utils'
+import { formatCurrencyCompact, type CurrencyCode } from '@/utils/currency'
 
 export interface PriceDisplayProps {
   original?: number
   discounted: number
-  currency: string
-  size?: 'sm' | 'md' | 'lg' | 'xl'
+  currency: CurrencyCode
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   showOriginal?: boolean
+  variant?: 'default' | 'compact' | 'inline'
   className?: string
+  discountedClassName?: string
+  originalClassName?: string
 }
 
 export const PriceDisplay = ({
@@ -15,47 +19,58 @@ export const PriceDisplay = ({
   currency,
   size = 'md',
   showOriginal = true,
+  variant = 'default',
   className,
+  discountedClassName,
+  originalClassName,
 }: PriceDisplayProps) => {
   const hasDiscount = original && original > discounted
 
   const sizeClasses = {
+    xs: {
+      discounted: 'text-10',
+      original: 'text-8',
+    },
     sm: {
+      discounted: 'text-14',
+      original: 'text-10',
+    },
+    md: {
+      discounted: 'text-16',
+      original: 'text-10',
+    },
+    lg: {
+      discounted: 'text-18',
+      original: 'text-12',
+    },
+    xl: {
       discounted: 'text-20',
       original: 'text-14',
     },
-    md: {
-      discounted: 'text-24',
-      original: 'text-14',
-    },
-    lg: {
-      discounted: 'text-32 md:text-40',
-      original: 'text-16',
-    },
-    xl: {
-      discounted: 'text-40 md:text-48',
-      original: 'text-18',
-    },
   }
 
+  const gapClass = variant === 'compact' ? 'gap-0.5' : variant === 'inline' ? 'gap-1' : 'gap-1'
+
   return (
-    <div className={cn('flex items-baseline gap-1', className)}>
+    <div className={cn('flex items-baseline', gapClass, className)}>
       <span
         className={cn(
-          'font-normal text-gray-600',
-          sizeClasses[size].discounted
+          'font-normal text-gray-900',
+          sizeClasses[size].discounted,
+          discountedClassName
         )}
       >
-        {discounted.toLocaleString()} {currency}
+        {formatCurrencyCompact(discounted, currency)}
       </span>
       {hasDiscount && showOriginal && (
         <span
           className={cn(
             'font-normal text-gray-400 line-through',
-            sizeClasses[size].original
+            sizeClasses[size].original,
+            originalClassName
           )}
         >
-          {original!.toLocaleString()} {currency}
+          {formatCurrencyCompact(original!, currency)}
         </span>
       )}
     </div>

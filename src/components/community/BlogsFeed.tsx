@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { BlogCard } from './BlogCard'
+import { CommunityEmptyState } from './CommunityEmptyState'
 import type { BlogResponse } from '@/types/responses/community'
 
 export interface BlogsFeedProps {
@@ -17,13 +18,18 @@ export const BlogsFeed = ({ className, blogs = [] }: BlogsFeedProps) => {
           <BlogCard key={blog.id} blog={blog} />
         ))
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <p className="text-gray-500">No blogs available yet</p>
-        </div>
+        <CommunityEmptyState
+          title="No Blogs Available"
+          message="There are no blogs to display at the moment."
+          compact
+        />
       )}
     </div>
   )
 }
+
+
+
 
 
 

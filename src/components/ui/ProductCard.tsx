@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
 import { RatingDisplay } from './RatingDisplay'
+import { PriceDisplay } from './PriceDisplay'
 import { useCartItems, useAddToCart, useWishlistItems, useFollowItems } from '@/hooks'
 import { Heart, ShoppingCart, CheckCircle2, Check, UserPlus } from 'lucide-react'
 import type { Product } from '@/types/product'
@@ -221,7 +222,13 @@ export const ProductCard = React.memo(({
 
         {/* Provider Name */}
         <div className="flex items-center gap-1.5">
-          <span className="text-14 text-gray-600">{product.provider.name}</span>
+          <Link 
+            href={`/provider/${product.provider.id}`}
+            className="text-14 text-gray-600 hover:text-brand-500 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {product.provider.name}
+          </Link>
           {product.provider.verified && (
             <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
           )}
@@ -231,21 +238,21 @@ export const ProductCard = React.memo(({
         <RatingDisplay
           rating={product.rating.value}
           count={product.rating.count}
+          showCount={true}
           size="sm"
-          className="gap-1.5"
+          format="default"
+          variant="default"
         />
 
         {/* Pricing */}
-        <div className="flex items-baseline gap-0.5">
-          {hasDiscount && (
-            <span className="text-10 font-normal text-gray-400 line-through">
-              {product.price.original.toLocaleString()} {product.price.currency}
-            </span>
-          )}
-          <span className="text-16 font-normal text-gray-900">
-            {product.price.discounted.toLocaleString()} {product.price.currency}
-          </span>
-        </div>
+        <PriceDisplay
+          original={product.price.original}
+          discounted={product.price.discounted}
+          currency={product.price.currency}
+          size="md"
+          variant="compact"
+          showOriginal={hasDiscount}
+        />
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2 pt-1">

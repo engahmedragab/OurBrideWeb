@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
-import { Heart, CheckCircle2, Star } from 'lucide-react'
+import { Heart, CheckCircle2 } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
 import type { Service } from '@/types/service'
 
 export interface ServiceListProps {
@@ -109,9 +110,13 @@ export const ServiceList = ({
                         </h3>
                       </Link>
                       <div className="flex items-center gap-1.5 mt-1">
-                        <span className="text-14 text-gray-600">
+                        <Link 
+                          href={`/provider/${service.provider.id}`}
+                          className="text-14 text-gray-600 hover:text-brand-500 transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           {service.provider.name}
-                        </span>
+                        </Link>
                         {service.provider.verified && (
                           <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
                         )}
@@ -149,12 +154,13 @@ export const ServiceList = ({
 
                   {/* Rating and Tags */}
                   <div className="flex items-center gap-4 flex-wrap">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
-                      <span className="text-14 font-normal text-gray-900">
-                        {service.rating.value}/5
-                      </span>
-                    </div>
+                    <RatingDisplay
+                      rating={service.rating.value}
+                      showValue={true}
+                      size="sm"
+                      format="value-only"
+                      variant="compact"
+                    />
                     {service.tags && service.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
                         {service.tags.slice(0, 3).map((tag, index) => (

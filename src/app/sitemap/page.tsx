@@ -92,6 +92,7 @@ export default function SitemapPage() {
         { label: 'About Us', href: '/about' },
         { label: 'Shipping', href: '/shipping' },
         { label: 'Returns', href: '/returns' },
+        { label: 'Download App', href: '/download-app' },
         { label: 'Sitemap', href: '/sitemap' },
       ],
     },

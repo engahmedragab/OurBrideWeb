@@ -7,7 +7,9 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
-import { Heart, CheckCircle2, Star, UserPlus } from 'lucide-react'
+import { Heart, CheckCircle2, UserPlus } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
+import { PriceDisplay } from './PriceDisplay'
 import { useWishlistItems, useFollowItems } from '@/hooks'
 import type { Service } from '@/types/service'
 
@@ -41,6 +43,12 @@ export const ServiceCard = React.memo(({
   const isInWishlist = isServiceInWishlist(serviceId)
   const isFollowed = isServiceFollowed(serviceId)
   const hasDiscount = service.price.discounted < service.price.original
+
+  const handleProviderClick = (e: React.MouseEvent, providerId: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    router.push(`/provider/${providerId}`)
+  }
   const discountPercentage = hasDiscount
     ? Math.round(
       ((service.price.original - service.price.discounted) /
@@ -162,33 +170,44 @@ export const ServiceCard = React.memo(({
         </Link>
 
         {/* Provider Name */}
-        <div className="flex items-center gap-1.5">
-          <span className="text-14 text-gray-600">{service.provider.name}</span>
+        <div className="flex items-center gap-1.5 relative z-50">
+          <button
+            type="button"
+            onClick={(e) => handleProviderClick(e, service.provider.id)}
+            className="text-14 text-gray-600 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
+          >
+            {service.provider.name}
+          </button>
           {service.provider.verified && (
-            <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
+            <button
+              type="button"
+              onClick={(e) => handleProviderClick(e, service.provider.id)}
+              className="flex-shrink-0 relative z-50 pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
+              aria-label="Verified provider"
+            >
+              <CheckCircle2 className="h-4 w-4 text-blue-500 hover:text-blue-600 transition-colors" />
+            </button>
           )}
         </div>
 
         {/* Rating and Pricing Row */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
-            <span className="text-14 font-normal text-gray-900">
-              {service.rating.value}
-            </span>
-          </div>
-          <div className="flex items-baseline gap-0.5">
-            {hasDiscount && (
-              <span className="text-10 font-normal text-gray-400 line-through">
-                {service.price.original.toLocaleString()}{' '}
-                {service.price.currency}
-              </span>
-            )}
-            <span className="text-16 font-normal text-gray-900">
-              {service.price.discounted.toLocaleString()}{' '}
-              {service.price.currency}
-            </span>
-          </div>
+          <RatingDisplay
+            rating={service.rating.value}
+            showValue={true}
+            size="sm"
+            format="default"
+            variant="compact"
+            className="gap-1"
+          />
+          <PriceDisplay
+            original={service.price.original}
+            discounted={service.price.discounted}
+            currency={service.price.currency}
+            size="md"
+            variant="compact"
+            showOriginal={hasDiscount}
+          />
         </div>
 
         {/* Action Button */}

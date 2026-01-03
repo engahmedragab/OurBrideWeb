@@ -10,7 +10,6 @@ import { useCartItems, useAddToCart, useWishlistItems, useFollowItems } from '@/
 import {
   Heart,
   ShoppingCart,
-  Star,
   CheckCircle2,
   MessageCircle,
   ArrowRight,
@@ -18,7 +17,10 @@ import {
   Share2,
   UserPlus,
   Check,
+  Star,
 } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
+import { PriceDisplay } from './PriceDisplay'
 
 // Base card variants
 const cardVariants = cva(
@@ -187,6 +189,12 @@ const ProductServiceCard = ({
   const router = useRouter()
   const addToCartMutation = useAddToCart()
 
+  const handleProviderClick = (e: React.MouseEvent, providerId: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    router.push(`/provider/${providerId}`)
+  }
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -241,7 +249,7 @@ const ProductServiceCard = ({
   return (
     <div className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg shadow-sm transition-shadow">
       {/* Action Icons - Floating above the card */}
-      <div className="absolute top-3 right-3 z-20 flex items-center gap-2 pointer-events-auto">
+      <div className="absolute top-0 right-2 z-20 flex items-center gap-2 pointer-events-auto">
         {/* Wishlist Icon */}
         {data.onWishlistToggle && (
           <button
@@ -249,7 +257,7 @@ const ProductServiceCard = ({
             onClick={handleWishlistToggle}
             disabled={data.isLoadingWishlist}
             className={cn(
-              'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+              'w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
               'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
               isInWishlist || data.isWishlisted
                 ? 'border-brand-500 bg-brand-500'
@@ -304,39 +312,58 @@ const ProductServiceCard = ({
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-3 relative">
         {/* Title */}
         <h3 className="text-16 font-semibold text-gray-900 line-clamp-2">
           {data.title}
         </h3>
 
-        {/* Provider Name */}
-        <div className="flex items-center gap-1.5">
-          <span className="text-14 text-gray-600">{data.providerName}</span>
-          {data.verified && (
+        {/* Provider Name - Always clickable if providerId exists */}
+        <div className="flex items-center gap-1.5 relative z-50">
+          {data.providerId ? (
+            <button
+              type="button"
+              onClick={(e) => handleProviderClick(e, data.providerId!)}
+              className="text-14 text-gray-600 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
+            >
+              {data.providerName}
+            </button>
+          ) : (
+            <span className="text-14 text-gray-600">{data.providerName}</span>
+          )}
+          {data.verified && data.providerId && (
+            <button
+              type="button"
+              onClick={(e) => handleProviderClick(e, data.providerId!)}
+              className="flex-shrink-0 relative z-50 pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
+              aria-label="Verified provider"
+            >
+              <CheckCircle2 className="h-4 w-4 text-blue-500 hover:text-blue-600 transition-colors" />
+            </button>
+          )}
+          {data.verified && !data.providerId && (
             <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
           )}
         </div>
 
         {/* Rating */}
-        <div className="flex items-center gap-1">
-          <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
-          <span className="text-14 font-medium text-gray-900">
-            {data.rating}
-          </span>
-        </div>
+        <RatingDisplay
+          rating={data.rating}
+          showValue={true}
+          size="sm"
+          format="default"
+          variant="compact"
+        />
 
         {/* Pricing */}
-        <div className="flex items-center gap-1">
-          {hasDiscount && (
-            <span className="text-12 font-normal text-gray-400 line-through">
-              {data.originalPrice.toLocaleString()} egp
-            </span>
-          )}
-          <span className="text-18 font-normal text-gray-900">
-            {data.discountedPrice.toLocaleString()} egp
-          </span>
-        </div>
+        <PriceDisplay
+          original={data.originalPrice}
+          discounted={data.discountedPrice}
+          currency="EGP"
+          size="md"
+          variant="compact"
+          showOriginal={hasDiscount}
+        />
 
         {/* Action Buttons */}
         {cardType === 'product' ? (
@@ -409,7 +436,7 @@ const ProductServiceCard = ({
           <div className="flex flex-wrap gap-1.5 pt-1">
             {data.tags.slice(0, 4).map((tag, index) => (
               <span
-                key={index}
+                key={`tag-${data.id || 'product'}-${tag}-${index}`}
                 className="px-2 py-1 rounded-md bg-gray-100 text-12 font-medium text-gray-700"
               >
                 {tag}
@@ -436,7 +463,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
         {/* Stars - All red for 5-star rating */}
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, index) => (
-            <Star key={index} className="h-5 w-5 fill-red-500 text-red-500" />
+            <Star key={`star-${data.authorName}-${index}`} className="h-5 w-5 fill-red-500 text-red-500" />
           ))}
         </div>
       </div>
@@ -556,8 +583,12 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
         )}
       </div>
 
-      {/* Profile Image */}
-      <div className="relative w-20 h-20 md:w-24 md:h-24 mb-4">
+      {/* Profile Image - Clickable */}
+      <Link
+        href={`/provider/${data.id}`}
+        className="relative w-20 h-20 md:w-24 md:h-24 mb-4 block hover:opacity-90 transition-opacity"
+        onClick={(e) => e.stopPropagation()}
+      >
         {data.image && data.image.trim() !== '' ? (
           <Image
             src={data.image}
@@ -573,13 +604,26 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
             </span>
           </div>
         )}
-      </div>
+      </Link>
 
-      {/* Name with Verification */}
+      {/* Name with Verification - Clickable */}
       <div className="flex items-center justify-center gap-1.5 mb-1">
-        <h3 className="text-18 font-semibold text-gray-900">{data.name}</h3>
+        <Link
+          href={`/provider/${data.id}`}
+          className="text-18 font-semibold text-gray-900 hover:text-brand-500 transition-colors"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {data.name}
+        </Link>
         {data.verified && (
-          <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
+          <Link
+            href={`/provider/${data.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="flex-shrink-0"
+            aria-label="Verified provider"
+          >
+            <CheckCircle2 className="h-5 w-5 text-blue-500 hover:text-blue-600 transition-colors" />
+          </Link>
         )}
       </div>
 

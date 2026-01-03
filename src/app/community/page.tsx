@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+import { ErrorModal } from '@/components/ui/ErrorModal'
 import { useCommunityHome } from '@/hooks/home/useHome'
 import {
   usePosts,
@@ -206,10 +207,13 @@ function CommunityContent() {
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">Failed to load community data</p>
-            <p className="text-gray-600 text-sm">{homeError instanceof Error ? homeError.message : 'Unknown error'}</p>
-          </div>
+          <ErrorModal
+            open={true}
+            title="Failed to Load Community Data"
+            message={homeError instanceof Error ? homeError.message : 'Unknown error'}
+            onRetry={() => window.location.reload()}
+            onClose={() => {}}
+          />
         </main>
         <Footer />
       </div>
@@ -478,11 +482,7 @@ function CommunityContent() {
                       avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
                     } : undefined}
                   />
-                ) : (
-                  <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-                    <p className="text-gray-500">Loading community data...</p>
-                  </div>
-                )
+                ) : null
               ) : activeTab === 'posts' ? (
                 <CommunityFeed
                   posts={displayPosts || []}
@@ -514,11 +514,7 @@ function CommunityContent() {
                       avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
                     } : undefined}
                   />
-                ) : (
-                  <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-                    <p className="text-gray-500">No content available</p>
-                  </div>
-                )
+                ) : null
               )}
             </div>
 

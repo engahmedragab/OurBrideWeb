@@ -92,12 +92,14 @@ export type { FollowResponse } from './follow-response'
 export type { FavoriteResponse } from './favorite-response'
 export type { ReviewResponse } from './review-response'
 export type { LinkResponse } from './link-response'
+export type { ProviderLinkeeResponse } from './provider-linkee-response'
 export type { WishlistResponse } from './wishlist-response'
 export type { ViewResponse } from './view-response'
 export type { MediaResponse } from './media-response'
 export type { WorkingTimeResponse } from './working-time-response'
 export type { BlockedWorkingTimeResponse } from './blocked-working-time-response'
 export type { PlaceResponse } from './place-response'
+export type { BranchPortfolioResponse } from './branch-portfolio-response'
 export type { ResourceResponse } from './resource-response'
 export type { UserResponse } from './user-response'
 export type { WeddingPlannerResponse } from './wedding-planner-response'
@@ -155,6 +157,7 @@ export type { ProductAttributeMappingResponse } from './product-attribute-mappin
 export type { ProductAttributeValueResponse } from './product-attribute-value-response'
 export type { ProductBrandResponse } from './product-brand-response'
 export type { ProviderProductBrandResponse } from './provider-product-brand-response'
+export type { ProductsHomeResponse } from './products-home-response'
 export type { ProductCategoryLineResponse } from './product-category-line-response'
 export type { ProductDefaultAttributeResponse } from './product-default-attribute-response'
 export type { ProductDimensionResponse } from './product-dimension-response'
@@ -273,6 +276,29 @@ export type TodoBookListResponse = ApiResult<TodoBookResponse>
 
 // Community Response Types
 export * from './community'
+
+// Provider Public Profile Response Types
+// Provider Public Profile Response types (split into separate files to avoid duplication)
+export type { ProviderPublicProfileResponse } from './provider-public-profile-response'
+export type { ProviderPublicStoreResponse } from './provider-public-store-response'
+export type { ProviderPublicProfileSettingsResponse } from './provider-public-profile-settings-response'
+export type { ServicePublicResponse } from './service-public-response'
+export type { MembershipPlanResponse } from './membership-plan-response'
+export type { GiftCardTemplateResponse } from './gift-card-template-response'
+export type { ProviderSubscriptionResponse } from './provider-subscription-response'
+export type { ProviderShippingZoneResponse } from './provider-shipping-zone-response'
+export type { ProviderShippingMethodResponse } from './provider-shipping-method-response'
+
+// Provider Home Response Types
+// Provider Home Response types (split into separate files to avoid duplication)
+export type { ProviderHomeResponse } from './provider-home-response'
+export type { ProviderHomeUserResponse } from './provider-home-user-response'
+export type { ProviderHomeOwnerResponse } from './provider-home-owner-response'
+export type { ProviderHomeProviderInfoResponse } from './provider-home-provider-info-response'
+export type { ProviderHomeServiceSummary } from './provider-home-service-summary'
+export type { ProviderHomeFeaturedProviderResponse } from './provider-home-featured-provider-response'
+export type { ProviderHomeStatisticsResponse } from './provider-home-statistics-response'
+export type { ProviderHomeTestimonialResponse } from './provider-home-testimonial-response'
 
 export type EventLineListResponse = ApiResult<EventLineResponse[]>
 export type BudgetLineListResponse = ApiResult<BudgetLineResponse[]>

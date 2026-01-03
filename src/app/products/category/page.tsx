@@ -60,7 +60,7 @@ function ProductsContent() {
     if (!productsHomeData?.categories) return []
     return productsHomeData.categories.map(cat => ({
       id: String(cat.id),
-      name: cat.name,
+      name: cat.nameEn || cat.nameAr || '',
       slug: cat.slug || '',
     }))
   }, [productsHomeData?.categories])

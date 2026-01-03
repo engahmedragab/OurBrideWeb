@@ -32,6 +32,7 @@ import {
 } from '@/services/api/contestsApi'
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface ContestDetailsProps {
   contest: LeaderboardContestResponse
@@ -67,6 +68,8 @@ export const ContestDetails = ({
   const [hasJoined, setHasJoined] = useState(false)
 
   const status = getContestStatus(contest)
+
+  const imageUrl = COMMUNITY_IMAGES.DEFAULT_CONTEST_IMAGE
 
   // Map reviews to comments format
   const comments = (contest.reviews || []).map((review: ReviewResponse) => ({
@@ -220,7 +223,7 @@ export const ContestDetails = ({
         {/* Contest Image */}
         <div className="relative w-full h-96">
           <Image
-            src={'https://via.placeholder.com/800'}
+            src={imageUrl}
             alt={contest.title}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"

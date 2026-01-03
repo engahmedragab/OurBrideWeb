@@ -9,6 +9,7 @@ import { CheckCircle2, ChevronRight } from 'lucide-react'
 import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { RatingDisplay } from '@/components/ui/RatingDisplay'
+import { formatRole } from '@/utils/role'
 
 // Import Swiper styles
 import 'swiper/css'
@@ -117,7 +118,7 @@ export const ServicesProvidersSlider = ({
                   )}
                 </div>
                 <p className="text-14 md:text-16 font-normal text-gray-600">
-                  {provider.role}
+                  {formatRole(provider.role)}
                 </p>
                 <RatingDisplay
                   rating={provider.rating}

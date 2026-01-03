@@ -134,6 +134,7 @@ const mapOrderToOrderCard = (order: OrderResponse) => {
     discountAmount: order.orderSummary?.discount ?? order.discountAmount ?? 0,
     depositAmount: order.depositAmount ?? 0,
     itemCount: products.length,
+    deliveryStatus: order.deliveryStatus ?? null,
     orderResponse: order, // Store original OrderResponse for API calls
   }
 }
@@ -195,6 +196,7 @@ const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
         count: 0,
       },
       provider: {
+        id: purchase.providerId?.toString() ?? service.providerId?.toString() ?? service.provider?.id?.toString(),
         name: purchase.providerName ?? service.provider?.nameEn ?? service.provider?.nameAr ?? 'Provider',
       },
     },
@@ -573,6 +575,7 @@ export default function OrdersPage() {
                       discountAmount={order.discountAmount}
                       depositAmount={order.depositAmount}
                       itemCount={order.itemCount}
+                      deliveryStatus={order.deliveryStatus}
                       onCancelOrder={() => handleCancelOrder(order.orderId)}
                       onViewDetails={() => {
                         const orderResponse = order.orderResponse
@@ -647,6 +650,7 @@ export default function OrdersPage() {
                     discountAmount={order.discountAmount}
                     depositAmount={order.depositAmount}
                     itemCount={order.itemCount}
+                    deliveryStatus={order.deliveryStatus}
                     onReorder={() => handleReorder(order.orderId)}
                     onViewDetails={() => {
                       const orderResponse = order.orderResponse

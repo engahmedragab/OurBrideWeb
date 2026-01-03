@@ -13,6 +13,7 @@ import { getProfileUrl } from './utils'
 import type { PostResponse } from '@/types/responses/community'
 import { toggleLike as togglePostLike, toggleFavorite as togglePostFavorite, sharePost } from '@/services/api/postsApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface PostCardProps {
   post: PostResponse
@@ -34,14 +35,17 @@ const formatDate = (dateString: string | null): string => {
 
 // Helper function to get user display name
 const getUserDisplayName = (user: PostResponse['user']): string => {
-  if (!user) return 'Anonymous'
-  return `${user.firstName} ${user.lastName}`.trim() || user.userName || 'Unknown'
+  if (!user) return 'OurBride'
+  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
+  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const fullName = `${firstName} ${lastName}`.trim()
+  return fullName || user.userName || 'OurBride'
 }
 
 // Helper function to get user avatar
-const getUserAvatar = (user: PostResponse['user']): string => {
-  if (!user) return 'https://via.placeholder.com/100'
-  return user.profileUrl || 'https://via.placeholder.com/100'
+const getUserAvatar = (user: PostResponse['user']): string | null => {
+  if (!user || !user.profileUrl) return null
+  return user.profileUrl
 }
 
 export const PostCard = ({ post, className }: PostCardProps) => {
@@ -152,7 +156,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            {avatar && avatar !== 'https://via.placeholder.com/100' ? (
+            {avatar ? (
               <Image
                 src={avatar}
                 alt={displayName}
@@ -164,11 +168,15 @@ export const PostCard = ({ post, className }: PostCardProps) => {
                 }}
               />
             ) : null}
-            {(!avatar || avatar === 'https://via.placeholder.com/100') && (
-              <div className="w-full h-full flex items-center justify-center bg-brand-100">
-                <span className="text-14 font-semibold text-brand-600">
-                  {displayName.charAt(0).toUpperCase() || 'U'}
-                </span>
+            {!avatar && (
+              <div className="w-full h-full flex items-center justify-center bg-white">
+                <Image
+                  src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                  alt="OurBride"
+                  width={24}
+                  height={24}
+                  className="object-contain"
+                />
               </div>
             )}
           </div>
@@ -209,9 +217,9 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       </p>
 
       {/* Post Images */}
-      {images.length > 0 && (
-        <div className="mb-4">
-          {images.length === 1 ? (
+      <div className="mb-4">
+        {images.length > 0 ? (
+          images.length === 1 ? (
             <div className="relative w-full aspect-video rounded-lg overflow-hidden">
               <Image
                 src={images[0]}
@@ -260,9 +268,19 @@ export const PostCard = ({ post, className }: PostCardProps) => {
                 ))}
               </div>
             </div>
-          )}
-        </div>
-      )}
+          )
+        ) : (
+          <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+            <Image
+              src={COMMUNITY_IMAGES.DEFAULT_POST_IMAGE}
+              alt="OurBride"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+        )}
+      </div>
 
       {/* Tags */}
       {post.tags && post.tags.length > 0 && (

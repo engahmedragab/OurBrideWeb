@@ -6,7 +6,8 @@ import type {
 } from '@/../client/common/api/gen/ourbride-api'
 import type { ProductResponse, ApiResult,   ProductVariationResponse,
   ProductAttributeResponse,
-  ProductBrandResponse} from '@/types/responses'
+  ProductBrandResponse,
+  ProductsHomeResponse} from '@/types/responses'
 
 /**
  * Helper function to extract error details from API errors
@@ -166,18 +167,28 @@ export const getFilteredProducts = async (
 /**
  * Get products for home page
  */
-export const getProductsHome = async (): Promise<ApiResult<unknown>> => {
+export const getProductsHome = async (): Promise<ApiResult<ProductsHomeResponse>> => {
   const response = await apiClient.api.getProductGetProductsHome()
-  const responseData = response as unknown as { data?: ApiResult<unknown> } | ApiResult<unknown>
+  const responseData = response as unknown as { data?: ApiResult<ProductsHomeResponse> } | ApiResult<ProductsHomeResponse> | ProductsHomeResponse
   if (responseData && typeof responseData === 'object') {
     if ('data' in responseData && responseData.data && typeof responseData.data === 'object' && 'success' in responseData.data) {
-      return responseData.data as ApiResult<unknown>
+      return responseData.data as ApiResult<ProductsHomeResponse>
     }
     if ('success' in responseData) {
-      return responseData as ApiResult<unknown>
+      return responseData as ApiResult<ProductsHomeResponse>
+    }
+    // If response is directly ProductsHomeResponse
+    if ('headers' in responseData || 'tags' in responseData) {
+      return {
+        data: responseData as ProductsHomeResponse,
+        success: true,
+        statusCode: 200,
+        message: '',
+        errors: undefined,
+      }
     }
   }
-  return { data: null, success: false, statusCode: 0, message: '' } as ApiResult<unknown>
+  return { data: null as any, success: false, statusCode: 0, message: '', errors: undefined } as ApiResult<ProductsHomeResponse>
 }
 
 /**

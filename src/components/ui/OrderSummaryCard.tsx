@@ -59,9 +59,14 @@ export const OrderSummaryCard = ({
       {/* Total price */}
       <div className="flex items-center justify-between">
         <span className="text-14 text-gray-900">Total price</span>
-        <span className="text-20 font-semibold text-gray-900">
-          {totalPrice.toLocaleString()} {currency}
-        </span>
+        <PriceDisplay
+          discounted={totalPrice}
+          currency={currency}
+          size="xl"
+          variant="inline"
+          showOriginal={false}
+          discountedClassName="font-semibold"
+        />
       </div>
 
       {/* Deliver to */}

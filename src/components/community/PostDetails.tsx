@@ -30,6 +30,7 @@ import {
 } from '@/services/api/postsApi'
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface PostDetailsProps {
   post: PostResponse
@@ -197,7 +198,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-              {avatar && avatar !== 'https://via.placeholder.com/100' ? (
+              {avatar ? (
                 <Image
                   src={avatar}
                   alt={displayName}
@@ -210,11 +211,15 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                   }}
                 />
               ) : null}
-              {(!avatar || avatar === 'https://via.placeholder.com/100') && (
-                <div className="w-full h-full flex items-center justify-center bg-brand-100">
-                  <span className="text-14 font-semibold text-brand-600">
-                    {displayName.charAt(0).toUpperCase() || 'U'}
-                  </span>
+              {!avatar && (
+                <div className="w-full h-full flex items-center justify-center bg-white">
+                  <Image
+                    src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                    alt="OurBride"
+                    width={24}
+                    height={24}
+                    className="object-contain"
+                  />
                 </div>
               )}
             </div>
@@ -274,9 +279,9 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
         </p>
 
         {/* Post Images */}
-        {images && images.length > 0 && (
-          <div className="mb-4">
-            {images.length === 1 ? (
+        <div className="mb-4">
+          {images && images.length > 0 ? (
+            images.length === 1 ? (
               <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                 <Image
                   src={images[0]}
@@ -325,9 +330,19 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                   ))}
                 </div>
               </div>
-            )}
-          </div>
-        )}
+            )
+          ) : (
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+              <Image
+                src={COMMUNITY_IMAGES.DEFAULT_POST_IMAGE}
+                alt="OurBride"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+          )}
+        </div>
 
         {/* Engagement Metrics */}
         <div className="pt-4 border-t border-gray-100">

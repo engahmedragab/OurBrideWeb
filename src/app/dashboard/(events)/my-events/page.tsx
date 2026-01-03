@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { EventCard, AddEventModal } from '@/components/events'
 import { Button, LoadingSpinner } from '@/components/ui'
+import { ErrorModal } from '@/components/ui/ErrorModal'
 import { cn } from '@/lib/utils'
 import {
   useWeddingEvents,
@@ -722,12 +723,13 @@ function MyEventsPageContent() {
         {/* Error State */}
         {isMounted && !eventInfo && !isLoadingEventInfo && (
           <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-16 text-red-600 mb-4">
-              Failed to load event details. Please try again.
-            </p>
-            <Button variant="outline" onClick={handleBackToEvents}>
-              Back to Events
-            </Button>
+            <ErrorModal
+              open={true}
+              title="Failed to Load Event Details"
+              message="Failed to load event details. Please try again."
+              onRetry={() => window.location.reload()}
+              onClose={handleBackToEvents}
+            />
           </div>
         )}
       </div>
@@ -779,15 +781,13 @@ function MyEventsPageContent() {
       {/* Error State */}
       {isMounted && error && !isLoading && (
         <div className="flex flex-col items-center justify-center py-12">
-          <p className="text-16 text-red-600 mb-4">
-            Failed to load events. Please try again.
-          </p>
-          <Button
-            variant="outline"
-            onClick={() => window.location.reload()}
-          >
-            Retry
-          </Button>
+          <ErrorModal
+            open={true}
+            title="Failed to Load Events"
+            message="Failed to load events. Please try again."
+            onRetry={() => window.location.reload()}
+            onClose={() => {}}
+          />
         </div>
       )}
 

@@ -15,6 +15,7 @@ import {
   Pagination,
   LoadingSpinner,
 } from '@/components/ui'
+import { ErrorModal } from '@/components/ui/ErrorModal'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
 import type {
@@ -763,14 +764,13 @@ function ServicesCategoryPageContent() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-16 text-red-600 mb-4">
-              Failed to load services. Please try again later.
-            </p>
-            <Button onClick={() => window.location.reload()}>
-              Retry
-            </Button>
-          </div>
+          <ErrorModal
+            open={true}
+            title="Failed to Load Services"
+            message="Failed to load services. Please try again later."
+            onRetry={() => window.location.reload()}
+            onClose={() => {}}
+          />
         </main>
         <Footer />
       </div>

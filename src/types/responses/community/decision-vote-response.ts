@@ -23,3 +23,11 @@ export interface DecisionVoteResponse extends BaseEntityResponse {
 
 
 
+
+
+
+
+
+
+
+

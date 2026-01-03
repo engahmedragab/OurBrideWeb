@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { DecisionGroupCard } from './DecisionGroupCard'
+import { CommunityEmptyState } from './CommunityEmptyState'
 import type { DecisionGroupResponse } from '@/types/responses/community'
 
 export interface DecisionGroupsFeedProps {
@@ -24,13 +25,18 @@ export const DecisionGroupsFeed = ({ className, decisionGroups = [] }: DecisionG
           />
         ))
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <p className="text-gray-500">No decision groups available yet</p>
-        </div>
+        <CommunityEmptyState
+          title="No Decision Groups Available"
+          message="There are no decision groups to display at the moment."
+          compact
+        />
       )}
     </div>
   )
 }
+
+
+
 
 
 

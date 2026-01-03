@@ -87,6 +87,12 @@ export const Footer = ({ className }: FooterProps) => {
                   Returns
                 </Link>
                 <Link
+                  href="/download-app"
+                  className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
+                >
+                  Download App
+                </Link>
+                <Link
                   href="/sitemap"
                   className="text-16 font-normal text-gray-700 hover:opacity-80 transition-opacity"
                 >

@@ -6,7 +6,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
-import { CheckCircle2, Star, X } from 'lucide-react'
+import { CheckCircle2, X } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
 import type { FeaturedProviderResponse } from '@/types/responses/featured-provider-response'
 
 export interface WishlistProviderCardProps {
@@ -24,8 +25,6 @@ export const WishlistProviderCard = React.memo(({
 }: WishlistProviderCardProps) => {
   const router = useRouter()
   const rating = provider.rate || 0
-  const fullStars = Math.floor(rating)
-  const hasHalfStar = rating % 1 >= 0.5
   const providerName = provider.nameEn || provider.nameAr || `Provider #${provider.id}`
   const providerImage = provider.publicLogoImageUrl || provider.publicBannerImageUrl || ''
 
@@ -80,8 +79,13 @@ export const WishlistProviderCard = React.memo(({
             {/* Rating Badge Overlay */}
             {rating > 0 && (
               <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1 shadow-lg">
-                <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
-                <span className="text-14 font-bold text-gray-900">{rating.toFixed(1)}</span>
+                <RatingDisplay
+                  rating={rating}
+                  size="sm"
+                  format="value-only"
+                  variant="compact"
+                  valueClassName="text-14 font-bold text-gray-900"
+                />
               </div>
             )}
           </div>

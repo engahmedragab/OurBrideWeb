@@ -12,6 +12,7 @@ import type { DecisionGroupResponse } from '@/types/responses/community'
 import { toggleLike as toggleDecisionGroupLike, toggleFavorite as toggleDecisionGroupFavorite, shareDecisionGroup } from '@/services/api/decisionGroupsApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface DecisionGroupCardProps {
   decisionGroup: DecisionGroupResponse
@@ -32,14 +33,17 @@ const formatDate = (dateString: string | null): string => {
 
 // Helper function to get user display name
 const getUserDisplayName = (user: DecisionGroupResponse['user']): string => {
-  if (!user) return 'Anonymous'
-  return `${user.firstName} ${user.lastName}`.trim() || user.userName || 'Unknown'
+  if (!user) return 'OurBride'
+  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
+  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const fullName = `${firstName} ${lastName}`.trim()
+  return fullName || user.userName || 'OurBride'
 }
 
 // Helper function to get user avatar
-const getUserAvatar = (user: DecisionGroupResponse['user']): string => {
-  if (!user) return 'https://via.placeholder.com/100'
-  return user.profileUrl || 'https://via.placeholder.com/100'
+const getUserAvatar = (user: DecisionGroupResponse['user']): string | null => {
+  if (!user || !user.profileUrl) return null
+  return user.profileUrl
 }
 
 export const DecisionGroupCard = ({
@@ -141,7 +145,7 @@ export const DecisionGroupCard = ({
       {/* Header */}
       <div className="flex items-start gap-4 mb-4">
         <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-          {avatar && avatar !== 'https://via.placeholder.com/100' ? (
+          {avatar ? (
             <Image
               src={avatar}
               alt={displayName}
@@ -153,11 +157,15 @@ export const DecisionGroupCard = ({
               }}
             />
           ) : null}
-          {(!avatar || avatar === 'https://via.placeholder.com/100') && (
-            <div className="w-full h-full flex items-center justify-center bg-brand-100">
-              <span className="text-14 font-semibold text-brand-600">
-                {displayName.charAt(0).toUpperCase() || 'U'}
-              </span>
+          {!avatar && (
+            <div className="w-full h-full flex items-center justify-center bg-white">
+              <Image
+                src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                alt="OurBride"
+                width={24}
+                height={24}
+                className="object-contain"
+              />
             </div>
           )}
         </div>

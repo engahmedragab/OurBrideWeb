@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { ContestCard } from './ContestCard'
+import { CommunityEmptyState } from './CommunityEmptyState'
 import type { LeaderboardContestResponse } from '@/types/responses/community'
 
 export interface ContestsFeedProps {
@@ -24,13 +25,18 @@ export const ContestsFeed = ({ className, contests = [] }: ContestsFeedProps) =>
           />
         ))
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <p className="text-gray-500">No contests available yet</p>
-        </div>
+        <CommunityEmptyState
+          title="No Contests Available"
+          message="There are no contests to display at the moment."
+          compact
+        />
       )}
     </div>
   )
 }
+
+
+
 
 
 

@@ -14,6 +14,7 @@ const NavigationMenu = React.forwardRef<
       'relative z-10 flex max-w-max flex-1 items-center justify-center',
       className
     )}
+    suppressHydrationWarning
     {...props}
   >
     {children}
@@ -32,12 +33,23 @@ const NavigationMenuList = React.forwardRef<
       'group flex flex-1 list-none items-center justify-center gap-1',
       className
     )}
+    suppressHydrationWarning
     {...props}
   />
 ))
 NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 
-const NavigationMenuItem = NavigationMenuPrimitive.Item
+const NavigationMenuItem = React.forwardRef<
+  React.ElementRef<typeof NavigationMenuPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Item>
+>((props, ref) => (
+  <NavigationMenuPrimitive.Item
+    ref={ref}
+    suppressHydrationWarning
+    {...props}
+  />
+))
+NavigationMenuItem.displayName = NavigationMenuPrimitive.Item.displayName
 
 const navigationMenuTriggerStyle = cva(
   'group inline-flex h-10 w-max items-center justify-center gap-2 rounded-md bg-background px-4 py-2 text-16 font-semibold transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent data-[state=open]:bg-accent'
@@ -50,6 +62,7 @@ const NavigationMenuTrigger = React.forwardRef<
   <NavigationMenuPrimitive.Trigger
     ref={ref}
     className={cn(navigationMenuTriggerStyle(), 'group', className)}
+    suppressHydrationWarning
     {...props}
   >
     {children}{' '}
@@ -77,6 +90,7 @@ const NavigationMenuContent = React.forwardRef<
       'md:w-auto',
       className
     )}
+    suppressHydrationWarning
     {...props}
   />
 ))

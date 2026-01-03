@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { getHomeData, getStoreHomeData, getCommunityHome, getMineInfo } from '@/services/api/home.api'
+import { getHomeData, getStoreHomeData, getCommunityHome, getMineInfo, getProviderHome } from '@/services/api/home.api'
 import type { CommunityHomeResponse } from '@/types/responses/community/community-home-response'
+import type { ProviderHomeResponse } from '@/types/responses/provider-home-response'
 
 /**
  * Hook to fetch home page data
@@ -65,6 +66,22 @@ export const useMineInfo = (enabled = true) => {
     queryKey: ['mine-info'],
     queryFn: async () => {
       const data = await getMineInfo()
+      return data
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  })
+}
+
+/**
+ * Hook to fetch provider home page data
+ */
+export const useProviderHome = (enabled = true) => {
+  return useQuery<ProviderHomeResponse>({
+    queryKey: ['provider-home'],
+    queryFn: async () => {
+      const data = await getProviderHome()
       return data
     },
     enabled,

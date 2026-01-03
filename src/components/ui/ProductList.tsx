@@ -6,6 +6,7 @@ import { Badge } from './Badge'
 import { RatingDisplay } from './RatingDisplay'
 import { useCartItems } from '@/hooks/cart/useCart'
 import { Heart, ShoppingCart, CheckCircle2, Check } from 'lucide-react'
+import { PriceDisplay } from './PriceDisplay'
 import type { Product } from '@/types/product'
 
 export interface ProductListProps {
@@ -79,9 +80,13 @@ export const ProductList = ({
                         </h3>
                       </Link>
                       <div className="flex items-center gap-1.5 mt-1">
-                        <span className="text-14 text-gray-600">
+                        <Link 
+                          href={`/provider/${product.provider.id}`}
+                          className="text-14 text-gray-600 hover:text-brand-500 transition-colors"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           {product.provider.name}
-                        </span>
+                        </Link>
                         {product.provider.verified && (
                           <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
                         )}
@@ -122,8 +127,10 @@ export const ProductList = ({
                     <RatingDisplay
                       rating={product.rating.value}
                       count={product.rating.count}
+                      showCount={true}
                       size="sm"
-                      className="gap-1.5"
+                      format="default"
+                      variant="default"
                     />
                     {product.tags && product.tags.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
@@ -143,17 +150,15 @@ export const ProductList = ({
 
                 {/* Footer */}
                 <div className="flex items-center justify-between gap-4 pt-3 border-t border-gray-100">
-                  <div className="flex items-center gap-0.5">
-                    {hasDiscount && (
-                      <span className="text-10 font-normal text-gray-400 line-through">
-                        {product.price.original.toLocaleString()}{' '}
-                        {product.price.currency}
-                      </span>
-                    )}
-                    <span className="text-18 font-normal text-gray-900">
-                      {product.price.discounted.toLocaleString()}{' '}
-                      {product.price.currency}
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <PriceDisplay
+                      original={product.price.original}
+                      discounted={product.price.discounted}
+                      currency={product.price.currency}
+                      size="lg"
+                      variant="compact"
+                      showOriginal={hasDiscount}
+                    />
                     {hasDiscount && (
                       <Badge
                         variant="default"

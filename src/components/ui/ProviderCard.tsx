@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { MessageCircle, CheckCircle2, Star, UserPlus } from 'lucide-react'
+import { MessageCircle, CheckCircle2, UserPlus, Star } from 'lucide-react'
+import { RatingDisplay } from './RatingDisplay'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
 import { useFavoriteItems, useFollowItems } from '@/hooks'
@@ -128,8 +129,12 @@ export const ProviderCard = ({
           )}
         </div>
       )}
-      {/* Profile Picture */}
-      <div className="relative w-28 h-28">
+      {/* Profile Picture - Clickable */}
+      <Link
+        href={`/provider/${provider.id}`}
+        className="relative w-28 h-28 block hover:opacity-90 transition-opacity"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Image with inner border */}
         <div className="relative w-full h-full rounded-full border-2 border-pink-200 overflow-hidden shadow-[0_0_0_4px_rgba(251,207,232,0.4),0_0_0_6px_rgba(251,207,232,0.2)]">
           {provider.image && provider.image.trim() !== '' ? (
@@ -148,13 +153,26 @@ export const ProviderCard = ({
             </div>
           )}
         </div>
-      </div>
+      </Link>
 
-      {/* Name with Verification */}
+      {/* Name with Verification - Clickable */}
       <div className="flex items-center gap-2">
-        <h3 className="text-20 font-normal text-gray-900">{provider.name}</h3>
+        <Link
+          href={`/provider/${provider.id}`}
+          className="text-20 font-normal text-gray-900 hover:text-brand-500 transition-colors"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {provider.name}
+        </Link>
         {provider.verified && (
-          <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
+          <Link
+            href={`/provider/${provider.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="flex-shrink-0"
+            aria-label="Verified provider"
+          >
+            <CheckCircle2 className="h-5 w-5 text-blue-500 hover:text-blue-600 transition-colors" />
+          </Link>
         )}
       </div>
 
@@ -164,19 +182,14 @@ export const ProviderCard = ({
       )}
 
       {/* Rating Stars */}
-      <div className="flex items-center gap-1">
-        {[1, 2, 3, 4, 5].map(star => (
-          <Star
-            key={star}
-            className={cn(
-              'h-4 w-4',
-              star <= roundedRating
-                ? 'fill-brand-500 text-brand-500'
-                : 'fill-gray-200 text-gray-200'
-            )}
-          />
-        ))}
-      </div>
+      {rating > 0 && (
+        <RatingDisplay
+          rating={rating}
+          size="sm"
+          format="stars-only"
+          variant="compact"
+        />
+      )}
 
       {/* Action Buttons */}
       <div className="flex items-center gap-3 w-full pt-2">
@@ -198,7 +211,7 @@ export const ProviderCard = ({
           className="flex-1 rounded-full font-normal text-brand-500"
           asChild
         >
-          <Link href={`/providers/${provider.id}`} onClick={onViewProfile}>
+          <Link href={`/provider/${provider.id}`} onClick={onViewProfile}>
             View Profile
           </Link>
         </Button>

@@ -10,6 +10,7 @@ import { ChevronRight } from 'lucide-react'
 import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { RatingDisplay } from '@/components/ui/RatingDisplay'
+import { PriceDisplay } from '@/components/ui/PriceDisplay'
 
 // Import Swiper styles
 import 'swiper/css'
@@ -136,25 +137,22 @@ export const ServicesProductsSlider = ({
                     </h3>
                     <div className="flex items-center justify-between gap-2">
                       {/* Rating and Price on same line */}
-                      <div className="flex items-center gap-1.5">
-                        <RatingDisplay
-                          rating={product.rating}
-                          size="sm"
-                          showCount={false}
-                          className="gap-0.5"
-                        />
-                        <span className="text-11 font-normal text-gray-500">
-                          {product.rating}
-                        </span>
-                      </div>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-14 md:text-16 font-semibold text-gray-900">
-                          {product.price.toLocaleString()}
-                        </span>
-                        <span className="text-11 font-normal text-gray-900">
-                          {product.currency}
-                        </span>
-                      </div>
+                      <RatingDisplay
+                        rating={product.rating}
+                        size="sm"
+                        format="value-only"
+                        variant="compact"
+                        showValue={true}
+                        className="gap-1"
+                      />
+                      <PriceDisplay
+                        discounted={product.price}
+                        currency={product.currency}
+                        size="md"
+                        variant="inline"
+                        showOriginal={false}
+                        discountedClassName="text-14 md:text-16 font-semibold"
+                      />
                     </div>
                   </div>
                   <div className={ctaTextVariants({ intent: 'primary' })}>

@@ -1,4 +1,7 @@
 export * from './useProviderInteractions'
 export * from './useProviderCardHandlers'
 export * from './useProviderPublicProfileSettings'
+export * from './useProviderPublicProfile'
+export * from './useProviderPublicStore'
+export * from './useProviderLinkee'
 export * from './useProvidersMap'

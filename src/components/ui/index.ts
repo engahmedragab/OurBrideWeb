@@ -265,6 +265,9 @@ export type { RankingProgressBarProps } from './RankingProgressBar'
 export { StatusBadge } from './StatusBadge'
 export type { StatusBadgeProps, StatusBadgeType } from './StatusBadge'
 
+export { DeliveryStatusBadge, getDeliveryStatusLabel } from './DeliveryStatusBadge'
+export type { DeliveryStatusBadgeProps } from './DeliveryStatusBadge'
+
 export { SocialShareButtons } from './SocialShareButtons'
 export type { SocialShareButtonsProps } from './SocialShareButtons'
 
@@ -301,6 +304,9 @@ export type { LoadingSpinnerProps } from './LoadingSpinner'
 
 export { StatusModal } from './StatusModal'
 export type { StatusModalProps } from './StatusModal'
+
+export { ErrorModal } from './ErrorModal'
+export type { ErrorModalProps } from './ErrorModal'
 
 export { ProcessingModal } from './ProcessingModal'
 export type { ProcessingModalProps } from './ProcessingModal'
@@ -411,6 +417,9 @@ export type { BackButtonProps } from './BackButton'
 export { CardWrapper } from './CardWrapper'
 export type { CardWrapperProps } from './CardWrapper'
 
+export { QRCode } from './QRCode'
+export type { QRCodeProps } from './QRCode'
+
 export { ChatPlaceholder } from './ChatPlaceholder'
 export type { ChatPlaceholderProps } from './ChatPlaceholder'
 export { Tabs, tabsVariants, tabItemVariants } from './Tabs'
@@ -421,3 +430,42 @@ export type { GiftSentSuccessModalProps } from './GiftSentSuccessModal'
 
 export { CalendarEventBlock } from './CalendarEventBlock'
 export type { CalendarEventBlockProps, EventStatus } from './CalendarEventBlock'
+
+export { TestimonialCard } from './TestimonialCard'
+export type { TestimonialCardProps } from './TestimonialCard'
+
+export { TestimonialsSection } from './TestimonialsSection'
+export type { TestimonialsSectionProps } from './TestimonialsSection'
+
+export { StatisticsSection } from './StatisticsSection'
+export type { StatisticsSectionProps, Statistic } from './StatisticsSection'
+
+export { ForBusinessSection } from './ForBusinessSection'
+export type { ForBusinessSectionProps } from './ForBusinessSection'
+
+export { ClientOnly } from './ClientOnly'
+
+// Export new names
+export { PreparationCategorySelect } from './TreatmentCategorySelect'
+export type { PreparationCategorySelectProps, PreparationCategory } from './TreatmentCategorySelect'
+// Keep old exports for backward compatibility (re-export the new names)
+export { PreparationCategorySelect as TreatmentCategorySelect } from './TreatmentCategorySelect'
+export type { PreparationCategorySelectProps as TreatmentCategorySelectProps, PreparationCategory as TreatmentCategory } from './TreatmentCategorySelect'
+
+export { CustomDatePicker } from './CustomDatePicker'
+export type { CustomDatePickerProps, DatePickerTimeSlot } from './CustomDatePicker'
+
+export { MobileAppsSection } from './MobileAppsSection'
+export type { MobileAppsSectionProps, MobileAppCardProps } from './MobileAppsSection'
+
+export { ProviderHomeCard } from './ProviderHomeCard'
+export type { ProviderHomeCardProps } from './ProviderHomeCard'
+export { ProviderSearchCard } from './ProviderSearchCard'
+export type { ProviderSearchCardProps } from './ProviderSearchCard'
+
+export { ProviderHomeSection } from './ProviderHomeSection'
+export type { ProviderHomeSectionProps } from './ProviderHomeSection'
+export { ProviderFiltersModal } from './ProviderFiltersModal'
+export type { ProviderFiltersModalProps, ProviderFilters, SortOption, VenueType } from './ProviderFiltersModal'
+export { ProviderMap } from './ProviderMap'
+export type { ProviderMapProps } from './ProviderMap'

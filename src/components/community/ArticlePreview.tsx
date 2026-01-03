@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface ArticlePreviewProps {
   id: string
@@ -35,7 +36,7 @@ export const ArticlePreview = ({
     >
       <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
         <Image
-          src={thumbnail}
+          src={thumbnail || COMMUNITY_IMAGES.DEFAULT_ARTICLE_IMAGE}
           alt={title}
           fill
           sizes="80px"

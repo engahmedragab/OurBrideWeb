@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { UserPageLayout } from '@/components/layout'
 import { Button, Input } from '@/components/ui'
+import { ErrorModal } from '@/components/ui/ErrorModal'
 import { useToast } from '@/components/ui/Toaster'
 import {
   useProviderPublicProfileSettings,
@@ -184,7 +185,13 @@ export default function BusinessProfilePage() {
     return (
       <UserPageLayout>
         <div className="text-center py-12">
-          <p className="text-red-600">Failed to load business profile settings</p>
+          <ErrorModal
+            open={true}
+            title="Failed to Load Business Profile Settings"
+            message="Failed to load business profile settings. Please try again."
+            onRetry={() => window.location.reload()}
+            onClose={() => {}}
+          />
         </div>
       </UserPageLayout>
     )

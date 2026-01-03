@@ -3,7 +3,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { CheckCircle2, ChevronRight, Star } from 'lucide-react'
+import { CheckCircle2, ChevronRight } from 'lucide-react'
+import { RatingDisplay } from '@/components/ui/RatingDisplay'
+import { PriceDisplay } from '@/components/ui/PriceDisplay'
 import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
@@ -111,19 +113,13 @@ export const BestProvidersSection = ({
                 {provider.profession}
               </p>
               {/* Red Stars for Provider Rating */}
-              <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map(star => (
-                  <Star
-                    key={star}
-                    className={cn(
-                      'h-4 w-4',
-                      star <= Math.round(provider.rating)
-                        ? 'fill-red-500 text-red-500'
-                        : 'fill-gray-200 text-gray-200'
-                    )}
-                  />
-                ))}
-              </div>
+              <RatingDisplay
+                rating={provider.rating}
+                size="sm"
+                format="stars-only"
+                variant="compact"
+                starColor="red"
+              />
             </div>
           </div>
         ))}
@@ -158,21 +154,23 @@ export const BestProvidersSection = ({
                   </h4>
                   {/* Rating and Price on same row */}
                   <div className="flex items-center justify-between w-full">
-                    <div className="flex gap-1 items-center">
-                      {/* Red Star for Product Rating */}
-                      <Star className="h-3.5 w-3.5 fill-red-500 text-red-500" />
-                      <span className="text-12 md:text-14 font-normal text-gray-500">
-                        {provider.product.rating}
-                      </span>
-                    </div>
-                    <div className="flex gap-1 items-baseline">
-                      <span className="text-18 md:text-20 font-normal text-gray-900">
-                        {provider.product.price.toLocaleString()}
-                      </span>
-                      <span className="text-11 md:text-12 font-normal text-gray-600">
-                        {provider.product.currency}
-                      </span>
-                    </div>
+                    <RatingDisplay
+                      rating={provider.product.rating}
+                      size="xs"
+                      format="value-only"
+                      variant="compact"
+                      showValue={true}
+                      starColor="red"
+                      valueClassName="text-12 md:text-14 font-normal text-gray-500"
+                    />
+                    <PriceDisplay
+                      discounted={provider.product.price}
+                      currency={provider.product.currency}
+                      size="lg"
+                      variant="inline"
+                      showOriginal={false}
+                      discountedClassName="text-18 md:text-20 font-normal"
+                    />
                   </div>
                 </div>
                 <Button

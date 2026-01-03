@@ -22,7 +22,14 @@ export interface FeaturedProviderResponse {
   publicProfileSlug: string
   uniqueCode: string
   topRatedService: ServiceSummary | null
+  // Additional fields for provider card display with multiple services
+  topRatedServices?: ServiceSummary[]
 }
+
+
+
+
+
 
 
 

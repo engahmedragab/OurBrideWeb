@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { ReelCard } from './ReelCard'
 import { ReelPlayer } from './ReelPlayer'
+import { CommunityEmptyState } from './CommunityEmptyState'
 import type { ReelResponse } from '@/types/responses/community'
 
 export interface ReelsFeedProps {
@@ -32,9 +33,10 @@ export const ReelsFeed = ({ className, reels = [], selectedReelId: externalSelec
         'md:min-h-[calc(100vh-200px)]',
         className
       )}>
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <p className="text-gray-500">No reels available yet</p>
-        </div>
+        <CommunityEmptyState
+          title="No Reels Available"
+          message="There are no reels to display at the moment."
+        />
       </div>
     )
   }

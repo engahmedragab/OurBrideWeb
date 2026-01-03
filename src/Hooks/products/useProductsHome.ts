@@ -1,34 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
 import { getProductsHome } from '@/services/api/products.api'
-import { extractProductsHomeData } from '@/utils/home-data.utils'
-import type { Product } from '@/types/product'
-
-export interface ProductsHomeData {
-  products: Product[]
-  categories: Array<{ id: number; name: string; slug?: string }>
-}
+import type { ProductsHomeResponse } from '@/types/responses/products-home-response'
 
 /**
  * Hook to fetch products home data
  */
-export const useProductsHome = (enabled = true) => {
-  return useQuery({
-    queryKey: ['products-home'],
-    queryFn: async (): Promise<ProductsHomeData> => {
-      try {
-        const result = await getProductsHome()
-        const extractedData = extractProductsHomeData(result)
-        
-        return {
-          products: extractedData.products || [],
-          categories: extractedData.categories || [],
-        }
-      } catch (error) {
-        throw error
-      }
+export const useProductsHome = (enabled: boolean = true) => {
+  return useQuery<ProductsHomeResponse | null, Error>({
+    queryKey: ['productsHome'],
+    queryFn: async () => {
+      const result = await getProductsHome()
+      return result.success && result.data ? result.data : null
     },
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   })
 }
-

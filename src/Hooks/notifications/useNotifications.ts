@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import {
   getUserNotifications,
   markNotificationAsRead,
@@ -7,6 +7,7 @@ import {
   deleteNotification,
 } from '@/services/api/notificationsApi'
 import type { Notification } from '@/types/notification'
+import type { PaginatedList } from '@/types/responses/service-types'
 import { isAuthenticated } from '@/auth/utils/token'
 import { useToast } from '@/components/ui/Toaster'
 
@@ -31,11 +32,15 @@ export const useNotifications = (query?: {
     enabled: enabled && authenticated,
     staleTime: 1 * 60 * 1000, // 1 minute
     refetchOnWindowFocus: true, // Refetch when window gains focus to get latest notifications
-    onError: (error: unknown) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch notifications'
-      addToast(errorMessage, 'error')
-    },
   })
+
+  // Handle errors using useEffect (onError is deprecated in newer React Query versions)
+  useEffect(() => {
+    if (queryResult.isError && queryResult.error) {
+      const errorMessage = queryResult.error instanceof Error ? queryResult.error.message : 'Failed to fetch notifications'
+      addToast(errorMessage, 'error')
+    }
+  }, [queryResult.isError, queryResult.error, addToast])
 
   const notifications = queryResult.data?.items || []
   const unreadCount = useMemo(
@@ -140,10 +145,10 @@ export const useNotifications = (query?: {
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: ['notifications'] })
 
-      const previousData = queryClient.getQueryData<{ items: Notification[] }>(['notifications', queryParams])
+      const previousData = queryClient.getQueryData<PaginatedList<Notification>>(['notifications', queryParams])
 
       if (previousData) {
-        queryClient.setQueryData<{ items: Notification[] }>(['notifications', queryParams], {
+        queryClient.setQueryData<PaginatedList<Notification>>(['notifications', queryParams], {
           ...previousData,
           items: previousData.items.filter(n => n.id !== id),
           totalCount: Math.max(0, previousData.totalCount - 1),

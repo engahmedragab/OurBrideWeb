@@ -34,20 +34,20 @@ export const formatDateShort = (dateString: string | null): string => {
 
 // Helper function to get user display name
 export const getUserDisplayName = (user: UserResponse | null, fallback?: string): string => {
-  if (!user) return fallback || 'Anonymous'
+  if (!user) return fallback || 'OurBride'
   
-  // Handle null/undefined firstName and lastName
-  const firstName = user.firstName || ''
-  const lastName = user.lastName || ''
+  // Handle null/undefined firstName and lastName - check for null/undefined explicitly
+  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
+  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   
-  return fullName || user.userName || fallback || 'Anonymous'
+  return fullName || user.userName || fallback || 'OurBride'
 }
 
 // Helper function to get user avatar
-export const getUserAvatar = (user: UserResponse | null): string => {
-  if (!user) return 'https://via.placeholder.com/100'
-  return user.profileUrl || 'https://via.placeholder.com/100'
+export const getUserAvatar = (user: UserResponse | null): string | null => {
+  if (!user || !user.profileUrl) return null
+  return user.profileUrl
 }
 
 // Helper function to format duration

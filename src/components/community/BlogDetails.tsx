@@ -29,6 +29,7 @@ import {
 } from '@/services/api/blogsApi'
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface BlogDetailsProps {
   blog: BlogResponse
@@ -50,8 +51,8 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
   const displayName = getUserDisplayName(blog.user, blog.authorName)
   const avatar = getUserAvatar(blog.user)
   const date = formatDate(blog.publishedAt || blog.creationDate)
-  // Use placeholder - BlogResponse doesn't have thumbnailUrl property
-  const imageUrl = 'https://via.placeholder.com/800'
+
+  const imageUrl = COMMUNITY_IMAGES.DEFAULT_BLOG_IMAGE
 
   // Map reviews to comments format
   const comments = (blog.reviews || []).map((review: ReviewResponse) => ({
@@ -197,7 +198,7 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-              {avatar && avatar !== 'https://via.placeholder.com/100' ? (
+              {avatar ? (
                 <Image
                   src={avatar}
                   alt={displayName}
@@ -209,11 +210,15 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
                   }}
                 />
               ) : null}
-              {(!avatar || avatar === 'https://via.placeholder.com/100') && (
-                <div className="w-full h-full flex items-center justify-center bg-brand-100">
-                  <span className="text-14 font-semibold text-brand-600">
-                    {displayName.charAt(0).toUpperCase() || 'U'}
-                  </span>
+              {!avatar && (
+                <div className="w-full h-full flex items-center justify-center bg-white">
+                  <Image
+                    src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                    alt="OurBride"
+                    width={24}
+                    height={24}
+                    className="object-contain"
+                  />
                 </div>
               )}
             </div>
@@ -285,9 +290,12 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
         <p className="text-14 text-gray-700 mb-4">{blog.summary || blog.excerpt}</p>
 
         {/* Full Blog Content */}
-        <div className="text-14 text-gray-700 mb-4 whitespace-pre-wrap">
-          {blog.content}
-        </div>
+        <div
+          className="text-14 text-gray-700 mb-4 [&_h1]:text-24 [&_h1]:font-semibold [&_h1]:text-gray-900 [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-20 [&_h2]:font-semibold [&_h2]:text-gray-900 [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-18 [&_h3]:font-semibold [&_h3]:text-gray-900 [&_h3]:mb-2 [&_h3]:mt-4 [&_p]:mb-4 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4 [&_ol]:space-y-2 [&_li]:mb-1 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_a]:text-brand-500 [&_a]:hover:text-brand-600 [&_a]:underline [&_ul]:rtl:pr-6 [&_ul]:rtl:pl-0 [&_ol]:rtl:pr-6 [&_ol]:rtl:pl-0"
+          dir="auto"
+          style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
+          dangerouslySetInnerHTML={{ __html: blog.content || '' }}
+        />
 
         {/* Engagement Metrics */}
         <div className="pt-4 border-t border-gray-100">

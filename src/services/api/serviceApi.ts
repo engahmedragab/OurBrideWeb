@@ -220,14 +220,29 @@ export const getServicesByPreparationId = async (
  */
 export const getServicesByProviderId = async (
   providerId: number
-): Promise<unknown> => {
+): Promise<ServiceResponse[]> => {
   try {
+    // Validate providerId
+    if (!providerId || isNaN(providerId) || providerId <= 0) {
+      throw new Error(`Invalid providerId: ${providerId}`)
+    }
+
     const response = await apiClient.api.getServicesGeByProviderId(providerId)
-    const responseData = response as { data?: unknown }
-    return responseData.data ?? response
+    const responseAny: any = response
+    
+    // Handle different response structures
+    // Expected: ServiceResponse[] or { data: ServiceResponse[] } or { data: { data: ServiceResponse[] } }
+    let services = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    
+    // Ensure it's an array
+    if (!Array.isArray(services)) {
+      services = []
+    }
+    
+    return services as ServiceResponse[]
   } catch (error) {
     console.error('Error fetching services by provider ID:', error)
-    throw error
+    throw error instanceof Error ? error : new Error('Failed to fetch services by provider ID')
   }
 }
 

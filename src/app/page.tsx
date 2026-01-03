@@ -177,7 +177,7 @@ export default function Home() {
       testimonials.slice(
         testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE,
         testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE +
-          PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
+        PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
       ),
     [testimonials, testimonialsIndex]
   )
@@ -361,6 +361,33 @@ export default function Home() {
                     asChild
                   >
                     <Link href="/products">Explore Products</Link>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Services Card */}
+              <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+                <div className="aspect-[5/2] overflow-hidden relative">
+                  <Image
+                    src={
+                      typeof heroCardBrideImage === 'string'
+                        ? heroCardBrideImage
+                        : heroCardBrideImage.src
+                    }
+                    alt="Explore Services"
+                    fill
+                    sizes="(max-width: 768px) 192px, 224px"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-14 font-semibold rounded-full"
+                    asChild
+                  >
+                    <Link href="/services">Explore Services</Link>
                   </Button>
                 </div>
               </div>

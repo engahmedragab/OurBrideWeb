@@ -12,6 +12,7 @@ import type { ReelResponse } from '@/types/responses/community'
 import { toggleLike as toggleReelLike, toggleFavorite as toggleReelFavorite, shareReel } from '@/services/api/reelsApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface ReelCardProps {
   reel: ReelResponse
@@ -32,14 +33,17 @@ const formatDate = (dateString: string | null): string => {
 
 // Helper function to get user display name
 const getUserDisplayName = (user: ReelResponse['user']): string => {
-  if (!user) return 'Anonymous'
-  return `${user.firstName} ${user.lastName}`.trim() || user.userName || 'Unknown'
+  if (!user) return 'OurBride'
+  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
+  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const fullName = `${firstName} ${lastName}`.trim()
+  return fullName || user.userName || 'OurBride'
 }
 
 // Helper function to get user avatar
-const getUserAvatar = (user: ReelResponse['user']): string => {
-  if (!user) return 'https://via.placeholder.com/100'
-  return user.profileUrl || 'https://via.placeholder.com/100'
+const getUserAvatar = (user: ReelResponse['user']): string | null => {
+  if (!user || !user.profileUrl) return null
+  return user.profileUrl
 }
 
 // Helper function to format duration
@@ -133,7 +137,8 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
   const displayName = getUserDisplayName(reel.user)
   const avatar = getUserAvatar(reel.user)
   const date = formatDate(reel.publishedAt || reel.creationDate)
-  const thumbnail = reel.thumbnailUrl || 'https://via.placeholder.com/400'
+  
+  const thumbnail = reel.thumbnailUrl || COMMUNITY_IMAGES.DEFAULT_REEL_IMAGE
 
   return (
     <div
@@ -168,7 +173,7 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
       <div className="p-4">
         <div className="flex items-start gap-3 mb-2">
           <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-            {avatar && avatar !== 'https://via.placeholder.com/100' ? (
+            {avatar ? (
               <Image
                 src={avatar}
                 alt={displayName}
@@ -180,11 +185,15 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
                 }}
               />
             ) : null}
-            {(!avatar || avatar === 'https://via.placeholder.com/100') && (
-              <div className="w-full h-full flex items-center justify-center bg-brand-100">
-                <span className="text-12 font-semibold text-brand-600">
-                  {displayName.charAt(0).toUpperCase() || 'U'}
-                </span>
+            {!avatar && (
+              <div className="w-full h-full flex items-center justify-center bg-white">
+                <Image
+                  src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                  alt="OurBride"
+                  width={20}
+                  height={20}
+                  className="object-contain"
+                />
               </div>
             )}
           </div>

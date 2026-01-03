@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { ArticleCard } from './ArticleCard'
+import { CommunityEmptyState } from './CommunityEmptyState'
 import type { ArticleResponse } from '@/types/responses/community'
 
 export interface ArticlesFeedProps {
@@ -17,9 +18,11 @@ export const ArticlesFeed = ({ className, articles = [] }: ArticlesFeedProps) =>
           <ArticleCard key={article.id} article={article} />
         ))
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <p className="text-gray-500">No articles available yet</p>
-        </div>
+        <CommunityEmptyState
+          title="No Articles Available"
+          message="There are no articles to display at the moment."
+          compact
+        />
       )}
     </div>
   )

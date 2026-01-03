@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { PostCard } from './PostCard'
 import { ArticleCard } from './ArticleCard'
+import { CommunityEmptyState } from './CommunityEmptyState'
 import type { CommunityHomeResponse } from '@/types/responses/community/community-home-response'
 
 export interface CommunityHomeFeedProps {
@@ -63,13 +64,18 @@ export const CommunityHomeFeed = ({ className, data, currentUser }: CommunityHom
       {/* Empty State */}
       {(!data.recentPosts || data.recentPosts.length === 0) &&
         (!data.recentArticles || data.recentArticles.length === 0) && (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-            <p className="text-gray-500">No content available yet</p>
-          </div>
+          <CommunityEmptyState
+            title="No Content Available"
+            message="There is no content to display at the moment. Check back later or be the first to share something!"
+            compact
+          />
         )}
     </div>
   )
 }
+
+
+
 
 
 

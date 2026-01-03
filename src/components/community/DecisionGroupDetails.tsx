@@ -30,6 +30,7 @@ import {
 } from '@/services/api/decisionGroupsApi'
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface DecisionGroupDetailsProps {
   decisionGroup: DecisionGroupResponse
@@ -210,7 +211,7 @@ export const DecisionGroupDetails = ({
               {(() => {
                 const avatar = getUserAvatar(decisionGroup.user)
                 const displayName = getUserDisplayName(decisionGroup.user)
-                return avatar && avatar !== 'https://via.placeholder.com/100' ? (
+                return avatar ? (
                   <Image
                     src={avatar}
                     alt={displayName}
@@ -225,12 +226,15 @@ export const DecisionGroupDetails = ({
               })()}
               {(() => {
                 const avatar = getUserAvatar(decisionGroup.user)
-                const displayName = getUserDisplayName(decisionGroup.user)
-                return (!avatar || avatar === 'https://via.placeholder.com/100') && (
-                  <div className="w-full h-full flex items-center justify-center bg-brand-100">
-                    <span className="text-14 font-semibold text-brand-600">
-                      {displayName.charAt(0).toUpperCase() || 'U'}
-                    </span>
+                return !avatar && (
+                  <div className="w-full h-full flex items-center justify-center bg-white">
+                    <Image
+                      src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                      alt="OurBride"
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
                   </div>
                 )
               })()}

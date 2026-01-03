@@ -17,6 +17,7 @@ import {
     RatingDisplay,
     Input,
 } from '@/components/ui'
+import { DeliveryStatusBadge } from '@/components/ui/DeliveryStatusBadge'
 import { useToast } from '@/components/ui/Toaster'
 import { getOrderById } from '@/services/api/orderApi'
 import { useDownloadOrderInvoice, useOrderReviews, useSubmitOrderReview } from '@/hooks/orders'
@@ -546,9 +547,8 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* Delivery Status - Current delivery status */}
                         {deliveryStatus && (
                             <div className="text-14 text-gray-600 mb-4">
-                                <p>
-                                    <span className="font-medium">Delivery Status:</span> {deliveryStatus}
-                                </p>
+                                <p className="font-medium text-gray-900 mb-2">Delivery Status:</p>
+                                <DeliveryStatusBadge status={deliveryStatus} />
                             </div>
                         )}
 
@@ -563,7 +563,10 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     <p className="text-12 mb-1">Delivery: {deliveryDeliveryDate}</p>
                                 )}
                                 {deliveryObjectStatus && (
-                                    <p className="text-12">Status: {deliveryObjectStatus}</p>
+                                    <div className="mt-2">
+                                        <p className="text-12 font-medium text-gray-900 mb-1">Status:</p>
+                                        <DeliveryStatusBadge status={deliveryObjectStatus} className="text-12" />
+                                    </div>
                                 )}
                             </div>
                         )}

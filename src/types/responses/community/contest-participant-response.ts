@@ -37,3 +37,11 @@ export interface ContestParticipantResponse extends BaseEntityResponse {
 
 
 
+
+
+
+
+
+
+
+

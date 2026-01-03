@@ -6,6 +6,7 @@ import type {
   ReservationUpdateRequest,
   GroupReservationRequest,
   ClientTestFeedbackRequest,
+  MultipleServicesTimeSlotsRequest,
 } from '@/../client/common/api/gen/ourbride-api'
 import type {
   ReservationResponse,
@@ -51,6 +52,28 @@ export const getAvailableTimeSlots = async (
   } catch (error: unknown) {
     console.error('Error fetching available time slots:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch available time slots')
+  }
+}
+
+/**
+ * Get available time slots for multiple services
+ * Endpoint: POST /api/v1/services/reservations/available-timeslots/multiple
+ */
+export const getAvailableTimeSlotsForMultipleServices = async (
+  request: MultipleServicesTimeSlotsRequest
+): Promise<TimeSlotResponse[]> => {
+  try {
+    const response = await apiClient.api.postReservationGenerateTimeSlotsForMultipleServices(request)
+    const responseAny: any = response
+    
+    // Extract time slots from response
+    const timeSlots = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    
+    // Ensure it's an array
+    return Array.isArray(timeSlots) ? timeSlots : []
+  } catch (error: unknown) {
+    console.error('Error fetching available time slots for multiple services:', error)
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch available time slots for multiple services')
   }
 }
 

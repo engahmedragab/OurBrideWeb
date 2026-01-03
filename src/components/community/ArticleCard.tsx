@@ -12,6 +12,7 @@ import type { ArticleResponse } from '@/types/responses/community'
 import { toggleLike as toggleArticleLike, toggleFavorite as toggleArticleFavorite, shareArticle } from '@/services/api/articlesApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface ArticleCardProps {
   article: ArticleResponse
@@ -31,14 +32,17 @@ const formatDate = (dateString: string | null): string => {
 
 // Helper function to get user display name
 const getUserDisplayName = (user: ArticleResponse['user']): string => {
-  if (!user) return 'Anonymous'
-  return `${user.firstName} ${user.lastName}`.trim() || user.userName || 'Unknown'
+  if (!user) return 'OurBride'
+  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
+  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const fullName = `${firstName} ${lastName}`.trim()
+  return fullName || user.userName || 'OurBride'
 }
 
 // Helper function to get user avatar
-const getUserAvatar = (user: ArticleResponse['user']): string => {
-  if (!user) return 'https://via.placeholder.com/100'
-  return user.profileUrl || 'https://via.placeholder.com/100'
+const getUserAvatar = (user: ArticleResponse['user']): string | null => {
+  if (!user || !user.profileUrl) return null
+  return user.profileUrl
 }
 
 export const ArticleCard = ({ article, className }: ArticleCardProps) => {
@@ -120,9 +124,8 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
   const displayName = getUserDisplayName(article.user)
   const avatar = getUserAvatar(article.user)
   const date = formatDate(article.publishedAt || article.creationDate)
-
-  // Use placeholder - ArticleResponse doesn't have thumbnailUrl property
-  const imageUrl = 'https://via.placeholder.com/800'
+  
+  const imageUrl = COMMUNITY_IMAGES.DEFAULT_ARTICLE_IMAGE
 
   return (
     <div
@@ -148,7 +151,7 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            {avatar && avatar !== 'https://via.placeholder.com/100' ? (
+            {avatar ? (
               <Image
                 src={avatar}
                 alt={displayName}
@@ -160,11 +163,15 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
                 }}
               />
             ) : null}
-            {(!avatar || avatar === 'https://via.placeholder.com/100') && (
-              <div className="w-full h-full flex items-center justify-center bg-brand-100">
-                <span className="text-12 font-semibold text-brand-600">
-                  {displayName.charAt(0).toUpperCase() || 'U'}
-                </span>
+            {!avatar && (
+              <div className="w-full h-full flex items-center justify-center bg-white">
+                <Image
+                  src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                  alt="OurBride"
+                  width={20}
+                  height={20}
+                  className="object-contain"
+                />
               </div>
             )}
           </div>

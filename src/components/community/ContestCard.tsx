@@ -10,6 +10,7 @@ import type { LeaderboardContestResponse } from '@/types/responses/community'
 import { toggleLike as toggleContestLike, toggleFavorite as toggleContestFavorite, shareContest } from '@/services/api/contestsApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface ContestCardProps {
   contest: LeaderboardContestResponse
@@ -30,8 +31,11 @@ const formatDate = (dateString: string | null): string => {
 
 // Helper function to get user display name
 const getUserDisplayName = (user: LeaderboardContestResponse['user']): string => {
-  if (!user) return 'Anonymous'
-  return `${user.firstName} ${user.lastName}`.trim() || user.userName || 'Unknown'
+  if (!user) return 'OurBride'
+  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
+  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const fullName = `${firstName} ${lastName}`.trim()
+  return fullName || user.userName || 'OurBride'
 }
 
 // Helper function to get contest status
@@ -128,9 +132,8 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
 
   const status = getContestStatus(contest)
   const endDate = formatDate(contest.endDate)
-
-  // Use placeholder - LeaderboardContestResponse doesn't have thumbnailUrl property
-  const imageUrl = 'https://via.placeholder.com/800'
+  
+  const imageUrl = COMMUNITY_IMAGES.DEFAULT_CONTEST_IMAGE
 
   return (
     <div

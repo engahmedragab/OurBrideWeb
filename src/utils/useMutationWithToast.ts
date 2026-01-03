@@ -1,9 +1,9 @@
-import { useMutation, useMutationOptions, useQueryClient } from '@tanstack/react-query'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/Toaster'
 import { extractApiMessage, extractApiErrorMessage, extractApiSuccess } from '@/utils/api-response.utils'
 
 interface UseMutationWithToastOptions<TData, TError, TVariables, TContext> 
-  extends Omit<useMutationOptions<TData, TError, TVariables, TContext>, 'onSuccess' | 'onError'> {
+  extends Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'onSuccess' | 'onError'> {
   onSuccess?: (data: TData, variables: TVariables, context: TContext | undefined) => void
   onError?: (error: TError, variables: TVariables, context: TContext | undefined) => void
   successMessage?: string | ((data: TData) => string)

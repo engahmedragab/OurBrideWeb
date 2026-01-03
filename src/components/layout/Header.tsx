@@ -33,6 +33,7 @@ import {
 } from 'lucide-react'
 import { NotificationDropdown } from '@/components/notifications'
 import { useNotifications } from '@/hooks/notifications/useNotifications'
+import { ClientOnly } from '@/components/ui/ClientOnly'
 
 export interface HeaderProps {
   className?: string
@@ -169,8 +170,9 @@ export const Header = ({ className }: HeaderProps) => {
           </Link>
 
           {/* Navigation Menu */}
-          <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList className="gap-0.5 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm h-12">
+          <ClientOnly>
+            <NavigationMenu className="hidden md:flex">
+              <NavigationMenuList className="gap-0.5 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm h-12">
               {navigationItems.map(item => {
                 const Icon = item.icon
                 // For dropdown items, check if any dropdown item is active instead of the parent path
@@ -265,8 +267,9 @@ export const Header = ({ className }: HeaderProps) => {
                   </NavigationMenuItem>
                 )
               })}
-            </NavigationMenuList>
-          </NavigationMenu>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </ClientOnly>
 
           {/* Search Bar */}
           <div className="hidden flex-1 max-w-md lg:block">
@@ -322,13 +325,15 @@ export const Header = ({ className }: HeaderProps) => {
               </Button>
 
               {/* Notifications */}
-              <NotificationDropdown
-                notifications={notifications}
-                onMarkAsRead={markAsRead}
-                onDelete={deleteNotification}
-                onMarkAllAsRead={markAllAsRead}
-                isLoading={isLoadingNotifications}
-              />
+              <ClientOnly>
+                <NotificationDropdown
+                  notifications={notifications}
+                  onMarkAsRead={markAsRead}
+                  onDelete={deleteNotification}
+                  onMarkAllAsRead={markAllAsRead}
+                  isLoading={isLoadingNotifications}
+                />
+              </ClientOnly>
 
               {/* Cart */}
               <Button

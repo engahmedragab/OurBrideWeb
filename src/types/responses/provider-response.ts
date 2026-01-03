@@ -17,6 +17,7 @@ import type { ProviderPaymentMethodResponse } from './provider-payment-method-re
 import type { WorkingTimeResponse } from './working-time-response'
 import type { BlockedWorkingTimeResponse } from './blocked-working-time-response'
 import type { ProviderStatus, ProviderRate } from '@/types/responses/common'
+import type { ServiceSummary } from './service-summary'
 
 export interface ProviderResponse extends BaseLookupResponse {
   phoneNumber: string
@@ -54,4 +55,9 @@ export interface ProviderResponse extends BaseLookupResponse {
   resources: ResourceResponse[]
   isProfileComplete: boolean
   profileCompletionPercentage: number
+  // Additional fields for provider card display (same as ProviderMapItem)
+  topRatedServices?: ServiceSummary[]
+  totalServicesCount?: number
+  reviewCount?: number
+  images?: MediaResponse[]
 }

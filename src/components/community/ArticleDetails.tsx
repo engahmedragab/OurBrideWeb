@@ -29,6 +29,7 @@ import {
 } from '@/services/api/articlesApi'
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface ArticleDetailsProps {
   article: ArticleResponse
@@ -50,8 +51,8 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
   const displayName = getUserDisplayName(article.user, article.authorName)
   const avatar = getUserAvatar(article.user)
   const date = formatDate(article.publishedAt || article.creationDate)
-  // Use placeholder - ArticleResponse doesn't have thumbnailUrl property
-  const imageUrl = 'https://via.placeholder.com/800'
+
+  const imageUrl = COMMUNITY_IMAGES.DEFAULT_ARTICLE_IMAGE
 
   // Map reviews to comments format
   const comments = (article.reviews || []).map((review: ReviewResponse) => ({
@@ -199,7 +200,7 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-              {avatar && avatar !== 'https://via.placeholder.com/100' ? (
+              {avatar ? (
                 <Image
                   src={avatar}
                   alt={displayName}
@@ -211,11 +212,15 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
                   }}
                 />
               ) : null}
-              {(!avatar || avatar === 'https://via.placeholder.com/100') && (
-                <div className="w-full h-full flex items-center justify-center bg-brand-100">
-                  <span className="text-14 font-semibold text-brand-600">
-                    {displayName.charAt(0).toUpperCase() || 'U'}
-                  </span>
+              {!avatar && (
+                <div className="w-full h-full flex items-center justify-center bg-white">
+                  <Image
+                    src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                    alt="OurBride"
+                    width={24}
+                    height={24}
+                    className="object-contain"
+                  />
                 </div>
               )}
             </div>

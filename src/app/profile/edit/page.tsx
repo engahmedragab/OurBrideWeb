@@ -24,7 +24,11 @@ export default function ProfileEditPage() {
   const updateMutation = useUpdateUserProfile()
 
   // Extract user data from mineInfo (fallback to profileData)
-  const userData = mineInfo?.data?.userProfile?.user || profileData || authUser
+  // Handle different response structures: mineInfo.data.userProfile.user or mineInfo.userProfile.user
+  const mineInfoAny = mineInfo as any
+  const data: any = mineInfoAny?.data || mineInfoAny || {}
+  const userProfile: any = data?.userProfile || {}
+  const userData = userProfile?.user || profileData || authUser
 
   const [formData, setFormData] = useState({
     firstName: '',

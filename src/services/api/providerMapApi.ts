@@ -1,6 +1,7 @@
 import type { FeaturedProviderResponse } from '@/types/responses'
-import { getToken } from '@/auth/utils/token'
-import { getApiLanguage } from '@/utils/language'
+import type { ServiceSummary } from '@/types/responses/service-summary'
+import type { MediaResponse } from '@/types/responses/media-response'
+import { apiClient } from '@/services/api/apiClient'
 
 export interface GetProvidersMapParams {
   latitude?: number
@@ -15,7 +16,7 @@ export interface GetProvidersMapParams {
 }
 
 /**
- * Provider Map Response - simplified response from map endpoint
+ * Provider Map Response - matches C# ProviderMapItem structure
  */
 export interface ProviderMapResponse {
   id: number
@@ -24,34 +25,81 @@ export interface ProviderMapResponse {
   longitude: number
   address: string
   rate: number | null
+  // Additional fields for provider card display
+  topRatedServices: ServiceSummary[]
+  totalServicesCount: number
+  reviewCount: number
+  images: MediaResponse[]
 }
 
 /**
  * Map ProviderMapResponse to FeaturedProviderResponse
- * Also attach coordinates as a custom property for map display
+ * Also attach coordinates and services as custom properties for map display
  */
-const mapProviderMapToFeatured = (provider: ProviderMapResponse): FeaturedProviderResponse & { latitude?: number; longitude?: number } => {
-  return {
+const mapProviderMapToFeatured = (
+  provider: ProviderMapResponse
+): FeaturedProviderResponse & { 
+  latitude?: number
+  longitude?: number
+  topRatedServices?: ServiceSummary[]
+} => {
+  console.log('[mapProviderMapToFeatured] Mapping provider:', {
     id: provider.id,
-    nameEn: provider.name,
-    nameAr: provider.name,
+    name: provider.name,
+    latitude: provider.latitude,
+    longitude: provider.longitude,
+    address: provider.address,
+    rate: provider.rate,
+    topRatedServicesCount: provider.topRatedServices?.length || 0,
+    totalServicesCount: provider.totalServicesCount,
+    reviewCount: provider.reviewCount,
+    imagesCount: provider.images?.length || 0,
+  })
+  
+  // Get first image from images array for banner/logo
+  const firstImage = provider.images && provider.images.length > 0 
+    ? provider.images[0] 
+    : null
+  
+  // Get banner image (prefer featured or first image)
+  const bannerImage = provider.images?.find(img => img.isFeatured) || firstImage
+  const logoImage = provider.images?.find(img => img.mediaType === 1) || firstImage // Assuming 1 is image type
+  
+  const mapped = {
+    id: provider.id,
+    nameEn: provider.name || '',
+    nameAr: provider.name || '',
     descriptionEn: '',
     descriptionAr: '',
-    publicLogoImageUrl: '',
-    publicBannerImageUrl: '',
+    publicLogoImageUrl: logoImage?.url || logoImage?.thumbnailUrl || '',
+    publicBannerImageUrl: bannerImage?.url || bannerImage?.thumbnailUrl || '',
     rate: provider.rate,
-    totalReviews: 0,
+    totalReviews: provider.reviewCount || 0,
     isVerified: false,
-    totalServices: 0,
+    totalServices: provider.totalServicesCount || 0,
     totalProducts: 0,
     shortAddress: provider.address || '',
     publicProfileSlug: `/provider/${provider.id}`,
     uniqueCode: `provider-${provider.id}`,
-    topRatedService: null,
-    // Add coordinates for map display
+    topRatedService: provider.topRatedServices && provider.topRatedServices.length > 0
+      ? provider.topRatedServices[0]
+      : null,
+    // Add coordinates for map display - these are critical for map markers
     latitude: provider.latitude,
     longitude: provider.longitude,
+    // Add topRatedServices for ProviderSearchCard
+    topRatedServices: provider.topRatedServices || [],
   }
+  
+  console.log('[mapProviderMapToFeatured] Mapped result:', {
+    id: mapped.id,
+    nameEn: mapped.nameEn,
+    latitude: mapped.latitude,
+    longitude: mapped.longitude,
+    topRatedServicesCount: mapped.topRatedServices?.length || 0,
+  })
+  
+  return mapped
 }
 
 /**
@@ -62,111 +110,199 @@ export const getProvidersMap = async (
   params?: GetProvidersMapParams
 ): Promise<FeaturedProviderResponse[]> => {
   try {
-    const queryParams = new URLSearchParams()
-    
-    if (params?.latitude !== undefined) {
-      queryParams.append('Latitude', params.latitude.toString())
-    }
-    if (params?.longitude !== undefined) {
-      queryParams.append('Longitude', params.longitude.toString())
-    }
-    if (params?.radius !== undefined) {
-      queryParams.append('Radius', params.radius.toString())
-    }
-    if (params?.sortBy) {
-      queryParams.append('SortBy', params.sortBy)
-    }
-    if (params?.venueType) {
-      queryParams.append('VenueType', params.venueType)
-    }
-    if (params?.serviceClasses && params.serviceClasses.length > 0) {
-      params.serviceClasses.forEach(sc => {
-        queryParams.append('ServiceClasses', sc.toString())
-      })
-    }
-    if (params?.minRating !== undefined) {
-      queryParams.append('MinRating', params.minRating.toString())
-    }
-    if (params?.offersDeals !== undefined) {
-      queryParams.append('OffersDeals', params.offersDeals.toString())
-    }
-    if (params?.acceptsGroups !== undefined) {
-      queryParams.append('AcceptsGroups', params.acceptsGroups.toString())
-    }
+    // Build query object matching the generated API client signature
+    const query = params
+      ? {
+          Latitude: params.latitude,
+          Longitude: params.longitude,
+          Radius: params.radius,
+          SortBy: params.sortBy,
+          VenueType: params.venueType,
+          ServiceClasses: params.serviceClasses,
+          MinRating: params.minRating,
+          OffersDeals: params.offersDeals,
+          AcceptsGroups: params.acceptsGroups,
+        }
+      : undefined
 
-    // Add language parameter
-    queryParams.append('lang', getApiLanguage())
+    // Remove undefined values from query
+    const cleanQuery = query
+      ? Object.fromEntries(
+          Object.entries(query).filter(([_, value]) => value !== undefined)
+        )
+      : undefined
+
+    const response = await apiClient.api.getProviderMap(cleanQuery)
+    const responseAny: any = response
     
-    // Use fetch API with proper headers
-    const token = getToken()
-    const language = getApiLanguage()
-    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || ''
+    console.log('[getProvidersMap] Raw API response:', JSON.stringify(responseAny, null, 2))
+    console.log('[getProvidersMap] Response type:', typeof responseAny)
+    console.log('[getProvidersMap] Response keys:', responseAny ? Object.keys(responseAny) : [])
     
-    const headers: Record<string, string> = {
-      'Accept-Language': language,
-      'Content-Type': 'application/json',
-    }
+    // Handle different response structures
+    // Expected structure from API: { data: { providers: [...] }, success: true, ... }
+    // API client may return: response.data = { data: { providers: [...] }, ... }
+    let providersData: unknown = null
     
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`
-    }
+    // First, check if response has a .data property (API client wrapper)
+    const actualResponse = responseAny?.data || responseAny
     
-    // Construct URL - remove /api/v1 from baseURL if it exists to avoid duplication
-    const cleanBaseURL = baseURL.replace(/\/$/, '').replace(/\/api\/v1$/, '')
-    const endpoint = `/api/v1/services/providers/map`
-    const queryString = queryParams.toString()
-    const fullUrl = `${cleanBaseURL}${endpoint}${queryString ? `?${queryString}` : ''}`
+    console.log('[getProvidersMap] Actual response after unwrapping:', JSON.stringify(actualResponse, null, 2))
+    console.log('[getProvidersMap] Actual response keys:', actualResponse ? Object.keys(actualResponse) : [])
     
-    console.log('Fetching providers map:', fullUrl)
-    
-    const fetchResponse = await fetch(fullUrl, {
-      method: 'GET',
-      headers,
-    })
-    
-    if (!fetchResponse.ok) {
-      throw new Error(`HTTP error! status: ${fetchResponse.status}`)
-    }
-    
-    const responseData = await fetchResponse.json() as Record<string, unknown>
-    
-    console.log('Map API response:', responseData)
-    
-    // Handle response structure: { data: { providers: [...] } }
-    let providersData: unknown = responseData
-    
-    if (responseData && typeof responseData === 'object') {
-      if ('data' in responseData) {
-        const nestedData = responseData.data
-        if (Array.isArray(nestedData)) {
-          providersData = nestedData
-        } else if (nestedData && typeof nestedData === 'object') {
-          if ('providers' in nestedData && Array.isArray(nestedData.providers)) {
-            providersData = nestedData.providers
-          } else if ('data' in nestedData && Array.isArray(nestedData.data)) {
-            providersData = nestedData.data
-          } else if ('items' in nestedData && Array.isArray(nestedData.items)) {
-            providersData = nestedData.items
+    if (actualResponse && typeof actualResponse === 'object') {
+      // Check for { data: { providers: [...] } } structure
+      if ('data' in actualResponse && actualResponse.data) {
+        const dataObj = actualResponse.data
+        console.log('[getProvidersMap] Found data.data:', dataObj)
+        console.log('[getProvidersMap] data.data type:', typeof dataObj)
+        console.log('[getProvidersMap] data.data keys:', typeof dataObj === 'object' ? Object.keys(dataObj) : [])
+        
+        if (typeof dataObj === 'object') {
+          if ('providers' in dataObj && Array.isArray(dataObj.providers)) {
+            providersData = dataObj.providers
+            console.log('[getProvidersMap] ✓ Found providers in data.data.providers, count:', (providersData as any[]).length)
+          } else if (Array.isArray(dataObj)) {
+            providersData = dataObj
+            console.log('[getProvidersMap] ✓ Found providers in data.data (array), count:', (providersData as any[]).length)
+          } else if ('data' in dataObj && Array.isArray(dataObj.data)) {
+            providersData = dataObj.data
+            console.log('[getProvidersMap] ✓ Found providers in data.data.data, count:', (providersData as any[]).length)
+          } else if ('items' in dataObj && Array.isArray(dataObj.items)) {
+            providersData = dataObj.items
+            console.log('[getProvidersMap] ✓ Found providers in data.data.items, count:', (providersData as any[]).length)
           }
         }
-      } else if ('providers' in responseData && Array.isArray(responseData.providers)) {
-        providersData = responseData.providers
+      } 
+      // Check for direct { providers: [...] } in actual response
+      else if ('providers' in actualResponse && Array.isArray(actualResponse.providers)) {
+        providersData = actualResponse.providers
+        console.log('[getProvidersMap] ✓ Found providers in root providers, count:', (providersData as any[]).length)
+      }
+      // Check if actual response is directly an array
+      else if (Array.isArray(actualResponse)) {
+        providersData = actualResponse
+        console.log('[getProvidersMap] ✓ Response is directly an array, count:', (providersData as any[]).length)
       }
     }
     
     // Ensure we have an array
     if (!Array.isArray(providersData)) {
-      console.warn('Providers data is not an array:', providersData)
+      console.warn('[getProvidersMap] Providers data is not an array. Response structure:', {
+        responseAny,
+        hasData: 'data' in (responseAny || {}),
+        dataType: typeof (responseAny?.data),
+        dataKeys: responseAny?.data ? Object.keys(responseAny.data) : [],
+      })
       return []
     }
     
+    console.log('[getProvidersMap] Extracted providers count:', providersData.length)
+    console.log('[getProvidersMap] Sample provider:', providersData[0])
+    
     // Map ProviderMapResponse[] to FeaturedProviderResponse[]
     const providers = providersData as ProviderMapResponse[]
-    return providers.map(mapProviderMapToFeatured)
+    const mappedProviders = providers.map(mapProviderMapToFeatured)
+    
+    console.log('[getProvidersMap] Mapped providers count:', mappedProviders.length)
+    console.log('[getProvidersMap] Sample mapped provider:', mappedProviders[0])
+    
+    return mappedProviders
   } catch (error: unknown) {
     console.error('Error fetching providers map:', error)
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch providers for map'
+    )
+  }
+}
+
+/**
+ * Get nearby providers for a specific provider
+ * GET /api/v1/services/providers/{providerId}/nearby
+ */
+export const getNearbyProviders = async (
+  providerId: number,
+  params?: {
+    radius?: number
+    sortBy?: string
+  }
+): Promise<ProviderMapResponse[]> => {
+  try {
+    // Validate providerId
+    if (!providerId || isNaN(providerId) || providerId <= 0) {
+      throw new Error(`Invalid providerId: ${providerId}`)
+    }
+
+    // Clean query parameters - remove undefined values
+    const cleanQuery = params
+      ? Object.fromEntries(
+          Object.entries(params).filter(([_, value]) => value !== undefined)
+        )
+      : undefined
+
+    console.log('[getNearbyProviders] Calling API with providerId:', providerId, 'query:', cleanQuery)
+
+    const response = await apiClient.api.getProviderGetNearbyProviders(
+      providerId,
+      Object.keys(cleanQuery || {}).length > 0 ? cleanQuery : undefined
+    )
+    
+    console.log('[getNearbyProviders] API response received:', response)
+    
+    const responseAny: any = response
+    
+    // Handle different response structures
+    let providersData: unknown = null
+    
+    // First, check if response has a .data property (API client wrapper)
+    const actualResponse = responseAny?.data || responseAny
+    
+    console.log('[getNearbyProviders] Actual response after unwrapping:', JSON.stringify(actualResponse, null, 2))
+    
+    if (actualResponse && typeof actualResponse === 'object') {
+      // Check for { data: { providers: [...] } } structure
+      if ('data' in actualResponse && actualResponse.data) {
+        const dataObj = actualResponse.data
+        if (typeof dataObj === 'object') {
+          if ('providers' in dataObj && Array.isArray(dataObj.providers)) {
+            providersData = dataObj.providers
+          } else if (Array.isArray(dataObj)) {
+            providersData = dataObj
+          } else if ('data' in dataObj && Array.isArray(dataObj.data)) {
+            providersData = dataObj.data
+          } else if ('items' in dataObj && Array.isArray(dataObj.items)) {
+            providersData = dataObj.items
+          }
+        }
+      } 
+      // Check for direct { providers: [...] } in actual response
+      else if ('providers' in actualResponse && Array.isArray(actualResponse.providers)) {
+        providersData = actualResponse.providers
+      }
+      // Check if actual response is directly an array
+      else if (Array.isArray(actualResponse)) {
+        providersData = actualResponse
+      }
+    }
+    
+    // Ensure we have an array
+    if (!Array.isArray(providersData)) {
+      console.warn('[getNearbyProviders] Providers data is not an array. Response structure:', {
+        responseAny,
+        hasData: 'data' in (responseAny || {}),
+        dataType: typeof (responseAny?.data),
+      })
+      return []
+    }
+    
+    console.log('[getNearbyProviders] Extracted providers count:', providersData.length)
+    
+    // Return as ProviderMapResponse[]
+    return providersData as ProviderMapResponse[]
+  } catch (error: unknown) {
+    console.error('[getNearbyProviders] Error fetching nearby providers:', error)
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch nearby providers'
     )
   }
 }

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import messagesEmptySvg from '@/assets/svg/messages-empty.svg'
+import type { Notification } from '@/types/notification'
 
 const notificationTabs = [
   { id: 'all', label: 'All', icon: Bell },
@@ -58,13 +59,13 @@ export default function NotificationsPage() {
     () =>
     activeTab === 'all'
       ? notifications
-        : notifications.filter(n => n.type === activeTab),
+        : notifications.filter((n: Notification) => n.type === activeTab),
     [notifications, activeTab]
   )
 
   // Count unread notifications for filtered view
   const filteredUnreadCount = useMemo(
-    () => filteredNotifications.filter(n => !n.isRead).length,
+    () => filteredNotifications.filter((n: Notification) => !n.isRead).length,
     [filteredNotifications]
   )
 
@@ -84,8 +85,8 @@ export default function NotificationsPage() {
     } else {
       // Mark all unread notifications in the filtered list as read
       filteredNotifications
-        .filter(n => !n.isRead)
-        .forEach(n => markAsRead(n.id))
+        .filter((n: Notification) => !n.isRead)
+        .forEach((n: Notification) => markAsRead(n.id))
     }
   }
 
@@ -146,7 +147,7 @@ export default function NotificationsPage() {
             const tabUnreadCount =
               tab.id === 'all'
                 ? unreadCount
-                : notifications.filter(n => n.type === tab.id && !n.isRead).length
+                : notifications.filter((n: Notification) => n.type === tab.id && !n.isRead).length
 
             return (
               <button
@@ -198,7 +199,7 @@ export default function NotificationsPage() {
       ) : (
         <>
         <div className="space-y-3">
-          {filteredNotifications.map(notification => (
+          {filteredNotifications.map((notification: Notification) => (
             <NotificationCard
               key={notification.id}
               notification={notification}
