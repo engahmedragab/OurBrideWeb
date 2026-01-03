@@ -1,76 +1,62 @@
 'use client'
 
 import { useMemo } from 'react'
-import Image from 'next/image'
 import { Badge } from '@/components/ui/Badge'
 import { 
   Clock, 
   CheckCircle2,
-  Sparkles,
-  Camera,
-  UtensilsCrossed,
-  Building2,
-  Flower2,
-  Cake,
-  Shirt,
-  Heart,
-  Crown,
   Music,
   Car,
   Palette,
   Scissors,
   Gift,
-  type LucideIcon
+  UtensilsCrossed,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { MainServiceBookResponse } from '@/types/responses'
+import { WeddingHallIcon } from '@/assets/icons/WeddingHallIcon'
+import { BridalBeautyIcon } from '@/assets/icons/BridalBeautyIcon'
+import { PhotographyIcon } from '@/assets/icons/PhotographyIcon'
+import { BouquetIcon } from '@/assets/icons/BouquetIcon'
+import { WeddingCakeIcon } from '@/assets/icons/WeddingCakeIcon'
+import { WeddingDressIcon } from '@/assets/icons/WeddingDressIcon'
+import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
+import { AccessoriesIcon } from '@/assets/icons/AccessoriesIcon'
+import type { SVGProps } from 'react'
+
+type IconComponent = React.ComponentType<SVGProps<SVGSVGElement>>
 
 /**
- * Map iconName to Lucide icon component
+ * Map iconName to custom icon component
  */
-const getIconFromName = (iconName: string): LucideIcon => {
+const getIconFromName = (iconName: string): IconComponent | null => {
   const name = iconName.toLowerCase().trim()
   
-  // Map common icon names to Lucide icons
-  const iconMap: Record<string, LucideIcon> = {
-    'makeup': Sparkles,
-    'bridal': Sparkles,
-    'beauty': Sparkles,
-    'salon': Sparkles,
-    'photo': Camera,
-    'photography': Camera,
-    'camera': Camera,
-    'video': Camera,
-    'catering': UtensilsCrossed,
-    'food': UtensilsCrossed,
-    'restaurant': UtensilsCrossed,
-    'hall': Building2,
-    'venue': Building2,
-    'location': Building2,
-    'bouquet': Flower2,
-    'flower': Flower2,
-    'floral': Flower2,
-    'cake': Cake,
-    'dessert': Cake,
-    'suit': Shirt,
-    'tuxedo': Shirt,
-    'dress': Heart,
-    'gown': Heart,
-    'accessor': Crown,
-    'jewelry': Crown,
-    'music': Music,
-    'dj': Music,
-    'entertainment': Music,
-    'car': Car,
-    'transport': Car,
-    'vehicle': Car,
-    'decoration': Palette,
-    'design': Palette,
-    'decor': Palette,
-    'hair': Scissors,
-    'styling': Scissors,
-    'gift': Gift,
-    'favor': Gift,
+  // Map common icon names to custom icons
+  const iconMap: Record<string, IconComponent> = {
+    'makeup': BridalBeautyIcon,
+    'bridal': BridalBeautyIcon,
+    'beauty': BridalBeautyIcon,
+    'salon': BridalBeautyIcon,
+    'photo': PhotographyIcon,
+    'photography': PhotographyIcon,
+    'camera': PhotographyIcon,
+    'video': PhotographyIcon,
+    'hall': WeddingHallIcon,
+    'venue': WeddingHallIcon,
+    'location': WeddingHallIcon,
+    'bouquet': BouquetIcon,
+    'flower': BouquetIcon,
+    'floral': BouquetIcon,
+    'cake': WeddingCakeIcon,
+    'dessert': WeddingCakeIcon,
+    'suit': WeddingSuitIcon,
+    'tuxedo': WeddingSuitIcon,
+    'dress': WeddingDressIcon,
+    'gown': WeddingDressIcon,
+    'accessor': AccessoriesIcon,
+    'jewelry': AccessoriesIcon,
+    'accessories': AccessoriesIcon,
   }
   
   // Try exact match first
@@ -85,8 +71,8 @@ const getIconFromName = (iconName: string): LucideIcon => {
     }
   }
   
-  // Default icon
-  return Sparkles
+  // Default to null (no icon)
+  return null
 }
 
 export interface UpcomingBookingsProps {
@@ -100,16 +86,15 @@ export interface UpcomingBookingsProps {
 export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }: UpcomingBookingsProps) => {
   // Get active lines (not deleted) - use services if available, otherwise use lines
   const activeLines = useMemo(() => {
-    const lines = book.services || book.lines || []
-    return lines.filter(line => !line.isDeleted)
+    const lines = (book.services || book.lines || []) as any[]
+    return lines.filter((line: any) => !line?.isDeleted)
   }, [book.services, book.lines])
 
-  // Sort by creation date (newest first)
-  // Note: All lines share the same book-level pending/completed status
+  // Sort by lastModifiedDate (newest first), fallback to creationDate
   const sortedLines = useMemo(() => {
-    return [...activeLines].sort((a, b) => {
-      const dateA = new Date(a.creationDate).getTime()
-      const dateB = new Date(b.creationDate).getTime()
+    return [...activeLines].sort((a: any, b: any) => {
+      const dateA = new Date(a.lastModifiedDate || a.creationDate || 0).getTime()
+      const dateB = new Date(b.lastModifiedDate || b.creationDate || 0).getTime()
       return dateB - dateA
     })
   }, [activeLines])
@@ -138,69 +123,72 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
         <button
           className="text-12 text-brand-500 hover:text-brand-600 font-medium"
           onClick={handleClick}
+          type="button"
         >
           View All
         </button>
       </div>
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-3">
         {displayBookings.length > 0 ? (
-          displayBookings.map(line => {
-            // Use creationDate as date
-            const date = line.creationDate || line.lastModifiedDate
-            // Format time from date
-            const time = date ? format(new Date(date), 'hh:mm a') : ''
+          displayBookings.map((line: any) => {
+            // Use lastModifiedDate, fallback to creationDate
+            const date = line.lastModifiedDate || line.creationDate
 
-            // Check if iconName exists, otherwise use image
+            // Check if iconName exists
             const hasIconName = line.iconName && line.iconName.trim() !== ''
             const IconComponent = hasIconName ? getIconFromName(line.iconName) : null
 
             return (
-              <div key={line.id} className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4">
-                {/* Single horizontal row layout */}
+              <button
+                key={line.id}
+                type="button"
+                onClick={handleClick}
+                className="w-full text-left bg-white rounded-lg border border-gray-200 p-3 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              >
                 <div className="flex items-center justify-between gap-4">
-                  {/* Left section: Icon + Title + Date grouped together */}
+                  {/* Left section: Icon + Title */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     {/* Icon */}
                     {hasIconName && IconComponent && (
-                      <div className="w-12 h-12 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <IconComponent className="w-6 h-6 sm:w-6 sm:h-6 text-brand-500" />
+                      <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center flex-shrink-0">
+                        <IconComponent className="w-5 h-5 text-brand-500" />
                       </div>
                     )}
                     
-                    {/* Title and Date stack */}
+                    {/* Title */}
                     <div className="flex flex-col min-w-0 flex-1">
-                      <p className="text-14 sm:text-16 font-semibold text-gray-900 truncate">
-                        {line.title}
+                      <p className="text-13 font-semibold text-gray-900 truncate">
+                        {line.title || 'Untitled Service'}
                       </p>
                       {date && date !== '0001-01-01T00:00:00' && (
-                        <p className="text-12 sm:text-14 text-gray-600 truncate">
-                          {format(new Date(date), 'dd/MM/yyyy')} {time}
+                        <p className="text-11 text-gray-500 mt-0.5">
+                          {format(new Date(date), 'dd MMM, yyyy')}
                         </p>
                       )}
                     </div>
                   </div>
 
                   {/* Right section: Status badges */}
-                  <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     {book.pending && book.pending > 0 && (
-                      <Badge variant="pending" className="md:text-12 text-[6px] flex items-center gap-1 whitespace-nowrap">
-                        <Clock className="w-3 h-3 md:w-4 md:h-4" />
+                      <Badge variant="pending" className="text-11 flex items-center gap-1 whitespace-nowrap">
+                        <Clock className="w-3 h-3" />
                         <span>Pending</span>
                       </Badge>
                     )}
                     {((book.completed && book.completed > 0) || book.isSubDone) && (
-                      <Badge variant="confirmed" className="md:text-12 text-[6px] flex items-center gap-1 whitespace-nowrap">
-                        <CheckCircle2 className="w-3 h-3 md:w-4 md:h-4" />
+                      <Badge variant="confirmed" className="text-11 flex items-center gap-1 whitespace-nowrap">
+                        <CheckCircle2 className="w-3 h-3" />
                         <span>Completed</span>
                       </Badge>
                     )}
                   </div>
                 </div>
-              </div>
+              </button>
             )
           })
         ) : (
-          <p className="text-14 text-gray-500 text-center py-4">No bookings yet</p>
+          <p className="text-13 text-gray-500 text-center py-6">No bookings yet</p>
         )}
       </div>
     </div>
