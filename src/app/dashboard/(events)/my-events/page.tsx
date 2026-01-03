@@ -567,11 +567,17 @@ function MyEventsPageContent() {
                   eventId={selectedEventId || undefined}
             
                 />
-                <QuickStatsCard
+                  <ItemsOverview
+      book={eventInfo.itemBook}
+      onInit={() => handleBookInit('item')}
+      onNavigate={() => handleBookNavigate('item')}
+      eventId={selectedEventId || undefined}
+    />
+                {/* <QuickStatsCard
                   title="Invite Your Guests"
                   book={eventInfo.guestBook}
                   eventId={selectedEventId || undefined}
-                />
+                /> */}
               </div>
             </div>
 
@@ -613,14 +619,14 @@ function MyEventsPageContent() {
 
             {/* SECTION 6: Items, Notes & Occasions - Three Columns */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
-  <div className="self-start h-fit">
+  {/* <div className="self-start h-fit">
     <ItemsOverview
       book={eventInfo.itemBook}
       onInit={() => handleBookInit('item')}
       onNavigate={() => handleBookNavigate('item')}
       eventId={selectedEventId || undefined}
     />
-  </div>
+  </div> */}
 
   <div className="self-start h-fit">
     <NotesOverview

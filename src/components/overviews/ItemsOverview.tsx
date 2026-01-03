@@ -47,9 +47,24 @@ export const ItemsOverview = ({
     return (completed / total) * 100
   }, [book.completed, total])
 
+  // Use actual values from API
   const completed = book.completed || 0
-  const estimated = book.estimated || 0
-  const totalPrice = book.totalPrice || 0
+  const estimated = book.estimated ?? null // Can be null
+  
+  // Calculate totalPrice: use book.totalPrice if > 0, otherwise sum from lines
+  const totalPrice = useMemo(() => {
+    // If book.totalPrice exists and > 0, use it
+    if (book.totalPrice && book.totalPrice > 0) {
+      return book.totalPrice
+    }
+    // Otherwise, calculate from lines
+    if (book.lines && book.lines.length > 0) {
+      return book.lines.reduce((sum, line) => {
+        return sum + (line.totalPrice || 0)
+      }, 0)
+    }
+    return 0
+  }, [book.totalPrice, book.lines])
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
@@ -70,32 +85,32 @@ export const ItemsOverview = ({
             <p className="text-16 font-bold text-gray-900">
               {completed} Out of {total}
             </p>
-            <p className="text-12 text-gray-500 mt-1">Items completed</p>
+            {/* <p className="text-12 text-gray-500 mt-1">Items completed</p> */}
           </div>
           <ProgressRing percentage={percentage} />
         </div>
 
         {/* Budget Info */}
-        {(estimated > 0 || totalPrice > 0) && (
+        {(estimated !== null && estimated > 0) || totalPrice > 0 ? (
           <div className="pt-3 border-t border-gray-100 space-y-2">
-            {estimated > 0 && (
+            {estimated !== null && estimated > 0 && (
               <div className="flex items-center justify-between">
-                <span className="text-13 text-gray-600">Estimated Budget</span>
-                <span className="text-14 font-semibold text-gray-900">
+                <span className="text-12 text-gray-600">Estimated Budget</span>
+                <span className="text-12 font-semibold text-gray-900">
                   {estimated.toLocaleString()} EGP
                 </span>
               </div>
             )}
             {totalPrice > 0 && (
               <div className="flex items-center justify-between">
-                <span className="text-13 text-gray-600">Total Price</span>
-                <span className="text-14 font-semibold text-gray-900">
+                <span className="text-12 text-gray-600">Total Price</span>
+                <span className="text-12 font-semibold text-gray-900">
                   {totalPrice.toLocaleString()} EGP
                 </span>
               </div>
             )}
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   )

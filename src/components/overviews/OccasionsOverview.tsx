@@ -2,85 +2,9 @@
 
 import { useMemo } from 'react'
 import { format } from 'date-fns'
-import { Calendar, Star } from 'lucide-react'
+import { Calendar, Star, ChevronRight } from 'lucide-react'
 import { MainOccasionBookResponse } from '@/types/responses'
-import {
-  Sparkles,
-  Camera,
-  UtensilsCrossed,
-  Building2,
-  Flower2,
-  Cake,
-  Shirt,
-  Heart,
-  Crown,
-  Music,
-  Car,
-  Palette,
-  Scissors,
-  Gift,
-  type LucideIcon
-} from 'lucide-react'
-
-/**
- * Map iconName to Lucide icon component
- */
-const getIconFromName = (iconName: string): LucideIcon => {
-  const name = iconName.toLowerCase().trim()
-
-  const iconMap: Record<string, LucideIcon> = {
-    'makeup': Sparkles,
-    'bridal': Sparkles,
-    'beauty': Sparkles,
-    'salon': Sparkles,
-    'photo': Camera,
-    'photography': Camera,
-    'camera': Camera,
-    'video': Camera,
-    'catering': UtensilsCrossed,
-    'food': UtensilsCrossed,
-    'restaurant': UtensilsCrossed,
-    'hall': Building2,
-    'venue': Building2,
-    'location': Building2,
-    'bouquet': Flower2,
-    'flower': Flower2,
-    'floral': Flower2,
-    'cake': Cake,
-    'dessert': Cake,
-    'suit': Shirt,
-    'tuxedo': Shirt,
-    'dress': Heart,
-    'gown': Heart,
-    'accessor': Crown,
-    'jewelry': Crown,
-    'music': Music,
-    'dj': Music,
-    'entertainment': Music,
-    'car': Car,
-    'transport': Car,
-    'vehicle': Car,
-    'decoration': Palette,
-    'design': Palette,
-    'decor': Palette,
-    'hair': Scissors,
-    'styling': Scissors,
-    'gift': Gift,
-    'favor': Gift,
-  }
-
-  if (iconMap[name]) {
-    return iconMap[name]
-  }
-
-  for (const [key, icon] of Object.entries(iconMap)) {
-    if (name.includes(key)) {
-      return icon
-    }
-  }
-
-  return Calendar
-}
+import flowerImg from '@/assets/images/flowers.png'
 
 export interface OccasionsOverviewProps {
   book?: MainOccasionBookResponse
@@ -89,114 +13,119 @@ export interface OccasionsOverviewProps {
   eventId?: number
 }
 
-export const OccasionsOverview = ({
-  book,
-  onInit,
-  onNavigate,
-  eventId,
-}: OccasionsOverviewProps) => {
-  if (!book) {
-    return null
-  }
+const OccasionAvatar = ({ title }: { title: string }) => {
+  const imageSrc = typeof flowerImg === 'string' ? flowerImg : flowerImg.src
+  return (
+    <div className="w-11 h-11 overflow-hidden bg-gray-100 shrink-0 rounded-full">
+      <img
+        src={imageSrc}
+        alt={title}
+        className="w-full h-full object-cover"
+        loading="lazy"
+      />
+    </div>
+  )
+}
 
-  const needsInit = !book.isBookInit
+export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOverviewProps) => {
+  const needsInit = !!book && !book.isBookInit
 
-  const handleClick = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    if (needsInit && onInit) {
-      await onInit()
-    }
-    if (onNavigate) {
-      onNavigate()
-    }
-  }
-
-  // Get active occasions (not deleted) - use occasions if available, otherwise use lines
   const activeOccasions = useMemo(() => {
-    const occasions = book.occasions || book.lines || []
-    return occasions.filter(occasion => !occasion.isDeleted)
-  }, [book.occasions, book.lines])
+    const occasions = (book?.occasions || book?.lines || []) as any[]
+    return occasions.filter((o) => !o?.isDeleted)
+  }, [book?.occasions, book?.lines])
 
-  // Sort by date (upcoming first)
   const sortedOccasions = useMemo(() => {
     return [...activeOccasions].sort((a, b) => {
-      const dateA = new Date(a.date).getTime()
-      const dateB = new Date(b.date).getTime()
+      const dateA = new Date(a?.date).getTime()
+      const dateB = new Date(b?.date).getTime()
       return dateA - dateB
     })
   }, [activeOccasions])
 
-  // Limit to first 3 occasions for preview
-  const displayOccasions = useMemo(() => {
-    return sortedOccasions.slice(0, 3)
-  }, [sortedOccasions])
+  const displayOccasions = useMemo(() => sortedOccasions.slice(0, 3), [sortedOccasions])
 
   const count = activeOccasions.length
 
+  const handleClickAll = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (needsInit && onInit) await onInit()
+    onNavigate?.()
+  }
+
+  if (!book) return null
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-18 font-semibold text-gray-900">Occasions</h2>
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      {/* Header */}
+      <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+        <h2 className="text-14 font-semibold text-gray-900">Occasions</h2>
+
         <button
           className="text-12 text-brand-500 hover:text-brand-600 font-medium"
-          onClick={handleClick}
+          onClick={handleClickAll}
+          type="button"
         >
-          View All ({count})
+          View All 
         </button>
       </div>
-      
-      <div className="space-y-3 sm:space-y-4">
-        {displayOccasions.length > 0 ? (
-          displayOccasions.map((occasion) => {
-            const occasionDate = occasion.date
-            const title = occasion.titleEn || occasion.titleAr || 'Untitled Occasion'
-            const subTitle = occasion.subTitleEn || occasion.subTitleAr || ''
-            const hasIconName = occasion.iconName && occasion.iconName.trim() !== ''
-            const IconComponent = hasIconName ? getIconFromName(occasion.iconName) : Calendar
 
-            return (
-              <div
-                key={occasion.id}
-                className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 flex items-start gap-3"
-              >
-                <div className="flex-shrink-0 mt-0.5">
-                  <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center">
-                    <IconComponent className="w-5 h-5 text-brand-500" />
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0 flex flex-col gap-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-14 font-semibold text-gray-900 line-clamp-1">
-                        {title}
+      {/* List */}
+      <div className="px-2 pb-2">
+        {displayOccasions.length > 0 ? (
+          <div className="divide-y divide-gray-100 rounded-lg">
+            {displayOccasions.map((occasion: any) => {
+              const title = occasion?.titleEn || occasion?.titleAr || 'Untitled Occasion'
+              const provider = occasion?.providerName || occasion?.subTitleEn || occasion?.subTitleAr || ''
+              const date = occasion?.date
+
+              return (
+                <button
+                  key={occasion?.id}
+                  type="button"
+                  className="w-full text-left px-3 py-3 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-3"
+                  onClick={handleClickAll}
+                >
+                  <OccasionAvatar title={title} />
+
+                  <div className="min-w-0 flex-1">
+                    {/* Title + favorite */}
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-13 font-semibold text-gray-900 truncate">{title}</p>
+
+                      {occasion?.isFavorite ? (
+                        <Star className="w-4 h-4 text-brand-500 shrink-0" fill="currentColor" />
+                      ) : null}
+                    </div>
+
+                    {/* Provider line */}
+                    {provider ? (
+                      <p className="text-12 text-gray-600 truncate mt-0.5">
+                        <span className="text-gray-500">Provider: </span>
+                        <span className="text-gray-700">{provider}</span>
                       </p>
-                      {subTitle && (
-                        <p className="text-12 text-gray-600 mt-0.5 line-clamp-1">
-                          {subTitle}
+                    ) : null}
+
+                    {/* Date line */}
+                    {date && date !== '0001-01-01T00:00:00' ? (
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                        <p className="text-12 text-gray-500">
+                          {format(new Date(date), 'd MMM, dd MMMM')}
                         </p>
-                      )}
-                    </div>
-                    {occasion.isFavorite && (
-                      <Star className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" fill="currentColor" />
-                    )}
+                      </div>
+                    ) : null}
                   </div>
-                  {occasionDate && occasionDate !== '0001-01-01T00:00:00' && (
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                      <p className="text-12 text-gray-500">
-                        {format(new Date(occasionDate), 'dd MMM yyyy')}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          })
+
+                  <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
+                </button>
+              )
+            })}
+          </div>
         ) : (
-          <p className="text-14 text-gray-500 text-center py-4">No occasions yet</p>
+          <p className="text-13 text-gray-500 text-center py-6">No bookings yet</p>
         )}
       </div>
     </div>
   )
 }
-
