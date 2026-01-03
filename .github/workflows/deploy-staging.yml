@@ -22,31 +22,40 @@ jobs:
       - name: 📦 Install Dependencies
         run: npm ci
 
-      - name: 🧹 Clean Cache
+      - name: 🧹 Clean Build Cache
         run: |
-          rm -rf .next out
+          rm -rf .next
+          rm -rf out
+          rm -rf .turbo
+          npm cache clean --force
 
-      - name: 🏗️ Build & Export Static Site
+      - name: 🏗️ Build Next.js App (Staging)
         run: npm run build
+        env:
+          NODE_ENV: production
 
-      - name: ✅ Verify Static Export
-        run: |
-          if [ ! -d "out" ]; then
-            echo "❌ Static export failed: out/ not found"
-            exit 1
-          fi
-
-      - name: 🚀 Deploy Static Site to Server
+      - name: 🚀 Deploy Static Export to DigitalOcean (Staging)
         uses: appleboy/scp-action@v0.1.3
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USER }}
           password: ${{ secrets.DO_PASSWORD }}
           port: 22
-          source: "out/*"
+          source: ".next/*"
           target: "/var/www/OurBrideWeb-staging/build"
           rm: true
           strip_components: 1
+
+      - name: 🔧 Fix Permissions
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USER }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: 22
+          script: |
+            sudo chown -R www-data:www-data /var/www/OurBrideWeb-staging
+            sudo chmod -R 755 /var/www/OurBrideWeb-staging
 
       - name: 🔄 Reload Nginx
         uses: appleboy/ssh-action@v0.1.3
@@ -55,4 +64,5 @@ jobs:
           username: ${{ secrets.DO_USER }}
           password: ${{ secrets.DO_PASSWORD }}
           port: 22
-          script: sudo systemctl reload nginx
+          script: |
+            sudo systemctl reload nginx
