@@ -10,7 +10,7 @@ export interface CalendarDay {
   date: Date
   eventsCount?: number
   variant?: 'default' | 'selected' | 'hasEvents'
-  isBigDay?: boolean
+  isEventDay?: boolean
 }
 
 export interface CalendarGridProps {
@@ -54,7 +54,7 @@ export const CalendarGrid = ({
         dayId,
         date,
         eventsCount: dayData?.eventsCount || 0,
-        isBigDay: dayData?.isBigDay || false,
+        isEventDay: dayData?.isEventDay || false,
         variant:
           selectedDayId === dayId
             ? 'selected'
@@ -99,7 +99,7 @@ export const CalendarGrid = ({
                       eventsCount={day.eventsCount}
                       variant={day.variant}
                       isSelected={selectedDayId === day.dayId}
-                      isBigDay={day.isBigDay}
+                      isEventDay={day.isEventDay}
                       onClick={() => handleDayClick(day.dayId)}
                       className="flex-1"
                     />

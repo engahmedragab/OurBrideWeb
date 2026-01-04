@@ -1,16 +1,23 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { NumberStepper } from './NumberStepper'
-import { ServiceSelect, SERVICE_OPTIONS } from './ServiceSelect'
+import { ServiceSelect } from './ServiceSelect'
 import { SelectField } from './SelectField'
 import { PriceSummary } from './PriceSummary'
 import { planningTypography } from './typography'
 import { cn } from '@/lib/utils'
+import { usePreparations } from '@/hooks/planning/usePreparations'
+import { getServiceIcon } from '@/utils/serviceIconMapper'
+import { preparationLineSchema, type PreparationLineFormValues } from '@/schema/preparations.schema'
+import { Sparkles } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 export interface ServiceModalFormData {
   completed: boolean
@@ -55,129 +62,168 @@ export const ServiceModal = ({
   onClose,
   onSave,
 }: ServiceModalProps) => {
-  const [formData, setFormData] = useState<ServiceModalFormData>({
-    completed: false,
-    serviceKey: '',
-    title: '',
-    serviceType: 'rent',
-    quantity: 1,
-    cost: 0,
-    advancePayment: 0,
-    providerUserName: '',
-    purchaseDate: '',
+  // Fetch services from API
+  const { data: services = [], isLoading: isLoadingServices } = usePreparations({
+    enabled: open, // Only fetch when modal is open
   })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    watch,
+    reset,
+    setValue,
+  } = useForm<PreparationLineFormValues>({
+    resolver: zodResolver(preparationLineSchema),
+    defaultValues: {
+      completed: false,
+      serviceKey: '',
+      title: '',
+      serviceType: 'rent',
+      quantity: 1,
+      cost: 0,
+      advancePayment: 0,
+      providerUserName: '',
+      purchaseDate: '',
+    },
+    mode: 'onChange',
+  })
+
+  const watchedValues = watch()
+  const serviceKey = watch('serviceKey')
+  const title = watch('title')
+  const cost = watch('cost') || 0
+  const quantity = watch('quantity') || 1
+  const advancePayment = watch('advancePayment') || 0
+
+  // Track if form has been initialized to prevent infinite loops
+  const isInitializedRef = useRef(false)
+  const lastOpenStateRef = useRef(false)
 
   // Derived values for calculations
   const totalCost = useMemo(
-    () => formData.cost * formData.quantity,
-    [formData.cost, formData.quantity]
+    () => cost * quantity,
+    [cost, quantity]
   )
 
   const remaining = useMemo(
-    () => Math.max(totalCost - formData.advancePayment, 0),
-    [totalCost, formData.advancePayment]
+    () => Math.max(totalCost - advancePayment, 0),
+    [totalCost, advancePayment]
   )
 
   // Get selected service for icon display
-  const selectedService = useMemo(
-    () => SERVICE_OPTIONS.find(s => s.serviceKey === formData.serviceKey),
-    [formData.serviceKey]
-  )
-
-  // Initialize form data
-  useEffect(() => {
-    if (open) {
-      if (initialValue && mode === 'edit') {
-        // Edit mode: pre-fill all fields
-        // Validate purchase date - ensure it's not invalid
-        let purchaseDate = initialValue.purchaseDate || ''
-        if (
-          purchaseDate &&
-          (purchaseDate === '0001-01-01' || isNaN(Date.parse(purchaseDate)))
-        ) {
-          purchaseDate = ''
-        }
-
-        // Get the service label for the title
-        const serviceKey = initialValue.serviceKey || ''
-        const service = serviceKey
-          ? SERVICE_OPTIONS.find(s => s.serviceKey === serviceKey)
-          : null
-        const title = service ? service.label : ''
-
-        setFormData({
-          completed: initialValue.completed,
-          serviceKey,
-          title,
-          serviceType:
-            initialValue.serviceType === 'rent' || initialValue.serviceType === 'buy'
-              ? initialValue.serviceType
-              : 'rent',
-          quantity: initialValue.quantity,
-          cost: initialValue.cost,
-          advancePayment: initialValue.advancePayment,
-          providerUserName: initialValue.providerUserName || '',
-          purchaseDate,
-        })
-      } else {
-        // Add mode: clean defaults
-        setFormData({
-          completed: false,
-          serviceKey: '',
-          title: '',
-          serviceType: 'rent',
-          quantity: 1,
-          cost: 0,
-          advancePayment: 0,
-          providerUserName: '',
-          purchaseDate: '',
-        })
+  const selectedService = useMemo(() => {
+    if (!serviceKey || !services.length) {
+      // Default to Sparkles icon when no service selected
+      return {
+        label: 'Add New Preparation',
+        Icon: Sparkles,
+        imageUrl: undefined,
       }
     }
-  }, [open, initialValue, mode])
+    
+    const service = services.find(s => String(s.id) === serviceKey)
+    if (!service) {
+      return {
+        label: 'Add New Preparation',
+        Icon: Sparkles,
+        imageUrl: undefined,
+      }
+    }
+
+    // Use icon from API if available, otherwise use getServiceIcon fallback
+    const Icon = getServiceIcon(service.name) as LucideIcon
+    
+    return {
+      label: service.nameEn || service.nameAr || service.name || 'Unknown',
+      Icon,
+      imageUrl: service.imageUrl,
+    }
+  }, [serviceKey, services])
+
+  // Initialize form data - only when modal opens or initialValue/mode changes
+  useEffect(() => {
+    // Only initialize when modal opens (not when it closes)
+    if (!open) {
+      isInitializedRef.current = false
+      lastOpenStateRef.current = false
+      return
+    }
+
+    // Prevent re-initialization if modal is already open and initialized
+    if (lastOpenStateRef.current && isInitializedRef.current) {
+      return
+    }
+
+    lastOpenStateRef.current = true
+
+    if (initialValue && mode === 'edit') {
+      // Edit mode: pre-fill all fields
+      let purchaseDate = initialValue.purchaseDate || ''
+      if (
+        purchaseDate &&
+        (purchaseDate === '0001-01-01' || isNaN(Date.parse(purchaseDate)))
+      ) {
+        purchaseDate = ''
+      }
+
+      // Get the service label for the title
+      const serviceKey = initialValue.serviceKey || ''
+      const service = serviceKey && services.length
+        ? services.find(s => String(s.id) === serviceKey)
+        : null
+      const title = service 
+        ? (service.nameEn || service.nameAr || service.name || '')
+        : initialValue.title || ''
+
+      reset({
+        completed: initialValue.completed,
+        serviceKey,
+        title,
+        serviceType:
+          initialValue.serviceType === 'rent' || initialValue.serviceType === 'buy'
+            ? initialValue.serviceType
+            : 'rent',
+        quantity: initialValue.quantity,
+        cost: initialValue.cost,
+        advancePayment: initialValue.advancePayment,
+        providerUserName: initialValue.providerUserName || '',
+        purchaseDate,
+      })
+      isInitializedRef.current = true
+    } else {
+      // Add mode: clean defaults
+      reset({
+        completed: false,
+        serviceKey: '',
+        title: '',
+        serviceType: 'rent',
+        quantity: 1,
+        cost: 0,
+        advancePayment: 0,
+        providerUserName: '',
+        purchaseDate: '',
+      })
+      isInitializedRef.current = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initialValue?.id, mode]) // Only depend on open, initialValue.id, and mode
 
   // Sync title and header with selected service (works in both Add and Edit modes)
   useEffect(() => {
-    if (formData.serviceKey) {
-      const service = SERVICE_OPTIONS.find(s => s.serviceKey === formData.serviceKey)
+    if (!open) return // Don't update if modal is closed
+    
+    if (serviceKey && services.length) {
+      const service = services.find(s => String(s.id) === serviceKey)
       if (service) {
         // Always update title to match selected service name
-        setFormData(prev => ({ ...prev, title: service.label }))
+        const serviceName = service.nameEn || service.nameAr || service.name || ''
+        setValue('title', serviceName, { shouldValidate: true })
       }
-    } else {
-      // If no service selected, clear the title
-      setFormData(prev => ({ ...prev, title: '' }))
     }
-  }, [formData.serviceKey])
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    // Validation
-    if (!formData.serviceKey) {
-      alert('Please select a service')
-      return
-    }
-    if (!formData.title.trim()) {
-      alert('Please enter a title')
-      return
-    }
-    if (formData.quantity < 1) {
-      alert('Quantity must be at least 1')
-      return
-    }
-    if (formData.cost < 0) {
-      alert('Cost cannot be negative')
-      return
-    }
-    if (formData.advancePayment < 0) {
-      alert('Advance payment cannot be negative')
-      return
-    }
-
-    onSave(formData)
-    onClose()
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serviceKey, services.length, open]) // Only depend on serviceKey, services.length, and open
 
   // Handle ESC key and body scroll lock
   useEffect(() => {
@@ -196,6 +242,22 @@ export const ServiceModal = ({
     }
   }, [open, onClose])
 
+  const onSubmit = (data: PreparationLineFormValues) => {
+    // Convert to ServiceModalFormData format
+    const formData: ServiceModalFormData = {
+      completed: data.completed,
+      serviceKey: data.serviceKey,
+      title: data.title,
+      serviceType: data.serviceType,
+      quantity: data.quantity,
+      cost: data.cost,
+      advancePayment: data.advancePayment,
+      providerUserName: data.providerUserName || '',
+      purchaseDate: data.purchaseDate || '',
+    }
+    onSave(formData)
+  }
+
   // Header title: always show selected service name, or placeholder if none selected
   const displayTitle = selectedService
     ? selectedService.label
@@ -212,17 +274,19 @@ export const ServiceModal = ({
       headerClassName="hidden"
       contentClassName="p-0"
     >
-      <form onSubmit={handleSubmit} className="p-6 space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
         {/* Top Section: Icon + Title */}
-        <div className="flex flex-col items-center space-y-4">
-          {/* Icon in soft circle */}
+        <div className="flex flex-col items-center space-y-2">
+          {/* Icon in soft circle - Always show Sparkles by default */}
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-            {selectedService ? (
-              <selectedService.Icon className="w-8 h-8 text-primary" />
+            {selectedService.imageUrl ? (
+              <img
+                src={selectedService.imageUrl}
+                alt={selectedService.label}
+                className="w-8 h-8 object-contain"
+              />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gray-300/50 flex items-center justify-center">
-                <div className="w-6 h-6 rounded-full bg-gray-300" />
-              </div>
+              <selectedService.Icon className="w-8 h-8 text-primary" />
             )}
           </div>
 
@@ -234,23 +298,29 @@ export const ServiceModal = ({
 
         {/* Service Selection - At the top */}
         <div>
-          <ServiceSelect
-            value={formData.serviceKey}
-            onChange={serviceKey =>
-              setFormData(prev => ({ ...prev, serviceKey }))
-            }
-            required
-          />
+          {isLoadingServices ? (
+            <div className="py-4 text-center text-gray-500">
+              Loading services...
+            </div>
+          ) : (
+            <ServiceSelect
+              value={serviceKey}
+              onChange={value => setValue('serviceKey', value, { shouldValidate: true })}
+              required
+              services={services}
+            />
+          )}
+          {errors.serviceKey && (
+            <p className="mt-1 text-sm text-red-500">{errors.serviceKey.message}</p>
+          )}
         </div>
 
         {/* Header Row: Completed + Service Type */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Checkbox
-              checked={formData.completed}
-              onChange={checked =>
-                setFormData(prev => ({ ...prev, completed: checked }))
-              }
+              checked={watchedValues.completed}
+              onChange={checked => setValue('completed', checked)}
               variant="brand"
             />
             <label
@@ -266,22 +336,22 @@ export const ServiceModal = ({
           <div className="flex-1 max-w-[200px]">
             <SelectField
               label="Service Type"
-              value={formData.serviceType}
+              value={watchedValues.serviceType}
               onChange={value =>
-                setFormData(prev => ({
-                  ...prev,
-                  serviceType: value as 'rent' | 'buy',
-                }))
+                setValue('serviceType', value as 'rent' | 'buy', { shouldValidate: true })
               }
               options={SERVICE_TYPE_OPTIONS}
               required
               showLabel={false}
             />
+            {errors.serviceType && (
+              <p className="mt-1 text-sm text-red-500">{errors.serviceType.message}</p>
+            )}
           </div>
         </div>
 
         {/* Main Form Card */}
-        <div className="bg-white rounded-xl border border-gray-200/50 shadow-sm p-6 space-y-6">
+        <div className="bg-white rounded-xl border border-gray-200/50 shadow-sm p-6 space-y-3">
           {/* Title Input */}
           <div>
             <label
@@ -294,12 +364,10 @@ export const ServiceModal = ({
               Title <span className="text-red-500">*</span>
             </label>
             <Input
-              value={formData.title}
-              onChange={e =>
-                setFormData(prev => ({ ...prev, title: e.target.value }))
-              }
+              {...register('title')}
               placeholder="Enter service title"
               required
+              errorMessage={errors.title?.message}
             />
           </div>
 
@@ -315,12 +383,13 @@ export const ServiceModal = ({
               Quantity
             </label>
             <NumberStepper
-              value={formData.quantity}
-              onChange={value =>
-                setFormData(prev => ({ ...prev, quantity: value }))
-              }
+              value={watchedValues.quantity || 1}
+              onChange={value => setValue('quantity', value, { shouldValidate: true })}
               min={1}
             />
+            {errors.quantity && (
+              <p className="mt-1 text-sm text-red-500">{errors.quantity.message}</p>
+            )}
           </div>
 
           {/* Cost Section: Left Inputs + Right Summary */}
@@ -339,17 +408,12 @@ export const ServiceModal = ({
                 </label>
                 <Input
                   type="number"
-                  value={formData.cost || ''}
-                  onChange={e =>
-                    setFormData(prev => ({
-                      ...prev,
-                      cost: parseFloat(e.target.value) || 0,
-                    }))
-                  }
+                  {...register('cost', { valueAsNumber: true })}
                   placeholder="0.00"
                   min="0"
                   step="0.01"
                   required
+                  errorMessage={errors.cost?.message}
                 />
               </div>
 
@@ -365,17 +429,12 @@ export const ServiceModal = ({
                 </label>
                 <Input
                   type="number"
-                  value={formData.advancePayment || ''}
-                  onChange={e =>
-                    setFormData(prev => ({
-                      ...prev,
-                      advancePayment: parseFloat(e.target.value) || 0,
-                    }))
-                  }
+                  {...register('advancePayment', { valueAsNumber: true })}
                   placeholder="0.00"
                   min="0"
                   step="0.01"
                   required
+                  errorMessage={errors.advancePayment?.message}
                 />
               </div>
             </div>
@@ -398,13 +457,7 @@ export const ServiceModal = ({
               Provider User Name
             </label>
             <Input
-              value={formData.providerUserName}
-              onChange={e =>
-                setFormData(prev => ({
-                  ...prev,
-                  providerUserName: e.target.value,
-                }))
-              }
+              {...register('providerUserName')}
               placeholder="Enter provider name"
             />
           </div>
@@ -422,18 +475,13 @@ export const ServiceModal = ({
             </label>
             <Input
               type="date"
+              {...register('purchaseDate')}
               value={
-                formData.purchaseDate &&
-                formData.purchaseDate !== '0001-01-01' &&
-                !isNaN(Date.parse(formData.purchaseDate))
-                  ? formData.purchaseDate
+                watchedValues.purchaseDate &&
+                watchedValues.purchaseDate !== '0001-01-01' &&
+                !isNaN(Date.parse(watchedValues.purchaseDate))
+                  ? watchedValues.purchaseDate
                   : ''
-              }
-              onChange={e =>
-                setFormData(prev => ({
-                  ...prev,
-                  purchaseDate: e.target.value || '',
-                }))
               }
             />
           </div>
@@ -441,11 +489,11 @@ export const ServiceModal = ({
 
         {/* Footer Buttons */}
         <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button type="submit" variant="brand" className="text-white">
-            Save
+          <Button type="submit" variant="brand" className="text-white" disabled={isSubmitting}>
+            {isSubmitting ? 'Saving...' : 'Save'}
           </Button>
         </div>
       </form>

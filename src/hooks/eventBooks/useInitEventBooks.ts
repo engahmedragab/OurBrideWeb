@@ -7,6 +7,7 @@ import { handleApiResponseForToast } from '@/utils/api-response.utils'
 export interface UseInitEventBooksParams {
   clientId?: string
   userType?: UserType
+  eventId?: number
 }
 
 /**

@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { ChevronLeft, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { BudgetFiltersBar, type FilterType } from './components/filters/BudgetFiltersBar'
 import { BudgetOverviewCard } from './components/BudgetOverviewCard'
@@ -323,7 +323,7 @@ export default function BudgetPage() {
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Go back"
             >
-              <ArrowLeft className="h-5 w-5 text-gray-700" />
+              <ChevronLeft className="h-5 w-5 text-gray-700" />
             </button>
             <h1 className="text-24 sm:text-28 font-semibold text-gray-900">
               Budget
@@ -361,7 +361,7 @@ export default function BudgetPage() {
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Go back"
             >
-              <ArrowLeft className="h-4 w-4 text-gray-700" />
+              <ChevronLeft className="h-4 w-4 text-gray-700" />
             </button>
             <h1 className="text-20 font-semibold text-gray-900">
               Budget

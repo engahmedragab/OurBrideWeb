@@ -36,7 +36,7 @@ export const ConfirmDialog = ({
           <Button variant="outline" onClick={onCancel}>
             {cancelText}
           </Button>
-          <Button variant="destructive" onClick={onConfirm}>
+          <Button variant="destructive" onClick={onConfirm} className="text-white">
             {confirmText}
           </Button>
         </div>

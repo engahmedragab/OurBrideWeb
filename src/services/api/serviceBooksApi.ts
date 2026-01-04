@@ -594,17 +594,6 @@ export const getServiceCategories = async (
 /**
  * Create a service line category
  */
-export const createServiceCategory = async (
-  data: ServiceLineCategoryRequest,
-  query?: { clientId?: string }
-): Promise<void> => {
-  try {
-    await apiClient.api.postServiceBooksCreateCategory(data, query)
-  } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create service category')
-  }
-}
-
 /**
  * Get service line category by ID
  */

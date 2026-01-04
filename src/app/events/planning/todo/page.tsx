@@ -1,348 +1,153 @@
 'use client'
 
-import { useState } from 'react'
-import { Checkbox, Button, Input } from '@/components/ui'
-import { CheckCircle2, ChevronDown, Plus, Trash2, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import React, { useMemo, useState } from 'react'
+import Link from 'next/link'
+import { ArrowLeft, ChevronLeft } from 'lucide-react'
 
-const INITIAL_TASKS = [
-  {
-    id: 1,
-    title: 'Sofa',
-    completed: false,
-    isOpen: true,
-    subTasks: [
-      { id: 11, title: 'Three-seat fabric sofa', completed: true },
-      { id: 12, title: 'Pay remaining amount', completed: true },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Sofa',
-    completed: false,
-    isOpen: true,
-    subTasks: [
-      { id: 21, title: 'Three-seat fabric sofa', completed: true },
-      { id: 22, title: 'Pay remaining amount', completed: true },
-    ],
-  }
+import { TodoLinesPanel } from '@/components/planning/todo/TodoLinesPanel'
+import { TodoListsSidebar } from '@/components/planning/todo/TodoListsSidebar'
+import { CreateItemListModal } from '@/components/planning/items/CreateItemListModal'
+import type { ColorKey } from '@/components/planning/items/CreateItemListModal'
+
+export type UiTodo = {
+  id: number
+  title: string
+  isDone: boolean
+  isDeleted?: boolean
+  categoryId: number
+  categoryName: string
+}
+
+export type UiTodoCategory = {
+  id: number
+  name: string
+  color?: string
+}
+
+const INITIAL_CATEGORIES: UiTodoCategory[] = [
+  { id: 0, name: 'Untitled List', color: 'gray' },
+  { id: 1, name: 'Home', color: 'blue' },
+  { id: 2, name: 'Work', color: 'orange' },
 ]
 
-export default function TodosPage() {
-  const [tasks, setTasks] = useState(INITIAL_TASKS)
+const INITIAL_TODOS: UiTodo[] = [
+  { id: 1, title: 'Buy milk', isDone: false, categoryId: 0, categoryName: 'Untitled List' },
+  { id: 2, title: 'Call the provider', isDone: true, categoryId: 0, categoryName: 'Untitled List' },
+]
 
-const [editingTaskId, setEditingTaskId] = useState<number | null>(null)
-const [editingSubTask, setEditingSubTask] = useState<{
-  taskId: number
-  subId: number
-} | null>(null)
+export default function TodoPage() {
+  const [todos, setTodos] = useState<UiTodo[]>(INITIAL_TODOS)
+  const [categories, setCategories] = useState<UiTodoCategory[]>(INITIAL_CATEGORIES)
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(INITIAL_CATEGORIES[0]?.id ?? 0)
 
-const [inputValue, setInputValue] = useState('')
-  /* ---------------- TASK ACTIONS ---------------- */
+  const [createListOpen, setCreateListOpen] = useState(false)
 
-  const toggleTask = (taskId: number) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId
-          ? {
-              ...task,
-              completed: !task.completed,
-              subTasks: task.subTasks.map(sub => ({
-                ...sub,
-                completed: !task.completed,
-              })),
-            }
-          : task
-      )
+  const selectedCategory = useMemo(() => {
+    return categories.find((c) => c.id === selectedCategoryId) ?? null
+  }, [categories, selectedCategoryId])
+
+  const visibleTodos = useMemo(() => {
+    return todos.filter((t) => !t.isDeleted && t.categoryId === selectedCategoryId)
+  }, [todos, selectedCategoryId])
+
+  const stats = useMemo(() => {
+    const total = visibleTodos.length
+    const completed = visibleTodos.filter((t) => t.isDone).length
+    const pending = total - completed
+    return { total, completed, pending }
+  }, [visibleTodos])
+
+  const handleToggleDone = (todoId: number) => {
+    setTodos((prev) => prev.map((t) => (t.id === todoId ? { ...t, isDone: !t.isDone } : t)))
+  }
+
+  const handleDeleteTodo = (todoId: number) => {
+    setTodos((prev) => prev.map((t) => (t.id === todoId ? { ...t, isDeleted: true } : t)))
+  }
+
+  const handleCreateTodo = async (data: { title: string; isDone?: boolean }) => {
+    if (!selectedCategory) return
+    setTodos((prev) => {
+      const nextId = prev.length ? Math.max(...prev.map((t) => t.id)) + 1 : 1
+      const newTodo: UiTodo = {
+        id: nextId,
+        title: data.title,
+        isDone: Boolean(data.isDone),
+        categoryId: selectedCategory.id,
+        categoryName: selectedCategory.name,
+      }
+      return [newTodo, ...prev]
+    })
+  }
+
+  const handleEditTodo = async (todoId: number, data: { title: string; isDone?: boolean }) => {
+    setTodos((prev) =>
+      prev.map((t) => {
+        if (t.id !== todoId) return t
+        return { ...t, title: data.title, isDone: Boolean(data.isDone) }
+      }),
     )
   }
 
-  const toggleSubTask = (taskId: number, subId: number) => {
-    setTasks(prev =>
-      prev.map(task => {
-        if (task.id !== taskId) return task
+  const handleAddNewList = () => setCreateListOpen(true)
 
-        const updatedSubs = task.subTasks.map(sub =>
-          sub.id === subId ? { ...sub, completed: !sub.completed } : sub
-        )
+  const handleCreateList = async (data: { name: string; color: ColorKey }) => {
+    const nextId = categories.length ? Math.max(...categories.map((c) => c.id)) + 1 : 0
+    const newCategory: UiTodoCategory = { id: nextId, name: data.name, color: data.color }
 
-        return {
-          ...task,
-          subTasks: updatedSubs,
-          completed: updatedSubs.every(s => s.completed),
-        }
-      })
-    )
+    setCategories((prev) => [newCategory, ...prev])
+    setSelectedCategoryId(nextId)
+    setCreateListOpen(false)
   }
 
-  const toggleOpen = (taskId: number) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId ? { ...task, isOpen: !task.isOpen } : task
-      )
-    )
+  const handleDeleteList = (categoryId: number) => {
+    console.log('Delete todo list', categoryId)
   }
-
-  const addTask = () => {
-    const title = prompt('Task name')
-    if (!title) return
-
-    setTasks(prev => [
-      ...prev,
-      {
-  id: Date.now(),
-          title: 'New Task',
-          completed: false,
-          isOpen: true,
-          subTasks: [],
-      },
-    ])
-  }
-
-  const startEditTask = (taskId: number, title: string) => {
-    setEditingTaskId(taskId)
-    setInputValue(title)
-  }
-
-  const saveTaskTitle = (taskId: number) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId ? { ...task, title: inputValue } : task
-      )
-    )
-    setEditingTaskId(null)
-  }
-
-  const addSubTask = (taskId: number) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId
-          ? {
-              ...task,
-              subTasks: [
-                ...task.subTasks,
-                {
-                  id: Date.now(),
-                  title: 'New Sub Task',
-                  completed: false,
-                },
-              ],
-            }
-          : task
-      )
-    )
-  }
-
-  const startEditSubTask = (
-    taskId: number,
-    subId: number,
-    title: string
-  ) => {
-    setEditingSubTask({ taskId, subId })
-    setInputValue(title)
-  }
-
-  const saveSubTaskTitle = (taskId: number, subId: number) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId
-          ? {
-              ...task,
-              subTasks: task.subTasks.map(sub =>
-              sub.id === subId ? { ...sub, title: inputValue } : sub
-              ),
-            }
-          : task
-      )
-    )
-    setEditingSubTask(null)
-  }
-
-  const deleteTask = (taskId: number) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId))
-  }
-
-  const deleteSubTask = (taskId: number, subId: number) => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId
-          ? {
-              ...task,
-              subTasks: task.subTasks.filter(sub => sub.id !== subId),
-            }
-          : task
-      )
-    )
-  }
-
 
   return (
-    <div className="space-y-6 text-end">
+    <div className="w-full">
+      {/* Header */}
+      <div className="mb-6 flex items-center gap-1">
+        <Link
+          href="/dashboard/my-events"
+          className="inline-flex h-9 w-9 items-center justify-center"
+          aria-label="Back to My Events"
+        >
+        <ChevronLeft className="w-5 h-5 text-gray-700" />
 
-      {/* ADD TASK BUTTON */}
-      <Button
-        className='text-white'
-        onClick={addTask}
-        variant='brand'
-        size="md"
-      >
-        Add New Task
-        <Plus className="w-5 h-5 ml-2" />
-      </Button>
+        </Link>
 
-      {/* TASKS */}
-      {tasks.map(task => {
-        return (
-          <div
-            key={task.id}
-            className="bg-white border rounded-2xl p-4 space-y-3"
-          >
-            {/* TASK HEADER */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                 <Checkbox
-                  checked={task.completed}
-                  onChange={() => toggleTask(task.id)}
-                  size="md"
-                  variant={
-                      task.completed
-                          ? 'successFilled'
-                          : 'gray'
-                  }
-                  shape="square"
-                  className="cursor-pointer"/>
-              {editingTaskId === task.id ? (
-                <Input
-                  autoFocus
-                  value={inputValue}
-                  onChange={e => setInputValue(e.target.value)}
-                  onBlur={() => saveTaskTitle(task.id)}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') saveTaskTitle(task.id)
-                  }}
-                  className="
-                    border-b border-brand-500
-                    outline-none
-                    bg-transparent
-                    text-sm
-                    font-medium
-                    w-[180px]
-                  "
-                />
-              ) : (
-                <span
-                  onClick={() => startEditTask(task.id, task.title)}
-                  className="font-medium cursor-pointer hover:text-brand-500"
-                >
-                  {task.title}
-                </span>
-              )}
-              </div>
-              <div className="hidden sm:flex flex-col items-end gap-2">
-                <button
-                  onClick={() => deleteTask(task.id)}
-                  className="text-red-500"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-                <div onClick={() => toggleOpen(task.id)}
-                 className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    <span className="text-12 font-normal text-gray-700">
-                        {
-                            task.subTasks.filter(i => i.completed)
-                                .length
-                        }
-                        /{task.subTasks.length}
-                    </span>
-                     <div
-                  className={cn(
-                    'transition-transform',
-                    task.isOpen && 'rotate-180'
-                  )}
-                >
-                  <ChevronDown className="w-5 h-5" />
-                </div>
-                </div>
-       
-              </div>
-              
-            </div>
-         <div className=" h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                        className="h-full bg-green-500 rounded-full transition-all duration-500"
-                        style={{
-                            width: `${
-                                (task.subTasks.filter(i => i.completed)
-                                    .length /
-                                    task.subTasks.length) *
-                                100
-                            }%`,
-                        }}
-                    />
-                </div>
-            {/* SUB TASKS */}
-            {task.isOpen && (
-              <div className="space-y-2 pl-7">
-                {task.subTasks.map(sub => (
-                  <div
-                    key={sub.id}
-                    className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        checked={sub.completed}
-                        onChange={() => toggleSubTask(task.id, sub.id)}
-                      />
-                       {editingSubTask?.taskId === task.id &&
-                        editingSubTask?.subId === sub.id ? (
-                          <Input
-                            autoFocus
-                            value={inputValue}
-                            onChange={e => setInputValue(e.target.value)}
-                            onBlur={() => saveSubTaskTitle(task.id, sub.id)}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter') saveSubTaskTitle(task.id, sub.id)
-                              if (e.key === 'Escape') setEditingSubTask(null)
-                            }}
-                            className="w-full bg-transparent text-sm outline-none border-b border-gray-300"
-                          />
-                        ) : (
-                          <span
-                            onClick={() => startEditSubTask(task.id, sub.id, sub.title)}
-                            className={cn(
-                              'text-sm cursor-pointer',
-                              sub.completed && 'line-through text-gray-400'
-                            )}
-                          >
-                            {sub.title}
-                          </span>
-                        )}
-                    </div>
+        <h1 className="text-xl font-semibold text-gray-900">Todo</h1>
+      </div>
 
-                    <button
-                      onClick={() => deleteSubTask(task.id, sub.id)}
-                      className="text-red-500"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+        <TodoLinesPanel
+          categoryName={selectedCategory?.name ?? 'Untitled List'}
+          stats={stats}
+          todos={visibleTodos}
+          onToggleDone={handleToggleDone}
+          onDeleteTodo={handleDeleteTodo}
+          onCreateTodo={handleCreateTodo}
+          onEditTodo={handleEditTodo}
+        />
 
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => addSubTask(task.id)}
-                  className="text-brand-500"
-                >
-                  Add SubTask
-                  <Plus className="w-4 h-4 ml-1" />
-                </Button>
-              </div>
-            )}
-          </div>
-        )
-      })}
+        <TodoListsSidebar
+          title="Your Lists"
+          actionLabel="Add New"
+          onAction={handleAddNewList}
+          categories={categories}
+          selectedCategoryId={selectedCategoryId}
+          onSelectCategory={setSelectedCategoryId}
+          onDeleteCategory={handleDeleteList}
+        />
+      </div>
+
+      {/* نفس مودال إنشاء الليست بتاع items (Reusable) */}
+      <CreateItemListModal
+        open={createListOpen}
+        onClose={() => setCreateListOpen(false)}
+        onSubmit={handleCreateList}
+      />
     </div>
   )
 }

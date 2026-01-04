@@ -20,20 +20,10 @@ export const useCreateEventBookCategory = () => {
       category: EventLineCategoryRequest
       params?: UseCreateEventBookCategoryParams
     }) => createEventBookCategory(data.category, data.params),
-    onSuccess: (response) => {
-      // Invalidate event books query to refetch after category creation
+    onSuccess: () => {
+      // Invalidate event books and categories queries to refetch after category creation
       queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
-      
-      const { message, type } = handleApiResponseForToast(
-        response,
-        'Event category created successfully',
-        'Failed to create event category'
-      )
-      addToast(message, type)
-    },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create event category'
-      addToast(errorMessage, 'error')
+      queryClient.invalidateQueries({ queryKey: ['eventBooksCategories'] })
     },
   })
 }

@@ -1,15 +1,20 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import { newEventSchema, type NewEventFormValues } from '@/schema/event.schema'
 
 export interface AddEventModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   baseDate: Date
   onCreate: (event: { startTime: Date; title: string; duration: number }) => void
+  initialTime?: string
+  initialDuration?: string
 }
 
 export const AddEventModal = ({
@@ -17,61 +22,44 @@ export const AddEventModal = ({
   onOpenChange,
   baseDate,
   onCreate,
+  initialTime = '',
+  initialDuration = '',
 }: AddEventModalProps) => {
-  const [title, setTitle] = useState('')
-  const [time, setTime] = useState('')
-  const [duration, setDuration] = useState('')
-  const [errors, setErrors] = useState<{
-    title?: string
-    time?: string
-    duration?: string
-  }>({})
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch,
+  } = useForm<NewEventFormValues>({
+    resolver: zodResolver(newEventSchema),
+    defaultValues: {
+      title: '',
+      time: initialTime,
+      duration: initialDuration,
+    },
+  })
+
+  const titleValue = watch('title')
+  const timeValue = watch('time')
+  const durationValue = watch('duration')
 
   const handleClose = () => {
-    setTitle('')
-    setTime('')
-    setDuration('')
-    setErrors({})
+    reset()
     onOpenChange(false)
   }
 
-  const validateForm = (): boolean => {
-    const newErrors: typeof errors = {}
-
-    if (!title.trim()) {
-      newErrors.title = 'Title is required'
+  // Update time and duration when initial values change
+  useEffect(() => {
+    if (open) {
+      setValue('time', initialTime)
+      setValue('duration', initialDuration)
     }
+  }, [open, initialTime, initialDuration, setValue])
 
-    if (!time.trim()) {
-      newErrors.time = 'Start time is required'
-    } else {
-      const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
-      if (!timeRegex.test(time)) {
-        newErrors.time = 'Invalid time format (use HH:MM)'
-      }
-    }
-
-    if (!duration.trim()) {
-      newErrors.duration = 'Duration is required'
-    } else {
-      const durationNum = parseInt(duration, 10)
-      if (isNaN(durationNum) || durationNum <= 0) {
-        newErrors.duration = 'Duration must be a positive number'
-      }
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-
-    if (!validateForm()) {
-      return
-    }
-
-    const [hours, minutes] = time.split(':').map(Number)
+  const onSubmit = (data: NewEventFormValues) => {
+    const [hours, minutes] = data.time.split(':').map(Number)
     const startTime = new Date(
       baseDate.getFullYear(),
       baseDate.getMonth(),
@@ -83,8 +71,8 @@ export const AddEventModal = ({
 
     onCreate({
       startTime,
-      title: title.trim(),
-      duration: parseInt(duration, 10),
+      title: data.title.trim(),
+      duration: parseInt(data.duration, 10),
     })
 
     handleClose()
@@ -97,7 +85,7 @@ export const AddEventModal = ({
       title="Add New Event"
       maxWidth="md"
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Title Field */}
         <div className="space-y-1.5">
           <label htmlFor="event-title" className="text-14 font-medium text-gray-700">
@@ -107,15 +95,9 @@ export const AddEventModal = ({
             id="event-title"
             type="text"
             placeholder="Enter event title"
-            value={title}
-            onChange={e => {
-              setTitle(e.target.value)
-              if (errors.title) {
-                setErrors(prev => ({ ...prev, title: undefined }))
-              }
-            }}
-            variant={errors.title ? 'error' : title ? 'fill' : 'default'}
-            errorMessage={errors.title}
+            {...register('title')}
+            variant={errors.title ? 'error' : titleValue ? 'fill' : 'default'}
+            errorMessage={errors.title?.message}
             size="lg"
           />
         </div>
@@ -128,15 +110,9 @@ export const AddEventModal = ({
           <Input
             id="event-time"
             type="time"
-            value={time}
-            onChange={e => {
-              setTime(e.target.value)
-              if (errors.time) {
-                setErrors(prev => ({ ...prev, time: undefined }))
-              }
-            }}
-            variant={errors.time ? 'error' : time ? 'fill' : 'default'}
-            errorMessage={errors.time}
+            {...register('time')}
+            variant={errors.time ? 'error' : timeValue ? 'fill' : 'default'}
+            errorMessage={errors.time?.message}
             size="lg"
           />
         </div>
@@ -150,16 +126,10 @@ export const AddEventModal = ({
             id="event-duration"
             type="number"
             placeholder="Enter duration in minutes"
-            value={duration}
-            onChange={e => {
-              setDuration(e.target.value)
-              if (errors.duration) {
-                setErrors(prev => ({ ...prev, duration: undefined }))
-              }
-            }}
+            {...register('duration')}
             min="1"
-            variant={errors.duration ? 'error' : duration ? 'fill' : 'default'}
-            errorMessage={errors.duration}
+            variant={errors.duration ? 'error' : durationValue ? 'fill' : 'default'}
+            errorMessage={errors.duration?.message}
             size="lg"
           />
         </div>

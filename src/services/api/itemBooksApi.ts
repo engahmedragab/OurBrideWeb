@@ -76,17 +76,14 @@ export const getItemBook = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetBook(normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ItemBookResponse } | ItemBookResponse } | ItemBookResponse
+    const responseAny: any = response
     
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
-      const data = responseAny.data
-      if (data && typeof data === 'object' && 'data' in data) {
-        return (data as { data: ItemBookResponse }).data
-      }
-      if (data && typeof data === 'object' && 'id' in data) {
-        return data as ItemBookResponse
-      }
+    if (responseAny?.data?.data) {
+      return responseAny.data.data as ItemBookResponse
+    }
+    if (responseAny?.data) {
+      return responseAny.data as ItemBookResponse
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as ItemBookResponse

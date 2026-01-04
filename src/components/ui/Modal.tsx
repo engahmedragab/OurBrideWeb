@@ -18,6 +18,7 @@ export interface ModalProps {
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
   zIndex?: number
   disabled?: boolean
+  backdropClassName?: string
 }
 
 const maxWidthClasses = {
@@ -43,6 +44,7 @@ export const Modal = ({
   maxWidth = 'md',
   zIndex = 50,
   disabled = false,
+  backdropClassName,
 }: ModalProps) => {
   if (!isOpen) return null
 
@@ -65,6 +67,7 @@ export const Modal = ({
       <div
         className={cn(
           'fixed inset-0 bg-black/40 transition-opacity duration-300',
+          backdropClassName,
           isOpen ? 'opacity-100' : 'opacity-0'
         )}
         style={{ zIndex: zIndex * 10 - 1 }}
