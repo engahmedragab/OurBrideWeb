@@ -169,7 +169,7 @@ export const Footer = ({ className }: FooterProps) => {
       <div className="w-full h-[1px] bg-brand-500" />
 
       <div className="bg-white px-5 container">
-        <div className="  py-12 md:py-16">
+        <div className="  py-10 ">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12">
             {/* Left */}
             <div className="md:col-span-4 lg:col-span-3 flex flex-col items-start gap-6">
