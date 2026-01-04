@@ -10,7 +10,7 @@ interface GuestsSummaryProps {
 }
 
 export const GuestsSummary = ({ side, invitationsCount, peopleTotal }: GuestsSummaryProps) => {
-  const personName = side === 'bride' ? 'Aya Ragab' : 'Ahmed Mohamed'
+  const personName = side === 'bride' ? 'Bride' : 'Groom'
   const role = side === 'bride' ? 'Bride' : 'Groom'
 
   return (
@@ -22,7 +22,7 @@ export const GuestsSummary = ({ side, invitationsCount, peopleTotal }: GuestsSum
           </div>
           <div>
             <h3 className="text-16 font-semibold text-gray-900">{personName}</h3>
-            <p className="text-14 text-gray-600">{role}</p>
+            {/* <p className="text-14 text-gray-600">{role}</p> */}
           </div>
         </div>
 

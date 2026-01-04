@@ -1,4 +1,4 @@
-import { argbToHex } from './iconUtils'
+import { argbToHex } from '@/utils/iconUtils'
 
 // Color palette for fallback (stable colors based on category id)
 const COLOR_PALETTE = [
