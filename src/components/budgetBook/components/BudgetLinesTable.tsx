@@ -4,10 +4,11 @@ import { Plus } from 'lucide-react'
 import { cardVariants } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { BudgetLineRowActions } from './BudgetLineRowActions'
-import { getCategoryColor } from '@/utils/budgetColors'
+// import { getCategoryColor } from '@/utils/budgetColors' // Temporarily comment out due to missing module
 import { formatEGP } from '@/utils/formatCurrency'
 import { cn } from '@/lib/utils'
 import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
+import { getCategoryColor } from '@/utils/budgetbook/budgetColors'
 
 interface BudgetLinesTableProps {
   lines: BudgetLineResponse[]

@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { cardVariants } from '@/components/ui/Card'
 import { cn } from '@/lib/utils'
-import { getCategoryColor } from '@/utils/budgetColors'
 import { formatEGP } from '@/utils/formatCurrency'
 import type { BudgetLineCategoryResponse } from '@/types/responses'
+import { getCategoryColor } from '@/utils/budgetbook/budgetColors'
 
 interface CategoryStat {
   category: BudgetLineCategoryResponse

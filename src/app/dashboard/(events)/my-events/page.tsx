@@ -167,6 +167,7 @@ function MyEventsPageContent() {
   const initNoteBooks = useInitNoteBooks()
   const initTodoBooks = useInitTodoBooks()
   const initOccasionBooks = useInitOccasionBooks()
+  
 
   // Helper function to handle book initialization and navigation
   const handleBookInit = async (
@@ -209,7 +210,7 @@ function MyEventsPageContent() {
   }
 
   const handleBookNavigate = (
-    bookType: 'item' | 'service' | 'budget' | 'event' | 'guest' | 'note' | 'todo' | 'occasion'
+    bookType: 'item' | 'service' | 'budget' | 'event' | 'guest' | 'note' | 'todo' | 'occasion'|'noteBook'
   ) => {
     if (!selectedEventId) return
 
@@ -222,6 +223,7 @@ function MyEventsPageContent() {
       note: `/dashboard/my-events?eventId=${selectedEventId}`,
       todo: '/events/planning/todo',
       occasion: '/events/planning/occasion',
+      noteBook: '/events/planning/notes',
     }
     router.push(`${routes[bookType]}?eventId=${selectedEventId}`)
   }
@@ -366,6 +368,8 @@ function MyEventsPageContent() {
         return eventInfo.guestBook?.isBookInit ?? false
       case 'overview':
         return true // Overview doesn't have a book, always initialized
+      case 'noteBook':
+        return eventInfo.noteBook?.isBookInit ?? false
       default:
         return false
     }
@@ -421,6 +425,12 @@ function MyEventsPageContent() {
       value: 'todo',
       needsInit: !getBookInitStatus('todo')
     },
+    {
+      label: 'notes',
+      href: buildPlanningHref('/events/planning/notes'),
+      value: 'noteBook',
+      needsInit: !getBookInitStatus('noteBook')
+    },
   ]
 
   // Get active tab based on current pathname (for when navigating to planning pages)
@@ -434,6 +444,7 @@ function MyEventsPageContent() {
     if (pathname?.includes('/occasion')) return 'occasion'
     if (pathname?.includes('/preparations')) return 'preparations'
     if (pathname?.includes('/todo')) return 'todo'
+    if (pathname?.includes('/notes')) return 'noteBook'
     // When on my-events page with selected event, default to overview
     if (pathname?.includes('/my-events') && selectedEventId !== null) return 'overview'
     return 'overview'

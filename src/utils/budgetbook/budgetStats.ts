@@ -1,4 +1,4 @@
-import type { BudgetBookDraft } from '@/utils/budgetAdapters'
+import type { BudgetBookDraft } from '@/utils/budgetbook/budgetAdapters'
 import type { BudgetLineCategoryResponse } from '@/types/responses'
 
 type CategoryStat = {

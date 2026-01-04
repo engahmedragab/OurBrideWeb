@@ -17,11 +17,11 @@ import { BudgetLineModal } from '@/components/budgetBook/components/modals/Budge
 import { CategoryModal } from '@/components/budgetBook/components/modals/CategoryModal'
 import { ConfirmDeleteModal } from '@/components/budgetBook/components/modals/ConfirmDeleteModal'
 
-import { generateTempId, slugify } from '@/utils/budgetAdapters'
-import type { BudgetBookDraft } from '@/utils/budgetAdapters'
+import { generateTempId, slugify } from '@/utils/budgetbook/budgetAdapters'
+import type { BudgetBookDraft } from '@/utils/budgetbook/budgetAdapters'
 import type { BudgetBookRequest } from '@/../client/common/api/gen/ourbride-api'
 
-import { calculateBudgetStats } from '@/utils/budgetStats'
+import { calculateBudgetStats } from '@/utils/budgetbook/budgetStats'
 import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 

@@ -27,6 +27,7 @@ function PlanningLayoutContent({ children }: { children: ReactNode }) {
     { label: 'occasions', href: buildHref('/events/planning/occasion'), value: 'occasion' },
     { label: 'preparations', href: buildHref('/events/planning/preparations'), value: 'preparations' },
     { label: 'ToDo', href: buildHref('/events/planning/todo'), value: 'todo' },
+    { label: 'notes', href: buildHref('/events/planning/notes'), value: 'notes' },
   ]
 
   const getActiveTab = () => {
@@ -38,6 +39,7 @@ function PlanningLayoutContent({ children }: { children: ReactNode }) {
     if (pathname?.includes('/occasion')) return 'occasion'
     if (pathname?.includes('/preparations')) return 'preparations'
     if (pathname?.includes('/todo')) return 'todo'
+    if (pathname?.includes('/notes')) return 'notes'
     return 'overview' // Default to overview
   }
 
