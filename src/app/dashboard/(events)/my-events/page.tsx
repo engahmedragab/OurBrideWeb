@@ -5,8 +5,8 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { EventCard, AddEventModal } from '@/components/events'
-import { Button, LoadingSpinner } from '@/components/ui'
 import { ErrorModal } from '@/components/ui/ErrorModal'
+import { Button, LoadingOverlay, LoadingSpinner } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import {
   useWeddingEvents,
@@ -43,8 +43,9 @@ import {
   UpcomingBookings,
   BudgetPayments,
   GuestsInvitation,
-  type Task,
-  type Booking,
+  ItemsOverview,
+  NotesOverview,
+  OccasionsOverview,
 } from '@/components/overviews'
 import authHeroImage from '@/assets/images/authHero.jpg'
 
@@ -167,6 +168,7 @@ function MyEventsPageContent() {
   const initNoteBooks = useInitNoteBooks()
   const initTodoBooks = useInitTodoBooks()
   const initOccasionBooks = useInitOccasionBooks()
+  
 
   // Helper function to handle book initialization and navigation
   const handleBookInit = async (
@@ -209,7 +211,7 @@ function MyEventsPageContent() {
   }
 
   const handleBookNavigate = (
-    bookType: 'item' | 'service' | 'budget' | 'event' | 'guest' | 'note' | 'todo' | 'occasion'
+    bookType: 'item' | 'service' | 'budget' | 'event' | 'guest' | 'note' | 'todo' | 'occasion'|'noteBook'
   ) => {
     if (!selectedEventId) return
 
@@ -222,6 +224,7 @@ function MyEventsPageContent() {
       note: `/dashboard/my-events?eventId=${selectedEventId}`,
       todo: '/events/planning/todo',
       occasion: '/events/planning/occasion',
+      noteBook: '/events/planning/notes',
     }
     router.push(`${routes[bookType]}?eventId=${selectedEventId}`)
   }
@@ -326,77 +329,19 @@ function MyEventsPageContent() {
     }
   }, [eventInfo])
 
-  // Budget statistics
-  const budgetStats = useMemo(() => {
-    if (!eventInfo?.budgetBook) {
-      return { total: 0, paid: 0, remaining: 0, pending: 0, other: 0, actualRemaining: 0 }
-    }
+  // Tasks from todoBook (not used, kept for future reference)
+  // const tasks = useMemo(() => {
+  //   if (!eventInfo?.todoBook?.lines) return []
+  //   // TODO: Map todoBook lines to Task format when API structure is available
+  //   return []
+  // }, [eventInfo])
 
-    const total = eventInfo.budgetBook.initialEstimated || 0
-    const paid = 0 // TODO: Get from API when available
-    const pending = 0 // TODO: Get from API when available
-    const other = 0 // TODO: Get from API when available
-    const remaining = total - paid
-    const actualRemaining = remaining - pending - other
-
-    return { total, paid, remaining, pending, other, actualRemaining }
-  }, [eventInfo])
-
-  // Budget chart data
-  const budgetChartData = useMemo(() => [
-    { label: 'Remaining', value: budgetStats.actualRemaining, color: '#E5E7EB' },
-    { label: 'Paid', value: budgetStats.paid, color: '#059669' },
-    { label: 'Pending', value: budgetStats.pending, color: '#F59E0B' },
-    { label: 'Other', value: budgetStats.other, color: '#60A5FA' },
-  ], [budgetStats])
-
-  // Mock tasks (TODO: Get from todoBook when available)
-  const mockTasks: Task[] = useMemo(() => [
-    {
-      id: '1',
-      description: 'You must Go To Home & Prepare Everything For Wedding. You must Organize all items and check everything is ready.',
-      dueDate: '2025-12-12',
-      completed: true,
-    },
-    {
-      id: '2',
-      description: 'Finalize guest list and send invitations to all confirmed guests.',
-      dueDate: '2025-12-10',
-      completed: true,
-    },
-    {
-      id: '3',
-      description: 'Confirm all bookings and make final payments for services.',
-      dueDate: '2025-12-15',
-      completed: false,
-    },
-  ], [])
-
-  // Mock bookings (TODO: Get from serviceBook when available)
-  const upcomingBookings: Booking[] = useMemo(() => [
-    {
-      id: '1',
-      title: 'Makeup Artist',
-      providerUserName: 'Asmaa Mohamed',
-      location: 'Olea, 6 Of October',
-      date: '2025-12-12',
-      time: '04:30 PM',
-      status: 'pending',
-      providerImage: '/placeholder-avatar.jpg',
-      imageSrc: authHeroImage,
-    },
-    {
-      id: '2',
-      title: 'Photography',
-      providerUserName: 'Photo Studio',
-      location: 'Cairo',
-      date: '2025-12-15',
-      time: '10:00 AM',
-      status: 'confirmed',
-      providerImage: '/placeholder-avatar.jpg',
-      imageSrc: authHeroImage,
-    },
-  ], [])
+  // Bookings from serviceBook (not used, kept for future reference)
+  // const upcomingBookings = useMemo(() => {
+  //   if (!eventInfo?.serviceBook?.lines) return []
+  //   // TODO: Map serviceBook lines to Booking format when API structure is available
+  //   return []
+  // }, [eventInfo])
 
   // Build href with eventId for planning tabs
   const buildPlanningHref = (path: string) => {
@@ -424,6 +369,8 @@ function MyEventsPageContent() {
         return eventInfo.guestBook?.isBookInit ?? false
       case 'overview':
         return true // Overview doesn't have a book, always initialized
+      case 'noteBook':
+        return eventInfo.noteBook?.isBookInit ?? false
       default:
         return false
     }
@@ -479,6 +426,12 @@ function MyEventsPageContent() {
       value: 'todo',
       needsInit: !getBookInitStatus('todo')
     },
+    {
+      label: 'notes',
+      href: buildPlanningHref('/events/planning/notes'),
+      value: 'noteBook',
+      needsInit: !getBookInitStatus('noteBook')
+    },
   ]
 
   // Get active tab based on current pathname (for when navigating to planning pages)
@@ -492,6 +445,7 @@ function MyEventsPageContent() {
     if (pathname?.includes('/occasion')) return 'occasion'
     if (pathname?.includes('/preparations')) return 'preparations'
     if (pathname?.includes('/todo')) return 'todo'
+    if (pathname?.includes('/notes')) return 'noteBook'
     // When on my-events page with selected event, default to overview
     if (pathname?.includes('/my-events') && selectedEventId !== null) return 'overview'
     return 'overview'
@@ -556,21 +510,33 @@ function MyEventsPageContent() {
                 >
                   <span>{tab.label}</span>
                   {tab.needsInit && (
-                    <span className={cn(
-                      "px-1.5 py-0.5 text-10 font-medium rounded",
-                      "bg-yellow-100 text-yellow-700"
-                    )}>
-                      Init
-                    </span>
-                  )}
-                  {!tab.needsInit && tab.value !== 'overview' && tab.value !== 'events' && (
-                    <span className={cn(
-                      "px-1.5 py-0.5 text-10 font-medium rounded",
-                      "bg-green-100 text-green-700"
-                    )}>
-                      ✓
-                    </span>
-                  )}
+  <span
+    className={cn(
+      "ml-2 inline-flex items-center justify-center",
+      "h-4 w-4 rounded-full",
+      "bg-yellow-100 text-yellow-700 ring-1 ring-yellow-200",
+      "relative"
+    )}
+    title="Needs init"
+  >
+    <span className="absolute inset-0 rounded-full bg-yellow-200/60 animate-ping" />
+    <span className="relative h-1.5 w-1.5 rounded-full bg-yellow-600" />
+  </span>
+)}
+
+{!tab.needsInit && tab.value !== "overview" && tab.value !== "events" && (
+  <span
+    className={cn(
+      "ml-2 inline-flex items-center justify-center",
+      "h-4 w-4 rounded-full",
+      "bg-green-100 text-green-700 ring-1 ring-green-200"
+    )}
+    title="Ready"
+  >
+    <span className="text-[10px] leading-none">✓</span>
+  </span>
+)}
+
                   {isActive && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full animate-in fade-in slide-in-from-bottom-1" />
                   )}
@@ -583,7 +549,7 @@ function MyEventsPageContent() {
         {/* Loading State */}
         {isMounted && isLoadingEventInfo && (
           <div className="flex items-center justify-center py-12">
-            <LoadingSpinner size="lg" text="Loading event details..." />
+            <LoadingOverlay open={true} title="Loading event details..." />
           </div>
         )}
 
@@ -603,52 +569,99 @@ function MyEventsPageContent() {
             <div className="mb-6 sm:mb-8">
               <div className={cn('grid gap-3 sm:gap-4', 'grid-cols-1', 'sm:grid-cols-3')}>
                 <QuickStatsCard
-                  title="Confirmed Booking"
-                  current={stats.bookings.current}
-                  total={stats.bookings.total}
-                  percentage={stats.bookings.percentage}
+                  title="Completed services"
+                  book={eventInfo.serviceBook}
+                  eventId={selectedEventId || undefined}
                 />
                 <QuickStatsCard
                   title="Complete Lists"
-                  current={stats.items.current}
-                  total={stats.items.total}
-                  percentage={stats.items.percentage}
+                  book={eventInfo.todoBook}
+                  eventId={selectedEventId || undefined}
+            
                 />
-                <QuickStatsCard
+                  <ItemsOverview
+      book={eventInfo.itemBook}
+      onInit={() => handleBookInit('item')}
+      onNavigate={() => handleBookNavigate('item')}
+      eventId={selectedEventId || undefined}
+    />
+                {/* <QuickStatsCard
                   title="Invite Your Guests"
-                  current={stats.guests.current}
-                  total={stats.guests.total}
-                  percentage={stats.guests.percentage}
-                />
+                  book={eventInfo.guestBook}
+                  eventId={selectedEventId || undefined}
+                /> */}
               </div>
             </div>
 
             {/* SECTION 3: Tasks Reminder - Full Width */}
             <div className="mb-6 sm:mb-8">
-              <TasksReminder tasks={mockTasks} />
+              <TasksReminder     
+                     book={eventInfo.todoBook}
+                    onInit={() => handleBookInit('todo')}
+                    onNavigate={() => handleBookNavigate('todo')}
+                    eventId={selectedEventId || undefined}/>
             </div>
 
             {/* SECTION 4: Upcoming Bookings - Full Width */}
             <div className="mb-6 sm:mb-8">
-              <UpcomingBookings bookings={upcomingBookings} imageSrc={authHeroImage} />
+              <UpcomingBookings 
+               book={eventInfo.serviceBook}
+                    onInit={() => handleBookInit('service')}
+                    onNavigate={() => handleBookNavigate('service')}
+                    eventId={selectedEventId || undefined}
+                     imageSrc={authHeroImage} />
             </div>
 
             {/* SECTION 5: Budget & Guests - Two Columns */}
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 mb-6 sm:mb-8">
               <BudgetPayments
-                total={budgetStats.total}
-                remaining={budgetStats.remaining}
-                chartData={budgetChartData}
+                 book={eventInfo.budgetBook}
+                 onInit={() => handleBookInit('budget')}
+                 onNavigate={() => handleBookNavigate('budget')}
+                 eventId={selectedEventId || undefined}
               />
               <GuestsInvitation
-                invitedGuests={stats.guests.current}
-                remainingSeats={stats.guests.total}
+                 book={eventInfo.guestBook}
+                 onInit={() => handleBookInit('guest')}
+                 onNavigate={() => handleBookNavigate('guest')}
+                 eventId={selectedEventId || undefined}
                 imageSrc={authHeroImage}
               />
             </div>
 
+            {/* SECTION 6: Items, Notes & Occasions - Three Columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
+  {/* <div className="self-start h-fit">
+    <ItemsOverview
+      book={eventInfo.itemBook}
+      onInit={() => handleBookInit('item')}
+      onNavigate={() => handleBookNavigate('item')}
+      eventId={selectedEventId || undefined}
+    />
+  </div> */}
+
+  <div className="self-start h-fit">
+    <NotesOverview
+      book={eventInfo.noteBook}
+      onInit={() => handleBookInit('note')}
+      onNavigate={() => handleBookNavigate('note')}
+      eventId={selectedEventId || undefined}
+    />
+  </div>
+
+  <div className="self-start h-fit">
+    <OccasionsOverview
+      book={eventInfo.occasionBook}
+      onInit={() => handleBookInit('occasion')}
+      onNavigate={() => handleBookNavigate('occasion')}
+      eventId={selectedEventId || undefined}
+    />
+  </div>
+</div>
+
+
             {/* SECTION 6: Book Cards */}
-            <div>
+            {/* <div>
               <h2 className="text-24 font-semibold text-gray-900 mb-6">Planning Books</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {eventInfo.itemBook && (
@@ -716,7 +729,7 @@ function MyEventsPageContent() {
                   />
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         )}
 
@@ -774,7 +787,7 @@ function MyEventsPageContent() {
       {/* Loading State */}
       {isMounted && isLoading && (
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Loading events..." />
+          <LoadingOverlay open={true} title="Loading events..." />
         </div>
       )}
 
@@ -849,9 +862,7 @@ export default function MyEventsPage() {
     <Suspense
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <LoadingSpinner size="lg" text="Loading events..." />
-          </div>
+          <LoadingOverlay open={true} title="Loading events..." />
         </div>
       }
     >

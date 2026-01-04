@@ -21,15 +21,21 @@ export interface NoteBooksQuery {
 }
 
 /**
- * Normalize query parameters - set clientId and userType to null, keep eventId
+ * Normalize query parameters - remove null/empty values, keep only defined values
  */
 const normalizeQuery = (query?: NoteBooksQuery) => {
   if (!query) return undefined
-  return {
-    clientId: null as unknown as string | undefined,
-    userType: null as unknown as UserType | undefined,
-    eventId: query.eventId,
+  const normalized: any = {}
+  if (query.eventId !== undefined && query.eventId !== null) {
+    normalized.eventId = query.eventId
   }
+  if (query.userType !== undefined && query.userType !== null) {
+    normalized.userType = query.userType
+  }
+  if (query.clientId !== undefined && query.clientId !== null && query.clientId.trim() !== '') {
+    normalized.clientId = query.clientId
+  }
+  return Object.keys(normalized).length > 0 ? normalized : undefined
 }
 
 /**
@@ -41,11 +47,7 @@ export const initNoteBooks = async (params?: {
   eventId?: number
 }): Promise<void> => {
   try {
-    const normalizedParams = params ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: params.eventId,
-    } : undefined
+    const normalizedParams = normalizeQuery(params)
     await apiClient.api.postNoteBooksInit(normalizedParams)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to initialize note books')

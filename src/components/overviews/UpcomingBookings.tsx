@@ -1,114 +1,195 @@
 'use client'
 
-import Link from 'next/link'
-import Image from 'next/image'
+import { useMemo } from 'react'
 import { Badge } from '@/components/ui/Badge'
-import { Sun, CheckCircle2, X } from 'lucide-react'
+import { 
+  Clock, 
+  CheckCircle2,
+  Music,
+  Car,
+  Palette,
+  Scissors,
+  Gift,
+  UtensilsCrossed,
+} from 'lucide-react'
 import { format } from 'date-fns'
+import { MainServiceBookResponse } from '@/types/responses'
+import { WeddingHallIcon } from '@/assets/icons/WeddingHallIcon'
+import { BridalBeautyIcon } from '@/assets/icons/BridalBeautyIcon'
+import { PhotographyIcon } from '@/assets/icons/PhotographyIcon'
+import { BouquetIcon } from '@/assets/icons/BouquetIcon'
+import { WeddingCakeIcon } from '@/assets/icons/WeddingCakeIcon'
+import { WeddingDressIcon } from '@/assets/icons/WeddingDressIcon'
+import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
+import { AccessoriesIcon } from '@/assets/icons/AccessoriesIcon'
+import type { SVGProps } from 'react'
 
-export interface Booking {
-  id: string | number
-  title: string
-  providerUserName: string
-  location: string
-  date: string | Date
-  time: string
-  status: 'pending' | 'confirmed' | 'canceled'
-  providerImage?: string | any
-  imageSrc?: string | any
+type IconComponent = React.ComponentType<SVGProps<SVGSVGElement>>
+
+/**
+ * Map iconName to custom icon component
+ */
+const getIconFromName = (iconName: string): IconComponent | null => {
+  const name = iconName.toLowerCase().trim()
+  
+  // Map common icon names to custom icons
+  const iconMap: Record<string, IconComponent> = {
+    'makeup': BridalBeautyIcon,
+    'bridal': BridalBeautyIcon,
+    'beauty': BridalBeautyIcon,
+    'salon': BridalBeautyIcon,
+    'photo': PhotographyIcon,
+    'photography': PhotographyIcon,
+    'camera': PhotographyIcon,
+    'video': PhotographyIcon,
+    'hall': WeddingHallIcon,
+    'venue': WeddingHallIcon,
+    'location': WeddingHallIcon,
+    'bouquet': BouquetIcon,
+    'flower': BouquetIcon,
+    'floral': BouquetIcon,
+    'cake': WeddingCakeIcon,
+    'dessert': WeddingCakeIcon,
+    'suit': WeddingSuitIcon,
+    'tuxedo': WeddingSuitIcon,
+    'dress': WeddingDressIcon,
+    'gown': WeddingDressIcon,
+    'accessor': AccessoriesIcon,
+    'jewelry': AccessoriesIcon,
+    'accessories': AccessoriesIcon,
+  }
+  
+  // Try exact match first
+  if (iconMap[name]) {
+    return iconMap[name]
+  }
+  
+  // Try partial match
+  for (const [key, icon] of Object.entries(iconMap)) {
+    if (name.includes(key)) {
+      return icon
+    }
+  }
+  
+  // Default to null (no icon)
+  return null
 }
 
 export interface UpcomingBookingsProps {
-  bookings: Booking[]
+  book: MainServiceBookResponse
+  onInit?: () => Promise<void>
+  onNavigate?: () => void
+  eventId?: number
   imageSrc: string | any
-  viewAllHref?: string
 }
 
-export const UpcomingBookings = ({ bookings, imageSrc, viewAllHref = '/events/planning/preparations' }: UpcomingBookingsProps) => {
+export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }: UpcomingBookingsProps) => {
+  // Get active lines (not deleted) - use services if available, otherwise use lines
+  const activeLines = useMemo(() => {
+    const lines = (book.services || book.lines || []) as any[]
+    return lines.filter((line: any) => !line?.isDeleted)
+  }, [book.services, book.lines])
+
+  // Sort by lastModifiedDate (newest first), fallback to creationDate
+  const sortedLines = useMemo(() => {
+    return [...activeLines].sort((a: any, b: any) => {
+      const dateA = new Date(a.lastModifiedDate || a.creationDate || 0).getTime()
+      const dateB = new Date(b.lastModifiedDate || b.creationDate || 0).getTime()
+      return dateB - dateA
+    })
+  }, [activeLines])
+
+  // Limit to first 3 bookings for preview
+  const displayBookings = useMemo(() => {
+    return sortedLines.slice(0, 3)
+  }, [sortedLines])
+
+  const needsInit = !book.isBookInit
+
+  const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (needsInit && onInit) {
+      await onInit()
+    }
+    if (onNavigate) {
+      onNavigate()
+    }
+  }
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-18 font-semibold text-gray-900">Upcoming Bookings</h2>
-        <Link
-          href={viewAllHref}
+        <h2 className="text-18 font-semibold text-gray-900">Services Bookings</h2>
+        <button
           className="text-12 text-brand-500 hover:text-brand-600 font-medium"
+          onClick={handleClick}
+          type="button"
         >
           View All
-        </Link>
+        </button>
       </div>
-      <div className="space-y-3 sm:space-y-4">
-        {bookings.map(booking => (
-          <div key={booking.id} className="bg-white rounded-lg border border-gray-200 flex items-stretch gap-0 relative">
-            {/* Image Thumbnail */}
-            <div className="w-24 sm:w-32 md:w-36 self-stretch rounded-l-lg rounded-r-none bg-gray-200 flex-shrink-0 overflow-hidden relative">
-              <Image
-                src={booking.imageSrc || imageSrc}
-                alt={booking.title}
-                fill
-                sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 144px"
-                className="object-cover"
-              />
-            </div>
+      <div className="space-y-3">
+        {displayBookings.length > 0 ? (
+          displayBookings.map((line: any) => {
+            // Use lastModifiedDate, fallback to creationDate
+            const date = line.lastModifiedDate || line.creationDate
 
-            {/* Content */}
-            <div className="flex-1 min-w-0 py-2 sm:py-2 pl-3 sm:pl-4 pr-3 relative">
-              <div className="flex flex-col gap-1.5 sm:gap-2">
-                {/* Mobile Layout: Badge first, then title below */}
-                {/* Badge - Show on mobile only, above title */}
-                <div className="sm:hidden flex flex-col gap-2">
-                  {booking.status === 'pending' && (
-                    <Badge variant="pending" className="text-8 flex items-center gap-0.5 w-fit px-1.5 py-0.5">
-                      <Sun className="w-2 h-2" />
-                      <span className='text-[10px]'>Booking Pending</span>
-                    </Badge>
-                  )}
-                  {booking.status === 'confirmed' && (
-                    <Badge variant="confirmed" className="text-8 flex items-center gap-0.5 w-fit px-1.5 py-0.5">
-                      <CheckCircle2 className="w-2 h-2" />
-                      <span className='text-[10px]'>Booking Confirmed</span>
-                    </Badge>
-                  )}
-                  {booking.status === 'canceled' && (
-                    <Badge variant="outline" className="text-8 flex items-center gap-0.5 w-fit px-1.5 py-0.5 border-red-500 text-red-500 bg-red-50">
-                      <X className="w-2 h-2 rounded-full border border-red-500 text-red-500" />
-                      <span className='text-[10px]'>Booking Canceled</span>
-                    </Badge>
-                  )}
-                  <p className="text-14 font-semibold text-gray-900">{booking.title}</p>
+            // Check if iconName exists
+            const hasIconName = line.iconName && line.iconName.trim() !== ''
+            const IconComponent = hasIconName ? getIconFromName(line.iconName) : null
+
+            return (
+              <button
+                key={line.id}
+                type="button"
+                onClick={handleClick}
+                className="w-full text-left bg-white rounded-lg border border-gray-200 p-3 hover:bg-gray-50 hover:border-gray-300 transition-colors"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  {/* Left section: Icon + Title */}
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {/* Icon */}
+                    {hasIconName && IconComponent && (
+                      <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center flex-shrink-0">
+                        <IconComponent className="w-5 h-5 text-brand-500" />
+                      </div>
+                    )}
+                    
+                    {/* Title */}
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <p className="text-13 font-semibold text-gray-900 truncate">
+                        {line.title || 'Untitled Service'}
+                      </p>
+                      {date && date !== '0001-01-01T00:00:00' && (
+                        <p className="text-11 text-gray-500 mt-0.5">
+                          {format(new Date(date), 'dd MMM, yyyy')}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right section: Status badges */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {book.pending && book.pending > 0 && (
+                      <Badge variant="pending" className="text-11 flex items-center gap-1 whitespace-nowrap">
+                        <Clock className="w-3 h-3" />
+                        <span>Pending</span>
+                      </Badge>
+                    )}
+                    {((book.completed && book.completed > 0) || book.isSubDone) && (
+                      <Badge variant="confirmed" className="text-11 flex items-center gap-1 whitespace-nowrap">
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>Completed</span>
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-                {/* Desktop Layout: Title and badge inline */}
-                <div className="hidden sm:flex sm:items-start sm:justify-between sm:gap-2">
-                  <p className="text-16 font-semibold text-gray-900 flex-1">{booking.title}</p>
-                  {booking.status === 'pending' && (
-                    <Badge variant="pending" className="text-12 flex items-center gap-1 flex-shrink-0">
-                      <Sun className="w-4 h-4" />
-                      <span>Booking Pending</span>
-                    </Badge>
-                  )}
-                  {booking.status === 'confirmed' && (
-                    <Badge variant="confirmed" className="text-12 flex items-center gap-1 flex-shrink-0">
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Booking Confirmed</span>
-                    </Badge>
-                  )}
-                  {booking.status === 'canceled' && (
-                    <Badge variant="outline" className="text-12 flex items-center gap-1 flex-shrink-0 border-red-500 text-red-500 bg-red-50">
-                      <X className="w-3.5 h-3.5  rounded-full border border-red-500 text-red-500" />
-                      <span>Booking Canceled</span>
-                    </Badge>
-                  )}
-                </div>
-                <p className="text-12 sm:text-14 text-gray-600">Provider : {booking.providerUserName}</p>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2">
-                  <p className="text-12 sm:text-14 text-gray-600">{booking.location}</p>
-                  <p className="text-12 sm:text-14 text-gray-600">
-                    {format(new Date(booking.date), 'dd/MM/yyyy')} {booking.time}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+              </button>
+            )
+          })
+        ) : (
+          <p className="text-13 text-gray-500 text-center py-6">No bookings yet</p>
+        )}
       </div>
     </div>
   )

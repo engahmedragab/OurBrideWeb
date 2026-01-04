@@ -12,7 +12,7 @@ export interface BudgetLineResponse extends LineResponse {
   estimated: number
   paid: number
   final: number
-  dueDate: string // ISO DateTime string
+  dueDate: string | null // ISO DateTime string
   count: number
   payer: string
   note: string
