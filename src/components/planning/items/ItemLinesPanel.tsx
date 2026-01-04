@@ -8,6 +8,7 @@ import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { CreateItemModal } from '@/components/planning/items/CreateItemModal'
 import { EditItemModal } from '@/components/planning/items/EditItemModal'
+import { ItemsSummaryCard } from '@/components/planning/items/ItemsSummaryCard'
 
 export type ItemFormData = {
   name: string
@@ -49,25 +50,25 @@ export function ItemLinesPanel({
 
   return (
     <section className={cn('rounded-xl border bg-white p-4', className)}>
-      <div className="mb-4 flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900">{categoryName}</h2>
-          <div className="mt-1 text-xs text-gray-500">
-            {stats.total} items • {stats.completed} completed • {stats.remaining} remaining
-          </div>
-        </div>
+      {/* Summary Card (مثل التصميم اللي بعتيه) */}
+      <ItemsSummaryCard
+        title={categoryName}
+        total={stats.total}
+        completed={stats.completed}
+        rightSlot={
+          <Button
+            variant="ghost"
+            onClick={() => setCreateOpen(true)}
+            className="h-9 rounded-xl px-3 text-xs text-primary hover:bg-gray-100"
+          >
+            <Plus className="mr-1 h-4 w-4" />
+            Add new item
+          </Button>
+        }
+      />
 
-        <Button
-          variant="ghost"
-          onClick={() => setCreateOpen(true)}
-          className="h-9 rounded-xl px-3 text-xs text-primary hover:bg-gray-100"
-        >
-          <Plus className="mr-1 h-4 w-4" />
-          Add new item
-        </Button>
-      </div>
-
-      <div className="space-y-3">
+      {/* Items List */}
+      <div className="mt-4 space-y-3">
         {items.map((it) => (
           <ItemLineRow
             key={it.id}
@@ -88,6 +89,7 @@ export function ItemLinesPanel({
         ) : null}
       </div>
 
+      {/* Create Modal */}
       <CreateItemModal
         open={createOpen}
         onClose={() => setCreateOpen(false)}
@@ -97,6 +99,7 @@ export function ItemLinesPanel({
         }}
       />
 
+      {/* Edit Modal */}
       <EditItemModal
         open={editOpen}
         onClose={() => {

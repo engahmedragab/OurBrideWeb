@@ -7,6 +7,8 @@ import { ItemLinesPanel } from '@/components/planning/items/ItemLinesPanel'
 import type { ItemFormData } from '@/components/planning/items/ItemLinesPanel'
 import { CreateItemListModal } from '@/components/planning/items/CreateItemListModal'
 import type { ColorKey } from '@/components/planning/items/CreateItemListModal'
+import { ChevronLeft } from 'lucide-react'
+import Link from 'next/link'
 
 export type UiItem = {
   id: number
@@ -152,8 +154,17 @@ export default function ItemsPage() {
 
   return (
     <div className="w-full">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Items</h1>
+     <div className="mb-6 flex items-center gap-1">
+        <Link
+          href="/dashboard/my-events"
+          className="inline-flex h-9 w-9 items-center justify-center"
+          aria-label="Back to My Events"
+        >
+        <ChevronLeft className="w-5 h-5 text-gray-700" />
+
+        </Link>
+
+        <h1 className="text-xl font-semibold text-gray-900">Items</h1>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
