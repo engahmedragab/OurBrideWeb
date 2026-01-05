@@ -1424,7 +1424,7 @@ export default function CartPage() {
 
           {/* Order Summary Sidebar - Desktop only - Shows filtered totals */}
           {hasFilteredItems && (
-            <div className="w-full lg:w-96 lg:flex-shrink-0">
+            <div className="w-full lg:w-80 lg:flex-shrink-0">
               <div className="lg:sticky lg:top-6">
                 <CartOrderSummary
                   subtotal={filteredTotals.subtotal}
