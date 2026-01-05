@@ -52,7 +52,7 @@ import type {
   BudgetLineCategoryUpdateRequest,
   ApiError,
   UserType,
-} from '@/services/api/budgetBooks.types'
+} from '@/types/responses/budgetBooks.types'
 
 // Helper functions for cache invalidation
 const invalidateBudgetBookQueries = (queryClient: ReturnType<typeof useQueryClient>) => {
