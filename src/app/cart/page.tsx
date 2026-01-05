@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
-import { RefreshCw, Trash2, X } from 'lucide-react'
+import { RefreshCw, Trash2, X, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { UserPageLayout } from '@/components/layout'
 import {
@@ -34,7 +34,7 @@ import type {
 } from '@/types/responses'
 import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
 import type { CartItemType } from '@/components/ui/CartItem'
-import { ProviderMultiSelect } from '@/components/ui'
+import { ProviderMultiSelect, Popover, PopoverContent, PopoverTrigger } from '@/components/ui'
 
 /**
  * Map PurchaseResponse to CartProduct using display properties from PurchaseResponse
@@ -285,6 +285,10 @@ export default function CartPage() {
   const [requestToCancel, setRequestToCancel] = useState<string | null>(null)
   const [clearAllModalOpen, setClearAllModalOpen] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
+
+  // Mobile filter state - Products or Services (default: Products)
+  const [cartFilter, setcartFilter] = useState<'Products' | 'Services'>('Products')
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false)
 
   // Cart filter state - using cart IDs from CartProviderResponse
   const [selectedCartIds, setSelectedCartIds] = useState<number[]>([])
@@ -999,6 +1003,61 @@ export default function CartPage() {
 
   const isLoadingData = (needsGeneralCart && isLoadingGeneralCart) || isLoadingCarts
 
+  // Filter cart items based on mobile filter
+  const filteredCartProducts = useMemo(() => {
+    if (cartFilter === 'Products') {
+      return cartProducts
+    }
+    return []
+  }, [cartProducts, cartFilter])
+
+  const filteredServicePurchases = useMemo(() => {
+    if (cartFilter === 'Services') {
+      return servicePurchases
+    }
+    return []
+  }, [servicePurchases, cartFilter])
+
+  // Check if filtered items exist
+  const hasFilteredItems = useMemo(() => {
+    if (cartFilter === 'Products') {
+      return filteredCartProducts.length > 0
+    }
+    if (cartFilter === 'Services') {
+      return filteredServicePurchases.length > 0
+    }
+    return false
+  }, [cartFilter, filteredCartProducts, filteredServicePurchases])
+
+  // Calculate filtered totals
+  const filteredTotals = useMemo(() => {
+    if (cartFilter === 'Products') {
+      const productsTotal = filteredCartProducts.reduce(
+        (sum, product) => sum + product.discountedPrice * product.quantity,
+        0
+      )
+      return {
+        subtotal: productsTotal,
+        taxesAndFees: activeCartData?.priceCalculation?.tax ?? taxesAndFees ?? 0,
+        deliveryFee: activeCartData?.priceCalculation?.shippingCost ?? deliveryFee ?? 0,
+        total: productsTotal + (activeCartData?.priceCalculation?.tax ?? taxesAndFees ?? 0) + (activeCartData?.priceCalculation?.shippingCost ?? deliveryFee ?? 0),
+      }
+    }
+    if (cartFilter === 'Services') {
+      const servicesTotal = filteredServicePurchases.reduce(
+        (sum, service) => sum + (service.totalPrice ?? service.price ?? 0) * (service.quantity || 1),
+        0
+      )
+      return {
+        subtotal: servicesTotal,
+        taxesAndFees: activeCartData?.priceCalculation?.tax ?? taxesAndFees ?? 0,
+        deliveryFee: activeCartData?.priceCalculation?.shippingCost ?? deliveryFee ?? 0,
+        total: servicesTotal + (activeCartData?.priceCalculation?.tax ?? taxesAndFees ?? 0) + (activeCartData?.priceCalculation?.shippingCost ?? deliveryFee ?? 0),
+      }
+    }
+    return { subtotal: 0, taxesAndFees: 0, deliveryFee: 0, total: 0 }
+  }, [cartFilter, filteredCartProducts, filteredServicePurchases, activeCartData, taxesAndFees, deliveryFee])
+
   // Show loading state
   if (isLoadingData) {
     return (
@@ -1030,11 +1089,67 @@ export default function CartPage() {
 
   return (
     <UserPageLayout>
-      {/* Page Header with Filter */}
+      {/* Desktop Page Header with Actions and Filter */}
       <div className="mb-6">
         <div className="flex items-center justify-between gap-4 mb-4">
           <PageHeader title="My Cart" />
+          
           <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Products/Services Filter Dropdown */}
+            <Popover open={mobileDropdownOpen} onOpenChange={setMobileDropdownOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className="flex items-center gap-1 text-14 font-medium text-red-500 hover:text-red-600 transition-colors px-3 py-1.5 "
+                  aria-label="Filter cart items"
+                >
+                  <span>{cartFilter}</span>
+                  <ChevronDown
+                    className={cn(
+                      'h-4 w-4 transition-transform',
+                      mobileDropdownOpen && 'rotate-180'
+                    )}
+                  />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="p-1.5 bg-white border border-gray-200 rounded-xl shadow-lg min-w-[120px] !z-[9999]"
+                align="end"
+                sideOffset={4}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setcartFilter('Products')
+                    setMobileDropdownOpen(false)
+                  }}
+                  className={cn(
+                    'w-full flex items-center px-3 py-2.5 rounded-xl text-14 font-normal transition-colors text-left',
+                    cartFilter === 'Products'
+                      ? 'bg-red-50 text-red-500'
+                      : 'text-gray-900 hover:bg-red-50 hover:text-red-500'
+                  )}
+                >
+                  Products
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setcartFilter('Services')
+                    setMobileDropdownOpen(false)
+                  }}
+                  className={cn(
+                    'w-full flex items-center px-3 py-2.5 my-2 rounded- xl text-14 font-normal transition-colors text-left',
+                    cartFilter === 'Services'
+                      ? 'bg-red-50 text-red-500'
+                      : 'text-gray-900 hover:bg-red-50 hover:text-red-500'
+                  )}
+                >
+                  Services
+                </button>
+              </PopoverContent>
+            </Popover>
+
             {hasItems && (
               <button
                 type="button"
@@ -1164,13 +1279,13 @@ export default function CartPage() {
 
       {/* Content Area */}
       {hasItems ? (
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 pb-24 md:pb-0">
           {/* Cart Items */}
           <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
             {/* Products Section */}
-            {hasProducts && cartProducts.length > 0 && (
+            {cartFilter === 'Products' && filteredCartProducts.length > 0 && (
               <div className="space-y-3 sm:space-y-4">
-                {cartProducts.map(product => (
+                {filteredCartProducts.map(product => (
                   <CartItem
                     key={product.purchaseId ?? `product-${product.id}`}
                     id={product.id}
@@ -1193,9 +1308,9 @@ export default function CartPage() {
             )}
 
             {/* Services Section - using CartItem for compact display */}
-            {hasServices && (
+            {cartFilter === 'Services' && filteredServicePurchases.length > 0 && (
               <div className="space-y-3 sm:space-y-4">
-                {servicePurchases.map((purchase) => {
+                {filteredServicePurchases.map((purchase) => {
                   // Priority: Use display properties from PurchaseResponse, then ServiceHeaderResponse
                   const displayName = purchase.name ?? purchase.nameEn ?? purchase.nameAr
                   const displayImage = purchase.imageUrl
@@ -1239,9 +1354,9 @@ export default function CartPage() {
               </div>
             )}
 
-            {/* Reservations Section - using ReservationResponse */}
+            {/* Reservations Section - using ReservationResponse - Hidden on mobile */}
             {hasReservations && (
-              <div className="space-y-3 sm:space-y-4">
+              <div className=" space-y-3 sm:space-y-4">
                 {reservationPurchases.map((reservation) => (
                   <CartItem
                     key={reservation.purchaseId ?? `reservation-${reservation.id}`}
@@ -1262,7 +1377,7 @@ export default function CartPage() {
               </div>
             )}
 
-            {/* Memberships Section */}
+            {/* Memberships Section - Hidden on mobile */}
             {hasMemberships && (
               <div className="space-y-3 sm:space-y-4">
                 {membershipPurchases.map((membership) => (
@@ -1284,7 +1399,7 @@ export default function CartPage() {
               </div>
             )}
 
-            {/* Gift Cards Section */}
+            {/* Gift Cards Section - Hidden on mobile */}
             {hasGiftCards && (
               <div className="space-y-3 sm:space-y-4">
                 {giftCardPurchases.map((giftCard) => (
@@ -1307,15 +1422,15 @@ export default function CartPage() {
             )}
           </div>
 
-          {/* Order Summary Sidebar - Show for products and services */}
-          {hasItems && (
+          {/* Order Summary Sidebar - Desktop only - Shows filtered totals */}
+          {hasFilteredItems && (
             <div className="w-full lg:w-96 lg:flex-shrink-0">
               <div className="lg:sticky lg:top-6">
                 <CartOrderSummary
-                  subtotal={subtotal}
-                  taxesAndFees={taxesAndFees}
-                  deliveryFee={deliveryFee}
-                  total={total}
+                  subtotal={filteredTotals.subtotal}
+                  taxesAndFees={filteredTotals.taxesAndFees}
+                  deliveryFee={filteredTotals.deliveryFee}
+                  total={filteredTotals.total}
                   onCheckout={handleCheckout}
                   priceCalculation={activeCartData?.priceCalculation ?? null}
                 />
@@ -1332,6 +1447,26 @@ export default function CartPage() {
           actionHref="/products"
         />
       )}
+
+      {/* Mobile Fixed Bottom Bar */}
+      {hasFilteredItems && (
+        <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-6 z-50 shadow-lg">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-16 font-semibold text-gray-900">Total Price</span>
+            <span className="text-16 font-semibold text-gray-900">
+              {filteredTotals.total.toLocaleString()} EGP
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleCheckout}
+            disabled={checkoutMutation.isPending}
+            className="w-full px-4 py-3 text-16 font-semibold text-white bg-red-500 rounded-full hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Checkout All
+          </button>
+        </div>
+      )} 
 
       {/* Delete Cart Item Modal */}
       <DeleteCartItemModal

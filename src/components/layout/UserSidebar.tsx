@@ -279,28 +279,34 @@ export const UserSidebar = ({
 
                 return (
                   <li key={item.path} className="relative">
-                    {item.comingSoon && (
-                      <span className="absolute -top-1 -right-1 flex items-center justify-center rounded-full bg-gray-200 text-8 font-medium text-brand-500 px-1 h-3.5 min-w-[28px]">
-                        Coming Soon
-                      </span>
-                    )}
                     <Link
                       href={item.path}
                       onClick={onLinkClick}
+                      aria-current={active ? 'page' : undefined}
+                      data-active={active ? 'true' : undefined}
                       className={cn(
-                        'flex items-center gap-3 px-3 py-2.5 rounded-lg text-14 font-normal transition-all duration-150',
+                        'relative flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-lg text-14 font-normal transition-all duration-150',
                         active
-                          ? 'bg-red-500 text-white'
+                          ? 'text-brand-500'
                           : 'text-gray-900 hover:bg-gray-50'
                       )}
                     >
+                      {/* Red vertical indicator for active item - positioned on left edge */}
+                      {active && (
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500 rounded-full" />
+                      )}
                       <Icon
                         className={cn(
                           'h-5 w-5 flex-shrink-0',
-                          active ? 'text-white' : 'text-gray-900'
+                          active ? 'text-brand-500' : 'text-gray-900'
                         )}
                       />
                       <span className="flex-1">{item.label}</span>
+                      {item.comingSoon && (
+                        <span className="flex items-center justify-center rounded-full bg-gray-200 text-8 font-medium text-brand-500 px-1 h-3.5 min-w-[28px] flex-shrink-0">
+                          Coming Soon
+                        </span>
+                      )}
                       {item.path === '/cart' && cartCount > 0 && (
                         <span
                           className={cn(

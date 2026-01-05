@@ -5,16 +5,16 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const toggleVariants = cva(
-  'relative inline-flex  items-center rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
+  'relative inline-flex items-center rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
   {
     variants: {
       variant: {
-        default: 'bg-white border-2  border-brand-500',
-        brand: 'bg-white border-2  border-brand-500',
+        default: 'bg-white border border-gray-300',
+        brand: 'bg-white border border-gray-300',
       },
       size: {
         sm: 'h-5 w-10',
-        md: 'h-6 w-12',
+        md: 'h-7 w-12',
         lg: 'h-7 w-14',
       },
     },
@@ -84,10 +84,10 @@ const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
         aria-disabled={disabled}
         className={cn(
           toggleVariants({ variant, size }),
-          // When checked (ON): solid red background, no border
-          checked && 'bg-brand-500 border-brand-500 ',
-          // When unchecked (OFF): white background with red border
-          !checked && 'bg-white border-2  border-brand-500',
+          // When checked (ON): solid red background with red border
+          checked && 'bg-white border-brand-500',
+          // When unchecked (OFF): white background with light gray border
+          !checked && 'bg-white border border-gray-300',
           className
         )}
         onClick={handleClick}
@@ -98,9 +98,9 @@ const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
           className={cn(
             toggleThumbVariants({ size }),
             // When checked (ON): white thumb
-            checked && 'bg-white',
-            // When unchecked (OFF): red thumb
-            !checked && 'bg-brand-500',
+            checked && 'bg-brand',
+            // When unchecked (OFF): light gray thumb (matching screenshot)
+            !checked && 'bg-gray-300',
             getTranslateX()
           )}
         />
