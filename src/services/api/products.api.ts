@@ -1,13 +1,16 @@
 import { apiClient } from './apiClient'
 import type {
   CreateProductReviewRequest,
-
   SearchProductsRequest,
 } from '@/../client/common/api/gen/ourbride-api'
-import type { ProductResponse, ApiResult,   ProductVariationResponse,
+import type {
+  ProductResponse,
+  ApiResult,
+  ProductVariationResponse,
   ProductAttributeResponse,
   ProductBrandResponse,
-  ProductsHomeResponse} from '@/types/responses'
+  ProductsHomeResponse,
+} from '@/types/responses'
 
 /**
  * Helper function to extract error details from API errors
@@ -15,33 +18,41 @@ import type { ProductResponse, ApiResult,   ProductVariationResponse,
 const getErrorMessage = (error: unknown, defaultMessage: string): string => {
   if (error && typeof error === 'object') {
     // Check if it's an Axios error with response
-    const axiosError = error as { response?: { status?: number; data?: unknown }; message?: string }
+    const axiosError = error as {
+      response?: { status?: number; data?: unknown }
+      message?: string
+    }
     if (axiosError.response) {
       const status = axiosError.response.status
       const responseData = axiosError.response.data
-      
+
       // Try to extract error message from response data
       let errorMessage = defaultMessage
       if (responseData && typeof responseData === 'object') {
-        const data = responseData as { message?: string; error?: string; errors?: unknown }
+        const data = responseData as {
+          message?: string
+          error?: string
+          errors?: unknown
+        }
         if (data.message) {
           errorMessage = data.message
         } else if (data.error) {
-          errorMessage = typeof data.error === 'string' ? data.error : defaultMessage
+          errorMessage =
+            typeof data.error === 'string' ? data.error : defaultMessage
         } else if (data.errors) {
           // Handle validation errors
           errorMessage = 'Validation error'
         }
       }
-      
+
       return `Request failed with status code ${status}: ${errorMessage}`
     }
-    
+
     if (axiosError.message) {
       return axiosError.message
     }
   }
-  
+
   return error instanceof Error ? error.message : defaultMessage
 }
 
@@ -85,12 +96,14 @@ export const getProducts = async (
   params?: GetProductsParams
 ): Promise<ProductResponse[]> => {
   const response = await apiClient.api.getProductGetProducts(params)
-  const responseData = response as unknown as { data?: { data?: ProductResponse[] } }
-  
+  const responseData = response as unknown as {
+    data?: { data?: ProductResponse[] }
+  }
+
   if (!responseData?.data?.data) {
     return []
   }
-  
+
   return responseData.data.data
 }
 
@@ -102,12 +115,14 @@ export const getProductById = async (
 ): Promise<ProductResponse | null> => {
   try {
     const response = await apiClient.api.getProductGetProductById(id)
-    const responseData = response as unknown as { data?: { data?: ProductResponse } }
-    
+    const responseData = response as unknown as {
+      data?: { data?: ProductResponse }
+    }
+
     if (!responseData?.data?.data) {
       return null
     }
-    
+
     return responseData.data.data
   } catch (error: unknown) {
     const errorMessage = getErrorMessage(error, 'Failed to fetch product by ID')
@@ -125,12 +140,14 @@ export const getProductBySlug = async (
 ): Promise<ProductResponse | null> => {
   try {
     const response = await apiClient.api.getProductGetProductBySlug(slug)
-    const responseData = response as unknown as { data?: { data?: ProductResponse } }
-    
+    const responseData = response as unknown as {
+      data?: { data?: ProductResponse }
+    }
+
     if (!responseData?.data?.data) {
       return null
     }
-    
+
     return responseData.data.data
   } catch (error) {
     console.error('Error fetching product by slug:', error)
@@ -141,37 +158,57 @@ export const getProductBySlug = async (
 /**
  * Get filtered products
  */
-export const getFilteredProducts = async (
-  params?: {
-    search?: string
-    categoryId?: number
-    minPrice?: number
-    maxPrice?: number
-    rating?: number
-    sortBy?: string
-  }
-): Promise<ApiResult<unknown>> => {
+export const getFilteredProducts = async (params?: {
+  search?: string
+  categoryId?: number
+  minPrice?: number
+  maxPrice?: number
+  rating?: number
+  sortBy?: string
+}): Promise<ApiResult<unknown>> => {
   const response = await apiClient.api.getProductGetFilteredProducts(params)
-  const responseData = response as unknown as { data?: ApiResult<unknown> } | ApiResult<unknown>
+  const responseData = response as unknown as
+    | { data?: ApiResult<unknown> }
+    | ApiResult<unknown>
   if (responseData && typeof responseData === 'object') {
-    if ('data' in responseData && responseData.data && typeof responseData.data === 'object' && 'success' in responseData.data) {
+    if (
+      'data' in responseData &&
+      responseData.data &&
+      typeof responseData.data === 'object' &&
+      'success' in responseData.data
+    ) {
       return responseData.data as ApiResult<unknown>
     }
     if ('success' in responseData) {
       return responseData as ApiResult<unknown>
     }
   }
-  return { data: null, success: false, statusCode: 0, message: '' } as ApiResult<unknown>
+  return {
+    data: null,
+    success: false,
+    statusCode: 0,
+    message: '',
+  } as ApiResult<unknown>
 }
 
 /**
  * Get products for home page
  */
-export const getProductsHome = async (): Promise<ApiResult<ProductsHomeResponse>> => {
+export const getProductsHome = async (): Promise<
+  ApiResult<ProductsHomeResponse>
+> => {
   const response = await apiClient.api.getProductGetProductsHome()
-  const responseData = response as unknown as { data?: ApiResult<ProductsHomeResponse> } | ApiResult<ProductsHomeResponse> | ProductsHomeResponse
+  const responseData = response as unknown as
+    | { data?: ApiResult<ProductsHomeResponse> }
+    | ApiResult<ProductsHomeResponse>
+    | ProductsHomeResponse
   if (responseData && typeof responseData === 'object') {
-    if ('data' in responseData && responseData.data && typeof responseData.data === 'object' && 'success' in responseData.data) {
+    if (
+      'data' in responseData &&
+      responseData.data &&
+      typeof responseData.data === 'object' &&
+      'success' in responseData.data
+    ) {
       return responseData.data as ApiResult<ProductsHomeResponse>
     }
     if ('success' in responseData) {
@@ -188,7 +225,13 @@ export const getProductsHome = async (): Promise<ApiResult<ProductsHomeResponse>
       }
     }
   }
-  return { data: null as any, success: false, statusCode: 0, message: '', errors: undefined } as ApiResult<ProductsHomeResponse>
+  return {
+    data: null as any,
+    success: false,
+    statusCode: 0,
+    message: '',
+    errors: undefined,
+  } as ApiResult<ProductsHomeResponse>
 }
 
 /**
@@ -196,16 +239,28 @@ export const getProductsHome = async (): Promise<ApiResult<ProductsHomeResponse>
  */
 export const getProductOffers = async (): Promise<ApiResult<unknown>> => {
   const response = await apiClient.api.getProductGetOffers()
-  const responseData = response as unknown as { data?: ApiResult<unknown> } | ApiResult<unknown>
+  const responseData = response as unknown as
+    | { data?: ApiResult<unknown> }
+    | ApiResult<unknown>
   if (responseData && typeof responseData === 'object') {
-    if ('data' in responseData && responseData.data && typeof responseData.data === 'object' && 'success' in responseData.data) {
+    if (
+      'data' in responseData &&
+      responseData.data &&
+      typeof responseData.data === 'object' &&
+      'success' in responseData.data
+    ) {
       return responseData.data as ApiResult<unknown>
     }
     if ('success' in responseData) {
       return responseData as ApiResult<unknown>
     }
   }
-  return { data: null, success: false, statusCode: 0, message: '' } as ApiResult<unknown>
+  return {
+    data: null,
+    success: false,
+    statusCode: 0,
+    message: '',
+  } as ApiResult<unknown>
 }
 
 /**
@@ -213,16 +268,28 @@ export const getProductOffers = async (): Promise<ApiResult<unknown>> => {
  */
 export const getProductCategories = async (): Promise<ApiResult<unknown>> => {
   const response = await apiClient.api.getProductGetCategories()
-  const responseData = response as unknown as { data?: ApiResult<unknown> } | ApiResult<unknown>
+  const responseData = response as unknown as
+    | { data?: ApiResult<unknown> }
+    | ApiResult<unknown>
   if (responseData && typeof responseData === 'object') {
-    if ('data' in responseData && responseData.data && typeof responseData.data === 'object' && 'success' in responseData.data) {
+    if (
+      'data' in responseData &&
+      responseData.data &&
+      typeof responseData.data === 'object' &&
+      'success' in responseData.data
+    ) {
       return responseData.data as ApiResult<unknown>
     }
     if ('success' in responseData) {
       return responseData as ApiResult<unknown>
     }
   }
-  return { data: null, success: false, statusCode: 0, message: '' } as ApiResult<unknown>
+  return {
+    data: null,
+    success: false,
+    statusCode: 0,
+    message: '',
+  } as ApiResult<unknown>
 }
 
 /**
@@ -243,12 +310,14 @@ export const getProductsByCategory = async (
       categoryId,
       params
     )
-    const responseData = response as unknown as { data?: { data?: ProductResponse[] } }
-    
+    const responseData = response as unknown as {
+      data?: { data?: ProductResponse[] }
+    }
+
     if (!responseData?.data?.data) {
       return []
     }
-    
+
     return responseData.data.data
   } catch (error) {
     console.error('Error fetching products by category:', error)
@@ -269,19 +338,24 @@ export const getRelatedProducts = async (
       productId,
       { providerId: undefined, branchId: undefined, staffId: undefined }
     )
-    const responseData = response as unknown as { data?: { data?: ProductResponse[] } | ApiResult<ProductResponse[]> }
-    
+    const responseData = response as unknown as {
+      data?: { data?: ProductResponse[] } | ApiResult<ProductResponse[]>
+    }
+
     // The endpoint returns ApiResult, extract data from it
     // Adjust based on actual API response structure
     if (responseData?.data) {
-      if ('data' in responseData.data && Array.isArray(responseData.data.data)) {
+      if (
+        'data' in responseData.data &&
+        Array.isArray(responseData.data.data)
+      ) {
         return responseData.data.data
       }
       if (Array.isArray(responseData.data)) {
         return responseData.data
       }
     }
-    
+
     return []
   } catch (error) {
     console.error('Error fetching related products:', error)
@@ -306,16 +380,28 @@ export const getProductReviews = async (
     String(productId),
     { productId, ...params }
   )
-  const responseData = response as unknown as { data?: ApiResult<unknown> } | ApiResult<unknown>
+  const responseData = response as unknown as
+    | { data?: ApiResult<unknown> }
+    | ApiResult<unknown>
   if (responseData && typeof responseData === 'object') {
-    if ('data' in responseData && responseData.data && typeof responseData.data === 'object' && 'success' in responseData.data) {
+    if (
+      'data' in responseData &&
+      responseData.data &&
+      typeof responseData.data === 'object' &&
+      'success' in responseData.data
+    ) {
       return responseData.data as ApiResult<unknown>
     }
     if ('success' in responseData) {
       return responseData as ApiResult<unknown>
     }
   }
-  return { data: null, success: false, statusCode: 0, message: '' } as ApiResult<unknown>
+  return {
+    data: null,
+    success: false,
+    statusCode: 0,
+    message: '',
+  } as ApiResult<unknown>
 }
 
 /**
@@ -338,7 +424,9 @@ export const submitProductReview = async (
       data,
       query
     )
-    const responseData = response as unknown as { data?: { data?: ApiResult<unknown> } | ApiResult<unknown> } | ApiResult<unknown>
+    const responseData = response as unknown as
+      | { data?: { data?: ApiResult<unknown> } | ApiResult<unknown> }
+      | ApiResult<unknown>
     if (responseData && typeof responseData === 'object') {
       if ('data' in responseData) {
         const nested = responseData.data
@@ -370,8 +458,14 @@ export const toggleProductFavorite = async (
   }
 ): Promise<boolean> => {
   try {
-    const response = await apiClient.api.postProductToggleFavorite(productId, query)
-    const responseData = response as unknown as { data?: { data?: boolean } | { success?: boolean } | boolean } | { success?: boolean } | boolean
+    const response = await apiClient.api.postProductToggleFavorite(
+      productId,
+      query
+    )
+    const responseData = response as unknown as
+      | { data?: { data?: boolean } | { success?: boolean } | boolean }
+      | { success?: boolean }
+      | boolean
     if (typeof responseData === 'boolean') {
       return responseData
     }
@@ -380,10 +474,16 @@ export const toggleProductFavorite = async (
         if (typeof responseData.data === 'boolean') {
           return responseData.data
         }
-        if (typeof responseData.data === 'object' && 'data' in responseData.data) {
+        if (
+          typeof responseData.data === 'object' &&
+          'data' in responseData.data
+        ) {
           return responseData.data.data ?? true
         }
-        if (typeof responseData.data === 'object' && 'success' in responseData.data) {
+        if (
+          typeof responseData.data === 'object' &&
+          'success' in responseData.data
+        ) {
           return responseData.data.success ?? true
         }
       }
@@ -394,7 +494,9 @@ export const toggleProductFavorite = async (
     return true
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to toggle product favorite'
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle product favorite'
     )
   }
 }
@@ -412,14 +514,17 @@ export const searchProducts = async (
   }
 ): Promise<ProductResponse[]> => {
   try {
-    const response = await apiClient.api.getProductSearchProducts(
-      { query }
-    )
-    const responseData = response as unknown as { data?: { data?: ProductResponse[] } | ApiResult<ProductResponse[]> }
-    
+    const response = await apiClient.api.getProductSearchProducts({ query })
+    const responseData = response as unknown as {
+      data?: { data?: ProductResponse[] } | ApiResult<ProductResponse[]>
+    }
+
     // Handle ApiResult response structure
     if (responseData?.data) {
-      if (typeof responseData.data === 'object' && 'data' in responseData.data) {
+      if (
+        typeof responseData.data === 'object' &&
+        'data' in responseData.data
+      ) {
         const apiResult = responseData.data as { data?: unknown }
         const data = apiResult.data
         if (Array.isArray(data)) {
@@ -430,7 +535,7 @@ export const searchProducts = async (
         return responseData.data
       }
     }
-    
+
     return []
   } catch (error) {
     console.error('Error searching products:', error)
@@ -452,7 +557,9 @@ export const searchProductsAdvanced = async (
 ): Promise<ApiResult<unknown>> => {
   try {
     const response = await apiClient.api.postProductSearchProducts(data, query)
-    const responseData = response as unknown as { data?: { data?: ApiResult<unknown> } | ApiResult<unknown> } | ApiResult<unknown>
+    const responseData = response as unknown as
+      | { data?: { data?: ApiResult<unknown> } | ApiResult<unknown> }
+      | ApiResult<unknown>
     if (responseData && typeof responseData === 'object') {
       if ('data' in responseData) {
         const nested = responseData.data
@@ -483,8 +590,14 @@ export const toggleProductWishlist = async (
   }
 ): Promise<boolean> => {
   try {
-    const response = await apiClient.api.postProductToggleWishlist(productId, query)
-    const responseData = response as unknown as { data?: { data?: boolean } | { success?: boolean } | boolean } | { success?: boolean } | boolean
+    const response = await apiClient.api.postProductToggleWishlist(
+      productId,
+      query
+    )
+    const responseData = response as unknown as
+      | { data?: { data?: boolean } | { success?: boolean } | boolean }
+      | { success?: boolean }
+      | boolean
     if (typeof responseData === 'boolean') {
       return responseData
     }
@@ -493,10 +606,16 @@ export const toggleProductWishlist = async (
         if (typeof responseData.data === 'boolean') {
           return responseData.data
         }
-        if (typeof responseData.data === 'object' && 'data' in responseData.data) {
+        if (
+          typeof responseData.data === 'object' &&
+          'data' in responseData.data
+        ) {
           return responseData.data.data ?? true
         }
-        if (typeof responseData.data === 'object' && 'success' in responseData.data) {
+        if (
+          typeof responseData.data === 'object' &&
+          'success' in responseData.data
+        ) {
           return responseData.data.success ?? true
         }
       }
@@ -507,7 +626,9 @@ export const toggleProductWishlist = async (
     return true
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to toggle product wishlist'
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle product wishlist'
     )
   }
 }
@@ -525,12 +646,14 @@ export const getProductBySku = async (
 ): Promise<ProductResponse | null> => {
   try {
     const response = await apiClient.api.getProductGetProductBySku(sku, params)
-    const responseData = response as unknown as { data?: { data?: ProductResponse } }
-    
+    const responseData = response as unknown as {
+      data?: { data?: ProductResponse }
+    }
+
     if (!responseData?.data?.data) {
       return null
     }
-    
+
     return responseData.data.data
   } catch (error) {
     console.error('Error fetching product by SKU:', error)
@@ -552,14 +675,20 @@ export const getProductVariations = async (
   try {
     const response = await apiClient.api.getProductGetProductVariations(
       String(productId),
-      { productId: typeof productId === 'number' ? productId : parseInt(productId, 10), ...params }
+      {
+        productId:
+          typeof productId === 'number' ? productId : parseInt(productId, 10),
+        ...params,
+      }
     )
-    const responseData = response as unknown as { data?: { data?: ProductVariationResponse[] } }
-    
+    const responseData = response as unknown as {
+      data?: { data?: ProductVariationResponse[] }
+    }
+
     if (!responseData?.data?.data) {
       return []
     }
-    
+
     return responseData.data.data
   } catch (error) {
     console.error('Error fetching product variations:', error)
@@ -583,12 +712,14 @@ export const getProductAttributes = async (
       productId,
       params
     )
-    const responseData = response as unknown as { data?: { data?: ProductAttributeResponse[] } }
-    
+    const responseData = response as unknown as {
+      data?: { data?: ProductAttributeResponse[] }
+    }
+
     if (!responseData?.data?.data) {
       return []
     }
-    
+
     return responseData.data.data
   } catch (error) {
     console.error('Error fetching product attributes:', error)
@@ -599,19 +730,27 @@ export const getProductAttributes = async (
 /**
  * Get all product brands
  */
-export const getProductBrands = async (
-  params?: {
-    providerId?: number
-    branchId?: number
-    staffId?: string
-  }
-): Promise<ProductBrandResponse[]> => {
+export const getProductBrands = async (params?: {
+  providerId?: number
+  branchId?: number
+  staffId?: string
+}): Promise<ProductBrandResponse[]> => {
   try {
     const response = await apiClient.api.getProductGetAllBrands(params)
-    const responseData = response as unknown as { data?: { data?: ProductBrandResponse[] } | ApiResult<ProductBrandResponse[]> } | { data?: ProductBrandResponse[] }
-    
+    const responseData = response as unknown as
+      | {
+          data?:
+            | { data?: ProductBrandResponse[] }
+            | ApiResult<ProductBrandResponse[]>
+        }
+      | { data?: ProductBrandResponse[] }
+
     // Handle ApiResult response structure
-    if (responseData && typeof responseData === 'object' && 'data' in responseData) {
+    if (
+      responseData &&
+      typeof responseData === 'object' &&
+      'data' in responseData
+    ) {
       const data = responseData.data
       if (data && typeof data === 'object') {
         if ('data' in data && Array.isArray(data.data)) {
@@ -622,7 +761,7 @@ export const getProductBrands = async (
         }
       }
     }
-    
+
     return []
   } catch (error) {
     console.error('Error fetching product brands:', error)
@@ -633,25 +772,35 @@ export const getProductBrands = async (
 /**
  * Get flash sale grouped products
  */
-export const getFlashSaleGrouped = async (
-  params?: {
-    providerId?: number
-    branchId?: number
-    staffId?: string
-  }
-): Promise<ApiResult<unknown>> => {
+export const getFlashSaleGrouped = async (params?: {
+  providerId?: number
+  branchId?: number
+  staffId?: string
+}): Promise<ApiResult<unknown>> => {
   try {
     const response = await apiClient.api.getProductGetFlashSaleGrouped(params)
-    const responseData = response as unknown as { data?: ApiResult<unknown> } | ApiResult<unknown>
+    const responseData = response as unknown as
+      | { data?: ApiResult<unknown> }
+      | ApiResult<unknown>
     if (responseData && typeof responseData === 'object') {
-      if ('data' in responseData && responseData.data && typeof responseData.data === 'object' && 'success' in responseData.data) {
+      if (
+        'data' in responseData &&
+        responseData.data &&
+        typeof responseData.data === 'object' &&
+        'success' in responseData.data
+      ) {
         return responseData.data as ApiResult<unknown>
       }
       if ('success' in responseData && 'statusCode' in responseData) {
         return responseData as ApiResult<unknown>
       }
     }
-    const defaultResult: ApiResult<unknown> = { data: null, success: false, statusCode: 0, message: '' }
+    const defaultResult: ApiResult<unknown> = {
+      data: null,
+      success: false,
+      statusCode: 0,
+      message: '',
+    }
     return defaultResult
   } catch (error) {
     console.error('Error fetching flash sale grouped products:', error)
@@ -674,21 +823,28 @@ export const getRelatedCategoryProducts = async (
   try {
     // The API expects query object with providerId/branchId/staffId, not categoryId
     // categoryId might need to be passed differently or this API doesn't support it
-    const query = params ? {
-      providerId: params.providerId,
-      branchId: params.branchId,
-      staffId: params.staffId,
-    } : undefined
+    const query = params
+      ? {
+          providerId: params.providerId,
+          branchId: params.branchId,
+          staffId: params.staffId,
+        }
+      : undefined
     const response = await apiClient.api.getProductGetRelatedCategoryProducts(
       productId,
       query,
       {}
     )
-    const responseData = response as unknown as { data?: { data?: ProductResponse[] } | ApiResult<ProductResponse[]> }
-    
+    const responseData = response as unknown as {
+      data?: { data?: ProductResponse[] } | ApiResult<ProductResponse[]>
+    }
+
     // Handle ApiResult response structure
     if (responseData?.data) {
-      if (typeof responseData.data === 'object' && 'data' in responseData.data) {
+      if (
+        typeof responseData.data === 'object' &&
+        'data' in responseData.data
+      ) {
         const apiResult = responseData.data as { data?: unknown }
         const data = apiResult.data
         if (Array.isArray(data)) {
@@ -699,11 +855,10 @@ export const getRelatedCategoryProducts = async (
         return responseData.data
       }
     }
-    
+
     return []
   } catch (error) {
     console.error('Error fetching related category products:', error)
     return []
   }
 }
-

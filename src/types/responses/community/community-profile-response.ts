@@ -44,21 +44,3 @@ export interface CommunityProfileResponse {
   providerInfo: ProviderProfileInfo | null
   bazaarEventInfo: BazaarEventProfileInfo | null
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

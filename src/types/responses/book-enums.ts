@@ -171,5 +171,3 @@ export enum PersonalType {
   National = 0,
   Passport = 1,
 }
-
-

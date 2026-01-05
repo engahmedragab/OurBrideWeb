@@ -8,7 +8,9 @@ import type { GroomResponse } from './groom-response'
 import type { BrideResponse } from './bride-response'
 import type { LineResponse } from './line-response'
 
-export interface BookResponse<TLine extends LineResponse> extends BaseEntityResponse {
+export interface BookResponse<
+  TLine extends LineResponse,
+> extends BaseEntityResponse {
   groomId?: string // Guid
   groom?: GroomResponse
   brideId?: string // Guid
@@ -24,5 +26,3 @@ export interface BookResponse<TLine extends LineResponse> extends BaseEntityResp
   createdBy: string // Guid
   lastModifiedBy: string // Guid
 }
-
-

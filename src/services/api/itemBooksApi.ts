@@ -4,7 +4,11 @@
  */
 
 import { apiClient } from '@/services/api/apiClient'
-import type { ItemBookResponse, ItemLineResponse, ItemLineCategoryResponse } from '@/types/responses'
+import type {
+  ItemBookResponse,
+  ItemLineResponse,
+  ItemLineCategoryResponse,
+} from '@/types/responses'
 import type {
   ItemBookRequest,
   ItemLineRequest,
@@ -41,14 +45,18 @@ export const initItemBooks = async (params?: {
   eventId?: number
 }): Promise<void> => {
   try {
-    const normalizedParams = params ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: params.eventId,
-    } : undefined
+    const normalizedParams = params
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: params.eventId,
+        }
+      : undefined
     await apiClient.api.postItemBooksInit(normalizedParams)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to initialize item books')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to initialize item books'
+    )
   }
 }
 
@@ -63,7 +71,9 @@ export const syncItemBook = async (
     const params = normalizeQuery(query)
     await apiClient.api.postItemBooksSyncBook(data, params)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to sync item book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to sync item book'
+    )
   }
 }
 
@@ -77,7 +87,7 @@ export const getItemBook = async (
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetBook(normalizedQuery)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ItemBookResponse
@@ -90,7 +100,9 @@ export const getItemBook = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch item book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch item book'
+    )
   }
 }
 
@@ -103,10 +115,20 @@ export const getItemLines = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetAll(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[]; items?: ItemLineResponse[] } } | ItemLineResponse[]
-    
+    const responseAny: any = response as
+      | {
+          data?:
+            | ItemLineResponse[]
+            | { data?: ItemLineResponse[]; items?: ItemLineResponse[] }
+        }
+      | ItemLineResponse[]
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
@@ -125,7 +147,9 @@ export const getItemLines = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch item lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch item lines'
+    )
   }
 }
 
@@ -137,16 +161,28 @@ export const getItemLineById = async (
   query?: { clientId?: string; eventId?: number }
 ): Promise<ItemLineResponse | null> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getItemBooksGet(lineId, String(lineId), normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ItemLineResponse } | ItemLineResponse } | ItemLineResponse
-    
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response = await apiClient.api.getItemBooksGet(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: ItemLineResponse } | ItemLineResponse }
+      | ItemLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ItemLineResponse }).data
@@ -160,7 +196,9 @@ export const getItemLineById = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch item line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch item line'
+    )
   }
 }
 
@@ -173,11 +211,20 @@ export const createItemLine = async (
 ): Promise<ItemLineResponse> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.postItemBooksCreate(data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ItemLineResponse } | ItemLineResponse } | ItemLineResponse
-    
+    const response = await apiClient.api.postItemBooksCreate(
+      data,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: ItemLineResponse } | ItemLineResponse }
+      | ItemLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ItemLineResponse }).data
@@ -191,7 +238,9 @@ export const createItemLine = async (
     }
     throw new Error('Invalid response format from create item line endpoint')
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create item line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create item line'
+    )
   }
 }
 
@@ -206,7 +255,9 @@ export const createItemLinesBulk = async (
     const normalizedQuery = normalizeQuery(query)
     await apiClient.api.postItemBooksCreateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create item lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create item lines'
+    )
   }
 }
 
@@ -219,16 +270,29 @@ export const updateItemLine = async (
   query?: ItemBooksQuery
 ): Promise<ItemLineResponse> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      // eventId is excluded if the API doesn't accept it
-    } : undefined
-    const response = await apiClient.api.putItemBooksUpdate(lineId, String(lineId), data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ItemLineResponse } | ItemLineResponse } | ItemLineResponse
-    
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          // eventId is excluded if the API doesn't accept it
+        }
+      : undefined
+    const response = await apiClient.api.putItemBooksUpdate(
+      lineId,
+      String(lineId),
+      data,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: ItemLineResponse } | ItemLineResponse }
+      | ItemLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ItemLineResponse }).data
@@ -242,7 +306,9 @@ export const updateItemLine = async (
     }
     throw new Error('Invalid response format from update item line endpoint')
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update item line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update item line'
+    )
   }
 }
 
@@ -254,14 +320,18 @@ export const updateItemLinesBulk = async (
   query?: { clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putItemBooksUpdateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update item lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update item lines'
+    )
   }
 }
 
@@ -274,9 +344,15 @@ export const deleteItemLine = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.deleteItemBooksDelete(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.deleteItemBooksDelete(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete item line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete item line'
+    )
   }
 }
 
@@ -285,18 +361,27 @@ export const deleteItemLine = async (
  */
 export const deleteItemLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.deleteItemBooksDeleteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete item lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete item lines'
+    )
   }
 }
 
@@ -309,9 +394,17 @@ export const toggleItemLineDone = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putItemBooksDone(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putItemBooksDone(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle item line done status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle item line done status'
+    )
   }
 }
 
@@ -324,9 +417,17 @@ export const toggleItemLineFavorite = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putItemBooksFavorite(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putItemBooksFavorite(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle item line favorite status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle item line favorite status'
+    )
   }
 }
 
@@ -341,21 +442,41 @@ export const getItemLinesCustom = async (
 ): Promise<ItemLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getItemBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response = await apiClient.api.getItemBooksGetAllCustom(
+      isDeleted,
+      isDone,
+      isFavorite,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } }
+      | ItemLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch custom item lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch custom item lines'
+    )
   }
 }
 
@@ -368,50 +489,83 @@ export const getItemLinesDone = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetAllDone(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const responseAny: any = response as
+      | { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } }
+      | ItemLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch done item lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch done item lines'
+    )
   }
 }
 
 /**
  * Get not done item lines
  */
-export const getItemLinesNotDone = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<ItemLineResponse[]> => {
+export const getItemLinesNotDone = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<ItemLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getItemBooksGetAllNotDone(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getItemBooksGetAllNotDone(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } }
+      | ItemLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not done item lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not done item lines'
+    )
   }
 }
 
@@ -423,51 +577,87 @@ export const getItemLinesFavorite = async (
 ): Promise<ItemLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getItemBooksGetAllFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getItemBooksGetAllFavorite(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } }
+      | ItemLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch favorite item lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch favorite item lines'
+    )
   }
 }
 
 /**
  * Get not favorite item lines
  */
-export const getItemLinesNotFavorite = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<ItemLineResponse[]> => {
+export const getItemLinesNotFavorite = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<ItemLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getItemBooksGetAllNotFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getItemBooksGetAllNotFavorite(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } }
+      | ItemLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not favorite item lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not favorite item lines'
+    )
   }
 }
 
@@ -479,21 +669,37 @@ export const getItemLinesDeleted = async (
 ): Promise<ItemLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getItemBooksGetAllDelete(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getItemBooksGetAllDelete(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } }
+      | ItemLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch deleted item lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch deleted item lines'
+    )
   }
 }
 
@@ -505,21 +711,37 @@ export const getItemLinesNotDeleted = async (
 ): Promise<ItemLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getItemBooksGetAllNotDelete(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getItemBooksGetAllNotDelete(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } }
+      | ItemLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not deleted item lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not deleted item lines'
+    )
   }
 }
 
@@ -528,18 +750,29 @@ export const getItemLinesNotDeleted = async (
  */
 export const markItemLinesDoneBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putItemBooksDoneAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to mark item lines as done')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to mark item lines as done'
+    )
   }
 }
 
@@ -548,43 +781,69 @@ export const markItemLinesDoneBulk = async (
  */
 export const favoriteItemLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putItemBooksFavoriteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to favorite item lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to favorite item lines'
+    )
   }
 }
 
 /**
  * Get all item line categories
  */
-export const getItemCategories = async (
-  query?: { clientId?: string }
-): Promise<ItemLineCategoryResponse[]> => {
+export const getItemCategories = async (query?: {
+  clientId?: string
+}): Promise<ItemLineCategoryResponse[]> => {
   try {
     const response = await apiClient.api.getItemBooksGetAllCategories(query)
-    const responseAny: any = response as { data?: ItemLineCategoryResponse[] | { data?: ItemLineCategoryResponse[] } } | ItemLineCategoryResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const responseAny: any = response as
+      | {
+          data?:
+            | ItemLineCategoryResponse[]
+            | { data?: ItemLineCategoryResponse[] }
+        }
+      | ItemLineCategoryResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch item categories')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch item categories'
+    )
   }
 }
 
@@ -598,7 +857,9 @@ export const createItemCategory = async (
   try {
     await apiClient.api.postItemBooksCreateCategory(data, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create item category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create item category'
+    )
   }
 }
 
@@ -610,10 +871,21 @@ export const getItemCategory = async (
   query?: { clientId?: string }
 ): Promise<ItemLineCategoryResponse | null> => {
   try {
-    const response = await apiClient.api.getItemBooksGetCategory(categoryId, query)
-    const responseAny: any = response as { data?: { data?: ItemLineCategoryResponse } | ItemLineCategoryResponse } | ItemLineCategoryResponse
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response = await apiClient.api.getItemBooksGetCategory(
+      categoryId,
+      query
+    )
+    const responseAny: any = response as
+      | {
+          data?: { data?: ItemLineCategoryResponse } | ItemLineCategoryResponse
+        }
+      | ItemLineCategoryResponse
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ItemLineCategoryResponse }).data
@@ -627,7 +899,9 @@ export const getItemCategory = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch item category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch item category'
+    )
   }
 }
 
@@ -642,7 +916,9 @@ export const updateItemCategory = async (
   try {
     await apiClient.api.putItemBooksUpdateCategory(categoryId, data, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update item category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update item category'
+    )
   }
 }
 
@@ -656,6 +932,8 @@ export const deleteItemCategory = async (
   try {
     await apiClient.api.deleteItemBooksDeleteCategory(categoryId, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete item category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete item category'
+    )
   }
 }

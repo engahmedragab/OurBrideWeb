@@ -26,7 +26,10 @@ import {
   Button,
   StatusBadge,
 } from '@/components/ui'
-import { getReservationById, cancelReservation } from '@/services/api/reservationApi'
+import {
+  getReservationById,
+  cancelReservation,
+} from '@/services/api/reservationApi'
 import type { ReservationResponse } from '@/types/responses'
 import { ReservationStatus } from '@/types/responses/common'
 import { useToast } from '@/components/ui/Toaster'
@@ -46,12 +49,16 @@ const mapReservationStatusToBadgeType = (
 }
 
 const getStatusColor = (status: ReservationStatus) => {
-  if (status === ReservationStatus.Completed) return 'text-green-600 bg-green-50 border-green-200'
-  if (status === ReservationStatus.Cancelled) return 'text-red-600 bg-red-50 border-red-200'
+  if (status === ReservationStatus.Completed)
+    return 'text-green-600 bg-green-50 border-green-200'
+  if (status === ReservationStatus.Cancelled)
+    return 'text-red-600 bg-red-50 border-red-200'
   return 'text-yellow-600 bg-yellow-50 border-yellow-200'
 }
 
-export function ReservationDetailsClient({ reservationId }: ReservationDetailsClientProps) {
+export function ReservationDetailsClient({
+  reservationId,
+}: ReservationDetailsClientProps) {
   const router = useRouter()
   const queryClient = useQueryClient()
   const { addToast } = useToast()
@@ -62,7 +69,12 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
   }, [])
 
   // Fetch reservation details
-  const { data: reservation, isLoading, error, refetch } = useQuery<ReservationResponse | null>({
+  const {
+    data: reservation,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<ReservationResponse | null>({
     queryKey: ['reservation', reservationId],
     queryFn: async () => {
       const data = await getReservationById(reservationId)
@@ -78,21 +90,24 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
       await cancelReservation(id)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reservation', reservationId] })
+      queryClient.invalidateQueries({
+        queryKey: ['reservation', reservationId],
+      })
       queryClient.invalidateQueries({ queryKey: ['reservations'] })
       addToast('Reservation cancelled successfully', 'success')
       router.push('/reservations')
     },
     onError: (error: Error) => {
-      addToast(
-        error.message || 'Failed to cancel reservation',
-        'error'
-      )
+      addToast(error.message || 'Failed to cancel reservation', 'error')
     },
   })
 
   const handleCancelReservation = async () => {
-    if (!confirm('Are you sure you want to cancel this reservation? This action cannot be undone.')) {
+    if (
+      !confirm(
+        'Are you sure you want to cancel this reservation? This action cannot be undone.'
+      )
+    ) {
       return
     }
 
@@ -136,62 +151,65 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
   const service = reservation.service
   const provider = reservation.provider
   const status = reservation.status
-  const isCompleted = status === ReservationStatus.Completed || status === ReservationStatus.Cancelled
+  const isCompleted =
+    status === ReservationStatus.Completed ||
+    status === ReservationStatus.Cancelled
   const isInProgress = !isCompleted
 
   // Format dates
   const reservationDate = reservation.reservationDate
     ? new Date(reservation.reservationDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    })
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      })
     : null
 
   const reservationTime = reservation.requestedStartTime
     ? new Date(reservation.requestedStartTime).toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    })
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      })
     : null
 
   const reservationDateTime = reservation.requestedStartTime
     ? new Date(reservation.requestedStartTime).toLocaleString('en-GB', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    })
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      })
     : null
 
   const createdDate = reservation.creationDate
     ? new Date(reservation.creationDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
     : null
 
   const lastModifiedDate = reservation.lastModifiedDate
     ? new Date(reservation.lastModifiedDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
     : null
 
   // Get service details
   const serviceName = service?.nameEn ?? service?.nameAr ?? 'Service'
   const serviceImage = service?.imageUrl ?? '/placeholder-service.png'
   const serviceRating = service?.rate ?? 0
-  const serviceDescription = service?.descriptionEn ?? service?.descriptionAr ?? null
+  const serviceDescription =
+    service?.descriptionEn ?? service?.descriptionAr ?? null
 
   // Get provider details
   const providerName = provider?.nameEn ?? provider?.nameAr ?? 'Provider'
@@ -200,12 +218,18 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
   const providerAddress = provider?.shortAddress ?? null
 
   // Get place details
-  const placeName = reservation.reservationPlace?.nameEn ?? reservation.reservationPlace?.nameAr ?? null
-  const placeAddress = reservation.reservationPlace?.address?.fullAddress ?? null
+  const placeName =
+    reservation.reservationPlace?.nameEn ??
+    reservation.reservationPlace?.nameAr ??
+    null
+  const placeAddress =
+    reservation.reservationPlace?.address?.fullAddress ?? null
 
   // Get staff details
   const user = reservation.reservationStaff?.user
-  const staffName = user ? `${user.firstName} ${user.lastName}`.trim() || null : null
+  const staffName = user
+    ? `${user.firstName} ${user.lastName}`.trim() || null
+    : null
   const staffPhone = user?.phoneNumber ?? null
 
   // Get price details
@@ -231,9 +255,7 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
           subtitle={
             <div className="flex items-center gap-2 mt-1">
               <StatusBadge status={mapReservationStatusToBadgeType(status)} />
-              <span className="text-14 text-gray-600">
-                {status}
-              </span>
+              <span className="text-14 text-gray-600">{status}</span>
             </div>
           }
         />
@@ -244,7 +266,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
         <div className="lg:col-span-2 space-y-6">
           {/* Service Information Card */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h2 className="text-20 font-semibold text-gray-900 mb-4">Service Information</h2>
+            <h2 className="text-20 font-semibold text-gray-900 mb-4">
+              Service Information
+            </h2>
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative w-full sm:w-32 h-32 rounded-lg overflow-hidden flex-shrink-0">
                 <Image
@@ -300,14 +324,20 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
 
           {/* Reservation Details Card */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h2 className="text-20 font-semibold text-gray-900 mb-4">Reservation Details</h2>
+            <h2 className="text-20 font-semibold text-gray-900 mb-4">
+              Reservation Details
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {reservationDateTime && (
                 <div className="flex items-start gap-3">
                   <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div>
-                    <p className="text-12 text-gray-500 mb-1">Reservation Date & Time</p>
-                    <p className="text-14 font-medium text-gray-900">{reservationDateTime}</p>
+                    <p className="text-12 text-gray-500 mb-1">
+                      Reservation Date & Time
+                    </p>
+                    <p className="text-14 font-medium text-gray-900">
+                      {reservationDateTime}
+                    </p>
                   </div>
                 </div>
               )}
@@ -315,8 +345,12 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
                 <div className="flex items-start gap-3">
                   <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div>
-                    <p className="text-12 text-gray-500 mb-1">Reservation Date</p>
-                    <p className="text-14 font-medium text-gray-900">{reservationDate}</p>
+                    <p className="text-12 text-gray-500 mb-1">
+                      Reservation Date
+                    </p>
+                    <p className="text-14 font-medium text-gray-900">
+                      {reservationDate}
+                    </p>
                   </div>
                 </div>
               )}
@@ -324,8 +358,12 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
                 <div className="flex items-start gap-3">
                   <Clock className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div>
-                    <p className="text-12 text-gray-500 mb-1">Reservation Time</p>
-                    <p className="text-14 font-medium text-gray-900">{reservationTime}</p>
+                    <p className="text-12 text-gray-500 mb-1">
+                      Reservation Time
+                    </p>
+                    <p className="text-14 font-medium text-gray-900">
+                      {reservationTime}
+                    </p>
                   </div>
                 </div>
               )}
@@ -334,7 +372,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
                   <Package className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div>
                     <p className="text-12 text-gray-500 mb-1">Quantity</p>
-                    <p className="text-14 font-medium text-gray-900">{reservation.quantity}</p>
+                    <p className="text-14 font-medium text-gray-900">
+                      {reservation.quantity}
+                    </p>
                   </div>
                 </div>
               )}
@@ -343,7 +383,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
                   <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div>
                     <p className="text-12 text-gray-500 mb-1">Created On</p>
-                    <p className="text-14 font-medium text-gray-900">{createdDate}</p>
+                    <p className="text-14 font-medium text-gray-900">
+                      {createdDate}
+                    </p>
                   </div>
                 </div>
               )}
@@ -352,7 +394,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
                   <Clock className="h-5 w-5 text-gray-500 mt-0.5" />
                   <div>
                     <p className="text-12 text-gray-500 mb-1">Last Modified</p>
-                    <p className="text-14 font-medium text-gray-900">{lastModifiedDate}</p>
+                    <p className="text-14 font-medium text-gray-900">
+                      {lastModifiedDate}
+                    </p>
                   </div>
                 </div>
               )}
@@ -362,12 +406,16 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
           {/* Location Information Card */}
           {(placeName || placeAddress) && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <h2 className="text-20 font-semibold text-gray-900 mb-4">Location</h2>
+              <h2 className="text-20 font-semibold text-gray-900 mb-4">
+                Location
+              </h2>
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-gray-500 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
                   {placeName && (
-                    <p className="text-16 font-medium text-gray-900 mb-1">{placeName}</p>
+                    <p className="text-16 font-medium text-gray-900 mb-1">
+                      {placeName}
+                    </p>
                   )}
                   {placeAddress && (
                     <p className="text-14 text-gray-600">{placeAddress}</p>
@@ -380,11 +428,15 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
           {/* Staff Information Card */}
           {staffName && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <h2 className="text-20 font-semibold text-gray-900 mb-4">Assigned Staff</h2>
+              <h2 className="text-20 font-semibold text-gray-900 mb-4">
+                Assigned Staff
+              </h2>
               <div className="flex items-start gap-3">
                 <User className="h-5 w-5 text-gray-500 mt-0.5" />
                 <div>
-                  <p className="text-14 font-medium text-gray-900">{staffName}</p>
+                  <p className="text-14 font-medium text-gray-900">
+                    {staffName}
+                  </p>
                   {staffPhone && (
                     <p className="text-14 text-gray-600 mt-1">{staffPhone}</p>
                   )}
@@ -396,14 +448,20 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
           {/* Package Information Card */}
           {reservation.servicePackage && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <h2 className="text-20 font-semibold text-gray-900 mb-4">Package Details</h2>
+              <h2 className="text-20 font-semibold text-gray-900 mb-4">
+                Package Details
+              </h2>
               <div className="space-y-2">
                 <p className="text-16 font-medium text-gray-900">
-                  {reservation.servicePackage.nameEn ?? reservation.servicePackage.nameAr ?? 'Package'}
+                  {reservation.servicePackage.nameEn ??
+                    reservation.servicePackage.nameAr ??
+                    'Package'}
                 </p>
-                {(reservation.servicePackage.descriptionEn || reservation.servicePackage.descriptionAr) && (
+                {(reservation.servicePackage.descriptionEn ||
+                  reservation.servicePackage.descriptionAr) && (
                   <p className="text-14 text-gray-600">
-                    {reservation.servicePackage.descriptionEn ?? reservation.servicePackage.descriptionAr}
+                    {reservation.servicePackage.descriptionEn ??
+                      reservation.servicePackage.descriptionAr}
                   </p>
                 )}
                 {reservation.servicePackage.price && (
@@ -418,13 +476,20 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
           {/* Resources Card */}
           {reservation.resources && reservation.resources.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <h2 className="text-20 font-semibold text-gray-900 mb-4">Resources</h2>
+              <h2 className="text-20 font-semibold text-gray-900 mb-4">
+                Resources
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {reservation.resources.map((resource) => (
-                  <div key={resource.id} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                {reservation.resources.map(resource => (
+                  <div
+                    key={resource.id}
+                    className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg"
+                  >
                     <FileText className="h-4 w-4 text-gray-500" />
                     <span className="text-14 text-gray-900">
-                      {resource.nameEn ?? resource.nameAr ?? `Resource ${resource.id}`}
+                      {resource.nameEn ??
+                        resource.nameAr ??
+                        `Resource ${resource.id}`}
                     </span>
                   </div>
                 ))}
@@ -435,8 +500,12 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
           {/* Notes Card */}
           {reservation.notes && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <h2 className="text-20 font-semibold text-gray-900 mb-4">Notes</h2>
-              <p className="text-14 text-gray-700 whitespace-pre-wrap">{reservation.notes}</p>
+              <h2 className="text-20 font-semibold text-gray-900 mb-4">
+                Notes
+              </h2>
+              <p className="text-14 text-gray-700 whitespace-pre-wrap">
+                {reservation.notes}
+              </p>
             </div>
           )}
 
@@ -447,7 +516,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
                 <FileText className="h-5 w-5" />
                 Your Feedback
               </h2>
-              <p className="text-14 text-blue-800 whitespace-pre-wrap">{reservation.clientFeedback}</p>
+              <p className="text-14 text-blue-800 whitespace-pre-wrap">
+                {reservation.clientFeedback}
+              </p>
             </div>
           )}
 
@@ -464,12 +535,14 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
                 </p>
                 {reservation.isTestAccepted !== null && (
                   <p className="text-14 font-medium text-yellow-900">
-                    Status: {reservation.isTestAccepted ? 'Accepted' : 'Rejected'}
+                    Status:{' '}
+                    {reservation.isTestAccepted ? 'Accepted' : 'Rejected'}
                   </p>
                 )}
                 {reservation.clientWantsToContinue !== null && (
                   <p className="text-14 text-yellow-800">
-                    Continue with service: {reservation.clientWantsToContinue ? 'Yes' : 'No'}
+                    Continue with service:{' '}
+                    {reservation.clientWantsToContinue ? 'Yes' : 'No'}
                   </p>
                 )}
               </div>
@@ -480,10 +553,12 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Status Card */}
-          <div className={cn(
-            'bg-white rounded-xl border p-6 shadow-sm',
-            getStatusColor(status)
-          )}>
+          <div
+            className={cn(
+              'bg-white rounded-xl border p-6 shadow-sm',
+              getStatusColor(status)
+            )}
+          >
             <h3 className="text-16 font-semibold mb-4">Reservation Status</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -492,11 +567,17 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
               </div>
               <div className="pt-3 border-t border-gray-200">
                 <p className="text-12 text-gray-600">
-                  {status === ReservationStatus.Completed && 'This reservation has been completed.'}
-                  {status === ReservationStatus.Cancelled && 'This reservation has been cancelled.'}
-                  {status === ReservationStatus.Confirmed && 'This reservation has been confirmed.'}
-                  {status === ReservationStatus.Pending && 'This reservation is pending confirmation.'}
-                  {!['Completed', 'Cancelled', 'Confirmed', 'Pending'].includes(status) && 'This reservation is in progress.'}
+                  {status === ReservationStatus.Completed &&
+                    'This reservation has been completed.'}
+                  {status === ReservationStatus.Cancelled &&
+                    'This reservation has been cancelled.'}
+                  {status === ReservationStatus.Confirmed &&
+                    'This reservation has been confirmed.'}
+                  {status === ReservationStatus.Pending &&
+                    'This reservation is pending confirmation.'}
+                  {!['Completed', 'Cancelled', 'Confirmed', 'Pending'].includes(
+                    status
+                  ) && 'This reservation is in progress.'}
                 </p>
               </div>
             </div>
@@ -504,7 +585,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
 
           {/* Provider Information Card */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 className="text-16 font-semibold text-gray-900 mb-4">Provider</h3>
+            <h3 className="text-16 font-semibold text-gray-900 mb-4">
+              Provider
+            </h3>
             <div className="space-y-3">
               {providerImage && (
                 <div className="relative w-16 h-16 rounded-lg overflow-hidden">
@@ -518,7 +601,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
                 </div>
               )}
               <div>
-                <p className="text-16 font-semibold text-gray-900">{providerName}</p>
+                <p className="text-16 font-semibold text-gray-900">
+                  {providerName}
+                </p>
                 {providerAddress && (
                   <p className="text-14 text-gray-600 mt-1 flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
@@ -546,7 +631,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
 
           {/* Pricing Card */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 className="text-16 font-semibold text-gray-900 mb-4">Pricing</h3>
+            <h3 className="text-16 font-semibold text-gray-900 mb-4">
+              Pricing
+            </h3>
             <div className="space-y-3">
               {servicePrice && (
                 <div className="flex items-center justify-between">
@@ -566,7 +653,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
               )}
               <div className="pt-3 border-t border-gray-200">
                 <div className="flex items-center justify-between">
-                  <span className="text-16 font-semibold text-gray-900">Total:</span>
+                  <span className="text-16 font-semibold text-gray-900">
+                    Total:
+                  </span>
                   <span className="text-18 font-bold text-brand-600">
                     {totalPrice.toLocaleString()} EGP
                   </span>
@@ -578,7 +667,9 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
           {/* Actions Card */}
           {isInProgress && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <h3 className="text-16 font-semibold text-gray-900 mb-4">Actions</h3>
+              <h3 className="text-16 font-semibold text-gray-900 mb-4">
+                Actions
+              </h3>
               <div className="space-y-2">
                 <Button
                   variant="outline"
@@ -605,4 +696,3 @@ export function ReservationDetailsClient({ reservationId }: ReservationDetailsCl
     </UserPageLayout>
   )
 }
-

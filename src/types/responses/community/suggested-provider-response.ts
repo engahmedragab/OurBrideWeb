@@ -10,21 +10,3 @@ export interface SuggestedProviderResponse {
   category: string
   isFollowing: boolean
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

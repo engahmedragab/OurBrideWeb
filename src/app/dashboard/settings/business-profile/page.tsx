@@ -29,38 +29,45 @@ export default function BusinessProfilePage() {
   // For now, using a placeholder - you'll need to get this from your auth system
   const providerId = 1 // Replace with actual providerId from auth context
 
-  const { data: settings, isLoading, error } = useProviderPublicProfileSettings(
+  const {
+    data: settings,
+    isLoading,
+    error,
+  } = useProviderPublicProfileSettings(
     providerId,
     typeof window !== 'undefined'
   )
   const updateMutation = useUpdateProviderPublicProfileSettings()
 
-  const [formData, setFormData] = useState<UpdateProviderPublicProfileSettingsRequest>({
-    isPublicProfileEnabled: false,
-    publicProfileSlug: null,
-    showName: true,
-    showDescription: true,
-    showPhoneNumber: true,
-    showAddress: true,
-    showBranches: true,
-    showServices: true,
-    showProducts: true,
-    showReviews: true,
-    showRatings: true,
-    showLinks: true,
-    showWorkingHours: true,
-    showPaymentMethods: true,
-    showVerificationBadge: true,
-    publicDescriptionAr: null,
-    publicDescriptionEn: null,
-    publicBannerImageUrl: null,
-    publicLogoImageUrl: null,
-    seoMetaTitle: null,
-  })
+  const [formData, setFormData] =
+    useState<UpdateProviderPublicProfileSettingsRequest>({
+      isPublicProfileEnabled: false,
+      publicProfileSlug: null,
+      showName: true,
+      showDescription: true,
+      showPhoneNumber: true,
+      showAddress: true,
+      showBranches: true,
+      showServices: true,
+      showProducts: true,
+      showReviews: true,
+      showRatings: true,
+      showLinks: true,
+      showWorkingHours: true,
+      showPaymentMethods: true,
+      showVerificationBadge: true,
+      publicDescriptionAr: null,
+      publicDescriptionEn: null,
+      publicBannerImageUrl: null,
+      publicLogoImageUrl: null,
+      seoMetaTitle: null,
+    })
 
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [bannerPreview, setBannerPreview] = useState<string | null>(null)
-  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null)
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
+    null
+  )
 
   // Update form data when settings are loaded
   useEffect(() => {
@@ -122,7 +129,9 @@ export default function BusinessProfilePage() {
     }
   }
 
-  const handleProfileImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfileImageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0]
     if (file) {
       // Create preview
@@ -156,7 +165,9 @@ export default function BusinessProfilePage() {
       addToast('Business profile settings updated successfully', 'success')
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to update business profile settings'
+        error instanceof Error
+          ? error.message
+          : 'Failed to update business profile settings'
       addToast(errorMessage, 'error')
     }
   }
@@ -202,7 +213,9 @@ export default function BusinessProfilePage() {
       <div className="flex flex-col space-y-6">
         {/* Header with Save Button */}
         <div className="flex items-center justify-between">
-          <h2 className="text-18 font-normal text-gray-900">Business Profile Settings</h2>
+          <h2 className="text-18 font-normal text-gray-900">
+            Business Profile Settings
+          </h2>
           <Button
             variant="ghost"
             className="text-14 font-normal text-brand-500 hover:text-brand-600 hover:bg-transparent p-0 h-auto"
@@ -219,12 +232,16 @@ export default function BusinessProfilePage() {
           <div className="space-y-6">
             {/* Profile Image */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
-              <h3 className="text-16 font-normal text-gray-900 mb-4">Profile Image</h3>
+              <h3 className="text-16 font-normal text-gray-900 mb-4">
+                Profile Image
+              </h3>
               <div className="flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-gray-300 rounded-lg p-6">
                 {profileImagePreview || formData.profileImageUrl ? (
                   <div className="relative w-32 h-32 mb-4">
                     <Image
-                      src={profileImagePreview || formData.profileImageUrl || ''}
+                      src={
+                        profileImagePreview || formData.profileImageUrl || ''
+                      }
                       alt="Profile"
                       fill
                       sizes="128px"
@@ -233,7 +250,9 @@ export default function BusinessProfilePage() {
                   </div>
                 ) : (
                   <div className="text-center mb-4">
-                    <p className="text-14 text-gray-500 mb-2">No profile image uploaded</p>
+                    <p className="text-14 text-gray-500 mb-2">
+                      No profile image uploaded
+                    </p>
                   </div>
                 )}
 
@@ -258,7 +277,9 @@ export default function BusinessProfilePage() {
                 {formData.profileImageUrl && (
                   <div className="mt-4 text-center">
                     <p className="text-12 text-gray-500">Current URL:</p>
-                    <p className="text-12 text-gray-700 break-all">{formData.profileImageUrl}</p>
+                    <p className="text-12 text-gray-700 break-all">
+                      {formData.profileImageUrl}
+                    </p>
                   </div>
                 )}
               </div>
@@ -266,7 +287,9 @@ export default function BusinessProfilePage() {
 
             {/* Logo Image */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
-              <h3 className="text-16 font-normal text-gray-900 mb-4">Logo Image</h3>
+              <h3 className="text-16 font-normal text-gray-900 mb-4">
+                Logo Image
+              </h3>
               <div className="flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-gray-300 rounded-lg p-6">
                 {logoPreview || formData.publicLogoImageUrl ? (
                   <div className="relative w-32 h-32 mb-4">
@@ -280,7 +303,9 @@ export default function BusinessProfilePage() {
                   </div>
                 ) : (
                   <div className="text-center mb-4">
-                    <p className="text-14 text-gray-500 mb-2">No logo uploaded</p>
+                    <p className="text-14 text-gray-500 mb-2">
+                      No logo uploaded
+                    </p>
                   </div>
                 )}
 
@@ -305,7 +330,9 @@ export default function BusinessProfilePage() {
                 {formData.publicLogoImageUrl && (
                   <div className="mt-4 text-center">
                     <p className="text-12 text-gray-500">Current URL:</p>
-                    <p className="text-12 text-gray-700 break-all">{formData.publicLogoImageUrl}</p>
+                    <p className="text-12 text-gray-700 break-all">
+                      {formData.publicLogoImageUrl}
+                    </p>
                   </div>
                 )}
               </div>
@@ -313,7 +340,9 @@ export default function BusinessProfilePage() {
 
             {/* Banner Image */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
-              <h3 className="text-16 font-normal text-gray-900 mb-4">Banner Image</h3>
+              <h3 className="text-16 font-normal text-gray-900 mb-4">
+                Banner Image
+              </h3>
               <div className="flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-gray-300 rounded-lg p-6">
                 {bannerPreview || formData.publicBannerImageUrl ? (
                   <div className="relative w-full h-32 mb-4">
@@ -327,7 +356,9 @@ export default function BusinessProfilePage() {
                   </div>
                 ) : (
                   <div className="text-center mb-4">
-                    <p className="text-14 text-gray-500 mb-2">No banner uploaded</p>
+                    <p className="text-14 text-gray-500 mb-2">
+                      No banner uploaded
+                    </p>
                   </div>
                 )}
 
@@ -363,7 +394,9 @@ export default function BusinessProfilePage() {
 
           {/* Right Section: Settings */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
-            <h3 className="text-16 font-normal text-gray-900 mb-6">Profile Settings</h3>
+            <h3 className="text-16 font-normal text-gray-900 mb-6">
+              Profile Settings
+            </h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
@@ -371,7 +404,12 @@ export default function BusinessProfilePage() {
                 </label>
                 <Input
                   value={formData.publicProfileSlug || ''}
-                  onChange={e => handleInputChange('publicProfileSlug', e.target.value || null)}
+                  onChange={e =>
+                    handleInputChange(
+                      'publicProfileSlug',
+                      e.target.value || null
+                    )
+                  }
                   placeholder="public-profile-slug"
                   variant="default"
                   size="lg"
@@ -385,7 +423,10 @@ export default function BusinessProfilePage() {
                 <textarea
                   value={formData.publicDescriptionEn || ''}
                   onChange={e =>
-                    handleInputChange('publicDescriptionEn', e.target.value || null)
+                    handleInputChange(
+                      'publicDescriptionEn',
+                      e.target.value || null
+                    )
                   }
                   placeholder="Enter description in English"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg text-14 focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -400,7 +441,10 @@ export default function BusinessProfilePage() {
                 <textarea
                   value={formData.publicDescriptionAr || ''}
                   onChange={e =>
-                    handleInputChange('publicDescriptionAr', e.target.value || null)
+                    handleInputChange(
+                      'publicDescriptionAr',
+                      e.target.value || null
+                    )
                   }
                   placeholder="Enter description in Arabic"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg text-14 focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -414,7 +458,9 @@ export default function BusinessProfilePage() {
                 </label>
                 <Input
                   value={formData.seoMetaTitle || ''}
-                  onChange={e => handleInputChange('seoMetaTitle', e.target.value || null)}
+                  onChange={e =>
+                    handleInputChange('seoMetaTitle', e.target.value || null)
+                  }
                   placeholder="SEO Meta Title"
                   variant="default"
                   size="lg"
@@ -427,5 +473,3 @@ export default function BusinessProfilePage() {
     </UserPageLayout>
   )
 }
-
-

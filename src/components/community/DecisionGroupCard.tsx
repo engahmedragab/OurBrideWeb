@@ -4,12 +4,23 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Users, CheckCircle2, Heart, MessageCircle, Share2, Star } from 'lucide-react'
+import {
+  Users,
+  CheckCircle2,
+  Heart,
+  MessageCircle,
+  Share2,
+  Star,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { EngagementButton } from './EngagementButton'
 import { getProfileUrl } from './utils'
 import type { DecisionGroupResponse } from '@/types/responses/community'
-import { toggleLike as toggleDecisionGroupLike, toggleFavorite as toggleDecisionGroupFavorite, shareDecisionGroup } from '@/services/api/decisionGroupsApi'
+import {
+  toggleLike as toggleDecisionGroupLike,
+  toggleFavorite as toggleDecisionGroupFavorite,
+  shareDecisionGroup,
+} from '@/services/api/decisionGroupsApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
@@ -34,8 +45,10 @@ const formatDate = (dateString: string | null): string => {
 // Helper function to get user display name
 const getUserDisplayName = (user: DecisionGroupResponse['user']): string => {
   if (!user) return 'OurBride'
-  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
-  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const firstName =
+    user.firstName && user.firstName !== 'null' ? user.firstName : ''
+  const lastName =
+    user.lastName && user.lastName !== 'null' ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   return fullName || user.userName || 'OurBride'
 }
@@ -67,10 +80,15 @@ export const DecisionGroupCard = ({
     onSuccess: () => {
       setIsLiked(!isLiked)
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
-      queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
+      queryClient.invalidateQueries({
+        queryKey: ['decision-group', decisionGroup.id],
+      })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -78,17 +96,27 @@ export const DecisionGroupCard = ({
     mutationFn: async (shareSource?: string) => {
       return await shareDecisionGroup(decisionGroup.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/decision-groups/${decisionGroup.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/decision-groups/${decisionGroup.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
-      queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
+      queryClient.invalidateQueries({
+        queryKey: ['decision-group', decisionGroup.id],
+      })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share decision group', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error
+          ? error.message
+          : 'Failed to share decision group',
+        'error'
+      )
     },
   })
 
@@ -99,10 +127,15 @@ export const DecisionGroupCard = ({
     onSuccess: () => {
       setIsFavorited(!isFavorited)
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
-      queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
+      queryClient.invalidateQueries({
+        queryKey: ['decision-group', decisionGroup.id],
+      })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -132,7 +165,9 @@ export const DecisionGroupCard = ({
 
   const displayName = getUserDisplayName(decisionGroup.user)
   const avatar = getUserAvatar(decisionGroup.user)
-  const timestamp = formatDate(decisionGroup.publishedAt || decisionGroup.creationDate)
+  const timestamp = formatDate(
+    decisionGroup.publishedAt || decisionGroup.creationDate
+  )
 
   return (
     <div
@@ -152,7 +187,7 @@ export const DecisionGroupCard = ({
               fill
               sizes="40px"
               className="object-cover"
-              onError={(e) => {
+              onError={e => {
                 e.currentTarget.style.display = 'none'
               }}
             />
@@ -171,10 +206,13 @@ export const DecisionGroupCard = ({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            {decisionGroup.userId && getProfileUrl(decisionGroup.userId, decisionGroup.user?.type) ? (
+            {decisionGroup.userId &&
+            getProfileUrl(decisionGroup.userId, decisionGroup.user?.type) ? (
               <Link
-                href={getProfileUrl(decisionGroup.userId, decisionGroup.user?.type)!}
-                onClick={(e) => e.stopPropagation()}
+                href={
+                  getProfileUrl(decisionGroup.userId, decisionGroup.user?.type)!
+                }
+                onClick={e => e.stopPropagation()}
                 className="hover:text-brand-500 transition-colors"
               >
                 <span className="text-14 font-semibold text-gray-900">
@@ -244,7 +282,9 @@ export const DecisionGroupCard = ({
       <div className="flex items-center justify-center gap-3 pt-4 border-t border-gray-100">
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
+            icon={
+              <Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />
+            }
             count={likes}
             label="Likes"
             onClick={handleLikeClick}
@@ -271,7 +311,11 @@ export const DecisionGroupCard = ({
         </div>
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Star className={cn('h-4 w-4', isFavorited && 'fill-brand-500')} />}
+            icon={
+              <Star
+                className={cn('h-4 w-4', isFavorited && 'fill-brand-500')}
+              />
+            }
             count={favorites}
             label="Favorites"
             onClick={handleFavoriteClick}
@@ -283,8 +327,3 @@ export const DecisionGroupCard = ({
     </div>
   )
 }
-
-
-
-
-

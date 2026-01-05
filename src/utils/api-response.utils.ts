@@ -70,7 +70,9 @@ export const extractApiErrors = (response: unknown): string[] => {
 
   // Try nested data.errors
   if (isRecord(response.data) && Array.isArray(response.data.errors)) {
-    return response.data.errors.filter((e): e is string => typeof e === 'string')
+    return response.data.errors.filter(
+      (e): e is string => typeof e === 'string'
+    )
   }
 
   return []
@@ -90,7 +92,9 @@ export const extractApiErrorMessage = (
 
   // Fallback to message if no errors array
   const message = extractApiMessage(response, defaultMessage)
-  return message !== 'Operation completed successfully' ? message : defaultMessage
+  return message !== 'Operation completed successfully'
+    ? message
+    : defaultMessage
 }
 
 /**
@@ -112,4 +116,3 @@ export const handleApiResponseForToast = (
     type: success ? 'success' : 'error',
   }
 }
-

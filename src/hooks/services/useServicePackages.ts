@@ -29,15 +29,16 @@ export const useServicePackages = (serviceId: string, enabled = true) => {
       try {
         const result = await getServicePackages(parsedServiceId)
         const resultAny = result as any
-        
+
         // Extract packages from response
         let packages: ServicePackage[] = []
-        
+
         if (Array.isArray(resultAny)) {
           packages = resultAny.map((pkg: any) => ({
             id: String(pkg.id || ''),
             name: pkg.name || pkg.nameEn || pkg.nameAr || '',
-            description: pkg.description || pkg.descriptionEn || pkg.descriptionAr,
+            description:
+              pkg.description || pkg.descriptionEn || pkg.descriptionAr,
             price: pkg.price || pkg.salePrice || 0,
             originalPrice: pkg.originalPrice || pkg.buyPrice || pkg.rentPrice,
             currency: pkg.currency || 'egp',
@@ -49,7 +50,8 @@ export const useServicePackages = (serviceId: string, enabled = true) => {
           packages = resultAny.data.map((pkg: any) => ({
             id: String(pkg.id || ''),
             name: pkg.name || pkg.nameEn || pkg.nameAr || '',
-            description: pkg.description || pkg.descriptionEn || pkg.descriptionAr,
+            description:
+              pkg.description || pkg.descriptionEn || pkg.descriptionAr,
             price: pkg.price || pkg.salePrice || 0,
             originalPrice: pkg.originalPrice || pkg.buyPrice || pkg.rentPrice,
             currency: pkg.currency || 'egp',
@@ -61,7 +63,8 @@ export const useServicePackages = (serviceId: string, enabled = true) => {
           packages = resultAny.packages.map((pkg: any) => ({
             id: String(pkg.id || ''),
             name: pkg.name || pkg.nameEn || pkg.nameAr || '',
-            description: pkg.description || pkg.descriptionEn || pkg.descriptionAr,
+            description:
+              pkg.description || pkg.descriptionEn || pkg.descriptionAr,
             price: pkg.price || pkg.salePrice || 0,
             originalPrice: pkg.originalPrice || pkg.buyPrice || pkg.rentPrice,
             currency: pkg.currency || 'egp',
@@ -70,7 +73,7 @@ export const useServicePackages = (serviceId: string, enabled = true) => {
             images: pkg.images || (pkg.imageUrl ? [pkg.imageUrl] : []),
           }))
         }
-        
+
         return { packages }
       } catch (error) {
         return { packages: [] }
@@ -81,4 +84,3 @@ export const useServicePackages = (serviceId: string, enabled = true) => {
     refetchOnWindowFocus: false,
   })
 }
-

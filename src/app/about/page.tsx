@@ -15,7 +15,8 @@ import {
 
 export const metadata: Metadata = {
   title: 'About Us | OurBride',
-  description: 'Learn about OurBride - your trusted partner for wedding products and services',
+  description:
+    'Learn about OurBride - your trusted partner for wedding products and services',
 }
 
 export default function AboutPage() {
@@ -54,13 +55,16 @@ export default function AboutPage() {
                   </h2>
                 </div>
                 <p className="text-16 text-gray-700 leading-relaxed mb-4">
-                  At OurBride, we believe that every wedding should be a perfect reflection of your unique love story. 
-                  Our mission is to make wedding planning effortless, enjoyable, and memorable by connecting brides and 
-                  grooms with the finest wedding products and services.
+                  At OurBride, we believe that every wedding should be a perfect
+                  reflection of your unique love story. Our mission is to make
+                  wedding planning effortless, enjoyable, and memorable by
+                  connecting brides and grooms with the finest wedding products
+                  and services.
                 </p>
                 <p className="text-16 text-gray-700 leading-relaxed">
-                  We are committed to providing a seamless experience where you can discover, compare, and book everything 
-                  you need for your special day - all in one place.
+                  We are committed to providing a seamless experience where you
+                  can discover, compare, and book everything you need for your
+                  special day - all in one place.
                 </p>
               </section>
 
@@ -75,13 +79,14 @@ export default function AboutPage() {
                   </h2>
                 </div>
                 <p className="text-16 text-gray-700 leading-relaxed mb-4">
-                  We envision a world where wedding planning is stress-free and accessible to everyone. Our platform brings 
-                  together verified service providers, quality products, and a supportive community to help you create the 
-                  wedding of your dreams.
+                  We envision a world where wedding planning is stress-free and
+                  accessible to everyone. Our platform brings together verified
+                  service providers, quality products, and a supportive
+                  community to help you create the wedding of your dreams.
                 </p>
                 <p className="text-16 text-gray-700 leading-relaxed">
-                  Through innovation, trust, and dedication, we aim to be the leading destination for couples planning their 
-                  perfect day.
+                  Through innovation, trust, and dedication, we aim to be the
+                  leading destination for couples planning their perfect day.
                 </p>
               </section>
 
@@ -101,9 +106,12 @@ export default function AboutPage() {
                       <Shield className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="text-18 font-normal text-gray-900 mb-2">Trust & Transparency</h3>
+                      <h3 className="text-18 font-normal text-gray-900 mb-2">
+                        Trust & Transparency
+                      </h3>
                       <p className="text-16 text-gray-700 leading-relaxed">
-                        We verify all service providers and maintain transparent pricing to ensure you make informed decisions.
+                        We verify all service providers and maintain transparent
+                        pricing to ensure you make informed decisions.
                       </p>
                     </div>
                   </div>
@@ -112,9 +120,13 @@ export default function AboutPage() {
                       <Star className="h-6 w-6 text-yellow-600" />
                     </div>
                     <div>
-                      <h3 className="text-18 font-normal text-gray-900 mb-2">Quality & Excellence</h3>
+                      <h3 className="text-18 font-normal text-gray-900 mb-2">
+                        Quality & Excellence
+                      </h3>
                       <p className="text-16 text-gray-700 leading-relaxed">
-                        We curate only the best products and services, ensuring high standards and exceptional quality for your special day.
+                        We curate only the best products and services, ensuring
+                        high standards and exceptional quality for your special
+                        day.
                       </p>
                     </div>
                   </div>
@@ -123,9 +135,13 @@ export default function AboutPage() {
                       <Users className="h-6 w-6 text-pink-600" />
                     </div>
                     <div>
-                      <h3 className="text-18 font-normal text-gray-900 mb-2">Community & Support</h3>
+                      <h3 className="text-18 font-normal text-gray-900 mb-2">
+                        Community & Support
+                      </h3>
                       <p className="text-16 text-gray-700 leading-relaxed">
-                        Our vibrant community of brides, grooms, and wedding professionals supports and inspires each other throughout the planning journey.
+                        Our vibrant community of brides, grooms, and wedding
+                        professionals supports and inspires each other
+                        throughout the planning journey.
                       </p>
                     </div>
                   </div>
@@ -134,9 +150,13 @@ export default function AboutPage() {
                       <Lightbulb className="h-6 w-6 text-indigo-600" />
                     </div>
                     <div>
-                      <h3 className="text-18 font-normal text-gray-900 mb-2">Innovation & Convenience</h3>
+                      <h3 className="text-18 font-normal text-gray-900 mb-2">
+                        Innovation & Convenience
+                      </h3>
                       <p className="text-16 text-gray-700 leading-relaxed">
-                        We continuously innovate to make wedding planning easier, faster, and more convenient through technology and user-friendly solutions.
+                        We continuously innovate to make wedding planning
+                        easier, faster, and more convenient through technology
+                        and user-friendly solutions.
                       </p>
                     </div>
                   </div>
@@ -174,4 +194,3 @@ export default function AboutPage() {
     </div>
   )
 }
-

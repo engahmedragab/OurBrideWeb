@@ -7,13 +7,3 @@ export interface ProviderSummaryResponse {
   nameAr: string
   nameEn: string
 }
-
-
-
-
-
-
-
-
-
-

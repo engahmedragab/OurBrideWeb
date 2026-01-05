@@ -3,7 +3,10 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getUserProfile, updateUserProfile } from '@/services/profile/profileApi'
+import {
+  getUserProfile,
+  updateUserProfile,
+} from '@/services/profile/profileApi'
 import type { UserRequest } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
@@ -37,11 +40,11 @@ export const useUpdateUserProfile = () => {
     mutationFn: async (data: UserRequest) => {
       await updateUserProfile(data)
     },
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['user-profile'] })
       queryClient.invalidateQueries({ queryKey: ['mine-info'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Profile updated successfully',
@@ -49,10 +52,10 @@ export const useUpdateUserProfile = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update profile'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to update profile'
       addToast(errorMessage, 'error')
     },
   })
 }
-

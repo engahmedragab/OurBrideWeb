@@ -6,10 +6,7 @@ import type {
   UpdateFavoriteRequest,
   Source,
 } from '@/../client/common/api/gen/ourbride-api'
-import type {
-  PaginatedList,
-  FavoriteResponse,
-} from '@/types/responses'
+import type { PaginatedList, FavoriteResponse } from '@/types/responses'
 
 /**
  * Get favorite by ID
@@ -26,7 +23,9 @@ export const getFavoriteById = async (
   try {
     const response = await apiClient.api.getFavoriteGetById(id, query)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FavoriteResponse
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as FavoriteResponse
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch favorite'
@@ -47,7 +46,9 @@ export const updateFavorite = async (
   try {
     const response = await apiClient.api.putFavoriteUpdate(id, data, query)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FavoriteResponse
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as FavoriteResponse
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to update favorite'
@@ -95,7 +96,9 @@ export const getAllFavorites = async (query?: {
   try {
     const response = await apiClient.api.getFavoriteGetAll(query)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<FavoriteResponse>
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as PaginatedList<FavoriteResponse>
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch favorites'
@@ -115,7 +118,9 @@ export const createFavorite = async (
   try {
     const response = await apiClient.api.postFavoriteCreate(data, query)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FavoriteResponse
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as FavoriteResponse
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to create favorite'
@@ -135,12 +140,20 @@ export const getFavoritesBySource = async (
   }
 ): Promise<PaginatedList<FavoriteResponse>> => {
   try {
-    const response = await apiClient.api.getFavoriteGetBySource(source, sourceId, query)
+    const response = await apiClient.api.getFavoriteGetBySource(
+      source,
+      sourceId,
+      query
+    )
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<FavoriteResponse>
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as PaginatedList<FavoriteResponse>
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to fetch favorites by source'
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch favorites by source'
     )
   }
 }

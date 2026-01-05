@@ -8,13 +8,3 @@ export interface ProviderProfileInfo {
   providerName: string
   category: string
 }
-
-
-
-
-
-
-
-
-
-

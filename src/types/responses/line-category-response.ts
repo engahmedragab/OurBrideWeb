@@ -16,5 +16,3 @@ export interface LineCategoryResponse extends BaseEntityResponse {
   lastModifiedBy: string // Guid
   isModelLine: boolean
 }
-
-

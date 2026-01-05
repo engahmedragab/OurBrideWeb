@@ -62,8 +62,7 @@ export const PRODUCT_FEATURES: Feature[] = [
   },
   {
     title: 'Bridal-Friendly Formulas',
-    description:
-      'Products selected to suit sensitive skin and long event days',
+    description: 'Products selected to suit sensitive skin and long event days',
   },
   {
     title: 'Exclusive Discounts',
@@ -71,8 +70,7 @@ export const PRODUCT_FEATURES: Feature[] = [
   },
   {
     title: 'Verified Sellers',
-    description:
-      'We work only with reliable, vetted beauty providers',
+    description: 'We work only with reliable, vetted beauty providers',
   },
 ]
 
@@ -90,4 +88,3 @@ export const MAX_HERO_SLIDES = 5
 
 // Default products to display on home page
 export const DEFAULT_HOME_PRODUCTS_COUNT = 4
-

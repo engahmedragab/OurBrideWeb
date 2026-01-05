@@ -4,7 +4,11 @@
  */
 
 import { apiClient } from '@/services/api/apiClient'
-import type { NoteBookResponse, NoteLineResponse, NoteLineCategoryResponse } from '@/types/responses'
+import type {
+  NoteBookResponse,
+  NoteLineResponse,
+  NoteLineCategoryResponse,
+} from '@/types/responses'
 import type {
   NoteBookRequest,
   NoteLineRequest,
@@ -32,7 +36,11 @@ const normalizeQuery = (query?: NoteBooksQuery) => {
   if (query.userType !== undefined && query.userType !== null) {
     normalized.userType = query.userType
   }
-  if (query.clientId !== undefined && query.clientId !== null && query.clientId.trim() !== '') {
+  if (
+    query.clientId !== undefined &&
+    query.clientId !== null &&
+    query.clientId.trim() !== ''
+  ) {
     normalized.clientId = query.clientId
   }
   return Object.keys(normalized).length > 0 ? normalized : undefined
@@ -50,7 +58,9 @@ export const initNoteBooks = async (params?: {
     const normalizedParams = normalizeQuery(params)
     await apiClient.api.postNoteBooksInit(normalizedParams)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to initialize note books')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to initialize note books'
+    )
   }
 }
 
@@ -65,7 +75,9 @@ export const syncNoteBook = async (
     const params = normalizeQuery(query)
     await apiClient.api.postNoteBooksSyncBook(data, params)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to sync note book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to sync note book'
+    )
   }
 }
 
@@ -78,10 +90,16 @@ export const getNoteBook = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getNoteBooksGetBook(normalizedQuery)
-    const responseAny: any = response as { data?: { data?: NoteBookResponse } | NoteBookResponse } | NoteBookResponse
-    
+    const responseAny: any = response as
+      | { data?: { data?: NoteBookResponse } | NoteBookResponse }
+      | NoteBookResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: NoteBookResponse }).data
@@ -95,7 +113,9 @@ export const getNoteBook = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch note book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch note book'
+    )
   }
 }
 
@@ -108,10 +128,20 @@ export const getNoteLines = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getNoteBooksGetAll(normalizedQuery)
-    const responseAny: any = response as { data?: NoteLineResponse[] | { data?: NoteLineResponse[]; items?: NoteLineResponse[] } } | NoteLineResponse[]
-    
+    const responseAny: any = response as
+      | {
+          data?:
+            | NoteLineResponse[]
+            | { data?: NoteLineResponse[]; items?: NoteLineResponse[] }
+        }
+      | NoteLineResponse[]
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
@@ -130,7 +160,9 @@ export const getNoteLines = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch note lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch note lines'
+    )
   }
 }
 
@@ -142,16 +174,28 @@ export const getNoteLineById = async (
   query?: { clientId?: string; eventId?: number }
 ): Promise<NoteLineResponse | null> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getNoteBooksGet(lineId, String(lineId), normalizedQuery)
-    const responseAny: any = response as { data?: { data?: NoteLineResponse } | NoteLineResponse } | NoteLineResponse
-    
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response = await apiClient.api.getNoteBooksGet(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: NoteLineResponse } | NoteLineResponse }
+      | NoteLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: NoteLineResponse }).data
@@ -165,7 +209,9 @@ export const getNoteLineById = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch note line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch note line'
+    )
   }
 }
 
@@ -178,11 +224,20 @@ export const createNoteLine = async (
 ): Promise<NoteLineResponse> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.postNoteBooksCreate(data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: NoteLineResponse } | NoteLineResponse } | NoteLineResponse
-    
+    const response = await apiClient.api.postNoteBooksCreate(
+      data,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: NoteLineResponse } | NoteLineResponse }
+      | NoteLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: NoteLineResponse }).data
@@ -196,7 +251,9 @@ export const createNoteLine = async (
     }
     throw new Error('Invalid response format from create note line endpoint')
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create note line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create note line'
+    )
   }
 }
 
@@ -211,7 +268,9 @@ export const createNoteLinesBulk = async (
     const normalizedQuery = normalizeQuery(query)
     await apiClient.api.postNoteBooksCreateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create note lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create note lines'
+    )
   }
 }
 
@@ -224,16 +283,29 @@ export const updateNoteLine = async (
   query?: NoteBooksQuery
 ): Promise<NoteLineResponse> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      // eventId is excluded if the API doesn't accept it
-    } : undefined
-    const response = await apiClient.api.putNoteBooksUpdate(lineId, String(lineId), data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: NoteLineResponse } | NoteLineResponse } | NoteLineResponse
-    
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          // eventId is excluded if the API doesn't accept it
+        }
+      : undefined
+    const response = await apiClient.api.putNoteBooksUpdate(
+      lineId,
+      String(lineId),
+      data,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: NoteLineResponse } | NoteLineResponse }
+      | NoteLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: NoteLineResponse }).data
@@ -247,7 +319,9 @@ export const updateNoteLine = async (
     }
     throw new Error('Invalid response format from update note line endpoint')
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update note line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update note line'
+    )
   }
 }
 
@@ -259,14 +333,18 @@ export const updateNoteLinesBulk = async (
   query?: { clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putNoteBooksUpdateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update note lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update note lines'
+    )
   }
 }
 
@@ -279,9 +357,15 @@ export const deleteNoteLine = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.deleteNoteBooksDelete(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.deleteNoteBooksDelete(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete note line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete note line'
+    )
   }
 }
 
@@ -290,18 +374,27 @@ export const deleteNoteLine = async (
  */
 export const deleteNoteLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.deleteNoteBooksDeleteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete note lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete note lines'
+    )
   }
 }
 
@@ -314,9 +407,17 @@ export const toggleNoteLineDone = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putNoteBooksDone(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putNoteBooksDone(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle note line done status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle note line done status'
+    )
   }
 }
 
@@ -329,9 +430,17 @@ export const toggleNoteLineFavorite = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putNoteBooksFavorite(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putNoteBooksFavorite(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle note line favorite status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle note line favorite status'
+    )
   }
 }
 
@@ -346,21 +455,41 @@ export const getNoteLinesCustom = async (
 ): Promise<NoteLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getNoteBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
-    const responseAny: any = response as { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } } | NoteLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response = await apiClient.api.getNoteBooksGetAllCustom(
+      isDeleted,
+      isDone,
+      isFavorite,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } }
+      | NoteLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch custom note lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch custom note lines'
+    )
   }
 }
 
@@ -373,50 +502,83 @@ export const getNoteLinesDone = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getNoteBooksGetAllDone(normalizedQuery)
-    const responseAny: any = response as { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } } | NoteLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const responseAny: any = response as
+      | { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } }
+      | NoteLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch done note lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch done note lines'
+    )
   }
 }
 
 /**
  * Get not done note lines
  */
-export const getNoteLinesNotDone = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<NoteLineResponse[]> => {
+export const getNoteLinesNotDone = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<NoteLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getNoteBooksGetAllNotDone(normalizedQuery)
-    const responseAny: any = response as { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } } | NoteLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getNoteBooksGetAllNotDone(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } }
+      | NoteLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not done note lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not done note lines'
+    )
   }
 }
 
@@ -428,51 +590,87 @@ export const getNoteLinesFavorite = async (
 ): Promise<NoteLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getNoteBooksGetAllFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } } | NoteLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getNoteBooksGetAllFavorite(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } }
+      | NoteLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch favorite note lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch favorite note lines'
+    )
   }
 }
 
 /**
  * Get not favorite note lines
  */
-export const getNoteLinesNotFavorite = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<NoteLineResponse[]> => {
+export const getNoteLinesNotFavorite = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<NoteLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getNoteBooksGetAllNotFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } } | NoteLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getNoteBooksGetAllNotFavorite(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } }
+      | NoteLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not favorite note lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not favorite note lines'
+    )
   }
 }
 
@@ -484,21 +682,37 @@ export const getNoteLinesDeleted = async (
 ): Promise<NoteLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getNoteBooksGetAllDelete(normalizedQuery)
-    const responseAny: any = response as { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } } | NoteLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getNoteBooksGetAllDelete(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } }
+      | NoteLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch deleted note lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch deleted note lines'
+    )
   }
 }
 
@@ -510,21 +724,37 @@ export const getNoteLinesNotDeleted = async (
 ): Promise<NoteLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getNoteBooksGetAllNotDelete(normalizedQuery)
-    const responseAny: any = response as { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } } | NoteLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getNoteBooksGetAllNotDelete(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: NoteLineResponse[] | { data?: NoteLineResponse[] } }
+      | NoteLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not deleted note lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not deleted note lines'
+    )
   }
 }
 
@@ -533,18 +763,29 @@ export const getNoteLinesNotDeleted = async (
  */
 export const markNoteLinesDoneBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putNoteBooksDoneAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to mark note lines as done')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to mark note lines as done'
+    )
   }
 }
 
@@ -553,43 +794,69 @@ export const markNoteLinesDoneBulk = async (
  */
 export const favoriteNoteLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putNoteBooksFavoriteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to favorite note lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to favorite note lines'
+    )
   }
 }
 
 /**
  * Get all note line categories
  */
-export const getNoteCategories = async (
-  query?: { clientId?: string }
-): Promise<NoteLineCategoryResponse[]> => {
+export const getNoteCategories = async (query?: {
+  clientId?: string
+}): Promise<NoteLineCategoryResponse[]> => {
   try {
     const response = await apiClient.api.getNoteBooksGetAllCategories(query)
-    const responseAny: any = response as { data?: NoteLineCategoryResponse[] | { data?: NoteLineCategoryResponse[] } } | NoteLineCategoryResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const responseAny: any = response as
+      | {
+          data?:
+            | NoteLineCategoryResponse[]
+            | { data?: NoteLineCategoryResponse[] }
+        }
+      | NoteLineCategoryResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch note categories')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch note categories'
+    )
   }
 }
 
@@ -603,7 +870,9 @@ export const createNoteCategory = async (
   try {
     await apiClient.api.postNoteBooksCreateCategory(data, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create note category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create note category'
+    )
   }
 }
 
@@ -615,10 +884,21 @@ export const getNoteCategory = async (
   query?: { clientId?: string }
 ): Promise<NoteLineCategoryResponse | null> => {
   try {
-    const response = await apiClient.api.getNoteBooksGetCategory(categoryId, query)
-    const responseAny: any = response as { data?: { data?: NoteLineCategoryResponse } | NoteLineCategoryResponse } | NoteLineCategoryResponse
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response = await apiClient.api.getNoteBooksGetCategory(
+      categoryId,
+      query
+    )
+    const responseAny: any = response as
+      | {
+          data?: { data?: NoteLineCategoryResponse } | NoteLineCategoryResponse
+        }
+      | NoteLineCategoryResponse
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: NoteLineCategoryResponse }).data
@@ -632,7 +912,9 @@ export const getNoteCategory = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch note category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch note category'
+    )
   }
 }
 
@@ -647,7 +929,9 @@ export const updateNoteCategory = async (
   try {
     await apiClient.api.putNoteBooksUpdateCategory(categoryId, data, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update note category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update note category'
+    )
   }
 }
 
@@ -661,6 +945,8 @@ export const deleteNoteCategory = async (
   try {
     await apiClient.api.deleteNoteBooksDeleteCategory(categoryId, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete note category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete note category'
+    )
   }
 }

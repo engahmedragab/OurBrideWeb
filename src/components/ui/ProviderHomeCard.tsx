@@ -16,25 +16,30 @@ export interface ProviderHomeCardProps {
   className?: string
 }
 
-export const ProviderHomeCard = ({ provider, category, className }: ProviderHomeCardProps) => {
+export const ProviderHomeCard = ({
+  provider,
+  category,
+  className,
+}: ProviderHomeCardProps) => {
   const providerName = provider.nameEn || provider.nameAr || 'Provider'
-  const providerImage = provider.publicBannerImageUrl || provider.publicLogoImageUrl
+  const providerImage =
+    provider.publicBannerImageUrl || provider.publicLogoImageUrl
   const rating = provider.rate || 0
   const reviewCount = provider.totalReviews || 0
   const location = provider.shortAddress || ''
   const providerId = provider.id.toString()
   // publicProfileSlug may already include /provider/ prefix, so check for it
-  const profileUrl = provider.publicProfileSlug 
-    ? (provider.publicProfileSlug.startsWith('/provider/') 
-        ? provider.publicProfileSlug 
-        : `/provider/${provider.publicProfileSlug}`)
+  const profileUrl = provider.publicProfileSlug
+    ? provider.publicProfileSlug.startsWith('/provider/')
+      ? provider.publicProfileSlug
+      : `/provider/${provider.publicProfileSlug}`
     : provider.uniqueCode
-    ? `/provider/${provider.uniqueCode}`
-    : `/provider/${providerId}`
+      ? `/provider/${provider.uniqueCode}`
+      : `/provider/${providerId}`
 
   // Determine category from topRatedService or use provided category
-  const displayCategory = category || 
-    (provider.topRatedService?.name ? 'Service' : 'Provider')
+  const displayCategory =
+    category || (provider.topRatedService?.name ? 'Service' : 'Provider')
 
   return (
     <Link
@@ -98,12 +103,9 @@ export const ProviderHomeCard = ({ provider, category, className }: ProviderHome
 
         {/* Category */}
         {displayCategory && (
-          <p className="text-14 text-gray-500">
-            {displayCategory}
-          </p>
+          <p className="text-14 text-gray-500">{displayCategory}</p>
         )}
       </div>
     </Link>
   )
 }
-

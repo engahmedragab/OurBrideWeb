@@ -57,5 +57,4 @@ export interface ProviderPublicProfileResponse {
   totalViews: number
   seoMetaTitle: string | null
   seoMetaDescription: string | null
-  
 }

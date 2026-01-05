@@ -34,7 +34,7 @@ export const PINModal = ({
     }
   }
 
-  const isPinComplete = pinValue.every((digit) => digit !== '')
+  const isPinComplete = pinValue.every(digit => digit !== '')
 
   return (
     <Modal
@@ -75,4 +75,3 @@ export const PINModal = ({
     </Modal>
   )
 }
-

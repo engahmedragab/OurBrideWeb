@@ -34,14 +34,14 @@ export default function EditItemModal<T extends Record<string, any>>({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: type === 'number' ? parseFloat(value) || 0 : value,
     }))
   }
 
   const handleToggle = (name: string, checked: boolean) => {
-    setFormData((prev) => ({ ...prev, [name]: checked }))
+    setFormData(prev => ({ ...prev, [name]: checked }))
   }
 
   const handleSaveInternal = () => {
@@ -53,12 +53,11 @@ export default function EditItemModal<T extends Record<string, any>>({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Edit Item" 
+      title="Edit Item"
       maxWidth="2xl"
       contentClassName="p-0 max-h-[90vh] overflow-y-auto"
       headerClassName="px-2.5 py-2 sm:px-3 sm:py-2.5 md:px-4 md:py-3"
       containerClassName="max-h-[100vh] overflow-hidden max-w-[95%] sm:max-w-[90%] md:max-w-[700px] lg:max-w-[1000px] w-full"
-
     >
       <div className="bg-gray-50">
         {/* Content */}
@@ -70,7 +69,7 @@ export default function EditItemModal<T extends Record<string, any>>({
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {Object.keys(formData).map((key) => {
+              {Object.keys(formData).map(key => {
                 const value = formData[key]
                 const lower = key.toLowerCase()
 
@@ -92,14 +91,11 @@ export default function EditItemModal<T extends Record<string, any>>({
                   lower.includes('note') || lower.includes('description')
 
                 return (
-                  <div
-                    key={key}
-                    className={cn(isWide && 'sm:col-span-2')}
-                  >
+                  <div key={key} className={cn(isWide && 'sm:col-span-2')}>
                     <label className="text-10 font-bold uppercase text-gray-400 mb-1 block">
                       {key
                         .replace(/([A-Z])/g, ' $1')
-                        .replace(/^./, (str) => str.toUpperCase())
+                        .replace(/^./, str => str.toUpperCase())
                         .trim()}
                     </label>
 
@@ -109,8 +105,8 @@ export default function EditItemModal<T extends Record<string, any>>({
                         typeof value === 'number'
                           ? 'number'
                           : lower.includes('date')
-                          ? 'date'
-                          : 'text'
+                            ? 'date'
+                            : 'text'
                       }
                       value={formData[key] || ''}
                       onChange={handleChange}
@@ -125,18 +121,14 @@ export default function EditItemModal<T extends Record<string, any>>({
             <div className="flex items-center gap-3 pt-2">
               <Checkbox
                 checked={formData.iscompleted}
-                onChange={(val) =>
-                  setFormData({ ...formData, iscompleted: val })
-                }
+                onChange={val => setFormData({ ...formData, iscompleted: val })}
                 variant={formData.iscompleted ? 'successFilled' : 'gray'}
                 size="sm"
               />
               <span
                 className={cn(
                   'text-11 font-bold uppercase tracking-wide',
-                  formData.iscompleted
-                    ? 'text-green-700'
-                    : 'text-gray-500'
+                  formData.iscompleted ? 'text-green-700' : 'text-gray-500'
                 )}
               >
                 {formData.iscompleted ? 'Completed' : 'Pending Action'}
@@ -153,7 +145,7 @@ export default function EditItemModal<T extends Record<string, any>>({
               </h3>
               <Toggle
                 checked={formData.hasProvider}
-                onChange={(v) => handleToggle('hasProvider', v)}
+                onChange={v => handleToggle('hasProvider', v)}
                 className="scale-90"
               />
             </div>
@@ -162,16 +154,16 @@ export default function EditItemModal<T extends Record<string, any>>({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
                 {Object.keys(formData)
                   .filter(
-                    (k) =>
+                    k =>
                       k.toLowerCase().startsWith('provider') &&
                       k !== 'hasProvider'
                   )
-                  .map((key) => (
+                  .map(key => (
                     <div key={key}>
                       <Label className="text-10 font-bold uppercase text-gray-400 mb-1 block">
                         {key
                           .replace(/([A-Z])/g, ' $1')
-                          .replace(/^./, (str) => str.toUpperCase())
+                          .replace(/^./, str => str.toUpperCase())
                           .trim()}
                       </Label>
                       <Input
@@ -196,7 +188,7 @@ export default function EditItemModal<T extends Record<string, any>>({
               <Toggle
                 variant="brand"
                 checked={formData.hasReminder}
-                onChange={(v) => handleToggle('hasReminder', v)}
+                onChange={v => handleToggle('hasReminder', v)}
                 className="scale-90"
               />
             </div>
@@ -204,13 +196,13 @@ export default function EditItemModal<T extends Record<string, any>>({
             {formData.hasReminder && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-orange-200">
                 {Object.keys(formData)
-                  .filter((k) => k.toLowerCase().startsWith('reminder'))
-                  .map((key) => (
+                  .filter(k => k.toLowerCase().startsWith('reminder'))
+                  .map(key => (
                     <div key={key}>
                       <Label className="text-10 font-bold uppercase text-gray-400 mb-1 block">
                         {key
                           .replace(/([A-Z])/g, ' $1')
-                          .replace(/^./, (str) => str.toUpperCase())
+                          .replace(/^./, str => str.toUpperCase())
                           .trim()}
                       </Label>
                       <Input

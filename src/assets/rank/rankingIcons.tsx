@@ -18,7 +18,10 @@ export interface RankingIconProps extends HTMLAttributes<HTMLImageElement> {
  * Bronze Rank Badge Icon
  * Shield-shaped badge with bronze color and star icon
  */
-export const BronzeIcon = ({ className = 'w-10 h-10', ...props }: RankingIconProps) => {
+export const BronzeIcon = ({
+  className = 'w-10 h-10',
+  ...props
+}: RankingIconProps) => {
   return (
     <Image
       src={typeof bronzeImage === 'string' ? bronzeImage : bronzeImage.src}
@@ -35,7 +38,10 @@ export const BronzeIcon = ({ className = 'w-10 h-10', ...props }: RankingIconPro
  * Silver Rank Badge Icon
  * Diamond-shaped badge with silver/grey color and star icon
  */
-export const SilverIcon = ({ className = 'w-10 h-10', ...props }: RankingIconProps) => {
+export const SilverIcon = ({
+  className = 'w-10 h-10',
+  ...props
+}: RankingIconProps) => {
   return (
     <Image
       src={typeof silverImage === 'string' ? silverImage : silverImage.src}
@@ -52,7 +58,10 @@ export const SilverIcon = ({ className = 'w-10 h-10', ...props }: RankingIconPro
  * Gold Rank Badge Icon
  * Pentagon-shaped badge with orange-gold color and star icon
  */
-export const GoldIcon = ({ className = 'w-10 h-10', ...props }: RankingIconProps) => {
+export const GoldIcon = ({
+  className = 'w-10 h-10',
+  ...props
+}: RankingIconProps) => {
   return (
     <Image
       src={typeof goldImage === 'string' ? goldImage : goldImage.src}
@@ -69,7 +78,10 @@ export const GoldIcon = ({ className = 'w-10 h-10', ...props }: RankingIconProps
  * Blue Rank Badge Icon
  * Hexagonal badge with blue color and star icon
  */
-export const BlueRankIcon = ({ className = 'w-10 h-10', ...props }: RankingIconProps) => {
+export const BlueRankIcon = ({
+  className = 'w-10 h-10',
+  ...props
+}: RankingIconProps) => {
   return (
     <Image
       src={typeof blueImage === 'string' ? blueImage : blueImage.src}
@@ -86,7 +98,10 @@ export const BlueRankIcon = ({ className = 'w-10 h-10', ...props }: RankingIconP
  * Pink Rank Badge Icon
  * Hexagonal badge with magenta/pink color and star icon
  */
-export const PinkRankIcon = ({ className = 'w-10 h-10', ...props }: RankingIconProps) => {
+export const PinkRankIcon = ({
+  className = 'w-10 h-10',
+  ...props
+}: RankingIconProps) => {
   return (
     <Image
       src={typeof pinkImage === 'string' ? pinkImage : pinkImage.src}
@@ -103,7 +118,10 @@ export const PinkRankIcon = ({ className = 'w-10 h-10', ...props }: RankingIconP
  * Red Rank Badge Icon
  * Shield-shaped badge with red color and star icon
  */
-export const RedRankIcon = ({ className = 'w-10 h-10', ...props }: RankingIconProps) => {
+export const RedRankIcon = ({
+  className = 'w-10 h-10',
+  ...props
+}: RankingIconProps) => {
   return (
     <Image
       src={typeof redImage === 'string' ? redImage : redImage.src}
@@ -115,4 +133,3 @@ export const RedRankIcon = ({ className = 'w-10 h-10', ...props }: RankingIconPr
     />
   )
 }
-

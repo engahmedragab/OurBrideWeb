@@ -44,46 +44,54 @@ export const useFilteredProducts = (params?: {
     queryFn: async () => {
       try {
         const result = await getFilteredProducts(filterParams)
-        
+
         // The filtered products endpoint returns ApiResult
         // Treat result as unknown to safely access potential data property
         const resultAny = result as unknown as Record<string, unknown>
-        
+
         // Check if result has a data property (common API pattern)
         if (resultAny && 'data' in resultAny && resultAny.data) {
           const data = resultAny.data
-          
+
           // If data is an array of products
           if (Array.isArray(data)) {
             return mapProductResponsesToProducts(data as ProductResponse[])
           }
-          
+
           // If data is an object with products/items/results property
           if (typeof data === 'object' && data !== null) {
             const dataObj = data as Record<string, unknown>
-            
+
             // Check for 'products' property
             if ('products' in dataObj && Array.isArray(dataObj.products)) {
-              return mapProductResponsesToProducts(dataObj.products as ProductResponse[])
+              return mapProductResponsesToProducts(
+                dataObj.products as ProductResponse[]
+              )
             }
-            
+
             // Check for 'items' property
             if ('items' in dataObj && Array.isArray(dataObj.items)) {
-              return mapProductResponsesToProducts(dataObj.items as ProductResponse[])
+              return mapProductResponsesToProducts(
+                dataObj.items as ProductResponse[]
+              )
             }
-            
+
             // Check for 'results' property
             if ('results' in dataObj && Array.isArray(dataObj.results)) {
-              return mapProductResponsesToProducts(dataObj.results as ProductResponse[])
+              return mapProductResponsesToProducts(
+                dataObj.results as ProductResponse[]
+              )
             }
-            
+
             // Check for 'data' property (nested)
             if ('data' in dataObj && Array.isArray(dataObj.data)) {
-              return mapProductResponsesToProducts(dataObj.data as ProductResponse[])
+              return mapProductResponsesToProducts(
+                dataObj.data as ProductResponse[]
+              )
             }
           }
         }
-        
+
         return []
       } catch (error) {
         return []
@@ -93,4 +101,3 @@ export const useFilteredProducts = (params?: {
     staleTime: 5 * 60 * 1000,
   })
 }
-

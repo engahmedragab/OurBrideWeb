@@ -34,7 +34,7 @@ export function ItemListsSidebar({
         {actionLabel ? (
           <Button
             variant="ghost"
-             className="h-9 rounded-xl px-3 text-xs text-primary
+            className="h-9 rounded-xl px-3 text-xs text-primary
             hover:text-white hover:bg-brand-500"
             onClick={onAction}
           >
@@ -45,7 +45,7 @@ export function ItemListsSidebar({
       </div>
 
       <div className="space-y-2">
-        {categories.map((cat) => (
+        {categories.map(cat => (
           <ItemListRow
             key={cat.id}
             category={cat}

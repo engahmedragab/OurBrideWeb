@@ -14,9 +14,7 @@ export const BlogsFeed = ({ className, blogs = [] }: BlogsFeedProps) => {
   return (
     <div className={cn('flex-1 space-y-6', className)}>
       {blogs.length > 0 ? (
-        blogs.map(blog => (
-          <BlogCard key={blog.id} blog={blog} />
-        ))
+        blogs.map(blog => <BlogCard key={blog.id} blog={blog} />)
       ) : (
         <CommunityEmptyState
           title="No Blogs Available"
@@ -27,16 +25,3 @@ export const BlogsFeed = ({ className, blogs = [] }: BlogsFeedProps) => {
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

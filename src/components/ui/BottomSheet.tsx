@@ -57,71 +57,84 @@ export const BottomSheet = ({
     }
   }, [isOpen])
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (disabled) return
-    // Only allow dragging from the top area (header or drag handle)
-    const target = e.target as HTMLElement
-    const isDraggableArea = target.closest('[data-draggable]') || 
-                            target.closest('header') ||
-                            target.closest('.drag-handle')
-    
-    if (isDraggableArea || e.touches[0].clientY < 150) {
-      startY.current = e.touches[0].clientY
-      setIsDragging(true)
-    }
-  }, [disabled])
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (disabled) return
+      // Only allow dragging from the top area (header or drag handle)
+      const target = e.target as HTMLElement
+      const isDraggableArea =
+        target.closest('[data-draggable]') ||
+        target.closest('header') ||
+        target.closest('.drag-handle')
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!isDragging || disabled) return
-    
-    e.preventDefault()
-    const currentY = e.touches[0].clientY
-    const deltaY = currentY - startY.current
-    
-    // Only allow dragging down
-    if (deltaY > 0) {
-      setDragY(deltaY)
-    }
-  }, [isDragging, disabled])
+      if (isDraggableArea || e.touches[0].clientY < 150) {
+        startY.current = e.touches[0].clientY
+        setIsDragging(true)
+      }
+    },
+    [disabled]
+  )
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isDragging || disabled) return
+
+      e.preventDefault()
+      const currentY = e.touches[0].clientY
+      const deltaY = currentY - startY.current
+
+      // Only allow dragging down
+      if (deltaY > 0) {
+        setDragY(deltaY)
+      }
+    },
+    [isDragging, disabled]
+  )
 
   const handleTouchEnd = useCallback(() => {
     if (!isDragging || disabled) return
-    
+
     // If dragged more than 100px, close the sheet
     if (dragY > 100) {
       onClose()
     }
-    
+
     // Reset drag state
     setDragY(0)
     setIsDragging(false)
   }, [isDragging, dragY, onClose, disabled])
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (disabled) return
-    startY.current = e.clientY
-    setIsDragging(true)
-  }, [disabled])
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (disabled) return
+      startY.current = e.clientY
+      setIsDragging(true)
+    },
+    [disabled]
+  )
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging || disabled) return
-    
-    const deltaY = e.clientY - startY.current
-    
-    // Only allow dragging down
-    if (deltaY > 0) {
-      setDragY(deltaY)
-    }
-  }, [isDragging, disabled])
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging || disabled) return
+
+      const deltaY = e.clientY - startY.current
+
+      // Only allow dragging down
+      if (deltaY > 0) {
+        setDragY(deltaY)
+      }
+    },
+    [isDragging, disabled]
+  )
 
   const handleMouseUp = useCallback(() => {
     if (!isDragging || disabled) return
-    
+
     // If dragged more than 100px, close the sheet
     if (dragY > 100) {
       onClose()
     }
-    
+
     // Reset drag state
     setDragY(0)
     setIsDragging(false)
@@ -132,7 +145,7 @@ export const BottomSheet = ({
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove)
       document.addEventListener('mouseup', handleMouseUp)
-      
+
       return () => {
         document.removeEventListener('mousemove', handleMouseMove)
         document.removeEventListener('mouseup', handleMouseUp)
@@ -167,7 +180,11 @@ export const BottomSheet = ({
           !isDragging && 'transition-opacity duration-300'
         )}
         style={{
-          opacity: isOpen ? (isDragging ? Math.max(0.1, 0.4 - dragY / 500) : 0.4) : 0,
+          opacity: isOpen
+            ? isDragging
+              ? Math.max(0.1, 0.4 - dragY / 500)
+              : 0.4
+            : 0,
         }}
       />
 
@@ -180,12 +197,14 @@ export const BottomSheet = ({
           isOpen && !isDragging
             ? 'translate-y-0 opacity-100'
             : !isOpen
-            ? 'translate-y-full opacity-0'
-            : '',
+              ? 'translate-y-full opacity-0'
+              : '',
           containerClassName
         )}
         style={{
-          transform: isOpen ? `translateY(${translateY}px)` : 'translateY(100%)',
+          transform: isOpen
+            ? `translateY(${translateY}px)`
+            : 'translateY(100%)',
           opacity: isOpen ? opacity : 0,
         }}
         onClick={e => e.stopPropagation()}
@@ -195,7 +214,7 @@ export const BottomSheet = ({
         onMouseDown={handleMouseDown}
       >
         {/* Drag Handle */}
-        <div 
+        <div
           className="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing select-none"
           data-draggable
           onMouseDown={handleMouseDown}
@@ -248,4 +267,3 @@ export const BottomSheet = ({
     </div>
   )
 }
-

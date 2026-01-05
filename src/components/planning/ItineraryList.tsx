@@ -23,7 +23,9 @@ export const ItineraryList = ({
   if (sortedEvents.length === 0) {
     return (
       <div className={cn('w-full py-8 text-center', className)}>
-        <p className="text-14 text-gray-500">No events scheduled for this day</p>
+        <p className="text-14 text-gray-500">
+          No events scheduled for this day
+        </p>
       </div>
     )
   }
@@ -42,4 +44,3 @@ export const ItineraryList = ({
     </div>
   )
 }
-

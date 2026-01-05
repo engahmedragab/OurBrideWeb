@@ -1,13 +1,27 @@
 'use client'
 
 import Image from 'next/image'
-import { Trash2, Minus, Plus, Package, Calendar, Crown, Gift, Scissors } from 'lucide-react'
+import {
+  Trash2,
+  Minus,
+  Plus,
+  Package,
+  Calendar,
+  Crown,
+  Gift,
+  Scissors,
+} from 'lucide-react'
 import { PriceDisplay } from './PriceDisplay'
 import { Button } from './Button'
 import { Badge } from './Badge'
 import { cn } from '@/lib/utils'
 
-export type CartItemType = 'Product' | 'Service' | 'Reservation' | 'Membership' | 'GiftCard'
+export type CartItemType =
+  | 'Product'
+  | 'Service'
+  | 'Reservation'
+  | 'Membership'
+  | 'GiftCard'
 
 export interface CartItemProps {
   id: string
@@ -153,9 +167,7 @@ export const CartItem = ({
 
         {/* Delivery Date */}
         {deliveryDate && (
-          <p className="text-14 text-gray-600 mb-2">
-            Get In By {deliveryDate}
-          </p>
+          <p className="text-14 text-gray-600 mb-2">Get In By {deliveryDate}</p>
         )}
 
         {/* Purchase Price and Date */}
@@ -175,11 +187,13 @@ export const CartItem = ({
           {purchaseDate && (
             <p className="text-14 text-gray-600">
               <span className="font-medium">Added on: </span>
-              <span>{new Date(purchaseDate).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-              })}</span>
+              <span>
+                {new Date(purchaseDate).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </span>
             </p>
           )}
         </div>
@@ -253,4 +267,3 @@ export const CartItem = ({
     </div>
   )
 }
-

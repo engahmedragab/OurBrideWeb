@@ -6,7 +6,7 @@ import { Source } from '@/../client/common/api/gen/ourbride-api'
 /**
  * Hook to check if items are in favorites
  * Returns helper functions to check favorite status
- * 
+ *
  * Note: This hook fetches all favorites and extracts product/service/provider IDs
  * from the sourceId field. Since the API doesn't expose favorite items directly,
  * we rely on the sourceId matching the product/service/provider ID.
@@ -22,14 +22,18 @@ export const useFavoriteItems = (enabled = true) => {
   const favorites = useMemo(() => {
     if (!favoritesData) return []
     // Handle both array and PaginatedList types
-    return Array.isArray(favoritesData) ? favoritesData : favoritesData.items || []
+    return Array.isArray(favoritesData)
+      ? favoritesData
+      : favoritesData.items || []
   }, [favoritesData])
 
   // Extract product IDs from favorites
   const productIds = useMemo(() => {
     return new Set<number>(
       favorites
-        .filter((favorite: FavoriteResponse) => favorite.source === Source.Product)
+        .filter(
+          (favorite: FavoriteResponse) => favorite.source === Source.Product
+        )
         .map((favorite: FavoriteResponse) => favorite.sourceId)
     )
   }, [favorites])
@@ -38,7 +42,9 @@ export const useFavoriteItems = (enabled = true) => {
   const serviceIds = useMemo(() => {
     return new Set<number>(
       favorites
-        .filter((favorite: FavoriteResponse) => favorite.source === Source.Service)
+        .filter(
+          (favorite: FavoriteResponse) => favorite.source === Source.Service
+        )
         .map((favorite: FavoriteResponse) => favorite.sourceId)
     )
   }, [favorites])
@@ -47,7 +53,9 @@ export const useFavoriteItems = (enabled = true) => {
   const providerIds = useMemo(() => {
     return new Set<number>(
       favorites
-        .filter((favorite: FavoriteResponse) => favorite.source === Source.Provider)
+        .filter(
+          (favorite: FavoriteResponse) => favorite.source === Source.Provider
+        )
         .map((favorite: FavoriteResponse) => favorite.sourceId)
     )
   }, [favorites])
@@ -87,4 +95,3 @@ export const useFavoriteItems = (enabled = true) => {
     favorites,
   }
 }
-

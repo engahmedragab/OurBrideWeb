@@ -9,5 +9,3 @@ export interface OccasionBookResponse extends BookResponse<OccasionLineResponse>
   weddingOccasionId?: number
   weddingOccasion?: OccasionLineResponse
 }
-
-

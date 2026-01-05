@@ -34,7 +34,8 @@ export type NoteBookDraft = {
 /**
  * Generate temporary negative ID for new items
  */
-export const generateTempId = (): number => -Math.floor(Date.now() + Math.random() * 1000)
+export const generateTempId = (): number =>
+  -Math.floor(Date.now() + Math.random() * 1000)
 
 /**
  * Slugify text for category slugs

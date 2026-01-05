@@ -4,7 +4,11 @@ interface ProgressRingProps {
   strokeWidth?: number
 }
 
-export const ProgressRing = ({ percentage, size = 60, strokeWidth = 6 }: ProgressRingProps) => {
+export const ProgressRing = ({
+  percentage,
+  size = 60,
+  strokeWidth = 6,
+}: ProgressRingProps) => {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   const offset = circumference - (percentage / 100) * circumference
@@ -13,7 +17,7 @@ export const ProgressRing = ({ percentage, size = 60, strokeWidth = 6 }: Progres
   // 0% = light green (#86EFAC), 100% = dark green (#16A34A)
   const getGreenColor = (percent: number): string => {
     const clampedPercent = Math.max(0, Math.min(100, percent))
-    
+
     // Interpolate between light green and dark green
     // Light green: #86EFAC (rgb(134, 239, 172))
     // Dark green: #16A34A (rgb(22, 163, 74))
@@ -23,12 +27,12 @@ export const ProgressRing = ({ percentage, size = 60, strokeWidth = 6 }: Progres
     const r2 = 22
     const g2 = 163
     const b2 = 74
-    
+
     const ratio = clampedPercent / 100
     const r = Math.round(r1 + (r2 - r1) * ratio)
     const g = Math.round(g1 + (g2 - g1) * ratio)
     const b = Math.round(b1 + (b2 - b1) * ratio)
-    
+
     return `rgb(${r}, ${g}, ${b})`
   }
 
@@ -61,4 +65,3 @@ export const ProgressRing = ({ percentage, size = 60, strokeWidth = 6 }: Progres
     </div>
   )
 }
-

@@ -2,7 +2,13 @@
 
 // Auth context and provider
 
-import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useCallback,
+} from 'react'
 import type {
   AuthState,
   AuthAction,
@@ -18,7 +24,12 @@ import type {
   SendPhoneOTPCredentials,
 } from '../types'
 import * as authApi from '../services/authApi'
-import { getToken, getUser, isTokenExpired, getRefreshToken } from '../utils/token'
+import {
+  getToken,
+  getUser,
+  isTokenExpired,
+  getRefreshToken,
+} from '../utils/token'
 import { setToken } from '../utils/token'
 
 const initialState: AuthState = {
@@ -114,11 +125,17 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 interface AuthContextType extends AuthState {
   loginWithEmail: (credentials: LoginCredentials) => Promise<void>
   loginWithPhone: (credentials: LoginCredentials) => Promise<void>
-  loginWithExternalProvider: (credentials: ExternalLoginCredentials) => Promise<void>
+  loginWithExternalProvider: (
+    credentials: ExternalLoginCredentials
+  ) => Promise<void>
   guestLogin: (credentials: GuestLoginCredentials) => Promise<void>
   signupFull: (credentials: SignupCredentials) => Promise<AuthResponse>
-  signupWithEmail: (credentials: SignupEmailCredentials) => Promise<AuthResponse>
-  signupWithPhone: (credentials: SignupPhoneCredentials) => Promise<AuthResponse>
+  signupWithEmail: (
+    credentials: SignupEmailCredentials
+  ) => Promise<AuthResponse>
+  signupWithPhone: (
+    credentials: SignupPhoneCredentials
+  ) => Promise<AuthResponse>
   sendPhoneOTP: (credentials: SendPhoneOTPCredentials) => Promise<void>
   verifyPhoneOTP: (credentials: VerifyPhoneCredentials) => Promise<AuthResponse>
   confirmPhone: (credentials: VerifyPhoneCredentials) => Promise<AuthResponse>
@@ -150,8 +167,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const authData = await authApi.refreshToken()
                 // Note: authApi.refreshToken already calls setToken internally
                 // Update user from refreshed token response (convert null to undefined for type compatibility)
-                const refreshedUser: AuthUser | undefined = authData.user ?? (user ? (user as unknown as AuthUser) : undefined)
-                dispatch({ type: 'REFRESH_TOKEN', payload: { ...authData, user: refreshedUser } })
+                const refreshedUser: AuthUser | undefined =
+                  authData.user ??
+                  (user ? (user as unknown as AuthUser) : undefined)
+                dispatch({
+                  type: 'REFRESH_TOKEN',
+                  payload: { ...authData, user: refreshedUser },
+                })
                 dispatch({ type: 'SET_LOADING', payload: false })
                 return
               } catch {
@@ -184,7 +206,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!state.isAuthenticated) return
 
     // Get the token expiration time (in localStorage)
-    const expiresAtStr = typeof window !== 'undefined' ? localStorage.getItem('token_expires_at') : null
+    const expiresAtStr =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('token_expires_at')
+        : null
     if (!expiresAtStr) return
     const expirationTime = new Date(expiresAtStr).getTime()
     const bufferMs = 5 * 60 * 1000 // 5 min buffer before expire
@@ -204,8 +229,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           const authData = await authApi.refreshToken()
           // Note: authApi.refreshToken already calls setToken internally
-          const refreshedUser: AuthUser | undefined = authData.user ?? (state.user ? state.user : undefined)
-          dispatch({ type: 'REFRESH_TOKEN', payload: { ...authData, user: refreshedUser } })
+          const refreshedUser: AuthUser | undefined =
+            authData.user ?? (state.user ? state.user : undefined)
+          dispatch({
+            type: 'REFRESH_TOKEN',
+            payload: { ...authData, user: refreshedUser },
+          })
         } catch {
           dispatch({ type: 'LOGOUT' })
         }
@@ -219,7 +248,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       cancelled = true
       if (timeout) clearTimeout(timeout)
     }
-  }, [state.isAuthenticated, state.user && typeof window !== 'undefined' ? localStorage.getItem('token_expires_at') : null])
+  }, [
+    state.isAuthenticated,
+    state.user && typeof window !== 'undefined'
+      ? localStorage.getItem('token_expires_at')
+      : null,
+  ])
 
   const loginWithEmail = useCallback(async (credentials: LoginCredentials) => {
     dispatch({ type: 'LOGIN_START' })
@@ -233,7 +267,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Login failed'
       dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage })
       throw error
     }
@@ -251,29 +286,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Login failed'
       dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage })
       throw error
     }
   }, [])
 
-  const loginWithExternalProvider = useCallback(async (credentials: ExternalLoginCredentials) => {
-    dispatch({ type: 'LOGIN_START' })
-    try {
-      const authData = await authApi.loginWithExternalProvider(credentials)
-      setToken({
-        accessToken: authData.accessToken,
-        refreshToken: authData.refreshToken,
-        expiresAt: authData.expiresAt,
-        user: authData.user,
-      })
-      dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'External login failed'
-      dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage })
-      throw error
-    }
-  }, [])
+  const loginWithExternalProvider = useCallback(
+    async (credentials: ExternalLoginCredentials) => {
+      dispatch({ type: 'LOGIN_START' })
+      try {
+        const authData = await authApi.loginWithExternalProvider(credentials)
+        setToken({
+          accessToken: authData.accessToken,
+          refreshToken: authData.refreshToken,
+          expiresAt: authData.expiresAt,
+          user: authData.user,
+        })
+        dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'External login failed'
+        dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage })
+        throw error
+      }
+    },
+    []
+  )
 
   const guestLogin = useCallback(async (credentials: GuestLoginCredentials) => {
     dispatch({ type: 'LOGIN_START' })
@@ -287,143 +327,168 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Guest login failed'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Guest login failed'
       dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage })
       throw error
     }
   }, [])
 
-  const signupFull = useCallback(async (credentials: SignupCredentials): Promise<AuthResponse> => {
-    dispatch({ type: 'SIGNUP_START' })
-    try {
-      const authData = await authApi.signupFull(credentials)
-      if (authData.accessToken) {
-        setToken({
-          accessToken: authData.accessToken,
-          refreshToken: authData.refreshToken,
-          expiresAt: authData.expiresAt,
-          user: authData.user,
-        })
-        dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
-      } else {
-        // Registration successful but verification required
-        dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
+  const signupFull = useCallback(
+    async (credentials: SignupCredentials): Promise<AuthResponse> => {
+      dispatch({ type: 'SIGNUP_START' })
+      try {
+        const authData = await authApi.signupFull(credentials)
+        if (authData.accessToken) {
+          setToken({
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken,
+            expiresAt: authData.expiresAt,
+            user: authData.user,
+          })
+          dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
+        } else {
+          // Registration successful but verification required
+          dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
+        }
+        return authData
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Registration failed'
+        dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage })
+        throw error
       }
-      return authData
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Registration failed'
-      dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage })
-      throw error
-    }
-  }, [])
+    },
+    []
+  )
 
-  const signupWithEmail = useCallback(async (credentials: SignupEmailCredentials): Promise<AuthResponse> => {
-    dispatch({ type: 'SIGNUP_START' })
-    try {
-      const authData = await authApi.signupWithEmail(credentials)
-      if (authData.accessToken) {
-        setToken({
-          accessToken: authData.accessToken,
-          refreshToken: authData.refreshToken,
-          expiresAt: authData.expiresAt,
-          user: authData.user,
-        })
-        dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
-      } else {
-        dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
+  const signupWithEmail = useCallback(
+    async (credentials: SignupEmailCredentials): Promise<AuthResponse> => {
+      dispatch({ type: 'SIGNUP_START' })
+      try {
+        const authData = await authApi.signupWithEmail(credentials)
+        if (authData.accessToken) {
+          setToken({
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken,
+            expiresAt: authData.expiresAt,
+            user: authData.user,
+          })
+          dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
+        } else {
+          dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
+        }
+        return authData
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Registration failed'
+        dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage })
+        throw error
       }
-      return authData
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Registration failed'
-      dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage })
-      throw error
-    }
-  }, [])
+    },
+    []
+  )
 
-  const signupWithPhone = useCallback(async (credentials: SignupPhoneCredentials): Promise<AuthResponse> => {
-    dispatch({ type: 'SIGNUP_START' })
-    try {
-      const authData = await authApi.signupWithPhone(credentials)
-      if (authData.accessToken) {
-        setToken({
-          accessToken: authData.accessToken,
-          refreshToken: authData.refreshToken,
-          expiresAt: authData.expiresAt,
-          user: authData.user,
-        })
-        dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
-      } else {
-        dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
+  const signupWithPhone = useCallback(
+    async (credentials: SignupPhoneCredentials): Promise<AuthResponse> => {
+      dispatch({ type: 'SIGNUP_START' })
+      try {
+        const authData = await authApi.signupWithPhone(credentials)
+        if (authData.accessToken) {
+          setToken({
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken,
+            expiresAt: authData.expiresAt,
+            user: authData.user,
+          })
+          dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
+        } else {
+          dispatch({ type: 'SIGNUP_SUCCESS', payload: authData })
+        }
+        return authData
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Registration failed'
+        dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage })
+        throw error
       }
-      return authData
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Registration failed'
-      dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage })
-      throw error
-    }
-  }, [])
+    },
+    []
+  )
 
-  const sendPhoneOTP = useCallback(async (credentials: SendPhoneOTPCredentials): Promise<void> => {
-    dispatch({ type: 'SET_LOADING', payload: true })
-    dispatch({ type: 'SET_ERROR', payload: null })
-    try {
-      await authApi.sendPhoneOTP(credentials)
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to send OTP'
-      dispatch({ type: 'SET_ERROR', payload: errorMessage })
-      throw error
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false })
-    }
-  }, [])
-
-  const verifyPhoneOTP = useCallback(async (credentials: VerifyPhoneCredentials): Promise<AuthResponse> => {
-    dispatch({ type: 'SET_LOADING', payload: true })
-    dispatch({ type: 'SET_ERROR', payload: null })
-    try {
-      const authData = await authApi.verifyPhoneOTP(credentials)
-      if (authData.accessToken) {
-        setToken({
-          accessToken: authData.accessToken,
-          refreshToken: authData.refreshToken,
-          expiresAt: authData.expiresAt,
-          user: authData.user,
-        })
-        dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
+  const sendPhoneOTP = useCallback(
+    async (credentials: SendPhoneOTPCredentials): Promise<void> => {
+      dispatch({ type: 'SET_LOADING', payload: true })
+      dispatch({ type: 'SET_ERROR', payload: null })
+      try {
+        await authApi.sendPhoneOTP(credentials)
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to send OTP'
+        dispatch({ type: 'SET_ERROR', payload: errorMessage })
+        throw error
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false })
       }
-      return authData
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Invalid OTP code'
-      dispatch({ type: 'SET_ERROR', payload: errorMessage })
-      throw error
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false })
-    }
-  }, [])
+    },
+    []
+  )
 
-  const confirmPhone = useCallback(async (credentials: VerifyPhoneCredentials): Promise<AuthResponse> => {
-    dispatch({ type: 'SET_LOADING', payload: true })
-    dispatch({ type: 'SET_ERROR', payload: null })
-    try {
-      const authData = await authApi.confirmPhone(credentials)
-      if (authData.accessToken) {
-        setToken({
-          accessToken: authData.accessToken,
-          refreshToken: authData.refreshToken,
-          expiresAt: authData.expiresAt,
-          user: authData.user,
-        })
-        dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
+  const verifyPhoneOTP = useCallback(
+    async (credentials: VerifyPhoneCredentials): Promise<AuthResponse> => {
+      dispatch({ type: 'SET_LOADING', payload: true })
+      dispatch({ type: 'SET_ERROR', payload: null })
+      try {
+        const authData = await authApi.verifyPhoneOTP(credentials)
+        if (authData.accessToken) {
+          setToken({
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken,
+            expiresAt: authData.expiresAt,
+            user: authData.user,
+          })
+          dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
+        }
+        return authData
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Invalid OTP code'
+        dispatch({ type: 'SET_ERROR', payload: errorMessage })
+        throw error
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false })
       }
-      return authData
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Invalid confirmation code'
-      dispatch({ type: 'SET_ERROR', payload: errorMessage })
-      throw error
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false })
-    }
-  }, [])
+    },
+    []
+  )
+
+  const confirmPhone = useCallback(
+    async (credentials: VerifyPhoneCredentials): Promise<AuthResponse> => {
+      dispatch({ type: 'SET_LOADING', payload: true })
+      dispatch({ type: 'SET_ERROR', payload: null })
+      try {
+        const authData = await authApi.confirmPhone(credentials)
+        if (authData.accessToken) {
+          setToken({
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken,
+            expiresAt: authData.expiresAt,
+            user: authData.user,
+          })
+          dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
+        }
+        return authData
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Invalid confirmation code'
+        dispatch({ type: 'SET_ERROR', payload: errorMessage })
+        throw error
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false })
+      }
+    },
+    []
+  )
 
   const logout = useCallback(async () => {
     try {
@@ -440,8 +505,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const authData = await authApi.refreshToken()
       // Note: authApi.refreshToken already calls setToken internally
       // Convert null to undefined for type compatibility
-      const refreshedUser = authData.user ?? (state.user ? state.user : undefined)
-      dispatch({ type: 'REFRESH_TOKEN', payload: { ...authData, user: refreshedUser } })
+      const refreshedUser =
+        authData.user ?? (state.user ? state.user : undefined)
+      dispatch({
+        type: 'REFRESH_TOKEN',
+        payload: { ...authData, user: refreshedUser },
+      })
     } catch (error: unknown) {
       dispatch({ type: 'LOGOUT' })
       throw error

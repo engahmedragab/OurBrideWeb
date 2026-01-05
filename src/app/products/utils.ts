@@ -46,7 +46,13 @@ export const buildProductQueryParams = (
 /**
  * Apply client-side filtering and sorting
  */
-export const applyClientSideFilters = <T extends { inStock: boolean; price: { discounted: number }; rating: { value: number; count: number } }>(
+export const applyClientSideFilters = <
+  T extends {
+    inStock: boolean
+    price: { discounted: number }
+    rating: { value: number; count: number }
+  },
+>(
   products: T[],
   filters: ProductFilter,
   sortBy: string
@@ -88,4 +94,3 @@ export const parseProductId = (id: string | number | null): number | null => {
   const parsed = typeof id === 'string' ? parseInt(id, 10) : id
   return isNaN(parsed) ? null : parsed
 }
-

@@ -9,7 +9,12 @@ import type { OfferItem } from '@/components/ui/OfferBanner'
 export interface ServicesHomeData {
   services: ServiceCardData[]
   offers: ServiceCardData[]
-  categories: Array<{ id: number; name: string; slug?: string; description?: string }>
+  categories: Array<{
+    id: number
+    name: string
+    slug?: string
+    description?: string
+  }>
   banners?: OfferItem[]
   providers?: ProviderCardData[]
   heroSlides?: HeroSlide[]
@@ -45,4 +50,3 @@ export const useServicesHome = (enabled = true) => {
     refetchOnWindowFocus: false,
   })
 }
-

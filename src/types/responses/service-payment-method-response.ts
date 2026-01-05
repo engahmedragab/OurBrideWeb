@@ -3,7 +3,10 @@
  */
 
 import type { BaseResponse } from '@/types/responses/common'
-import type { InstalmentType, PaymentMethodStatus } from '@/types/responses/common'
+import type {
+  InstalmentType,
+  PaymentMethodStatus,
+} from '@/types/responses/common'
 import type { PaymentMethodResponse } from './payment-method-response'
 
 export interface ServicePaymentMethodResponse extends BaseResponse {

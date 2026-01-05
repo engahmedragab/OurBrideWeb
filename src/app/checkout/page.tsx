@@ -25,15 +25,36 @@ import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { CheckoutCartItem, Checkbox, AddressModal } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
-import { useCart, useUpdatePurchase, useRemovePurchase, useCheckout, useValidateCoupon, usePaymentMethods, useAddresses } from '@/hooks'
+import {
+  useCart,
+  useUpdatePurchase,
+  useRemovePurchase,
+  useCheckout,
+  useValidateCoupon,
+  usePaymentMethods,
+  useAddresses,
+} from '@/hooks'
 import { getUser } from '@/auth/utils/token'
 import { getProductById } from '@/services/api/products.api'
 import { useQueries } from '@tanstack/react-query'
-import type { PurchaseResponse, ProductResponse, ReservationResponse, DeliveryAddressResponse } from '@/types/responses'
-import type { CartProduct, CartReservation, CartMembership, CartGiftCard } from '@/types/responses'
+import type {
+  PurchaseResponse,
+  ProductResponse,
+  ReservationResponse,
+  DeliveryAddressResponse,
+} from '@/types/responses'
+import type {
+  CartProduct,
+  CartReservation,
+  CartMembership,
+  CartGiftCard,
+} from '@/types/responses'
 import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
 import type { PurchaseStatus } from '@/../client/common/api/gen/ourbride-api'
-import type { CheckoutRequest, CustomerRequest } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  CheckoutRequest,
+  CustomerRequest,
+} from '@/../client/common/api/gen/ourbride-api'
 import type { CartItemType } from '@/components/ui/CartItem'
 
 /**
@@ -70,9 +91,14 @@ const mapPurchaseToCartProduct = (
 
   // If ProductHeaderResponse exists, use it for pricing
   if (productHeader) {
-    originalPrice = productHeader.regularPrice ?? productHeader.price ?? pricePerUnit
-    discountedPrice = productHeader.salePrice ?? productHeader.price ?? originalPrice
-    const hasDiscount = productHeader.hasDiscount && productHeader.salePrice && productHeader.regularPrice
+    originalPrice =
+      productHeader.regularPrice ?? productHeader.price ?? pricePerUnit
+    discountedPrice =
+      productHeader.salePrice ?? productHeader.price ?? originalPrice
+    const hasDiscount =
+      productHeader.hasDiscount &&
+      productHeader.salePrice &&
+      productHeader.regularPrice
     discountPercentage = hasDiscount
       ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
       : undefined
@@ -93,9 +119,14 @@ const mapPurchaseToCartProduct = (
       image = fetchedProduct.image ?? '/placeholder-product.png'
     }
     if (!productHeader) {
-      originalPrice = fetchedProduct.regularPrice ?? fetchedProduct.price ?? pricePerUnit
-      discountedPrice = fetchedProduct.salePrice ?? fetchedProduct.price ?? originalPrice
-      const hasDiscount = fetchedProduct.hasDiscount && fetchedProduct.salePrice && fetchedProduct.regularPrice
+      originalPrice =
+        fetchedProduct.regularPrice ?? fetchedProduct.price ?? pricePerUnit
+      discountedPrice =
+        fetchedProduct.salePrice ?? fetchedProduct.price ?? originalPrice
+      const hasDiscount =
+        fetchedProduct.hasDiscount &&
+        fetchedProduct.salePrice &&
+        fetchedProduct.regularPrice
       discountPercentage = hasDiscount
         ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
         : undefined
@@ -110,10 +141,10 @@ const mapPurchaseToCartProduct = (
   // Format delivery date if available
   const deliveryDate = purchase.preferredDeliveryDate
     ? new Date(purchase.preferredDeliveryDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
     : undefined
 
   return {
@@ -164,10 +195,10 @@ const mapPurchaseToCartReservation = (
 
     const reservationDate = reservation.reservationDate
       ? new Date(reservation.reservationDate).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      })
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        })
       : undefined
 
     // Final fallback: Use type name if name is still null
@@ -226,7 +257,8 @@ const mapPurchaseToCartMembership = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority: Use display properties from PurchaseResponse, fallback to type name
-  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Membership'
+  const title =
+    purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Membership'
   const image = purchase.imageUrl ?? '/placeholder-membership.png'
 
   return {
@@ -257,7 +289,8 @@ const mapPurchaseToCartGiftCard = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority: Use display properties from PurchaseResponse, fallback to type name
-  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Gift Card'
+  const title =
+    purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Gift Card'
   const image = purchase.imageUrl ?? '/placeholder-giftcard.png'
 
   return {
@@ -293,22 +326,28 @@ export interface OrderFormData {
   acceptTerms: boolean
 }
 
-
 export default function CheckoutPage() {
   const router = useRouter()
   const { addToast } = useToast()
 
   // Fetch cart data
-  const { data: cartData, isLoading: isLoadingCart, error: cartError } = useCart()
+  const {
+    data: cartData,
+    isLoading: isLoadingCart,
+    error: cartError,
+  } = useCart()
 
   // Fetch active payment methods
-  const { data: paymentMethods = [], isLoading: isLoadingPaymentMethods } = usePaymentMethods()
+  const { data: paymentMethods = [], isLoading: isLoadingPaymentMethods } =
+    usePaymentMethods()
 
   // Fetch user addresses
   const { data: addresses = [], isLoading: isLoadingAddresses } = useAddresses()
 
   // Helper function to map payment method code to form value
-  const getPaymentMethodValue = (code: string): 'debit-credit' | 'mobile-wallet' | 'cash-on-delivery' => {
+  const getPaymentMethodValue = (
+    code: string
+  ): 'debit-credit' | 'mobile-wallet' | 'cash-on-delivery' => {
     const codeLower = code.toLowerCase()
     if (codeLower.includes('wallet') || codeLower.includes('mobile')) {
       return 'mobile-wallet'
@@ -334,18 +373,13 @@ export default function CheckoutPage() {
   const productIdsToFetch = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .filter(
-        (p) =>
-          p.type === PurchaseType.Product &&
-          p.productId &&
-          !p.product
-      )
-      .map((p) => p.productId!)
+      .filter(p => p.type === PurchaseType.Product && p.productId && !p.product)
+      .map(p => p.productId!)
   }, [allPurchases])
 
   // Fetch product details for purchases that have productId but product is null
   const productQueries = useQueries({
-    queries: productIdsToFetch.map((productId) => ({
+    queries: productIdsToFetch.map(productId => ({
       queryKey: ['product', productId],
       queryFn: async () => {
         const product = await getProductById(productId)
@@ -359,7 +393,7 @@ export default function CheckoutPage() {
   // Create a map of productId -> Product data for quick lookup
   const productMap = useMemo(() => {
     const map = new Map<number, ProductResponse>()
-    productQueries.forEach((query) => {
+    productQueries.forEach(query => {
       if (query.data?.product) {
         const product = query.data.product as ProductResponse
         map.set(query.data.productId, product)
@@ -372,7 +406,7 @@ export default function CheckoutPage() {
   const cartProducts = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => {
+      .map(purchase => {
         // Only process Product type purchases
         if (purchase.type !== PurchaseType.Product) {
           return null
@@ -395,15 +429,17 @@ export default function CheckoutPage() {
   const reservationPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartReservation(purchase))
-      .filter((reservation): reservation is CartReservation => reservation !== null)
+      .map(purchase => mapPurchaseToCartReservation(purchase))
+      .filter(
+        (reservation): reservation is CartReservation => reservation !== null
+      )
   }, [allPurchases])
 
   // Filter membership purchases
   const membershipPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartMembership(purchase))
+      .map(purchase => mapPurchaseToCartMembership(purchase))
       .filter((membership): membership is CartMembership => membership !== null)
   }, [allPurchases])
 
@@ -411,7 +447,7 @@ export default function CheckoutPage() {
   const giftCardPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartGiftCard(purchase))
+      .map(purchase => mapPurchaseToCartGiftCard(purchase))
       .filter((giftCard): giftCard is CartGiftCard => giftCard !== null)
   }, [allPurchases])
 
@@ -425,7 +461,10 @@ export default function CheckoutPage() {
   // Initialize local items when cart data loads
   useEffect(() => {
     // Create a stable ID string from cart products
-    const currentIds = cartProducts.map(p => p.id).sort().join(',')
+    const currentIds = cartProducts
+      .map(p => p.id)
+      .sort()
+      .join(',')
 
     // Only update if the IDs have actually changed
     if (currentIds !== lastCartProductIdsRef.current) {
@@ -448,20 +487,27 @@ export default function CheckoutPage() {
   const initializeFormData = (): OrderFormData => {
     const user = getUser()
     // Type guard to check if user is UserResponse
-    const isUserResponse = (u: typeof user): u is import('@/types/responses').UserResponse => {
+    const isUserResponse = (
+      u: typeof user
+    ): u is import('@/types/responses').UserResponse => {
       return u !== null && 'firstName' in u && 'lastName' in u
     }
     // Type guard to check if user is AuthUser
-    const isAuthUser = (u: typeof user): u is import('@/auth/types').AuthUser => {
+    const isAuthUser = (
+      u: typeof user
+    ): u is import('@/auth/types').AuthUser => {
       return u !== null && 'fullName' in u && !('firstName' in u)
     }
 
     let fullName = ''
     if (user) {
       if (isUserResponse(user)) {
-        fullName = (user.firstName && user.lastName
-          ? `${user.firstName} ${user.lastName}`.trim()
-          : '') || user.userName || ''
+        fullName =
+          (user.firstName && user.lastName
+            ? `${user.firstName} ${user.lastName}`.trim()
+            : '') ||
+          user.userName ||
+          ''
       } else if (isAuthUser(user)) {
         fullName = user.fullName || ''
       } else if ('userName' in user) {
@@ -493,7 +539,9 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showPaymentConfirmation, setShowPaymentConfirmation] = useState(false)
   const [showOrderConfirmation, setShowOrderConfirmation] = useState(false)
-  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null)
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
+    null
+  )
   const [showAddressModal, setShowAddressModal] = useState(false)
 
   const currency = 'EGP'
@@ -660,7 +708,10 @@ export default function CheckoutPage() {
       return methodValue === formData.paymentMethod
     })
 
-    if (selectedPaymentMethod?.requiresCardInfo || formData.paymentMethod === 'debit-credit') {
+    if (
+      selectedPaymentMethod?.requiresCardInfo ||
+      formData.paymentMethod === 'debit-credit'
+    ) {
       const cardFields: (keyof OrderFormData)[] = [
         'cardNumber',
         'cardExpiry',
@@ -678,7 +729,12 @@ export default function CheckoutPage() {
       })
     }
 
-    if (localItems.length === 0 && reservationPurchases.length === 0 && membershipPurchases.length === 0 && giftCardPurchases.length === 0) {
+    if (
+      localItems.length === 0 &&
+      reservationPurchases.length === 0 &&
+      membershipPurchases.length === 0 &&
+      giftCardPurchases.length === 0
+    ) {
       newErrors.items = 'Please select at least one item'
     }
 
@@ -734,9 +790,10 @@ export default function CheckoutPage() {
 
       // Ensure we have a valid email (required by CustomerRequest)
       // Use user's email if available, otherwise create a temporary email from phone number
-      const customerEmail = userEmail && userEmail.includes('@')
-        ? userEmail
-        : `${formData.mobileNumber.replace(/\s/g, '')}@temp.ourbride.com`
+      const customerEmail =
+        userEmail && userEmail.includes('@')
+          ? userEmail
+          : `${formData.mobileNumber.replace(/\s/g, '')}@temp.ourbride.com`
 
       // Split full name into first and last name
       const nameParts = formData.fullName.trim().split(/\s+/)
@@ -754,8 +811,11 @@ export default function CheckoutPage() {
         firstName: firstName,
         lastName: lastName,
         address: selectedAddress
-          ? (selectedAddress.address1 || formData.street || formData.location || '')
-          : (formData.street || formData.location || ''),
+          ? selectedAddress.address1 ||
+            formData.street ||
+            formData.location ||
+            ''
+          : formData.street || formData.location || '',
         address2: selectedAddress?.address2 || null,
         region: selectedAddress?.state || null,
         city: selectedAddress?.city || formData.location || '',
@@ -767,8 +827,11 @@ export default function CheckoutPage() {
 
       // Get preferred delivery date from first purchase with delivery date, if any
       // Check purchases directly as they have the ISO date format
-      const firstPurchaseWithDeliveryDate = allPurchases.find(p => p.preferredDeliveryDate)
-      const preferredDeliveryDate = firstPurchaseWithDeliveryDate?.preferredDeliveryDate || null
+      const firstPurchaseWithDeliveryDate = allPurchases.find(
+        p => p.preferredDeliveryDate
+      )
+      const preferredDeliveryDate =
+        firstPurchaseWithDeliveryDate?.preferredDeliveryDate || null
 
       // Prepare checkout request with all required and optional fields
       const checkoutRequest: CheckoutRequest = {
@@ -782,11 +845,14 @@ export default function CheckoutPage() {
 
       // Validate cart is active before proceeding
       if (!cartData.active) {
-        throw new Error('Cart is not active. Please refresh your cart and try again.')
+        throw new Error(
+          'Cart is not active. Please refresh your cart and try again.'
+        )
       }
 
       // Step 1: Call checkout API first
-      const checkoutResponse = await checkoutMutation.mutateAsync(checkoutRequest)
+      const checkoutResponse =
+        await checkoutMutation.mutateAsync(checkoutRequest)
 
       setShowPaymentConfirmation(false)
 
@@ -798,8 +864,14 @@ export default function CheckoutPage() {
 
       // Store checkout data in sessionStorage for create-order page
       if (typeof window !== 'undefined') {
-        sessionStorage.setItem('checkoutRequest', JSON.stringify(checkoutRequest))
-        sessionStorage.setItem('checkoutResponse', JSON.stringify(checkoutResponse))
+        sessionStorage.setItem(
+          'checkoutRequest',
+          JSON.stringify(checkoutRequest)
+        )
+        sessionStorage.setItem(
+          'checkoutResponse',
+          JSON.stringify(checkoutResponse)
+        )
         sessionStorage.setItem('cartData', JSON.stringify(cartData))
       }
 
@@ -870,7 +942,14 @@ export default function CheckoutPage() {
   }
 
   // Calculate totals from priceCalculation (most accurate), then cartSummary, otherwise calculate from all items
-  const { subtotal, taxesAndFees, deliveryFee, total, couponDiscount, appliedCouponCode } = useMemo(() => {
+  const {
+    subtotal,
+    taxesAndFees,
+    deliveryFee,
+    total,
+    couponDiscount,
+    appliedCouponCode,
+  } = useMemo(() => {
     // Priority 1: Use priceCalculation if available (most detailed and accurate)
     if (cartData?.priceCalculation) {
       const calc = cartData.priceCalculation
@@ -914,13 +993,15 @@ export default function CheckoutPage() {
       (sum, giftCard) => sum + giftCard.price * giftCard.quantity,
       0
     )
-    const sub = productsTotal + reservationsTotal + membershipsTotal + giftCardsTotal
+    const sub =
+      productsTotal + reservationsTotal + membershipsTotal + giftCardsTotal
     const taxes = 0 // Will be calculated by API
     const delivery = 0 // Will be calculated by API
     const tot = sub + taxes + delivery
 
     // Get coupon code from cart data
-    const couponCode = cartData?.couponCode ?? cartData?.cartSummary?.couponCode ?? ''
+    const couponCode =
+      cartData?.couponCode ?? cartData?.cartSummary?.couponCode ?? ''
 
     return {
       subtotal: sub,
@@ -930,14 +1011,23 @@ export default function CheckoutPage() {
       couponDiscount: 0,
       appliedCouponCode: couponCode,
     }
-  }, [cartData, cartProducts, reservationPurchases, membershipPurchases, giftCardPurchases])
+  }, [
+    cartData,
+    cartProducts,
+    reservationPurchases,
+    membershipPurchases,
+    giftCardPurchases,
+  ])
 
   const hasRelevantErrors =
     Object.keys(errors).length > 0 &&
     Object.values(errors).some(error => error !== '')
 
   const isCheckoutDisabled =
-    (localItems.length === 0 && reservationPurchases.length === 0 && membershipPurchases.length === 0 && giftCardPurchases.length === 0) ||
+    (localItems.length === 0 &&
+      reservationPurchases.length === 0 &&
+      membershipPurchases.length === 0 &&
+      giftCardPurchases.length === 0) ||
     hasRelevantErrors ||
     isSubmitting
 
@@ -981,7 +1071,11 @@ export default function CheckoutPage() {
   }
 
   // Show empty cart state
-  const hasItems = localItems.length > 0 || reservationPurchases.length > 0 || membershipPurchases.length > 0 || giftCardPurchases.length > 0
+  const hasItems =
+    localItems.length > 0 ||
+    reservationPurchases.length > 0 ||
+    membershipPurchases.length > 0 ||
+    giftCardPurchases.length > 0
 
   if (!hasItems) {
     return (
@@ -995,10 +1089,7 @@ export default function CheckoutPage() {
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
                 <p className="text-16 text-gray-600 mb-4">Your cart is empty</p>
-                <Button
-                  variant="brand"
-                  onClick={() => router.push('/cart')}
-                >
+                <Button variant="brand" onClick={() => router.push('/cart')}>
                   Go to Cart
                 </Button>
               </div>
@@ -1010,7 +1101,6 @@ export default function CheckoutPage() {
     )
   }
 
-
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
@@ -1021,7 +1111,12 @@ export default function CheckoutPage() {
             Order Checkout
           </h1>
 
-          <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+          <form
+            onSubmit={e => {
+              e.preventDefault()
+              handleSubmit()
+            }}
+          >
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
               {/* LEFT COLUMN - Form Section */}
               <div className="w-full lg:w-[40%] lg:flex-shrink-0 space-y-6">
@@ -1074,21 +1169,29 @@ export default function CheckoutPage() {
                   {/* Address Selector */}
                   {isLoadingAddresses ? (
                     <div className="flex items-center justify-center py-8">
-                      <p className="text-14 text-gray-500">Loading addresses...</p>
+                      <p className="text-14 text-gray-500">
+                        Loading addresses...
+                      </p>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       {/* Horizontal Address Selector */}
                       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                        {addresses.map((address) => (
+                        {addresses.map(address => (
                           <button
                             key={address.id}
                             type="button"
                             onClick={() => {
                               setSelectedAddressId(address.id)
                               // Update form data with selected address
-                              updateFormData('location', address.city || address.address1 || '')
-                              updateFormData('street', address.address1 || address.address2 || '')
+                              updateFormData(
+                                'location',
+                                address.city || address.address1 || ''
+                              )
+                              updateFormData(
+                                'street',
+                                address.address1 || address.address2 || ''
+                              )
                             }}
                             className={cn(
                               'flex-shrink-0 px-4 py-3 rounded-lg border-2 transition-all text-left min-w-[200px]',
@@ -1099,19 +1202,28 @@ export default function CheckoutPage() {
                             )}
                           >
                             <div className="flex items-start gap-2">
-                              <MapPin className={cn(
-                                'h-5 w-5 flex-shrink-0 mt-0.5',
-                                selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-400'
-                              )} />
+                              <MapPin
+                                className={cn(
+                                  'h-5 w-5 flex-shrink-0 mt-0.5',
+                                  selectedAddressId === address.id
+                                    ? 'text-brand-400'
+                                    : 'text-gray-400'
+                                )}
+                              />
                               <div className="flex-1 min-w-0">
-                                <p className={cn(
-                                  'text-14 font-medium truncate',
-                                  selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-900'
-                                )}>
+                                <p
+                                  className={cn(
+                                    'text-14 font-medium truncate',
+                                    selectedAddressId === address.id
+                                      ? 'text-brand-400'
+                                      : 'text-gray-900'
+                                  )}
+                                >
                                   {address.contactName || 'Address'}
                                 </p>
                                 <p className="text-12 text-gray-600 line-clamp-2 mt-1">
-                                  {address.address1 || ''} {address.address2 || ''}
+                                  {address.address1 || ''}{' '}
+                                  {address.address2 || ''}
                                   {address.city && `, ${address.city}`}
                                 </p>
                               </div>
@@ -1130,12 +1242,12 @@ export default function CheckoutPage() {
                           )}
                         >
                           <MapPin className="h-5 w-5 text-gray-400" />
-                          <span className="text-14 font-medium text-gray-600">Add Address</span>
+                          <span className="text-14 font-medium text-gray-600">
+                            Add Address
+                          </span>
                         </button>
                       </div>
-
                     </div>
-
                   )}
                   {/* Notes */}
                   <div className="relative">
@@ -1164,25 +1276,39 @@ export default function CheckoutPage() {
                   </h3>
                   {isLoadingPaymentMethods ? (
                     <div className="flex items-center justify-center py-8">
-                      <p className="text-14 text-gray-500">Loading payment methods...</p>
+                      <p className="text-14 text-gray-500">
+                        Loading payment methods...
+                      </p>
                     </div>
                   ) : paymentMethods.length === 0 ? (
                     <div className="flex items-center justify-center py-8">
-                      <p className="text-14 text-gray-500">No payment methods available</p>
+                      <p className="text-14 text-gray-500">
+                        No payment methods available
+                      </p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      {paymentMethods.map((method) => {
+                      {paymentMethods.map(method => {
                         // Map payment method code to icon
                         const getPaymentMethodIcon = (code: string) => {
                           const codeLower = code.toLowerCase()
-                          if (codeLower.includes('card') || codeLower.includes('credit') || codeLower.includes('debit')) {
+                          if (
+                            codeLower.includes('card') ||
+                            codeLower.includes('credit') ||
+                            codeLower.includes('debit')
+                          ) {
                             return CreditCard
                           }
-                          if (codeLower.includes('wallet') || codeLower.includes('mobile')) {
+                          if (
+                            codeLower.includes('wallet') ||
+                            codeLower.includes('mobile')
+                          ) {
                             return Wallet
                           }
-                          if (codeLower.includes('cash') || codeLower.includes('delivery')) {
+                          if (
+                            codeLower.includes('cash') ||
+                            codeLower.includes('delivery')
+                          ) {
                             return DollarSign
                           }
                           return CreditCard // Default icon
@@ -1190,8 +1316,10 @@ export default function CheckoutPage() {
 
                         const Icon = getPaymentMethodIcon(method.code)
                         const methodValue = getPaymentMethodValue(method.code)
-                        const isSelected = formData.paymentMethod === methodValue
-                        const displayName = method.nameEn || method.nameAr || method.code
+                        const isSelected =
+                          formData.paymentMethod === methodValue
+                        const displayName =
+                          method.nameEn || method.nameAr || method.code
 
                         return (
                           <button
@@ -1247,7 +1375,9 @@ export default function CheckoutPage() {
                               <Icon
                                 className={cn(
                                   'h-5 w-5',
-                                  isSelected ? 'text-brand-400' : 'text-gray-400'
+                                  isSelected
+                                    ? 'text-brand-400'
+                                    : 'text-gray-400'
                                 )}
                               />
                             )}
@@ -1261,11 +1391,12 @@ export default function CheckoutPage() {
                             >
                               {displayName}
                             </span>
-                            {method.supportsInstallments && method.maxInstallments && (
-                              <span className="text-10 text-gray-500">
-                                Up to {method.maxInstallments} installments
-                              </span>
-                            )}
+                            {method.supportsInstallments &&
+                              method.maxInstallments && (
+                                <span className="text-10 text-gray-500">
+                                  Up to {method.maxInstallments} installments
+                                </span>
+                              )}
                           </button>
                         )
                       })}
@@ -1453,7 +1584,7 @@ export default function CheckoutPage() {
                   {/* Reservations Section */}
                   {reservationPurchases.length > 0 && (
                     <div className="space-y-3">
-                      {reservationPurchases.map((reservation) => (
+                      {reservationPurchases.map(reservation => (
                         <CheckoutCartItem
                           key={`reservation-${reservation.purchaseId ?? reservation.id}`}
                           id={reservation.id}
@@ -1474,7 +1605,7 @@ export default function CheckoutPage() {
                   {/* Memberships Section */}
                   {membershipPurchases.length > 0 && (
                     <div className="space-y-3">
-                      {membershipPurchases.map((membership) => (
+                      {membershipPurchases.map(membership => (
                         <CheckoutCartItem
                           key={`membership-${membership.purchaseId ?? membership.id}`}
                           id={membership.id}
@@ -1494,7 +1625,7 @@ export default function CheckoutPage() {
                   {/* Gift Cards Section */}
                   {giftCardPurchases.length > 0 && (
                     <div className="space-y-3">
-                      {giftCardPurchases.map((giftCard) => (
+                      {giftCardPurchases.map(giftCard => (
                         <CheckoutCartItem
                           key={`giftcard-${giftCard.purchaseId ?? giftCard.id}`}
                           id={giftCard.id}
@@ -1556,7 +1687,9 @@ export default function CheckoutPage() {
                   )}
 
                   <div className="flex justify-between items-center pt-3 border-t border-gray-200">
-                    <span className="text-18 font-semibold text-gray-900">Total</span>
+                    <span className="text-18 font-semibold text-gray-900">
+                      Total
+                    </span>
                     <div className="text-right">
                       <div className="text-18 font-semibold text-gray-900">
                         {total.toLocaleString()} {currency}
@@ -1575,7 +1708,9 @@ export default function CheckoutPage() {
                       </span>
                       <div className="flex items-center gap-1 ml-2">
                         <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
-                        <span className="text-14 font-medium text-green-600">Redeemed</span>
+                        <span className="text-14 font-medium text-green-600">
+                          Redeemed
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -1624,13 +1759,19 @@ export default function CheckoutPage() {
                     type="submit"
                     variant="default"
                     size="xl"
-                    disabled={isCheckoutDisabled || checkoutMutation.isPending || isSubmitting || !formData.acceptTerms}
+                    disabled={
+                      isCheckoutDisabled ||
+                      checkoutMutation.isPending ||
+                      isSubmitting ||
+                      !formData.acceptTerms
+                    }
                     className="w-full rounded-lg text-white"
                   >
-                    {isSubmitting || checkoutMutation.isPending ? 'Processing...' : 'Create Order'}
+                    {isSubmitting || checkoutMutation.isPending
+                      ? 'Processing...'
+                      : 'Create Order'}
                   </Button>
                 </div>
-
               </div>
             </div>
           </form>
@@ -1670,7 +1811,8 @@ export default function CheckoutPage() {
         title={
           checkoutMutation.isPending || isSubmitting
             ? 'Processing checkout...'
-            : updatePurchaseMutation.isPending || removePurchaseMutation.isPending
+            : updatePurchaseMutation.isPending ||
+                removePurchaseMutation.isPending
               ? 'Updating cart...'
               : 'Validating...'
         }

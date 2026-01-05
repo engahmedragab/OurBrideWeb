@@ -6,7 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Input } from '@/components/ui'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { occasionFormSchema, type OccasionFormData } from '@/app/events/planning/occasion/schemas/occasion.schema'
+import {
+  occasionFormSchema,
+  type OccasionFormData,
+} from '@/app/events/planning/occasion/schemas/occasion.schema'
 import { OccasionType } from '@/../client/common/api/gen/ourbride-api'
 import type { OccasionLineResponse } from '@/types/responses'
 
@@ -79,8 +82,12 @@ export function OccasionForm({
         subTitleEn: editingOccasion.subTitleEn || '',
         subTitleAr: editingOccasion.subTitleAr || '',
         caption: editingOccasion.caption || '',
-        date: editingOccasion.date ? new Date(editingOccasion.date).toISOString().slice(0, 16) : getTodayDateTime(),
-        subDate: editingOccasion.subDate ? new Date(editingOccasion.subDate).toISOString().slice(0, 16) : null,
+        date: editingOccasion.date
+          ? new Date(editingOccasion.date).toISOString().slice(0, 16)
+          : getTodayDateTime(),
+        subDate: editingOccasion.subDate
+          ? new Date(editingOccasion.subDate).toISOString().slice(0, 16)
+          : null,
         brideFirstName: editingOccasion.brideFirstName || '',
         brideLastName: editingOccasion.brideLastName || '',
         groomFirstName: editingOccasion.groomFirstName || '',
@@ -133,39 +140,49 @@ export function OccasionForm({
           {/* Title (English) */}
           <div>
             <label className="text-14 font-normal text-gray-900 mb-2 block">
-              Title (English) {!titleAr && <span className="text-red-500">*</span>}
+              Title (English){' '}
+              {!titleAr && <span className="text-red-500">*</span>}
             </label>
             <Input
               {...register('titleEn')}
               placeholder="Enter title in English"
               className={cn(
-                "h-auto px-4 py-3 text-14",
-                errors.titleEn && "border-red-500 focus:border-red-500 focus:ring-red-500"
+                'h-auto px-4 py-3 text-14',
+                errors.titleEn &&
+                  'border-red-500 focus:border-red-500 focus:ring-red-500'
               )}
             />
             {errors.titleEn && (
-              <p className="text-12 text-red-500 mt-1">{errors.titleEn.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.titleEn.message}
+              </p>
             )}
             {errors.titleEn?.type === 'refine' && (
-              <p className="text-12 text-red-500 mt-1">Please enter a title in English or Arabic</p>
+              <p className="text-12 text-red-500 mt-1">
+                Please enter a title in English or Arabic
+              </p>
             )}
           </div>
 
           {/* Title (Arabic) */}
           <div>
             <label className="text-14 font-normal text-gray-900 mb-2 block">
-              Title (Arabic) {!titleEn && <span className="text-red-500">*</span>}
+              Title (Arabic){' '}
+              {!titleEn && <span className="text-red-500">*</span>}
             </label>
             <Input
               {...register('titleAr')}
               placeholder="Enter title in Arabic"
               className={cn(
-                "h-auto px-4 py-3 text-14",
-                errors.titleAr && "border-red-500 focus:border-red-500 focus:ring-red-500"
+                'h-auto px-4 py-3 text-14',
+                errors.titleAr &&
+                  'border-red-500 focus:border-red-500 focus:ring-red-500'
               )}
             />
             {errors.titleAr && (
-              <p className="text-12 text-red-500 mt-1">{errors.titleAr.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.titleAr.message}
+              </p>
             )}
           </div>
 
@@ -180,7 +197,9 @@ export function OccasionForm({
               className="h-auto px-4 py-3 text-14"
             />
             {errors.subTitleEn && (
-              <p className="text-12 text-red-500 mt-1">{errors.subTitleEn.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.subTitleEn.message}
+              </p>
             )}
           </div>
 
@@ -195,7 +214,9 @@ export function OccasionForm({
               className="h-auto px-4 py-3 text-14"
             />
             {errors.subTitleAr && (
-              <p className="text-12 text-red-500 mt-1">{errors.subTitleAr.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.subTitleAr.message}
+              </p>
             )}
           </div>
 
@@ -208,8 +229,9 @@ export function OccasionForm({
               type="datetime-local"
               {...register('date')}
               className={cn(
-                "h-auto px-4 py-3 text-14",
-                errors.date && "border-red-500 focus:border-red-500 focus:ring-red-500"
+                'h-auto px-4 py-3 text-14',
+                errors.date &&
+                  'border-red-500 focus:border-red-500 focus:ring-red-500'
               )}
             />
             {errors.date && (
@@ -228,7 +250,9 @@ export function OccasionForm({
               className="h-auto px-4 py-3 text-14"
             />
             {errors.subDate && (
-              <p className="text-12 text-red-500 mt-1">{errors.subDate.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.subDate.message}
+              </p>
             )}
           </div>
 
@@ -241,12 +265,15 @@ export function OccasionForm({
               {...register('brideFirstName')}
               placeholder="Enter bride first name"
               className={cn(
-                "h-auto px-4 py-3 text-14",
-                errors.brideFirstName && "border-red-500 focus:border-red-500 focus:ring-red-500"
+                'h-auto px-4 py-3 text-14',
+                errors.brideFirstName &&
+                  'border-red-500 focus:border-red-500 focus:ring-red-500'
               )}
             />
             {errors.brideFirstName && (
-              <p className="text-12 text-red-500 mt-1">{errors.brideFirstName.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.brideFirstName.message}
+              </p>
             )}
           </div>
 
@@ -261,7 +288,9 @@ export function OccasionForm({
               className="h-auto px-4 py-3 text-14"
             />
             {errors.brideLastName && (
-              <p className="text-12 text-red-500 mt-1">{errors.brideLastName.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.brideLastName.message}
+              </p>
             )}
           </div>
 
@@ -274,12 +303,15 @@ export function OccasionForm({
               {...register('groomFirstName')}
               placeholder="Enter groom first name"
               className={cn(
-                "h-auto px-4 py-3 text-14",
-                errors.groomFirstName && "border-red-500 focus:border-red-500 focus:ring-red-500"
+                'h-auto px-4 py-3 text-14',
+                errors.groomFirstName &&
+                  'border-red-500 focus:border-red-500 focus:ring-red-500'
               )}
             />
             {errors.groomFirstName && (
-              <p className="text-12 text-red-500 mt-1">{errors.groomFirstName.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.groomFirstName.message}
+              </p>
             )}
           </div>
 
@@ -294,7 +326,9 @@ export function OccasionForm({
               className="h-auto px-4 py-3 text-14"
             />
             {errors.groomLastName && (
-              <p className="text-12 text-red-500 mt-1">{errors.groomLastName.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.groomLastName.message}
+              </p>
             )}
           </div>
 
@@ -309,7 +343,9 @@ export function OccasionForm({
               className="h-auto px-4 py-3 text-14"
             />
             {errors.caption && (
-              <p className="text-12 text-red-500 mt-1">{errors.caption.message}</p>
+              <p className="text-12 text-red-500 mt-1">
+                {errors.caption.message}
+              </p>
             )}
           </div>
         </div>
@@ -332,12 +368,11 @@ export function OccasionForm({
             {isSubmitting
               ? 'Saving...'
               : editingOccasion
-              ? 'Update Occasion'
-              : 'Create Occasion'}
+                ? 'Update Occasion'
+                : 'Create Occasion'}
           </Button>
         </div>
       </form>
     </div>
   )
 }
-

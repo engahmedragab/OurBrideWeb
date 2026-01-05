@@ -26,8 +26,14 @@ export function TodoLinesPanel({
   todos: UiTodo[]
   onToggleDone: (id: number) => void
   onDeleteTodo: (id: number) => void
-  onCreateTodo: (data: { title: string; isDone?: boolean }) => Promise<void> | void
-  onEditTodo: (todoId: number, data: { title: string; isDone?: boolean }) => Promise<void> | void
+  onCreateTodo: (data: {
+    title: string
+    isDone?: boolean
+  }) => Promise<void> | void
+  onEditTodo: (
+    todoId: number,
+    data: { title: string; isDone?: boolean }
+  ) => Promise<void> | void
 }) {
   const [createOpen, setCreateOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
@@ -35,7 +41,7 @@ export function TodoLinesPanel({
 
   const editingTodo = useMemo(() => {
     if (editingTodoId == null) return null
-    return todos.find((t) => t.id === editingTodoId) ?? null
+    return todos.find(t => t.id === editingTodoId) ?? null
   }, [todos, editingTodoId])
 
   return (
@@ -43,8 +49,9 @@ export function TodoLinesPanel({
       {/* Header */}
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{categoryName}</h2>
-         
+          <h2 className="text-lg font-semibold text-gray-900">
+            {categoryName}
+          </h2>
         </div>
 
         <Button
@@ -60,7 +67,7 @@ export function TodoLinesPanel({
 
       {/* List */}
       <div className="space-y-3">
-        {todos.map((t) => (
+        {todos.map(t => (
           <TodoLineRow
             key={t.id}
             todo={t}
@@ -84,7 +91,7 @@ export function TodoLinesPanel({
       <CreateTodoModal
         open={createOpen}
         onClose={() => setCreateOpen(false)}
-        onSubmit={async (data) => {
+        onSubmit={async data => {
           await onCreateTodo(data)
           setCreateOpen(false)
         }}
@@ -105,7 +112,7 @@ export function TodoLinesPanel({
               }
             : null
         }
-        onSubmit={async (data) => {
+        onSubmit={async data => {
           if (editingTodoId == null) return
           await onEditTodo(editingTodoId, data)
           setEditOpen(false)

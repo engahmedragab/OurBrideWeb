@@ -45,7 +45,7 @@ export function ItemLinesPanel({
 
   const editingItem = useMemo(() => {
     if (editingItemId == null) return null
-    return items.find((i) => i.id === editingItemId) ?? null
+    return items.find(i => i.id === editingItemId) ?? null
   }, [items, editingItemId])
 
   return (
@@ -69,7 +69,7 @@ export function ItemLinesPanel({
 
       {/* Items List */}
       <div className="mt-4 space-y-3">
-        {items.map((it) => (
+        {items.map(it => (
           <ItemLineRow
             key={it.id}
             item={it}
@@ -93,7 +93,7 @@ export function ItemLinesPanel({
       <CreateItemModal
         open={createOpen}
         onClose={() => setCreateOpen(false)}
-        onSubmit={async (data) => {
+        onSubmit={async data => {
           await onAddNewLine(data)
           setCreateOpen(false)
         }}
@@ -119,7 +119,7 @@ export function ItemLinesPanel({
               }
             : null
         }
-        onSubmit={async (data) => {
+        onSubmit={async data => {
           if (editingItemId == null) return
           await onEditItem(editingItemId, data)
           setEditOpen(false)

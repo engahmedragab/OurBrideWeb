@@ -5,7 +5,10 @@ import {
   generatePaymentReceipt,
   downloadPaymentReceipt,
 } from '@/services/api/orderApi'
-import type { ServiceInvoiceResponse, ServiceReceiptResponse } from '@/types/responses'
+import type {
+  ServiceInvoiceResponse,
+  ServiceReceiptResponse,
+} from '@/types/responses'
 
 /**
  * Hook to generate order invoice
@@ -60,7 +63,9 @@ export const useDownloadOrderInvoice = () => {
       window.URL.revokeObjectURL(url)
 
       // Invalidate invoice query
-      queryClient.invalidateQueries({ queryKey: ['order', variables.orderId, 'invoice'] })
+      queryClient.invalidateQueries({
+        queryKey: ['order', variables.orderId, 'invoice'],
+      })
     },
   })
 }
@@ -81,7 +86,8 @@ export const usePaymentReceipt = (
   return useQuery<ServiceReceiptResponse>({
     queryKey: ['order', orderId, 'payment', paymentId, 'receipt', queryParams],
     queryFn: async () => {
-      if (!orderId || !paymentId) throw new Error('Order ID and Payment ID are required')
+      if (!orderId || !paymentId)
+        throw new Error('Order ID and Payment ID are required')
       return await generatePaymentReceipt(orderId, paymentId, queryParams)
     },
     enabled: enabled && !!orderId && !!paymentId,
@@ -121,9 +127,14 @@ export const useDownloadPaymentReceipt = () => {
 
       // Invalidate receipt query
       queryClient.invalidateQueries({
-        queryKey: ['order', variables.orderId, 'payment', variables.paymentId, 'receipt'],
+        queryKey: [
+          'order',
+          variables.orderId,
+          'payment',
+          variables.paymentId,
+          'receipt',
+        ],
       })
     },
   })
 }
-

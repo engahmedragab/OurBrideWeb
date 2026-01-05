@@ -49,7 +49,8 @@ export const PriceDisplay = ({
     },
   }
 
-  const gapClass = variant === 'compact' ? 'gap-0.5' : variant === 'inline' ? 'gap-1' : 'gap-1'
+  const gapClass =
+    variant === 'compact' ? 'gap-0.5' : variant === 'inline' ? 'gap-1' : 'gap-1'
 
   return (
     <div className={cn('flex items-baseline', gapClass, className)}>

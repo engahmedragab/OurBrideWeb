@@ -27,4 +27,3 @@ export interface ProviderHomeUserResponse {
   userName?: string
   profileUrl?: string
 }
-

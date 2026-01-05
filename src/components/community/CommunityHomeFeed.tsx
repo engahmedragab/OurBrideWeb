@@ -16,7 +16,11 @@ export interface CommunityHomeFeedProps {
   }
 }
 
-export const CommunityHomeFeed = ({ className, data, currentUser }: CommunityHomeFeedProps) => {
+export const CommunityHomeFeed = ({
+  className,
+  data,
+  currentUser,
+}: CommunityHomeFeedProps) => {
   const router = useRouter()
 
   return (
@@ -25,7 +29,9 @@ export const CommunityHomeFeed = ({ className, data, currentUser }: CommunityHom
       {data.recentPosts && data.recentPosts.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-20 font-semibold text-gray-900">Recent Posts</h2>
+            <h2 className="text-20 font-semibold text-gray-900">
+              Recent Posts
+            </h2>
             <button
               onClick={() => router.push('/community?tab=posts')}
               className="text-14 font-normal text-brand-500 hover:text-brand-600 transition-colors"
@@ -45,7 +51,9 @@ export const CommunityHomeFeed = ({ className, data, currentUser }: CommunityHom
       {data.recentArticles && data.recentArticles.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-20 font-semibold text-gray-900">Recent Articles</h2>
+            <h2 className="text-20 font-semibold text-gray-900">
+              Recent Articles
+            </h2>
             <button
               onClick={() => router.push('/community?tab=articles')}
               className="text-14 font-normal text-brand-500 hover:text-brand-600 transition-colors"
@@ -73,16 +81,3 @@ export const CommunityHomeFeed = ({ className, data, currentUser }: CommunityHom
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

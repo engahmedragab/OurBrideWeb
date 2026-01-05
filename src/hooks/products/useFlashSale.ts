@@ -20,34 +20,40 @@ export const useFlashSaleGrouped = (params?: {
     queryFn: async (): Promise<Product[]> => {
       try {
         const result = await getFlashSaleGrouped(flashSaleParams)
-        
+
         // Handle ApiResult response structure
         const resultAny = result as unknown as Record<string, unknown>
-        
+
         if (resultAny && 'data' in resultAny && resultAny.data) {
           const data = resultAny.data
-          
+
           if (Array.isArray(data)) {
             return mapProductResponsesToProducts(data as ProductResponse[])
           }
-          
+
           if (typeof data === 'object' && data !== null) {
             const dataObj = data as Record<string, unknown>
-            
+
             if ('products' in dataObj && Array.isArray(dataObj.products)) {
-              return mapProductResponsesToProducts(dataObj.products as ProductResponse[])
+              return mapProductResponsesToProducts(
+                dataObj.products as ProductResponse[]
+              )
             }
-            
+
             if ('items' in dataObj && Array.isArray(dataObj.items)) {
-              return mapProductResponsesToProducts(dataObj.items as ProductResponse[])
+              return mapProductResponsesToProducts(
+                dataObj.items as ProductResponse[]
+              )
             }
-            
+
             if ('results' in dataObj && Array.isArray(dataObj.results)) {
-              return mapProductResponsesToProducts(dataObj.results as ProductResponse[])
+              return mapProductResponsesToProducts(
+                dataObj.results as ProductResponse[]
+              )
             }
           }
         }
-        
+
         return []
       } catch (error) {
         return []
@@ -57,4 +63,3 @@ export const useFlashSaleGrouped = (params?: {
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
-

@@ -14,7 +14,7 @@ export const getAllTags = async (): Promise<TagResponse[]> => {
   try {
     const response = await apiClient.api.getTagsGetAll()
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as TagResponse[]
@@ -28,10 +28,12 @@ export const getAllTags = async (): Promise<TagResponse[]> => {
     if (Array.isArray(responseAny)) {
       return responseAny as TagResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch tags')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch tags'
+    )
   }
 }
 
@@ -42,7 +44,7 @@ export const getTagById = async (id: number): Promise<TagResponse | null> => {
   try {
     const response = await apiClient.api.getTagsGetById(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as TagResponse
@@ -53,21 +55,25 @@ export const getTagById = async (id: number): Promise<TagResponse | null> => {
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as TagResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch tag')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch tag'
+    )
   }
 }
 
 /**
  * Get tag by slug
  */
-export const getTagBySlug = async (slug: string): Promise<TagResponse | null> => {
+export const getTagBySlug = async (
+  slug: string
+): Promise<TagResponse | null> => {
   try {
     const response = await apiClient.api.getTagsGetBySlug(slug)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as TagResponse
@@ -78,10 +84,12 @@ export const getTagBySlug = async (slug: string): Promise<TagResponse | null> =>
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as TagResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch tag by slug')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch tag by slug'
+    )
   }
 }
 
@@ -93,7 +101,9 @@ export const getActiveTags = async (): Promise<TagResponse[]> => {
     const allTags = await getAllTags()
     return allTags.filter(tag => tag.isActive)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch active tags')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch active tags'
+    )
   }
 }
 
@@ -105,32 +115,38 @@ export const getFeaturedTags = async (): Promise<TagResponse[]> => {
     const allTags = await getAllTags()
     return allTags.filter(tag => tag.isFeatured)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch featured tags')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch featured tags'
+    )
   }
 }
 
 /**
  * Get most used tags
  */
-export const getMostUsedTags = async (count: number = 10): Promise<TagResponse[]> => {
+export const getMostUsedTags = async (
+  count: number = 10
+): Promise<TagResponse[]> => {
   try {
     const allTags = await getAllTags()
-    return allTags
-      .sort((a, b) => b.usageCount - a.usageCount)
-      .slice(0, count)
+    return allTags.sort((a, b) => b.usageCount - a.usageCount).slice(0, count)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch most used tags')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch most used tags'
+    )
   }
 }
 
 /**
  * Search tags
  */
-export const searchTags = async (searchTerm: string): Promise<TagResponse[]> => {
+export const searchTags = async (
+  searchTerm: string
+): Promise<TagResponse[]> => {
   try {
     const response = await apiClient.api.getTagsSearch({ searchTerm })
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as TagResponse[]
@@ -144,21 +160,25 @@ export const searchTags = async (searchTerm: string): Promise<TagResponse[]> => 
     if (Array.isArray(responseAny)) {
       return responseAny as TagResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to search tags')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to search tags'
+    )
   }
 }
 
 /**
  * Create a new tag
  */
-export const createTag = async (data: CreateCommunityTagRequest): Promise<TagResponse | null> => {
+export const createTag = async (
+  data: CreateCommunityTagRequest
+): Promise<TagResponse | null> => {
   try {
     const response = await apiClient.api.postTagsCreate(data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as TagResponse
@@ -169,21 +189,26 @@ export const createTag = async (data: CreateCommunityTagRequest): Promise<TagRes
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as TagResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create tag')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create tag'
+    )
   }
 }
 
 /**
  * Update a tag
  */
-export const updateTag = async (id: number, data: UpdateCommunityTagRequest): Promise<TagResponse | null> => {
+export const updateTag = async (
+  id: number,
+  data: UpdateCommunityTagRequest
+): Promise<TagResponse | null> => {
   try {
     const response = await apiClient.api.putTagsUpdate(id, data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as TagResponse
@@ -194,10 +219,12 @@ export const updateTag = async (id: number, data: UpdateCommunityTagRequest): Pr
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as TagResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update tag')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update tag'
+    )
   }
 }
 
@@ -209,24 +236,8 @@ export const deleteTag = async (id: number): Promise<boolean> => {
     await apiClient.api.deleteTagsDelete(id)
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete tag')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete tag'
+    )
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,8 +1,15 @@
 // Community Blogs API service functions
 
 import { apiClient } from '@/services/api/apiClient'
-import type { BlogResponse, ShareBlogResponse } from '@/types/responses/community'
-import type { CreateBlogRequest, UpdateBlogRequest, AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  BlogResponse,
+  ShareBlogResponse,
+} from '@/types/responses/community'
+import type {
+  CreateBlogRequest,
+  UpdateBlogRequest,
+  AddReviewRequest,
+} from '@/../client/common/api/gen/ourbride-api'
 
 /**
  * Get all blogs
@@ -14,7 +21,7 @@ export const getAllBlogs = async (params?: {
   try {
     const response = await apiClient.api.getBlogsGetAll(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as BlogResponse[]
@@ -28,10 +35,12 @@ export const getAllBlogs = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as BlogResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch blogs')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch blogs'
+    )
   }
 }
 
@@ -42,7 +51,7 @@ export const getBlogById = async (id: number): Promise<BlogResponse | null> => {
   try {
     const response = await apiClient.api.getBlogsGetById(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as BlogResponse
@@ -53,10 +62,12 @@ export const getBlogById = async (id: number): Promise<BlogResponse | null> => {
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as BlogResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch blog')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch blog'
+    )
   }
 }
 
@@ -70,7 +81,7 @@ export const getPublishedBlogs = async (params?: {
   try {
     const response = await apiClient.api.getBlogsGetPublished(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as BlogResponse[]
@@ -84,10 +95,12 @@ export const getPublishedBlogs = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as BlogResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch published blogs')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch published blogs'
+    )
   }
 }
 
@@ -101,7 +114,7 @@ export const getFeaturedBlogs = async (params?: {
   try {
     const response = await apiClient.api.getBlogsGetFeatured(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as BlogResponse[]
@@ -115,21 +128,25 @@ export const getFeaturedBlogs = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as BlogResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch featured blogs')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch featured blogs'
+    )
   }
 }
 
 /**
  * Get blogs by user ID
  */
-export const getBlogsByUserId = async (userId: string): Promise<BlogResponse[]> => {
+export const getBlogsByUserId = async (
+  userId: string
+): Promise<BlogResponse[]> => {
   try {
     const response = await apiClient.api.getBlogsGetByUserId(userId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as BlogResponse[]
@@ -143,21 +160,25 @@ export const getBlogsByUserId = async (userId: string): Promise<BlogResponse[]> 
     if (Array.isArray(responseAny)) {
       return responseAny as BlogResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch blogs by user')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch blogs by user'
+    )
   }
 }
 
 /**
  * Get blog by slug
  */
-export const getBlogBySlug = async (slug: string): Promise<BlogResponse | null> => {
+export const getBlogBySlug = async (
+  slug: string
+): Promise<BlogResponse | null> => {
   try {
     const response = await apiClient.api.getBlogsGetBySlug(slug)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as BlogResponse
@@ -168,10 +189,12 @@ export const getBlogBySlug = async (slug: string): Promise<BlogResponse | null> 
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as BlogResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch blog by slug')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch blog by slug'
+    )
   }
 }
 
@@ -184,7 +207,7 @@ export const searchBlogs = async (params?: {
   try {
     const response = await apiClient.api.getBlogsSearch(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as BlogResponse[]
@@ -198,21 +221,25 @@ export const searchBlogs = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as BlogResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to search blogs')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to search blogs'
+    )
   }
 }
 
 /**
  * Create a new blog
  */
-export const createBlog = async (data: CreateBlogRequest): Promise<BlogResponse | null> => {
+export const createBlog = async (
+  data: CreateBlogRequest
+): Promise<BlogResponse | null> => {
   try {
     const response = await apiClient.api.postBlogsCreate(data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as BlogResponse
@@ -223,21 +250,26 @@ export const createBlog = async (data: CreateBlogRequest): Promise<BlogResponse 
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as BlogResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create blog')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create blog'
+    )
   }
 }
 
 /**
  * Update a blog
  */
-export const updateBlog = async (id: number, data: UpdateBlogRequest): Promise<BlogResponse | null> => {
+export const updateBlog = async (
+  id: number,
+  data: UpdateBlogRequest
+): Promise<BlogResponse | null> => {
   try {
     const response = await apiClient.api.putBlogsUpdate(id, data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as BlogResponse
@@ -248,10 +280,12 @@ export const updateBlog = async (id: number, data: UpdateBlogRequest): Promise<B
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as BlogResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update blog')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update blog'
+    )
   }
 }
 
@@ -263,18 +297,25 @@ export const deleteBlog = async (id: number): Promise<boolean> => {
     await apiClient.api.deleteBlogsDelete(id)
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete blog')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete blog'
+    )
   }
 }
 
 /**
  * Add review to a blog
  */
-export const addReview = async (id: number, data: AddReviewRequest): Promise<void> => {
+export const addReview = async (
+  id: number,
+  data: AddReviewRequest
+): Promise<void> => {
   try {
     await apiClient.api.postBlogsAddReview(id, data)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add review')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to add review'
+    )
   }
 }
 
@@ -287,7 +328,9 @@ export const toggleLike = async (id: number): Promise<boolean> => {
     // The API might return the new like status, but we'll need to check separately
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle like')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle like'
+    )
   }
 }
 
@@ -298,7 +341,7 @@ export const isLiked = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getBlogsIsLiked(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -309,10 +352,12 @@ export const isLiked = async (id: number): Promise<boolean> => {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check like status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check like status'
+    )
   }
 }
 
@@ -325,7 +370,9 @@ export const toggleFavorite = async (id: number): Promise<boolean> => {
     // The API might return the new favorite status, but we'll need to check separately
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle favorite')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle favorite'
+    )
   }
 }
 
@@ -336,7 +383,7 @@ export const isFavorite = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getBlogsIsFavorite(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -347,10 +394,12 @@ export const isFavorite = async (id: number): Promise<boolean> => {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check favorite status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check favorite status'
+    )
   }
 }
 
@@ -361,18 +410,25 @@ export const addMedia = async (id: number, mediaId: number): Promise<void> => {
   try {
     await apiClient.api.postBlogsAddMedia(id, mediaId)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add media')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to add media'
+    )
   }
 }
 
 /**
  * Remove media from a blog
  */
-export const removeMedia = async (id: number, mediaId: number): Promise<void> => {
+export const removeMedia = async (
+  id: number,
+  mediaId: number
+): Promise<void> => {
   try {
     await apiClient.api.deleteBlogsRemoveMedia(id, mediaId)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to remove media')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to remove media'
+    )
   }
 }
 
@@ -383,7 +439,7 @@ export const getMediaIds = async (id: number): Promise<number[]> => {
   try {
     const response = await apiClient.api.getBlogsGetMedia(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as number[]
@@ -397,10 +453,12 @@ export const getMediaIds = async (id: number): Promise<number[]> => {
     if (Array.isArray(responseAny)) {
       return responseAny as number[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch media IDs')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch media IDs'
+    )
   }
 }
 
@@ -411,7 +469,9 @@ export const incrementViewCount = async (id: number): Promise<void> => {
   try {
     await apiClient.api.postBlogsIncrementView(id)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to increment view count')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to increment view count'
+    )
   }
 }
 
@@ -426,9 +486,13 @@ export const shareBlog = async (
   try {
     const response = await apiClient.api.postBlogsShare(id, { shareSource })
     const responseAny: any = response
-    
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = (responseAny as { data?: unknown }).data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ShareBlogResponse }).data
@@ -437,30 +501,18 @@ export const shareBlog = async (
         return data as ShareBlogResponse
       }
     }
-    if (responseAny && typeof responseAny === 'object' && 'blogId' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'blogId' in responseAny
+    ) {
       return responseAny as ShareBlogResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to share blog')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to share blog'
+    )
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

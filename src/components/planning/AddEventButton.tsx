@@ -26,4 +26,3 @@ export const AddEventButton = ({ onClick, className }: AddEventButtonProps) => {
     </div>
   )
 }
-

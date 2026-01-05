@@ -43,11 +43,7 @@ const NavigationMenuItem = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Item>
 >((props, ref) => (
-  <NavigationMenuPrimitive.Item
-    ref={ref}
-    suppressHydrationWarning
-    {...props}
-  />
+  <NavigationMenuPrimitive.Item ref={ref} suppressHydrationWarning {...props} />
 ))
 NavigationMenuItem.displayName = NavigationMenuPrimitive.Item.displayName
 

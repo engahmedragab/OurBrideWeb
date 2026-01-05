@@ -8,7 +8,10 @@ import { Input } from '@/components/ui/Input'
 import { SelectPopover } from '@/components/ui/SelectPopover'
 import { Button } from '@/components/ui/Button'
 import type { GuestGroup, GuestGroupId, GuestStatus } from './mockGuests'
-import { addGuestFormSchema, type AddGuestFormData } from '@/app/events/planning/invitation/schemas/guest.schema'
+import {
+  addGuestFormSchema,
+  type AddGuestFormData,
+} from '@/app/events/planning/invitation/schemas/guest.schema'
 
 const slugify = (text: string): string =>
   text
@@ -23,9 +26,22 @@ interface AddGuestDialogProps {
   isOpen: boolean
   onClose: () => void
 
-  onSubmit: (data:
-    | { mode: 'existing'; lineCategoryId: number; nickName: string; peopleCount: number; status: GuestStatus }
-    | { mode: 'new'; category: { name: string; slug: string; description?: string }; nickName: string; peopleCount: number; status: GuestStatus }
+  onSubmit: (
+    data:
+      | {
+          mode: 'existing'
+          lineCategoryId: number
+          nickName: string
+          peopleCount: number
+          status: GuestStatus
+        }
+      | {
+          mode: 'new'
+          category: { name: string; slug: string; description?: string }
+          nickName: string
+          peopleCount: number
+          status: GuestStatus
+        }
   ) => void
 
   availableGroups: GuestGroup[]
@@ -58,7 +74,11 @@ export const AddGuestDialog = ({
   } = useForm<AddGuestFormData>({
     resolver: zodResolver(addGuestFormSchema) as any,
     defaultValues: {
-      categoryMode: forceNewCategory ? 'new' : forcedGroupId ? 'existing' : 'existing',
+      categoryMode: forceNewCategory
+        ? 'new'
+        : forcedGroupId
+          ? 'existing'
+          : 'existing',
       lineCategoryId: forcedGroupId ? String(forcedGroupId) : '',
       nickName: '',
       peopleCount: 1,
@@ -76,7 +96,11 @@ export const AddGuestDialog = ({
   useEffect(() => {
     if (!isOpen) return
     reset({
-      categoryMode: forceNewCategory ? 'new' : forcedGroupId ? 'existing' : 'existing',
+      categoryMode: forceNewCategory
+        ? 'new'
+        : forcedGroupId
+          ? 'existing'
+          : 'existing',
       lineCategoryId: forcedGroupId ? String(forcedGroupId) : '',
       nickName: '',
       peopleCount: 1,
@@ -114,7 +138,9 @@ export const AddGuestDialog = ({
     }
 
     // new category
-    const finalSlug = (data.categorySlug?.trim() || slugify(data.categoryName)).trim()
+    const finalSlug = (
+      data.categorySlug?.trim() || slugify(data.categoryName)
+    ).trim()
     if (!finalSlug) return
 
     onSubmit({
@@ -131,8 +157,9 @@ export const AddGuestDialog = ({
     onClose()
   }
 
-  const lockedTitle =
-    forcedGroupId ? availableGroups.find(g => g.id === forcedGroupId)?.title : null
+  const lockedTitle = forcedGroupId
+    ? availableGroups.find(g => g.id === forcedGroupId)?.title
+    : null
 
   return (
     <Modal
@@ -201,16 +228,28 @@ export const AddGuestDialog = ({
               <>
                 <SelectPopover
                   value={lineCategoryId}
-                  onChange={value => setValue('lineCategoryId', String(value), { shouldValidate: true })}
-                  options={selectableGroups.map(g => ({ value: g.id, label: g.title }))}
+                  onChange={value =>
+                    setValue('lineCategoryId', String(value), {
+                      shouldValidate: true,
+                    })
+                  }
+                  options={selectableGroups.map(g => ({
+                    value: g.id,
+                    label: g.title,
+                  }))}
                   placeholder="Select category"
                 />
-                {'lineCategoryId' in errors && (errors as any).lineCategoryId?.message && (
-                  <p className="mt-1 text-12 text-red-600">{(errors as any).lineCategoryId.message}</p>
-                )}
+                {'lineCategoryId' in errors &&
+                  (errors as any).lineCategoryId?.message && (
+                    <p className="mt-1 text-12 text-red-600">
+                      {(errors as any).lineCategoryId.message}
+                    </p>
+                  )}
 
                 {selectableGroups.length === 0 && (
-                  <p className="mt-2 text-12 text-gray-500">You need to add a category first.</p>
+                  <p className="mt-2 text-12 text-gray-500">
+                    You need to add a category first.
+                  </p>
                 )}
               </>
             ) : null}
@@ -249,7 +288,9 @@ export const AddGuestDialog = ({
 
           {/* Status */}
           <div>
-            <label className="block text-14 font-medium text-gray-700 mb-2">Status</label>
+            <label className="block text-14 font-medium text-gray-700 mb-2">
+              Status
+            </label>
             <SelectPopover
               value={status}
               onChange={value => setValue('status', value as any)}
@@ -263,10 +304,21 @@ export const AddGuestDialog = ({
 
           {/* Actions */}
           <div className="flex flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-gray-200">
-            <Button type="button" variant="outline" onClick={onClose} size="md" className="w-full sm:w-auto">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              size="md"
+              className="w-full sm:w-auto"
+            >
               Cancel
             </Button>
-            <Button type="submit" variant="brand" size="md" className="w-full sm:w-auto text-white">
+            <Button
+              type="submit"
+              variant="brand"
+              size="md"
+              className="w-full sm:w-auto text-white"
+            >
               Add Guest
             </Button>
           </div>

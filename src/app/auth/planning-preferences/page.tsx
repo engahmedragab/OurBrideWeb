@@ -7,29 +7,29 @@ import { DownloadApp } from '@/components/common'
  * Planning Preferences Page - Collect user preferences after mobile verification
  * User selects services, budget, location, and provides details
  */
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { getPlanningPreferenceInit } from '@/services/profile/profileApi';
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { getPlanningPreferenceInit } from '@/services/profile/profileApi'
 
 export default function PlanningPreferencesPage() {
-  const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  const router = useRouter()
+  const [checking, setChecking] = useState(true)
 
   useEffect(() => {
     async function checkPreferenceStatus() {
-      const isComplete = await getPlanningPreferenceInit();
+      const isComplete = await getPlanningPreferenceInit()
       if (isComplete) {
-        router.replace('/dashboard');
+        router.replace('/dashboard')
       } else {
-        setChecking(false);
+        setChecking(false)
       }
     }
-    checkPreferenceStatus();
-  }, [router]);
+    checkPreferenceStatus()
+  }, [router])
 
   if (checking) {
     // Optionally show a spinner skeleton
-    return null;
+    return null
   }
 
   return (

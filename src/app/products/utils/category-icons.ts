@@ -13,7 +13,9 @@ import hairDryerIcon from '@/assets/category/hair-dryer.svg'
 /**
  * Get category icon mapping
  */
-export const getCategoryIconMap = (): Record<string, string> & { default: string } => {
+export const getCategoryIconMap = (): Record<string, string> & {
+  default: string
+} => {
   return {
     perfumes: perfumesIcon,
     makeup: toolsDevicesIcon,
@@ -26,4 +28,3 @@ export const getCategoryIconMap = (): Record<string, string> & { default: string
     default: toolsDevicesIcon,
   }
 }
-

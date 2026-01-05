@@ -1,6 +1,6 @@
 /**
  * BudgetBooks API Functions
- * 
+ *
  * Wrapper functions for BudgetBooks API endpoints.
  * Handles response extraction and error handling with proper typing.
  */
@@ -40,7 +40,10 @@ export const initBudgetBook = async (
     await apiClient.api.postBudgetBooksInit(query, params)
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to initialize budget book',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to initialize budget book',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -50,7 +53,7 @@ export const initBudgetBook = async (
 
 /**
  * Sync a budget book
- * 
+ *
  * @param data - Budget book data including lines and categories
  * @example
  * ```typescript
@@ -93,7 +96,8 @@ export const syncBudgetBook = async (
     await apiClient.api.postBudgetBooksSyncBook(data, query, params)
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to sync budget book',
+      message:
+        error instanceof Error ? error.message : 'Failed to sync budget book',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -111,7 +115,7 @@ export const getBudgetBook = async (
   try {
     const response = await apiClient.api.getBudgetBooksGetBook(query, params)
     const responseAny: any = response
-    
+
     // Handle different response structures (similar to occasion API)
     if (responseAny?.data?.data) {
       return responseAny.data.data as GetBudgetBookResponse
@@ -125,7 +129,8 @@ export const getBudgetBook = async (
     return null
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch budget book',
+      message:
+        error instanceof Error ? error.message : 'Failed to fetch budget book',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -145,7 +150,8 @@ export const getBudgetLines = async (
     return (response?.data ?? response) as unknown as GetBudgetLinesResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch budget lines',
+      message:
+        error instanceof Error ? error.message : 'Failed to fetch budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -165,7 +171,8 @@ export const createBudgetLine = async (
     await apiClient.api.postBudgetBooksCreate(data, query, params)
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to create budget line',
+      message:
+        error instanceof Error ? error.message : 'Failed to create budget line',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -185,7 +192,10 @@ export const createBudgetLinesBulk = async (
     await apiClient.api.postBudgetBooksCreateAll(data, query, params)
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to create budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to create budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -204,10 +214,17 @@ export const updateBudgetLine = async (
   params?: RequestParams
 ): Promise<void> => {
   try {
-    await apiClient.api.putBudgetBooksUpdate(eventLineId, budgetlineId, data, query, params)
+    await apiClient.api.putBudgetBooksUpdate(
+      eventLineId,
+      budgetlineId,
+      data,
+      query,
+      params
+    )
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to update budget line',
+      message:
+        error instanceof Error ? error.message : 'Failed to update budget line',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -227,7 +244,10 @@ export const updateBudgetLinesBulk = async (
     await apiClient.api.putBudgetBooksUpdateAll(data, query, params)
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to update budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to update budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -245,10 +265,16 @@ export const deleteBudgetLine = async (
   params?: RequestParams
 ): Promise<void> => {
   try {
-    await apiClient.api.deleteBudgetBooksDelete(eventLineId, budgetlineId, query, params)
+    await apiClient.api.deleteBudgetBooksDelete(
+      eventLineId,
+      budgetlineId,
+      query,
+      params
+    )
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to delete budget line',
+      message:
+        error instanceof Error ? error.message : 'Failed to delete budget line',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -266,10 +292,18 @@ export const toggleBudgetLineDone = async (
   params?: RequestParams
 ): Promise<void> => {
   try {
-    await apiClient.api.putBudgetBooksDone(eventLineId, budgetlineId, query, params)
+    await apiClient.api.putBudgetBooksDone(
+      eventLineId,
+      budgetlineId,
+      query,
+      params
+    )
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to toggle budget line done status',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to toggle budget line done status',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -287,10 +321,18 @@ export const toggleBudgetLineFavorite = async (
   params?: RequestParams
 ): Promise<void> => {
   try {
-    await apiClient.api.putBudgetBooksFavorite(eventLineId, budgetlineId, query, params)
+    await apiClient.api.putBudgetBooksFavorite(
+      eventLineId,
+      budgetlineId,
+      query,
+      params
+    )
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to toggle budget line favorite status',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to toggle budget line favorite status',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -319,7 +361,10 @@ export const getBudgetLinesCustom = async (
     return (response?.data ?? response) as unknown as GetBudgetLinesResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch custom budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch custom budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -339,7 +384,10 @@ export const getBudgetLinesDone = async (
     return (response?.data ?? response) as unknown as GetBudgetLinesResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch done budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch done budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -360,7 +408,10 @@ export const markBudgetLinesDoneBulk = async (
     await apiClient.api.putBudgetBooksDoneAll(ids, { value, ...query }, params)
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to mark budget lines as done',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to mark budget lines as done',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -376,11 +427,17 @@ export const getBudgetLinesNotDone = async (
   params?: RequestParams
 ): Promise<GetBudgetLinesResponse> => {
   try {
-    const response = await apiClient.api.getBudgetBooksGetAllNotDone(query, params)
+    const response = await apiClient.api.getBudgetBooksGetAllNotDone(
+      query,
+      params
+    )
     return (response?.data ?? response) as unknown as GetBudgetLinesResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch not done budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch not done budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -396,11 +453,17 @@ export const getBudgetLinesFavorite = async (
   params?: RequestParams
 ): Promise<GetBudgetLinesResponse> => {
   try {
-    const response = await apiClient.api.getBudgetBooksGetAllFavorite(query, params)
+    const response = await apiClient.api.getBudgetBooksGetAllFavorite(
+      query,
+      params
+    )
     return (response?.data ?? response) as unknown as GetBudgetLinesResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch favorite budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch favorite budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -416,11 +479,17 @@ export const getBudgetLinesNotFavorite = async (
   params?: RequestParams
 ): Promise<GetBudgetLinesResponse> => {
   try {
-    const response = await apiClient.api.getBudgetBooksGetAllNotFavorite(query, params)
+    const response = await apiClient.api.getBudgetBooksGetAllNotFavorite(
+      query,
+      params
+    )
     return (response?.data ?? response) as unknown as GetBudgetLinesResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch not favorite budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch not favorite budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -436,11 +505,17 @@ export const getBudgetLinesDeleted = async (
   params?: RequestParams
 ): Promise<GetBudgetLinesResponse> => {
   try {
-    const response = await apiClient.api.getBudgetBooksGetAllDelete(query, params)
+    const response = await apiClient.api.getBudgetBooksGetAllDelete(
+      query,
+      params
+    )
     return (response?.data ?? response) as unknown as GetBudgetLinesResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch deleted budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch deleted budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -456,11 +531,17 @@ export const getBudgetLinesNotDeleted = async (
   params?: RequestParams
 ): Promise<GetBudgetLinesResponse> => {
   try {
-    const response = await apiClient.api.getBudgetBooksGetAllNotDelete(query, params)
+    const response = await apiClient.api.getBudgetBooksGetAllNotDelete(
+      query,
+      params
+    )
     return (response?.data ?? response) as unknown as GetBudgetLinesResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch not deleted budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch not deleted budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -478,10 +559,17 @@ export const deleteBudgetLinesBulk = async (
   params?: RequestParams
 ): Promise<void> => {
   try {
-    await apiClient.api.deleteBudgetBooksDeleteAll(ids, { value, ...query }, params)
+    await apiClient.api.deleteBudgetBooksDeleteAll(
+      ids,
+      { value, ...query },
+      params
+    )
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to delete budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to delete budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -499,10 +587,17 @@ export const favoriteBudgetLinesBulk = async (
   params?: RequestParams
 ): Promise<void> => {
   try {
-    await apiClient.api.putBudgetBooksFavoriteAll(ids, { value, ...query }, params)
+    await apiClient.api.putBudgetBooksFavoriteAll(
+      ids,
+      { value, ...query },
+      params
+    )
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to toggle favorite status for budget lines',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to toggle favorite status for budget lines',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -520,11 +615,17 @@ export const getBudgetLine = async (
   params?: RequestParams
 ): Promise<GetBudgetLineResponse> => {
   try {
-    const response = await apiClient.api.getBudgetBooksGet(eventLineId, budgetlineId, query, params)
+    const response = await apiClient.api.getBudgetBooksGet(
+      eventLineId,
+      budgetlineId,
+      query,
+      params
+    )
     return (response?.data ?? response) as unknown as GetBudgetLineResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch budget line',
+      message:
+        error instanceof Error ? error.message : 'Failed to fetch budget line',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -540,11 +641,18 @@ export const getBudgetCategories = async (
   params?: RequestParams
 ): Promise<GetBudgetCategoriesResponse> => {
   try {
-    const response = await apiClient.api.getBudgetBooksGetAllCategories(query, params)
-    return (response?.data ?? response) as unknown as GetBudgetCategoriesResponse
+    const response = await apiClient.api.getBudgetBooksGetAllCategories(
+      query,
+      params
+    )
+    return (response?.data ??
+      response) as unknown as GetBudgetCategoriesResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch budget categories',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch budget categories',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -564,7 +672,10 @@ export const createBudgetCategory = async (
     await apiClient.api.postBudgetBooksCreateCategory(data, query, params)
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to create budget category',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to create budget category',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -581,11 +692,18 @@ export const getBudgetCategory = async (
   params?: RequestParams
 ): Promise<GetBudgetCategoryResponse> => {
   try {
-    const response = await apiClient.api.getBudgetBooksGetCategory(lineCategoryId, query, params)
+    const response = await apiClient.api.getBudgetBooksGetCategory(
+      lineCategoryId,
+      query,
+      params
+    )
     return (response?.data ?? response) as unknown as GetBudgetCategoryResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to fetch budget category',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch budget category',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -603,10 +721,18 @@ export const updateBudgetCategory = async (
   params?: RequestParams
 ): Promise<void> => {
   try {
-    await apiClient.api.putBudgetBooksUpdateCategory(lineCategoryId, data, query, params)
+    await apiClient.api.putBudgetBooksUpdateCategory(
+      lineCategoryId,
+      data,
+      query,
+      params
+    )
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to update budget category',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to update budget category',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -623,14 +749,20 @@ export const deleteBudgetCategory = async (
   params?: RequestParams
 ): Promise<void> => {
   try {
-    await apiClient.api.deleteBudgetBooksDeleteCategory(lineCategoryId, query, params)
+    await apiClient.api.deleteBudgetBooksDeleteCategory(
+      lineCategoryId,
+      query,
+      params
+    )
   } catch (error: unknown) {
     const apiError: ApiError = {
-      message: error instanceof Error ? error.message : 'Failed to delete budget category',
+      message:
+        error instanceof Error
+          ? error.message
+          : 'Failed to delete budget category',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
     throw apiError
   }
 }
-

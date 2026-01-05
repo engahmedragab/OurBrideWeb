@@ -11,5 +11,3 @@ export interface MainServiceBookResponse extends MainBookResponse<MainServiceLin
   isSubDone?: boolean
   services?: MainServiceLineResponse[]
 }
-
-

@@ -22,6 +22,3 @@ export interface ProviderHomeFeaturedProviderResponse {
   uniqueCode?: string
   topRatedService?: ProviderHomeServiceSummary
 }
-
-
-

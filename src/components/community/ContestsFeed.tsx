@@ -11,7 +11,10 @@ export interface ContestsFeedProps {
   contests?: LeaderboardContestResponse[]
 }
 
-export const ContestsFeed = ({ className, contests = [] }: ContestsFeedProps) => {
+export const ContestsFeed = ({
+  className,
+  contests = [],
+}: ContestsFeedProps) => {
   const router = useRouter()
 
   return (
@@ -34,16 +37,3 @@ export const ContestsFeed = ({ className, contests = [] }: ContestsFeedProps) =>
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

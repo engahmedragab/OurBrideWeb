@@ -27,13 +27,15 @@ const toDateKey = (value: Date | string): string => {
 /**
  * Normalize bigDay prop to an array of date keys (YYYY-MM-DD)
  */
-const normalizeBigDays = (bigDay?: Date | string | Array<Date | string>): string[] => {
+const normalizeBigDays = (
+  bigDay?: Date | string | Array<Date | string>
+): string[] => {
   if (!bigDay) return []
-  
+
   if (Array.isArray(bigDay)) {
     return bigDay.map(day => toDateKey(day)).filter(Boolean)
   }
-  
+
   return [toDateKey(bigDay)]
 }
 
@@ -60,7 +62,9 @@ const valueToDate = (value: PlanningMiniCalendarValue): Date => {
 /**
  * Get calendar grid for a given month (always 42 days = 6 weeks * 7 days)
  */
-const getMonthGrid = (viewMonth: Date): Array<{
+const getMonthGrid = (
+  viewMonth: Date
+): Array<{
   day: number
   isOtherMonth: boolean
   date: Date
@@ -126,7 +130,7 @@ export const PlanningMiniCalendar = ({
 }: PlanningMiniCalendarProps) => {
   const selectedDate = valueToDate(value)
   const today = getToday()
-  
+
   // Internal state for the visible month (viewMonth)
   const [viewMonth, setViewMonth] = useState(() => {
     // Initialize to the month of the selected date, or today if no selection
@@ -153,14 +157,20 @@ export const PlanningMiniCalendar = ({
 
   // Ref to track the last value's month key to detect actual value changes
   const lastValueMonthKeyRef = useRef<string>(
-    getMonthKey(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1))
+    getMonthKey(
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
+    )
   )
 
   // Update viewMonth ONLY when value prop actually changes (not when viewMonth changes internally)
   useEffect(() => {
-    const selectedMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
+    const selectedMonth = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      1
+    )
     const selectedMonthKey = getMonthKey(selectedMonth)
-    
+
     // Only update if the value prop's month actually changed (not just a re-render)
     if (selectedMonthKey !== lastValueMonthKeyRef.current) {
       lastValueMonthKeyRef.current = selectedMonthKey
@@ -226,7 +236,7 @@ export const PlanningMiniCalendar = ({
   // Generate calendar grid
   const calendarDays = useMemo(() => {
     const grid = getMonthGrid(viewMonth)
-    
+
     return grid.map(({ day, isOtherMonth, date }) => {
       const isSelected = isSameDay(date, selectedDate)
       const dateIsBigDay = checkIsBigDay(date, normalizedBigDays)
@@ -252,7 +262,7 @@ export const PlanningMiniCalendar = ({
   }, [currentYear])
 
   const handleMonthChange = (direction: 'prev' | 'next') => {
-    setViewMonth((prev) => {
+    setViewMonth(prev => {
       const year = prev.getFullYear()
       const month = prev.getMonth()
       if (direction === 'prev') {
@@ -272,14 +282,14 @@ export const PlanningMiniCalendar = ({
   }
 
   const handleMonthSelect = (monthIndex: number) => {
-    setViewMonth((prev) => {
+    setViewMonth(prev => {
       return new Date(prev.getFullYear(), monthIndex, 1)
     })
     setIsMonthOpen(false)
   }
 
   const handleYearSelect = (year: number) => {
-    setViewMonth((prev) => {
+    setViewMonth(prev => {
       return new Date(year, prev.getMonth(), 1)
     })
     setIsYearOpen(false)
@@ -287,13 +297,13 @@ export const PlanningMiniCalendar = ({
 
   const handleDaySelect = (date: Date) => {
     if (!date) return
-    
+
     // Call onChange with the selected date
     onChange(date)
-    
+
     // If the selected day belongs to a different month, update viewMonth to that month
     const selectedMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-    setViewMonth((prev) => {
+    setViewMonth(prev => {
       const currentViewMonth = new Date(prev.getFullYear(), prev.getMonth(), 1)
       // Only update if different month
       if (selectedMonth.getTime() !== currentViewMonth.getTime()) {
@@ -342,7 +352,8 @@ export const PlanningMiniCalendar = ({
                   onClick={() => handleMonthSelect(index)}
                   className={cn(
                     'w-full px-3 py-2 text-left text-10 font-normal text-gray-700 hover:bg-gray-100 transition-colors',
-                    index === viewMonth.getMonth() && 'bg-brand-50 text-brand-500'
+                    index === viewMonth.getMonth() &&
+                      'bg-brand-50 text-brand-500'
                   )}
                 >
                   {month}
@@ -368,13 +379,14 @@ export const PlanningMiniCalendar = ({
           </button>
           {isYearOpen && (
             <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 w-20 max-h-60 overflow-y-auto">
-              {years.map((year) => (
+              {years.map(year => (
                 <button
                   key={year}
                   onClick={() => handleYearSelect(year)}
                   className={cn(
                     'w-full px-3 py-2 text-center text-10 font-normal text-gray-700 hover:bg-gray-100 transition-colors',
-                    year === viewMonth.getFullYear() && 'bg-brand-50 text-brand-500'
+                    year === viewMonth.getFullYear() &&
+                      'bg-brand-50 text-brand-500'
                   )}
                 >
                   {year}
@@ -398,11 +410,16 @@ export const PlanningMiniCalendar = ({
         {/* Weekday Headers */}
         <div className="flex items-center justify-between w-full mb-0">
           {weekDays.map((day, index) => (
-            <div key={day} className="flex items-center justify-center rounded size-5">
+            <div
+              key={day}
+              className="flex items-center justify-center rounded size-5"
+            >
               <p
                 className={cn(
                   'text-10 font-normal text-center whitespace-nowrap',
-                  index === 0 || index === 6 ? 'text-brand-500' : 'text-gray-500'
+                  index === 0 || index === 6
+                    ? 'text-brand-500'
+                    : 'text-gray-500'
                 )}
               >
                 {day}
@@ -431,7 +448,9 @@ export const PlanningMiniCalendar = ({
                   // If selected is also bigDay, add green border to combine styles
                   isBoth && 'ring-2 ring-brand-500 ring-offset-1',
                   // Big day (not selected): green background with border
-                  showBigDay && !showSelected && 'bg-green-100 border border-green-500 rounded-full',
+                  showBigDay &&
+                    !showSelected &&
+                    'bg-green-100 border border-green-500 rounded-full',
                   // Other month: muted style
                   isOtherMonth && 'opacity-50',
                   // Hover state (only for current month, non-selected days)
@@ -449,7 +468,10 @@ export const PlanningMiniCalendar = ({
                     // Other month: muted gray
                     isOtherMonth && !showSelected && 'text-gray-500',
                     // Default: dark gray
-                    !showSelected && !showBigDay && !isOtherMonth && 'text-gray-900'
+                    !showSelected &&
+                      !showBigDay &&
+                      !isOtherMonth &&
+                      'text-gray-900'
                   )}
                 >
                   {dateInfo.day}

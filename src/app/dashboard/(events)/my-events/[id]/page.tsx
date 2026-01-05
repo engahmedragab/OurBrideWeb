@@ -7,11 +7,7 @@ import { redirect } from 'next/navigation'
 export async function generateStaticParams() {
   // Return a minimal set of placeholder IDs
   // In a real app, you might fetch actual event IDs from an API
-  return [
-    { id: '1' },
-    { id: '2' },
-    { id: '3' },
-  ]
+  return [{ id: '1' }, { id: '2' }, { id: '3' }]
 }
 
 /**
@@ -26,7 +22,7 @@ export default async function EventDetailsPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  
+
   if (id) {
     // Redirect to my-events with the event ID selected
     redirect(`/dashboard/my-events?eventId=${id}`)

@@ -13,5 +13,3 @@ export interface BudgetLineCategoryResponse extends LineCategoryResponse {
   iconName: string
   colorName: string
 }
-
-

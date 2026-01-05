@@ -41,20 +41,3 @@ async function BlogDetailsContentWrapper({
   const { id } = await params
   return <BlogDetailsClient id={id} />
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

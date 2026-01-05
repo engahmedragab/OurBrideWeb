@@ -46,30 +46,30 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
 // Helper function to map category name to icon
 const getCategoryIcon = (categoryName: string): React.ReactNode => {
   const normalizedName = categoryName.toLowerCase().replace(/\s+/g, '-')
-  return CATEGORY_ICON_MAP[normalizedName] || CATEGORY_ICON_MAP[Object.keys(CATEGORY_ICON_MAP)[0]] || null
+  return (
+    CATEGORY_ICON_MAP[normalizedName] ||
+    CATEGORY_ICON_MAP[Object.keys(CATEGORY_ICON_MAP)[0]] ||
+    null
+  )
 }
 
 // Static features for "Why Brides Trust OurBride" section
 const TRUST_FEATURES = [
   {
     title: 'Usp Title',
-    description:
-      'OurBride is your all-in-one platform for wedding planning .',
+    description: 'OurBride is your all-in-one platform for wedding planning .',
   },
   {
     title: 'Usp Title',
-    description:
-      'OurBride is your all-in-one platform for wedding planning .',
+    description: 'OurBride is your all-in-one platform for wedding planning .',
   },
   {
     title: 'Usp Title',
-    description:
-      'OurBride is your all-in-one platform for wedding planning .',
+    description: 'OurBride is your all-in-one platform for wedding planning .',
   },
   {
     title: 'Usp Title',
-    description:
-      'OurBride is your all-in-one platform for wedding planning .',
+    description: 'OurBride is your all-in-one platform for wedding planning .',
   },
 ]
 
@@ -161,7 +161,6 @@ function ServicesIntroPageContent() {
     [data?.categories]
   )
 
-
   // Map providers to BestProvider format - memoized
   const bestProviders: BestProvider[] = useMemo(() => {
     if (!data?.providers || data.providers.length === 0) return []
@@ -174,7 +173,9 @@ function ServicesIntroPageContent() {
         return profession
       }
       // Show first 2 services with ellipsis
-      return services.slice(0, 2).join(', ') + (services.length > 2 ? '...' : '')
+      return (
+        services.slice(0, 2).join(', ') + (services.length > 2 ? '...' : '')
+      )
     }
 
     return data.providers
@@ -190,7 +191,9 @@ function ServicesIntroPageContent() {
           id: provider.id,
           name: provider.name,
           image: provider.image || '',
-          profession: formatProfession(provider.profession || 'Service Provider'),
+          profession: formatProfession(
+            provider.profession || 'Service Provider'
+          ),
           verified: provider.verified || false,
           rating: provider.rating || 0,
           product: providerService
@@ -283,7 +286,10 @@ function ServicesIntroPageContent() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {offersServiceCards.map(cardData => (
-                  <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
+                  <Card
+                    key={cardData.id}
+                    cardData={{ type: 'service', ...cardData }}
+                  />
                 ))}
               </div>
             </section>

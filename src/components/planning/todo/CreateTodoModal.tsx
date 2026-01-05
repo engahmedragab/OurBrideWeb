@@ -100,7 +100,10 @@ export const CreateTodoModal = ({
 
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label htmlFor="todo-title" className="block text-14 font-medium text-gray-700">
+            <label
+              htmlFor="todo-title"
+              className="block text-14 font-medium text-gray-700"
+            >
               Todo <span className="text-red-500">*</span>
             </label>
             <Input
@@ -122,7 +125,7 @@ export const CreateTodoModal = ({
               <div className="flex items-center gap-3">
                 <Checkbox
                   checked={!!field.value}
-                  onChange={(val) => field.onChange(val === true)}
+                  onChange={val => field.onChange(val === true)}
                   disabled={isSubmitting || isLoading}
                 />
                 <span className="text-sm text-gray-700">Mark as completed</span>
@@ -132,7 +135,12 @@ export const CreateTodoModal = ({
         </div>
 
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
-          <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting || isLoading}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+            disabled={isSubmitting || isLoading}
+          >
             Cancel
           </Button>
           <Button

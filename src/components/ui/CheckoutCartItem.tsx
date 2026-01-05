@@ -134,20 +134,26 @@ export const CheckoutCartItem = ({
         <div className="mb-1">
           <span className="text-14 text-gray-600 mr-2">Price Per Piece</span>
           <span className="text-16 font-normal text-gray-900">
-            {discountedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
+            {discountedPrice.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
+            {currency}
           </span>
           {hasDiscount && (
             <span className="text-14 font-normal text-gray-400 line-through ml-2">
-              {originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
+              {originalPrice.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}{' '}
+              {currency}
             </span>
           )}
         </div>
 
         {/* Delivery Date */}
         {deliveryDate && (
-          <p className="text-14 text-gray-600 mb-2">
-            Get In By {deliveryDate}
-          </p>
+          <p className="text-14 text-gray-600 mb-2">Get In By {deliveryDate}</p>
         )}
 
         {/* Purchase Price and Date */}
@@ -155,17 +161,25 @@ export const CheckoutCartItem = ({
           {purchasePrice !== undefined && purchasePrice !== null && (
             <p className="text-14 text-gray-600">
               <span className="font-medium">Purchase Price: </span>
-              <span>{purchasePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</span>
+              <span>
+                {purchasePrice.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}{' '}
+                {currency}
+              </span>
             </p>
           )}
           {purchaseDate && (
             <p className="text-14 text-gray-600">
               <span className="font-medium">Added on: </span>
-              <span>{new Date(purchaseDate).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-              })}</span>
+              <span>
+                {new Date(purchaseDate).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </span>
             </p>
           )}
         </div>
@@ -174,7 +188,9 @@ export const CheckoutCartItem = ({
         <div className="mt-auto pt-3 border-t border-gray-200">
           <div className="text-16 font-semibold text-gray-900">
             <span className="font-normal">Total Price : </span>
-            <span>{totalPrice.toLocaleString()} {currency}</span>
+            <span>
+              {totalPrice.toLocaleString()} {currency}
+            </span>
           </div>
         </div>
       </div>
@@ -199,4 +215,3 @@ export const CheckoutCartItem = ({
     </div>
   )
 }
-

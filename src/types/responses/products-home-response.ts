@@ -17,6 +17,3 @@ export interface ProductsHomeResponse {
   categories: CategoryResponse[]
   statistics: OrderStatisticsResponse
 }
-
-
-

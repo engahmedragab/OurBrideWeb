@@ -18,7 +18,7 @@ import { isAuthenticated } from '@/auth/utils/token'
 export const useItemBook = (query?: ItemBooksQuery & { enabled?: boolean }) => {
   const { enabled = true, ...queryParams } = query || {}
   const authenticated = isAuthenticated()
-  
+
   return useQuery<ItemBookResponse | null>({
     queryKey: ['itemBook', queryParams],
     queryFn: async () => {
@@ -35,9 +35,15 @@ export const useItemBook = (query?: ItemBooksQuery & { enabled?: boolean }) => {
  */
 export const useSyncItemBook = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
-    mutationFn: async ({ data, query }: { data: ItemBookRequest; query?: ItemBooksQuery }) => {
+    mutationFn: async ({
+      data,
+      query,
+    }: {
+      data: ItemBookRequest
+      query?: ItemBooksQuery
+    }) => {
       await syncItemBook(data, query)
     },
     onSuccess: (_, variables) => {
@@ -45,4 +51,3 @@ export const useSyncItemBook = () => {
     },
   })
 }
-

@@ -1,8 +1,15 @@
 // Community Reels API service functions
 
 import { apiClient } from '@/services/api/apiClient'
-import type { ReelResponse, ShareReelResponse } from '@/types/responses/community'
-import type { CreateReelRequest, UpdateReelRequest, AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  ReelResponse,
+  ShareReelResponse,
+} from '@/types/responses/community'
+import type {
+  CreateReelRequest,
+  UpdateReelRequest,
+  AddReviewRequest,
+} from '@/../client/common/api/gen/ourbride-api'
 
 /**
  * Get all reels
@@ -14,7 +21,7 @@ export const getAllReels = async (params?: {
   try {
     const response = await apiClient.api.getReelsGetAll(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as ReelResponse[]
@@ -28,10 +35,12 @@ export const getAllReels = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch reels')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch reels'
+    )
   }
 }
 
@@ -42,7 +51,7 @@ export const getReelById = async (id: number): Promise<ReelResponse | null> => {
   try {
     const response = await apiClient.api.getReelsGetById(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ReelResponse
@@ -53,10 +62,12 @@ export const getReelById = async (id: number): Promise<ReelResponse | null> => {
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as ReelResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch reel')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch reel'
+    )
   }
 }
 
@@ -70,7 +81,7 @@ export const getPublishedReels = async (params?: {
   try {
     const response = await apiClient.api.getReelsGetPublished(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as ReelResponse[]
@@ -84,10 +95,12 @@ export const getPublishedReels = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch published reels')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch published reels'
+    )
   }
 }
 
@@ -101,7 +114,7 @@ export const getFeaturedReels = async (params?: {
   try {
     const response = await apiClient.api.getReelsGetFeatured(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as ReelResponse[]
@@ -115,10 +128,12 @@ export const getFeaturedReels = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch featured reels')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch featured reels'
+    )
   }
 }
 
@@ -132,7 +147,7 @@ export const getTrendingReels = async (params?: {
   try {
     const response = await apiClient.api.getReelsGetTrending(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as ReelResponse[]
@@ -146,21 +161,25 @@ export const getTrendingReels = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch trending reels')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch trending reels'
+    )
   }
 }
 
 /**
  * Get reels by user ID
  */
-export const getReelsByUserId = async (userId: string): Promise<ReelResponse[]> => {
+export const getReelsByUserId = async (
+  userId: string
+): Promise<ReelResponse[]> => {
   try {
     const response = await apiClient.api.getReelsGetByUserId(userId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as ReelResponse[]
@@ -174,10 +193,12 @@ export const getReelsByUserId = async (userId: string): Promise<ReelResponse[]> 
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch reels by user')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch reels by user'
+    )
   }
 }
 
@@ -190,7 +211,7 @@ export const searchReels = async (params?: {
   try {
     const response = await apiClient.api.getReelsSearch(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as ReelResponse[]
@@ -204,21 +225,25 @@ export const searchReels = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to search reels')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to search reels'
+    )
   }
 }
 
 /**
  * Create a new reel
  */
-export const createReel = async (data: CreateReelRequest): Promise<ReelResponse | null> => {
+export const createReel = async (
+  data: CreateReelRequest
+): Promise<ReelResponse | null> => {
   try {
     const response = await apiClient.api.postReelsCreate(data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ReelResponse
@@ -229,21 +254,26 @@ export const createReel = async (data: CreateReelRequest): Promise<ReelResponse 
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as ReelResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create reel')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create reel'
+    )
   }
 }
 
 /**
  * Update a reel
  */
-export const updateReel = async (id: number, data: UpdateReelRequest): Promise<ReelResponse | null> => {
+export const updateReel = async (
+  id: number,
+  data: UpdateReelRequest
+): Promise<ReelResponse | null> => {
   try {
     const response = await apiClient.api.putReelsUpdate(id, data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ReelResponse
@@ -254,10 +284,12 @@ export const updateReel = async (id: number, data: UpdateReelRequest): Promise<R
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as ReelResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update reel')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update reel'
+    )
   }
 }
 
@@ -269,7 +301,9 @@ export const deleteReel = async (id: number): Promise<boolean> => {
     await apiClient.api.deleteReelsDelete(id)
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete reel')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete reel'
+    )
   }
 }
 
@@ -281,18 +315,25 @@ export const approveReel = async (id: number): Promise<boolean> => {
     await apiClient.api.postReelsApprove(id)
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to approve reel')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to approve reel'
+    )
   }
 }
 
 /**
  * Add review to a reel
  */
-export const addReview = async (id: number, data: AddReviewRequest): Promise<void> => {
+export const addReview = async (
+  id: number,
+  data: AddReviewRequest
+): Promise<void> => {
   try {
     await apiClient.api.postReelsAddReview(id, data)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add review')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to add review'
+    )
   }
 }
 
@@ -305,7 +346,9 @@ export const toggleLike = async (id: number): Promise<boolean> => {
     // The API might return the new like status, but we'll need to check separately
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle like')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle like'
+    )
   }
 }
 
@@ -316,7 +359,7 @@ export const isLiked = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getReelsIsLiked(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -327,10 +370,12 @@ export const isLiked = async (id: number): Promise<boolean> => {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check like status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check like status'
+    )
   }
 }
 
@@ -343,7 +388,9 @@ export const toggleFavorite = async (id: number): Promise<boolean> => {
     // The API might return the new favorite status, but we'll need to check separately
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle favorite')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle favorite'
+    )
   }
 }
 
@@ -354,7 +401,7 @@ export const isFavorite = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getReelsIsFavorite(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -365,10 +412,12 @@ export const isFavorite = async (id: number): Promise<boolean> => {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check favorite status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check favorite status'
+    )
   }
 }
 
@@ -379,18 +428,25 @@ export const addMedia = async (id: number, mediaId: number): Promise<void> => {
   try {
     await apiClient.api.postReelsAddMedia(id, mediaId)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add media')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to add media'
+    )
   }
 }
 
 /**
  * Remove media from a reel
  */
-export const removeMedia = async (id: number, mediaId: number): Promise<void> => {
+export const removeMedia = async (
+  id: number,
+  mediaId: number
+): Promise<void> => {
   try {
     await apiClient.api.deleteReelsRemoveMedia(id, mediaId)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to remove media')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to remove media'
+    )
   }
 }
 
@@ -401,7 +457,7 @@ export const getMediaIds = async (id: number): Promise<number[]> => {
   try {
     const response = await apiClient.api.getReelsGetMedia(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as number[]
@@ -415,10 +471,12 @@ export const getMediaIds = async (id: number): Promise<number[]> => {
     if (Array.isArray(responseAny)) {
       return responseAny as number[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch media IDs')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch media IDs'
+    )
   }
 }
 
@@ -429,7 +487,9 @@ export const incrementViewCount = async (id: number): Promise<void> => {
   try {
     await apiClient.api.postReelsIncrementView(id)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to increment view count')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to increment view count'
+    )
   }
 }
 
@@ -444,9 +504,13 @@ export const shareReel = async (
   try {
     const response = await apiClient.api.postReelsShare(id, { shareSource })
     const responseAny: any = response
-    
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = (responseAny as { data?: unknown }).data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ShareReelResponse }).data
@@ -455,30 +519,18 @@ export const shareReel = async (
         return data as ShareReelResponse
       }
     }
-    if (responseAny && typeof responseAny === 'object' && 'reelId' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'reelId' in responseAny
+    ) {
       return responseAny as ShareReelResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to share reel')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to share reel'
+    )
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

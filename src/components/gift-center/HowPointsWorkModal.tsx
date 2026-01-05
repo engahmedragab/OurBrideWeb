@@ -140,7 +140,6 @@ export const HowPointsWorkModal = ({
               <p className="text-16 sm:text-18 font-medium text-gray-900 leading-6">
                 Complete Weekly tasks on Gifts Center
               </p>
-          
             </div>
 
             {/* Section 2: Weekly Missions */}
@@ -169,7 +168,11 @@ export const HowPointsWorkModal = ({
                           {mission.points}
                         </p>
                         <Image
-                          src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
+                          src={
+                            typeof diamondSvg === 'string'
+                              ? diamondSvg
+                              : diamondSvg.src
+                          }
                           alt="Diamond"
                           width={24}
                           height={24}
@@ -216,7 +219,6 @@ export const HowPointsWorkModal = ({
               <p className="text-16 sm:text-18 font-medium text-gray-900 leading-6">
                 Level Up Your Rank By Daily Tasks
               </p>
-             
             </div>
 
             {/* Section 4: Make bookings, orders and share posts */}
@@ -238,7 +240,11 @@ export const HowPointsWorkModal = ({
                         {task.points}
                       </p>
                       <Image
-                        src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
+                        src={
+                          typeof diamondSvg === 'string'
+                            ? diamondSvg
+                            : diamondSvg.src
+                        }
                         alt="Diamond"
                         width={24}
                         height={24}
@@ -257,25 +263,30 @@ export const HowPointsWorkModal = ({
                   How To Redeem Points
                 </p>
                 <p className="text-14 sm:text-16 font-normal text-gray-500 leading-6">
-                  Use your points for discounts on services, special offers, Redeem Your Points By
-                  Clicking On Redeem In the Offers Section
+                  Use your points for discounts on services, special offers,
+                  Redeem Your Points By Clicking On Redeem In the Offers Section
                 </p>
               </div>
-             
             </div>
 
             {/* Section 6: Points to Discount Conversion */}
             <div className="flex flex-col gap-2 items-center justify-center">
               <div className="flex gap-3 sm:gap-4 items-center justify-center">
-                <p className="text-20 sm:text-24 font-medium text-gray-900">750</p>
+                <p className="text-20 sm:text-24 font-medium text-gray-900">
+                  750
+                </p>
                 <Image
-                  src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
+                  src={
+                    typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src
+                  }
                   alt="Diamond"
                   width={32}
                   height={32}
                   className="h-6 w-6 sm:h-8 sm:w-8"
                 />
-                <p className="text-20 sm:text-24 font-medium text-gray-900">= 1% Discount</p>
+                <p className="text-20 sm:text-24 font-medium text-gray-900">
+                  = 1% Discount
+                </p>
               </div>
               <p className="text-14 sm:text-16 font-normal text-gray-500 text-center">
                 Discount Limit : 10%
@@ -299,4 +310,3 @@ export const HowPointsWorkModal = ({
     </Modal>
   )
 }
-

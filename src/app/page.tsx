@@ -57,10 +57,16 @@ import {
   PAGINATION_CONFIG,
 } from '@/constants'
 
+import user1Image from '@/assets/home/user1.svg'
+import user2Image from '@/assets/home/user2.svg'
+import { ActiveUsers } from '@/components/home/ActiveUsers'
+
+const activeUsers = [user1Image, user2Image, user1Image, user2Image]
 // Memoized Product Card Component
 const ProductCardItem = memo(({ product }: { product: ProductCardData }) => {
   const handlers = useProductCardHandlers(parseInt(product.id, 10))
-  const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+  const { handleAddToCart, isLoading: isLoadingAddToCart } =
+    useAddProductToCart()
 
   const handleAddToCartClick = useCallback(
     (e: React.MouseEvent) => {
@@ -116,21 +122,23 @@ const ServiceCardItem = memo(({ service }: { service: ServiceCardData }) => {
 ServiceCardItem.displayName = 'ServiceCardItem'
 
 // Memoized Provider Card Component
-const ProviderCardItem = memo(({ provider }: { provider: ProviderCardData }) => {
-  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
-  return (
-    <Card
-      cardData={{
-        type: 'provider',
-        ...provider,
-        onFollowToggle: handlers.handleFollowToggle,
-        onFavoriteToggle: handlers.handleFavoriteToggle,
-        isLoadingFollow: handlers.isLoadingFollow,
-        isLoadingFavorite: handlers.isLoadingFavorite,
-      }}
-    />
-  )
-})
+const ProviderCardItem = memo(
+  ({ provider }: { provider: ProviderCardData }) => {
+    const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+    return (
+      <Card
+        cardData={{
+          type: 'provider',
+          ...provider,
+          onFollowToggle: handlers.handleFollowToggle,
+          onFavoriteToggle: handlers.handleFavoriteToggle,
+          isLoadingFollow: handlers.isLoadingFollow,
+          isLoadingFavorite: handlers.isLoadingFavorite,
+        }}
+      />
+    )
+  }
+)
 ProviderCardItem.displayName = 'ProviderCardItem'
 
 export default function Home() {
@@ -177,7 +185,7 @@ export default function Home() {
       testimonials.slice(
         testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE,
         testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE +
-        PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
+          PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
       ),
     [testimonials, testimonialsIndex]
   )
@@ -202,60 +210,37 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         {/* Section 1: Hero */}
-        <section className="container-custom py-12 md:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-center">
-            {/* Left Content */}
-            <div className="flex flex-col gap-6">
-              {/* Active Users */}
-              <div className="flex items-center gap-3 -mt-2">
-                <span className="text-14 font-semibold text-gray-700">
-                  <span className="text-gray-500 font-normal text-24">
-                    {statistics?.activeUsers || '+0'}
-                  </span>
-                  <span className="text-gray-500 font-normal text-14">
-                    Active Users
-                  </span>
-                </span>
-                <div className="flex -space-x-2">
-                  {[1, 2, 3, 4].map(i => (
-                    <div
-                      key={i}
-                      className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-brand-100 to-brand-200 flex items-center justify-center overflow-hidden"
-                    >
-                      <Users className="h-5 w-5 text-brand-500" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 self-start">
-                <span className="px-4 py-1.5 rounded-full bg-brand-500 text-white text-14 font-semibold">
-                  All-in-one platform for wedding.
-                </span>
-              </div>
+        <section className="container-custom py-12 md:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-10 lg:gap-8 items-center">
+            {/* Center Image (يطلع أول حاجة على الموبايل) */}
+            <div className="order-1 lg:order-2 flex justify-center">
+              <div className="relative w-80 h-80 md:w-96 md:h-96">
+                {/* 1) Base SVG Border (no blur) */}
+                <Image
+                  src={
+                    typeof heroCircularSvg === 'string'
+                      ? heroCircularSvg
+                      : heroCircularSvg.src
+                  }
+                  alt=""
+                  fill
+                  sizes="(max-width: 768px) 320px, 384px"
+                  className="absolute inset-0 z-0"
+                  aria-hidden="true"
+                  priority
+                />
 
-              {/* Headline */}
-              <h1 className="text-24 sm:text-30 md:text-40 lg:text-48 font-semibold text-gray-900 leading-tight mt-2">
-                YOUR BRIDE ALWAYS IS <br />
-                <span className="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
-                  OUR RESPONSIBILITY.
-                </span>
-              </h1>
-
-              {/* Description */}
-              <p className="text-14 sm:text-16 md:text-18 text-gray-600 leading-relaxed max-w-lg">
-                OurBride is your all-in-one platform for wedding planning and
-                shopping. Find everything you need to create your perfect day.
-              </p>
-            </div>
-
-            {/* Center: Bride Image */}
-            <div className="relative flex items-center justify-center">
-              {/* Main Bride Image - Centered */}
-              <div className="relative">
-                {/* Circular Image Container with Gradient Border */}
-                <div className="relative w-80 h-80 md:w-96 md:h-96">
-                  {/* SVG Border */}
+                {/* 2) Blurred SVG Border with progressive fade */}
+                <div
+                  className="absolute inset-0 z-[1] pointer-events-none"
+                  style={{
+                    filter: 'blur(10px)',
+                    WebkitMaskImage:
+                      'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)',
+                    maskImage:
+                      'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)',
+                  }}
+                >
                   <Image
                     src={
                       typeof heroCircularSvg === 'string'
@@ -269,30 +254,57 @@ export default function Home() {
                     aria-hidden="true"
                     priority
                   />
-                  {/* Bride Image */}
-                  <div className="absolute inset-[6.52px] rounded-full overflow-hidden z-10">
-                    <Image
-                      src={
-                        typeof heroBrideImage === 'string'
-                          ? heroBrideImage
-                          : heroBrideImage.src
-                      }
-                      alt="Happy Bride"
-                      fill
-                      sizes="(max-width: 768px) 307px, 371px"
-                      className="object-contain"
-                      priority
-                    />
-                  </div>
+                </div>
+
+                {/* Bride Image */}
+                <div className="absolute inset-[6.52px] rounded-full overflow-hidden z-10">
+                  <Image
+                    src={
+                      typeof heroBrideImage === 'string'
+                        ? heroBrideImage
+                        : heroBrideImage.src
+                    }
+                    alt="Happy Bride"
+                    fill
+                    sizes="(max-width: 768px) 307px, 371px"
+                    className="object-contain"
+                    priority
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Right Content: Circular Text and Explore Products Card */}
-            <div className="relative flex flex-col items-center lg:items-center gap-4 z-10">
-              {/* Circular Badge Button */}
-              <div className="relative w-24 h-24 md:w-28 md:h-28 flex items-center justify-center">
-                {/* Outer Rotating Text Ring */}
+            {/* Left Content (يجي بعد الصورة على الموبايل) */}
+            <div className="order-2 lg:order-1 flex flex-col gap-4 md:gap-6 items-center lg:items-start text-center lg:text-left">
+              {/* Active Users */}
+              <div className="flex justify-center lg:justify-start w-full">
+                <ActiveUsers statistics={statistics} photos={activeUsers} />
+              </div>
+
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2">
+                <span className="pt-1.5 text-brand-500 text-14 font-semibold">
+                  All-in-one platform for wedding
+                </span>
+              </div>
+
+              {/* Headline */}
+              <h1 className="text-24 sm:text-30 md:text-5xl lg:text-48 font-semibold text-gray-900 leading-tight">
+                YOUR BRIDE <br /> ALWAYS IS OUR <br />
+                RESPONSIBILITY
+              </h1>
+
+              {/* Description */}
+              <p className="text-14 sm:text-16 md:text-18 text-gray-500 leading-relaxed max-w-lg">
+                OurBride is your all-in-one platform for wedding planning and
+                shopping. Find everything you need to create your perfect day.
+              </p>
+            </div>
+
+            {/* Right Content (آخر حاجة على الموبايل) */}
+            <div className="order-3 lg:order-3 relative flex flex-col items-center gap-4 z-10 w-full">
+              {/* Circular Badge Button (مخفي على الموبايل لأنه مش ظاهر بالصورة) */}
+              <div className="hidden lg:flex relative w-24 h-24 md:w-28 md:h-28 items-center justify-center">
                 <svg
                   viewBox="0 0 120 120"
                   className="absolute inset-0 w-full h-full animate-spin-slow"
@@ -305,7 +317,7 @@ export default function Home() {
                   </defs>
                   <text
                     fill="currentColor"
-                    className="font-black text-12 uppercase tracking-wide"
+                    className="text-primary-500 text-12 uppercase tracking-wide"
                   >
                     <textPath href="#circle-text" startOffset="0%">
                       START SHOPPING NOW WITH OURBRIDE
@@ -313,11 +325,8 @@ export default function Home() {
                   </text>
                 </svg>
 
-                {/* Inner Fixed Circle and Arrow */}
                 <div className="relative z-10 flex items-center justify-center">
-                  {/* Inner Filled Circle */}
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-brand-400 flex items-center justify-center shadow-md">
-                    {/* White Arrow Icon (upward-right) */}
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary-500 flex items-center justify-center shadow-md">
                     <svg
                       width="24"
                       height="24"
@@ -338,57 +347,62 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Products Card */}
-              <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-                <div className="aspect-[5/2] overflow-hidden relative">
-                  <Image
-                    src={
-                      typeof heroCardBrideImage === 'string'
-                        ? heroCardBrideImage
-                        : heroCardBrideImage.src
-                    }
-                    alt="Explore Products"
-                    fill
-                    sizes="(max-width: 768px) 192px, 224px"
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-14 font-semibold rounded-full"
-                    asChild
-                  >
-                    <Link href="/products">Explore Products</Link>
-                  </Button>
-                </div>
-              </div>
+              {/* Cards: على الموبايل جنب بعض، على lg تحت بعض */}
+              <div className="w-full grid grid-cols-2 gap-3 lg:flex lg:flex-col lg:gap-4 lg:items-center">
+                {/* Products Card */}
+                <div className="relative w-full max-w-[190px] mx-auto lg:w-48 bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+                  <div className="aspect-[5/6] md:aspect-[6/3] overflow-hidden relative">
+                    <Image
+                      src={
+                        typeof heroCardBrideImage === 'string'
+                          ? heroCardBrideImage
+                          : heroCardBrideImage.src
+                      }
+                      alt="Explore Products"
+                      fill
+                      sizes="(max-width: 768px) 190px, 192px"
+                      className="object-cover object-top"
+                    />
+                  </div>
 
-              {/* Services Card */}
-              <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-                <div className="aspect-[5/2] overflow-hidden relative">
-                  <Image
-                    src={
-                      typeof heroCardBrideImage === 'string'
-                        ? heroCardBrideImage
-                        : heroCardBrideImage.src
-                    }
-                    alt="Explore Services"
-                    fill
-                    sizes="(max-width: 768px) 192px, 224px"
-                    className="object-cover"
-                  />
+                  <div className="p-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-14 border rounded-full border-primary-500 text-primary-500 hover:text-primary-600 hover:border-primary-600"
+                      asChild
+                    >
+                      <Link href="/products">Explore Products</Link>
+                    </Button>
+                  </div>
                 </div>
-                <div className="p-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-14 font-semibold rounded-full"
-                    asChild
-                  >
-                    <Link href="/services">Explore Services</Link>
-                  </Button>
+
+                {/* Services Card */}
+                <div className="relative w-full max-w-[190px] mx-auto lg:w-48 bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+                  <div className="aspect-[5/6] md:aspect-[6/3] overflow-hidden relative">
+                    <Image
+                      src={
+                        typeof heroCardBrideImage === 'string'
+                          ? heroCardBrideImage
+                          : heroCardBrideImage.src
+                      }
+                      alt="Explore Services"
+                      fill
+                      sizes="(max-width: 768px) 190px, 192px"
+                      className="object-cover object-top"
+                    />
+                  </div>
+
+                  <div className="p-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-14 border rounded-full border-primary-500 text-primary-500 hover:text-primary-600 hover:border-primary-600"
+                      asChild
+                    >
+                      <Link href="/services">Explore Services</Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -704,7 +718,7 @@ export default function Home() {
         </section>
 
         {/* Section 10: Wedding Journey */}
-        < section className="relative py-16 md:py-24 overflow-hidden bg-white" >
+        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <Image
               src={typeof lineS4Svg === 'string' ? lineS4Svg : lineS4Svg.src}

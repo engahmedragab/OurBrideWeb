@@ -18,7 +18,13 @@ export interface CallUserModalProps {
 }
 
 // AVATAR + RIPPLE helper (to ensure DRY):
-function AnimatedAvatar({ userAvatar, userName }: { userAvatar?: string, userName: string }) {
+function AnimatedAvatar({
+  userAvatar,
+  userName,
+}: {
+  userAvatar?: string
+  userName: string
+}) {
   return (
     <div className="relative flex items-center justify-center mt-2">
       <span
@@ -76,7 +82,7 @@ export const CallUserModal = ({
 
   useEffect(() => {
     if (!active || !isOpen) return
-    const interval = setInterval(() => setElapsed((t) => t + 1), 1000)
+    const interval = setInterval(() => setElapsed(t => t + 1), 1000)
     return () => clearInterval(interval)
   }, [active, isOpen])
 
@@ -100,7 +106,9 @@ export const CallUserModal = ({
           {/* Name */}
           <h3 className="text-18 font-normal text-gray-900 mt-2">{userName}</h3>
           {/* Timer */}
-          <div className="text-24 font-semibold text-gray-900 select-none tracking-widest">{timerText}</div>
+          <div className="text-24 font-semibold text-gray-900 select-none tracking-widest">
+            {timerText}
+          </div>
           {/* Controls Row -- Speaker & Mic */}
           <div className="flex items-center justify-center gap-12 mt-3 mb-2">
             <button
@@ -109,13 +117,20 @@ export const CallUserModal = ({
               aria-label="Toggle speaker"
               className="flex flex-col items-center gap-1.5 focus:outline-none"
             >
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${speakerOn ? 'bg-brand-500' : 'bg-gray-100'
-                }`}>
-                {speakerOn
-                  ? <Volume2 className="w-6 h-6 text-white" />
-                  : <VolumeX className="w-6 h-6 text-gray-400" />}
+              <div
+                className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+                  speakerOn ? 'bg-brand-500' : 'bg-gray-100'
+                }`}
+              >
+                {speakerOn ? (
+                  <Volume2 className="w-6 h-6 text-white" />
+                ) : (
+                  <VolumeX className="w-6 h-6 text-gray-400" />
+                )}
               </div>
-              <span className={`text-11 font-normal ${speakerOn ? 'text-brand-500' : 'text-gray-400'}`}>
+              <span
+                className={`text-11 font-normal ${speakerOn ? 'text-brand-500' : 'text-gray-400'}`}
+              >
                 {speakerOn ? 'Speakers On' : 'Speakers Off'}
               </span>
             </button>
@@ -125,13 +140,20 @@ export const CallUserModal = ({
               aria-label="Toggle mic"
               className="flex flex-col items-center gap-1.5 focus:outline-none"
             >
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${micOn ? 'bg-brand-500' : 'bg-gray-100'
-                }`}>
-                {micOn
-                  ? <Mic className="w-6 h-6 text-white" />
-                  : <MicOff className="w-6 h-6 text-gray-400" />}
+              <div
+                className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+                  micOn ? 'bg-brand-500' : 'bg-gray-100'
+                }`}
+              >
+                {micOn ? (
+                  <Mic className="w-6 h-6 text-white" />
+                ) : (
+                  <MicOff className="w-6 h-6 text-gray-400" />
+                )}
               </div>
-              <span className={`text-11 font-normal ${micOn ? 'text-brand-500' : 'text-gray-400'}`}>
+              <span
+                className={`text-11 font-normal ${micOn ? 'text-brand-500' : 'text-gray-400'}`}
+              >
                 {micOn ? 'Mic On' : 'Mic Off'}
               </span>
             </button>
@@ -248,7 +270,9 @@ export const CallUserModal = ({
           {/* Avatar */}
           <AnimatedAvatar userAvatar={userAvatar} userName={userName} />
           {/* Title and note */}
-          <h3 className="text-16 font-normal text-gray-900 mt-4">Call {userName} ?</h3>
+          <h3 className="text-16 font-normal text-gray-900 mt-4">
+            Call {userName} ?
+          </h3>
           <p className="text-14 text-center text-gray-400 leading-relaxed max-w-xs">
             Please note that all calls made through OurBride are recorded to
             ensure your safety, security, and protection of your rights.
@@ -273,7 +297,10 @@ export const CallUserModal = ({
           <Button
             variant="destructive"
             size="lg"
-            onClick={() => { setMode('idle'); onClose(); }}
+            onClick={() => {
+              setMode('idle')
+              onClose()
+            }}
             className=" rounded-full text-white font-normal flex items-center justify-center gap-2 py-3 text-white"
           >
             <X className="w-6 h-6 mr-2" />

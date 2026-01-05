@@ -37,12 +37,18 @@ export const EventMiniMonth = ({
 
   // Update currentMonth when selectedDate changes from outside
   useEffect(() => {
-    const newMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
-    const currentMonthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1)
-    
-    if (
-      currentMonthStart.getTime() !== newMonth.getTime()
-    ) {
+    const newMonth = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      1
+    )
+    const currentMonthStart = new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      1
+    )
+
+    if (currentMonthStart.getTime() !== newMonth.getTime()) {
       setCurrentMonth(newMonth)
     }
   }, [selectedDate])
@@ -87,9 +93,11 @@ export const EventMiniMonth = ({
       // Check if this day has events
       const eventsForDay = getEventsForDate(date)
       const hasEvent = eventsForDay.length > 0
-      
+
       // Check if this day is a big day (for planning calendar)
-      const isBigDay = checkBigDays ? getBigDays().includes(formatDateSafe(date)) : false
+      const isBigDay = checkBigDays
+        ? getBigDays().includes(formatDateSafe(date))
+        : false
 
       days.push({
         day,
@@ -131,7 +139,7 @@ export const EventMiniMonth = ({
   ]
 
   const handleMonthChange = (direction: 'prev' | 'next') => {
-    setCurrentMonth((prev) => {
+    setCurrentMonth(prev => {
       const newMonth = new Date(prev)
       if (direction === 'prev') {
         newMonth.setMonth(prev.getMonth() - 1)
@@ -183,11 +191,16 @@ export const EventMiniMonth = ({
         {/* Weekday Headers */}
         <div className="flex items-center justify-between w-full mb-0">
           {weekDays.map((day, index) => (
-            <div key={day} className="flex items-center justify-center rounded size-6">
+            <div
+              key={day}
+              className="flex items-center justify-center rounded size-6"
+            >
               <p
                 className={cn(
                   'text-11 font-normal text-center whitespace-nowrap',
-                  index === 0 || index === 6 ? 'text-brand-500' : 'text-gray-500'
+                  index === 0 || index === 6
+                    ? 'text-brand-500'
+                    : 'text-gray-500'
                 )}
               >
                 {day}
@@ -205,8 +218,12 @@ export const EventMiniMonth = ({
               className={cn(
                 'flex items-center justify-center rounded size-8 transition-colors',
                 dateInfo.isSelected && 'bg-brand-500 rounded-full',
-                dateInfo.hasEvent && !dateInfo.isSelected && 'bg-brand-100 rounded-full',
-                !dateInfo.isOtherMonth && !dateInfo.isSelected && 'hover:bg-gray-50'
+                dateInfo.hasEvent &&
+                  !dateInfo.isSelected &&
+                  'bg-brand-100 rounded-full',
+                !dateInfo.isOtherMonth &&
+                  !dateInfo.isSelected &&
+                  'hover:bg-gray-50'
               )}
             >
               <p

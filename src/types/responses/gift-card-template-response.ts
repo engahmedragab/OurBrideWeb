@@ -12,6 +12,3 @@ export interface GiftCardTemplateResponse {
   textColor: string | null
   isActive: boolean
 }
-
-
-

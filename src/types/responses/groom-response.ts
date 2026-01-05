@@ -8,5 +8,3 @@ export interface GroomResponse extends UserResponse {
   groomId: number
   brideName: string
 }
-
-

@@ -39,22 +39,40 @@ function CommunityContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams?.get('tab')
-  const validTabs: CommunityTab[] = ['community', 'posts', 'blogs', 'articles', 'reels', 'decision-groups', 'contests', 'profile']
+  const validTabs: CommunityTab[] = [
+    'community',
+    'posts',
+    'blogs',
+    'articles',
+    'reels',
+    'decision-groups',
+    'contests',
+    'profile',
+  ]
   const [activeTab, setActiveTab] = useState<CommunityTab>(
-    (tabParam && validTabs.includes(tabParam as CommunityTab))
+    tabParam && validTabs.includes(tabParam as CommunityTab)
       ? (tabParam as CommunityTab)
       : 'community'
   )
 
   // Fetch community home data once (for sidebar user data and community tab)
   // This is always enabled to ensure user data is available for all tabs
-  const { data: communityData, isLoading: isLoadingHome, error: homeError } = useCommunityHome({
-    postsCount: activeTab === 'community' ? 20 : activeTab === 'posts' ? 20 : undefined,
-    articlesCount: activeTab === 'community' ? 20 : activeTab === 'articles' ? 20 : 3,
-    suggestedUsersCount: 3,
-    topProvidersCount: 3,
-    tagsCount: 10,
-  }, true) // Always enabled to fetch user data for all tabs
+  const {
+    data: communityData,
+    isLoading: isLoadingHome,
+    error: homeError,
+  } = useCommunityHome(
+    {
+      postsCount:
+        activeTab === 'community' ? 20 : activeTab === 'posts' ? 20 : undefined,
+      articlesCount:
+        activeTab === 'community' ? 20 : activeTab === 'articles' ? 20 : 3,
+      suggestedUsersCount: 3,
+      topProvidersCount: 3,
+      tagsCount: 10,
+    },
+    true
+  ) // Always enabled to fetch user data for all tabs
 
   // Fetch content based on active tab
   const { data: posts, isLoading: isLoadingPosts } = usePosts({
@@ -81,11 +99,12 @@ function CommunityContent() {
     enabled: activeTab === 'reels',
   })
 
-  const { data: decisionGroups, isLoading: isLoadingDecisionGroups } = useDecisionGroups({
-    page: 1,
-    pageSize: 20,
-    enabled: activeTab === 'decision-groups',
-  })
+  const { data: decisionGroups, isLoading: isLoadingDecisionGroups } =
+    useDecisionGroups({
+      page: 1,
+      pageSize: 20,
+      enabled: activeTab === 'decision-groups',
+    })
 
   const { data: contests, isLoading: isLoadingContests } = useContests({
     page: 1,
@@ -102,46 +121,57 @@ function CommunityContent() {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
 
   // Search hooks - only enabled when there's a search query
-  const { data: searchPostsData, isLoading: isLoadingPostsSearch } = usePostsSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'posts' && !!searchQuery,
-  })
+  const { data: searchPostsData, isLoading: isLoadingPostsSearch } =
+    usePostsSearch({
+      searchTerm: searchQuery,
+      enabled: activeTab === 'posts' && !!searchQuery,
+    })
 
-  const { data: searchArticlesData, isLoading: isLoadingArticlesSearch } = useArticlesSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'articles' && !!searchQuery,
-  })
+  const { data: searchArticlesData, isLoading: isLoadingArticlesSearch } =
+    useArticlesSearch({
+      searchTerm: searchQuery,
+      enabled: activeTab === 'articles' && !!searchQuery,
+    })
 
-  const { data: searchBlogsData, isLoading: isLoadingBlogsSearch } = useBlogsSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'blogs' && !!searchQuery,
-  })
+  const { data: searchBlogsData, isLoading: isLoadingBlogsSearch } =
+    useBlogsSearch({
+      searchTerm: searchQuery,
+      enabled: activeTab === 'blogs' && !!searchQuery,
+    })
 
-  const { data: searchReelsData, isLoading: isLoadingReelsSearch } = useReelsSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'reels' && !!searchQuery,
-  })
+  const { data: searchReelsData, isLoading: isLoadingReelsSearch } =
+    useReelsSearch({
+      searchTerm: searchQuery,
+      enabled: activeTab === 'reels' && !!searchQuery,
+    })
 
-  const { data: searchDecisionGroupsData, isLoading: isLoadingDecisionGroupsSearch } = useDecisionGroupsSearch({
+  const {
+    data: searchDecisionGroupsData,
+    isLoading: isLoadingDecisionGroupsSearch,
+  } = useDecisionGroupsSearch({
     searchTerm: searchQuery,
     enabled: activeTab === 'decision-groups' && !!searchQuery,
   })
 
-  const { data: searchContestsData, isLoading: isLoadingContestsSearch } = useContestsSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'contests' && !!searchQuery,
-  })
+  const { data: searchContestsData, isLoading: isLoadingContestsSearch } =
+    useContestsSearch({
+      searchTerm: searchQuery,
+      enabled: activeTab === 'contests' && !!searchQuery,
+    })
 
   // Determine which data to show (search results or regular feed)
   const displayPosts = searchQuery ? searchPostsData : posts
   const displayArticles = searchQuery ? searchArticlesData : articles
   const displayBlogs = searchQuery ? searchBlogsData : blogs
   const displayReels = searchQuery ? searchReelsData : reels
-  const displayDecisionGroups = searchQuery ? searchDecisionGroupsData : decisionGroups
+  const displayDecisionGroups = searchQuery
+    ? searchDecisionGroupsData
+    : decisionGroups
   const displayContests = searchQuery ? searchContestsData : contests
 
   // Determine loading state including search
-  const isLoadingSearch = (activeTab === 'posts' && isLoadingPostsSearch) ||
+  const isLoadingSearch =
+    (activeTab === 'posts' && isLoadingPostsSearch) ||
     (activeTab === 'articles' && isLoadingArticlesSearch) ||
     (activeTab === 'blogs' && isLoadingBlogsSearch) ||
     (activeTab === 'reels' && isLoadingReelsSearch) ||
@@ -168,12 +198,14 @@ function CommunityContent() {
   }
 
   // Determine loading state
-  const isLoading = (activeTab === 'community' && isLoadingHome) ||
+  const isLoading =
+    (activeTab === 'community' && isLoadingHome) ||
     (activeTab === 'posts' && (isLoadingPosts || isLoadingSearch)) ||
     (activeTab === 'articles' && (isLoadingArticles || isLoadingSearch)) ||
     (activeTab === 'blogs' && (isLoadingBlogs || isLoadingSearch)) ||
     (activeTab === 'reels' && (isLoadingReels || isLoadingSearch)) ||
-    (activeTab === 'decision-groups' && (isLoadingDecisionGroups || isLoadingSearch)) ||
+    (activeTab === 'decision-groups' &&
+      (isLoadingDecisionGroups || isLoadingSearch)) ||
     (activeTab === 'contests' && (isLoadingContests || isLoadingSearch)) ||
     (activeTab === 'profile' && false) // Profile tab redirects, so no loading needed
 
@@ -210,7 +242,9 @@ function CommunityContent() {
           <ErrorModal
             open={true}
             title="Failed to Load Community Data"
-            message={homeError instanceof Error ? homeError.message : 'Unknown error'}
+            message={
+              homeError instanceof Error ? homeError.message : 'Unknown error'
+            }
             onRetry={() => window.location.reload()}
             onClose={() => {}}
           />
@@ -328,10 +362,12 @@ function CommunityContent() {
             )}
           >
             {/* Left Sidebar */}
-            <aside className={cn(
-              'hidden lg:block lg:w-64 xl:w-72 lg:flex-shrink-0',
-              activeTab === 'reels' && 'lg:w-auto'
-            )}>
+            <aside
+              className={cn(
+                'hidden lg:block lg:w-64 xl:w-72 lg:flex-shrink-0',
+                activeTab === 'reels' && 'lg:w-auto'
+              )}
+            >
               <div className="sticky top-6">
                 <CommunitySidebar
                   activeTab={activeTab}
@@ -341,10 +377,13 @@ function CommunityContent() {
             </aside>
 
             {/* Main Content */}
-            <div className={cn(
-              'flex-1 min-w-0',
-              activeTab !== 'reels' && 'w-full lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto lg:mx-0'
-            )}>
+            <div
+              className={cn(
+                'flex-1 min-w-0',
+                activeTab !== 'reels' &&
+                  'w-full lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto lg:mx-0'
+              )}
+            >
               {/* Search Bar - Only show for content tabs (not community tab) */}
               {activeTab !== 'community' && (
                 <div className="mb-6">
@@ -376,8 +415,8 @@ function CommunityContent() {
                             type="text"
                             placeholder={`Search ${activeTab}...`}
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) => {
+                            onChange={e => setSearchQuery(e.target.value)}
+                            onKeyDown={e => {
                               if (e.key === 'Enter') {
                                 handleSearch(searchQuery)
                               }
@@ -468,7 +507,8 @@ function CommunityContent() {
                   )}
                   {searchQuery && (
                     <div className="mt-2 text-sm text-gray-600">
-                      Showing results for: <span className="font-semibold">"{searchQuery}"</span>
+                      Showing results for:{' '}
+                      <span className="font-semibold">"{searchQuery}"</span>
                     </div>
                   )}
                 </div>
@@ -477,19 +517,37 @@ function CommunityContent() {
                 communityData ? (
                   <CommunityHomeFeed
                     data={communityData}
-                    currentUser={communityData.currentUser ? {
-                      name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || 'User',
-                      avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
-                    } : undefined}
+                    currentUser={
+                      communityData.currentUser
+                        ? {
+                            name:
+                              `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() ||
+                              communityData.currentUser.userName ||
+                              'User',
+                            avatar:
+                              communityData.currentUser.profileUrl ||
+                              'https://via.placeholder.com/100',
+                          }
+                        : undefined
+                    }
                   />
                 ) : null
               ) : activeTab === 'posts' ? (
                 <CommunityFeed
                   posts={displayPosts || []}
-                  currentUser={communityData?.currentUser ? {
-                    name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || 'User',
-                    avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
-                  } : undefined}
+                  currentUser={
+                    communityData?.currentUser
+                      ? {
+                          name:
+                            `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() ||
+                            communityData.currentUser.userName ||
+                            'User',
+                          avatar:
+                            communityData.currentUser.profileUrl ||
+                            'https://via.placeholder.com/100',
+                        }
+                      : undefined
+                  }
                 />
               ) : activeTab === 'blogs' ? (
                 <BlogsFeed blogs={displayBlogs || []} />
@@ -502,35 +560,55 @@ function CommunityContent() {
                   onReelSelect={setSelectedReelId}
                 />
               ) : activeTab === 'decision-groups' ? (
-                <DecisionGroupsFeed decisionGroups={displayDecisionGroups || []} />
+                <DecisionGroupsFeed
+                  decisionGroups={displayDecisionGroups || []}
+                />
               ) : activeTab === 'contests' ? (
                 <ContestsFeed contests={displayContests || []} />
-              ) : (
-                communityData ? (
-                  <CommunityHomeFeed
-                    data={communityData}
-                    currentUser={communityData.currentUser ? {
-                      name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || 'User',
-                      avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
-                    } : undefined}
-                  />
-                ) : null
-              )}
+              ) : communityData ? (
+                <CommunityHomeFeed
+                  data={communityData}
+                  currentUser={
+                    communityData.currentUser
+                      ? {
+                          name:
+                            `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() ||
+                            communityData.currentUser.userName ||
+                            'User',
+                          avatar:
+                            communityData.currentUser.profileUrl ||
+                            'https://via.placeholder.com/100',
+                        }
+                      : undefined
+                  }
+                />
+              ) : null}
             </div>
 
             {/* Right Sidebar */}
-            <aside className={cn(
-              'hidden xl:block xl:w-80 2xl:w-96 xl:flex-shrink-0',
-              activeTab === 'reels' && 'xl:w-auto'
-            )}>
+            <aside
+              className={cn(
+                'hidden xl:block xl:w-80 2xl:w-96 xl:flex-shrink-0',
+                activeTab === 'reels' && 'xl:w-auto'
+              )}
+            >
               <div className="sticky top-6">
                 <CommunityRightSidebar
                   activeTab={activeTab}
-                  currentUser={communityData?.currentUser ? {
-                    name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || 'User',
-                    email: communityData.currentUser.email || '',
-                    avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
-                  } : undefined}
+                  currentUser={
+                    communityData?.currentUser
+                      ? {
+                          name:
+                            `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() ||
+                            communityData.currentUser.userName ||
+                            'User',
+                          email: communityData.currentUser.email || '',
+                          avatar:
+                            communityData.currentUser.profileUrl ||
+                            'https://via.placeholder.com/100',
+                        }
+                      : undefined
+                  }
                   suggestedUsers={communityData?.suggestedUsers || []}
                   topProviders={communityData?.topProviders || []}
                   recentArticles={communityData?.recentArticles || []}
@@ -568,4 +646,3 @@ export default function CommunityPage() {
     </Suspense>
   )
 }
-

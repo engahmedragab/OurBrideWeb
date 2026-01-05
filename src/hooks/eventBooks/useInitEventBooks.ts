@@ -19,10 +19,10 @@ export const useInitEventBooks = () => {
 
   return useMutation({
     mutationFn: (params?: UseInitEventBooksParams) => initEventBooks(params),
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Invalidate event books query to refetch after initialization
       queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Event books initialized successfully',
@@ -30,10 +30,12 @@ export const useInitEventBooks = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to initialize event books'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to initialize event books'
       addToast(errorMessage, 'error')
     },
   })
 }
-

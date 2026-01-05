@@ -10,4 +10,3 @@ export const addCategoryFormSchema = z.object({
 })
 
 export type AddCategoryFormData = z.infer<typeof addCategoryFormSchema>
-

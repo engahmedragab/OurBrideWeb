@@ -73,7 +73,9 @@ export const SectionHeader = ({
             )}
           </div>
         )}
-        {rightContent && <div className="mt-2 sm:mt-3 md:mt-4">{rightContent}</div>}
+        {rightContent && (
+          <div className="mt-2 sm:mt-3 md:mt-4">{rightContent}</div>
+        )}
       </div>
     )
   }
@@ -98,7 +100,9 @@ export const SectionHeader = ({
       </div>
       {rightContent && <div>{rightContent}</div>}
       {count !== undefined && !suffix && !rightContent && (
-        <p className="text-13 sm:text-14 md:text-15 lg:text-17 text-gray-600">{count}</p>
+        <p className="text-13 sm:text-14 md:text-15 lg:text-17 text-gray-600">
+          {count}
+        </p>
       )}
     </div>
   )

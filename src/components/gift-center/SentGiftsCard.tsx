@@ -115,7 +115,9 @@ export const SentGiftsCard = ({ gifts = [], isEmpty }: SentGiftsCardProps) => {
 
   return (
     <div className="bg-white rounded-xl p-2.5 sm:p-3 border border-gray-100 shadow-sm">
-      <h3 className="text-12 sm:text-14 font-normal text-gray-900 mb-2 sm:mb-3">Sent Gifts</h3>
+      <h3 className="text-12 sm:text-14 font-normal text-gray-900 mb-2 sm:mb-3">
+        Sent Gifts
+      </h3>
 
       {hasGifts ? (
         /* Filled State - List of Sent Gifts */
@@ -148,12 +150,11 @@ export const SentGiftsCard = ({ gifts = [], isEmpty }: SentGiftsCardProps) => {
             />
           </div>
           <p className="text-10 sm:text-12 text-gray-600 text-center max-w-xs">
-            You Don&apos;t Have any sent gifts, express Your Love and send a gift
-            now.
+            You Don&apos;t Have any sent gifts, express Your Love and send a
+            gift now.
           </p>
         </div>
       )}
     </div>
   )
 }
-

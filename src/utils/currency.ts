@@ -3,7 +3,18 @@
  * Provides consistent currency formatting across the application
  */
 
-export type CurrencyCode = 'EGP' | 'SAR' | 'USD' | 'AED' | 'KWD' | 'BHD' | 'QAR' | 'OMR' | 'JOD' | 'LBP' | string
+export type CurrencyCode =
+  | 'EGP'
+  | 'SAR'
+  | 'USD'
+  | 'AED'
+  | 'KWD'
+  | 'BHD'
+  | 'QAR'
+  | 'OMR'
+  | 'JOD'
+  | 'LBP'
+  | string
 
 // Default currency and country
 export const DEFAULT_CURRENCY: CurrencyCode = 'EGP'
@@ -23,22 +34,75 @@ export interface CurrencyFormatOptions {
  * Maps currency codes to their display properties
  * Default currency: EGP (Egyptian Pound)
  */
-const CURRENCY_CONFIG: Record<string, {
-  symbol: string
-  symbolPosition: 'before' | 'after'
-  locale: string
-  decimalPlaces: number
-}> = {
-  EGP: { symbol: '£', symbolPosition: 'before', locale: 'en-EG', decimalPlaces: 2 }, // Default
-  SAR: { symbol: 'ر.س', symbolPosition: 'after', locale: 'ar-SA', decimalPlaces: 2 },
-  USD: { symbol: '$', symbolPosition: 'before', locale: 'en-US', decimalPlaces: 2 },
-  AED: { symbol: 'د.إ', symbolPosition: 'after', locale: 'ar-AE', decimalPlaces: 2 },
-  KWD: { symbol: 'د.ك', symbolPosition: 'after', locale: 'ar-KW', decimalPlaces: 3 },
-  BHD: { symbol: '.د.ب', symbolPosition: 'after', locale: 'ar-BH', decimalPlaces: 3 },
-  QAR: { symbol: 'ر.ق', symbolPosition: 'after', locale: 'ar-QA', decimalPlaces: 2 },
-  OMR: { symbol: 'ر.ع.', symbolPosition: 'after', locale: 'ar-OM', decimalPlaces: 3 },
-  JOD: { symbol: 'د.أ', symbolPosition: 'after', locale: 'ar-JO', decimalPlaces: 3 },
-  LBP: { symbol: 'ل.ل', symbolPosition: 'after', locale: 'ar-LB', decimalPlaces: 0 },
+const CURRENCY_CONFIG: Record<
+  string,
+  {
+    symbol: string
+    symbolPosition: 'before' | 'after'
+    locale: string
+    decimalPlaces: number
+  }
+> = {
+  EGP: {
+    symbol: '£',
+    symbolPosition: 'before',
+    locale: 'en-EG',
+    decimalPlaces: 2,
+  }, // Default
+  SAR: {
+    symbol: 'ر.س',
+    symbolPosition: 'after',
+    locale: 'ar-SA',
+    decimalPlaces: 2,
+  },
+  USD: {
+    symbol: '$',
+    symbolPosition: 'before',
+    locale: 'en-US',
+    decimalPlaces: 2,
+  },
+  AED: {
+    symbol: 'د.إ',
+    symbolPosition: 'after',
+    locale: 'ar-AE',
+    decimalPlaces: 2,
+  },
+  KWD: {
+    symbol: 'د.ك',
+    symbolPosition: 'after',
+    locale: 'ar-KW',
+    decimalPlaces: 3,
+  },
+  BHD: {
+    symbol: '.د.ب',
+    symbolPosition: 'after',
+    locale: 'ar-BH',
+    decimalPlaces: 3,
+  },
+  QAR: {
+    symbol: 'ر.ق',
+    symbolPosition: 'after',
+    locale: 'ar-QA',
+    decimalPlaces: 2,
+  },
+  OMR: {
+    symbol: 'ر.ع.',
+    symbolPosition: 'after',
+    locale: 'ar-OM',
+    decimalPlaces: 3,
+  },
+  JOD: {
+    symbol: 'د.أ',
+    symbolPosition: 'after',
+    locale: 'ar-JO',
+    decimalPlaces: 3,
+  },
+  LBP: {
+    symbol: 'ل.ل',
+    symbolPosition: 'after',
+    locale: 'ar-LB',
+    decimalPlaces: 0,
+  },
 }
 
 /**
@@ -61,7 +125,8 @@ export function formatCurrency(
     maximumFractionDigits,
   } = options
 
-  const config = CURRENCY_CONFIG[currency.toUpperCase()] || CURRENCY_CONFIG[DEFAULT_CURRENCY]
+  const config =
+    CURRENCY_CONFIG[currency.toUpperCase()] || CURRENCY_CONFIG[DEFAULT_CURRENCY]
 
   const finalLocale = locale || config.locale
   const minFractionDigits = minimumFractionDigits ?? config.decimalPlaces
@@ -114,7 +179,8 @@ export function formatCurrencyWithCode(
   amount: number,
   currency: CurrencyCode = DEFAULT_CURRENCY
 ): string {
-  const config = CURRENCY_CONFIG[currency.toUpperCase()] || CURRENCY_CONFIG[DEFAULT_CURRENCY]
+  const config =
+    CURRENCY_CONFIG[currency.toUpperCase()] || CURRENCY_CONFIG[DEFAULT_CURRENCY]
 
   const formattedNumber = new Intl.NumberFormat(config.locale, {
     minimumFractionDigits: 0,
@@ -127,7 +193,9 @@ export function formatCurrencyWithCode(
 /**
  * Gets currency symbol
  */
-export function getCurrencySymbol(currency: CurrencyCode = DEFAULT_CURRENCY): string {
+export function getCurrencySymbol(
+  currency: CurrencyCode = DEFAULT_CURRENCY
+): string {
   const config = CURRENCY_CONFIG[currency.toUpperCase()]
   return config?.symbol || CURRENCY_CONFIG[DEFAULT_CURRENCY].symbol
 }
@@ -135,8 +203,11 @@ export function getCurrencySymbol(currency: CurrencyCode = DEFAULT_CURRENCY): st
 /**
  * Gets currency symbol position
  */
-export function getCurrencySymbolPosition(currency: CurrencyCode = DEFAULT_CURRENCY): 'before' | 'after' {
+export function getCurrencySymbolPosition(
+  currency: CurrencyCode = DEFAULT_CURRENCY
+): 'before' | 'after' {
   const config = CURRENCY_CONFIG[currency.toUpperCase()]
-  return config?.symbolPosition || CURRENCY_CONFIG[DEFAULT_CURRENCY].symbolPosition
+  return (
+    config?.symbolPosition || CURRENCY_CONFIG[DEFAULT_CURRENCY].symbolPosition
+  )
 }
-

@@ -13,7 +13,9 @@ export type { RelatedServicesData } from './useRelatedServices'
 export { useServiceReviews, useSubmitServiceReview } from './useServiceReviews'
 export type { ServiceReview } from './useServiceReviews'
 export { useServicesSearch } from './useServicesSearch'
-export type { ServicesSearchData, ServicesSearchParams } from './useServicesSearch'
+export type {
+  ServicesSearchData,
+  ServicesSearchParams,
+} from './useServicesSearch'
 export { useServicePackages } from './useServicePackages'
 export type { ServicePackagesData, ServicePackage } from './useServicePackages'
-

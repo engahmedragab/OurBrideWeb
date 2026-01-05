@@ -17,5 +17,3 @@ export interface EventLineResponse extends LineResponse {
   highlighted: boolean
   eventLineCategory?: EventLineCategoryResponse
 }
-
-

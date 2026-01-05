@@ -37,22 +37,24 @@ export const ChatView = ({
   const [hasAttachments, setHasAttachments] = useState(false)
   const [showProfileView, setShowProfileView] = useState(false)
   // Demo: track call modal state
-  const [modalMode, setModalMode] = useState<'none'|'outgoing'|'incoming'|'active'>('none');
-  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [modalMode, setModalMode] = useState<
+    'none' | 'outgoing' | 'incoming' | 'active'
+  >('none')
+  const [showRatingModal, setShowRatingModal] = useState(false)
 
   // Demo handlers
-  const openOutgoing = () => setModalMode('outgoing');
-  const openIncoming = () => setModalMode('incoming');
-  const startActive = () => setModalMode('active');
+  const openOutgoing = () => setModalMode('outgoing')
+  const openIncoming = () => setModalMode('incoming')
+  const startActive = () => setModalMode('active')
   const handleEnd = () => {
-    setModalMode('none');
+    setModalMode('none')
     // Show rating modal after call ends
-    setShowRatingModal(true);
-  };
+    setShowRatingModal(true)
+  }
 
   const handleRatingSubmit = (_rating: number) => {
     // TODO: Send rating to backend
-  };
+  }
 
   const quickReplySuggestions = [
     'Good Morning',
@@ -147,10 +149,18 @@ export const ChatView = ({
           }}
           mediaItems={mediaItems}
           onBack={() => setShowProfileView(false)}
-          onViewProfile={() => {/* TODO: Implement view profile */}}
-          onMute={() => {/* TODO: Implement mute */}}
-          onBlock={() => {/* TODO: Implement block */}}
-          onCall={() => {/* TODO: Implement call */}}
+          onViewProfile={() => {
+            /* TODO: Implement view profile */
+          }}
+          onMute={() => {
+            /* TODO: Implement mute */
+          }}
+          onBlock={() => {
+            /* TODO: Implement block */
+          }}
+          onCall={() => {
+            /* TODO: Implement call */
+          }}
           className={className}
         />
       ) : (
@@ -187,10 +197,20 @@ export const ChatView = ({
             </div>
             <div className="flex items-center gap-2">
               {/* Demo Only: Start and Receive Call Test Buttons */}
-              <Button variant="brand" size="sm" className="mr-2" onClick={openOutgoing}>
+              <Button
+                variant="brand"
+                size="sm"
+                className="mr-2"
+                onClick={openOutgoing}
+              >
                 Demo Start Call
               </Button>
-              <Button variant="success" size="sm" className="mr-2" onClick={openIncoming}>
+              <Button
+                variant="success"
+                size="sm"
+                className="mr-2"
+                onClick={openIncoming}
+              >
                 Demo Receive Call
               </Button>
               {/* Normal Call icon button to open outgoing modal for user action (optional) */}
@@ -213,140 +233,164 @@ export const ChatView = ({
             </div>
           </div>
 
-      {/* Messages Area and Input - Combined Container */}
-      <div className="flex-1 flex flex-col bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-        {messages.map(message => {
-          const isUserMessage = message.senderId === 'current-user'
+          {/* Messages Area and Input - Combined Container */}
+          <div className="flex-1 flex flex-col bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+              {messages.map(message => {
+                const isUserMessage = message.senderId === 'current-user'
 
-          return (
-            <div
-              key={message.id}
-              className={cn(
-                'flex gap-3',
-                isUserMessage ? 'justify-end' : 'justify-start'
-              )}
-            >
-              {!isUserMessage && (
-                <div className="relative w-10 h-10 flex-shrink-0">
-                  <Image
-                  src={
-                    message.senderAvatar ||
-                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100'
-                  }
-                  alt={message.senderName}
-                    fill
-                    sizes="40px"
-                    className="rounded-full object-cover"
-                />
-                </div>
-              )}
-              <div className={cn('max-w-[70%]', isUserMessage && 'items-end')}>
-                {message.type === 'product' && message.productData ? (
+                return (
                   <div
+                    key={message.id}
                     className={cn(
-                      'flex items-center gap-3 p-3 rounded-2xl border border-gray-200 bg-white mb-2'
+                      'flex gap-3',
+                      isUserMessage ? 'justify-end' : 'justify-start'
                     )}
                   >
-                    <div className="relative w-16 h-16 flex-shrink-0">
-                      <Image
-                      src={message.productData.image}
-                      alt={message.productData.title}
-                        fill
-                        sizes="64px"
-                        className="rounded-xl object-cover"
-                    />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-14 font-semibold text-gray-900 mb-1">
-                        {message.productData.title}
-                      </h4>
-                      <p className="text-16 font-bold text-gray-900">
-                        {message.productData.price}{' '}
-                        <span className="text-12 font-normal">
-                          {message.productData.currency}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                ) : null}
-                {message.type === 'image' ? (
-                  <div className={cn('flex flex-col gap-1', isUserMessage ? 'items-end' : 'items-start')}>
-                    <div className="relative rounded-2xl overflow-hidden max-w-full max-h-80 aspect-auto">
-                      <Image
-                        src={message.content}
-                        alt="Shared image"
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className={cn('flex items-center gap-1', isUserMessage ? 'justify-end' : 'justify-start')}>
-                      {message.timestamp && (
-                        <span className="text-10 sm:text-11 md:text-12 font-normal leading-3 sm:leading-3.5 md:leading-4 text-gray-500">
-                          {message.timestamp}
-                        </span>
+                    {!isUserMessage && (
+                      <div className="relative w-10 h-10 flex-shrink-0">
+                        <Image
+                          src={
+                            message.senderAvatar ||
+                            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100'
+                          }
+                          alt={message.senderName}
+                          fill
+                          sizes="40px"
+                          className="rounded-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div
+                      className={cn(
+                        'max-w-[70%]',
+                        isUserMessage && 'items-end'
                       )}
-                      {isUserMessage && (
-                        <div className="flex items-center">
-                          {message.seen ? (
-                            <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
-                            </svg>
-                          ) : (
-                            <svg className="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
-                            </svg>
+                    >
+                      {message.type === 'product' && message.productData ? (
+                        <div
+                          className={cn(
+                            'flex items-center gap-3 p-3 rounded-2xl border border-gray-200 bg-white mb-2'
                           )}
+                        >
+                          <div className="relative w-16 h-16 flex-shrink-0">
+                            <Image
+                              src={message.productData.image}
+                              alt={message.productData.title}
+                              fill
+                              sizes="64px"
+                              className="rounded-xl object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-14 font-semibold text-gray-900 mb-1">
+                              {message.productData.title}
+                            </h4>
+                            <p className="text-16 font-bold text-gray-900">
+                              {message.productData.price}{' '}
+                              <span className="text-12 font-normal">
+                                {message.productData.currency}
+                              </span>
+                            </p>
+                          </div>
                         </div>
-                      )}
+                      ) : null}
+                      {message.type === 'image' ? (
+                        <div
+                          className={cn(
+                            'flex flex-col gap-1',
+                            isUserMessage ? 'items-end' : 'items-start'
+                          )}
+                        >
+                          <div className="relative rounded-2xl overflow-hidden max-w-full max-h-80 aspect-auto">
+                            <Image
+                              src={message.content}
+                              alt="Shared image"
+                              fill
+                              sizes="(max-width: 768px) 100vw, 50vw"
+                              className="object-cover"
+                            />
+                          </div>
+                          <div
+                            className={cn(
+                              'flex items-center gap-1',
+                              isUserMessage ? 'justify-end' : 'justify-start'
+                            )}
+                          >
+                            {message.timestamp && (
+                              <span className="text-10 sm:text-11 md:text-12 font-normal leading-3 sm:leading-3.5 md:leading-4 text-gray-500">
+                                {message.timestamp}
+                              </span>
+                            )}
+                            {isUserMessage && (
+                              <div className="flex items-center">
+                                {message.seen ? (
+                                  <svg
+                                    className="w-4 h-4 text-blue-500"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                                  </svg>
+                                ) : (
+                                  <svg
+                                    className="w-4 h-4 text-gray-400"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path d="M0 11l2-2 5 5L18 3l2 2L7 18z" />
+                                  </svg>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : null}
+                      {(message.type === 'text' ||
+                        message.type === 'product') &&
+                        message.content && (
+                          <MessageBubble
+                            message={message.content}
+                            timestamp={message.timestamp}
+                            seen={message.seen}
+                            sender={isUserMessage ? 'user' : 'support'}
+                          />
+                        )}
                     </div>
                   </div>
-                ) : null}
-                {(message.type === 'text' || message.type === 'product') && message.content && (
-                  <MessageBubble
-                    message={message.content}
-                    timestamp={message.timestamp}
-                    seen={message.seen}
-                    sender={isUserMessage ? 'user' : 'support'}
+                )
+              })}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-4 bg-white border-t border-gray-200">
+              <div className="space-y-3">
+                {/* Quick Replies - Hidden when attachments are present */}
+                {!hasAttachments && (
+                  <QuickReplySuggestions
+                    suggestions={quickReplySuggestions}
+                    selectedSuggestion={selectedQuickReply}
+                    onSelect={handleQuickReplySelect}
                   />
                 )}
+
+                {/* Chat Input */}
+                <ChatInputArea
+                  value={inputValue}
+                  onChange={setInputValue}
+                  onSend={handleSend}
+                  onAttachImage={handleAttachImage}
+                  onAttachDocument={handleAttachDocument}
+                  onAttachLocation={handleAttachLocation}
+                  onImagesChange={setHasAttachments}
+                  placeholder="Enter Your Message.."
+                />
               </div>
             </div>
-          )
-        })}
-      </div>
-
-        {/* Input Area */}
-        <div className="p-4 bg-white border-t border-gray-200">
-          <div className="space-y-3">
-            {/* Quick Replies - Hidden when attachments are present */}
-            {!hasAttachments && (
-              <QuickReplySuggestions
-                suggestions={quickReplySuggestions}
-                selectedSuggestion={selectedQuickReply}
-                onSelect={handleQuickReplySelect}
-              />
-            )}
-
-            {/* Chat Input */}
-            <ChatInputArea
-              value={inputValue}
-              onChange={setInputValue}
-              onSend={handleSend}
-              onAttachImage={handleAttachImage}
-              onAttachDocument={handleAttachDocument}
-              onAttachLocation={handleAttachLocation}
-              onImagesChange={setHasAttachments}
-              placeholder="Enter Your Message.."
-            />
           </div>
         </div>
-      </div>
-      </div>
       )}
     </>
   )
 }
-

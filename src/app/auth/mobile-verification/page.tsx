@@ -21,11 +21,11 @@ export default function MobileVerificationPage() {
     if (typeof window !== 'undefined') {
       const storedPhone = localStorage.getItem('pending_phone_number')
       const storedCountryCode = localStorage.getItem('pending_country_code')
-      
+
       if (storedPhone) {
         setPhoneNumber(storedPhone)
       }
-      
+
       if (storedCountryCode) {
         setCountryCode(parseInt(storedCountryCode, 10))
       }

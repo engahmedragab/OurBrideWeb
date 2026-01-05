@@ -28,7 +28,11 @@ export const useProductCardHandlers = (
         const response = await toggleFavorite.mutateAsync({ productId })
         options?.onFavoriteSuccess?.(response)
       } catch (error) {
-        options?.onFavoriteError?.(error instanceof Error ? error : new Error('Failed to toggle favorite'))
+        options?.onFavoriteError?.(
+          error instanceof Error
+            ? error
+            : new Error('Failed to toggle favorite')
+        )
       }
     },
     [productId, toggleFavorite, options]
@@ -42,7 +46,11 @@ export const useProductCardHandlers = (
         const response = await toggleWishlist.mutateAsync({ productId })
         options?.onWishlistSuccess?.(response)
       } catch (error) {
-        options?.onWishlistError?.(error instanceof Error ? error : new Error('Failed to toggle wishlist'))
+        options?.onWishlistError?.(
+          error instanceof Error
+            ? error
+            : new Error('Failed to toggle wishlist')
+        )
       }
     },
     [productId, toggleWishlist, options]

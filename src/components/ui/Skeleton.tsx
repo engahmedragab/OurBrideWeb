@@ -140,10 +140,7 @@ export const MemberTestimonialCardSkeleton = ({
   return (
     <>
       {Array.from({ length: count }).map((_, index) => (
-        <div
-          key={index}
-          className="bg-white rounded-xl p-6 md:p-8 shadow-sm"
-        >
+        <div key={index} className="bg-white rounded-xl p-6 md:p-8 shadow-sm">
           {/* Author Info Skeleton */}
           <div className="flex items-center gap-3 mb-4">
             <Skeleton className="w-12 h-12 rounded-full" />
@@ -187,17 +184,17 @@ export const OfferBannerSkeleton = () => {
             <div className="text-center lg:text-left px-4 md:px-5 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center">
               {/* Heading Skeleton */}
               <Skeleton className="h-6 w-3/4 mx-auto lg:mx-0 mb-2" />
-              
+
               {/* Description Skeleton */}
               <Skeleton className="h-4 w-full max-w-lg mx-auto lg:mx-0 mb-2" />
               <Skeleton className="h-4 w-5/6 max-w-lg mx-auto lg:mx-0 mb-4" />
-              
+
               {/* Button Skeleton */}
               <div className="flex justify-center lg:justify-start">
                 <Skeleton className="h-10 w-40 rounded-full" />
               </div>
             </div>
-            
+
             {/* Product Image Skeleton - Right side */}
             <div className="flex justify-end items-end order-1 lg:order-2 relative overflow-hidden">
               <div className="relative w-full h-full flex items-end justify-end">
@@ -217,4 +214,3 @@ export const OfferBannerSkeleton = () => {
     </section>
   )
 }
-

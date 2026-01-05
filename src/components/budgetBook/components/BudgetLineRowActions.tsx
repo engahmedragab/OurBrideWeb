@@ -48,7 +48,7 @@ export const BudgetLineRowActions = ({
       {onEdit && (
         <button
           type="button"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation()
             onEdit()
           }}
@@ -63,7 +63,7 @@ export const BudgetLineRowActions = ({
       {onDelete && (
         <button
           type="button"
-          onClick={(e) => {
+          onClick={e => {
             e.stopPropagation()
             onDelete()
           }}

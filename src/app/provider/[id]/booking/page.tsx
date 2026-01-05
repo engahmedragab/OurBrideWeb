@@ -9,7 +9,8 @@ export default async function ProviderBookingPage({
 }) {
   const { id: providerId } = await params
   const { service: serviceId } = await searchParams
-  
-  return <BookingClient providerId={providerId} preSelectedServiceId={serviceId} />
-}
 
+  return (
+    <BookingClient providerId={providerId} preSelectedServiceId={serviceId} />
+  )
+}

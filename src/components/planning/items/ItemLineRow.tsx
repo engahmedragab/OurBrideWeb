@@ -21,15 +21,17 @@ export function ItemLineRow({
       role="button"
       tabIndex={0}
       onClick={onEdit}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') onEdit()
       }}
-      className={cn('flex items-start gap-3 rounded-xl border bg-white p-4 transition hover:bg-gray-50')}
+      className={cn(
+        'flex items-start gap-3 rounded-xl border bg-white p-4 transition hover:bg-gray-50'
+      )}
     >
       {/* Toggle Done */}
       <button
         type="button"
-        onClick={(e) => {
+        onClick={e => {
           e.preventDefault()
           e.stopPropagation()
           onToggleDone()
@@ -46,12 +48,19 @@ export function ItemLineRow({
 
       {/* Content */}
       <div className="min-w-0 flex-1">
-        <div className={cn('text-sm font-medium text-gray-900', item.isDone && 'line-through text-gray-400')}>
+        <div
+          className={cn(
+            'text-sm font-medium text-gray-900',
+            item.isDone && 'line-through text-gray-400'
+          )}
+        >
           {item.title}
         </div>
 
         {item.description ? (
-          <div className="mt-1 line-clamp-2 text-xs text-gray-500">{item.description}</div>
+          <div className="mt-1 line-clamp-2 text-xs text-gray-500">
+            {item.description}
+          </div>
         ) : null}
 
         {/* Meta: label dark, value gray */}
@@ -91,7 +100,9 @@ export function ItemLineRow({
         <span
           className={cn(
             'rounded-full px-3 py-1 text-xs font-medium',
-            item.isDone ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-700',
+            item.isDone
+              ? 'bg-green-50 text-green-700'
+              : 'bg-gray-100 text-gray-700'
           )}
         >
           {item.isDone ? 'Completed' : 'Pending'}
@@ -99,7 +110,7 @@ export function ItemLineRow({
 
         <button
           type="button"
-          onClick={(e) => {
+          onClick={e => {
             e.preventDefault()
             e.stopPropagation()
             onDelete()

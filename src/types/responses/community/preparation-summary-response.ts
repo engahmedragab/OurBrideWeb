@@ -7,21 +7,3 @@ export interface PreparationSummaryResponse {
   nameAr: string
   nameEn: string
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

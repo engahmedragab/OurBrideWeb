@@ -56,7 +56,9 @@ export const ReferralProgramCard = ({
               onClick={onViewDetails}
               className="flex gap-1 items-center shrink-0 hover:opacity-80 transition-opacity"
             >
-              <p className="text-12 sm:text-14 font-medium text-brand-500">View Details</p>
+              <p className="text-12 sm:text-14 font-medium text-brand-500">
+                View Details
+              </p>
               <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 text-brand-500" />
             </button>
           ) : (
@@ -94,11 +96,10 @@ export const ReferralProgramCard = ({
             Invited
           </p>
           <p className="text-16 sm:text-18 font-semibold text-gray-900 shrink-0">
-            {invitedFriendsCount} Freinds 
+            {invitedFriendsCount} Freinds
           </p>
         </div>
       </div>
     </div>
   )
 }
-

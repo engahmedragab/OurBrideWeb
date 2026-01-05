@@ -1,6 +1,6 @@
 /**
  * Purchase API Response Types
- * 
+ *
  * This module exports all TypeScript type definitions for IPurchaseService responses.
  */
 
@@ -72,7 +72,10 @@ export type { PriceCalculationResponse } from './price-calculation-response'
 export type { PurchaseResponse } from './purchase-response'
 export type { CartResponse } from './cart-response'
 export type { UserCartWithProviderResponse } from './user-cart-with-provider-response'
-export type { CartProviderResponse, CartPurchaseInfo } from './cart-provider-response'
+export type {
+  CartProviderResponse,
+  CartPurchaseInfo,
+} from './cart-provider-response'
 export type { CartProduct } from './cart-product'
 export type { CartReservation } from './cart-reservation'
 export type { CartMembership } from './cart-membership'
@@ -164,12 +167,24 @@ export type { ProductDimensionResponse } from './product-dimension-response'
 export type { ProductDownloadLineResponse } from './product-download-line-response'
 export type { ProductImageResponse } from './product-image-response'
 export type { ProductReviewResponse } from './product-review-response'
-export type { ProductSalesReportResponse, TopProduct, CategorySales, DailySales } from './product-sales-report-response'
+export type {
+  ProductSalesReportResponse,
+  TopProduct,
+  CategorySales,
+  DailySales,
+} from './product-sales-report-response'
 export type { ProductSupplierResponse } from './product-supplier-response'
 export type { ProductTagLineResponse } from './product-tag-line-response'
 export type { ProductVariationResponse } from './product-variation-response'
-export type { InventoryResponse, StockMovementResponse, ReorderAlertResponse } from './inventory-response'
-export type { ProductAnalyticsResponse, DailyAnalytics } from './product-analytics-response'
+export type {
+  InventoryResponse,
+  StockMovementResponse,
+  ReorderAlertResponse,
+} from './inventory-response'
+export type {
+  ProductAnalyticsResponse,
+  DailyAnalytics,
+} from './product-analytics-response'
 export type { ProductErrorResponse } from './product-error-response'
 export type { ProductErrorDataResponse } from './product-error-data-response'
 export type { AdditionalDataResponse } from './additional-data-response'
@@ -309,11 +324,21 @@ export type OccasionLineListResponse = ApiResult<OccasionLineResponse[]>
 export type ServiceLineListResponse = ApiResult<ServiceLineResponse[]>
 export type TodoLineListResponse = ApiResult<TodoLineResponse[]>
 
-export type EventLineCategoryListResponse = ApiResult<EventLineCategoryResponse[]>
-export type BudgetLineCategoryListResponse = ApiResult<BudgetLineCategoryResponse[]>
-export type GuestLineCategoryListResponse = ApiResult<GuestLineCategoryResponse[]>
+export type EventLineCategoryListResponse = ApiResult<
+  EventLineCategoryResponse[]
+>
+export type BudgetLineCategoryListResponse = ApiResult<
+  BudgetLineCategoryResponse[]
+>
+export type GuestLineCategoryListResponse = ApiResult<
+  GuestLineCategoryResponse[]
+>
 export type ItemLineCategoryListResponse = ApiResult<ItemLineCategoryResponse[]>
 export type NoteLineCategoryListResponse = ApiResult<NoteLineCategoryResponse[]>
-export type OccasionLineCategoryListResponse = ApiResult<OccasionLineCategoryResponse[]>
-export type ServiceLineCategoryListResponse = ApiResult<ServiceLineCategoryResponse[]>
+export type OccasionLineCategoryListResponse = ApiResult<
+  OccasionLineCategoryResponse[]
+>
+export type ServiceLineCategoryListResponse = ApiResult<
+  ServiceLineCategoryResponse[]
+>
 export type TodoLineCategoryListResponse = ApiResult<TodoLineCategoryResponse[]>

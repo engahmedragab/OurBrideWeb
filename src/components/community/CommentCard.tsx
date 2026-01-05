@@ -32,7 +32,7 @@ export const CommentCard = ({
             fill
             sizes="40px"
             className="object-cover"
-            onError={(e) => {
+            onError={e => {
               e.currentTarget.style.display = 'none'
             }}
           />

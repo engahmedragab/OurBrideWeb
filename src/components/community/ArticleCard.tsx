@@ -9,7 +9,11 @@ import { cn } from '@/lib/utils'
 import { EngagementButton } from './EngagementButton'
 import { getProfileUrl } from './utils'
 import type { ArticleResponse } from '@/types/responses/community'
-import { toggleLike as toggleArticleLike, toggleFavorite as toggleArticleFavorite, shareArticle } from '@/services/api/articlesApi'
+import {
+  toggleLike as toggleArticleLike,
+  toggleFavorite as toggleArticleFavorite,
+  shareArticle,
+} from '@/services/api/articlesApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
@@ -33,8 +37,10 @@ const formatDate = (dateString: string | null): string => {
 // Helper function to get user display name
 const getUserDisplayName = (user: ArticleResponse['user']): string => {
   if (!user) return 'OurBride'
-  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
-  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const firstName =
+    user.firstName && user.firstName !== 'null' ? user.firstName : ''
+  const lastName =
+    user.lastName && user.lastName !== 'null' ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   return fullName || user.userName || 'OurBride'
 }
@@ -64,8 +70,11 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -73,17 +82,23 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
     mutationFn: async (shareSource?: string) => {
       return await shareArticle(article.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/articles/${article.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/articles/${article.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share article', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share article',
+        'error'
+      )
     },
   })
 
@@ -96,8 +111,11 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -124,7 +142,7 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
   const displayName = getUserDisplayName(article.user)
   const avatar = getUserAvatar(article.user)
   const date = formatDate(article.publishedAt || article.creationDate)
-  
+
   const imageUrl = COMMUNITY_IMAGES.DEFAULT_ARTICLE_IMAGE
 
   return (
@@ -144,9 +162,13 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
           className="object-cover"
         />
       </div>
-      <h3 className="text-20 font-normal text-gray-900 mb-3">{article.title}</h3>
+      <h3 className="text-20 font-normal text-gray-900 mb-3">
+        {article.title}
+      </h3>
       <p className="text-14 text-gray-700 mb-4 line-clamp-3">
-        {article.summary || article.excerpt || article.content.substring(0, 150)}
+        {article.summary ||
+          article.excerpt ||
+          article.content.substring(0, 150)}
       </p>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -158,7 +180,7 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
                 fill
                 sizes="32px"
                 className="object-cover"
-                onError={(e) => {
+                onError={e => {
                   e.currentTarget.style.display = 'none'
                 }}
               />
@@ -176,13 +198,16 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
             )}
           </div>
           <div>
-            {article.userId && getProfileUrl(article.userId, article.user?.type) ? (
+            {article.userId &&
+            getProfileUrl(article.userId, article.user?.type) ? (
               <Link
                 href={getProfileUrl(article.userId, article.user?.type)!}
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 className="hover:text-brand-500 transition-colors"
               >
-                <p className="text-14 font-normal text-gray-900">{displayName}</p>
+                <p className="text-14 font-normal text-gray-900">
+                  {displayName}
+                </p>
               </Link>
             ) : (
               <p className="text-14 font-normal text-gray-900">{displayName}</p>
@@ -210,7 +235,9 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
       <div className="flex items-center justify-center gap-3 pt-4 mt-4 border-t border-gray-100">
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+            icon={
+              <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
+            }
             count={likes}
             label="Likes"
             onClick={handleLikeClick}
@@ -237,7 +264,11 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
         </div>
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+            icon={
+              <Star
+                className={cn('h-5 w-5', isFavorited && 'fill-brand-500')}
+              />
+            }
             count={favorites}
             label="Favorites"
             onClick={handleFavoriteClick}

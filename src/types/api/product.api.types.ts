@@ -10,22 +10,34 @@ export const mapProductResponseToProduct = (
 ): Product => {
   // Extract images - filter out empty strings and null/undefined values
   const images: string[] = []
-  if (apiProduct.image && typeof apiProduct.image === 'string' && apiProduct.image.trim() !== '') {
+  if (
+    apiProduct.image &&
+    typeof apiProduct.image === 'string' &&
+    apiProduct.image.trim() !== ''
+  ) {
     images.push(apiProduct.image)
   }
   if (apiProduct.images && apiProduct.images.length > 0) {
     apiProduct.images.forEach(img => {
       // MediaResponse has 'url' property, not 'src'
-      const imageUrl = img.url || img.originalUrl || img.thumbnailUrl || img.previewUrl
-      if (imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '' && !images.includes(imageUrl)) {
+      const imageUrl =
+        img.url || img.originalUrl || img.thumbnailUrl || img.previewUrl
+      if (
+        imageUrl &&
+        typeof imageUrl === 'string' &&
+        imageUrl.trim() !== '' &&
+        !images.includes(imageUrl)
+      ) {
         images.push(imageUrl)
       }
     })
   }
-  
+
   // Filter out any empty strings that might have slipped through
-  const validImages = images.filter(img => img && typeof img === 'string' && img.trim() !== '')
-  
+  const validImages = images.filter(
+    img => img && typeof img === 'string' && img.trim() !== ''
+  )
+
   // Return valid images (empty array is acceptable - components will handle it)
   // Components should check for empty arrays and display placeholder UI
   const finalImages = validImages
@@ -33,16 +45,31 @@ export const mapProductResponseToProduct = (
   // Extract tags
   const tags: string[] = []
   if (Array.isArray(apiProduct.tags)) {
-    tags.push(...apiProduct.tags.map(tag => (tag && typeof tag === 'object' && 'name' in tag ? tag.name || '' : '')).filter(Boolean))
+    tags.push(
+      ...apiProduct.tags
+        .map(tag =>
+          tag && typeof tag === 'object' && 'name' in tag ? tag.name || '' : ''
+        )
+        .filter(Boolean)
+    )
   }
   // Access providerProductTags using type assertion since it may exist in runtime but not in the generated type
   const productWithProviderTags = apiProduct as typeof apiProduct & {
     providerProductTags?: Array<{ name?: string | null }> | null
   }
-  if (productWithProviderTags.providerProductTags && productWithProviderTags.providerProductTags.length > 0) {
+  if (
+    productWithProviderTags.providerProductTags &&
+    productWithProviderTags.providerProductTags.length > 0
+  ) {
     productWithProviderTags.providerProductTags.forEach(tag => {
       // Safely access name property, similar to how tags array is handled
-      if (tag && typeof tag === 'object' && 'name' in tag && tag.name && !tags.includes(tag.name as string)) {
+      if (
+        tag &&
+        typeof tag === 'object' &&
+        'name' in tag &&
+        tag.name &&
+        !tags.includes(tag.name as string)
+      ) {
         tags.push(tag.name as string)
       }
     })
@@ -58,8 +85,17 @@ export const mapProductResponseToProduct = (
   // Use category object if available, otherwise use categoryId
   if (apiProduct.category) {
     category.id = String(apiProduct.category.id || category.id)
-    const categoryWithName = apiProduct.category as typeof apiProduct.category & { nameEn?: string; nameAr?: string; name?: string }
-    category.name = categoryWithName.nameEn || categoryWithName.nameAr || categoryWithName.name || ''
+    const categoryWithName =
+      apiProduct.category as typeof apiProduct.category & {
+        nameEn?: string
+        nameAr?: string
+        name?: string
+      }
+    category.name =
+      categoryWithName.nameEn ||
+      categoryWithName.nameAr ||
+      categoryWithName.name ||
+      ''
     category.slug = apiProduct.category.slug || ''
   }
 
@@ -78,14 +114,17 @@ export const mapProductResponseToProduct = (
 
   // Calculate prices
   const originalPrice = apiProduct.regularPrice || apiProduct.price || 0
-  const discountedPrice = apiProduct.salePrice || apiProduct.price || originalPrice
+  const discountedPrice =
+    apiProduct.salePrice || apiProduct.price || originalPrice
 
   // Extract rating
   const ratingValue = apiProduct.rate
-    ? (typeof apiProduct.rate === 'string' ? parseFloat(apiProduct.rate) : apiProduct.rate)
+    ? typeof apiProduct.rate === 'string'
+      ? parseFloat(apiProduct.rate)
+      : apiProduct.rate
     : apiProduct.averageRating
-    ? parseFloat(apiProduct.averageRating)
-    : 0
+      ? parseFloat(apiProduct.averageRating)
+      : 0
   const ratingCount = apiProduct.ratingCount || apiProduct.likes || 0
 
   // Map reviews if available
@@ -120,9 +159,11 @@ export const mapProductResponseToProduct = (
     },
     category,
     tags,
-    inStock: apiProduct.stockQuantity !== null && apiProduct.stockQuantity !== undefined 
-      ? apiProduct.stockQuantity > 0 
-      : (apiProduct.inStock ?? false),
+    inStock:
+      apiProduct.stockQuantity !== null &&
+      apiProduct.stockQuantity !== undefined
+        ? apiProduct.stockQuantity > 0
+        : (apiProduct.inStock ?? false),
     stockQuantity: apiProduct.stockQuantity ?? undefined,
     sku: apiProduct.sku || undefined,
     isWishlisted: false, // This should come from a separate API call
@@ -154,4 +195,3 @@ export const mapProductResponsesToProducts = (
 ): Product[] => {
   return apiProducts.map(mapProductResponseToProduct)
 }
-

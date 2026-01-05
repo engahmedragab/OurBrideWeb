@@ -30,10 +30,10 @@ function isProtectedRoute(pathname: string): boolean {
 function isAuthenticated(request: NextRequest): boolean {
   // Check for auth token in cookies
   const token = request.cookies.get('auth_token')?.value
-  
+
   // Also check for user data cookie as a fallback
   const userData = request.cookies.get('user_data')?.value
-  
+
   return !!(token || userData)
 }
 

@@ -14,11 +14,23 @@ const itemSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
   quantity: z
-    .preprocess((v) => (v === '' || v === null || v === undefined ? undefined : Number(v)), z.number().optional())
-    .refine((v) => v === undefined || (!Number.isNaN(v) && v >= 0), 'Quantity must be a valid number'),
+    .preprocess(
+      v => (v === '' || v === null || v === undefined ? undefined : Number(v)),
+      z.number().optional()
+    )
+    .refine(
+      v => v === undefined || (!Number.isNaN(v) && v >= 0),
+      'Quantity must be a valid number'
+    ),
   totalPrice: z
-    .preprocess((v) => (v === '' || v === null || v === undefined ? undefined : Number(v)), z.number().optional())
-    .refine((v) => v === undefined || (!Number.isNaN(v) && v >= 0), 'Total price must be a valid number'),
+    .preprocess(
+      v => (v === '' || v === null || v === undefined ? undefined : Number(v)),
+      z.number().optional()
+    )
+    .refine(
+      v => v === undefined || (!Number.isNaN(v) && v >= 0),
+      'Total price must be a valid number'
+    ),
   providerName: z.string().optional(),
   buyDate: z.string().optional(),
   isDone: z.boolean().default(false),
@@ -155,7 +167,10 @@ export const EditItemModal = ({
 
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label htmlFor="item-name" className="block text-14 font-medium text-gray-700">
+            <label
+              htmlFor="item-name"
+              className="block text-14 font-medium text-gray-700"
+            >
               Name <span className="text-red-500">*</span>
             </label>
             <Input
@@ -171,7 +186,10 @@ export const EditItemModal = ({
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="item-description" className="block text-14 font-medium text-gray-700">
+            <label
+              htmlFor="item-description"
+              className="block text-14 font-medium text-gray-700"
+            >
               Description
             </label>
             <Input
@@ -187,7 +205,10 @@ export const EditItemModal = ({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <label htmlFor="item-quantity" className="block text-14 font-medium text-gray-700">
+              <label
+                htmlFor="item-quantity"
+                className="block text-14 font-medium text-gray-700"
+              >
                 Quantity
               </label>
               <Input
@@ -203,7 +224,10 @@ export const EditItemModal = ({
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="item-totalPrice" className="block text-14 font-medium text-gray-700">
+              <label
+                htmlFor="item-totalPrice"
+                className="block text-14 font-medium text-gray-700"
+              >
                 Total price
               </label>
               <Input
@@ -220,7 +244,10 @@ export const EditItemModal = ({
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="item-providerName" className="block text-14 font-medium text-gray-700">
+            <label
+              htmlFor="item-providerName"
+              className="block text-14 font-medium text-gray-700"
+            >
               Provider name
             </label>
             <Input
@@ -235,7 +262,10 @@ export const EditItemModal = ({
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="item-buyDate" className="block text-14 font-medium text-gray-700">
+            <label
+              htmlFor="item-buyDate"
+              className="block text-14 font-medium text-gray-700"
+            >
               Buy date
             </label>
             <Input
@@ -256,7 +286,7 @@ export const EditItemModal = ({
               <div className="flex items-center gap-3">
                 <Checkbox
                   checked={Boolean(field.value)}
-                  onChange={(val) => field.onChange(val === true)}
+                  onChange={val => field.onChange(val === true)}
                   disabled={isSubmitting || isLoading}
                 />
                 <span className="text-sm text-gray-700">Mark as completed</span>
@@ -266,10 +296,20 @@ export const EditItemModal = ({
         </div>
 
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
-          <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting || isLoading}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+            disabled={isSubmitting || isLoading}
+          >
             Cancel
           </Button>
-          <Button type="submit" variant="brand" className="text-white" disabled={isSubmitting || isLoading || !isValid}>
+          <Button
+            type="submit"
+            variant="brand"
+            className="text-white"
+            disabled={isSubmitting || isLoading || !isValid}
+          >
             {isSubmitting || isLoading ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>

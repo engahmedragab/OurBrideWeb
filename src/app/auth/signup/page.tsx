@@ -21,7 +21,13 @@ import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-
  */
 export default function SignupPage() {
   const router = useRouter()
-  const { signupFull, loginWithExternalProvider, isLoading, error, clearError } = useAuth()
+  const {
+    signupFull,
+    loginWithExternalProvider,
+    isLoading,
+    error,
+    clearError,
+  } = useAuth()
   const [showTermsModal, setShowTermsModal] = useState(false)
   const [signupCredentials, setSignupCredentials] = useState<{
     fullName: string
@@ -45,30 +51,45 @@ export default function SignupPage() {
     return 'Unknown' as Gender
   }
 
-  const handleFullNameChange = useCallback((fullName: string) => {
-    setSignupCredentials(prev => ({ ...prev, fullName }))
-    if (error) clearError()
-  }, [error, clearError])
+  const handleFullNameChange = useCallback(
+    (fullName: string) => {
+      setSignupCredentials(prev => ({ ...prev, fullName }))
+      if (error) clearError()
+    },
+    [error, clearError]
+  )
 
-  const handleGenderChange = useCallback((gender: 'male' | 'female') => {
-    setSignupCredentials(prev => ({ ...prev, gender }))
-    if (error) clearError()
-  }, [error, clearError])
+  const handleGenderChange = useCallback(
+    (gender: 'male' | 'female') => {
+      setSignupCredentials(prev => ({ ...prev, gender }))
+      if (error) clearError()
+    },
+    [error, clearError]
+  )
 
-  const handleEmailChange = useCallback((email: string) => {
-    setSignupCredentials(prev => ({ ...prev, email }))
-    if (error) clearError()
-  }, [error, clearError])
+  const handleEmailChange = useCallback(
+    (email: string) => {
+      setSignupCredentials(prev => ({ ...prev, email }))
+      if (error) clearError()
+    },
+    [error, clearError]
+  )
 
-  const handleMobileChange = useCallback((mobileNumber: string) => {
-    setSignupCredentials(prev => ({ ...prev, mobileNumber }))
-    if (error) clearError()
-  }, [error, clearError])
+  const handleMobileChange = useCallback(
+    (mobileNumber: string) => {
+      setSignupCredentials(prev => ({ ...prev, mobileNumber }))
+      if (error) clearError()
+    },
+    [error, clearError]
+  )
 
-  const handlePasswordChange = useCallback((password: string) => {
-    setSignupCredentials(prev => ({ ...prev, password }))
-    if (error) clearError()
-  }, [error, clearError])
+  const handlePasswordChange = useCallback(
+    (password: string) => {
+      setSignupCredentials(prev => ({ ...prev, password }))
+      if (error) clearError()
+    },
+    [error, clearError]
+  )
 
   const handleSignup = useCallback(async () => {
     try {
@@ -95,7 +116,10 @@ export default function SignupPage() {
         // Registration successful but verification required
         // Store phone number for mobile verification page
         if (typeof window !== 'undefined') {
-          localStorage.setItem('pending_phone_number', signupCredentials.mobileNumber)
+          localStorage.setItem(
+            'pending_phone_number',
+            signupCredentials.mobileNumber
+          )
           // You can also store country code if you have it
         }
         router.push('/auth/mobile-verification')
@@ -106,28 +130,31 @@ export default function SignupPage() {
     }
   }, [signupCredentials, acceptedTerms, signupFull, router, clearError])
 
-  const handleSocialSignup = useCallback(async (provider: 'google' | 'facebook') => {
-    try {
-      clearError()
+  const handleSocialSignup = useCallback(
+    async (provider: 'google' | 'facebook') => {
+      try {
+        clearError()
 
-      const providerMap: Record<string, ExternalProvidersType | null> = {
-        google: 'Google' as ExternalProvidersType,
-        facebook: 'Facebook' as ExternalProvidersType,
+        const providerMap: Record<string, ExternalProvidersType | null> = {
+          google: 'Google' as ExternalProvidersType,
+          facebook: 'Facebook' as ExternalProvidersType,
+        }
+
+        const providerType = providerMap[provider]
+
+        if (!providerType) {
+          console.warn(`${provider} signup is not supported by the API`)
+          return
+        }
+
+        // TODO: Implement OAuth flow for signup
+        console.log(`Social signup with ${provider} - OAuth integration needed`)
+      } catch (err) {
+        console.error(`${provider} signup failed:`, err)
       }
-
-      const providerType = providerMap[provider]
-
-      if (!providerType) {
-        console.warn(`${provider} signup is not supported by the API`)
-        return
-      }
-
-      // TODO: Implement OAuth flow for signup
-      console.log(`Social signup with ${provider} - OAuth integration needed`)
-    } catch (err) {
-      console.error(`${provider} signup failed:`, err)
-    }
-  }, [loginWithExternalProvider, clearError])
+    },
+    [loginWithExternalProvider, clearError]
+  )
 
   return (
     <>
@@ -148,7 +175,6 @@ export default function SignupPage() {
             provider="facebook"
             onClick={() => handleSocialSignup('facebook')}
           />
-
         </div>
 
         {/* Divider */}
@@ -172,9 +198,13 @@ export default function SignupPage() {
           <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
             {error.includes('\n') ? (
               <div className="space-y-1">
-                <p className="text-sm font-medium text-red-800 mb-1">Validation Errors:</p>
+                <p className="text-sm font-medium text-red-800 mb-1">
+                  Validation Errors:
+                </p>
                 {error.split('\n').map((err, index) => (
-                  <p key={index} className="text-sm text-red-600">• {err}</p>
+                  <p key={index} className="text-sm text-red-600">
+                    • {err}
+                  </p>
                 ))}
               </div>
             ) : (
@@ -193,7 +223,9 @@ export default function SignupPage() {
       <TermsAndConditionsModal
         isOpen={showTermsModal}
         onClose={() => setShowTermsModal(false)}
-        onAccept={() => {/* TODO: Handle terms acceptance */ }}
+        onAccept={() => {
+          /* TODO: Handle terms acceptance */
+        }}
       />
 
       {/* Loading Overlay */}

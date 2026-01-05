@@ -101,7 +101,8 @@ const mockMessages: Record<string, Message[]> = {
       productData: {
         id: 'p1',
         title: 'Product title',
-        image: 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
+        image:
+          'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=200',
         price: 4500,
         currency: 'egp',
       },
@@ -179,9 +180,8 @@ export default function MessagesPage() {
     string | null
   >(conversations.length > 0 ? conversations[0].id : null)
   const [searchValue, setSearchValue] = useState('')
-  const [messages, setMessages] = useState<Record<string, Message[]>>(
-    mockMessages
-  )
+  const [messages, setMessages] =
+    useState<Record<string, Message[]>>(mockMessages)
 
   const selectedConversation = conversations.find(
     c => c.id === selectedConversationId
@@ -190,17 +190,21 @@ export default function MessagesPage() {
     ? messages[selectedConversationId] || []
     : []
 
-  const handleSendMessage = (message: string, audioBlob?: Blob, images?: File[]) => {
+  const handleSendMessage = (
+    message: string,
+    audioBlob?: Blob,
+    images?: File[]
+  ) => {
     if (!selectedConversationId) return
 
     // Handle images if provided
     if (images && images.length > 0) {
-      images.forEach((imageFile) => {
+      images.forEach(imageFile => {
         // TODO: In production, upload image to server first:
         // const imageUrl = await uploadImage(imageFile)
         // For demo purposes, we use createObjectURL for immediate preview
         const imageUrl = URL.createObjectURL(imageFile)
-        
+
         const imageMessage: Message = {
           id: `m${Date.now()}-${Math.random()}`,
           conversationId: selectedConversationId,

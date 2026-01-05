@@ -8,19 +8,3 @@ export interface SharePostResponse {
   fullUrl: string
   shareCount: number
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

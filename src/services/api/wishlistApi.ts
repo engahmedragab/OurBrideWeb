@@ -5,10 +5,7 @@ import type {
   CreateWishlistRequest,
   UpdateWishlistRequest,
 } from '@/../client/common/api/gen/ourbride-api'
-import type {
-  PaginatedList,
-  WishlistResponse,
-} from '@/types/responses'
+import type { PaginatedList, WishlistResponse } from '@/types/responses'
 
 /**
  * Get wishlist by ID
@@ -92,7 +89,9 @@ export const checkWishlistExists = async (
       return (error as { status: number }).status !== 404
     }
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to check wishlist existence'
+      error instanceof Error
+        ? error.message
+        : 'Failed to check wishlist existence'
     )
   }
 }
@@ -112,27 +111,27 @@ export const getAllWishlists = async (query?: {
   try {
     const response = await apiClient.api.getWishlistGetAll(query)
     const responseAny: any = response
-    
+
     // Handle nested response structure: { data: { data: [...] } }
     if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
       return responseAny.data.data as WishlistResponse[]
     }
-    
+
     // Handle the actual response structure: { data: [...], success, statusCode, message, errors }
     if (responseAny?.data && Array.isArray(responseAny.data)) {
       return responseAny.data as WishlistResponse[]
     }
-    
+
     // Fallback for paginated structure if API changes
     if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
       return responseAny.data.items as WishlistResponse[]
     }
-    
+
     // Fallback for direct array
     if (Array.isArray(responseAny)) {
       return responseAny as WishlistResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
     throw new Error(

@@ -15,7 +15,12 @@ export interface AffiliateOnboardingModalsProps {
   onComplete?: () => void
 }
 
-type Step = 'payment' | 'payment-success' | 'create-pin' | 'confirm-pin' | 'pin-success'
+type Step =
+  | 'payment'
+  | 'payment-success'
+  | 'create-pin'
+  | 'confirm-pin'
+  | 'pin-success'
 
 /**
  * AffiliateOnboardingModals Component
@@ -27,7 +32,9 @@ export const AffiliateOnboardingModals = ({
   onComplete,
 }: AffiliateOnboardingModalsProps) => {
   const [currentStep, setCurrentStep] = useState<Step>('payment')
-  const [paymentMethod, setPaymentMethod] = useState<'debit' | 'wallet'>('debit')
+  const [paymentMethod, setPaymentMethod] = useState<'debit' | 'wallet'>(
+    'debit'
+  )
   const [fullName, setFullName] = useState('')
   const [mobileNumber, setMobileNumber] = useState('')
   const [walletMobileNumber, setWalletMobileNumber] = useState('')
@@ -43,7 +50,9 @@ export const AffiliateOnboardingModals = ({
   const validatePayment = (): boolean => {
     const newErrors: Record<string, string> = {}
 
-    {/* Full Name validation */}
+    {
+      /* Full Name validation */
+    }
     if (!fullName.trim()) {
       newErrors.fullName = 'Full name is required'
     } else if (fullName.trim().length < 2) {
@@ -51,34 +60,44 @@ export const AffiliateOnboardingModals = ({
     }
 
     if (paymentMethod === 'wallet') {
-      {/* Wallet mobile number validation */}
+      {
+        /* Wallet mobile number validation */
+      }
       if (!walletMobileNumber.trim()) {
         newErrors.walletMobileNumber = 'Mobile number is required'
       } else {
         const phoneRegex = /^[0-9]{10,11}$/
         if (!phoneRegex.test(walletMobileNumber.replace(/\s/g, ''))) {
-          newErrors.walletMobileNumber = 'Please enter a valid mobile number (10-11 digits)'
+          newErrors.walletMobileNumber =
+            'Please enter a valid mobile number (10-11 digits)'
         }
       }
     } else {
-      {/* Mobile number validation for debit/credit */}
+      {
+        /* Mobile number validation for debit/credit */
+      }
       if (!mobileNumber.trim()) {
         newErrors.mobileNumber = 'Mobile number is required'
       } else {
         const phoneRegex = /^[0-9]{10,11}$/
         if (!phoneRegex.test(mobileNumber.replace(/\s/g, ''))) {
-          newErrors.mobileNumber = 'Please enter a valid mobile number (10-11 digits)'
+          newErrors.mobileNumber =
+            'Please enter a valid mobile number (10-11 digits)'
         }
       }
 
-      {/* Card name validation */}
+      {
+        /* Card name validation */
+      }
       if (!cardName.trim()) {
         newErrors.cardName = 'Cardholder name is required'
       } else if (cardName.trim().length < 2) {
         newErrors.cardName = 'Cardholder name must be at least 2 characters'
       }
 
-      {/* Card number validation */}
+      {
+        /* Card number validation */
+      }
       if (!cardNumber.trim()) {
         newErrors.cardNumber = 'Card number is required'
       } else {
@@ -88,7 +107,9 @@ export const AffiliateOnboardingModals = ({
         }
       }
 
-      {/* Expiry date validation */}
+      {
+        /* Expiry date validation */
+      }
       if (!mmyy.trim()) {
         newErrors.mmyy = 'Expiry date is required'
       } else {
@@ -98,7 +119,9 @@ export const AffiliateOnboardingModals = ({
         }
       }
 
-      {/* CVV validation */}
+      {
+        /* CVV validation */
+      }
       if (!cvv.trim()) {
         newErrors.cvv = 'CVV is required'
       } else {
@@ -124,7 +147,9 @@ export const AffiliateOnboardingModals = ({
   }
 
   const handleCreatePin = () => {
-    {/* Validate PIN */}
+    {
+      /* Validate PIN */
+    }
     const pinValue = createPin.join('')
     if (pinValue.length !== 4) {
       setPinError('Please enter a 4-digit PIN')
@@ -135,20 +160,22 @@ export const AffiliateOnboardingModals = ({
   }
 
   const handleConfirmPin = () => {
-    {/* Validate PIN confirmation */}
+    {
+      /* Validate PIN confirmation */
+    }
     const pinValue = createPin.join('')
     const confirmPinValue = confirmPin.join('')
-    
+
     if (confirmPinValue.length !== 4) {
       setPinError('Please enter a 4-digit PIN')
       return
     }
-    
+
     if (confirmPinValue !== pinValue) {
       setPinError('PINs do not match')
       return
     }
-    
+
     setPinError('')
     setCurrentStep('pin-success')
   }
@@ -161,7 +188,9 @@ export const AffiliateOnboardingModals = ({
   }
 
   const handleClose = () => {
-    {/* Reset all states */}
+    {
+      /* Reset all states */
+    }
     setCurrentStep('payment')
     setPaymentMethod('debit')
     setFullName('')
@@ -212,17 +241,17 @@ export const AffiliateOnboardingModals = ({
                   type="text"
                   placeholder="Full Name"
                   value={fullName}
-                  onChange={(e) => {
+                  onChange={e => {
                     setFullName(e.target.value)
                     if (errors.fullName) {
                       setErrors(prev => ({ ...prev, fullName: '' }))
                     }
                   }}
                   className={cn(
-                    "w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white",
+                    'w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white',
                     errors.fullName
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-200 bg-gray-50 focus:border-brand-500"
+                      ? 'border-red-500 bg-red-50'
+                      : 'border-gray-200 bg-gray-50 focus:border-brand-500'
                   )}
                 />
                 {errors.fullName && (
@@ -237,21 +266,23 @@ export const AffiliateOnboardingModals = ({
                     type="tel"
                     placeholder="Mobile Number"
                     value={mobileNumber}
-                    onChange={(e) => {
+                    onChange={e => {
                       setMobileNumber(e.target.value)
                       if (errors.mobileNumber) {
                         setErrors(prev => ({ ...prev, mobileNumber: '' }))
                       }
                     }}
                     className={cn(
-                      "w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white",
+                      'w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white',
                       errors.mobileNumber
-                        ? "border-red-500 bg-red-50"
-                        : "border-gray-200 bg-gray-50 focus:border-brand-500"
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-200 bg-gray-50 focus:border-brand-500'
                     )}
                   />
                   {errors.mobileNumber && (
-                    <p className="text-12 text-red-500 mt-1">{errors.mobileNumber}</p>
+                    <p className="text-12 text-red-500 mt-1">
+                      {errors.mobileNumber}
+                    </p>
                   )}
                 </div>
               )}
@@ -299,21 +330,26 @@ export const AffiliateOnboardingModals = ({
                       type="tel"
                       placeholder="Mobile Number"
                       value={walletMobileNumber}
-                      onChange={(e) => {
+                      onChange={e => {
                         setWalletMobileNumber(e.target.value)
                         if (errors.walletMobileNumber) {
-                          setErrors(prev => ({ ...prev, walletMobileNumber: '' }))
+                          setErrors(prev => ({
+                            ...prev,
+                            walletMobileNumber: '',
+                          }))
                         }
                       }}
                       className={cn(
-                        "w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white",
+                        'w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white',
                         errors.walletMobileNumber
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-200 bg-gray-50 focus:border-brand-500"
+                          ? 'border-red-500 bg-red-50'
+                          : 'border-gray-200 bg-gray-50 focus:border-brand-500'
                       )}
                     />
                     {errors.walletMobileNumber && (
-                      <p className="text-12 text-red-500 mt-1">{errors.walletMobileNumber}</p>
+                      <p className="text-12 text-red-500 mt-1">
+                        {errors.walletMobileNumber}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -329,21 +365,23 @@ export const AffiliateOnboardingModals = ({
                       type="text"
                       placeholder="Name On Card"
                       value={cardName}
-                      onChange={(e) => {
+                      onChange={e => {
                         setCardName(e.target.value)
                         if (errors.cardName) {
                           setErrors(prev => ({ ...prev, cardName: '' }))
                         }
                       }}
                       className={cn(
-                        "w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white",
+                        'w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white',
                         errors.cardName
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-200 bg-gray-50 focus:border-brand-500"
+                          ? 'border-red-500 bg-red-50'
+                          : 'border-gray-200 bg-gray-50 focus:border-brand-500'
                       )}
                     />
                     {errors.cardName && (
-                      <p className="text-12 text-red-500 mt-1">{errors.cardName}</p>
+                      <p className="text-12 text-red-500 mt-1">
+                        {errors.cardName}
+                      </p>
                     )}
                   </div>
 
@@ -352,8 +390,10 @@ export const AffiliateOnboardingModals = ({
                       type="text"
                       placeholder="Card Number"
                       value={cardNumber}
-                      onChange={(e) => {
-                        let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '')
+                      onChange={e => {
+                        let value = e.target.value
+                          .replace(/\s/g, '')
+                          .replace(/\D/g, '')
                         value = value.slice(0, 16)
                         value = value.replace(/(.{4})/g, '$1 ').trim()
                         setCardNumber(value)
@@ -362,15 +402,17 @@ export const AffiliateOnboardingModals = ({
                         }
                       }}
                       className={cn(
-                        "w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white",
+                        'w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white',
                         errors.cardNumber
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-200 bg-gray-50 focus:border-brand-500"
+                          ? 'border-red-500 bg-red-50'
+                          : 'border-gray-200 bg-gray-50 focus:border-brand-500'
                       )}
                       maxLength={19}
                     />
                     {errors.cardNumber && (
-                      <p className="text-12 text-red-500 mt-1">{errors.cardNumber}</p>
+                      <p className="text-12 text-red-500 mt-1">
+                        {errors.cardNumber}
+                      </p>
                     )}
                   </div>
 
@@ -380,7 +422,7 @@ export const AffiliateOnboardingModals = ({
                         type="text"
                         placeholder="MM/YY"
                         value={mmyy}
-                        onChange={(e) => {
+                        onChange={e => {
                           let value = e.target.value.replace(/\D/g, '')
                           if (value.length >= 2) {
                             value = value.slice(0, 2) + '/' + value.slice(2, 4)
@@ -391,15 +433,17 @@ export const AffiliateOnboardingModals = ({
                           }
                         }}
                         className={cn(
-                          "w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white",
+                          'w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white',
                           errors.mmyy
-                            ? "border-red-500 bg-red-50"
-                            : "border-gray-200 bg-gray-50 focus:border-brand-500"
+                            ? 'border-red-500 bg-red-50'
+                            : 'border-gray-200 bg-gray-50 focus:border-brand-500'
                         )}
                         maxLength={5}
                       />
                       {errors.mmyy && (
-                        <p className="text-12 text-red-500 mt-1">{errors.mmyy}</p>
+                        <p className="text-12 text-red-500 mt-1">
+                          {errors.mmyy}
+                        </p>
                       )}
                     </div>
                     <div className="flex-1">
@@ -407,23 +451,27 @@ export const AffiliateOnboardingModals = ({
                         type="text"
                         placeholder="CVV"
                         value={cvv}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '').slice(0, 4)
+                        onChange={e => {
+                          const value = e.target.value
+                            .replace(/\D/g, '')
+                            .slice(0, 4)
                           setCvv(value)
                           if (errors.cvv) {
                             setErrors(prev => ({ ...prev, cvv: '' }))
                           }
                         }}
                         className={cn(
-                          "w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white",
+                          'w-full h-11 px-3 rounded-lg border text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:bg-white',
                           errors.cvv
-                            ? "border-red-500 bg-red-50"
-                            : "border-gray-200 bg-gray-50 focus:border-brand-500"
+                            ? 'border-red-500 bg-red-50'
+                            : 'border-gray-200 bg-gray-50 focus:border-brand-500'
                         )}
                         maxLength={4}
                       />
                       {errors.cvv && (
-                        <p className="text-12 text-red-500 mt-1">{errors.cvv}</p>
+                        <p className="text-12 text-red-500 mt-1">
+                          {errors.cvv}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -500,7 +548,11 @@ export const AffiliateOnboardingModals = ({
 
               <div className="mb-6 flex justify-center">
                 <Image
-                  src={typeof affiliatePinSvg === 'string' ? affiliatePinSvg : affiliatePinSvg.src}
+                  src={
+                    typeof affiliatePinSvg === 'string'
+                      ? affiliatePinSvg
+                      : affiliatePinSvg.src
+                  }
                   alt="Create PIN"
                   width={128}
                   height={128}
@@ -555,7 +607,11 @@ export const AffiliateOnboardingModals = ({
 
               <div className="mb-6 flex justify-center">
                 <Image
-                  src={typeof affiliatePinSvg === 'string' ? affiliatePinSvg : affiliatePinSvg.src}
+                  src={
+                    typeof affiliatePinSvg === 'string'
+                      ? affiliatePinSvg
+                      : affiliatePinSvg.src
+                  }
                   alt="Confirm PIN"
                   width={128}
                   height={128}
@@ -619,7 +675,8 @@ export const AffiliateOnboardingModals = ({
                 PIN Created Successfully
               </h2>
               <p className="text-14 text-gray-500 mb-6">
-                Your wallet PIN has been created successfully. You can now start earning with the affiliate program
+                Your wallet PIN has been created successfully. You can now start
+                earning with the affiliate program
               </p>
 
               <Button

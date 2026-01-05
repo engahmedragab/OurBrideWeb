@@ -81,11 +81,7 @@ export const PromoHero = ({
             <p className="text-20 md:text-24 text-gray-700 leading-[32px] max-w-full">
               {description}
             </p>
-            {ctaLink ? (
-              <Link href={ctaLink}>{ctaButton}</Link>
-            ) : (
-              ctaButton
-            )}
+            {ctaLink ? <Link href={ctaLink}>{ctaButton}</Link> : ctaButton}
           </div>
 
           {/* Right Side - Banner & Product Image */}
@@ -168,4 +164,3 @@ export const PromoHero = ({
     </div>
   )
 }
-

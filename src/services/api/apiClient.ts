@@ -7,7 +7,10 @@ import { getApiLanguage } from '@/utils/language'
 // So baseURL should be just the domain (e.g., https://preprod.our-bride.com)
 // NOT https://preprod.our-bride.com/api/v1
 const getBaseURL = (): string => {
-  const url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://preprod.our-bride.com'
+  const url =
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    process.env.VITE_API_BASE_URL ||
+    'https://preprod.our-bride.com'
   // Remove trailing slash if present
   let baseURL = url.replace(/\/$/, '')
   // Remove /api/v1 if it's at the end of the baseURL (since endpoints already include it)
@@ -38,38 +41,38 @@ const httpClient = new HttpClient({
 
 // Add request interceptor to inject token and language
 httpClient.instance.interceptors.request.use(
-  (config) => {
+  config => {
     const token = getToken()
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    
+
     // Add language support: query parameter and Accept-Language header
     const language = getApiLanguage()
     if (config.headers) {
       config.headers['Accept-Language'] = language
     }
-    
+
     // Add lang as query parameter
     if (!config.params) {
       config.params = {}
     }
     config.params.lang = language
-    
+
     return config
   },
-  (error) => Promise.reject(error)
+  error => Promise.reject(error)
 )
 
 // Add response interceptor for error handling
 httpClient.instance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  response => response,
+  async error => {
     if (error.response?.status === 401) {
       // Token expired or invalid - clear token and redirect to login
       const { removeToken } = await import('@/auth/utils/token')
       removeToken()
-      
+
       // Only redirect if we're in the browser
       if (typeof window !== 'undefined') {
         window.location.href = '/auth/login'
@@ -83,4 +86,3 @@ httpClient.instance.interceptors.response.use(
 export const apiClient = new Api(httpClient)
 
 export default apiClient
-

@@ -7,7 +7,10 @@ import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { X } from 'lucide-react'
-import { createServiceCategorySchema, type CreateServiceCategoryFormValues } from '@/schema/serviceCategory.schema'
+import {
+  createServiceCategorySchema,
+  type CreateServiceCategoryFormValues,
+} from '@/schema/serviceCategory.schema'
 
 export interface CreateCategoryModalProps {
   open: boolean
@@ -92,7 +95,9 @@ export const CreateCategoryModal = ({
       <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-20 font-semibold text-gray-900">Create New Category</h2>
+          <h2 className="text-20 font-semibold text-gray-900">
+            Create New Category
+          </h2>
           <button
             type="button"
             onClick={handleClose}
@@ -106,7 +111,10 @@ export const CreateCategoryModal = ({
         {/* Form Fields */}
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label htmlFor="category-name" className="text-14 font-medium text-gray-700 block">
+            <label
+              htmlFor="category-name"
+              className="text-14 font-medium text-gray-700 block"
+            >
               Name <span className="text-red-500">*</span>
             </label>
             <Input
@@ -122,7 +130,10 @@ export const CreateCategoryModal = ({
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="category-description" className="text-14 font-medium text-gray-700 block">
+            <label
+              htmlFor="category-description"
+              className="text-14 font-medium text-gray-700 block"
+            >
               Description (Optional)
             </label>
             <Input

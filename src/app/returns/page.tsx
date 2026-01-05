@@ -14,7 +14,8 @@ import {
 
 export const metadata: Metadata = {
   title: 'Returns & Refunds | OurBride',
-  description: 'Learn about OurBride return policy, refund process, and exchange information',
+  description:
+    'Learn about OurBride return policy, refund process, and exchange information',
 }
 
 export default function ReturnsPage() {
@@ -55,15 +56,22 @@ export default function ReturnsPage() {
                 <div className="space-y-6">
                   <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
                     <p className="text-16 text-gray-700 leading-relaxed">
-                      We want you to be completely satisfied with your purchase. If you&apos;re not happy with your order, 
-                      you can return most items within <span className="font-semibold text-gray-900">30 days</span> of delivery for a full refund or exchange.
+                      We want you to be completely satisfied with your purchase.
+                      If you&apos;re not happy with your order, you can return
+                      most items within{' '}
+                      <span className="font-semibold text-gray-900">
+                        30 days
+                      </span>{' '}
+                      of delivery for a full refund or exchange.
                     </p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="bg-green-50 rounded-lg p-4 border border-green-100">
                       <div className="flex items-center gap-2 mb-3">
                         <CheckCircle2 className="h-5 w-5 text-green-600" />
-                        <h3 className="text-16 font-normal text-gray-900">Eligible Items</h3>
+                        <h3 className="text-16 font-normal text-gray-900">
+                          Eligible Items
+                        </h3>
                       </div>
                       <ul className="list-disc list-inside space-y-1.5 text-14 text-gray-700 ml-2">
                         <li>Unused and in original condition</li>
@@ -74,7 +82,9 @@ export default function ReturnsPage() {
                     <div className="bg-red-50 rounded-lg p-4 border border-red-100">
                       <div className="flex items-center gap-2 mb-3">
                         <XCircle className="h-5 w-5 text-red-600" />
-                        <h3 className="text-16 font-normal text-gray-900">Non-Returnable</h3>
+                        <h3 className="text-16 font-normal text-gray-900">
+                          Non-Returnable
+                        </h3>
                       </div>
                       <ul className="list-disc list-inside space-y-1.5 text-14 text-gray-700 ml-2">
                         <li>Personalized or customized items</li>
@@ -103,10 +113,19 @@ export default function ReturnsPage() {
                       1
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-18 font-normal text-gray-900 mb-2">Initiate Return</h3>
+                      <h3 className="text-18 font-normal text-gray-900 mb-2">
+                        Initiate Return
+                      </h3>
                       <p className="text-16 text-gray-700 leading-relaxed">
-                        Go to your <a href="/orders" className="text-brand-500 hover:text-brand-600 underline font-medium">Orders</a> page, 
-                        select the item you want to return, and click &quot;Request Return&quot;.
+                        Go to your{' '}
+                        <a
+                          href="/orders"
+                          className="text-brand-500 hover:text-brand-600 underline font-medium"
+                        >
+                          Orders
+                        </a>{' '}
+                        page, select the item you want to return, and click
+                        &quot;Request Return&quot;.
                       </p>
                     </div>
                   </div>
@@ -115,9 +134,12 @@ export default function ReturnsPage() {
                       2
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-18 font-normal text-gray-900 mb-2">Get Return Authorization</h3>
+                      <h3 className="text-18 font-normal text-gray-900 mb-2">
+                        Get Return Authorization
+                      </h3>
                       <p className="text-16 text-gray-700 leading-relaxed">
-                        Once approved, you&apos;ll receive a return authorization and shipping label via email.
+                        Once approved, you&apos;ll receive a return
+                        authorization and shipping label via email.
                       </p>
                     </div>
                   </div>
@@ -126,10 +148,13 @@ export default function ReturnsPage() {
                       3
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-18 font-normal text-gray-900 mb-2">Package & Ship</h3>
+                      <h3 className="text-18 font-normal text-gray-900 mb-2">
+                        Package & Ship
+                      </h3>
                       <p className="text-16 text-gray-700 leading-relaxed">
-                        Package the item securely with all original packaging and tags, attach the return label, 
-                        and ship it back to us.
+                        Package the item securely with all original packaging
+                        and tags, attach the return label, and ship it back to
+                        us.
                       </p>
                     </div>
                   </div>
@@ -138,10 +163,13 @@ export default function ReturnsPage() {
                       4
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-18 font-normal text-gray-900 mb-2">Receive Refund</h3>
+                      <h3 className="text-18 font-normal text-gray-900 mb-2">
+                        Receive Refund
+                      </h3>
                       <p className="text-16 text-gray-700 leading-relaxed">
-                        Once we receive and inspect your return, we&apos;ll process your refund to the original 
-                        payment method within 5-10 business days.
+                        Once we receive and inspect your return, we&apos;ll
+                        process your refund to the original payment method
+                        within 5-10 business days.
                       </p>
                     </div>
                   </div>
@@ -160,18 +188,25 @@ export default function ReturnsPage() {
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-18 font-normal text-gray-900 mb-2">Refund Processing Time</h3>
+                    <h3 className="text-18 font-normal text-gray-900 mb-2">
+                      Refund Processing Time
+                    </h3>
                     <p className="text-16 text-gray-700 leading-relaxed">
-                      Refunds are typically processed within 5-10 business days after we receive your return. 
-                      The time it takes for the refund to appear in your account depends on your payment method 
-                      and financial institution.
+                      Refunds are typically processed within 5-10 business days
+                      after we receive your return. The time it takes for the
+                      refund to appear in your account depends on your payment
+                      method and financial institution.
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-18 font-normal text-gray-900 mb-2">Shipping Costs</h3>
+                    <h3 className="text-18 font-normal text-gray-900 mb-2">
+                      Shipping Costs
+                    </h3>
                     <p className="text-16 text-gray-700 leading-relaxed">
-                      Original shipping costs are non-refundable unless the item was defective or we made an error. 
-                      Return shipping costs are the responsibility of the customer unless the return is due to our error.
+                      Original shipping costs are non-refundable unless the item
+                      was defective or we made an error. Return shipping costs
+                      are the responsibility of the customer unless the return
+                      is due to our error.
                     </p>
                   </div>
                 </div>
@@ -188,11 +223,13 @@ export default function ReturnsPage() {
                   </h2>
                 </div>
                 <p className="text-16 text-gray-700 leading-relaxed mb-4">
-                  If you need a different size, color, or style, you can request an exchange during the return process. 
-                  Exchanges are subject to product availability.
+                  If you need a different size, color, or style, you can request
+                  an exchange during the return process. Exchanges are subject
+                  to product availability.
                 </p>
                 <p className="text-16 text-gray-700 leading-relaxed">
-                  If the item you want is not available, we&apos;ll process a refund instead.
+                  If the item you want is not available, we&apos;ll process a
+                  refund instead.
                 </p>
               </section>
 
@@ -207,11 +244,13 @@ export default function ReturnsPage() {
                   </h2>
                 </div>
                 <p className="text-16 text-gray-700 leading-relaxed mb-4">
-                  If you receive a damaged or defective item, please contact us immediately. We&apos;ll arrange for 
-                  a replacement or full refund, including return shipping costs.
+                  If you receive a damaged or defective item, please contact us
+                  immediately. We&apos;ll arrange for a replacement or full
+                  refund, including return shipping costs.
                 </p>
                 <p className="text-16 text-gray-700 leading-relaxed">
-                  Please take photos of the damaged item and packaging to help us process your claim faster.
+                  Please take photos of the damaged item and packaging to help
+                  us process your claim faster.
                 </p>
               </section>
 
@@ -226,7 +265,8 @@ export default function ReturnsPage() {
                   </h2>
                 </div>
                 <p className="text-16 text-gray-700 leading-relaxed mb-4">
-                  If you have questions about returns or need assistance, we&apos;re here to help.
+                  If you have questions about returns or need assistance,
+                  we&apos;re here to help.
                 </p>
                 <a
                   href="/dashboard/help-center"
@@ -244,4 +284,3 @@ export default function ReturnsPage() {
     </div>
   )
 }
-

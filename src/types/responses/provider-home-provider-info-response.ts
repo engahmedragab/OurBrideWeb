@@ -27,6 +27,3 @@ export interface ProviderHomeProviderInfoResponse extends BaseLookupResponse {
   isProfileComplete: boolean
   profileCompletionPercentage: number
 }
-
-
-

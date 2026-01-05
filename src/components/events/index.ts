@@ -33,4 +33,3 @@ export { mockEvents } from './calendar/mockEvents'
 export type { MockEvent } from './calendar/mockEvents'
 
 export * from './books'
-

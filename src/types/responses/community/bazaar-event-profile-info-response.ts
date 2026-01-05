@@ -9,13 +9,3 @@ export interface BazaarEventProfileInfo {
   startDate: string | null // ISO date string
   endDate: string | null // ISO date string
 }
-
-
-
-
-
-
-
-
-
-

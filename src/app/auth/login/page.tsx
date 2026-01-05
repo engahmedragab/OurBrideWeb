@@ -20,22 +20,34 @@ import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-
 function LoginFormContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { loginWithEmail, loginWithExternalProvider, isLoading, error, clearError } = useAuth()
+  const {
+    loginWithEmail,
+    loginWithExternalProvider,
+    isLoading,
+    error,
+    clearError,
+  } = useAuth()
   const [loginCredentials, setLoginCredentials] = useState<{
     email: string
     password: string
   }>({ email: '', password: '' })
   const [rememberMe, setRememberMe] = useState(false)
 
-  const handleEmailChange = useCallback((email: string) => {
-    setLoginCredentials(prev => ({ ...prev, email }))
-    if (error) clearError()
-  }, [error, clearError])
+  const handleEmailChange = useCallback(
+    (email: string) => {
+      setLoginCredentials(prev => ({ ...prev, email }))
+      if (error) clearError()
+    },
+    [error, clearError]
+  )
 
-  const handlePasswordChange = useCallback((password: string) => {
-    setLoginCredentials(prev => ({ ...prev, password }))
-    if (error) clearError()
-  }, [error, clearError])
+  const handlePasswordChange = useCallback(
+    (password: string) => {
+      setLoginCredentials(prev => ({ ...prev, password }))
+      if (error) clearError()
+    },
+    [error, clearError]
+  )
 
   const handleLogin = useCallback(async () => {
     try {
@@ -46,8 +58,10 @@ function LoginFormContent() {
       })
 
       // After login, get planning preference init status from backend and update local user
-      const { getPlanningPreferenceInit } = await import('@/services/profile/profileApi')
-      const { setPreferenceInit, isPreferenceInit } = await import('@/auth/utils/token')
+      const { getPlanningPreferenceInit } =
+        await import('@/services/profile/profileApi')
+      const { setPreferenceInit, isPreferenceInit } =
+        await import('@/auth/utils/token')
       const backendPreferenceInit = await getPlanningPreferenceInit()
       setPreferenceInit(backendPreferenceInit)
 
@@ -71,43 +85,46 @@ function LoginFormContent() {
     }
   }, [loginCredentials, loginWithEmail, router, searchParams, clearError])
 
-  const handleSocialLogin = useCallback(async (provider: 'google' | 'facebook') => {
-    try {
-      clearError()
+  const handleSocialLogin = useCallback(
+    async (provider: 'google' | 'facebook') => {
+      try {
+        clearError()
 
-      // Map provider names to ExternalProvidersType
-      // Note: API only supports Google, Facebook, LinkedIn - Apple not in enum
-      const providerMap: Record<string, ExternalProvidersType | null> = {
-        google: 'Google' as ExternalProvidersType,
-        facebook: 'Facebook' as ExternalProvidersType,
-        apple: null, // Apple not supported in API enum
+        // Map provider names to ExternalProvidersType
+        // Note: API only supports Google, Facebook, LinkedIn - Apple not in enum
+        const providerMap: Record<string, ExternalProvidersType | null> = {
+          google: 'Google' as ExternalProvidersType,
+          facebook: 'Facebook' as ExternalProvidersType,
+          apple: null, // Apple not supported in API enum
+        }
+
+        const providerType = providerMap[provider]
+
+        if (!providerType) {
+          console.warn(`${provider} login is not supported by the API`)
+          // TODO: Show user-friendly message
+          return
+        }
+
+        // TODO: Implement OAuth flow
+        // For now, this is a placeholder - you'll need to integrate with your OAuth provider
+        // Example: Get access token from OAuth provider, then call loginWithExternalProvider
+        console.log(`Social login with ${provider} - OAuth integration needed`)
+
+        // Placeholder - replace with actual OAuth implementation
+        // const accessToken = await getOAuthToken(provider)
+        // await loginWithExternalProvider({
+        //   accessToken,
+        //   provider: providerType,
+        // })
+
+        // router.push('/dashboard')
+      } catch (err) {
+        console.error(`${provider} login failed:`, err)
       }
-
-      const providerType = providerMap[provider]
-
-      if (!providerType) {
-        console.warn(`${provider} login is not supported by the API`)
-        // TODO: Show user-friendly message
-        return
-      }
-
-      // TODO: Implement OAuth flow
-      // For now, this is a placeholder - you'll need to integrate with your OAuth provider
-      // Example: Get access token from OAuth provider, then call loginWithExternalProvider
-      console.log(`Social login with ${provider} - OAuth integration needed`)
-
-      // Placeholder - replace with actual OAuth implementation
-      // const accessToken = await getOAuthToken(provider)
-      // await loginWithExternalProvider({
-      //   accessToken,
-      //   provider: providerType,
-      // })
-
-      // router.push('/dashboard')
-    } catch (err) {
-      console.error(`${provider} login failed:`, err)
-    }
-  }, [loginWithExternalProvider, clearError, router])
+    },
+    [loginWithExternalProvider, clearError, router]
+  )
 
   return (
     <>
@@ -128,7 +145,6 @@ function LoginFormContent() {
             provider="facebook"
             onClick={() => handleSocialLogin('facebook')}
           />
-
         </div>
 
         {/* Divider */}
@@ -168,17 +184,19 @@ function LoginFormContent() {
  */
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
-        <WelcomeHeader welcomeText="Welcome To OurBride" />
-        <AuthTabs />
-        <LoadingOverlay
-          open={true}
-          title="Loading..."
-          subtitle="Please wait a moment"
-        />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
+          <WelcomeHeader welcomeText="Welcome To OurBride" />
+          <AuthTabs />
+          <LoadingOverlay
+            open={true}
+            title="Loading..."
+            subtitle="Please wait a moment"
+          />
+        </div>
+      }
+    >
       <LoginFormContent />
     </Suspense>
   )

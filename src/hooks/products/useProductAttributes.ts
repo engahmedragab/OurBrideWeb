@@ -29,4 +29,3 @@ export const useProductAttributes = (
     staleTime: 10 * 60 * 1000, // 10 minutes - attributes don't change often
   })
 }
-

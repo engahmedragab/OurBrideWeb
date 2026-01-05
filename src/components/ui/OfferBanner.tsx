@@ -39,7 +39,7 @@ export const OfferBanner = ({
     if (offers.length <= 1) return
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % offers.length)
+      setCurrentIndex(prevIndex => (prevIndex + 1) % offers.length)
     }, autoPlayInterval)
 
     return () => clearInterval(interval)

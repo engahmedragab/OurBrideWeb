@@ -1,13 +1,36 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, addDays, isToday, isTomorrow } from 'date-fns'
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react'
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  addMonths,
+  subMonths,
+  addDays,
+  isToday,
+  isTomorrow,
+} from 'date-fns'
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+} from 'lucide-react'
 import { Popover, PopoverTrigger, PopoverContent } from './Popover'
 import { Input } from './Input'
 import { cn } from '@/lib/utils'
 
-export type DatePickerTimeSlot = 'any' | 'morning' | 'afternoon' | 'evening' | 'custom'
+export type DatePickerTimeSlot =
+  | 'any'
+  | 'morning'
+  | 'afternoon'
+  | 'evening'
+  | 'custom'
 
 export interface CustomDatePickerProps {
   value?: Date
@@ -33,8 +56,11 @@ export const CustomDatePicker = ({
   disabled = false,
 }: CustomDatePickerProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [currentMonth, setCurrentMonth] = useState(() => value ? new Date(value.getFullYear(), value.getMonth(), 1) : new Date())
-  const [selectedTime, setSelectedTime] = useState<DatePickerTimeSlot>(selectedTimeSlot)
+  const [currentMonth, setCurrentMonth] = useState(() =>
+    value ? new Date(value.getFullYear(), value.getMonth(), 1) : new Date()
+  )
+  const [selectedTime, setSelectedTime] =
+    useState<DatePickerTimeSlot>(selectedTimeSlot)
 
   const today = new Date()
   const tomorrow = addDays(today, 1)
@@ -74,7 +100,7 @@ export const CustomDatePicker = ({
   }
 
   const handleMonthChange = (direction: 'prev' | 'next') => {
-    setCurrentMonth((prev) => {
+    setCurrentMonth(prev => {
       if (direction === 'prev') {
         return subMonths(prev, 1)
       } else {
@@ -97,9 +123,21 @@ export const CustomDatePicker = ({
 
   const timeSlots = [
     { id: 'any' as DatePickerTimeSlot, label: 'Any time', timeRange: null },
-    { id: 'morning' as DatePickerTimeSlot, label: 'Morning', timeRange: '9 AM - 12 PM' },
-    { id: 'afternoon' as DatePickerTimeSlot, label: 'Afternoon', timeRange: '12 PM - 5 PM' },
-    { id: 'evening' as DatePickerTimeSlot, label: 'Evening', timeRange: '5 PM - 11 PM' },
+    {
+      id: 'morning' as DatePickerTimeSlot,
+      label: 'Morning',
+      timeRange: '9 AM - 12 PM',
+    },
+    {
+      id: 'afternoon' as DatePickerTimeSlot,
+      label: 'Afternoon',
+      timeRange: '12 PM - 5 PM',
+    },
+    {
+      id: 'evening' as DatePickerTimeSlot,
+      label: 'Evening',
+      timeRange: '5 PM - 11 PM',
+    },
     { id: 'custom' as DatePickerTimeSlot, label: 'Custom', timeRange: null },
   ]
 
@@ -141,10 +179,14 @@ export const CustomDatePicker = ({
                     'flex flex-col p-4 rounded-xl bg-white border border-gray-200 shadow-sm',
                     'hover:shadow-md transition-all duration-200',
                     'text-left min-w-[160px]',
-                    value && isSameDay(value, today) && 'ring-2 ring-brand-500 border-brand-500'
+                    value &&
+                      isSameDay(value, today) &&
+                      'ring-2 ring-brand-500 border-brand-500'
                   )}
                 >
-                  <span className="text-20 font-bold text-gray-900 mb-1">Today</span>
+                  <span className="text-20 font-bold text-gray-900 mb-1">
+                    Today
+                  </span>
                   <span className="text-14 text-gray-600">{todayLabel}</span>
                 </button>
 
@@ -155,10 +197,14 @@ export const CustomDatePicker = ({
                     'flex flex-col p-4 rounded-xl bg-white border border-gray-200 shadow-sm',
                     'hover:shadow-md transition-all duration-200',
                     'text-left min-w-[160px]',
-                    value && isSameDay(value, tomorrow) && 'ring-2 ring-brand-500 border-brand-500'
+                    value &&
+                      isSameDay(value, tomorrow) &&
+                      'ring-2 ring-brand-500 border-brand-500'
                   )}
                 >
-                  <span className="text-20 font-bold text-gray-900 mb-1">Tomorrow</span>
+                  <span className="text-20 font-bold text-gray-900 mb-1">
+                    Tomorrow
+                  </span>
                   <span className="text-14 text-gray-600">{tomorrowLabel}</span>
                 </button>
               </div>
@@ -189,7 +235,7 @@ export const CustomDatePicker = ({
 
               {/* Days of Week Header */}
               <div className="grid grid-cols-7 gap-2 mb-2">
-                {weekDays.map((day) => (
+                {weekDays.map(day => (
                   <div
                     key={day}
                     className="text-12 font-medium text-gray-500 text-center py-2"
@@ -216,8 +262,11 @@ export const CustomDatePicker = ({
                         'flex items-center justify-center',
                         !isCurrentMonth && 'text-gray-300 cursor-not-allowed',
                         isCurrentMonth && 'text-gray-900 hover:bg-gray-100',
-                        isSelected && 'bg-brand-500 text-white hover:bg-brand-600 ring-2 ring-brand-200',
-                        isTodayDate && !isSelected && 'bg-gray-100 text-gray-900 font-semibold'
+                        isSelected &&
+                          'bg-brand-500 text-white hover:bg-brand-600 ring-2 ring-brand-200',
+                        isTodayDate &&
+                          !isSelected &&
+                          'bg-gray-100 text-gray-900 font-semibold'
                       )}
                     >
                       {format(day, 'd')}
@@ -235,7 +284,7 @@ export const CustomDatePicker = ({
                 Select time
               </label>
               <div className="flex flex-wrap gap-2 flex-1">
-                {timeSlots.map((slot) => (
+                {timeSlots.map(slot => (
                   <button
                     key={slot.id}
                     onClick={() => handleTimeSlotSelect(slot.id)}
@@ -244,12 +293,17 @@ export const CustomDatePicker = ({
                       'bg-white border border-gray-200 shadow-sm',
                       'hover:shadow-md transition-all duration-200',
                       'min-w-[100px]',
-                      selectedTime === slot.id && 'ring-2 ring-brand-500 border-brand-500 bg-brand-50'
+                      selectedTime === slot.id &&
+                        'ring-2 ring-brand-500 border-brand-500 bg-brand-50'
                     )}
                   >
-                    <span className="text-14 font-medium text-gray-900">{slot.label}</span>
+                    <span className="text-14 font-medium text-gray-900">
+                      {slot.label}
+                    </span>
                     {slot.timeRange && (
-                      <span className="text-12 text-gray-500 mt-0.5">{slot.timeRange}</span>
+                      <span className="text-12 text-gray-500 mt-0.5">
+                        {slot.timeRange}
+                      </span>
                     )}
                   </button>
                 ))}
@@ -261,4 +315,3 @@ export const CustomDatePicker = ({
     </div>
   )
 }
-

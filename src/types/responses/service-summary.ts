@@ -13,7 +13,10 @@ import type {
   PriceType,
 } from '@/types/responses/common'
 
-export interface ServiceSummary extends Omit<BaseLookupResponse, 'nameAr' | 'nameEn' | 'descriptionAr' | 'descriptionEn'> {
+export interface ServiceSummary extends Omit<
+  BaseLookupResponse,
+  'nameAr' | 'nameEn' | 'descriptionAr' | 'descriptionEn'
+> {
   serviceStatus: ServiceStatus
   isOurBrideService: boolean
   rate: number | null
@@ -59,4 +62,3 @@ export interface ServiceSummary extends Omit<BaseLookupResponse, 'nameAr' | 'nam
   dateOnSaleFrom?: string | null // ISO DateTime string
   dateOnSaleTo?: string | null // ISO DateTime string
 }
-

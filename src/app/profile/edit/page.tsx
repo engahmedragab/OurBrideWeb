@@ -5,7 +5,10 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { UserPageLayout } from '@/components/layout'
 import { Button, Input, LoadingSpinner } from '@/components/ui'
-import { useUserProfileData, useUpdateUserProfile } from '@/hooks/profile/useProfile'
+import {
+  useUserProfileData,
+  useUpdateUserProfile,
+} from '@/hooks/profile/useProfile'
 import { useMineInfo } from '@/hooks/home'
 import { useAuth } from '@/auth'
 
@@ -17,9 +20,10 @@ export default function ProfileEditPage() {
   const router = useRouter()
   const { user: authUser } = useAuth()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  
+
   // Fetch profile data
-  const { data: profileData, isLoading: isLoadingProfile } = useUserProfileData()
+  const { data: profileData, isLoading: isLoadingProfile } =
+    useUserProfileData()
   const { data: mineInfo } = useMineInfo()
   const updateMutation = useUpdateUserProfile()
 
@@ -39,7 +43,9 @@ export default function ProfileEditPage() {
     profileUrl: '',
   })
 
-  const [profileImage, setProfileImage] = useState('https://via.placeholder.com/200')
+  const [profileImage, setProfileImage] = useState(
+    'https://via.placeholder.com/200'
+  )
 
   // Initialize form data when user data is loaded
   useEffect(() => {
@@ -47,7 +53,10 @@ export default function ProfileEditPage() {
       setFormData({
         firstName: userData.firstName || '',
         lastName: userData.lastName || '',
-        gender: typeof userData.gender === 'string' ? userData.gender : String(userData.gender || ''),
+        gender:
+          typeof userData.gender === 'string'
+            ? userData.gender
+            : String(userData.gender || ''),
         mobileNumber: userData.phoneNumber || '',
         email: userData.email || '',
         profileUrl: userData.profileUrl || '',
@@ -66,7 +75,7 @@ export default function ProfileEditPage() {
     try {
       // Convert gender to number if needed (API might expect number)
       const genderValue = formData.gender
-      
+
       await updateMutation.mutateAsync({
         id: userData?.id || undefined,
         firstName: formData.firstName || null,
@@ -74,9 +83,12 @@ export default function ProfileEditPage() {
         gender: genderValue || null,
         phoneNumber: formData.mobileNumber || null,
         email: formData.email || null,
-        profileUrl: profileImage !== 'https://via.placeholder.com/200' ? profileImage : null,
+        profileUrl:
+          profileImage !== 'https://via.placeholder.com/200'
+            ? profileImage
+            : null,
       })
-      
+
       // Navigate back to profile page after successful save
       router.push('/profile')
     } catch (error) {

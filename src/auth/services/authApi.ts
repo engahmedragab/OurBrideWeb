@@ -15,11 +15,11 @@ import type {
   PhoneConfirmationRequest,
   SendPhoneVarifyRequest,
 } from '@/../client/common/api/gen/ourbride-api'
-import type { 
-  AuthResponse, 
+import type {
+  AuthResponse,
   AuthUser,
-  LoginCredentials, 
-  ExternalLoginCredentials, 
+  LoginCredentials,
+  ExternalLoginCredentials,
   GuestLoginCredentials,
   SignupCredentials,
   SignupEmailCredentials,
@@ -27,7 +27,12 @@ import type {
   VerifyPhoneCredentials,
   SendPhoneOTPCredentials,
 } from '../types'
-import { setToken, getToken, getRefreshToken, removeToken } from '../utils/token'
+import {
+  setToken,
+  getToken,
+  getRefreshToken,
+  removeToken,
+} from '../utils/token'
 
 /**
  * Extract error message from unknown error type
@@ -35,24 +40,32 @@ import { setToken, getToken, getRefreshToken, removeToken } from '../utils/token
 const getErrorMessage = (error: unknown, defaultMessage: string): string => {
   if (error && typeof error === 'object') {
     // Check for Axios error structure
-    if ('response' in error && error.response && typeof error.response === 'object') {
-      const response = error.response as { 
+    if (
+      'response' in error &&
+      error.response &&
+      typeof error.response === 'object'
+    ) {
+      const response = error.response as {
         status?: number
-        data?: { 
+        data?: {
           message?: string
           error?: string
           errors?: string[]
           success?: boolean
-        } 
+        }
       }
-      
+
       if (response.data) {
         // Handle validation errors (400 status with errors array)
-        if (response.status === 400 && Array.isArray(response.data.errors) && response.data.errors.length > 0) {
+        if (
+          response.status === 400 &&
+          Array.isArray(response.data.errors) &&
+          response.data.errors.length > 0
+        ) {
           // Join all validation errors with newlines or commas
           return response.data.errors.join('\n')
         }
-        
+
         // Fallback to message or error field
         return response.data.message || response.data.error || defaultMessage
       }
@@ -76,45 +89,82 @@ const extractAuthDataFromResponse = (response: {
   // Check response headers for tokens (case-insensitive)
   const headers = (response.headers || {}) as Record<string, string | undefined>
   const data = response.data as Record<string, unknown> | undefined
-  
-  const accessToken = 
-    (typeof headers['authorization'] === 'string' ? headers['authorization'].replace(/^Bearer\s+/i, '') : undefined) ||
-    (typeof headers['Authorization'] === 'string' ? headers['Authorization'].replace(/^Bearer\s+/i, '') : undefined) ||
-    (typeof headers['x-access-token'] === 'string' ? headers['x-access-token'] : undefined) ||
-    (typeof headers['X-Access-Token'] === 'string' ? headers['X-Access-Token'] : undefined) ||
-    (data && typeof data.accessToken === 'string' ? data.accessToken : undefined) ||
+
+  const accessToken =
+    (typeof headers['authorization'] === 'string'
+      ? headers['authorization'].replace(/^Bearer\s+/i, '')
+      : undefined) ||
+    (typeof headers['Authorization'] === 'string'
+      ? headers['Authorization'].replace(/^Bearer\s+/i, '')
+      : undefined) ||
+    (typeof headers['x-access-token'] === 'string'
+      ? headers['x-access-token']
+      : undefined) ||
+    (typeof headers['X-Access-Token'] === 'string'
+      ? headers['X-Access-Token']
+      : undefined) ||
+    (data && typeof data.accessToken === 'string'
+      ? data.accessToken
+      : undefined) ||
     (data && typeof data.token === 'string' ? data.token : undefined) ||
-    (data && typeof data.data === 'object' && data.data !== null && 
-     typeof (data.data as Record<string, unknown>).accessToken === 'string' 
-     ? (data.data as Record<string, unknown>).accessToken as string : undefined) ||
-    (data && typeof data.data === 'object' && data.data !== null && 
-     typeof (data.data as Record<string, unknown>).token === 'string' 
-     ? (data.data as Record<string, unknown>).token as string : undefined)
+    (data &&
+    typeof data.data === 'object' &&
+    data.data !== null &&
+    typeof (data.data as Record<string, unknown>).accessToken === 'string'
+      ? ((data.data as Record<string, unknown>).accessToken as string)
+      : undefined) ||
+    (data &&
+    typeof data.data === 'object' &&
+    data.data !== null &&
+    typeof (data.data as Record<string, unknown>).token === 'string'
+      ? ((data.data as Record<string, unknown>).token as string)
+      : undefined)
 
-  const refreshToken = 
-    (typeof headers['x-refresh-token'] === 'string' ? headers['x-refresh-token'] : undefined) ||
-    (typeof headers['X-Refresh-Token'] === 'string' ? headers['X-Refresh-Token'] : undefined) ||
-    (data && typeof data.refreshToken === 'string' ? data.refreshToken : undefined) ||
-    (data && typeof data.data === 'object' && data.data !== null && 
-     typeof (data.data as Record<string, unknown>).refreshToken === 'string' 
-     ? (data.data as Record<string, unknown>).refreshToken as string : undefined)
+  const refreshToken =
+    (typeof headers['x-refresh-token'] === 'string'
+      ? headers['x-refresh-token']
+      : undefined) ||
+    (typeof headers['X-Refresh-Token'] === 'string'
+      ? headers['X-Refresh-Token']
+      : undefined) ||
+    (data && typeof data.refreshToken === 'string'
+      ? data.refreshToken
+      : undefined) ||
+    (data &&
+    typeof data.data === 'object' &&
+    data.data !== null &&
+    typeof (data.data as Record<string, unknown>).refreshToken === 'string'
+      ? ((data.data as Record<string, unknown>).refreshToken as string)
+      : undefined)
 
-  const expiresAt = 
-    (typeof headers['x-token-expires'] === 'string' ? headers['x-token-expires'] : undefined) ||
-    (typeof headers['X-Token-Expires'] === 'string' ? headers['X-Token-Expires'] : undefined) ||
+  const expiresAt =
+    (typeof headers['x-token-expires'] === 'string'
+      ? headers['x-token-expires']
+      : undefined) ||
+    (typeof headers['X-Token-Expires'] === 'string'
+      ? headers['X-Token-Expires']
+      : undefined) ||
     (data && typeof data.expiresAt === 'string' ? data.expiresAt : undefined) ||
-    (data && typeof data.data === 'object' && data.data !== null && 
-     typeof (data.data as Record<string, unknown>).expiresAt === 'string' 
-     ? (data.data as Record<string, unknown>).expiresAt as string : undefined)
+    (data &&
+    typeof data.data === 'object' &&
+    data.data !== null &&
+    typeof (data.data as Record<string, unknown>).expiresAt === 'string'
+      ? ((data.data as Record<string, unknown>).expiresAt as string)
+      : undefined)
 
   // Extract user data from various possible locations
-  const user = 
-    (data && data.user ? data.user as AuthUser : undefined) ||
-    (data && typeof data.data === 'object' && data.data !== null && (data.data as Record<string, unknown>).user 
-     ? (data.data as Record<string, unknown>).user as AuthUser : undefined) ||
-    (data && typeof data.data === 'object' && data.data !== null 
-     ? data.data as AuthUser : undefined) ||
-    (data ? data as AuthUser : undefined)
+  const user =
+    (data && data.user ? (data.user as AuthUser) : undefined) ||
+    (data &&
+    typeof data.data === 'object' &&
+    data.data !== null &&
+    (data.data as Record<string, unknown>).user
+      ? ((data.data as Record<string, unknown>).user as AuthUser)
+      : undefined) ||
+    (data && typeof data.data === 'object' && data.data !== null
+      ? (data.data as AuthUser)
+      : undefined) ||
+    (data ? (data as AuthUser) : undefined)
 
   // If we have an access token, return auth data
   if (accessToken) {
@@ -146,9 +196,9 @@ export const loginWithEmail = async (
     }
 
     const response = await apiClient.api.postIdentityLogin(loginRequest)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (!authData) {
       // If tokens are in cookies, we might need to fetch user info
       // For now, we'll assume the token is in cookies and try to get user
@@ -160,7 +210,10 @@ export const loginWithEmail = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Login failed. Please check your credentials.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Login failed. Please check your credentials.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -179,9 +232,9 @@ export const loginWithPhone = async (
     }
 
     const response = await apiClient.api.postIdentityLoginPhone(loginRequest)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (!authData) {
       throw new Error('No token received from server')
     }
@@ -190,7 +243,10 @@ export const loginWithPhone = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Login failed. Please check your credentials.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Login failed. Please check your credentials.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -210,9 +266,9 @@ export const loginWithExternalProvider = async (
     }
 
     const response = await apiClient.api.postIdentityExternalLogin(loginRequest)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (!authData) {
       throw new Error('No token received from server')
     }
@@ -221,7 +277,10 @@ export const loginWithExternalProvider = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'External login failed. Please try again.')
+    const errorMessage = getErrorMessage(
+      error,
+      'External login failed. Please try again.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -261,9 +320,9 @@ export const guestLogin = async (
     }
 
     const response = await apiClient.api.postIdentityGuestLogin(loginRequest)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (!authData) {
       throw new Error('No token received from server')
     }
@@ -272,7 +331,10 @@ export const guestLogin = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Guest login failed. Please try again.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Guest login failed. Please try again.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -295,9 +357,9 @@ export const refreshToken = async (): Promise<AuthResponse> => {
     }
 
     const response = await apiClient.api.postIdentityRefresh(refreshRequest)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (!authData) {
       throw new Error('No token received from server')
     }
@@ -308,8 +370,11 @@ export const refreshToken = async (): Promise<AuthResponse> => {
   } catch (error: unknown) {
     // If refresh fails, clear tokens
     removeToken()
-    
-    const errorMessage = getErrorMessage(error, 'Token refresh failed. Please login again.')
+
+    const errorMessage = getErrorMessage(
+      error,
+      'Token refresh failed. Please login again.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -321,7 +386,7 @@ export const logout = async (): Promise<void> => {
   try {
     // Optionally call a logout endpoint if available
     // await apiClient.api.postIdentityLogout()
-    
+
     // Clear local tokens
     removeToken()
   } catch {
@@ -344,9 +409,9 @@ export const adminLogin = async (
     }
 
     const response = await apiClient.api.postIdentityLoginAdmin(loginRequest)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (!authData) {
       throw new Error('No token received from server')
     }
@@ -355,7 +420,10 @@ export const adminLogin = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Admin login failed. Please check your credentials.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Admin login failed. Please check your credentials.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -379,9 +447,9 @@ export const signupFull = async (
     }
 
     const response = await apiClient.api.postIdentityFullRegister(signupRequest)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (!authData) {
       // Registration might not return tokens immediately if email/phone verification is required
       // In that case, return a success response without tokens
@@ -403,7 +471,10 @@ export const signupFull = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Registration failed. Please try again.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Registration failed. Please try again.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -424,9 +495,9 @@ export const signupWithEmail = async (
     }
 
     const response = await apiClient.api.postIdentityRegister(signupRequest)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (!authData) {
       // Registration might not return tokens immediately if email verification is required
       return {
@@ -444,7 +515,10 @@ export const signupWithEmail = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Registration failed. Please try again.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Registration failed. Please try again.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -465,10 +539,11 @@ export const signupWithPhone = async (
       guestUserId: credentials.guestUserId || null,
     }
 
-    const response = await apiClient.api.postIdentityPhoneRegister(signupRequest)
-    
+    const response =
+      await apiClient.api.postIdentityPhoneRegister(signupRequest)
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (!authData) {
       // Registration might not return tokens immediately if phone verification is required
       return {
@@ -486,7 +561,10 @@ export const signupWithPhone = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Registration failed. Please try again.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Registration failed. Please try again.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -505,7 +583,10 @@ export const sendPhoneOTP = async (
 
     await apiClient.api.postIdentitySendCode(request)
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Failed to send OTP. Please try again.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Failed to send OTP. Please try again.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -524,9 +605,9 @@ export const verifyPhoneOTP = async (
     }
 
     const response = await apiClient.api.postIdentityPhoneVarify(request)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (authData && authData.accessToken) {
       setToken(authData)
       return authData
@@ -542,7 +623,10 @@ export const verifyPhoneOTP = async (
       } as AuthUser,
     }
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Invalid OTP code. Please try again.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Invalid OTP code. Please try again.'
+    )
     throw new Error(errorMessage)
   }
 }
@@ -561,9 +645,9 @@ export const confirmPhone = async (
     }
 
     const response = await apiClient.api.postIdentityConfarmPhone(request)
-    
+
     const authData = extractAuthDataFromResponse(response)
-    
+
     if (authData && authData.accessToken) {
       setToken(authData)
       return authData
@@ -577,7 +661,10 @@ export const confirmPhone = async (
       } as AuthUser,
     }
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Invalid confirmation code. Please try again.')
+    const errorMessage = getErrorMessage(
+      error,
+      'Invalid confirmation code. Please try again.'
+    )
     throw new Error(errorMessage)
   }
 }

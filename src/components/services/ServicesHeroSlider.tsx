@@ -56,10 +56,10 @@ export interface ServicesHeroSliderProps {
 
 /**
  * ServicesHeroSlider Component
- * 
+ *
  * A responsive image slider banner for the Services page.
  * Uses Swiper for smooth horizontal looping slider functionality.
- * 
+ *
  * Features:
  * - Responsive: 1 slide on mobile, 2 on tablet, 3 on desktop
  * - Looping slider with smooth transitions
@@ -96,12 +96,7 @@ export const ServicesHeroSlider = ({
     sliderImages.length > 0 && sliderImages[0] ? sliderImages : [fallbackUrl]
 
   return (
-    <section
-      className={cn(
-        'relative w-full  mb-1',
-        className
-      )}
-    >
+    <section className={cn('relative w-full  mb-1', className)}>
       <div className="relative w-full h-[200px] sm:h-[280px] md:h-[360px] lg:h-[440px]  overflow-hidden">
         <Swiper
           ref={swiperRef}
@@ -112,22 +107,22 @@ export const ServicesHeroSlider = ({
           className="h-full w-full"
           style={{ width: '100%' }}
         >
-            {finalImages.map((imageUrl, index) => (
-              <SwiperSlide key={index} className="!h-full !flex-shrink-0">
-                <div className="relative w-full h-full overflow-hidden flex items-center justify-center px-2 sm:px-4 md:px-6">
-                  <div className="relative w-full  h-full">
-                    <Image
-                      src={imageUrl}
-                      alt={`Service banner ${index + 1}`}
-                      fill
-                      sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
-                      className="object-contain"
-                      priority={index === 0}
-                    />
-                  </div>
+          {finalImages.map((imageUrl, index) => (
+            <SwiperSlide key={index} className="!h-full !flex-shrink-0">
+              <div className="relative w-full h-full overflow-hidden flex items-center justify-center px-2 sm:px-4 md:px-6">
+                <div className="relative w-full  h-full">
+                  <Image
+                    src={imageUrl}
+                    alt={`Service banner ${index + 1}`}
+                    fill
+                    sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
+                    className="object-contain"
+                    priority={index === 0}
+                  />
                 </div>
-              </SwiperSlide>
-            ))}
+              </div>
+            </SwiperSlide>
+          ))}
         </Swiper>
 
         {/* Navigation Buttons */}
@@ -159,4 +154,3 @@ export const ServicesHeroSlider = ({
     </section>
   )
 }
-

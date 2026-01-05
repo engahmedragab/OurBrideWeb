@@ -1,5 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { filterProviders, type FilterProvidersParams } from '@/services/api/providerApi'
+import {
+  filterProviders,
+  type FilterProvidersParams,
+} from '@/services/api/providerApi'
 import type { FeaturedProviderResponse } from '@/types/responses'
 
 /**
@@ -18,5 +21,3 @@ export const useProvidersFilter = (
     staleTime: 2 * 60 * 1000, // 2 minutes
   })
 }
-
-

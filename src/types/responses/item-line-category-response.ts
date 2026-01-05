@@ -13,5 +13,3 @@ export interface ItemLineCategoryResponse extends LineCategoryResponse {
   iconName: string
   colorName: string
 }
-
-

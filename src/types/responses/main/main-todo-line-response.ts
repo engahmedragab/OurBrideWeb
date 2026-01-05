@@ -15,5 +15,3 @@ export interface MainTodoLineResponse extends MainLineResponse {
   hasSubline: boolean
   sublines?: MainTodoLineResponse[]
 }
-
-

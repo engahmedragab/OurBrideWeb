@@ -2,7 +2,17 @@
 
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { X, ChevronLeft, ChevronRight, Clock, Phone, MapPin, Star, ImageIcon, Mail } from 'lucide-react'
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Phone,
+  MapPin,
+  Star,
+  ImageIcon,
+  Mail,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { MediaResponse } from '@/types/responses'
 import type { BranchPortfolioResponse } from '@/types/responses/branch-portfolio-response'
@@ -31,7 +41,9 @@ export function PortfolioModal({
   subtitle,
 }: PortfolioModalProps) {
   const [activeTab, setActiveTab] = useState<TabType>('about')
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
+    null
+  )
 
   if (!isOpen) return null
 
@@ -57,7 +69,10 @@ export function PortfolioModal({
   }
 
   const handleNextImage = () => {
-    if (selectedImageIndex !== null && selectedImageIndex < portfolioImages.length - 1) {
+    if (
+      selectedImageIndex !== null &&
+      selectedImageIndex < portfolioImages.length - 1
+    ) {
       setSelectedImageIndex(selectedImageIndex + 1)
     }
   }
@@ -67,7 +82,7 @@ export function PortfolioModal({
     const parts = duration.split(':')
     const hours = parseInt(parts[0], 10)
     const minutes = parseInt(parts[1], 10)
-    
+
     if (hours > 0) {
       return `${hours}h ${minutes}m`
     }
@@ -115,7 +130,9 @@ export function PortfolioModal({
                 <p className="text-14 text-gray-600 mt-1">{subtitle}</p>
               )}
               {about && (about as any).jobTitle && (
-                <p className="text-14 text-gray-600 mt-1">{(about as any).jobTitle}</p>
+                <p className="text-14 text-gray-600 mt-1">
+                  {(about as any).jobTitle}
+                </p>
               )}
               {reviews && reviews.averageRating !== null && (
                 <div className="mt-2">
@@ -145,7 +162,10 @@ export function PortfolioModal({
               { id: 'about' as const, label: 'About' },
               { id: 'services' as const, label: 'Services' },
               { id: 'portfolio' as const, label: 'Portfolio' },
-              { id: 'reviews' as const, label: `Reviews${reviews && reviews.totalReviews > 0 ? ` ${reviews.totalReviews}` : ''}` },
+              {
+                id: 'reviews' as const,
+                label: `Reviews${reviews && reviews.totalReviews > 0 ? ` ${reviews.totalReviews}` : ''}`,
+              },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -174,22 +194,36 @@ export function PortfolioModal({
                   <>
                     {about.description && (
                       <div>
-                        <h3 className="text-18 font-semibold text-gray-900 mb-2">Description</h3>
-                        <p className="text-14 text-gray-700 leading-relaxed">{about.description}</p>
+                        <h3 className="text-18 font-semibold text-gray-900 mb-2">
+                          Description
+                        </h3>
+                        <p className="text-14 text-gray-700 leading-relaxed">
+                          {about.description}
+                        </p>
                       </div>
                     )}
-                    
+
                     {statistics && (
                       <div>
-                        <h3 className="text-18 font-semibold text-gray-900 mb-3">Statistics</h3>
+                        <h3 className="text-18 font-semibold text-gray-900 mb-3">
+                          Statistics
+                        </h3>
                         <div className="space-y-3">
                           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <span className="text-14 text-gray-700">Appointments completed</span>
-                            <span className="text-16 font-semibold text-brand-600">{statistics.appointmentsCompleted.toLocaleString()}</span>
+                            <span className="text-14 text-gray-700">
+                              Appointments completed
+                            </span>
+                            <span className="text-16 font-semibold text-brand-600">
+                              {statistics.appointmentsCompleted.toLocaleString()}
+                            </span>
                           </div>
                           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <span className="text-14 text-gray-700">Clients served</span>
-                            <span className="text-16 font-semibold text-brand-600">{statistics.clientsServed.toLocaleString()}</span>
+                            <span className="text-14 text-gray-700">
+                              Clients served
+                            </span>
+                            <span className="text-16 font-semibold text-brand-600">
+                              {statistics.clientsServed.toLocaleString()}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -197,29 +231,48 @@ export function PortfolioModal({
 
                     {about.address && (
                       <div>
-                        <h3 className="text-18 font-semibold text-gray-900 mb-3">Location</h3>
+                        <h3 className="text-18 font-semibold text-gray-900 mb-3">
+                          Location
+                        </h3>
                         <div className="flex items-start gap-2 text-14 text-gray-700">
                           <MapPin className="h-4 w-4 text-brand-500 flex-shrink-0 mt-0.5" />
                           <div className="flex-1">
                             <p className="font-medium text-gray-900 mb-1">
-                              {about.address.fullAddress || about.address.displayAddress || about.address.displayName || about.address.nameEn || about.address.nameAr}
+                              {about.address.fullAddress ||
+                                about.address.displayAddress ||
+                                about.address.displayName ||
+                                about.address.nameEn ||
+                                about.address.nameAr}
                             </p>
-                            {(about.address.addressEn || about.address.addressAr) && (
+                            {(about.address.addressEn ||
+                              about.address.addressAr) && (
                               <p className="text-gray-600">
-                                {about.address.addressEn || about.address.addressAr}
+                                {about.address.addressEn ||
+                                  about.address.addressAr}
                               </p>
                             )}
                             {about.address.street && (
                               <p className="text-gray-600 mt-1">
                                 {about.address.street}
-                                {about.address.building && `, ${about.address.building}`}
-                                {about.address.floor && `, Floor ${about.address.floor}`}
-                                {about.address.apartment && `, Apt ${about.address.apartment}`}
+                                {about.address.building &&
+                                  `, ${about.address.building}`}
+                                {about.address.floor &&
+                                  `, Floor ${about.address.floor}`}
+                                {about.address.apartment &&
+                                  `, Apt ${about.address.apartment}`}
                               </p>
                             )}
-                            {(about.address.cityName || about.address.regionName || about.address.countryName) && (
+                            {(about.address.cityName ||
+                              about.address.regionName ||
+                              about.address.countryName) && (
                               <p className="text-gray-600 mt-1">
-                                {[about.address.cityName, about.address.regionName, about.address.countryName].filter(Boolean).join(', ')}
+                                {[
+                                  about.address.cityName,
+                                  about.address.regionName,
+                                  about.address.countryName,
+                                ]
+                                  .filter(Boolean)
+                                  .join(', ')}
                               </p>
                             )}
                             {about.address.postalCode && (
@@ -232,14 +285,21 @@ export function PortfolioModal({
                       </div>
                     )}
 
-                    {(about.phoneNumber || about.phoneNumber2 || (about as any).email) && (
+                    {(about.phoneNumber ||
+                      about.phoneNumber2 ||
+                      (about as any).email) && (
                       <div>
-                        <h3 className="text-18 font-semibold text-gray-900 mb-3">Contact</h3>
+                        <h3 className="text-18 font-semibold text-gray-900 mb-3">
+                          Contact
+                        </h3>
                         <div className="space-y-2">
                           {about.phoneNumber && (
                             <div className="flex items-center gap-2 text-14 text-gray-700">
                               <Phone className="h-4 w-4 text-brand-500" />
-                              <a href={`tel:${about.phoneNumber}`} className="hover:text-brand-500 transition-colors">
+                              <a
+                                href={`tel:${about.phoneNumber}`}
+                                className="hover:text-brand-500 transition-colors"
+                              >
                                 {about.phoneNumber}
                               </a>
                             </div>
@@ -247,7 +307,10 @@ export function PortfolioModal({
                           {about.phoneNumber2 && (
                             <div className="flex items-center gap-2 text-14 text-gray-700">
                               <Phone className="h-4 w-4 text-brand-500" />
-                              <a href={`tel:${about.phoneNumber2}`} className="hover:text-brand-500 transition-colors">
+                              <a
+                                href={`tel:${about.phoneNumber2}`}
+                                className="hover:text-brand-500 transition-colors"
+                              >
                                 {about.phoneNumber2}
                               </a>
                             </div>
@@ -255,7 +318,10 @@ export function PortfolioModal({
                           {(about as any).email && (
                             <div className="flex items-center gap-2 text-14 text-gray-700">
                               <Mail className="h-4 w-4 text-brand-500" />
-                              <a href={`mailto:${(about as any).email}`} className="hover:text-brand-500 transition-colors">
+                              <a
+                                href={`mailto:${(about as any).email}`}
+                                className="hover:text-brand-500 transition-colors"
+                              >
                                 {(about as any).email}
                               </a>
                             </div>
@@ -263,22 +329,29 @@ export function PortfolioModal({
                         </div>
                       </div>
                     )}
-                    
-                    {statistics && (statistics as any).languages && Array.isArray((statistics as any).languages) && (statistics as any).languages.length > 0 && (
-                      <div>
-                        <h3 className="text-18 font-semibold text-gray-900 mb-3">Languages</h3>
-                        <div className="flex flex-wrap gap-2">
-                          {(statistics as any).languages.map((lang: string, index: number) => (
-                            <span
-                              key={index}
-                              className="px-3 py-1.5 bg-brand-50 text-brand-700 text-14 font-medium rounded-lg border border-brand-200"
-                            >
-                              {lang}
-                            </span>
-                          ))}
+
+                    {statistics &&
+                      (statistics as any).languages &&
+                      Array.isArray((statistics as any).languages) &&
+                      (statistics as any).languages.length > 0 && (
+                        <div>
+                          <h3 className="text-18 font-semibold text-gray-900 mb-3">
+                            Languages
+                          </h3>
+                          <div className="flex flex-wrap gap-2">
+                            {(statistics as any).languages.map(
+                              (lang: string, index: number) => (
+                                <span
+                                  key={index}
+                                  className="px-3 py-1.5 bg-brand-50 text-brand-700 text-14 font-medium rounded-lg border border-brand-200"
+                                >
+                                  {lang}
+                                </span>
+                              )
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </>
                 )}
               </div>
@@ -287,7 +360,9 @@ export function PortfolioModal({
             {/* Services Tab */}
             {activeTab === 'services' && (
               <div className="p-6">
-                <h3 className="text-24 font-semibold text-gray-900 mb-4">Services</h3>
+                <h3 className="text-24 font-semibold text-gray-900 mb-4">
+                  Services
+                </h3>
                 {services.length > 0 ? (
                   <div className="space-y-3">
                     {services.map(service => (
@@ -297,7 +372,8 @@ export function PortfolioModal({
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start gap-3">
-                            {service.imageUrl && service.imageUrl.trim() !== '' ? (
+                            {service.imageUrl &&
+                            service.imageUrl.trim() !== '' ? (
                               <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                                 <Image
                                   src={service.imageUrl}
@@ -309,9 +385,13 @@ export function PortfolioModal({
                               </div>
                             ) : null}
                             <div className="flex-1 min-w-0">
-                              <h4 className="text-16 font-semibold text-gray-900 mb-1">{service.name}</h4>
+                              <h4 className="text-16 font-semibold text-gray-900 mb-1">
+                                {service.name}
+                              </h4>
                               {service.description && (
-                                <p className="text-14 text-gray-600 mb-2 line-clamp-2">{service.description}</p>
+                                <p className="text-14 text-gray-600 mb-2 line-clamp-2">
+                                  {service.description}
+                                </p>
                               )}
                               <div className="flex items-center gap-3 text-14 text-gray-600">
                                 {service.duration && (
@@ -355,11 +435,14 @@ export function PortfolioModal({
             {/* Portfolio Tab */}
             {activeTab === 'portfolio' && (
               <div className="p-6">
-                <h3 className="text-24 font-semibold text-gray-900 mb-4">Portfolio</h3>
+                <h3 className="text-24 font-semibold text-gray-900 mb-4">
+                  Portfolio
+                </h3>
                 {portfolioImages.length > 0 ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {portfolioImages.map((media, index) => {
-                      const imageUrl = media.url || media.thumbnailUrl || media.previewUrl
+                      const imageUrl =
+                        media.url || media.thumbnailUrl || media.previewUrl
                       return imageUrl && imageUrl.trim() !== '' ? (
                         <button
                           key={media.id || index}
@@ -381,7 +464,9 @@ export function PortfolioModal({
                 ) : (
                   <div className="text-center py-12">
                     <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500">This professional doesn't have a portfolio yet</p>
+                    <p className="text-gray-500">
+                      This professional doesn't have a portfolio yet
+                    </p>
                   </div>
                 )}
               </div>
@@ -391,7 +476,9 @@ export function PortfolioModal({
             {activeTab === 'reviews' && (
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-24 font-semibold text-gray-900">Reviews</h3>
+                  <h3 className="text-24 font-semibold text-gray-900">
+                    Reviews
+                  </h3>
                   {reviews && reviews.averageRating !== null && (
                     <RatingDisplay
                       rating={reviews.averageRating}
@@ -415,13 +502,18 @@ export function PortfolioModal({
                             <div className="flex items-center gap-2 mb-1">
                               <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center">
                                 <span className="text-white text-12 font-semibold">
-                                  {review.userName?.charAt(0).toUpperCase() || 'U'}
+                                  {review.userName?.charAt(0).toUpperCase() ||
+                                    'U'}
                                 </span>
                               </div>
                               <div>
-                                <h4 className="text-14 font-semibold text-gray-900">{review.userName || 'Anonymous'}</h4>
+                                <h4 className="text-14 font-semibold text-gray-900">
+                                  {review.userName || 'Anonymous'}
+                                </h4>
                                 {review.date && (
-                                  <p className="text-12 text-gray-500">{review.date}</p>
+                                  <p className="text-12 text-gray-500">
+                                    {review.date}
+                                  </p>
                                 )}
                               </div>
                             </div>
@@ -434,10 +526,14 @@ export function PortfolioModal({
                           />
                         </div>
                         {review.title && (
-                          <h5 className="text-14 font-semibold text-gray-900 mb-1">{review.title}</h5>
+                          <h5 className="text-14 font-semibold text-gray-900 mb-1">
+                            {review.title}
+                          </h5>
                         )}
                         {review.text && (
-                          <p className="text-14 text-gray-700 leading-relaxed">{review.text}</p>
+                          <p className="text-14 text-gray-700 leading-relaxed">
+                            {review.text}
+                          </p>
                         )}
                       </div>
                     ))}
@@ -514,7 +610,10 @@ export function PortfolioModal({
                 portfolioImages[selectedImageIndex].thumbnailUrl ||
                 ''
               }
-              alt={portfolioImages[selectedImageIndex].alt || `Portfolio image ${selectedImageIndex + 1}`}
+              alt={
+                portfolioImages[selectedImageIndex].alt ||
+                `Portfolio image ${selectedImageIndex + 1}`
+              }
               fill
               className="object-contain"
               sizes="90vw"

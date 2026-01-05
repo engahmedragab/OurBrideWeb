@@ -216,10 +216,10 @@ export const RequestCard = ({
                     <p className="text-12 text-gray-600">
                       Provider:{' '}
                       {service.provider.id ? (
-                        <Link 
+                        <Link
                           href={`/provider/${service.provider.id}`}
                           className="hover:text-brand-500 transition-colors"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={e => e.stopPropagation()}
                         >
                           {service.provider.name}
                         </Link>

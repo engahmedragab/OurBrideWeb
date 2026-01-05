@@ -10,7 +10,10 @@ export interface ArticlesFeedProps {
   articles?: ArticleResponse[]
 }
 
-export const ArticlesFeed = ({ className, articles = [] }: ArticlesFeedProps) => {
+export const ArticlesFeed = ({
+  className,
+  articles = [],
+}: ArticlesFeedProps) => {
   return (
     <div className={cn('flex-1 space-y-6', className)}>
       {articles.length > 0 ? (

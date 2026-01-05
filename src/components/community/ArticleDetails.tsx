@@ -19,7 +19,12 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { ArticleResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
-import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
+import {
+  formatDate,
+  getUserDisplayName,
+  getUserAvatar,
+  getProfileUrl,
+} from './utils'
 import Link from 'next/link'
 import {
   addReview as addArticleReview,
@@ -76,8 +81,11 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
       // Invalidate queries to refresh comments/reviews
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to add comment',
+        'error'
+      )
     },
   })
 
@@ -91,8 +99,11 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -109,18 +120,24 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
     mutationFn: async (shareSource?: string) => {
       return await shareArticle(article.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
         // Copy share URL to clipboard
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/articles/${article.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/articles/${article.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share article', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share article',
+        'error'
+      )
     },
   })
 
@@ -133,8 +150,11 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -148,10 +168,16 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(
+        isFollowing ? 'Unfollowed successfully' : 'Followed successfully',
+        'success'
+      )
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle follow',
+        'error'
+      )
     },
   })
 
@@ -207,7 +233,7 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
                   fill
                   sizes="40px"
                   className="object-cover"
-                  onError={(e) => {
+                  onError={e => {
                     e.currentTarget.style.display = 'none'
                   }}
                 />
@@ -225,7 +251,8 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
               )}
             </div>
             <div className="min-w-0">
-              {article.userId && getProfileUrl(article.userId, article.user?.type) ? (
+              {article.userId &&
+              getProfileUrl(article.userId, article.user?.type) ? (
                 <Link
                   href={getProfileUrl(article.userId, article.user?.type)!}
                   className="hover:text-brand-500 transition-colors"
@@ -255,7 +282,9 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
                   !isFollowing && 'text-white'
                 )}
               >
-                <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
+                <UserPlus
+                  className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')}
+                />
                 {toggleFollowMutation.isPending
                   ? 'Loading...'
                   : isFollowing
@@ -286,10 +315,14 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
         </div>
 
         {/* Article Title */}
-        <h1 className="text-24 font-normal text-gray-900 mb-4">{article.title}</h1>
+        <h1 className="text-24 font-normal text-gray-900 mb-4">
+          {article.title}
+        </h1>
 
         {/* Article Description */}
-        <p className="text-14 text-gray-700 mb-4">{article.summary || article.excerpt}</p>
+        <p className="text-14 text-gray-700 mb-4">
+          {article.summary || article.excerpt}
+        </p>
 
         {/* Full Article Content */}
         <div className="text-14 text-gray-700 mb-4 whitespace-pre-wrap">
@@ -300,10 +333,14 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center justify-center gap-3">
             <EngagementButton
-              icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+              icon={
+                <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
+              }
               count={likes}
               label="Likes"
-              onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
+              onClick={
+                toggleLikeMutation.isPending ? undefined : handleLikeClick
+              }
               isActive={isLiked}
             />
             <EngagementButton
@@ -318,10 +355,18 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
               onClick={shareMutation.isPending ? undefined : handleShareClick}
             />
             <EngagementButton
-              icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+              icon={
+                <Star
+                  className={cn('h-5 w-5', isFavorited && 'fill-brand-500')}
+                />
+              }
               count={favorites}
               label="Favorites"
-              onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
+              onClick={
+                toggleFavoriteMutation.isPending
+                  ? undefined
+                  : handleFavoriteClick
+              }
               isActive={isFavorited}
             />
           </div>

@@ -28,7 +28,11 @@ export const useServiceCardHandlers = (
         const response = await toggleFavorite.mutateAsync(serviceId)
         options?.onFavoriteSuccess?.(response)
       } catch (error) {
-        options?.onFavoriteError?.(error instanceof Error ? error : new Error('Failed to toggle favorite'))
+        options?.onFavoriteError?.(
+          error instanceof Error
+            ? error
+            : new Error('Failed to toggle favorite')
+        )
       }
     },
     [serviceId, toggleFavorite, options]
@@ -42,7 +46,11 @@ export const useServiceCardHandlers = (
         const response = await toggleWishlist.mutateAsync(serviceId)
         options?.onWishlistSuccess?.(response)
       } catch (error) {
-        options?.onWishlistError?.(error instanceof Error ? error : new Error('Failed to toggle wishlist'))
+        options?.onWishlistError?.(
+          error instanceof Error
+            ? error
+            : new Error('Failed to toggle wishlist')
+        )
       }
     },
     [serviceId, toggleWishlist, options]

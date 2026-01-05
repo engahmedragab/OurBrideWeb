@@ -11,7 +11,8 @@ const selectMenuTriggerVariants = cva(
   {
     variants: {
       variant: {
-        default: 'border-gray-300 hover:border-brand-400 focus:border-brand-500',
+        default:
+          'border-gray-300 hover:border-brand-400 focus:border-brand-500',
         error: 'border-red-500 bg-red-100 focus:border-red-500',
       },
       size: {
@@ -32,8 +33,9 @@ export interface SelectMenuOption {
   value: string
 }
 
-export interface SelectMenuProps
-  extends VariantProps<typeof selectMenuTriggerVariants> {
+export interface SelectMenuProps extends VariantProps<
+  typeof selectMenuTriggerVariants
+> {
   value: string
   onChange: (value: string) => void
   options: SelectMenuOption[]
@@ -54,7 +56,9 @@ export const SelectMenu = ({
 }: SelectMenuProps) => {
   const [open, setOpen] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
-  const [triggerWidth, setTriggerWidth] = useState<number | undefined>(undefined)
+  const [triggerWidth, setTriggerWidth] = useState<number | undefined>(
+    undefined
+  )
 
   const selectedOption = options.find(opt => opt.value === value)
 
@@ -133,7 +137,11 @@ export const SelectMenu = ({
           className="p-1.5 bg-white border border-gray-200 rounded-xl shadow-lg"
           align="start"
           sideOffset={4}
-          style={triggerWidth ? { width: triggerWidth } : { minWidth: 'var(--radix-popover-trigger-width)' }}
+          style={
+            triggerWidth
+              ? { width: triggerWidth }
+              : { minWidth: 'var(--radix-popover-trigger-width)' }
+          }
         >
           <div className="max-h-[300px] overflow-y-auto">
             {options.map(option => {
@@ -146,7 +154,8 @@ export const SelectMenu = ({
                   className={cn(
                     'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-16 font-normal transition-colors',
                     'hover:bg-brand-50 hover:text-brand-500',
-                    isSelected && 'bg-brand-500 text-white hover:bg-brand-500 hover:text-white'
+                    isSelected &&
+                      'bg-brand-500 text-white hover:bg-brand-500 hover:text-white'
                   )}
                 >
                   <span className="flex-1 text-left" dir="auto">
@@ -164,4 +173,3 @@ export const SelectMenu = ({
     </div>
   )
 }
-

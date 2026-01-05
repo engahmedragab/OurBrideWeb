@@ -20,7 +20,7 @@ export const UserPageLayout = ({
   return (
     <div className={`min-h-screen flex flex-col bg-gray-50 ${className || ''}`}>
       <Header />
-      
+
       {/* Mobile Sidebar Toggle Button - Sticky below header */}
       <div className="lg:hidden sticky top-16 z-30 bg-white border-b border-gray-200 px-4 py-2">
         <Button
@@ -58,9 +58,9 @@ export const UserPageLayout = ({
             <Button
               variant="ghost"
               size="icon"
-            onClick={() => setIsSidebarOpen(false)}
-            aria-label="Close menu"
-          >
+              onClick={() => setIsSidebarOpen(false)}
+              aria-label="Close menu"
+            >
               <X className="h-5 w-5" />
             </Button>
           </div>

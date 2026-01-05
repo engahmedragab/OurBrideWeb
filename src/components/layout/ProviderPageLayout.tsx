@@ -20,16 +20,13 @@ export const ProviderPageLayout = ({
   return (
     <div className={`min-h-screen flex flex-col bg-gray-50 ${className || ''}`}>
       <ProviderHeader />
-      
+
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
-        <div className="container-custom py-8">
-          {children}
-        </div>
+        <div className="container-custom py-8">{children}</div>
       </main>
 
       <Footer />
     </div>
   )
 }
-

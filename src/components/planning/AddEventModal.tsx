@@ -12,7 +12,11 @@ export interface AddEventModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   baseDate: Date
-  onCreate: (event: { startTime: Date; title: string; duration: number }) => void
+  onCreate: (event: {
+    startTime: Date
+    title: string
+    duration: number
+  }) => void
   initialTime?: string
   initialDuration?: string
 }
@@ -88,7 +92,10 @@ export const AddEventModal = ({
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Title Field */}
         <div className="space-y-1.5">
-          <label htmlFor="event-title" className="text-14 font-medium text-gray-700">
+          <label
+            htmlFor="event-title"
+            className="text-14 font-medium text-gray-700"
+          >
             Title <span className="text-red-500">*</span>
           </label>
           <Input
@@ -104,7 +111,10 @@ export const AddEventModal = ({
 
         {/* Start Time Field */}
         <div className="space-y-1.5">
-          <label htmlFor="event-time" className="text-14 font-medium text-gray-700">
+          <label
+            htmlFor="event-time"
+            className="text-14 font-medium text-gray-700"
+          >
             Start Time <span className="text-red-500">*</span>
           </label>
           <Input
@@ -119,7 +129,10 @@ export const AddEventModal = ({
 
         {/* Duration Field */}
         <div className="space-y-1.5">
-          <label htmlFor="event-duration" className="text-14 font-medium text-gray-700">
+          <label
+            htmlFor="event-duration"
+            className="text-14 font-medium text-gray-700"
+          >
             Duration (minutes) <span className="text-red-500">*</span>
           </label>
           <Input
@@ -128,7 +141,9 @@ export const AddEventModal = ({
             placeholder="Enter duration in minutes"
             {...register('duration')}
             min="1"
-            variant={errors.duration ? 'error' : durationValue ? 'fill' : 'default'}
+            variant={
+              errors.duration ? 'error' : durationValue ? 'fill' : 'default'
+            }
             errorMessage={errors.duration?.message}
             size="lg"
           />
@@ -157,4 +172,3 @@ export const AddEventModal = ({
     </Modal>
   )
 }
-

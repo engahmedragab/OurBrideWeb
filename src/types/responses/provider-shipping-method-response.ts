@@ -22,4 +22,3 @@ export interface ProviderShippingMethodResponse {
   lastModifiedDate: string | null // ISO 8601 date string
   shippingZones: ProviderShippingZoneResponse[]
 }
-

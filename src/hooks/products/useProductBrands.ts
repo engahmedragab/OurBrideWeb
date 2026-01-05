@@ -22,4 +22,3 @@ export const useProductBrands = (params?: {
     staleTime: 10 * 60 * 1000, // 10 minutes - brands don't change often
   })
 }
-

@@ -18,5 +18,3 @@ export interface CartProduct {
   purchaseDate?: string // Date from PurchaseResponse (creationDate or buyDate)
   type: CartItemType
 }
-
-

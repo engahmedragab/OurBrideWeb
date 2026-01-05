@@ -39,4 +39,3 @@ export interface MessageGroup {
   senderAvatar?: string
   messages: Message[]
 }
-

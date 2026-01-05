@@ -28,32 +28,27 @@ export const ConfirmDeleteModal = ({
   }, [onConfirm, onClose])
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={title}
-      maxWidth="sm"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="sm">
       <div className="flex flex-col">
         <div className="space-y-6 pb-6">
-        {/* Warning Icon */}
-        <div className="flex items-center justify-center">
-          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
-            <AlertTriangle className="h-8 w-8 text-red-500" />
+          {/* Warning Icon */}
+          <div className="flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+              <AlertTriangle className="h-8 w-8 text-red-500" />
+            </div>
+          </div>
+
+          {/* Message */}
+          <div className="text-center space-y-2">
+            {itemName && (
+              <p className="text-16 font-medium text-gray-900">
+                <span className="font-semibold">&quot;{itemName}&quot;</span>
+              </p>
+            )}
+            <p className="text-14 text-gray-600">{message}</p>
           </div>
         </div>
 
-        {/* Message */}
-        <div className="text-center space-y-2">
-          {itemName && (
-            <p className="text-16 font-medium text-gray-900">
-              <span className="font-semibold">&quot;{itemName}&quot;</span>
-            </p>
-          )}
-          <p className="text-14 text-gray-600">{message}</p>
-        </div>
-        </div>
-        
         {/* Footer */}
         <div className="sticky bottom-0 pt-4 border-t border-gray-100 -mx-6 px-6 bg-white rounded-b-2xl">
           <div className="flex flex-row gap-3">

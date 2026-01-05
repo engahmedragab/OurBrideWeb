@@ -20,18 +20,30 @@ import {
 import { RefreshCw } from 'lucide-react'
 import type { Service } from '@/types/service'
 import type { Product } from '@/types/product'
-import { useWishlists, useDeleteWishlist, useAddProductToCart, useCartItems } from '@/hooks'
+import {
+  useWishlists,
+  useDeleteWishlist,
+  useAddProductToCart,
+  useCartItems,
+} from '@/hooks'
 import { useToggleServiceWishlist } from '@/hooks/services/useServiceInteractions'
 import { useToggleProductWishlist } from '@/hooks/products/useProductInteractions'
 import { useToggleProviderFavorite } from '@/hooks/providers/useProviderInteractions'
-import type { WishlistResponse, ProductResponse, ServiceResponse, FeaturedProviderResponse } from '@/types/responses'
+import type {
+  WishlistResponse,
+  ProductResponse,
+  ServiceResponse,
+  FeaturedProviderResponse,
+} from '@/types/responses'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
 import { mapProductResponseToProduct } from '@/types/api/product.api.types'
 import { mapServiceResponseToService } from '@/utils/services-category.utils'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
 export default function WishlistPage() {
-  const [wishlistType, setWishlistType] = useState<'services' | 'products'>('services')
+  const [wishlistType, setWishlistType] = useState<'services' | 'products'>(
+    'services'
+  )
   const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
   // Fetch wishlists using WishlistResponse from API
@@ -107,14 +119,14 @@ export default function WishlistPage() {
   // Extract all services and products from sourceObject (regardless of wishlistType filter)
   const allWishlistServices: Service[] = useMemo(() => {
     return filteredWishlists
-      .filter((wishlist) => {
+      .filter(wishlist => {
         return (
           wishlist.source === Source.Service &&
           wishlist.sourceObject &&
           'serviceStatus' in wishlist.sourceObject
         )
       })
-      .map((wishlist) => {
+      .map(wishlist => {
         const serviceResponse = wishlist.sourceObject as ServiceResponse
         try {
           return mapServiceResponseToService(serviceResponse)
@@ -127,14 +139,14 @@ export default function WishlistPage() {
 
   const allWishlistProducts: Product[] = useMemo(() => {
     return filteredWishlists
-      .filter((wishlist) => {
+      .filter(wishlist => {
         return (
           wishlist.source === Source.Product &&
           wishlist.sourceObject &&
           'productId' in wishlist.sourceObject
         )
       })
-      .map((wishlist) => {
+      .map(wishlist => {
         const productResponse = wishlist.sourceObject as ProductResponse
         try {
           return mapProductResponseToProduct(productResponse)
@@ -147,7 +159,7 @@ export default function WishlistPage() {
 
   const allWishlistProviders: FeaturedProviderResponse[] = useMemo(() => {
     return filteredWishlists
-      .filter((wishlist) => {
+      .filter(wishlist => {
         return (
           wishlist.source === Source.Provider &&
           wishlist.sourceObject &&
@@ -155,10 +167,13 @@ export default function WishlistPage() {
           'nameEn' in wishlist.sourceObject
         )
       })
-      .map((wishlist) => {
+      .map(wishlist => {
         return wishlist.sourceObject as FeaturedProviderResponse
       })
-      .filter((provider): provider is FeaturedProviderResponse => provider !== null && provider !== undefined)
+      .filter(
+        (provider): provider is FeaturedProviderResponse =>
+          provider !== null && provider !== undefined
+      )
   }, [filteredWishlists])
 
   // Filter by wishlistType for display
@@ -195,7 +210,9 @@ export default function WishlistPage() {
       if (!isNaN(productIdNum)) {
         // Find product to get providerId if available
         const product = allWishlistProducts.find(p => p.id === productId)
-        const providerId = product?.provider?.id ? parseInt(product.provider.id, 10) : undefined
+        const providerId = product?.provider?.id
+          ? parseInt(product.provider.id, 10)
+          : undefined
 
         await toggleProductWishlistMutation.mutateAsync({
           productId: productIdNum,
@@ -232,7 +249,9 @@ export default function WishlistPage() {
     try {
       // Add to cart if not already in cart
       const productIdNum = parseInt(product.id, 10)
-      const providerId = product.provider?.id ? parseInt(product.provider.id, 10) : undefined
+      const providerId = product.provider?.id
+        ? parseInt(product.provider.id, 10)
+        : undefined
       const isInCart = isProductInCart(productIdNum, providerId)
 
       if (!isInCart) {
@@ -248,25 +267,31 @@ export default function WishlistPage() {
   // Calculate total items from wishlists
   // NOTE: This hook must be called before any conditional returns to follow Rules of Hooks
   const totalItems = useMemo(() => {
-    return filteredWishlists.reduce((sum, wishlist) => sum + (wishlist.itemCount || 0), 0)
+    return filteredWishlists.reduce(
+      (sum, wishlist) => sum + (wishlist.itemCount || 0),
+      0
+    )
   }, [filteredWishlists])
 
   // Source filter options - common sources for wishlists
-  const sourceOptions = useMemo(() => [
-    { value: 'all', label: 'All Sources' },
-    { value: Source.Product, label: 'Products' },
-    { value: Source.Service, label: 'Services' },
-    { value: Source.Membership, label: 'Memberships' },
-    { value: Source.GiftCard, label: 'Gift Cards' },
-    { value: Source.ServiceReservation, label: 'Service Reservations' },
-    { value: Source.Provider, label: 'Providers' },
-    { value: Source.Offer, label: 'Offers' },
-    { value: Source.Preparation, label: 'Preparations' },
-    { value: Source.Post, label: 'Posts' },
-    { value: Source.Blog, label: 'Blogs' },
-    { value: Source.Article, label: 'Articles' },
-    { value: Source.Reel, label: 'Reels' },
-  ], [])
+  const sourceOptions = useMemo(
+    () => [
+      { value: 'all', label: 'All Sources' },
+      { value: Source.Product, label: 'Products' },
+      { value: Source.Service, label: 'Services' },
+      { value: Source.Membership, label: 'Memberships' },
+      { value: Source.GiftCard, label: 'Gift Cards' },
+      { value: Source.ServiceReservation, label: 'Service Reservations' },
+      { value: Source.Provider, label: 'Providers' },
+      { value: Source.Offer, label: 'Offers' },
+      { value: Source.Preparation, label: 'Preparations' },
+      { value: Source.Post, label: 'Posts' },
+      { value: Source.Blog, label: 'Blogs' },
+      { value: Source.Article, label: 'Articles' },
+      { value: Source.Reel, label: 'Reels' },
+    ],
+    []
+  )
 
   const handleRefresh = () => {
     refetchWishlists()
@@ -289,7 +314,7 @@ export default function WishlistPage() {
       </Button>
       <SelectPopover
         value={selectedSource}
-        onChange={(value) => setSelectedSource(value as Source | 'all')}
+        onChange={value => setSelectedSource(value as Source | 'all')}
         options={sourceOptions}
         placeholder="Filter by source"
         className="w-40"
@@ -302,10 +327,7 @@ export default function WishlistPage() {
   if (isLoadingWishlists) {
     return (
       <UserPageLayout>
-        <PageHeader
-          title="Wishlist"
-          rightContent={headerRightContent}
-        />
+        <PageHeader title="Wishlist" rightContent={headerRightContent} />
         <LoadingOverlay
           open={true}
           title="Loading wishlists..."
@@ -319,10 +341,7 @@ export default function WishlistPage() {
   if (wishlistsError) {
     return (
       <UserPageLayout>
-        <PageHeader
-          title="Wishlist"
-          rightContent={headerRightContent}
-        />
+        <PageHeader title="Wishlist" rightContent={headerRightContent} />
         <ErrorDisplay
           title="Error loading wishlists"
           message="Please try again later"
@@ -350,7 +369,7 @@ export default function WishlistPage() {
       {hasWishlistItems ? (
         <div className="space-y-0">
           {/* Show all services with sourceObject */}
-          {allWishlistServices.map((service) => (
+          {allWishlistServices.map(service => (
             <WishlistServiceCard
               key={service.id}
               service={service}
@@ -360,7 +379,7 @@ export default function WishlistPage() {
           ))}
 
           {/* Show all products with sourceObject */}
-          {allWishlistProducts.map((product) => (
+          {allWishlistProducts.map(product => (
             <WishlistProductCard
               key={product.id}
               product={product}
@@ -370,7 +389,7 @@ export default function WishlistPage() {
           ))}
 
           {/* Show all providers with sourceObject */}
-          {allWishlistProviders.map((provider) => (
+          {allWishlistProviders.map(provider => (
             <WishlistProviderCard
               key={provider.id}
               provider={provider}
@@ -394,7 +413,9 @@ export default function WishlistPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-16 font-medium text-gray-900">
-                        {wishlist.displayName || wishlist.name || `Wishlist #${wishlist.id}`}
+                        {wishlist.displayName ||
+                          wishlist.name ||
+                          `Wishlist #${wishlist.id}`}
                       </h4>
                       {wishlist.source && (
                         <span className="text-12 px-2 py-1 bg-gray-100 text-gray-600 rounded">
@@ -416,7 +437,8 @@ export default function WishlistPage() {
                       <span>{wishlist.itemCount || 0} items</span>
                       {wishlist.lastModified && (
                         <span>
-                          Updated {new Date(wishlist.lastModified).toLocaleDateString()}
+                          Updated{' '}
+                          {new Date(wishlist.lastModified).toLocaleDateString()}
                         </span>
                       )}
                     </div>
@@ -447,11 +469,15 @@ export default function WishlistPage() {
 
       {/* Loading Overlay for Mutations */}
       <LoadingOverlay
-        open={deleteWishlistMutation.isPending || toggleServiceWishlistMutation.isPending || toggleProductWishlistMutation.isPending || toggleProviderFavoriteMutation.isPending}
+        open={
+          deleteWishlistMutation.isPending ||
+          toggleServiceWishlistMutation.isPending ||
+          toggleProductWishlistMutation.isPending ||
+          toggleProviderFavoriteMutation.isPending
+        }
         title="Updating wishlist..."
         subtitle="Please wait a moment"
       />
     </UserPageLayout>
   )
 }
-

@@ -33,4 +33,3 @@ export interface HomeStatisticsResponse {
    */
   reservations: string
 }
-

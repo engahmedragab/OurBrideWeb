@@ -8,6 +8,3 @@ export default async function ProviderLinksPage({
   const { id: providerId } = await params
   return <ProviderLinksClient providerId={providerId} />
 }
-
-
-

@@ -2,7 +2,17 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Home, Globe, FileText, Monitor, BookOpen, Users, Trophy, User, UserCircle } from 'lucide-react'
+import {
+  Home,
+  Globe,
+  FileText,
+  Monitor,
+  BookOpen,
+  Users,
+  Trophy,
+  User,
+  UserCircle,
+} from 'lucide-react'
 import { useAuth } from '@/auth/hooks'
 import { SearchInput } from '@/components/ui/SearchInput'
 import { Button } from '@/components/ui/Button'
@@ -14,7 +24,15 @@ import { useArticles } from '@/hooks/community/useCommunityContent'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
-export type CommunityTab = 'community' | 'posts' | 'blogs' | 'articles' | 'reels' | 'decision-groups' | 'contests' | 'profile'
+export type CommunityTab =
+  | 'community'
+  | 'posts'
+  | 'blogs'
+  | 'articles'
+  | 'reels'
+  | 'decision-groups'
+  | 'contests'
+  | 'profile'
 
 export interface CommunitySidebarProps {
   className?: string
@@ -29,7 +47,8 @@ export const CommunitySidebar = ({
 }: CommunitySidebarProps) => {
   const router = useRouter()
   const { user } = useAuth()
-  const [internalActiveTab, setInternalActiveTab] = useState<CommunityTab>('posts')
+  const [internalActiveTab, setInternalActiveTab] =
+    useState<CommunityTab>('posts')
   const [searchQuery, setSearchQuery] = useState('')
   const activeTab = externalActiveTab ?? internalActiveTab
 
@@ -37,10 +56,14 @@ export const CommunitySidebar = ({
     setSearchQuery(e.target.value)
   }
 
-  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchSubmit = (
+    e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLInputElement>
+  ) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      router.push(`/community/search?q=${encodeURIComponent(searchQuery.trim())}`)
+      router.push(
+        `/community/search?q=${encodeURIComponent(searchQuery.trim())}`
+      )
     }
   }
 
@@ -222,7 +245,9 @@ export const CommunitySidebar = ({
             <Users
               className={cn(
                 'h-5 w-5 flex-shrink-0',
-                activeTab === 'decision-groups' ? 'text-brand-500' : 'text-gray-900'
+                activeTab === 'decision-groups'
+                  ? 'text-brand-500'
+                  : 'text-gray-900'
               )}
             />
             <span>Decision Groups</span>
@@ -275,15 +300,15 @@ export const CommunitySidebar = ({
                 )}
               </button>
               <button
-                onClick={() => router.push(`/community/profile?id=${user.id}&type=User`)}
+                onClick={() =>
+                  router.push(`/community/profile?id=${user.id}&type=User`)
+                }
                 className={cn(
                   'w-full flex items-center gap-2 py-2 px-0 text-14 font-normal transition-colors relative mt-2 pt-2 border-t border-gray-200',
                   'text-gray-900 hover:text-gray-700'
                 )}
               >
-                <User
-                  className="h-5 w-5 flex-shrink-0 text-gray-900"
-                />
+                <User className="h-5 w-5 flex-shrink-0 text-gray-900" />
                 <span>My Profile</span>
               </button>
             </>
@@ -320,7 +345,12 @@ export const CommunitySidebar = ({
                     key={article.id}
                     id={String(article.id)}
                     title={article.title}
-                    description={article.summary || article.excerpt || article.content?.substring(0, 100) || ''}
+                    description={
+                      article.summary ||
+                      article.excerpt ||
+                      article.content?.substring(0, 100) ||
+                      ''
+                    }
                     thumbnail={COMMUNITY_IMAGES.DEFAULT_ARTICLE_IMAGE}
                   />
                 ))}

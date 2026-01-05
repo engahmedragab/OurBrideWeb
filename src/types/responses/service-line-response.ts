@@ -3,7 +3,12 @@
  */
 
 import type { LineResponse } from './line-response'
-import type { ServiceType, ServiceClass, ReminderType, ProvidingType } from './book-enums'
+import type {
+  ServiceType,
+  ServiceClass,
+  ReminderType,
+  ProvidingType,
+} from './book-enums'
 import type { PreparationResponse } from './preparation-response'
 import type { ProviderResponse } from './provider-response'
 import type { ServiceResponse } from './service-response'
@@ -48,5 +53,3 @@ export interface ServiceLineResponse extends LineResponse {
   serviceNotes: string
   reservationNotes: string
 }
-
-

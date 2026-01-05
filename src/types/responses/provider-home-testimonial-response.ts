@@ -24,6 +24,3 @@ export interface ProviderHomeTestimonialResponse extends BaseLookupResponse {
   orderId?: number // ulong
   productId?: number
 }
-
-
-

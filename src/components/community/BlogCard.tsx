@@ -9,7 +9,11 @@ import { cn } from '@/lib/utils'
 import { EngagementButton } from './EngagementButton'
 import { getProfileUrl } from './utils'
 import type { BlogResponse } from '@/types/responses/community'
-import { toggleLike as toggleBlogLike, toggleFavorite as toggleBlogFavorite, shareBlog } from '@/services/api/blogsApi'
+import {
+  toggleLike as toggleBlogLike,
+  toggleFavorite as toggleBlogFavorite,
+  shareBlog,
+} from '@/services/api/blogsApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
@@ -31,10 +35,15 @@ const formatDate = (dateString: string | null): string => {
 }
 
 // Helper function to get user display name
-const getUserDisplayName = (user: BlogResponse['user'], authorName?: string): string => {
+const getUserDisplayName = (
+  user: BlogResponse['user'],
+  authorName?: string
+): string => {
   if (!user) return authorName || 'OurBride'
-  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
-  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const firstName =
+    user.firstName && user.firstName !== 'null' ? user.firstName : ''
+  const lastName =
+    user.lastName && user.lastName !== 'null' ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   return fullName || user.userName || authorName || 'OurBride'
 }
@@ -64,8 +73,11 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['blog', blog.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -73,17 +85,23 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
     mutationFn: async (shareSource?: string) => {
       return await shareBlog(blog.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/blogs/${blog.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/blogs/${blog.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['blog', blog.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share blog', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share blog',
+        'error'
+      )
     },
   })
 
@@ -96,8 +114,11 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['blog', blog.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -124,7 +145,7 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
   const displayName = getUserDisplayName(blog.user, blog.authorName)
   const avatar = getUserAvatar(blog.user)
   const date = formatDate(blog.publishedAt || blog.creationDate)
-  
+
   const imageUrl = COMMUNITY_IMAGES.DEFAULT_BLOG_IMAGE
 
   return (
@@ -158,7 +179,7 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
                 fill
                 sizes="32px"
                 className="object-cover"
-                onError={(e) => {
+                onError={e => {
                   e.currentTarget.style.display = 'none'
                 }}
               />
@@ -179,10 +200,12 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
             {blog.userId && getProfileUrl(blog.userId, blog.user?.type) ? (
               <Link
                 href={getProfileUrl(blog.userId, blog.user?.type)!}
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 className="hover:text-brand-500 transition-colors"
               >
-                <p className="text-14 font-normal text-gray-900">{displayName}</p>
+                <p className="text-14 font-normal text-gray-900">
+                  {displayName}
+                </p>
               </Link>
             ) : (
               <p className="text-14 font-normal text-gray-900">{displayName}</p>
@@ -210,7 +233,9 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
       <div className="flex items-center justify-center gap-3 pt-4 mt-4 border-t border-gray-100">
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+            icon={
+              <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
+            }
             count={likes}
             label="Likes"
             onClick={handleLikeClick}
@@ -237,7 +262,11 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
         </div>
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+            icon={
+              <Star
+                className={cn('h-5 w-5', isFavorited && 'fill-brand-500')}
+              />
+            }
             count={favorites}
             label="Favorites"
             onClick={handleFavoriteClick}
@@ -249,8 +278,3 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
     </div>
   )
 }
-
-
-
-
-

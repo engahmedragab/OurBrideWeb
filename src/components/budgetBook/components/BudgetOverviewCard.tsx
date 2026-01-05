@@ -65,7 +65,10 @@ export const BudgetOverviewCard = ({
 
     if (segmentsWithValue.length === 0) return []
 
-    const totalValue = segmentsWithValue.reduce((sum, seg) => sum + seg.value, 0)
+    const totalValue = segmentsWithValue.reduce(
+      (sum, seg) => sum + seg.value,
+      0
+    )
     if (totalValue === 0) return []
 
     return segmentsWithValue
@@ -93,7 +96,12 @@ export const BudgetOverviewCard = ({
 
   if (isLoading) {
     return (
-      <div className={cn(cardVariants({ variant: 'default', padding: 'lg' }), 'p-6')}>
+      <div
+        className={cn(
+          cardVariants({ variant: 'default', padding: 'lg' }),
+          'p-6'
+        )}
+      >
         <div className="animate-pulse space-y-4">
           <div className="h-4 bg-gray-200 rounded w-1/3" />
           <div className="h-48 bg-gray-200 rounded" />
@@ -104,11 +112,18 @@ export const BudgetOverviewCard = ({
   }
 
   return (
-    <div className={cn(cardVariants({ variant: 'default', padding: 'lg' }), 'p-4 shadow-sm border border-gray-200')}>
+    <div
+      className={cn(
+        cardVariants({ variant: 'default', padding: 'lg' }),
+        'p-4 shadow-sm border border-gray-200'
+      )}
+    >
       <div className="p-0 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-14 font-semibold text-gray-900">Budget Overview</h2>
+          <h2 className="text-14 font-semibold text-gray-900">
+            Budget Overview
+          </h2>
           <span className="text-12 font-medium text-green-500">
             {savedPercentage.toFixed(0)}% Saved
           </span>

@@ -2,7 +2,6 @@
 
 import { UserPageLayout } from '@/components/layout'
 
-
 export default function eventsLayout({
   children,
 }: {
@@ -10,9 +9,7 @@ export default function eventsLayout({
 }) {
   return (
     <UserPageLayout>
-      <div className="w-full min-h-screen flex flex-col">
-        {children}
-      </div>
+      <div className="w-full min-h-screen flex flex-col">{children}</div>
     </UserPageLayout>
   )
 }

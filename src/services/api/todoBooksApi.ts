@@ -4,7 +4,11 @@
  */
 
 import { apiClient } from '@/services/api/apiClient'
-import type { TodoBookResponse, TodoLineResponse, TodoLineCategoryResponse } from '@/types/responses'
+import type {
+  TodoBookResponse,
+  TodoLineResponse,
+  TodoLineCategoryResponse,
+} from '@/types/responses'
 import type {
   TodoBookRequest,
   TodoLineRequest,
@@ -41,14 +45,18 @@ export const initTodoBooks = async (params?: {
   eventId?: number
 }): Promise<void> => {
   try {
-    const normalizedParams = params ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: params.eventId,
-    } : undefined
+    const normalizedParams = params
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: params.eventId,
+        }
+      : undefined
     await apiClient.api.postTodoBooksInit(normalizedParams)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to initialize todo books')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to initialize todo books'
+    )
   }
 }
 
@@ -63,7 +71,9 @@ export const syncTodoBook = async (
     const params = normalizeQuery(query)
     await apiClient.api.postTodoBooksSyncBook(data, params)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to sync todo book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to sync todo book'
+    )
   }
 }
 
@@ -76,10 +86,16 @@ export const getTodoBook = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetBook(normalizedQuery)
-    const responseAny: any = response as { data?: { data?: TodoBookResponse } | TodoBookResponse } | TodoBookResponse
-    
+    const responseAny: any = response as
+      | { data?: { data?: TodoBookResponse } | TodoBookResponse }
+      | TodoBookResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: TodoBookResponse }).data
@@ -93,7 +109,9 @@ export const getTodoBook = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch todo book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch todo book'
+    )
   }
 }
 
@@ -106,10 +124,20 @@ export const getTodoLines = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetAll(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[]; items?: TodoLineResponse[] } } | TodoLineResponse[]
-    
+    const responseAny: any = response as
+      | {
+          data?:
+            | TodoLineResponse[]
+            | { data?: TodoLineResponse[]; items?: TodoLineResponse[] }
+        }
+      | TodoLineResponse[]
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
@@ -128,7 +156,9 @@ export const getTodoLines = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch todo lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch todo lines'
+    )
   }
 }
 
@@ -140,16 +170,28 @@ export const getTodoLineById = async (
   query?: { clientId?: string; eventId?: number }
 ): Promise<TodoLineResponse | null> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getTodoBooksGet(lineId, String(lineId), normalizedQuery)
-    const responseAny: any = response as { data?: { data?: TodoLineResponse } | TodoLineResponse } | TodoLineResponse
-    
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response = await apiClient.api.getTodoBooksGet(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: TodoLineResponse } | TodoLineResponse }
+      | TodoLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: TodoLineResponse }).data
@@ -163,7 +205,9 @@ export const getTodoLineById = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch todo line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch todo line'
+    )
   }
 }
 
@@ -176,11 +220,20 @@ export const createTodoLine = async (
 ): Promise<TodoLineResponse> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.postTodoBooksCreate(data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: TodoLineResponse } | TodoLineResponse } | TodoLineResponse
-    
+    const response = await apiClient.api.postTodoBooksCreate(
+      data,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: TodoLineResponse } | TodoLineResponse }
+      | TodoLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: TodoLineResponse }).data
@@ -194,7 +247,9 @@ export const createTodoLine = async (
     }
     throw new Error('Invalid response format from create todo line endpoint')
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create todo line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create todo line'
+    )
   }
 }
 
@@ -209,7 +264,9 @@ export const createTodoLinesBulk = async (
     const normalizedQuery = normalizeQuery(query)
     await apiClient.api.postTodoBooksCreateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create todo lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create todo lines'
+    )
   }
 }
 
@@ -222,16 +279,29 @@ export const updateTodoLine = async (
   query?: TodoBooksQuery
 ): Promise<TodoLineResponse> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      // eventId is excluded if the API doesn't accept it
-    } : undefined
-    const response = await apiClient.api.putTodoBooksUpdate(lineId, String(lineId), data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: TodoLineResponse } | TodoLineResponse } | TodoLineResponse
-    
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          // eventId is excluded if the API doesn't accept it
+        }
+      : undefined
+    const response = await apiClient.api.putTodoBooksUpdate(
+      lineId,
+      String(lineId),
+      data,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: TodoLineResponse } | TodoLineResponse }
+      | TodoLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: TodoLineResponse }).data
@@ -245,7 +315,9 @@ export const updateTodoLine = async (
     }
     throw new Error('Invalid response format from update todo line endpoint')
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update todo line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update todo line'
+    )
   }
 }
 
@@ -257,14 +329,18 @@ export const updateTodoLinesBulk = async (
   query?: { clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putTodoBooksUpdateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update todo lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update todo lines'
+    )
   }
 }
 
@@ -277,9 +353,15 @@ export const deleteTodoLine = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.deleteTodoBooksDelete(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.deleteTodoBooksDelete(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete todo line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete todo line'
+    )
   }
 }
 
@@ -288,18 +370,27 @@ export const deleteTodoLine = async (
  */
 export const deleteTodoLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putTodoBooksDeleteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete todo lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete todo lines'
+    )
   }
 }
 
@@ -312,9 +403,17 @@ export const toggleTodoLineDone = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putTodoBooksDone(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putTodoBooksDone(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle todo line done status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle todo line done status'
+    )
   }
 }
 
@@ -327,9 +426,17 @@ export const toggleTodoLineFavorite = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putTodoBooksFavorite(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putTodoBooksFavorite(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle todo line favorite status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle todo line favorite status'
+    )
   }
 }
 
@@ -344,21 +451,41 @@ export const getTodoLinesCustom = async (
 ): Promise<TodoLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getTodoBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response = await apiClient.api.getTodoBooksGetAllCustom(
+      isDeleted,
+      isDone,
+      isFavorite,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } }
+      | TodoLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch custom todo lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch custom todo lines'
+    )
   }
 }
 
@@ -371,50 +498,83 @@ export const getTodoLinesDone = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetAllDone(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const responseAny: any = response as
+      | { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } }
+      | TodoLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch done todo lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch done todo lines'
+    )
   }
 }
 
 /**
  * Get not done todo lines
  */
-export const getTodoLinesNotDone = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<TodoLineResponse[]> => {
+export const getTodoLinesNotDone = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<TodoLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getTodoBooksGetAllNotDone(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getTodoBooksGetAllNotDone(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } }
+      | TodoLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not done todo lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not done todo lines'
+    )
   }
 }
 
@@ -426,51 +586,87 @@ export const getTodoLinesFavorite = async (
 ): Promise<TodoLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getTodoBooksGetAllFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getTodoBooksGetAllFavorite(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } }
+      | TodoLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch favorite todo lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch favorite todo lines'
+    )
   }
 }
 
 /**
  * Get not favorite todo lines
  */
-export const getTodoLinesNotFavorite = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<TodoLineResponse[]> => {
+export const getTodoLinesNotFavorite = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<TodoLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getTodoBooksGetAllNotFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getTodoBooksGetAllNotFavorite(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } }
+      | TodoLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not favorite todo lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not favorite todo lines'
+    )
   }
 }
 
@@ -482,21 +678,37 @@ export const getTodoLinesDeleted = async (
 ): Promise<TodoLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getTodoBooksGetAllDelete(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getTodoBooksGetAllDelete(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } }
+      | TodoLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch deleted todo lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch deleted todo lines'
+    )
   }
 }
 
@@ -508,21 +720,37 @@ export const getTodoLinesNotDeleted = async (
 ): Promise<TodoLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getTodoBooksGetAllNotDelete(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getTodoBooksGetAllNotDelete(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } }
+      | TodoLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not deleted todo lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not deleted todo lines'
+    )
   }
 }
 
@@ -531,18 +759,29 @@ export const getTodoLinesNotDeleted = async (
  */
 export const markTodoLinesDoneBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putTodoBooksDoneAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to mark todo lines as done')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to mark todo lines as done'
+    )
   }
 }
 
@@ -551,43 +790,69 @@ export const markTodoLinesDoneBulk = async (
  */
 export const favoriteTodoLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putTodoBooksFavoriteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to favorite todo lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to favorite todo lines'
+    )
   }
 }
 
 /**
  * Get all todo line categories
  */
-export const getTodoCategories = async (
-  query?: { clientId?: string }
-): Promise<TodoLineCategoryResponse[]> => {
+export const getTodoCategories = async (query?: {
+  clientId?: string
+}): Promise<TodoLineCategoryResponse[]> => {
   try {
     const response = await apiClient.api.getTodoBooksGetAllCategories(query)
-    const responseAny: any = response as { data?: TodoLineCategoryResponse[] | { data?: TodoLineCategoryResponse[] } } | TodoLineCategoryResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const responseAny: any = response as
+      | {
+          data?:
+            | TodoLineCategoryResponse[]
+            | { data?: TodoLineCategoryResponse[] }
+        }
+      | TodoLineCategoryResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch todo categories')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch todo categories'
+    )
   }
 }
 
@@ -601,7 +866,9 @@ export const createTodoCategory = async (
   try {
     await apiClient.api.postTodoBooksCreateCategory(data, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create todo category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create todo category'
+    )
   }
 }
 
@@ -613,10 +880,21 @@ export const getTodoCategory = async (
   query?: { clientId?: string }
 ): Promise<TodoLineCategoryResponse | null> => {
   try {
-    const response = await apiClient.api.getTodoBooksGetCategory(categoryId, query)
-    const responseAny: any = response as { data?: { data?: TodoLineCategoryResponse } | TodoLineCategoryResponse } | TodoLineCategoryResponse
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response = await apiClient.api.getTodoBooksGetCategory(
+      categoryId,
+      query
+    )
+    const responseAny: any = response as
+      | {
+          data?: { data?: TodoLineCategoryResponse } | TodoLineCategoryResponse
+        }
+      | TodoLineCategoryResponse
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: TodoLineCategoryResponse }).data
@@ -630,7 +908,9 @@ export const getTodoCategory = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch todo category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch todo category'
+    )
   }
 }
 
@@ -645,7 +925,9 @@ export const updateTodoCategory = async (
   try {
     await apiClient.api.putTodoBooksUpdateCategory(categoryId, data, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update todo category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update todo category'
+    )
   }
 }
 
@@ -659,6 +941,8 @@ export const deleteTodoCategory = async (
   try {
     await apiClient.api.postTodoBooksDeleteCategory(categoryId, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete todo category')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete todo category'
+    )
   }
 }

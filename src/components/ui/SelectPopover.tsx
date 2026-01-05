@@ -88,7 +88,9 @@ export const SelectPopover = ({
                     isSelected && 'bg-brand-500 text-white mb-2'
                   )}
                 >
-                  <span className="flex-1 text-left" dir="auto">{option.label}</span>
+                  <span className="flex-1 text-left" dir="auto">
+                    {option.label}
+                  </span>
                   {isSelected && (
                     <Check className="h-4 w-4 text-white flex-shrink-0" />
                   )}
@@ -106,4 +108,3 @@ export const SelectPopover = ({
     </div>
   )
 }
-

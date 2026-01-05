@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import Image from 'next/image'
 import offlineSvg from '@/assets/svg/offline.svg'
@@ -20,7 +20,9 @@ export default function OfflinePage() {
           className="w-64 h-64 object-contain mb-8"
         />
         {/* Heading */}
-        <h2 className="text-18 md:text-22 font-semibold text-gray-900 mb-1 text-center">You&apos;re Offline</h2>
+        <h2 className="text-18 md:text-22 font-semibold text-gray-900 mb-1 text-center">
+          You&apos;re Offline
+        </h2>
         {/* Subtext */}
         <p className="text-14 text-gray-500 mb-6 text-center">
           Please check your internet connection and try again

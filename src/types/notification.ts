@@ -23,4 +23,3 @@ export interface Notification {
     eventId?: string
   }
 }
-

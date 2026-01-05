@@ -6,7 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { addCategoryFormSchema, type AddCategoryFormData } from '@/app/events/planning/invitation/schemas/category.schema'
+import {
+  addCategoryFormSchema,
+  type AddCategoryFormData,
+} from '@/app/events/planning/invitation/schemas/category.schema'
 
 const slugify = (text: string): string => {
   return text
@@ -21,7 +24,11 @@ const slugify = (text: string): string => {
 interface AddCategoryModalProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (data: { name: string; slug?: string; description?: string }) => void
+  onSubmit: (data: {
+    name: string
+    slug?: string
+    description?: string
+  }) => void
   isSubmitting?: boolean
 }
 
@@ -86,7 +93,9 @@ export const AddCategoryModal = ({
           </div>
 
           <div>
-            <label className="block text-14 font-medium text-gray-700 mb-2">Slug (Optional)</label>
+            <label className="block text-14 font-medium text-gray-700 mb-2">
+              Slug (Optional)
+            </label>
             <Input
               {...register('slug')}
               placeholder="Auto-generated if empty"
@@ -97,7 +106,9 @@ export const AddCategoryModal = ({
           </div>
 
           <div>
-            <label className="block text-14 font-medium text-gray-700 mb-2">Description (Optional)</label>
+            <label className="block text-14 font-medium text-gray-700 mb-2">
+              Description (Optional)
+            </label>
             <Input
               {...register('description')}
               placeholder="Enter category description"
@@ -108,7 +119,13 @@ export const AddCategoryModal = ({
           </div>
 
           <div className="flex flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-gray-200">
-            <Button type="button" variant="outline" onClick={onClose} size="md" className="w-full sm:w-auto">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              size="md"
+              className="w-full sm:w-auto"
+            >
               Cancel
             </Button>
             <Button

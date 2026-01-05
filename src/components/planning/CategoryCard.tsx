@@ -29,7 +29,8 @@ export const CategoryCard = ({
   className,
 }: CategoryCardProps) => {
   const Icon = getCategoryIcon(category)
-  const categoryName = category.name || category.nameEn || category.nameAr || 'Unnamed Category'
+  const categoryName =
+    category.name || category.nameEn || category.nameAr || 'Unnamed Category'
 
   return (
     <div
@@ -57,19 +58,24 @@ export const CategoryCard = ({
             {category.lineCount !== undefined && (
               <div>
                 <span className="font-medium">Total:</span>{' '}
-                <span>{category.lineCount} {category.lineCount === 1 ? 'preparation' : 'preparations'}</span>
+                <span>
+                  {category.lineCount}{' '}
+                  {category.lineCount === 1 ? 'preparation' : 'preparations'}
+                </span>
               </div>
             )}
-            {category.completedCount !== undefined && category.completedCount > 0 && (
-              <div>
-                <span className="font-medium">Completed:</span>{' '}
-                <span className="text-green-600">{category.completedCount}</span>
-              </div>
-            )}
+            {category.completedCount !== undefined &&
+              category.completedCount > 0 && (
+                <div>
+                  <span className="font-medium">Completed:</span>{' '}
+                  <span className="text-green-600">
+                    {category.completedCount}
+                  </span>
+                </div>
+              )}
           </div>
         </div>
       </div>
     </div>
   )
 }
-

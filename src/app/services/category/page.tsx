@@ -18,10 +18,7 @@ import {
 import { ErrorModal } from '@/components/ui/ErrorModal'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
-import type {
-  ServiceSortOption,
-  ServiceViewMode,
-} from '@/types/service'
+import type { ServiceSortOption, ServiceViewMode } from '@/types/service'
 import type { ProductFilter } from '@/types/product'
 import { useServicesPreparations } from '@/hooks/services'
 
@@ -538,7 +535,10 @@ function ServicesCategoryPageContent() {
 
   // Extract services and categories from API data
   const apiServices = useMemo(() => data?.services || [], [data?.services])
-  const apiCategories = useMemo(() => data?.categories || [], [data?.categories])
+  const apiCategories = useMemo(
+    () => data?.categories || [],
+    [data?.categories]
+  )
 
   // Read filters from URL on mount and when URL changes
   useEffect(() => {
@@ -928,11 +928,7 @@ export default function ServicesCategoryPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <LoadingSpinner
-            size="lg"
-            text="Loading..."
-            fullScreen={true}
-          />
+          <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
         </div>
       }
     >
@@ -940,4 +936,3 @@ export default function ServicesCategoryPage() {
     </Suspense>
   )
 }
-

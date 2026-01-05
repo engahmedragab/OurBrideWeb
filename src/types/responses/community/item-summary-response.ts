@@ -7,13 +7,3 @@ export interface ItemSummaryResponse {
   nameAr: string
   nameEn: string
 }
-
-
-
-
-
-
-
-
-
-

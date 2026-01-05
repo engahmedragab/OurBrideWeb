@@ -51,9 +51,7 @@ export const ItineraryEventCard = ({
     <div className={cn('flex gap-4 items-start relative', className)}>
       <div className="flex flex-col items-center">
         <div className="w-3 h-3 rounded-full bg-brand-500" />
-        {!isLast && (
-          <div className="w-0.5 flex-1 bg-brand-500 min-h-[60px]" />
-        )}
+        {!isLast && <div className="w-0.5 flex-1 bg-brand-500 min-h-[60px]" />}
       </div>
 
       <div className="flex-1 bg-brand-50 rounded-lg p-4 border border-brand-200">
@@ -62,7 +60,9 @@ export const ItineraryEventCard = ({
             <p className="text-16 font-normal text-gray-900 mb-1">
               {formattedTime}
             </p>
-            <p className="text-14 text-gray-500 mb-1">Duration: {durationText}</p>
+            <p className="text-14 text-gray-500 mb-1">
+              Duration: {durationText}
+            </p>
             <p className="text-14 text-gray-500">{event.title}</p>
           </div>
           <DropdownMenu>
@@ -74,7 +74,10 @@ export const ItineraryEventCard = ({
                 <MoreVertical className="h-5 w-5 text-gray-900" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40 bg-white border border-gray-200">
+            <DropdownMenuContent
+              align="end"
+              className="w-40 bg-white border border-gray-200"
+            >
               <DropdownMenuItem
                 onClick={() => onEdit?.(event)}
                 className="cursor-pointer text-gray-900 hover:bg-brand-50 focus:bg-brand-50"
@@ -96,4 +99,3 @@ export const ItineraryEventCard = ({
     </div>
   )
 }
-

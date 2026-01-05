@@ -25,7 +25,7 @@ export const getAllDecisionGroups = async (params?: {
   try {
     const response = await apiClient.api.getDecisionGroupsGetAll(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as DecisionGroupResponse[]
@@ -39,21 +39,25 @@ export const getAllDecisionGroups = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as DecisionGroupResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch decision groups')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch decision groups'
+    )
   }
 }
 
 /**
  * Get decision group by ID
  */
-export const getDecisionGroupById = async (id: number): Promise<DecisionGroupResponse | null> => {
+export const getDecisionGroupById = async (
+  id: number
+): Promise<DecisionGroupResponse | null> => {
   try {
     const response = await apiClient.api.getDecisionGroupsGetById(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as DecisionGroupResponse
@@ -64,21 +68,25 @@ export const getDecisionGroupById = async (id: number): Promise<DecisionGroupRes
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as DecisionGroupResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch decision group')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch decision group'
+    )
   }
 }
 
 /**
  * Get decision group with options
  */
-export const getDecisionGroupWithOptions = async (id: number): Promise<DecisionGroupResponse | null> => {
+export const getDecisionGroupWithOptions = async (
+  id: number
+): Promise<DecisionGroupResponse | null> => {
   try {
     const response = await apiClient.api.getDecisionGroupsGetWithOptions(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as DecisionGroupResponse
@@ -89,10 +97,14 @@ export const getDecisionGroupWithOptions = async (id: number): Promise<DecisionG
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as DecisionGroupResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch decision group with options')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch decision group with options'
+    )
   }
 }
 
@@ -106,7 +118,7 @@ export const getPublishedDecisionGroups = async (params?: {
   try {
     const response = await apiClient.api.getDecisionGroupsGetPublished(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as DecisionGroupResponse[]
@@ -120,10 +132,14 @@ export const getPublishedDecisionGroups = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as DecisionGroupResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch published decision groups')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch published decision groups'
+    )
   }
 }
 
@@ -137,7 +153,7 @@ export const getActiveDecisionGroups = async (params?: {
   try {
     const response = await apiClient.api.getDecisionGroupsGetActive(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as DecisionGroupResponse[]
@@ -151,21 +167,27 @@ export const getActiveDecisionGroups = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as DecisionGroupResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch active decision groups')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch active decision groups'
+    )
   }
 }
 
 /**
  * Get decision groups by user ID
  */
-export const getDecisionGroupsByUserId = async (userId: string): Promise<DecisionGroupResponse[]> => {
+export const getDecisionGroupsByUserId = async (
+  userId: string
+): Promise<DecisionGroupResponse[]> => {
   try {
     const response = await apiClient.api.getDecisionGroupsGetByUserId(userId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as DecisionGroupResponse[]
@@ -179,10 +201,14 @@ export const getDecisionGroupsByUserId = async (userId: string): Promise<Decisio
     if (Array.isArray(responseAny)) {
       return responseAny as DecisionGroupResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch decision groups by user')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch decision groups by user'
+    )
   }
 }
 
@@ -195,7 +221,7 @@ export const searchDecisionGroups = async (params?: {
   try {
     const response = await apiClient.api.getDecisionGroupsSearch(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as DecisionGroupResponse[]
@@ -209,21 +235,27 @@ export const searchDecisionGroups = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as DecisionGroupResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to search decision groups')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to search decision groups'
+    )
   }
 }
 
 /**
  * Create a new decision group
  */
-export const createDecisionGroup = async (data: CreateDecisionGroupRequest): Promise<DecisionGroupResponse | null> => {
+export const createDecisionGroup = async (
+  data: CreateDecisionGroupRequest
+): Promise<DecisionGroupResponse | null> => {
   try {
     const response = await apiClient.api.postDecisionGroupsCreate(data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as DecisionGroupResponse
@@ -234,21 +266,26 @@ export const createDecisionGroup = async (data: CreateDecisionGroupRequest): Pro
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as DecisionGroupResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create decision group')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create decision group'
+    )
   }
 }
 
 /**
  * Update a decision group
  */
-export const updateDecisionGroup = async (id: number, data: UpdateDecisionGroupRequest): Promise<DecisionGroupResponse | null> => {
+export const updateDecisionGroup = async (
+  id: number,
+  data: UpdateDecisionGroupRequest
+): Promise<DecisionGroupResponse | null> => {
   try {
     const response = await apiClient.api.putDecisionGroupsUpdate(id, data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as DecisionGroupResponse
@@ -259,10 +296,12 @@ export const updateDecisionGroup = async (id: number, data: UpdateDecisionGroupR
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as DecisionGroupResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update decision group')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update decision group'
+    )
   }
 }
 
@@ -274,18 +313,23 @@ export const deleteDecisionGroup = async (id: number): Promise<boolean> => {
     await apiClient.api.deleteDecisionGroupsDelete(id)
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete decision group')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete decision group'
+    )
   }
 }
 
 /**
  * Add decision option to a decision group
  */
-export const addDecisionOption = async (id: number, data: DecisionOptionRequest): Promise<DecisionOptionResponse | null> => {
+export const addDecisionOption = async (
+  id: number,
+  data: DecisionOptionRequest
+): Promise<DecisionOptionResponse | null> => {
   try {
     const response = await apiClient.api.postDecisionGroupsAddOption(id, data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as DecisionOptionResponse
@@ -296,21 +340,26 @@ export const addDecisionOption = async (id: number, data: DecisionOptionRequest)
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as DecisionOptionResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add decision option')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to add decision option'
+    )
   }
 }
 
 /**
  * Cast a vote on a decision group
  */
-export const castVote = async (id: string, data: CastVoteRequest): Promise<DecisionVoteResponse | null> => {
+export const castVote = async (
+  id: string,
+  data: CastVoteRequest
+): Promise<DecisionVoteResponse | null> => {
   try {
     const response = await apiClient.api.postDecisionGroupsCastVote(id, data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as DecisionVoteResponse
@@ -321,21 +370,28 @@ export const castVote = async (id: string, data: CastVoteRequest): Promise<Decis
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as DecisionVoteResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to cast vote')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to cast vote'
+    )
   }
 }
 
 /**
  * Add review to a decision group
  */
-export const addReview = async (id: number, data: AddReviewRequest): Promise<void> => {
+export const addReview = async (
+  id: number,
+  data: AddReviewRequest
+): Promise<void> => {
   try {
     await apiClient.api.postDecisionGroupsAddReview(id, data)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add review')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to add review'
+    )
   }
 }
 
@@ -348,7 +404,9 @@ export const toggleLike = async (id: number): Promise<boolean> => {
     // The API might return the new like status, but we'll need to check separately
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle like')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle like'
+    )
   }
 }
 
@@ -359,7 +417,7 @@ export const isLiked = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getDecisionGroupsIsLiked(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -370,10 +428,12 @@ export const isLiked = async (id: number): Promise<boolean> => {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check like status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check like status'
+    )
   }
 }
 
@@ -386,7 +446,9 @@ export const toggleFavorite = async (id: number): Promise<boolean> => {
     // The API might return the new favorite status, but we'll need to check separately
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle favorite')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle favorite'
+    )
   }
 }
 
@@ -397,7 +459,7 @@ export const isFavorite = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getDecisionGroupsIsFavorite(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -408,10 +470,12 @@ export const isFavorite = async (id: number): Promise<boolean> => {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check favorite status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check favorite status'
+    )
   }
 }
 
@@ -422,18 +486,25 @@ export const addMedia = async (id: number, mediaId: number): Promise<void> => {
   try {
     await apiClient.api.postDecisionGroupsAddMedia(id, mediaId)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add media')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to add media'
+    )
   }
 }
 
 /**
  * Remove media from a decision group
  */
-export const removeMedia = async (id: number, mediaId: number): Promise<void> => {
+export const removeMedia = async (
+  id: number,
+  mediaId: number
+): Promise<void> => {
   try {
     await apiClient.api.deleteDecisionGroupsRemoveMedia(id, mediaId)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to remove media')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to remove media'
+    )
   }
 }
 
@@ -444,7 +515,7 @@ export const getMediaIds = async (id: number): Promise<number[]> => {
   try {
     const response = await apiClient.api.getDecisionGroupsGetMedia(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as number[]
@@ -458,10 +529,12 @@ export const getMediaIds = async (id: number): Promise<number[]> => {
     if (Array.isArray(responseAny)) {
       return responseAny as number[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch media IDs')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch media IDs'
+    )
   }
 }
 
@@ -472,7 +545,9 @@ export const incrementViewCount = async (id: number): Promise<void> => {
   try {
     await apiClient.api.postDecisionGroupsIncrementView(id)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to increment view count')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to increment view count'
+    )
   }
 }
 
@@ -485,11 +560,17 @@ export const shareDecisionGroup = async (
   shareSource?: string
 ): Promise<ShareDecisionGroupResponse | null> => {
   try {
-    const response = await apiClient.api.postDecisionGroupsShare(id, { shareSource })
+    const response = await apiClient.api.postDecisionGroupsShare(id, {
+      shareSource,
+    })
     const responseAny: any = response
-    
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = (responseAny as { data?: unknown }).data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ShareDecisionGroupResponse }).data
@@ -498,30 +579,18 @@ export const shareDecisionGroup = async (
         return data as ShareDecisionGroupResponse
       }
     }
-    if (responseAny && typeof responseAny === 'object' && 'decisionGroupId' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'decisionGroupId' in responseAny
+    ) {
       return responseAny as ShareDecisionGroupResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to share decision group')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to share decision group'
+    )
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -4,11 +4,10 @@ import { OrderDetailsClient } from './OrderDetailsClient'
 // This allows orders to be fetched at runtime based on user authentication
 
 export default async function OrderDetailPage({
-    params,
+  params,
 }: {
-    params: Promise<{ id: string }>
+  params: Promise<{ id: string }>
 }) {
-    const { id } = await params
-    return <OrderDetailsClient orderId={id} />
+  const { id } = await params
+  return <OrderDetailsClient orderId={id} />
 }
-

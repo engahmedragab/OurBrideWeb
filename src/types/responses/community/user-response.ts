@@ -26,21 +26,3 @@ export interface UserResponse {
   userName: string
   profileUrl: string
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

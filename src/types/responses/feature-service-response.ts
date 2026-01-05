@@ -19,4 +19,3 @@ export interface FeatureServiceResponse extends BaseLookupResponse {
   providerId: number | null
   provider: ProviderInfoResponse | null
 }
-

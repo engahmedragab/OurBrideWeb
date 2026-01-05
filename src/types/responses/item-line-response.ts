@@ -41,5 +41,3 @@ export interface ItemLineResponse extends LineResponse {
   subCategoryId: number
   providerId?: number
 }
-
-

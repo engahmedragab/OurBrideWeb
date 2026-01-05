@@ -5,7 +5,14 @@ import Image from 'next/image'
 import { X, ChevronRight } from 'lucide-react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
-import { SilverIcon, GoldIcon, BlueRankIcon, PinkRankIcon, RedRankIcon, BronzeIcon } from '@/assets/rank/rankingIcons'
+import {
+  SilverIcon,
+  GoldIcon,
+  BlueRankIcon,
+  PinkRankIcon,
+  RedRankIcon,
+  BronzeIcon,
+} from '@/assets/rank/rankingIcons'
 import diamondSvg from '@/assets/svg/Diamond.svg'
 
 /**
@@ -16,7 +23,10 @@ export type RankType = 'bronze' | 'silver' | 'gold' | 'blue' | 'pink' | 'red'
 /**
  * Rank badge mapping
  */
-const rankBadgeMap: Record<RankType, React.ComponentType<{ className?: string }>> = {
+const rankBadgeMap: Record<
+  RankType,
+  React.ComponentType<{ className?: string }>
+> = {
   bronze: BronzeIcon,
   silver: SilverIcon,
   gold: GoldIcon,
@@ -99,7 +109,6 @@ export const RankUpModal = ({
         {/* Rank Badge */}
         <div className="flex items-center justify-center shrink-0">
           <NewRankIcon className="w-[80px] h-[80px]" />
-
         </div>
 
         {/* Message Text */}
@@ -133,7 +142,9 @@ export const RankUpModal = ({
                 {rewardValue}
               </p>
               <Image
-                src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
+                src={
+                  typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src
+                }
                 alt="Diamond"
                 width={24}
                 height={24}
@@ -163,4 +174,3 @@ export const RankUpModal = ({
     </Modal>
   )
 }
-

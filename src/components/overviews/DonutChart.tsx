@@ -10,7 +10,10 @@ interface DonutChartProps {
 
 export const DonutChart = ({ data }: DonutChartProps) => {
   // Filter out invalid data and calculate total
-  const validData = data.filter(item => typeof item.value === 'number' && !isNaN(item.value) && item.value >= 0)
+  const validData = data.filter(
+    item =>
+      typeof item.value === 'number' && !isNaN(item.value) && item.value >= 0
+  )
   const total = validData.reduce((sum, item) => sum + item.value, 0)
   const radius = 60
   const circumference = 2 * Math.PI * radius
@@ -42,7 +45,9 @@ export const DonutChart = ({ data }: DonutChartProps) => {
     currentOffset += dashLength
 
     // Ensure values are valid numbers
-    const validDashArray = isFinite(dashLength) ? strokeDasharray : `0 ${circumference}`
+    const validDashArray = isFinite(dashLength)
+      ? strokeDasharray
+      : `0 ${circumference}`
     const validDashOffset = isFinite(strokeDashoffset) ? strokeDashoffset : 0
 
     return (
@@ -81,4 +86,3 @@ export const DonutChart = ({ data }: DonutChartProps) => {
     </div>
   )
 }
-

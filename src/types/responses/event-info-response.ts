@@ -22,5 +22,3 @@ export interface EventInfoResponse {
   todoBook: MainTodoBookResponse
   occasionBook: MainOccasionBookResponse
 }
-
-

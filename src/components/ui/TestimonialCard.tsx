@@ -66,13 +66,12 @@ export const TestimonialCard = ({
 
         {/* Name and Location */}
         <div className="flex-1 min-w-0">
-          <p className="text-14 font-bold text-gray-900 truncate">{reviewerName}</p>
+          <p className="text-14 font-bold text-gray-900 truncate">
+            {reviewerName}
+          </p>
           <p className="text-12 text-gray-600 truncate">{reviewerLocation}</p>
         </div>
       </div>
     </div>
   )
 }
-
-
-

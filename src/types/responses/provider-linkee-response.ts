@@ -45,6 +45,3 @@ export interface ProviderLinkeeResponse {
   totalProducts: number
   totalServices: number
 }
-
-
-

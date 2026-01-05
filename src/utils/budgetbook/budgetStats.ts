@@ -12,7 +12,10 @@ export function calculateBudgetStats(draft: BudgetBookDraft, p0: any) {
   const categories = (draft.lineCategories || []).filter(c => !c.isDeleted)
   const lines = (draft.lines || []).filter(l => !l.isDeleted)
 
-  const totalEstimated = lines.reduce((sum, l) => sum + (Number(l.estimated) || 0), 0)
+  const totalEstimated = lines.reduce(
+    (sum, l) => sum + (Number(l.estimated) || 0),
+    0
+  )
   const totalPaid = lines.reduce((sum, l) => sum + (Number(l.paid) || 0), 0)
   const totalFinal = lines.reduce((sum, l) => sum + (Number(l.final) || 0), 0)
 
@@ -26,7 +29,10 @@ export function calculateBudgetStats(draft: BudgetBookDraft, p0: any) {
 
   const categoryStats: CategoryStat[] = categories.map(cat => {
     const catLines = lines.filter(l => l.lineCategoryId === cat.id)
-    const catEstimated = catLines.reduce((sum, l) => sum + (Number(l.estimated) || 0), 0)
+    const catEstimated = catLines.reduce(
+      (sum, l) => sum + (Number(l.estimated) || 0),
+      0
+    )
     const catPaid = catLines.reduce((sum, l) => sum + (Number(l.paid) || 0), 0)
 
     return {

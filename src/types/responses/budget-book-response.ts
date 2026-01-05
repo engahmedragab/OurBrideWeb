@@ -15,5 +15,3 @@ export interface BudgetBookResponse extends BookResponse<BudgetLineResponse> {
   lineCategories?: BudgetLineCategoryResponse[]
   categoriesCount?: number
 }
-
-

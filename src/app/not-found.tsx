@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import Image from 'next/image'
 import pageNotFoundSvg from '@/assets/svg/page-not-found.svg'
@@ -12,14 +12,20 @@ export default function NotFoundPage() {
       <div className="flex flex-col items-center justify-center w-full">
         {/* SVG Illustration */}
         <Image
-          src={typeof pageNotFoundSvg === 'string' ? pageNotFoundSvg : pageNotFoundSvg.src}
+          src={
+            typeof pageNotFoundSvg === 'string'
+              ? pageNotFoundSvg
+              : pageNotFoundSvg.src
+          }
           alt="Page Not Found"
           width={256}
           height={256}
           className="w-64 h-64 object-contain mb-8"
         />
         {/* Heading */}
-        <h2 className="text-18 md:text-22 font-semibold text-gray-900 mb-1 text-center">404 &mdash; Page Not Found</h2>
+        <h2 className="text-18 md:text-22 font-semibold text-gray-900 mb-1 text-center">
+          404 &mdash; Page Not Found
+        </h2>
         {/* Subtext */}
         <p className="text-14 text-gray-500 mb-6 text-center">
           The page you’re looking for doesn’t exist or was moved.

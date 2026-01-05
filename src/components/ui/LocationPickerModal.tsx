@@ -153,7 +153,8 @@ export const LocationPickerModal = ({
         setSearchResults(results)
         setSearchError(null)
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to search locations'
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to search locations'
         setSearchError(errorMessage)
         setSearchResults([])
       } finally {
@@ -172,7 +173,10 @@ export const LocationPickerModal = ({
   /**
    * Reverse geocode coordinates to get address
    */
-  const reverseGeocode = async (latitude: number, longitude: number): Promise<string> => {
+  const reverseGeocode = async (
+    latitude: number,
+    longitude: number
+  ): Promise<string> => {
     try {
       // Using OpenStreetMap Nominatim (free, no API key required)
       const response = await fetch(
@@ -197,12 +201,17 @@ export const LocationPickerModal = ({
 
         // Build address string from most specific to least specific
         if (address.road) parts.push(address.road)
-        if (address.suburb || address.neighbourhood) parts.push(address.suburb || address.neighbourhood)
-        if (address.city || address.town || address.village) parts.push(address.city || address.town || address.village)
-        if (address.state || address.region) parts.push(address.state || address.region)
+        if (address.suburb || address.neighbourhood)
+          parts.push(address.suburb || address.neighbourhood)
+        if (address.city || address.town || address.village)
+          parts.push(address.city || address.town || address.village)
+        if (address.state || address.region)
+          parts.push(address.state || address.region)
         if (address.country) parts.push(address.country)
 
-        return parts.length > 0 ? parts.join(', ') : data.display_name || `${latitude}, ${longitude}`
+        return parts.length > 0
+          ? parts.join(', ')
+          : data.display_name || `${latitude}, ${longitude}`
       }
 
       return data.display_name || `${latitude}, ${longitude}`
@@ -222,7 +231,7 @@ export const LocationPickerModal = ({
     setLocationError(null)
 
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      async position => {
         try {
           const { latitude, longitude } = position.coords
 
@@ -254,18 +263,22 @@ export const LocationPickerModal = ({
           onSelect(locationData)
           onClose()
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Failed to get location address'
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : 'Failed to get location address'
           setLocationError(errorMessage)
         } finally {
           setIsGettingLocation(false)
         }
       },
-      (error) => {
+      error => {
         let errorMessage = 'Failed to get your location'
 
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'Location access denied. Please enable location permissions in your browser settings.'
+            errorMessage =
+              'Location access denied. Please enable location permissions in your browser settings.'
             break
           case error.POSITION_UNAVAILABLE:
             errorMessage = 'Location information is unavailable.'
@@ -322,8 +335,8 @@ export const LocationPickerModal = ({
             onClick={handleUseCurrentLocation}
             disabled={isGettingLocation}
             className={cn(
-              "flex items-center gap-2 text-brand-500 hover:text-brand-600 transition-colors w-full",
-              isGettingLocation && "opacity-50 cursor-not-allowed"
+              'flex items-center gap-2 text-brand-500 hover:text-brand-600 transition-colors w-full',
+              isGettingLocation && 'opacity-50 cursor-not-allowed'
             )}
           >
             {isGettingLocation ? (
@@ -332,7 +345,9 @@ export const LocationPickerModal = ({
               <MapPin className="h-5 w-5 text-brand-500" />
             )}
             <span className="text-14 font-medium">
-              {isGettingLocation ? 'Getting your location...' : 'Use My Current location'}
+              {isGettingLocation
+                ? 'Getting your location...'
+                : 'Use My Current location'}
             </span>
           </button>
 

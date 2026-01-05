@@ -1,15 +1,28 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback, useRef, Suspense } from 'react'
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  useRef,
+  Suspense,
+} from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, Save } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LoadingOverlay } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
-import { useBudgetBook, useBudgetSyncMutation } from '../../../../hooks/budget/budgetBooks.hooks'
+import {
+  useBudgetBook,
+  useBudgetSyncMutation,
+} from '../../../../hooks/budget/budgetBooks.hooks'
 
-import { BudgetFiltersBar, type FilterType } from '@/components/budgetBook/components/filters/BudgetFiltersBar'
+import {
+  BudgetFiltersBar,
+  type FilterType,
+} from '@/components/budgetBook/components/filters/BudgetFiltersBar'
 import { BudgetOverviewCard } from '@/components/budgetBook/components/BudgetOverviewCard'
 import { BudgetCategoryBreakdownList } from '@/components/budgetBook/components/BudgetCategoryBreakdownList'
 import { BudgetLinesTable } from '@/components/budgetBook/components/BudgetLinesTable'
@@ -22,7 +35,10 @@ import type { BudgetBookDraft } from '@/utils/budgetbook/budgetAdapters'
 import type { BudgetBookRequest } from '@/../client/common/api/gen/ourbride-api'
 
 import { calculateBudgetStats } from '@/utils/budgetbook/budgetStats'
-import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
+import type {
+  BudgetLineResponse,
+  BudgetLineCategoryResponse,
+} from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -50,14 +66,22 @@ function BudgetPageContent() {
   } | null>(null)
 
   // Editing states
-  const [editingLine, setEditingLine] = useState<BudgetLineResponse | null>(null)
-  const [editingCategory, setEditingCategory] = useState<BudgetLineCategoryResponse | null>(null)
+  const [editingLine, setEditingLine] = useState<BudgetLineResponse | null>(
+    null
+  )
+  const [editingCategory, setEditingCategory] =
+    useState<BudgetLineCategoryResponse | null>(null)
 
   // Filter states
   const [filterType, setFilterType] = useState<FilterType>('all')
 
   // Fetch budget book
-  const { data: budgetBook, isLoading, error, refetch } = useBudgetBook(
+  const {
+    data: budgetBook,
+    isLoading,
+    error,
+    refetch,
+  } = useBudgetBook(
     {
       eventId: eventId || undefined,
       userType: null as unknown as UserType | undefined,
@@ -80,126 +104,134 @@ function BudgetPageContent() {
    *   lineCategoryCountId + lineCategorySlug so server can link in the same snapshot.
    * - Keep nulls as null (don’t convert to 0), because null != 0.
    */
-  const buildSyncPayload = useCallback((draft: BudgetBookDraft): BudgetBookRequest => {
-    const now = new Date().toISOString()
-    const d: any = draft as any
+  const buildSyncPayload = useCallback(
+    (draft: BudgetBookDraft): BudgetBookRequest => {
+      const now = new Date().toISOString()
+      const d: any = draft as any
 
-    const findCategoryByLocalId = (localId: number | null | undefined) => {
-      if (localId == null) return null
-      return (d.lineCategories || []).find((c: any) => c.id === localId) ?? null
-    }
-
-    const lineCategories = (d.lineCategories || []).map((c: any) => {
-      const isTemp = typeof c.id === 'number' && c.id <= 0
-
-      return {
-        id: isTemp ? 0 : c.id,
-
-        name: c.name ?? '',
-        nameAr: c.nameAr ?? c.name ?? '',
-        nameEn: c.nameEn ?? c.name ?? '',
-
-        description: c.description ?? null,
-        descriptionAr: c.descriptionAr ?? c.description ?? null,
-        descriptionEn: c.descriptionEn ?? c.description ?? null,
-
-        // summary fields (send them even if null)
-        estimated: c.estimated ?? 0,
-        pending: c.pending ?? null,
-        paid: c.paid ?? null,
-        final: c.final ?? null,
-        count: c.count ?? null,
-
-        iconName: c.iconName ?? null,
-        colorName: c.colorName ?? null,
-
-        slug: c.slug ?? null,
-        count_id: c.count_id ?? null,
-
-        isDeleted: c.isDeleted ?? false,
-        isModelLine: c.isModelLine ?? false,
-        creationDate: c.creationDate ?? now,
-        lastModifiedDate: c.lastModifiedDate ?? now,
+      const findCategoryByLocalId = (localId: number | null | undefined) => {
+        if (localId == null) return null
+        return (
+          (d.lineCategories || []).find((c: any) => c.id === localId) ?? null
+        )
       }
-    })
 
-    const lines = (d.lines || []).map((l: any) => {
-      const isTempLine = typeof l.id === 'number' && l.id <= 0
+      const lineCategories = (d.lineCategories || []).map((c: any) => {
+        const isTemp = typeof c.id === 'number' && c.id <= 0
 
-      const localCategoryId: number | null = l.lineCategoryId ?? null
-      const category = findCategoryByLocalId(localCategoryId)
+        return {
+          id: isTemp ? 0 : c.id,
 
-      const categoryIsTemp = typeof localCategoryId === 'number' && localCategoryId <= 0
+          name: c.name ?? '',
+          nameAr: c.nameAr ?? c.name ?? '',
+          nameEn: c.nameEn ?? c.name ?? '',
 
-      // if category is temp: payload category id must be 0, but we send slug + countId
-      const payloadLineCategoryId =
-        localCategoryId == null ? null : categoryIsTemp ? 0 : localCategoryId
+          description: c.description ?? null,
+          descriptionAr: c.descriptionAr ?? c.description ?? null,
+          descriptionEn: c.descriptionEn ?? c.description ?? null,
 
-      const payloadLineCategoryCountId = l.lineCategoryCountId ?? category?.count_id ?? null
-      const payloadLineCategorySlug = l.lineCategorySlug ?? category?.slug ?? null
+          // summary fields (send them even if null)
+          estimated: c.estimated ?? 0,
+          pending: c.pending ?? null,
+          paid: c.paid ?? null,
+          final: c.final ?? null,
+          count: c.count ?? null,
 
+          iconName: c.iconName ?? null,
+          colorName: c.colorName ?? null,
+
+          slug: c.slug ?? null,
+          count_id: c.count_id ?? null,
+
+          isDeleted: c.isDeleted ?? false,
+          isModelLine: c.isModelLine ?? false,
+          creationDate: c.creationDate ?? now,
+          lastModifiedDate: c.lastModifiedDate ?? now,
+        }
+      })
+
+      const lines = (d.lines || []).map((l: any) => {
+        const isTempLine = typeof l.id === 'number' && l.id <= 0
+
+        const localCategoryId: number | null = l.lineCategoryId ?? null
+        const category = findCategoryByLocalId(localCategoryId)
+
+        const categoryIsTemp =
+          typeof localCategoryId === 'number' && localCategoryId <= 0
+
+        // if category is temp: payload category id must be 0, but we send slug + countId
+        const payloadLineCategoryId =
+          localCategoryId == null ? null : categoryIsTemp ? 0 : localCategoryId
+
+        const payloadLineCategoryCountId =
+          l.lineCategoryCountId ?? category?.count_id ?? null
+        const payloadLineCategorySlug =
+          l.lineCategorySlug ?? category?.slug ?? null
+
+        return {
+          id: isTempLine ? 0 : (l.id ?? 0),
+
+          isDone: l.isDone ?? false,
+          isFavorite: l.isFavorite ?? false,
+          isDeleted: l.isDeleted ?? false,
+          isModelLine: l.isModelLine ?? false,
+
+          brideId: l.brideId ?? d.brideId ?? null,
+          groomId: l.groomId ?? d.groomId ?? null,
+
+          bookId: d.id ?? l.bookId ?? 0,
+
+          lineCategoryId: payloadLineCategoryId,
+          lineCategoryCountId: payloadLineCategoryCountId,
+          lineCategorySlug: payloadLineCategorySlug,
+
+          creationDate: l.creationDate ?? now,
+          lastModifiedDate: l.lastModifiedDate ?? now,
+
+          expense: l.expense ?? '',
+          expenseAr: l.expenseAr ?? l.expense ?? '',
+          expenseEn: l.expenseEn ?? l.expense ?? '',
+
+          estimated: l.estimated ?? 0,
+          paid: l.paid ?? 0,
+          final: l.final ?? null,
+
+          dueDate: l.dueDate ?? null,
+          count: l.count ?? null,
+
+          payer: l.payer ?? null,
+          note: l.note ?? null,
+
+          iconName: l.iconName ?? null,
+          colorName: l.colorName ?? null,
+        }
+      })
+
+      // NOTE: cast at end to avoid fighting generated types if they’re stricter than backend reality
       return {
-        id: isTempLine ? 0 : (l.id ?? 0),
+        id: d.id ?? 0,
 
-        isDone: l.isDone ?? false,
-        isFavorite: l.isFavorite ?? false,
-        isDeleted: l.isDeleted ?? false,
-        isModelLine: l.isModelLine ?? false,
+        groomId: d.groomId ?? null,
+        brideId: d.brideId ?? null,
+        weddingPlannerId: d.weddingPlannerId ?? null,
 
-        brideId: l.brideId ?? d.brideId ?? null,
-        groomId: l.groomId ?? d.groomId ?? null,
+        bookType: d.bookType,
+        bookClass: d.bookClass,
 
-        bookId: d.id ?? l.bookId ?? 0,
+        title: d.title ?? null,
+        clientName: d.clientName ?? null,
+        weddingDate: d.weddingDate ?? null,
+        eventLocation: d.eventLocation ?? null,
 
-        lineCategoryId: payloadLineCategoryId,
-        lineCategoryCountId: payloadLineCategoryCountId,
-        lineCategorySlug: payloadLineCategorySlug,
+        lines,
+        lineCategories,
 
-        creationDate: l.creationDate ?? now,
-        lastModifiedDate: l.lastModifiedDate ?? now,
-
-        expense: l.expense ?? '',
-        expenseAr: l.expenseAr ?? l.expense ?? '',
-        expenseEn: l.expenseEn ?? l.expense ?? '',
-
-        estimated: l.estimated ?? 0,
-        paid: l.paid ?? 0,
-        final: l.final ?? null,
-
-        dueDate: l.dueDate ?? null,
-        count: l.count ?? null,
-
-        payer: l.payer ?? null,
-        note: l.note ?? null,
-
-        iconName: l.iconName ?? null,
-        colorName: l.colorName ?? null,
-      }
-    })
-
-    // NOTE: cast at end to avoid fighting generated types if they’re stricter than backend reality
-    return {
-      id: d.id ?? 0,
-
-      groomId: d.groomId ?? null,
-      brideId: d.brideId ?? null,
-      weddingPlannerId: d.weddingPlannerId ?? null,
-
-      bookType: d.bookType,
-      bookClass: d.bookClass,
-
-      title: d.title ?? null,
-      clientName: d.clientName ?? null,
-      weddingDate: d.weddingDate ?? null,
-      eventLocation: d.eventLocation ?? null,
-
-      lines,
-      lineCategories,
-
-      lastModifiedDate: now,
-      initialEstimated: d.initialEstimated ?? null,
-    } as any as BudgetBookRequest
-  }, [])
+        lastModifiedDate: now,
+        initialEstimated: d.initialEstimated ?? null,
+      } as any as BudgetBookRequest
+    },
+    []
+  )
 
   // Helper to sync draft immediately after any change
   const syncDraft = useCallback(
@@ -251,7 +283,8 @@ function BudgetPageContent() {
     const b: any = lastSyncedRef.current
 
     // Basic props
-    if ((a.initialEstimated ?? null) !== (b.initialEstimated ?? null)) return true
+    if ((a.initialEstimated ?? null) !== (b.initialEstimated ?? null))
+      return true
 
     // Categories: compare by id (including temp ids) + key fields
     const aCats: any[] = a.lineCategories || []
@@ -279,7 +312,8 @@ function BudgetPageContent() {
       if (!match) return true
       if ((l.isDeleted ?? false) !== (match.isDeleted ?? false)) return true
       if ((l.expense ?? '') !== (match.expense ?? '')) return true
-      if ((l.lineCategoryId ?? null) !== (match.lineCategoryId ?? null)) return true
+      if ((l.lineCategoryId ?? null) !== (match.lineCategoryId ?? null))
+        return true
       if ((l.estimated ?? 0) !== (match.estimated ?? 0)) return true
       if ((l.paid ?? 0) !== (match.paid ?? 0)) return true
       if ((l.final ?? null) !== (match.final ?? null)) return true
@@ -313,8 +347,9 @@ function BudgetPageContent() {
     let lines = (localDraft.lines || []) as any[]
 
     lines = lines.filter(line => {
-      if (activeCategoryId !== null && line.lineCategoryId !== activeCategoryId) return false
-      
+      if (activeCategoryId !== null && line.lineCategoryId !== activeCategoryId)
+        return false
+
       return true
     })
 
@@ -327,7 +362,7 @@ function BudgetPageContent() {
         return lines.filter(l => l.isFavorite)
       case 'not-favorite':
         return lines.filter(l => !l.isFavorite)
- 
+
       default:
         return lines
     }
@@ -385,11 +420,14 @@ function BudgetPageContent() {
 
       const now = new Date().toISOString()
       const finalCategoryId =
-        data.lineCategoryId ?? (activeCategoryId !== null ? activeCategoryId : null)
+        data.lineCategoryId ??
+        (activeCategoryId !== null ? activeCategoryId : null)
 
       const selectedCategory: any =
         finalCategoryId != null
-          ? (localDraft as any).lineCategories?.find((c: any) => c.id === finalCategoryId)
+          ? (localDraft as any).lineCategories?.find(
+              (c: any) => c.id === finalCategoryId
+            )
           : null
 
       const lineCategorySlug = selectedCategory?.slug ?? null
@@ -496,7 +534,9 @@ function BudgetPageContent() {
       const nextDraft: any = {
         ...(localDraft as any),
         lines: ((localDraft as any).lines || []).map((line: any) =>
-          line.id === lineId ? { ...line, isDone: !line.isDone, lastModifiedDate: now } : line
+          line.id === lineId
+            ? { ...line, isDone: !line.isDone, lastModifiedDate: now }
+            : line
         ),
       }
 
@@ -595,28 +635,32 @@ function BudgetPageContent() {
         // Update existing category (no line data)
         nextDraft = {
           ...(localDraft as any),
-          lineCategories: ((localDraft as any).lineCategories || []).map((cat: any) =>
-            cat.id === data.id
-              ? {
-                  ...cat,
-                  name: data.name,
-                  nameAr: data.nameAr,
-                  nameEn: data.nameEn,
-                  description: data.description ?? null,
-                  descriptionAr: data.descriptionAr ?? null,
-                  descriptionEn: data.descriptionEn ?? null,
-                  estimated: data.estimated ?? 0,
-                  iconName: data.iconName ?? null,
-                  colorName: data.colorName ?? null,
-                  lastModifiedDate: now,
-                }
-              : cat
+          lineCategories: ((localDraft as any).lineCategories || []).map(
+            (cat: any) =>
+              cat.id === data.id
+                ? {
+                    ...cat,
+                    name: data.name,
+                    nameAr: data.nameAr,
+                    nameEn: data.nameEn,
+                    description: data.description ?? null,
+                    descriptionAr: data.descriptionAr ?? null,
+                    descriptionEn: data.descriptionEn ?? null,
+                    estimated: data.estimated ?? 0,
+                    iconName: data.iconName ?? null,
+                    colorName: data.colorName ?? null,
+                    lastModifiedDate: now,
+                  }
+                : cat
           ),
         }
       } else {
         // Create new category + line together
         if (!data.lineData) {
-          addToast('Line data is required when creating a new category', 'error')
+          addToast(
+            'Line data is required when creating a new category',
+            'error'
+          )
           return
         }
 
@@ -679,7 +723,10 @@ function BudgetPageContent() {
 
         nextDraft = {
           ...(localDraft as any),
-          lineCategories: [...(((localDraft as any).lineCategories as any[]) || []), newCategory],
+          lineCategories: [
+            ...(((localDraft as any).lineCategories as any[]) || []),
+            newCategory,
+          ],
           lines: [...(((localDraft as any).lines as any[]) || []), newLine],
         }
 
@@ -692,14 +739,19 @@ function BudgetPageContent() {
       setEditingCategory(null)
 
       await syncDraft(nextDraft)
-      addToast(data.id ? 'Category saved' : 'Category and line added', 'success')
+      addToast(
+        data.id ? 'Category saved' : 'Category and line added',
+        'success'
+      )
     },
     [localDraft, syncDraft, addToast]
   )
 
   const handleDeleteCategory = useCallback(
     (categoryId: number) => {
-      const category = (localDraft as any)?.lineCategories?.find((c: any) => c.id === categoryId)
+      const category = (localDraft as any)?.lineCategories?.find(
+        (c: any) => c.id === categoryId
+      )
       if (category) {
         setItemToDelete({ type: 'category', item: category })
         setIsDeleteModalOpen(true)
@@ -716,8 +768,11 @@ function BudgetPageContent() {
 
     const nextDraft: any = {
       ...(localDraft as any),
-      lineCategories: ((localDraft as any).lineCategories || []).map((c: any) =>
-        c.id === categoryId ? { ...c, isDeleted: true, lastModifiedDate: now } : c
+      lineCategories: ((localDraft as any).lineCategories || []).map(
+        (c: any) =>
+          c.id === categoryId
+            ? { ...c, isDeleted: true, lastModifiedDate: now }
+            : c
       ),
       lines: ((localDraft as any).lines || []).map((line: any) =>
         line.lineCategoryId === categoryId
@@ -794,7 +849,11 @@ function BudgetPageContent() {
           </h1>
         </div>
         <div className="flex items-center justify-center py-12">
-          <LoadingOverlay open={true} title="Loading budget..." subtitle="Please wait a moment" />
+          <LoadingOverlay
+            open={true}
+            title="Loading budget..."
+            subtitle="Please wait a moment"
+          />
         </div>
       </div>
     )
@@ -805,7 +864,9 @@ function BudgetPageContent() {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
         <div className="flex flex-col items-center justify-center py-12">
-          <p className="text-16 text-red-600 mb-4">Failed to load budget. Please try again.</p>
+          <p className="text-16 text-red-600 mb-4">
+            Failed to load budget. Please try again.
+          </p>
           <Button variant="outline" onClick={() => window.location.reload()}>
             Retry
           </Button>
@@ -842,7 +903,10 @@ function BudgetPageContent() {
           </div>
 
           {localDraft && (
-            <BudgetFiltersBar filterType={filterType} onFilterChange={setFilterType} />
+            <BudgetFiltersBar
+              filterType={filterType}
+              onFilterChange={setFilterType}
+            />
           )}
         </div>
 
@@ -851,7 +915,9 @@ function BudgetPageContent() {
             variant="brand"
             size="md"
             onClick={handleSave}
-            disabled={!hasUnsavedChanges || syncMutation.isPending || !localDraft}
+            disabled={
+              !hasUnsavedChanges || syncMutation.isPending || !localDraft
+            }
             className="flex items-center gap-2 rounded-xl !text-white"
           >
             <Save className="h-4 w-4" />
@@ -859,7 +925,9 @@ function BudgetPageContent() {
           </Button>
 
           {hasUnsavedChanges && (
-            <span className="!text-16 text-brand-500 font-medium">Unsaved changes</span>
+            <span className="!text-16 text-brand-500 font-medium">
+              Unsaved changes
+            </span>
           )}
         </div>
       </div>
@@ -884,7 +952,9 @@ function BudgetPageContent() {
               activeCategoryId={activeCategoryId}
               onCategoryClick={handleCategoryClick}
               onEditCategory={categoryId => {
-                const category = (localDraft as any)?.lineCategories?.find((c: any) => c.id === categoryId)
+                const category = (localDraft as any)?.lineCategories?.find(
+                  (c: any) => c.id === categoryId
+                )
                 if (category) {
                   setEditingCategory(category)
                   setIsCategoryModalOpen(true)
@@ -928,9 +998,10 @@ function BudgetPageContent() {
             }}
             onSave={handleSaveLine}
             editingLine={editingLine}
-            categories={(((localDraft as any).lineCategories || []) as BudgetLineCategoryResponse[]).filter(
-              c => !c.isDeleted
-            )}
+            categories={(
+              ((localDraft as any).lineCategories ||
+                []) as BudgetLineCategoryResponse[]
+            ).filter(c => !c.isDeleted)}
             defaultCategoryId={activeCategoryId}
           />
 
@@ -952,7 +1023,8 @@ function BudgetPageContent() {
             }}
             onConfirm={() => {
               if (itemToDelete?.type === 'line') confirmDeleteLine()
-              else if (itemToDelete?.type === 'category') confirmDeleteCategory()
+              else if (itemToDelete?.type === 'category')
+                confirmDeleteCategory()
             }}
             title="Confirm Delete"
             message={
@@ -978,7 +1050,11 @@ export default function BudgetPage() {
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingOverlay open={true} title="Loading budget..." subtitle="Please wait a moment" />
+            <LoadingOverlay
+              open={true}
+              title="Loading budget..."
+              subtitle="Please wait a moment"
+            />
           </div>
         </div>
       }

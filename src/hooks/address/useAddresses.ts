@@ -1,5 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getUserDeliveryaddresses, getDeliveryaddressById, createDeliveryaddress, updateDeliveryaddress, deleteDeliveryaddress, setDefaultDeliveryaddress } from '@/services/api/addressApi'
+import {
+  getUserDeliveryaddresses,
+  getDeliveryaddressById,
+  createDeliveryaddress,
+  updateDeliveryaddress,
+  deleteDeliveryaddress,
+  setDefaultDeliveryaddress,
+} from '@/services/api/addressApi'
 import type { DeliveryAddressResponse } from '@/types/responses'
 import type { DeliveryAddressRequest } from '@/../client/common/api/gen/ourbride-api'
 import { isAuthenticated } from '@/auth/utils/token'
@@ -17,28 +24,33 @@ export const useAddresses = (query?: {
   const { enabled = true, ...queryParams } = query || {}
   const authenticated = isAuthenticated()
   const queryEnabled = enabled && authenticated
-  
+
   const queryResult = useQuery<DeliveryAddressResponse[]>({
     queryKey: ['addresses', 'user', queryParams],
     queryFn: async () => {
       const response = await getUserDeliveryaddresses(queryParams)
-      
+
       // Handle both paginated response and direct array
       let addresses: DeliveryAddressResponse[] = []
-      
+
       if (Array.isArray(response)) {
         addresses = response
-      } else if (response && typeof response === 'object' && 'items' in response) {
-        addresses = (response as { items?: DeliveryAddressResponse[] }).items || []
+      } else if (
+        response &&
+        typeof response === 'object' &&
+        'items' in response
+      ) {
+        addresses =
+          (response as { items?: DeliveryAddressResponse[] }).items || []
       }
-      
+
       return addresses
     },
     enabled: queryEnabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
   })
-  
+
   return queryResult
 }
 
@@ -48,12 +60,12 @@ export const useAddresses = (query?: {
 export const useCreateAddress = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: DeliveryAddressRequest) => {
       return await createDeliveryaddress(data)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
       const { message, type } = handleApiResponseForToast(
         data,
@@ -62,8 +74,9 @@ export const useCreateAddress = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create address'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to create address'
       addToast(errorMessage, 'error')
     },
   })
@@ -75,12 +88,18 @@ export const useCreateAddress = () => {
 export const useUpdateAddress = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: DeliveryAddressRequest }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number
+      data: DeliveryAddressRequest
+    }) => {
       return await updateDeliveryaddress(id, data)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
       const { message, type } = handleApiResponseForToast(
         data,
@@ -89,8 +108,9 @@ export const useUpdateAddress = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update address'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to update address'
       addToast(errorMessage, 'error')
     },
   })
@@ -116,7 +136,7 @@ export const useAddress = (id: number, enabled: boolean = true) => {
 export const useDeleteAddress = () => {
   const queryClient = useQueryClient()
   useToast()
-  
+
   return useMutation({
     mutationFn: async (id: number) => {
       return await deleteDeliveryaddress(id)
@@ -132,7 +152,7 @@ export const useDeleteAddress = () => {
  */
 export const useSetDefaultAddress = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (id: number) => {
       return await setDefaultDeliveryaddress(id)
@@ -141,8 +161,9 @@ export const useSetDefaultAddress = () => {
       queryClient.invalidateQueries({ queryKey: ['addresses'] })
       addToast('Address deleted successfully', 'success')
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete address'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to delete address'
       addToast(errorMessage, 'error')
     },
   })
@@ -151,4 +172,3 @@ export const useSetDefaultAddress = () => {
 function addToast(_arg0: string, _arg1: string) {
   throw new Error('Function not implemented.')
 }
-

@@ -79,10 +79,7 @@ const receivedRewards: Array<{
   {
     title: 'Bronze Rank ! ( New Member )',
     points: 200,
-    descriptionLines: [
-      'Rewards :',
-      '200 Diamonds Points',
-    ],
+    descriptionLines: ['Rewards :', '200 Diamonds Points'],
     discountCode: '4478EEF',
     expiryDate: '19/9/2025',
   },
@@ -111,8 +108,6 @@ export default function RewardsPage() {
 
       {/* Rewards Grid Section */}
       <div className="flex flex-col gap-4 items-start mb-6 sm:mb-8">
-        
-       
         {/* Bottom Row - Reward Details (Same cards but showing reward details) */}
         <div className="flex gap-6 w-full overflow-auto py-2">
           {rewardTiers.map((tier, index) => (
@@ -124,7 +119,7 @@ export default function RewardsPage() {
               rewardLabel={tier.rewardLabel}
               description={tier.description}
               isActive={tier.isActive}
-              className='w-1/3 lg:w-1/6'
+              className="w-1/3 lg:w-1/6"
             />
           ))}
         </div>
@@ -156,4 +151,3 @@ export default function RewardsPage() {
     </div>
   )
 }
-

@@ -103,12 +103,17 @@ export const NotificationCard = ({
         {/* Icon/Image */}
         <div className="flex-shrink-0">
           {notification.imageUrl ? (
-            <div className={cn('relative rounded-full overflow-hidden bg-gray-100', compact ? 'w-10 h-10' : 'w-12 h-12')}>
+            <div
+              className={cn(
+                'relative rounded-full overflow-hidden bg-gray-100',
+                compact ? 'w-10 h-10' : 'w-12 h-12'
+              )}
+            >
               <Image
                 src={notification.imageUrl}
                 alt={notification.title}
                 fill
-                sizes={compact ? "40px" : "48px"}
+                sizes={compact ? '40px' : '48px'}
                 className="object-cover"
               />
             </div>
@@ -142,11 +147,23 @@ export const NotificationCard = ({
                   <div className="w-2 h-2 rounded-full bg-brand-500 flex-shrink-0" />
                 )}
               </div>
-              <p className={cn('text-gray-600 mb-2', compact ? 'text-13 line-clamp-1' : 'text-14 line-clamp-2')}>
+              <p
+                className={cn(
+                  'text-gray-600 mb-2',
+                  compact ? 'text-13 line-clamp-1' : 'text-14 line-clamp-2'
+                )}
+              >
                 {notification.message}
               </p>
               <div className="flex items-center justify-between">
-                <span className={cn('text-gray-500', compact ? 'text-11' : 'text-12')}>{notification.timestamp}</span>
+                <span
+                  className={cn(
+                    'text-gray-500',
+                    compact ? 'text-11' : 'text-12'
+                  )}
+                >
+                  {notification.timestamp}
+                </span>
                 {notification.actionUrl && !compact && (
                   <span className="text-12 text-brand-500 font-medium flex items-center gap-1">
                     View
@@ -204,4 +221,3 @@ export const NotificationCard = ({
 
   return cardContent
 }
-

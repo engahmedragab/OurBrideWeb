@@ -17,19 +17,35 @@ import {
 import { RefreshCw } from 'lucide-react'
 import type { Service } from '@/types/service'
 import type { Product } from '@/types/product'
-import { useFavorites, useDeleteFavorite, useAddProductToCart, useCartItems } from '@/hooks'
-import type { FavoriteResponse, ProductResponse, ServiceResponse, FeaturedProviderResponse } from '@/types/responses'
+import {
+  useFavorites,
+  useDeleteFavorite,
+  useAddProductToCart,
+  useCartItems,
+} from '@/hooks'
+import type {
+  FavoriteResponse,
+  ProductResponse,
+  ServiceResponse,
+  FeaturedProviderResponse,
+} from '@/types/responses'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
 import { mapProductResponseToProduct } from '@/types/api/product.api.types'
 import { mapServiceResponseToService } from '@/utils/services-category.utils'
 import { useToggleServiceFavorite } from '@/hooks/services/useServiceInteractions'
 import { useToggleProductFavorite } from '@/hooks/products/useProductInteractions'
 import { useToggleProviderFavorite } from '@/hooks/providers/useProviderInteractions'
-import { WishlistServiceCard, WishlistProductCard, WishlistProviderCard } from '@/components/ui'
+import {
+  WishlistServiceCard,
+  WishlistProductCard,
+  WishlistProviderCard,
+} from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
 export default function FavoritesPage() {
-  const [favoriteType, setFavoriteType] = useState<'services' | 'products'>('services')
+  const [favoriteType, setFavoriteType] = useState<'services' | 'products'>(
+    'services'
+  )
   const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
   // Fetch favorites using FavoriteResponse from API
@@ -121,14 +137,14 @@ export default function FavoritesPage() {
   // Extract all services, products, and providers from sourceObject
   const allFavoriteServices: Service[] = useMemo(() => {
     return filteredFavorites
-      .filter((favorite) => {
+      .filter(favorite => {
         return (
           favorite.source === Source.Service &&
           favorite.sourceObject &&
           'serviceStatus' in favorite.sourceObject
         )
       })
-      .map((favorite) => {
+      .map(favorite => {
         const serviceResponse = favorite.sourceObject as ServiceResponse
         try {
           return mapServiceResponseToService(serviceResponse)
@@ -141,14 +157,14 @@ export default function FavoritesPage() {
 
   const allFavoriteProducts: Product[] = useMemo(() => {
     return filteredFavorites
-      .filter((favorite) => {
+      .filter(favorite => {
         return (
           favorite.source === Source.Product &&
           favorite.sourceObject &&
           'productId' in favorite.sourceObject
         )
       })
-      .map((favorite) => {
+      .map(favorite => {
         const productResponse = favorite.sourceObject as ProductResponse
         try {
           return mapProductResponseToProduct(productResponse)
@@ -161,16 +177,17 @@ export default function FavoritesPage() {
 
   const allFavoriteProviders: FeaturedProviderResponse[] = useMemo(() => {
     return filteredFavorites
-      .filter((favorite) => {
+      .filter(favorite => {
         return (
           favorite.source === Source.Provider &&
           favorite.sourceObject &&
           typeof favorite.sourceObject === 'object' &&
           'id' in favorite.sourceObject &&
-          ('nameEn' in favorite.sourceObject || 'nameAr' in favorite.sourceObject)
+          ('nameEn' in favorite.sourceObject ||
+            'nameAr' in favorite.sourceObject)
         )
       })
-      .map((favorite) => {
+      .map(favorite => {
         // Map the sourceObject to FeaturedProviderResponse format
         const sourceObj = favorite.sourceObject as any
         const profileImage = sourceObj.profileURL || sourceObj.image || ''
@@ -189,16 +206,18 @@ export default function FavoritesPage() {
           totalServices: sourceObj.servicesCount || 0,
           totalProducts: sourceObj.productsCount || 0,
           shortAddress: sourceObj.shortAddress || sourceObj.address || '',
-          publicProfileSlug: sourceObj.publicProfileSlug || `/providers/${sourceObj.id}`,
+          publicProfileSlug:
+            sourceObj.publicProfileSlug || `/providers/${sourceObj.id}`,
           uniqueCode: sourceObj.uniqueCode || `PROV-${sourceObj.id}`,
           topRatedService: sourceObj.topRatedService || null,
         } as FeaturedProviderResponse
       })
-      .filter((provider): provider is FeaturedProviderResponse =>
-        provider !== null &&
-        provider !== undefined &&
-        provider.id !== undefined &&
-        provider.id !== null
+      .filter(
+        (provider): provider is FeaturedProviderResponse =>
+          provider !== null &&
+          provider !== undefined &&
+          provider.id !== undefined &&
+          provider.id !== null
       )
   }, [filteredFavorites])
 
@@ -226,7 +245,9 @@ export default function FavoritesPage() {
       const productIdNum = parseInt(productId, 10)
       if (!isNaN(productIdNum)) {
         const product = allFavoriteProducts.find(p => p.id === productId)
-        const providerId = product?.provider?.id ? parseInt(product.provider.id, 10) : undefined
+        const providerId = product?.provider?.id
+          ? parseInt(product.provider.id, 10)
+          : undefined
 
         await toggleProductFavoriteMutation.mutateAsync({
           productId: productIdNum,
@@ -263,7 +284,9 @@ export default function FavoritesPage() {
     try {
       // Add to cart if not already in cart
       const productIdNum = parseInt(product.id, 10)
-      const providerId = product.provider?.id ? parseInt(product.provider.id, 10) : undefined
+      const providerId = product.provider?.id
+        ? parseInt(product.provider.id, 10)
+        : undefined
       const isInCart = isProductInCart(productIdNum, providerId)
 
       if (!isInCart) {
@@ -283,31 +306,37 @@ export default function FavoritesPage() {
   // Calculate total items from favorites
   // NOTE: This hook must be called before any conditional returns to follow Rules of Hooks
   const totalItems = useMemo(() => {
-    return filteredFavorites.reduce((sum, favorite) => sum + (favorite.viewCount || 0), 0)
+    return filteredFavorites.reduce(
+      (sum, favorite) => sum + (favorite.viewCount || 0),
+      0
+    )
   }, [filteredFavorites])
 
   // Source filter options - common sources for favorites
-  const sourceOptions = useMemo(() => [
-    { value: 'all', label: 'All Sources' },
-    { value: Source.Product, label: 'Products' },
-    { value: Source.Service, label: 'Services' },
-    { value: Source.Membership, label: 'Memberships' },
-    { value: Source.GiftCard, label: 'Gift Cards' },
-    { value: Source.ServiceReservation, label: 'Service Reservations' },
-    { value: Source.Provider, label: 'Providers' },
-    { value: Source.Offer, label: 'Offers' },
-    { value: Source.Preparation, label: 'Preparations' },
-    { value: Source.Post, label: 'Posts' },
-    { value: Source.Blog, label: 'Blogs' },
-    { value: Source.Article, label: 'Articles' },
-    { value: Source.Reel, label: 'Reels' },
-  ], [])
+  const sourceOptions = useMemo(
+    () => [
+      { value: 'all', label: 'All Sources' },
+      { value: Source.Product, label: 'Products' },
+      { value: Source.Service, label: 'Services' },
+      { value: Source.Membership, label: 'Memberships' },
+      { value: Source.GiftCard, label: 'Gift Cards' },
+      { value: Source.ServiceReservation, label: 'Service Reservations' },
+      { value: Source.Provider, label: 'Providers' },
+      { value: Source.Offer, label: 'Offers' },
+      { value: Source.Preparation, label: 'Preparations' },
+      { value: Source.Post, label: 'Posts' },
+      { value: Source.Blog, label: 'Blogs' },
+      { value: Source.Article, label: 'Articles' },
+      { value: Source.Reel, label: 'Reels' },
+    ],
+    []
+  )
 
   const headerRightContent = (
     <div className="flex items-center gap-2">
       <SelectPopover
         value={selectedSource}
-        onChange={(value) => setSelectedSource(value as Source | 'all')}
+        onChange={value => setSelectedSource(value as Source | 'all')}
         options={sourceOptions}
         placeholder="Filter by source"
         className="w-40"
@@ -329,10 +358,7 @@ export default function FavoritesPage() {
   if (isLoadingFavorites) {
     return (
       <UserPageLayout>
-        <PageHeader
-          title="Favorites"
-          rightContent={headerRightContent}
-        />
+        <PageHeader title="Favorites" rightContent={headerRightContent} />
         <LoadingOverlay
           open={true}
           title="Loading favorites..."
@@ -346,10 +372,7 @@ export default function FavoritesPage() {
   if (favoritesError) {
     return (
       <UserPageLayout>
-        <PageHeader
-          title="Favorites"
-          rightContent={headerRightContent}
-        />
+        <PageHeader title="Favorites" rightContent={headerRightContent} />
         <ErrorDisplay
           title="Error loading favorites"
           message="Please try again later"
@@ -377,33 +400,36 @@ export default function FavoritesPage() {
       {hasFavoriteItems ? (
         <div className="space-y-0">
           {/* Show all services with sourceObject */}
-          {allFavoriteServices.length > 0 && allFavoriteServices.map((service) => (
-            <WishlistServiceCard
-              key={`service-${service.id}`}
-              service={service}
-              onRemove={handleServiceFavoriteToggle}
-              onBookNow={handleBookNow}
-            />
-          ))}
+          {allFavoriteServices.length > 0 &&
+            allFavoriteServices.map(service => (
+              <WishlistServiceCard
+                key={`service-${service.id}`}
+                service={service}
+                onRemove={handleServiceFavoriteToggle}
+                onBookNow={handleBookNow}
+              />
+            ))}
 
           {/* Show all products with sourceObject */}
-          {allFavoriteProducts.length > 0 && allFavoriteProducts.map((product) => (
-            <WishlistProductCard
-              key={`product-${product.id}`}
-              product={product}
-              onRemove={handleProductFavoriteToggle}
-              onBuyNow={handleAddToCart}
-            />
-          ))}
+          {allFavoriteProducts.length > 0 &&
+            allFavoriteProducts.map(product => (
+              <WishlistProductCard
+                key={`product-${product.id}`}
+                product={product}
+                onRemove={handleProductFavoriteToggle}
+                onBuyNow={handleAddToCart}
+              />
+            ))}
 
           {/* Show all providers with sourceObject */}
-          {allFavoriteProviders.length > 0 && allFavoriteProviders.map((provider) => (
-            <WishlistProviderCard
-              key={`provider-${provider.id}`}
-              provider={provider}
-              onRemove={handleProviderFavoriteToggle}
-            />
-          ))}
+          {allFavoriteProviders.length > 0 &&
+            allFavoriteProviders.map(provider => (
+              <WishlistProviderCard
+                key={`provider-${provider.id}`}
+                provider={provider}
+                onRemove={handleProviderFavoriteToggle}
+              />
+            ))}
         </div>
       ) : hasFavorites ? (
         // Show favorites list when we have favorites but no items to display
@@ -421,7 +447,10 @@ export default function FavoritesPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-16 font-medium text-gray-900">
-                        {favorite.displayName || favorite.nameEn || favorite.nameAr || `Favorite #${favorite.id}`}
+                        {favorite.displayName ||
+                          favorite.nameEn ||
+                          favorite.nameAr ||
+                          `Favorite #${favorite.id}`}
                       </h4>
                       {favorite.source && (
                         <span className="text-12 px-2 py-1 bg-gray-100 text-gray-600 rounded">
@@ -443,7 +472,10 @@ export default function FavoritesPage() {
                       <span>{favorite.viewCount || 0} views</span>
                       {favorite.lastModifiedDate && (
                         <span>
-                          Updated {new Date(favorite.lastModifiedDate).toLocaleDateString()}
+                          Updated{' '}
+                          {new Date(
+                            favorite.lastModifiedDate
+                          ).toLocaleDateString()}
                         </span>
                       )}
                     </div>
@@ -474,7 +506,12 @@ export default function FavoritesPage() {
 
       {/* Loading Overlay for Mutations */}
       <LoadingOverlay
-        open={deleteFavoriteMutation.isPending || toggleServiceFavoriteMutation.isPending || toggleProductFavoriteMutation.isPending || toggleProviderFavoriteMutation.isPending}
+        open={
+          deleteFavoriteMutation.isPending ||
+          toggleServiceFavoriteMutation.isPending ||
+          toggleProductFavoriteMutation.isPending ||
+          toggleProviderFavoriteMutation.isPending
+        }
         title="Updating favorites..."
         subtitle="Please wait a moment"
       />

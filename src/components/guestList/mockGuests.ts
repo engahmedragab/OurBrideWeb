@@ -23,11 +23,17 @@ export const getGuestsBySide = (guests: Guest[], side: GuestSide): Guest[] => {
   return guests.filter(guest => guest.side === side)
 }
 
-export const getGuestsByGroup = (guests: Guest[], groupId: GuestGroupId): Guest[] => {
+export const getGuestsByGroup = (
+  guests: Guest[],
+  groupId: GuestGroupId
+): Guest[] => {
   return guests.filter(guest => guest.groupId === groupId)
 }
 
-export const getGroupCount = (guests: Guest[], groupId: GuestGroupId): number => {
+export const getGroupCount = (
+  guests: Guest[],
+  groupId: GuestGroupId
+): number => {
   return getGuestsByGroup(guests, groupId).length
 }
 
@@ -41,6 +47,19 @@ export const getTotalPeople = (guests: Guest[]): number => {
 
 export const formatDate = (dateString: string): string => {
   const date = new Date(dateString)
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
   return `${date.getDate()} ${months[date.getMonth()]}, ${date.getFullYear()}`
 }

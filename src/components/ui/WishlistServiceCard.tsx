@@ -19,144 +19,146 @@ export interface WishlistServiceCardProps {
   className?: string
 }
 
-export const WishlistServiceCard = React.memo(({
-  service,
-  onRemove,
-  onBookNow,
-  className,
-}: WishlistServiceCardProps) => {
-  const router = useRouter()
-  const rating = service.rating.value || 0
+export const WishlistServiceCard = React.memo(
+  ({ service, onRemove, onBookNow, className }: WishlistServiceCardProps) => {
+    const router = useRouter()
+    const rating = service.rating.value || 0
 
-  const handleBookNow = () => {
-    router.push(`/booking/${service.id}`)
-    onBookNow?.(service.id)
-  }
+    const handleBookNow = () => {
+      router.push(`/booking/${service.id}`)
+      onBookNow?.(service.id)
+    }
 
-  const handleRemove = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    onRemove?.(service.id)
-  }
+    const handleRemove = (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      onRemove?.(service.id)
+    }
 
-  return (
-    <div
-      className={cn(
-        'relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow mb-4',
-        className
-      )}
-    >
-      <div className="flex">
-        {/* Image Section (Left) */}
-        <Link href={`/services/category/${service.id}`} className="block flex-shrink-0">
-          <div className="relative w-32 h-32 md:w-40 md:h-40 overflow-hidden bg-gray-100 rounded-lg">
-            {service.images && service.images.length > 0 && service.images[0] && service.images[0].trim() !== '' ? (
-              <Image
-                src={service.images[0]}
-                alt={service.title}
-                fill
-                sizes="(max-width: 768px) 128px, 160px"
-                className="object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
-                <span className="text-2xl font-semibold text-white">
-                  {service.title.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            )}
-          </div>
-        </Link>
-
-        {/* Details Section (Right) */}
-        <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
-          <div className="space-y-2">
-            {/* Title */}
-            <Link href={`/services/category/${service.id}`}>
-              <h3 className="text-lg font-bold text-gray-900 line-clamp-1 hover:text-brand-500 transition-colors">
-                {service.title}
-              </h3>
-            </Link>
-
-            {/* Provider Name with Verified Badge */}
-            <div className="flex items-center gap-1.5">
-              <Link 
-                href={`/provider/${service.provider.id}`}
-                className="text-sm text-gray-600 hover:text-brand-500 transition-colors"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {service.provider.name}
-              </Link>
-              {service.provider.verified && (
-                <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
+    return (
+      <div
+        className={cn(
+          'relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow mb-4',
+          className
+        )}
+      >
+        <div className="flex">
+          {/* Image Section (Left) */}
+          <Link
+            href={`/services/category/${service.id}`}
+            className="block flex-shrink-0"
+          >
+            <div className="relative w-32 h-32 md:w-40 md:h-40 overflow-hidden bg-gray-100 rounded-lg">
+              {service.images &&
+              service.images.length > 0 &&
+              service.images[0] &&
+              service.images[0].trim() !== '' ? (
+                <Image
+                  src={service.images[0]}
+                  alt={service.title}
+                  fill
+                  sizes="(max-width: 768px) 128px, 160px"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+                  <span className="text-2xl font-semibold text-white">
+                    {service.title.charAt(0).toUpperCase()}
+                  </span>
+                </div>
               )}
             </div>
+          </Link>
 
-            {/* Rating */}
-            <RatingDisplay
-              rating={rating}
-              size="sm"
-              format="stars-only"
-              variant="compact"
-              showHalfStars={true}
-              starColor="red"
-            />
+          {/* Details Section (Right) */}
+          <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
+            <div className="space-y-2">
+              {/* Title */}
+              <Link href={`/services/category/${service.id}`}>
+                <h3 className="text-lg font-bold text-gray-900 line-clamp-1 hover:text-brand-500 transition-colors">
+                  {service.title}
+                </h3>
+              </Link>
 
-            {/* Tags */}
-            {service.tags && service.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {service.tags.slice(0, 4).map((tag, index) => (
-                  <Badge
-                    key={index}
-                    variant="outline"
-                    className="text-xs px-2 py-1 border-gray-200 text-gray-600 bg-gray-50 rounded-md"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
+              {/* Provider Name with Verified Badge */}
+              <div className="flex items-center gap-1.5">
+                <Link
+                  href={`/provider/${service.provider.id}`}
+                  className="text-sm text-gray-600 hover:text-brand-500 transition-colors"
+                  onClick={e => e.stopPropagation()}
+                >
+                  {service.provider.name}
+                </Link>
+                {service.provider.verified && (
+                  <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                )}
               </div>
-            )}
 
-            {/* Price */}
-            <div className="flex items-baseline gap-2">
-              <span className="text-sm text-gray-500">Start From</span>
-              <PriceDisplay
-                discounted={service.price.discounted}
-                currency={service.price.currency}
-                size="lg"
-                variant="inline"
-                showOriginal={false}
-                discountedClassName="text-lg font-bold text-gray-900"
+              {/* Rating */}
+              <RatingDisplay
+                rating={rating}
+                size="sm"
+                format="stars-only"
+                variant="compact"
+                showHalfStars={true}
+                starColor="red"
               />
+
+              {/* Tags */}
+              {service.tags && service.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {service.tags.slice(0, 4).map((tag, index) => (
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      className="text-xs px-2 py-1 border-gray-200 text-gray-600 bg-gray-50 rounded-md"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {/* Price */}
+              <div className="flex items-baseline gap-2">
+                <span className="text-sm text-gray-500">Start From</span>
+                <PriceDisplay
+                  discounted={service.price.discounted}
+                  currency={service.price.currency}
+                  size="lg"
+                  variant="inline"
+                  showOriginal={false}
+                  discountedClassName="text-lg font-bold text-gray-900"
+                />
+              </div>
+            </div>
+
+            {/* Book Now Button */}
+            <div className="mt-3 flex justify-end">
+              <Button
+                variant="default"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-md text-sm font-medium"
+                onClick={handleBookNow}
+              >
+                Book Now
+              </Button>
             </div>
           </div>
 
-          {/* Book Now Button */}
-          <div className="mt-3 flex justify-end">
-                  <Button
-                    variant="default"
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-md text-sm font-medium"
-                    onClick={handleBookNow}
-                  >
-                    Book Now
-                  </Button>
-          </div>
+          {/* Close Button (Top Right) */}
+          {onRemove && (
+            <button
+              onClick={handleRemove}
+              className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/90 hover:bg-gray-100 border border-gray-200 flex items-center justify-center transition-colors z-10 shadow-sm"
+              aria-label="Remove from wishlist"
+            >
+              <X className="h-4 w-4 text-gray-600" />
+            </button>
+          )}
         </div>
-
-        {/* Close Button (Top Right) */}
-        {onRemove && (
-          <button
-            onClick={handleRemove}
-            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/90 hover:bg-gray-100 border border-gray-200 flex items-center justify-center transition-colors z-10 shadow-sm"
-            aria-label="Remove from wishlist"
-          >
-            <X className="h-4 w-4 text-gray-600" />
-          </button>
-        )}
       </div>
-    </div>
-  )
-})
+    )
+  }
+)
 
 WishlistServiceCard.displayName = 'WishlistServiceCard'
-

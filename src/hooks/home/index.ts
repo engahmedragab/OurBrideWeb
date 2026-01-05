@@ -1,2 +1,7 @@
-export { useHome, useStoreHome, useCommunityHome, useMineInfo, useProviderHome } from './useHome'
-
+export {
+  useHome,
+  useStoreHome,
+  useCommunityHome,
+  useMineInfo,
+  useProviderHome,
+} from './useHome'

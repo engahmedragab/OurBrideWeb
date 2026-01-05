@@ -1,6 +1,12 @@
 'use client'
 
-import { useState, useRef, useEffect, cloneElement, isValidElement } from 'react'
+import {
+  useState,
+  useRef,
+  useEffect,
+  cloneElement,
+  isValidElement,
+} from 'react'
 import { cn } from '@/lib/utils'
 
 export interface SearchFieldProps {
@@ -52,7 +58,10 @@ export const SearchField = ({
     if (isValidElement(children)) {
       const childrenProps = children.props as any
       const nestedChildren = childrenProps?.children
-      const input = (isValidElement(nestedChildren) && (nestedChildren.props as any)?.children) || children
+      const input =
+        (isValidElement(nestedChildren) &&
+          (nestedChildren.props as any)?.children) ||
+        children
       if (isValidElement(input)) {
         const inputProps = input.props as any
         if (inputProps?.onFocus) {
@@ -69,7 +78,10 @@ export const SearchField = ({
     if (isValidElement(children)) {
       const childrenProps = children.props as any
       const nestedChildren = childrenProps?.children
-      const input = (isValidElement(nestedChildren) && (nestedChildren.props as any)?.children) || children
+      const input =
+        (isValidElement(nestedChildren) &&
+          (nestedChildren.props as any)?.children) ||
+        children
       if (isValidElement(input)) {
         const inputProps = input.props as any
         if (inputProps?.onBlur) {
@@ -82,9 +94,9 @@ export const SearchField = ({
   // Clone children to add focus/blur handlers
   const childrenWithHandlers = isValidElement(children)
     ? cloneElement(children, {
-      onFocus: handleFocus,
-      onBlur: handleBlur,
-    } as any)
+        onFocus: handleFocus,
+        onBlur: handleBlur,
+      } as any)
     : children
 
   return (
@@ -101,7 +113,8 @@ export const SearchField = ({
           'flex flex-col transition-all duration-300 ease-in-out',
           'bg-gray-50 rounded-xl p-3 border border-gray-200',
           'hover:bg-gray-100',
-          focused && 'bg-white border-brand-500 shadow-lg ring-2 ring-brand-500/20 scale-[1.02]',
+          focused &&
+            'bg-white border-brand-500 shadow-lg ring-2 ring-brand-500/20 scale-[1.02]',
           !focused && isExpanded && 'scale-[1.01]'
         )}
       >
@@ -116,9 +129,7 @@ export const SearchField = ({
         </label>
 
         {/* Input Container */}
-        <div className="relative">
-          {childrenWithHandlers}
-        </div>
+        <div className="relative">{childrenWithHandlers}</div>
 
         {/* Value Display */}
         <div
@@ -134,4 +145,3 @@ export const SearchField = ({
     </div>
   )
 }
-

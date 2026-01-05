@@ -82,18 +82,27 @@ export const getCommunityHome = async (query?: {
       // Only use cleanQuery if there are actual values, otherwise pass undefined
       cleanQuery = Object.keys(filtered).length > 0 ? filtered : undefined
     }
-    
+
     // Log API call for debugging
     console.log('[getCommunityHome] Calling API with query:', cleanQuery)
-    console.log('[getCommunityHome] Base URL:', process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL)
-    
+    console.log(
+      '[getCommunityHome] Base URL:',
+      process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL
+    )
+
     const response = await apiClient.api.getHomeGetCommunityHome(cleanQuery)
-    
+
     console.log('[getCommunityHome] API response received:', response)
-    const responseAny: any = response as { data?: { data?: CommunityHomeResponse } | CommunityHomeResponse } | CommunityHomeResponse
-    
+    const responseAny: any = response as
+      | { data?: { data?: CommunityHomeResponse } | CommunityHomeResponse }
+      | CommunityHomeResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: CommunityHomeResponse }).data
@@ -102,17 +111,24 @@ export const getCommunityHome = async (query?: {
         return data as CommunityHomeResponse
       }
     }
-    if (responseAny && typeof responseAny === 'object' && 'recentPosts' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'recentPosts' in responseAny
+    ) {
       return responseAny as CommunityHomeResponse
     }
     throw new Error('Invalid response format from community home endpoint')
   } catch (error: any) {
-    console.error('[getCommunityHome] Error fetching community home data:', error)
+    console.error(
+      '[getCommunityHome] Error fetching community home data:',
+      error
+    )
     if (error instanceof Error) {
       console.error('[getCommunityHome] Error message:', error.message)
       console.error('[getCommunityHome] Error stack:', error.stack)
     }
-    
+
     // Log additional Axios error details if available
     if (error?.isAxiosError) {
       console.error('[getCommunityHome] Axios error details:', {
@@ -125,15 +141,19 @@ export const getCommunityHome = async (query?: {
           params: error.config?.params,
           headers: error.config?.headers,
         },
-        response: error.response ? {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data,
-        } : 'No response received',
+        response: error.response
+          ? {
+              status: error.response.status,
+              statusText: error.response.statusText,
+              data: error.response.data,
+            }
+          : 'No response received',
       })
     }
-    
-    throw error instanceof Error ? error : new Error('Failed to fetch community home data')
+
+    throw error instanceof Error
+      ? error
+      : new Error('Failed to fetch community home data')
   }
 }
 
@@ -149,7 +169,9 @@ export const getMineInfo = async (): Promise<unknown> => {
     return responseAny.data ?? responseAny
   } catch (error) {
     console.error('Error fetching mine info:', error)
-    throw error instanceof Error ? error : new Error('Failed to fetch mine info')
+    throw error instanceof Error
+      ? error
+      : new Error('Failed to fetch mine info')
   }
 }
 
@@ -161,10 +183,16 @@ export const getMineInfo = async (): Promise<unknown> => {
 export const getProviderHome = async (): Promise<ProviderHomeResponse> => {
   try {
     const response = await apiClient.api.getHomeGetProviderHome()
-    const responseAny: any = response as { data?: { data?: ProviderHomeResponse } | ProviderHomeResponse } | ProviderHomeResponse
-    
+    const responseAny: any = response as
+      | { data?: { data?: ProviderHomeResponse } | ProviderHomeResponse }
+      | ProviderHomeResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ProviderHomeResponse }).data
@@ -173,13 +201,18 @@ export const getProviderHome = async (): Promise<ProviderHomeResponse> => {
         return data as ProviderHomeResponse
       }
     }
-    if (responseAny && typeof responseAny === 'object' && 'featuredProviders' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'featuredProviders' in responseAny
+    ) {
       return responseAny as ProviderHomeResponse
     }
     throw new Error('Invalid response format from provider home endpoint')
   } catch (error) {
     console.error('Error fetching provider home data:', error)
-    throw error instanceof Error ? error : new Error('Failed to fetch provider home data')
+    throw error instanceof Error
+      ? error
+      : new Error('Failed to fetch provider home data')
   }
 }
-

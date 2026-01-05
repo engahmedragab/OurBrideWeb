@@ -28,21 +28,3 @@ export interface CommunityHomeResponse {
   // Featured/active tags for filtering
   tags: TagResponse[]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

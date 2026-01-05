@@ -22,7 +22,12 @@ export const ItemsSummaryCard = ({
   const progressPercentage = total > 0 ? (completed / total) * 100 : 0
 
   return (
-    <div className={cn('rounded-xl border border-gray-200 bg-white p-4', className)}>
+    <div
+      className={cn(
+        'rounded-xl border border-gray-200 bg-white p-4',
+        className
+      )}
+    >
       {/* Header */}
       <div className="mb-1 flex items-start justify-between gap-3">
         <h3 className="text-lg font-semibold text-gray-900">{title}</h3>

@@ -26,8 +26,15 @@ export const LoadingSpinner = ({
   fullScreen = false,
 }: LoadingSpinnerProps) => {
   const spinner = (
-    <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
-      <Loader2 className={cn('animate-spin text-brand-500', sizeClasses[size])} />
+    <div
+      className={cn(
+        'flex flex-col items-center justify-center gap-3',
+        className
+      )}
+    >
+      <Loader2
+        className={cn('animate-spin text-brand-500', sizeClasses[size])}
+      />
       {text && (
         <p className="text-14 sm:text-16 text-gray-600 font-medium">{text}</p>
       )}
@@ -44,4 +51,3 @@ export const LoadingSpinner = ({
 
   return spinner
 }
-

@@ -5,7 +5,10 @@ import { z } from 'zod'
  */
 const parseAmount = (val: unknown): number => {
   if (typeof val === 'string') {
-    const cleaned = val.replace(/,/g, '').replace(/\s*EGP\s*/gi, '').trim()
+    const cleaned = val
+      .replace(/,/g, '')
+      .replace(/\s*EGP\s*/gi, '')
+      .trim()
     const num = parseFloat(cleaned)
     return isNaN(num) ? 0 : Math.max(0, num)
   }
@@ -21,7 +24,10 @@ const parseAmount = (val: unknown): number => {
 const parseNullableAmount = (val: unknown): number | null => {
   if (val === null || val === '' || val === undefined) return null
   if (typeof val === 'string') {
-    const cleaned = val.replace(/,/g, '').replace(/\s*EGP\s*/gi, '').trim()
+    const cleaned = val
+      .replace(/,/g, '')
+      .replace(/\s*EGP\s*/gi, '')
+      .trim()
     if (!cleaned) return null
     const num = parseFloat(cleaned)
     return isNaN(num) ? null : Math.max(0, num)
@@ -60,7 +66,10 @@ export const categoryFormSchema = z.object({
   description: z.string().default(''),
   descriptionAr: z.string().default(''),
   descriptionEn: z.string().default(''),
-  estimated: z.preprocess(parseAmount, z.number().min(0, 'Estimated must be 0 or greater')),
+  estimated: z.preprocess(
+    parseAmount,
+    z.number().min(0, 'Estimated must be 0 or greater')
+  ),
   iconName: z.string().nullable().default(null),
   colorName: z.string().nullable().default(null),
 })
@@ -78,14 +87,21 @@ export const categoryWithLineFormSchema = z.object({
   descriptionEn: z.string().default(''),
   iconName: z.string().nullable().default(null),
   colorName: z.string().nullable().default(null),
-  
+
   // Line fields (required when creating new category)
   expense: z.string().min(1, 'Service name is required').trim(),
   expenseAr: z.string().default(''),
   expenseEn: z.string().default(''),
-  estimated: z.preprocess(parseAmount, z.number().min(0, 'Total price must be 0 or greater')),
-  paid: z.preprocess(parseAmount, z.number().min(0, 'Paid must be 0 or greater')).default(0),
-  final: z.preprocess(parseNullableAmount, z.number().min(0).nullable()).default(null),
+  estimated: z.preprocess(
+    parseAmount,
+    z.number().min(0, 'Total price must be 0 or greater')
+  ),
+  paid: z
+    .preprocess(parseAmount, z.number().min(0, 'Paid must be 0 or greater'))
+    .default(0),
+  final: z
+    .preprocess(parseNullableAmount, z.number().min(0).nullable())
+    .default(null),
   dueDate: z.string().nullable().default(null),
   count: z.preprocess(parseCount, z.number().min(0).nullable()).default(null),
   payer: z.string().nullable().default(null),
@@ -97,5 +113,6 @@ export const categoryWithLineFormSchema = z.object({
 })
 
 export type CategoryFormData = z.infer<typeof categoryFormSchema>
-export type CategoryWithLineFormData = z.infer<typeof categoryWithLineFormSchema>
-
+export type CategoryWithLineFormData = z.infer<
+  typeof categoryWithLineFormSchema
+>

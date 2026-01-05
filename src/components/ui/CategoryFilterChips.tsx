@@ -27,7 +27,7 @@ export const CategoryFilterChips = ({
   return (
     <div className={cn('w-full', className)}>
       <Swiper
-       modules={[Navigation, Pagination, FreeMode]}
+        modules={[Navigation, Pagination, FreeMode]}
         slidesPerView="auto"
         spaceBetween={8}
         className="!pb-2"
@@ -72,4 +72,3 @@ export const CategoryFilterChips = ({
     </div>
   )
 }
-

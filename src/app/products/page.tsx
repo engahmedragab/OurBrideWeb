@@ -2,7 +2,12 @@
 
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
-import { HeroCarousel, OfferBanner, LoadingSpinner, useToast } from '@/components/ui'
+import {
+  HeroCarousel,
+  OfferBanner,
+  LoadingSpinner,
+  useToast,
+} from '@/components/ui'
 import { useMemo, useCallback } from 'react'
 import {
   ProductCategoriesSection,
@@ -38,7 +43,8 @@ export default function ProductIntroPage() {
   const { data: storeHomeData, isLoading: storeHomeLoading } = useStoreHome()
 
   // Fetch data from products home endpoint (getProductGetProductsHome) - for categories and products
-  const { data: productsHomeData, isLoading: productsHomeLoading } = useProductsHome()
+  const { data: productsHomeData, isLoading: productsHomeLoading } =
+    useProductsHome()
 
   // Extract and map data from store home API (for banners)
   const storeData = useMemo(() => {
@@ -49,13 +55,16 @@ export default function ProductIntroPage() {
   }, [storeHomeData])
 
   // Use products home data for categories
-  const categories = useMemo(() =>
-    productsHomeData?.categories || [],
+  const categories = useMemo(
+    () => productsHomeData?.categories || [],
     [productsHomeData?.categories]
   )
 
   const apiBanners = useMemo(() => storeData.banners || [], [storeData.banners])
-  const apiProvidersData = useMemo(() => storeData.providers || [], [storeData.providers])
+  const apiProvidersData = useMemo(
+    () => storeData.providers || [],
+    [storeData.providers]
+  )
 
   const isLoading = storeHomeLoading || productsHomeLoading
 
@@ -95,37 +104,39 @@ export default function ProductIntroPage() {
   // Map ProductHeaderResponse to Product type
   const displayProducts = useMemo(() => {
     if (!productsHomeData?.headers) return []
-    
-    return productsHomeData.headers.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map((header): Product => ({
-      id: String(header.id),
-      title: header.name || header.nameEn || header.nameAr || '',
-      description: header.shortDescription || header.bio || '',
-      images: header.image ? [header.image] : [],
-      provider: {
-        id: header.providerId ? String(header.providerId) : '',
-        name: header.provider?.nameEn || header.provider?.nameAr || '',
-        verified: false,
-        image: header.provider?.profileURL || undefined,
-      },
-      price: {
-        original: header.regularPrice || header.price || 0,
-        discounted: header.salePrice || header.price || 0,
-        currency: 'USD', // Default currency, adjust if available in response
-      },
-      rating: {
-        value: parseFloat(header.rate) || 0,
-        count: header.ratingCount || 0,
-      },
-      category: {
-        id: String(header.categoryId),
-        name: '',
-        slug: '',
-      },
-      tags: [],
-      inStock: header.inStock,
-      stockQuantity: header.stockQuantity || undefined,
-      sku: header.sku,
-    }))
+
+    return productsHomeData.headers.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map(
+      (header): Product => ({
+        id: String(header.id),
+        title: header.name || header.nameEn || header.nameAr || '',
+        description: header.shortDescription || header.bio || '',
+        images: header.image ? [header.image] : [],
+        provider: {
+          id: header.providerId ? String(header.providerId) : '',
+          name: header.provider?.nameEn || header.provider?.nameAr || '',
+          verified: false,
+          image: header.provider?.profileURL || undefined,
+        },
+        price: {
+          original: header.regularPrice || header.price || 0,
+          discounted: header.salePrice || header.price || 0,
+          currency: 'USD', // Default currency, adjust if available in response
+        },
+        rating: {
+          value: parseFloat(header.rate) || 0,
+          count: header.ratingCount || 0,
+        },
+        category: {
+          id: String(header.categoryId),
+          name: '',
+          slug: '',
+        },
+        tags: [],
+        inStock: header.inStock,
+        stockQuantity: header.stockQuantity || undefined,
+        sku: header.sku,
+      })
+    )
   }, [productsHomeData?.headers])
 
   // Map providers to BestProvidersSection format
@@ -144,7 +155,10 @@ export default function ProductIntroPage() {
         title: featuredProduct.title,
         image: featuredProduct.images?.[0] || '',
         rating: featuredProduct.rating?.value || 0,
-        price: featuredProduct.price?.discounted || featuredProduct.price?.original || 0,
+        price:
+          featuredProduct.price?.discounted ||
+          featuredProduct.price?.original ||
+          0,
         currency: featuredProduct.price?.currency || 'USD',
         href: `/products/${featuredProduct.id}`,
       }
@@ -203,7 +217,11 @@ export default function ProductIntroPage() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 bg-white flex items-center justify-center">
-          <LoadingSpinner size="lg" text="Loading products..." fullScreen={true} />
+          <LoadingSpinner
+            size="lg"
+            text="Loading products..."
+            fullScreen={true}
+          />
         </main>
         <Footer />
       </div>
@@ -289,4 +307,3 @@ export default function ProductIntroPage() {
     </ProductPageLayout>
   )
 }
-

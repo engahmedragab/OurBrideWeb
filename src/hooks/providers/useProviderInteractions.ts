@@ -22,7 +22,7 @@ export const useToggleProviderFollow = () => {
       queryClient.invalidateQueries({ queryKey: ['provider', providerId] })
       queryClient.invalidateQueries({ queryKey: ['providers'] })
       queryClient.invalidateQueries({ queryKey: ['follows'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Provider follow toggled successfully',
@@ -30,8 +30,11 @@ export const useToggleProviderFollow = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle provider follow'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to toggle provider follow'
       addToast(errorMessage, 'error')
     },
   })
@@ -53,7 +56,7 @@ export const useToggleProviderFavorite = () => {
       queryClient.invalidateQueries({ queryKey: ['provider', providerId] })
       queryClient.invalidateQueries({ queryKey: ['providers'] })
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Provider favorite toggled successfully',
@@ -61,8 +64,11 @@ export const useToggleProviderFavorite = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle provider favorite'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to toggle provider favorite'
       addToast(errorMessage, 'error')
     },
   })

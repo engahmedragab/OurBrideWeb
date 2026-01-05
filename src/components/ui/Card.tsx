@@ -6,7 +6,12 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
-import { useCartItems, useAddToCart, useWishlistItems, useFollowItems } from '@/hooks'
+import {
+  useCartItems,
+  useAddToCart,
+  useWishlistItems,
+  useFollowItems,
+} from '@/hooks'
 import {
   Heart,
   ShoppingCart,
@@ -161,19 +166,22 @@ const ProductServiceCard = ({
   // Check if item is in cart
   const productId = parseInt(data.id, 10)
   const providerId = data.providerId ? parseInt(data.providerId, 10) : undefined
-  const isInCart = cardType === 'product'
-    ? isProductInCart(productId, providerId)
-    : isServiceInCart(productId, providerId)
+  const isInCart =
+    cardType === 'product'
+      ? isProductInCart(productId, providerId)
+      : isServiceInCart(productId, providerId)
 
   // Check if item is in wishlist
-  const isInWishlist = cardType === 'product'
-    ? isProductInWishlist(productId)
-    : isServiceInWishlist(productId)
+  const isInWishlist =
+    cardType === 'product'
+      ? isProductInWishlist(productId)
+      : isServiceInWishlist(productId)
 
   // Check if item is being followed
-  const isFollowed = cardType === 'product'
-    ? isProductFollowed(productId)
-    : isServiceFollowed(productId)
+  const isFollowed =
+    cardType === 'product'
+      ? isProductFollowed(productId)
+      : isServiceFollowed(productId)
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -210,13 +218,20 @@ const ProductServiceCard = ({
     e.preventDefault()
     e.stopPropagation()
 
-    if (data.inStock === false || data.isLoadingAddToCart || addToCartMutation.isPending) return
+    if (
+      data.inStock === false ||
+      data.isLoadingAddToCart ||
+      addToCartMutation.isPending
+    )
+      return
 
     // If not in cart, add it first
     if (!isInCart && data.onAddToCart) {
       try {
         const productId = parseInt(data.id, 10)
-        const providerId = data.providerId ? parseInt(data.providerId, 10) : undefined
+        const providerId = data.providerId
+          ? parseInt(data.providerId, 10)
+          : undefined
 
         // Ensure providerId is available
         if (!providerId) {
@@ -264,7 +279,9 @@ const ProductServiceCard = ({
                 : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
             )}
             aria-label={
-              isInWishlist || data.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
+              isInWishlist || data.isWishlisted
+                ? 'Remove from wishlist'
+                : 'Add to wishlist'
             }
           >
             <Heart
@@ -323,7 +340,7 @@ const ProductServiceCard = ({
           {data.providerId ? (
             <button
               type="button"
-              onClick={(e) => handleProviderClick(e, data.providerId!)}
+              onClick={e => handleProviderClick(e, data.providerId!)}
               className="text-14 text-gray-600 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
             >
               {data.providerName}
@@ -334,7 +351,7 @@ const ProductServiceCard = ({
           {data.verified && data.providerId && (
             <button
               type="button"
-              onClick={(e) => handleProviderClick(e, data.providerId!)}
+              onClick={e => handleProviderClick(e, data.providerId!)}
               className="flex-shrink-0 relative z-50 pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
               aria-label="Verified provider"
             >
@@ -370,15 +387,15 @@ const ProductServiceCard = ({
           <div className="flex items-center gap-2 pt-1">
             {data.onAddToCart && (
               <Button
-                variant={isInCart ? "default" : "outline"}
+                variant={isInCart ? 'default' : 'outline'}
                 size="icon"
                 className={cn(
-                  "h-10 w-10 rounded-full",
+                  'h-10 w-10 rounded-full',
                   isInCart
-                    ? "border-brand-500 bg-brand-500 hover:bg-brand-600"
-                    : "border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
+                    ? 'border-brand-500 bg-brand-500 hover:bg-brand-600'
+                    : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-white'
                 )}
-                aria-label={isInCart ? "Item in cart" : "Add to cart"}
+                aria-label={isInCart ? 'Item in cart' : 'Add to cart'}
                 onClick={handleAddToCart}
                 disabled={data.isLoadingAddToCart || data.inStock === false}
               >
@@ -414,7 +431,11 @@ const ProductServiceCard = ({
                 size="default"
                 className="flex-1 rounded-full text-14 font-normal text-white"
                 onClick={handleBuyNow}
-                disabled={data.inStock === false || data.isLoadingAddToCart || addToCartMutation.isPending}
+                disabled={
+                  data.inStock === false ||
+                  data.isLoadingAddToCart ||
+                  addToCartMutation.isPending
+                }
               >
                 {addToCartMutation.isPending ? 'Adding...' : 'Buy Now'}
               </Button>
@@ -463,7 +484,10 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
         {/* Stars - All red for 5-star rating */}
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, index) => (
-            <Star key={`star-${data.authorName}-${index}`} className="h-5 w-5 fill-red-500 text-red-500" />
+            <Star
+              key={`star-${data.authorName}-${index}`}
+              className="h-5 w-5 fill-red-500 text-red-500"
+            />
           ))}
         </div>
       </div>
@@ -587,7 +611,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
       <Link
         href={`/provider/${data.id}`}
         className="relative w-20 h-20 md:w-24 md:h-24 mb-4 block hover:opacity-90 transition-opacity"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         {data.image && data.image.trim() !== '' ? (
           <Image
@@ -611,14 +635,14 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
         <Link
           href={`/provider/${data.id}`}
           className="text-18 font-semibold text-gray-900 hover:text-brand-500 transition-colors"
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           {data.name}
         </Link>
         {data.verified && (
           <Link
             href={`/provider/${data.id}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
             className="flex-shrink-0"
             aria-label="Verified provider"
           >

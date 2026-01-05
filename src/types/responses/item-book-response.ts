@@ -15,5 +15,3 @@ export interface ItemBookResponse extends BookResponse<ItemLineResponse> {
   lineCategories?: ItemLineCategoryResponse[]
   categoriesCount?: number
 }
-
-

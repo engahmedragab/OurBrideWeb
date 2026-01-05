@@ -81,21 +81,3 @@ export interface DecisionGroupResponse extends BaseEntityResponse {
   bazaarEvents: BazaarEventSummaryResponse[]
   tags: TagResponse[]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

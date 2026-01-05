@@ -65,7 +65,12 @@ export const CalendarEventBlock = ({
     >
       {/* Top Row: Title + Status */}
       <div className="flex gap-0.5 items-start">
-        <p className={cn('flex-1 text-16 font-medium truncate', styles.titleColor)}>
+        <p
+          className={cn(
+            'flex-1 text-16 font-medium truncate',
+            styles.titleColor
+          )}
+        >
           {title}
         </p>
         <p className={cn('text-16 font-normal truncate', styles.titleColor)}>
@@ -76,19 +81,24 @@ export const CalendarEventBlock = ({
       {/* Bottom Row: Customer Name + Time */}
       <div className="flex gap-0.5 items-start">
         {customerName && (
-          <p className={cn('flex-1 text-12 font-normal truncate', styles.textColor)}>
+          <p
+            className={cn(
+              'flex-1 text-12 font-normal truncate',
+              styles.textColor
+            )}
+          >
             {customerName}
           </p>
         )}
         {timeRange && (
           <div className="flex gap-0.5 items-center shrink-0">
             <Clock className={cn('size-4', styles.iconColor)} />
-            <p className={cn('text-14 font-normal', styles.textColor)}>{timeRange}</p>
+            <p className={cn('text-14 font-normal', styles.textColor)}>
+              {timeRange}
+            </p>
           </div>
         )}
       </div>
     </div>
   )
 }
-
-

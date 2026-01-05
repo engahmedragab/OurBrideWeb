@@ -19,148 +19,150 @@ export interface WishlistProductCardProps {
   className?: string
 }
 
-export const WishlistProductCard = React.memo(({
-  product,
-  onRemove,
-  onBuyNow,
-  className,
-}: WishlistProductCardProps) => {
-  const router = useRouter()
-  const rating = product.rating.value || 0
-  const hasDiscount = product.price.discounted < product.price.original
+export const WishlistProductCard = React.memo(
+  ({ product, onRemove, onBuyNow, className }: WishlistProductCardProps) => {
+    const router = useRouter()
+    const rating = product.rating.value || 0
+    const hasDiscount = product.price.discounted < product.price.original
 
-  const handleBuyNow = () => {
-    router.push(`/products/category/${product.id}`)
-    onBuyNow?.(product.id)
-  }
+    const handleBuyNow = () => {
+      router.push(`/products/category/${product.id}`)
+      onBuyNow?.(product.id)
+    }
 
-  const handleRemove = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    onRemove?.(product.id)
-  }
+    const handleRemove = (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      onRemove?.(product.id)
+    }
 
-  return (
-    <div
-      className={cn(
-        'relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow mb-4',
-        className
-      )}
-    >
-      <div className="flex">
-        {/* Image Section (Left) */}
-        <Link href={`/products/category/${product.id}`} className="block flex-shrink-0">
-          <div className="relative w-32 h-32 md:w-40 md:h-40 overflow-hidden bg-gray-100 rounded-lg">
-            {product.images && product.images.length > 0 && product.images[0] && product.images[0].trim() !== '' ? (
-              <Image
-                src={product.images[0]}
-                alt={product.title}
-                fill
-                sizes="(max-width: 768px) 128px, 160px"
-                className="object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
-                <span className="text-2xl font-semibold text-white">
-                  {product.title.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            )}
-          </div>
-        </Link>
-
-        {/* Details Section (Right) */}
-        <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
-          <div className="space-y-2">
-            {/* Title */}
-            <Link href={`/products/category/${product.id}`}>
-              <h3 className="text-lg font-bold text-gray-900 line-clamp-1 hover:text-brand-500 transition-colors">
-                {product.title}
-              </h3>
-            </Link>
-
-            {/* Provider Name with Verified Badge */}
-            <div className="flex items-center gap-1.5">
-              <Link 
-                href={`/provider/${product.provider.id}`}
-                className="text-sm text-gray-600 hover:text-brand-500 transition-colors"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {product.provider.name}
-              </Link>
-              {product.provider.verified && (
-                <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
+    return (
+      <div
+        className={cn(
+          'relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow mb-4',
+          className
+        )}
+      >
+        <div className="flex">
+          {/* Image Section (Left) */}
+          <Link
+            href={`/products/category/${product.id}`}
+            className="block flex-shrink-0"
+          >
+            <div className="relative w-32 h-32 md:w-40 md:h-40 overflow-hidden bg-gray-100 rounded-lg">
+              {product.images &&
+              product.images.length > 0 &&
+              product.images[0] &&
+              product.images[0].trim() !== '' ? (
+                <Image
+                  src={product.images[0]}
+                  alt={product.title}
+                  fill
+                  sizes="(max-width: 768px) 128px, 160px"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+                  <span className="text-2xl font-semibold text-white">
+                    {product.title.charAt(0).toUpperCase()}
+                  </span>
+                </div>
               )}
             </div>
+          </Link>
 
-            {/* Rating */}
-            <RatingDisplay
-              rating={rating}
-              size="sm"
-              format="value-only"
-              variant="compact"
-              showHalfStars={true}
-              starColor="red"
-              showValue={true}
-            />
+          {/* Details Section (Right) */}
+          <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
+            <div className="space-y-2">
+              {/* Title */}
+              <Link href={`/products/category/${product.id}`}>
+                <h3 className="text-lg font-bold text-gray-900 line-clamp-1 hover:text-brand-500 transition-colors">
+                  {product.title}
+                </h3>
+              </Link>
 
-            {/* Tags */}
-            {product.tags && product.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {product.tags.slice(0, 4).map((tag, index) => (
-                  <Badge
-                    key={index}
-                    variant="outline"
-                    className="text-xs px-2 py-1 border-gray-200 text-gray-600 bg-gray-50 rounded-md"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
+              {/* Provider Name with Verified Badge */}
+              <div className="flex items-center gap-1.5">
+                <Link
+                  href={`/provider/${product.provider.id}`}
+                  className="text-sm text-gray-600 hover:text-brand-500 transition-colors"
+                  onClick={e => e.stopPropagation()}
+                >
+                  {product.provider.name}
+                </Link>
+                {product.provider.verified && (
+                  <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                )}
               </div>
-            )}
 
-            {/* Price */}
-            <div className="flex items-baseline gap-2">
-              <span className="text-sm text-gray-500">Price</span>
-              <PriceDisplay
-                original={product.price.original}
-                discounted={product.price.discounted}
-                currency={product.price.currency}
-                size="lg"
+              {/* Rating */}
+              <RatingDisplay
+                rating={rating}
+                size="sm"
+                format="value-only"
                 variant="compact"
-                showOriginal={hasDiscount}
-                discountedClassName="text-lg font-bold text-gray-900"
+                showHalfStars={true}
+                starColor="red"
+                showValue={true}
               />
+
+              {/* Tags */}
+              {product.tags && product.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {product.tags.slice(0, 4).map((tag, index) => (
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      className="text-xs px-2 py-1 border-gray-200 text-gray-600 bg-gray-50 rounded-md"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {/* Price */}
+              <div className="flex items-baseline gap-2">
+                <span className="text-sm text-gray-500">Price</span>
+                <PriceDisplay
+                  original={product.price.original}
+                  discounted={product.price.discounted}
+                  currency={product.price.currency}
+                  size="lg"
+                  variant="compact"
+                  showOriginal={hasDiscount}
+                  discountedClassName="text-lg font-bold text-gray-900"
+                />
+              </div>
+            </div>
+
+            {/* Buy Now Button */}
+            <div className="mt-3 flex justify-end">
+              <Button
+                variant="default"
+                className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-md text-sm font-medium"
+                onClick={handleBuyNow}
+                disabled={!product.inStock}
+              >
+                Buy Now
+              </Button>
             </div>
           </div>
 
-          {/* Buy Now Button */}
-          <div className="mt-3 flex justify-end">
-            <Button
-              variant="default"
-              className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-md text-sm font-medium"
-              onClick={handleBuyNow}
-              disabled={!product.inStock}
+          {/* Close Button (Top Right) */}
+          {onRemove && (
+            <button
+              onClick={handleRemove}
+              className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/90 hover:bg-gray-100 border border-gray-200 flex items-center justify-center transition-colors z-10 shadow-sm"
+              aria-label="Remove from wishlist"
             >
-              Buy Now
-            </Button>
-          </div>
+              <X className="h-4 w-4 text-gray-600" />
+            </button>
+          )}
         </div>
-
-        {/* Close Button (Top Right) */}
-        {onRemove && (
-          <button
-            onClick={handleRemove}
-            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/90 hover:bg-gray-100 border border-gray-200 flex items-center justify-center transition-colors z-10 shadow-sm"
-            aria-label="Remove from wishlist"
-          >
-            <X className="h-4 w-4 text-gray-600" />
-          </button>
-        )}
       </div>
-    </div>
-  )
-})
+    )
+  }
+)
 
 WishlistProductCard.displayName = 'WishlistProductCard'
-

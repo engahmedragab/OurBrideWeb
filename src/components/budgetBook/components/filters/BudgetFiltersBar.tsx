@@ -8,7 +8,6 @@ export type FilterType =
   | 'not-done'
   | 'favorite'
   | 'not-favorite'
-  
 
 interface BudgetFiltersBarProps {
   filterType: FilterType
@@ -29,7 +28,6 @@ export const BudgetFiltersBar = ({
         { label: 'Not Done', value: 'not-done' },
         { label: 'Favorite', value: 'favorite' },
         { label: 'Not Favorite', value: 'not-favorite' },
-      
       ]}
       placeholder="Select filter..."
       size="lg"
@@ -37,4 +35,3 @@ export const BudgetFiltersBar = ({
     />
   )
 }
-

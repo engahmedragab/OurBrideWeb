@@ -24,7 +24,7 @@ export const getWeddingEvents = async (params?: {
       params: params || {},
     } as any)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as WeddingEventResponse[]
@@ -38,21 +38,25 @@ export const getWeddingEvents = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as WeddingEventResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch wedding events')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch wedding events'
+    )
   }
 }
 
 /**
  * Get wedding event by ID
  */
-export const getWeddingEventById = async (eventId: number): Promise<WeddingEventResponse | null> => {
+export const getWeddingEventById = async (
+  eventId: number
+): Promise<WeddingEventResponse | null> => {
   try {
     const response = await apiClient.api.getWeddingEventGetEventById(eventId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as WeddingEventResponse
@@ -63,21 +67,25 @@ export const getWeddingEventById = async (eventId: number): Promise<WeddingEvent
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as WeddingEventResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch wedding event')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch wedding event'
+    )
   }
 }
 
 /**
  * Create a new wedding event
  */
-export const createWeddingEvent = async (data: WeddingEventCreateRequest): Promise<WeddingEventResponse> => {
+export const createWeddingEvent = async (
+  data: WeddingEventCreateRequest
+): Promise<WeddingEventResponse> => {
   try {
     const response = await apiClient.api.postWeddingEventCreateEvent(data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as WeddingEventResponse
@@ -88,10 +96,14 @@ export const createWeddingEvent = async (data: WeddingEventCreateRequest): Promi
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as WeddingEventResponse
     }
-    
-    throw new Error('Invalid response format from create wedding event endpoint')
+
+    throw new Error(
+      'Invalid response format from create wedding event endpoint'
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create wedding event')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create wedding event'
+    )
   }
 }
 
@@ -103,9 +115,12 @@ export const updateWeddingEvent = async (
   data: WeddingEventUpdateRequest
 ): Promise<WeddingEventResponse> => {
   try {
-    const response = await apiClient.api.putWeddingEventUpdateEvent(eventId, data)
+    const response = await apiClient.api.putWeddingEventUpdateEvent(
+      eventId,
+      data
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as WeddingEventResponse
@@ -116,10 +131,14 @@ export const updateWeddingEvent = async (
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as WeddingEventResponse
     }
-    
-    throw new Error('Invalid response format from update wedding event endpoint')
+
+    throw new Error(
+      'Invalid response format from update wedding event endpoint'
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update wedding event')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update wedding event'
+    )
   }
 }
 
@@ -130,7 +149,9 @@ export const deleteWeddingEvent = async (eventId: number): Promise<void> => {
   try {
     await apiClient.api.deleteWeddingEventDeleteEvent(eventId)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete wedding event')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete wedding event'
+    )
   }
 }
 
@@ -143,15 +164,15 @@ const convertBookType = (bookType: string | number | undefined): UserType => {
   }
   if (typeof bookType === 'string') {
     const typeMap: Record<string, UserType> = {
-      'Guest': UserType.Guest,
-      'Bride': UserType.Bride,
-      'Groom': UserType.Groom,
-      'Owner': UserType.Owner,
-      'Admin': UserType.Admin,
-      'FamilyMember': UserType.FamilyMember,
-      'LocalGuider': UserType.LocalGuider,
-      'ProviderUser': UserType.ProviderUser,
-      'WeddingPlanner': UserType.WeddingPlanner,
+      Guest: UserType.Guest,
+      Bride: UserType.Bride,
+      Groom: UserType.Groom,
+      Owner: UserType.Owner,
+      Admin: UserType.Admin,
+      FamilyMember: UserType.FamilyMember,
+      LocalGuider: UserType.LocalGuider,
+      ProviderUser: UserType.ProviderUser,
+      WeddingPlanner: UserType.WeddingPlanner,
     }
     return typeMap[bookType] ?? UserType.Guest
   }
@@ -161,22 +182,24 @@ const convertBookType = (bookType: string | number | undefined): UserType => {
 /**
  * Convert string bookClass to BookClass enum
  */
-const convertBookClass = (bookClass: string | number | undefined): BookClass => {
+const convertBookClass = (
+  bookClass: string | number | undefined
+): BookClass => {
   if (typeof bookClass === 'number') {
     return bookClass as BookClass
   }
   if (typeof bookClass === 'string') {
     const classMap: Record<string, BookClass> = {
-      'Event': BookClass.Event,
-      'Budget': BookClass.Budget,
-      'Guest': BookClass.Guest,
-      'Item': BookClass.Item,
-      'Note': BookClass.Note,
-      'Occasion': BookClass.Occasion,
-      'Service': BookClass.Service,
-      'Todo': BookClass.Todo,
+      Event: BookClass.Event,
+      Budget: BookClass.Budget,
+      Guest: BookClass.Guest,
+      Item: BookClass.Item,
+      Note: BookClass.Note,
+      Occasion: BookClass.Occasion,
+      Service: BookClass.Service,
+      Todo: BookClass.Todo,
       // Handle "Main" as a special case - might need to be determined by context
-      'Main': BookClass.Event, // Default fallback, but this should be set based on actual book type
+      Main: BookClass.Event, // Default fallback, but this should be set based on actual book type
     }
     return classMap[bookClass] ?? BookClass.Event
   }
@@ -188,37 +211,46 @@ const convertBookClass = (bookClass: string | number | undefined): BookClass => 
  */
 const normalizeBook = (book: any, expectedBookClass: BookClass): any => {
   if (!book) return book
-  
+
   return {
     ...book,
     bookType: convertBookType(book.bookType),
-    bookClass: book.bookClass === 'Main' ? expectedBookClass : convertBookClass(book.bookClass),
+    bookClass:
+      book.bookClass === 'Main'
+        ? expectedBookClass
+        : convertBookClass(book.bookClass),
   }
 }
 
 /**
  * Get event info (all books) for a wedding event
  */
-export const getEventInfo = async (eventId: number): Promise<EventInfoResponse | null> => {
+export const getEventInfo = async (
+  eventId: number
+): Promise<EventInfoResponse | null> => {
   try {
     const response = await apiClient.api.getWeddingEventGetEventInfo(eventId)
     const responseAny: any = response
-    
+
     let eventInfo: any = null
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       eventInfo = responseAny.data.data
     } else if (responseAny?.data) {
       eventInfo = responseAny.data
-    } else if (responseAny && typeof responseAny === 'object' && 'itemBook' in responseAny) {
+    } else if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'itemBook' in responseAny
+    ) {
       eventInfo = responseAny
     }
-    
+
     if (!eventInfo) {
       return null
     }
-    
+
     // Normalize all books by converting string enums to proper enum types
     return {
       itemBook: normalizeBook(eventInfo.itemBook, BookClass.Item),
@@ -231,8 +263,8 @@ export const getEventInfo = async (eventId: number): Promise<EventInfoResponse |
       occasionBook: normalizeBook(eventInfo.occasionBook, BookClass.Occasion),
     } as EventInfoResponse
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch event info')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch event info'
+    )
   }
 }
-
-

@@ -50,7 +50,7 @@ export const ItemsOverview = ({
   // Use actual values from API
   const completed = book.completed || 0
   const estimated = book.estimated ?? null // Can be null
-  
+
   // Calculate totalPrice: use book.totalPrice if > 0, otherwise sum from lines
   const totalPrice = useMemo(() => {
     // If book.totalPrice exists and > 0, use it
@@ -77,7 +77,7 @@ export const ItemsOverview = ({
           View All
         </button>
       </div>
-      
+
       <div className="space-y-4">
         {/* Progress Section */}
         <div className="flex items-center justify-between">
@@ -115,4 +115,3 @@ export const ItemsOverview = ({
     </div>
   )
 }
-

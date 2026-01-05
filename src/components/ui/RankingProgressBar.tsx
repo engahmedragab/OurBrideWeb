@@ -1,8 +1,7 @@
 import { HTMLAttributes, forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
-export interface RankingProgressBarProps
-  extends HTMLAttributes<HTMLDivElement> {
+export interface RankingProgressBarProps extends HTMLAttributes<HTMLDivElement> {
   /**
    * Total number of steps/ranks
    */
@@ -23,24 +22,12 @@ export interface RankingProgressBarProps
  * Matches Figma design with red active segment and grey inactive segment
  */
 const RankingProgressBar = forwardRef<HTMLDivElement, RankingProgressBarProps>(
-  (
-    {
-      totalSteps = 6,
-      currentStep = 0,
-      className,
-      ...props
-    },
-    ref
-  ) => {
+  ({ totalSteps = 6, currentStep = 0, className, ...props }, ref) => {
     // Calculate progress percentage
     const progressPercentage = ((currentStep + 1) / totalSteps) * 100
 
     return (
-      <div
-        ref={ref}
-        className={cn('relative w-full', className)}
-        {...props}
-      >
+      <div ref={ref} className={cn('relative w-full', className)} {...props}>
         {/* Background line (grey) */}
         <div className="absolute top-1/2 left-0 right-0 h-[2px] sm:h-[3px] bg-gray-200 -translate-y-1/2 rounded-full" />
 
@@ -78,4 +65,3 @@ const RankingProgressBar = forwardRef<HTMLDivElement, RankingProgressBarProps>(
 RankingProgressBar.displayName = 'RankingProgressBar'
 
 export { RankingProgressBar }
-

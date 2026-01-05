@@ -18,5 +18,3 @@ export interface GuestLineResponse extends LineResponse {
   guestRelevant: GuestRelevant
   guestLineCategory?: GuestLineCategoryResponse
 }
-
-

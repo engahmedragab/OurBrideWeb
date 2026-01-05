@@ -199,15 +199,24 @@ export const UserSidebar = ({
     if (!pathname) return false
     // Special handling for Settings - should be active for /dashboard/settings and all sub-pages
     if (path === '/dashboard/settings') {
-      return pathname === '/dashboard/settings' || pathname.startsWith('/dashboard/settings/')
+      return (
+        pathname === '/dashboard/settings' ||
+        pathname.startsWith('/dashboard/settings/')
+      )
     }
     // Special handling for Help Center
     if (path === '/dashboard/help-center') {
-      return pathname === '/dashboard/help-center' || pathname.startsWith('/dashboard/help-center/')
+      return (
+        pathname === '/dashboard/help-center' ||
+        pathname.startsWith('/dashboard/help-center/')
+      )
     }
     // Special handling for Gift Center
     if (path === '/dashboard/gift-center') {
-      return pathname === '/dashboard/gift-center' || pathname.startsWith('/dashboard/gift-center/')
+      return (
+        pathname === '/dashboard/gift-center' ||
+        pathname.startsWith('/dashboard/gift-center/')
+      )
     }
     // Special handling for Coupons
     if (path === '/coupons') {
@@ -215,7 +224,10 @@ export const UserSidebar = ({
     }
     // Special handling for Events - should be active for /dashboard/my-events and all sub-pages
     if (path === '/dashboard/my-events') {
-      return pathname === '/dashboard/my-events' || pathname.startsWith('/dashboard/my-events/')
+      return (
+        pathname === '/dashboard/my-events' ||
+        pathname.startsWith('/dashboard/my-events/')
+      )
     }
     // Special handling for Delivery Address
     if (path === '/addresses') {
@@ -242,12 +254,13 @@ export const UserSidebar = ({
                 fill
                 sizes="48px"
                 className="object-cover"
-                onError={(e) => {
+                onError={e => {
                   e.currentTarget.style.display = 'none'
                 }}
               />
             ) : null}
-            {(!userImage || userImage === 'https://via.placeholder.com/100') && (
+            {(!userImage ||
+              userImage === 'https://via.placeholder.com/100') && (
               <div className="w-full h-full flex items-center justify-center bg-brand-100">
                 <span className="text-14 font-semibold text-brand-600">
                   {userName.charAt(0).toUpperCase() || 'U'}

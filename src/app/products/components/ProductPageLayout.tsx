@@ -36,4 +36,3 @@ export function ProductPageLayout({
     </div>
   )
 }
-

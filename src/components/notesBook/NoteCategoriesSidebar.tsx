@@ -63,7 +63,9 @@ export const NoteCategoriesSidebar = ({
                     <span
                       className={cn(
                         'text-14 font-medium truncate block',
-                        isSelected ? 'text-gray-900 font-semibold' : 'text-gray-700'
+                        isSelected
+                          ? 'text-gray-900 font-semibold'
+                          : 'text-gray-700'
                       )}
                     >
                       {note.title || 'Untitled List'}
@@ -72,7 +74,7 @@ export const NoteCategoriesSidebar = ({
 
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                     <button
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation()
                         onEditNote(note)
                       }}
@@ -83,7 +85,7 @@ export const NoteCategoriesSidebar = ({
                     </button>
 
                     <button
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation()
                         onDeleteNote(note)
                       }}

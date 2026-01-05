@@ -2,7 +2,14 @@
 
 import { apiClient } from '@/services/api/apiClient'
 import type { UpdateProviderPublicProfileSettingsRequest } from '@/../client/common/api/gen/ourbride-api'
-import type { ApiResult, MediaResponse, ProviderResponse, FeaturedProviderResponse, BranchPortfolioResponse, PlaceResponse } from '@/types/responses'
+import type {
+  ApiResult,
+  MediaResponse,
+  ProviderResponse,
+  FeaturedProviderResponse,
+  BranchPortfolioResponse,
+  PlaceResponse,
+} from '@/types/responses'
 import type { ReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { ProviderStatus } from '@/types/responses/common'
 import type { ProviderLinkeeResponse } from '@/types/responses/provider-linkee-response'
@@ -14,20 +21,29 @@ import { getApiLanguage } from '@/utils/language'
 /**
  * Map ProviderResponse to FeaturedProviderResponse
  */
-const mapProviderToFeatured = (provider: ProviderResponse): FeaturedProviderResponse => {
+const mapProviderToFeatured = (
+  provider: ProviderResponse
+): FeaturedProviderResponse => {
   // Get banner and logo images from images array or media array
   const images = provider.images || provider.media || []
-  const bannerImage = images.find((img: MediaResponse) => img.isFeatured) || images[0]
-  const logoImage = images.find((img: MediaResponse) => img.mediaType === 1) || images[0] // Assuming 1 is image type
-  
+  const bannerImage =
+    images.find((img: MediaResponse) => img.isFeatured) || images[0]
+  const logoImage =
+    images.find((img: MediaResponse) => img.mediaType === 1) || images[0] // Assuming 1 is image type
+
   return {
     id: provider.id,
     nameEn: provider.nameEn || '',
     nameAr: provider.nameAr || '',
     descriptionEn: provider.descriptionEn || '',
     descriptionAr: provider.descriptionAr || '',
-    publicLogoImageUrl: logoImage?.url || logoImage?.thumbnailUrl || provider.profileURL || '',
-    publicBannerImageUrl: bannerImage?.url || bannerImage?.thumbnailUrl || provider.profileURL || '',
+    publicLogoImageUrl:
+      logoImage?.url || logoImage?.thumbnailUrl || provider.profileURL || '',
+    publicBannerImageUrl:
+      bannerImage?.url ||
+      bannerImage?.thumbnailUrl ||
+      provider.profileURL ||
+      '',
     rate: provider.rate,
     totalReviews: provider.reviewCount ?? provider.reviews?.length ?? 0,
     isVerified: provider.providerStatus === ProviderStatus.Active,
@@ -36,9 +52,10 @@ const mapProviderToFeatured = (provider: ProviderResponse): FeaturedProviderResp
     shortAddress: provider.shortAddress || '',
     publicProfileSlug: `/provider/${provider.id}`,
     uniqueCode: provider.slug || `provider-${provider.id}`,
-    topRatedService: provider.topRatedServices && provider.topRatedServices.length > 0
-      ? provider.topRatedServices[0]
-      : null,
+    topRatedService:
+      provider.topRatedServices && provider.topRatedServices.length > 0
+        ? provider.topRatedServices[0]
+        : null,
     topRatedServices: provider.topRatedServices || [],
   }
 }
@@ -53,7 +70,7 @@ export const getProviderById = async (
   try {
     const response = await apiClient.api.getProviderGetById(providerId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ProviderResponse
@@ -64,12 +81,14 @@ export const getProviderById = async (
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as ProviderResponse
     }
-    
+
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
     console.error('Error fetching provider:', error)
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to fetch provider details'
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch provider details'
     )
   }
 }
@@ -87,7 +106,9 @@ export const toggleProviderFollow = async (
     return true
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to toggle provider follow'
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle provider follow'
     )
   }
 }
@@ -105,7 +126,9 @@ export const toggleProviderFavorite = async (
     return true
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to toggle provider favorite'
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle provider favorite'
     )
   }
 }
@@ -119,25 +142,47 @@ export const submitProviderReview = async (
   data: ReviewRequest
 ): Promise<ApiResult<unknown>> => {
   try {
-    const response = await apiClient.api.postProviderAddReviews(providerId, data)
+    const response = await apiClient.api.postProviderAddReviews(
+      providerId,
+      data
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
-    if (responseAny?.data?.data && typeof responseAny.data.data === 'object' && 'success' in responseAny.data.data) {
+    if (
+      responseAny?.data?.data &&
+      typeof responseAny.data.data === 'object' &&
+      'success' in responseAny.data.data
+    ) {
       return responseAny.data.data as ApiResult<unknown>
     }
-    if (responseAny?.data && typeof responseAny.data === 'object' && 'success' in responseAny.data) {
+    if (
+      responseAny?.data &&
+      typeof responseAny.data === 'object' &&
+      'success' in responseAny.data
+    ) {
       return responseAny.data as ApiResult<unknown>
     }
-    if (responseAny && typeof responseAny === 'object' && 'success' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'success' in responseAny
+    ) {
       return responseAny as ApiResult<unknown>
     }
-    
-    const defaultResult: ApiResult<unknown> = { data: null, success: false, statusCode: 0, message: '' }
+
+    const defaultResult: ApiResult<unknown> = {
+      data: null,
+      success: false,
+      statusCode: 0,
+      message: '',
+    }
     return defaultResult
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to submit provider review'
+      error instanceof Error
+        ? error.message
+        : 'Failed to submit provider review'
     )
   }
 }
@@ -155,9 +200,10 @@ export const getProviderPublicProfileById = async (
       throw new Error(`Invalid providerId: ${providerId}`)
     }
 
-    const response = await apiClient.api.getProviderGetPublicProfileById(providerId)
+    const response =
+      await apiClient.api.getProviderGetPublicProfileById(providerId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ProviderPublicProfileResponse
@@ -168,14 +214,14 @@ export const getProviderPublicProfileById = async (
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as ProviderPublicProfileResponse
     }
-    
+
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
     console.error('Error fetching provider public profile:', error)
-    
+
     // Handle Axios errors with more detail
-    const axiosError = error as { 
-      response?: { 
+    const axiosError = error as {
+      response?: {
         status?: number
         data?: unknown
         statusText?: string
@@ -184,23 +230,33 @@ export const getProviderPublicProfileById = async (
       code?: string
       request?: unknown
     }
-    
+
     if (axiosError.response) {
       // Server responded with error status
       const status = axiosError.response.status
       const statusText = axiosError.response.statusText
-      console.error(`API Error ${status}: ${statusText}`, axiosError.response.data)
-      throw new Error(`Failed to fetch provider public profile: ${status} ${statusText}`)
+      console.error(
+        `API Error ${status}: ${statusText}`,
+        axiosError.response.data
+      )
+      throw new Error(
+        `Failed to fetch provider public profile: ${status} ${statusText}`
+      )
     } else if (axiosError.request) {
       // Request was made but no response received (network error, timeout, etc.)
-      console.error('Network error - no response received:', axiosError.message || axiosError.code)
-      throw new Error(`Network error: Unable to reach the server. ${axiosError.message || axiosError.code || 'Please check your connection and try again.'}`)
+      console.error(
+        'Network error - no response received:',
+        axiosError.message || axiosError.code
+      )
+      throw new Error(
+        `Network error: Unable to reach the server. ${axiosError.message || axiosError.code || 'Please check your connection and try again.'}`
+      )
     } else if (error instanceof Error) {
       // Other error
       console.error('Error message:', error.message)
       throw error
     }
-    
+
     throw new Error('Failed to fetch provider public profile')
   }
 }
@@ -213,9 +269,10 @@ export const getProviderPublicProfileSettings = async (
   providerId: number
 ): Promise<UpdateProviderPublicProfileSettingsRequest | null> => {
   try {
-    const response = await apiClient.api.getProviderGetPublicProfileSettings(providerId)
+    const response =
+      await apiClient.api.getProviderGetPublicProfileSettings(providerId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as UpdateProviderPublicProfileSettingsRequest
@@ -226,11 +283,13 @@ export const getProviderPublicProfileSettings = async (
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as UpdateProviderPublicProfileSettingsRequest
     }
-    
+
     return null
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to fetch public profile settings'
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch public profile settings'
     )
   }
 }
@@ -247,7 +306,9 @@ export const updateProviderPublicProfileSettings = async (
     await apiClient.api.putProviderUpdatePublicProfileSettings(providerId, data)
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to update public profile settings'
+      error instanceof Error
+        ? error.message
+        : 'Failed to update public profile settings'
     )
   }
 }
@@ -269,22 +330,28 @@ export const getProviderBranchPortfolio = async (
       throw new Error(`Invalid branchId: ${branchId}`)
     }
 
-    const response = await apiClient.api.getProviderBranchGetPortfolio(providerId, branchId)
+    const response = await apiClient.api.getProviderBranchGetPortfolio(
+      providerId,
+      branchId
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     // Expected: { data: { about, services, portfolio, reviews, statistics }, success, ... }
-    const portfolioData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    
+    const portfolioData =
+      responseAny?.data?.data ?? responseAny?.data ?? responseAny
+
     // Ensure we have the expected structure
     if (!portfolioData || typeof portfolioData !== 'object') {
       throw new Error('Invalid response structure')
     }
-    
+
     return portfolioData as BranchPortfolioResponse
   } catch (error: unknown) {
     console.error('Error fetching provider branch portfolio:', error)
-    throw error instanceof Error ? error : new Error('Failed to fetch provider branch portfolio')
+    throw error instanceof Error
+      ? error
+      : new Error('Failed to fetch provider branch portfolio')
   }
 }
 
@@ -305,51 +372,69 @@ export const getProviderTeamMemberPortfolio = async (
       throw new Error(`Invalid teamMemberId: ${teamMemberId}`)
     }
 
-    const response = await apiClient.api.getProviderTeamGetTeamMemberPortfolio(providerId, teamMemberId)
+    const response = await apiClient.api.getProviderTeamGetTeamMemberPortfolio(
+      providerId,
+      teamMemberId
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     // Expected: { data: { about, services, portfolio, reviews, statistics }, success, ... }
-    const portfolioData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    
+    const portfolioData =
+      responseAny?.data?.data ?? responseAny?.data ?? responseAny
+
     // Ensure we have the expected structure
     if (!portfolioData || typeof portfolioData !== 'object') {
       throw new Error('Invalid response structure')
     }
-    
+
     // Map the team member about structure to match BranchPortfolioAbout
     if (portfolioData.about) {
       const about = portfolioData.about
       // Handle both team member structure (with userId, firstName, lastName) and branch structure
       if (about.userId || about.firstName !== undefined) {
         portfolioData.about = {
-          id: about.userId ? parseInt(about.userId.split('-')[0], 16) || 0 : (about.id || 0),
-          name: about.fullName || `${about.firstName || ''} ${about.lastName || ''}`.trim() || about.name || 'Team Member',
+          id: about.userId
+            ? parseInt(about.userId.split('-')[0], 16) || 0
+            : about.id || 0,
+          name:
+            about.fullName ||
+            `${about.firstName || ''} ${about.lastName || ''}`.trim() ||
+            about.name ||
+            'Team Member',
           description: about.description || '',
           phoneNumber: about.phoneNumber || '',
           phoneNumber2: about.phoneNumber2 || '',
           imageUrl: about.imageUrl || '',
-          address: about.address || null as any, // Team members might not have address
+          address: about.address || (null as any), // Team members might not have address
           isMain: about.isMain || false,
           isActive: about.isActive !== undefined ? about.isActive : true,
         }
       }
     }
-    
+
     // Ensure statistics structure matches (team members might have languages array)
-    if (portfolioData.statistics && Array.isArray(portfolioData.statistics.languages)) {
+    if (
+      portfolioData.statistics &&
+      Array.isArray(portfolioData.statistics.languages)
+    ) {
       // Statistics already has the right structure, just ensure it exists
       portfolioData.statistics = {
-        appointmentsCompleted: portfolioData.statistics.appointmentsCompleted || 0,
+        appointmentsCompleted:
+          portfolioData.statistics.appointmentsCompleted || 0,
         clientsServed: portfolioData.statistics.clientsServed || 0,
-        ...(portfolioData.statistics.languages && { languages: portfolioData.statistics.languages }),
+        ...(portfolioData.statistics.languages && {
+          languages: portfolioData.statistics.languages,
+        }),
       } as any
     }
-    
+
     return portfolioData as BranchPortfolioResponse
   } catch (error: unknown) {
     console.error('Error fetching provider team member portfolio:', error)
-    throw error instanceof Error ? error : new Error('Failed to fetch provider team member portfolio')
+    throw error instanceof Error
+      ? error
+      : new Error('Failed to fetch provider team member portfolio')
   }
 }
 
@@ -370,16 +455,27 @@ export const getProviderTeamMemberPortfolioByAssignmentId = async (
       throw new Error(`Invalid assignmentId: ${assignmentId}`)
     }
 
-    const response = await apiClient.api.getProviderTeamGetTeamMemberPortfolio(providerId, assignmentId.toString())
+    const response = await apiClient.api.getProviderTeamGetTeamMemberPortfolio(
+      providerId,
+      assignmentId.toString()
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
-    const portfolio = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    
+    const portfolio =
+      responseAny?.data?.data ?? responseAny?.data ?? responseAny
+
     return Array.isArray(portfolio) ? portfolio : []
   } catch (error: unknown) {
-    console.error('Error fetching provider team member portfolio by assignment ID:', error)
-    throw error instanceof Error ? error : new Error('Failed to fetch provider team member portfolio by assignment ID')
+    console.error(
+      'Error fetching provider team member portfolio by assignment ID:',
+      error
+    )
+    throw error instanceof Error
+      ? error
+      : new Error(
+          'Failed to fetch provider team member portfolio by assignment ID'
+        )
   }
 }
 
@@ -396,17 +492,20 @@ export const getProviderTeamUsers = async (
       throw new Error(`Invalid providerId: ${providerId}`)
     }
 
-    const response = await apiClient.api.getProviderTeamGetAllProviderUsers(providerId)
+    const response =
+      await apiClient.api.getProviderTeamGetAllProviderUsers(providerId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     // Expected: ProviderUserAssignmentResponse[] or { data: ProviderUserAssignmentResponse[] }
     const users = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    
+
     return Array.isArray(users) ? users : []
   } catch (error: unknown) {
     console.error('Error fetching provider team users:', error)
-    throw error instanceof Error ? error : new Error('Failed to fetch provider team users')
+    throw error instanceof Error
+      ? error
+      : new Error('Failed to fetch provider team users')
   }
 }
 
@@ -425,15 +524,17 @@ export const getProviderBranches = async (
 
     const response = await apiClient.api.getProviderBranchGetAll(providerId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     // Expected: PlaceResponse[] or { data: PlaceResponse[] }
     const branches = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    
+
     return Array.isArray(branches) ? branches : []
   } catch (error: unknown) {
     console.error('Error fetching provider branches:', error)
-    throw error instanceof Error ? error : new Error('Failed to fetch provider branches')
+    throw error instanceof Error
+      ? error
+      : new Error('Failed to fetch provider branches')
   }
 }
 /**
@@ -491,21 +592,24 @@ export const filterProviders = async (
 
     const response = await apiClient.api.getProviderFilter(cleanQuery)
     const responseAny: any = response
-    
+
     // Handle different response structures - API returns ProviderResponse[]
-    const providersData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    
+    const providersData =
+      responseAny?.data?.data ?? responseAny?.data ?? responseAny
+
     if (!Array.isArray(providersData)) {
       console.warn('Providers data is not an array:', providersData)
       return []
     }
-    
+
     // Map ProviderResponse[] to FeaturedProviderResponse[]
     const providers = providersData as ProviderResponse[]
     return providers.map(mapProviderToFeatured)
   } catch (error: unknown) {
     console.error('Error filtering providers:', error)
-    throw error instanceof Error ? error : new Error('Failed to filter providers')
+    throw error instanceof Error
+      ? error
+      : new Error('Failed to filter providers')
   }
 }
 
@@ -533,7 +637,12 @@ export const getProviderPublicStore = async (
         )
       : {}
 
-    console.log('[getProviderPublicStore] Calling API with providerId:', providerId, 'query:', cleanQuery)
+    console.log(
+      '[getProviderPublicStore] Calling API with providerId:',
+      providerId,
+      'query:',
+      cleanQuery
+    )
 
     // Only pass query if it has values, otherwise pass undefined to use defaults
     // Note: Accept-Language header is already added by the API client interceptor
@@ -541,11 +650,11 @@ export const getProviderPublicStore = async (
       providerId,
       Object.keys(cleanQuery).length > 0 ? cleanQuery : undefined
     )
-    
+
     console.log('[getProviderPublicStore] API response received:', response)
-    
+
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ProviderPublicStoreResponse
@@ -553,13 +662,20 @@ export const getProviderPublicStore = async (
     if (responseAny?.data) {
       return responseAny.data as ProviderPublicStoreResponse
     }
-    if (responseAny && typeof responseAny === 'object' && 'providerId' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'providerId' in responseAny
+    ) {
       return responseAny as ProviderPublicStoreResponse
     }
-    
+
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
-    console.error('[getProviderPublicStore] Error fetching provider public store:', error)
+    console.error(
+      '[getProviderPublicStore] Error fetching provider public store:',
+      error
+    )
     if (error instanceof Error) {
       console.error('[getProviderPublicStore] Error message:', error.message)
       console.error('[getProviderPublicStore] Error stack:', error.stack)
@@ -579,7 +695,7 @@ export const getProviderLinkee = async (
   try {
     const response = await apiClient.api.getProviderGetPublicLinkee(providerId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ProviderLinkeeResponse
@@ -587,10 +703,14 @@ export const getProviderLinkee = async (
     if (responseAny?.data) {
       return responseAny.data as ProviderLinkeeResponse
     }
-    if (responseAny && typeof responseAny === 'object' && 'providerId' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'providerId' in responseAny
+    ) {
       return responseAny as ProviderLinkeeResponse
     }
-    
+
     throw new Error('Invalid response structure')
   } catch (error: unknown) {
     console.error('Error fetching provider linkee:', error)

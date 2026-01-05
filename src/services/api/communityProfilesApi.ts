@@ -6,11 +6,14 @@ import type { CommunityProfileResponse } from '@/types/responses/community'
 /**
  * Get user profile
  */
-export const getUserProfile = async (userId: string): Promise<CommunityProfileResponse | null> => {
+export const getUserProfile = async (
+  userId: string
+): Promise<CommunityProfileResponse | null> => {
   try {
-    const response = await apiClient.api.getCommunityProfileGetUserProfile(userId)
+    const response =
+      await apiClient.api.getCommunityProfileGetUserProfile(userId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as CommunityProfileResponse
@@ -21,21 +24,26 @@ export const getUserProfile = async (userId: string): Promise<CommunityProfileRe
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as CommunityProfileResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch user profile')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch user profile'
+    )
   }
 }
 
 /**
  * Get provider profile
  */
-export const getProviderProfile = async (providerId: number): Promise<CommunityProfileResponse | null> => {
+export const getProviderProfile = async (
+  providerId: number
+): Promise<CommunityProfileResponse | null> => {
   try {
-    const response = await apiClient.api.getCommunityProfileGetProviderProfile(providerId)
+    const response =
+      await apiClient.api.getCommunityProfileGetProviderProfile(providerId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as CommunityProfileResponse
@@ -46,21 +54,30 @@ export const getProviderProfile = async (providerId: number): Promise<CommunityP
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as CommunityProfileResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch provider profile')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch provider profile'
+    )
   }
 }
 
 /**
  * Get bazaar event profile
  */
-export const getBazaarEventProfile = async (bazaarEventId: number): Promise<CommunityProfileResponse | null> => {
+export const getBazaarEventProfile = async (
+  bazaarEventId: number
+): Promise<CommunityProfileResponse | null> => {
   try {
-    const response = await apiClient.api.getCommunityProfileGetBazaarEventProfile(bazaarEventId)
+    const response =
+      await apiClient.api.getCommunityProfileGetBazaarEventProfile(
+        bazaarEventId
+      )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as CommunityProfileResponse
@@ -71,10 +88,14 @@ export const getBazaarEventProfile = async (bazaarEventId: number): Promise<Comm
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as CommunityProfileResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch bazaar event profile')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch bazaar event profile'
+    )
   }
 }
 
@@ -89,7 +110,9 @@ export const toggleLike = async (params: {
   try {
     await apiClient.api.postCommunityProfileToggleLike(params)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle like')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle like'
+    )
   }
 }
 
@@ -104,7 +127,7 @@ export const isLiked = async (params: {
   try {
     const response = await apiClient.api.getCommunityProfileIsLiked(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -115,10 +138,12 @@ export const isLiked = async (params: {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check like status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check like status'
+    )
   }
 }
 
@@ -133,7 +158,9 @@ export const toggleFollow = async (params: {
   try {
     await apiClient.api.postCommunityProfileToggleFollow(params)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle follow')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle follow'
+    )
   }
 }
 
@@ -148,7 +175,7 @@ export const isFollowing = async (params: {
   try {
     const response = await apiClient.api.getCommunityProfileIsFollowing(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -159,10 +186,12 @@ export const isFollowing = async (params: {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check follow status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check follow status'
+    )
   }
 }
 
@@ -177,7 +206,9 @@ export const toggleFavorite = async (params: {
   try {
     await apiClient.api.postCommunityProfileToggleFavorite(params)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle favorite')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle favorite'
+    )
   }
 }
 
@@ -192,7 +223,7 @@ export const isFavorited = async (params: {
   try {
     const response = await apiClient.api.getCommunityProfileIsFavorited(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -203,27 +234,11 @@ export const isFavorited = async (params: {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check favorite status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check favorite status'
+    )
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

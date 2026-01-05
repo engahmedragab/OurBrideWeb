@@ -29,14 +29,16 @@ export const ProviderHomeSection = ({
       <div className="container-custom">
         {/* Section Header */}
         <div className="mb-6">
-          <h2 className="text-24 md:text-28 font-bold text-gray-900">{title}</h2>
+          <h2 className="text-24 md:text-28 font-bold text-gray-900">
+            {title}
+          </h2>
         </div>
 
         {/* Horizontal Scrolling Cards */}
         <div className="relative">
           <div className="overflow-x-auto scrollbar-hide pb-4">
             <div className="flex gap-4">
-              {providers.map((provider) => (
+              {providers.map(provider => (
                 <ProviderHomeCard
                   key={provider.id}
                   provider={provider}
@@ -50,4 +52,3 @@ export const ProviderHomeSection = ({
     </section>
   )
 }
-

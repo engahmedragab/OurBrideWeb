@@ -72,11 +72,14 @@ export const Header = ({ className }: HeaderProps) => {
 
   // More specific active check for dropdown items to avoid conflicts
   // This ensures only the most specific matching path is highlighted
-  const isDropdownItemActive = (path: string, allDropdownPaths: Array<{ path: string }>) => {
+  const isDropdownItemActive = (
+    path: string,
+    allDropdownPaths: Array<{ path: string }>
+  ) => {
     if (pathname === path) {
       return true
     }
-    
+
     // Check if pathname starts with this dropdown item's path
     if (pathname.startsWith(path + '/')) {
       // Find if there's a more specific dropdown path that matches
@@ -84,10 +87,13 @@ export const Header = ({ className }: HeaderProps) => {
         if (otherPath.path === path) return false // Skip self
         if (otherPath.path.length <= path.length) return false // Must be longer/more specific
         // Check if the other path starts with this path and the pathname matches that other path
-        return otherPath.path.startsWith(path + '/') && 
-               (pathname === otherPath.path || pathname.startsWith(otherPath.path + '/'))
+        return (
+          otherPath.path.startsWith(path + '/') &&
+          (pathname === otherPath.path ||
+            pathname.startsWith(otherPath.path + '/'))
+        )
       })
-      
+
       // Only return true if there's no more specific match
       return !moreSpecificMatch
     }
@@ -95,9 +101,12 @@ export const Header = ({ className }: HeaderProps) => {
   }
 
   // Check if parent menu item should be active (only if dropdown item is active)
-  const isParentActive = (itemPath: string, dropdownItems: Array<{ path: string }>) => {
+  const isParentActive = (
+    itemPath: string,
+    dropdownItems: Array<{ path: string }>
+  ) => {
     // Check if any dropdown item is active
-    return dropdownItems.some(dropdownItem => 
+    return dropdownItems.some(dropdownItem =>
       isDropdownItemActive(dropdownItem.path, dropdownItems)
     )
   }
@@ -155,7 +164,7 @@ export const Header = ({ className }: HeaderProps) => {
           <Link
             href="/"
             className={cn(
-              'flex items-center gap-2 transition-opacity duration-150',
+              'flex items-center gap-2 transition-opacity duration-150'
               // 'hover:opacity-80',
               // 'focus:outline-none rounded-md'
             )}
@@ -173,19 +182,82 @@ export const Header = ({ className }: HeaderProps) => {
           <ClientOnly>
             <NavigationMenu className="hidden md:flex">
               <NavigationMenuList className="gap-0.5 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm h-12">
-              {navigationItems.map(item => {
-                const Icon = item.icon
-                // For dropdown items, check if any dropdown item is active instead of the parent path
-                const active = item.hasDropdown 
-                  ? isParentActive(item.path, item.dropdownItems || [])
-                  : isActive(item.path)
+                {navigationItems.map(item => {
+                  const Icon = item.icon
+                  // For dropdown items, check if any dropdown item is active instead of the parent path
+                  const active = item.hasDropdown
+                    ? isParentActive(item.path, item.dropdownItems || [])
+                    : isActive(item.path)
 
-                if (item.hasDropdown) {
+                  if (item.hasDropdown) {
+                    return (
+                      <NavigationMenuItem key={item.path}>
+                        <NavigationMenuTrigger
+                          className={cn(
+                            'gap-2 rounded-md px-3 py-2 text-16 font-semibold transition-colors duration-150',
+                            'hover:bg-brand-50/50 hover:text-brand-600',
+                            'focus:outline-none',
+                            active
+                              ? 'bg-brand-50/70 text-brand-600'
+                              : 'text-gray-700'
+                          )}
+                        >
+                          <Icon
+                            className={cn(
+                              'h-5 w-5 transition-colors duration-150',
+                              active
+                                ? 'text-brand-600'
+                                : 'text-gray-500 group-hover:text-brand-600'
+                            )}
+                          />
+                          {item.label}
+                        </NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <div className="w-56 p-1.5 bg-white rounded-lg shadow-lg border border-gray-100">
+                            {item.dropdownItems?.map(dropdownItem => {
+                              const isDropdownActive = isDropdownItemActive(
+                                dropdownItem.path,
+                                item.dropdownItems || []
+                              )
+                              return (
+                                <Link
+                                  key={dropdownItem.path}
+                                  href={dropdownItem.path}
+                                  className={cn(
+                                    'group relative flex items-center gap-3 rounded-md px-3 py-2 text-14 font-medium',
+                                    'transition-colors duration-150',
+                                    'hover:text-brand-600',
+                                    'focus:outline-none',
+                                    isDropdownActive
+                                      ? 'text-brand-600 font-semibold'
+                                      : 'text-gray-700 hover:text-brand-600'
+                                  )}
+                                >
+                                  {isDropdownActive && (
+                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-brand-600 rounded-r-full" />
+                                  )}
+                                  <span className="flex-1">
+                                    {dropdownItem.label}
+                                  </span>
+                                  {isDropdownActive && (
+                                    <div className="w-1.5 h-1.5 rounded-full bg-brand-600" />
+                                  )}
+                                </Link>
+                              )
+                            })}
+                          </div>
+                        </NavigationMenuContent>
+                      </NavigationMenuItem>
+                    )
+                  }
+
                   return (
                     <NavigationMenuItem key={item.path}>
-                      <NavigationMenuTrigger
+                      <Link
+                        href={item.path}
                         className={cn(
-                          'gap-2 rounded-md px-3 py-2 text-16 font-semibold transition-colors duration-150',
+                          'group relative flex items-center gap-2 rounded-full px-3 py-2 text-16 font-semibold',
+                          'transition-colors duration-150',
                           'hover:bg-brand-50/50 hover:text-brand-600',
                           'focus:outline-none',
                           active
@@ -202,71 +274,13 @@ export const Header = ({ className }: HeaderProps) => {
                           )}
                         />
                         {item.label}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <div className="w-56 p-1.5 bg-white rounded-lg shadow-lg border border-gray-100">
-                          {item.dropdownItems?.map(dropdownItem => {
-                            const isDropdownActive = isDropdownItemActive(dropdownItem.path, item.dropdownItems || [])
-                            return (
-                              <Link
-                                key={dropdownItem.path}
-                                href={dropdownItem.path}
-                                className={cn(
-                                  'group relative flex items-center gap-3 rounded-md px-3 py-2 text-14 font-medium',
-                                  'transition-colors duration-150',
-                                  'hover:text-brand-600',
-                                  'focus:outline-none',
-                                  isDropdownActive
-                                    ? 'text-brand-600 font-semibold'
-                                    : 'text-gray-700 hover:text-brand-600'
-                                )}
-                              >
-                                {isDropdownActive && (
-                                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-brand-600 rounded-r-full" />
-                                )}
-                                <span className="flex-1">
-                                  {dropdownItem.label}
-                                </span>
-                                {isDropdownActive && (
-                                  <div className="w-1.5 h-1.5 rounded-full bg-brand-600" />
-                                )}
-                              </Link>
-                            )
-                          })}
-                        </div>
-                      </NavigationMenuContent>
+                        {active && (
+                          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-brand-600 rounded-full" />
+                        )}
+                      </Link>
                     </NavigationMenuItem>
                   )
-                }
-
-                return (
-                  <NavigationMenuItem key={item.path}>
-                    <Link
-                      href={item.path}
-                      className={cn(
-                        'group relative flex items-center gap-2 rounded-full px-3 py-2 text-16 font-semibold',
-                        'transition-colors duration-150',
-                        'hover:bg-brand-50/50 hover:text-brand-600',
-                        'focus:outline-none',
-                        active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-700'
-                      )}
-                    >
-                      <Icon
-                        className={cn(
-                          'h-5 w-5 transition-colors duration-150',
-                          active
-                            ? 'text-brand-600'
-                            : 'text-gray-500 group-hover:text-brand-600'
-                        )}
-                      />
-                      {item.label}
-                      {active && (
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-brand-600 rounded-full" />
-                      )}
-                    </Link>
-                  </NavigationMenuItem>
-                )
-              })}
+                })}
               </NavigationMenuList>
             </NavigationMenu>
           </ClientOnly>
@@ -302,7 +316,6 @@ export const Header = ({ className }: HeaderProps) => {
             >
               <Menu className="h-7 w-7 text-brand-500" />
             </Button>
-
 
             {/* Wishlist, Notifications, and Cart Group */}
             <div className="hidden md:flex items-center rounded-full border border-brand-500 bg-transparent px-1">
@@ -445,7 +458,7 @@ export const Header = ({ className }: HeaderProps) => {
           {navigationItems.map(item => {
             const Icon = item.icon
             // For dropdown items, check if any dropdown item is active instead of the parent path
-            const active = item.hasDropdown 
+            const active = item.hasDropdown
               ? isParentActive(item.path, item.dropdownItems || [])
               : isActive(item.path)
 
@@ -469,7 +482,10 @@ export const Header = ({ className }: HeaderProps) => {
                   </Link>
                   <div className="ml-7 space-y-1">
                     {item.dropdownItems?.map(dropdownItem => {
-                      const isDropdownActive = isDropdownItemActive(dropdownItem.path, item.dropdownItems || [])
+                      const isDropdownActive = isDropdownItemActive(
+                        dropdownItem.path,
+                        item.dropdownItems || []
+                      )
                       return (
                         <Link
                           key={dropdownItem.path}

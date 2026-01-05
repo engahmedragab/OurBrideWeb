@@ -9,19 +9,17 @@ import type { UnifiedCommunityContentResponse } from '@/types/responses/communit
 /**
  * Hook to search unified community content
  */
-export const useUnifiedContentSearch = (
-  params?: {
-    categoryId?: number
-    itemId?: number
-    preparationId?: number
-    providerId?: number
-    bazaarEventId?: number
-    tagIds?: string
-    page?: number
-    pageSize?: number
-    enabled?: boolean
-  }
-) => {
+export const useUnifiedContentSearch = (params?: {
+  categoryId?: number
+  itemId?: number
+  preparationId?: number
+  providerId?: number
+  bazaarEventId?: number
+  tagIds?: string
+  page?: number
+  pageSize?: number
+  enabled?: boolean
+}) => {
   const { enabled = true, ...searchParams } = params || {}
 
   return useQuery<UnifiedCommunityContentResponse[]>({
@@ -34,5 +32,3 @@ export const useUnifiedContentSearch = (
     refetchOnWindowFocus: false,
   })
 }
-
-

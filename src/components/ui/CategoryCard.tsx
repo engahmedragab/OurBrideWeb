@@ -37,7 +37,8 @@ export const CategoryCard = ({
       >
         {icon && (
           <div className="relative w-[80px] h-[80px] flex-shrink-0">
-            {typeof icon === 'string' || (icon && typeof icon === 'object' && 'src' in icon) ? (
+            {typeof icon === 'string' ||
+            (icon && typeof icon === 'object' && 'src' in icon) ? (
               <Image
                 src={typeof icon === 'string' ? icon : icon.src}
                 alt={title}
@@ -61,5 +62,3 @@ export const CategoryCard = ({
     </Link>
   )
 }
-
-

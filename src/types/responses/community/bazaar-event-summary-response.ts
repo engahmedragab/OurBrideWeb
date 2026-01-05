@@ -7,13 +7,3 @@ export interface BazaarEventSummaryResponse {
   name: string
   slug: string
 }
-
-
-
-
-
-
-
-
-
-

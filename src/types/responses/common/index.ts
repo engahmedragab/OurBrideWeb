@@ -44,5 +44,3 @@ export {
   ResourceType,
   ResourceStatus,
 } from '@/../client/common/api/gen/ourbride-api'
-
-

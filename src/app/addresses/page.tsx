@@ -10,7 +10,13 @@ import {
   Button,
   EmptyState,
 } from '@/components/ui'
-import { useAddresses, useDeleteAddress, useCreateAddress, useUpdateAddress, useSetDefaultAddress } from '@/hooks'
+import {
+  useAddresses,
+  useDeleteAddress,
+  useCreateAddress,
+  useUpdateAddress,
+  useSetDefaultAddress,
+} from '@/hooks'
 import type { DeliveryAddressResponse } from '@/types/responses'
 import { MapPin, Plus, Edit, Trash2, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -20,7 +26,8 @@ import orderEmptySvg from '@/assets/svg/order-empty.svg'
 export default function AddressesPage() {
   const { addToast } = useToast()
   const [showAddressModal, setShowAddressModal] = useState(false)
-  const [editingAddress, setEditingAddress] = useState<DeliveryAddressResponse | null>(null)
+  const [editingAddress, setEditingAddress] =
+    useState<DeliveryAddressResponse | null>(null)
   const [isMounted, setIsMounted] = useState(false)
 
   // Track mount state to prevent hydration mismatch
@@ -30,7 +37,11 @@ export default function AddressesPage() {
 
   // Fetch addresses - disable during SSR to prevent hydration mismatch
   const addressesQuery = useAddresses({ enabled: isMounted })
-  const { data: addresses = [], isLoading: isLoadingAddresses, error: addressesError } = addressesQuery
+  const {
+    data: addresses = [],
+    isLoading: isLoadingAddresses,
+    error: addressesError,
+  } = addressesQuery
   const deleteAddressMutation = useDeleteAddress()
   const createAddressMutation = useCreateAddress()
   const updateAddressMutation = useUpdateAddress()
@@ -70,7 +81,9 @@ export default function AddressesPage() {
     } catch (error) {
       console.error('Failed to set default address:', error)
       addToast(
-        error instanceof Error ? error.message : 'Failed to set default address',
+        error instanceof Error
+          ? error.message
+          : 'Failed to set default address',
         'error'
       )
     }
@@ -170,25 +183,31 @@ export default function AddressesPage() {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {addresses.map((address) => (
+          {addresses.map(address => (
             <div
               key={address.id}
               className={cn(
                 'bg-white border-2 rounded-lg p-5 hover:border-brand-400 transition-all shadow-sm hover:shadow-md',
-                address.isDefault ? 'border-brand-400 shadow-brand-100' : 'border-gray-200'
+                address.isDefault
+                  ? 'border-brand-400 shadow-brand-100'
+                  : 'border-gray-200'
               )}
             >
               {/* Address Header */}
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-start gap-2 flex-1 min-w-0">
-                  <div className={cn(
-                    'h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0',
-                    address.isDefault ? 'bg-brand-100' : 'bg-gray-100'
-                  )}>
-                    <MapPin className={cn(
-                      'h-5 w-5',
-                      address.isDefault ? 'text-brand-600' : 'text-gray-600'
-                    )} />
+                  <div
+                    className={cn(
+                      'h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0',
+                      address.isDefault ? 'bg-brand-100' : 'bg-gray-100'
+                    )}
+                  >
+                    <MapPin
+                      className={cn(
+                        'h-5 w-5',
+                        address.isDefault ? 'text-brand-600' : 'text-gray-600'
+                      )}
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-16 font-semibold text-gray-900 truncate">
@@ -197,7 +216,9 @@ export default function AddressesPage() {
                     {address.isDefault && (
                       <div className="flex items-center gap-1 mt-1">
                         <Star className="h-3 w-3 fill-brand-600 text-brand-600" />
-                        <span className="text-10 font-medium text-brand-600">Default Address</span>
+                        <span className="text-10 font-medium text-brand-600">
+                          Default Address
+                        </span>
                       </div>
                     )}
                   </div>
@@ -221,17 +242,20 @@ export default function AddressesPage() {
                 <div className="flex flex-col gap-1 pt-2 border-t border-gray-100">
                   {address.contactNumber1 && (
                     <p className="text-13 text-gray-600 flex items-center gap-1">
-                      <span className="font-medium">Phone:</span> {address.contactNumber1}
+                      <span className="font-medium">Phone:</span>{' '}
+                      {address.contactNumber1}
                     </p>
                   )}
                   {address.contactNumber2 && (
                     <p className="text-13 text-gray-600 flex items-center gap-1">
-                      <span className="font-medium">Alt:</span> {address.contactNumber2}
+                      <span className="font-medium">Alt:</span>{' '}
+                      {address.contactNumber2}
                     </p>
                   )}
                   {address.email && (
                     <p className="text-13 text-gray-600 flex items-center gap-1">
-                      <span className="font-medium">Email:</span> {address.email}
+                      <span className="font-medium">Email:</span>{' '}
+                      {address.email}
                     </p>
                   )}
                 </div>
@@ -302,7 +326,8 @@ export default function AddressesPage() {
             ? 'Deleting address...'
             : setDefaultAddressMutation.isPending
               ? 'Setting default address...'
-              : createAddressMutation.isPending || updateAddressMutation.isPending
+              : createAddressMutation.isPending ||
+                  updateAddressMutation.isPending
                 ? 'Saving address...'
                 : 'Processing...'
         }
@@ -311,4 +336,3 @@ export default function AddressesPage() {
     </UserPageLayout>
   )
 }
-

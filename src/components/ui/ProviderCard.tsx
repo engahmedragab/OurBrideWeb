@@ -86,7 +86,9 @@ export const ProviderCard = ({
                   : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
               )}
               aria-label={
-                isInFavorite || provider.isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                isInFavorite || provider.isFavorite
+                  ? 'Remove from favorites'
+                  : 'Add to favorites'
               }
             >
               <Star
@@ -114,7 +116,9 @@ export const ProviderCard = ({
                   ? 'border-brand-500 bg-brand-500'
                   : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
               )}
-              aria-label={isFollowed || provider.isFollowed ? 'Unfollow' : 'Follow'}
+              aria-label={
+                isFollowed || provider.isFollowed ? 'Unfollow' : 'Follow'
+              }
             >
               <UserPlus
                 className={cn(
@@ -133,7 +137,7 @@ export const ProviderCard = ({
       <Link
         href={`/provider/${provider.id}`}
         className="relative w-28 h-28 block hover:opacity-90 transition-opacity"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         {/* Image with inner border */}
         <div className="relative w-full h-full rounded-full border-2 border-pink-200 overflow-hidden shadow-[0_0_0_4px_rgba(251,207,232,0.4),0_0_0_6px_rgba(251,207,232,0.2)]">
@@ -160,14 +164,14 @@ export const ProviderCard = ({
         <Link
           href={`/provider/${provider.id}`}
           className="text-20 font-normal text-gray-900 hover:text-brand-500 transition-colors"
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           {provider.name}
         </Link>
         {provider.verified && (
           <Link
             href={`/provider/${provider.id}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
             className="flex-shrink-0"
             aria-label="Verified provider"
           >

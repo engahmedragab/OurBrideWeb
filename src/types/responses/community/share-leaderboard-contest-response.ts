@@ -8,19 +8,3 @@ export interface ShareLeaderboardContestResponse {
   fullUrl: string
   shareCount: number
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

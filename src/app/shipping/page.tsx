@@ -14,7 +14,8 @@ import {
 
 export const metadata: Metadata = {
   title: 'Shipping Information | OurBride',
-  description: 'Learn about OurBride shipping policies, delivery times, and tracking information',
+  description:
+    'Learn about OurBride shipping policies, delivery times, and tracking information',
 }
 
 export default function ShippingPage() {
@@ -36,7 +37,8 @@ export default function ShippingPage() {
               </div>
               <div className="w-20 h-1 bg-brand-500 mx-auto md:mx-0" />
               <p className="text-16 text-gray-600 mt-4 max-w-2xl">
-                Everything you need to know about shipping, delivery, and tracking your orders
+                Everything you need to know about shipping, delivery, and
+                tracking your orders
               </p>
             </div>
 
@@ -56,19 +58,24 @@ export default function ShippingPage() {
                   <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
                     <div className="flex items-center gap-2 mb-2">
                       <Package className="h-5 w-5 text-blue-600" />
-                      <h3 className="text-16 font-normal text-gray-900">Standard Shipping</h3>
+                      <h3 className="text-16 font-normal text-gray-900">
+                        Standard Shipping
+                      </h3>
                     </div>
                     <p className="text-14 text-gray-700 leading-relaxed mb-2">
                       5-7 business days
                     </p>
                     <p className="text-13 text-gray-600">
-                      Delivery times may vary based on location and product availability.
+                      Delivery times may vary based on location and product
+                      availability.
                     </p>
                   </div>
                   <div className="bg-green-50 rounded-lg p-4 border border-green-100">
                     <div className="flex items-center gap-2 mb-2">
                       <Truck className="h-5 w-5 text-green-600" />
-                      <h3 className="text-16 font-normal text-gray-900">Express Shipping</h3>
+                      <h3 className="text-16 font-normal text-gray-900">
+                        Express Shipping
+                      </h3>
                     </div>
                     <p className="text-14 text-gray-700 leading-relaxed mb-2">
                       2-3 business days
@@ -80,7 +87,9 @@ export default function ShippingPage() {
                   <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
                     <div className="flex items-center gap-2 mb-2">
                       <MapPin className="h-5 w-5 text-purple-600" />
-                      <h3 className="text-16 font-normal text-gray-900">International</h3>
+                      <h3 className="text-16 font-normal text-gray-900">
+                        International
+                      </h3>
                     </div>
                     <p className="text-14 text-gray-700 leading-relaxed mb-2">
                       10-21 business days
@@ -110,10 +119,14 @@ export default function ShippingPage() {
                     <li>Product weight and dimensions</li>
                     <li>Delivery address</li>
                     <li>Selected shipping method</li>
-                    <li>Order value (free shipping may apply for orders above a certain amount)</li>
+                    <li>
+                      Order value (free shipping may apply for orders above a
+                      certain amount)
+                    </li>
                   </ul>
                   <p className="text-16 text-gray-700 leading-relaxed mt-4">
-                    You can view the exact shipping cost before completing your purchase.
+                    You can view the exact shipping cost before completing your
+                    purchase.
                   </p>
                 </div>
               </section>
@@ -129,12 +142,19 @@ export default function ShippingPage() {
                   </h2>
                 </div>
                 <p className="text-16 text-gray-700 leading-relaxed mb-4">
-                  Once your order ships, you will receive a tracking number via email. You can use this tracking number 
-                  to monitor your package&apos;s journey from our warehouse to your doorstep.
+                  Once your order ships, you will receive a tracking number via
+                  email. You can use this tracking number to monitor your
+                  package&apos;s journey from our warehouse to your doorstep.
                 </p>
                 <p className="text-16 text-gray-700 leading-relaxed">
-                  Track your order by visiting the <a href="/orders" className="text-brand-500 hover:text-brand-600 underline">Orders</a> page 
-                  in your account dashboard.
+                  Track your order by visiting the{' '}
+                  <a
+                    href="/orders"
+                    className="text-brand-500 hover:text-brand-600 underline"
+                  >
+                    Orders
+                  </a>{' '}
+                  page in your account dashboard.
                 </p>
               </section>
 
@@ -149,11 +169,19 @@ export default function ShippingPage() {
                   </h2>
                 </div>
                 <p className="text-16 text-gray-700 leading-relaxed mb-4">
-                  Please ensure your delivery address is complete and accurate. We are not responsible for delays or 
-                  lost packages due to incorrect address information.
+                  Please ensure your delivery address is complete and accurate.
+                  We are not responsible for delays or lost packages due to
+                  incorrect address information.
                 </p>
                 <p className="text-16 text-gray-700 leading-relaxed">
-                  You can update your shipping addresses in your <a href="/addresses" className="text-brand-500 hover:text-brand-600 underline">Addresses</a> page.
+                  You can update your shipping addresses in your{' '}
+                  <a
+                    href="/addresses"
+                    className="text-brand-500 hover:text-brand-600 underline"
+                  >
+                    Addresses
+                  </a>{' '}
+                  page.
                 </p>
               </section>
 
@@ -171,19 +199,25 @@ export default function ShippingPage() {
                   <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-100">
                     <div className="flex items-center gap-2 mb-2">
                       <Package className="h-5 w-5 text-yellow-600" />
-                      <h3 className="text-16 font-normal text-gray-900">Fragile Items</h3>
+                      <h3 className="text-16 font-normal text-gray-900">
+                        Fragile Items
+                      </h3>
                     </div>
                     <p className="text-14 text-gray-700 leading-relaxed">
-                      Carefully packaged with extra protection. Please inspect upon delivery and report any damage immediately.
+                      Carefully packaged with extra protection. Please inspect
+                      upon delivery and report any damage immediately.
                     </p>
                   </div>
                   <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
                     <div className="flex items-center gap-2 mb-2">
                       <CheckCircle2 className="h-5 w-5 text-blue-600" />
-                      <h3 className="text-16 font-normal text-gray-900">Signature Required</h3>
+                      <h3 className="text-16 font-normal text-gray-900">
+                        Signature Required
+                      </h3>
                     </div>
                     <p className="text-14 text-gray-700 leading-relaxed">
-                      Some high-value orders may require a signature. You will be notified if signature confirmation is needed.
+                      Some high-value orders may require a signature. You will
+                      be notified if signature confirmation is needed.
                     </p>
                   </div>
                 </div>
@@ -200,7 +234,8 @@ export default function ShippingPage() {
                   </h2>
                 </div>
                 <p className="text-16 text-gray-700 leading-relaxed mb-4">
-                  If you have any questions about shipping or need assistance with your order, we&apos;re here to help.
+                  If you have any questions about shipping or need assistance
+                  with your order, we&apos;re here to help.
                 </p>
                 <a
                   href="/dashboard/help-center"
@@ -218,4 +253,3 @@ export default function ShippingPage() {
     </div>
   )
 }
-

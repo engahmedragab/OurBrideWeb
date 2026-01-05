@@ -101,7 +101,7 @@ export const useFollowsBySource = (
 export const useCreateFollow = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       data: CreateFollowRequest
@@ -109,7 +109,7 @@ export const useCreateFollow = () => {
     }): Promise<FollowResponse> => {
       return await createFollow(data.data, data.query)
     },
-    onSuccess: (response) => {
+    onSuccess: response => {
       queryClient.invalidateQueries({ queryKey: ['follows'] })
       const { message, type } = handleApiResponseForToast(
         response,
@@ -118,8 +118,9 @@ export const useCreateFollow = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to follow'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to follow'
       addToast(errorMessage, 'error')
     },
   })
@@ -131,7 +132,7 @@ export const useCreateFollow = () => {
 export const useUpdateFollow = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -150,8 +151,9 @@ export const useUpdateFollow = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update follow'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to update follow'
       addToast(errorMessage, 'error')
     },
   })
@@ -163,7 +165,7 @@ export const useUpdateFollow = () => {
 export const useDeleteFollow = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -177,8 +179,9 @@ export const useDeleteFollow = () => {
       queryClient.removeQueries({ queryKey: ['follow', variables.id] })
       addToast('Unfollowed successfully', 'success')
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to unfollow'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to unfollow'
       addToast(errorMessage, 'error')
     },
   })

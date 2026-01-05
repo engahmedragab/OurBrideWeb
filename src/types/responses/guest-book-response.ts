@@ -21,5 +21,3 @@ export interface GuestBookResponse extends BookResponse<GuestLineResponse> {
   maxBrideNumber?: number
   maxGroomNumber?: number
 }
-
-

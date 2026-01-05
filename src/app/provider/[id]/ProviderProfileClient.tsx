@@ -25,9 +25,15 @@ import { Button } from '@/components/ui/Button'
 import { LoadingSpinner, ErrorDisplay } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { formatRole } from '@/utils/role'
-import { useProviderBranchPortfolio, useProviderTeamMemberPortfolio } from '@/hooks/providers/useProviderPortfolio'
+import {
+  useProviderBranchPortfolio,
+  useProviderTeamMemberPortfolio,
+} from '@/hooks/providers/useProviderPortfolio'
 import { useProviderPublicProfile } from '@/hooks/providers/useProviderPublicProfile'
-import { useToggleProviderFollow, useToggleProviderFavorite } from '@/hooks/providers/useProviderInteractions'
+import {
+  useToggleProviderFollow,
+  useToggleProviderFavorite,
+} from '@/hooks/providers/useProviderInteractions'
 import { useFavoriteItems, useFollowItems } from '@/hooks'
 import { useToast } from '@/components/ui/Toaster'
 import { PortfolioModal } from '@/components/ui/PortfolioModal'
@@ -46,10 +52,25 @@ export function ProviderProfileClient({
 }: ProviderProfileClientProps) {
   const router = useRouter()
   const { addToast } = useToast()
-  const [activeTab, setActiveTab] = useState<'services' | 'products' | 'branches' | 'team' | 'reviews' | 'about' | 'location' | 'opening-times' | 'links' | 'additional-info'>('services')
+  const [activeTab, setActiveTab] = useState<
+    | 'services'
+    | 'products'
+    | 'branches'
+    | 'team'
+    | 'reviews'
+    | 'about'
+    | 'location'
+    | 'opening-times'
+    | 'links'
+    | 'additional-info'
+  >('services')
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
-  const [selectedBranchForPortfolio, setSelectedBranchForPortfolio] = useState<{ id: string; name: string } | null>(null)
-  const [selectedTeamMemberForPortfolio, setSelectedTeamMemberForPortfolio] = useState<{ id: string; name: string; role: string } | null>(null)
+  const [selectedBranchForPortfolio, setSelectedBranchForPortfolio] = useState<{
+    id: string
+    name: string
+  } | null>(null)
+  const [selectedTeamMemberForPortfolio, setSelectedTeamMemberForPortfolio] =
+    useState<{ id: string; name: string; role: string } | null>(null)
 
   // Follow and Favorite hooks - only mutations, no automatic fetching
   const toggleFollow = useToggleProviderFollow()
@@ -65,7 +86,11 @@ export function ProviderProfileClient({
   const sectionRefs = React.useRef<{ [key: string]: HTMLDivElement | null }>({})
 
   // Fetch provider public profile data from API - MUST be called before any conditional returns
-  const { data: providerData, isLoading, error } = useProviderPublicProfile(parseInt(providerId))
+  const {
+    data: providerData,
+    isLoading,
+    error,
+  } = useProviderPublicProfile(parseInt(providerId))
 
   // Update local state when providerData changes (if it includes follow/favorite status)
   React.useEffect(() => {
@@ -98,14 +123,16 @@ export function ProviderProfileClient({
   // Use publicBannerImageUrl first, then media
   const photos = providerData
     ? [
-      ...(providerData.publicBannerImageUrl ? [providerData.publicBannerImageUrl] : []),
-      ...(providerData.media || [])
-        .map(m => {
-          const url = m?.url || m?.thumbnailUrl || m?.previewUrl
-          return typeof url === 'string' ? url : null
-        })
-        .filter((url): url is string => url !== null && url.trim() !== ''),
-    ]
+        ...(providerData.publicBannerImageUrl
+          ? [providerData.publicBannerImageUrl]
+          : []),
+        ...(providerData.media || [])
+          .map(m => {
+            const url = m?.url || m?.thumbnailUrl || m?.previewUrl
+            return typeof url === 'string' ? url : null
+          })
+          .filter((url): url is string => url !== null && url.trim() !== ''),
+      ]
     : []
 
   // Reset photo index if current index is out of bounds
@@ -145,48 +172,55 @@ export function ProviderProfileClient({
   }, [activeTab])
 
   // Handle follow toggle - MUST be called before conditional returns
-  const handleFollowToggle = React.useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (toggleFollow.isPending) return
+  const handleFollowToggle = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      if (toggleFollow.isPending) return
 
-    // Optimistic update
-    const newFollowState = !isFollowed
-    setIsFollowed(newFollowState)
+      // Optimistic update
+      const newFollowState = !isFollowed
+      setIsFollowed(newFollowState)
 
-    // Call API
-    toggleFollow.mutate(providerIdNum, {
-      onError: () => {
-        // Revert on error
-        setIsFollowed(!newFollowState)
-      }
-    })
-  }, [toggleFollow, providerIdNum, isFollowed])
+      // Call API
+      toggleFollow.mutate(providerIdNum, {
+        onError: () => {
+          // Revert on error
+          setIsFollowed(!newFollowState)
+        },
+      })
+    },
+    [toggleFollow, providerIdNum, isFollowed]
+  )
 
   // Handle favorite toggle - MUST be called before conditional returns
-  const handleFavoriteToggle = React.useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (toggleFavorite.isPending) return
+  const handleFavoriteToggle = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      if (toggleFavorite.isPending) return
 
-    // Optimistic update
-    const newFavoriteState = !isFavorite
-    setIsFavorite(newFavoriteState)
+      // Optimistic update
+      const newFavoriteState = !isFavorite
+      setIsFavorite(newFavoriteState)
 
-    // Call API
-    toggleFavorite.mutate(providerIdNum, {
-      onError: () => {
-        // Revert on error
-        setIsFavorite(!newFavoriteState)
-      }
-    })
-  }, [toggleFavorite, providerIdNum, isFavorite])
+      // Call API
+      toggleFavorite.mutate(providerIdNum, {
+        onError: () => {
+          // Revert on error
+          setIsFavorite(!newFavoriteState)
+        },
+      })
+    },
+    [toggleFavorite, providerIdNum, isFavorite]
+  )
 
   // Handle share - MUST be called before conditional returns
   const handleShare = React.useCallback(async () => {
     if (!providerData) return
 
-    const providerName = providerData.nameEn || providerData.nameAr || 'Provider'
+    const providerName =
+      providerData.nameEn || providerData.nameAr || 'Provider'
     const shareData = {
       title: `${providerName} - OurBride`,
       text: `Check out ${providerName} on OurBride`,
@@ -194,7 +228,11 @@ export function ProviderProfileClient({
     }
 
     try {
-      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      if (
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare(shareData)
+      ) {
         await navigator.share(shareData)
         addToast('Shared successfully!', 'success')
       } else {
@@ -263,22 +301,30 @@ export function ProviderProfileClient({
     totalViews: providerData.totalViews || 0,
     likes: providerData.likes || 0,
     address: providerData.address
-      ? providerData.address.addressEn || providerData.address.addressAr || providerData.address.street || providerData.shortAddress || ''
+      ? providerData.address.addressEn ||
+        providerData.address.addressAr ||
+        providerData.address.street ||
+        providerData.shortAddress ||
+        ''
       : providerData.shortAddress || '',
     fullAddress: providerData.address
       ? [
-        providerData.address.street,
-        providerData.address.building,
-        providerData.address.floor,
-        providerData.address.apartment,
-        providerData.address.landmark,
-        providerData.address.cityName,
-        providerData.address.countryName,
-      ]
-        .filter(Boolean)
-        .join(', ')
+          providerData.address.street,
+          providerData.address.building,
+          providerData.address.floor,
+          providerData.address.apartment,
+          providerData.address.landmark,
+          providerData.address.cityName,
+          providerData.address.countryName,
+        ]
+          .filter(Boolean)
+          .join(', ')
       : providerData.shortAddress || '',
-    neighborhood: providerData.address?.regionName || providerData.address?.cityName || providerData.shortAddress || '',
+    neighborhood:
+      providerData.address?.regionName ||
+      providerData.address?.cityName ||
+      providerData.shortAddress ||
+      '',
     isVerified: providerData.isVerified,
     providerStatus: providerData.providerStatus,
     publicProfileSlug: providerData.publicProfileSlug,
@@ -287,7 +333,8 @@ export function ProviderProfileClient({
     photos,
     description: providerData.descriptionEn || providerData.descriptionAr || '',
     phoneNumber: providerData.phoneNumber || '',
-    profileURL: providerData.profileURL || providerData.publicLogoImageUrl || '',
+    profileURL:
+      providerData.profileURL || providerData.publicLogoImageUrl || '',
     publicLogoImageUrl: providerData.publicLogoImageUrl,
     publicBannerImageUrl: providerData.publicBannerImageUrl,
     branches: (providerData.branches || []).map(branch => ({
@@ -296,22 +343,29 @@ export function ProviderProfileClient({
       nameAr: branch.nameAr || '',
       nameEn: branch.nameEn || '',
       address: branch.address
-        ? branch.address.addressEn || branch.address.addressAr || branch.address.street || ''
+        ? branch.address.addressEn ||
+          branch.address.addressAr ||
+          branch.address.street ||
+          ''
         : '',
       fullAddress: branch.address
         ? [
-          branch.address.street,
-          branch.address.building,
-          branch.address.floor,
-          branch.address.apartment,
-          branch.address.landmark,
-          branch.address.cityName,
-          branch.address.countryName,
-        ]
-          .filter(Boolean)
-          .join(', ')
+            branch.address.street,
+            branch.address.building,
+            branch.address.floor,
+            branch.address.apartment,
+            branch.address.landmark,
+            branch.address.cityName,
+            branch.address.countryName,
+          ]
+            .filter(Boolean)
+            .join(', ')
         : '',
-      phone: branch.phoneNumber || branch.phoneNumber2 || providerData.phoneNumber || '',
+      phone:
+        branch.phoneNumber ||
+        branch.phoneNumber2 ||
+        providerData.phoneNumber ||
+        '',
       phone2: branch.phoneNumber2 || '',
       isOpen: branch.isActive ?? true,
       isMain: branch.isMain ?? false,
@@ -323,9 +377,16 @@ export function ProviderProfileClient({
     reviews: (providerData.reviews || []).map(review => ({
       id: review.id?.toString() || '',
       userName: review.nameEn || review.nameAr || review.title || 'User',
-      date: review.creationDate ? new Date(review.creationDate).toLocaleDateString() : '',
+      date: review.creationDate
+        ? new Date(review.creationDate).toLocaleDateString()
+        : '',
       rating: review.rate || 0,
-      text: review.comment || review.descriptionEn || review.descriptionAr || review.summary || '',
+      text:
+        review.comment ||
+        review.descriptionEn ||
+        review.descriptionAr ||
+        review.summary ||
+        '',
       title: review.title || '',
       likes: review.likes || 0,
       isVerified: review.isVerified || false,
@@ -382,14 +443,27 @@ export function ProviderProfileClient({
         name: product.nameEn || product.nameAr || product.name || 'Product',
         nameAr: product.nameAr || '',
         nameEn: product.nameEn || '',
-        description: product.shortDescriptionEn || product.shortDescriptionAr || product.shortDescription || product.bioEn || product.bioAr || product.bio || '',
+        description:
+          product.shortDescriptionEn ||
+          product.shortDescriptionAr ||
+          product.shortDescription ||
+          product.bioEn ||
+          product.bioAr ||
+          product.bio ||
+          '',
         image: imageUrl || '',
         price: product.salePrice || product.price || product.regularPrice || 0,
-        originalPrice: product.hasDiscount && product.regularPrice ? product.regularPrice : undefined,
+        originalPrice:
+          product.hasDiscount && product.regularPrice
+            ? product.regularPrice
+            : undefined,
         currency: DEFAULT_CURRENCY,
         inStock: product.inStock ?? false,
         stock: product.stockQuantity,
-        rate: typeof product.rate === 'string' ? parseFloat(product.rate) || 0 : (product.rate || 0),
+        rate:
+          typeof product.rate === 'string'
+            ? parseFloat(product.rate) || 0
+            : product.rate || 0,
         likes: product.likes || 0,
         hasDiscount: product.hasDiscount || false,
         isFeatured: product.isFeatured || false,
@@ -397,10 +471,21 @@ export function ProviderProfileClient({
       }
     }),
     openingHours: (providerData.workingTimes || []).map(wt => {
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+      const days = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+      ]
       return {
         day: days[wt.dayOfWeek] || '',
-        hours: wt.start && wt.end ? `${new Date(wt.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} - ${new Date(wt.end).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}` : 'Closed',
+        hours:
+          wt.start && wt.end
+            ? `${new Date(wt.start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} - ${new Date(wt.end).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`
+            : 'Closed',
         start: wt.start,
         end: wt.end,
       }
@@ -419,9 +504,7 @@ export function ProviderProfileClient({
 
   const prevPhoto = () => {
     if (photos.length === 0) return
-    setCurrentPhotoIndex(
-      prev => (prev - 1 + photos.length) % photos.length
-    )
+    setCurrentPhotoIndex(prev => (prev - 1 + photos.length) % photos.length)
   }
 
   return (
@@ -511,36 +594,40 @@ export function ProviderProfileClient({
                   Share
                 </Button>
                 <Button
-                  variant={isFollowed ? "brand" : "outline"}
+                  variant={isFollowed ? 'brand' : 'outline'}
                   size="md"
                   className={cn(
-                    "flex items-center gap-2",
-                    isFollowed && "!text-white"
+                    'flex items-center gap-2',
+                    isFollowed && '!text-white'
                   )}
                   onClick={handleFollowToggle}
                   disabled={toggleFollow.isPending || toggleFavorite.isPending}
                 >
-                  <UserPlus className={cn(
-                    "h-4 w-4",
-                    toggleFollow.isPending && "animate-pulse"
-                  )} />
+                  <UserPlus
+                    className={cn(
+                      'h-4 w-4',
+                      toggleFollow.isPending && 'animate-pulse'
+                    )}
+                  />
                   {isFollowed ? 'Following' : 'Follow'}
                 </Button>
                 <Button
-                  variant={isFavorite ? "brand" : "outline"}
+                  variant={isFavorite ? 'brand' : 'outline'}
                   size="md"
                   className={cn(
-                    "flex items-center gap-2",
-                    isFavorite && "!text-white"
+                    'flex items-center gap-2',
+                    isFavorite && '!text-white'
                   )}
                   onClick={handleFavoriteToggle}
                   disabled={toggleFollow.isPending || toggleFavorite.isPending}
                 >
-                  <Heart className={cn(
-                    "h-4 w-4",
-                    toggleFavorite.isPending && "animate-pulse",
-                    isFavorite && "fill-current"
-                  )} />
+                  <Heart
+                    className={cn(
+                      'h-4 w-4',
+                      toggleFavorite.isPending && 'animate-pulse',
+                      isFavorite && 'fill-current'
+                    )}
+                  />
                   {isFavorite ? 'Saved' : 'Save'}
                 </Button>
               </div>
@@ -549,9 +636,15 @@ export function ProviderProfileClient({
             {/* Photo Gallery */}
             <div className="relative rounded-xl overflow-hidden bg-gray-100 h-[400px] md:h-[500px]">
               {(() => {
-                const isValidIndex = currentPhotoIndex >= 0 && currentPhotoIndex < photos.length
-                const currentPhoto = isValidIndex ? photos[currentPhotoIndex] : null
-                const isValidPhoto = currentPhoto && typeof currentPhoto === 'string' && currentPhoto.trim() !== ''
+                const isValidIndex =
+                  currentPhotoIndex >= 0 && currentPhotoIndex < photos.length
+                const currentPhoto = isValidIndex
+                  ? photos[currentPhotoIndex]
+                  : null
+                const isValidPhoto =
+                  currentPhoto &&
+                  typeof currentPhoto === 'string' &&
+                  currentPhoto.trim() !== ''
 
                 return isValidPhoto ? (
                   <Image
@@ -638,7 +731,10 @@ export function ProviderProfileClient({
                     setActiveTab(tab.id)
                     const section = sectionRefs.current[tab.id]
                     if (section) {
-                      section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      section.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                      })
                     }
                   }}
                   className={cn(
@@ -665,7 +761,9 @@ export function ProviderProfileClient({
             <div className="lg:col-span-2 space-y-16">
               {/* Services Section */}
               <div
-                ref={el => { sectionRefs.current['services'] = el }}
+                ref={el => {
+                  sectionRefs.current['services'] = el
+                }}
                 data-section-id="services"
                 className="scroll-mt-32"
               >
@@ -675,8 +773,15 @@ export function ProviderProfileClient({
                 {provider.services.length > 0 ? (
                   <div className="space-y-3">
                     {provider.services.map(service => {
-                      const displayPrice = service.saleBuyPrice || service.saleRentPrice || service.price || 0
-                      const originalPrice = service.hasDiscount && service.price ? service.price : undefined
+                      const displayPrice =
+                        service.saleBuyPrice ||
+                        service.saleRentPrice ||
+                        service.price ||
+                        0
+                      const originalPrice =
+                        service.hasDiscount && service.price
+                          ? service.price
+                          : undefined
                       return (
                         <div
                           key={service.id}
@@ -714,12 +819,14 @@ export function ProviderProfileClient({
                                         variant="compact"
                                       />
                                     )}
-                                    {service.availableStartTime && service.availableEndTime && (
-                                      <span className="flex items-center gap-1">
-                                        <Clock className="h-4 w-4" />
-                                        {service.availableStartTime} - {service.availableEndTime}
-                                      </span>
-                                    )}
+                                    {service.availableStartTime &&
+                                      service.availableEndTime && (
+                                        <span className="flex items-center gap-1">
+                                          <Clock className="h-4 w-4" />
+                                          {service.availableStartTime} -{' '}
+                                          {service.availableEndTime}
+                                        </span>
+                                      )}
                                   </div>
                                 </div>
                               </div>
@@ -761,7 +868,9 @@ export function ProviderProfileClient({
 
               {/* Products Section */}
               <div
-                ref={el => { sectionRefs.current['products'] = el }}
+                ref={el => {
+                  sectionRefs.current['products'] = el
+                }}
                 data-section-id="products"
                 className="scroll-mt-32"
               >
@@ -777,9 +886,11 @@ export function ProviderProfileClient({
                       >
                         <div className="relative w-full aspect-square bg-gray-100">
                           {(() => {
-                            const imageUrl = typeof product.image === 'string' && product.image.trim() !== ''
-                              ? product.image
-                              : null
+                            const imageUrl =
+                              typeof product.image === 'string' &&
+                              product.image.trim() !== ''
+                                ? product.image
+                                : null
                             return imageUrl ? (
                               <Image
                                 src={imageUrl}
@@ -838,7 +949,9 @@ export function ProviderProfileClient({
               {/* Branches Section */}
               {provider.branches.length > 0 && (
                 <div
-                  ref={el => { sectionRefs.current['branches'] = el }}
+                  ref={el => {
+                    sectionRefs.current['branches'] = el
+                  }}
                   data-section-id="branches"
                   className="scroll-mt-32"
                 >
@@ -894,16 +1007,18 @@ export function ProviderProfileClient({
                             </div>
                           </div>
                           <div className="flex flex-col gap-2 ml-4 flex-shrink-0">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                            >
+                            <Button variant="outline" size="sm">
                               Get Directions
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => setSelectedBranchForPortfolio({ id: branch.id, name: branch.name })}
+                              onClick={() =>
+                                setSelectedBranchForPortfolio({
+                                  id: branch.id,
+                                  name: branch.name,
+                                })
+                              }
                               className="flex items-center gap-1"
                             >
                               <ImageIcon className="h-4 w-4" />
@@ -920,7 +1035,9 @@ export function ProviderProfileClient({
               {/* Team Section */}
               {provider.team.length > 0 && (
                 <div
-                  ref={el => { sectionRefs.current['team'] = el }}
+                  ref={el => {
+                    sectionRefs.current['team'] = el
+                  }}
                   data-section-id="team"
                   className="scroll-mt-32"
                 >
@@ -936,7 +1053,9 @@ export function ProviderProfileClient({
                         <div className="flex items-start gap-3 mb-3">
                           <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-full flex items-center justify-center">
                             <span className="text-20 font-semibold text-gray-600">
-                              {(member.name || member.email || 'T').charAt(0).toUpperCase()}
+                              {(member.name || member.email || 'T')
+                                .charAt(0)
+                                .toUpperCase()}
                             </span>
                           </div>
                           <div className="flex-1 min-w-0">
@@ -956,7 +1075,14 @@ export function ProviderProfileClient({
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setSelectedTeamMemberForPortfolio({ id: member.id, name: member.name || member.email || 'Team Member', role: member.role })}
+                          onClick={() =>
+                            setSelectedTeamMemberForPortfolio({
+                              id: member.id,
+                              name:
+                                member.name || member.email || 'Team Member',
+                              role: member.role,
+                            })
+                          }
                           className="w-full flex items-center justify-center gap-1"
                         >
                           <ImageIcon className="h-4 w-4" />
@@ -971,7 +1097,9 @@ export function ProviderProfileClient({
               {/* Reviews Section */}
               {provider.reviews.length > 0 && (
                 <div
-                  ref={el => { sectionRefs.current['reviews'] = el }}
+                  ref={el => {
+                    sectionRefs.current['reviews'] = el
+                  }}
                   data-section-id="reviews"
                   className="scroll-mt-32"
                 >
@@ -1030,8 +1158,12 @@ export function ProviderProfileClient({
                         </p>
                         {review.hasResponse && review.response && (
                           <div className="mt-3 pt-3 border-t border-gray-200">
-                            <p className="text-12 text-gray-500 mb-1">Provider Response:</p>
-                            <p className="text-14 text-gray-700">{review.response}</p>
+                            <p className="text-12 text-gray-500 mb-1">
+                              Provider Response:
+                            </p>
+                            <p className="text-14 text-gray-700">
+                              {review.response}
+                            </p>
                           </div>
                         )}
                         {review.likes > 0 && (
@@ -1054,7 +1186,9 @@ export function ProviderProfileClient({
               {/* About Section */}
               {provider.description && (
                 <div
-                  ref={el => { sectionRefs.current['about'] = el }}
+                  ref={el => {
+                    sectionRefs.current['about'] = el
+                  }}
                   data-section-id="about"
                   className="scroll-mt-32"
                 >
@@ -1069,7 +1203,9 @@ export function ProviderProfileClient({
 
               {/* Location Section */}
               <div
-                ref={el => { sectionRefs.current['location'] = el }}
+                ref={el => {
+                  sectionRefs.current['location'] = el
+                }}
                 data-section-id="location"
                 className="scroll-mt-32"
               >
@@ -1097,7 +1233,9 @@ export function ProviderProfileClient({
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="text-center">
                             <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                            <p className="text-gray-500">Map view coming soon</p>
+                            <p className="text-gray-500">
+                              Map view coming soon
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1112,7 +1250,9 @@ export function ProviderProfileClient({
               {/* Opening Times Section */}
               {provider.openingHours.length > 0 && (
                 <div
-                  ref={el => { sectionRefs.current['opening-times'] = el }}
+                  ref={el => {
+                    sectionRefs.current['opening-times'] = el
+                  }}
                   data-section-id="opening-times"
                   className="scroll-mt-32"
                 >
@@ -1142,7 +1282,9 @@ export function ProviderProfileClient({
               {/* Links Section */}
               {provider.links.length > 0 && (
                 <div
-                  ref={el => { sectionRefs.current['links'] = el }}
+                  ref={el => {
+                    sectionRefs.current['links'] = el
+                  }}
                   data-section-id="links"
                   className="scroll-mt-32"
                 >
@@ -1153,18 +1295,39 @@ export function ProviderProfileClient({
                     {provider.links
                       .filter(link => link.isPublic && link.url)
                       .map(link => {
-                        const linkName = link.nameEn || link.nameAr || link.displayName || link.title || 'Link'
-                        const linkDescription = link.descriptionEn || link.descriptionAr || link.displayDescription || link.metaDescription
+                        const linkName =
+                          link.nameEn ||
+                          link.nameAr ||
+                          link.displayName ||
+                          link.title ||
+                          'Link'
+                        const linkDescription =
+                          link.descriptionEn ||
+                          link.descriptionAr ||
+                          link.displayDescription ||
+                          link.metaDescription
                         const isEmail = link.url?.includes('mailto:')
                         const isWebsite = link.url?.startsWith('http')
-                        const linkIcon = isEmail ? Mail : isWebsite ? Globe : Globe
+                        const linkIcon = isEmail
+                          ? Mail
+                          : isWebsite
+                            ? Globe
+                            : Globe
 
                         return (
                           <a
                             key={link.id}
                             href={link.url || '#'}
-                            target={link.isExternal || link.openInNewTab ? '_blank' : '_self'}
-                            rel={link.isExternal || link.openInNewTab ? 'noopener noreferrer' : undefined}
+                            target={
+                              link.isExternal || link.openInNewTab
+                                ? '_blank'
+                                : '_self'
+                            }
+                            rel={
+                              link.isExternal || link.openInNewTab
+                                ? 'noopener noreferrer'
+                                : undefined
+                            }
                             className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all hover:border-brand-300 group"
                           >
                             <div className="flex items-start gap-3">
@@ -1201,7 +1364,8 @@ export function ProviderProfileClient({
                         )
                       })}
                   </div>
-                  {provider.links.filter(link => link.isPublic && link.url).length === 0 && (
+                  {provider.links.filter(link => link.isPublic && link.url)
+                    .length === 0 && (
                     <div className="bg-white border border-gray-200 rounded-xl p-8 text-center">
                       <p className="text-gray-500">No public links available</p>
                     </div>
@@ -1211,7 +1375,9 @@ export function ProviderProfileClient({
 
               {/* Additional Information Section */}
               <div
-                ref={el => { sectionRefs.current['additional-info'] = el }}
+                ref={el => {
+                  sectionRefs.current['additional-info'] = el
+                }}
                 data-section-id="additional-info"
                 className="scroll-mt-32"
               >
@@ -1231,7 +1397,9 @@ export function ProviderProfileClient({
                             key={index}
                             className="px-3 py-1 bg-gray-100 text-gray-700 text-14 rounded-full"
                           >
-                            {(method as any).name || (method as any).paymentMethodName || 'Payment Method'}
+                            {(method as any).name ||
+                              (method as any).paymentMethodName ||
+                              'Payment Method'}
                           </span>
                         ))}
                       </div>
@@ -1247,27 +1415,48 @@ export function ProviderProfileClient({
                       {provider.phoneNumber && (
                         <div className="flex items-center gap-2 text-14 text-gray-700">
                           <Phone className="h-4 w-4 text-gray-400" />
-                          <a href={`tel:${provider.phoneNumber}`} className="hover:text-brand-600">
+                          <a
+                            href={`tel:${provider.phoneNumber}`}
+                            className="hover:text-brand-600"
+                          >
                             {provider.phoneNumber}
                           </a>
                         </div>
                       )}
-                      {provider.links.filter(link => link.isPublic && link.url && link.url.includes('mailto:')).length > 0 && (
+                      {provider.links.filter(
+                        link =>
+                          link.isPublic &&
+                          link.url &&
+                          link.url.includes('mailto:')
+                      ).length > 0 && (
                         <div className="flex items-center gap-2 text-14 text-gray-700">
                           <Mail className="h-4 w-4 text-gray-400" />
                           <a
-                            href={provider.links.find(link => link.url?.includes('mailto:'))?.url || '#'}
+                            href={
+                              provider.links.find(link =>
+                                link.url?.includes('mailto:')
+                              )?.url || '#'
+                            }
                             className="hover:text-brand-600"
                           >
                             Email
                           </a>
                         </div>
                       )}
-                      {provider.links.filter(link => link.isPublic && link.url && link.url.startsWith('http')).length > 0 && (
+                      {provider.links.filter(
+                        link =>
+                          link.isPublic &&
+                          link.url &&
+                          link.url.startsWith('http')
+                      ).length > 0 && (
                         <div className="flex items-center gap-2 text-14 text-gray-700">
                           <Globe className="h-4 w-4 text-gray-400" />
                           <a
-                            href={provider.links.find(link => link.url?.startsWith('http'))?.url || '#'}
+                            href={
+                              provider.links.find(link =>
+                                link.url?.startsWith('http')
+                              )?.url || '#'
+                            }
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-brand-600"
@@ -1287,25 +1476,33 @@ export function ProviderProfileClient({
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       {provider.totalServices > 0 && (
                         <div className="text-center p-3 bg-gray-50 rounded-lg">
-                          <div className="text-20 font-bold text-brand-600">{provider.totalServices}</div>
+                          <div className="text-20 font-bold text-brand-600">
+                            {provider.totalServices}
+                          </div>
                           <div className="text-12 text-gray-600">Services</div>
                         </div>
                       )}
                       {provider.totalProducts > 0 && (
                         <div className="text-center p-3 bg-gray-50 rounded-lg">
-                          <div className="text-20 font-bold text-brand-600">{provider.totalProducts}</div>
+                          <div className="text-20 font-bold text-brand-600">
+                            {provider.totalProducts}
+                          </div>
                           <div className="text-12 text-gray-600">Products</div>
                         </div>
                       )}
                       {provider.totalFollowers > 0 && (
                         <div className="text-center p-3 bg-gray-50 rounded-lg">
-                          <div className="text-20 font-bold text-brand-600">{provider.totalFollowers}</div>
+                          <div className="text-20 font-bold text-brand-600">
+                            {provider.totalFollowers}
+                          </div>
                           <div className="text-12 text-gray-600">Followers</div>
                         </div>
                       )}
                       {provider.totalViews > 0 && (
                         <div className="text-center p-3 bg-gray-50 rounded-lg">
-                          <div className="text-20 font-bold text-brand-600">{provider.totalViews}</div>
+                          <div className="text-20 font-bold text-brand-600">
+                            {provider.totalViews}
+                          </div>
                           <div className="text-12 text-gray-600">Views</div>
                         </div>
                       )}
@@ -1340,7 +1537,9 @@ export function ProviderProfileClient({
                   <Button
                     variant="default"
                     size="lg"
-                    onClick={() => router.push(`/provider/${providerId}/booking`)}
+                    onClick={() =>
+                      router.push(`/provider/${providerId}/booking`)
+                    }
                     className="w-full mb-3 !bg-brand-600 hover:!bg-brand-700 !text-white font-semibold"
                   >
                     Book now
@@ -1351,7 +1550,9 @@ export function ProviderProfileClient({
                     <Button
                       variant="outline"
                       size="md"
-                      onClick={() => router.push(`/provider/${providerId}/store`)}
+                      onClick={() =>
+                        router.push(`/provider/${providerId}/store`)
+                      }
                       className="flex items-center justify-center gap-2"
                     >
                       <Store className="h-4 w-4" />
@@ -1360,7 +1561,9 @@ export function ProviderProfileClient({
                     <Button
                       variant="outline"
                       size="md"
-                      onClick={() => router.push(`/provider/${providerId}/links`)}
+                      onClick={() =>
+                        router.push(`/provider/${providerId}/links`)
+                      }
                       className="flex items-center justify-center gap-2"
                     >
                       <span>Linkee</span>
@@ -1377,12 +1580,32 @@ export function ProviderProfileClient({
                             {(() => {
                               const today = new Date().getDay()
                               const todaySchedule = provider.openingHours.find(
-                                (schedule, index) => index === today || schedule.day.toLowerCase() === ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][today].toLowerCase()
+                                (schedule, index) =>
+                                  index === today ||
+                                  schedule.day.toLowerCase() ===
+                                    [
+                                      'sunday',
+                                      'monday',
+                                      'tuesday',
+                                      'wednesday',
+                                      'thursday',
+                                      'friday',
+                                      'saturday',
+                                    ][today].toLowerCase()
                               )
-                              if (todaySchedule && todaySchedule.hours !== 'Closed') {
+                              if (
+                                todaySchedule &&
+                                todaySchedule.hours !== 'Closed'
+                              ) {
                                 const endTime = todaySchedule.end
                                 if (endTime) {
-                                  const time = new Date(endTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+                                  const time = new Date(
+                                    endTime
+                                  ).toLocaleTimeString('en-US', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true,
+                                  })
                                   return `Open until ${time}`
                                 }
                               }
@@ -1402,13 +1625,20 @@ export function ProviderProfileClient({
                     <div className="mb-4">
                       <div className="flex items-start gap-2 text-14 text-gray-700 mb-2">
                         <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-0.5" />
-                        <span className="flex-1">{provider.fullAddress || provider.address}</span>
+                        <span className="flex-1">
+                          {provider.fullAddress || provider.address}
+                        </span>
                       </div>
                       <button
                         onClick={() => {
                           // Open maps with address
-                          const address = encodeURIComponent(provider.fullAddress || provider.address)
-                          window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank')
+                          const address = encodeURIComponent(
+                            provider.fullAddress || provider.address
+                          )
+                          window.open(
+                            `https://www.google.com/maps/search/?api=1&query=${address}`,
+                            '_blank'
+                          )
                         }}
                         className="text-14 text-brand-600 hover:text-brand-700 font-medium"
                       >
@@ -1422,19 +1652,25 @@ export function ProviderProfileClient({
                     {provider.totalServices > 0 && (
                       <div className="flex items-center justify-between text-14">
                         <span className="text-gray-600">Services</span>
-                        <span className="font-semibold text-gray-900">{provider.totalServices}</span>
+                        <span className="font-semibold text-gray-900">
+                          {provider.totalServices}
+                        </span>
                       </div>
                     )}
                     {provider.totalProducts > 0 && (
                       <div className="flex items-center justify-between text-14">
                         <span className="text-gray-600">Products</span>
-                        <span className="font-semibold text-gray-900">{provider.totalProducts}</span>
+                        <span className="font-semibold text-gray-900">
+                          {provider.totalProducts}
+                        </span>
                       </div>
                     )}
                     {provider.totalReviews > 0 && (
                       <div className="flex items-center justify-between text-14">
                         <span className="text-gray-600">Reviews</span>
-                        <span className="font-semibold text-gray-900">{provider.totalReviews}</span>
+                        <span className="font-semibold text-gray-900">
+                          {provider.totalReviews}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -1465,7 +1701,9 @@ export function ProviderProfileClient({
           onClose={() => setSelectedTeamMemberForPortfolio(null)}
           branchData={teamMemberPortfolio}
           title={selectedTeamMemberForPortfolio.name}
-          subtitle={formatRole(selectedTeamMemberForPortfolio.role) || undefined}
+          subtitle={
+            formatRole(selectedTeamMemberForPortfolio.role) || undefined
+          }
         />
       )}
     </div>

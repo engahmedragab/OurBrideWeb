@@ -9,8 +9,16 @@ import Image from 'next/image'
 import occasionImage from '@/assets/images/occasion.png'
 import { useOccasionBook, useSyncOccasionBook } from '@/hooks/occasionBooks'
 import { useEventId } from '@/hooks/planning'
-import type { OccasionLineResponse, OccasionBookResponse } from '@/types/responses'
-import type { OccasionLineRequest, OccasionBookRequest, BookClass, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  OccasionLineResponse,
+  OccasionBookResponse,
+} from '@/types/responses'
+import type {
+  OccasionLineRequest,
+  OccasionBookRequest,
+  BookClass,
+  UserType,
+} from '@/../client/common/api/gen/ourbride-api'
 import { OccasionType } from '@/../client/common/api/gen/ourbride-api'
 import { OccasionDetailView } from '@/components/occasion/components/OccasionDetailView'
 import { OccasionForm } from '@/components/occasion/components/OccasionForm'
@@ -45,17 +53,24 @@ function OccasionsPageContent() {
   const eventId = useEventId()
   const [editingLineId, setEditingLineId] = useState<number | null>(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
-  const [selectedOccasion, setSelectedOccasion] = useState<OccasionLineResponse | null>(null)
+  const [selectedOccasion, setSelectedOccasion] =
+    useState<OccasionLineResponse | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
 
   // Local state to keep the book in memory
-  const [localOccasionBook, setLocalOccasionBook] = useState<OccasionBookResponse | null>(null)
+  const [localOccasionBook, setLocalOccasionBook] =
+    useState<OccasionBookResponse | null>(null)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const lastSyncedRef = useRef<OccasionBookResponse | null>(null)
   const isInitialLoadRef = useRef(true)
 
   // Fetch occasion book (includes lines) - GET endpoint only
-  const { data: occasionBook, isLoading, error, refetch } = useOccasionBook({
+  const {
+    data: occasionBook,
+    isLoading,
+    error,
+    refetch,
+  } = useOccasionBook({
     eventId: eventId || undefined,
     userType: null as unknown as UserType | undefined,
     clientId: null as unknown as string | undefined,
@@ -98,37 +113,42 @@ function OccasionsPageContent() {
   useEffect(() => {
     if (!eventId || !localOccasionBook || hasUnsavedChanges) return
 
-    const interval = setInterval(async () => {
-      try {
-        // Check if there are actual changes before syncing
-        if (!hasActualChanges()) {
-          return // No changes, skip sync
-        }
+    const interval = setInterval(
+      async () => {
+        try {
+          // Check if there are actual changes before syncing
+          if (!hasActualChanges()) {
+            return // No changes, skip sync
+          }
 
-        const bookRequest = buildBookRequestFromLocal()
-        await syncMutation.mutateAsync({
-          data: bookRequest,
-          query: {
-            eventId: eventId || undefined,
-            userType: null as unknown as UserType | undefined,
-            clientId: null as unknown as string | undefined,
-          },
-        })
-        // Update last synced ref
-        lastSyncedRef.current = localOccasionBook
-        // Refetch to get latest from server
-        refetch()
-      } catch (error) {
-        console.error('Auto-sync failed:', error)
-        // Don't show toast for auto-sync failures to avoid annoying the user
-      }
-    }, 2 * 60 * 1000) // 2 minutes
+          const bookRequest = buildBookRequestFromLocal()
+          await syncMutation.mutateAsync({
+            data: bookRequest,
+            query: {
+              eventId: eventId || undefined,
+              userType: null as unknown as UserType | undefined,
+              clientId: null as unknown as string | undefined,
+            },
+          })
+          // Update last synced ref
+          lastSyncedRef.current = localOccasionBook
+          // Refetch to get latest from server
+          refetch()
+        } catch (error) {
+          console.error('Auto-sync failed:', error)
+          // Don't show toast for auto-sync failures to avoid annoying the user
+        }
+      },
+      2 * 60 * 1000
+    ) // 2 minutes
 
     return () => clearInterval(interval)
   }, [eventId, localOccasionBook, hasUnsavedChanges, syncMutation, refetch])
 
   // Get occasion lines from local state (filter out deleted items for display)
-  const occasionLines: OccasionLineResponse[] = (localOccasionBook?.lines || []).filter(line => !line.isDeleted)
+  const occasionLines: OccasionLineResponse[] = (
+    localOccasionBook?.lines || []
+  ).filter(line => !line.isDeleted)
 
   const handleAddNew = () => {
     setIsAddingNew(true)
@@ -163,13 +183,17 @@ function OccasionsPageContent() {
   }
 
   const editingOccasion = editingLineId
-    ? (localOccasionBook?.lines || []).find(line => line.id === editingLineId) || null
+    ? (localOccasionBook?.lines || []).find(
+        line => line.id === editingLineId
+      ) || null
     : null
 
   /**
    * Convert OccasionLineResponse to OccasionLineRequest
    */
-  const convertLineToRequest = (line: OccasionLineResponse): OccasionLineRequest => {
+  const convertLineToRequest = (
+    line: OccasionLineResponse
+  ): OccasionLineRequest => {
     return {
       id: line.id,
       bookId: line.bookId || localOccasionBook?.id || 0,
@@ -190,7 +214,7 @@ function OccasionsPageContent() {
       brideId: line.brideId || null,
       groomId: line.groomId || null,
       lineCategoryId: line.lineCategoryId || null,
-      lineType: (line.lineType as unknown) as UserType | undefined,
+      lineType: line.lineType as unknown as UserType | undefined,
       colorName: line.colorName || null,
       iconName: line.iconName || null,
       creationDate: line.creationDate || null,
@@ -201,7 +225,9 @@ function OccasionsPageContent() {
   /**
    * Convert form data to OccasionLineRequest
    */
-  const convertFormDataToLineRequest = (formData: OccasionFormData): OccasionLineRequest => {
+  const convertFormDataToLineRequest = (
+    formData: OccasionFormData
+  ): OccasionLineRequest => {
     if (!localOccasionBook?.id) {
       throw new Error('Occasion book not found')
     }
@@ -249,8 +275,10 @@ function OccasionsPageContent() {
       groomId: localOccasionBook.groomId || null,
       brideId: localOccasionBook.brideId || null,
       weddingPlannerId: undefined,
-      bookType: (localOccasionBook.bookType as unknown) as UserType | undefined,
-      bookClass: localOccasionBook.bookClass as unknown as BookClass | undefined,
+      bookType: localOccasionBook.bookType as unknown as UserType | undefined,
+      bookClass: localOccasionBook.bookClass as unknown as
+        | BookClass
+        | undefined,
       title: localOccasionBook.title || null,
       clientName: null,
       weddingDate: null,
@@ -264,7 +292,9 @@ function OccasionsPageContent() {
   /**
    * Build OccasionBookRequest from current book and updated lines
    */
-  const buildBookRequest = (updatedLines: OccasionLineRequest[]): OccasionBookRequest => {
+  const buildBookRequest = (
+    updatedLines: OccasionLineRequest[]
+  ): OccasionBookRequest => {
     if (!localOccasionBook) {
       throw new Error('Occasion book not found')
     }
@@ -274,8 +304,10 @@ function OccasionsPageContent() {
       groomId: localOccasionBook.groomId || null,
       brideId: localOccasionBook.brideId || null,
       weddingPlannerId: undefined,
-      bookType: (localOccasionBook.bookType as unknown) as UserType | undefined,
-      bookClass: localOccasionBook.bookClass as unknown as BookClass | undefined,
+      bookType: localOccasionBook.bookType as unknown as UserType | undefined,
+      bookClass: localOccasionBook.bookClass as unknown as
+        | BookClass
+        | undefined,
       title: localOccasionBook.title || null,
       clientName: null,
       weddingDate: null,
@@ -367,20 +399,27 @@ function OccasionsPageContent() {
 
       if (editingLineId) {
         // Update existing line in local state (check all lines including deleted)
-        const existingLine = allLocalLines.find(line => line.id === editingLineId)
+        const existingLine = allLocalLines.find(
+          line => line.id === editingLineId
+        )
         if (existingLine) {
           const updatedLine: OccasionLineResponse = {
             ...existingLine,
             date: formData.date,
             subDate: formData.subDate || existingLine.subDate,
-            brideFirstName: formData.brideFirstName || existingLine.brideFirstName,
+            brideFirstName:
+              formData.brideFirstName || existingLine.brideFirstName,
             brideLastName: formData.brideLastName || existingLine.brideLastName,
-            groomFirstName: formData.groomFirstName || existingLine.groomFirstName,
+            groomFirstName:
+              formData.groomFirstName || existingLine.groomFirstName,
             groomLastName: formData.groomLastName || existingLine.groomLastName,
             title: formData.titleEn || formData.titleAr || existingLine.title,
             titleEn: formData.titleEn || existingLine.titleEn,
             titleAr: formData.titleAr || existingLine.titleAr,
-            subTitle: formData.subTitleEn || formData.subTitleAr || existingLine.subTitle,
+            subTitle:
+              formData.subTitleEn ||
+              formData.subTitleAr ||
+              existingLine.subTitle,
             subTitleEn: formData.subTitleEn || existingLine.subTitleEn,
             subTitleAr: formData.subTitleAr || existingLine.subTitleAr,
             caption: formData.caption || existingLine.caption,
@@ -391,72 +430,77 @@ function OccasionsPageContent() {
             if (!prev) return prev
             return {
               ...prev,
-              lines: prev.lines?.map(line => line.id === editingLineId ? updatedLine : line) || []
+              lines:
+                prev.lines?.map(line =>
+                  line.id === editingLineId ? updatedLine : line
+                ) || [],
             }
           })
         }
       } else {
         // Add new line to local state - use first existing line as template or create minimal structure
         const templateLine = allLocalLines[0]
-        const newLine: OccasionLineResponse = templateLine ? {
-          ...templateLine,
-          id: 0, // Temporary ID for new lines (0 indicates new, not yet saved)
-          date: formData.date,
-          subDate: formData.subDate || undefined,
-          brideFirstName: formData.brideFirstName || '',
-          brideLastName: formData.brideLastName || '',
-          groomFirstName: formData.groomFirstName || '',
-          groomLastName: formData.groomLastName || '',
-          title: formData.titleEn || formData.titleAr || '',
-          titleEn: formData.titleEn || '',
-          titleAr: formData.titleAr || '',
-          subTitle: formData.subTitleEn || formData.subTitleAr || '',
-          subTitleEn: formData.subTitleEn || '',
-          subTitleAr: formData.subTitleAr || '',
-          caption: formData.caption || '',
-          type: formData.type || OccasionType.Wedding,
-          isDone: false,
-          isFavorite: false,
-          isDeleted: false,
-          creationDate: new Date().toISOString(),
-          lastModifiedDate: new Date().toISOString(),
-        } : ({
-          // Fallback if no existing lines - this should rarely happen
-          id: 0,
-          bookId: localOccasionBook.id,
-          date: formData.date,
-          subDate: formData.subDate,
-          brideFirstName: formData.brideFirstName || '',
-          brideLastName: formData.brideLastName || '',
-          groomFirstName: formData.groomFirstName || '',
-          groomLastName: formData.groomLastName || '',
-          title: formData.titleEn || formData.titleAr || '',
-          titleEn: formData.titleEn || '',
-          titleAr: formData.titleAr || '',
-          subTitle: formData.subTitleEn || formData.subTitleAr || '',
-          subTitleEn: formData.subTitleEn || '',
-          subTitleAr: formData.subTitleAr || '',
-          caption: formData.caption || '',
-          type: formData.type || OccasionType.Wedding,
-          isDone: false,
-          isFavorite: false,
-          isDeleted: false,
-          isModelLine: false,
-          colorName: '',
-          iconName: '',
-          bookClass: localOccasionBook.bookClass,
-          createdBy: '',
-          lastModifiedBy: '',
-          slug: '',
-          creationDate: new Date().toISOString(),
-          lastModifiedDate: new Date().toISOString(),
-        } as unknown as OccasionLineResponse)
+        const newLine: OccasionLineResponse = templateLine
+          ? {
+              ...templateLine,
+              id: 0, // Temporary ID for new lines (0 indicates new, not yet saved)
+              date: formData.date,
+              subDate: formData.subDate || undefined,
+              brideFirstName: formData.brideFirstName || '',
+              brideLastName: formData.brideLastName || '',
+              groomFirstName: formData.groomFirstName || '',
+              groomLastName: formData.groomLastName || '',
+              title: formData.titleEn || formData.titleAr || '',
+              titleEn: formData.titleEn || '',
+              titleAr: formData.titleAr || '',
+              subTitle: formData.subTitleEn || formData.subTitleAr || '',
+              subTitleEn: formData.subTitleEn || '',
+              subTitleAr: formData.subTitleAr || '',
+              caption: formData.caption || '',
+              type: formData.type || OccasionType.Wedding,
+              isDone: false,
+              isFavorite: false,
+              isDeleted: false,
+              creationDate: new Date().toISOString(),
+              lastModifiedDate: new Date().toISOString(),
+            }
+          : ({
+              // Fallback if no existing lines - this should rarely happen
+              id: 0,
+              bookId: localOccasionBook.id,
+              date: formData.date,
+              subDate: formData.subDate,
+              brideFirstName: formData.brideFirstName || '',
+              brideLastName: formData.brideLastName || '',
+              groomFirstName: formData.groomFirstName || '',
+              groomLastName: formData.groomLastName || '',
+              title: formData.titleEn || formData.titleAr || '',
+              titleEn: formData.titleEn || '',
+              titleAr: formData.titleAr || '',
+              subTitle: formData.subTitleEn || formData.subTitleAr || '',
+              subTitleEn: formData.subTitleEn || '',
+              subTitleAr: formData.subTitleAr || '',
+              caption: formData.caption || '',
+              type: formData.type || OccasionType.Wedding,
+              isDone: false,
+              isFavorite: false,
+              isDeleted: false,
+              isModelLine: false,
+              colorName: '',
+              iconName: '',
+              bookClass: localOccasionBook.bookClass,
+              createdBy: '',
+              lastModifiedBy: '',
+              slug: '',
+              creationDate: new Date().toISOString(),
+              lastModifiedDate: new Date().toISOString(),
+            } as unknown as OccasionLineResponse)
 
         setLocalOccasionBook(prev => {
           if (!prev) return prev
           return {
             ...prev,
-            lines: [...(prev.lines || []), newLine]
+            lines: [...(prev.lines || []), newLine],
           }
         })
       }
@@ -509,8 +553,6 @@ function OccasionsPageContent() {
   }
 
   const handleDelete = (lineId: number) => {
-    
-
     if (!localOccasionBook) {
       if (isLoading) {
         return
@@ -523,11 +565,10 @@ function OccasionsPageContent() {
       if (!prev) return prev
       return {
         ...prev,
-        lines: prev.lines?.map(line =>
-          line.id === lineId
-            ? { ...line, isDeleted: true }
-            : line
-        ) || []
+        lines:
+          prev.lines?.map(line =>
+            line.id === lineId ? { ...line, isDeleted: true } : line
+          ) || [],
       }
     })
 
@@ -562,20 +603,29 @@ function OccasionsPageContent() {
       <div className="flex items-center justify-between">
         {hasUnsavedChanges && (
           <div className="flex items-center gap-3">
-          <Button
+            <Button
               className="rounded-lg text-10 md:text-14 lg hover:bg-brand-500 hover:text-white"
-            onClick={handleSync}
+              onClick={handleSync}
               variant="outlineBrand"
-            size="md"
-            disabled={syncMutation.isPending || !localOccasionBook || isLoading}
-          >
-            <Save className="w-4 h-4 " />
-            {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
-          </Button>
-            <span className="text-12 md:text-14 text-gray-600">Unsaved changes</span>
+              size="md"
+              disabled={
+                syncMutation.isPending || !localOccasionBook || isLoading
+              }
+            >
+              <Save className="w-4 h-4 " />
+              {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </Button>
+            <span className="text-12 md:text-14 text-gray-600">
+              Unsaved changes
+            </span>
           </div>
         )}
-        <div className={cn("flex items-center gap-2", !hasUnsavedChanges && "ml-auto")}>
+        <div
+          className={cn(
+            'flex items-center gap-2',
+            !hasUnsavedChanges && 'ml-auto'
+          )}
+        >
           <Button
             className="rounded-lg text-10 md:text-14  hover:bg-brand-500 hover:text-white"
             onClick={handleAddNew}
@@ -604,67 +654,72 @@ function OccasionsPageContent() {
       {!isFormOpen && (
         <>
           {occasionLines.length === 0 ? (
-        <div className="bg-white border rounded-2xl p-12 text-center">
-          <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-16 text-gray-600 mb-2">No occasions found</p>
-          <p className="text-14 text-gray-500">Create your first occasion to get started</p>
-        </div>
-      ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {occasionLines.map(line => (
-            <div
-              key={line.id}
-              className="bg-white border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => handleOccasionClick(line)}
-            >
-              {/* Image Section - 50% of card */}
-              <div className="relative h-48 w-full">
-                <Image
-                  src={occasionImage}
-                  alt={line.title || line.titleEn || 'Occasion'}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-black/20"></div>
-                {/* Action Buttons Overlay */}
-                <div className="absolute top-3 right-3 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    onClick={() => handleEdit(line)}
-                    className="p-2 bg-white/90 backdrop-blur-sm rounded-lg text-gray-600 hover:text-brand-500 hover:bg-white transition-all shadow-sm"
-                    disabled={isFormOpen}
-                    title="Edit"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(line.id)}
-                    className="p-2 bg-white/90 backdrop-blur-sm rounded-lg text-red-500 hover:text-red-700 hover:bg-white transition-all shadow-sm"
-                    disabled={syncMutation.isPending}
-                    title="Delete"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Content Section - 50% of card */}
-              <div className="p-5 space-y-3">
-                {/* Occasion Title */}
-                <h3 className="text-18 font-semibold text-gray-900 line-clamp-2">
-                  {line.title || line.titleEn || 'Untitled Occasion'}
-                </h3>
-
-                {/* Date */}
-                <div className="flex items-center gap-2 text-14 text-gray-600">
-                  <Calendar className="w-4 h-4 text-brand-500 flex-shrink-0" />
-                  <span>{formatDate(line.date)}</span>
-                </div>
-              </div>
+            <div className="bg-white border rounded-2xl p-12 text-center">
+              <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-16 text-gray-600 mb-2">No occasions found</p>
+              <p className="text-14 text-gray-500">
+                Create your first occasion to get started
+              </p>
             </div>
-          ))}
-        </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {occasionLines.map(line => (
+                <div
+                  key={line.id}
+                  className="bg-white border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => handleOccasionClick(line)}
+                >
+                  {/* Image Section - 50% of card */}
+                  <div className="relative h-48 w-full">
+                    <Image
+                      src={occasionImage}
+                      alt={line.title || line.titleEn || 'Occasion'}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                    {/* Dark overlay */}
+                    <div className="absolute inset-0 bg-black/20"></div>
+                    {/* Action Buttons Overlay */}
+                    <div
+                      className="absolute top-3 right-3 flex items-center gap-2"
+                      onClick={e => e.stopPropagation()}
+                    >
+                      <button
+                        onClick={() => handleEdit(line)}
+                        className="p-2 bg-white/90 backdrop-blur-sm rounded-lg text-gray-600 hover:text-brand-500 hover:bg-white transition-all shadow-sm"
+                        disabled={isFormOpen}
+                        title="Edit"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(line.id)}
+                        className="p-2 bg-white/90 backdrop-blur-sm rounded-lg text-red-500 hover:text-red-700 hover:bg-white transition-all shadow-sm"
+                        disabled={syncMutation.isPending}
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Content Section - 50% of card */}
+                  <div className="p-5 space-y-3">
+                    {/* Occasion Title */}
+                    <h3 className="text-18 font-semibold text-gray-900 line-clamp-2">
+                      {line.title || line.titleEn || 'Untitled Occasion'}
+                    </h3>
+
+                    {/* Date */}
+                    <div className="flex items-center gap-2 text-14 text-gray-600">
+                      <Calendar className="w-4 h-4 text-brand-500 flex-shrink-0" />
+                      <span>{formatDate(line.date)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </>
       )}
@@ -696,5 +751,3 @@ export default function OccasionsPage() {
     </Suspense>
   )
 }
-
-

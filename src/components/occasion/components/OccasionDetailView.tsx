@@ -73,16 +73,22 @@ const calculateTimeRemaining = (targetDate: string | null | undefined) => {
   return { days, hours, minutes, isPast: false }
 }
 
-export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetailViewProps) {
+export function OccasionDetailView({
+  occasion,
+  onClose,
+  onEdit,
+}: OccasionDetailViewProps) {
   // Initialize with null to avoid hydration mismatch, then calculate on client side
-  const [timeRemaining, setTimeRemaining] = useState<ReturnType<typeof calculateTimeRemaining> | null>(null)
+  const [timeRemaining, setTimeRemaining] = useState<ReturnType<
+    typeof calculateTimeRemaining
+  > | null>(null)
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
     setIsMounted(true)
     // Calculate initial time on client side only
     setTimeRemaining(calculateTimeRemaining(occasion.date))
-    
+
     const interval = setInterval(() => {
       setTimeRemaining(calculateTimeRemaining(occasion.date))
     }, 60000) // Update every minute
@@ -94,9 +100,12 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
   const groomLastName = occasion.groomLastName || ''
   const brideFirstName = occasion.brideFirstName || ''
   const brideLastName = occasion.brideLastName || ''
-  const groomFullName = [groomFirstName, groomLastName].filter(Boolean).join(' ') || 'Groom Name'
-  const brideFullName = [brideFirstName, brideLastName].filter(Boolean).join(' ') || 'Bride Name'
-  const occasionTitle = occasion.title || occasion.titleEn || occasion.titleAr || 'Occasion Name'
+  const groomFullName =
+    [groomFirstName, groomLastName].filter(Boolean).join(' ') || 'Groom Name'
+  const brideFullName =
+    [brideFirstName, brideLastName].filter(Boolean).join(' ') || 'Bride Name'
+  const occasionTitle =
+    occasion.title || occasion.titleEn || occasion.titleAr || 'Occasion Name'
   const location = 'Giza, 6 of October' // This could come from occasion data if available
 
   return (
@@ -135,19 +144,29 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
             {/* Groom Name */}
             <div className="flex flex-col items-center gap-1 md:gap-1.5 order-1 md:order-1">
               <Image
-                src={typeof groomNameSvg === 'string' ? groomNameSvg : groomNameSvg.src || groomNameSvg}
+                src={
+                  typeof groomNameSvg === 'string'
+                    ? groomNameSvg
+                    : groomNameSvg.src || groomNameSvg
+                }
                 alt={groomFullName}
                 width={223}
                 height={42}
                 className="h-8 md:h-10 w-auto"
               />
-              <p className="text-12 md:text-16 italic text-gray-900 font-semibold">{groomFullName}</p>
+              <p className="text-12 md:text-16 italic text-gray-900 font-semibold">
+                {groomFullName}
+              </p>
             </div>
 
             {/* Heart */}
             <div className="flex-shrink-0 order-2 md:order-2">
               <Image
-                src={typeof heartSvg === 'string' ? heartSvg : heartSvg.src || heartSvg}
+                src={
+                  typeof heartSvg === 'string'
+                    ? heartSvg
+                    : heartSvg.src || heartSvg
+                }
                 alt="Heart"
                 width={188}
                 height={119}
@@ -158,13 +177,19 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
             {/* Bride Name */}
             <div className="flex flex-col items-center gap-1 md:gap-1.5 order-3 md:order-3">
               <Image
-                src={typeof brideNameSvg === 'string' ? brideNameSvg : brideNameSvg.src || brideNameSvg}
+                src={
+                  typeof brideNameSvg === 'string'
+                    ? brideNameSvg
+                    : brideNameSvg.src || brideNameSvg
+                }
                 alt={brideFullName}
                 width={203}
                 height={38}
                 className="h-8 md:h-10 w-auto"
               />
-              <p className="text-12 md:text-16 italic text-gray-900 font-semibold">{brideFullName}</p>
+              <p className="text-12 md:text-16 italic text-gray-900 font-semibold">
+                {brideFullName}
+              </p>
             </div>
           </div>
 
@@ -173,16 +198,28 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
             <div className="text-center">
               <div className="flex items-baseline justify-center gap-4 md:gap-6">
                 <div className="text-center">
-                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">{timeRemaining.days}</div>
-                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">Days</div>
+                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">
+                    {timeRemaining.days}
+                  </div>
+                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">
+                    Days
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">{timeRemaining.hours}</div>
-                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">Hours</div>
+                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">
+                    {timeRemaining.hours}
+                  </div>
+                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">
+                    Hours
+                  </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">{timeRemaining.minutes}</div>
-                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">Minutes</div>
+                  <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">
+                    {timeRemaining.minutes}
+                  </div>
+                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">
+                    Minutes
+                  </div>
                 </div>
               </div>
             </div>
@@ -190,7 +227,6 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
 
           {/* Invitation Message */}
           <div className="text-center space-y-0.5">
-          
             <p className="text-16 md:text-24 italic font-semibold text-gray-900">
               {occasionTitle}
             </p>
@@ -208,7 +244,9 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
           {/* Additional Info */}
           {occasion.caption && (
             <div className="pt-4 border-t border-gray-200">
-              <p className="text-14 text-gray-600 italic text-center">{occasion.caption}</p>
+              <p className="text-14 text-gray-600 italic text-center">
+                {occasion.caption}
+              </p>
             </div>
           )}
         </div>
@@ -216,4 +254,3 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
     </div>
   )
 }
-

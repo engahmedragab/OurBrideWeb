@@ -14,7 +14,11 @@ import type { ServicePackageResponse } from './service-package-response'
 import type { ReservationInfoResponse } from './reservation-info-response'
 import type { ResourceResponse } from './resource-response'
 import type { PlaceResponse } from './place-response'
-import type { ReservationStatus, ServiceType, ServiceClass } from '@/types/responses/common'
+import type {
+  ReservationStatus,
+  ServiceType,
+  ServiceClass,
+} from '@/types/responses/common'
 
 export interface ReservationResponse extends BaseResponse {
   reservationId: string

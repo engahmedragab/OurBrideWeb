@@ -25,7 +25,9 @@ export const CommunityEmptyState = ({
   // Default image path - can be overridden via props
   const defaultImage = '/favicon-32x32.png'
   const imageSrc = image
-    ? (typeof image === 'string' ? image : image.src)
+    ? typeof image === 'string'
+      ? image
+      : image.src
     : defaultImage
 
   return (
@@ -68,18 +70,10 @@ export const CommunityEmptyState = ({
 
       {/* Message */}
       {message && (
-        <p
-          className={cn(
-            'text-gray-500',
-            compact ? 'text-14' : 'text-16'
-          )}
-        >
+        <p className={cn('text-gray-500', compact ? 'text-14' : 'text-16')}>
           {message}
         </p>
       )}
     </div>
   )
 }
-
-
-

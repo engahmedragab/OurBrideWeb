@@ -9,7 +9,7 @@ import { isAuthenticated } from '@/auth/utils/token'
  */
 export const usePaymentMethods = () => {
   const authenticated = isAuthenticated()
-  
+
   return useQuery<PaymentMethodResponse[]>({
     queryKey: ['paymentMethods', 'active'],
     queryFn: async () => {

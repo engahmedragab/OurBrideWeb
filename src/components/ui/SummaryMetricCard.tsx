@@ -30,17 +30,19 @@ export const SummaryMetricCard = ({
   editableSub = false,
 }: SummaryMetricCardProps) => {
   // Extract numeric value if it's a string with currency
-  const numericValue = typeof value === 'number' 
-    ? value 
-    : typeof value === 'string' && value.startsWith('£')
-    ? parseFloat(value.replace(/[£,]/g, '')) || 0
-    : 0
+  const numericValue =
+    typeof value === 'number'
+      ? value
+      : typeof value === 'string' && value.startsWith('£')
+        ? parseFloat(value.replace(/[£,]/g, '')) || 0
+        : 0
 
-  const numericSubValue = typeof subValue === 'number'
-    ? subValue
-    : typeof subValue === 'string' && subValue.startsWith('£')
-    ? parseFloat(subValue.replace(/[£,]/g, '')) || 0
-    : 0
+  const numericSubValue =
+    typeof subValue === 'number'
+      ? subValue
+      : typeof subValue === 'string' && subValue.startsWith('£')
+        ? parseFloat(subValue.replace(/[£,]/g, '')) || 0
+        : 0
 
   const [isEditing, setIsEditing] = useState(false)
   const [isEditingSub, setIsEditingSub] = useState(false)
@@ -185,4 +187,3 @@ export const SummaryMetricCard = ({
     </div>
   )
 }
-

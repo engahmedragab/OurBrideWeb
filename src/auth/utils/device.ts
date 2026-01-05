@@ -66,7 +66,11 @@ export const getDeviceInfo = () => {
     operatingSystem = 'Linux'
   } else if (userAgent.includes('Android')) {
     operatingSystem = 'Android'
-  } else if (userAgent.includes('iOS') || userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+  } else if (
+    userAgent.includes('iOS') ||
+    userAgent.includes('iPhone') ||
+    userAgent.includes('iPad')
+  ) {
     operatingSystem = 'iOS'
   }
 
@@ -103,15 +107,18 @@ export const getDeviceInfo = () => {
 /**
  * Get geolocation if available (requires user permission)
  */
-export const getGeolocation = (): Promise<{ latitude: number; longitude: number } | null> => {
-  return new Promise((resolve) => {
+export const getGeolocation = (): Promise<{
+  latitude: number
+  longitude: number
+} | null> => {
+  return new Promise(resolve => {
     if (!navigator.geolocation) {
       resolve(null)
       return
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      position => {
         resolve({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -124,4 +131,3 @@ export const getGeolocation = (): Promise<{ latitude: number; longitude: number 
     )
   })
 }
-

@@ -6,11 +6,7 @@ import { UserPageLayout } from '@/components/layout'
 import { useAuth } from '@/auth'
 import { isPreferenceInit } from '@/auth/utils/token'
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: ReactNode
-}) {
+export default function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const { user, isLoading } = useAuth()
@@ -68,4 +64,3 @@ export default function DashboardLayout({
 
   return <UserPageLayout>{children}</UserPageLayout>
 }
-

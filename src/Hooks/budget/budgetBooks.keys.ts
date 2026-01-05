@@ -1,11 +1,14 @@
 /**
  * BudgetBooks Query Keys Factory
- * 
+ *
  * Provides stable query keys for React Query cache management.
  * All keys are returned as arrays suitable for use with queryClient.invalidateQueries().
  */
 
-import type { BudgetBooksQuery, BudgetBooksBaseQuery } from '@/services/api/budgetBooks.types'
+import type {
+  BudgetBooksQuery,
+  BudgetBooksBaseQuery,
+} from '@/services/api/budgetBooks.types'
 
 /**
  * Query key factory for budget book queries
@@ -89,4 +92,3 @@ export const budgetBookKeys = {
    */
   all: () => ['budgetBook'] as const,
 }
-

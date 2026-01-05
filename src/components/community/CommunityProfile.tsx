@@ -38,9 +38,19 @@ export interface CommunityProfileProps {
   className?: string
 }
 
-type ContentTab = 'all' | 'posts' | 'blogs' | 'articles' | 'reels' | 'decision-groups' | 'contests'
+type ContentTab =
+  | 'all'
+  | 'posts'
+  | 'blogs'
+  | 'articles'
+  | 'reels'
+  | 'decision-groups'
+  | 'contests'
 
-export const CommunityProfile = ({ profile, className }: CommunityProfileProps) => {
+export const CommunityProfile = ({
+  profile,
+  className,
+}: CommunityProfileProps) => {
   const router = useRouter()
   const { addToast } = useToast()
   const [activeTab, setActiveTab] = useState<ContentTab>('all')
@@ -63,7 +73,8 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
     return {
       profileType: profile.profileType,
       profileId: profile.profileType !== 'User' ? profile.profileId : undefined,
-      profileUserId: profile.profileType === 'User' ? profile.userInfo?.userId : undefined,
+      profileUserId:
+        profile.profileType === 'User' ? profile.userInfo?.userId : undefined,
     }
   }
 
@@ -76,7 +87,10 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
     } catch (error) {
       // Revert on error
       setIsFollowing(profile.isFollowing)
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle follow',
+        'error'
+      )
     }
   }
 
@@ -89,7 +103,10 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
     } catch (error) {
       // Revert on error
       setIsLiked(profile.isLiked)
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     }
   }
 
@@ -105,7 +122,10 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
     } catch (error) {
       // Revert on error
       setIsFavorited(profile.isFavorited)
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     }
   }
 
@@ -152,7 +172,10 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
         ) : null
       case 'decisiongroup':
         return content.decisionGroup ? (
-          <DecisionGroupCard key={content.id} decisionGroup={content.decisionGroup} />
+          <DecisionGroupCard
+            key={content.id}
+            decisionGroup={content.decisionGroup}
+          />
         ) : null
       case 'contest':
         return content.contest ? (
@@ -186,7 +209,10 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
     })
   }
 
-  const allContent = [...(profile.recentContent || []), ...(profile.featuredContent || [])]
+  const allContent = [
+    ...(profile.recentContent || []),
+    ...(profile.featuredContent || []),
+  ]
   const filteredContent = filterContent(allContent)
 
   return (
@@ -236,19 +262,22 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
               {/* Avatar */}
               <div className="relative -mt-16">
                 <div className="relative w-32 h-32 rounded-full border-4 border-white overflow-hidden shadow-lg bg-gray-200">
-                  {profile.avatarUrl && profile.avatarUrl !== 'https://via.placeholder.com/128' ? (
+                  {profile.avatarUrl &&
+                  profile.avatarUrl !== 'https://via.placeholder.com/128' ? (
                     <Image
                       src={profile.avatarUrl}
                       alt={profile.displayName}
                       fill
                       sizes="128px"
                       className="object-cover"
-                      onError={(e) => {
+                      onError={e => {
                         e.currentTarget.style.display = 'none'
                       }}
                     />
                   ) : null}
-                  {(!profile.avatarUrl || profile.avatarUrl === 'https://via.placeholder.com/128') && (
+                  {(!profile.avatarUrl ||
+                    profile.avatarUrl ===
+                      'https://via.placeholder.com/128') && (
                     <div className="w-full h-full flex items-center justify-center bg-brand-100">
                       <span className="text-32 font-semibold text-brand-600">
                         {profile.displayName.charAt(0).toUpperCase() || 'U'}
@@ -268,7 +297,9 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 )}
                 {/* Additional Info Based on Type */}
                 {profile.userInfo && (
-                  <p className="text-12 text-gray-500">@{profile.userInfo.userName}</p>
+                  <p className="text-12 text-gray-500">
+                    @{profile.userInfo.userName}
+                  </p>
                 )}
                 {profile.providerInfo && (
                   <p className="text-12 text-gray-500">
@@ -315,15 +346,15 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 onClick={handleFavorite}
                 disabled={toggleFavoriteMutation.isPending}
                 className={cn(isFavorited && 'text-yellow-500')}
-                aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                aria-label={
+                  isFavorited ? 'Remove from favorites' : 'Add to favorites'
+                }
               >
-                <Star className={cn('h-5 w-5', isFavorited && 'fill-current')} />
+                <Star
+                  className={cn('h-5 w-5', isFavorited && 'fill-current')}
+                />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="More options"
-              >
+              <Button variant="ghost" size="icon" aria-label="More options">
                 <MoreVertical className="h-5 w-5 text-gray-500" />
               </Button>
             </div>
@@ -396,7 +427,9 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-14 text-gray-700 mb-1">
                 <Users className="h-4 w-4" />
-                <span className="font-semibold">{profile.totalDecisionGroups}</span>
+                <span className="font-semibold">
+                  {profile.totalDecisionGroups}
+                </span>
               </div>
               <div className="text-12 text-gray-600">Decisions</div>
             </div>
@@ -497,7 +530,9 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
       {/* Featured Content */}
       {profile.featuredContent && profile.featuredContent.length > 0 && (
         <div>
-          <h2 className="text-20 font-semibold text-gray-900 mb-4">Featured Content</h2>
+          <h2 className="text-20 font-semibold text-gray-900 mb-4">
+            Featured Content
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {profile.featuredContent.map(content => renderContentCard(content))}
           </div>
@@ -507,7 +542,9 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
       {/* All Content */}
       <div>
         <h2 className="text-20 font-semibold text-gray-900 mb-4">
-          {activeTab === 'all' ? 'All Content' : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
+          {activeTab === 'all'
+            ? 'All Content'
+            : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
         </h2>
         {filteredContent.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -522,21 +559,3 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

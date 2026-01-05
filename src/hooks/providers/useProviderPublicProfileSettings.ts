@@ -53,7 +53,7 @@ export const useUpdateProviderPublicProfileSettings = () => {
       queryClient.invalidateQueries({
         queryKey: ['providerPublicProfileSettings', variables.providerId],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Provider settings updated successfully',
@@ -61,30 +61,12 @@ export const useUpdateProviderPublicProfileSettings = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update provider settings'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to update provider settings'
       addToast(errorMessage, 'error')
     },
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

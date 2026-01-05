@@ -8,5 +8,3 @@ import type { MainGuestLineResponse } from './main-guest-line-response'
 export interface MainGuestBookResponse extends MainBookResponse<MainGuestLineResponse> {
   // No additional properties
 }
-
-

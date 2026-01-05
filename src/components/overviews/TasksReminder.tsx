@@ -13,7 +13,12 @@ export interface TasksReminderProps {
   eventId?: number
 }
 
-export const TasksReminder = ({ book, onInit, onNavigate, eventId }: TasksReminderProps) => {
+export const TasksReminder = ({
+  book,
+  onInit,
+  onNavigate,
+  eventId,
+}: TasksReminderProps) => {
   // Get active lines (not deleted) - use todos if available, otherwise use lines
   const activeLines = useMemo(() => {
     const lines = (book.todos || book.lines || []) as any[]
@@ -28,8 +33,12 @@ export const TasksReminder = ({ book, onInit, onNavigate, eventId }: TasksRemind
         return a.isDone ? 1 : -1
       }
       // Then sort by lastModifiedDate (newest first), fallback to creationDate
-      const dateA = new Date(a.lastModifiedDate || a.creationDate || 0).getTime()
-      const dateB = new Date(b.lastModifiedDate || b.creationDate || 0).getTime()
+      const dateA = new Date(
+        a.lastModifiedDate || a.creationDate || 0
+      ).getTime()
+      const dateB = new Date(
+        b.lastModifiedDate || b.creationDate || 0
+      ).getTime()
       return dateB - dateA
     })
   }, [activeLines])
@@ -90,7 +99,9 @@ export const TasksReminder = ({ book, onInit, onNavigate, eventId }: TasksRemind
                   <p
                     className={cn(
                       'text-13 font-semibold',
-                      line.isDone ? 'line-through text-gray-400' : 'text-gray-900'
+                      line.isDone
+                        ? 'line-through text-gray-400'
+                        : 'text-gray-900'
                     )}
                   >
                     {taskName}
@@ -111,4 +122,3 @@ export const TasksReminder = ({ book, onInit, onNavigate, eventId }: TasksRemind
     </div>
   )
 }
-

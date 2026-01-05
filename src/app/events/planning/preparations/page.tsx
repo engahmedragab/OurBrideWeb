@@ -6,11 +6,26 @@ import { Button, LoadingSpinner } from '@/components/ui'
 import { Plus, ChevronLeft, Save } from 'lucide-react'
 import { CategoryCard } from '@/components/planning/CategoryCard'
 import { CreateCategoryModal } from '@/components/planning/CreateCategoryModal'
-import { useServiceBook, useSyncServiceBook, useServiceCategories } from '@/hooks/serviceBooks'
+import {
+  useServiceBook,
+  useSyncServiceBook,
+  useServiceCategories,
+} from '@/hooks/serviceBooks'
 import { useEventId } from '@/hooks/planning'
 import { useToast } from '@/components/ui/Toaster'
-import type { ServiceBookResponse, ServiceLineCategoryResponse, ServiceLineResponse } from '@/types/responses'
-import type { ServiceLineCategoryRequest, ServiceBookRequest, ServiceLineRequest, UserType, ServiceType, BookClass } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  ServiceBookResponse,
+  ServiceLineCategoryResponse,
+  ServiceLineResponse,
+} from '@/types/responses'
+import type {
+  ServiceLineCategoryRequest,
+  ServiceBookRequest,
+  ServiceLineRequest,
+  UserType,
+  ServiceType,
+  BookClass,
+} from '@/../client/common/api/gen/ourbride-api'
 
 /**
  * Extended ServiceBook type with categories for local state management
@@ -22,11 +37,17 @@ interface ServiceBookWithCategories extends ServiceBookResponse {
 /**
  * Convert ServiceLineCategoryResponse to ServiceLineCategoryRequest
  */
-const convertCategoryToRequest = (category: ServiceLineCategoryResponse): ServiceLineCategoryRequest => {
+const convertCategoryToRequest = (
+  category: ServiceLineCategoryResponse
+): ServiceLineCategoryRequest => {
   return {
     id: category.id || null,
     name: category.name || category.nameEn || category.nameAr || null,
-    description: category.description || category.descriptionEn || category.descriptionAr || null,
+    description:
+      category.description ||
+      category.descriptionEn ||
+      category.descriptionAr ||
+      null,
     slug: category.slug || null,
     isDeleted: Boolean(category.isDeleted),
     isModelLine: Boolean(category.isModelLine),
@@ -38,11 +59,18 @@ const convertCategoryToRequest = (category: ServiceLineCategoryResponse): Servic
 /**
  * Convert ServiceLineResponse to ServiceLineRequest
  */
-const convertLineToRequest = (line: ServiceLineResponse, bookId: number): ServiceLineRequest => {
+const convertLineToRequest = (
+  line: ServiceLineResponse,
+  bookId: number
+): ServiceLineRequest => {
   // Map ServiceType enum from response to request type
   // ServiceType enum values: 0 = Rent, 1 = Buy
-  const serviceType = (line.serviceType === 0 ? 0 : line.serviceType === 1 ? 1 : 0) as unknown as ServiceType
-  
+  const serviceType = (line.serviceType === 0
+    ? 0
+    : line.serviceType === 1
+      ? 1
+      : 0) as unknown as ServiceType
+
   return {
     id: line.id,
     bookId: line.bookId || bookId,
@@ -73,16 +101,22 @@ const convertLineToRequest = (line: ServiceLineResponse, bookId: number): Servic
  * Build ServiceBookRequest from local state
  * Includes all categories (including deleted ones) for sync
  */
-const buildBookRequestFromLocal = (localServiceBook: ServiceBookWithCategories): ServiceBookRequest => {
-  const allLines = (localServiceBook.lines || []).map(line => convertLineToRequest(line, localServiceBook.id))
-  const allCategories = (localServiceBook.lineCategories || []).map(convertCategoryToRequest)
+const buildBookRequestFromLocal = (
+  localServiceBook: ServiceBookWithCategories
+): ServiceBookRequest => {
+  const allLines = (localServiceBook.lines || []).map(line =>
+    convertLineToRequest(line, localServiceBook.id)
+  )
+  const allCategories = (localServiceBook.lineCategories || []).map(
+    convertCategoryToRequest
+  )
 
   return {
     id: localServiceBook.id,
     groomId: localServiceBook.groomId || null,
     brideId: localServiceBook.brideId || null,
     weddingPlannerId: undefined,
-    bookType: (localServiceBook.bookType as unknown) as UserType | undefined,
+    bookType: localServiceBook.bookType as unknown as UserType | undefined,
     bookClass: localServiceBook.bookClass as unknown as BookClass | undefined,
     title: localServiceBook.title || null,
     clientName: null,
@@ -132,7 +166,9 @@ const hasActualChanges = (
 
   for (let i = 0; i < currentCategories.length; i++) {
     const currentCategory = currentCategories[i]
-    const lastSyncedCategory = lastSyncedCategories.find(c => c.id === currentCategory.id)
+    const lastSyncedCategory = lastSyncedCategories.find(
+      c => c.id === currentCategory.id
+    )
 
     if (!lastSyncedCategory) {
       return true
@@ -190,13 +226,18 @@ export default function PreparationsCategoriesPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   // Local state to keep the book in memory
-  const [localServiceBook, setLocalServiceBook] = useState<ServiceBookWithCategories | null>(null)
+  const [localServiceBook, setLocalServiceBook] =
+    useState<ServiceBookWithCategories | null>(null)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const lastSyncedRef = useRef<ServiceBookWithCategories | null>(null)
   const isInitialLoadRef = useRef(true)
 
   // Fetch service book (includes lines) - GET endpoint only
-  const { data: serviceBook, isLoading, refetch } = useServiceBook({
+  const {
+    data: serviceBook,
+    isLoading,
+    refetch,
+  } = useServiceBook({
     eventId: eventId || undefined,
     userType: null as unknown as UserType | undefined,
     clientId: null as unknown as string | undefined,
@@ -206,9 +247,11 @@ export default function PreparationsCategoriesPage() {
   const syncMutation = useSyncServiceBook()
 
   // Fetch categories separately (ServiceBook doesn't include lineCategories in response)
-  const { data: categories, refetch: refetchCategories } = useServiceCategories({
-    enabled: typeof window !== 'undefined',
-  })
+  const { data: categories, refetch: refetchCategories } = useServiceCategories(
+    {
+      enabled: typeof window !== 'undefined',
+    }
+  )
 
   // On first load, use the book from GET endpoint and merge categories
   useEffect(() => {
@@ -225,7 +268,12 @@ export default function PreparationsCategoriesPage() {
 
   // Sync fetched data to local state when it changes (only if no unsaved changes)
   useEffect(() => {
-    if (serviceBook && categories && !hasUnsavedChanges && !isInitialLoadRef.current) {
+    if (
+      serviceBook &&
+      categories &&
+      !hasUnsavedChanges &&
+      !isInitialLoadRef.current
+    ) {
       const updatedBook: ServiceBookWithCategories = {
         ...serviceBook,
         lineCategories: categories, // Use fetched categories
@@ -239,7 +287,12 @@ export default function PreparationsCategoriesPage() {
 
   // After sync, update local state from refetched data
   useEffect(() => {
-    if (serviceBook && categories && !hasUnsavedChanges && syncMutation.isSuccess) {
+    if (
+      serviceBook &&
+      categories &&
+      !hasUnsavedChanges &&
+      syncMutation.isSuccess
+    ) {
       const updatedBook: ServiceBookWithCategories = {
         ...serviceBook,
         lineCategories: categories,
@@ -254,31 +307,41 @@ export default function PreparationsCategoriesPage() {
   useEffect(() => {
     if (!eventId || !localServiceBook || hasUnsavedChanges) return
 
-    const interval = setInterval(async () => {
-      try {
-        if (!hasActualChanges(localServiceBook, lastSyncedRef.current)) {
-          return
-        }
+    const interval = setInterval(
+      async () => {
+        try {
+          if (!hasActualChanges(localServiceBook, lastSyncedRef.current)) {
+            return
+          }
 
-        const bookRequest = buildBookRequestFromLocal(localServiceBook)
-        await syncMutation.mutateAsync({
-          data: bookRequest,
-          query: {
-            eventId: eventId || undefined,
-            userType: null as unknown as UserType | undefined,
-            clientId: null as unknown as string | undefined,
-          },
-        })
-        lastSyncedRef.current = localServiceBook
-        refetch()
-        refetchCategories()
-      } catch {
-        // Auto-sync failed silently
-      }
-    }, 2 * 60 * 1000) // 2 minutes
+          const bookRequest = buildBookRequestFromLocal(localServiceBook)
+          await syncMutation.mutateAsync({
+            data: bookRequest,
+            query: {
+              eventId: eventId || undefined,
+              userType: null as unknown as UserType | undefined,
+              clientId: null as unknown as string | undefined,
+            },
+          })
+          lastSyncedRef.current = localServiceBook
+          refetch()
+          refetchCategories()
+        } catch {
+          // Auto-sync failed silently
+        }
+      },
+      2 * 60 * 1000
+    ) // 2 minutes
 
     return () => clearInterval(interval)
-  }, [eventId, localServiceBook, hasUnsavedChanges, syncMutation, refetch, refetchCategories])
+  }, [
+    eventId,
+    localServiceBook,
+    hasUnsavedChanges,
+    syncMutation,
+    refetch,
+    refetchCategories,
+  ])
 
   // Get active categories (not deleted) for display
   const activeCategories = useMemo(() => {
@@ -319,7 +382,10 @@ export default function PreparationsCategoriesPage() {
     setIsCreateModalOpen(false)
   }
 
-  const handleCreateCategory = async (data: { name: string; description?: string }) => {
+  const handleCreateCategory = async (data: {
+    name: string
+    description?: string
+  }) => {
     if (!localServiceBook) {
       addToast('Service book not found. Please refresh the page.', 'error')
       return
@@ -392,7 +458,8 @@ export default function PreparationsCategoriesPage() {
       refetch()
       refetchCategories()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save changes'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to save changes'
       addToast(errorMessage, 'error')
     }
   }
@@ -422,7 +489,9 @@ export default function PreparationsCategoriesPage() {
               variant="brand"
               size="md"
               className="text-white"
-              disabled={syncMutation.isPending || !localServiceBook || isLoading}
+              disabled={
+                syncMutation.isPending || !localServiceBook || isLoading
+              }
             >
               <Save className="w-5 h-5 mr-2" />
               {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
@@ -452,24 +521,29 @@ export default function PreparationsCategoriesPage() {
         <div className="space-y-4">
           {/* Pinned Default Card - Always First */}
           <CategoryCard
-            category={{
-              id: 1,
-              name: 'Default Preparations',
-              nameEn: 'Default Preparations',
-              nameAr: '',
-              description: 'Tap to view preparations list',
-              descriptionEn: 'Tap to view preparations list',
-              descriptionAr: '',
-              slug: '',
-              isDeleted: false,
-              isModelLine: false,
-              creationDate: new Date().toISOString(),
-              lastModifiedDate: new Date().toISOString(),
-              createdBy: '',
-              lastModifiedBy: '',
-              lineCount: 0,
-              completedCount: 0,
-            } as ServiceLineCategoryResponse & { lineCount: number; completedCount: number }}
+            category={
+              {
+                id: 1,
+                name: 'Default Preparations',
+                nameEn: 'Default Preparations',
+                nameAr: '',
+                description: 'Tap to view preparations list',
+                descriptionEn: 'Tap to view preparations list',
+                descriptionAr: '',
+                slug: '',
+                isDeleted: false,
+                isModelLine: false,
+                creationDate: new Date().toISOString(),
+                lastModifiedDate: new Date().toISOString(),
+                createdBy: '',
+                lastModifiedBy: '',
+                lineCount: 0,
+                completedCount: 0,
+              } as ServiceLineCategoryResponse & {
+                lineCount: number
+                completedCount: number
+              }
+            }
             onClick={handlePinnedCategoryClick}
             variant="pinned"
           />
@@ -478,7 +552,9 @@ export default function PreparationsCategoriesPage() {
           {categoriesWithCounts.length === 0 && (
             <div className="bg-white border rounded-2xl p-12 text-center">
               <p className="text-16 text-gray-500 mb-4">No categories yet</p>
-              <p className="text-14 text-gray-400">Create your first category to get started</p>
+              <p className="text-14 text-gray-400">
+                Create your first category to get started
+              </p>
             </div>
           )}
 

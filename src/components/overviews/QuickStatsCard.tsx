@@ -15,7 +15,11 @@ export interface QuickStatsCardProps {
   eventId?: number
 }
 
-export const QuickStatsCard = ({ title, book, eventId }: QuickStatsCardProps) => {
+export const QuickStatsCard = ({
+  title,
+  book,
+  eventId,
+}: QuickStatsCardProps) => {
   // Check if book is guest book (only has count, no completed/pending)
   const isGuestBook = useMemo(() => {
     if (!book) return false
@@ -41,7 +45,7 @@ export const QuickStatsCard = ({ title, book, eventId }: QuickStatsCardProps) =>
   // For books with progress (service, todo): calculate percentage
   if (book && 'completed' in book && 'pending' in book) {
     const progressBook = book as BookWithProgress
-    
+
     // Calculate total: lines.length + pending (same logic as in my-events page)
     const total = useMemo(() => {
       const linesCount = progressBook.lines?.length || 0
@@ -85,4 +89,3 @@ export const QuickStatsCard = ({ title, book, eventId }: QuickStatsCardProps) =>
     </div>
   )
 }
-

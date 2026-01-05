@@ -41,7 +41,11 @@ const MobileAppCard = ({
       <div className="mb-4">
         <p className="text-14 text-gray-700 mb-3 font-medium">Available on</p>
         <div className="flex items-center gap-2">
-          <StoreBadges size="sm" appStoreUrl={appStoreUrl} playStoreUrl={playStoreUrl} />
+          <StoreBadges
+            size="sm"
+            appStoreUrl={appStoreUrl}
+            playStoreUrl={playStoreUrl}
+          />
         </div>
       </div>
 
@@ -126,7 +130,9 @@ export const MobileAppsSection = ({
             Download our mobile apps
           </h2>
           <p className="text-16 sm:text-18 md:text-20 text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Book unforgettable beauty and wellness experiences with our mobile app, or run your business with our powerful, award-winning iOS and Android booking platform.
+            Book unforgettable beauty and wellness experiences with our mobile
+            app, or run your business with our powerful, award-winning iOS and
+            Android booking platform.
           </p>
         </div>
 
@@ -160,4 +166,3 @@ export const MobileAppsSection = ({
     </section>
   )
 }
-

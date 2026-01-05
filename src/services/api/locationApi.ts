@@ -1,7 +1,11 @@
 // Location API service functions
 
 import { apiClient } from '@/services/api/apiClient'
-import type { Country, City, Region } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  Country,
+  City,
+  Region,
+} from '@/../client/common/api/gen/ourbride-api'
 
 /**
  * Get all countries
@@ -15,11 +19,15 @@ export const getCountries = async (): Promise<Country[]> => {
       return responseAny as Country[]
     }
     if (responseAny?.data) {
-      return Array.isArray(responseAny.data.data) ? responseAny.data.data : responseAny.data.data.items || []
+      return Array.isArray(responseAny.data.data)
+        ? responseAny.data.data
+        : responseAny.data.data.items || []
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch countries')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch countries'
+    )
   }
 }
 
@@ -35,31 +43,42 @@ export const getCities = async (): Promise<City[]> => {
       return responseAny as City[]
     }
     if (responseAny?.data) {
-      return Array.isArray(responseAny.data.data) ? responseAny.data.data : responseAny.data.data.items || []
+      return Array.isArray(responseAny.data.data)
+        ? responseAny.data.data
+        : responseAny.data.data.items || []
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch cities')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch cities'
+    )
   }
 }
 
 /**
  * Get cities by country ID
  */
-export const getCitiesByCountry = async (countryId: number): Promise<City[]> => {
+export const getCitiesByCountry = async (
+  countryId: number
+): Promise<City[]> => {
   try {
-    const response = await apiClient.api.getLocationGetCitiesByCountry(countryId)
+    const response =
+      await apiClient.api.getLocationGetCitiesByCountry(countryId)
     const responseAny: any = response
     // Handle different response structures
     if (Array.isArray(responseAny)) {
       return responseAny as City[]
     }
     if (responseAny?.data) {
-      return Array.isArray(responseAny.data.data) ? responseAny.data.data : responseAny.data.data.items || []
+      return Array.isArray(responseAny.data.data)
+        ? responseAny.data.data
+        : responseAny.data.data.items || []
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch cities')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch cities'
+    )
   }
 }
 
@@ -75,11 +94,15 @@ export const getRegions = async (): Promise<Region[]> => {
       return responseAny as Region[]
     }
     if (responseAny?.data) {
-      return Array.isArray(responseAny.data.data) ? responseAny.data.data : responseAny.data.data.items || []
+      return Array.isArray(responseAny.data.data)
+        ? responseAny.data.data
+        : responseAny.data.data.items || []
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch regions')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch regions'
+    )
   }
 }
 
@@ -95,11 +118,14 @@ export const getRegionsByCity = async (cityId: number): Promise<Region[]> => {
       return responseAny as Region[]
     }
     if (responseAny?.data) {
-      return Array.isArray(responseAny.data.data) ? responseAny.data.data : responseAny.data.data.items || []
+      return Array.isArray(responseAny.data.data)
+        ? responseAny.data.data
+        : responseAny.data.data.items || []
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch regions')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch regions'
+    )
   }
 }
-

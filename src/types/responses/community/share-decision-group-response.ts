@@ -8,19 +8,3 @@ export interface ShareDecisionGroupResponse {
   fullUrl: string
   shareCount: number
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

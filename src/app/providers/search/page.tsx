@@ -2,13 +2,31 @@
 
 import { useState, useMemo, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Search, MapPin, Calendar, Map, List, X, Navigation, Filter } from 'lucide-react'
+import {
+  Search,
+  MapPin,
+  Calendar,
+  Map,
+  List,
+  X,
+  Navigation,
+  Filter,
+} from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
 import { DatePicker } from '@/components/ui/DatePicker'
 import { Input } from '@/components/ui/Input'
-import { EmptyState, LoadingSpinner, ProviderSearchCard, ProviderMap } from '@/components/ui'
-import { ProviderFiltersModal, type ProviderFilters, type SortOption } from '@/components/ui/ProviderFiltersModal'
+import {
+  EmptyState,
+  LoadingSpinner,
+  ProviderSearchCard,
+  ProviderMap,
+} from '@/components/ui'
+import {
+  ProviderFiltersModal,
+  type ProviderFilters,
+  type SortOption,
+} from '@/components/ui/ProviderFiltersModal'
 import type { FeaturedProviderResponse } from '@/types/responses'
 import { cn } from '@/lib/utils'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
@@ -16,7 +34,9 @@ import { useProvidersFilter } from '@/hooks/providers/useProvidersFilter'
 import { useProvidersMap } from '@/hooks/providers/useProvidersMap'
 
 // Google Maps API Key from environment variables
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyDAwJZexZRlbt9nAwu2Kr8wWaJnMdtblfE'
+const GOOGLE_MAPS_API_KEY =
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ||
+  'AIzaSyDAwJZexZRlbt9nAwu2Kr8wWaJnMdtblfE'
 
 // Add custom marker styles for black teardrop markers
 if (typeof document !== 'undefined') {
@@ -52,10 +72,14 @@ function ProvidersSearchContent() {
     searchParams.get('date') ? new Date(searchParams.get('date')!) : undefined
   )
   const [viewMode, setViewMode] = useState<'list' | 'map'>('map')
-  const [selectedProvider, setSelectedProvider] = useState<FeaturedProviderResponse | null>(null)
+  const [selectedProvider, setSelectedProvider] =
+    useState<FeaturedProviderResponse | null>(null)
   const [isLocationPopoverOpen, setIsLocationPopoverOpen] = useState(false)
   const [isGettingLocation, setIsGettingLocation] = useState(false)
-  const [userCoordinates, setUserCoordinates] = useState<{ lat: number; lng: number } | null>(null)
+  const [userCoordinates, setUserCoordinates] = useState<{
+    lat: number
+    lng: number
+  } | null>(null)
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery)
   const [showFilters, setShowFilters] = useState(false)
   const [filters, setFilters] = useState<ProviderFilters>({
@@ -90,34 +114,42 @@ function ProvidersSearchContent() {
   }
 
   // For map view, use the map-specific endpoint with location data
-  const { data: mapProviders, isLoading: isLoadingMapProviders } = useProvidersMap({
-    latitude: userCoordinates?.lat,
-    longitude: userCoordinates?.lng,
-    radius: userCoordinates ? 50 : undefined, // 50km radius when location is available
-    sortBy: getSortByParam(filters.sortBy),
-    venueType: filters.venueType !== 'everyone' ? filters.venueType : undefined,
-    offersDeals: filters.offersDeals || undefined,
-    acceptsGroups: filters.acceptsGroups || undefined,
-    enabled: viewMode === 'map', // Always enabled in map view, even without user coordinates
-  })
+  const { data: mapProviders, isLoading: isLoadingMapProviders } =
+    useProvidersMap({
+      latitude: userCoordinates?.lat,
+      longitude: userCoordinates?.lng,
+      radius: userCoordinates ? 50 : undefined, // 50km radius when location is available
+      sortBy: getSortByParam(filters.sortBy),
+      venueType:
+        filters.venueType !== 'everyone' ? filters.venueType : undefined,
+      offersDeals: filters.offersDeals || undefined,
+      acceptsGroups: filters.acceptsGroups || undefined,
+      enabled: viewMode === 'map', // Always enabled in map view, even without user coordinates
+    })
 
   // For list view, use the filter endpoint with search
-  const { data: filterProviders, isLoading: isLoadingFilterProviders } = useProvidersFilter({
-    search: debouncedSearchQuery || undefined,
-    latitude: userCoordinates?.lat,
-    longitude: userCoordinates?.lng,
-    radius: userCoordinates ? 50 : undefined,
-    sortBy: getSortByParam(filters.sortBy),
-    venueType: filters.venueType !== 'everyone' ? filters.venueType : undefined,
-    offersDeals: filters.offersDeals || undefined,
-    acceptsGroups: filters.acceptsGroups || undefined,
-    pageSize: 100,
-  }, {
-    enabled: viewMode === 'list', // Only enabled in list view
-  })
+  const { data: filterProviders, isLoading: isLoadingFilterProviders } =
+    useProvidersFilter(
+      {
+        search: debouncedSearchQuery || undefined,
+        latitude: userCoordinates?.lat,
+        longitude: userCoordinates?.lng,
+        radius: userCoordinates ? 50 : undefined,
+        sortBy: getSortByParam(filters.sortBy),
+        venueType:
+          filters.venueType !== 'everyone' ? filters.venueType : undefined,
+        offersDeals: filters.offersDeals || undefined,
+        acceptsGroups: filters.acceptsGroups || undefined,
+        pageSize: 100,
+      },
+      {
+        enabled: viewMode === 'list', // Only enabled in list view
+      }
+    )
 
   // Combine loading states
-  const isLoadingProviders = viewMode === 'map' ? isLoadingMapProviders : isLoadingFilterProviders
+  const isLoadingProviders =
+    viewMode === 'map' ? isLoadingMapProviders : isLoadingFilterProviders
 
   // Select the appropriate API data based on view mode
   const apiProviders = viewMode === 'map' ? mapProviders : filterProviders
@@ -129,7 +161,7 @@ function ProvidersSearchContent() {
     console.log('Checking Google Maps...', {
       hasGoogle: !!window.google,
       hasApiKey: !!GOOGLE_MAPS_API_KEY,
-      apiKey: GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing'
+      apiKey: GOOGLE_MAPS_API_KEY ? 'Present' : 'Missing',
     })
 
     if (window.google?.maps) {
@@ -137,7 +169,9 @@ function ProvidersSearchContent() {
       return
     }
 
-    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]')
+    const existingScript = document.querySelector(
+      'script[src*="maps.googleapis.com"]'
+    )
     if (existingScript) {
       console.log('Google Maps script already exists in DOM')
       return
@@ -157,7 +191,7 @@ function ProvidersSearchContent() {
     script.onload = () => {
       console.log('Google Maps script loaded successfully')
     }
-    script.onerror = (error) => {
+    script.onerror = error => {
       console.error('Failed to load Google Maps script:', error)
     }
     document.head.appendChild(script)
@@ -166,7 +200,10 @@ function ProvidersSearchContent() {
   // Use API providers - no fallback needed
   const providers = useMemo(() => {
     console.log('[ProvidersSearchContent] apiProviders:', apiProviders)
-    console.log('[ProvidersSearchContent] apiProviders length:', apiProviders?.length || 0)
+    console.log(
+      '[ProvidersSearchContent] apiProviders length:',
+      apiProviders?.length || 0
+    )
     if (apiProviders && apiProviders.length > 0) {
       console.log('[ProvidersSearchContent] Sample provider:', apiProviders[0])
       console.log('[ProvidersSearchContent] Provider with coords:', {
@@ -200,9 +237,10 @@ function ProvidersSearchContent() {
     if (searchQuery) params.append('q', searchQuery)
     if (location) params.append('location', location)
     if (selectedDate) {
-      const dateStr = selectedDate instanceof Date
-        ? selectedDate.toISOString().split('T')[0]
-        : selectedDate
+      const dateStr =
+        selectedDate instanceof Date
+          ? selectedDate.toISOString().split('T')[0]
+          : selectedDate
       params.append('date', dateStr)
     }
 
@@ -228,7 +266,7 @@ function ProvidersSearchContent() {
     setIsGettingLocation(true)
 
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      async position => {
         const { latitude, longitude } = position.coords
 
         setUserCoordinates({ lat: latitude, lng: longitude })
@@ -253,9 +291,11 @@ function ProvidersSearchContent() {
         setIsGettingLocation(false)
         setIsLocationPopoverOpen(false)
       },
-      (error) => {
+      error => {
         console.error('Error getting location:', error)
-        alert('Unable to retrieve your location. Please check your browser permissions.')
+        alert(
+          'Unable to retrieve your location. Please check your browser permissions.'
+        )
         setIsGettingLocation(false)
       }
     )
@@ -270,11 +310,17 @@ function ProvidersSearchContent() {
     if (filteredProviders.length > 0) {
       const providersWithCoords = filteredProviders.filter(
         p => (p as any).latitude && (p as any).longitude
-      ) as Array<typeof filteredProviders[0] & { latitude: number; longitude: number }>
+      ) as Array<
+        (typeof filteredProviders)[0] & { latitude: number; longitude: number }
+      >
 
       if (providersWithCoords.length > 0) {
-        const avgLat = providersWithCoords.reduce((sum, p) => sum + p.latitude, 0) / providersWithCoords.length
-        const avgLng = providersWithCoords.reduce((sum, p) => sum + p.longitude, 0) / providersWithCoords.length
+        const avgLat =
+          providersWithCoords.reduce((sum, p) => sum + p.latitude, 0) /
+          providersWithCoords.length
+        const avgLng =
+          providersWithCoords.reduce((sum, p) => sum + p.longitude, 0) /
+          providersWithCoords.length
         return { lat: avgLat, lng: avgLng }
       }
     }
@@ -299,7 +345,7 @@ function ProvidersSearchContent() {
                   type="text"
                   placeholder="Treatment or venue"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   onKeyPress={handleKeyPress}
                   prefixIcon={Search}
                   variant="fill"
@@ -314,7 +360,7 @@ function ProvidersSearchContent() {
                   type="text"
                   placeholder="Location"
                   value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  onChange={e => setLocation(e.target.value)}
                   onKeyPress={handleKeyPress}
                   onFocus={() => setIsLocationPopoverOpen(true)}
                   prefixIcon={MapPin}
@@ -334,16 +380,22 @@ function ProvidersSearchContent() {
                         disabled={isGettingLocation}
                         className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
                       >
-                        <Navigation className={cn(
-                          "h-5 w-5 text-brand-600 flex-shrink-0",
-                          isGettingLocation && "animate-pulse"
-                        )} />
+                        <Navigation
+                          className={cn(
+                            'h-5 w-5 text-brand-600 flex-shrink-0',
+                            isGettingLocation && 'animate-pulse'
+                          )}
+                        />
                         <div className="flex-1">
                           <div className="text-14 font-medium text-gray-900">
-                            {isGettingLocation ? 'Getting your location...' : 'Use current location'}
+                            {isGettingLocation
+                              ? 'Getting your location...'
+                              : 'Use current location'}
                           </div>
                           <div className="text-12 text-gray-500">
-                            {isGettingLocation ? 'Please wait' : 'Automatically detect your location'}
+                            {isGettingLocation
+                              ? 'Please wait'
+                              : 'Automatically detect your location'}
                           </div>
                         </div>
                       </button>
@@ -356,7 +408,9 @@ function ProvidersSearchContent() {
               <div className="flex-1">
                 <DatePicker
                   value={selectedDate}
-                  onChange={(date) => setSelectedDate(date instanceof Date ? date : undefined)}
+                  onChange={date =>
+                    setSelectedDate(date instanceof Date ? date : undefined)
+                  }
                   placeholder="Pick a date"
                   prefixIcon={Calendar}
                   size="lg"
@@ -383,7 +437,10 @@ function ProvidersSearchContent() {
             <div className="flex items-center justify-between">
               {/* Results Count */}
               <div className="text-16 text-gray-900">
-                <span className="font-semibold">{filteredProviders.length}</span> providers nearby
+                <span className="font-semibold">
+                  {filteredProviders.length}
+                </span>{' '}
+                providers nearby
               </div>
 
               {/* Action Buttons */}
@@ -402,7 +459,7 @@ function ProvidersSearchContent() {
                   <button
                     onClick={() => setViewMode('list')}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-md text-14 font-medium transition-colors",
+                      'flex items-center gap-2 px-4 py-2 rounded-md text-14 font-medium transition-colors',
                       viewMode === 'list'
                         ? 'bg-white text-brand-600 shadow-sm'
                         : 'text-gray-600 hover:text-gray-900'
@@ -414,7 +471,7 @@ function ProvidersSearchContent() {
                   <button
                     onClick={() => setViewMode('map')}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-md text-14 font-medium transition-colors",
+                      'flex items-center gap-2 px-4 py-2 rounded-md text-14 font-medium transition-colors',
                       viewMode === 'map'
                         ? 'bg-white text-brand-600 shadow-sm'
                         : 'text-gray-600 hover:text-gray-900'
@@ -431,7 +488,6 @@ function ProvidersSearchContent() {
 
         {/* View Toggle and Results */}
         <div className="container-custom py-6">
-
           {/* Content Area */}
           {isLoadingProviders ? (
             // Loading State
@@ -442,7 +498,7 @@ function ProvidersSearchContent() {
             // List View
             filteredProviders.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                {filteredProviders.map((provider) => {
+                {filteredProviders.map(provider => {
                   // Use topRatedServices from provider (now part of FeaturedProviderResponse)
                   const services = provider.topRatedServices || []
                   const totalServices = provider.totalServices || 0
@@ -455,23 +511,34 @@ function ProvidersSearchContent() {
                         // Determine price based on priceType (0 = Buy, 1 = Rent, etc.)
                         // PriceType enum: 0=Fixed, 1=Free, 2=From
                         // But backend uses: 0=Buy, 1=Rent
-                        const priceTypeNum = typeof svc.priceType === 'number' ? svc.priceType : 0
-                        const price = priceTypeNum === 1 ? (svc.rentPrice ?? 0) : (svc.buyPrice ?? 0)
-                        const salePrice = priceTypeNum === 1 ? (svc.saleRentPrice ?? null) : (svc.saleBuyPrice ?? null)
+                        const priceTypeNum =
+                          typeof svc.priceType === 'number' ? svc.priceType : 0
+                        const price =
+                          priceTypeNum === 1
+                            ? (svc.rentPrice ?? 0)
+                            : (svc.buyPrice ?? 0)
+                        const salePrice =
+                          priceTypeNum === 1
+                            ? (svc.saleRentPrice ?? null)
+                            : (svc.saleBuyPrice ?? null)
                         const finalPrice = salePrice ?? price
-                        const hasDiscount = svc.hasDiscount || (salePrice !== null && salePrice < price)
+                        const hasDiscount =
+                          svc.hasDiscount ||
+                          (salePrice !== null && salePrice < price)
 
                         // Parse duration from durationDisplay or duration field
                         let durationMin: number | undefined
                         let durationMax: number | undefined
                         if (svc.durationDisplay) {
                           // Parse "30 min - 45 min" format
-                          const match = svc.durationDisplay.match(/(\d+)\s*-\s*(\d+)/)
+                          const match =
+                            svc.durationDisplay.match(/(\d+)\s*-\s*(\d+)/)
                           if (match) {
                             durationMin = parseInt(match[1])
                             durationMax = parseInt(match[2])
                           } else {
-                            const singleMatch = svc.durationDisplay.match(/(\d+)/)
+                            const singleMatch =
+                              svc.durationDisplay.match(/(\d+)/)
                             if (singleMatch) {
                               durationMin = parseInt(singleMatch[1])
                             }
@@ -519,7 +586,7 @@ function ProvidersSearchContent() {
                 <div className="overflow-y-auto pr-2">
                   {filteredProviders.length > 0 ? (
                     <div className="grid grid-cols-2 gap-4">
-                      {filteredProviders.map((provider) => {
+                      {filteredProviders.map(provider => {
                         // Use topRatedServices from provider (now part of FeaturedProviderResponse)
                         const services = provider.topRatedServices || []
                         const totalServices = provider.totalServices || 0
@@ -528,32 +595,45 @@ function ProvidersSearchContent() {
                           <div
                             key={provider.id}
                             onClick={() => setSelectedProvider(provider)}
-                            className={`cursor-pointer transition-all duration-200 ${selectedProvider?.id === provider.id
-                              ? 'ring-2 ring-brand-500 rounded-lg'
-                              : ''
-                              }`}
+                            className={`cursor-pointer transition-all duration-200 ${
+                              selectedProvider?.id === provider.id
+                                ? 'ring-2 ring-brand-500 rounded-lg'
+                                : ''
+                            }`}
                           >
                             <ProviderSearchCard
                               provider={provider}
                               services={services.map(svc => {
                                 // Determine price based on priceType (0 = Buy, 1 = Rent, etc.)
                                 const priceType = svc.priceType ?? 0
-                                const price = priceType === 1 ? (svc.rentPrice ?? 0) : (svc.buyPrice ?? 0)
-                                const salePrice = priceType === 1 ? (svc.saleRentPrice ?? null) : (svc.saleBuyPrice ?? null)
+                                const price =
+                                  priceType === 1
+                                    ? (svc.rentPrice ?? 0)
+                                    : (svc.buyPrice ?? 0)
+                                const salePrice =
+                                  priceType === 1
+                                    ? (svc.saleRentPrice ?? null)
+                                    : (svc.saleBuyPrice ?? null)
                                 const finalPrice = salePrice ?? price
-                                const hasDiscount = svc.hasDiscount || (salePrice !== null && salePrice < price)
+                                const hasDiscount =
+                                  svc.hasDiscount ||
+                                  (salePrice !== null && salePrice < price)
 
                                 // Parse duration from durationDisplay or duration field
                                 let durationMin: number | undefined
                                 let durationMax: number | undefined
                                 if (svc.durationDisplay) {
                                   // Parse "30 min - 45 min" format
-                                  const match = svc.durationDisplay.match(/(\d+)\s*-\s*(\d+)/)
+                                  const match =
+                                    svc.durationDisplay.match(
+                                      /(\d+)\s*-\s*(\d+)/
+                                    )
                                   if (match) {
                                     durationMin = parseInt(match[1])
                                     durationMax = parseInt(match[2])
                                   } else {
-                                    const singleMatch = svc.durationDisplay.match(/(\d+)/)
+                                    const singleMatch =
+                                      svc.durationDisplay.match(/(\d+)/)
                                     if (singleMatch) {
                                       durationMin = parseInt(singleMatch[1])
                                     }
@@ -599,19 +679,23 @@ function ProvidersSearchContent() {
                 <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-lg">
                   {window.google?.maps?.Map ? (
                     (() => {
-                      console.log('[ProvidersSearchContent] Rendering ProviderMap with:', {
-                        providersCount: filteredProviders.length,
-                        mapCenter,
-                        mapZoom,
-                        selectedProviderId: selectedProvider?.id,
-                        providers: filteredProviders.map(p => ({
-                          id: p.id,
-                          name: p.nameEn || p.nameAr,
-                          latitude: (p as any).latitude,
-                          longitude: (p as any).longitude,
-                          hasCoords: !!(p as any).latitude && (p as any).longitude,
-                        })),
-                      })
+                      console.log(
+                        '[ProvidersSearchContent] Rendering ProviderMap with:',
+                        {
+                          providersCount: filteredProviders.length,
+                          mapCenter,
+                          mapZoom,
+                          selectedProviderId: selectedProvider?.id,
+                          providers: filteredProviders.map(p => ({
+                            id: p.id,
+                            name: p.nameEn || p.nameAr,
+                            latitude: (p as any).latitude,
+                            longitude: (p as any).longitude,
+                            hasCoords:
+                              !!(p as any).latitude && (p as any).longitude,
+                          })),
+                        }
+                      )
                       return (
                         <ProviderMap
                           providers={filteredProviders}
@@ -640,7 +724,10 @@ function ProvidersSearchContent() {
                       </button>
                       <div className="flex items-center gap-4">
                         <img
-                          src={selectedProvider.publicLogoImageUrl || '/placeholder-provider.png'}
+                          src={
+                            selectedProvider.publicLogoImageUrl ||
+                            '/placeholder-provider.png'
+                          }
                           alt={selectedProvider.nameEn || 'Provider'}
                           className="w-16 h-16 rounded-lg object-cover"
                         />
@@ -649,10 +736,13 @@ function ProvidersSearchContent() {
                             {selectedProvider.nameEn || selectedProvider.nameAr}
                           </h3>
                           <p className="text-14 text-gray-600">
-                            {selectedProvider.descriptionEn || selectedProvider.descriptionAr}
+                            {selectedProvider.descriptionEn ||
+                              selectedProvider.descriptionAr}
                           </p>
                           <Button
-                            onClick={() => handleProviderClick(selectedProvider.id)}
+                            onClick={() =>
+                              handleProviderClick(selectedProvider.id)
+                            }
                             className="mt-2 h-8 px-4 text-12 bg-brand-600 hover:bg-brand-700 !text-white"
                           >
                             View Profile
@@ -674,7 +764,7 @@ function ProvidersSearchContent() {
       <ProviderFiltersModal
         isOpen={showFilters}
         onClose={() => setShowFilters(false)}
-        onApply={(newFilters) => {
+        onApply={newFilters => {
           setFilters(newFilters)
           setShowFilters(false)
         }}
@@ -688,12 +778,14 @@ function ProvidersSearchContent() {
 
 export default function ProvidersSearchPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex flex-col bg-white">
-        <Header />
-        <Footer />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex flex-col bg-white">
+          <Header />
+          <Footer />
+        </div>
+      }
+    >
       <ProvidersSearchContent />
     </Suspense>
   )

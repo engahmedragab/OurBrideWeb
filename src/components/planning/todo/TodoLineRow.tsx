@@ -21,16 +21,18 @@ export function TodoLineRow({
       role="button"
       tabIndex={0}
       onClick={onEdit}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') onEdit()
         onToggleDone()
       }}
-      className={cn('flex items-center gap-3 rounded-xl border bg-white p-4 transition hover:bg-gray-50')}
+      className={cn(
+        'flex items-center gap-3 rounded-xl border bg-white p-4 transition hover:bg-gray-50'
+      )}
     >
       {/* Toggle Done (الدائرة) */}
       <button
         type="button"
-        onClick={(e) => {
+        onClick={e => {
           e.preventDefault()
           e.stopPropagation()
           onToggleDone()
@@ -47,7 +49,12 @@ export function TodoLineRow({
 
       {/* Content */}
       <div className="min-w-0 flex-1 flex items-center">
-        <div className={cn('text-sm font-medium text-gray-900 ', todo.isDone && 'line-through text-gray-400')}>
+        <div
+          className={cn(
+            'text-sm font-medium text-gray-900 ',
+            todo.isDone && 'line-through text-gray-400'
+          )}
+        >
           {todo.title}
         </div>
       </div>
@@ -57,7 +64,9 @@ export function TodoLineRow({
         <span
           className={cn(
             'rounded-full px-3 py-1 text-xs font-medium',
-            todo.isDone ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-700',
+            todo.isDone
+              ? 'bg-green-50 text-green-700'
+              : 'bg-gray-100 text-gray-700'
           )}
         >
           {todo.isDone ? 'Completed' : 'Pending'}
@@ -65,7 +74,7 @@ export function TodoLineRow({
 
         <button
           type="button"
-          onClick={(e) => {
+          onClick={e => {
             e.preventDefault()
             e.stopPropagation()
             onDelete()

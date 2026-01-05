@@ -10,14 +10,12 @@ import { ServiceSelectCard } from '../ServiceSelectCard'
 import { LocationPickerModal, type LocationData } from '../LocationPickerModal'
 import { StatusModal } from '../StatusModal'
 import { WelcomeHeader } from './WelcomeHeader'
-import { 
-  MapPin, 
-  User, 
-  Mail, 
-  X, 
-  Wallet,
-} from 'lucide-react'
-import { getPlanningPreferences, setPlanningPreferences, type PlanningPreference } from '@/services/profile/profileApi'
+import { MapPin, User, Mail, X, Wallet } from 'lucide-react'
+import {
+  getPlanningPreferences,
+  setPlanningPreferences,
+  type PlanningPreference,
+} from '@/services/profile/profileApi'
 import { getServiceIcon } from '@/utils/serviceIconMapper'
 import { useAuth } from '@/auth'
 import { LoadingOverlay } from '../LoadingOverlay'
@@ -26,7 +24,6 @@ export interface PlanningPreferencesFormProps {
   onBackClick?: () => void
   className?: string
 }
-
 
 /**
  * PlanningPreferencesForm - Form for collecting planning preferences
@@ -40,16 +37,20 @@ export const PlanningPreferencesForm = ({
   const { user, refreshUser } = useAuth()
 
   // API state
-  const [availablePreferences, setAvailablePreferences] = useState<PlanningPreference[]>([])
+  const [availablePreferences, setAvailablePreferences] = useState<
+    PlanningPreference[]
+  >([])
   const [isLoadingPreferences, setIsLoadingPreferences] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
-  
+
   // Track if preferences have been fetched to prevent duplicate calls
   const preferencesFetchedRef = useRef(false)
 
   // Form state - track selected preference IDs (preparationIds)
-  const [selectedPreferenceIds, setSelectedPreferenceIds] = useState<number[]>([])
+  const [selectedPreferenceIds, setSelectedPreferenceIds] = useState<number[]>(
+    []
+  )
   const [budget, setBudget] = useState('')
   const [location, setLocation] = useState('')
   const [fullName, setFullName] = useState('')
@@ -92,7 +93,10 @@ export const PlanningPreferencesForm = ({
       } catch (error) {
         // On error, allow retry by resetting the ref
         preferencesFetchedRef.current = false
-        const errorMessage = error instanceof Error ? error.message : 'Failed to load planning preferences'
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : 'Failed to load planning preferences'
         setApiError(errorMessage)
       } finally {
         setIsLoadingPreferences(false)
@@ -124,9 +128,10 @@ export const PlanningPreferencesForm = ({
 
   const handleLocationSelect = (selectedLocation: string | LocationData) => {
     // Extract display name if LocationData, otherwise use string directly
-    const locationName = typeof selectedLocation === 'string' 
-      ? selectedLocation 
-      : selectedLocation.displayName
+    const locationName =
+      typeof selectedLocation === 'string'
+        ? selectedLocation
+        : selectedLocation.displayName
     setLocation(locationName)
     setShowLocationModal(false)
     if (errors.location) {
@@ -173,37 +178,43 @@ export const PlanningPreferencesForm = ({
     }
 
     if (selectedPreferenceIds.length === 0) {
-      setErrors(prev => ({ ...prev, preferences: 'Please select at least one service' }))
+      setErrors(prev => ({
+        ...prev,
+        preferences: 'Please select at least one service',
+      }))
       return
     }
 
     try {
       setIsSubmitting(true)
-      
+
       // Submit selected preferences
       await setPlanningPreferences(selectedPreferenceIds)
-      
+
       // Update user's isInit to true after successful submission
       if (typeof window !== 'undefined' && user) {
         const updatedUser = { ...user, isInit: true }
         localStorage.setItem('user_data', JSON.stringify(updatedUser))
-        
+
         // Also update the cookie so middleware and other parts can access it
         // Use the same cookie setting logic as in token.ts
         const expires = new Date()
         expires.setTime(expires.getTime() + 30 * 24 * 60 * 60 * 1000)
         document.cookie = `user_data=${JSON.stringify(updatedUser)};expires=${expires.toUTCString()};path=/;SameSite=Lax`
       }
-      
+
       // Refresh user data in context
       if (refreshUser) {
         await refreshUser()
       }
-      
+
       // Show success modal
       setShowSuccessModal(true)
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save planning preferences'
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to save planning preferences'
       setApiError(errorMessage)
     } finally {
       setIsSubmitting(false)
@@ -275,7 +286,7 @@ export const PlanningPreferencesForm = ({
             </div>
           ) : availablePreferences.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {availablePreferences.map((preference) => {
+              {availablePreferences.map(preference => {
                 // Render icon from API data (image or Lucide icon based on service name)
                 const renderIcon = () => {
                   // If we have an image URL from API, use it
@@ -288,18 +299,18 @@ export const PlanningPreferencesForm = ({
                       />
                     )
                   }
-                  
+
                   // Use Lucide icon based on service name - always in brand color from design system
                   const Icon = getServiceIcon(preference.name)
-                  
+
                   return (
-                    <Icon 
-                      className="w-8 h-8 sm:w-10 sm:h-10 text-brand-500" 
+                    <Icon
+                      className="w-8 h-8 sm:w-10 sm:h-10 text-brand-500"
                       strokeWidth={1}
                     />
                   )
                 }
-                
+
                 return (
                   <ServiceSelectCard
                     key={preference.id}
@@ -491,7 +502,7 @@ export const PlanningPreferencesForm = ({
       {/* Loading Overlay */}
       <LoadingOverlay
         open={isSubmitting || isLoadingPreferences}
-        title={isSubmitting ? "Saving..." : "Loading..."}
+        title={isSubmitting ? 'Saving...' : 'Loading...'}
         subtitle="Please wait a moment."
       />
     </>

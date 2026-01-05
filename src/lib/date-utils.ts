@@ -47,7 +47,15 @@ export const getToday = (): Date => {
  * Uses local date to ensure correct weekday
  */
 export const getWeekdayShort = (date: Date): string => {
-  const safeDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)
-  return safeDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()
+  const safeDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    12,
+    0,
+    0
+  )
+  return safeDate
+    .toLocaleDateString('en-US', { weekday: 'short' })
+    .toUpperCase()
 }
-

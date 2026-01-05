@@ -10,5 +10,3 @@ export interface NoteLineResponse extends LineResponse {
   note: string
   noteLineCategory?: NoteLineCategoryResponse
 }
-
-

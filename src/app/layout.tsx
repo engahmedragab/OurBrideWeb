@@ -39,8 +39,12 @@ export default function RootLayout({
         {/* SVG clipPath definition for card with rounded corners and smooth top-right cutout */}
         <svg width="0" height="0" className="absolute pointer-events-none">
           <defs>
-            <clipPath id="clipWithCircularNotch" clipPathUnits="objectBoundingBox">
-              <path d="
+            <clipPath
+              id="clipWithCircularNotch"
+              clipPathUnits="objectBoundingBox"
+            >
+              <path
+                d="
                   M 0.06, 0
                   L 0.75, 0
                   A 0.05, 0.05 0 0 1 0.80, 0.05
@@ -53,7 +57,8 @@ export default function RootLayout({
                   L 0, 0.06
                   Q 0, 0 0.06, 0
                   Z
-                " />
+                "
+              />
             </clipPath>
           </defs>
         </svg>

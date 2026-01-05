@@ -58,19 +58,21 @@ export const CreatePostModal = ({
         {/* User Info Section */}
         <div className="flex items-start gap-3 mb-4">
           <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-            {currentUser.avatar && currentUser.avatar !== 'https://via.placeholder.com/100' ? (
+            {currentUser.avatar &&
+            currentUser.avatar !== 'https://via.placeholder.com/100' ? (
               <NextImage
                 src={currentUser.avatar}
                 alt={currentUser.name}
                 fill
                 sizes="40px"
                 className="object-cover"
-                onError={(e) => {
+                onError={e => {
                   e.currentTarget.style.display = 'none'
                 }}
               />
             ) : null}
-            {(!currentUser.avatar || currentUser.avatar === 'https://via.placeholder.com/100') && (
+            {(!currentUser.avatar ||
+              currentUser.avatar === 'https://via.placeholder.com/100') && (
               <div className="w-full h-full flex items-center justify-center bg-brand-100">
                 <span className="text-14 font-semibold text-brand-600">
                   {currentUser.name.charAt(0).toUpperCase() || 'U'}

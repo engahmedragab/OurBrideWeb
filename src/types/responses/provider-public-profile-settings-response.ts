@@ -27,6 +27,3 @@ export interface ProviderPublicProfileSettingsResponse {
   seoMetaTitle: string | null
   seoMetaDescription: string | null
 }
-
-
-

@@ -3,11 +3,23 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Trophy, Calendar, Users, Heart, MessageCircle, Share2, Star } from 'lucide-react'
+import {
+  Trophy,
+  Calendar,
+  Users,
+  Heart,
+  MessageCircle,
+  Share2,
+  Star,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { EngagementButton } from './EngagementButton'
 import type { LeaderboardContestResponse } from '@/types/responses/community'
-import { toggleLike as toggleContestLike, toggleFavorite as toggleContestFavorite, shareContest } from '@/services/api/contestsApi'
+import {
+  toggleLike as toggleContestLike,
+  toggleFavorite as toggleContestFavorite,
+  shareContest,
+} from '@/services/api/contestsApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
@@ -30,16 +42,22 @@ const formatDate = (dateString: string | null): string => {
 }
 
 // Helper function to get user display name
-const getUserDisplayName = (user: LeaderboardContestResponse['user']): string => {
+const getUserDisplayName = (
+  user: LeaderboardContestResponse['user']
+): string => {
   if (!user) return 'OurBride'
-  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
-  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const firstName =
+    user.firstName && user.firstName !== 'null' ? user.firstName : ''
+  const lastName =
+    user.lastName && user.lastName !== 'null' ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   return fullName || user.userName || 'OurBride'
 }
 
 // Helper function to get contest status
-const getContestStatus = (contest: LeaderboardContestResponse): 'active' | 'ended' | 'upcoming' => {
+const getContestStatus = (
+  contest: LeaderboardContestResponse
+): 'active' | 'ended' | 'upcoming' => {
   if (!contest.isActive) return 'ended'
   const now = new Date()
   const endDate = contest.endDate ? new Date(contest.endDate) : null
@@ -50,7 +68,11 @@ const getContestStatus = (contest: LeaderboardContestResponse): 'active' | 'ende
   return 'active'
 }
 
-export const ContestCard = ({ contest, className, onClick }: ContestCardProps) => {
+export const ContestCard = ({
+  contest,
+  className,
+  onClick,
+}: ContestCardProps) => {
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
@@ -69,8 +91,11 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -78,17 +103,23 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
     mutationFn: async (shareSource?: string) => {
       return await shareContest(contest.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/contests/${contest.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/contests/${contest.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share contest', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share contest',
+        'error'
+      )
     },
   })
 
@@ -101,8 +132,11 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -132,7 +166,7 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
 
   const status = getContestStatus(contest)
   const endDate = formatDate(contest.endDate)
-  
+
   const imageUrl = COMMUNITY_IMAGES.DEFAULT_CONTEST_IMAGE
 
   return (
@@ -171,8 +205,12 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
 
       {/* Contest Info */}
       <div className="p-6">
-        <h3 className="text-20 font-semibold text-gray-900 mb-2">{contest.title}</h3>
-        <p className="text-14 text-gray-700 mb-4 line-clamp-2">{contest.description}</p>
+        <h3 className="text-20 font-semibold text-gray-900 mb-2">
+          {contest.title}
+        </h3>
+        <p className="text-14 text-gray-700 mb-4 line-clamp-2">
+          {contest.description}
+        </p>
 
         <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2">
@@ -184,9 +222,12 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
           </div>
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-gray-500" />
-            <span className="text-14 font-semibold text-gray-900">Participants:</span>
+            <span className="text-14 font-semibold text-gray-900">
+              Participants:
+            </span>
             <span className="text-14 text-gray-700">
-              {contest.currentParticipants} / {contest.maxParticipants > 0 ? contest.maxParticipants : '∞'}
+              {contest.currentParticipants} /{' '}
+              {contest.maxParticipants > 0 ? contest.maxParticipants : '∞'}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -197,14 +238,20 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
         </div>
 
         <button className="w-full bg-brand-500 text-white py-2 rounded-lg text-14 font-semibold hover:bg-brand-600 transition-colors">
-          {status === 'active' ? 'Join Contest' : status === 'ended' ? 'View Results' : 'Coming Soon'}
+          {status === 'active'
+            ? 'Join Contest'
+            : status === 'ended'
+              ? 'View Results'
+              : 'Coming Soon'}
         </button>
 
         {/* Engagement Metrics */}
         <div className="flex items-center justify-center gap-3 pt-4 mt-4 border-t border-gray-100">
           <div onClick={e => e.stopPropagation()}>
             <EngagementButton
-              icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
+              icon={
+                <Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />
+              }
               count={likes}
               label="Likes"
               onClick={handleLikeClick}
@@ -231,7 +278,11 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
           </div>
           <div onClick={e => e.stopPropagation()}>
             <EngagementButton
-              icon={<Star className={cn('h-4 w-4', isFavorited && 'fill-brand-500')} />}
+              icon={
+                <Star
+                  className={cn('h-4 w-4', isFavorited && 'fill-brand-500')}
+                />
+              }
               count={favorites}
               label="Favorites"
               onClick={handleFavoriteClick}
@@ -244,8 +295,3 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
     </div>
   )
 }
-
-
-
-
-

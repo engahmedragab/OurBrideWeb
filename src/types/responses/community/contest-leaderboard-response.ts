@@ -17,13 +17,3 @@ export interface ContestLeaderboardResponse extends BaseEntityResponse {
   views: number
   lastUpdated: string // ISO date string
 }
-
-
-
-
-
-
-
-
-
-

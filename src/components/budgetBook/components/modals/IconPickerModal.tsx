@@ -94,12 +94,7 @@ export const IconPickerModal = ({
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Select Icon"
-      maxWidth="sm"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Select Icon" maxWidth="sm">
       <div className="space-y-3">
         {/* Icon Grid - 5 columns, smaller icons */}
         <div className="grid grid-cols-5 gap-3">
@@ -129,4 +124,3 @@ export const IconPickerModal = ({
     </Modal>
   )
 }
-

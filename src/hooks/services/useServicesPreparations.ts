@@ -30,5 +30,3 @@ export const useServicesPreparations = (enabled = true) => {
     refetchOnWindowFocus: false,
   })
 }
-
-

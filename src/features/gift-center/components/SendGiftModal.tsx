@@ -150,7 +150,9 @@ export const SendGiftModal = ({ open, onClose }: SendGiftModalProps) => {
                 Debit / Credit
               </Button>
               <Button
-                variant={paymentMethod === 'wallet' ? 'outlineBrand' : 'outline'}
+                variant={
+                  paymentMethod === 'wallet' ? 'outlineBrand' : 'outline'
+                }
                 size="md"
                 onClick={() => setPaymentMethod('wallet')}
                 className={cn(
@@ -214,7 +216,7 @@ export const SendGiftModal = ({ open, onClose }: SendGiftModalProps) => {
 
           {/* Order Items */}
           <div className="space-y-2 sm:space-y-3">
-            {orderItems.map((item) => (
+            {orderItems.map(item => (
               <div
                 key={item.id}
                 onClick={() => setSelectedGiftId(item.id)}
@@ -300,4 +302,3 @@ export const SendGiftModal = ({ open, onClose }: SendGiftModalProps) => {
     </Modal>
   )
 }
-

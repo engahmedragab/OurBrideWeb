@@ -74,7 +74,7 @@ export interface ServicesProductsSliderProps {
 
 /**
  * ServicesProductsSlider Component
- * 
+ *
  * Displays a slider of compact product cards with Swiper.
  * Shows 3 cards per row on desktop, 2 on tablet, 1 on mobile.
  * Each card has image on left (1/4 width) and content on right.
@@ -187,4 +187,3 @@ export const ServicesProductsSlider = ({
     </div>
   )
 }
-

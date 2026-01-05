@@ -13,7 +13,11 @@ interface GuestBookCardProps {
   eventId?: number
 }
 
-export function GuestBookCard({ book, onInit, onNavigate }: GuestBookCardProps) {
+export function GuestBookCard({
+  book,
+  onInit,
+  onNavigate,
+}: GuestBookCardProps) {
   const activeLines = (book.lines || []).filter(line => !line.isDeleted)
   const needsInit = !book.isBookInit
 
@@ -29,23 +33,28 @@ export function GuestBookCard({ book, onInit, onNavigate }: GuestBookCardProps) 
   return (
     <div
       className={cn(
-        "bg-white border rounded-2xl p-6",
-        (onInit || onNavigate) && "cursor-pointer hover:shadow-lg transition-shadow"
+        'bg-white border rounded-2xl p-6',
+        (onInit || onNavigate) &&
+          'cursor-pointer hover:shadow-lg transition-shadow'
       )}
       onClick={handleClick}
     >
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-18 font-semibold text-gray-900">{book.title}</h3>
         <div className="flex items-center gap-2">
-          <span className={cn(
-            "px-2 py-1 text-12 font-medium rounded",
-            needsInit
-              ? "bg-yellow-100 text-yellow-700"
-              : "bg-green-100 text-green-700"
-          )}>
-            {needsInit ? "Needs Init" : "Initialized"}
+          <span
+            className={cn(
+              'px-2 py-1 text-12 font-medium rounded',
+              needsInit
+                ? 'bg-yellow-100 text-yellow-700'
+                : 'bg-green-100 text-green-700'
+            )}
+          >
+            {needsInit ? 'Needs Init' : 'Initialized'}
           </span>
-          <span className="text-14 text-gray-500">{activeLines.length} guests</span>
+          <span className="text-14 text-gray-500">
+            {activeLines.length} guests
+          </span>
         </div>
       </div>
 
@@ -67,9 +76,7 @@ export function GuestBookCard({ book, onInit, onNavigate }: GuestBookCardProps) 
                     line.isDone ? 'bg-green-500' : 'bg-gray-300'
                   )}
                 />
-                <span className="text-14 text-gray-900">
-                  Guest #{line.id}
-                </span>
+                <span className="text-14 text-gray-900">Guest #{line.id}</span>
               </div>
             </div>
           ))}
@@ -80,5 +87,3 @@ export function GuestBookCard({ book, onInit, onNavigate }: GuestBookCardProps) 
     </div>
   )
 }
-
-

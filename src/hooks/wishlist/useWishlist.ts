@@ -104,7 +104,7 @@ export const useWishlistExists = (
 export const useCreateWishlist = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       data: CreateWishlistRequest
@@ -112,7 +112,7 @@ export const useCreateWishlist = () => {
     }): Promise<WishlistResponse> => {
       return await createWishlist(data.data, data.query)
     },
-    onSuccess: (response) => {
+    onSuccess: response => {
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
       const { message, type } = handleApiResponseForToast(
         response,
@@ -121,8 +121,9 @@ export const useCreateWishlist = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create wishlist'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to create wishlist'
       addToast(errorMessage, 'error')
     },
   })
@@ -134,7 +135,7 @@ export const useCreateWishlist = () => {
 export const useUpdateWishlist = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -153,8 +154,9 @@ export const useUpdateWishlist = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update wishlist'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to update wishlist'
       addToast(errorMessage, 'error')
     },
   })
@@ -166,7 +168,7 @@ export const useUpdateWishlist = () => {
 export const useDeleteWishlist = () => {
   const queryClient = useQueryClient()
   const { addToast } = useToast()
-  
+
   return useMutation({
     mutationFn: async (data: {
       id: number
@@ -180,8 +182,9 @@ export const useDeleteWishlist = () => {
       queryClient.removeQueries({ queryKey: ['wishlist', variables.id] })
       addToast('Wishlist deleted successfully', 'success')
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to delete wishlist'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to delete wishlist'
       addToast(errorMessage, 'error')
     },
   })
@@ -190,7 +193,7 @@ export const useDeleteWishlist = () => {
 /**
  * Hook to check if items are in wishlists
  * Returns helper functions to check wishlist status
- * 
+ *
  * Note: This hook fetches all wishlists and extracts product/service IDs
  * from the sourceId field. Since the API doesn't expose wishlist items directly,
  * we rely on the sourceId matching the product/service ID.
@@ -211,7 +214,9 @@ export const useWishlistItems = (enabled = true) => {
   const productIds = useMemo(() => {
     return new Set<number>(
       wishlists
-        .filter((wishlist: WishlistResponse) => wishlist.source === Source.Product)
+        .filter(
+          (wishlist: WishlistResponse) => wishlist.source === Source.Product
+        )
         .map((wishlist: WishlistResponse) => wishlist.sourceId)
     )
   }, [wishlists])
@@ -220,7 +225,9 @@ export const useWishlistItems = (enabled = true) => {
   const serviceIds = useMemo(() => {
     return new Set<number>(
       wishlists
-        .filter((wishlist: WishlistResponse) => wishlist.source === Source.Service)
+        .filter(
+          (wishlist: WishlistResponse) => wishlist.source === Source.Service
+        )
         .map((wishlist: WishlistResponse) => wishlist.sourceId)
     )
   }, [wishlists])
@@ -251,7 +258,8 @@ export const useWishlistItems = (enabled = true) => {
       return wishlists
         .filter(
           (wishlist: WishlistResponse) =>
-            wishlist.source === Source.Product && wishlist.sourceId === productId
+            wishlist.source === Source.Product &&
+            wishlist.sourceId === productId
         )
         .map((wishlist: WishlistResponse) => wishlist.id)
     }
@@ -265,7 +273,8 @@ export const useWishlistItems = (enabled = true) => {
       return wishlists
         .filter(
           (wishlist: WishlistResponse) =>
-            wishlist.source === Source.Service && wishlist.sourceId === serviceId
+            wishlist.source === Source.Service &&
+            wishlist.sourceId === serviceId
         )
         .map((wishlist: WishlistResponse) => wishlist.id)
     }

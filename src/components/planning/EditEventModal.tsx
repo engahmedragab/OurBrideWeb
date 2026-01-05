@@ -11,7 +11,10 @@ export interface EditEventModalProps {
   onOpenChange: (open: boolean) => void
   baseDate: Date
   event: ItineraryEvent | null
-  onUpdate: (eventId: string, eventData: { startTime: Date; title: string; duration: number }) => void
+  onUpdate: (
+    eventId: string,
+    eventData: { startTime: Date; title: string; duration: number }
+  ) => void
 }
 
 export const EditEventModal = ({
@@ -107,16 +110,14 @@ export const EditEventModal = ({
   if (!event) return null
 
   return (
-    <Modal
-      isOpen={open}
-      onClose={handleClose}
-      title="Edit Event"
-      maxWidth="md"
-    >
+    <Modal isOpen={open} onClose={handleClose} title="Edit Event" maxWidth="md">
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Title Field */}
         <div className="space-y-1.5">
-          <label htmlFor="edit-event-title" className="text-14 font-medium text-gray-700">
+          <label
+            htmlFor="edit-event-title"
+            className="text-14 font-medium text-gray-700"
+          >
             Title <span className="text-red-500">*</span>
           </label>
           <Input
@@ -138,7 +139,10 @@ export const EditEventModal = ({
 
         {/* Start Time Field */}
         <div className="space-y-1.5">
-          <label htmlFor="edit-event-time" className="text-14 font-medium text-gray-700">
+          <label
+            htmlFor="edit-event-time"
+            className="text-14 font-medium text-gray-700"
+          >
             Start Time <span className="text-red-500">*</span>
           </label>
           <Input
@@ -159,7 +163,10 @@ export const EditEventModal = ({
 
         {/* Duration Field */}
         <div className="space-y-1.5">
-          <label htmlFor="edit-event-duration" className="text-14 font-medium text-gray-700">
+          <label
+            htmlFor="edit-event-duration"
+            className="text-14 font-medium text-gray-700"
+          >
             Duration (minutes) <span className="text-red-500">*</span>
           </label>
           <Input
@@ -203,4 +210,3 @@ export const EditEventModal = ({
     </Modal>
   )
 }
-

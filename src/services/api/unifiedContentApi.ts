@@ -1,4 +1,3 @@
-
 // Unified Community Content API service functions
 
 import { apiClient } from '@/services/api/apiClient'
@@ -15,9 +14,12 @@ export const getAllByCategoryId = async (
   }
 ): Promise<UnifiedCommunityContentResponse[]> => {
   try {
-    const response = await apiClient.api.getUnifiedContentGetByCategory(categoryId, params)
+    const response = await apiClient.api.getUnifiedContentGetByCategory(
+      categoryId,
+      params
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as UnifiedCommunityContentResponse[]
@@ -31,10 +33,14 @@ export const getAllByCategoryId = async (
     if (Array.isArray(responseAny)) {
       return responseAny as UnifiedCommunityContentResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch unified content by category')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch unified content by category'
+    )
   }
 }
 
@@ -49,9 +55,12 @@ export const getAllByItemId = async (
   }
 ): Promise<UnifiedCommunityContentResponse[]> => {
   try {
-    const response = await apiClient.api.getUnifiedContentGetByItem(itemId, params)
+    const response = await apiClient.api.getUnifiedContentGetByItem(
+      itemId,
+      params
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as UnifiedCommunityContentResponse[]
@@ -65,10 +74,14 @@ export const getAllByItemId = async (
     if (Array.isArray(responseAny)) {
       return responseAny as UnifiedCommunityContentResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch unified content by item')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch unified content by item'
+    )
   }
 }
 
@@ -83,9 +96,12 @@ export const getAllByPreparationId = async (
   }
 ): Promise<UnifiedCommunityContentResponse[]> => {
   try {
-    const response = await apiClient.api.getUnifiedContentGetByPreparation(preparationId, params)
+    const response = await apiClient.api.getUnifiedContentGetByPreparation(
+      preparationId,
+      params
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as UnifiedCommunityContentResponse[]
@@ -99,10 +115,14 @@ export const getAllByPreparationId = async (
     if (Array.isArray(responseAny)) {
       return responseAny as UnifiedCommunityContentResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch unified content by preparation')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch unified content by preparation'
+    )
   }
 }
 
@@ -117,9 +137,12 @@ export const getAllByProviderId = async (
   }
 ): Promise<UnifiedCommunityContentResponse[]> => {
   try {
-    const response = await apiClient.api.getUnifiedContentGetByProvider(providerId, params)
+    const response = await apiClient.api.getUnifiedContentGetByProvider(
+      providerId,
+      params
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as UnifiedCommunityContentResponse[]
@@ -133,10 +156,14 @@ export const getAllByProviderId = async (
     if (Array.isArray(responseAny)) {
       return responseAny as UnifiedCommunityContentResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch unified content by provider')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch unified content by provider'
+    )
   }
 }
 
@@ -151,9 +178,12 @@ export const getAllByBazaarEventId = async (
   }
 ): Promise<UnifiedCommunityContentResponse[]> => {
   try {
-    const response = await apiClient.api.getUnifiedContentGetByBazaarEvent(bazaarEventId, params)
+    const response = await apiClient.api.getUnifiedContentGetByBazaarEvent(
+      bazaarEventId,
+      params
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as UnifiedCommunityContentResponse[]
@@ -167,42 +197,46 @@ export const getAllByBazaarEventId = async (
     if (Array.isArray(responseAny)) {
       return responseAny as UnifiedCommunityContentResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch unified content by bazaar event')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch unified content by bazaar event'
+    )
   }
 }
 
 /**
  * Search unified content with optional filters
  */
-export const search = async (
-  params?: {
-    categoryId?: number
-    itemId?: number
-    preparationId?: number
-    providerId?: number
-    bazaarEventId?: number
-    tagIds?: string
-    page?: number
-    pageSize?: number
-  }
-): Promise<UnifiedCommunityContentResponse[]> => {
+export const search = async (params?: {
+  categoryId?: number
+  itemId?: number
+  preparationId?: number
+  providerId?: number
+  bazaarEventId?: number
+  tagIds?: string
+  page?: number
+  pageSize?: number
+}): Promise<UnifiedCommunityContentResponse[]> => {
   try {
     // Filter out undefined values to ensure API is called with valid params
-    const cleanParams = params ? Object.fromEntries(
-      Object.entries(params).filter(([_, value]) => value !== undefined)
-    ) : undefined
-    
+    const cleanParams = params
+      ? Object.fromEntries(
+          Object.entries(params).filter(([_, value]) => value !== undefined)
+        )
+      : undefined
+
     // Log API call for debugging
     console.log('[UnifiedContentSearch] Calling API with params:', cleanParams)
-    
+
     const response = await apiClient.api.getUnifiedContentSearch(cleanParams)
-    
+
     console.log('[UnifiedContentSearch] API response:', response)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as UnifiedCommunityContentResponse[]
@@ -216,14 +250,13 @@ export const search = async (
     if (Array.isArray(responseAny)) {
       return responseAny as UnifiedCommunityContentResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to search unified content')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to search unified content'
+    )
   }
 }
-
-
-
-
-

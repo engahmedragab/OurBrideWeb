@@ -43,7 +43,7 @@ export function TodoListsSidebar({
       </div>
 
       <div className="space-y-2">
-        {categories.map((cat) => (
+        {categories.map(cat => (
           <TodoListRow
             key={cat.id}
             category={cat}

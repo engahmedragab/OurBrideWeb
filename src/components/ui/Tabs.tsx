@@ -54,7 +54,8 @@ export interface TabItem {
 }
 
 export interface TabsProps
-  extends VariantProps<typeof tabsVariants>,
+  extends
+    VariantProps<typeof tabsVariants>,
     Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   items: TabItem[]
   activeValue: string
@@ -108,4 +109,3 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
 Tabs.displayName = 'Tabs'
 
 export { tabsVariants, tabItemVariants }
-

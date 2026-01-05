@@ -8,19 +8,3 @@ export interface ShareReelResponse {
   fullUrl: string
   shareCount: number
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

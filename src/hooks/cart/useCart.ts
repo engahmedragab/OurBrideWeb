@@ -14,7 +14,12 @@ import {
 } from '@/services/api/purchaseApi'
 import type { PurchaseRequest } from '@/../client/common/api/gen/ourbride-api'
 import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
-import type { CartResponse, PurchaseResponse, CheckoutResponse, CartProviderResponse } from '@/types/responses'
+import type {
+  CartResponse,
+  PurchaseResponse,
+  CheckoutResponse,
+  CartProviderResponse,
+} from '@/types/responses'
 import type {
   PurchaseUpdateRequest,
   PurchaseRemoveRequest,
@@ -56,7 +61,10 @@ export const useCartsWithProviders = (enabled = true) => {
 /**
  * Hook to fetch cart by provider ID
  */
-export const useCartByProvider = (providerId: number | null, enabled = true) => {
+export const useCartByProvider = (
+  providerId: number | null,
+  enabled = true
+) => {
   return useQuery({
     queryKey: ['cart', 'provider', providerId],
     queryFn: async () => {
@@ -103,12 +111,12 @@ export const useUpdatePurchase = () => {
     }) => {
       return await updatePurchase(id, data)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate cart queries to refetch
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
       queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
-      
+
       // Show success toast
       const { message, type } = handleApiResponseForToast(
         data,
@@ -117,8 +125,9 @@ export const useUpdatePurchase = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update cart'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to update cart'
       addToast(errorMessage, 'error')
     },
   })
@@ -146,12 +155,15 @@ export const useRemovePurchase = () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
       queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
-      
+
       // Show success toast
       addToast('Item removed from cart successfully', 'success')
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to remove item from cart'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to remove item from cart'
       addToast(errorMessage, 'error')
     },
   })
@@ -168,11 +180,11 @@ export const useCheckout = () => {
     mutationFn: async (data: CheckoutRequest): Promise<CheckoutResponse> => {
       return await checkout(data)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate cart queries after successful checkout
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
-      
+
       // Show success toast
       const { message, type } = handleApiResponseForToast(
         data,
@@ -181,8 +193,9 @@ export const useCheckout = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to complete checkout'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to complete checkout'
       addToast(errorMessage, 'error')
     },
   })
@@ -198,7 +211,7 @@ export const useValidateCoupon = () => {
     mutationFn: async (couponCode: string) => {
       return await validateCoupon(couponCode)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       const { message, type } = handleApiResponseForToast(
         data,
         'Coupon applied successfully',
@@ -206,8 +219,9 @@ export const useValidateCoupon = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to validate coupon'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to validate coupon'
       addToast(errorMessage, 'error')
     },
   })
@@ -230,12 +244,13 @@ export const useClearCart = () => {
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
       queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
       queryClient.invalidateQueries({ queryKey: ['cart-providers'] })
-      
+
       // Show success toast
       addToast('Cart cleared successfully', 'success')
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to clear cart'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to clear cart'
       addToast(errorMessage, 'error')
     },
   })
@@ -266,13 +281,13 @@ export const useAddToCart = () => {
       }
       return await addPurchase(purchaseRequest)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate cart queries to refetch updated cart
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
       queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
       queryClient.invalidateQueries({ queryKey: ['cart-providers'] })
-      
+
       // Show success toast
       const { message, type } = handleApiResponseForToast(
         data,
@@ -281,8 +296,9 @@ export const useAddToCart = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to add product to cart'
       addToast(errorMessage, 'error')
     },
   })
@@ -299,11 +315,11 @@ export const useCartItems = () => {
   // Get all purchases from all carts
   const allPurchases = useMemo(() => {
     const purchases: PurchaseResponse[] = []
-    
+
     if (cart?.purchases) {
       purchases.push(...cart.purchases)
     }
-    
+
     if (cartsWithProviders) {
       cartsWithProviders.forEach(cartWithProvider => {
         if (cartWithProvider.purchases) {
@@ -311,7 +327,7 @@ export const useCartItems = () => {
         }
       })
     }
-    
+
     return purchases
   }, [cart, cartsWithProviders])
 
@@ -323,7 +339,8 @@ export const useCartItems = () => {
       return allPurchases.some(purchase => {
         if (purchase.type !== PurchaseType.Product) return false
         if (purchase.productId !== productId) return false
-        if (providerId !== undefined && purchase.providerId !== providerId) return false
+        if (providerId !== undefined && purchase.providerId !== providerId)
+          return false
         return !purchase.isDeleted
       })
     }
@@ -337,7 +354,8 @@ export const useCartItems = () => {
       return allPurchases.some(purchase => {
         if (purchase.type !== PurchaseType.Service) return false
         if (purchase.serviceId !== serviceId) return false
-        if (providerId !== undefined && purchase.providerId !== providerId) return false
+        if (providerId !== undefined && purchase.providerId !== providerId)
+          return false
         return !purchase.isDeleted
       })
     }
@@ -351,7 +369,8 @@ export const useCartItems = () => {
       const purchase = allPurchases.find(p => {
         if (p.type !== PurchaseType.Product) return false
         if (p.productId !== productId) return false
-        if (providerId !== undefined && p.providerId !== providerId) return false
+        if (providerId !== undefined && p.providerId !== providerId)
+          return false
         return !p.isDeleted
       })
       return purchase?.quantity || 0
@@ -366,7 +385,8 @@ export const useCartItems = () => {
       const purchase = allPurchases.find(p => {
         if (p.type !== PurchaseType.Service) return false
         if (p.serviceId !== serviceId) return false
-        if (providerId !== undefined && p.providerId !== providerId) return false
+        if (providerId !== undefined && p.providerId !== providerId)
+          return false
         return !p.isDeleted
       })
       return purchase?.quantity || 0
@@ -381,7 +401,8 @@ export const useCartItems = () => {
       const purchase = allPurchases.find(p => {
         if (p.type !== PurchaseType.Product) return false
         if (p.productId !== productId) return false
-        if (providerId !== undefined && p.providerId !== providerId) return false
+        if (providerId !== undefined && p.providerId !== providerId)
+          return false
         return !p.isDeleted
       })
       return purchase?.id || null
@@ -396,7 +417,8 @@ export const useCartItems = () => {
       const purchase = allPurchases.find(p => {
         if (p.type !== PurchaseType.Service) return false
         if (p.serviceId !== serviceId) return false
-        if (providerId !== undefined && p.providerId !== providerId) return false
+        if (providerId !== undefined && p.providerId !== providerId)
+          return false
         return !p.isDeleted
       })
       return purchase?.id || null

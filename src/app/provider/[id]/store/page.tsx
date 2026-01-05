@@ -8,6 +8,3 @@ export default async function ProviderStorePage({
   const { id: providerId } = await params
   return <ProviderStoreClient providerId={providerId} />
 }
-
-
-

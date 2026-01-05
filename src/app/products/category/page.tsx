@@ -53,7 +53,8 @@ function ProductsContent() {
   }, [searchParams])
 
   // Fetch categories from products home endpoint
-  const { data: productsHomeData, isLoading: categoriesLoading } = useProductsHome()
+  const { data: productsHomeData, isLoading: categoriesLoading } =
+    useProductsHome()
 
   // Map categories to ProductCategory format (id as string)
   const categories = useMemo(() => {
@@ -78,7 +79,7 @@ function ProductsContent() {
   // Build advanced search params if we have filters or search query
   const advancedSearchParams = useMemo(() => {
     if (!hasFilters && !searchQuery) return null
-    
+
     const params: {
       searchTerm?: string
       categoryIds?: number[]
@@ -117,8 +118,8 @@ function ProductsContent() {
       const sortMap: Record<string, { sortBy?: string; sortOrder?: string }> = {
         'price-low': { sortBy: 'price', sortOrder: 'asc' },
         'price-high': { sortBy: 'price', sortOrder: 'desc' },
-        'rating': { sortBy: 'rating', sortOrder: 'desc' },
-        'popular': { sortBy: 'popularity', sortOrder: 'desc' },
+        rating: { sortBy: 'rating', sortOrder: 'desc' },
+        popular: { sortBy: 'popularity', sortOrder: 'desc' },
       }
       const sortConfig = sortMap[sortBy]
       if (sortConfig) {
@@ -138,10 +139,10 @@ function ProductsContent() {
     })
 
   // Fetch simple search results (fallback for simple search only)
-  const { data: searchResults = [], isLoading: searchLoading } = useProductSearch(
-    searchQuery || null,
-    { enabled: !!searchQuery && searchQuery.trim().length > 0 && !hasFilters }
-  )
+  const { data: searchResults = [], isLoading: searchLoading } =
+    useProductSearch(searchQuery || null, {
+      enabled: !!searchQuery && searchQuery.trim().length > 0 && !hasFilters,
+    })
 
   // Build API query params from filters (for filtered endpoint)
   const apiQueryParams = useMemo(
@@ -171,31 +172,41 @@ function ProductsContent() {
     if (advancedSearchParams && advancedSearchResults.length > 0) {
       return advancedSearchResults
     }
-    if (searchQuery && searchQuery.trim().length > 0 && !hasFilters && searchResults.length > 0) {
+    if (
+      searchQuery &&
+      searchQuery.trim().length > 0 &&
+      !hasFilters &&
+      searchResults.length > 0
+    ) {
       return searchResults
     }
     if (apiProducts.length > 0) {
       return apiProducts
     }
     return allProducts
-  }, [advancedSearchResults, searchResults, apiProducts, allProducts, searchQuery, hasFilters, advancedSearchParams])
+  }, [
+    advancedSearchResults,
+    searchResults,
+    apiProducts,
+    allProducts,
+    searchQuery,
+    hasFilters,
+    advancedSearchParams,
+  ])
 
   // Determine loading state
   const isLoading = advancedSearchLoading || searchLoading || productsLoading
 
   // Apply client-side filtering only for filters not supported by API
   // (Advanced search handles most filters, so minimal client-side filtering needed)
-  const filteredAndSortedProducts = useMemo(
-    () => {
-      // If we used advanced search, it already handled most filters
-      if (advancedSearchParams) {
-        return products
-      }
-      // Otherwise, apply client-side filters
-      return applyClientSideFilters(products, filters, sortBy)
-    },
-    [products, filters, sortBy, advancedSearchParams]
-  )
+  const filteredAndSortedProducts = useMemo(() => {
+    // If we used advanced search, it already handled most filters
+    if (advancedSearchParams) {
+      return products
+    }
+    // Otherwise, apply client-side filters
+    return applyClientSideFilters(products, filters, sortBy)
+  }, [products, filters, sortBy, advancedSearchParams])
 
   const handleWishlistToggle = (_productId: string) => {
     // TODO: Implement wishlist toggle
@@ -218,7 +229,10 @@ function ProductsContent() {
       addToast(message, type)
     } catch (error) {
       console.error('Failed to add product to cart:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to add product to cart. Please try again.'
       addToast(errorMessage, 'error')
     }
   }
@@ -289,10 +303,7 @@ function ProductsContent() {
             {/* Products */}
             {productsLoading || searchLoading ? (
               <div className="py-12">
-                <LoadingSpinner
-                  size="lg"
-                  text="Loading products..."
-                />
+                <LoadingSpinner size="lg" text="Loading products..." />
               </div>
             ) : viewMode === 'grid' ? (
               <ProductGrid

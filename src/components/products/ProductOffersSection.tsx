@@ -30,9 +30,7 @@ export const ProductOffersSection = ({
   title = "Today's Best Product Offers",
 }: ProductOffersSectionProps) => {
   return (
-    <section
-      className={cn('py-12 md:py-20', className)}
-    >
+    <section className={cn('py-12 md:py-20', className)}>
       {/* Section Header with Timer */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
         <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
@@ -51,7 +49,8 @@ export const ProductOffersSection = ({
           // Inline component to use hooks properly
           const ProductCardItem = () => {
             const handlers = useProductCardHandlers(parseInt(product.id, 10))
-            const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+            const { handleAddToCart, isLoading: isLoadingAddToCart } =
+              useAddProductToCart()
 
             const handleAddToCartClick = (e: React.MouseEvent) => {
               e.preventDefault()
@@ -93,5 +92,3 @@ export const ProductOffersSection = ({
     </section>
   )
 }
-
-

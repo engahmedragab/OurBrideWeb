@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createEventBookEventLine } from '@/services/api/eventBooksApi'
-import type { EventLineRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  EventLineRequest,
+  UserType,
+} from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
@@ -22,10 +25,10 @@ export const useCreateEventBookEventLine = () => {
       eventLine: EventLineRequest
       params?: UseCreateEventBookEventLineParams
     }) => createEventBookEventLine(data.eventLine, data.params),
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Invalidate event books query to refetch after event line creation
       queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Event line created successfully',
@@ -33,10 +36,10 @@ export const useCreateEventBookEventLine = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create event line'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to create event line'
       addToast(errorMessage, 'error')
     },
   })
 }
-

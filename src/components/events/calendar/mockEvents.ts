@@ -197,7 +197,7 @@ export const getEventsForDate = (date: Date): MockEvent[] => {
     },
   ]
 
-  return allEvents.filter((event) => {
+  return allEvents.filter(event => {
     return (
       event.date.getDate() === day &&
       event.date.getMonth() === month &&

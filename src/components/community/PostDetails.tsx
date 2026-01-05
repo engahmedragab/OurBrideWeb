@@ -20,7 +20,12 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { PostResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
-import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
+import {
+  formatDate,
+  getUserDisplayName,
+  getUserAvatar,
+  getProfileUrl,
+} from './utils'
 import Link from 'next/link'
 import {
   addReview as addPostReview,
@@ -75,8 +80,11 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
       // Invalidate queries to refresh comments/reviews
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to add comment',
+        'error'
+      )
     },
   })
 
@@ -89,8 +97,11 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -107,18 +118,24 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
     mutationFn: async (shareSource?: string) => {
       return await sharePost(post.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
         // Copy share URL to clipboard
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/posts/${post.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/posts/${post.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share post', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share post',
+        'error'
+      )
     },
   })
 
@@ -131,8 +148,11 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -146,10 +166,16 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(
+        isFollowing ? 'Unfollowed successfully' : 'Followed successfully',
+        'success'
+      )
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle follow',
+        'error'
+      )
     },
   })
 
@@ -188,7 +214,9 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
           <span>/</span>
           <span>Posts</span>
           <span>/</span>
-          <span className="text-gray-900">{post.title || displayName + "'s Post"}</span>
+          <span className="text-gray-900">
+            {post.title || displayName + "'s Post"}
+          </span>
         </div>
       </div>
 
@@ -205,7 +233,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                   fill
                   sizes="40px"
                   className="object-cover"
-                  onError={(e) => {
+                  onError={e => {
                     // Hide image on error, show fallback
                     e.currentTarget.style.display = 'none'
                   }}
@@ -254,7 +282,9 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                   !isFollowing && 'text-white'
                 )}
               >
-                <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
+                <UserPlus
+                  className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')}
+                />
                 {toggleFollowMutation.isPending
                   ? 'Loading...'
                   : isFollowing
@@ -294,7 +324,10 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
             ) : images.length === 2 ? (
               <div className="grid grid-cols-2 gap-2">
                 {images.map((img, idx) => (
-                  <div key={idx} className="relative w-full h-48 rounded-lg overflow-hidden">
+                  <div
+                    key={idx}
+                    className="relative w-full h-48 rounded-lg overflow-hidden"
+                  >
                     <Image
                       src={img}
                       alt={`Post image ${idx + 1}`}
@@ -318,7 +351,10 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                 </div>
                 <div className="col-span-2 flex flex-col gap-2">
                   {images.slice(1, 3).map((img, idx) => (
-                    <div key={idx} className="relative w-full h-32 rounded-lg overflow-hidden">
+                    <div
+                      key={idx}
+                      className="relative w-full h-32 rounded-lg overflow-hidden"
+                    >
                       <Image
                         src={img}
                         alt={`Post image ${idx + 2}`}
@@ -348,10 +384,14 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center justify-center gap-3">
             <EngagementButton
-              icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+              icon={
+                <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
+              }
               count={likes}
               label="Likes"
-              onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
+              onClick={
+                toggleLikeMutation.isPending ? undefined : handleLikeClick
+              }
               isActive={isLiked}
             />
             <EngagementButton
@@ -366,10 +406,18 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
               onClick={shareMutation.isPending ? undefined : handleShareClick}
             />
             <EngagementButton
-              icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+              icon={
+                <Star
+                  className={cn('h-5 w-5', isFavorited && 'fill-brand-500')}
+                />
+              }
               count={favorites}
               label="Favorites"
-              onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
+              onClick={
+                toggleFavoriteMutation.isPending
+                  ? undefined
+                  : handleFavoriteClick
+              }
               isActive={isFavorited}
             />
           </div>

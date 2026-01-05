@@ -6,5 +6,3 @@ export * from './GuestBookCard'
 export * from './NoteBookCard'
 export * from './TodoBookCard'
 export * from './OccasionBookCard'
-
-

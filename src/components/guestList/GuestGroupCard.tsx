@@ -37,14 +37,21 @@ const getRowKey = (guest: Guest) => {
   return `tmp-${guest.id}`
 }
 
-const isSidebar = (props: GuestGroupCardProps): props is SidebarProps => Array.isArray(props.group)
+const isSidebar = (props: GuestGroupCardProps): props is SidebarProps =>
+  Array.isArray(props.group)
 
 export const GuestGroupCard = (props: GuestGroupCardProps) => {
   // =========================
   // Sidebar mode (Right panel)
   // =========================
   if (isSidebar(props)) {
-    const { group: groups, guests, activeGroupId, onSelectGroup, onAddGroup } = props
+    const {
+      group: groups,
+      guests,
+      activeGroupId,
+      onSelectGroup,
+      onAddGroup,
+    } = props
 
     const statsByGroup = useMemo(() => {
       const map = new Map<string, { total: number; confirmed: number }>()
@@ -63,27 +70,30 @@ export const GuestGroupCard = (props: GuestGroupCardProps) => {
 
     return (
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-     <div className="px-4 py-4 border-b border-gray-100">
-  {/* Row 1: Title + Button */}
-  <div className="flex items-center justify-between gap-3">
-    <p className="text-16 font-semibold text-gray-900 truncate">Categories</p>
+        <div className="px-4 py-4 border-b border-gray-100">
+          {/* Row 1: Title + Button */}
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-16 font-semibold text-gray-900 truncate">
+              Categories
+            </p>
 
-    <Button
-    variant="outlineBrand"
-      size="sm"
-      onClick={onAddGroup}
-      type="button"
-      className="shrink-0  px-0 h-auto text-[14px]  text-brand-500 hover:bg-brand-500 hover:text-white rounded-md px-2 py-1  flex items-center gap-1"
-    >
-      <Plus className="h-4 w-4" />
-      add new
-    </Button>
-  </div>
+            <Button
+              variant="outlineBrand"
+              size="sm"
+              onClick={onAddGroup}
+              type="button"
+              className="shrink-0  px-0 h-auto text-[14px]  text-brand-500 hover:bg-brand-500 hover:text-white rounded-md px-2 py-1  flex items-center gap-1"
+            >
+              <Plus className="h-4 w-4" />
+              add new
+            </Button>
+          </div>
 
-  {/* Row 2: Subtitle */}
-  <p className="mt-1 text-12 text-gray-500 truncate">Organize your guest list</p>
-</div>
-
+          {/* Row 2: Subtitle */}
+          <p className="mt-1 text-12 text-gray-500 truncate">
+            Organize your guest list
+          </p>
+        </div>
 
         {/* ✅ CTA dashed row (زي Add Guest) */}
         {/* <div className="p-2">
@@ -108,14 +118,19 @@ export const GuestGroupCard = (props: GuestGroupCardProps) => {
           <div className="p-4">
             <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-6 text-center">
               <p className="text-14 text-gray-600">No categories yet</p>
-              <p className="text-12 text-gray-500 mt-1">Create one to start adding guests.</p>
+              <p className="text-12 text-gray-500 mt-1">
+                Create one to start adding guests.
+              </p>
             </div>
           </div>
         ) : (
           <div className="p-2 pt-0">
             <div className="space-y-2">
               {groups.map(g => {
-                const stats = statsByGroup.get(g.id) || { total: 0, confirmed: 0 }
+                const stats = statsByGroup.get(g.id) || {
+                  total: 0,
+                  confirmed: 0,
+                }
                 const isActive = String(activeGroupId || '') === String(g.id)
 
                 return (
@@ -125,12 +140,16 @@ export const GuestGroupCard = (props: GuestGroupCardProps) => {
                     onClick={() => onSelectGroup(g.id)}
                     className={[
                       'w-full text-left rounded-xl border px-3 py-3 transition-colors',
-                      isActive ? 'border-brand-400 ' : 'border-gray-200 hover:bg-gray-50',
+                      isActive
+                        ? 'border-brand-400 '
+                        : 'border-gray-200 hover:bg-gray-50',
                     ].join(' ')}
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-14 font-medium text-gray-900 truncate">{g.title}</p>
+                        <p className="text-14 font-medium text-gray-900 truncate">
+                          {g.title}
+                        </p>
                         <p className="text-12 text-gray-500 truncate">
                           {stats.total} guests • {stats.confirmed} confirmed
                         </p>
@@ -167,7 +186,10 @@ export const GuestGroupCard = (props: GuestGroupCardProps) => {
 
   const cardRef = useRef<HTMLDivElement>(null)
 
-  const groupGuests = useMemo(() => guests.filter(g => g.groupId === group.id), [guests, group.id])
+  const groupGuests = useMemo(
+    () => guests.filter(g => g.groupId === group.id),
+    [guests, group.id]
+  )
   const total = groupGuests.length
   const confirmed = groupGuests.filter(g => g.status === 'confirmed').length
   const remaining = Math.max(total - confirmed, 0)
@@ -183,7 +205,10 @@ export const GuestGroupCard = (props: GuestGroupCardProps) => {
   }, [scrollIntoView])
 
   return (
-    <div ref={cardRef} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div
+      ref={cardRef}
+      className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden"
+    >
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-4 cursor-pointer hover:bg-gray-50 transition-colors"
@@ -192,7 +217,9 @@ export const GuestGroupCard = (props: GuestGroupCardProps) => {
         tabIndex={0}
       >
         <div className="min-w-0">
-          <h2 className="text-18 font-semibold text-gray-900 truncate">{group.title}</h2>
+          <h2 className="text-18 font-semibold text-gray-900 truncate">
+            {group.title}
+          </h2>
           <p className="text-13 text-gray-500">
             {/* {total} guests • {confirmed} confirmed • {remaining} remaining */}
           </p>
@@ -201,8 +228,8 @@ export const GuestGroupCard = (props: GuestGroupCardProps) => {
         <Button
           variant="outlineBrand"
           size="sm"
-          className=" text-brand-500 hover:bg-brand-500 hover:text-white rounded-md text-[12px]" 
-          onClick={(e) => {
+          className=" text-brand-500 hover:bg-brand-500 hover:text-white rounded-md text-[12px]"
+          onClick={e => {
             e.stopPropagation()
             onAddGuest(group.id, true)
           }}
@@ -268,7 +295,9 @@ export const GuestGroupCard = (props: GuestGroupCardProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    groupGuests.filter(g => g.selected).forEach(g => onDelete(g.id))
+                    groupGuests
+                      .filter(g => g.selected)
+                      .forEach(g => onDelete(g.id))
                   }}
                   className="text-red-500 hover:text-red-600 hover:bg-red-50"
                   disabled={!hasSelected}

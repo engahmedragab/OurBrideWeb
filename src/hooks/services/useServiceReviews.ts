@@ -1,5 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getServiceReviews, submitServiceReview } from '@/services/api/serviceApi'
+import {
+  getServiceReviews,
+  submitServiceReview,
+} from '@/services/api/serviceApi'
 import type { ReviewResponse } from '@/types/responses/review-response'
 import type { ReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
@@ -27,7 +30,10 @@ const mapReviewResponseToServiceReview = (
   id: String(review.id || ''),
   userId: review.userId || '',
   userName: review.title || 'Anonymous',
-  userImage: ((review as unknown) as Record<string, unknown>).userImage as string | undefined || '',
+  userImage:
+    ((review as unknown as Record<string, unknown>).userImage as
+      | string
+      | undefined) || '',
   rating: review.rate || 0,
   comment: review.comment || '',
   date: review.creationDate || '',
@@ -71,11 +77,20 @@ export const useServiceReviews = (
       } else if (responseData && typeof responseData === 'object') {
         if ('data' in responseData && Array.isArray(responseData.data)) {
           reviews = responseData.data as ReviewResponse[]
-        } else if ('reviews' in responseData && Array.isArray(responseData.reviews)) {
+        } else if (
+          'reviews' in responseData &&
+          Array.isArray(responseData.reviews)
+        ) {
           reviews = responseData.reviews as ReviewResponse[]
-        } else if ('items' in responseData && Array.isArray(responseData.items)) {
+        } else if (
+          'items' in responseData &&
+          Array.isArray(responseData.items)
+        ) {
           reviews = responseData.items as ReviewResponse[]
-        } else if ('results' in responseData && Array.isArray(responseData.results)) {
+        } else if (
+          'results' in responseData &&
+          Array.isArray(responseData.results)
+        ) {
           reviews = responseData.results as ReviewResponse[]
         }
       }
@@ -136,7 +151,7 @@ export const useSubmitServiceReview = () => {
       queryClient.invalidateQueries({
         queryKey: ['service-detail', String(variables.serviceId)],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Review submitted successfully',
@@ -144,10 +159,10 @@ export const useSubmitServiceReview = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to submit review'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to submit review'
       addToast(errorMessage, 'error')
     },
   })
 }
-

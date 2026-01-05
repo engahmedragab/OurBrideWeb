@@ -4,7 +4,11 @@ import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button, LoadingSpinner } from '@/components/ui'
 import { Save, ChevronLeft, Plus } from 'lucide-react'
-import { useServiceBook, useSyncServiceBook, useInitServiceBooks } from '@/hooks/serviceBooks'
+import {
+  useServiceBook,
+  useSyncServiceBook,
+  useInitServiceBooks,
+} from '@/hooks/serviceBooks'
 import { useEventId } from '@/hooks/planning'
 import { usePreparations } from '@/hooks/planning/usePreparations'
 import { useToast } from '@/components/ui/Toaster'
@@ -14,8 +18,14 @@ import {
   ServiceModal,
   ConfirmDialog,
 } from '@/components/planning'
-import type { ServiceLineResponse, ServiceBookResponse } from '@/types/responses'
-import type { ServiceBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  ServiceLineResponse,
+  ServiceBookResponse,
+} from '@/types/responses'
+import type {
+  ServiceBookRequest,
+  UserType,
+} from '@/../client/common/api/gen/ourbride-api'
 import type { PreparationService } from '@/types/planning'
 import { normalizeIconName } from '@/utils/serviceIconMapper'
 
@@ -27,10 +37,13 @@ import { normalizeIconName } from '@/utils/serviceIconMapper'
  * - Paid column: line.advanceAmount if exists, otherwise 0
  * - Due column: line.buyDate if valid (not 0001-01-01...), otherwise shows "-"
  */
-const convertServiceLineToPreparationService = (line: ServiceLineResponse): PreparationService => {
+const convertServiceLineToPreparationService = (
+  line: ServiceLineResponse
+): PreparationService => {
   // Map serviceType enum to string
-  const serviceTypeStr = line.serviceType === 0 ? 'rent' : line.serviceType === 1 ? 'buy' : 'rent'
-  
+  const serviceTypeStr =
+    line.serviceType === 0 ? 'rent' : line.serviceType === 1 ? 'buy' : 'rent'
+
   return {
     id: String(line.id),
     // Service column: show line.title (fallback to titleEn then titleAr)
@@ -55,24 +68,38 @@ function PreparationsLinesContent() {
   const params = useParams()
   const router = useRouter()
   const eventId = useEventId()
-  const categoryId = params?.categoryId ? parseInt(String(params.categoryId), 10) : null
+  const categoryId = params?.categoryId
+    ? parseInt(String(params.categoryId), 10)
+    : null
 
-  const [editingService, setEditingService] = useState<PreparationService | undefined>()
-  const [serviceToDelete, setServiceToDelete] = useState<PreparationService | undefined>()
+  const [editingService, setEditingService] = useState<
+    PreparationService | undefined
+  >()
+  const [serviceToDelete, setServiceToDelete] = useState<
+    PreparationService | undefined
+  >()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
 
   // Local state to keep the book in memory
-  const [localServiceBook, setLocalServiceBook] = useState<ServiceBookResponse | null>(null)
+  const [localServiceBook, setLocalServiceBook] =
+    useState<ServiceBookResponse | null>(null)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const lastSyncedRef = useRef<ServiceBookResponse | null>(null)
   const isInitialLoadRef = useRef(true)
-  
+
   // Optimistic UI: pending lines added locally before sync/refetch
-  const [pendingLines, setPendingLines] = useState<Array<ServiceLineResponse & { clientTempId?: string }>>([])
+  const [pendingLines, setPendingLines] = useState<
+    Array<ServiceLineResponse & { clientTempId?: string }>
+  >([])
 
   // Fetch service book
-  const { data: serviceBook, isLoading, error, refetch } = useServiceBook({
+  const {
+    data: serviceBook,
+    isLoading,
+    error,
+    refetch,
+  } = useServiceBook({
     eventId: eventId || undefined,
     userType: null as unknown as UserType | undefined,
     clientId: null as unknown as string | undefined,
@@ -128,24 +155,39 @@ function PreparationsLinesContent() {
       setLocalServiceBook(serviceBook)
       lastSyncedRef.current = serviceBook
       isInitialLoadRef.current = false
-      
+
       // Remove pending lines that have been saved (deduplicate)
       // Match by checking if line exists in server response with same title and similar timestamp
-      const bookData = (serviceBook as unknown as { data?: ServiceBookResponse } | ServiceBookResponse)
-      const actualBook: ServiceBookResponse = 'data' in bookData && bookData.data ? bookData.data : bookData as ServiceBookResponse
-      const serverLineIds = new Set((actualBook?.lines || []).map(line => line.id))
-      
-      setPendingLines(prev => 
+      const bookData = serviceBook as unknown as
+        | { data?: ServiceBookResponse }
+        | ServiceBookResponse
+      const actualBook: ServiceBookResponse =
+        'data' in bookData && bookData.data
+          ? bookData.data
+          : (bookData as ServiceBookResponse)
+      const serverLineIds = new Set(
+        (actualBook?.lines || []).map(line => line.id)
+      )
+
+      setPendingLines(prev =>
         prev.filter(pendingLine => {
           // If pending line has a real ID now, it was saved
-          if (pendingLine.id && pendingLine.id > 0 && serverLineIds.has(pendingLine.id)) {
+          if (
+            pendingLine.id &&
+            pendingLine.id > 0 &&
+            serverLineIds.has(pendingLine.id)
+          ) {
             return false
           }
           // Also match by title and creation timestamp if available
-          const matchingServerLine = (actualBook?.lines || []).find(serverLine => 
-            serverLine.title === pendingLine.title &&
-            serverLine.lineCategoryId === pendingLine.lineCategoryId &&
-            Math.abs(new Date(serverLine.creationDate || '').getTime() - new Date(pendingLine.creationDate || '').getTime()) < 5000 // Within 5 seconds
+          const matchingServerLine = (actualBook?.lines || []).find(
+            serverLine =>
+              serverLine.title === pendingLine.title &&
+              serverLine.lineCategoryId === pendingLine.lineCategoryId &&
+              Math.abs(
+                new Date(serverLine.creationDate || '').getTime() -
+                  new Date(pendingLine.creationDate || '').getTime()
+              ) < 5000 // Within 5 seconds
           )
           if (matchingServerLine) {
             return false
@@ -161,27 +203,30 @@ function PreparationsLinesContent() {
   useEffect(() => {
     if (!eventId || !localServiceBook || hasUnsavedChanges) return
 
-    const interval = setInterval(async () => {
-      try {
-        if (!hasActualChanges()) {
-          return
-        }
+    const interval = setInterval(
+      async () => {
+        try {
+          if (!hasActualChanges()) {
+            return
+          }
 
-        const bookRequest = buildBookRequestFromLocal()
-        await syncMutation.mutateAsync({
-          data: bookRequest,
-          query: {
-            eventId: eventId || undefined,
-            userType: null as unknown as UserType | undefined,
-            clientId: null as unknown as string | undefined,
-          },
-        })
-        lastSyncedRef.current = localServiceBook
-        refetch()
-      } catch (error) {
-        console.error('Auto-sync failed:', error)
-      }
-    }, 2 * 60 * 1000) // 2 minutes
+          const bookRequest = buildBookRequestFromLocal()
+          await syncMutation.mutateAsync({
+            data: bookRequest,
+            query: {
+              eventId: eventId || undefined,
+              userType: null as unknown as UserType | undefined,
+              clientId: null as unknown as string | undefined,
+            },
+          })
+          lastSyncedRef.current = localServiceBook
+          refetch()
+        } catch (error) {
+          console.error('Auto-sync failed:', error)
+        }
+      },
+      2 * 60 * 1000
+    ) // 2 minutes
 
     return () => clearInterval(interval)
   }, [eventId, localServiceBook, hasUnsavedChanges, syncMutation, refetch])
@@ -190,22 +235,31 @@ function PreparationsLinesContent() {
   // The API returns { success: true, data: { lines: [...] } }
   const serverLines: ServiceLineResponse[] = useMemo(() => {
     if (!serviceBook) return []
-    
+
     // Check if serviceBook has a 'data' property (wrapped response)
     // If yes, use serviceBook.data.lines, otherwise use serviceBook.lines
-    const bookData = (serviceBook as unknown as { data?: ServiceBookResponse } | ServiceBookResponse)
-    const actualBook: ServiceBookResponse = 'data' in bookData && bookData.data ? bookData.data : bookData as ServiceBookResponse
+    const bookData = serviceBook as unknown as
+      | { data?: ServiceBookResponse }
+      | ServiceBookResponse
+    const actualBook: ServiceBookResponse =
+      'data' in bookData && bookData.data
+        ? bookData.data
+        : (bookData as ServiceBookResponse)
     const allLines = actualBook?.lines || []
-    
+
     // Only filter by isDeleted (temporarily remove category filter)
-    return allLines.filter((line: ServiceLineResponse) => line.isDeleted !== true)
+    return allLines.filter(
+      (line: ServiceLineResponse) => line.isDeleted !== true
+    )
   }, [serviceBook])
 
   // Merge server lines with pending lines (optimistic UI)
   const mergedLines: ServiceLineResponse[] = useMemo(() => {
     const allLines = [...pendingLines, ...serverLines]
     // Filter out deleted items
-    return allLines.filter((line: ServiceLineResponse) => line.isDeleted !== true)
+    return allLines.filter(
+      (line: ServiceLineResponse) => line.isDeleted !== true
+    )
   }, [pendingLines, serverLines])
 
   // Convert to PreparationService format for table
@@ -218,20 +272,25 @@ function PreparationsLinesContent() {
    * Backend uses "0001-01-01T00:00:00Z" for empty dates
    */
   const normalizeDateForBackend = (date: string | null | undefined): string => {
-    if (!date || date === '0001-01-01' || date === '0001-01-01T00:00:00' || date === '0001-01-01T00:00:00Z') {
+    if (
+      !date ||
+      date === '0001-01-01' ||
+      date === '0001-01-01T00:00:00' ||
+      date === '0001-01-01T00:00:00Z'
+    ) {
       return '0001-01-01T00:00:00Z'
     }
-    
+
     // If already ISO format, return as is
     if (date.includes('T')) {
       return date.endsWith('Z') ? date : `${date}Z`
     }
-    
+
     // If YYYY-MM-DD format, convert to ISO
     if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return `${date}T00:00:00.000Z`
     }
-    
+
     // Try to parse and convert
     try {
       const parsed = new Date(date)
@@ -249,9 +308,11 @@ function PreparationsLinesContent() {
    * Removes only server-managed fields (createdBy, lastModifiedBy, creationDate, lastModifiedDate)
    * For new lines, omits id completely
    */
-  const prepareLineForSync = (line: ServiceLineResponse): Record<string, unknown> => {
+  const prepareLineForSync = (
+    line: ServiceLineResponse
+  ): Record<string, unknown> => {
     const isNewLine = !line.id || line.id === 0
-    
+
     // Start with full line object (matches backend response shape)
     const preparedLine: Record<string, unknown> = {
       titleAr: line.titleAr || line.title || '',
@@ -274,8 +335,14 @@ function PreparationsLinesContent() {
       providingType: line.providingType ?? null,
       hasProvider: line.hasProvider || false,
       budget: line.budget || false,
-      serviceType: line.serviceType === 0 ? 'Rent' : line.serviceType === 1 ? 'Buy' : 'Rent',
-      serviceClass: line.serviceClass === 0 ? 'None' : String(line.serviceClass),
+      serviceType:
+        line.serviceType === 0
+          ? 'Rent'
+          : line.serviceType === 1
+            ? 'Buy'
+            : 'Rent',
+      serviceClass:
+        line.serviceClass === 0 ? 'None' : String(line.serviceClass),
       iconName: line.iconName || 'Sparkles',
       colorName: line.colorName ?? null,
       preparationId: line.preparationId ?? null,
@@ -298,17 +365,17 @@ function PreparationsLinesContent() {
       isDone: line.isDone || false,
       isFavorite: line.isFavorite || false,
       isDeleted: line.isDeleted || false,
-      isModelLine: isNewLine ? false : (line.isModelLine || false),
+      isModelLine: isNewLine ? false : line.isModelLine || false,
       bookId: line.bookId || localServiceBook?.id || 0,
       lineCategoryId: line.lineCategoryId || categoryId || null,
       slug: line.slug || '',
     }
-    
+
     // Only include id if it's a real positive number (existing line)
     if (!isNewLine) {
       preparedLine.id = line.id
     }
-    
+
     return preparedLine
   }
 
@@ -323,28 +390,34 @@ function PreparationsLinesContent() {
     }
 
     // Clone the entire book object to maintain shape
-    const payload = structuredClone(localServiceBook) as unknown as Record<string, unknown>
-    
+    const payload = structuredClone(localServiceBook) as unknown as Record<
+      string,
+      unknown
+    >
+
     // Prepare all lines to match backend shape
     payload.lines = (localServiceBook.lines || []).map(prepareLineForSync)
-    
+
     // Remove server-managed fields from root
     delete payload.createdBy
     delete payload.lastModifiedBy
     delete payload.creationDate
     delete payload.lastModifiedDate
-    
+
     // Ensure required root fields exist
     payload.completed = payload.completed ?? 0
     payload.pending = payload.pending ?? 0
     payload.isSubDone = payload.isSubDone ?? false
     payload.isModelsAdd = payload.isModelsAdd ?? true
-    payload.count = payload.count ?? (Array.isArray(payload.lines) ? payload.lines.length : 0)
-    
+    payload.count =
+      payload.count ?? (Array.isArray(payload.lines) ? payload.lines.length : 0)
+
     // Debug: Log final payload to verify structure
     if (process.env.NODE_ENV === 'development') {
       const linesArray = Array.isArray(payload.lines) ? payload.lines : []
-      const newLines = linesArray.filter((l: Record<string, unknown>) => !l.id || l.id === 0)
+      const newLines = linesArray.filter(
+        (l: Record<string, unknown>) => !l.id || l.id === 0
+      )
       console.log('Sync payload (matching backend shape):', {
         rootFields: {
           id: payload.id,
@@ -359,8 +432,14 @@ function PreparationsLinesContent() {
         linesCount: linesArray.length,
         newLinesCount: newLines.length,
         sampleNewLine: newLines[0] || null,
-        sampleExistingLine: linesArray.find((l: Record<string, unknown>) => l.id && typeof l.id === 'number' && l.id > 0) || null,
-        hasServerFields: payload.createdBy !== undefined || payload.lastModifiedBy !== undefined,
+        sampleExistingLine:
+          linesArray.find(
+            (l: Record<string, unknown>) =>
+              l.id && typeof l.id === 'number' && l.id > 0
+          ) || null,
+        hasServerFields:
+          payload.createdBy !== undefined ||
+          payload.lastModifiedBy !== undefined,
       })
     }
 
@@ -461,10 +540,17 @@ function PreparationsLinesContent() {
       // Normalize iconName to ensure it's a string name, not hex code
       let iconName = 'Sparkles' // Default icon name
       if (serviceData.serviceKey) {
-        const selectedPreparation = preparations.find(p => String(p.id) === serviceData.serviceKey)
+        const selectedPreparation = preparations.find(
+          p => String(p.id) === serviceData.serviceKey
+        )
         if (selectedPreparation) {
           // Normalize iconName: convert hex code to string name if needed
-          iconName = normalizeIconName(selectedPreparation.iconName, selectedPreparation.name || selectedPreparation.nameEn || selectedPreparation.nameAr)
+          iconName = normalizeIconName(
+            selectedPreparation.iconName,
+            selectedPreparation.name ||
+              selectedPreparation.nameEn ||
+              selectedPreparation.nameAr
+          )
         }
       }
 
@@ -480,11 +566,15 @@ function PreparationsLinesContent() {
         completed: serviceData.completed,
       }
 
-      const preparationId = serviceData.serviceKey ? parseInt(serviceData.serviceKey, 10) : null
+      const preparationId = serviceData.serviceKey
+        ? parseInt(serviceData.serviceKey, 10)
+        : null
 
       if (editingService) {
         // Update existing line
-        const existingLine = localServiceBook.lines?.find(l => String(l.id) === editingService.id)
+        const existingLine = localServiceBook.lines?.find(
+          l => String(l.id) === editingService.id
+        )
         if (existingLine) {
           const updatedLine: ServiceLineResponse = {
             ...existingLine,
@@ -507,36 +597,39 @@ function PreparationsLinesContent() {
             if (!prev) return prev
             return {
               ...prev,
-              lines: prev.lines?.map(line => line.id === existingLine.id ? updatedLine : line) || []
+              lines:
+                prev.lines?.map(line =>
+                  line.id === existingLine.id ? updatedLine : line
+                ) || [],
             }
           })
         }
       } else {
         // Add new line - create full line object matching backend response shape
         const templateLine = localServiceBook.lines?.[0]
-        const baseLine = templateLine || {} as ServiceLineResponse
-        
+        const baseLine = templateLine || ({} as ServiceLineResponse)
+
         const clientTempId = crypto.randomUUID()
         const newLine: ServiceLineResponse & { clientTempId?: string } = {
           // ID will be omitted in sync (set to 0 locally for tracking)
           id: 0,
           bookId: localServiceBook.id,
           lineCategoryId: categoryId || undefined,
-          
+
           // Title fields
           titleAr: mappedService.title,
           titleEn: mappedService.title,
           title: mappedService.title,
-          
+
           // Quantity and pricing
           quantity: mappedService.quantity,
           advanceAmount: mappedService.advancePayment,
           price: mappedService.cost,
           totalPrice: undefined,
-          
+
           // Date fields
           buyDate: mappedService.purchaseDate || undefined,
-          
+
           // Provider fields
           seller: mappedService.providerUserName || '',
           providerName: mappedService.providerUserName || '',
@@ -544,23 +637,26 @@ function PreparationsLinesContent() {
           providerLink: baseLine.providerLink || '',
           providingType: baseLine.providingType || undefined,
           hasProvider: !!mappedService.providerUserName,
-          
+
           // Notes
           notes: baseLine.notes || '',
-          
+
           // Reminder fields
           hasReminder: baseLine.hasReminder || false,
           reminderDate: baseLine.reminderDate || undefined,
           reminderText: baseLine.reminderText || '',
           reminderType: baseLine.reminderType || undefined,
-          
+
           // Service fields
           budget: baseLine.budget || false,
           serviceType: mappedService.serviceType === 'rent' ? 0 : 1,
-          serviceClass: baseLine.serviceClass || (localServiceBook.bookClass as unknown as number) || 0,
+          serviceClass:
+            baseLine.serviceClass ||
+            (localServiceBook.bookClass as unknown as number) ||
+            0,
           iconName: mappedService.icon.value,
           colorName: baseLine.colorName || '',
-          
+
           // Linked entities
           preparationId: preparationId || undefined,
           preparation: undefined,
@@ -570,47 +666,47 @@ function PreparationsLinesContent() {
           service: undefined,
           reservationId: baseLine.reservationId || undefined,
           reservation: undefined,
-          
+
           // Link flags
           isLinkedToService: baseLine.isLinkedToService || false,
           isLinkedToReservation: baseLine.isLinkedToReservation || false,
-          
+
           // Service date and notes
           serviceDate: baseLine.serviceDate || undefined,
           serviceNotes: baseLine.serviceNotes || '',
           reservationNotes: baseLine.reservationNotes || '',
-          
+
           // Line metadata
           groomId: baseLine.groomId || localServiceBook.groomId || undefined,
           brideId: baseLine.brideId || localServiceBook.brideId || undefined,
           lineType: baseLine.lineType || localServiceBook.bookType,
           bookClass: baseLine.bookClass || localServiceBook.bookClass,
-          
+
           // Status flags
           isDone: mappedService.completed,
           isFavorite: false,
           isDeleted: false,
           isModelLine: false,
-          
+
           // Server-managed fields (will be removed in sync)
           createdBy: baseLine.createdBy || '',
           lastModifiedBy: baseLine.lastModifiedBy || '',
           slug: baseLine.slug || '',
           creationDate: new Date().toISOString(),
           lastModifiedDate: new Date().toISOString(),
-          
+
           // Client-only field for deduplication (not sent to backend)
           clientTempId,
         }
 
         // Add to pendingLines for optimistic UI
         setPendingLines(prev => [...prev, newLine])
-          
-          setLocalServiceBook(prev => {
+
+        setLocalServiceBook(prev => {
           if (!prev) return prev
           return {
             ...prev,
-            lines: [...(prev.lines || []), newLine]
+            lines: [...(prev.lines || []), newLine],
           }
         })
       }
@@ -620,7 +716,8 @@ function PreparationsLinesContent() {
       setEditingService(undefined)
       addToast('Preparation saved. Click "Save Changes" to persist.', 'info')
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save preparation'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to save preparation'
       addToast(errorMessage, 'error')
     }
   }
@@ -633,11 +730,10 @@ function PreparationsLinesContent() {
       if (!prev) return prev
       return {
         ...prev,
-        lines: prev.lines?.map(line =>
-          line.id === lineId
-            ? { ...line, isDeleted: true }
-            : line
-        ) || []
+        lines:
+          prev.lines?.map(line =>
+            line.id === lineId ? { ...line, isDeleted: true } : line
+          ) || [],
       }
     })
 
@@ -680,12 +776,15 @@ function PreparationsLinesContent() {
 
       refetch()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save changes'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to save changes'
       addToast(errorMessage, 'error')
     }
   }
 
-  const completed = mergedLines.filter((line: ServiceLineResponse) => line.isDone).length
+  const completed = mergedLines.filter(
+    (line: ServiceLineResponse) => line.isDone
+  ).length
   const total = mergedLines.length
 
   if (isLoading || initMutation.isPending) {
@@ -713,7 +812,10 @@ function PreparationsLinesContent() {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <p className="text-16 text-red-600 mb-4">Invalid category</p>
-        <Button variant="outline" onClick={() => router.push('/events/planning/preparations')}>
+        <Button
+          variant="outline"
+          onClick={() => router.push('/events/planning/preparations')}
+        >
           Back to Categories
         </Button>
       </div>
@@ -737,7 +839,9 @@ function PreparationsLinesContent() {
             >
               <ChevronLeft className="w-5 h-5 text-gray-700" />
             </button>
-            <h1 className="text-24 font-semibold text-gray-900">Wedding Preparations</h1>
+            <h1 className="text-24 font-semibold text-gray-900">
+              Wedding Preparations
+            </h1>
           </div>
           <div className="flex items-center gap-3">
             {hasUnsavedChanges && (
@@ -746,7 +850,9 @@ function PreparationsLinesContent() {
                 onClick={handleSync}
                 variant="brand"
                 size="md"
-                disabled={syncMutation.isPending || !localServiceBook || isLoading}
+                disabled={
+                  syncMutation.isPending || !localServiceBook || isLoading
+                }
               >
                 <Save className="w-5 h-5 mr-2" />
                 {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
@@ -786,12 +892,20 @@ function PreparationsLinesContent() {
             editingService
               ? (() => {
                   // Find the line to get preparationId
-                  const line = localServiceBook?.lines?.find(l => String(l.id) === editingService.id)
-                  const serviceKey = line?.preparationId ? String(line.preparationId) : undefined
-                  
+                  const line = localServiceBook?.lines?.find(
+                    l => String(l.id) === editingService.id
+                  )
+                  const serviceKey = line?.preparationId
+                    ? String(line.preparationId)
+                    : undefined
+
                   return {
                     id: editingService.id,
-                    serviceKey: serviceKey || (editingService.icon.kind === 'asset' ? editingService.icon.value : undefined),
+                    serviceKey:
+                      serviceKey ||
+                      (editingService.icon.kind === 'asset'
+                        ? editingService.icon.value
+                        : undefined),
                     title: editingService.title,
                     serviceType: editingService.serviceType as 'rent' | 'buy',
                     quantity: editingService.quantity,
@@ -843,4 +957,3 @@ export default function PreparationsLinesClient() {
     </Suspense>
   )
 }
-

@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import Image from 'next/image'
 import serverErrorSvg from '@/assets/svg/server-error.svg'
@@ -13,14 +13,20 @@ export default function ServerErrorPage() {
       <div className="flex flex-col items-center justify-center w-full">
         {/* SVG Illustration */}
         <Image
-          src={typeof serverErrorSvg === 'string' ? serverErrorSvg : serverErrorSvg.src}
+          src={
+            typeof serverErrorSvg === 'string'
+              ? serverErrorSvg
+              : serverErrorSvg.src
+          }
           alt="Server Error"
           width={256}
           height={256}
           className="w-64 h-64 object-contain mb-8"
         />
         {/* Heading */}
-        <h2 className="text-18 md:text-22 font-semibold text-gray-900 mb-1 text-center">500 &mdash; Server Error</h2>
+        <h2 className="text-18 md:text-22 font-semibold text-gray-900 mb-1 text-center">
+          500 &mdash; Server Error
+        </h2>
         {/* Subtext */}
         <p className="text-14 text-gray-500 mb-6 text-center">
           We’re experiencing technical issues. Our team is working on it.

@@ -26,8 +26,9 @@ const offerCouponCardVariants = cva(
  * Offer Coupon Card Component Props
  * Used in Available Coupons Section (different from the main CouponCard)
  */
-export interface OfferCouponCardProps
-  extends VariantProps<typeof offerCouponCardVariants> {
+export interface OfferCouponCardProps extends VariantProps<
+  typeof offerCouponCardVariants
+> {
   title: string
   description?: string
   discountLabel?: string
@@ -82,7 +83,9 @@ export const OfferCouponCard = ({
               onClick={onCopyCode}
               className="flex gap-1 sm:gap-1.5 items-center justify-center rounded-full px-2 sm:px-2.5 py-0.5 sm:py-1 shrink-0 hover:opacity-80 transition-opacity"
             >
-              <p className="text-10 sm:text-12 font-medium text-brand-500">Copy Code</p>
+              <p className="text-10 sm:text-12 font-medium text-brand-500">
+                Copy Code
+              </p>
               <Copy className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand-500" />
             </button>
           )}
@@ -98,4 +101,3 @@ export const OfferCouponCard = ({
     </div>
   )
 }
-

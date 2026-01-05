@@ -8,5 +8,3 @@ import type { NoteLineResponse } from './note-line-response'
 export interface NoteBookResponse extends BookResponse<NoteLineResponse> {
   // No additional properties
 }
-
-

@@ -10,5 +10,3 @@ export interface EventBookResponse extends BookResponse<EventLineResponse> {
   lineCategories?: EventLineCategoryResponse[]
   categoriesCount?: number
 }
-
-

@@ -35,7 +35,8 @@ export const MobileVerificationForm = ({
   onVerifySuccess,
 }: MobileVerificationFormProps) => {
   const router = useRouter()
-  const { sendPhoneOTP, verifyPhoneOTP, isLoading, error, clearError } = useAuth()
+  const { sendPhoneOTP, verifyPhoneOTP, isLoading, error, clearError } =
+    useAuth()
 
   // Get phone number from props, localStorage, or signup flow
   const getPhoneNumber = (): string => {
@@ -206,7 +207,7 @@ export const MobileVerificationForm = ({
       }
 
       setOtpStatus('success')
-      
+
       // Always redirect to planning preferences after successful verification
       if (onVerifySuccess) {
         onVerifySuccess()

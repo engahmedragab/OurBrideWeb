@@ -8,5 +8,3 @@ export default async function InvoicePage({
   const { id } = await params
   return <InvoiceClient orderId={id} />
 }
-
-

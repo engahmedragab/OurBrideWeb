@@ -25,7 +25,7 @@ export const getAllContests = async (params?: {
   try {
     const response = await apiClient.api.getContestsGetAll(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as LeaderboardContestResponse[]
@@ -39,21 +39,25 @@ export const getAllContests = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch contests')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch contests'
+    )
   }
 }
 
 /**
  * Get contest by ID
  */
-export const getContestById = async (id: number): Promise<LeaderboardContestResponse | null> => {
+export const getContestById = async (
+  id: number
+): Promise<LeaderboardContestResponse | null> => {
   try {
     const response = await apiClient.api.getContestsGetById(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as LeaderboardContestResponse
@@ -64,21 +68,25 @@ export const getContestById = async (id: number): Promise<LeaderboardContestResp
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as LeaderboardContestResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch contest')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch contest'
+    )
   }
 }
 
 /**
  * Get contest with leaderboard
  */
-export const getContestWithLeaderboard = async (id: number): Promise<LeaderboardContestResponse | null> => {
+export const getContestWithLeaderboard = async (
+  id: number
+): Promise<LeaderboardContestResponse | null> => {
   try {
     const response = await apiClient.api.getContestsGetWithLeaderboard(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as LeaderboardContestResponse
@@ -89,10 +97,14 @@ export const getContestWithLeaderboard = async (id: number): Promise<Leaderboard
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as LeaderboardContestResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch contest with leaderboard')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch contest with leaderboard'
+    )
   }
 }
 
@@ -106,7 +118,7 @@ export const getPublishedContests = async (params?: {
   try {
     const response = await apiClient.api.getContestsGetPublished(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as LeaderboardContestResponse[]
@@ -120,10 +132,14 @@ export const getPublishedContests = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch published contests')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch published contests'
+    )
   }
 }
 
@@ -137,7 +153,7 @@ export const getActiveContests = async (params?: {
   try {
     const response = await apiClient.api.getContestsGetActive(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as LeaderboardContestResponse[]
@@ -151,21 +167,25 @@ export const getActiveContests = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch active contests')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch active contests'
+    )
   }
 }
 
 /**
  * Get contests by user ID
  */
-export const getContestsByUserId = async (userId: string): Promise<LeaderboardContestResponse[]> => {
+export const getContestsByUserId = async (
+  userId: string
+): Promise<LeaderboardContestResponse[]> => {
   try {
     const response = await apiClient.api.getContestsGetByUserId(userId)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as LeaderboardContestResponse[]
@@ -179,10 +199,14 @@ export const getContestsByUserId = async (userId: string): Promise<LeaderboardCo
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch contests by user')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch contests by user'
+    )
   }
 }
 
@@ -195,7 +219,7 @@ export const searchContests = async (params?: {
   try {
     const response = await apiClient.api.getContestsSearch(params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as LeaderboardContestResponse[]
@@ -209,21 +233,25 @@ export const searchContests = async (params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to search contests')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to search contests'
+    )
   }
 }
 
 /**
  * Create a new contest
  */
-export const createContest = async (data: CreateLeaderboardContestRequest): Promise<LeaderboardContestResponse | null> => {
+export const createContest = async (
+  data: CreateLeaderboardContestRequest
+): Promise<LeaderboardContestResponse | null> => {
   try {
     const response = await apiClient.api.postContestsCreate(data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as LeaderboardContestResponse
@@ -234,21 +262,26 @@ export const createContest = async (data: CreateLeaderboardContestRequest): Prom
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as LeaderboardContestResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create contest')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create contest'
+    )
   }
 }
 
 /**
  * Update a contest
  */
-export const updateContest = async (id: number, data: UpdateLeaderboardContestRequest): Promise<LeaderboardContestResponse | null> => {
+export const updateContest = async (
+  id: number,
+  data: UpdateLeaderboardContestRequest
+): Promise<LeaderboardContestResponse | null> => {
   try {
     const response = await apiClient.api.putContestsUpdate(id, data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as LeaderboardContestResponse
@@ -259,10 +292,12 @@ export const updateContest = async (id: number, data: UpdateLeaderboardContestRe
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as LeaderboardContestResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update contest')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update contest'
+    )
   }
 }
 
@@ -274,7 +309,9 @@ export const deleteContest = async (id: number): Promise<boolean> => {
     await apiClient.api.deleteContestsDelete(id)
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete contest')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete contest'
+    )
   }
 }
 
@@ -286,18 +323,23 @@ export const approveContest = async (id: number): Promise<boolean> => {
     await apiClient.api.postContestsApprove(id)
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to approve contest')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to approve contest'
+    )
   }
 }
 
 /**
  * Register participant in a contest
  */
-export const registerParticipant = async (id: string, data: RegisterContestParticipantRequest): Promise<ContestParticipantResponse | null> => {
+export const registerParticipant = async (
+  id: string,
+  data: RegisterContestParticipantRequest
+): Promise<ContestParticipantResponse | null> => {
   try {
     const response = await apiClient.api.postContestsRegister(id, data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ContestParticipantResponse
@@ -308,21 +350,26 @@ export const registerParticipant = async (id: string, data: RegisterContestParti
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as ContestParticipantResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to register participant')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to register participant'
+    )
   }
 }
 
 /**
  * Submit contest entry
  */
-export const submitContestEntry = async (id: string, data: SubmitContestEntryRequest): Promise<ContestParticipantResponse | null> => {
+export const submitContestEntry = async (
+  id: string,
+  data: SubmitContestEntryRequest
+): Promise<ContestParticipantResponse | null> => {
   try {
     const response = await apiClient.api.postContestsSubmitEntry(id, data)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as ContestParticipantResponse
@@ -333,23 +380,28 @@ export const submitContestEntry = async (id: string, data: SubmitContestEntryReq
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as ContestParticipantResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to submit contest entry')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to submit contest entry'
+    )
   }
 }
 
 /**
  * Get leaderboard for a contest
  */
-export const getLeaderboard = async (id: number, params?: {
-  topCount?: number
-}): Promise<ContestLeaderboardResponse[]> => {
+export const getLeaderboard = async (
+  id: number,
+  params?: {
+    topCount?: number
+  }
+): Promise<ContestLeaderboardResponse[]> => {
   try {
     const response = await apiClient.api.getContestsGetLeaderboard(id, params)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as ContestLeaderboardResponse[]
@@ -363,21 +415,28 @@ export const getLeaderboard = async (id: number, params?: {
     if (Array.isArray(responseAny)) {
       return responseAny as ContestLeaderboardResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch leaderboard')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch leaderboard'
+    )
   }
 }
 
 /**
  * Add review to a contest
  */
-export const addReview = async (id: number, data: AddReviewRequest): Promise<void> => {
+export const addReview = async (
+  id: number,
+  data: AddReviewRequest
+): Promise<void> => {
   try {
     await apiClient.api.postContestsAddReview(id, data)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add review')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to add review'
+    )
   }
 }
 
@@ -390,7 +449,9 @@ export const toggleLike = async (id: number): Promise<boolean> => {
     // The API might return the new like status, but we'll need to check separately
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle like')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle like'
+    )
   }
 }
 
@@ -401,7 +462,7 @@ export const isLiked = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getContestsIsLiked(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -412,10 +473,12 @@ export const isLiked = async (id: number): Promise<boolean> => {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check like status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check like status'
+    )
   }
 }
 
@@ -428,7 +491,9 @@ export const toggleFavorite = async (id: number): Promise<boolean> => {
     // The API might return the new favorite status, but we'll need to check separately
     return true
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle favorite')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to toggle favorite'
+    )
   }
 }
 
@@ -439,7 +504,7 @@ export const isFavorite = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getContestsIsFavorite(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (typeof responseAny?.data === 'boolean') {
       return responseAny.data
@@ -450,10 +515,12 @@ export const isFavorite = async (id: number): Promise<boolean> => {
     if (typeof responseAny === 'boolean') {
       return responseAny
     }
-    
+
     return false
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to check favorite status')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to check favorite status'
+    )
   }
 }
 
@@ -464,18 +531,25 @@ export const addMedia = async (id: number, mediaId: number): Promise<void> => {
   try {
     await apiClient.api.postContestsAddMedia(id, mediaId)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to add media')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to add media'
+    )
   }
 }
 
 /**
  * Remove media from a contest
  */
-export const removeMedia = async (id: number, mediaId: number): Promise<void> => {
+export const removeMedia = async (
+  id: number,
+  mediaId: number
+): Promise<void> => {
   try {
     await apiClient.api.deleteContestsRemoveMedia(id, mediaId)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to remove media')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to remove media'
+    )
   }
 }
 
@@ -486,7 +560,7 @@ export const getMediaIds = async (id: number): Promise<number[]> => {
   try {
     const response = await apiClient.api.getContestsGetMedia(id)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as number[]
@@ -500,10 +574,12 @@ export const getMediaIds = async (id: number): Promise<number[]> => {
     if (Array.isArray(responseAny)) {
       return responseAny as number[]
     }
-    
+
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch media IDs')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch media IDs'
+    )
   }
 }
 
@@ -514,7 +590,9 @@ export const incrementViewCount = async (id: number): Promise<void> => {
   try {
     await apiClient.api.postContestsIncrementView(id)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to increment view count')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to increment view count'
+    )
   }
 }
 
@@ -529,9 +607,13 @@ export const shareContest = async (
   try {
     const response = await apiClient.api.postContestsShare(id, { shareSource })
     const responseAny: any = response
-    
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = (responseAny as { data?: unknown }).data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ShareLeaderboardContestResponse }).data
@@ -540,30 +622,18 @@ export const shareContest = async (
         return data as ShareLeaderboardContestResponse
       }
     }
-    if (responseAny && typeof responseAny === 'object' && 'contestId' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'contestId' in responseAny
+    ) {
       return responseAny as ShareLeaderboardContestResponse
     }
-    
+
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to share contest')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to share contest'
+    )
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

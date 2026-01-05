@@ -22,7 +22,7 @@ export const useToggleServiceFavorite = () => {
       queryClient.invalidateQueries({ queryKey: ['service', serviceId] })
       queryClient.invalidateQueries({ queryKey: ['services'] })
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Service favorite toggled successfully',
@@ -30,8 +30,11 @@ export const useToggleServiceFavorite = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle service favorite'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to toggle service favorite'
       addToast(errorMessage, 'error')
     },
   })
@@ -56,7 +59,7 @@ export const useToggleServiceWishlist = () => {
       // Since useWishlists has staleTime: Infinity, we need to explicitly refetch
       await queryClient.invalidateQueries({ queryKey: ['wishlists'] })
       await queryClient.refetchQueries({ queryKey: ['wishlists'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Service wishlist toggled successfully',
@@ -64,8 +67,11 @@ export const useToggleServiceWishlist = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle service wishlist'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to toggle service wishlist'
       addToast(errorMessage, 'error')
     },
   })

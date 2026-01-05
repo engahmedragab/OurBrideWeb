@@ -23,8 +23,13 @@ export const EventWeekHeader = ({
   className,
 }: EventWeekHeaderProps) => {
   return (
-    <div className={cn('flex gap-6 md:gap-12 items-center overflow-x-auto', className)}>
-      {weekDays.map((weekDay) => (
+    <div
+      className={cn(
+        'flex gap-6 md:gap-12 items-center overflow-x-auto',
+        className
+      )}
+    >
+      {weekDays.map(weekDay => (
         <div
           key={`${weekDay.date.getTime()}`}
           className="flex flex-1 flex-col gap-2 items-center min-w-[60px]"

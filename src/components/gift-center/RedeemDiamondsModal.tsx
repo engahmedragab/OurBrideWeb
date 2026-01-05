@@ -73,7 +73,9 @@ export const RedeemDiamondsModal = ({
         {/* Illustration Image */}
         <div className="flex justify-center">
           <Image
-            src={typeof redeemImage === 'string' ? redeemImage : redeemImage.src}
+            src={
+              typeof redeemImage === 'string' ? redeemImage : redeemImage.src
+            }
             alt="Redeem"
             width={160}
             height={160}
@@ -85,22 +87,30 @@ export const RedeemDiamondsModal = ({
         <div className="flex flex-col gap-3 sm:gap-4 items-start w-full">
           {/* Success Message */}
           <div className="text-center w-full">
-            <p className="text-16 sm:text-18 font-normal text-gray-900">Success! 🎉</p>
+            <p className="text-16 sm:text-18 font-normal text-gray-900">
+              Success! 🎉
+            </p>
           </div>
 
           {/* Diamonds to Discount Conversion */}
           <div className="flex gap-3 sm:gap-4 items-center justify-center w-full">
             <div className="flex gap-1.5 sm:gap-2 items-center justify-center">
-              <p className="text-18 sm:text-20 font-medium text-gray-900">{diamondsCount}</p>
+              <p className="text-18 sm:text-20 font-medium text-gray-900">
+                {diamondsCount}
+              </p>
               <Image
-                src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
+                src={
+                  typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src
+                }
                 alt="Diamond"
                 width={28}
                 height={28}
                 className="h-6 w-6 sm:h-7 sm:w-7"
               />
             </div>
-            <p className="text-18 sm:text-20 font-normal text-gray-500">= {discountPercentage}% OFF</p>
+            <p className="text-18 sm:text-20 font-normal text-gray-500">
+              = {discountPercentage}% OFF
+            </p>
           </div>
         </div>
 
@@ -117,4 +127,3 @@ export const RedeemDiamondsModal = ({
     </Modal>
   )
 }
-

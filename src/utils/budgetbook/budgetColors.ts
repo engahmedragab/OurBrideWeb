@@ -20,12 +20,12 @@ const COLOR_PALETTE = [
  */
 export const getColorFromName = (colorName: string | null): string => {
   if (!colorName) return '#737373'
-  
+
   // If it looks like ARGB format (starts with 0x and is 8+ chars), parse it
   if (colorName.startsWith('0x') || colorName.startsWith('0X')) {
     return argbToHex(colorName)
   }
-  
+
   // Legacy string format support (for backward compatibility)
   switch (colorName) {
     case 'green':
@@ -87,4 +87,3 @@ export function getCategoryColor(category: CategoryLike): string {
   // Fallback: generate stable color from id
   return getStableColorById(category.id)
 }
-

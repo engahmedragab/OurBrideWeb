@@ -48,6 +48,3 @@ export interface ProviderPublicStoreResponse {
   totalViews: number
   totalFollowers: number
 }
-
-
-

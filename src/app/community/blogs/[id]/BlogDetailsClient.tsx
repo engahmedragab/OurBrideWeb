@@ -2,7 +2,12 @@
 
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
-import { BlogDetails, CommunitySidebar, CommunityRightSidebar, type CommunityTab } from '@/components/community'
+import {
+  BlogDetails,
+  CommunitySidebar,
+  CommunityRightSidebar,
+  type CommunityTab,
+} from '@/components/community'
 import { useCommunityHome } from '@/hooks/home/useHome'
 import { getBlogById } from '@/services/api/blogsApi'
 import { useQuery } from '@tanstack/react-query'
@@ -14,16 +19,23 @@ export function BlogDetailsClient({ id }: { id: string }) {
   const activeTab: CommunityTab = 'blogs'
 
   // Fetch community home data for sidebars
-  const { data: communityData } = useCommunityHome({
-    postsCount: undefined,
-    articlesCount: 3,
-    suggestedUsersCount: 3,
-    topProvidersCount: 3,
-    tagsCount: 10,
-  }, true)
+  const { data: communityData } = useCommunityHome(
+    {
+      postsCount: undefined,
+      articlesCount: 3,
+      suggestedUsersCount: 3,
+      topProvidersCount: 3,
+      tagsCount: 10,
+    },
+    true
+  )
 
   // Fetch blog data
-  const { data: blog, isLoading, error } = useQuery({
+  const {
+    data: blog,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['blog', id],
     queryFn: async () => {
       const blogId = parseInt(id, 10)
@@ -52,8 +64,13 @@ export function BlogDetailsClient({ id }: { id: string }) {
         <main className="flex-1 flex items-center justify-center min-h-[60vh] py-12">
           <div className="w-full max-w-md mx-auto px-4">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-10 text-center">
-              <p className="text-gray-600 text-base sm:text-lg font-medium">Blog not found</p>
-              <p className="text-gray-500 text-sm mt-2">The blog you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+              <p className="text-gray-600 text-base sm:text-lg font-medium">
+                Blog not found
+              </p>
+              <p className="text-gray-500 text-sm mt-2">
+                The blog you&apos;re looking for doesn&apos;t exist or has been
+                removed.
+              </p>
             </div>
           </div>
         </main>
@@ -67,13 +84,17 @@ export function BlogDetailsClient({ id }: { id: string }) {
       <Header />
       <main className="flex-1">
         <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 md:py-10 lg:py-12">
-          <div className={cn('flex flex-col gap-6 sm:gap-8 lg:gap-10 xl:gap-12 lg:flex-row lg:items-start')}>
+          <div
+            className={cn(
+              'flex flex-col gap-6 sm:gap-8 lg:gap-10 xl:gap-12 lg:flex-row lg:items-start'
+            )}
+          >
             {/* Left Sidebar */}
             <aside className="hidden lg:block lg:w-64 xl:w-72 lg:flex-shrink-0">
               <div className="sticky top-6">
                 <CommunitySidebar
                   activeTab={activeTab}
-                  onTabChange={() => { }}
+                  onTabChange={() => {}}
                 />
               </div>
             </aside>
@@ -90,11 +111,20 @@ export function BlogDetailsClient({ id }: { id: string }) {
               <div className="sticky top-6">
                 <CommunityRightSidebar
                   activeTab={activeTab}
-                  currentUser={communityData?.currentUser ? {
-                    name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || 'User',
-                    email: communityData.currentUser.email || '',
-                    avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
-                  } : undefined}
+                  currentUser={
+                    communityData?.currentUser
+                      ? {
+                          name:
+                            `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() ||
+                            communityData.currentUser.userName ||
+                            'User',
+                          email: communityData.currentUser.email || '',
+                          avatar:
+                            communityData.currentUser.profileUrl ||
+                            'https://via.placeholder.com/100',
+                        }
+                      : undefined
+                  }
                   suggestedUsers={communityData?.suggestedUsers || []}
                   topProviders={communityData?.topProviders || []}
                   recentArticles={communityData?.recentArticles || []}
@@ -109,4 +139,3 @@ export function BlogDetailsClient({ id }: { id: string }) {
     </div>
   )
 }
-

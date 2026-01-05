@@ -9,19 +9,32 @@ import { cn } from '@/lib/utils'
  * Gift Center Layout Component
  * Provides shared layout with tabs navigation for Gift Center pages
  */
-export default function GiftCenterLayout({ children }: { children: ReactNode }) {
+export default function GiftCenterLayout({
+  children,
+}: {
+  children: ReactNode
+}) {
   const pathname = usePathname()
 
   const tabs = [
     { value: 'offers', label: 'Offers', href: '/dashboard/gift-center/offers' },
-    { value: 'coupons', label: 'Coupons', href: '/dashboard/gift-center/coupons' },
-    { value: 'ranking', label: 'Ranking', href: '/dashboard/gift-center/ranking' },
+    {
+      value: 'coupons',
+      label: 'Coupons',
+      href: '/dashboard/gift-center/coupons',
+    },
+    {
+      value: 'ranking',
+      label: 'Ranking',
+      href: '/dashboard/gift-center/ranking',
+    },
   ]
 
   const getActiveTab = () => {
     if (pathname?.includes('/offers')) return 'offers'
     if (pathname?.includes('/coupons')) return 'coupons'
-    if (pathname?.includes('/ranking') || pathname?.includes('/rewards')) return 'ranking'
+    if (pathname?.includes('/ranking') || pathname?.includes('/rewards'))
+      return 'ranking'
     return 'coupons' // Default to coupons
   }
 
@@ -57,4 +70,3 @@ export default function GiftCenterLayout({ children }: { children: ReactNode }) 
     </div>
   )
 }
-

@@ -23,7 +23,7 @@ export const ProductList = ({
   className,
 }: ProductListProps) => {
   const { isProductInCart } = useCartItems()
-  
+
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
@@ -55,7 +55,10 @@ export const ProductList = ({
                 href={`/products/${product.id}`}
                 className="block flex-shrink-0 w-full md:w-48 h-48 rounded-lg overflow-hidden bg-gray-100 relative"
               >
-                {product.images && product.images.length > 0 && product.images[0] && product.images[0].trim() !== '' ? (
+                {product.images &&
+                product.images.length > 0 &&
+                product.images[0] &&
+                product.images[0].trim() !== '' ? (
                   <img
                     src={product.images[0]}
                     alt={product.title}
@@ -80,10 +83,10 @@ export const ProductList = ({
                         </h3>
                       </Link>
                       <div className="flex items-center gap-1.5 mt-1">
-                        <Link 
+                        <Link
                           href={`/provider/${product.provider.id}`}
                           className="text-14 text-gray-600 hover:text-brand-500 transition-colors"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={e => e.stopPropagation()}
                         >
                           {product.provider.name}
                         </Link>
@@ -171,23 +174,27 @@ export const ProductList = ({
                   <div className="flex items-center gap-2">
                     {(() => {
                       const productId = parseInt(product.id, 10)
-                      const providerId = product.provider?.id ? parseInt(product.provider.id, 10) : undefined
+                      const providerId = product.provider?.id
+                        ? parseInt(product.provider.id, 10)
+                        : undefined
                       const isInCart = isProductInCart(productId, providerId)
-                      
+
                       return (
                         <>
                           <Button
-                            variant={isInCart ? "default" : "outline"}
+                            variant={isInCart ? 'default' : 'outline'}
                             size="icon"
                             className={cn(
-                              "h-10 w-10 rounded-full",
+                              'h-10 w-10 rounded-full',
                               isInCart
-                                ? "border-brand-500 bg-brand-500 hover:bg-brand-600"
-                                : "border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
+                                ? 'border-brand-500 bg-brand-500 hover:bg-brand-600'
+                                : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-white'
                             )}
                             onClick={() => onAddToCart?.(product.id)}
                             disabled={!product.inStock}
-                            aria-label={isInCart ? "Item in cart" : "Add to cart"}
+                            aria-label={
+                              isInCart ? 'Item in cart' : 'Add to cart'
+                            }
                           >
                             {isInCart ? (
                               <Check className="h-5 w-5 text-white" />
@@ -198,14 +205,20 @@ export const ProductList = ({
                           <Button
                             variant="default"
                             className={cn(
-                              "h-10 px-6 rounded-full text-white",
-                              isInCart ? "bg-green-500 hover:bg-green-600" : "bg-brand-500 hover:bg-brand-600"
+                              'h-10 px-6 rounded-full text-white',
+                              isInCart
+                                ? 'bg-green-500 hover:bg-green-600'
+                                : 'bg-brand-500 hover:bg-brand-600'
                             )}
                             onClick={() => onAddToCart?.(product.id)}
                             disabled={!product.inStock}
                             asChild
                           >
-                            <Link href={isInCart ? "/cart" : `/products/${product.id}`}>
+                            <Link
+                              href={
+                                isInCart ? '/cart' : `/products/${product.id}`
+                              }
+                            >
                               {isInCart ? 'View in Cart' : 'Add to Cart'}
                             </Link>
                           </Button>

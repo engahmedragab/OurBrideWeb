@@ -16,5 +16,3 @@ export interface MainLineResponse {
   lastModifiedDate: string
   isModelLine: boolean
 }
-
-

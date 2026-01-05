@@ -14,9 +14,19 @@ export interface ReelsFeedProps {
   onReelSelect?: (reelId: number | null) => void
 }
 
-export const ReelsFeed = ({ className, reels = [], selectedReelId: externalSelectedReelId, onReelSelect }: ReelsFeedProps) => {
-  const [internalSelectedReelId, setInternalSelectedReelId] = useState<number | null>(null)
-  const selectedReelId = externalSelectedReelId !== undefined ? externalSelectedReelId : internalSelectedReelId
+export const ReelsFeed = ({
+  className,
+  reels = [],
+  selectedReelId: externalSelectedReelId,
+  onReelSelect,
+}: ReelsFeedProps) => {
+  const [internalSelectedReelId, setInternalSelectedReelId] = useState<
+    number | null
+  >(null)
+  const selectedReelId =
+    externalSelectedReelId !== undefined
+      ? externalSelectedReelId
+      : internalSelectedReelId
   const setSelectedReelId = onReelSelect || setInternalSelectedReelId
 
   // Update selected reel when reels change
@@ -28,11 +38,13 @@ export const ReelsFeed = ({ className, reels = [], selectedReelId: externalSelec
 
   if (reels.length === 0) {
     return (
-      <div className={cn(
-        'flex-1 flex justify-center items-center min-h-0 w-full',
-        'md:min-h-[calc(100vh-200px)]',
-        className
-      )}>
+      <div
+        className={cn(
+          'flex-1 flex justify-center items-center min-h-0 w-full',
+          'md:min-h-[calc(100vh-200px)]',
+          className
+        )}
+      >
         <CommunityEmptyState
           title="No Reels Available"
           message="There are no reels to display at the moment."

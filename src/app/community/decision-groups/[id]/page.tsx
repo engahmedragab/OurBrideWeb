@@ -41,20 +41,3 @@ async function DecisionGroupDetailsContentWrapper({
   const { id } = await params
   return <DecisionGroupDetailsClient id={id} />
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

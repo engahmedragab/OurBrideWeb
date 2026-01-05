@@ -42,9 +42,7 @@ export const ProductsNewsletterSection = ({
   }
 
   return (
-    <section
-      className={cn('py-12 md:py-20', className)}
-    >
+    <section className={cn('py-12 md:py-20', className)}>
       <div className="relative border border-brand-500 rounded-[24px] p-8 md:px-[74px] md:py-[31px] flex flex-col gap-6 md:gap-[24px] min-h-[277px] md:h-[277px]">
         {/* Background Image */}
         {image && (
@@ -94,5 +92,3 @@ export const ProductsNewsletterSection = ({
     </section>
   )
 }
-
-

@@ -45,9 +45,7 @@ export const ProductCategoriesSection = ({
   headerAlignment = 'center',
 }: ProductCategoriesSectionProps) => {
   return (
-    <section
-      className={cn('py-12 md:py-20', className)}
-    >
+    <section className={cn('py-12 md:py-20', className)}>
       {/* Section Header */}
       <div className="mb-12 md:mb-20">
         <SectionHeader
@@ -126,4 +124,3 @@ export const ProductCategoriesSection = ({
     </section>
   )
 }
-

@@ -10,5 +10,3 @@ export interface ServiceBookResponse extends BookResponse<ServiceLineResponse> {
   pending?: number
   isSubDone?: boolean
 }
-
-

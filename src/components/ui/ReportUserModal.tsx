@@ -63,7 +63,7 @@ export const ReportUserModal = ({
         <div className="flex flex-col gap-4">
           {/* Report Reasons */}
           <div className="flex flex-col gap-2">
-            {reportReasons.map((reason) => (
+            {reportReasons.map(reason => (
               <button
                 key={reason}
                 type="button"
@@ -88,7 +88,7 @@ export const ReportUserModal = ({
           <div className="flex flex-col gap-2">
             <textarea
               value={details}
-              onChange={(e) => setDetails(e.target.value)}
+              onChange={e => setDetails(e.target.value)}
               placeholder="Tell Us What Happened ?"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 text-14 font-normal text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-500 resize-none min-h-[80px]"
             />
@@ -145,4 +145,3 @@ export const ReportUserModal = ({
     </Modal>
   )
 }
-

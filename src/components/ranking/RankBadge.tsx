@@ -71,7 +71,8 @@ const rankBadgeVariants = cva(
 )
 
 export interface RankBadgeProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, 'onClick'>,
+  extends
+    Omit<HTMLAttributes<HTMLDivElement>, 'onClick'>,
     VariantProps<typeof rankBadgeVariants> {
   rankKey: RankKey
   title?: string
@@ -107,7 +108,9 @@ const RankBadge = forwardRef<HTMLDivElement, RankBadgeProps>(
     const config = rankConfig[rankKey]
     const displayTitle = title || config.label
     const hasClickHandler = !!onClick
-    const hasContent = Boolean(showText && (displayTitle || rankingValue !== undefined))
+    const hasContent = Boolean(
+      showText && (displayTitle || rankingValue !== undefined)
+    )
 
     return (
       <div
@@ -128,7 +131,7 @@ const RankBadge = forwardRef<HTMLDivElement, RankBadgeProps>(
         tabIndex={hasClickHandler ? 0 : undefined}
         onKeyDown={
           hasClickHandler
-            ? (e) => {
+            ? e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
                   onClick()
@@ -161,5 +164,3 @@ const RankBadge = forwardRef<HTMLDivElement, RankBadgeProps>(
 RankBadge.displayName = 'RankBadge'
 
 export { RankBadge, rankBadgeVariants }
-
-

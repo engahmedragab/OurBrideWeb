@@ -8,5 +8,3 @@ export interface MainNoteLineResponse extends MainLineResponse {
   title: string
   note: string
 }
-
-

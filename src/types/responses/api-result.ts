@@ -9,5 +9,3 @@ export interface ApiResult<T> {
   message: string
   errors?: string[]
 }
-
-

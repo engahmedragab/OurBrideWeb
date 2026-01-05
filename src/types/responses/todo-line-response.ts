@@ -18,5 +18,3 @@ export interface TodoLineResponse extends LineResponse {
   sublines?: TodoLineResponse[]
   todoLineCategory?: TodoLineCategoryResponse
 }
-
-

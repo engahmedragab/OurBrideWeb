@@ -12,5 +12,3 @@ export interface TodoSubLineResponse extends LineResponse {
   parentLineId?: number
   todoLineCategory?: TodoLineCategoryResponse
 }
-
-

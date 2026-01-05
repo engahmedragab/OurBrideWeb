@@ -33,14 +33,19 @@ export const formatDateShort = (dateString: string | null): string => {
 }
 
 // Helper function to get user display name
-export const getUserDisplayName = (user: UserResponse | null, fallback?: string): string => {
+export const getUserDisplayName = (
+  user: UserResponse | null,
+  fallback?: string
+): string => {
   if (!user) return fallback || 'OurBride'
-  
+
   // Handle null/undefined firstName and lastName - check for null/undefined explicitly
-  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
-  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const firstName =
+    user.firstName && user.firstName !== 'null' ? user.firstName : ''
+  const lastName =
+    user.lastName && user.lastName !== 'null' ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
-  
+
   return fullName || user.userName || fallback || 'OurBride'
 }
 
@@ -60,15 +65,13 @@ export const formatDuration = (seconds: number | null): string => {
 
 // Helper function to get profile URL
 // Uses query parameters instead of dynamic route to work with static export
-export const getProfileUrl = (userId: string | null | undefined, userType?: string | null): string | null => {
+export const getProfileUrl = (
+  userId: string | null | undefined,
+  userType?: string | null
+): string | null => {
   if (!userId) return null
-  
+
   // Check if user type is Provider, otherwise default to User
   const type = userType === 'Provider' ? 'Provider' : 'User'
   return `/community/profile?id=${userId}&type=${type}`
 }
-
-
-
-
-

@@ -164,7 +164,10 @@ export const BookingDetailsModal = ({
   const deliveryFee = 90
   const total = subtotal + taxes + deliveryFee
 
-  const handleInputChange = (field: keyof BookingFormData, value: BookingFormData[keyof BookingFormData]) => {
+  const handleInputChange = (
+    field: keyof BookingFormData,
+    value: BookingFormData[keyof BookingFormData]
+  ) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
@@ -354,7 +357,14 @@ export const BookingDetailsModal = ({
                 <DatePicker
                   value={formData.selectedDate || undefined}
                   onChange={date =>
-                    handleInputChange('selectedDate', date ? (typeof date === 'string' ? date : date.toISOString().split('T')[0]) : '')
+                    handleInputChange(
+                      'selectedDate',
+                      date
+                        ? typeof date === 'string'
+                          ? date
+                          : date.toISOString().split('T')[0]
+                        : ''
+                    )
                   }
                   placeholder="Select a date"
                   prefixIcon={Calendar}
@@ -424,10 +434,10 @@ export const BookingDetailsModal = ({
                   </div>
                   <p className="text-14 text-gray-600">
                     Provider:{' '}
-                    <Link 
+                    <Link
                       href={`/provider/${service.provider.id}`}
                       className="hover:text-brand-500 transition-colors"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={e => e.stopPropagation()}
                     >
                       {service.provider.name}
                     </Link>

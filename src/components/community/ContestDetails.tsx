@@ -22,7 +22,12 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { LeaderboardContestResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
-import { formatDateShort, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
+import {
+  formatDateShort,
+  getUserDisplayName,
+  getUserAvatar,
+  getProfileUrl,
+} from './utils'
 import Link from 'next/link'
 import {
   addReview as addContestReview,
@@ -40,7 +45,9 @@ export interface ContestDetailsProps {
 }
 
 // Helper function to get contest status
-const getContestStatus = (contest: LeaderboardContestResponse): 'active' | 'ended' | 'upcoming' => {
+const getContestStatus = (
+  contest: LeaderboardContestResponse
+): 'active' | 'ended' | 'upcoming' => {
   if (!contest.isActive) return 'ended'
   const now = new Date()
   const endDate = contest.endDate ? new Date(contest.endDate) : null
@@ -51,10 +58,7 @@ const getContestStatus = (contest: LeaderboardContestResponse): 'active' | 'ende
   return 'active'
 }
 
-export const ContestDetails = ({
-  contest,
-  className,
-}: ContestDetailsProps) => {
+export const ContestDetails = ({ contest, className }: ContestDetailsProps) => {
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
@@ -92,8 +96,11 @@ export const ContestDetails = ({
       // Invalidate queries to refresh comments/reviews
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to add comment',
+        'error'
+      )
     },
   })
 
@@ -111,8 +118,11 @@ export const ContestDetails = ({
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -120,18 +130,24 @@ export const ContestDetails = ({
     mutationFn: async (shareSource?: string) => {
       return await shareContest(contest.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
         // Copy share URL to clipboard
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/contests/${contest.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/contests/${contest.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share contest', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share contest',
+        'error'
+      )
     },
   })
 
@@ -144,8 +160,11 @@ export const ContestDetails = ({
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -159,10 +178,16 @@ export const ContestDetails = ({
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(
+        isFollowing ? 'Unfollowed successfully' : 'Followed successfully',
+        'success'
+      )
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle follow',
+        'error'
+      )
     },
   })
 
@@ -248,7 +273,9 @@ export const ContestDetails = ({
 
         <div className="p-6">
           {/* Contest Title */}
-          <h1 className="text-24 font-normal text-gray-900 mb-4">{contest.title}</h1>
+          <h1 className="text-24 font-normal text-gray-900 mb-4">
+            {contest.title}
+          </h1>
 
           {/* Contest Description */}
           <p className="text-14 text-gray-700 mb-4">{contest.description}</p>
@@ -265,7 +292,9 @@ export const ContestDetails = ({
             <div className="flex items-center gap-3">
               <Trophy className="h-5 w-5 text-brand-500" />
               <div>
-                <span className="text-14 font-semibold text-gray-900">Prize:</span>
+                <span className="text-14 font-semibold text-gray-900">
+                  Prize:
+                </span>
                 <span className="text-14 text-brand-500 font-semibold ml-2">
                   {contest.prizes || 'TBA'}
                 </span>
@@ -278,15 +307,20 @@ export const ContestDetails = ({
                   Participants:
                 </span>
                 <span className="text-14 text-gray-700 ml-2">
-                  {contest.currentParticipants} / {contest.maxParticipants > 0 ? contest.maxParticipants : '∞'}
+                  {contest.currentParticipants} /{' '}
+                  {contest.maxParticipants > 0 ? contest.maxParticipants : '∞'}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <Calendar className="h-5 w-5 text-gray-500" />
               <div>
-                <span className="text-14 font-semibold text-gray-900">Ends:</span>
-                <span className="text-14 text-gray-700 ml-2">{contest.endDate ? formatDateShort(contest.endDate) : 'TBA'}</span>
+                <span className="text-14 font-semibold text-gray-900">
+                  Ends:
+                </span>
+                <span className="text-14 text-gray-700 ml-2">
+                  {contest.endDate ? formatDateShort(contest.endDate) : 'TBA'}
+                </span>
               </div>
             </div>
           </div>
@@ -299,17 +333,27 @@ export const ContestDetails = ({
             disabled={hasJoined || status !== 'active'}
             className="w-full mb-4"
           >
-            {hasJoined ? 'Joined' : status === 'active' ? 'Join Contest' : 'Contest Ended'}
+            {hasJoined
+              ? 'Joined'
+              : status === 'active'
+                ? 'Join Contest'
+                : 'Contest Ended'}
           </Button>
 
           {/* Engagement Metrics */}
           <div className="pt-4 border-t border-gray-100">
             <div className="flex items-center justify-center gap-3">
               <EngagementButton
-                icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+                icon={
+                  <Heart
+                    className={cn('h-5 w-5', isLiked && 'fill-brand-500')}
+                  />
+                }
                 count={likes}
                 label="Likes"
-                onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
+                onClick={
+                  toggleLikeMutation.isPending ? undefined : handleLikeClick
+                }
                 isActive={isLiked}
               />
               <EngagementButton
@@ -324,10 +368,18 @@ export const ContestDetails = ({
                 onClick={shareMutation.isPending ? undefined : handleShareClick}
               />
               <EngagementButton
-                icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+                icon={
+                  <Star
+                    className={cn('h-5 w-5', isFavorited && 'fill-brand-500')}
+                  />
+                }
                 count={favorites}
                 label="Favorites"
-                onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
+                onClick={
+                  toggleFavoriteMutation.isPending
+                    ? undefined
+                    : handleFavoriteClick
+                }
                 isActive={isFavorited}
               />
             </div>
@@ -346,7 +398,9 @@ export const ContestDetails = ({
                   !isFollowing && 'text-white'
                 )}
               >
-                <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
+                <UserPlus
+                  className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')}
+                />
                 {toggleFollowMutation.isPending
                   ? 'Loading...'
                   : isFollowing
@@ -381,7 +435,8 @@ export const ContestDetails = ({
             <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
               <div className="w-full h-full flex items-center justify-center bg-brand-100">
                 <span className="text-14 font-semibold text-brand-600">
-                  {getUserDisplayName(contest.user).charAt(0).toUpperCase() || 'U'}
+                  {getUserDisplayName(contest.user).charAt(0).toUpperCase() ||
+                    'U'}
                 </span>
               </div>
             </div>
@@ -411,7 +466,3 @@ export const ContestDetails = ({
     </div>
   )
 }
-
-
-
-

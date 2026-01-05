@@ -18,9 +18,7 @@ import type { OfferItem } from '@/components/ui/OfferBanner'
 /**
  * Type guard to check if value is an object
  */
-export const isObject = (
-  value: unknown
-): value is Record<string, unknown> => {
+export const isObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
@@ -68,15 +66,13 @@ export const mapServiceToCardData = (
     '') as string
 
   // Get provider name
-  const provider = serviceObj.provider as
-    | {
-        name?: string
-        nameEn?: string
-        nameAr?: string
-        providerStatus?: string
-        isVerified?: boolean
-      }
-    | null
+  const provider = serviceObj.provider as {
+    name?: string
+    nameEn?: string
+    nameAr?: string
+    providerStatus?: string
+    isVerified?: boolean
+  } | null
   const providerName =
     provider?.nameEn || provider?.nameAr || provider?.name || ''
 
@@ -103,14 +99,16 @@ export const mapServiceToCardData = (
   const buyPrice =
     typeof serviceObj.buyPrice === 'number' ? serviceObj.buyPrice : null
   const saleRentPrice =
-    typeof serviceObj.saleRentPrice === 'number' ? serviceObj.saleRentPrice : null
+    typeof serviceObj.saleRentPrice === 'number'
+      ? serviceObj.saleRentPrice
+      : null
   const saleBuyPrice =
     typeof serviceObj.saleBuyPrice === 'number' ? serviceObj.saleBuyPrice : null
-  
+
   // Determine original and discounted prices
   let originalPrice = 0
   let discountedPrice = 0
-  
+
   if (priceType === 'Rent') {
     originalPrice = rentPrice || directPrice || 0
     discountedPrice = saleRentPrice || originalPrice
@@ -146,17 +144,17 @@ const extractProducts = (
   if (Array.isArray(data.topRelatedProducts)) {
     return data.topRelatedProducts
       .filter((p): p is ProductResponse => isObject(p))
-      .map((p) => mapProductToCardData(p as ProductResponse))
+      .map(p => mapProductToCardData(p as ProductResponse))
   }
   if (Array.isArray(data.products)) {
     return data.products
       .filter((p): p is ProductResponse => isObject(p))
-      .map((p) => mapProductToCardData(p as ProductResponse))
+      .map(p => mapProductToCardData(p as ProductResponse))
   }
   if (Array.isArray(data.suggestedProducts)) {
     return data.suggestedProducts
       .filter((p): p is ProductResponse => isObject(p))
-      .map((p) => mapProductToCardData(p as ProductResponse))
+      .map(p => mapProductToCardData(p as ProductResponse))
   }
   return undefined
 }
@@ -171,9 +169,9 @@ const extractServices = (
   if (Array.isArray(data.topRatedServices)) {
     return data.topRatedServices
       .filter((s): s is Record<string, unknown> => isObject(s))
-      .map((s) => mapServiceToCardData(s))
+      .map(s => mapServiceToCardData(s))
   }
-  
+
   // Extract services from preparations array for "Services Suggested for You"
   // Services are nested inside preparations[].services[]
   if (Array.isArray(data.preparations)) {
@@ -185,7 +183,7 @@ const extractServices = (
         if (Array.isArray(prep.services)) {
           const services = prep.services
             .filter((s): s is Record<string, unknown> => isObject(s))
-            .map((s) => mapServiceToCardData(s))
+            .map(s => mapServiceToCardData(s))
           allServices.push(...services)
         }
       }
@@ -200,17 +198,17 @@ const extractServices = (
   if (Array.isArray(data.topRelatedServices)) {
     return data.topRelatedServices
       .filter((s): s is Record<string, unknown> => isObject(s))
-      .map((s) => mapServiceToCardData(s))
+      .map(s => mapServiceToCardData(s))
   }
   if (Array.isArray(data.services)) {
     return data.services
       .filter((s): s is Record<string, unknown> => isObject(s))
-      .map((s) => mapServiceToCardData(s))
+      .map(s => mapServiceToCardData(s))
   }
   if (Array.isArray(data.suggestedServices)) {
     return data.suggestedServices
       .filter((s): s is Record<string, unknown> => isObject(s))
-      .map((s) => mapServiceToCardData(s))
+      .map(s => mapServiceToCardData(s))
   }
   return undefined
 }
@@ -222,28 +220,28 @@ const extractTestimonials = (
   data: Record<string, unknown>
 ): TestimonialCardData[] | undefined => {
   if (Array.isArray(data.testimonials)) {
-    return data.testimonials.filter((t): t is Record<string, unknown> =>
-      isObject(t)
-    ).map((t) => ({
-      quote: (t.commentEn ||
-        t.comment ||
-        t.quote ||
-        t.review ||
-        '') as string,
-      rating: (typeof t.rating === 'number' ? t.rating : 5) as number,
-      authorName: (t.customerNameEn ||
-        t.customerName ||
-        t.authorName ||
-        t.userName ||
-        t.name ||
-        'Anonymous') as string,
-      authorImage: (t.imageUrl ||
-        t.authorImage ||
-        t.userImage ||
-        t.image ||
-        '') as string,
-      timeAgo: (t.timeAgo || t.date || '') as string,
-    }))
+    return data.testimonials
+      .filter((t): t is Record<string, unknown> => isObject(t))
+      .map(t => ({
+        quote: (t.commentEn ||
+          t.comment ||
+          t.quote ||
+          t.review ||
+          '') as string,
+        rating: (typeof t.rating === 'number' ? t.rating : 5) as number,
+        authorName: (t.customerNameEn ||
+          t.customerName ||
+          t.authorName ||
+          t.userName ||
+          t.name ||
+          'Anonymous') as string,
+        authorImage: (t.imageUrl ||
+          t.authorImage ||
+          t.userImage ||
+          t.image ||
+          '') as string,
+        timeAgo: (t.timeAgo || t.date || '') as string,
+      }))
   }
   return undefined
 }
@@ -257,14 +255,14 @@ const extractProviders = (
   if (Array.isArray(data.providers)) {
     return data.providers
       .filter((p): p is Record<string, unknown> => isObject(p))
-      .map((p) => {
+      .map(p => {
         // Try multiple image properties, including publicLogoImageUrl from FeaturedProviderResponse
-        const image = (p.publicLogoImageUrl || 
-          p.image || 
-          p.profileURL || 
-          p.imageUrl || 
+        const image = (p.publicLogoImageUrl ||
+          p.image ||
+          p.profileURL ||
+          p.imageUrl ||
           '') as string
-        
+
         return {
           id: String(p.id || ''),
           name: (p.name || p.nameEn || p.nameAr || '') as string,
@@ -275,8 +273,9 @@ const extractProviders = (
             : typeof p.rate === 'number'
               ? p.rate
               : 0) as number,
-          verified:
-            (p.verified === true || p.isVerified === true || p.providerStatus === 'Active') as boolean,
+          verified: (p.verified === true ||
+            p.isVerified === true ||
+            p.providerStatus === 'Active') as boolean,
         }
       })
   }
@@ -290,12 +289,14 @@ const extractBanners = (data: Record<string, unknown>): OfferItem[] => {
   if (Array.isArray(data.banners)) {
     return data.banners
       .filter((b): b is Record<string, unknown> => isObject(b))
-      .filter((b) => b.isActive === true)
-      .map((b) => {
+      .filter(b => b.isActive === true)
+      .map(b => {
         // Get media URL if available
-        const media = b.media as
-          | { url?: string; thumbnailUrl?: string; originalUrl?: string }
-          | null
+        const media = b.media as {
+          url?: string
+          thumbnailUrl?: string
+          originalUrl?: string
+        } | null
         const imageUrl =
           media?.url || media?.thumbnailUrl || media?.originalUrl || ''
         // Only set productImage if we have a valid non-empty URL
@@ -314,14 +315,14 @@ const extractBanners = (data: Record<string, unknown>): OfferItem[] => {
           productImage,
         } as OfferItem
       })
-      .filter((banner) => banner.heading) // Only include banners with a heading
+      .filter(banner => banner.heading) // Only include banners with a heading
       .sort(
         (a, b) =>
           ((data.banners as Record<string, unknown>[]).find(
-            (banner) => banner.title === a.heading
+            banner => banner.title === a.heading
           )?.order as number) -
           ((data.banners as Record<string, unknown>[]).find(
-            (banner) => banner.title === b.heading
+            banner => banner.title === b.heading
           )?.order as number)
       )
   }
@@ -338,7 +339,7 @@ const extractMemberTestimonials = (
     // Use testimonials for member testimonials section
     return data.testimonials
       .filter((mt): mt is Record<string, unknown> => isObject(mt))
-      .map((mt) => ({
+      .map(mt => ({
         authorName: (mt.customerNameEn ||
           mt.customerName ||
           mt.authorName ||
@@ -372,7 +373,7 @@ const extractMemberTestimonials = (
     // Fallback to memberTestimonials if testimonials is not available
     return data.memberTestimonials
       .filter((mt): mt is Record<string, unknown> => isObject(mt))
-      .map((mt) => ({
+      .map(mt => ({
         authorName: (mt.customerNameEn ||
           mt.customerName ||
           mt.authorName ||
@@ -411,7 +412,7 @@ const extractCategories = (
   if (Array.isArray(data.categories)) {
     return data.categories
       .filter((c): c is Record<string, unknown> => isObject(c))
-      .map((c) => ({
+      .map(c => ({
         id: (typeof c.id === 'number' ? c.id : 0) as number,
         name: (c.name || c.nameEn || c.nameAr || '') as string,
         slug: (c.slug || '') as string,
@@ -425,21 +426,23 @@ const extractCategories = (
  */
 const extractTopBarTexts = (
   data: Record<string, unknown>
-): Array<{
-  id: number
-  text: string
-  textEn?: string
-  textAr?: string
-  backgroundColor?: string
-  textColor?: string
-  isActive: boolean
-  order: number
-}> | undefined => {
+):
+  | Array<{
+      id: number
+      text: string
+      textEn?: string
+      textAr?: string
+      backgroundColor?: string
+      textColor?: string
+      isActive: boolean
+      order: number
+    }>
+  | undefined => {
   if (Array.isArray(data.topBarTexts)) {
     return data.topBarTexts
       .filter((t): t is Record<string, unknown> => isObject(t))
-      .filter((t) => t.isActive === true)
-      .map((t) => ({
+      .filter(t => t.isActive === true)
+      .map(t => ({
         id: (typeof t.id === 'number' ? t.id : 0) as number,
         text: (t.text || t.textEn || t.textAr || '') as string,
         textEn: (t.textEn || '') as string,
@@ -463,8 +466,8 @@ const extractStoreTestimonials = (
   if (Array.isArray(data.testimonials)) {
     return data.testimonials
       .filter((t): t is Record<string, unknown> => isObject(t))
-      .filter((t) => t.isActive === true)
-      .map((t) => ({
+      .filter(t => t.isActive === true)
+      .map(t => ({
         quote: (t.comment || t.commentEn || t.commentAr || '') as string,
         rating: (typeof t.rating === 'number' ? t.rating : 5) as number,
         authorName: (t.customerName ||
@@ -483,21 +486,23 @@ const extractStoreTestimonials = (
  */
 const extractFAQs = (
   data: Record<string, unknown>
-): Array<{
-  id: number
-  question: string
-  questionEn?: string
-  questionAr?: string
-  answer: string
-  answerEn?: string
-  answerAr?: string
-  order: number
-}> | undefined => {
+):
+  | Array<{
+      id: number
+      question: string
+      questionEn?: string
+      questionAr?: string
+      answer: string
+      answerEn?: string
+      answerAr?: string
+      order: number
+    }>
+  | undefined => {
   if (Array.isArray(data.faQs)) {
     return data.faQs
       .filter((f): f is Record<string, unknown> => isObject(f))
-      .filter((f) => f.isActive === true)
-      .map((f) => ({
+      .filter(f => f.isActive === true)
+      .map(f => ({
         id: (typeof f.id === 'number' ? f.id : 0) as number,
         question: (f.question || f.questionEn || f.questionAr || '') as string,
         questionEn: (f.questionEn || '') as string,
@@ -521,12 +526,12 @@ const extractOffers = (
   if (Array.isArray(data.offers)) {
     return data.offers
       .filter((p): p is ProductResponse => isObject(p))
-      .map((p) => mapProductToCardData(p as ProductResponse))
+      .map(p => mapProductToCardData(p as ProductResponse))
   }
   if (Array.isArray(data.topOffers)) {
     return data.topOffers
       .filter((p): p is ProductResponse => isObject(p))
-      .map((p) => mapProductToCardData(p as ProductResponse))
+      .map(p => mapProductToCardData(p as ProductResponse))
   }
   return undefined
 }
@@ -554,9 +559,9 @@ export const extractHomeData = (apiResponse: unknown) => {
 
   // Handle different response structures
   const responseObj = isObject(apiResponse) ? apiResponse : {}
-  const data = (isObject(responseObj.data)
-    ? responseObj.data
-    : responseObj) as Record<string, unknown>
+  const data = (
+    isObject(responseObj.data) ? responseObj.data : responseObj
+  ) as Record<string, unknown>
 
   // Extract all data types
   result.products = extractProducts(data)
@@ -588,46 +593,61 @@ export const extractHomeData = (apiResponse: unknown) => {
 export const extractProductsHomeData = (apiResponse: unknown) => {
   const result: {
     products?: Product[]
-    categories?: Array<{ id: number; name: string; slug?: string; description?: string }>
+    categories?: Array<{
+      id: number
+      name: string
+      slug?: string
+      description?: string
+    }>
   } = {}
 
   // Handle different response structures
   const responseObj = isObject(apiResponse) ? apiResponse : {}
-  const data = (isObject(responseObj.data)
-    ? responseObj.data
-    : responseObj) as Record<string, unknown>
+  const data = (
+    isObject(responseObj.data) ? responseObj.data : responseObj
+  ) as Record<string, unknown>
 
   // Extract products - check multiple possible locations
   // Priority: tags > attributes > headers > flashSaleGrouped
   let productsArray: ProductResponse[] = []
-  
+
   if (Array.isArray(data.tags)) {
-    productsArray = data.tags.filter((p): p is ProductResponse => isObject(p)) as ProductResponse[]
+    productsArray = data.tags.filter((p): p is ProductResponse =>
+      isObject(p)
+    ) as ProductResponse[]
   } else if (Array.isArray(data.attributes)) {
-    productsArray = data.attributes.filter((p): p is ProductResponse => isObject(p)) as ProductResponse[]
+    productsArray = data.attributes.filter((p): p is ProductResponse =>
+      isObject(p)
+    ) as ProductResponse[]
   } else if (Array.isArray(data.headers)) {
-    productsArray = data.headers.filter((p): p is ProductResponse => isObject(p)) as ProductResponse[]
+    productsArray = data.headers.filter((p): p is ProductResponse =>
+      isObject(p)
+    ) as ProductResponse[]
   } else if (isObject(data.flashSaleGrouped)) {
     // Extract from flashSaleGrouped - get first date's products
     const flashSale = data.flashSaleGrouped as Record<string, unknown>
     const firstDateKey = Object.keys(flashSale)[0]
     if (firstDateKey && Array.isArray(flashSale[firstDateKey])) {
-      productsArray = (flashSale[firstDateKey] as unknown[]).filter((p): p is ProductResponse => isObject(p)) as ProductResponse[]
+      productsArray = (flashSale[firstDateKey] as unknown[]).filter(
+        (p): p is ProductResponse => isObject(p)
+      ) as ProductResponse[]
     }
   } else if (Array.isArray(data.products)) {
-    productsArray = data.products.filter((p): p is ProductResponse => isObject(p)) as ProductResponse[]
+    productsArray = data.products.filter((p): p is ProductResponse =>
+      isObject(p)
+    ) as ProductResponse[]
   }
 
   // Map products to Product type
   if (productsArray.length > 0) {
-    result.products = productsArray.map((p) => mapProductResponseToProduct(p))
+    result.products = productsArray.map(p => mapProductResponseToProduct(p))
   }
 
   // Extract categories - handle the actual structure from API
   if (Array.isArray(data.categories)) {
     result.categories = data.categories
       .filter((c): c is Record<string, unknown> => isObject(c))
-      .map((c) => ({
+      .map(c => ({
         id: (typeof c.id === 'number' ? c.id : 0) as number,
         name: (c.name || c.nameEn || c.nameAr || '') as string,
         slug: (c.slug || '') as string,
@@ -643,7 +663,12 @@ export const extractProductsHomeData = (apiResponse: unknown) => {
 export const extractStoreHomeData = (apiResponse: unknown) => {
   const result: {
     products?: ProductCardData[]
-    categories?: Array<{ id: number; name: string; slug?: string; description?: string }>
+    categories?: Array<{
+      id: number
+      name: string
+      slug?: string
+      description?: string
+    }>
     offers?: ProductCardData[]
     providers?: ProviderCardData[]
     banners?: OfferItem[]
@@ -672,9 +697,9 @@ export const extractStoreHomeData = (apiResponse: unknown) => {
 
   // Handle different response structures
   const responseObj = isObject(apiResponse) ? apiResponse : {}
-  const data = (isObject(responseObj.data)
-    ? responseObj.data
-    : responseObj) as Record<string, unknown>
+  const data = (
+    isObject(responseObj.data) ? responseObj.data : responseObj
+  ) as Record<string, unknown>
 
   // Extract store-specific data
   result.products = extractProducts(data)
@@ -699,18 +724,18 @@ const extractServiceOffers = (
   if (Array.isArray(data.topRatedServices)) {
     return data.topRatedServices
       .filter((s): s is Record<string, unknown> => isObject(s))
-      .map((s) => mapServiceToCardData(s))
+      .map(s => mapServiceToCardData(s))
   }
   // Check multiple possible locations for service offers
   if (Array.isArray(data.topOffers)) {
     return data.topOffers
       .filter((s): s is Record<string, unknown> => isObject(s))
-      .map((s) => mapServiceToCardData(s))
+      .map(s => mapServiceToCardData(s))
   }
   if (Array.isArray(data.offers)) {
     return data.offers
       .filter((s): s is Record<string, unknown> => isObject(s))
-      .map((s) => mapServiceToCardData(s))
+      .map(s => mapServiceToCardData(s))
   }
   // If no offers array, try to get first few services
   const allServices = extractServices(data)
@@ -725,20 +750,22 @@ const extractServiceOffers = (
  */
 const extractHeroSlides = (
   data: Record<string, unknown>
-): Array<{
-  id: string
-  label: string
-  title: string
-  description: string
-  ctaText: string
-  ctaLink: string
-  productImage: string
-  discountText?: string
-}> | undefined => {
+):
+  | Array<{
+      id: string
+      label: string
+      title: string
+      description: string
+      ctaText: string
+      ctaLink: string
+      productImage: string
+      discountText?: string
+    }>
+  | undefined => {
   if (Array.isArray(data.banners)) {
     return data.banners
       .filter((b): b is Record<string, unknown> => isObject(b))
-      .filter((b) => b.isActive === true || b.isActive === undefined)
+      .filter(b => b.isActive === true || b.isActive === undefined)
       .sort((a, b) => {
         // Sort by order if available
         const orderA = typeof a.order === 'number' ? a.order : 0
@@ -747,21 +774,22 @@ const extractHeroSlides = (
       })
       .slice(0, 5) // Limit to 5 slides
       .map((b, index) => {
-        const media = b.media as
-          | { url?: string; thumbnailUrl?: string; originalUrl?: string }
-          | null
+        const media = b.media as {
+          url?: string
+          thumbnailUrl?: string
+          originalUrl?: string
+        } | null
         const imageUrl =
           media?.url || media?.thumbnailUrl || media?.originalUrl || ''
         return {
           id: String(b.id || index + 1),
           label: (b.title || b.badge || '') as string,
           title: (b.nameEn || b.nameAr || b.title || '') as string,
-          description:
-            (b.descriptionEn ||
-              b.descriptionAr ||
-              b.description ||
-              b.subtitle ||
-              '') as string,
+          description: (b.descriptionEn ||
+            b.descriptionAr ||
+            b.description ||
+            b.subtitle ||
+            '') as string,
           ctaText: (b.buttonText || 'Book Now') as string,
           ctaLink: (b.buttonLink || b.linkUrl || '/services') as string,
           productImage: imageUrl,
@@ -781,14 +809,13 @@ const extractTrustFeatures = (
   if (Array.isArray(data.usps)) {
     return data.usps
       .filter((u): u is Record<string, unknown> => isObject(u))
-      .filter((u) => u.isActive === true || u.isActive === undefined)
-      .map((u) => ({
+      .filter(u => u.isActive === true || u.isActive === undefined)
+      .map(u => ({
         title: (u.title || u.nameEn || u.nameAr || '') as string,
-        description:
-          (u.description ||
-            u.descriptionEn ||
-            u.descriptionAr ||
-            '') as string,
+        description: (u.description ||
+          u.descriptionEn ||
+          u.descriptionAr ||
+          '') as string,
       }))
       .slice(0, 4) // Limit to 4 features
   }
@@ -802,7 +829,12 @@ export const extractServicesHomeData = (apiResponse: unknown) => {
   const result: {
     services?: ServiceCardData[]
     offers?: ServiceCardData[]
-    categories?: Array<{ id: number; name: string; slug?: string; description?: string }>
+    categories?: Array<{
+      id: number
+      name: string
+      slug?: string
+      description?: string
+    }>
     banners?: OfferItem[]
     providers?: ProviderCardData[]
     heroSlides?: Array<{
@@ -820,9 +852,9 @@ export const extractServicesHomeData = (apiResponse: unknown) => {
 
   // Handle different response structures
   const responseObj = isObject(apiResponse) ? apiResponse : {}
-  const data = (isObject(responseObj.data)
-    ? responseObj.data
-    : responseObj) as Record<string, unknown>
+  const data = (
+    isObject(responseObj.data) ? responseObj.data : responseObj
+  ) as Record<string, unknown>
 
   // Extract services
   result.services = extractServices(data)
@@ -834,8 +866,8 @@ export const extractServicesHomeData = (apiResponse: unknown) => {
   if (Array.isArray(data.featuredPreparations)) {
     result.categories = data.featuredPreparations
       .filter((p): p is Record<string, unknown> => isObject(p))
-      .filter((p) => p.isActive === true || p.isActive === undefined)
-      .map((p) => ({
+      .filter(p => p.isActive === true || p.isActive === undefined)
+      .map(p => ({
         id: (typeof p.id === 'number' ? p.id : 0) as number,
         name: (p.nameEn || p.nameAr || p.name || '') as string,
         slug: (p.slug || String(p.id || '')) as string,
@@ -844,7 +876,7 @@ export const extractServicesHomeData = (apiResponse: unknown) => {
   } else if (Array.isArray(data.preparations)) {
     result.categories = data.preparations
       .filter((p): p is Record<string, unknown> => isObject(p))
-      .map((p) => ({
+      .map(p => ({
         id: (typeof p.id === 'number' ? p.id : 0) as number,
         name: (p.name || p.nameEn || p.nameAr || '') as string,
         slug: (p.slug || String(p.id || '')) as string,
@@ -852,7 +884,7 @@ export const extractServicesHomeData = (apiResponse: unknown) => {
   } else if (Array.isArray(data.categories)) {
     result.categories = data.categories
       .filter((c): c is Record<string, unknown> => isObject(c))
-      .map((c) => ({
+      .map(c => ({
         id: (typeof c.id === 'number' ? c.id : 0) as number,
         name: (c.name || c.nameEn || c.nameAr || '') as string,
         slug: (c.slug || '') as string,
@@ -866,21 +898,21 @@ export const extractServicesHomeData = (apiResponse: unknown) => {
   if (Array.isArray(data.featureProviders)) {
     result.providers = data.featureProviders
       .filter((p): p is Record<string, unknown> => isObject(p))
-      .map((p) => {
+      .map(p => {
         // Try multiple image properties, including publicLogoImageUrl from FeaturedProviderResponse
-        const image = (p.publicLogoImageUrl || 
-          p.profileURL || 
-          p.image || 
+        const image = (p.publicLogoImageUrl ||
+          p.profileURL ||
+          p.image ||
           '') as string
-        
+
         return {
           id: String(p.id || ''),
           name: (p.nameEn || p.nameAr || p.name || '') as string,
           image: image,
           profession: (p.serviceClasses || '') as string,
           rating: (typeof p.rate === 'number' ? p.rate : 0) as number,
-          verified:
-            (p.isVerified === true || p.providerStatus === 'Active') as boolean,
+          verified: (p.isVerified === true ||
+            p.providerStatus === 'Active') as boolean,
         }
       })
   } else {
@@ -895,4 +927,3 @@ export const extractServicesHomeData = (apiResponse: unknown) => {
 
   return result
 }
-

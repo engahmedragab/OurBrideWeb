@@ -8,5 +8,3 @@ import type { MainNoteLineResponse } from './main-note-line-response'
 export interface MainNoteBookResponse extends MainBookResponse<MainNoteLineResponse> {
   notes?: MainNoteLineResponse[]
 }
-
-

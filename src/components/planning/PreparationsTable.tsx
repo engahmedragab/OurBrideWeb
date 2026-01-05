@@ -23,7 +23,11 @@ const formatCurrency = (amount: number): string => {
 
 // Format date
 const formatDate = (dateString: string | null | undefined): string => {
-  if (!dateString || dateString === '0001-01-01' || isNaN(Date.parse(dateString))) {
+  if (
+    !dateString ||
+    dateString === '0001-01-01' ||
+    isNaN(Date.parse(dateString))
+  ) {
     return '—'
   }
   try {
@@ -129,4 +133,3 @@ export const PreparationsTable = ({
     </div>
   )
 }
-

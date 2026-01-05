@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { getEventBooks } from '@/services/api/eventBooksApi'
-import type { EventBook, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  EventBook,
+  UserType,
+} from '@/../client/common/api/gen/ourbride-api'
 
 export interface UseEventBooksParams {
   clientId?: string
@@ -25,4 +28,3 @@ export const useEventBooks = (params?: UseEventBooksParams) => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
-

@@ -10,13 +10,3 @@ export interface SuggestedUserResponse {
   displayName: string
   isFollowing: boolean
 }
-
-
-
-
-
-
-
-
-
-

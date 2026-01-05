@@ -16,7 +16,7 @@ export interface QRCodeProps {
 export const QRCode = ({ value, size = 200, className }: QRCodeProps) => {
   // Using a QR code API service (you can replace with your preferred service)
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(value)}`
-  
+
   return (
     <div className={cn('inline-block', className)}>
       <Image
@@ -30,6 +30,3 @@ export const QRCode = ({ value, size = 200, className }: QRCodeProps) => {
     </div>
   )
 }
-
-
-

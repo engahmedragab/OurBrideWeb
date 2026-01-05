@@ -1,6 +1,6 @@
 /**
  * Wishlist Response
- * 
+ *
  * Response DTO for Wishlist entity
  * Matches OurBrideMain.Contracts.V1.Responses.Common.WishlistResponse
  */

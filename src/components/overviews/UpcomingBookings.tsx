@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react'
 import { Badge } from '@/components/ui/Badge'
-import { 
-  Clock, 
+import {
+  Clock,
   CheckCircle2,
   Music,
   Car,
@@ -31,46 +31,46 @@ type IconComponent = React.ComponentType<SVGProps<SVGSVGElement>>
  */
 const getIconFromName = (iconName: string): IconComponent | null => {
   const name = iconName.toLowerCase().trim()
-  
+
   // Map common icon names to custom icons
   const iconMap: Record<string, IconComponent> = {
-    'makeup': BridalBeautyIcon,
-    'bridal': BridalBeautyIcon,
-    'beauty': BridalBeautyIcon,
-    'salon': BridalBeautyIcon,
-    'photo': PhotographyIcon,
-    'photography': PhotographyIcon,
-    'camera': PhotographyIcon,
-    'video': PhotographyIcon,
-    'hall': WeddingHallIcon,
-    'venue': WeddingHallIcon,
-    'location': WeddingHallIcon,
-    'bouquet': BouquetIcon,
-    'flower': BouquetIcon,
-    'floral': BouquetIcon,
-    'cake': WeddingCakeIcon,
-    'dessert': WeddingCakeIcon,
-    'suit': WeddingSuitIcon,
-    'tuxedo': WeddingSuitIcon,
-    'dress': WeddingDressIcon,
-    'gown': WeddingDressIcon,
-    'accessor': AccessoriesIcon,
-    'jewelry': AccessoriesIcon,
-    'accessories': AccessoriesIcon,
+    makeup: BridalBeautyIcon,
+    bridal: BridalBeautyIcon,
+    beauty: BridalBeautyIcon,
+    salon: BridalBeautyIcon,
+    photo: PhotographyIcon,
+    photography: PhotographyIcon,
+    camera: PhotographyIcon,
+    video: PhotographyIcon,
+    hall: WeddingHallIcon,
+    venue: WeddingHallIcon,
+    location: WeddingHallIcon,
+    bouquet: BouquetIcon,
+    flower: BouquetIcon,
+    floral: BouquetIcon,
+    cake: WeddingCakeIcon,
+    dessert: WeddingCakeIcon,
+    suit: WeddingSuitIcon,
+    tuxedo: WeddingSuitIcon,
+    dress: WeddingDressIcon,
+    gown: WeddingDressIcon,
+    accessor: AccessoriesIcon,
+    jewelry: AccessoriesIcon,
+    accessories: AccessoriesIcon,
   }
-  
+
   // Try exact match first
   if (iconMap[name]) {
     return iconMap[name]
   }
-  
+
   // Try partial match
   for (const [key, icon] of Object.entries(iconMap)) {
     if (name.includes(key)) {
       return icon
     }
   }
-  
+
   // Default to null (no icon)
   return null
 }
@@ -83,7 +83,13 @@ export interface UpcomingBookingsProps {
   imageSrc: string | any
 }
 
-export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }: UpcomingBookingsProps) => {
+export const UpcomingBookings = ({
+  book,
+  onInit,
+  onNavigate,
+  eventId,
+  imageSrc,
+}: UpcomingBookingsProps) => {
   // Get active lines (not deleted) - use services if available, otherwise use lines
   const activeLines = useMemo(() => {
     const lines = (book.services || book.lines || []) as any[]
@@ -93,8 +99,12 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
   // Sort by lastModifiedDate (newest first), fallback to creationDate
   const sortedLines = useMemo(() => {
     return [...activeLines].sort((a: any, b: any) => {
-      const dateA = new Date(a.lastModifiedDate || a.creationDate || 0).getTime()
-      const dateB = new Date(b.lastModifiedDate || b.creationDate || 0).getTime()
+      const dateA = new Date(
+        a.lastModifiedDate || a.creationDate || 0
+      ).getTime()
+      const dateB = new Date(
+        b.lastModifiedDate || b.creationDate || 0
+      ).getTime()
       return dateB - dateA
     })
   }, [activeLines])
@@ -119,7 +129,9 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-18 font-semibold text-gray-900">Services Bookings</h2>
+        <h2 className="text-18 font-semibold text-gray-900">
+          Services Bookings
+        </h2>
         <button
           className="text-12 text-brand-500 hover:text-brand-600 font-medium"
           onClick={handleClick}
@@ -136,7 +148,9 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
 
             // Check if iconName exists
             const hasIconName = line.iconName && line.iconName.trim() !== ''
-            const IconComponent = hasIconName ? getIconFromName(line.iconName) : null
+            const IconComponent = hasIconName
+              ? getIconFromName(line.iconName)
+              : null
 
             return (
               <button
@@ -154,7 +168,7 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
                         <IconComponent className="w-5 h-5 text-brand-500" />
                       </div>
                     )}
-                    
+
                     {/* Title */}
                     <div className="flex flex-col min-w-0 flex-1">
                       <p className="text-13 font-semibold text-gray-900 truncate">
@@ -171,13 +185,20 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
                   {/* Right section: Status badges */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {book.pending && book.pending > 0 && (
-                      <Badge variant="pending" className="text-11 flex items-center gap-1 whitespace-nowrap">
+                      <Badge
+                        variant="pending"
+                        className="text-11 flex items-center gap-1 whitespace-nowrap"
+                      >
                         <Clock className="w-3 h-3" />
                         <span>Pending</span>
                       </Badge>
                     )}
-                    {((book.completed && book.completed > 0) || book.isSubDone) && (
-                      <Badge variant="confirmed" className="text-11 flex items-center gap-1 whitespace-nowrap">
+                    {((book.completed && book.completed > 0) ||
+                      book.isSubDone) && (
+                      <Badge
+                        variant="confirmed"
+                        className="text-11 flex items-center gap-1 whitespace-nowrap"
+                      >
                         <CheckCircle2 className="w-3 h-3" />
                         <span>Completed</span>
                       </Badge>
@@ -188,10 +209,11 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
             )
           })
         ) : (
-          <p className="text-13 text-gray-500 text-center py-6">No bookings yet</p>
+          <p className="text-13 text-gray-500 text-center py-6">
+            No bookings yet
+          </p>
         )}
       </div>
     </div>
   )
 }
-

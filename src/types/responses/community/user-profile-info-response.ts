@@ -8,13 +8,3 @@ export interface UserProfileInfo {
   userName: string
   email: string
 }
-
-
-
-
-
-
-
-
-
-

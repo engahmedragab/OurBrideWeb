@@ -17,7 +17,7 @@ export function AddNewLineCard({
       onClick={onClick}
       className={cn(
         'w-full rounded-xl border border-dashed bg-white p-4 text-left transition hover:bg-gray-50',
-        className,
+        className
       )}
     >
       <div className="flex items-center gap-3">
@@ -26,7 +26,9 @@ export function AddNewLineCard({
         </div>
         <div>
           <div className="text-sm font-medium text-gray-900">Add new item</div>
-          <div className="text-xs text-gray-500">Create a new line in this list</div>
+          <div className="text-xs text-gray-500">
+            Create a new line in this list
+          </div>
         </div>
       </div>
     </button>

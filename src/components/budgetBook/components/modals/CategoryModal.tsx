@@ -76,7 +76,12 @@ const dateToIsoOrNull = (raw: string) => {
   return new Date(`${raw}T00:00:00.000Z`).toISOString()
 }
 
-export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: CategoryModalProps) => {
+export const CategoryModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  editingCategory,
+}: CategoryModalProps) => {
   const isEditing = !!editingCategory
   const schema = isEditing ? categoryFormSchema : categoryWithLineFormSchema
 
@@ -143,8 +148,14 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
         nameAr: (editingCategory as any).nameAr || editingCategory.name || '',
         nameEn: (editingCategory as any).nameEn || editingCategory.name || '',
         description: editingCategory.description || '',
-        descriptionAr: (editingCategory as any).descriptionAr || editingCategory.description || '',
-        descriptionEn: (editingCategory as any).descriptionEn || editingCategory.description || '',
+        descriptionAr:
+          (editingCategory as any).descriptionAr ||
+          editingCategory.description ||
+          '',
+        descriptionEn:
+          (editingCategory as any).descriptionEn ||
+          editingCategory.description ||
+          '',
         estimated: est,
         iconName: editingCategory.iconName || null,
         colorName: editingCategory.colorName || null,
@@ -323,7 +334,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
             <div className="flex items-center justify-between">
               <h3 className="text-14 font-semibold text-gray-900">Category</h3>
               <span className="text-12 text-gray-500">
-                {isEditing ? 'Update category details' : 'Create a new category'}
+                {isEditing
+                  ? 'Update category details'
+                  : 'Create a new category'}
               </span>
             </div>
 
@@ -343,7 +356,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
 
             {/* Description */}
             <div className="space-y-2">
-              <label className="block text-13 font-semibold text-gray-900">Description</label>
+              <label className="block text-13 font-semibold text-gray-900">
+                Description
+              </label>
               <Textarea
                 {...register('description')}
                 placeholder="Optional…"
@@ -356,7 +371,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
             {/* Icon + Color */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="block text-13 font-semibold text-gray-900">Icon</label>
+                <label className="block text-13 font-semibold text-gray-900">
+                  Icon
+                </label>
                 <button
                   type="button"
                   onClick={() => setIsIconPickerOpen(true)}
@@ -369,22 +386,30 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                         colorName={colorName || '0xff8e8e8e'}
                         size="sm"
                       />
-                      <span className="text-14 text-gray-800 font-medium">Change icon</span>
+                      <span className="text-14 text-gray-800 font-medium">
+                        Change icon
+                      </span>
                     </>
                   ) : (
-                    <span className="text-14 text-gray-500">Select an icon</span>
+                    <span className="text-14 text-gray-500">
+                      Select an icon
+                    </span>
                   )}
                 </button>
               </div>
 
               <div className="space-y-2">
-                <label className="block text-13 font-semibold text-gray-900">Color</label>
+                <label className="block text-13 font-semibold text-gray-900">
+                  Color
+                </label>
                 <SelectMenu
                   value={colorName || ''}
                   onChange={value => {
                     const newColor = value || null
                     setColorName(newColor)
-                    setValue('colorName', newColor as any, { shouldValidate: true })
+                    setValue('colorName', newColor as any, {
+                      shouldValidate: true,
+                    })
                   }}
                   options={colorOptions}
                   placeholder="Select color"
@@ -396,7 +421,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
             {/* Estimated (edit only) */}
             {isEditing && (
               <div className="space-y-2">
-                <label className="block text-13 font-semibold text-gray-900">Estimated</label>
+                <label className="block text-13 font-semibold text-gray-900">
+                  Estimated
+                </label>
                 <Input
                   type="text"
                   inputMode="numeric"
@@ -414,8 +441,12 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
           {!isEditing && (
             <div className="rounded-2xl border border-gray-200 bg-white p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-14 font-semibold text-gray-900">First budget line</h3>
-                <span className="text-12 text-gray-500">Required to sync category properly</span>
+                <h3 className="text-14 font-semibold text-gray-900">
+                  First budget line
+                </h3>
+                <span className="text-12 text-gray-500">
+                  Required to sync category properly
+                </span>
               </div>
 
               {/* Service */}
@@ -442,7 +473,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     type="text"
                     inputMode="numeric"
                     value={lineEstimatedInput}
-                    onChange={e => onLineMoneyChange('estimated', e.target.value)}
+                    onChange={e =>
+                      onLineMoneyChange('estimated', e.target.value)
+                    }
                     placeholder="0"
                     size="lg"
                     errorMessage={errors.estimated?.message as any}
@@ -450,7 +483,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Paid</label>
+                  <label className="block text-13 font-semibold text-gray-900">
+                    Paid
+                  </label>
                   <Input
                     type="text"
                     inputMode="numeric"
@@ -465,7 +500,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Final</label>
+                  <label className="block text-13 font-semibold text-gray-900">
+                    Final
+                  </label>
                   <Input
                     type="text"
                     inputMode="numeric"
@@ -478,7 +515,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Count</label>
+                  <label className="block text-13 font-semibold text-gray-900">
+                    Count
+                  </label>
                   <Input
                     type="text"
                     inputMode="numeric"
@@ -494,7 +533,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
               {/* Due date + payer */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Due Date</label>
+                  <label className="block text-13 font-semibold text-gray-900">
+                    Due Date
+                  </label>
                   <Input
                     type="date"
                     size="lg"
@@ -506,7 +547,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Payer</label>
+                  <label className="block text-13 font-semibold text-gray-900">
+                    Payer
+                  </label>
                   <Input
                     type="text"
                     {...register('payer' as any)}
@@ -519,7 +562,9 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
 
               {/* Notes */}
               <div className="space-y-2">
-                <label className="block text-13 font-semibold text-gray-900">Note</label>
+                <label className="block text-13 font-semibold text-gray-900">
+                  Note
+                </label>
                 <Textarea
                   {...register('note' as any)}
                   placeholder="Optional…"
@@ -536,12 +581,21 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     name={'isDone' as any}
                     control={control}
                     render={({ field }) => (
-                      <Checkbox checked={!!field.value} onChange={field.onChange} size="md" variant="brand" />
+                      <Checkbox
+                        checked={!!field.value}
+                        onChange={field.onChange}
+                        size="md"
+                        variant="brand"
+                      />
                     )}
                   />
                   <div>
-                    <div className="text-13 font-semibold text-gray-900">Done</div>
-                    <div className="text-12 text-gray-500">Mark as completed</div>
+                    <div className="text-13 font-semibold text-gray-900">
+                      Done
+                    </div>
+                    <div className="text-12 text-gray-500">
+                      Mark as completed
+                    </div>
                   </div>
                 </div>
 
@@ -550,11 +604,18 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     name={'isFavorite' as any}
                     control={control}
                     render={({ field }) => (
-                      <Checkbox checked={!!field.value} onChange={field.onChange} size="md" variant="brand" />
+                      <Checkbox
+                        checked={!!field.value}
+                        onChange={field.onChange}
+                        size="md"
+                        variant="brand"
+                      />
                     )}
                   />
                   <div>
-                    <div className="text-13 font-semibold text-gray-900">Favorite</div>
+                    <div className="text-13 font-semibold text-gray-900">
+                      Favorite
+                    </div>
                     <div className="text-12 text-gray-500">Pin it on top</div>
                   </div>
                 </div>

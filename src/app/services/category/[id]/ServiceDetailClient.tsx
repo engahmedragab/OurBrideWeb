@@ -4,13 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import {
-  Star,
-  ArrowRight,
-  ThumbsUp,
-  MessageCircle,
-  Send,
-} from 'lucide-react'
+import { Star, ArrowRight, ThumbsUp, MessageCircle, Send } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import {
   Badge,
@@ -172,10 +166,8 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
   const service = serviceDetailData?.service
 
   // Fetch service packages
-  const {
-    data: packagesData,
-    isLoading: packagesLoading,
-  } = useServicePackages(serviceId)
+  const { data: packagesData, isLoading: packagesLoading } =
+    useServicePackages(serviceId)
 
   // Fetch service reviews
   const parsedServiceId = parseInt(serviceId, 10)
@@ -200,9 +192,9 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
   const relatedServices = relatedServicesData?.services || []
 
   // Filter out current service from related services
-  const suggestedServices = relatedServices.filter(
-    s => s.id !== serviceId
-  ).slice(0, 4)
+  const suggestedServices = relatedServices
+    .filter(s => s.id !== serviceId)
+    .slice(0, 4)
 
   // Submit review mutation
   const submitReviewMutation = useSubmitServiceReview()
@@ -213,21 +205,37 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
   // Use API handlers for service cards with toast callbacks
   const serviceHandlers = useServiceCardHandlers(parseInt(serviceId, 10), {
-    onFavoriteSuccess: (response) => {
-      const defaultMessage = response === true ? 'Added to favorites' : 'Removed from favorites'
-      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update favorite')
+    onFavoriteSuccess: response => {
+      const defaultMessage =
+        response === true ? 'Added to favorites' : 'Removed from favorites'
+      const { message } = handleApiResponseForToast(
+        response,
+        defaultMessage,
+        'Failed to update favorite'
+      )
       addToast(message, 'success')
     },
-    onFavoriteError: (error) => {
-      addToast(error.message || 'Failed to update favorite. Please try again.', 'error')
+    onFavoriteError: error => {
+      addToast(
+        error.message || 'Failed to update favorite. Please try again.',
+        'error'
+      )
     },
-    onWishlistSuccess: (response) => {
-      const defaultMessage = response === true ? 'Added to wishlist' : 'Removed from wishlist'
-      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update wishlist')
+    onWishlistSuccess: response => {
+      const defaultMessage =
+        response === true ? 'Added to wishlist' : 'Removed from wishlist'
+      const { message } = handleApiResponseForToast(
+        response,
+        defaultMessage,
+        'Failed to update wishlist'
+      )
       addToast(message, 'success')
     },
-    onWishlistError: (error) => {
-      addToast(error.message || 'Failed to update wishlist. Please try again.', 'error')
+    onWishlistError: error => {
+      addToast(
+        error.message || 'Failed to update wishlist. Please try again.',
+        'error'
+      )
     },
   })
 
@@ -359,7 +367,8 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
               {/* Delivery Date */}
               <div className="text-13 sm:text-14 text-brand-500 font-normal">
-                Book now and get by <span className="text-gray-900">25 AUG 2025</span>
+                Book now and get by{' '}
+                <span className="text-gray-900">25 AUG 2025</span>
               </div>
             </div>
 
@@ -377,11 +386,12 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
                 {/* Booking Details Card */}
                 <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-
                   {/* Pricing Section */}
                   <div className="mb-6 pb-6 border-b border-gray-200">
                     <div className="flex items-baseline gap-2 mb-4">
-                      <span className="text-13 sm:text-14 text-gray-600">Start From</span>
+                      <span className="text-13 sm:text-14 text-gray-600">
+                        Start From
+                      </span>
                       <span className="text-20 sm:text-22 md:text-24 font-normal text-gray-900">
                         {service.price.discounted.toLocaleString()}
                       </span>
@@ -476,12 +486,18 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                             )}
                           >
                             {packagesExpanded
-                              ? packagesData.packages.map((pkg) => (
-                                  <div key={pkg.id} className="text-14 text-gray-600">
-                                    <span className="font-medium">{pkg.name}</span>
+                              ? packagesData.packages.map(pkg => (
+                                  <div
+                                    key={pkg.id}
+                                    className="text-14 text-gray-600"
+                                  >
+                                    <span className="font-medium">
+                                      {pkg.name}
+                                    </span>
                                     {pkg.price > 0 && (
                                       <span className="ml-2">
-                                        ({pkg.price.toLocaleString()} {pkg.currency.toUpperCase()})
+                                        ({pkg.price.toLocaleString()}{' '}
+                                        {pkg.currency.toUpperCase()})
                                       </span>
                                     )}
                                     {pkg.description && (
@@ -491,12 +507,18 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                                     )}
                                   </div>
                                 ))
-                              : packagesData.packages.slice(0, 2).map((pkg) => (
-                                  <div key={pkg.id} className="text-14 text-gray-600">
-                                    <span className="font-medium">{pkg.name}</span>
+                              : packagesData.packages.slice(0, 2).map(pkg => (
+                                  <div
+                                    key={pkg.id}
+                                    className="text-14 text-gray-600"
+                                  >
+                                    <span className="font-medium">
+                                      {pkg.name}
+                                    </span>
                                     {pkg.price > 0 && (
                                       <span className="ml-2">
-                                        ({pkg.price.toLocaleString()} {pkg.currency.toUpperCase()})
+                                        ({pkg.price.toLocaleString()}{' '}
+                                        {pkg.currency.toUpperCase()})
                                       </span>
                                     )}
                                   </div>
@@ -504,7 +526,9 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                           </div>
                           {packagesData.packages.length > 2 && (
                             <button
-                              onClick={() => setPackagesExpanded(!packagesExpanded)}
+                              onClick={() =>
+                                setPackagesExpanded(!packagesExpanded)
+                              }
                               className="text-13 sm:text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
                             >
                               {packagesExpanded ? 'See Less' : 'See More'}
@@ -684,26 +708,31 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   {/* Send Button */}
                   <button
                     onClick={async () => {
-                      if (reviewComment.trim() && userRating > 0 && !isNaN(parsedServiceId)) {
+                      if (
+                        reviewComment.trim() &&
+                        userRating > 0 &&
+                        !isNaN(parsedServiceId)
+                      ) {
                         try {
                           const providerId = service?.provider?.id
                             ? parseInt(service.provider.id, 10)
                             : null
 
-                          const response = await submitReviewMutation.mutateAsync({
-                            serviceId: parsedServiceId,
-                            rating: userRating,
-                            review: reviewComment.trim(),
-                            title: '',
-                            providerId: providerId || null,
-                          })
-                          
+                          const response =
+                            await submitReviewMutation.mutateAsync({
+                              serviceId: parsedServiceId,
+                              rating: userRating,
+                              review: reviewComment.trim(),
+                              title: '',
+                              providerId: providerId || null,
+                            })
+
                           const { message, type } = handleApiResponseForToast(
                             response,
                             'Review submitted successfully!',
                             'Failed to submit review'
                           )
-                          
+
                           if (type === 'success') {
                             setReviewComment('')
                             setUserRating(0)
@@ -711,7 +740,10 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                           addToast(message, type)
                         } catch (error) {
                           console.error('Error submitting review:', error)
-                          const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+                          const errorMessage =
+                            error instanceof Error
+                              ? error.message
+                              : 'Failed to submit review. Please try again.'
                           addToast(errorMessage, 'error')
                         }
                       }
@@ -781,7 +813,6 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   ))}
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -820,7 +851,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   <ServiceCardWithHandlers
                     key={suggestedService.id}
                     service={suggestedService}
-                    onBookNow={(id) => router.push(`/booking/${id}`)}
+                    onBookNow={id => router.push(`/booking/${id}`)}
                   />
                 ))
               ) : (

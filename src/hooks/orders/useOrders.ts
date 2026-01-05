@@ -92,9 +92,11 @@ export const useServiceOrders = (params?: {
     queryKey: ['service-orders', searchRequest],
     queryFn: async () => {
       // Use default search request if none provided
-      const request: ServiceOrderSearchRequest = searchRequest || {
-        // Add default search parameters
-      }
+      const request: ServiceOrderSearchRequest =
+        searchRequest ||
+        {
+          // Add default search parameters
+        }
       const result = await searchPurchaseOrders(request)
       return result
     },
@@ -114,12 +116,12 @@ export const useCancelOrder = () => {
     mutationFn: async (orderId: number) => {
       return await cancelOrder(orderId)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate orders queries to refetch
       queryClient.invalidateQueries({ queryKey: ['orders'] })
       queryClient.invalidateQueries({ queryKey: ['client-orders'] })
       queryClient.invalidateQueries({ queryKey: ['orders-by-status'] })
-      
+
       // Show success toast
       const { message, type } = handleApiResponseForToast(
         data,
@@ -128,8 +130,9 @@ export const useCancelOrder = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to cancel order'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to cancel order'
       addToast(errorMessage, 'error')
     },
   })

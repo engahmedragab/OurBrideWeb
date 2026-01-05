@@ -96,7 +96,8 @@ export const SendGiftModal = ({
   ]
 
   // Calculate subtotal from selected item or first item
-  const selectedItem = orderItems.find(item => item.id === selectedGiftId) || orderItems[0]
+  const selectedItem =
+    orderItems.find(item => item.id === selectedGiftId) || orderItems[0]
   const subtotal = selectedItem.amount
   const taxes = 20
   const total = subtotal + taxes
@@ -122,9 +123,7 @@ export const SendGiftModal = ({
             <div className="space-y-2">
               <Input
                 placeholder="Full Name"
-                prefixIcon={
-                  <User className="h-4 w-4 text-gray-400" />
-                }
+                prefixIcon={<User className="h-4 w-4 text-gray-400" />}
                 className="w-full"
                 size="sm"
                 variant="default"
@@ -160,18 +159,14 @@ export const SendGiftModal = ({
             <div className="space-y-2">
               <Input
                 placeholder="Full Name"
-                prefixIcon={
-                  <User className="h-4 w-4 text-gray-400" />
-                }
+                prefixIcon={<User className="h-4 w-4 text-gray-400" />}
                 className="w-full"
                 size="sm"
                 variant="default"
               />
               <Input
                 placeholder="E-mail"
-                prefixIcon={
-                  <Mail className="h-4 w-4 text-gray-400" />
-                }
+                prefixIcon={<Mail className="h-4 w-4 text-gray-400" />}
                 type="email"
                 className="w-full"
                 size="sm"
@@ -218,7 +213,9 @@ export const SendGiftModal = ({
                 Debit / Credit
               </Button>
               <Button
-                variant={paymentMethod === 'wallet' ? 'outlineBrand' : 'outline'}
+                variant={
+                  paymentMethod === 'wallet' ? 'outlineBrand' : 'outline'
+                }
                 size="md"
                 onClick={() => setPaymentMethod('wallet')}
                 className={cn(
@@ -276,11 +273,13 @@ export const SendGiftModal = ({
 
         {/* Right Column - Order Summary */}
         <div className="rounded-xl p-2.5 sm:p-3 md:p-4 space-y-2.5 sm:space-y-3 md:space-y-4">
-          <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">Order Summary</h3>
+          <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">
+            Order Summary
+          </h3>
 
           {/* Order Items */}
           <div className="space-y-2 sm:space-y-3">
-            {orderItems.map((item) => {
+            {orderItems.map(item => {
               const iconColor = getGiftIconColor(item.amount)
               const formattedAmount = formatCouponAmount(item.amount)
               return (
@@ -295,7 +294,12 @@ export const SendGiftModal = ({
                   )}
                 >
                   <div className="flex items-center justify-center flex-shrink-0">
-                    <Gift className={cn('h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7', iconColor)} />
+                    <Gift
+                      className={cn(
+                        'h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7',
+                        iconColor
+                      )}
+                    />
                   </div>
                   <span className="text-12 sm:text-14 font-normal text-gray-900 flex-1">
                     {formattedAmount} Coupon
@@ -314,13 +318,17 @@ export const SendGiftModal = ({
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-10 sm:text-12 text-gray-600">Taxes & Fees</span>
+              <span className="text-10 sm:text-12 text-gray-600">
+                Taxes & Fees
+              </span>
               <span className="text-10 sm:text-12 font-semibold text-gray-900">
                 {taxes} EGP
               </span>
             </div>
             <div className="flex justify-between items-center pt-1.5 border-t border-gray-200">
-              <span className="text-12 sm:text-14 font-semibold text-gray-900">Total</span>
+              <span className="text-12 sm:text-14 font-semibold text-gray-900">
+                Total
+              </span>
               <span className="text-12 sm:text-14 font-semibold text-gray-900">
                 {total} EGP
               </span>

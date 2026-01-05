@@ -110,7 +110,10 @@ export const RatingDisplay = ({
               <Star
                 className={cn(sizeClasses[size], emptyStarColor, 'absolute')}
               />
-              <div className="absolute overflow-hidden" style={{ width: '50%', height: '100%' }}>
+              <div
+                className="absolute overflow-hidden"
+                style={{ width: '50%', height: '100%' }}
+              >
                 <Star
                   className={cn(sizeClasses[size], starColorClasses[starColor])}
                 />
@@ -132,16 +135,19 @@ export const RatingDisplay = ({
           key={star}
           className={cn(
             sizeClasses[size],
-            star <= roundedRating
-              ? starColorClasses[starColor]
-              : emptyStarColor
+            star <= roundedRating ? starColorClasses[starColor] : emptyStarColor
           )}
         />
       ))
     }
   }
 
-  const gapClass = variant === 'compact' ? 'gap-0.5' : variant === 'detailed' ? 'gap-2' : 'gap-1'
+  const gapClass =
+    variant === 'compact'
+      ? 'gap-0.5'
+      : variant === 'detailed'
+        ? 'gap-2'
+        : 'gap-1'
 
   // If format is value-only, don't render stars, just the value
   if (format === 'value-only') {
@@ -154,9 +160,7 @@ export const RatingDisplay = ({
 
   return (
     <div className={cn('flex items-center', gapClass, className)}>
-      <div className="flex items-center gap-0.5">
-        {renderStars()}
-      </div>
+      <div className="flex items-center gap-0.5">{renderStars()}</div>
       {formatText()}
     </div>
   )

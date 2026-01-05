@@ -17,10 +17,14 @@ export const WalletSummaryCard = () => {
       {/* Your Balance Section */}
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <div className="flex items-center gap-1 sm:gap-1.5">
-          <span className="text-10 sm:text-12 text-gray-600 font-normal">Your Balance</span>
+          <span className="text-10 sm:text-12 text-gray-600 font-normal">
+            Your Balance
+          </span>
           <Info className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-gray-400" />
         </div>
-        <div className="text-14 sm:text-16 font-regular text-gray-900">500 EGP</div>
+        <div className="text-14 sm:text-16 font-regular text-gray-900">
+          500 EGP
+        </div>
       </div>
 
       {/* Notice */}
@@ -30,4 +34,3 @@ export const WalletSummaryCard = () => {
     </div>
   )
 }
-

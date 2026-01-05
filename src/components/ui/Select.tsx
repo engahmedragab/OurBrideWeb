@@ -28,23 +28,14 @@ const selectVariants = cva(
 )
 
 export interface SelectProps
-  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
+  extends
+    Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
     VariantProps<typeof selectVariants> {
   errorMessage?: string
 }
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      errorMessage,
-      children,
-      ...props
-    },
-    ref
-  ) => {
+  ({ className, variant, size, errorMessage, children, ...props }, ref) => {
     return (
       <div className="w-full">
         <div className="relative">
@@ -73,4 +64,3 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
 Select.displayName = 'Select'
 
 export { Select, selectVariants }
-

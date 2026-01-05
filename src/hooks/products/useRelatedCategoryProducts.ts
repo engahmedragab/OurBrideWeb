@@ -17,8 +17,10 @@ export const useRelatedCategoryProducts = (
   }
 ) => {
   const { enabled = true, ...relatedParams } = params || {}
-  const prodId = typeof productId === 'string' ? parseInt(productId, 10) : productId
-  const catId = typeof categoryId === 'string' ? parseInt(categoryId, 10) : categoryId
+  const prodId =
+    typeof productId === 'string' ? parseInt(productId, 10) : productId
+  const catId =
+    typeof categoryId === 'string' ? parseInt(categoryId, 10) : categoryId
 
   return useQuery({
     queryKey: ['related-category-products', prodId, catId, relatedParams],
@@ -27,11 +29,14 @@ export const useRelatedCategoryProducts = (
         return []
       }
 
-      const products = await getRelatedCategoryProducts(prodId, catId, relatedParams)
+      const products = await getRelatedCategoryProducts(
+        prodId,
+        catId,
+        relatedParams
+      )
       return mapProductResponsesToProducts(products)
     },
     enabled: enabled && !!prodId && !!catId && !isNaN(prodId) && !isNaN(catId),
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
-

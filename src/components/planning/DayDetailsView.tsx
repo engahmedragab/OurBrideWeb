@@ -12,9 +12,16 @@ import { Button } from '@/components/ui/Button'
 import { Clock, Trash2 } from 'lucide-react'
 import { parseDateSafe, formatDateSafe } from '@/lib/date-utils'
 import { format } from 'date-fns'
-import { useCreateEventBookCategory, useDeleteEventBookCategory } from '@/hooks/eventBooks'
+import {
+  useCreateEventBookCategory,
+  useDeleteEventBookCategory,
+} from '@/hooks/eventBooks'
 import { useToast } from '@/components/ui/Toaster'
-import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  EventBook,
+  EventLine,
+  EventLineCategory,
+} from '@/../client/common/api/gen/ourbride-api'
 import type { UseMutationResult } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
 
@@ -54,7 +61,10 @@ const makeCategoryDateFromDayKey = (dayKey: string): string => {
 /**
  * Calculate minutes between two date-time strings
  */
-const minutesBetween = (start: string | null | undefined, end: string | null | undefined): number => {
+const minutesBetween = (
+  start: string | null | undefined,
+  end: string | null | undefined
+): number => {
   if (!start || !end) return 0
   try {
     const startDate = new Date(start)
@@ -89,10 +99,12 @@ const HourlyTimelineView = ({
 
   // Map events to hour slots
   const getEventForHour = (hour: number): ItineraryEvent | null => {
-    return events.find(event => {
-      const eventHour = event.startTime.getHours()
-      return eventHour === hour
-    }) || null
+    return (
+      events.find(event => {
+        const eventHour = event.startTime.getHours()
+        return eventHour === hour
+      }) || null
+    )
   }
 
   const formatHourLabel = (hour: number): string => {
@@ -100,7 +112,8 @@ const HourlyTimelineView = ({
     const period1 = hour >= 12 ? 'PM' : 'AM'
     const period2 = nextHour >= 12 ? 'PM' : 'AM'
     const displayHour1 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
-    const displayHour2 = nextHour > 12 ? nextHour - 12 : nextHour === 0 ? 12 : nextHour
+    const displayHour2 =
+      nextHour > 12 ? nextHour - 12 : nextHour === 0 ? 12 : nextHour
     return `${displayHour1} ${period1} - ${displayHour2} ${period2}`
   }
 
@@ -145,7 +158,7 @@ const HourlyTimelineView = ({
               ) : (
                 <div className="p-4 relative">
                   <button
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation()
                       onDelete(event)
                     }}
@@ -159,7 +172,9 @@ const HourlyTimelineView = ({
                   </h3>
                   <div className="flex items-center gap-2 text-14 text-gray-600">
                     <Clock className="h-4 w-4" />
-                    <span>{formatTimeRange(event.startTime, event.duration)}</span>
+                    <span>
+                      {formatTimeRange(event.startTime, event.duration)}
+                    </span>
                   </div>
                 </div>
               )}
@@ -176,7 +191,14 @@ export interface DayDetailsViewProps {
   showBackButton?: boolean
   className?: string
   localEventBook: EventBookWithCategories | null
-  setLocalEventBook: (book: EventBookWithCategories | null | ((prev: EventBookWithCategories | null) => EventBookWithCategories | null)) => void
+  setLocalEventBook: (
+    book:
+      | EventBookWithCategories
+      | null
+      | ((
+          prev: EventBookWithCategories | null
+        ) => EventBookWithCategories | null)
+  ) => void
   hasUnsavedChanges: boolean
   setHasUnsavedChanges: (value: boolean) => void
   onSync: () => Promise<void>
@@ -204,7 +226,7 @@ export const DayDetailsView = ({
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
   const [prefilledTime, setPrefilledTime] = useState<string>('')
   const [prefilledDuration, setPrefilledDuration] = useState<string>('')
-  
+
   const createCategoryMutation = useCreateEventBookCategory()
   const deleteCategoryMutation = useDeleteEventBookCategory()
 
@@ -212,7 +234,8 @@ export const DayDetailsView = ({
   const activeCategories = useMemo(() => {
     if (!localEventBook?.lineCategories) return []
     return localEventBook.lineCategories.filter(
-      cat => !cat.isDeleted && (cat.slug === 'event-day' || cat.slug === 'big day')
+      cat =>
+        !cat.isDeleted && (cat.slug === 'event-day' || cat.slug === 'big day')
     )
   }, [localEventBook])
 
@@ -222,7 +245,11 @@ export const DayDetailsView = ({
   }, [activeCategories, dayId])
 
   const isEventDay = Boolean(selectedCategory)
-  const customTitle = selectedCategory?.nameEn || selectedCategory?.nameAr || selectedCategory?.name || ''
+  const customTitle =
+    selectedCategory?.nameEn ||
+    selectedCategory?.nameAr ||
+    selectedCategory?.name ||
+    ''
 
   // Get visible lines for selected category (sorted by time, exclude deleted)
   const visibleLines = useMemo(() => {
@@ -252,7 +279,7 @@ export const DayDetailsView = ({
   }, [visibleLines])
 
   const eventDate = dayId ? parseDateSafe(dayId) : new Date()
-  const eventTitle = isEventDay ? (customTitle || 'Event Day') : undefined
+  const eventTitle = isEventDay ? customTitle || 'Event Day' : undefined
 
   const handleTitleEdit = (newTitle: string) => {
     if (!localEventBook || !selectedCategory) return
@@ -261,11 +288,12 @@ export const DayDetailsView = ({
       if (!prev) return prev
       return {
         ...prev,
-        lineCategories: prev.lineCategories?.map(cat =>
-          cat.id === selectedCategory.id
-            ? { ...cat, name: newTitle.trim(), nameEn: newTitle.trim() }
-            : cat
-        ) || [],
+        lineCategories:
+          prev.lineCategories?.map(cat =>
+            cat.id === selectedCategory.id
+              ? { ...cat, name: newTitle.trim(), nameEn: newTitle.trim() }
+              : cat
+          ) || [],
       }
     })
     setHasUnsavedChanges(true)
@@ -297,7 +325,9 @@ export const DayDetailsView = ({
           if (!prev) return prev
           return {
             ...prev,
-            lineCategories: (prev.lineCategories || []).filter(cat => cat.id !== selectedCategory.id),
+            lineCategories: (prev.lineCategories || []).filter(
+              cat => cat.id !== selectedCategory.id
+            ),
           }
         })
         setHasUnsavedChanges(false)
@@ -318,15 +348,22 @@ export const DayDetailsView = ({
         setHasUnsavedChanges(false)
         addToast('Event Day deleted successfully', 'success')
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to delete Event Day'
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to delete Event Day'
         addToast(errorMessage, 'error')
       }
     } else {
       // Mark: check if category already exists for this day (prevent duplicates)
-      const existingCategory = (localEventBook.lineCategories || []).find(cat => {
-        const catDayKey = toDayKey(cat.date)
-        return (cat.slug === 'event-day' || cat.slug === 'big day') && catDayKey === dayId && cat.isDeleted !== true
-      })
+      const existingCategory = (localEventBook.lineCategories || []).find(
+        cat => {
+          const catDayKey = toDayKey(cat.date)
+          return (
+            (cat.slug === 'event-day' || cat.slug === 'big day') &&
+            catDayKey === dayId &&
+            cat.isDeleted !== true
+          )
+        }
+      )
 
       if (existingCategory && existingCategory.id && existingCategory.id > 0) {
         // Category already exists with real ID, just reactivate if needed
@@ -336,7 +373,13 @@ export const DayDetailsView = ({
             ...prev,
             lineCategories: (prev.lineCategories || []).map(cat =>
               cat.id === existingCategory.id
-                ? { ...cat, isDeleted: false, name: 'Event Day', nameEn: 'Event Day', slug: 'event-day' }
+                ? {
+                    ...cat,
+                    isDeleted: false,
+                    name: 'Event Day',
+                    nameEn: 'Event Day',
+                    slug: 'event-day',
+                  }
                 : cat
             ),
           }
@@ -366,7 +409,8 @@ export const DayDetailsView = ({
           setHasUnsavedChanges(false)
           addToast('Event Day marked successfully', 'success')
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Failed to mark Event Day'
+          const errorMessage =
+            error instanceof Error ? error.message : 'Failed to mark Event Day'
           addToast(errorMessage, 'error')
         }
       }
@@ -385,10 +429,16 @@ export const DayDetailsView = ({
     setIsAddModalOpen(true)
   }
 
-  const handleCreateEvent = (eventData: { startTime: Date; title: string; duration: number }) => {
+  const handleCreateEvent = (eventData: {
+    startTime: Date
+    title: string
+    duration: number
+  }) => {
     if (!localEventBook || !selectedCategory) return
 
-    const endTime = new Date(eventData.startTime.getTime() + eventData.duration * 60 * 1000)
+    const endTime = new Date(
+      eventData.startTime.getTime() + eventData.duration * 60 * 1000
+    )
     const newLine: EventLine = {
       id: 0, // Temporary ID for new lines
       bookId: localEventBook.id,
@@ -423,28 +473,34 @@ export const DayDetailsView = ({
     setIsEditModalOpen(true)
   }
 
-  const handleUpdateEvent = (eventId: string, eventData: { startTime: Date; title: string; duration: number }) => {
+  const handleUpdateEvent = (
+    eventId: string,
+    eventData: { startTime: Date; title: string; duration: number }
+  ) => {
     if (!localEventBook) return
 
     const lineId = parseInt(eventId, 10)
-    const endTime = new Date(eventData.startTime.getTime() + eventData.duration * 60 * 1000)
+    const endTime = new Date(
+      eventData.startTime.getTime() + eventData.duration * 60 * 1000
+    )
 
     setLocalEventBook(prev => {
       if (!prev) return prev
       return {
         ...prev,
-        lines: prev.lines?.map(line => {
-          if (line.id === lineId) {
-            return {
-              ...line,
-              time: eventData.startTime.toISOString(),
-              duration: endTime.toISOString(),
-              nameEn: eventData.title,
-              lastModifiedDate: new Date().toISOString(),
+        lines:
+          prev.lines?.map(line => {
+            if (line.id === lineId) {
+              return {
+                ...line,
+                time: eventData.startTime.toISOString(),
+                duration: endTime.toISOString(),
+                nameEn: eventData.title,
+                lastModifiedDate: new Date().toISOString(),
+              }
             }
-          }
-          return line
-        }) || [],
+            return line
+          }) || [],
       }
     })
     setHasUnsavedChanges(true)
@@ -458,9 +514,10 @@ export const DayDetailsView = ({
       if (!prev) return prev
       return {
         ...prev,
-        lines: prev.lines?.map(line =>
-          line.id === lineId ? { ...line, isDeleted: true } : line
-        ) || [],
+        lines:
+          prev.lines?.map(line =>
+            line.id === lineId ? { ...line, isDeleted: true } : line
+          ) || [],
       }
     })
     setHasUnsavedChanges(true)
@@ -489,7 +546,7 @@ export const DayDetailsView = ({
             onClick={handleToggleEventDay}
             variant="brand"
             size="md"
-            className='text-white'
+            className="text-white"
             disabled={!localEventBook}
           >
             Mark as Event Day
@@ -507,7 +564,7 @@ export const DayDetailsView = ({
           />
         </div>
       )}
-      
+
       <AddEventModal
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
@@ -516,7 +573,7 @@ export const DayDetailsView = ({
         initialTime={prefilledTime}
         initialDuration={prefilledDuration}
       />
-      
+
       <EditEventModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}

@@ -136,14 +136,14 @@ export const OrderCard = ({
               Order #{orderId}
             </h3>
             <p className="text-14 text-gray-600 mb-2">Placed: {orderDate}</p>
-            
+
             {/* Delivery Status */}
             {deliveryStatus && (
               <div className="mb-2">
                 <DeliveryStatusBadge status={deliveryStatus} />
               </div>
             )}
-            
+
             {/* Provider Info */}
             {providerName && (
               <div className="flex items-center gap-2 mb-2">
@@ -220,7 +220,9 @@ export const OrderCard = ({
                 <div className="flex justify-between text-12 text-gray-600 mt-1">
                   <span>Paid: {totalPaidAmount.toLocaleString()} EGP</span>
                   {totalRemainingAmount > 0 && (
-                    <span>Remaining: {totalRemainingAmount.toLocaleString()} EGP</span>
+                    <span>
+                      Remaining: {totalRemainingAmount.toLocaleString()} EGP
+                    </span>
                   )}
                 </div>
               )}
@@ -280,14 +282,17 @@ export const OrderCard = ({
                     className="flex items-center gap-3 bg-white rounded-lg p-3 border border-gray-200"
                   >
                     <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
-                      {product.image && product.image.trim() !== '' && product.image !== '/placeholder-product.png' && product.image !== '/images/placeholder-product.png' ? (
+                      {product.image &&
+                      product.image.trim() !== '' &&
+                      product.image !== '/placeholder-product.png' &&
+                      product.image !== '/images/placeholder-product.png' ? (
                         <Image
                           src={product.image}
                           alt={product.title}
                           fill
                           sizes="64px"
                           className="object-cover"
-                          onError={(e) => {
+                          onError={e => {
                             e.currentTarget.style.display = 'none'
                           }}
                         />

@@ -35,7 +35,7 @@ export const MessagesCenterLayout = ({
   }
 
   const [showConversations, setShowConversations] = useState(getInitialState)
-  
+
   const handleBackToConversations = () => {
     setShowConversations(true)
   }
@@ -106,5 +106,3 @@ export const MessagesCenterLayout = ({
     </div>
   )
 }
-
-

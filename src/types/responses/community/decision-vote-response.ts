@@ -13,21 +13,3 @@ export interface DecisionVoteResponse extends BaseEntityResponse {
   votedAt: string // ISO date string
   isAnonymous: boolean
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

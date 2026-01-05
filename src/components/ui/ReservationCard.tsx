@@ -3,7 +3,15 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronDown, ChevronUp, MapPin, Calendar, Clock, User, X } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Calendar,
+  Clock,
+  User,
+  X,
+} from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import { Button } from './Button'
 import { StatusBadge } from './StatusBadge'
@@ -28,7 +36,8 @@ const mapReservationStatusToBadgeType = (
 }
 
 const getStatusLineColor = (status: ReservationStatus) => {
-  if (status === ReservationStatus.Completed) return 'border-l-4 border-green-500'
+  if (status === ReservationStatus.Completed)
+    return 'border-l-4 border-green-500'
   if (status === ReservationStatus.Cancelled) return 'border-l-4 border-red-500'
   return 'border-l-4 border-yellow-500'
 }
@@ -44,7 +53,9 @@ export const ReservationCard = ({
   const service = reservation.service
   const provider = reservation.provider
   const status = reservation.status
-  const isCompleted = status === ReservationStatus.Completed || status === ReservationStatus.Cancelled
+  const isCompleted =
+    status === ReservationStatus.Completed ||
+    status === ReservationStatus.Cancelled
   const isInProgress = !isCompleted
 
   // Format dates
@@ -77,10 +88,16 @@ export const ReservationCard = ({
   const serviceImage = service?.imageUrl ?? '/placeholder-service.png'
   const serviceRating = service?.rate ?? 0
   const providerName = provider?.nameEn ?? provider?.nameAr ?? 'Provider'
-  const placeName = reservation.reservationPlace?.nameEn ?? reservation.reservationPlace?.nameAr ?? null
-  const placeAddress = reservation.reservationPlace?.address?.fullAddress ?? null
+  const placeName =
+    reservation.reservationPlace?.nameEn ??
+    reservation.reservationPlace?.nameAr ??
+    null
+  const placeAddress =
+    reservation.reservationPlace?.address?.fullAddress ?? null
   const user = reservation.reservationStaff?.user
-  const staffName = user ? `${user.firstName} ${user.lastName}`.trim() || null : null
+  const staffName = user
+    ? `${user.firstName} ${user.lastName}`.trim() || null
+    : null
 
   // Get price
   const totalPrice = reservation.totalPrice ?? reservation.servicePrice ?? 0
@@ -156,10 +173,10 @@ export const ReservationCard = ({
                 <p className="text-14 text-gray-600">
                   Provider:{' '}
                   {reservation.providerId ? (
-                    <Link 
+                    <Link
                       href={`/provider/${reservation.providerId}`}
                       className="hover:text-brand-500 transition-colors"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={e => e.stopPropagation()}
                     >
                       {providerName}
                     </Link>
@@ -241,7 +258,10 @@ export const ReservationCard = ({
             {reservation.servicePackage && (
               <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <p className="text-14 font-semibold text-gray-900 mb-1">
-                  Package: {reservation.servicePackage.nameEn ?? reservation.servicePackage.nameAr ?? 'Package'}
+                  Package:{' '}
+                  {reservation.servicePackage.nameEn ??
+                    reservation.servicePackage.nameAr ??
+                    'Package'}
                 </p>
                 {reservation.servicePackage.descriptionEn && (
                   <p className="text-12 text-gray-600">
@@ -281,7 +301,9 @@ export const ReservationCard = ({
             {/* Notes */}
             {reservation.notes && (
               <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-12 font-semibold text-blue-900 mb-1">Notes:</p>
+                <p className="text-12 font-semibold text-blue-900 mb-1">
+                  Notes:
+                </p>
                 <p className="text-12 text-blue-700">{reservation.notes}</p>
               </div>
             )}
@@ -289,8 +311,12 @@ export const ReservationCard = ({
             {/* Client Feedback */}
             {reservation.clientFeedback && (
               <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                <p className="text-12 font-semibold text-green-900 mb-1">Your Feedback:</p>
-                <p className="text-12 text-green-700">{reservation.clientFeedback}</p>
+                <p className="text-12 font-semibold text-green-900 mb-1">
+                  Your Feedback:
+                </p>
+                <p className="text-12 text-green-700">
+                  {reservation.clientFeedback}
+                </p>
               </div>
             )}
           </div>
@@ -299,4 +325,3 @@ export const ReservationCard = ({
     </div>
   )
 }
-

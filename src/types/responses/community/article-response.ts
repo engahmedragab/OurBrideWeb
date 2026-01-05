@@ -78,21 +78,3 @@ export interface ArticleResponse extends BaseEntityResponse {
   bazaarEvents: BazaarEventSummaryResponse[]
   tags: TagResponse[]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

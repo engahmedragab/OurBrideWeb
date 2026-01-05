@@ -48,14 +48,18 @@ export const useServicesSearch = (
         }
 
         const result = await searchServices(query)
-        
+
         // Try to extract data from different response structures
         const extractedData = extractServicesCategoryData(result)
-        
+
         return {
           services: extractedData.services || [],
           categories: extractedData.categories,
-          totalCount: (result as any)?.totalCount || (result as any)?.total || extractedData.services?.length || 0,
+          totalCount:
+            (result as any)?.totalCount ||
+            (result as any)?.total ||
+            extractedData.services?.length ||
+            0,
           page: params?.page || 1,
           pageSize: params?.pageSize || 10,
         }
@@ -68,4 +72,3 @@ export const useServicesSearch = (
     refetchOnWindowFocus: false,
   })
 }
-

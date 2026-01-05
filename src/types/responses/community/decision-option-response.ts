@@ -13,13 +13,3 @@ export interface DecisionOptionResponse extends BaseEntityResponse {
   voteCount: number
   percentage: number
 }
-
-
-
-
-
-
-
-
-
-

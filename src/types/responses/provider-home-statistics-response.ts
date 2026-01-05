@@ -34,6 +34,3 @@ export interface ProviderHomeStatisticsResponse {
    */
   appointmentsBookedToday: string
 }
-
-
-

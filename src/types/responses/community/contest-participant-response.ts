@@ -27,21 +27,3 @@ export interface ContestParticipantResponse extends BaseEntityResponse {
   submissionContent: string
   submissionUrl: string
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

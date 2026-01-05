@@ -25,5 +25,3 @@ export interface ItemDetailResponse extends BaseEntityResponse {
   createdBy: string // Guid
   lastModifiedBy: string // Guid
 }
-
-

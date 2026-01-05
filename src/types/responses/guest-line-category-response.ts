@@ -8,5 +8,3 @@ import type { GuestRelevant } from './book-enums'
 export interface GuestLineCategoryResponse extends LineCategoryResponse {
   guestRelevant: GuestRelevant
 }
-
-

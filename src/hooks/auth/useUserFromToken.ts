@@ -28,38 +28,42 @@ export interface ExtractedUserInfo {
 /**
  * Extract user name from various user object formats
  */
-const extractUserName = (userData: AuthUser | UserResponse | null | undefined): string => {
+const extractUserName = (
+  userData: AuthUser | UserResponse | null | undefined
+): string => {
   if (!userData) return ''
-  
+
   const userAny = userData as any
-  
+
   // Check for fullName (AuthUser)
   if (userAny.fullName && typeof userAny.fullName === 'string') {
     return userAny.fullName.trim()
   }
-  
+
   // Check for firstName + lastName (UserResponse)
   if (userAny.firstName && userAny.lastName) {
     const name = `${userAny.firstName} ${userAny.lastName}`.trim()
     if (name) return name
   }
-  
+
   // Fallback to userName
   if (userAny.userName && typeof userAny.userName === 'string') {
     return userAny.userName.trim()
   }
-  
+
   return ''
 }
 
 /**
  * Extract phone number from various user object formats
  */
-const extractUserPhone = (userData: AuthUser | UserResponse | null | undefined): string => {
+const extractUserPhone = (
+  userData: AuthUser | UserResponse | null | undefined
+): string => {
   if (!userData) return ''
-  
+
   const userAny = userData as any
-  
+
   // Check multiple possible phone number fields
   if (userAny.phoneNumber && typeof userAny.phoneNumber === 'string') {
     return userAny.phoneNumber.trim()
@@ -70,7 +74,7 @@ const extractUserPhone = (userData: AuthUser | UserResponse | null | undefined):
   if (userAny.mobileNumber && typeof userAny.mobileNumber === 'string') {
     return userAny.mobileNumber.trim()
   }
-  
+
   return ''
 }
 
@@ -80,12 +84,12 @@ const extractUserPhone = (userData: AuthUser | UserResponse | null | undefined):
  */
 export const useUserFromToken = (): ExtractedUserInfo => {
   const { user } = useAuthContext()
-  
+
   return useMemo(() => {
     // Get user from context or localStorage
     const userFromStorage = typeof window !== 'undefined' ? getUser() : null
     const currentUser = user || userFromStorage
-    
+
     // Default return value
     const defaultInfo: ExtractedUserInfo = {
       id: null,
@@ -96,17 +100,17 @@ export const useUserFromToken = (): ExtractedUserInfo => {
       sub: null,
       rawUser: currentUser,
     }
-    
+
     if (!currentUser) {
       return defaultInfo
     }
-    
+
     const userAny = currentUser as any
-    
+
     // If it's a login response with token, decode the token
     if (userAny.token && typeof userAny.token === 'string') {
       const tokenInfo = getUserInfoFromToken(userAny.token)
-      
+
       return {
         ...tokenInfo,
         fullName: tokenInfo.name || extractUserName(currentUser),
@@ -117,17 +121,18 @@ export const useUserFromToken = (): ExtractedUserInfo => {
         rawUser: currentUser,
       }
     }
-    
+
     // If it's a regular user object (AuthUser or UserResponse)
     const extractedName = extractUserName(currentUser)
     const extractedPhone = extractUserPhone(currentUser)
-    
+
     return {
       id: (currentUser as any).id || (currentUser as any).userId || null,
       email: (currentUser as any).email || '',
       name: extractedName,
       phoneNumber: extractedPhone,
-      userType: (currentUser as any).userType || (currentUser as any).type || '',
+      userType:
+        (currentUser as any).userType || (currentUser as any).type || '',
       sub: (currentUser as any).sub || null,
       fullName: (currentUser as any).fullName,
       firstName: (currentUser as any).firstName,
@@ -137,4 +142,3 @@ export const useUserFromToken = (): ExtractedUserInfo => {
     }
   }, [user])
 }
-

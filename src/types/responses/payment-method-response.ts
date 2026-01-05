@@ -4,7 +4,10 @@
 
 import type { BaseLookupResponse } from '@/types/responses/common'
 
-export interface PaymentMethodResponse extends Omit<BaseLookupResponse, 'lastModifiedDate'> {
+export interface PaymentMethodResponse extends Omit<
+  BaseLookupResponse,
+  'lastModifiedDate'
+> {
   code: string
   type: number // PaymentMethodsType enum
   status: number // PaymentMethodStatus enum

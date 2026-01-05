@@ -5,19 +5,17 @@ import { z } from 'zod'
  * Validates name and description fields
  */
 export const createServiceCategorySchema = z.object({
-  name: z
-    .string()
-    .min(1, 'Category name is required')
-    .trim(),
+  name: z.string().min(1, 'Category name is required').trim(),
   description: z
     .string()
     .trim()
     .optional()
-    .transform((val) => val || undefined),
+    .transform(val => val || undefined),
 })
 
 /**
  * Inferred TypeScript type from the schema
  */
-export type CreateServiceCategoryFormValues = z.infer<typeof createServiceCategorySchema>
-
+export type CreateServiceCategoryFormValues = z.infer<
+  typeof createServiceCategorySchema
+>

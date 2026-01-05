@@ -43,7 +43,6 @@ const getGiftIconColor = (amount: number): string => {
   return 'text-blue-500'
 }
 
-
 const formatCouponAmount = (amount: number): string => {
   if (amount >= 1000) {
     const thousands = amount / 1000
@@ -57,7 +56,11 @@ const formatCouponAmount = (amount: number): string => {
  * Displays a coupon with amount, description, and send button
  * Gift icon color changes based on the coupon amount
  */
-export const CouponCard = ({ amount, description, onSendClick }: CouponCardProps) => {
+export const CouponCard = ({
+  amount,
+  description,
+  onSendClick,
+}: CouponCardProps) => {
   const iconColor = getGiftIconColor(amount)
   const formattedAmount = formatCouponAmount(amount)
 

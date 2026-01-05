@@ -1,7 +1,13 @@
 'use client'
 
 import { useMemo } from 'react'
-import { startOfMonth, endOfMonth, eachDayOfInterval, format, getDay } from 'date-fns'
+import {
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  format,
+  getDay,
+} from 'date-fns'
 import { CalendarDayCard } from './CalendarDayCard'
 import { cn } from '@/lib/utils'
 
@@ -114,4 +120,3 @@ export const CalendarGrid = ({
     </div>
   )
 }
-

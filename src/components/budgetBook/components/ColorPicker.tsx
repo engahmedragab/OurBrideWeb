@@ -22,7 +22,11 @@ interface ColorPickerProps {
   className?: string
 }
 
-export const ColorPicker = ({ value, onChange, className }: ColorPickerProps) => {
+export const ColorPicker = ({
+  value,
+  onChange,
+  className,
+}: ColorPickerProps) => {
   return (
     <div className={cn('space-y-2', className)}>
       <div className="grid grid-cols-4 gap-3">
@@ -63,4 +67,3 @@ export const ColorPicker = ({ value, onChange, className }: ColorPickerProps) =>
     </div>
   )
 }
-

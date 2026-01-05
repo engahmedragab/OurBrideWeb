@@ -29,8 +29,8 @@ const searchInputVariants = cva(
 
 export interface SearchInputProps
   extends
-  Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
-  VariantProps<typeof searchInputVariants> { }
+    Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
+    VariantProps<typeof searchInputVariants> {}
 
 const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   ({ className, variant, size, value, onChange, ...props }, ref) => {

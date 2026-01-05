@@ -14,21 +14,3 @@ export interface TagResponse extends BaseEntityResponse {
   isFeatured: boolean
   usageCount: number
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

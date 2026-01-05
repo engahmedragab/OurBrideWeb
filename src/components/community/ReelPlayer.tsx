@@ -29,7 +29,12 @@ import {
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
-import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
+import {
+  formatDate,
+  getUserDisplayName,
+  getUserAvatar,
+  getProfileUrl,
+} from './utils'
 import Link from 'next/link'
 import type { ReviewResponse } from '@/types/responses/review-response'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
@@ -60,7 +65,11 @@ export const ReelPlayer = ({
 
   // Fetch reel data
   const reelId = parseInt(id, 10)
-  const { data: reel, isLoading, error } = useQuery({
+  const {
+    data: reel,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['reel', id],
     queryFn: async () => {
       if (isNaN(reelId)) throw new Error('Invalid reel ID')
@@ -131,8 +140,11 @@ export const ReelPlayer = ({
       setIsLiked(!isLiked)
       queryClient.invalidateQueries({ queryKey: ['reel', id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -147,8 +159,11 @@ export const ReelPlayer = ({
       // Invalidate queries to refresh comments/reviews
       queryClient.invalidateQueries({ queryKey: ['reel', id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to add comment',
+        'error'
+      )
     },
   })
 
@@ -166,18 +181,24 @@ export const ReelPlayer = ({
       if (!reel) throw new Error('Reel not loaded')
       return await shareReel(reel.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
         // Copy share URL to clipboard
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/reels/${reel?.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/reels/${reel?.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['reel', id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share reel', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share reel',
+        'error'
+      )
     },
   })
 
@@ -191,8 +212,11 @@ export const ReelPlayer = ({
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['reel', id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -206,10 +230,16 @@ export const ReelPlayer = ({
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(
+        isFollowing ? 'Unfollowed successfully' : 'Followed successfully',
+        'success'
+      )
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle follow',
+        'error'
+      )
     },
   })
 
@@ -235,7 +265,12 @@ export const ReelPlayer = ({
 
   if (isLoading) {
     return (
-      <div className={cn('flex items-center justify-center w-full min-h-[400px]', className)}>
+      <div
+        className={cn(
+          'flex items-center justify-center w-full min-h-[400px]',
+          className
+        )}
+      >
         <LoadingOverlay open={true} title="Loading reel..." />
       </div>
     )
@@ -243,7 +278,12 @@ export const ReelPlayer = ({
 
   if (error || !reel) {
     return (
-      <div className={cn('flex items-center justify-center w-full min-h-[400px]', className)}>
+      <div
+        className={cn(
+          'flex items-center justify-center w-full min-h-[400px]',
+          className
+        )}
+      >
         <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
           <p className="text-gray-500">Reel not found</p>
         </div>
@@ -349,7 +389,7 @@ export const ReelPlayer = ({
                         fill
                         sizes="40px"
                         className="object-cover"
-                        onError={(e) => {
+                        onError={e => {
                           e.currentTarget.style.display = 'none'
                         }}
                       />
@@ -357,22 +397,25 @@ export const ReelPlayer = ({
                   })()}
                   {(() => {
                     const avatar = getUserAvatar(reel.user)
-                    return !avatar && (
-                      <div className="w-full h-full flex items-center justify-center bg-white">
-                        <Image
-                          src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                          alt="OurBride"
-                          width={24}
-                          height={24}
-                          className="object-contain"
-                        />
-                      </div>
+                    return (
+                      !avatar && (
+                        <div className="w-full h-full flex items-center justify-center bg-white">
+                          <Image
+                            src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                            alt="OurBride"
+                            width={24}
+                            height={24}
+                            className="object-contain"
+                          />
+                        </div>
+                      )
                     )
                   })()}
                 </div>
                 <div className="flex-1 text-white">
                   <div className="flex items-center gap-2 mb-1">
-                    {reel.userId && getProfileUrl(reel.userId, reel.user?.type) ? (
+                    {reel.userId &&
+                    getProfileUrl(reel.userId, reel.user?.type) ? (
                       <Link
                         href={getProfileUrl(reel.userId, reel.user?.type)!}
                         className="hover:text-brand-300 transition-colors"
@@ -394,7 +437,12 @@ export const ReelPlayer = ({
                         disabled={toggleFollowMutation.isPending}
                         className="text-10 h-6 px-2"
                       >
-                        <UserPlus className={cn('h-3 w-3 mr-1', isFollowing && 'hidden')} />
+                        <UserPlus
+                          className={cn(
+                            'h-3 w-3 mr-1',
+                            isFollowing && 'hidden'
+                          )}
+                        />
                         {toggleFollowMutation.isPending
                           ? '...'
                           : isFollowing

@@ -33,7 +33,6 @@ import {
 import { useProviderCardHandlers } from '@/hooks/providers'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
 
-
 interface ProductCategoryDetailClientProps {
   productId: string
 }
@@ -88,13 +87,11 @@ export function ProductCategoryDetailClient({
   const submitReviewMutation = useSubmitProductReview()
 
   // Add to cart hook - MUST be called before any conditional returns
-  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } =
+    useAddProductToCart()
 
   // Fetch related products
-  const { data: relatedProducts = [] } = useRelatedProducts(
-    parsedProductId,
-    4
-  )
+  const { data: relatedProducts = [] } = useRelatedProducts(parsedProductId, 4)
 
   // Calculate rating distribution from actual reviews
   const ratingDistribution = useMemo(() => {
@@ -110,7 +107,8 @@ export function ProductCategoryDetailClient({
 
     const distribution = [5, 4, 3, 2, 1].map(stars => {
       const count = reviews.filter(r => Math.round(r.rating) === stars).length
-      const percentage = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0
+      const percentage =
+        reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0
       return { stars, count, percentage }
     })
 
@@ -141,9 +139,7 @@ export function ProductCategoryDetailClient({
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="text-18 text-gray-600 mb-4">
-              Product not found
-            </div>
+            <div className="text-18 text-gray-600 mb-4">Product not found</div>
             <BackButton href="/products" label="Back to Products" />
           </div>
         </main>
@@ -164,7 +160,10 @@ export function ProductCategoryDetailClient({
       addToast(message, type)
     } catch (error) {
       console.error('Failed to add product to cart:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to add product to cart. Please try again.'
       addToast(errorMessage, 'error')
     }
   }
@@ -255,7 +254,8 @@ export function ProductCategoryDetailClient({
 
               {/* Delivery Date */}
               <div className="text-14 text-brand-500 font-normal">
-                Buy now and get by <span className="text-gray-900">25 AUG 2025</span>
+                Buy now and get by{' '}
+                <span className="text-gray-900">25 AUG 2025</span>
               </div>
             </div>
 
@@ -339,7 +339,9 @@ export function ProductCategoryDetailClient({
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="text-12 text-gray-500">
-                                  {review.date ? new Date(review.date).toLocaleDateString() : 'Recently'}
+                                  {review.date
+                                    ? new Date(review.date).toLocaleDateString()
+                                    : 'Recently'}
                                 </span>
                                 <div className="flex items-center gap-0.5">
                                   {[1, 2, 3, 4, 5].map(star => (
@@ -356,12 +358,13 @@ export function ProductCategoryDetailClient({
                                 </div>
                               </div>
                             </div>
-                            {review.helpful !== undefined && review.helpful > 0 && (
-                              <button className="flex items-center gap-1 text-12 text-gray-500 hover:text-gray-700">
-                                <ThumbsUp className="h-4 w-4" />
-                                <span>{review.helpful}</span>
-                              </button>
-                            )}
+                            {review.helpful !== undefined &&
+                              review.helpful > 0 && (
+                                <button className="flex items-center gap-1 text-12 text-gray-500 hover:text-gray-700">
+                                  <ThumbsUp className="h-4 w-4" />
+                                  <span>{review.helpful}</span>
+                                </button>
+                              )}
                           </div>
                           <p className="text-14 text-gray-600 leading-relaxed">
                             {review.comment || ''}
@@ -422,20 +425,25 @@ export function ProductCategoryDetailClient({
                   {/* Send Button */}
                   <button
                     onClick={async () => {
-                      if (reviewComment.trim() && userRating > 0 && parsedProductId) {
+                      if (
+                        reviewComment.trim() &&
+                        userRating > 0 &&
+                        parsedProductId
+                      ) {
                         try {
-                          const response = await submitReviewMutation.mutateAsync({
-                            productId: parsedProductId,
-                            rating: userRating,
-                            review: reviewComment.trim(),
-                          })
-                          
+                          const response =
+                            await submitReviewMutation.mutateAsync({
+                              productId: parsedProductId,
+                              rating: userRating,
+                              review: reviewComment.trim(),
+                            })
+
                           const { message, type } = handleApiResponseForToast(
                             response,
                             'Review submitted successfully!',
                             'Failed to submit review'
                           )
-                          
+
                           if (type === 'success') {
                             setReviewComment('')
                             setUserRating(0)
@@ -443,12 +451,20 @@ export function ProductCategoryDetailClient({
                           addToast(message, type)
                         } catch (error) {
                           console.error('Error submitting review:', error)
-                          const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+                          const errorMessage =
+                            error instanceof Error
+                              ? error.message
+                              : 'Failed to submit review. Please try again.'
                           addToast(errorMessage, 'error')
                         }
                       }
                     }}
-                    disabled={!reviewComment.trim() || userRating === 0 || submitReviewMutation.isPending || !parsedProductId}
+                    disabled={
+                      !reviewComment.trim() ||
+                      userRating === 0 ||
+                      submitReviewMutation.isPending ||
+                      !parsedProductId
+                    }
                     className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
                     aria-label="Send review"
                   >
@@ -513,12 +529,15 @@ export function ProductCategoryDetailClient({
 
           {/* Newsletter/Offer Banner Section */}
           <OfferBanner
-            offers={[{
-              heading: "24% Offer On our product!",
-              description: "Subscribe to our newsletter and get exclusive offers on premium wedding products.",
-              variant: "default",
-              productImage: productImage,
-            }]}
+            offers={[
+              {
+                heading: '24% Offer On our product!',
+                description:
+                  'Subscribe to our newsletter and get exclusive offers on premium wedding products.',
+                variant: 'default',
+                productImage: productImage,
+              },
+            ]}
             className="mb-12"
           />
 
@@ -541,8 +560,11 @@ export function ProductCategoryDetailClient({
                 {relatedProducts.map(product => {
                   // Inline component to use hooks properly
                   const ProductCardItem = () => {
-                    const handlers = useProductCardHandlers(parseInt(product.id, 10))
-                    const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+                    const handlers = useProductCardHandlers(
+                      parseInt(product.id, 10)
+                    )
+                    const { handleAddToCart, isLoading: isLoadingAddToCart } =
+                      useAddProductToCart()
 
                     const handleAddToCartClick = (e: React.MouseEvent) => {
                       e.preventDefault()

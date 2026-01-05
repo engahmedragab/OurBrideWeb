@@ -3,7 +3,10 @@
 import React from 'react'
 import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { ServicesProvidersSlider, type Provider } from './ServicesProvidersSlider'
+import {
+  ServicesProvidersSlider,
+  type Provider,
+} from './ServicesProvidersSlider'
 import { ServicesProductsSlider, type Product } from './ServicesProductsSlider'
 
 /**
@@ -43,10 +46,9 @@ const titleVariants = cva('text-center', {
   },
 })
 
-
 /**
  * BestProvidersWithProductsSection Component
- * 
+ *
  * Parent section component that displays:
  * 1. Title with mixed bold/normal text
  * 2. Providers slider (ServicesProvidersSlider)
@@ -62,13 +64,20 @@ export const BestProvidersWithProductsSection = ({
     <section className={cn('w-full py-12 md:py-20', className)}>
       <div className="w-full px-8 sm:px-12 md:px-16 lg:px-20 xl:px-24 2xl:px-32">
         {/* Title */}
-        <div className={cn(titleVariants({ alignment: 'center' }), 'mb-12 md:mb-16')}>
+        <div
+          className={cn(
+            titleVariants({ alignment: 'center' }),
+            'mb-12 md:mb-16'
+          )}
+        >
           <h2 className="text-48 md:text-56 lg:text-64 xl:text-72 2xl:text-80 font-black text-gray-900 leading-tight">
             <span className="block">
               {titleParts.slice(0, 2).map((part, index) => (
                 <span
                   key={index}
-                  className={part.isHighlighted ? 'font-semibold' : 'font-normal'}
+                  className={
+                    part.isHighlighted ? 'font-semibold' : 'font-normal'
+                  }
                 >
                   {part.text}
                   {index < 1 && ' '}
@@ -79,7 +88,9 @@ export const BestProvidersWithProductsSection = ({
               {titleParts.slice(2).map((part, index) => (
                 <span
                   key={index + 2}
-                  className={part.isHighlighted ? 'font-semibold' : 'font-normal'}
+                  className={
+                    part.isHighlighted ? 'font-semibold' : 'font-normal'
+                  }
                 >
                   {part.text}
                   {index < titleParts.slice(2).length - 1 && ' '}
@@ -98,4 +109,3 @@ export const BestProvidersWithProductsSection = ({
     </section>
   )
 }
-

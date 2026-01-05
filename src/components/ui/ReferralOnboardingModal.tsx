@@ -31,18 +31,30 @@ export const ReferralOnboardingModal = ({
   const steps: Step[] = [
     {
       title: 'Welcome To Referral System',
-      description: "Invite people using your custom link\nThey'll get special offers, and earn\nrewards!",
-      svg: typeof referralWelcomeSvg === 'string' ? referralWelcomeSvg : referralWelcomeSvg.src,
+      description:
+        "Invite people using your custom link\nThey'll get special offers, and earn\nrewards!",
+      svg:
+        typeof referralWelcomeSvg === 'string'
+          ? referralWelcomeSvg
+          : referralWelcomeSvg.src,
     },
     {
       title: 'Invite People To Earn More Coupons',
-      description: 'Invite friends\nand get coupons you can use to buy\nproducts or services',
-      svg: typeof referralInviteSvg === 'string' ? referralInviteSvg : referralInviteSvg.src,
+      description:
+        'Invite friends\nand get coupons you can use to buy\nproducts or services',
+      svg:
+        typeof referralInviteSvg === 'string'
+          ? referralInviteSvg
+          : referralInviteSvg.src,
     },
     {
       title: 'Collect Diamond Points',
-      description: 'Earn extra Diamond Points\nwith every referral and unlock Special\nrewards!',
-      svg: typeof referralCollectSvg === 'string' ? referralCollectSvg : referralCollectSvg.src,
+      description:
+        'Earn extra Diamond Points\nwith every referral and unlock Special\nrewards!',
+      svg:
+        typeof referralCollectSvg === 'string'
+          ? referralCollectSvg
+          : referralCollectSvg.src,
     },
   ]
 
@@ -138,4 +150,3 @@ export const ReferralOnboardingModal = ({
     </>
   )
 }
-

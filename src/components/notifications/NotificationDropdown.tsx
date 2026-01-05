@@ -3,7 +3,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/Popover'
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from '@/components/ui/Popover'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { NotificationCard } from './NotificationCard'
@@ -76,7 +80,10 @@ export const NotificationDropdown = ({
           <div className="flex items-center gap-2">
             <h3 className="text-18 font-normal text-gray-900">Notifications</h3>
             {unreadCount > 0 && (
-              <Badge variant="default" className="bg-brand-500 text-white border-0">
+              <Badge
+                variant="default"
+                className="bg-brand-500 text-white border-0"
+              >
                 {unreadCount} new
               </Badge>
             )}
@@ -143,4 +150,3 @@ export const NotificationDropdown = ({
     </Popover>
   )
 }
-

@@ -1,5 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { getHomeData, getStoreHomeData, getCommunityHome, getMineInfo, getProviderHome } from '@/services/api/home.api'
+import {
+  getHomeData,
+  getStoreHomeData,
+  getCommunityHome,
+  getMineInfo,
+  getProviderHome,
+} from '@/services/api/home.api'
 import type { CommunityHomeResponse } from '@/types/responses/community/community-home-response'
 import type { ProviderHomeResponse } from '@/types/responses/provider-home-response'
 
@@ -38,14 +44,17 @@ export const useStoreHome = (enabled = true) => {
 /**
  * Hook to fetch community home page data
  */
-export const useCommunityHome = (query?: {
-  postsCount?: number
-  articlesCount?: number
-  suggestedUsersCount?: number
-  topProvidersCount?: number
-  tagIds?: string
-  tagsCount?: number
-}, enabled = true) => {
+export const useCommunityHome = (
+  query?: {
+    postsCount?: number
+    articlesCount?: number
+    suggestedUsersCount?: number
+    topProvidersCount?: number
+    tagIds?: string
+    tagsCount?: number
+  },
+  enabled = true
+) => {
   return useQuery<CommunityHomeResponse>({
     queryKey: ['community-home', query],
     queryFn: async () => {

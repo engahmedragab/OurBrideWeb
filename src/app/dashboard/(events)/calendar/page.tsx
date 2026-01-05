@@ -19,13 +19,22 @@ export default function CalendarPage() {
   }
 
   const getWeekDays = (date: Date) => {
-    const weekDays: Array<{ day: number; label: string; date: Date; isSelected: boolean }> = []
+    const weekDays: Array<{
+      day: number
+      label: string
+      date: Date
+      isSelected: boolean
+    }> = []
     const startOfWeek = new Date(date)
     const day = startOfWeek.getDay()
     const diff = startOfWeek.getDate() - day
 
     for (let i = 0; i < 7; i++) {
-      const currentDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), diff + i)
+      const currentDate = new Date(
+        startOfWeek.getFullYear(),
+        startOfWeek.getMonth(),
+        diff + i
+      )
       const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
       weekDays.push({
         day: currentDate.getDate(),

@@ -20,4 +20,3 @@ export interface MembershipPlanResponse extends BaseEntityResponse {
   providerId: number
   providerName: string | null
 }
-

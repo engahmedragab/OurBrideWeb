@@ -88,12 +88,14 @@ const formatTime = (dateString: string | null | undefined): string => {
  */
 const mapWeddingEventToEventCard = (event: WeddingEventResponse) => {
   // Get creator name from bride or groom
-  const brideName = event.bride?.displayName ||
+  const brideName =
+    event.bride?.displayName ||
     (event.bride?.firstName && event.bride?.lastName
       ? `${event.bride.firstName} ${event.bride.lastName}`
       : event.bride?.userName) ||
     null
-  const groomName = event.groom?.displayName ||
+  const groomName =
+    event.groom?.displayName ||
     (event.groom?.firstName && event.groom?.lastName
       ? `${event.groom.firstName} ${event.groom.lastName}`
       : event.groom?.userName) ||
@@ -102,7 +104,8 @@ const mapWeddingEventToEventCard = (event: WeddingEventResponse) => {
   const creatorName = brideName || groomName || 'Unknown'
 
   // Get creator avatar from profileUrl
-  const creatorAvatar = event.bride?.profileUrl ||
+  const creatorAvatar =
+    event.bride?.profileUrl ||
     event.groom?.profileUrl ||
     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100'
 
@@ -126,7 +129,9 @@ function MyEventsPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { addToast } = useToast()
-  const [activeTab, setActiveTab] = useState<'my-events' | 'shared-events'>('my-events')
+  const [activeTab, setActiveTab] = useState<'my-events' | 'shared-events'>(
+    'my-events'
+  )
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null)
   const [isMounted, setIsMounted] = useState(false)
@@ -148,7 +153,11 @@ function MyEventsPageContent() {
   }, [searchParams])
 
   // Fetch wedding events - disable during SSR to prevent hydration mismatch
-  const { data: weddingEvents = [], isLoading, error } = useWeddingEvents({
+  const {
+    data: weddingEvents = [],
+    isLoading,
+    error,
+  } = useWeddingEvents({
     enabled: isMounted,
   })
   const createEventMutation = useCreateWeddingEvent()
@@ -168,11 +177,18 @@ function MyEventsPageContent() {
   const initNoteBooks = useInitNoteBooks()
   const initTodoBooks = useInitTodoBooks()
   const initOccasionBooks = useInitOccasionBooks()
-  
 
   // Helper function to handle book initialization and navigation
   const handleBookInit = async (
-    bookType: 'item' | 'service' | 'budget' | 'event' | 'guest' | 'note' | 'todo' | 'occasion'
+    bookType:
+      | 'item'
+      | 'service'
+      | 'budget'
+      | 'event'
+      | 'guest'
+      | 'note'
+      | 'todo'
+      | 'occasion'
   ): Promise<void> => {
     if (!selectedEventId) return
 
@@ -211,7 +227,16 @@ function MyEventsPageContent() {
   }
 
   const handleBookNavigate = (
-    bookType: 'item' | 'service' | 'budget' | 'event' | 'guest' | 'note' | 'todo' | 'occasion'|'noteBook'
+    bookType:
+      | 'item'
+      | 'service'
+      | 'budget'
+      | 'event'
+      | 'guest'
+      | 'note'
+      | 'todo'
+      | 'occasion'
+      | 'noteBook'
   ) => {
     if (!selectedEventId) return
 
@@ -272,7 +297,8 @@ function MyEventsPageContent() {
       addToast('Event created successfully', 'success')
       setIsModalOpen(false)
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create event'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to create event'
       addToast(errorMessage, 'error')
     }
   }
@@ -304,7 +330,9 @@ function MyEventsPageContent() {
     }
 
     const confirmedBookings = eventInfo.serviceBook?.completed || 0
-    const totalBookings = (eventInfo.serviceBook?.lines?.length || 0) + (eventInfo.serviceBook?.pending || 0)
+    const totalBookings =
+      (eventInfo.serviceBook?.lines?.length || 0) +
+      (eventInfo.serviceBook?.pending || 0)
     const completedItems = eventInfo.itemBook?.completed || 0
     const totalItems = eventInfo.itemBook?.lines?.length || 0
     const invitedGuests = eventInfo.guestBook?.lines?.length || 0
@@ -314,17 +342,18 @@ function MyEventsPageContent() {
       bookings: {
         current: confirmedBookings,
         total: totalBookings || 1,
-        percentage: totalBookings > 0 ? (confirmedBookings / totalBookings) * 100 : 0
+        percentage:
+          totalBookings > 0 ? (confirmedBookings / totalBookings) * 100 : 0,
       },
       items: {
         current: completedItems,
         total: totalItems || 1,
-        percentage: totalItems > 0 ? (completedItems / totalItems) * 100 : 0
+        percentage: totalItems > 0 ? (completedItems / totalItems) * 100 : 0,
       },
       guests: {
         current: invitedGuests,
         total: maxGuests,
-        percentage: (invitedGuests / maxGuests) * 100
+        percentage: (invitedGuests / maxGuests) * 100,
       },
     }
   }, [eventInfo])
@@ -380,57 +409,59 @@ function MyEventsPageContent() {
   const planningTabs = [
     {
       label: 'overview',
-      href: selectedEventId ? `/dashboard/my-events?eventId=${selectedEventId}` : '/dashboard/my-events',
+      href: selectedEventId
+        ? `/dashboard/my-events?eventId=${selectedEventId}`
+        : '/dashboard/my-events',
       value: 'overview',
-      needsInit: false // Overview doesn't have a book
+      needsInit: false, // Overview doesn't have a book
     },
     {
       label: 'budget',
       href: buildPlanningHref('/events/planning/budget'),
       value: 'budget',
-      needsInit: !getBookInitStatus('budget')
+      needsInit: !getBookInitStatus('budget'),
     },
     {
       label: 'items',
       href: buildPlanningHref('/events/planning/items'),
       value: 'items',
-      needsInit: !getBookInitStatus('items')
+      needsInit: !getBookInitStatus('items'),
     },
     {
       label: 'events',
       href: buildPlanningHref('/events/planning/events'),
       value: 'events',
-      needsInit: false // Events doesn't have a book
+      needsInit: false, // Events doesn't have a book
     },
     {
       label: 'invitation',
       href: buildPlanningHref('/events/planning/invitation'),
       value: 'invitation',
-      needsInit: !getBookInitStatus('invitation')
+      needsInit: !getBookInitStatus('invitation'),
     },
     {
       label: 'occasions',
       href: buildPlanningHref('/events/planning/occasion'),
       value: 'occasion',
-      needsInit: !getBookInitStatus('occasion')
+      needsInit: !getBookInitStatus('occasion'),
     },
     {
       label: 'preparations',
       href: buildPlanningHref('/events/planning/preparations'),
       value: 'preparations',
-      needsInit: !getBookInitStatus('preparations')
+      needsInit: !getBookInitStatus('preparations'),
     },
     {
       label: 'ToDo',
       href: buildPlanningHref('/events/planning/todo'),
       value: 'todo',
-      needsInit: !getBookInitStatus('todo')
+      needsInit: !getBookInitStatus('todo'),
     },
     {
       label: 'notes',
       href: buildPlanningHref('/events/planning/notes'),
       value: 'noteBook',
-      needsInit: !getBookInitStatus('noteBook')
+      needsInit: !getBookInitStatus('noteBook'),
     },
   ]
 
@@ -447,7 +478,8 @@ function MyEventsPageContent() {
     if (pathname?.includes('/todo')) return 'todo'
     if (pathname?.includes('/notes')) return 'noteBook'
     // When on my-events page with selected event, default to overview
-    if (pathname?.includes('/my-events') && selectedEventId !== null) return 'overview'
+    if (pathname?.includes('/my-events') && selectedEventId !== null)
+      return 'overview'
     return 'overview'
   }
 
@@ -470,17 +502,25 @@ function MyEventsPageContent() {
 
         {/* Planning Tabs */}
         <div className="mb-6 sm:mb-8">
-          <div className={cn(
-            "flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full",
-            "grid grid-cols-2 sm:flex sm:justify-between"
-          )}>
+          <div
+            className={cn(
+              'flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full',
+              'grid grid-cols-2 sm:flex sm:justify-between'
+            )}
+          >
             {planningTabs.map(tab => {
               const isActive = activePlanningTab === tab.value
 
               // Handle tab click - if needs init, call init first then navigate
-              const handleTabClick = async (e: MouseEvent<HTMLAnchorElement>) => {
+              const handleTabClick = async (
+                e: MouseEvent<HTMLAnchorElement>
+              ) => {
                 // Only handle init for occasion tab when it needs init
-                if (tab.value === 'occasion' && tab.needsInit && selectedEventId) {
+                if (
+                  tab.value === 'occasion' &&
+                  tab.needsInit &&
+                  selectedEventId
+                ) {
                   e.preventDefault()
                   try {
                     await handleBookInit('occasion')
@@ -510,32 +550,34 @@ function MyEventsPageContent() {
                 >
                   <span>{tab.label}</span>
                   {tab.needsInit && (
-  <span
-    className={cn(
-      "ml-2 inline-flex items-center justify-center",
-      "h-4 w-4 rounded-full",
-      "bg-yellow-100 text-yellow-700 ring-1 ring-yellow-200",
-      "relative"
-    )}
-    title="Needs init"
-  >
-    <span className="absolute inset-0 rounded-full bg-yellow-200/60 animate-ping" />
-    <span className="relative h-1.5 w-1.5 rounded-full bg-yellow-600" />
-  </span>
-)}
+                    <span
+                      className={cn(
+                        'ml-2 inline-flex items-center justify-center',
+                        'h-4 w-4 rounded-full',
+                        'bg-yellow-100 text-yellow-700 ring-1 ring-yellow-200',
+                        'relative'
+                      )}
+                      title="Needs init"
+                    >
+                      <span className="absolute inset-0 rounded-full bg-yellow-200/60 animate-ping" />
+                      <span className="relative h-1.5 w-1.5 rounded-full bg-yellow-600" />
+                    </span>
+                  )}
 
-{!tab.needsInit && tab.value !== "overview" && tab.value !== "events" && (
-  <span
-    className={cn(
-      "ml-2 inline-flex items-center justify-center",
-      "h-4 w-4 rounded-full",
-      "bg-green-100 text-green-700 ring-1 ring-green-200"
-    )}
-    title="Ready"
-  >
-    <span className="text-[10px] leading-none">✓</span>
-  </span>
-)}
+                  {!tab.needsInit &&
+                    tab.value !== 'overview' &&
+                    tab.value !== 'events' && (
+                      <span
+                        className={cn(
+                          'ml-2 inline-flex items-center justify-center',
+                          'h-4 w-4 rounded-full',
+                          'bg-green-100 text-green-700 ring-1 ring-green-200'
+                        )}
+                        title="Ready"
+                      >
+                        <span className="text-[10px] leading-none">✓</span>
+                      </span>
+                    )}
 
                   {isActive && (
                     <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full animate-in fade-in slide-in-from-bottom-1" />
@@ -560,14 +602,24 @@ function MyEventsPageContent() {
             <div className="mb-6 sm:mb-8">
               <EventSummaryCard
                 eventName={selectedEvent.title}
-                eventDate={selectedEvent.startDate ? new Date(selectedEvent.startDate) : new Date()}
+                eventDate={
+                  selectedEvent.startDate
+                    ? new Date(selectedEvent.startDate)
+                    : new Date()
+                }
                 imageSrc={authHeroImage}
               />
             </div>
 
             {/* SECTION 2: Quick Stats Cards */}
             <div className="mb-6 sm:mb-8">
-              <div className={cn('grid gap-3 sm:gap-4', 'grid-cols-1', 'sm:grid-cols-3')}>
+              <div
+                className={cn(
+                  'grid gap-3 sm:gap-4',
+                  'grid-cols-1',
+                  'sm:grid-cols-3'
+                )}
+              >
                 <QuickStatsCard
                   title="Completed services"
                   book={eventInfo.serviceBook}
@@ -577,14 +629,13 @@ function MyEventsPageContent() {
                   title="Complete Lists"
                   book={eventInfo.todoBook}
                   eventId={selectedEventId || undefined}
-            
                 />
-                  <ItemsOverview
-      book={eventInfo.itemBook}
-      onInit={() => handleBookInit('item')}
-      onNavigate={() => handleBookNavigate('item')}
-      eventId={selectedEventId || undefined}
-    />
+                <ItemsOverview
+                  book={eventInfo.itemBook}
+                  onInit={() => handleBookInit('item')}
+                  onNavigate={() => handleBookNavigate('item')}
+                  eventId={selectedEventId || undefined}
+                />
                 {/* <QuickStatsCard
                   title="Invite Your Guests"
                   book={eventInfo.guestBook}
@@ -595,43 +646,45 @@ function MyEventsPageContent() {
 
             {/* SECTION 3: Tasks Reminder - Full Width */}
             <div className="mb-6 sm:mb-8">
-              <TasksReminder     
-                     book={eventInfo.todoBook}
-                    onInit={() => handleBookInit('todo')}
-                    onNavigate={() => handleBookNavigate('todo')}
-                    eventId={selectedEventId || undefined}/>
+              <TasksReminder
+                book={eventInfo.todoBook}
+                onInit={() => handleBookInit('todo')}
+                onNavigate={() => handleBookNavigate('todo')}
+                eventId={selectedEventId || undefined}
+              />
             </div>
 
             {/* SECTION 4: Upcoming Bookings - Full Width */}
             <div className="mb-6 sm:mb-8">
-              <UpcomingBookings 
-               book={eventInfo.serviceBook}
-                    onInit={() => handleBookInit('service')}
-                    onNavigate={() => handleBookNavigate('service')}
-                    eventId={selectedEventId || undefined}
-                     imageSrc={authHeroImage} />
+              <UpcomingBookings
+                book={eventInfo.serviceBook}
+                onInit={() => handleBookInit('service')}
+                onNavigate={() => handleBookNavigate('service')}
+                eventId={selectedEventId || undefined}
+                imageSrc={authHeroImage}
+              />
             </div>
 
             {/* SECTION 5: Budget & Guests - Two Columns */}
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 mb-6 sm:mb-8">
               <BudgetPayments
-                 book={eventInfo.budgetBook}
-                 onInit={() => handleBookInit('budget')}
-                 onNavigate={() => handleBookNavigate('budget')}
-                 eventId={selectedEventId || undefined}
+                book={eventInfo.budgetBook}
+                onInit={() => handleBookInit('budget')}
+                onNavigate={() => handleBookNavigate('budget')}
+                eventId={selectedEventId || undefined}
               />
               <GuestsInvitation
-                 book={eventInfo.guestBook}
-                 onInit={() => handleBookInit('guest')}
-                 onNavigate={() => handleBookNavigate('guest')}
-                 eventId={selectedEventId || undefined}
+                book={eventInfo.guestBook}
+                onInit={() => handleBookInit('guest')}
+                onNavigate={() => handleBookNavigate('guest')}
+                eventId={selectedEventId || undefined}
                 imageSrc={authHeroImage}
               />
             </div>
 
             {/* SECTION 6: Items, Notes & Occasions - Three Columns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
-  {/* <div className="self-start h-fit">
+              {/* <div className="self-start h-fit">
     <ItemsOverview
       book={eventInfo.itemBook}
       onInit={() => handleBookInit('item')}
@@ -640,25 +693,24 @@ function MyEventsPageContent() {
     />
   </div> */}
 
-  <div className="self-start h-fit">
-    <NotesOverview
-      book={eventInfo.noteBook}
-      onInit={() => handleBookInit('note')}
-      onNavigate={() => handleBookNavigate('note')}
-      eventId={selectedEventId || undefined}
-    />
-  </div>
+              <div className="self-start h-fit">
+                <NotesOverview
+                  book={eventInfo.noteBook}
+                  onInit={() => handleBookInit('note')}
+                  onNavigate={() => handleBookNavigate('note')}
+                  eventId={selectedEventId || undefined}
+                />
+              </div>
 
-  <div className="self-start h-fit">
-    <OccasionsOverview
-      book={eventInfo.occasionBook}
-      onInit={() => handleBookInit('occasion')}
-      onNavigate={() => handleBookNavigate('occasion')}
-      eventId={selectedEventId || undefined}
-    />
-  </div>
-</div>
-
+              <div className="self-start h-fit">
+                <OccasionsOverview
+                  book={eventInfo.occasionBook}
+                  onInit={() => handleBookInit('occasion')}
+                  onNavigate={() => handleBookNavigate('occasion')}
+                  eventId={selectedEventId || undefined}
+                />
+              </div>
+            </div>
 
             {/* SECTION 6: Book Cards */}
             {/* <div>
@@ -759,7 +811,9 @@ function MyEventsPageContent() {
             return (
               <button
                 key={tab.value}
-                onClick={() => setActiveTab(tab.value as 'my-events' | 'shared-events')}
+                onClick={() =>
+                  setActiveTab(tab.value as 'my-events' | 'shared-events')
+                }
                 className={cn(
                   'px-2 py-2 !text-14 font-normal transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 text-center w-full',
                   isActive
@@ -830,7 +884,9 @@ function MyEventsPageContent() {
           ) : (
             <div className="flex flex-col items-center justify-center py-12">
               <p className="text-16 text-gray-500 mb-4">
-                {activeTab === 'my-events' ? 'No events found. Create your first event!' : 'No shared events found.'}
+                {activeTab === 'my-events'
+                  ? 'No events found. Create your first event!'
+                  : 'No shared events found.'}
               </p>
               {activeTab === 'my-events' && (
                 <Button

@@ -95,27 +95,27 @@ export const CommunityRightSidebar = ({
   }
 
   return (
-    <aside
-      className={cn('w-full space-y-6', className)}
-    >
+    <aside className={cn('w-full space-y-6', className)}>
       {/* User Profile Card - Always visible in all tabs */}
       {currentUser && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
           <div className="flex items-center gap-3">
             <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-              {currentUser.avatar && currentUser.avatar !== 'https://via.placeholder.com/100' ? (
+              {currentUser.avatar &&
+              currentUser.avatar !== 'https://via.placeholder.com/100' ? (
                 <Image
                   src={currentUser.avatar}
                   alt={currentUser.name}
                   fill
                   sizes="48px"
                   className="object-cover"
-                  onError={(e) => {
+                  onError={e => {
                     e.currentTarget.style.display = 'none'
                   }}
                 />
               ) : null}
-              {(!currentUser.avatar || currentUser.avatar === 'https://via.placeholder.com/100') && (
+              {(!currentUser.avatar ||
+                currentUser.avatar === 'https://via.placeholder.com/100') && (
                 <div className="w-full h-full flex items-center justify-center bg-brand-100">
                   <span className="text-16 font-semibold text-brand-600">
                     {currentUser.name.charAt(0).toUpperCase() || 'U'}
@@ -127,9 +127,7 @@ export const CommunityRightSidebar = ({
               <h4 className="text-16 font-normal text-gray-900 truncate">
                 {currentUser.name}
               </h4>
-              <p className="text-12 text-gray-500 truncate">
-                OurBride
-              </p>
+              <p className="text-12 text-gray-500 truncate">OurBride</p>
             </div>
           </div>
         </div>
@@ -167,18 +165,27 @@ export const CommunityRightSidebar = ({
                   {getUserDisplayName(selectedReel.user)}
                 </h4>
                 <p className="text-12 text-gray-500">
-                  {formatDate(selectedReel.publishedAt || selectedReel.creationDate)}
+                  {formatDate(
+                    selectedReel.publishedAt || selectedReel.creationDate
+                  )}
                 </p>
               </div>
             </div>
 
             <p className="text-14 text-gray-700 mb-4 whitespace-pre-wrap">
-              {selectedReel.description || selectedReel.caption || selectedReel.title || ''}
+              {selectedReel.description ||
+                selectedReel.caption ||
+                selectedReel.title ||
+                ''}
             </p>
 
             <div className="flex items-center justify-center gap-3 pt-4 border-t border-gray-100">
               <EngagementButton
-                icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
+                icon={
+                  <Heart
+                    className={cn('h-4 w-4', isLiked && 'fill-brand-500')}
+                  />
+                }
                 count={likes}
                 label="Likes"
                 onClick={handleLikeClick}
@@ -217,19 +224,22 @@ export const CommunityRightSidebar = ({
             <div className="pt-6 border-t border-gray-100">
               <div className="flex gap-3">
                 <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-                  {currentUser.avatar && currentUser.avatar !== 'https://via.placeholder.com/100' ? (
+                  {currentUser.avatar &&
+                  currentUser.avatar !== 'https://via.placeholder.com/100' ? (
                     <Image
                       src={currentUser.avatar}
                       alt={currentUser.name}
                       fill
                       sizes="40px"
                       className="object-cover"
-                      onError={(e) => {
+                      onError={e => {
                         e.currentTarget.style.display = 'none'
                       }}
                     />
                   ) : null}
-                  {(!currentUser.avatar || currentUser.avatar === 'https://via.placeholder.com/100') && (
+                  {(!currentUser.avatar ||
+                    currentUser.avatar ===
+                      'https://via.placeholder.com/100') && (
                     <div className="w-full h-full flex items-center justify-center bg-brand-100">
                       <span className="text-14 font-semibold text-brand-600">
                         {currentUser.name.charAt(0).toUpperCase() || 'U'}
@@ -283,36 +293,52 @@ export const CommunityRightSidebar = ({
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
                         {(() => {
-                          const avatar = suggestion.profileImageUrl || 'https://via.placeholder.com/100'
-                          const displayName = suggestion.displayName || suggestion.userName || 'User'
-                          return avatar && avatar !== 'https://via.placeholder.com/100' ? (
+                          const avatar =
+                            suggestion.profileImageUrl ||
+                            'https://via.placeholder.com/100'
+                          const displayName =
+                            suggestion.displayName ||
+                            suggestion.userName ||
+                            'User'
+                          return avatar &&
+                            avatar !== 'https://via.placeholder.com/100' ? (
                             <Image
                               src={avatar}
                               alt={displayName}
                               fill
                               sizes="40px"
                               className="object-cover"
-                              onError={(e) => {
+                              onError={e => {
                                 e.currentTarget.style.display = 'none'
                               }}
                             />
                           ) : null
                         })()}
                         {(() => {
-                          const avatar = suggestion.profileImageUrl || 'https://via.placeholder.com/100'
-                          const displayName = suggestion.displayName || suggestion.userName || 'User'
-                          return (!avatar || avatar === 'https://via.placeholder.com/100') && (
-                            <div className="w-full h-full flex items-center justify-center bg-brand-100">
-                              <span className="text-14 font-semibold text-brand-600">
-                                {displayName.charAt(0).toUpperCase() || 'U'}
-                              </span>
-                            </div>
+                          const avatar =
+                            suggestion.profileImageUrl ||
+                            'https://via.placeholder.com/100'
+                          const displayName =
+                            suggestion.displayName ||
+                            suggestion.userName ||
+                            'User'
+                          return (
+                            (!avatar ||
+                              avatar === 'https://via.placeholder.com/100') && (
+                              <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                                <span className="text-14 font-semibold text-brand-600">
+                                  {displayName.charAt(0).toUpperCase() || 'U'}
+                                </span>
+                              </div>
+                            )
                           )
                         })()}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-14 font-normal text-gray-900 truncate">
-                          {suggestion.displayName || suggestion.userName || 'User'}
+                          {suggestion.displayName ||
+                            suggestion.userName ||
+                            'User'}
                         </h4>
                         <p className="text-12 text-gray-500 truncate">
                           OurBride
@@ -348,7 +374,10 @@ export const CommunityRightSidebar = ({
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
                         <Image
-                          src={provider.profileImageUrl || 'https://via.placeholder.com/100'}
+                          src={
+                            provider.profileImageUrl ||
+                            'https://via.placeholder.com/100'
+                          }
                           alt={provider.providerName || 'Provider'}
                           fill
                           sizes="40px"
@@ -385,7 +414,7 @@ export const CommunityRightSidebar = ({
                 Popular Tags
               </h3>
               <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
+                {tags.map(tag => (
                   <button
                     key={tag.id}
                     className="px-4 py-2 bg-gray-100 text-14 font-normal text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"

@@ -7,7 +7,10 @@ import { getAllPosts, searchPosts } from '@/services/api/postsApi'
 import { getAllArticles, searchArticles } from '@/services/api/articlesApi'
 import { getAllBlogs, searchBlogs } from '@/services/api/blogsApi'
 import { getAllReels, searchReels } from '@/services/api/reelsApi'
-import { getAllDecisionGroups, searchDecisionGroups } from '@/services/api/decisionGroupsApi'
+import {
+  getAllDecisionGroups,
+  searchDecisionGroups,
+} from '@/services/api/decisionGroupsApi'
 import { getAllContests, searchContests } from '@/services/api/contestsApi'
 import type { PostResponse } from '@/types/responses/community'
 import type { ArticleResponse } from '@/types/responses/community'
@@ -261,8 +264,3 @@ export const useContestsSearch = (params?: {
     refetchOnWindowFocus: false,
   })
 }
-
-
-
-
-

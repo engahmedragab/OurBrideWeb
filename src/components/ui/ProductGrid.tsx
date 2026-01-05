@@ -48,7 +48,8 @@ export const ProductGrid = ({
         // Inline component to use hooks properly
         const ProductCardItem = () => {
           const handlers = useProductCardHandlers(parseInt(product.id, 10))
-          const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+          const { handleAddToCart, isLoading: isLoadingAddToCart } =
+            useAddProductToCart()
 
           const handleAddToCartClick = (e: React.MouseEvent) => {
             e.preventDefault()

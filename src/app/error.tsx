@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -12,7 +12,11 @@ export default function ErrorPage() {
       <div className="flex flex-col items-center justify-center w-full">
         {/* SVG Illustration */}
         <Image
-          src={typeof orderEmptySvg === 'string' ? orderEmptySvg : orderEmptySvg.src}
+          src={
+            typeof orderEmptySvg === 'string'
+              ? orderEmptySvg
+              : orderEmptySvg.src
+          }
           alt="Something went wrong"
           width={256}
           height={256}

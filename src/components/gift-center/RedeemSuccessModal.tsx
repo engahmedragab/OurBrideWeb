@@ -119,7 +119,9 @@ export const RedeemSuccessModal = ({
             {code && (
               <div className="w-full pt-1 sm:pt-1.5">
                 <div className="bg-green-100 border border-dashed border-green-500 rounded-sm h-10 sm:h-12 flex items-center justify-center relative">
-                  <p className="text-14 sm:text-16 font-normal text-green-500">{code}</p>
+                  <p className="text-14 sm:text-16 font-normal text-green-500">
+                    {code}
+                  </p>
                   {onCopyCode && (
                     <button
                       onClick={handleCopyCode}
@@ -148,4 +150,3 @@ export const RedeemSuccessModal = ({
     </Modal>
   )
 }
-

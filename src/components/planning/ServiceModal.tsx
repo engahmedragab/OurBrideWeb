@@ -15,7 +15,10 @@ import { planningTypography } from './typography'
 import { cn } from '@/lib/utils'
 import { usePreparations } from '@/hooks/planning/usePreparations'
 import { getServiceIcon } from '@/utils/serviceIconMapper'
-import { preparationLineSchema, type PreparationLineFormValues } from '@/schema/preparations.schema'
+import {
+  preparationLineSchema,
+  type PreparationLineFormValues,
+} from '@/schema/preparations.schema'
 import { Sparkles } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -63,9 +66,11 @@ export const ServiceModal = ({
   onSave,
 }: ServiceModalProps) => {
   // Fetch services from API
-  const { data: services = [], isLoading: isLoadingServices } = usePreparations({
-    enabled: open, // Only fetch when modal is open
-  })
+  const { data: services = [], isLoading: isLoadingServices } = usePreparations(
+    {
+      enabled: open, // Only fetch when modal is open
+    }
+  )
 
   const {
     register,
@@ -102,10 +107,7 @@ export const ServiceModal = ({
   const lastOpenStateRef = useRef(false)
 
   // Derived values for calculations
-  const totalCost = useMemo(
-    () => cost * quantity,
-    [cost, quantity]
-  )
+  const totalCost = useMemo(() => cost * quantity, [cost, quantity])
 
   const remaining = useMemo(
     () => Math.max(totalCost - advancePayment, 0),
@@ -122,7 +124,7 @@ export const ServiceModal = ({
         imageUrl: undefined,
       }
     }
-    
+
     const service = services.find(s => String(s.id) === serviceKey)
     if (!service) {
       return {
@@ -134,7 +136,7 @@ export const ServiceModal = ({
 
     // Use icon from API if available, otherwise use getServiceIcon fallback
     const Icon = getServiceIcon(service.name) as LucideIcon
-    
+
     return {
       label: service.nameEn || service.nameAr || service.name || 'Unknown',
       Icon,
@@ -170,11 +172,12 @@ export const ServiceModal = ({
 
       // Get the service label for the title
       const serviceKey = initialValue.serviceKey || ''
-      const service = serviceKey && services.length
-        ? services.find(s => String(s.id) === serviceKey)
-        : null
-      const title = service 
-        ? (service.nameEn || service.nameAr || service.name || '')
+      const service =
+        serviceKey && services.length
+          ? services.find(s => String(s.id) === serviceKey)
+          : null
+      const title = service
+        ? service.nameEn || service.nameAr || service.name || ''
         : initialValue.title || ''
 
       reset({
@@ -182,7 +185,8 @@ export const ServiceModal = ({
         serviceKey,
         title,
         serviceType:
-          initialValue.serviceType === 'rent' || initialValue.serviceType === 'buy'
+          initialValue.serviceType === 'rent' ||
+          initialValue.serviceType === 'buy'
             ? initialValue.serviceType
             : 'rent',
         quantity: initialValue.quantity,
@@ -213,12 +217,13 @@ export const ServiceModal = ({
   // Sync title and header with selected service (works in both Add and Edit modes)
   useEffect(() => {
     if (!open) return // Don't update if modal is closed
-    
+
     if (serviceKey && services.length) {
       const service = services.find(s => String(s.id) === serviceKey)
       if (service) {
         // Always update title to match selected service name
-        const serviceName = service.nameEn || service.nameAr || service.name || ''
+        const serviceName =
+          service.nameEn || service.nameAr || service.name || ''
         setValue('title', serviceName, { shouldValidate: true })
       }
     }
@@ -305,13 +310,17 @@ export const ServiceModal = ({
           ) : (
             <ServiceSelect
               value={serviceKey}
-              onChange={value => setValue('serviceKey', value, { shouldValidate: true })}
+              onChange={value =>
+                setValue('serviceKey', value, { shouldValidate: true })
+              }
               required
               services={services}
             />
           )}
           {errors.serviceKey && (
-            <p className="mt-1 text-sm text-red-500">{errors.serviceKey.message}</p>
+            <p className="mt-1 text-sm text-red-500">
+              {errors.serviceKey.message}
+            </p>
           )}
         </div>
 
@@ -338,14 +347,18 @@ export const ServiceModal = ({
               label="Service Type"
               value={watchedValues.serviceType}
               onChange={value =>
-                setValue('serviceType', value as 'rent' | 'buy', { shouldValidate: true })
+                setValue('serviceType', value as 'rent' | 'buy', {
+                  shouldValidate: true,
+                })
               }
               options={SERVICE_TYPE_OPTIONS}
               required
               showLabel={false}
             />
             {errors.serviceType && (
-              <p className="mt-1 text-sm text-red-500">{errors.serviceType.message}</p>
+              <p className="mt-1 text-sm text-red-500">
+                {errors.serviceType.message}
+              </p>
             )}
           </div>
         </div>
@@ -384,11 +397,15 @@ export const ServiceModal = ({
             </label>
             <NumberStepper
               value={watchedValues.quantity || 1}
-              onChange={value => setValue('quantity', value, { shouldValidate: true })}
+              onChange={value =>
+                setValue('quantity', value, { shouldValidate: true })
+              }
               min={1}
             />
             {errors.quantity && (
-              <p className="mt-1 text-sm text-red-500">{errors.quantity.message}</p>
+              <p className="mt-1 text-sm text-red-500">
+                {errors.quantity.message}
+              </p>
             )}
           </div>
 
@@ -489,10 +506,20 @@ export const ServiceModal = ({
 
         {/* Footer Buttons */}
         <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
-          <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button type="submit" variant="brand" className="text-white" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            variant="brand"
+            className="text-white"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? 'Saving...' : 'Save'}
           </Button>
         </div>

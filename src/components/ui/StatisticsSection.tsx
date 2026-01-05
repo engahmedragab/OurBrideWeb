@@ -32,7 +32,9 @@ export const StatisticsSection = ({
   mainStatisticColor = 'text-brand-500',
 }: StatisticsSectionProps) => {
   return (
-    <section className={cn('py-16 sm:py-20 md:py-24 lg:py-32 bg-white', className)}>
+    <section
+      className={cn('py-16 sm:py-20 md:py-24 lg:py-32 bg-white', className)}
+    >
       <div className="container-custom">
         <div className="max-w-4xl mx-auto text-center">
           {/* Headline */}
@@ -47,7 +49,12 @@ export const StatisticsSection = ({
 
           {/* Main Statistic */}
           <div className="mb-16 sm:mb-20 md:mb-24">
-            <div className={cn('text-48 sm:text-64 md:text-80 lg:text-96 xl:text-[120px] font-bold mb-4 sm:mb-6', mainStatisticColor)}>
+            <div
+              className={cn(
+                'text-48 sm:text-64 md:text-80 lg:text-96 xl:text-[120px] font-bold mb-4 sm:mb-6',
+                mainStatisticColor
+              )}
+            >
               {mainStatistic.value}
             </div>
             <p className="text-18 sm:text-20 md:text-24 text-gray-700">
@@ -73,6 +80,3 @@ export const StatisticsSection = ({
     </section>
   )
 }
-
-
-

@@ -14,7 +14,12 @@ interface GuestRowProps {
   onDelete: (id: string) => void
 }
 
-export const GuestRow = ({ guest, onToggleSelect, onToggleStatus, onDelete }: GuestRowProps) => {
+export const GuestRow = ({
+  guest,
+  onToggleSelect,
+  onToggleStatus,
+  onDelete,
+}: GuestRowProps) => {
   return (
     <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
       <Checkbox
@@ -27,7 +32,9 @@ export const GuestRow = ({ guest, onToggleSelect, onToggleStatus, onDelete }: Gu
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-12 text-gray-500">No.</span>
-          <span className="text-14 font-medium text-gray-900 truncate">{guest.name}</span>
+          <span className="text-14 font-medium text-gray-900 truncate">
+            {guest.name}
+          </span>
         </div>
 
         <p className="text-12 text-gray-500 truncate">
@@ -43,7 +50,11 @@ export const GuestRow = ({ guest, onToggleSelect, onToggleStatus, onDelete }: Gu
           aria-label={`Toggle status for ${guest.name}`}
         >
           {guest.status === 'confirmed' ? (
-            <Badge variant="confirmed" size="sm" className="flex items-center gap-1.5 px-2.5 py-1">
+            <Badge
+              variant="confirmed"
+              size="sm"
+              className="flex items-center gap-1.5 px-2.5 py-1"
+            >
               <CheckCircle2 className="h-3.5 w-3.5" />
               <span className="text-12">Confirmed</span>
             </Badge>

@@ -8,19 +8,3 @@ export interface ShareArticleResponse {
   fullUrl: string
   shareCount: number
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

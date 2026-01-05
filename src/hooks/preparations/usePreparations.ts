@@ -15,7 +15,7 @@ export const usePreparations = (enabled = true) => {
     queryFn: async (): Promise<PreparationsData> => {
       try {
         const response = await apiClient.api.getPreparationsGetAll()
-        
+
         // Handle different response structures
         let preparations: PreparationResponse[] = []
         const responseData = (response as { data?: unknown })?.data
@@ -41,7 +41,7 @@ export const usePreparations = (enabled = true) => {
         }
 
         // Filter only active preparations
-        preparations = preparations.filter((prep) => prep.isActive !== false)
+        preparations = preparations.filter(prep => prep.isActive !== false)
 
         return {
           preparations,
@@ -56,5 +56,3 @@ export const usePreparations = (enabled = true) => {
     refetchOnWindowFocus: false,
   })
 }
-
-

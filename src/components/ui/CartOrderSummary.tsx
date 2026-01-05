@@ -268,13 +268,17 @@ export const CartOrderSummary = ({
               {depositPaid > 0 && (
                 <div className="flex justify-between text-12 text-gray-600">
                   <span>Deposit Paid</span>
-                  <span>{depositPaid.toLocaleString()} {currency}</span>
+                  <span>
+                    {depositPaid.toLocaleString()} {currency}
+                  </span>
                 </div>
               )}
               {depositRemaining > 0 && (
                 <div className="flex justify-between text-12 text-gray-600">
                   <span>Deposit Remaining</span>
-                  <span>{depositRemaining.toLocaleString()} {currency}</span>
+                  <span>
+                    {depositRemaining.toLocaleString()} {currency}
+                  </span>
                 </div>
               )}
             </div>
@@ -301,7 +305,9 @@ export const CartOrderSummary = ({
             </span>
             <div className="flex items-center gap-1 ml-2">
               <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
-              <span className="text-14 font-medium text-green-600">Redeemed</span>
+              <span className="text-14 font-medium text-green-600">
+                Redeemed
+              </span>
             </div>
           </div>
         </div>

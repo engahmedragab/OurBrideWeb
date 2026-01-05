@@ -11,7 +11,11 @@ import { cn } from '@/lib/utils'
 import { EngagementButton } from './EngagementButton'
 import { getProfileUrl } from './utils'
 import type { PostResponse } from '@/types/responses/community'
-import { toggleLike as togglePostLike, toggleFavorite as togglePostFavorite, sharePost } from '@/services/api/postsApi'
+import {
+  toggleLike as togglePostLike,
+  toggleFavorite as togglePostFavorite,
+  sharePost,
+} from '@/services/api/postsApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
@@ -36,8 +40,10 @@ const formatDate = (dateString: string | null): string => {
 // Helper function to get user display name
 const getUserDisplayName = (user: PostResponse['user']): string => {
   if (!user) return 'OurBride'
-  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
-  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const firstName =
+    user.firstName && user.firstName !== 'null' ? user.firstName : ''
+  const lastName =
+    user.lastName && user.lastName !== 'null' ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   return fullName || user.userName || 'OurBride'
 }
@@ -73,8 +79,11 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -82,18 +91,24 @@ export const PostCard = ({ post, className }: PostCardProps) => {
     mutationFn: async (shareSource?: string) => {
       return await sharePost(post.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
         // Copy share URL to clipboard
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/posts/${post.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/posts/${post.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share post', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share post',
+        'error'
+      )
     },
   })
 
@@ -106,8 +121,11 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -163,7 +181,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
                 fill
                 sizes="40px"
                 className="object-cover"
-                onError={(e) => {
+                onError={e => {
                   e.currentTarget.style.display = 'none'
                 }}
               />
@@ -184,13 +202,17 @@ export const PostCard = ({ post, className }: PostCardProps) => {
             {post.userId && getProfileUrl(post.userId, post.user?.type) ? (
               <Link
                 href={getProfileUrl(post.userId, post.user?.type)!}
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 className="hover:text-brand-500 transition-colors"
               >
-                <h4 className="text-16 font-normal text-gray-900">{displayName}</h4>
+                <h4 className="text-16 font-normal text-gray-900">
+                  {displayName}
+                </h4>
               </Link>
             ) : (
-              <h4 className="text-16 font-normal text-gray-900">{displayName}</h4>
+              <h4 className="text-16 font-normal text-gray-900">
+                {displayName}
+              </h4>
             )}
             <p className="text-12 text-gray-500">{timestamp}</p>
           </div>
@@ -208,7 +230,9 @@ export const PostCard = ({ post, className }: PostCardProps) => {
 
       {/* Post Title */}
       {post.title && (
-        <h3 className="text-18 font-semibold text-gray-900 mb-2">{post.title}</h3>
+        <h3 className="text-18 font-semibold text-gray-900 mb-2">
+          {post.title}
+        </h3>
       )}
 
       {/* Post Content */}
@@ -232,7 +256,10 @@ export const PostCard = ({ post, className }: PostCardProps) => {
           ) : images.length === 2 ? (
             <div className="grid grid-cols-2 gap-2">
               {images.map((img, idx) => (
-                <div key={idx} className="relative w-full h-48 rounded-lg overflow-hidden">
+                <div
+                  key={idx}
+                  className="relative w-full h-48 rounded-lg overflow-hidden"
+                >
                   <Image
                     src={img}
                     alt={`Post image ${idx + 1}`}
@@ -256,7 +283,10 @@ export const PostCard = ({ post, className }: PostCardProps) => {
               </div>
               <div className="col-span-2 flex flex-col gap-2">
                 {images.slice(1, 3).map((img, idx) => (
-                  <div key={idx} className="relative w-full h-32 rounded-lg overflow-hidden">
+                  <div
+                    key={idx}
+                    className="relative w-full h-32 rounded-lg overflow-hidden"
+                  >
                     <Image
                       src={img}
                       alt={`Post image ${idx + 2}`}
@@ -300,7 +330,9 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       <div className="flex items-center justify-center gap-3 pt-4 border-t border-gray-100">
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+            icon={
+              <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
+            }
             count={likes}
             label="Likes"
             onClick={handleLikeClick}
@@ -327,7 +359,11 @@ export const PostCard = ({ post, className }: PostCardProps) => {
         </div>
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+            icon={
+              <Star
+                className={cn('h-5 w-5', isFavorited && 'fill-brand-500')}
+              />
+            }
             count={favorites}
             label="Favorites"
             onClick={handleFavoriteClick}

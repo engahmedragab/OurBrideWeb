@@ -26,19 +26,18 @@ import {
   Volume2,
 
   // ✅ Wedding / Planning extras
-  Shirt,       // dress
-  Church,      // venue
-  Gem,         // ring
-  Utensils,    // catering
-  Calendar,    // schedule
-  MapPin,      // location
-  Scissors,    // hair service
-  CreditCard,  // budget/payment
-  Receipt,     // invoices/receipts
-  Tag,         // offers/discounts
-  Mail,        // invitations
-  HandHeart,   // volunteer/thanks
-
+  Shirt, // dress
+  Church, // venue
+  Gem, // ring
+  Utensils, // catering
+  Calendar, // schedule
+  MapPin, // location
+  Scissors, // hair service
+  CreditCard, // budget/payment
+  Receipt, // invoices/receipts
+  Tag, // offers/discounts
+  Mail, // invitations
+  HandHeart, // volunteer/thanks
   type LucideIcon,
 } from 'lucide-react'
 

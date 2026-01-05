@@ -19,4 +19,3 @@ export const usePreparations = (options?: { enabled?: boolean }) => {
     refetchOnWindowFocus: false,
   })
 }
-

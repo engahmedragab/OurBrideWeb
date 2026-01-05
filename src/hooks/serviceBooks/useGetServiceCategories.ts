@@ -6,10 +6,13 @@ import { isAuthenticated } from '@/auth/utils/token'
 /**
  * Hook to fetch service categories
  */
-export const useServiceCategories = (query?: { clientId?: string; enabled?: boolean }) => {
+export const useServiceCategories = (query?: {
+  clientId?: string
+  enabled?: boolean
+}) => {
   const { enabled = true, ...queryParams } = query || {}
   const authenticated = isAuthenticated()
-  
+
   return useQuery<ServiceLineCategoryResponse[]>({
     queryKey: ['serviceCategories', queryParams],
     queryFn: async () => {
@@ -20,4 +23,3 @@ export const useServiceCategories = (query?: { clientId?: string; enabled?: bool
     refetchOnWindowFocus: false,
   })
 }
-

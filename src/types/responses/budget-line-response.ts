@@ -20,5 +20,3 @@ export interface BudgetLineResponse extends LineResponse {
   colorName: string
   budgetLineCategory?: BudgetLineCategoryResponse
 }
-
-

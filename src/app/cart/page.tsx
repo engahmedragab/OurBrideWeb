@@ -17,11 +17,21 @@ import {
   LoadingOverlay,
 } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
-import { useCart, useCartProviders, useUpdatePurchase, useRemovePurchase, useClearCart, useCheckout } from '@/hooks'
+import {
+  useCart,
+  useCartProviders,
+  useUpdatePurchase,
+  useRemovePurchase,
+  useClearCart,
+  useCheckout,
+} from '@/hooks'
 import { getCartByProvider, getCartByCartId } from '@/services/api/purchaseApi'
 import { getProductById } from '@/services/api/products.api'
 import { getUser } from '@/auth/utils/token'
-import type { CheckoutRequest, CustomerRequest } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  CheckoutRequest,
+  CustomerRequest,
+} from '@/../client/common/api/gen/ourbride-api'
 import type { PurchaseResponse } from '@/types/responses'
 import type { ProductResponse } from '@/types/responses'
 import type { ReservationResponse } from '@/types/responses'
@@ -70,9 +80,14 @@ const mapPurchaseToCartProduct = (
 
   // If ProductHeaderResponse exists, use it for pricing
   if (productHeader) {
-    originalPrice = productHeader.regularPrice ?? productHeader.price ?? pricePerUnit
-    discountedPrice = productHeader.salePrice ?? productHeader.price ?? originalPrice
-    const hasDiscount = productHeader.hasDiscount && productHeader.salePrice && productHeader.regularPrice
+    originalPrice =
+      productHeader.regularPrice ?? productHeader.price ?? pricePerUnit
+    discountedPrice =
+      productHeader.salePrice ?? productHeader.price ?? originalPrice
+    const hasDiscount =
+      productHeader.hasDiscount &&
+      productHeader.salePrice &&
+      productHeader.regularPrice
     discountPercentage = hasDiscount
       ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
       : undefined
@@ -93,9 +108,14 @@ const mapPurchaseToCartProduct = (
       image = fetchedProduct.image ?? '/placeholder-product.png'
     }
     if (!productHeader) {
-      originalPrice = fetchedProduct.regularPrice ?? fetchedProduct.price ?? pricePerUnit
-      discountedPrice = fetchedProduct.salePrice ?? fetchedProduct.price ?? originalPrice
-      const hasDiscount = fetchedProduct.hasDiscount && fetchedProduct.salePrice && fetchedProduct.regularPrice
+      originalPrice =
+        fetchedProduct.regularPrice ?? fetchedProduct.price ?? pricePerUnit
+      discountedPrice =
+        fetchedProduct.salePrice ?? fetchedProduct.price ?? originalPrice
+      const hasDiscount =
+        fetchedProduct.hasDiscount &&
+        fetchedProduct.salePrice &&
+        fetchedProduct.regularPrice
       discountPercentage = hasDiscount
         ? Math.round(((originalPrice - discountedPrice) / originalPrice) * 100)
         : undefined
@@ -110,10 +130,10 @@ const mapPurchaseToCartProduct = (
   // Format delivery date if available
   const deliveryDate = purchase.preferredDeliveryDate
     ? new Date(purchase.preferredDeliveryDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
     : undefined
 
   return {
@@ -164,10 +184,10 @@ const mapPurchaseToCartReservation = (
 
     const reservationDate = reservation.reservationDate
       ? new Date(reservation.reservationDate).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      })
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        })
       : undefined
 
     // Final fallback: Use type name if name is still null
@@ -226,7 +246,8 @@ const mapPurchaseToCartMembership = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority: Use display properties from PurchaseResponse, fallback to type name
-  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Membership'
+  const title =
+    purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Membership'
   const image = purchase.imageUrl ?? '/placeholder-membership.png'
 
   return {
@@ -257,7 +278,8 @@ const mapPurchaseToCartGiftCard = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority: Use display properties from PurchaseResponse, fallback to type name
-  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Gift Card'
+  const title =
+    purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Gift Card'
   const image = purchase.imageUrl ?? '/placeholder-giftcard.png'
 
   return {
@@ -290,16 +312,24 @@ export default function CartPage() {
   const [selectedCartIds, setSelectedCartIds] = useState<number[]>([])
 
   // Fetch cart providers (includes cartId for each provider/general cart)
-  const { data: cartProviders = [], refetch: refetchProviders, isLoading: isLoadingProviders } = useCartProviders()
+  const {
+    data: cartProviders = [],
+    refetch: refetchProviders,
+    isLoading: isLoadingProviders,
+  } = useCartProviders()
 
   // Find general cart (providerId is null)
   const generalCartProvider = useMemo(() => {
-    return cartProviders.find(cp => cp.providerId === null || cp.providerId === undefined)
+    return cartProviders.find(
+      cp => cp.providerId === null || cp.providerId === undefined
+    )
   }, [cartProviders])
 
   // Get provider carts (excluding general cart)
   const providerCarts = useMemo(() => {
-    return cartProviders.filter(cp => cp.providerId !== null && cp.providerId !== undefined)
+    return cartProviders.filter(
+      cp => cp.providerId !== null && cp.providerId !== undefined
+    )
   }, [cartProviders])
 
   // Get selected provider IDs for display (for the tags and multi-select)
@@ -307,7 +337,11 @@ export default function CartPage() {
     return cartProviders
       .filter(cp => {
         const cartId = cp.cartId
-        return cartId !== null && cartId !== undefined && selectedCartIds.includes(cartId)
+        return (
+          cartId !== null &&
+          cartId !== undefined &&
+          selectedCartIds.includes(cartId)
+        )
       })
       .map(cp => cp.providerId)
       .filter((id): id is number => id !== null && id !== undefined)
@@ -315,11 +349,21 @@ export default function CartPage() {
 
   // Determine if we should fetch general cart
   // Fetch general cart if: no filters OR general cart is selected
-  const shouldFetchGeneralCart = selectedCartIds.length === 0 ||
-    !!(generalCartProvider && generalCartProvider.cartId && selectedCartIds.includes(generalCartProvider.cartId))
+  const shouldFetchGeneralCart =
+    selectedCartIds.length === 0 ||
+    !!(
+      generalCartProvider &&
+      generalCartProvider.cartId &&
+      selectedCartIds.includes(generalCartProvider.cartId)
+    )
 
   // Fetch general cart data
-  const { data: cartData, isLoading: isLoadingGeneralCart, error, refetch: refetchCart } = useCart(!!shouldFetchGeneralCart)
+  const {
+    data: cartData,
+    isLoading: isLoadingGeneralCart,
+    error,
+    refetch: refetchCart,
+  } = useCart(!!shouldFetchGeneralCart)
 
   // Fetch carts by ID when filtering
   // If no filters selected, fetch all provider carts by provider
@@ -330,7 +374,9 @@ export default function CartPage() {
       return []
     } else {
       // Filters applied - fetch all selected carts by cartId
-      return selectedCartIds.filter(cartId => cartId !== null && cartId !== undefined)
+      return selectedCartIds.filter(
+        cartId => cartId !== null && cartId !== undefined
+      )
     }
   }, [selectedCartIds])
 
@@ -344,14 +390,18 @@ export default function CartPage() {
       const selectedCartIdsSet = new Set(selectedCartIds)
       return providerCarts.filter(cp => {
         const cartId = cp.cartId
-        return cartId !== null && cartId !== undefined && !selectedCartIdsSet.has(cartId)
+        return (
+          cartId !== null &&
+          cartId !== undefined &&
+          !selectedCartIdsSet.has(cartId)
+        )
       })
     }
   }, [selectedCartIds, providerCarts])
 
   // Fetch carts by cartId when filtering
   const cartByIdQueries = useQueries({
-    queries: cartsToFetchById.map((cartId) => {
+    queries: cartsToFetchById.map(cartId => {
       return {
         queryKey: ['cart', 'cartId', cartId],
         queryFn: async () => {
@@ -366,7 +416,7 @@ export default function CartPage() {
 
   // Fetch provider carts by providerId (for carts not in selectedCartIds when filtering)
   const cartQueries = useQueries({
-    queries: providerCartsToFetch.map((provider) => {
+    queries: providerCartsToFetch.map(provider => {
       const cartId = provider.cartId
       const providerId = provider.providerId!
       return {
@@ -375,12 +425,17 @@ export default function CartPage() {
           const cart = await getCartByProvider(providerId)
           return { cartId, providerId, cart }
         },
-        enabled: !!(cartId !== null && cartId !== undefined && providerId !== null && providerId !== undefined && !isLoadingProviders),
+        enabled: !!(
+          cartId !== null &&
+          cartId !== undefined &&
+          providerId !== null &&
+          providerId !== undefined &&
+          !isLoadingProviders
+        ),
         staleTime: 1 * 60 * 1000, // 1 minute
       }
     }),
   })
-
 
   // Mutations
   const updatePurchaseMutation = useUpdatePurchase()
@@ -397,39 +452,30 @@ export default function CartPage() {
     if (cartData?.purchases) {
       cartData.purchases
         .filter(
-          (p) =>
-            p.type === PurchaseType.Product &&
-            p.productId &&
-            !p.product
+          p => p.type === PurchaseType.Product && p.productId && !p.product
         )
-        .forEach((p) => productIds.add(p.productId!))
+        .forEach(p => productIds.add(p.productId!))
     }
 
     // Check provider carts (fetched by providerId)
-    cartQueries.forEach((query) => {
+    cartQueries.forEach(query => {
       if (query.data?.cart?.purchases) {
         query.data.cart.purchases
           .filter(
-            (p) =>
-              p.type === PurchaseType.Product &&
-              p.productId &&
-              !p.product
+            p => p.type === PurchaseType.Product && p.productId && !p.product
           )
-          .forEach((p) => productIds.add(p.productId!))
+          .forEach(p => productIds.add(p.productId!))
       }
     })
 
     // Check carts fetched by cartId
-    cartByIdQueries.forEach((query) => {
+    cartByIdQueries.forEach(query => {
       if (query.data?.cart?.purchases) {
         query.data.cart.purchases
           .filter(
-            (p) =>
-              p.type === PurchaseType.Product &&
-              p.productId &&
-              !p.product
+            p => p.type === PurchaseType.Product && p.productId && !p.product
           )
-          .forEach((p) => productIds.add(p.productId!))
+          .forEach(p => productIds.add(p.productId!))
       }
     })
 
@@ -438,7 +484,7 @@ export default function CartPage() {
 
   // Fetch product details for purchases that have productId but product is null
   const productQueries = useQueries({
-    queries: productIdsToFetch.map((productId) => ({
+    queries: productIdsToFetch.map(productId => ({
       queryKey: ['product', productId],
       queryFn: async () => {
         const product = await getProductById(productId)
@@ -458,18 +504,22 @@ export default function CartPage() {
     // If filtering by specific carts
     if (selectedCartIds.length > 0) {
       // Add general cart purchases if general cart is selected
-      if (generalCartProvider && generalCartProvider.cartId && selectedCartIds.includes(generalCartProvider.cartId)) {
+      if (
+        generalCartProvider &&
+        generalCartProvider.cartId &&
+        selectedCartIds.includes(generalCartProvider.cartId)
+      ) {
         if (cartData?.purchases && cartData.id) {
           // Mark this cart as processed
           seenCartIds.add(cartData.id)
-          cartData.purchases.forEach((purchase) => {
+          cartData.purchases.forEach(purchase => {
             purchaseMap.set(purchase.id, purchase)
           })
         }
       }
 
       // Add selected cart purchases (fetched by cartId)
-      cartByIdQueries.forEach((query) => {
+      cartByIdQueries.forEach(query => {
         if (query.data?.cart) {
           const cart = query.data.cart
           const cartId = cart.id
@@ -481,7 +531,7 @@ export default function CartPage() {
 
           if (cart.purchases) {
             seenCartIds.add(cartId)
-            cart.purchases.forEach((purchase) => {
+            cart.purchases.forEach(purchase => {
               purchaseMap.set(purchase.id, purchase)
             })
           }
@@ -489,7 +539,7 @@ export default function CartPage() {
       })
 
       // Add remaining provider cart purchases (not in selectedCartIds, fetched by providerId)
-      cartQueries.forEach((query) => {
+      cartQueries.forEach(query => {
         if (query.data?.cart) {
           const cart = query.data.cart
           const cartId = cart.id
@@ -501,7 +551,7 @@ export default function CartPage() {
 
           if (cart.purchases) {
             seenCartIds.add(cartId)
-            cart.purchases.forEach((purchase) => {
+            cart.purchases.forEach(purchase => {
               purchaseMap.set(purchase.id, purchase)
             })
           }
@@ -516,13 +566,13 @@ export default function CartPage() {
     // Add general cart first
     if (cartData?.purchases && cartData.id) {
       seenCartIds.add(cartData.id)
-      cartData.purchases.forEach((purchase) => {
+      cartData.purchases.forEach(purchase => {
         purchaseMap.set(purchase.id, purchase)
       })
     }
 
     // Add all provider carts (fetched by providerId)
-    cartQueries.forEach((query) => {
+    cartQueries.forEach(query => {
       if (query.data?.cart) {
         const cart = query.data.cart
         const cartId = cart.id
@@ -534,7 +584,7 @@ export default function CartPage() {
 
         if (cart.purchases) {
           seenCartIds.add(cartId)
-          cart.purchases.forEach((purchase) => {
+          cart.purchases.forEach(purchase => {
             purchaseMap.set(purchase.id, purchase)
           })
         }
@@ -543,13 +593,19 @@ export default function CartPage() {
 
     const purchases = Array.from(purchaseMap.values())
     return purchases
-  }, [selectedCartIds, cartQueries, cartByIdQueries, cartData, generalCartProvider])
+  }, [
+    selectedCartIds,
+    cartQueries,
+    cartByIdQueries,
+    cartData,
+    generalCartProvider,
+  ])
 
   // Create a map of productId -> ProductResponse for quick lookup
   // Used when ProductHeaderResponse is not available in purchase
   const productMap = useMemo(() => {
     const map = new Map<number, ProductResponse>()
-    productQueries.forEach((query) => {
+    productQueries.forEach(query => {
       if (query.data?.product) {
         const product = query.data.product as ProductResponse
         map.set(query.data.productId, product)
@@ -562,7 +618,7 @@ export default function CartPage() {
   const cartProducts = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => {
+      .map(purchase => {
         // Only process Product type purchases
         if (purchase.type !== PurchaseType.Product) {
           return null
@@ -586,7 +642,10 @@ export default function CartPage() {
   const servicePurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases.filter(
-      (p) => p.type === PurchaseType.Service && (p.serviceId !== null && p.serviceId !== undefined)
+      p =>
+        p.type === PurchaseType.Service &&
+        p.serviceId !== null &&
+        p.serviceId !== undefined
     )
   }, [allPurchases])
 
@@ -594,15 +653,17 @@ export default function CartPage() {
   const reservationPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartReservation(purchase))
-      .filter((reservation): reservation is CartReservation => reservation !== null)
+      .map(purchase => mapPurchaseToCartReservation(purchase))
+      .filter(
+        (reservation): reservation is CartReservation => reservation !== null
+      )
   }, [allPurchases])
 
   // Filter membership purchases
   const membershipPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartMembership(purchase))
+      .map(purchase => mapPurchaseToCartMembership(purchase))
       .filter((membership): membership is CartMembership => membership !== null)
   }, [allPurchases])
 
@@ -610,7 +671,7 @@ export default function CartPage() {
   const giftCardPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartGiftCard(purchase))
+      .map(purchase => mapPurchaseToCartGiftCard(purchase))
       .filter((giftCard): giftCard is CartGiftCard => giftCard !== null)
   }, [allPurchases])
 
@@ -619,8 +680,12 @@ export default function CartPage() {
   const hasReservations = reservationPurchases.length > 0
   const hasMemberships = membershipPurchases.length > 0
   const hasGiftCards = giftCardPurchases.length > 0
-  const hasItems = hasProducts || hasServices || hasReservations || hasMemberships || hasGiftCards
-
+  const hasItems =
+    hasProducts ||
+    hasServices ||
+    hasReservations ||
+    hasMemberships ||
+    hasGiftCards
 
   // Get the active cart data (from main cart or combined provider carts)
   const activeCartData = useMemo(() => {
@@ -653,7 +718,13 @@ export default function CartPage() {
 
     // Multiple carts selected - calculate from items (no single cart data)
     return null
-  }, [selectedCartIds, cartData, cartQueries, cartByIdQueries, generalCartProvider])
+  }, [
+    selectedCartIds,
+    cartData,
+    cartQueries,
+    cartByIdQueries,
+    generalCartProvider,
+  ])
 
   // Calculate totals from priceCalculation (most accurate), then cartSummary, otherwise calculate from all items
   const { subtotal, taxesAndFees, deliveryFee, total } = useMemo(() => {
@@ -696,7 +767,8 @@ export default function CartPage() {
       (sum, giftCard) => sum + giftCard.price * giftCard.quantity,
       0
     )
-    const sub = productsTotal + reservationsTotal + membershipsTotal + giftCardsTotal
+    const sub =
+      productsTotal + reservationsTotal + membershipsTotal + giftCardsTotal
     const taxes = 0 // Will be calculated by API
     const delivery = 0 // Will be calculated by API
     const tot = sub + taxes + delivery
@@ -707,7 +779,13 @@ export default function CartPage() {
       deliveryFee: delivery,
       total: tot,
     }
-  }, [cartProducts, reservationPurchases, membershipPurchases, giftCardPurchases, activeCartData])
+  }, [
+    cartProducts,
+    reservationPurchases,
+    membershipPurchases,
+    giftCardPurchases,
+    activeCartData,
+  ])
 
   const handleQuantityChange = async (id: string, delta: number) => {
     // Find the item in any of the cart item types
@@ -784,7 +862,11 @@ export default function CartPage() {
       }
 
       // Add providerId for products and services
-      if ((purchaseType === PurchaseType.Product || purchaseType === PurchaseType.Service) && providerId !== null) {
+      if (
+        (purchaseType === PurchaseType.Product ||
+          purchaseType === PurchaseType.Service) &&
+        providerId !== null
+      ) {
         updateData.providerId = providerId
       }
 
@@ -873,16 +955,23 @@ export default function CartPage() {
         const selectedCartId = selectedCartIds[0]
 
         // Check if it's general cart
-        if (generalCartProvider && selectedCartId === generalCartProvider.cartId) {
+        if (
+          generalCartProvider &&
+          selectedCartId === generalCartProvider.cartId
+        ) {
           cartIdToCheckout = cartData?.id ?? null
         } else {
           // Check carts fetched by cartId
-          const queryById = cartByIdQueries.find(q => q.data?.cartId === selectedCartId)
+          const queryById = cartByIdQueries.find(
+            q => q.data?.cartId === selectedCartId
+          )
           if (queryById?.data?.cart?.id) {
             cartIdToCheckout = queryById.data.cart.id
           } else {
             // Check provider carts
-            const query = cartQueries.find(q => q.data?.cartId === selectedCartId)
+            const query = cartQueries.find(
+              q => q.data?.cartId === selectedCartId
+            )
             if (query?.data?.cart?.id) {
               cartIdToCheckout = query.data.cart.id
             }
@@ -966,8 +1055,10 @@ export default function CartPage() {
       // If filtering by carts, refetch selected carts
       if (selectedCartIds.length > 0) {
         await Promise.all(
-          selectedCartIds.map((cartId) =>
-            queryClient.invalidateQueries({ queryKey: ['cart', 'cartId', cartId] })
+          selectedCartIds.map(cartId =>
+            queryClient.invalidateQueries({
+              queryKey: ['cart', 'cartId', cartId],
+            })
           )
         )
       }
@@ -991,13 +1082,19 @@ export default function CartPage() {
   }
 
   // Check if any cart queries are loading
-  const isLoadingCarts = cartQueries.some((query) => query.isLoading) || cartByIdQueries.some((query) => query.isLoading)
+  const isLoadingCarts =
+    cartQueries.some(query => query.isLoading) ||
+    cartByIdQueries.some(query => query.isLoading)
 
   // Only wait for general cart if we need it (no filters or general cart is selected)
-  const needsGeneralCart = selectedCartIds.length === 0 ||
-    (generalCartProvider && generalCartProvider.cartId && selectedCartIds.includes(generalCartProvider.cartId))
+  const needsGeneralCart =
+    selectedCartIds.length === 0 ||
+    (generalCartProvider &&
+      generalCartProvider.cartId &&
+      selectedCartIds.includes(generalCartProvider.cartId))
 
-  const isLoadingData = (needsGeneralCart && isLoadingGeneralCart) || isLoadingCarts
+  const isLoadingData =
+    (needsGeneralCart && isLoadingGeneralCart) || isLoadingCarts
 
   // Show loading state
   if (isLoadingData) {
@@ -1070,14 +1167,20 @@ export default function CartPage() {
             <div className="flex-1 flex flex-wrap items-center gap-2 min-h-[36px]">
               {selectedProviderIds.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2">
-                  {selectedCartIds.map((cartId) => {
-                    const provider = cartProviders.find((p) => p.cartId === cartId)
+                  {selectedCartIds.map(cartId => {
+                    const provider = cartProviders.find(
+                      p => p.cartId === cartId
+                    )
                     if (!provider) return null
 
                     // Display name: "General" for general cart, provider name for provider carts
-                    const displayName = provider.providerId === null || provider.providerId === undefined
-                      ? 'General'
-                      : (provider.providerNameEn || provider.providerNameAr || 'Provider')
+                    const displayName =
+                      provider.providerId === null ||
+                      provider.providerId === undefined
+                        ? 'General'
+                        : provider.providerNameEn ||
+                          provider.providerNameAr ||
+                          'Provider'
 
                     return (
                       <div
@@ -1091,7 +1194,7 @@ export default function CartPage() {
                           type="button"
                           onClick={() => {
                             setSelectedCartIds(
-                              selectedCartIds.filter((id) => id !== cartId)
+                              selectedCartIds.filter(id => id !== cartId)
                             )
                           }}
                           className="flex-shrink-0 p-0.5 hover:bg-red-100 rounded transition-colors"
@@ -1117,7 +1220,9 @@ export default function CartPage() {
                     const isSelected = selectedCartIds.includes(generalCartId)
 
                     if (isSelected) {
-                      setSelectedCartIds(selectedCartIds.filter(id => id !== generalCartId))
+                      setSelectedCartIds(
+                        selectedCartIds.filter(id => id !== generalCartId)
+                      )
                     } else {
                       setSelectedCartIds([...selectedCartIds, generalCartId])
                     }
@@ -1136,19 +1241,25 @@ export default function CartPage() {
               <ProviderMultiSelect
                 providers={cartProviders}
                 selectedProviderIds={selectedProviderIds}
-                onChange={(providerIds) => {
+                onChange={providerIds => {
                   // Convert provider IDs to cart IDs
                   const newCartIds: number[] = []
 
                   providerIds.forEach(providerId => {
-                    const provider = cartProviders.find(cp => cp.providerId === providerId)
+                    const provider = cartProviders.find(
+                      cp => cp.providerId === providerId
+                    )
                     if (provider?.cartId) {
                       newCartIds.push(provider.cartId)
                     }
                   })
 
                   // Keep general cart selection if it was already selected
-                  if (generalCartProvider && generalCartProvider.cartId && selectedCartIds.includes(generalCartProvider.cartId)) {
+                  if (
+                    generalCartProvider &&
+                    generalCartProvider.cartId &&
+                    selectedCartIds.includes(generalCartProvider.cartId)
+                  ) {
                     newCartIds.push(generalCartProvider.cartId)
                   }
 
@@ -1195,9 +1306,10 @@ export default function CartPage() {
             {/* Services Section - using CartItem for compact display */}
             {hasServices && (
               <div className="space-y-3 sm:space-y-4">
-                {servicePurchases.map((purchase) => {
+                {servicePurchases.map(purchase => {
                   // Priority: Use display properties from PurchaseResponse, then ServiceHeaderResponse
-                  const displayName = purchase.name ?? purchase.nameEn ?? purchase.nameAr
+                  const displayName =
+                    purchase.name ?? purchase.nameEn ?? purchase.nameAr
                   const displayImage = purchase.imageUrl
 
                   // Use ServiceHeaderResponse from purchase.service if available
@@ -1206,16 +1318,23 @@ export default function CartPage() {
 
                   // Use service name/image - prefer purchase display properties, then service object, then fallback
                   // If all are empty, use a default name based on serviceId
-                  const serviceName = displayName || service?.nameEn || service?.nameAr || `Service #${purchase.serviceId || purchase.id}`
-                  const serviceImage = displayImage || service?.imageUrl || '/placeholder-service.png'
+                  const serviceName =
+                    displayName ||
+                    service?.nameEn ||
+                    service?.nameAr ||
+                    `Service #${purchase.serviceId || purchase.id}`
+                  const serviceImage =
+                    displayImage ||
+                    service?.imageUrl ||
+                    '/placeholder-service.png'
 
                   // Format delivery date from endDate
                   const deliveryDate = purchase.endDate
                     ? new Date(purchase.endDate).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })
                     : undefined
 
                   return (
@@ -1230,8 +1349,12 @@ export default function CartPage() {
                       onQuantityChange={handleQuantityChange}
                       onRemove={handleRemoveItemClick}
                       deliveryDate={deliveryDate}
-                      purchasePrice={purchase.totalPrice ?? purchase.price ?? undefined}
-                      purchaseDate={purchase.creationDate || purchase.buyDate || undefined}
+                      purchasePrice={
+                        purchase.totalPrice ?? purchase.price ?? undefined
+                      }
+                      purchaseDate={
+                        purchase.creationDate || purchase.buyDate || undefined
+                      }
                       type="Service"
                     />
                   )
@@ -1242,9 +1365,11 @@ export default function CartPage() {
             {/* Reservations Section - using ReservationResponse */}
             {hasReservations && (
               <div className="space-y-3 sm:space-y-4">
-                {reservationPurchases.map((reservation) => (
+                {reservationPurchases.map(reservation => (
                   <CartItem
-                    key={reservation.purchaseId ?? `reservation-${reservation.id}`}
+                    key={
+                      reservation.purchaseId ?? `reservation-${reservation.id}`
+                    }
                     id={reservation.id}
                     title={reservation.title}
                     image={reservation.image}
@@ -1265,7 +1390,7 @@ export default function CartPage() {
             {/* Memberships Section */}
             {hasMemberships && (
               <div className="space-y-3 sm:space-y-4">
-                {membershipPurchases.map((membership) => (
+                {membershipPurchases.map(membership => (
                   <CartItem
                     key={membership.purchaseId ?? `membership-${membership.id}`}
                     id={membership.id}
@@ -1287,7 +1412,7 @@ export default function CartPage() {
             {/* Gift Cards Section */}
             {hasGiftCards && (
               <div className="space-y-3 sm:space-y-4">
-                {giftCardPurchases.map((giftCard) => (
+                {giftCardPurchases.map(giftCard => (
                   <CartItem
                     key={giftCard.purchaseId ?? `giftcard-${giftCard.id}`}
                     id={giftCard.id}
@@ -1343,10 +1468,10 @@ export default function CartPage() {
         onConfirm={handleConfirmDeleteItem}
         productTitle={
           itemToDelete
-            ? cartProducts.find(p => p.id === itemToDelete)?.title ??
-            reservationPurchases.find(r => r.id === itemToDelete)?.title ??
-            membershipPurchases.find(m => m.id === itemToDelete)?.title ??
-            giftCardPurchases.find(g => g.id === itemToDelete)?.title
+            ? (cartProducts.find(p => p.id === itemToDelete)?.title ??
+              reservationPurchases.find(r => r.id === itemToDelete)?.title ??
+              membershipPurchases.find(m => m.id === itemToDelete)?.title ??
+              giftCardPurchases.find(g => g.id === itemToDelete)?.title)
             : undefined
         }
       />
@@ -1374,17 +1499,21 @@ export default function CartPage() {
 
       {/* Loading Overlay for Mutations */}
       <LoadingOverlay
-        open={updatePurchaseMutation.isPending || removePurchaseMutation.isPending || clearCartMutation.isPending || checkoutMutation.isPending}
+        open={
+          updatePurchaseMutation.isPending ||
+          removePurchaseMutation.isPending ||
+          clearCartMutation.isPending ||
+          checkoutMutation.isPending
+        }
         title={
           clearCartMutation.isPending
-            ? "Clearing cart..."
+            ? 'Clearing cart...'
             : checkoutMutation.isPending
-              ? "Processing checkout..."
-              : "Updating cart..."
+              ? 'Processing checkout...'
+              : 'Updating cart...'
         }
         subtitle="Please wait a moment"
       />
     </UserPageLayout>
   )
 }
-

@@ -37,18 +37,20 @@ export function TodoListRow({
         'w-full rounded-lg border px-3 py-3 text-left transition hover:brightness-[0.98]',
         style.bg,
         style.border,
-        active ? 'ring-1 ring-gray-900/20' : '',
+        active ? 'ring-1 ring-gray-900/20' : ''
       )}
     >
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <div className="truncate text-sm font-medium text-gray-900">{category.name}</div>
+          <div className="truncate text-sm font-medium text-gray-900">
+            {category.name}
+          </div>
         </div>
 
         <div className="flex items-center gap-1">
           {onDelete ? (
             <span
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault()
                 e.stopPropagation()
                 onDelete()

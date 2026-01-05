@@ -40,10 +40,10 @@ export const ServiceSelect = ({
 
   // Map services from API to ServiceOption format
   const serviceOptions: ServiceOption[] = useMemo(() => {
-    return services.map((service) => {
+    return services.map(service => {
       // Use icon from API if available, otherwise use getServiceIcon fallback
       const Icon = getServiceIcon(service.name)
-      
+
       return {
         serviceKey: String(service.id), // Use preparation ID as serviceKey
         label: service.nameEn || service.nameAr || service.name || 'Unknown',
@@ -192,7 +192,9 @@ export const ServiceSelect = ({
                   <selectedService.Icon className="h-5 w-5 text-primary" />
                 )}
               </div>
-              <span className="text-gray-900 truncate">{selectedService.label}</span>
+              <span className="text-gray-900 truncate">
+                {selectedService.label}
+              </span>
             </>
           ) : (
             <span className="text-gray-400">Select a service</span>

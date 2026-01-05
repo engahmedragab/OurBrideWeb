@@ -136,7 +136,7 @@ export const Footer = ({ className }: FooterProps) => {
 
             {/* Right: App Download */}
             <div className="flex flex-col gap-4 items-end">
-              <div className='flex flex-col gap-4 items-start'>
+              <div className="flex flex-col gap-4 items-start">
                 <h3 className="text-20 font-normal text-gray-700">
                   Download Ourbride App
                 </h3>

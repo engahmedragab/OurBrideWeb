@@ -81,7 +81,7 @@ export const ProviderFiltersModal = ({
     onClose()
   }
 
-  const hasActiveFilters = 
+  const hasActiveFilters =
     filters.sortBy !== DEFAULT_FILTERS.sortBy ||
     filters.maxPrice !== DEFAULT_FILTERS.maxPrice ||
     filters.venueType !== DEFAULT_FILTERS.venueType ||
@@ -115,51 +115,65 @@ export const ProviderFiltersModal = ({
         <div className="px-6 py-6 space-y-8 max-h-[calc(100vh-300px)] overflow-y-auto">
           {/* Sort by Section */}
           <div>
-            <h3 className="text-16 font-semibold text-gray-900 mb-4">Sort by</h3>
+            <h3 className="text-16 font-semibold text-gray-900 mb-4">
+              Sort by
+            </h3>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => handleSortChange('best-match')}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all",
+                  'flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all',
                   filters.sortBy === 'best-match'
                     ? 'bg-brand-50 border-2 border-brand-500 text-brand-700'
                     : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
                 )}
               >
-                <Heart className={cn(
-                  "h-4 w-4",
-                  filters.sortBy === 'best-match' ? 'text-brand-600 fill-brand-600' : 'text-gray-500'
-                )} />
+                <Heart
+                  className={cn(
+                    'h-4 w-4',
+                    filters.sortBy === 'best-match'
+                      ? 'text-brand-600 fill-brand-600'
+                      : 'text-gray-500'
+                  )}
+                />
                 Best match
               </button>
               <button
                 onClick={() => handleSortChange('nearest')}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all",
+                  'flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all',
                   filters.sortBy === 'nearest'
                     ? 'bg-brand-50 border-2 border-brand-500 text-brand-700'
                     : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
                 )}
               >
-                <MapPin className={cn(
-                  "h-4 w-4",
-                  filters.sortBy === 'nearest' ? 'text-brand-600' : 'text-gray-500'
-                )} />
+                <MapPin
+                  className={cn(
+                    'h-4 w-4',
+                    filters.sortBy === 'nearest'
+                      ? 'text-brand-600'
+                      : 'text-gray-500'
+                  )}
+                />
                 Nearest
               </button>
               <button
                 onClick={() => handleSortChange('top-rated')}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all",
+                  'flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all',
                   filters.sortBy === 'top-rated'
                     ? 'bg-brand-50 border-2 border-brand-500 text-brand-700'
                     : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
                 )}
               >
-                <Star className={cn(
-                  "h-4 w-4",
-                  filters.sortBy === 'top-rated' ? 'text-brand-600 fill-brand-600' : 'text-gray-500'
-                )} />
+                <Star
+                  className={cn(
+                    'h-4 w-4',
+                    filters.sortBy === 'top-rated'
+                      ? 'text-brand-600 fill-brand-600'
+                      : 'text-gray-500'
+                  )}
+                />
                 Top rated
               </button>
             </div>
@@ -168,7 +182,9 @@ export const ProviderFiltersModal = ({
           {/* Maximum Price Section */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-16 font-semibold text-gray-900">Maximum price</h3>
+              <h3 className="text-16 font-semibold text-gray-900">
+                Maximum price
+              </h3>
               <span className="text-16 font-semibold text-gray-900">
                 {currency} {filters.maxPrice.toLocaleString()}
               </span>
@@ -180,10 +196,10 @@ export const ProviderFiltersModal = ({
                 max={maxPriceRange.max}
                 step={100}
                 value={filters.maxPrice}
-                onChange={(e) => handlePriceChange(Number(e.target.value))}
+                onChange={e => handlePriceChange(Number(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                 style={{
-                  background: `linear-gradient(to right, #F14836 0%, #F14836 ${((filters.maxPrice - maxPriceRange.min) / (maxPriceRange.max - maxPriceRange.min)) * 100}%, #e5e7eb ${((filters.maxPrice - maxPriceRange.min) / (maxPriceRange.max - maxPriceRange.min)) * 100}%, #e5e7eb 100%)`
+                  background: `linear-gradient(to right, #F14836 0%, #F14836 ${((filters.maxPrice - maxPriceRange.min) / (maxPriceRange.max - maxPriceRange.min)) * 100}%, #e5e7eb ${((filters.maxPrice - maxPriceRange.min) / (maxPriceRange.max - maxPriceRange.min)) * 100}%, #e5e7eb 100%)`,
                 }}
               />
               <style jsx>{`
@@ -192,7 +208,7 @@ export const ProviderFiltersModal = ({
                   width: 20px;
                   height: 20px;
                   border-radius: 50%;
-                  background: #F14836;
+                  background: #f14836;
                   cursor: pointer;
                   border: 3px solid white;
                   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -201,7 +217,7 @@ export const ProviderFiltersModal = ({
                   width: 20px;
                   height: 20px;
                   border-radius: 50%;
-                  background: #F14836;
+                  background: #f14836;
                   cursor: pointer;
                   border: 3px solid white;
                   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -212,12 +228,14 @@ export const ProviderFiltersModal = ({
 
           {/* Venue Type Section */}
           <div>
-            <h3 className="text-16 font-semibold text-gray-900 mb-4">Venue type</h3>
+            <h3 className="text-16 font-semibold text-gray-900 mb-4">
+              Venue type
+            </h3>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => handleVenueTypeChange('everyone')}
                 className={cn(
-                  "px-4 py-2.5 rounded-full text-14 font-medium transition-all",
+                  'px-4 py-2.5 rounded-full text-14 font-medium transition-all',
                   filters.venueType === 'everyone'
                     ? 'bg-brand-500 text-white'
                     : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
@@ -228,7 +246,7 @@ export const ProviderFiltersModal = ({
               <button
                 onClick={() => handleVenueTypeChange('female-only')}
                 className={cn(
-                  "px-4 py-2.5 rounded-full text-14 font-medium transition-all",
+                  'px-4 py-2.5 rounded-full text-14 font-medium transition-all',
                   filters.venueType === 'female-only'
                     ? 'bg-brand-500 text-white'
                     : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
@@ -239,7 +257,7 @@ export const ProviderFiltersModal = ({
               <button
                 onClick={() => handleVenueTypeChange('male-only')}
                 className={cn(
-                  "px-4 py-2.5 rounded-full text-14 font-medium transition-all",
+                  'px-4 py-2.5 rounded-full text-14 font-medium transition-all',
                   filters.venueType === 'male-only'
                     ? 'bg-brand-500 text-white'
                     : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
@@ -252,12 +270,14 @@ export const ProviderFiltersModal = ({
 
           {/* Booking Options Section */}
           <div>
-            <h3 className="text-16 font-semibold text-gray-900 mb-4">Booking options</h3>
+            <h3 className="text-16 font-semibold text-gray-900 mb-4">
+              Booking options
+            </h3>
             <div className="flex items-center gap-3">
               <button
                 onClick={handleToggleOffersDeals}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all",
+                  'flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all',
                   filters.offersDeals
                     ? 'bg-brand-500 text-white'
                     : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
@@ -269,7 +289,7 @@ export const ProviderFiltersModal = ({
               <button
                 onClick={handleToggleAcceptsGroups}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all",
+                  'flex items-center gap-2 px-4 py-2.5 rounded-full text-14 font-medium transition-all',
                   filters.acceptsGroups
                     ? 'bg-brand-500 text-white'
                     : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
@@ -304,4 +324,3 @@ export const ProviderFiltersModal = ({
     </Modal>
   )
 }
-

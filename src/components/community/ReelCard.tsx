@@ -9,7 +9,11 @@ import { cn } from '@/lib/utils'
 import { EngagementButton } from './EngagementButton'
 import { getProfileUrl } from './utils'
 import type { ReelResponse } from '@/types/responses/community'
-import { toggleLike as toggleReelLike, toggleFavorite as toggleReelFavorite, shareReel } from '@/services/api/reelsApi'
+import {
+  toggleLike as toggleReelLike,
+  toggleFavorite as toggleReelFavorite,
+  shareReel,
+} from '@/services/api/reelsApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
@@ -34,8 +38,10 @@ const formatDate = (dateString: string | null): string => {
 // Helper function to get user display name
 const getUserDisplayName = (user: ReelResponse['user']): string => {
   if (!user) return 'OurBride'
-  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
-  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const firstName =
+    user.firstName && user.firstName !== 'null' ? user.firstName : ''
+  const lastName =
+    user.lastName && user.lastName !== 'null' ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   return fullName || user.userName || 'OurBride'
 }
@@ -73,8 +79,11 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['reel', reel.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -82,17 +91,23 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
     mutationFn: async (shareSource?: string) => {
       return await shareReel(reel.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/reels/${reel.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/reels/${reel.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['reel', reel.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share reel', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share reel',
+        'error'
+      )
     },
   })
 
@@ -105,8 +120,11 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['reel', reel.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -137,7 +155,7 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
   const displayName = getUserDisplayName(reel.user)
   const avatar = getUserAvatar(reel.user)
   const date = formatDate(reel.publishedAt || reel.creationDate)
-  
+
   const thumbnail = reel.thumbnailUrl || COMMUNITY_IMAGES.DEFAULT_REEL_IMAGE
 
   return (
@@ -180,7 +198,7 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
                 fill
                 sizes="32px"
                 className="object-cover"
-                onError={(e) => {
+                onError={e => {
                   e.currentTarget.style.display = 'none'
                 }}
               />
@@ -201,7 +219,7 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
             {reel.userId && getProfileUrl(reel.userId, reel.user?.type) ? (
               <Link
                 href={getProfileUrl(reel.userId, reel.user?.type)!}
-                onClick={(e) => e.stopPropagation()}
+                onClick={e => e.stopPropagation()}
                 className="hover:text-brand-500 transition-colors"
               >
                 <h4 className="text-14 font-semibold text-gray-900 truncate">
@@ -225,7 +243,9 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
         <div className="flex items-center justify-center gap-3 pt-3 mt-3 border-t border-gray-100">
           <div onClick={e => e.stopPropagation()}>
             <EngagementButton
-              icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
+              icon={
+                <Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />
+              }
               count={likes}
               label="Likes"
               onClick={handleLikeClick}
@@ -252,7 +272,11 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
           </div>
           <div onClick={e => e.stopPropagation()}>
             <EngagementButton
-              icon={<Star className={cn('h-4 w-4', isFavorited && 'fill-brand-500')} />}
+              icon={
+                <Star
+                  className={cn('h-4 w-4', isFavorited && 'fill-brand-500')}
+                />
+              }
               count={favorites}
               label="Favorites"
               onClick={handleFavoriteClick}
@@ -265,8 +289,3 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
     </div>
   )
 }
-
-
-
-
-

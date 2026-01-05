@@ -21,5 +21,3 @@ export interface MainOccasionLineResponse extends MainLineResponse {
   colorName: string
   type?: OccasionType
 }
-
-

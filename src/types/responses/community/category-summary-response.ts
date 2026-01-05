@@ -7,13 +7,3 @@ export interface CategorySummaryResponse {
   nameAr: string
   nameEn: string
 }
-
-
-
-
-
-
-
-
-
-

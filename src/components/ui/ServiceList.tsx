@@ -56,7 +56,10 @@ export const ServiceList = ({
                 href={`/services/category/${service.id}`}
                 className="block flex-shrink-0 w-full md:w-48 h-48 rounded-lg overflow-hidden bg-gray-100 relative"
               >
-                {service.images && service.images.length > 0 && service.images[0] && service.images[0].trim() !== '' ? (
+                {service.images &&
+                service.images.length > 0 &&
+                service.images[0] &&
+                service.images[0].trim() !== '' ? (
                   <Image
                     src={service.images[0]}
                     alt={service.title}
@@ -110,10 +113,10 @@ export const ServiceList = ({
                         </h3>
                       </Link>
                       <div className="flex items-center gap-1.5 mt-1">
-                        <Link 
+                        <Link
                           href={`/provider/${service.provider.id}`}
                           className="text-14 text-gray-600 hover:text-brand-500 transition-colors"
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={e => e.stopPropagation()}
                         >
                           {service.provider.name}
                         </Link>

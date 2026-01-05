@@ -29,23 +29,28 @@ export function ItemBookCard({ book, onInit, onNavigate }: ItemBookCardProps) {
   return (
     <div
       className={cn(
-        "bg-white border rounded-2xl p-6",
-        (onInit || onNavigate) && "cursor-pointer hover:shadow-lg transition-shadow"
+        'bg-white border rounded-2xl p-6',
+        (onInit || onNavigate) &&
+          'cursor-pointer hover:shadow-lg transition-shadow'
       )}
       onClick={handleClick}
     >
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-18 font-semibold text-gray-900">{book.title}</h3>
         <div className="flex items-center gap-2">
-          <span className={cn(
-            "px-2 py-1 text-12 font-medium rounded",
-            needsInit
-              ? "bg-yellow-100 text-yellow-700"
-              : "bg-green-100 text-green-700"
-          )}>
-            {needsInit ? "Needs Init" : "Initialized"}
+          <span
+            className={cn(
+              'px-2 py-1 text-12 font-medium rounded',
+              needsInit
+                ? 'bg-yellow-100 text-yellow-700'
+                : 'bg-green-100 text-green-700'
+            )}
+          >
+            {needsInit ? 'Needs Init' : 'Initialized'}
           </span>
-          <span className="text-14 text-gray-500">{activeLines.length} items</span>
+          <span className="text-14 text-gray-500">
+            {activeLines.length} items
+          </span>
         </div>
       </div>
 
@@ -67,9 +72,7 @@ export function ItemBookCard({ book, onInit, onNavigate }: ItemBookCardProps) {
                     line.isDone ? 'bg-green-500' : 'bg-gray-300'
                   )}
                 />
-                <span className="text-14 text-gray-900">
-                  Item #{line.id}
-                </span>
+                <span className="text-14 text-gray-900">Item #{line.id}</span>
               </div>
               {line.totalPrice !== undefined && (
                 <span className="text-14 font-medium text-gray-900">
@@ -96,5 +99,3 @@ export function ItemBookCard({ book, onInit, onNavigate }: ItemBookCardProps) {
     </div>
   )
 }
-
-

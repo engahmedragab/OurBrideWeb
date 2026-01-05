@@ -83,10 +83,9 @@ export const BudgetPayments = ({
         </button>
       </div>
       <div className="flex flex-col items-center">
-      <DonutChart data={chartData} />
+        <DonutChart data={chartData} />
         {initialEstimated > 0 ? (
           <>
-          
             <div className="mt-2 space-y-2 w-full">
               <div className="flex items-center justify-between">
                 <span className="text-12 text-gray-600">All Budget</span>
@@ -121,4 +120,3 @@ export const BudgetPayments = ({
     </div>
   )
 }
-

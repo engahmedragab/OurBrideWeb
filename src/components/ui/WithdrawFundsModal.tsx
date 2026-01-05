@@ -88,7 +88,7 @@ export const WithdrawFundsModal = ({
               placeholder="Amount"
               suffix="EGP"
               value={withdrawAmount}
-              onChange={(e) => setWithdrawAmount(e.target.value)}
+              onChange={e => setWithdrawAmount(e.target.value)}
             />
           </div>
 
@@ -98,7 +98,7 @@ export const WithdrawFundsModal = ({
               Available Cards
             </h3>
             <div className="space-y-3">
-              {availableCards.map((card) => (
+              {availableCards.map(card => (
                 <button
                   key={card.id}
                   onClick={() => setSelectedCardId(card.id)}
@@ -158,4 +158,3 @@ export const WithdrawFundsModal = ({
     </>
   )
 }
-

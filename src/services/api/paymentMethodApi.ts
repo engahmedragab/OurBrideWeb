@@ -10,7 +10,9 @@ import { getToken } from '@/auth/utils/token'
  * Note: This endpoint requires authentication. If user is not authenticated,
  * returns empty array instead of throwing error.
  */
-export const getActivePaymentMethods = async (): Promise<PaymentMethodResponse[]> => {
+export const getActivePaymentMethods = async (): Promise<
+  PaymentMethodResponse[]
+> => {
   try {
     const token = getToken()
     if (!token) {
@@ -19,16 +21,21 @@ export const getActivePaymentMethods = async (): Promise<PaymentMethodResponse[]
 
     const response = await apiClient.api.getPaymentMethodGetActive()
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaymentMethodResponse[]
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as PaymentMethodResponse[]
   } catch (error: unknown) {
     // Handle 403 Forbidden - user might not have permission or not authenticated
     if (error && typeof error === 'object' && 'response' in error) {
       const axiosError = error as { response?: { status?: number } }
-      if (axiosError.response?.status === 403 || axiosError.response?.status === 401) {
+      if (
+        axiosError.response?.status === 403 ||
+        axiosError.response?.status === 401
+      ) {
         return []
       }
     }
-    
+
     // For other errors, return empty array to allow checkout to continue
     return []
   }

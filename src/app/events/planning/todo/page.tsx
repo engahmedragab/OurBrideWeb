@@ -31,44 +31,68 @@ const INITIAL_CATEGORIES: UiTodoCategory[] = [
 ]
 
 const INITIAL_TODOS: UiTodo[] = [
-  { id: 1, title: 'Buy milk', isDone: false, categoryId: 0, categoryName: 'Untitled List' },
-  { id: 2, title: 'Call the provider', isDone: true, categoryId: 0, categoryName: 'Untitled List' },
+  {
+    id: 1,
+    title: 'Buy milk',
+    isDone: false,
+    categoryId: 0,
+    categoryName: 'Untitled List',
+  },
+  {
+    id: 2,
+    title: 'Call the provider',
+    isDone: true,
+    categoryId: 0,
+    categoryName: 'Untitled List',
+  },
 ]
 
 export default function TodoPage() {
   const [todos, setTodos] = useState<UiTodo[]>(INITIAL_TODOS)
-  const [categories, setCategories] = useState<UiTodoCategory[]>(INITIAL_CATEGORIES)
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(INITIAL_CATEGORIES[0]?.id ?? 0)
+  const [categories, setCategories] =
+    useState<UiTodoCategory[]>(INITIAL_CATEGORIES)
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(
+    INITIAL_CATEGORIES[0]?.id ?? 0
+  )
 
   const [createListOpen, setCreateListOpen] = useState(false)
 
   const selectedCategory = useMemo(() => {
-    return categories.find((c) => c.id === selectedCategoryId) ?? null
+    return categories.find(c => c.id === selectedCategoryId) ?? null
   }, [categories, selectedCategoryId])
 
   const visibleTodos = useMemo(() => {
-    return todos.filter((t) => !t.isDeleted && t.categoryId === selectedCategoryId)
+    return todos.filter(
+      t => !t.isDeleted && t.categoryId === selectedCategoryId
+    )
   }, [todos, selectedCategoryId])
 
   const stats = useMemo(() => {
     const total = visibleTodos.length
-    const completed = visibleTodos.filter((t) => t.isDone).length
+    const completed = visibleTodos.filter(t => t.isDone).length
     const pending = total - completed
     return { total, completed, pending }
   }, [visibleTodos])
 
   const handleToggleDone = (todoId: number) => {
-    setTodos((prev) => prev.map((t) => (t.id === todoId ? { ...t, isDone: !t.isDone } : t)))
+    setTodos(prev =>
+      prev.map(t => (t.id === todoId ? { ...t, isDone: !t.isDone } : t))
+    )
   }
 
   const handleDeleteTodo = (todoId: number) => {
-    setTodos((prev) => prev.map((t) => (t.id === todoId ? { ...t, isDeleted: true } : t)))
+    setTodos(prev =>
+      prev.map(t => (t.id === todoId ? { ...t, isDeleted: true } : t))
+    )
   }
 
-  const handleCreateTodo = async (data: { title: string; isDone?: boolean }) => {
+  const handleCreateTodo = async (data: {
+    title: string
+    isDone?: boolean
+  }) => {
     if (!selectedCategory) return
-    setTodos((prev) => {
-      const nextId = prev.length ? Math.max(...prev.map((t) => t.id)) + 1 : 1
+    setTodos(prev => {
+      const nextId = prev.length ? Math.max(...prev.map(t => t.id)) + 1 : 1
       const newTodo: UiTodo = {
         id: nextId,
         title: data.title,
@@ -80,22 +104,31 @@ export default function TodoPage() {
     })
   }
 
-  const handleEditTodo = async (todoId: number, data: { title: string; isDone?: boolean }) => {
-    setTodos((prev) =>
-      prev.map((t) => {
+  const handleEditTodo = async (
+    todoId: number,
+    data: { title: string; isDone?: boolean }
+  ) => {
+    setTodos(prev =>
+      prev.map(t => {
         if (t.id !== todoId) return t
         return { ...t, title: data.title, isDone: Boolean(data.isDone) }
-      }),
+      })
     )
   }
 
   const handleAddNewList = () => setCreateListOpen(true)
 
   const handleCreateList = async (data: { name: string; color: ColorKey }) => {
-    const nextId = categories.length ? Math.max(...categories.map((c) => c.id)) + 1 : 0
-    const newCategory: UiTodoCategory = { id: nextId, name: data.name, color: data.color }
+    const nextId = categories.length
+      ? Math.max(...categories.map(c => c.id)) + 1
+      : 0
+    const newCategory: UiTodoCategory = {
+      id: nextId,
+      name: data.name,
+      color: data.color,
+    }
 
-    setCategories((prev) => [newCategory, ...prev])
+    setCategories(prev => [newCategory, ...prev])
     setSelectedCategoryId(nextId)
     setCreateListOpen(false)
   }
@@ -113,8 +146,7 @@ export default function TodoPage() {
           className="inline-flex h-9 w-9 items-center justify-center"
           aria-label="Back to My Events"
         >
-        <ChevronLeft className="w-5 h-5 text-gray-700" />
-
+          <ChevronLeft className="w-5 h-5 text-gray-700" />
         </Link>
 
         <h1 className="text-xl font-semibold text-gray-900">Todo</h1>

@@ -12,5 +12,3 @@ export interface MainItemBookResponse extends MainBookResponse<MainItemLineRespo
   pending?: number
   isSubDone?: boolean
 }
-
-

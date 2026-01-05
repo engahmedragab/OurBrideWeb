@@ -6,7 +6,7 @@ import { Source } from '@/../client/common/api/gen/ourbride-api'
 /**
  * Hook to check if items are being followed
  * Returns helper functions to check follow status
- * 
+ *
  * Note: This hook fetches all follows and extracts product/service/provider IDs
  * from the sourceId field. Since the API doesn't expose follow items directly,
  * we rely on the sourceId matching the product/service/provider ID.
@@ -85,4 +85,3 @@ export const useFollowItems = (enabled = true) => {
     follows,
   }
 }
-

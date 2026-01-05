@@ -27,12 +27,16 @@ const OccasionAvatar = ({ title }: { title: string }) => {
   )
 }
 
-export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOverviewProps) => {
+export const OccasionsOverview = ({
+  book,
+  onInit,
+  onNavigate,
+}: OccasionsOverviewProps) => {
   const needsInit = !!book && !book.isBookInit
 
   const activeOccasions = useMemo(() => {
     const occasions = (book?.occasions || book?.lines || []) as any[]
-    return occasions.filter((o) => !o?.isDeleted)
+    return occasions.filter(o => !o?.isDeleted)
   }, [book?.occasions, book?.lines])
 
   const sortedOccasions = useMemo(() => {
@@ -43,7 +47,10 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
     })
   }, [activeOccasions])
 
-  const displayOccasions = useMemo(() => sortedOccasions.slice(0, 3), [sortedOccasions])
+  const displayOccasions = useMemo(
+    () => sortedOccasions.slice(0, 3),
+    [sortedOccasions]
+  )
 
   const count = activeOccasions.length
 
@@ -66,7 +73,7 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
           onClick={handleClickAll}
           type="button"
         >
-          View All 
+          View All
         </button>
       </div>
 
@@ -75,8 +82,13 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
         {displayOccasions.length > 0 ? (
           <div className="divide-y divide-gray-100 rounded-lg">
             {displayOccasions.map((occasion: any) => {
-              const title = occasion?.titleEn || occasion?.titleAr || 'Untitled Occasion'
-              const provider = occasion?.providerName || occasion?.subTitleEn || occasion?.subTitleAr || ''
+              const title =
+                occasion?.titleEn || occasion?.titleAr || 'Untitled Occasion'
+              const provider =
+                occasion?.providerName ||
+                occasion?.subTitleEn ||
+                occasion?.subTitleAr ||
+                ''
               const date = occasion?.date
 
               return (
@@ -91,10 +103,15 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
                   <div className="min-w-0 flex-1">
                     {/* Title + favorite */}
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-13 font-semibold text-gray-900 truncate">{title}</p>
+                      <p className="text-13 font-semibold text-gray-900 truncate">
+                        {title}
+                      </p>
 
                       {occasion?.isFavorite ? (
-                        <Star className="w-4 h-4 text-brand-500 shrink-0" fill="currentColor" />
+                        <Star
+                          className="w-4 h-4 text-brand-500 shrink-0"
+                          fill="currentColor"
+                        />
                       ) : null}
                     </div>
 
@@ -123,7 +140,9 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
             })}
           </div>
         ) : (
-          <p className="text-13 text-gray-500 text-center py-6">No bookings yet</p>
+          <p className="text-13 text-gray-500 text-center py-6">
+            No bookings yet
+          </p>
         )}
       </div>
     </div>

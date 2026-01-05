@@ -37,7 +37,10 @@ export const useNotifications = (query?: {
   // Handle errors using useEffect (onError is deprecated in newer React Query versions)
   useEffect(() => {
     if (queryResult.isError && queryResult.error) {
-      const errorMessage = queryResult.error instanceof Error ? queryResult.error.message : 'Failed to fetch notifications'
+      const errorMessage =
+        queryResult.error instanceof Error
+          ? queryResult.error.message
+          : 'Failed to fetch notifications'
       addToast(errorMessage, 'error')
     }
   }, [queryResult.isError, queryResult.error, addToast])
@@ -64,14 +67,22 @@ export const useNotifications = (query?: {
       await queryClient.cancelQueries({ queryKey: ['notifications'] })
 
       // Snapshot previous value
-      const previousData = queryClient.getQueryData<{ items: Notification[] }>(['notifications', queryParams])
+      const previousData = queryClient.getQueryData<{ items: Notification[] }>([
+        'notifications',
+        queryParams,
+      ])
 
       // Optimistically update
       if (previousData) {
-        queryClient.setQueryData<{ items: Notification[] }>(['notifications', queryParams], {
-          ...previousData,
-          items: previousData.items.map(n => (n.id === id ? { ...n, isRead: true } : n)),
-        })
+        queryClient.setQueryData<{ items: Notification[] }>(
+          ['notifications', queryParams],
+          {
+            ...previousData,
+            items: previousData.items.map(n =>
+              n.id === id ? { ...n, isRead: true } : n
+            ),
+          }
+        )
       }
 
       return { previousData }
@@ -79,10 +90,16 @@ export const useNotifications = (query?: {
     onError: (err, id, context) => {
       // Rollback on error
       if (context?.previousData) {
-        queryClient.setQueryData(['notifications', queryParams], context.previousData)
+        queryClient.setQueryData(
+          ['notifications', queryParams],
+          context.previousData
+        )
       }
       // Show error toast
-      const errorMessage = err instanceof Error ? err.message : 'Failed to mark notification as read'
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : 'Failed to mark notification as read'
       addToast(errorMessage, 'error')
     },
     onSettled: () => {
@@ -98,7 +115,7 @@ export const useNotifications = (query?: {
         .filter(n => !n.isRead)
         .map(n => parseInt(n.id, 10))
         .filter(id => !isNaN(id))
-      
+
       if (unreadIds.length === 0) {
         return
       }
@@ -108,23 +125,35 @@ export const useNotifications = (query?: {
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['notifications'] })
 
-      const previousData = queryClient.getQueryData<{ items: Notification[] }>(['notifications', queryParams])
+      const previousData = queryClient.getQueryData<{ items: Notification[] }>([
+        'notifications',
+        queryParams,
+      ])
 
       if (previousData) {
-        queryClient.setQueryData<{ items: Notification[] }>(['notifications', queryParams], {
-          ...previousData,
-          items: previousData.items.map(n => ({ ...n, isRead: true })),
-        })
+        queryClient.setQueryData<{ items: Notification[] }>(
+          ['notifications', queryParams],
+          {
+            ...previousData,
+            items: previousData.items.map(n => ({ ...n, isRead: true })),
+          }
+        )
       }
 
       return { previousData }
     },
     onError: (err, variables, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(['notifications', queryParams], context.previousData)
+        queryClient.setQueryData(
+          ['notifications', queryParams],
+          context.previousData
+        )
       }
       // Show error toast
-      const errorMessage = err instanceof Error ? err.message : 'Failed to mark all notifications as read'
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : 'Failed to mark all notifications as read'
       addToast(errorMessage, 'error')
     },
     onSettled: () => {
@@ -145,24 +174,33 @@ export const useNotifications = (query?: {
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: ['notifications'] })
 
-      const previousData = queryClient.getQueryData<PaginatedList<Notification>>(['notifications', queryParams])
+      const previousData = queryClient.getQueryData<
+        PaginatedList<Notification>
+      >(['notifications', queryParams])
 
       if (previousData) {
-        queryClient.setQueryData<PaginatedList<Notification>>(['notifications', queryParams], {
-          ...previousData,
-          items: previousData.items.filter(n => n.id !== id),
-          totalCount: Math.max(0, previousData.totalCount - 1),
-        })
+        queryClient.setQueryData<PaginatedList<Notification>>(
+          ['notifications', queryParams],
+          {
+            ...previousData,
+            items: previousData.items.filter(n => n.id !== id),
+            totalCount: Math.max(0, previousData.totalCount - 1),
+          }
+        )
       }
 
       return { previousData }
     },
     onError: (err, id, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(['notifications', queryParams], context.previousData)
+        queryClient.setQueryData(
+          ['notifications', queryParams],
+          context.previousData
+        )
       }
       // Show error toast
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete notification'
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to delete notification'
       addToast(errorMessage, 'error')
     },
     onSettled: () => {

@@ -31,6 +31,3 @@ export interface ServicePublicResponse {
   availableStartTime: string | null // TimeSpan as string (e.g., "HH:mm:ss")
   availableEndTime: string | null // TimeSpan as string (e.g., "HH:mm:ss")
 }
-
-
-

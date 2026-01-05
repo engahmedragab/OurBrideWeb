@@ -48,10 +48,18 @@ export const PromotedCampaignCard = ({
       style={!bgClass && backgroundColor ? { backgroundColor } : undefined}
     >
       <div className="inline-block bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-3 sm:mb-4">
-        <p className="text-12 sm:text-14 font-medium text-gray-900">{badgeText}</p>
+        <p className="text-12 sm:text-14 font-medium text-gray-900">
+          {badgeText}
+        </p>
       </div>
-      <h3 className="text-18 sm:text-20 font-semibold text-gray-900 mb-3 sm:mb-4">{title}</h3>
-      <Input value={link} readOnly className="mb-4 sm:mb-6 bg-white text-13 sm:text-14" />
+      <h3 className="text-18 sm:text-20 font-semibold text-gray-900 mb-3 sm:mb-4">
+        {title}
+      </h3>
+      <Input
+        value={link}
+        readOnly
+        className="mb-4 sm:mb-6 bg-white text-13 sm:text-14"
+      />
       <SocialShareButtons
         className="py-3 sm:py-4"
         onFacebookClick={onShare?.onFacebookClick}
@@ -62,4 +70,3 @@ export const PromotedCampaignCard = ({
     </div>
   )
 }
-

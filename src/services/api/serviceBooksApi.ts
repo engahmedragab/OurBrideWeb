@@ -4,7 +4,11 @@
  */
 
 import { apiClient } from '@/services/api/apiClient'
-import type { ServiceBookResponse, ServiceLineResponse, ServiceLineCategoryResponse } from '@/types/responses'
+import type {
+  ServiceBookResponse,
+  ServiceLineResponse,
+  ServiceLineCategoryResponse,
+} from '@/types/responses'
 import type {
   ServiceBookRequest,
   ServiceLineRequest,
@@ -41,14 +45,20 @@ export const initServiceBooks = async (params?: {
   eventId?: number
 }): Promise<void> => {
   try {
-    const normalizedParams = params ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: params.eventId,
-    } : undefined
+    const normalizedParams = params
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: params.eventId,
+        }
+      : undefined
     await apiClient.api.postServiceBooksInit(normalizedParams)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to initialize service books')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to initialize service books'
+    )
   }
 }
 
@@ -63,7 +73,9 @@ export const syncServiceBook = async (
     const params = normalizeQuery(query)
     await apiClient.api.postServiceBooksSyncBook(data, params)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to sync service book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to sync service book'
+    )
   }
 }
 
@@ -76,10 +88,16 @@ export const getServiceBook = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getServiceBooksGetBook(normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ServiceBookResponse } | ServiceBookResponse } | ServiceBookResponse
-    
+    const responseAny: any = response as
+      | { data?: { data?: ServiceBookResponse } | ServiceBookResponse }
+      | ServiceBookResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ServiceBookResponse }).data
@@ -93,7 +111,9 @@ export const getServiceBook = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch service book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch service book'
+    )
   }
 }
 
@@ -106,10 +126,20 @@ export const getServiceLines = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getServiceBooksGetAll(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[]; items?: ServiceLineResponse[] } } | ServiceLineResponse[]
-    
+    const responseAny: any = response as
+      | {
+          data?:
+            | ServiceLineResponse[]
+            | { data?: ServiceLineResponse[]; items?: ServiceLineResponse[] }
+        }
+      | ServiceLineResponse[]
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
@@ -128,7 +158,9 @@ export const getServiceLines = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch service lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch service lines'
+    )
   }
 }
 
@@ -140,16 +172,28 @@ export const getServiceLineById = async (
   query?: { clientId?: string; eventId?: number }
 ): Promise<ServiceLineResponse | null> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getServiceBooksGet(lineId, String(lineId), normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ServiceLineResponse } | ServiceLineResponse } | ServiceLineResponse
-    
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response = await apiClient.api.getServiceBooksGet(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: ServiceLineResponse } | ServiceLineResponse }
+      | ServiceLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ServiceLineResponse }).data
@@ -163,7 +207,9 @@ export const getServiceLineById = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch service line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch service line'
+    )
   }
 }
 
@@ -176,11 +222,20 @@ export const createServiceLine = async (
 ): Promise<ServiceLineResponse> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.postServiceBooksCreate(data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ServiceLineResponse } | ServiceLineResponse } | ServiceLineResponse
-    
+    const response = await apiClient.api.postServiceBooksCreate(
+      data,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: ServiceLineResponse } | ServiceLineResponse }
+      | ServiceLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ServiceLineResponse }).data
@@ -194,7 +249,9 @@ export const createServiceLine = async (
     }
     throw new Error('Invalid response format from create service line endpoint')
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create service line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create service line'
+    )
   }
 }
 
@@ -209,7 +266,9 @@ export const createServiceLinesBulk = async (
     const normalizedQuery = normalizeQuery(query)
     await apiClient.api.postServiceBooksCreateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create service lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create service lines'
+    )
   }
 }
 
@@ -222,16 +281,29 @@ export const updateServiceLine = async (
   query?: ServiceBooksQuery
 ): Promise<ServiceLineResponse> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      // eventId is excluded if the API doesn't accept it
-    } : undefined
-    const response = await apiClient.api.putServiceBooksUpdate(lineId, String(lineId), data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ServiceLineResponse } | ServiceLineResponse } | ServiceLineResponse
-    
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          // eventId is excluded if the API doesn't accept it
+        }
+      : undefined
+    const response = await apiClient.api.putServiceBooksUpdate(
+      lineId,
+      String(lineId),
+      data,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: { data?: ServiceLineResponse } | ServiceLineResponse }
+      | ServiceLineResponse
+
     // Handle different response structures
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ServiceLineResponse }).data
@@ -245,7 +317,9 @@ export const updateServiceLine = async (
     }
     throw new Error('Invalid response format from update service line endpoint')
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update service line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update service line'
+    )
   }
 }
 
@@ -257,14 +331,18 @@ export const updateServiceLinesBulk = async (
   query?: { clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putServiceBooksUpdateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update service lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update service lines'
+    )
   }
 }
 
@@ -277,9 +355,15 @@ export const deleteServiceLine = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.deleteServiceBooksDelete(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.deleteServiceBooksDelete(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete service line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete service line'
+    )
   }
 }
 
@@ -288,18 +372,27 @@ export const deleteServiceLine = async (
  */
 export const deleteServiceLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.deleteServiceBooksDeleteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete service lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete service lines'
+    )
   }
 }
 
@@ -312,9 +405,17 @@ export const toggleServiceLineDone = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putServiceBooksDone(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putServiceBooksDone(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle service line done status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle service line done status'
+    )
   }
 }
 
@@ -327,9 +428,17 @@ export const toggleServiceLineFavorite = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putServiceBooksFavorite(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putServiceBooksFavorite(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle service line favorite status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle service line favorite status'
+    )
   }
 }
 
@@ -344,21 +453,41 @@ export const getServiceLinesCustom = async (
 ): Promise<ServiceLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getServiceBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response = await apiClient.api.getServiceBooksGetAllCustom(
+      isDeleted,
+      isDone,
+      isFavorite,
+      normalizedQuery
+    )
+    const responseAny: any = response as
+      | { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } }
+      | ServiceLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch custom service lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch custom service lines'
+    )
   }
 }
 
@@ -370,51 +499,87 @@ export const getServiceLinesDone = async (
 ): Promise<ServiceLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getServiceBooksGetAllDone(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getServiceBooksGetAllDone(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } }
+      | ServiceLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch done service lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch done service lines'
+    )
   }
 }
 
 /**
  * Get not done service lines
  */
-export const getServiceLinesNotDone = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<ServiceLineResponse[]> => {
+export const getServiceLinesNotDone = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<ServiceLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getServiceBooksGetAllNotDone(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getServiceBooksGetAllNotDone(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } }
+      | ServiceLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not done service lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not done service lines'
+    )
   }
 }
 
@@ -426,51 +591,87 @@ export const getServiceLinesFavorite = async (
 ): Promise<ServiceLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getServiceBooksGetAllFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getServiceBooksGetAllFavorite(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } }
+      | ServiceLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch favorite service lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch favorite service lines'
+    )
   }
 }
 
 /**
  * Get not favorite service lines
  */
-export const getServiceLinesNotFavorite = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<ServiceLineResponse[]> => {
+export const getServiceLinesNotFavorite = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<ServiceLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getServiceBooksGetAllNotFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getServiceBooksGetAllNotFavorite(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } }
+      | ServiceLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not favorite service lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not favorite service lines'
+    )
   }
 }
 
@@ -482,21 +683,37 @@ export const getServiceLinesDeleted = async (
 ): Promise<ServiceLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getServiceBooksGetAllDelete(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getServiceBooksGetAllDelete(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } }
+      | ServiceLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch deleted service lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch deleted service lines'
+    )
   }
 }
 
@@ -508,21 +725,37 @@ export const getServiceLinesNotDeleted = async (
 ): Promise<ServiceLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getServiceBooksGetAllNotDelete(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response =
+      await apiClient.api.getServiceBooksGetAllNotDelete(normalizedQuery)
+    const responseAny: any = response as
+      | { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } }
+      | ServiceLineResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not deleted service lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not deleted service lines'
+    )
   }
 }
 
@@ -531,18 +764,29 @@ export const getServiceLinesNotDeleted = async (
  */
 export const markServiceLinesDoneBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putServiceBooksDoneAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to mark service lines as done')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to mark service lines as done'
+    )
   }
 }
 
@@ -551,43 +795,73 @@ export const markServiceLinesDoneBulk = async (
  */
 export const favoriteServiceLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putServiceBooksFavoriteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to favorite service lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to favorite service lines'
+    )
   }
 }
 
 /**
  * Get all service line categories
  */
-export const getServiceCategories = async (
-  query?: { clientId?: string }
-): Promise<ServiceLineCategoryResponse[]> => {
+export const getServiceCategories = async (query?: {
+  clientId?: string
+}): Promise<ServiceLineCategoryResponse[]> => {
   try {
     const response = await apiClient.api.getServiceBooksGetAllCategories(query)
-    const responseAny: any = response as { data?: ServiceLineCategoryResponse[] | { data?: ServiceLineCategoryResponse[] } } | ServiceLineCategoryResponse[]
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const responseAny: any = response as
+      | {
+          data?:
+            | ServiceLineCategoryResponse[]
+            | { data?: ServiceLineCategoryResponse[] }
+        }
+      | ServiceLineCategoryResponse[]
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (Array.isArray(data)) {
         return data
       }
-      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+      if (
+        data &&
+        typeof data === 'object' &&
+        'data' in data &&
+        Array.isArray(data.data)
+      ) {
         return data.data
       }
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch service categories')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch service categories'
+    )
   }
 }
 
@@ -602,10 +876,23 @@ export const getServiceCategory = async (
   query?: { clientId?: string }
 ): Promise<ServiceLineCategoryResponse | null> => {
   try {
-    const response = await apiClient.api.getServiceBooksGetCategory(categoryId, query)
-    const responseAny: any = response as { data?: { data?: ServiceLineCategoryResponse } | ServiceLineCategoryResponse } | ServiceLineCategoryResponse
-    
-    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+    const response = await apiClient.api.getServiceBooksGetCategory(
+      categoryId,
+      query
+    )
+    const responseAny: any = response as
+      | {
+          data?:
+            | { data?: ServiceLineCategoryResponse }
+            | ServiceLineCategoryResponse
+        }
+      | ServiceLineCategoryResponse
+
+    if (
+      responseAny &&
+      typeof responseAny === 'object' &&
+      'data' in responseAny
+    ) {
       const data = responseAny.data
       if (data && typeof data === 'object' && 'data' in data) {
         return (data as { data: ServiceLineCategoryResponse }).data
@@ -619,7 +906,11 @@ export const getServiceCategory = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch service category')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch service category'
+    )
   }
 }
 
@@ -634,7 +925,11 @@ export const updateServiceCategory = async (
   try {
     await apiClient.api.putServiceBooksUpdateCategory(categoryId, data, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update service category')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to update service category'
+    )
   }
 }
 
@@ -648,6 +943,10 @@ export const deleteServiceCategory = async (
   try {
     await apiClient.api.deleteServiceBooksDeleteCategory(categoryId, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete service category')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to delete service category'
+    )
   }
 }

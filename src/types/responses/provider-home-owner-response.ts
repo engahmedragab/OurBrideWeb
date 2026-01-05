@@ -9,6 +9,3 @@ export interface ProviderHomeOwnerResponse extends ProviderHomeUserResponse {
   id: string // Guid (overrides UserResponse.id)
   ownerId: number
 }
-
-
-

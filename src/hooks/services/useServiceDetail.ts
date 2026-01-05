@@ -20,8 +20,9 @@ export const useServiceDetail = (serviceId: string, enabled = true) => {
         }
 
         // Fetch ServiceResponse from API
-        const serviceResponse: ServiceResponse | null = await getServiceById(parsedId)
-        
+        const serviceResponse: ServiceResponse | null =
+          await getServiceById(parsedId)
+
         if (!serviceResponse) {
           return { service: null, rawServiceResponse: null }
         }
@@ -38,4 +39,3 @@ export const useServiceDetail = (serviceId: string, enabled = true) => {
     refetchOnWindowFocus: false,
   })
 }
-

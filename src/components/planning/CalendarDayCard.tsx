@@ -67,7 +67,9 @@ export const CalendarDayCard = ({
           </div>
           {eventsCount > 1 && (
             <div className="bg-white border-[0.5px] border-gray-500 rounded px-1 py-1">
-              <p className="text-8 font-medium text-gray-500">+ {eventsCount - 1} More</p>
+              <p className="text-8 font-medium text-gray-500">
+                + {eventsCount - 1} More
+              </p>
             </div>
           )}
         </div>
@@ -75,4 +77,3 @@ export const CalendarDayCard = ({
     </button>
   )
 }
-

@@ -102,9 +102,7 @@ export const ErrorModal = ({
 
           {/* Message */}
           {message && (
-            <p className="text-14 text-gray-500 mb-6 text-center">
-              {message}
-            </p>
+            <p className="text-14 text-gray-500 mb-6 text-center">{message}</p>
           )}
 
           {/* Action Buttons */}
@@ -133,6 +131,3 @@ export const ErrorModal = ({
     </div>
   )
 }
-
-
-

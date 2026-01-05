@@ -35,6 +35,3 @@ export interface ProviderHomeServiceSummary {
   availableStartTime?: string // TimeSpan as string (e.g., "HH:mm:ss")
   availableEndTime?: string // TimeSpan as string (e.g., "HH:mm:ss")
 }
-
-
-

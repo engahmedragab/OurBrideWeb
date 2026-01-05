@@ -34,16 +34,24 @@ export const PreparationsSummaryCard = ({
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         <div className="text-center">
-          <p className={`${planningTypography.statNumber} text-gray-900`}>{total}</p>
+          <p className={`${planningTypography.statNumber} text-gray-900`}>
+            {total}
+          </p>
           <p className={`${planningTypography.statLabel} mt-0.5`}>Total</p>
         </div>
         <div className="text-center">
-          <p className={`${planningTypography.statNumber} text-green-500`}>{completed}</p>
+          <p className={`${planningTypography.statNumber} text-green-500`}>
+            {completed}
+          </p>
           <p className={`${planningTypography.statLabel} mt-0.5`}>Completed</p>
         </div>
         <div className="text-center">
-          <p className={`${planningTypography.statNumber} text-yellow-600`}>{inProgress}</p>
-          <p className={`${planningTypography.statLabel} mt-0.5`}>Still on the way</p>
+          <p className={`${planningTypography.statNumber} text-yellow-600`}>
+            {inProgress}
+          </p>
+          <p className={`${planningTypography.statLabel} mt-0.5`}>
+            Still on the way
+          </p>
         </div>
       </div>
     </div>

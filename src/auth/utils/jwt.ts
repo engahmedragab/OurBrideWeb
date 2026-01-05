@@ -13,14 +13,17 @@ export const JWT_CLAIMS = {
   JTI: 'jti',
   SUB: 'sub',
   EMAIL: 'email',
-  EMAIL_CLAIM: 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress',
+  EMAIL_CLAIM:
+    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress',
   ISS: 'iss',
   AUD: 'aud',
   USER_ID: 'nameid',
-  NAME_IDENTIFIER: 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier',
+  NAME_IDENTIFIER:
+    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier',
   NAME: 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
   SID: 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid',
-  MOBILE_PHONE: 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone',
+  MOBILE_PHONE:
+    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone',
   ROLE: 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role',
   PERMISSION: 'permission',
 } as const
@@ -68,7 +71,7 @@ export const decodeJWT = (token: string): DecodedJWT | null => {
 export const getUserIdFromToken = (token: string): string | null => {
   const decoded = decodeJWT(token)
   if (!decoded) return null
-  
+
   return (
     (decoded[JWT_CLAIMS.USER_ID] as string) ||
     (decoded[JWT_CLAIMS.SID] as string) ||
@@ -83,12 +86,12 @@ export const getUserIdFromToken = (token: string): string | null => {
 export const getUserNameFromToken = (token: string): string => {
   const decoded = decodeJWT(token)
   if (!decoded) return ''
-  
+
   const name = decoded[JWT_CLAIMS.NAME] as string
   if (name && typeof name === 'string') {
     return name.trim()
   }
-  
+
   return ''
 }
 
@@ -98,12 +101,12 @@ export const getUserNameFromToken = (token: string): string => {
 export const getPhoneFromToken = (token: string): string => {
   const decoded = decodeJWT(token)
   if (!decoded) return ''
-  
+
   const phone = decoded[JWT_CLAIMS.MOBILE_PHONE] as string
   if (phone && typeof phone === 'string') {
     return phone.trim()
   }
-  
+
   return ''
 }
 
@@ -113,12 +116,13 @@ export const getPhoneFromToken = (token: string): string => {
 export const getEmailFromToken = (token: string): string => {
   const decoded = decodeJWT(token)
   if (!decoded) return ''
-  
-  const email = (decoded[JWT_CLAIMS.EMAIL] || decoded[JWT_CLAIMS.EMAIL_CLAIM]) as string
+
+  const email = (decoded[JWT_CLAIMS.EMAIL] ||
+    decoded[JWT_CLAIMS.EMAIL_CLAIM]) as string
   if (email && typeof email === 'string') {
     return email.trim()
   }
-  
+
   return ''
 }
 
@@ -128,12 +132,12 @@ export const getEmailFromToken = (token: string): string => {
 export const getUserTypeFromToken = (token: string): string => {
   const decoded = decodeJWT(token)
   if (!decoded) return ''
-  
+
   const type = decoded[JWT_CLAIMS.TYPE] as string
   if (type && typeof type === 'string') {
     return type.toLowerCase()
   }
-  
+
   return ''
 }
 
@@ -144,10 +148,10 @@ export const isJWTTokenExpired = (token: string): boolean => {
   try {
     const decoded = decodeJWT(token)
     if (!decoded || !decoded.exp) return true
-    
+
     const exp = decoded.exp as number
     const currentTime = Math.floor(Date.now() / 1000)
-    
+
     return exp < currentTime
   } catch {
     return true
@@ -161,7 +165,7 @@ export const getTokenExpirationDate = (token: string): Date | null => {
   try {
     const decoded = decodeJWT(token)
     if (!decoded || !decoded.exp) return null
-    
+
     const exp = decoded.exp as number
     return new Date(exp * 1000)
   } catch {
@@ -172,7 +176,9 @@ export const getTokenExpirationDate = (token: string): Date | null => {
 /**
  * Extract all user information from JWT token
  */
-export const getUserInfoFromToken = (token: string): {
+export const getUserInfoFromToken = (
+  token: string
+): {
   id: string | null
   email: string
   name: string
@@ -182,7 +188,7 @@ export const getUserInfoFromToken = (token: string): {
   decoded: DecodedJWT | null
 } => {
   const decoded = decodeJWT(token)
-  
+
   if (!decoded) {
     return {
       id: null,
@@ -194,7 +200,7 @@ export const getUserInfoFromToken = (token: string): {
       decoded: null,
     }
   }
-  
+
   return {
     id: getUserIdFromToken(token),
     email: getEmailFromToken(token),
@@ -205,4 +211,3 @@ export const getUserInfoFromToken = (token: string): {
     decoded,
   }
 }
-

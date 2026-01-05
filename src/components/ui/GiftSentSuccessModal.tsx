@@ -51,9 +51,7 @@ export const GiftSentSuccessModal = ({
           <p className="text-20 font-semibold text-gray-900 mb-2">
             Success! 🎉
           </p>
-          <p className="text-16 text-gray-600">
-            Your Gift Sent Successfully! 
-          </p>
+          <p className="text-16 text-gray-600">Your Gift Sent Successfully!</p>
         </div>
 
         {/* Action Button */}
@@ -69,4 +67,3 @@ export const GiftSentSuccessModal = ({
     </Modal>
   )
 }
-

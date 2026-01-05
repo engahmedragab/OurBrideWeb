@@ -11,33 +11,12 @@ import { useMemo } from 'react'
  */
 export const useEventId = (): number | null => {
   const searchParams = useSearchParams()
-  
+
   return useMemo(() => {
     const eventIdParam = searchParams?.get('eventId')
     if (!eventIdParam) return null
-    
+
     const eventId = parseInt(eventIdParam, 10)
     return isNaN(eventId) ? null : eventId
   }, [searchParams])
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

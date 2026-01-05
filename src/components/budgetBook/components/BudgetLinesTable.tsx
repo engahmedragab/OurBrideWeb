@@ -7,7 +7,10 @@ import { BudgetLineRowActions } from './BudgetLineRowActions'
 // import { getCategoryColor } from '@/utils/budgetColors' // Temporarily comment out due to missing module
 import { formatEGP } from '@/utils/formatCurrency'
 import { cn } from '@/lib/utils'
-import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
+import type {
+  BudgetLineResponse,
+  BudgetLineCategoryResponse,
+} from '@/types/responses'
 import { getCategoryColor } from '@/utils/budgetbook/budgetColors'
 
 interface BudgetLinesTableProps {
@@ -33,12 +36,11 @@ export const BudgetLinesTable = ({
   onDelete,
   onCreateLine,
   isLoading = false,
-  activeCategoryId
+  activeCategoryId,
 }: BudgetLinesTableProps) => {
   const getCategory = (categoryId: number | null) => {
     return categories.find(cat => cat.id === categoryId)
   }
-
 
   const calculatePercentage = (amount: number) => {
     if (totalBudget === 0) return 0
@@ -47,7 +49,12 @@ export const BudgetLinesTable = ({
 
   if (isLoading) {
     return (
-      <div className={cn(cardVariants({ variant: 'default', padding: 'lg' }), 'p-6')}>
+      <div
+        className={cn(
+          cardVariants({ variant: 'default', padding: 'lg' }),
+          'p-6'
+        )}
+      >
         <div className="animate-pulse space-y-4">
           <div className="h-4 bg-gray-200 rounded w-full" />
           <div className="h-4 bg-gray-200 rounded w-3/4" />
@@ -59,67 +66,79 @@ export const BudgetLinesTable = ({
 
   if (lines.length === 0) {
     return (
-      <div className={cn(cardVariants({ variant: 'default', padding: 'lg' }), 'p-6')}>
+      <div
+        className={cn(
+          cardVariants({ variant: 'default', padding: 'lg' }),
+          'p-6'
+        )}
+      >
         <div className="text-center py-12 text-gray-500">
-        <div className="flex items-center justify-center md:justify-end px-4 py-3 border-b border-gray-200 bg-white">
-          <Button
-            variant="brand"
-            size="sm"
-            onClick={onCreateLine}
-            className="text-white whitespace-nowrap !rounded-lg h-9 px-3 "
-          >
-            <Plus className="h-3.5 w-3.5 mr-1.5 text-white" />
-            Add New
-          </Button>
-        </div>
+          <div className="flex items-center justify-center md:justify-end px-4 py-3 border-b border-gray-200 bg-white">
+            <Button
+              variant="brand"
+              size="sm"
+              onClick={onCreateLine}
+              className="text-white whitespace-nowrap !rounded-lg h-9 px-3 "
+            >
+              <Plus className="h-3.5 w-3.5 mr-1.5 text-white" />
+              Add New
+            </Button>
+          </div>
           <p className="text-14">No budget lines found</p>
         </div>
       </div>
     )
   }
   const selectedCategory =
-  activeCategoryId != null
-    ? categories.find(c => c.id === activeCategoryId)
-    : null
+    activeCategoryId != null
+      ? categories.find(c => c.id === activeCategoryId)
+      : null
 
-const selectedEstimated = selectedCategory?.estimated ?? null
+  const selectedEstimated = selectedCategory?.estimated ?? null
 
   return (
-    <div className={cn(cardVariants({ variant: 'default' }), 'overflow-hidden shadow-sm border border-gray-200')}>
+    <div
+      className={cn(
+        cardVariants({ variant: 'default' }),
+        'overflow-hidden shadow-sm border border-gray-200'
+      )}
+    >
       {/* Table Header with Add New Button */}
       {onCreateLine && (
-  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
-    {/* ✅ Left: يظهر بس لما يكون فيه category مختارة */}
-    <div className="flex items-center gap-2">
-      {selectedCategory ? (
-        <>
-          <span className="text-12 font-medium text-gray-500 uppercase tracking-wider">
-            Estimated:
-          </span>
-          <span className="text-14 font-semibold text-gray-900">
-            {selectedEstimated !== null ? formatEGP(selectedEstimated) : '--'}
-          </span>
-        </>
-      ) : (
-        <span className="text-12 text-gray-400">
-          Select a category to see its estimated
-        </span>
-      )}
-    </div>
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white">
+          {/* ✅ Left: يظهر بس لما يكون فيه category مختارة */}
+          <div className="flex items-center gap-2">
+            {selectedCategory ? (
+              <>
+                <span className="text-12 font-medium text-gray-500 uppercase tracking-wider">
+                  Estimated:
+                </span>
+                <span className="text-14 font-semibold text-gray-900">
+                  {selectedEstimated !== null
+                    ? formatEGP(selectedEstimated)
+                    : '--'}
+                </span>
+              </>
+            ) : (
+              <span className="text-12 text-gray-400">
+                Select a category to see its estimated
+              </span>
+            )}
+          </div>
 
-    {/* Right: Add New */}
-    <Button
-      variant="brand"
-      size="sm"
-      onClick={onCreateLine}
-      type="button"
-      className="text-white whitespace-nowrap !rounded-lg h-9 px-3"
-    >
-      <Plus className="h-3.5 w-3.5 mr-1.5 text-white" />
-      Add New
-    </Button>
-  </div>
-)}
+          {/* Right: Add New */}
+          <Button
+            variant="brand"
+            size="sm"
+            onClick={onCreateLine}
+            type="button"
+            className="text-white whitespace-nowrap !rounded-lg h-9 px-3"
+          >
+            <Plus className="h-3.5 w-3.5 mr-1.5 text-white" />
+            Add New
+          </Button>
+        </div>
+      )}
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
@@ -230,4 +249,3 @@ const selectedEstimated = selectedCategory?.estimated ?? null
     </div>
   )
 }
-

@@ -19,9 +19,12 @@ const badgeVariants = cva(
         warning:
           'border-transparent bg-warning text-warning-foreground hover:bg-warning/80',
         info: 'border-transparent bg-info text-info-foreground hover:bg-info/80',
-        confirmed: 'bg-green-50 text-green-600 border-green-200 [&>svg]:text-green-600',
-        pending: 'bg-yellow-50 text-yellow-600 border-yellow-200 [&>svg]:text-yellow-600',
-        processing: 'bg-blue-50 text-blue-600 border-blue-200 [&>svg]:text-blue-600',
+        confirmed:
+          'bg-green-50 text-green-600 border-green-200 [&>svg]:text-green-600',
+        pending:
+          'bg-yellow-50 text-yellow-600 border-yellow-200 [&>svg]:text-yellow-600',
+        processing:
+          'bg-blue-50 text-blue-600 border-blue-200 [&>svg]:text-blue-600',
       },
       size: {
         sm: 'px-2 py-0.5 text-xs',

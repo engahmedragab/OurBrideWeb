@@ -34,24 +34,22 @@ export const ProviderMultiSelect = ({
       return providers
     }
     const query = searchQuery.toLowerCase()
-    return providers.filter(
-      (provider) => {
-        // General cart (providerId is null) - search by "general"
-        if (provider.providerId === null || provider.providerId === undefined) {
-          return 'general'.includes(query)
-        }
-        return (
-          provider.providerNameEn?.toLowerCase().includes(query) ||
-          provider.providerNameAr?.toLowerCase().includes(query)
-        )
+    return providers.filter(provider => {
+      // General cart (providerId is null) - search by "general"
+      if (provider.providerId === null || provider.providerId === undefined) {
+        return 'general'.includes(query)
       }
-    )
+      return (
+        provider.providerNameEn?.toLowerCase().includes(query) ||
+        provider.providerNameAr?.toLowerCase().includes(query)
+      )
+    })
   }, [providers, searchQuery])
 
   const selectedProviders = useMemo(() => {
     // Filter providers that are selected (by providerId)
     // Note: General cart (providerId is null) is handled separately by parent via cartId
-    return providers.filter((p) => {
+    return providers.filter(p => {
       if (p.providerId === null || p.providerId === undefined) {
         return false // General cart selection is handled by parent component
       }
@@ -65,7 +63,7 @@ export const ProviderMultiSelect = ({
       return
     }
     if (selectedProviderIds.includes(providerId)) {
-      onChange(selectedProviderIds.filter((id) => id !== providerId))
+      onChange(selectedProviderIds.filter(id => id !== providerId))
     } else {
       onChange([...selectedProviderIds, providerId])
     }
@@ -73,9 +71,13 @@ export const ProviderMultiSelect = ({
 
   const handleSelectAll = () => {
     // Filter out general cart (providerId is null) for select all
-    const providerCarts = providers.filter(p => p.providerId !== null && p.providerId !== undefined)
-    const providerIds = providerCarts.map((p) => p.providerId!).filter((id): id is number => id !== null)
-    
+    const providerCarts = providers.filter(
+      p => p.providerId !== null && p.providerId !== undefined
+    )
+    const providerIds = providerCarts
+      .map(p => p.providerId!)
+      .filter((id): id is number => id !== null)
+
     if (selectedProviderIds.length === providerIds.length) {
       onChange([])
     } else {
@@ -85,7 +87,7 @@ export const ProviderMultiSelect = ({
 
   const handleRemoveProvider = (providerId: number, e: React.MouseEvent) => {
     e.stopPropagation()
-    onChange(selectedProviderIds.filter((id) => id !== providerId))
+    onChange(selectedProviderIds.filter(id => id !== providerId))
   }
 
   const handleClearAll = (e: React.MouseEvent) => {
@@ -106,7 +108,8 @@ export const ProviderMultiSelect = ({
     selectedProviders.length === 0
       ? placeholder
       : selectedProviders.length === 1
-        ? selectedProviders[0].providerNameEn || selectedProviders[0].providerNameAr
+        ? selectedProviders[0].providerNameEn ||
+          selectedProviders[0].providerNameAr
         : `${selectedProviders.length} providers selected`
 
   return (
@@ -129,41 +132,54 @@ export const ProviderMultiSelect = ({
               {selectedProviders.length > 0 ? (
                 <div className="flex items-center gap-1.5 flex-1 min-w-0">
                   <div className="flex items-center gap-1 flex-wrap">
-                    {selectedProviders.slice(0, 2).map((provider) => {
-                      const displayName = provider.providerId === null || provider.providerId === undefined
-                        ? 'General'
-                        : (provider.providerNameEn || provider.providerNameAr)
+                    {selectedProviders.slice(0, 2).map(provider => {
+                      const displayName =
+                        provider.providerId === null ||
+                        provider.providerId === undefined
+                          ? 'General'
+                          : provider.providerNameEn || provider.providerNameAr
                       return (
-                      <span
-                        key={provider.providerId ?? `general-${provider.cartId}`}
-                        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-brand-100 text-brand-700 rounded text-11 font-medium"
-                      >
-                        <span className="truncate max-w-[60px]">
-                          {displayName}
-                        </span>
                         <span
-                          role="button"
-                          tabIndex={0}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (provider.providerId !== null && provider.providerId !== undefined) {
-                              handleRemoveProvider(provider.providerId, e)
-                            }
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              if (provider.providerId !== null && provider.providerId !== undefined) {
-                                handleRemoveProvider(provider.providerId, e as any)
-                              }
-                            }
-                          }}
-                          className="hover:text-brand-900 flex-shrink-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-brand-500 rounded"
+                          key={
+                            provider.providerId ?? `general-${provider.cartId}`
+                          }
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-brand-100 text-brand-700 rounded text-11 font-medium"
                         >
-                          <X className="h-2.5 w-2.5" />
+                          <span className="truncate max-w-[60px]">
+                            {displayName}
+                          </span>
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={e => {
+                              e.stopPropagation()
+                              if (
+                                provider.providerId !== null &&
+                                provider.providerId !== undefined
+                              ) {
+                                handleRemoveProvider(provider.providerId, e)
+                              }
+                            }}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                if (
+                                  provider.providerId !== null &&
+                                  provider.providerId !== undefined
+                                ) {
+                                  handleRemoveProvider(
+                                    provider.providerId,
+                                    e as any
+                                  )
+                                }
+                              }
+                            }}
+                            className="hover:text-brand-900 flex-shrink-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-brand-500 rounded"
+                          >
+                            <X className="h-2.5 w-2.5" />
+                          </span>
                         </span>
-                      </span>
                       )
                     })}
                     {selectedProviders.length > 2 && (
@@ -174,7 +190,9 @@ export const ProviderMultiSelect = ({
                   </div>
                 </div>
               ) : (
-                <span className="text-14 text-gray-500 truncate">{displayText}</span>
+                <span className="text-14 text-gray-500 truncate">
+                  {displayText}
+                </span>
               )}
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
@@ -183,7 +201,7 @@ export const ProviderMultiSelect = ({
                   role="button"
                   tabIndex={0}
                   onClick={handleClearAll}
-                  onKeyDown={(e) => {
+                  onKeyDown={e => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
                       handleClearAll(e as any)
@@ -217,7 +235,7 @@ export const ProviderMultiSelect = ({
                 ref={searchInputRef}
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search providers..."
                 className="w-full pl-9 pr-3 py-2 text-14 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               />
@@ -231,7 +249,9 @@ export const ProviderMultiSelect = ({
               onClick={handleSelectAll}
               className="w-full text-left px-3 py-2 text-14 font-medium text-brand-500 hover:bg-brand-50 rounded-lg transition-colors"
             >
-              {selectedProviderIds.length === providers.length ? 'Deselect All' : 'Select All'}
+              {selectedProviderIds.length === providers.length
+                ? 'Deselect All'
+                : 'Select All'}
             </button>
           </div>
 
@@ -242,15 +262,19 @@ export const ProviderMultiSelect = ({
                 No providers found
               </div>
             ) : (
-              filteredProviders.map((provider) => {
-                const isSelected = provider.providerId !== null && provider.providerId !== undefined
-                  ? selectedProviderIds.includes(provider.providerId)
-                  : false
+              filteredProviders.map(provider => {
+                const isSelected =
+                  provider.providerId !== null &&
+                  provider.providerId !== undefined
+                    ? selectedProviderIds.includes(provider.providerId)
+                    : false
                 return (
                   <button
                     key={provider.providerId ?? `general-${provider.cartId}`}
                     type="button"
-                    onClick={() => handleToggleProvider(provider.providerId ?? null)}
+                    onClick={() =>
+                      handleToggleProvider(provider.providerId ?? null)
+                    }
                     className={cn(
                       'w-full flex items-center gap-3 px-3 py-2.5 text-16 font-normal transition-colors',
                       'hover:bg-gray-50',
@@ -262,14 +286,20 @@ export const ProviderMultiSelect = ({
                       {provider.providerImage ? (
                         <Image
                           src={provider.providerImage}
-                          alt={provider.providerNameEn || provider.providerNameAr || 'Provider'}
+                          alt={
+                            provider.providerNameEn ||
+                            provider.providerNameAr ||
+                            'Provider'
+                          }
                           fill
                           className="object-cover"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                           <span className="text-18 font-semibold">
-                            {(provider.providerNameEn || provider.providerNameAr || 'P')[0].toUpperCase()}
+                            {(provider.providerNameEn ||
+                              provider.providerNameAr ||
+                              'P')[0].toUpperCase()}
                           </span>
                         </div>
                       )}
@@ -278,12 +308,16 @@ export const ProviderMultiSelect = ({
                     {/* Provider Info */}
                     <div className="flex-1 min-w-0 text-left">
                       <div className="text-14 font-medium text-gray-900 truncate">
-                        {provider.providerId === null || provider.providerId === undefined
+                        {provider.providerId === null ||
+                        provider.providerId === undefined
                           ? 'General'
-                          : (provider.providerNameEn || provider.providerNameAr || 'Provider')}
+                          : provider.providerNameEn ||
+                            provider.providerNameAr ||
+                            'Provider'}
                       </div>
                       <div className="text-12 text-gray-500">
-                        {provider.itemCount} {provider.itemCount === 1 ? 'item' : 'items'}
+                        {provider.itemCount}{' '}
+                        {provider.itemCount === 1 ? 'item' : 'items'}
                       </div>
                     </div>
 
@@ -308,6 +342,3 @@ export const ProviderMultiSelect = ({
     </div>
   )
 }
-
-
-

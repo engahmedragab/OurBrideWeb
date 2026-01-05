@@ -8,5 +8,3 @@ import type { MainOccasionLineResponse } from './main-occasion-line-response'
 export interface MainOccasionBookResponse extends MainBookResponse<MainOccasionLineResponse> {
   occasions: MainOccasionLineResponse[]
 }
-
-

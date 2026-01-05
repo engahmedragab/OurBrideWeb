@@ -77,4 +77,3 @@ export interface HomeResponse {
   notificationsUnReadCount: number
   homeCenterUpdate: HomeCenterUpdateResponse | null
 }
-

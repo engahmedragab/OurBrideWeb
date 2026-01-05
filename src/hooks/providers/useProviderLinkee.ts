@@ -19,6 +19,3 @@ export const useProviderLinkee = (
     refetchOnWindowFocus: false,
   })
 }
-
-
-

@@ -57,8 +57,8 @@ export default function NotificationsPage() {
   // Filter notifications based on active tab
   const filteredNotifications = useMemo(
     () =>
-    activeTab === 'all'
-      ? notifications
+      activeTab === 'all'
+        ? notifications
         : notifications.filter((n: Notification) => n.type === activeTab),
     [notifications, activeTab]
   )
@@ -120,7 +120,9 @@ export default function NotificationsPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <h1 className="text-24 sm:text-32 font-normal text-gray-900">Notifications</h1>
+          <h1 className="text-24 sm:text-32 font-normal text-gray-900">
+            Notifications
+          </h1>
           {unreadCount > 0 && (
             <p className="text-14 text-gray-600 mt-1">
               {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
@@ -147,7 +149,9 @@ export default function NotificationsPage() {
             const tabUnreadCount =
               tab.id === 'all'
                 ? unreadCount
-                : notifications.filter((n: Notification) => n.type === tab.id && !n.isRead).length
+                : notifications.filter(
+                    (n: Notification) => n.type === tab.id && !n.isRead
+                  ).length
 
             return (
               <button
@@ -198,16 +202,16 @@ export default function NotificationsPage() {
         />
       ) : (
         <>
-        <div className="space-y-3">
-          {filteredNotifications.map((notification: Notification) => (
-            <NotificationCard
-              key={notification.id}
-              notification={notification}
-              onMarkAsRead={() => markAsRead(notification.id)}
-              onDelete={() => deleteNotification(notification.id)}
-            />
-          ))}
-        </div>
+          <div className="space-y-3">
+            {filteredNotifications.map((notification: Notification) => (
+              <NotificationCard
+                key={notification.id}
+                notification={notification}
+                onMarkAsRead={() => markAsRead(notification.id)}
+                onDelete={() => deleteNotification(notification.id)}
+              />
+            ))}
+          </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
@@ -223,12 +227,16 @@ export default function NotificationsPage() {
               </Button>
               <span className="text-14 text-gray-600">
                 Page {currentPage} of {totalPages}
-                {isLoading && <span className="ml-2 text-gray-400">Loading...</span>}
+                {isLoading && (
+                  <span className="ml-2 text-gray-400">Loading...</span>
+                )}
               </span>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                onClick={() =>
+                  setCurrentPage(prev => Math.min(totalPages, prev + 1))
+                }
                 disabled={currentPage === totalPages || isLoading}
                 className="text-14"
               >

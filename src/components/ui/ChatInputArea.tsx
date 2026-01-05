@@ -3,7 +3,14 @@
 import { useState, KeyboardEvent, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { Input } from './Input'
-import { Plus, Mic, Send, MapPin, Image as ImageIcon, Paperclip } from 'lucide-react'
+import {
+  Plus,
+  Mic,
+  Send,
+  MapPin,
+  Image as ImageIcon,
+  Paperclip,
+} from 'lucide-react'
 import { Button } from './Button'
 import { VoiceRecorderInput } from './VoiceRecorderInput'
 import { Popover, PopoverTrigger, PopoverContent } from './Popover'
@@ -51,7 +58,9 @@ export const ChatInputArea = ({
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null)
   const [recordingDuration, setRecordingDuration] = useState(0)
   const [isAttachMenuOpen, setIsAttachMenuOpen] = useState(false)
-  const [pendingImages, setPendingImages] = useState<Array<{ file: File; preview: string }>>([])
+  const [pendingImages, setPendingImages] = useState<
+    Array<{ file: File; preview: string }>
+  >([])
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -84,7 +93,10 @@ export const ChatInputArea = ({
   }
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && (value.trim().length > 0 || pendingImages.length > 0)) {
+    if (
+      e.key === 'Enter' &&
+      (value.trim().length > 0 || pendingImages.length > 0)
+    ) {
       handleSend(value.trim())
     }
   }
@@ -305,10 +317,7 @@ export const ChatInputArea = ({
     <div className={cn('flex flex-col gap-2 sm:gap-3 md:gap-4', className)}>
       {/* Image Previews */}
       {pendingImages.length > 0 && (
-        <ImagePreviewList
-          images={pendingImages}
-          onRemove={handleRemoveImage}
-        />
+        <ImagePreviewList images={pendingImages} onRemove={handleRemoveImage} />
       )}
 
       {/* Input Area */}
@@ -345,7 +354,10 @@ export const ChatInputArea = ({
 
             {/* Plus Icon with Popover */}
             <div className="absolute left-3 top-1/2 -translate-y-1/2">
-              <Popover open={isAttachMenuOpen} onOpenChange={setIsAttachMenuOpen}>
+              <Popover
+                open={isAttachMenuOpen}
+                onOpenChange={setIsAttachMenuOpen}
+              >
                 <PopoverTrigger asChild>
                   <button
                     type="button"

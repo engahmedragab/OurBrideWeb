@@ -19,11 +19,7 @@ import {
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import type { OrderStatus } from '@/components/ui/OrderProgressIndicator'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
-import {
-  useClientOrders,
-  useCancelOrder,
-  useCartsWithProviders,
-} from '@/hooks'
+import { useClientOrders, useCancelOrder, useCartsWithProviders } from '@/hooks'
 import type { OrderResponse, PurchaseResponse } from '@/types/responses'
 import {
   OrderStatus as ApiOrderStatus,
@@ -52,31 +48,30 @@ const mapOrderStatus = (status: ApiOrderStatus | string): OrderStatus => {
  * Map OrderResponse to OrderCard format
  */
 const mapOrderToOrderCard = (order: OrderResponse) => {
-
   // Format order date - use a static fallback to avoid hydration mismatch
   const orderDate = order.orderDate
     ? new Date(order.orderDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
     : 'N/A'
 
   // Format delivery date
   const arrivalDate = order.deliveryDate
     ? new Date(order.deliveryDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
     : undefined
 
   const arrivalTime = order.deliveryDate
     ? new Date(order.deliveryDate).toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    })
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      })
     : undefined
 
   // Map purchases from OrderResponse to products
@@ -94,11 +89,23 @@ const mapOrderToOrderCard = (order: OrderResponse) => {
     })
     .map((purchase: PurchaseResponse) => {
       // Use product data if available, otherwise use purchase name/image
-      const productName = purchase.product?.nameEn ?? purchase.product?.nameAr ?? purchase.nameEn ?? purchase.nameAr ?? purchase.name ?? 'Item'
-      const productImage = purchase.product?.image ?? purchase.imageUrl ?? '/images/placeholder-product.png'
+      const productName =
+        purchase.product?.nameEn ??
+        purchase.product?.nameAr ??
+        purchase.nameEn ??
+        purchase.nameAr ??
+        purchase.name ??
+        'Item'
+      const productImage =
+        purchase.product?.image ??
+        purchase.imageUrl ??
+        '/images/placeholder-product.png'
 
       return {
-        id: purchase.productId?.toString() ?? purchase.serviceId?.toString() ?? purchase.id.toString(),
+        id:
+          purchase.productId?.toString() ??
+          purchase.serviceId?.toString() ??
+          purchase.id.toString(),
         title: productName,
         image: productImage,
         price: purchase.totalPrice ?? purchase.price ?? 0,
@@ -110,7 +117,10 @@ const mapOrderToOrderCard = (order: OrderResponse) => {
   // OrderResponse.orderSummary contains OrderSummaryResponse with calculated totals
   const subtotal =
     order.orderSummary?.subtotal ??
-    order.totalAmount - (order.taxAmount ?? 0) - (order.shippingAmount ?? 0) - (order.discountAmount ?? 0)
+    order.totalAmount -
+      (order.taxAmount ?? 0) -
+      (order.shippingAmount ?? 0) -
+      (order.discountAmount ?? 0)
 
   return {
     orderId: order.orderNumber || order.id.toString(),
@@ -161,26 +171,26 @@ const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
   // Format dates
   const requestDate = purchase.creationDate
     ? new Date(purchase.creationDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
     : 'N/A'
 
   const dueDate = purchase.endDate
     ? new Date(purchase.endDate).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
     : undefined
 
   const dueTime = purchase.endDate
     ? new Date(purchase.endDate).toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    })
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      })
     : undefined
 
   return {
@@ -196,8 +206,15 @@ const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
         count: 0,
       },
       provider: {
-        id: purchase.providerId?.toString() ?? service.providerId?.toString() ?? service.provider?.id?.toString(),
-        name: purchase.providerName ?? service.provider?.nameEn ?? service.provider?.nameAr ?? 'Provider',
+        id:
+          purchase.providerId?.toString() ??
+          service.providerId?.toString() ??
+          service.provider?.id?.toString(),
+        name:
+          purchase.providerName ??
+          service.provider?.nameEn ??
+          service.provider?.nameAr ??
+          'Provider',
       },
     },
     assignedTo: purchase.providerName,
@@ -234,14 +251,12 @@ export default function OrdersPage() {
     enabled: filterType === 'products',
   })
 
-
   // Fetch service orders from carts with providers
   const {
     data: cartsWithProviders,
     isLoading: isLoadingServiceOrders,
     error: serviceOrdersError,
   } = useCartsWithProviders(filterType === 'services')
-
 
   // Cancel order mutation
   const cancelOrderMutation = useCancelOrder()
@@ -253,7 +268,10 @@ export default function OrdersPage() {
 
     if (clientOrdersData?.items && Array.isArray(clientOrdersData.items)) {
       allOrders = clientOrdersData.items
-    } else if ((clientOrdersData as any)?.data?.items && Array.isArray((clientOrdersData as any).data.items)) {
+    } else if (
+      (clientOrdersData as any)?.data?.items &&
+      Array.isArray((clientOrdersData as any).data.items)
+    ) {
       allOrders = (clientOrdersData as any).data.items
     } else {
       return []
@@ -274,7 +292,10 @@ export default function OrdersPage() {
 
     if (clientOrdersData?.items && Array.isArray(clientOrdersData.items)) {
       allOrders = clientOrdersData.items
-    } else if ((clientOrdersData as any)?.data?.items && Array.isArray((clientOrdersData as any).data.items)) {
+    } else if (
+      (clientOrdersData as any)?.data?.items &&
+      Array.isArray((clientOrdersData as any).data.items)
+    ) {
       allOrders = (clientOrdersData as any).data.items
     } else {
       return []
@@ -293,7 +314,9 @@ export default function OrdersPage() {
     if (!cartsWithProviders) return []
 
     // Ensure cartsWithProviders is an array
-    const cartsArray = Array.isArray(cartsWithProviders) ? cartsWithProviders : []
+    const cartsArray = Array.isArray(cartsWithProviders)
+      ? cartsWithProviders
+      : []
     const allPurchases: PurchaseResponse[] = []
     cartsArray.forEach((cart: { purchases?: PurchaseResponse[] }) => {
       if (cart && cart.purchases && Array.isArray(cart.purchases)) {
@@ -303,29 +326,31 @@ export default function OrdersPage() {
 
     // Filter for service purchases that are in progress
     // Using string comparison since PurchaseStatus enum values may vary
-    const inProgress = allPurchases.filter(
-      (purchase: PurchaseResponse) => {
-        const statusStr = String(purchase.status)
-        return (
-          purchase.type === PurchaseType.Service &&
-          statusStr !== 'Completed' &&
-          statusStr !== 'Cancelled' &&
-          statusStr !== 'Canceled' &&
-          !purchase.isDeleted
-        )
-      }
-    )
+    const inProgress = allPurchases.filter((purchase: PurchaseResponse) => {
+      const statusStr = String(purchase.status)
+      return (
+        purchase.type === PurchaseType.Service &&
+        statusStr !== 'Completed' &&
+        statusStr !== 'Cancelled' &&
+        statusStr !== 'Canceled' &&
+        !purchase.isDeleted
+      )
+    })
 
     return inProgress
       .map(mapServicePurchaseToRequestCard)
-      .filter((request): request is NonNullable<typeof request> => request !== null)
+      .filter(
+        (request): request is NonNullable<typeof request> => request !== null
+      )
   }, [cartsWithProviders])
 
   const requestsHistory = useMemo(() => {
     if (!cartsWithProviders) return []
 
     // Ensure cartsWithProviders is an array
-    const cartsArray = Array.isArray(cartsWithProviders) ? cartsWithProviders : []
+    const cartsArray = Array.isArray(cartsWithProviders)
+      ? cartsWithProviders
+      : []
     const allPurchases: PurchaseResponse[] = []
     cartsArray.forEach((cart: { purchases?: PurchaseResponse[] }) => {
       if (cart && cart.purchases && Array.isArray(cart.purchases)) {
@@ -335,26 +360,25 @@ export default function OrdersPage() {
 
     // Filter for service purchases that are completed or cancelled
     // Using string comparison since PurchaseStatus enum values may vary
-    const history = allPurchases.filter(
-      (purchase: PurchaseResponse) => {
-        const statusStr = String(purchase.status)
-        return (
-          purchase.type === PurchaseType.Service &&
-          (statusStr === 'Completed' ||
-            statusStr === 'Cancelled' ||
-            statusStr === 'Canceled')
-        )
-      }
-    )
+    const history = allPurchases.filter((purchase: PurchaseResponse) => {
+      const statusStr = String(purchase.status)
+      return (
+        purchase.type === PurchaseType.Service &&
+        (statusStr === 'Completed' ||
+          statusStr === 'Cancelled' ||
+          statusStr === 'Canceled')
+      )
+    })
 
     return history
       .map(mapServicePurchaseToRequestCard)
-      .filter((request): request is NonNullable<typeof request> => request !== null)
+      .filter(
+        (request): request is NonNullable<typeof request> => request !== null
+      )
   }, [cartsWithProviders])
 
-  const isLoading = filterType === 'products'
-    ? isLoadingOrders
-    : isLoadingServiceOrders
+  const isLoading =
+    filterType === 'products' ? isLoadingOrders : isLoadingServiceOrders
   const error = filterType === 'products' ? ordersError : serviceOrdersError
 
   const handleCancelOrder = (orderId: string) => {
@@ -367,7 +391,8 @@ export default function OrdersPage() {
 
     try {
       // Find the order to get its ID
-      const order = ordersInProgress.find(o => o.orderId === selectedOrderId) ||
+      const order =
+        ordersInProgress.find(o => o.orderId === selectedOrderId) ||
         ordersHistory.find(o => o.orderId === selectedOrderId)
 
       if (order && order.orderResponse) {
@@ -571,7 +596,9 @@ export default function OrdersPage() {
                       paymentMethod={order.paymentMethod}
                       totalPaidAmount={order.totalPaidAmount}
                       totalRemainingAmount={order.totalRemainingAmount}
-                      paymentProgressPercentage={order.paymentProgressPercentage}
+                      paymentProgressPercentage={
+                        order.paymentProgressPercentage
+                      }
                       discountAmount={order.discountAmount}
                       depositAmount={order.depositAmount}
                       itemCount={order.itemCount}

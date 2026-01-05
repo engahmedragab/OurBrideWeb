@@ -58,7 +58,6 @@ export const ItineraryHeader = ({
 
   return (
     <div className={cn('w-full', className)}>
-
       <div className="mb-4 flex flex-col items-center justify-center ">
         <p className="text-14 text-gray-500 mb-1">
           Event Date : {formattedDate}
@@ -70,10 +69,10 @@ export const ItineraryHeader = ({
                 <input
                   type="text"
                   value={editedTitle}
-                  onChange={(e) => setEditedTitle(e.target.value)}
+                  onChange={e => setEditedTitle(e.target.value)}
                   className="text-24 text-gray-900 font-medium text-center border-b-2 border-brand-500 focus:outline-none focus:border-brand-600 bg-transparent"
                   autoFocus
-                  onKeyDown={(e) => {
+                  onKeyDown={e => {
                     if (e.key === 'Enter') {
                       handleSaveEdit()
                     } else if (e.key === 'Escape') {
@@ -98,7 +97,9 @@ export const ItineraryHeader = ({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <h2 className="text-24 text-gray-400 font-medium">{eventTitle}</h2>
+                <h2 className="text-24 text-gray-400 font-medium">
+                  {eventTitle}
+                </h2>
                 {(onEditTitle || onDelete) && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -140,4 +141,3 @@ export const ItineraryHeader = ({
     </div>
   )
 }
-

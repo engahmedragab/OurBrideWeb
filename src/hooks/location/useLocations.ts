@@ -1,6 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
-import { getCountries, getCities, getCitiesByCountry, getRegions, getRegionsByCity } from '@/services/api/locationApi'
-import type { Country, City, Region } from '@/../client/common/api/gen/ourbride-api'
+import {
+  getCountries,
+  getCities,
+  getCitiesByCountry,
+  getRegions,
+  getRegionsByCity,
+} from '@/services/api/locationApi'
+import type {
+  Country,
+  City,
+  Region,
+} from '@/../client/common/api/gen/ourbride-api'
 import { isAuthenticated } from '@/auth/utils/token'
 
 /**
@@ -8,7 +18,7 @@ import { isAuthenticated } from '@/auth/utils/token'
  */
 export const useCountries = (enabled: boolean = true) => {
   const authenticated = isAuthenticated()
-  
+
   return useQuery<Country[]>({
     queryKey: ['locations', 'countries'],
     queryFn: async () => {
@@ -25,7 +35,7 @@ export const useCountries = (enabled: boolean = true) => {
  */
 export const useCities = (enabled: boolean = true) => {
   const authenticated = isAuthenticated()
-  
+
   return useQuery<City[]>({
     queryKey: ['locations', 'cities'],
     queryFn: async () => {
@@ -40,9 +50,12 @@ export const useCities = (enabled: boolean = true) => {
 /**
  * Hook to fetch cities by country ID
  */
-export const useCitiesByCountry = (countryId: number | null, enabled: boolean = true) => {
+export const useCitiesByCountry = (
+  countryId: number | null,
+  enabled: boolean = true
+) => {
   const authenticated = isAuthenticated()
-  
+
   return useQuery<City[]>({
     queryKey: ['locations', 'cities', 'country', countryId],
     queryFn: async () => {
@@ -60,7 +73,7 @@ export const useCitiesByCountry = (countryId: number | null, enabled: boolean = 
  */
 export const useRegions = (enabled: boolean = true) => {
   const authenticated = isAuthenticated()
-  
+
   return useQuery<Region[]>({
     queryKey: ['locations', 'regions'],
     queryFn: async () => {
@@ -75,9 +88,12 @@ export const useRegions = (enabled: boolean = true) => {
 /**
  * Hook to fetch regions by city ID
  */
-export const useRegionsByCity = (cityId: number | null, enabled: boolean = true) => {
+export const useRegionsByCity = (
+  cityId: number | null,
+  enabled: boolean = true
+) => {
   const authenticated = isAuthenticated()
-  
+
   return useQuery<Region[]>({
     queryKey: ['locations', 'regions', 'city', cityId],
     queryFn: async () => {
@@ -89,4 +105,3 @@ export const useRegionsByCity = (cityId: number | null, enabled: boolean = true)
     refetchOnWindowFocus: false,
   })
 }
-

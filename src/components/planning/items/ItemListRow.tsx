@@ -5,10 +5,7 @@ import { cn } from '@/lib/utils'
 import { ChevronRight, Trash2 } from 'lucide-react'
 import type { UiCategory } from '@/app/events/planning/items/page'
 
-const STYLE_BY_COLOR: Record<
-  string,
-  { bg: string; border: string }
-> = {
+const STYLE_BY_COLOR: Record<string, { bg: string; border: string }> = {
   gray: { bg: 'bg-gray-50', border: 'border-gray-200' },
   red: { bg: 'bg-red-50', border: 'border-red-200' },
   orange: { bg: 'bg-orange-50', border: 'border-orange-200' },
@@ -45,7 +42,7 @@ export function ItemListRow({
         'hover:brightness-[0.98] focus:outline-none',
 
         // active بدون border تقيل
-        active ? 'brightness-[0.97]' : '',
+        active ? 'brightness-[0.97]' : ''
       )}
     >
       <div className="flex items-center justify-between gap-3">
@@ -58,7 +55,7 @@ export function ItemListRow({
         <div className="flex items-center gap-1">
           {onDelete ? (
             <span
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault()
                 e.stopPropagation()
                 onDelete()

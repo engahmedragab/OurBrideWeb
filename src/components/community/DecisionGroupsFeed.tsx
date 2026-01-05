@@ -11,7 +11,10 @@ export interface DecisionGroupsFeedProps {
   decisionGroups?: DecisionGroupResponse[]
 }
 
-export const DecisionGroupsFeed = ({ className, decisionGroups = [] }: DecisionGroupsFeedProps) => {
+export const DecisionGroupsFeed = ({
+  className,
+  decisionGroups = [],
+}: DecisionGroupsFeedProps) => {
   const router = useRouter()
 
   return (
@@ -21,7 +24,9 @@ export const DecisionGroupsFeed = ({ className, decisionGroups = [] }: DecisionG
           <DecisionGroupCard
             key={group.id}
             decisionGroup={group}
-            onClick={() => router.push(`/community/decision-groups/${group.id}`)}
+            onClick={() =>
+              router.push(`/community/decision-groups/${group.id}`)
+            }
           />
         ))
       ) : (
@@ -34,16 +39,3 @@ export const DecisionGroupsFeed = ({ className, decisionGroups = [] }: DecisionG
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

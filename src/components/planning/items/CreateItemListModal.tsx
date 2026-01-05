@@ -59,7 +59,7 @@ export const CreateItemListModal = ({
   const selectedColor = watch('color')
 
   const selectOptions: SelectMenuOption[] = useMemo(() => {
-    return COLOR_OPTIONS.map((c) => ({ label: c.label, value: c.value }))
+    return COLOR_OPTIONS.map(c => ({ label: c.label, value: c.value }))
   }, [])
 
   // Reset form when modal closes
@@ -106,7 +106,9 @@ export const CreateItemListModal = ({
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-6">
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-20 font-semibold text-gray-900">Create New List</h2>
+          <h2 className="text-20 font-semibold text-gray-900">
+            Create New List
+          </h2>
           <button
             type="button"
             onClick={handleClose}
@@ -119,7 +121,10 @@ export const CreateItemListModal = ({
 
         {/* Name */}
         <div className="space-y-1.5">
-          <label htmlFor="list-name" className="block text-14 font-medium text-gray-700">
+          <label
+            htmlFor="list-name"
+            className="block text-14 font-medium text-gray-700"
+          >
             List name <span className="text-red-500">*</span>
           </label>
           <Input
@@ -136,11 +141,18 @@ export const CreateItemListModal = ({
 
         {/* Color (SelectMenu) */}
         <div className="space-y-1.5">
-          <label className="block text-14 font-medium text-gray-700">List color</label>
+          <label className="block text-14 font-medium text-gray-700">
+            List color
+          </label>
 
           <SelectMenu
             value={selectedColor}
-            onChange={(val) => setValue('color', val as ColorKey, { shouldDirty: true, shouldValidate: true })}
+            onChange={val =>
+              setValue('color', val as ColorKey, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }
             options={selectOptions}
             placeholder="Select color..."
             size="lg"
@@ -149,12 +161,19 @@ export const CreateItemListModal = ({
             disabled={isSubmitting || isLoading}
           />
 
-          {errors.color ? <div className="text-xs text-red-500">{errors.color.message}</div> : null}
+          {errors.color ? (
+            <div className="text-xs text-red-500">{errors.color.message}</div>
+          ) : null}
         </div>
 
         {/* Footer */}
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
-          <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting || isLoading}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+            disabled={isSubmitting || isLoading}
+          >
             Cancel
           </Button>
           <Button

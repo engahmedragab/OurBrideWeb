@@ -71,9 +71,7 @@ export const VoiceRecorderInput = ({
     if (isRecording) {
       // Animated waveform during recording
       const generateWaveform = () => {
-        const bars = Array.from({ length: 50 }, () =>
-          Math.random() * 60 + 20
-        )
+        const bars = Array.from({ length: 50 }, () => Math.random() * 60 + 20)
         setWaveformData(bars)
         animationRef.current = requestAnimationFrame(generateWaveform)
       }
@@ -132,15 +130,17 @@ export const VoiceRecorderInput = ({
               />
             ))
           ) : (
-            <div className="text-12 sm:text-13 md:text-14 text-gray-400">Recording...</div>
+            <div className="text-12 sm:text-13 md:text-14 text-gray-400">
+              Recording...
+            </div>
           )}
         </div>
 
         {/* Duration - Always visible */}
         <span
           className={cn(
-            "flex-shrink-0 text-12 sm:text-13 md:text-14 min-w-[45px] sm:min-w-[50px] text-right font-medium",
-            isRecording ? "text-brand-500" : "text-gray-600"
+            'flex-shrink-0 text-12 sm:text-13 md:text-14 min-w-[45px] sm:min-w-[50px] text-right font-medium',
+            isRecording ? 'text-brand-500' : 'text-gray-600'
           )}
         >
           {formatDuration(displayDuration)}
@@ -160,4 +160,3 @@ export const VoiceRecorderInput = ({
     </div>
   )
 }
-

@@ -19,6 +19,3 @@ export const useProviderPublicProfile = (
     refetchOnWindowFocus: false,
   })
 }
-
-
-

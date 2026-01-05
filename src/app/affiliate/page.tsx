@@ -14,8 +14,10 @@ import {
   LoadingOverlay,
 } from '@/components/ui'
 
-const AffiliateOnboardingModals = lazy(
-  () => import('@/components/ui/AffiliateOnboardingModals').then(module => ({ default: module.AffiliateOnboardingModals }))
+const AffiliateOnboardingModals = lazy(() =>
+  import('@/components/ui/AffiliateOnboardingModals').then(module => ({
+    default: module.AffiliateOnboardingModals,
+  }))
 )
 import {
   DollarSign,
@@ -50,13 +52,26 @@ export default function AffiliatePage() {
   const [hasJoined, setHasJoined] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [editingCampaignId, setEditingCampaignId] = useState<string | null>(null)
+  const [editingCampaignId, setEditingCampaignId] = useState<string | null>(
+    null
+  )
   const [showAddCardModal, setShowAddCardModal] = useState(false)
   const [showWithdrawModal, setShowWithdrawModal] = useState(false)
 
-  const categories = ['Makeup', 'Fashion', 'Makeup', 'Fashion', 'Fashion', 'Makeup', 'Fashion', 'Fashion']
+  const categories = [
+    'Makeup',
+    'Fashion',
+    'Makeup',
+    'Fashion',
+    'Fashion',
+    'Makeup',
+    'Fashion',
+    'Fashion',
+  ]
 
-  {/* Campaign data structure */}
+  {
+    /* Campaign data structure */
+  }
   interface Campaign {
     id: string
     name: string
@@ -74,7 +89,8 @@ export default function AffiliatePage() {
       name: 'Bridal Makeup Off',
       badgeText: 'Bridal Makeup',
       offerText: 'Get 15 % OFF',
-      description: 'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque',
+      description:
+        'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque',
       commission: '200',
       bannerColor: '#FFB8A8',
       isActive: true,
@@ -84,23 +100,56 @@ export default function AffiliatePage() {
       name: 'Campaigns Name',
       badgeText: 'Bridal Makeup',
       offerText: 'Get 15 % OFF',
-      description: 'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque',
+      description:
+        'Lorem ipsum dolor sit amet consectetur. Bibendum vitae vel urna nullam ac. Eget tortor molestie ut cras et sed lectus porta scelerisque',
       commission: '200',
       bannerColor: '#00D9A3',
       isActive: true,
     },
   ])
 
-  {/* Temporary edit state */}
+  {
+    /* Temporary edit state */
+  }
   const [editFormData, setEditFormData] = useState<Campaign | null>(null)
 
   const bannerColors = [
-    { id: 'coral', color: '#FFB8A8', name: 'Coral', className: 'bg-campaign-coral' },
-    { id: 'mint', color: '#A8E6CF', name: 'Mint', className: 'bg-campaign-mint' },
-    { id: 'pink', color: '#FFD1DC', name: 'Pink', className: 'bg-campaign-pink' },
-    { id: 'yellow', color: '#FFF4B8', name: 'Yellow', className: 'bg-campaign-yellow' },
-    { id: 'blue', color: '#B8D4FF', name: 'Blue', className: 'bg-campaign-blue' },
-    { id: 'gray', color: '#D4D4D4', name: 'Gray', className: 'bg-campaign-gray' },
+    {
+      id: 'coral',
+      color: '#FFB8A8',
+      name: 'Coral',
+      className: 'bg-campaign-coral',
+    },
+    {
+      id: 'mint',
+      color: '#A8E6CF',
+      name: 'Mint',
+      className: 'bg-campaign-mint',
+    },
+    {
+      id: 'pink',
+      color: '#FFD1DC',
+      name: 'Pink',
+      className: 'bg-campaign-pink',
+    },
+    {
+      id: 'yellow',
+      color: '#FFF4B8',
+      name: 'Yellow',
+      className: 'bg-campaign-yellow',
+    },
+    {
+      id: 'blue',
+      color: '#B8D4FF',
+      name: 'Blue',
+      className: 'bg-campaign-blue',
+    },
+    {
+      id: 'gray',
+      color: '#D4D4D4',
+      name: 'Gray',
+      className: 'bg-campaign-gray',
+    },
   ]
 
   const toggleCategory = (category: string, index: number) => {
@@ -140,7 +189,9 @@ export default function AffiliatePage() {
     }
   }
 
-  {/* Check if user has already joined on mount */}
+  {
+    /* Check if user has already joined on mount */
+  }
   useEffect(() => {
     const affiliateStatus = localStorage.getItem('affiliate_program_joined')
     if (affiliateStatus === 'true') {
@@ -158,7 +209,9 @@ export default function AffiliatePage() {
     localStorage.setItem('affiliate_program_joined', 'true')
   }
 
-  {/* Show loading state while checking localStorage */}
+  {
+    /* Show loading state while checking localStorage */
+  }
   if (isLoading) {
     return (
       <UserPageLayout>
@@ -167,7 +220,9 @@ export default function AffiliatePage() {
     )
   }
 
-  {/* Mock data */}
+  {
+    /* Mock data */
+  }
   const earningInsights = {
     totalEarning: 5200,
     pendingPayout: 200,
@@ -178,7 +233,8 @@ export default function AffiliatePage() {
     {
       id: '1',
       userName: 'Sarah Ahmed',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      userAvatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       date: 'Joined: Sep 23, 2025',
       sales: 3,
       commission: '+600 EGP',
@@ -187,7 +243,8 @@ export default function AffiliatePage() {
     {
       id: '2',
       userName: 'Sarah Ahmed',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      userAvatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       date: 'Joined: Sep 23, 2025',
       sales: 4,
       commission: '+600 EGP',
@@ -196,7 +253,8 @@ export default function AffiliatePage() {
     {
       id: '3',
       userName: 'Aya Ahmed',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      userAvatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       date: 'Joined: Sep 23, 2025',
       sales: 2,
       commission: '+600 EGP',
@@ -205,7 +263,8 @@ export default function AffiliatePage() {
     {
       id: '4',
       userName: 'Aya Ahmed',
-      userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+      userAvatar:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
       date: 'Joined: Sep 23, 2025',
       sales: 3,
       commission: '+600 EGP',
@@ -266,17 +325,18 @@ export default function AffiliatePage() {
     },
   ]
 
-
-  {/* If user hasn't joined, show the starting screen */}
+  {
+    /* If user hasn't joined, show the starting screen */
+  }
   if (!hasJoined) {
     return (
       <>
         <Suspense fallback={null}>
-        <AffiliateOnboardingModals
-          isOpen={showOnboarding}
-          onClose={() => setShowOnboarding(false)}
-          onComplete={handleOnboardingComplete}
-        />
+          <AffiliateOnboardingModals
+            isOpen={showOnboarding}
+            onClose={() => setShowOnboarding(false)}
+            onComplete={handleOnboardingComplete}
+          />
         </Suspense>
 
         <UserPageLayout>
@@ -285,7 +345,11 @@ export default function AffiliatePage() {
               {/* SVG Illustration */}
               <div className="mb-6 sm:mb-8 flex justify-center items-center relative w-48 h-48 sm:w-64 sm:h-64 mx-auto">
                 <Image
-                  src={typeof affiliateStartingSvg === 'string' ? affiliateStartingSvg : affiliateStartingSvg.src}
+                  src={
+                    typeof affiliateStartingSvg === 'string'
+                      ? affiliateStartingSvg
+                      : affiliateStartingSvg.src
+                  }
                   alt="Join Affiliate Program"
                   fill
                   sizes="(max-width: 640px) 192px, 256px"
@@ -300,7 +364,8 @@ export default function AffiliatePage() {
 
               {/* Description */}
               <p className="text-14 sm:text-16 text-gray-500 mb-6 sm:mb-8 leading-relaxed px-4">
-                Share your unique link, promote OurBride, and earn commission for every successful booking made through you
+                Share your unique link, promote OurBride, and earn commission
+                for every successful booking made through you
               </p>
 
               {/* Join Now Button */}
@@ -319,7 +384,9 @@ export default function AffiliatePage() {
     )
   }
 
-  {/* Main Affiliate Dashboard */}
+  {
+    /* Main Affiliate Dashboard */
+  }
   return (
     <UserPageLayout>
       {/* Tabs */}
@@ -414,7 +481,9 @@ export default function AffiliatePage() {
             {/* Promoted Campaigns */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Promoted Campaigns</h2>
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">
+                  Promoted Campaigns
+                </h2>
                 <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
                   View All
                 </button>
@@ -441,7 +510,9 @@ export default function AffiliatePage() {
           <aside className="w-full lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Recent Activity</h2>
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">
+                  Recent Activity
+                </h2>
                 <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
                   View all
                 </button>
@@ -452,12 +523,12 @@ export default function AffiliatePage() {
                     <div className="flex items-start gap-3">
                       <div className="relative w-10 h-10 flex-shrink-0">
                         <Image
-                        src={item.userAvatar}
-                        alt={item.userName}
+                          src={item.userAvatar}
+                          alt={item.userName}
                           fill
                           sizes="40px"
                           className="rounded-full object-cover"
-                      />
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
@@ -468,12 +539,18 @@ export default function AffiliatePage() {
                             {item.commission}
                           </p>
                         </div>
-                        <p className="text-11 sm:text-12 text-gray-500 mb-2">{item.date}</p>
+                        <p className="text-11 sm:text-12 text-gray-500 mb-2">
+                          {item.date}
+                        </p>
                         <p className="text-11 sm:text-12 text-gray-600 mb-2">
                           {item.sales} Booking
                         </p>
                         <Badge
-                          variant={item.status === 'Confirmed' ? 'confirmed' : 'pending'}
+                          variant={
+                            item.status === 'Confirmed'
+                              ? 'confirmed'
+                              : 'pending'
+                          }
                           className="gap-1.5 px-2 sm:px-3 py-1 text-11 sm:text-12 font-medium"
                         >
                           {item.status === 'Confirmed' ? (
@@ -532,25 +609,40 @@ export default function AffiliatePage() {
 
             {/* Top Campaigns Section */}
             <div>
-              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">Top Campaigns</h2>
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
+                Top Campaigns
+              </h2>
               <div className="space-y-3 sm:space-y-4">
                 {/* Campaign Card 1 */}
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                   <div className="p-3 sm:p-4">
                     <div className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4 bg-campaign-coral">
                       <div className="inline-block bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-2 sm:mb-3">
-                        <p className="text-11 sm:text-12 font-normal text-gray-900">Bridal Makeup</p>
+                        <p className="text-11 sm:text-12 font-normal text-gray-900">
+                          Bridal Makeup
+                        </p>
                       </div>
-                      <h3 className="text-20 sm:text-24 font-semibold text-gray-900">Get 15 % OFF</h3>
+                      <h3 className="text-20 sm:text-24 font-semibold text-gray-900">
+                        Get 15 % OFF
+                      </h3>
                     </div>
                     <div className="space-y-2 sm:space-y-3">
-                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">Bridal Makeup Essentials</h4>
+                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">
+                        Bridal Makeup Essentials
+                      </h4>
                       <p className="text-13 sm:text-14 text-gray-500">
-                        Promote our best selling bridal makeup sets for the big day.
+                        Promote our best selling bridal makeup sets for the big
+                        day.
                       </p>
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <p className="text-13 sm:text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
-                        <Button variant="brand" size="md" className="text-white w-full sm:w-auto">
+                        <p className="text-13 sm:text-14 font-normal text-gray-900">
+                          200 EGP For Each Booking
+                        </p>
+                        <Button
+                          variant="brand"
+                          size="md"
+                          className="text-white w-full sm:w-auto"
+                        >
                           Generate Link
                         </Button>
                       </div>
@@ -563,18 +655,31 @@ export default function AffiliatePage() {
                   <div className="p-3 sm:p-4">
                     <div className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4 bg-campaign-mint-green">
                       <div className="inline-block bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full mb-2 sm:mb-3">
-                        <p className="text-11 sm:text-12 font-normal text-gray-900">Bridal Makeup</p>
+                        <p className="text-11 sm:text-12 font-normal text-gray-900">
+                          Bridal Makeup
+                        </p>
                       </div>
-                      <h3 className="text-20 sm:text-24 font-semibold text-gray-900">Get 15 % OFF</h3>
+                      <h3 className="text-20 sm:text-24 font-semibold text-gray-900">
+                        Get 15 % OFF
+                      </h3>
                     </div>
                     <div className="space-y-2 sm:space-y-3">
-                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">Bridal Makeup Essentials</h4>
+                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">
+                        Bridal Makeup Essentials
+                      </h4>
                       <p className="text-13 sm:text-14 text-gray-500">
-                        Promote our best selling bridal makeup sets for the big day.
+                        Promote our best selling bridal makeup sets for the big
+                        day.
                       </p>
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <p className="text-13 sm:text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
-                        <Button variant="brand" size="md" className="text-white w-full sm:w-auto">
+                        <p className="text-13 sm:text-14 font-normal text-gray-900">
+                          200 EGP For Each Booking
+                        </p>
+                        <Button
+                          variant="brand"
+                          size="md"
+                          className="text-white w-full sm:w-auto"
+                        >
                           Generate Link
                         </Button>
                       </div>
@@ -589,7 +694,9 @@ export default function AffiliatePage() {
           <aside className="w-full lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Recent Activity</h2>
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">
+                  Recent Activity
+                </h2>
                 <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
                   View all
                 </button>
@@ -600,12 +707,12 @@ export default function AffiliatePage() {
                     <div className="flex items-start gap-3">
                       <div className="relative w-10 h-10 flex-shrink-0">
                         <Image
-                        src={item.userAvatar}
-                        alt={item.userName}
+                          src={item.userAvatar}
+                          alt={item.userName}
                           fill
                           sizes="40px"
                           className="rounded-full object-cover"
-                      />
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
@@ -616,12 +723,18 @@ export default function AffiliatePage() {
                             {item.commission}
                           </p>
                         </div>
-                        <p className="text-11 sm:text-12 text-gray-500 mb-2">{item.date}</p>
+                        <p className="text-11 sm:text-12 text-gray-500 mb-2">
+                          {item.date}
+                        </p>
                         <p className="text-11 sm:text-12 text-gray-600 mb-2">
                           {item.sales} Booking
                         </p>
                         <Badge
-                          variant={item.status === 'Confirmed' ? 'confirmed' : 'pending'}
+                          variant={
+                            item.status === 'Confirmed'
+                              ? 'confirmed'
+                              : 'pending'
+                          }
                           className="gap-1.5 px-2 sm:px-3 py-1 text-11 sm:text-12 font-medium"
                         >
                           {item.status === 'Confirmed' ? (
@@ -648,30 +761,43 @@ export default function AffiliatePage() {
           <div className="flex-1 space-y-4 sm:space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-18 sm:text-20 font-normal text-gray-900">Your Campaigns</h2>
+              <h2 className="text-18 sm:text-20 font-normal text-gray-900">
+                Your Campaigns
+              </h2>
             </div>
 
             {/* Campaign Cards */}
-            {campaigns.map((campaign) => {
+            {campaigns.map(campaign => {
               const isEditing = editingCampaignId === campaign.id
-              const displayData = isEditing && editFormData ? editFormData : campaign
+              const displayData =
+                isEditing && editFormData ? editFormData : campaign
 
               return (
-                <div key={campaign.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+                <div
+                  key={campaign.id}
+                  className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6"
+                >
                   <div className="flex items-start justify-between mb-3 sm:mb-4">
                     <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                       {isEditing ? (
                         <input
                           type="text"
                           value={displayData.name}
-                          onChange={(e) => updateEditFormData('name', e.target.value)}
+                          onChange={e =>
+                            updateEditFormData('name', e.target.value)
+                          }
                           className="text-14 sm:text-16 font-normal text-gray-900 border-b border-transparent hover:border-gray-300 focus:border-brand-500 focus:outline-none transition-colors bg-transparent px-1"
                           placeholder="Campaign Name"
                         />
                       ) : (
-                        <h3 className="text-14 sm:text-16 font-normal text-gray-900">{displayData.name}</h3>
+                        <h3 className="text-14 sm:text-16 font-normal text-gray-900">
+                          {displayData.name}
+                        </h3>
                       )}
-                      <Badge variant="success" className="bg-green-50 text-green-600 border-green-200 text-11 sm:text-12 font-normal px-2 sm:px-3 py-1">
+                      <Badge
+                        variant="success"
+                        className="bg-green-50 text-green-600 border-green-200 text-11 sm:text-12 font-normal px-2 sm:px-3 py-1"
+                      >
                         Active
                       </Badge>
                     </div>
@@ -703,7 +829,7 @@ export default function AffiliatePage() {
                   </div>
 
                   {/* Campaign Banner Preview */}
-                  <div 
+                  <div
                     className="rounded-xl p-6 sm:p-8 text-center mb-3 sm:mb-4"
                     style={{ backgroundColor: displayData.bannerColor }}
                   >
@@ -712,24 +838,32 @@ export default function AffiliatePage() {
                         <input
                           type="text"
                           value={displayData.badgeText}
-                          onChange={(e) => updateEditFormData('badgeText', e.target.value)}
+                          onChange={e =>
+                            updateEditFormData('badgeText', e.target.value)
+                          }
                           className="text-11 sm:text-12 font-normal text-gray-900 bg-transparent focus:outline-none text-center min-w-[100px]"
                           placeholder="Badge Text"
                         />
                       ) : (
-                        <p className="text-11 sm:text-12 font-normal text-gray-900">{displayData.badgeText}</p>
+                        <p className="text-11 sm:text-12 font-normal text-gray-900">
+                          {displayData.badgeText}
+                        </p>
                       )}
                     </div>
                     {isEditing ? (
                       <input
                         type="text"
                         value={displayData.offerText}
-                        onChange={(e) => updateEditFormData('offerText', e.target.value)}
+                        onChange={e =>
+                          updateEditFormData('offerText', e.target.value)
+                        }
                         className="text-20 sm:text-24 font-semibold text-gray-900 bg-transparent focus:outline-none text-center w-full"
                         placeholder="Offer Text"
                       />
                     ) : (
-                      <h3 className="text-20 sm:text-24 font-semibold text-gray-900">{displayData.offerText}</h3>
+                      <h3 className="text-20 sm:text-24 font-semibold text-gray-900">
+                        {displayData.offerText}
+                      </h3>
                     )}
                   </div>
 
@@ -739,7 +873,9 @@ export default function AffiliatePage() {
                       {/* Description */}
                       <textarea
                         value={displayData.description}
-                        onChange={(e) => updateEditFormData('description', e.target.value)}
+                        onChange={e =>
+                          updateEditFormData('description', e.target.value)
+                        }
                         className="w-full text-13 sm:text-14 text-gray-500 mb-3 sm:mb-4 border border-gray-200 rounded-xl p-3 focus:border-brand-500 focus:outline-none resize-none"
                         rows={3}
                         placeholder="Campaign description..."
@@ -747,15 +883,21 @@ export default function AffiliatePage() {
 
                       {/* Commission */}
                       <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
-                        <span className="text-13 sm:text-14 font-normal text-gray-900">Commission :</span>
+                        <span className="text-13 sm:text-14 font-normal text-gray-900">
+                          Commission :
+                        </span>
                         <input
                           type="text"
                           value={displayData.commission}
-                          onChange={(e) => updateEditFormData('commission', e.target.value)}
+                          onChange={e =>
+                            updateEditFormData('commission', e.target.value)
+                          }
                           className="text-13 sm:text-14 font-normal text-gray-900 border-b border-gray-300 hover:border-gray-400 focus:border-brand-500 focus:outline-none transition-colors bg-transparent px-1 w-20"
                           placeholder="200"
                         />
-                        <span className="text-13 sm:text-14 font-normal text-gray-900">EGP For Each Booking</span>
+                        <span className="text-13 sm:text-14 font-normal text-gray-900">
+                          EGP For Each Booking
+                        </span>
                       </div>
 
                       {/* Link Input */}
@@ -765,19 +907,30 @@ export default function AffiliatePage() {
                           readOnly
                           className="flex-1"
                         />
-                        <Button variant="brand" size="md" className="text-white px-4 whitespace-nowrap w-full sm:w-auto">
+                        <Button
+                          variant="brand"
+                          size="md"
+                          className="text-white px-4 whitespace-nowrap w-full sm:w-auto"
+                        >
                           Regenerate Link
                         </Button>
                       </div>
 
                       {/* Banner Color Selector */}
                       <div className="mb-3 sm:mb-4">
-                        <p className="text-13 sm:text-14 font-normal text-gray-900 mb-3">Banner Color</p>
+                        <p className="text-13 sm:text-14 font-normal text-gray-900 mb-3">
+                          Banner Color
+                        </p>
                         <div className="flex gap-2 sm:gap-3 flex-wrap">
-                          {bannerColors.map((bannerColor) => (
+                          {bannerColors.map(bannerColor => (
                             <button
                               key={bannerColor.id}
-                              onClick={() => updateEditFormData('bannerColor', bannerColor.color)}
+                              onClick={() =>
+                                updateEditFormData(
+                                  'bannerColor',
+                                  bannerColor.color
+                                )
+                              }
                               className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-all ${
                                 displayData.bannerColor === bannerColor.color
                                   ? 'ring-2 ring-offset-2 ring-gray-900'
@@ -811,7 +964,9 @@ export default function AffiliatePage() {
           <aside className="w-full lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Recent Activity</h2>
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">
+                  Recent Activity
+                </h2>
                 <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
                   View All
                 </button>
@@ -822,12 +977,12 @@ export default function AffiliatePage() {
                     <div className="flex items-start gap-3">
                       <div className="relative w-10 h-10 flex-shrink-0">
                         <Image
-                        src={item.userAvatar}
-                        alt={item.userName}
+                          src={item.userAvatar}
+                          alt={item.userName}
                           fill
                           sizes="40px"
                           className="rounded-full object-cover"
-                      />
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
@@ -838,12 +993,18 @@ export default function AffiliatePage() {
                             {item.commission}
                           </p>
                         </div>
-                        <p className="text-11 sm:text-12 text-gray-500 mb-2">{item.date}</p>
+                        <p className="text-11 sm:text-12 text-gray-500 mb-2">
+                          {item.date}
+                        </p>
                         <p className="text-11 sm:text-12 text-gray-600 mb-2">
                           {item.sales} Booking
                         </p>
                         <Badge
-                          variant={item.status === 'Confirmed' ? 'confirmed' : 'pending'}
+                          variant={
+                            item.status === 'Confirmed'
+                              ? 'confirmed'
+                              : 'pending'
+                          }
                           className="gap-1.5 px-2 sm:px-3 py-1 text-11 sm:text-12 font-medium"
                         >
                           {item.status === 'Confirmed' ? (
@@ -869,9 +1030,11 @@ export default function AffiliatePage() {
           {/* Transactions History */}
           <div className="flex-1">
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-4 sm:mb-6">Transactions History</h2>
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-4 sm:mb-6">
+                Transactions History
+              </h2>
               <div className="space-y-3 sm:space-y-4">
-                {transactions.map((transaction) => (
+                {transactions.map(transaction => (
                   <div
                     key={transaction.id}
                     className="flex items-center justify-between py-2 sm:py-3 border-b border-gray-100 last:border-0 gap-3"
@@ -883,7 +1046,9 @@ export default function AffiliatePage() {
                       <p className="text-11 sm:text-12 text-gray-500 mb-0.5">
                         ID: {transaction.transactionId}
                       </p>
-                      <p className="text-11 sm:text-12 text-gray-500">{transaction.date}</p>
+                      <p className="text-11 sm:text-12 text-gray-500">
+                        {transaction.date}
+                      </p>
                     </div>
                     <div className="text-14 sm:text-16 font-normal text-green-600 whitespace-nowrap">
                       {transaction.amount}
@@ -900,7 +1065,8 @@ export default function AffiliatePage() {
             <div
               className="rounded-2xl p-5 sm:p-6 text-white relative overflow-hidden"
               style={{
-                background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #8b2635 100%)',
+                background:
+                  'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #8b2635 100%)',
               }}
             >
               {/* Card Icons */}
@@ -914,13 +1080,17 @@ export default function AffiliatePage() {
 
               {/* Card Number */}
               <div className="mb-5 sm:mb-6">
-                <p className="text-14 sm:text-16 font-normal tracking-wider">34** **** **** ***7</p>
+                <p className="text-14 sm:text-16 font-normal tracking-wider">
+                  34** **** **** ***7
+                </p>
               </div>
 
               {/* Card Holder & Expiry */}
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-13 sm:text-14 font-normal">Ahmed Ramadan</p>
+                  <p className="text-13 sm:text-14 font-normal">
+                    Ahmed Ramadan
+                  </p>
                 </div>
                 <div>
                   <p className="text-13 sm:text-14 font-normal">02/30</p>
@@ -953,7 +1123,9 @@ export default function AffiliatePage() {
                   <span className="text-11 sm:text-12 font-medium">25 %</span>
                 </div>
               </div>
-              <p className="text-24 sm:text-28 font-semibold text-gray-900 mb-3 sm:mb-4">3500.00 EGP</p>
+              <p className="text-24 sm:text-28 font-semibold text-gray-900 mb-3 sm:mb-4">
+                3500.00 EGP
+              </p>
               <div className="flex items-center justify-between text-11 sm:text-12 text-gray-500 mb-4 sm:mb-6">
                 <span>Last Update</span>
                 <span className="text-right">Sep 15, 2025 11:30 am</span>

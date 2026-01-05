@@ -40,4 +40,3 @@ export const PriceSummary = ({ totalCost, remaining }: PriceSummaryProps) => {
     </div>
   )
 }
-

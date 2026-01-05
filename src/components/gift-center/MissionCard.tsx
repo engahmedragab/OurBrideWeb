@@ -24,7 +24,9 @@ const missionCardVariants = cva(
 /**
  * Mission Card Component Props
  */
-export interface MissionCardProps extends VariantProps<typeof missionCardVariants> {
+export interface MissionCardProps extends VariantProps<
+  typeof missionCardVariants
+> {
   title: string
   currentProgress: number
   targetProgress: number
@@ -65,7 +67,9 @@ export const MissionCard = ({
           </p>
           {isCompleted && (
             <div className="bg-green-100 border border-green-500 rounded-lg px-1.5 sm:px-2 py-0.5 sm:py-1 flex items-center justify-center shrink-0">
-              <p className="text-10 sm:text-12 font-normal text-green-500">Done</p>
+              <p className="text-10 sm:text-12 font-normal text-green-500">
+                Done
+              </p>
             </div>
           )}
         </div>
@@ -75,7 +79,9 @@ export const MissionCard = ({
           {isCompleted && (
             <Check className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 shrink-0" />
           )}
-          <p className="text-12 sm:text-14 font-normal text-gray-900 leading-4 sm:leading-5">{rewardAmount}</p>
+          <p className="text-12 sm:text-14 font-normal text-gray-900 leading-4 sm:leading-5">
+            {rewardAmount}
+          </p>
           <Image
             src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
             alt="Diamond"
@@ -101,7 +107,9 @@ export const MissionCard = ({
             onClick={onViewProducts}
             className="flex gap-1 sm:gap-1.5 items-center justify-center rounded-lg shrink-0 hover:opacity-80 transition-opacity"
           >
-            <p className="text-12 sm:text-14 font-medium text-brand-500">view Products</p>
+            <p className="text-12 sm:text-14 font-medium text-brand-500">
+              view Products
+            </p>
             <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand-500 shrink-0" />
           </button>
         )}
@@ -109,4 +117,3 @@ export const MissionCard = ({
     </div>
   )
 }
-

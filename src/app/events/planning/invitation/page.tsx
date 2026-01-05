@@ -6,7 +6,10 @@ import { Button } from '@/components/ui/Button'
 import { LoadingOverlay, LoadingSpinner } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
-import { useGuestBook, useSyncGuestBook } from '@/hooks/guestBooks/useGuestBooks'
+import {
+  useGuestBook,
+  useSyncGuestBook,
+} from '@/hooks/guestBooks/useGuestBooks'
 
 import {
   GuestsHeader,
@@ -24,9 +27,20 @@ import {
   getTotalPeople,
 } from '@/components/guestList'
 
-import type { GuestLineResponse, GuestLineCategoryResponse, GuestBookResponse } from '@/types/responses'
-import type { UserType, GuestBookRequest } from '@/../client/common/api/gen/ourbride-api'
-import { GuestStatus as GuestStatusEnum, GuestTitle, GuestRelevant } from '@/types/responses/book-enums'
+import type {
+  GuestLineResponse,
+  GuestLineCategoryResponse,
+  GuestBookResponse,
+} from '@/types/responses'
+import type {
+  UserType,
+  GuestBookRequest,
+} from '@/../client/common/api/gen/ourbride-api'
+import {
+  GuestStatus as GuestStatusEnum,
+  GuestTitle,
+  GuestRelevant,
+} from '@/types/responses/book-enums'
 import { generateClientId } from '@/utils/guestbook/uuid'
 
 /** temp negative id for new lines */
@@ -42,9 +56,13 @@ const toSideFromFamily = (family?: string | null): GuestSide => {
   return f === 'groom' ? 'groom' : 'bride'
 }
 
-const toUiStatus = (isDone?: boolean): GuestStatus => (isDone ? 'confirmed' : 'none')
+const toUiStatus = (isDone?: boolean): GuestStatus =>
+  isDone ? 'confirmed' : 'none'
 
-const mapLineToGuest = (line: GuestLineResponse, selectedIds: Set<string>): Guest => {
+const mapLineToGuest = (
+  line: GuestLineResponse,
+  selectedIds: Set<string>
+): Guest => {
   const side = toSideFromFamily((line as any).family)
   const groupId: GuestGroupId =
     line.lineCategoryId != null ? String(line.lineCategoryId) : 'uncategorized'
@@ -93,14 +111,23 @@ function InvitationPageContent() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   const [isAddGuestOpen, setIsAddGuestOpen] = useState(false)
-  const [forcedGroupId, setForcedGroupId] = useState<GuestGroupId | undefined>(undefined)
+  const [forcedGroupId, setForcedGroupId] = useState<GuestGroupId | undefined>(
+    undefined
+  )
   const [forceNewCategory, setForceNewCategory] = useState(false)
 
   // const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false)
 
-  const [selectedGuestIds, setSelectedGuestIds] = useState<Set<string>>(new Set())
+  const [selectedGuestIds, setSelectedGuestIds] = useState<Set<string>>(
+    new Set()
+  )
 
-  const { data: guestBook, isLoading, error, refetch } = useGuestBook({
+  const {
+    data: guestBook,
+    isLoading,
+    error,
+    refetch,
+  } = useGuestBook({
     eventId: eventId || undefined,
     userType: undefined as unknown as UserType | undefined,
     clientId: undefined as unknown as string | undefined,
@@ -140,7 +167,9 @@ function InvitationPageContent() {
     })
 
     // لو فيه lines بدون category
-    const hasUncategorized = (localDraft.lines || []).some(l => !l.isDeleted && l.lineCategoryId == null)
+    const hasUncategorized = (localDraft.lines || []).some(
+      l => !l.isDeleted && l.lineCategoryId == null
+    )
     if (hasUncategorized) {
       mapped.unshift({ id: 'uncategorized', title: 'Uncategorized' })
     }
@@ -156,7 +185,11 @@ function InvitationPageContent() {
       setActiveGroupId(null)
       return
     }
-    setActiveGroupId(prev => (prev && categoryGroups.some(g => g.id === prev) ? prev : categoryGroups[0].id))
+    setActiveGroupId(prev =>
+      prev && categoryGroups.some(g => g.id === prev)
+        ? prev
+        : categoryGroups[0].id
+    )
   }, [categoryGroups])
 
   const activeGroup = useMemo(() => {
@@ -177,8 +210,14 @@ function InvitationPageContent() {
   }, [guests, activeSide])
 
   /** counts */
-  const invitationsCount = useMemo(() => getTotalInvitations(filteredGuests), [filteredGuests])
-  const peopleTotal = useMemo(() => getTotalPeople(filteredGuests), [filteredGuests])
+  const invitationsCount = useMemo(
+    () => getTotalInvitations(filteredGuests),
+    [filteredGuests]
+  )
+  const peopleTotal = useMemo(
+    () => getTotalPeople(filteredGuests),
+    [filteredGuests]
+  )
 
   const handleRefresh = () => {
     refetch()
@@ -226,7 +265,9 @@ function InvitationPageContent() {
     setLocalDraft(prev => {
       if (!prev) return prev
       const nextLines = (prev.lines || []).map(line =>
-        Number(line.id) === lineIdNum ? ({ ...line, isDeleted: true } as any) : line
+        Number(line.id) === lineIdNum
+          ? ({ ...line, isDeleted: true } as any)
+          : line
       )
       return { ...prev, lines: nextLines }
     })
@@ -240,7 +281,9 @@ function InvitationPageContent() {
     return {
       ...(draft as any),
       lastModifiedDate: new Date().toISOString(),
-      lineCategories: (draft.lineCategories || []).map(c => ({ ...(c as any) })),
+      lineCategories: (draft.lineCategories || []).map(c => ({
+        ...(c as any),
+      })),
       lines: (draft.lines || []).map(l => ({ ...(l as any) })),
     } as GuestBookRequest
   }
@@ -274,7 +317,10 @@ function InvitationPageContent() {
   }
 
   /** open guest modal */
-  const handleOpenAddGuest = (groupId?: GuestGroupId, fromCategorySection?: boolean) => {
+  const handleOpenAddGuest = (
+    groupId?: GuestGroupId,
+    fromCategorySection?: boolean
+  ) => {
     // لو فتحنا من جروب مؤقت (tmp-..) أو Uncategorized — مش هنقفل الاختيار على حاجة غير صالحة
     if (fromCategorySection) {
       setForceNewCategory(true)
@@ -330,24 +376,37 @@ function InvitationPageContent() {
   /** add guest line: لازم categoryId */
   const handleSubmitGuest = (
     payload:
-      | { mode: 'existing'; lineCategoryId: number; nickName: string; peopleCount: number; status: GuestStatus }
-      | { mode: 'new'; category: { name: string; slug: string; description?: string }; nickName: string; peopleCount: number; status: GuestStatus }
+      | {
+          mode: 'existing'
+          lineCategoryId: number
+          nickName: string
+          peopleCount: number
+          status: GuestStatus
+        }
+      | {
+          mode: 'new'
+          category: { name: string; slug: string; description?: string }
+          nickName: string
+          peopleCount: number
+          status: GuestStatus
+        }
   ) => {
     if (!localDraft) return
-  
+
     const isDone = payload.status === 'confirmed'
     const apiStatus = isDone ? 'Confirmed' : 'None' // حسب الـ API عندك
     const now = new Date().toISOString()
-  
+
     // 1) لو new: ضيف category في lineCategories
-    let categoryIdForLine: number | 0 = payload.mode === 'existing' ? payload.lineCategoryId : 0
+    let categoryIdForLine: number | 0 =
+      payload.mode === 'existing' ? payload.lineCategoryId : 0
     let categorySlugForLine: string | null = null
-  
+
     let nextDraft = localDraft
-  
+
     if (payload.mode === 'new') {
       categorySlugForLine = payload.category.slug
-  
+
       const newCategory = {
         id: 0,
         name: payload.category.name,
@@ -360,17 +419,19 @@ function InvitationPageContent() {
         lastModifiedDate: now,
         guestRelevant: activeSide === 'bride' ? 'Bride' : 'Groom',
       } as any
-  
+
       nextDraft = {
         ...nextDraft,
         lineCategories: [...(nextDraft.lineCategories || []), newCategory],
       }
     } else {
       // existing: حاول تجيب slug من الـ category لو موجود
-      const cat = (nextDraft.lineCategories || []).find(c => Number((c as any).id) === payload.lineCategoryId) as any
+      const cat = (nextDraft.lineCategories || []).find(
+        c => Number((c as any).id) === payload.lineCategoryId
+      ) as any
       categorySlugForLine = cat?.slug || null
     }
-  
+
     // 2) ضيف line
     const newLine = {
       id: generateTempId(),
@@ -381,9 +442,9 @@ function InvitationPageContent() {
       brideId: activeSide === 'bride' ? nextDraft.brideId : null,
       groomId: activeSide === 'groom' ? nextDraft.groomId : null,
       bookId: nextDraft.id,
-      lineCategoryId: categoryIdForLine,         // existing => رقم / new => 0
+      lineCategoryId: categoryIdForLine, // existing => رقم / new => 0
       lineCategoryCountId: 0,
-      lineCategorySlug: categorySlugForLine,     // مهم جدًا في حالة new
+      lineCategorySlug: categorySlugForLine, // مهم جدًا في حالة new
       creationDate: now,
       lastModifiedDate: now,
       nickName: payload.nickName,
@@ -393,18 +454,18 @@ function InvitationPageContent() {
       status: apiStatus,
       guestRelevant: activeSide === 'bride' ? 'Bride' : 'Groom',
     } as any
-  
+
     nextDraft = {
       ...nextDraft,
       lines: [...(nextDraft.lines || []), newLine],
       lastModifiedDate: now,
     }
-  
+
     setLocalDraft(nextDraft)
     setHasUnsavedChanges(true)
     addToast('Guest added', 'info')
   }
-  
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -416,8 +477,12 @@ function InvitationPageContent() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-16 text-red-600 mb-4">Failed to load guests. Please try again.</p>
-        <p className="text-14 text-gray-500 mb-4">{error instanceof Error ? error.message : 'Unknown error'}</p>
+        <p className="text-16 text-red-600 mb-4">
+          Failed to load guests. Please try again.
+        </p>
+        <p className="text-14 text-gray-500 mb-4">
+          {error instanceof Error ? error.message : 'Unknown error'}
+        </p>
         <Button variant="outline" onClick={() => refetch()} type="button">
           Retry
         </Button>
@@ -431,7 +496,12 @@ function InvitationPageContent() {
         <GuestsHeader onRefresh={handleRefresh} />
         <div className="py-12 text-center">
           <p className="text-16 text-gray-500 mb-4">No guest book found</p>
-          <Button variant="brand" onClick={() => refetch()} className="text-white" type="button">
+          <Button
+            variant="brand"
+            onClick={() => refetch()}
+            className="text-white"
+            type="button"
+          >
             Refresh
           </Button>
         </div>
@@ -462,60 +532,64 @@ function InvitationPageContent() {
 
       <GuestsTabs activeSide={activeSide} onSideChange={setActiveSide} />
 
-      <GuestsSummary side={activeSide} invitationsCount={invitationsCount} peopleTotal={peopleTotal} />
+      <GuestsSummary
+        side={activeSide}
+        invitationsCount={invitationsCount}
+        peopleTotal={peopleTotal}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 sm:gap-6 mb-20 sm:mb-6">
-  {/* ✅ Right (Categories) FIRST on small screens */}
-  <div className="order-1 md:order-2 md:col-span-2">
-    <GuestGroupCard
-      group={categoryGroups}
-      guests={filteredGuests}
-      activeGroupId={activeGroup?.id}
-      onSelectGroup={(groupId: GuestGroupId) => setActiveGroupId(groupId)}
-      onAddGroup={() => handleOpenAddGuest(undefined, true)}
-    />
-  </div>
-
-  {/* ✅ Left (Lines) SECOND on small screens */}
-  <div className="order-2 md:order-1 md:col-span-3">
-    {!hasAnyGroups || !activeGroup ? (
-      <div className="rounded-xl border border-gray-200 bg-white p-6">
-        <div className="flex items-center justify-between">
-          <p className="text-16 font-medium text-gray-900">categories</p>
-
-          <Button
-            variant="outlineBrand"
-            size="sm"
-            onClick={() => handleOpenAddGuest()}
-            className="text-brand-500 rounded-md hover:bg-brand-500 hover:text-white"
-            type="button"
-          >
-            <Plus className="h-4 w-4" /> Add new guest
-          </Button>
+        {/* ✅ Right (Categories) FIRST on small screens */}
+        <div className="order-1 md:order-2 md:col-span-2">
+          <GuestGroupCard
+            group={categoryGroups}
+            guests={filteredGuests}
+            activeGroupId={activeGroup?.id}
+            onSelectGroup={(groupId: GuestGroupId) => setActiveGroupId(groupId)}
+            onAddGroup={() => handleOpenAddGuest(undefined, true)}
+          />
         </div>
 
-        <p className="mt-2 text-14 text-gray-500">
-          Add a category first, then you can start adding guests.
-        </p>
+        {/* ✅ Left (Lines) SECOND on small screens */}
+        <div className="order-2 md:order-1 md:col-span-3">
+          {!hasAnyGroups || !activeGroup ? (
+            <div className="rounded-xl border border-gray-200 bg-white p-6">
+              <div className="flex items-center justify-between">
+                <p className="text-16 font-medium text-gray-900">categories</p>
+
+                <Button
+                  variant="outlineBrand"
+                  size="sm"
+                  onClick={() => handleOpenAddGuest()}
+                  className="text-brand-500 rounded-md hover:bg-brand-500 hover:text-white"
+                  type="button"
+                >
+                  <Plus className="h-4 w-4" /> Add new guest
+                </Button>
+              </div>
+
+              <p className="mt-2 text-14 text-gray-500">
+                Add a category first, then you can start adding guests.
+              </p>
+            </div>
+          ) : (
+            <GuestGroupCard
+              key={`active-${String(activeGroup.id)}`}
+              group={activeGroup}
+              guests={filteredGuests}
+              isExpanded={true}
+              onToggleExpand={() => {}}
+              onToggleSelect={handleToggleSelect}
+              onToggleStatus={handleToggleStatus}
+              onDelete={handleDelete}
+              onAddGuest={(groupId: string) =>
+                handleOpenAddGuest(groupId as GuestGroupId)
+              }
+              scrollIntoView={false}
+            />
+          )}
+        </div>
       </div>
-    ) : (
-      <GuestGroupCard
-        key={`active-${String(activeGroup.id)}`}
-        group={activeGroup}
-        guests={filteredGuests}
-        isExpanded={true}
-        onToggleExpand={() => {}}
-        onToggleSelect={handleToggleSelect}
-        onToggleStatus={handleToggleStatus}
-        onDelete={handleDelete}
-        onAddGuest={(groupId: string) => handleOpenAddGuest(groupId as GuestGroupId)}
-        scrollIntoView={false}
-      />
-    )}
-  </div>
-</div>
-
-
 
       {/* Sticky Buttons */}
       {/* <div className="fixed bottom-0 left-0 right-0 sm:relative sm:bottom-auto sm:left-auto sm:right-auto bg-white border-t border-gray-200 sm:border-t-0 sm:bg-transparent p-4 sm:p-0 sm:mt-6 z-10 shadow-md sm:shadow-none">

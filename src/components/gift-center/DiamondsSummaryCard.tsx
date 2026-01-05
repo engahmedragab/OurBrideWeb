@@ -26,8 +26,9 @@ const diamondsCardVariants = cva(
 /**
  * Diamonds Summary Card Component Props
  */
-export interface DiamondsSummaryCardProps
-  extends VariantProps<typeof diamondsCardVariants> {
+export interface DiamondsSummaryCardProps extends VariantProps<
+  typeof diamondsCardVariants
+> {
   title?: string
   diamondsCount: number
   actionLabel?: string
@@ -70,34 +71,38 @@ export const DiamondsSummaryCard = ({
             </button>
           </div>
 
-        {/* Diamonds Count */}
-        <div className="flex gap-1 sm:gap-1.5 items-center shrink-0">
-          <p className="text-14 sm:text-16 font-medium text-gray-900 leading-4 sm:leading-5">{diamondsCount}</p>
-          <Image
-            src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
-            alt="Diamond"
-            width={20}
-            height={20}
-            className="h-4 w-4 sm:h-5 sm:w-5 shrink-0"
-          />
+          {/* Diamonds Count */}
+          <div className="flex gap-1 sm:gap-1.5 items-center shrink-0">
+            <p className="text-14 sm:text-16 font-medium text-gray-900 leading-4 sm:leading-5">
+              {diamondsCount}
+            </p>
+            <Image
+              src={typeof diamondSvg === 'string' ? diamondSvg : diamondSvg.src}
+              alt="Diamond"
+              width={20}
+              height={20}
+              className="h-4 w-4 sm:h-5 sm:w-5 shrink-0"
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Action Button */}
-      {onActionPress && (
-        <button
-          onClick={onActionPress}
-          className="flex gap-1 sm:gap-1.5 items-center justify-start rounded-lg shrink-0 hover:opacity-80 transition-opacity"
-        >
-          <p className="text-12 sm:text-14 font-medium text-brand-500">{actionLabel}</p>
-          <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand-500" />
-        </button>
-      )}
+        {/* Action Button */}
+        {onActionPress && (
+          <button
+            onClick={onActionPress}
+            className="flex gap-1 sm:gap-1.5 items-center justify-start rounded-lg shrink-0 hover:opacity-80 transition-opacity"
+          >
+            <p className="text-12 sm:text-14 font-medium text-brand-500">
+              {actionLabel}
+            </p>
+            <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-brand-500" />
+          </button>
+        )}
 
-      {/* Helper Text */}
-      {helperText && (
-        <p className="text-12 text-gray-500 text-center">{helperText}</p>
-      )}
+        {/* Helper Text */}
+        {helperText && (
+          <p className="text-12 text-gray-500 text-center">{helperText}</p>
+        )}
       </div>
 
       {/* How Points Work Modal */}
@@ -108,4 +113,3 @@ export const DiamondsSummaryCard = ({
     </>
   )
 }
-

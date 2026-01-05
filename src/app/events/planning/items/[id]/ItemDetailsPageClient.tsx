@@ -47,9 +47,7 @@ interface ItemDetailsPageClientProps {
   itemId: string
 }
 
-export function ItemDetailsPageClient({
-  itemId,
-}: ItemDetailsPageClientProps) {
+export function ItemDetailsPageClient({ itemId }: ItemDetailsPageClientProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   const [itemData, setItemData] = useState<ItemData>({
@@ -241,9 +239,7 @@ export function ItemDetailsPageClient({
 
             <div className="flex items-center justify-center gap-2 bg-brand-50 rounded-xl py-2">
               <Calendar className="w-4 h-4 text-brand-500" />
-              <span className="text-12 text-brand-700">
-                {itemData.buyDate}
-              </span>
+              <span className="text-12 text-brand-700">{itemData.buyDate}</span>
             </div>
           </div>
 
@@ -257,9 +253,7 @@ export function ItemDetailsPageClient({
               <p className="text-14 font-normal text-orange-800">
                 {itemData.reminderDate} at {itemData.reminderTime}
               </p>
-              <p className="text-13 text-orange-700">
-                {itemData.reminderNote}
-              </p>
+              <p className="text-13 text-orange-700">{itemData.reminderNote}</p>
             </div>
           )}
 

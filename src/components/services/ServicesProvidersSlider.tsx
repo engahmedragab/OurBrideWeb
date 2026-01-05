@@ -52,7 +52,7 @@ export interface ServicesProvidersSliderProps {
 
 /**
  * ServicesProvidersSlider Component
- * 
+ *
  * Displays a slider of provider cards with Swiper.
  * Shows 3 cards per row on desktop, 2 on tablet, 1 on mobile.
  * Navigation buttons are vertically centered.
@@ -154,4 +154,3 @@ export const ServicesProvidersSlider = ({
     </div>
   )
 }
-

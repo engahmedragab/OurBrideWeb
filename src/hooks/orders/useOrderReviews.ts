@@ -12,7 +12,10 @@ import type { CreateOrderReviewRequest } from '@/../client/common/api/gen/ourbri
 /**
  * Hook to fetch order reviews
  */
-export const useOrderReviews = (orderId: number | null, enabled: boolean = true) => {
+export const useOrderReviews = (
+  orderId: number | null,
+  enabled: boolean = true
+) => {
   return useQuery<ReviewResponse[]>({
     queryKey: ['order', orderId, 'reviews'],
     queryFn: async () => {
@@ -27,7 +30,10 @@ export const useOrderReviews = (orderId: number | null, enabled: boolean = true)
 /**
  * Hook to fetch a single order review by ID
  */
-export const useOrderReview = (reviewId: number | null, enabled: boolean = true) => {
+export const useOrderReview = (
+  reviewId: number | null,
+  enabled: boolean = true
+) => {
   return useQuery<ReviewResponse>({
     queryKey: ['order-review', reviewId],
     queryFn: async () => {
@@ -57,7 +63,9 @@ export const useSubmitOrderReview = () => {
     },
     onSuccess: (_, variables) => {
       // Invalidate order reviews list
-      queryClient.invalidateQueries({ queryKey: ['order', variables.orderId, 'reviews'] })
+      queryClient.invalidateQueries({
+        queryKey: ['order', variables.orderId, 'reviews'],
+      })
       // Invalidate order details to refresh review count
       queryClient.invalidateQueries({ queryKey: ['order', variables.orderId] })
     },
@@ -80,7 +88,7 @@ export const useUpdateOrderReview = () => {
     }) => {
       return await updateOrderReview(reviewId, data)
     },
-    onSuccess: (review) => {
+    onSuccess: review => {
       // Invalidate review queries
       queryClient.invalidateQueries({ queryKey: ['order-review', review.id] })
       // Invalidate order reviews list (we need orderId from review, but it's not in ReviewResponse)
@@ -107,6 +115,3 @@ export const useDeleteOrderReview = () => {
     },
   })
 }
-
-
-

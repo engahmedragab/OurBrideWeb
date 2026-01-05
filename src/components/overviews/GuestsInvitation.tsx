@@ -30,7 +30,8 @@ export const GuestsInvitation = ({
 
   const guestCount = Number(book.count ?? 0)
   const description =
-    book.description?.trim() || 'Manage your guest list and invitations in one place.'
+    book.description?.trim() ||
+    'Manage your guest list and invitations in one place.'
 
   const guestLabel = guestCount === 1 ? 'Guest' : 'Guests'
 
@@ -97,13 +98,15 @@ export const GuestsInvitation = ({
           </span>
         </div>
 
-        <p className="text-[13px] leading-relaxed text-gray-600" style={clamp2LinesStyle}>
+        <p
+          className="text-[13px] leading-relaxed text-gray-600"
+          style={clamp2LinesStyle}
+        >
           {description}
         </p>
       </div>
 
       {/* Subtle bottom accent */}
-     
     </div>
   )
 }

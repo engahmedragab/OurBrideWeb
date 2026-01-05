@@ -41,20 +41,3 @@ async function ContestDetailsContentWrapper({
   const { id } = await params
   return <ContestDetailsClient id={id} />
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -46,7 +46,12 @@ export const ForBusinessSection = ({
   }
 
   return (
-    <section className={cn('py-16 sm:py-20 md:py-24 lg:py-32 bg-white relative overflow-hidden', className)}>
+    <section
+      className={cn(
+        'py-16 sm:py-20 md:py-24 lg:py-32 bg-white relative overflow-hidden',
+        className
+      )}
+    >
       {/* Background Gradient */}
       <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-brand-50/50 to-transparent pointer-events-none" />
 
@@ -80,11 +85,15 @@ export const ForBusinessSection = ({
             {/* Ratings Section */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-4 border-t border-gray-200">
               <div className="flex items-center gap-3">
-                <span className="text-16 font-semibold text-gray-900">{ratingLabel}</span>
+                <span className="text-16 font-semibold text-gray-900">
+                  {ratingLabel}
+                </span>
                 <RatingDisplay rating={rating} size="sm" showValue={false} />
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-14 text-gray-600">{reviewCount} on {reviewSource}</span>
+                <span className="text-14 text-gray-600">
+                  {reviewCount} on {reviewSource}
+                </span>
                 {reviewSourceLogo ? (
                   <Image
                     src={reviewSourceLogo}
@@ -95,7 +104,9 @@ export const ForBusinessSection = ({
                   />
                 ) : (
                   <div className="w-20 h-6 bg-gray-300 rounded flex items-center justify-center">
-                    <span className="text-10 text-gray-600 font-semibold">{reviewSource}</span>
+                    <span className="text-10 text-gray-600 font-semibold">
+                      {reviewSource}
+                    </span>
                   </div>
                 )}
               </div>
@@ -112,16 +123,24 @@ export const ForBusinessSection = ({
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-brand-500" />
-                      <span className="text-14 font-semibold text-gray-900">ourbride</span>
+                      <span className="text-14 font-semibold text-gray-900">
+                        ourbride
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="px-3 py-1.5 bg-gray-100 rounded text-12 text-gray-700">The 7th Heaven Beauty</div>
-                      <div className="px-3 py-1.5 bg-gray-100 rounded text-12 text-gray-700">Working Staff</div>
+                      <div className="px-3 py-1.5 bg-gray-100 rounded text-12 text-gray-700">
+                        The 7th Heaven Beauty
+                      </div>
+                      <div className="px-3 py-1.5 bg-gray-100 rounded text-12 text-gray-700">
+                        Working Staff
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-6 h-6 bg-gray-200 rounded" />
                       <span className="text-12 text-gray-700">Today</span>
-                      <span className="text-12 text-gray-700">Tuesday 27 Aug, 2023</span>
+                      <span className="text-12 text-gray-700">
+                        Tuesday 27 Aug, 2023
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -131,19 +150,45 @@ export const ForBusinessSection = ({
                   <div className="flex gap-2">
                     {/* Staff Columns */}
                     {[
-                      { name: 'Brenda Massey', service: 'Blow Dry', time: '9:00 - 10:00', color: 'bg-blue-200' },
-                      { name: 'Zachary Kelley', service: 'Beard Grooming', time: '9:00 - 10:00', color: 'bg-pink-200' },
-                      { name: 'Jenny Murtaugh', service: 'Massage', time: '10:00 - 11:00', color: 'bg-teal-200' },
-                      { name: 'Diana Cam', service: 'Balinese M', time: '9:45 - 11:00', color: 'bg-orange-200' },
+                      {
+                        name: 'Brenda Massey',
+                        service: 'Blow Dry',
+                        time: '9:00 - 10:00',
+                        color: 'bg-blue-200',
+                      },
+                      {
+                        name: 'Zachary Kelley',
+                        service: 'Beard Grooming',
+                        time: '9:00 - 10:00',
+                        color: 'bg-pink-200',
+                      },
+                      {
+                        name: 'Jenny Murtaugh',
+                        service: 'Massage',
+                        time: '10:00 - 11:00',
+                        color: 'bg-teal-200',
+                      },
+                      {
+                        name: 'Diana Cam',
+                        service: 'Balinese M',
+                        time: '9:45 - 11:00',
+                        color: 'bg-orange-200',
+                      },
                     ].map((staff, idx) => (
                       <div key={idx} className="flex-1 min-w-[120px]">
                         <div className="flex flex-col items-center mb-2">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-200 to-brand-400 mb-2" />
-                          <span className="text-10 text-gray-700 text-center">{staff.name.split(' ')[0]}</span>
+                          <span className="text-10 text-gray-700 text-center">
+                            {staff.name.split(' ')[0]}
+                          </span>
                         </div>
                         <div className={`${staff.color} rounded-lg p-2 mb-2`}>
-                          <div className="text-10 font-medium text-gray-800">{staff.time}</div>
-                          <div className="text-10 text-gray-700">{staff.service}</div>
+                          <div className="text-10 font-medium text-gray-800">
+                            {staff.time}
+                          </div>
+                          <div className="text-10 text-gray-700">
+                            {staff.service}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -173,16 +218,24 @@ export const ForBusinessSection = ({
 
                 {/* Business Details */}
                 <div className="p-3">
-                  <h3 className="text-14 font-bold text-gray-900 mb-1">The 7th Heaven Beauty</h3>
+                  <h3 className="text-14 font-bold text-gray-900 mb-1">
+                    The 7th Heaven Beauty
+                  </h3>
                   <div className="flex items-center gap-1 mb-1">
                     <RatingDisplay rating={5} size="xs" showValue={false} />
                     <span className="text-10 text-gray-600">1,743 reviews</span>
                   </div>
-                  <p className="text-10 text-gray-600 mb-1">2.0km • Notting Hill, London</p>
-                  <p className="text-10 text-green-600 font-medium mb-2">Open now 10am - 6pm</p>
+                  <p className="text-10 text-gray-600 mb-1">
+                    2.0km • Notting Hill, London
+                  </p>
+                  <p className="text-10 text-green-600 font-medium mb-2">
+                    Open now 10am - 6pm
+                  </p>
                   <div className="flex items-center gap-1">
                     <div className="w-3 h-3 bg-yellow-400 rounded" />
-                    <span className="text-10 text-gray-700">Instant booking</span>
+                    <span className="text-10 text-gray-700">
+                      Instant booking
+                    </span>
                   </div>
                 </div>
               </div>
@@ -193,5 +246,3 @@ export const ForBusinessSection = ({
     </section>
   )
 }
-
-

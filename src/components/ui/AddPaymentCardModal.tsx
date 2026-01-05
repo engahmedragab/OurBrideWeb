@@ -19,7 +19,9 @@ export const AddPaymentCardModal = ({
   isOpen,
   onClose,
 }: AddPaymentCardModalProps) => {
-  const [paymentMethod, setPaymentMethod] = useState<'debit' | 'mobile'>('debit')
+  const [paymentMethod, setPaymentMethod] = useState<'debit' | 'mobile'>(
+    'debit'
+  )
 
   const savedCards = [
     {
@@ -107,7 +109,9 @@ export const AddPaymentCardModal = ({
           {/* Card Details Section */}
           {paymentMethod === 'debit' && (
             <div className="space-y-3 sm:space-y-4">
-              <h3 className="text-13 sm:text-14 font-normal text-gray-900">Card Details</h3>
+              <h3 className="text-13 sm:text-14 font-normal text-gray-900">
+                Card Details
+              </h3>
 
               {/* Name On Card */}
               <div>
@@ -140,9 +144,11 @@ export const AddPaymentCardModal = ({
 
         {/* Right Side - Saved Cards */}
         <div className="w-full lg:w-80 flex-shrink-0">
-          <h3 className="text-14 font-normal text-gray-900 mb-3 lg:hidden">Saved Cards</h3>
+          <h3 className="text-14 font-normal text-gray-900 mb-3 lg:hidden">
+            Saved Cards
+          </h3>
           <div className="space-y-3 sm:space-y-4 max-h-[400px] lg:max-h-[600px] overflow-y-auto pr-2">
-            {savedCards.map((card) => (
+            {savedCards.map(card => (
               <div key={card.id} className="relative">
                 <div
                   className="rounded-2xl p-4 text-white relative overflow-hidden"
@@ -183,8 +189,12 @@ export const AddPaymentCardModal = ({
 
                   {/* Card Holder & Expiry */}
                   <div className="flex items-center justify-between">
-                    <p className="text-11 sm:text-12 font-normal">{card.holder}</p>
-                    <p className="text-11 sm:text-12 font-normal">{card.expiry}</p>
+                    <p className="text-11 sm:text-12 font-normal">
+                      {card.holder}
+                    </p>
+                    <p className="text-11 sm:text-12 font-normal">
+                      {card.expiry}
+                    </p>
                   </div>
                 </div>
                 <p className="text-11 sm:text-12 text-gray-900 mt-2 text-center">
@@ -198,4 +208,3 @@ export const AddPaymentCardModal = ({
     </Modal>
   )
 }
-

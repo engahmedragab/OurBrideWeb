@@ -22,4 +22,3 @@ export interface DeliveryAddressResponse extends BaseEntityResponse {
   userId: string | null // Guid
   customerId: number | null // ulong in C# maps to number in TypeScript
 }
-

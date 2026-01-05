@@ -52,4 +52,3 @@ export type { RewardTierCardProps } from './RewardTierCard'
 
 export { ReceivedRewardCard } from './ReceivedRewardCard'
 export type { ReceivedRewardCardProps } from './ReceivedRewardCard'
-

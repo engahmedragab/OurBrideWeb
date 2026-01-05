@@ -21,5 +21,3 @@ export * from './main-guest-book-response'
 export * from './main-note-book-response'
 export * from './main-todo-book-response'
 export * from './main-occasion-book-response'
-
-

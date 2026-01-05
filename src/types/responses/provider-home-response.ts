@@ -19,4 +19,3 @@ export interface ProviderHomeResponse {
   testimonials: ProviderHomeTestimonialResponse[]
   statistics: ProviderHomeStatisticsResponse
 }
-

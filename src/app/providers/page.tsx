@@ -23,7 +23,9 @@ import Image from 'next/image'
 import type { TestimonialCardProps } from '@/components/ui/TestimonialCard'
 
 // Google Maps API Key
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyDAwJZexZRlbt9nAwu2Kr8wWaJnMdtblfE'
+const GOOGLE_MAPS_API_KEY =
+  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ||
+  'AIzaSyDAwJZexZRlbt9nAwu2Kr8wWaJnMdtblfE'
 
 export default function ProvidersPage() {
   const router = useRouter()
@@ -31,15 +33,19 @@ export default function ProvidersPage() {
   const [selectedCategory, setSelectedCategory] = useState('')
   const [location, setLocation] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<'any' | 'morning' | 'afternoon' | 'evening' | 'custom'>('any')
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<
+    'any' | 'morning' | 'afternoon' | 'evening' | 'custom'
+  >('any')
   const [isLocationPopoverOpen, setIsLocationPopoverOpen] = useState(false)
   const [isGettingLocation, setIsGettingLocation] = useState(false)
 
   // Fetch provider home data
-  const { data: providerHomeData, isLoading: isLoadingProviderHome } = useProviderHome()
+  const { data: providerHomeData, isLoading: isLoadingProviderHome } =
+    useProviderHome()
 
   // Fetch preparations data
-  const { data: preparationsData, isLoading: isLoadingPreparations } = usePreparations()
+  const { data: preparationsData, isLoading: isLoadingPreparations } =
+    usePreparations()
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -47,9 +53,10 @@ export default function ProvidersPage() {
     if (selectedCategory) params.append('category', selectedCategory)
     if (location) params.append('location', location)
     if (selectedDate) {
-      const dateStr = selectedDate instanceof Date
-        ? selectedDate.toISOString().split('T')[0]
-        : selectedDate
+      const dateStr =
+        selectedDate instanceof Date
+          ? selectedDate.toISOString().split('T')[0]
+          : selectedDate
       params.append('date', dateStr)
     }
 
@@ -71,7 +78,7 @@ export default function ProvidersPage() {
     setIsGettingLocation(true)
 
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      async position => {
         const { latitude, longitude } = position.coords
 
         try {
@@ -94,9 +101,11 @@ export default function ProvidersPage() {
         setIsGettingLocation(false)
         setIsLocationPopoverOpen(false)
       },
-      (error) => {
+      error => {
         console.error('Error getting location:', error)
-        alert('Unable to retrieve your location. Please check your browser permissions.')
+        alert(
+          'Unable to retrieve your location. Please check your browser permissions.'
+        )
         setIsGettingLocation(false)
       }
     )
@@ -131,7 +140,8 @@ export default function ProvidersPage() {
 
               {/* Subheading */}
               <p className="text-16 sm:text-18 md:text-20 text-gray-900 mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto">
-                Discover top-rated wedding providers, venues, and services trusted by couples worldwide
+                Discover top-rated wedding providers, venues, and services
+                trusted by couples worldwide
               </p>
 
               {/* Search Box */}
@@ -152,7 +162,7 @@ export default function ProvidersPage() {
                       type="text"
                       placeholder="Location"
                       value={location}
-                      onChange={(e) => setLocation(e.target.value)}
+                      onChange={e => setLocation(e.target.value)}
                       onKeyPress={handleKeyPress}
                       onFocus={() => setIsLocationPopoverOpen(true)}
                       prefixIcon={MapPin}
@@ -172,16 +182,22 @@ export default function ProvidersPage() {
                             disabled={isGettingLocation}
                             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed rounded-xl"
                           >
-                            <Navigation className={cn(
-                              "h-5 w-5 text-brand-600 flex-shrink-0",
-                              isGettingLocation && "animate-pulse"
-                            )} />
+                            <Navigation
+                              className={cn(
+                                'h-5 w-5 text-brand-600 flex-shrink-0',
+                                isGettingLocation && 'animate-pulse'
+                              )}
+                            />
                             <div className="flex-1">
                               <div className="text-14 font-medium text-gray-900">
-                                {isGettingLocation ? 'Getting your location...' : 'Use current location'}
+                                {isGettingLocation
+                                  ? 'Getting your location...'
+                                  : 'Use current location'}
                               </div>
                               <div className="text-12 text-gray-500">
-                                {isGettingLocation ? 'Please wait' : 'Automatically detect your location'}
+                                {isGettingLocation
+                                  ? 'Please wait'
+                                  : 'Automatically detect your location'}
                               </div>
                             </div>
                           </button>
@@ -194,9 +210,9 @@ export default function ProvidersPage() {
                   <div className="flex-1 min-w-0">
                     <CustomDatePicker
                       value={selectedDate}
-                      onChange={(date) => setSelectedDate(date)}
+                      onChange={date => setSelectedDate(date)}
                       selectedTimeSlot={selectedTimeSlot}
-                      onTimeSlotChange={(slot) => setSelectedTimeSlot(slot)}
+                      onTimeSlotChange={slot => setSelectedTimeSlot(slot)}
                       placeholder="Pick a date"
                     />
                   </div>
@@ -240,60 +256,67 @@ export default function ProvidersPage() {
         ) : (
           <>
             {/* Recently Viewed Providers */}
-            {providerHomeData?.recentlyViewedProviders && providerHomeData.recentlyViewedProviders.length > 0 && (
-              <ProviderHomeSection
-                title="Recently viewed"
-                providers={providerHomeData.recentlyViewedProviders}
-              />
-            )}
+            {providerHomeData?.recentlyViewedProviders &&
+              providerHomeData.recentlyViewedProviders.length > 0 && (
+                <ProviderHomeSection
+                  title="Recently viewed"
+                  providers={providerHomeData.recentlyViewedProviders}
+                />
+              )}
 
             {/* Recommended Providers */}
-            {providerHomeData?.recommendedProviders && providerHomeData.recommendedProviders.length > 0 && (
-              <ProviderHomeSection
-                title="Recommended"
-                providers={providerHomeData.recommendedProviders}
-              />
-            )}
+            {providerHomeData?.recommendedProviders &&
+              providerHomeData.recommendedProviders.length > 0 && (
+                <ProviderHomeSection
+                  title="Recommended"
+                  providers={providerHomeData.recommendedProviders}
+                />
+              )}
 
             {/* Featured Providers */}
-            {providerHomeData?.featuredProviders && providerHomeData.featuredProviders.length > 0 && (
-              <ProviderHomeSection
-                title="Featured"
-                providers={providerHomeData.featuredProviders}
-              />
-            )}
+            {providerHomeData?.featuredProviders &&
+              providerHomeData.featuredProviders.length > 0 && (
+                <ProviderHomeSection
+                  title="Featured"
+                  providers={providerHomeData.featuredProviders}
+                />
+              )}
 
             {/* Top Rated Providers */}
-            {providerHomeData?.topRatedProviders && providerHomeData.topRatedProviders.length > 0 && (
-              <ProviderHomeSection
-                title="Top Rated"
-                providers={providerHomeData.topRatedProviders}
-              />
-            )}
+            {providerHomeData?.topRatedProviders &&
+              providerHomeData.topRatedProviders.length > 0 && (
+                <ProviderHomeSection
+                  title="Top Rated"
+                  providers={providerHomeData.topRatedProviders}
+                />
+              )}
 
             {/* Popular Providers */}
-            {providerHomeData?.popularProviders && providerHomeData.popularProviders.length > 0 && (
-              <ProviderHomeSection
-                title="Popular"
-                providers={providerHomeData.popularProviders}
-              />
-            )}
+            {providerHomeData?.popularProviders &&
+              providerHomeData.popularProviders.length > 0 && (
+                <ProviderHomeSection
+                  title="Popular"
+                  providers={providerHomeData.popularProviders}
+                />
+              )}
 
             {/* Trending Providers */}
-            {providerHomeData?.trendingProviders && providerHomeData.trendingProviders.length > 0 && (
-              <ProviderHomeSection
-                title="Trending"
-                providers={providerHomeData.trendingProviders}
-              />
-            )}
+            {providerHomeData?.trendingProviders &&
+              providerHomeData.trendingProviders.length > 0 && (
+                <ProviderHomeSection
+                  title="Trending"
+                  providers={providerHomeData.trendingProviders}
+                />
+              )}
 
             {/* New Providers */}
-            {providerHomeData?.newProviders && providerHomeData.newProviders.length > 0 && (
-              <ProviderHomeSection
-                title="New"
-                providers={providerHomeData.newProviders}
-              />
-            )}
+            {providerHomeData?.newProviders &&
+              providerHomeData.newProviders.length > 0 && (
+                <ProviderHomeSection
+                  title="New"
+                  providers={providerHomeData.newProviders}
+                />
+              )}
           </>
         )}
 
@@ -320,7 +343,8 @@ export default function ProvidersPage() {
 
                     {/* Description */}
                     <p className="text-16 sm:text-18 md:text-20 text-gray-900 mb-8 leading-relaxed">
-                      Book unforgettable beauty and wellness experiences with the OurBride mobile app.
+                      Book unforgettable beauty and wellness experiences with
+                      the OurBride mobile app.
                     </p>
 
                     {/* QR Code */}
@@ -364,43 +388,67 @@ export default function ProvidersPage() {
 
                               {/* Provider Info */}
                               <div className="px-4 py-4">
-                                <h3 className="text-20 font-bold text-gray-900 mb-2">Provider Name</h3>
+                                <h3 className="text-20 font-bold text-gray-900 mb-2">
+                                  Provider Name
+                                </h3>
                                 <div className="flex items-center gap-2 mb-2">
                                   <div className="flex gap-1">
                                     {[...Array(5)].map((_, i) => (
-                                      <div key={i} className="w-4 h-4 bg-yellow-400 rounded-sm" />
+                                      <div
+                                        key={i}
+                                        className="w-4 h-4 bg-yellow-400 rounded-sm"
+                                      />
                                     ))}
                                   </div>
-                                  <span className="text-14 text-gray-600">Reviews</span>
+                                  <span className="text-14 text-gray-600">
+                                    Reviews
+                                  </span>
                                 </div>
-                                <p className="text-14 text-gray-600 mb-2">Location</p>
-                                <p className="text-14 text-green-600 font-medium mb-4">Open now</p>
+                                <p className="text-14 text-gray-600 mb-2">
+                                  Location
+                                </p>
+                                <p className="text-14 text-green-600 font-medium mb-4">
+                                  Open now
+                                </p>
 
                                 {/* Features */}
                                 <div className="flex gap-4 mb-4">
                                   <div className="flex items-center gap-1">
                                     <div className="w-4 h-4 bg-yellow-400 rounded" />
-                                    <span className="text-12 text-gray-600">Instant booking</span>
+                                    <span className="text-12 text-gray-600">
+                                      Instant booking
+                                    </span>
                                   </div>
                                   <div className="flex items-center gap-1">
                                     <div className="w-4 h-4 bg-blue-400 rounded" />
-                                    <span className="text-12 text-gray-600">Pay by app</span>
+                                    <span className="text-12 text-gray-600">
+                                      Pay by app
+                                    </span>
                                   </div>
                                 </div>
 
                                 {/* Tabs */}
                                 <div className="flex gap-4 border-b border-gray-200 mb-4">
                                   <div className="pb-2 border-b-2 border-black">
-                                    <span className="text-14 font-medium">Services</span>
+                                    <span className="text-14 font-medium">
+                                      Services
+                                    </span>
                                   </div>
-                                  <span className="text-14 text-gray-500">Team</span>
-                                  <span className="text-14 text-gray-500">Reviews</span>
+                                  <span className="text-14 text-gray-500">
+                                    Team
+                                  </span>
+                                  <span className="text-14 text-gray-500">
+                                    Reviews
+                                  </span>
                                 </div>
 
                                 {/* Services List */}
                                 <div className="space-y-2">
-                                  {[1, 2, 3].map((i) => (
-                                    <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                  {[1, 2, 3].map(i => (
+                                    <div
+                                      key={i}
+                                      className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                                    >
                                       <div>
                                         <div className="w-24 h-3 bg-gray-300 rounded mb-1" />
                                         <div className="w-16 h-2 bg-gray-200 rounded" />
@@ -413,7 +461,9 @@ export default function ProvidersPage() {
                                 {/* Bottom Button */}
                                 <div className="absolute bottom-4 left-4 right-4">
                                   <div className="flex items-center justify-between">
-                                    <span className="text-12 text-gray-500">Services available</span>
+                                    <span className="text-12 text-gray-500">
+                                      Services available
+                                    </span>
                                     <div className="bg-black text-white px-6 py-2 rounded-lg text-14 font-medium">
                                       Book now
                                     </div>
@@ -439,49 +489,77 @@ export default function ProvidersPage() {
                               <div className="px-3 mb-3">
                                 <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2">
                                   <div className="w-4 h-4 bg-gray-400 rounded" />
-                                  <span className="text-12 text-gray-500">Hair</span>
+                                  <span className="text-12 text-gray-500">
+                                    Hair
+                                  </span>
                                   <div className="ml-auto w-4 h-4 bg-gray-400 rounded" />
                                 </div>
                               </div>
 
                               {/* Filters */}
                               <div className="flex gap-2 px-3 mb-3">
-                                {['Sort', 'Max price', 'Venue type'].map((filter) => (
-                                  <div key={filter} className="px-3 py-1 bg-gray-100 rounded-lg">
-                                    <span className="text-12 text-gray-600">{filter}</span>
-                                  </div>
-                                ))}
+                                {['Sort', 'Max price', 'Venue type'].map(
+                                  filter => (
+                                    <div
+                                      key={filter}
+                                      className="px-3 py-1 bg-gray-100 rounded-lg"
+                                    >
+                                      <span className="text-12 text-gray-600">
+                                        {filter}
+                                      </span>
+                                    </div>
+                                  )
+                                )}
                               </div>
 
                               {/* Results */}
                               <div className="px-3">
-                                <p className="text-12 text-gray-600 mb-3">Venues nearby</p>
+                                <p className="text-12 text-gray-600 mb-3">
+                                  Venues nearby
+                                </p>
 
                                 {/* Result Card */}
                                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-3">
                                   <div className="w-full h-32 bg-gradient-to-br from-blue-100 to-purple-100" />
                                   <div className="p-3">
-                                    <h4 className="text-14 font-bold text-gray-900 mb-1">Provider Name</h4>
+                                    <h4 className="text-14 font-bold text-gray-900 mb-1">
+                                      Provider Name
+                                    </h4>
                                     <div className="flex items-center gap-1 mb-1">
                                       <div className="flex gap-0.5">
                                         {[...Array(4)].map((_, i) => (
-                                          <div key={i} className="w-3 h-3 bg-yellow-400 rounded-sm" />
+                                          <div
+                                            key={i}
+                                            className="w-3 h-3 bg-yellow-400 rounded-sm"
+                                          />
                                         ))}
                                         <div className="w-3 h-3 bg-gray-300 rounded-sm" />
                                       </div>
-                                      <span className="text-10 text-gray-500">(Reviews)</span>
+                                      <span className="text-10 text-gray-500">
+                                        (Reviews)
+                                      </span>
                                     </div>
-                                    <p className="text-12 text-gray-600 mb-2">Location</p>
+                                    <p className="text-12 text-gray-600 mb-2">
+                                      Location
+                                    </p>
 
                                     {/* Services */}
                                     <div className="space-y-1">
                                       <div className="flex justify-between text-11">
-                                        <span className="text-gray-700">Service name</span>
-                                        <span className="font-medium">Price</span>
+                                        <span className="text-gray-700">
+                                          Service name
+                                        </span>
+                                        <span className="font-medium">
+                                          Price
+                                        </span>
                                       </div>
                                       <div className="flex justify-between text-11">
-                                        <span className="text-gray-700">Service name</span>
-                                        <span className="font-medium">Price</span>
+                                        <span className="text-gray-700">
+                                          Service name
+                                        </span>
+                                        <span className="font-medium">
+                                          Price
+                                        </span>
                                       </div>
                                     </div>
                                   </div>
@@ -491,8 +569,11 @@ export default function ProvidersPage() {
                               {/* Bottom Nav */}
                               <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200">
                                 <div className="flex items-center justify-around py-2">
-                                  {[1, 2, 3, 4, 5].map((i) => (
-                                    <div key={i} className="w-5 h-5 bg-gray-300 rounded" />
+                                  {[1, 2, 3, 4, 5].map(i => (
+                                    <div
+                                      key={i}
+                                      className="w-5 h-5 bg-gray-300 rounded"
+                                    />
                                   ))}
                                 </div>
                               </div>
@@ -508,16 +589,16 @@ export default function ProvidersPage() {
           </div>
         </section>
 
-
         {/* Testimonials Section */}
         {isLoadingProviderHome ? (
           <div className="py-16 flex items-center justify-center">
             <LoadingSpinner size="lg" />
           </div>
-        ) : providerHomeData?.testimonials && providerHomeData.testimonials.length > 0 ? (
+        ) : providerHomeData?.testimonials &&
+          providerHomeData.testimonials.length > 0 ? (
           <TestimonialsSection
             title="Reviews"
-            testimonials={providerHomeData.testimonials.map((testimonial) => ({
+            testimonials={providerHomeData.testimonials.map(testimonial => ({
               rating: testimonial.rating || 0,
               title: testimonial.nameEn || testimonial.nameAr || '',
               comment:
@@ -527,8 +608,16 @@ export default function ProvidersPage() {
                 testimonial.descriptionEn ||
                 testimonial.descriptionAr ||
                 '',
-              reviewerName: testimonial.customerNameEn || testimonial.customerNameAr || testimonial.customerName || '',
-              reviewerLocation: testimonial.productEn || testimonial.productAr || testimonial.product || '',
+              reviewerName:
+                testimonial.customerNameEn ||
+                testimonial.customerNameAr ||
+                testimonial.customerName ||
+                '',
+              reviewerLocation:
+                testimonial.productEn ||
+                testimonial.productAr ||
+                testimonial.product ||
+                '',
               reviewerImage: testimonial.imageUrl || null,
             }))}
           />

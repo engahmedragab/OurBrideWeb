@@ -59,5 +59,3 @@ export interface BranchPortfolioResponse {
   reviews: BranchPortfolioReviews
   statistics: BranchPortfolioStatistics
 }
-
-

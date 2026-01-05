@@ -93,7 +93,8 @@ export const AddressModal = ({
    */
   const handleLocationSelect = async (locationData: string | LocationData) => {
     try {
-      let address: Partial<LocationData['address']> & Record<string, string | undefined> = {}
+      let address: Partial<LocationData['address']> &
+        Record<string, string | undefined> = {}
       let displayName = ''
       let lat: number | null = null
       let lon: number | null = null
@@ -135,8 +136,17 @@ export const AddressModal = ({
       }
 
       // Extract address components
-      const street = (address?.road as string) || (address?.street as string) || (address?.pedestrian as string) || ''
-      const city = (address?.city as string) || (address?.town as string) || (address?.village as string) || (address?.municipality as string) || ''
+      const street =
+        (address?.road as string) ||
+        (address?.street as string) ||
+        (address?.pedestrian as string) ||
+        ''
+      const city =
+        (address?.city as string) ||
+        (address?.town as string) ||
+        (address?.village as string) ||
+        (address?.municipality as string) ||
+        ''
       const country = (address?.country as string) || ''
       const building = (address?.house_number as string) || ''
 
@@ -152,16 +162,25 @@ export const AddressModal = ({
       addToast('Location selected successfully', 'success')
     } catch (error) {
       // Fallback: just set the address
-      const displayName = typeof locationData === 'string' ? locationData : locationData.displayName || ''
+      const displayName =
+        typeof locationData === 'string'
+          ? locationData
+          : locationData.displayName || ''
       setFormData(prev => ({
         ...prev,
         address1: displayName.split(',')[0] || displayName,
       }))
-      addToast('Location selected. Please verify and complete the address details.', 'info')
+      addToast(
+        'Location selected. Please verify and complete the address details.',
+        'info'
+      )
     }
   }
 
-  const updateField = (field: string, value: string | number | boolean | null) => {
+  const updateField = (
+    field: string,
+    value: string | number | boolean | null
+  ) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
@@ -227,7 +246,10 @@ export const AddressModal = ({
           addressComment: formData.addressComment || null,
           isDefault: formData.isDefault,
         }
-        await updateAddressMutation.mutateAsync({ id: address.id, data: updateData })
+        await updateAddressMutation.mutateAsync({
+          id: address.id,
+          data: updateData,
+        })
         addToast('Address updated successfully', 'success')
       } else {
         // Create new deliveryaddress
@@ -261,7 +283,8 @@ export const AddressModal = ({
     }
   }
 
-  const isLoading = createAddressMutation.isPending || updateAddressMutation.isPending
+  const isLoading =
+    createAddressMutation.isPending || updateAddressMutation.isPending
 
   return (
     <Modal
@@ -443,7 +466,7 @@ export const AddressModal = ({
       <LocationPickerModal
         open={showLocationPicker}
         onClose={() => setShowLocationPicker(false)}
-        onSelect={async (locationData) => {
+        onSelect={async locationData => {
           // Parse the location data and fill form fields
           await handleLocationSelect(locationData)
           setShowLocationPicker(false)
@@ -452,4 +475,3 @@ export const AddressModal = ({
     </Modal>
   )
 }
-

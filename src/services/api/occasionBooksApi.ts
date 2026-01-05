@@ -4,7 +4,11 @@
  */
 
 import { apiClient } from '@/services/api/apiClient'
-import type { OccasionBookResponse, OccasionLineResponse, OccasionLineCategoryResponse } from '@/types/responses'
+import type {
+  OccasionBookResponse,
+  OccasionLineResponse,
+  OccasionLineCategoryResponse,
+} from '@/types/responses'
 import type {
   OccasionBookRequest,
   OccasionLineRequest,
@@ -42,14 +46,20 @@ export const initOccasionBooks = async (params?: {
 }): Promise<void> => {
   try {
     // Normalize params: set clientId and userType to null, keep eventId
-    const normalizedParams = params ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: params.eventId,
-    } : undefined
+    const normalizedParams = params
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: params.eventId,
+        }
+      : undefined
     await apiClient.api.postOccasionsBooksInit(normalizedParams)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to initialize occasion books')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to initialize occasion books'
+    )
   }
 }
 
@@ -64,7 +74,9 @@ export const syncOccasionBook = async (
     const params = normalizeQuery(query)
     await apiClient.api.postOccasionsBooksSyncBook(data, params)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to sync occasion book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to sync occasion book'
+    )
   }
 }
 
@@ -76,9 +88,10 @@ export const getOccasionBook = async (
 ): Promise<OccasionBookResponse | null> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getOccasionsBooksGetBook(normalizedQuery)
+    const response =
+      await apiClient.api.getOccasionsBooksGetBook(normalizedQuery)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as OccasionBookResponse
@@ -91,7 +104,9 @@ export const getOccasionBook = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch occasion book')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch occasion book'
+    )
   }
 }
 
@@ -103,9 +118,10 @@ export const getOccasionLines = async (
 ): Promise<OccasionLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getOccasionsBooksGetAll(normalizedQuery)
+    const response =
+      await apiClient.api.getOccasionsBooksGetAll(normalizedQuery)
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
@@ -121,7 +137,9 @@ export const getOccasionLines = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch occasion lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch occasion lines'
+    )
   }
 }
 
@@ -133,14 +151,20 @@ export const getOccasionLineById = async (
   query?: { clientId?: string; eventId?: number }
 ): Promise<OccasionLineResponse | null> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getOccasionsBooksGet(lineId, String(lineId), normalizedQuery)
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response = await apiClient.api.getOccasionsBooksGet(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as OccasionLineResponse
@@ -153,7 +177,9 @@ export const getOccasionLineById = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch occasion line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch occasion line'
+    )
   }
 }
 
@@ -166,9 +192,12 @@ export const createOccasionLine = async (
 ): Promise<OccasionLineResponse> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.postOccasionsBooksCreate(data, normalizedQuery)
+    const response = await apiClient.api.postOccasionsBooksCreate(
+      data,
+      normalizedQuery
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as OccasionLineResponse
@@ -179,9 +208,13 @@ export const createOccasionLine = async (
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as OccasionLineResponse
     }
-    throw new Error('Invalid response format from create occasion line endpoint')
+    throw new Error(
+      'Invalid response format from create occasion line endpoint'
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create occasion line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create occasion line'
+    )
   }
 }
 
@@ -196,7 +229,9 @@ export const createOccasionLinesBulk = async (
     const normalizedQuery = normalizeQuery(query)
     await apiClient.api.postOccasionsBooksCreateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create occasion lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to create occasion lines'
+    )
   }
 }
 
@@ -210,14 +245,21 @@ export const updateOccasionLine = async (
 ): Promise<OccasionLineResponse> => {
   try {
     // Note: putOccasionsBooksUpdate may not accept eventId in query, but we normalize clientId and userType
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      // eventId is excluded if the API doesn't accept it
-    } : undefined
-    const response = await apiClient.api.putOccasionsBooksUpdate(lineId, String(lineId), data, normalizedQuery)
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          // eventId is excluded if the API doesn't accept it
+        }
+      : undefined
+    const response = await apiClient.api.putOccasionsBooksUpdate(
+      lineId,
+      String(lineId),
+      data,
+      normalizedQuery
+    )
     const responseAny: any = response
-    
+
     // Handle different response structures
     if (responseAny?.data?.data) {
       return responseAny.data.data as OccasionLineResponse
@@ -228,9 +270,13 @@ export const updateOccasionLine = async (
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
       return responseAny as OccasionLineResponse
     }
-    throw new Error('Invalid response format from update occasion line endpoint')
+    throw new Error(
+      'Invalid response format from update occasion line endpoint'
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update occasion line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update occasion line'
+    )
   }
 }
 
@@ -242,14 +288,18 @@ export const updateOccasionLinesBulk = async (
   query?: { clientId?: string; userType?: UserType; eventId?: number }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putOccasionsBooksUpdateAll(data, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update occasion lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to update occasion lines'
+    )
   }
 }
 
@@ -262,9 +312,15 @@ export const deleteOccasionLine = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.deleteOccasionsBooksDelete(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.deleteOccasionsBooksDelete(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete occasion line')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete occasion line'
+    )
   }
 }
 
@@ -273,18 +329,27 @@ export const deleteOccasionLine = async (
  */
 export const deleteOccasionLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.deleteOccasionsBooksDeleteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete occasion lines')
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to delete occasion lines'
+    )
   }
 }
 
@@ -297,9 +362,17 @@ export const toggleOccasionLineDone = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putOccasionsBooksDone(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putOccasionsBooksDone(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle occasion line done status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle occasion line done status'
+    )
   }
 }
 
@@ -312,9 +385,17 @@ export const toggleOccasionLineFavorite = async (
 ): Promise<void> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    await apiClient.api.putOccasionsBooksFavorite(lineId, String(lineId), normalizedQuery)
+    await apiClient.api.putOccasionsBooksFavorite(
+      lineId,
+      String(lineId),
+      normalizedQuery
+    )
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to toggle occasion line favorite status')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to toggle occasion line favorite status'
+    )
   }
 }
 
@@ -329,9 +410,14 @@ export const getOccasionLinesCustom = async (
 ): Promise<OccasionLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getOccasionsBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
+    const response = await apiClient.api.getOccasionsBooksGetAllCustom(
+      isDeleted,
+      isDone,
+      isFavorite,
+      normalizedQuery
+    )
     const responseAny: any = response
-    
+
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
     }
@@ -340,7 +426,11 @@ export const getOccasionLinesCustom = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch custom occasion lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch custom occasion lines'
+    )
   }
 }
 
@@ -352,9 +442,10 @@ export const getOccasionLinesDone = async (
 ): Promise<OccasionLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getOccasionsBooksGetAllDone(normalizedQuery)
+    const response =
+      await apiClient.api.getOccasionsBooksGetAllDone(normalizedQuery)
     const responseAny: any = response
-    
+
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
     }
@@ -363,25 +454,34 @@ export const getOccasionLinesDone = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch done occasion lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch done occasion lines'
+    )
   }
 }
 
 /**
  * Get not done occasion lines
  */
-export const getOccasionLinesNotDone = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<OccasionLineResponse[]> => {
+export const getOccasionLinesNotDone = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<OccasionLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getOccasionsBooksGetAllNotDone(normalizedQuery)
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getOccasionsBooksGetAllNotDone(normalizedQuery)
     const responseAny: any = response
-    
+
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
     }
@@ -390,7 +490,11 @@ export const getOccasionLinesNotDone = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not done occasion lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not done occasion lines'
+    )
   }
 }
 
@@ -402,9 +506,10 @@ export const getOccasionLinesFavorite = async (
 ): Promise<OccasionLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getOccasionsBooksGetAllFavorite(normalizedQuery)
+    const response =
+      await apiClient.api.getOccasionsBooksGetAllFavorite(normalizedQuery)
     const responseAny: any = response
-    
+
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
     }
@@ -413,25 +518,34 @@ export const getOccasionLinesFavorite = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch favorite occasion lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch favorite occasion lines'
+    )
   }
 }
 
 /**
  * Get not favorite occasion lines
  */
-export const getOccasionLinesNotFavorite = async (
-  query?: { clientId?: string; userType?: UserType; eventId?: number }
-): Promise<OccasionLineResponse[]> => {
+export const getOccasionLinesNotFavorite = async (query?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<OccasionLineResponse[]> => {
   try {
-    const normalizedQuery = query ? {
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
-    const response = await apiClient.api.getOccasionsBooksGetAllNotFavorite(normalizedQuery)
+    const normalizedQuery = query
+      ? {
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
+    const response =
+      await apiClient.api.getOccasionsBooksGetAllNotFavorite(normalizedQuery)
     const responseAny: any = response
-    
+
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
     }
@@ -440,7 +554,11 @@ export const getOccasionLinesNotFavorite = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not favorite occasion lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not favorite occasion lines'
+    )
   }
 }
 
@@ -452,9 +570,10 @@ export const getOccasionLinesDeleted = async (
 ): Promise<OccasionLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getOccasionsBooksGetAllDelete(normalizedQuery)
+    const response =
+      await apiClient.api.getOccasionsBooksGetAllDelete(normalizedQuery)
     const responseAny: any = response
-    
+
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
     }
@@ -463,7 +582,11 @@ export const getOccasionLinesDeleted = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch deleted occasion lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch deleted occasion lines'
+    )
   }
 }
 
@@ -475,9 +598,10 @@ export const getOccasionLinesNotDeleted = async (
 ): Promise<OccasionLineResponse[]> => {
   try {
     const normalizedQuery = normalizeQuery(query)
-    const response = await apiClient.api.getOccasionsBooksGetAllNotDelete(normalizedQuery)
+    const response =
+      await apiClient.api.getOccasionsBooksGetAllNotDelete(normalizedQuery)
     const responseAny: any = response
-    
+
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data as OccasionLineResponse[]
     }
@@ -486,7 +610,11 @@ export const getOccasionLinesNotDeleted = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch not deleted occasion lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch not deleted occasion lines'
+    )
   }
 }
 
@@ -495,18 +623,29 @@ export const getOccasionLinesNotDeleted = async (
  */
 export const markOccasionLinesDoneBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putOccasionsBooksDoneAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to mark occasion lines as done')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to mark occasion lines as done'
+    )
   }
 }
 
@@ -515,31 +654,43 @@ export const markOccasionLinesDoneBulk = async (
  */
 export const favoriteOccasionLinesBulk = async (
   lineIds: number[],
-  query?: { value?: boolean; clientId?: string; userType?: UserType; eventId?: number }
+  query?: {
+    value?: boolean
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
 ): Promise<void> => {
   try {
-    const normalizedQuery = query ? {
-      value: query.value,
-      clientId: null as unknown as string | undefined,
-      userType: null as unknown as UserType | undefined,
-      eventId: query.eventId,
-    } : undefined
+    const normalizedQuery = query
+      ? {
+          value: query.value,
+          clientId: null as unknown as string | undefined,
+          userType: null as unknown as UserType | undefined,
+          eventId: query.eventId,
+        }
+      : undefined
     await apiClient.api.putOccasionsBooksFavoriteAll(lineIds, normalizedQuery)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to favorite occasion lines')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to favorite occasion lines'
+    )
   }
 }
 
 /**
  * Get all occasion line categories
  */
-export const getOccasionCategories = async (
-  query?: { clientId?: string }
-): Promise<OccasionLineResponse[]> => {
+export const getOccasionCategories = async (query?: {
+  clientId?: string
+}): Promise<OccasionLineResponse[]> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetAllCategories(query)
+    const response =
+      await apiClient.api.getOccasionsBooksGetAllCategories(query)
     const responseAny: any = response
-    
+
     if (Array.isArray(responseAny?.data)) {
       return responseAny.data
     }
@@ -548,7 +699,11 @@ export const getOccasionCategories = async (
     }
     return []
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch occasion categories')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch occasion categories'
+    )
   }
 }
 
@@ -562,7 +717,11 @@ export const createOccasionCategory = async (
   try {
     await apiClient.api.postOccasionsBooksCreateCategory(data, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to create occasion category')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to create occasion category'
+    )
   }
 }
 
@@ -574,9 +733,12 @@ export const getOccasionCategory = async (
   query?: { clientId?: string }
 ): Promise<OccasionLineCategoryResponse | null> => {
   try {
-    const response = await apiClient.api.getOccasionsBooksGetCategory(categoryId, query)
+    const response = await apiClient.api.getOccasionsBooksGetCategory(
+      categoryId,
+      query
+    )
     const responseAny: any = response
-    
+
     if (responseAny?.data?.data) {
       return responseAny.data.data
     }
@@ -585,7 +747,11 @@ export const getOccasionCategory = async (
     }
     return null
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to fetch occasion category')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch occasion category'
+    )
   }
 }
 
@@ -600,7 +766,11 @@ export const updateOccasionCategory = async (
   try {
     await apiClient.api.putOccasionsBooksUpdateCategory(categoryId, data, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to update occasion category')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to update occasion category'
+    )
   }
 }
 
@@ -614,6 +784,10 @@ export const deleteOccasionCategory = async (
   try {
     await apiClient.api.deleteOccasionsBooksDeleteCategory(categoryId, query)
   } catch (error: unknown) {
-    throw new Error(error instanceof Error ? error.message : 'Failed to delete occasion category')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to delete occasion category'
+    )
   }
 }

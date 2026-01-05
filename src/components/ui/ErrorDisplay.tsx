@@ -32,10 +32,16 @@ export function ErrorDisplay({
   }
 
   return (
-    <div className={`flex flex-col items-center justify-center w-full py-12 ${className}`}>
+    <div
+      className={`flex flex-col items-center justify-center w-full py-12 ${className}`}
+    >
       {/* SVG Illustration */}
       <Image
-        src={typeof somethingWrongSvg === 'string' ? somethingWrongSvg : somethingWrongSvg.src}
+        src={
+          typeof somethingWrongSvg === 'string'
+            ? somethingWrongSvg
+            : somethingWrongSvg.src
+        }
         alt="Something went wrong"
         width={256}
         height={256}

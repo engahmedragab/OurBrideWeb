@@ -3,7 +3,11 @@
  * Based on OurBrideMain.Contracts.V1.Responses.WeddingEvents.WeddingEventResponse
  */
 
-import type { Bride, Groom, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  Bride,
+  Groom,
+  UserType,
+} from '@/../client/common/api/gen/ourbride-api'
 
 export interface WeddingEventResponse {
   /** @format int32 */
@@ -35,5 +39,3 @@ export interface WeddingEventResponse {
   lastModifiedDate: string
   slug: string
 }
-
-

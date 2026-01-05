@@ -33,7 +33,10 @@ export const AddEventModal = ({
   const [isDefault, setIsDefault] = useState(false)
 
   // Combine date and time into ISO string
-  const combineDateTime = (date: Date | undefined, time: string): string | null => {
+  const combineDateTime = (
+    date: Date | undefined,
+    time: string
+  ): string | null => {
     if (!date) return null
     if (!time) {
       // If no time provided, use start of day
@@ -127,7 +130,9 @@ export const AddEventModal = ({
             <div className="flex-1">
               <DatePicker
                 value={startDate}
-                onChange={date => setStartDate(date instanceof Date ? date : undefined)}
+                onChange={date =>
+                  setStartDate(date instanceof Date ? date : undefined)
+                }
                 placeholder="Select start date"
                 className="w-full"
               />
@@ -153,7 +158,9 @@ export const AddEventModal = ({
             <div className="flex-1">
               <DatePicker
                 value={endDate}
-                onChange={date => setEndDate(date instanceof Date ? date : undefined)}
+                onChange={date =>
+                  setEndDate(date instanceof Date ? date : undefined)
+                }
                 placeholder="Select end date"
                 className="w-full"
               />
@@ -179,18 +186,17 @@ export const AddEventModal = ({
             onChange={e => setIsDefault(e.target.checked)}
             className="w-4 h-4 text-brand-500 border-gray-300 rounded focus:ring-brand-500"
           />
-          <label htmlFor="isDefault" className="text-14 font-normal text-gray-900 cursor-pointer">
+          <label
+            htmlFor="isDefault"
+            className="text-14 font-normal text-gray-900 cursor-pointer"
+          >
             Set as default event
           </label>
         </div>
 
         {/* Submit Button */}
         <div className="flex justify-end gap-3 pt-2">
-          <Button
-            variant="outline"
-            onClick={handleClose}
-            className="px-6"
-          >
+          <Button variant="outline" onClick={handleClose} className="px-6">
             Cancel
           </Button>
           <Button
@@ -206,4 +212,3 @@ export const AddEventModal = ({
     </Modal>
   )
 }
-

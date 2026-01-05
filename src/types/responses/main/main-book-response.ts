@@ -21,5 +21,3 @@ export interface MainBookResponse<TLine extends MainLineResponse> {
   creationDate: string
   lastModifiedDate: string
 }
-
-

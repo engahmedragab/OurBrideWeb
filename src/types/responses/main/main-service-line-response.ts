@@ -11,5 +11,3 @@ export interface MainServiceLineResponse extends MainLineResponse {
   iconName: string
   colorName: string
 }
-
-

@@ -19,5 +19,3 @@ export interface LineResponse extends BaseEntityResponse {
   createdBy: string // Guid
   lastModifiedBy: string // Guid
 }
-
-

@@ -25,4 +25,3 @@ export const StatusBadge = ({ status, className }: StatusBadgeProps) => {
     </span>
   )
 }
-

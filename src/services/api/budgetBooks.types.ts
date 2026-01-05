@@ -1,6 +1,6 @@
 /**
  * BudgetBooks API Types
- * 
+ *
  * Type definitions, response types, query parameters, and form values
  * for the BudgetBooks module.
  */
@@ -109,4 +109,3 @@ export interface ApiError {
   status?: number
   details?: unknown
 }
-

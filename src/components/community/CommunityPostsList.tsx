@@ -47,9 +47,7 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
             <LoadingOverlay open={true} title="Loading..." />
           </div>
         ) : posts && posts.length > 0 ? (
-          <div 
-            className="space-y-4 max-h-[600px] overflow-y-auto pr-2 -mr-2 scrollbar-custom"
-          >
+          <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 -mr-2 scrollbar-custom">
             {posts.map(post => (
               <div
                 key={post.id}
@@ -67,7 +65,7 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
                         fill
                         sizes="40px"
                         className="object-cover"
-                        onError={(e) => {
+                        onError={e => {
                           e.currentTarget.style.display = 'none'
                         }}
                       />
@@ -75,16 +73,18 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
                   })()}
                   {(() => {
                     const avatar = getUserAvatar(post.user)
-                    return !avatar && (
-                      <div className="w-full h-full flex items-center justify-center bg-white">
-                        <Image
-                          src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                          alt="OurBride"
-                          width={24}
-                          height={24}
-                          className="object-contain"
-                        />
-                      </div>
+                    return (
+                      !avatar && (
+                        <div className="w-full h-full flex items-center justify-center bg-white">
+                          <Image
+                            src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
+                            alt="OurBride"
+                            width={24}
+                            height={24}
+                            className="object-contain"
+                          />
+                        </div>
+                      )
                     )
                   })()}
                 </div>

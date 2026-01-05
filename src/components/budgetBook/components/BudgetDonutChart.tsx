@@ -98,7 +98,7 @@ export const BudgetDonutChart = ({
 
     let currentAngle = startAngle
 
-    return segments.map((segment) => {
+    return segments.map(segment => {
       // Calculate segment angle (percentage of available degrees)
       const segmentDeg = (segment.percentage / 100) * availableDeg
 
@@ -121,7 +121,10 @@ export const BudgetDonutChart = ({
   const hasData = segments.length > 0 && segments.some(s => s.value > 0)
 
   return (
-    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+    <div
+      className="relative flex items-center justify-center"
+      style={{ width: size, height: size }}
+    >
       <svg width={size} height={size}>
         {/* Base ring (light gray) - always show full circle */}
         <circle
@@ -154,7 +157,6 @@ export const BudgetDonutChart = ({
             />
           ))}
       </svg>
-
     </div>
   )
 }

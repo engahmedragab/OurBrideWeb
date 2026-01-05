@@ -73,24 +73,43 @@ const ProductCardWithHandlers = ({
 }: {
   product: Product
   onCardClick: () => void
-  addToast: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
+  addToast: (
+    message: string,
+    type: 'success' | 'error' | 'info' | 'warning'
+  ) => void
 }) => {
   const handlers = useProductCardHandlers(parseInt(product.id, 10), {
-    onFavoriteSuccess: (response) => {
-      const defaultMessage = response === true ? 'Added to favorites' : 'Removed from favorites'
-      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update favorite')
+    onFavoriteSuccess: response => {
+      const defaultMessage =
+        response === true ? 'Added to favorites' : 'Removed from favorites'
+      const { message } = handleApiResponseForToast(
+        response,
+        defaultMessage,
+        'Failed to update favorite'
+      )
       addToast(message, 'success')
     },
-    onFavoriteError: (error) => {
-      addToast(error.message || 'Failed to update favorite. Please try again.', 'error')
+    onFavoriteError: error => {
+      addToast(
+        error.message || 'Failed to update favorite. Please try again.',
+        'error'
+      )
     },
-    onWishlistSuccess: (response) => {
-      const defaultMessage = response === true ? 'Added to wishlist' : 'Removed from wishlist'
-      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update wishlist')
+    onWishlistSuccess: response => {
+      const defaultMessage =
+        response === true ? 'Added to wishlist' : 'Removed from wishlist'
+      const { message } = handleApiResponseForToast(
+        response,
+        defaultMessage,
+        'Failed to update wishlist'
+      )
       addToast(message, 'success')
     },
-    onWishlistError: (error) => {
-      addToast(error.message || 'Failed to update wishlist. Please try again.', 'error')
+    onWishlistError: error => {
+      addToast(
+        error.message || 'Failed to update wishlist. Please try again.',
+        'error'
+      )
     },
   })
   return (
@@ -156,7 +175,8 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   const submitReviewMutation = useSubmitProductReview()
 
   // Add to cart hook - MUST be called before any conditional returns
-  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+  const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } =
+    useAddProductToCart()
 
   // Show loading state
   if (productLoading) {
@@ -196,7 +216,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
       addToast(message, type)
     } catch (error) {
       console.error('Failed to add product to cart:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to add product to cart. Please try again.'
       addToast(errorMessage, 'error')
     }
   }
@@ -218,13 +241,13 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
         rating: userRating,
         review: reviewComment,
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Review submitted successfully!',
         'Failed to submit review'
       )
-      
+
       if (type === 'success') {
         setUserRating(0)
         setReviewComment('')
@@ -232,7 +255,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
       addToast(message, type)
     } catch (error) {
       console.error('Error submitting review:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to submit review. Please try again.'
       addToast(errorMessage, 'error')
     }
   }
@@ -264,7 +290,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
             </h1>
 
             <div className="flex items-center gap-4">
-              <RatingDisplay rating={product.rating.value} count={product.rating.count} />
+              <RatingDisplay
+                rating={product.rating.value}
+                count={product.rating.count}
+              />
               <span className="text-14 text-gray-500">
                 ({product.rating.count} reviews)
               </span>
@@ -279,15 +308,22 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
             {/* Product Attributes */}
             {attributes.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-16 font-semibold text-gray-900">Attributes</h3>
+                <h3 className="text-16 font-semibold text-gray-900">
+                  Attributes
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {attributes.map((attr, index) => {
-                    const attrName = attr.nameEn || attr.nameAr || attr.name || 'Attribute'
-                    
+                    const attrName =
+                      attr.nameEn || attr.nameAr || attr.name || 'Attribute'
+
                     // Handle attribute value - could be string, JSON string, or array
                     let attrValue: string = 'N/A'
-                    const rawValue = attr.options || attr.attribute || attr.descriptionEn || attr.descriptionAr
-                    
+                    const rawValue =
+                      attr.options ||
+                      attr.attribute ||
+                      attr.descriptionEn ||
+                      attr.descriptionAr
+
                     if (rawValue) {
                       // Try to parse if it's a JSON string
                       if (typeof rawValue === 'string') {
@@ -308,7 +344,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                         attrValue = String(rawValue)
                       }
                     }
-                    
+
                     return (
                       <div
                         key={attr.id || index}
@@ -326,7 +362,9 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
             {/* Product Variations */}
             {variations.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-16 font-semibold text-gray-900">Available Options</h3>
+                <h3 className="text-16 font-semibold text-gray-900">
+                  Available Options
+                </h3>
                 <div className="space-y-2">
                   {variations.map((variation, index) => (
                     <div
@@ -340,16 +378,21 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                           </span>
                           {variation.price && (
                             <span className="text-14 text-gray-600 ml-2">
-                              - {variation.price.toLocaleString()} {product.price.currency}
+                              - {variation.price.toLocaleString()}{' '}
+                              {product.price.currency}
                             </span>
                           )}
                         </div>
                         {variation.inStock !== false && (
-                          <Badge variant="success" size="sm">In Stock</Badge>
+                          <Badge variant="success" size="sm">
+                            In Stock
+                          </Badge>
                         )}
                       </div>
                       {variation.description && (
-                        <p className="text-12 text-gray-500 mt-1">{variation.description}</p>
+                        <p className="text-12 text-gray-500 mt-1">
+                          {variation.description}
+                        </p>
                       )}
                     </div>
                   ))}
@@ -390,7 +433,9 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
 
             <ProviderCardWithHandlers
               provider={product.provider}
-              onViewProfile={() => router.push(`/provider/${product.provider.id}`)}
+              onViewProfile={() =>
+                router.push(`/provider/${product.provider.id}`)
+              }
             />
           </div>
         </div>
@@ -512,7 +557,9 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                 <ProductCardWithHandlers
                   key={relatedProduct.id}
                   product={relatedProduct}
-                  onCardClick={() => router.push(`/products/${relatedProduct.id}`)}
+                  onCardClick={() =>
+                    router.push(`/products/${relatedProduct.id}`)
+                  }
                   addToast={addToast}
                 />
               ))}

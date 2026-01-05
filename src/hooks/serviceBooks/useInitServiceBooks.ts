@@ -7,14 +7,20 @@ import type { UserType } from '@/../client/common/api/gen/ourbride-api'
  */
 export const useInitServiceBooks = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
-    mutationFn: async (params?: { clientId?: string | null; userType?: UserType | null; eventId?: number }) => {
-      const normalizedParams = params ? {
-        clientId: params.clientId ?? undefined,
-        userType: params.userType ?? undefined,
-        eventId: params.eventId,
-      } : undefined
+    mutationFn: async (params?: {
+      clientId?: string | null
+      userType?: UserType | null
+      eventId?: number
+    }) => {
+      const normalizedParams = params
+        ? {
+            clientId: params.clientId ?? undefined,
+            userType: params.userType ?? undefined,
+            eventId: params.eventId,
+          }
+        : undefined
       await initServiceBooks(normalizedParams)
     },
     onSuccess: (_, variables) => {
@@ -25,4 +31,3 @@ export const useInitServiceBooks = () => {
     },
   })
 }
-

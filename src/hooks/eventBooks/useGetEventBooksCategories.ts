@@ -9,11 +9,12 @@ export interface UseGetEventBooksCategoriesParams {
 /**
  * Hook to get all event book categories
  */
-export const useGetEventBooksCategories = (params?: UseGetEventBooksCategoriesParams) => {
+export const useGetEventBooksCategories = (
+  params?: UseGetEventBooksCategoriesParams
+) => {
   return useQuery({
     queryKey: ['eventBooksCategories', params?.clientId],
     queryFn: () => getEventBooksCategories({ clientId: params?.clientId }),
     enabled: params?.enabled !== false,
   })
 }
-

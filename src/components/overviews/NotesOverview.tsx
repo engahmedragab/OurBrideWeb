@@ -43,8 +43,12 @@ export const NotesOverview = ({
   // Sort by lastModifiedDate (newest first), fallback to creationDate
   const sortedNotes = useMemo(() => {
     return [...activeNotes].sort((a: any, b: any) => {
-      const dateA = new Date(a.lastModifiedDate || a.creationDate || 0).getTime()
-      const dateB = new Date(b.lastModifiedDate || b.creationDate || 0).getTime()
+      const dateA = new Date(
+        a.lastModifiedDate || a.creationDate || 0
+      ).getTime()
+      const dateB = new Date(
+        b.lastModifiedDate || b.creationDate || 0
+      ).getTime()
       return dateB - dateA
     })
   }, [activeNotes])
@@ -68,12 +72,17 @@ export const NotesOverview = ({
           View All
         </button>
       </div>
-      
+
       <div className="space-y-3">
         {displayNotes.length > 0 ? (
           displayNotes.map((note: any) => {
             // Use title field, fallback to note field (first 50 chars)
-            const noteTitle = note.title || (note.note ? note.note.substring(0, 50) + (note.note.length > 50 ? '...' : '') : 'Untitled Note')
+            const noteTitle =
+              note.title ||
+              (note.note
+                ? note.note.substring(0, 50) +
+                  (note.note.length > 50 ? '...' : '')
+                : 'Untitled Note')
             const noteContent = note.note || ''
             const date = note.lastModifiedDate || note.creationDate
 
@@ -114,4 +123,3 @@ export const NotesOverview = ({
     </div>
   )
 }
-

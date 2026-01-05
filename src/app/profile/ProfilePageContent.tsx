@@ -37,12 +37,12 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
   const data = mineInfo?.data || mineInfo || {}
   const userProfile = data.userProfile || {}
   const user = userProfile.user || {}
-  
-  const displayName = 
+
+  const displayName =
     user.firstName && user.lastName
       ? `${user.firstName} ${user.lastName}`
       : user.userName || user.email || 'User'
-  
+
   const profileImage = user.profileUrl || 'https://via.placeholder.com/200'
   const email = user.email || ''
   const phone = user.phoneNumber || ''
@@ -51,7 +51,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
   const gender = user.gender || ''
   const status = user.status || ''
   const type = user.type || ''
-  
+
   // Extract statistics
   const itemBook = data.itemBook || {}
   const serviceBook = data.serviceBook || {}
@@ -225,7 +225,9 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
               <Package className="h-5 w-5 text-brand-500" />
               <p className="text-12 text-gray-500">Items</p>
             </div>
-            <p className="text-18 font-normal text-gray-900">{itemBook.count || 0}</p>
+            <p className="text-18 font-normal text-gray-900">
+              {itemBook.count || 0}
+            </p>
             <p className="text-12 text-gray-500 mt-1">
               {itemBook.completed || 0} completed
             </p>
@@ -237,7 +239,9 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
               <ShoppingBag className="h-5 w-5 text-brand-500" />
               <p className="text-12 text-gray-500">Services</p>
             </div>
-            <p className="text-18 font-normal text-gray-900">{serviceBook.count || 0}</p>
+            <p className="text-18 font-normal text-gray-900">
+              {serviceBook.count || 0}
+            </p>
             <p className="text-12 text-gray-500 mt-1">
               {serviceBook.completed || 0} completed
             </p>
@@ -249,7 +253,9 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
               <CheckCircle2 className="h-5 w-5 text-brand-500" />
               <p className="text-12 text-gray-500">Todos</p>
             </div>
-            <p className="text-18 font-normal text-gray-900">{todoBook.count || 0}</p>
+            <p className="text-18 font-normal text-gray-900">
+              {todoBook.count || 0}
+            </p>
             <p className="text-12 text-gray-500 mt-1">
               {todoBook.completed || 0} completed
             </p>
@@ -262,7 +268,9 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
                 <Gift className="h-5 w-5 text-brand-500" />
                 <p className="text-12 text-gray-500">Coupons</p>
               </div>
-              <p className="text-18 font-normal text-gray-900">{couponsCount}</p>
+              <p className="text-18 font-normal text-gray-900">
+                {couponsCount}
+              </p>
             </div>
           )}
 
@@ -297,7 +305,9 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
                 <Gift className="h-5 w-5 text-brand-500" />
                 <p className="text-12 text-gray-500">Gift Cards</p>
               </div>
-              <p className="text-18 font-normal text-gray-900">{giftsCardsCount}</p>
+              <p className="text-18 font-normal text-gray-900">
+                {giftsCardsCount}
+              </p>
             </div>
           )}
 
@@ -308,7 +318,9 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
                 <Bell className="h-5 w-5 text-brand-500" />
                 <p className="text-12 text-gray-500">Notifications</p>
               </div>
-              <p className="text-18 font-normal text-gray-900">{notificationsCount}</p>
+              <p className="text-18 font-normal text-gray-900">
+                {notificationsCount}
+              </p>
               {notificationsUnReadCount > 0 && (
                 <p className="text-12 text-brand-500 mt-1">
                   {notificationsUnReadCount} unread
@@ -343,4 +355,3 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
     </div>
   )
 }
-

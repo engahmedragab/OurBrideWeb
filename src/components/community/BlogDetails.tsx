@@ -19,7 +19,12 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { BlogResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
-import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
+import {
+  formatDate,
+  getUserDisplayName,
+  getUserAvatar,
+  getProfileUrl,
+} from './utils'
 import Link from 'next/link'
 import {
   addReview as addBlogReview,
@@ -75,8 +80,11 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
       // Invalidate queries to refresh comments/reviews
       queryClient.invalidateQueries({ queryKey: ['blog', blog.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to add comment',
+        'error'
+      )
     },
   })
 
@@ -89,8 +97,11 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['blog', blog.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle like',
+        'error'
+      )
     },
   })
 
@@ -107,18 +118,24 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
     mutationFn: async (shareSource?: string) => {
       return await shareBlog(blog.id, shareSource)
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data) {
         setShares(data.shareCount)
         // Copy share URL to clipboard
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/blogs/${blog.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/blogs/${blog.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
         addToast('Shared successfully! Link copied to clipboard.', 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['blog', blog.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share blog', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to share blog',
+        'error'
+      )
     },
   })
 
@@ -131,8 +148,11 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['blog', blog.id] })
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle favorite',
+        'error'
+      )
     },
   })
 
@@ -146,10 +166,16 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(
+        isFollowing ? 'Unfollowed successfully' : 'Followed successfully',
+        'success'
+      )
     },
-    onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+    onError: error => {
+      addToast(
+        error instanceof Error ? error.message : 'Failed to toggle follow',
+        'error'
+      )
     },
   })
 
@@ -205,7 +231,7 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
                   fill
                   sizes="40px"
                   className="object-cover"
-                  onError={(e) => {
+                  onError={e => {
                     e.currentTarget.style.display = 'none'
                   }}
                 />
@@ -253,7 +279,9 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
                   !isFollowing && 'text-white'
                 )}
               >
-                <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
+                <UserPlus
+                  className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')}
+                />
                 {toggleFollowMutation.isPending
                   ? 'Loading...'
                   : isFollowing
@@ -287,13 +315,18 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
         <h1 className="text-24 font-normal text-gray-900 mb-4">{blog.title}</h1>
 
         {/* Blog Description */}
-        <p className="text-14 text-gray-700 mb-4">{blog.summary || blog.excerpt}</p>
+        <p className="text-14 text-gray-700 mb-4">
+          {blog.summary || blog.excerpt}
+        </p>
 
         {/* Full Blog Content */}
         <div
           className="text-14 text-gray-700 mb-4 [&_h1]:text-24 [&_h1]:font-semibold [&_h1]:text-gray-900 [&_h1]:mb-4 [&_h1]:mt-6 [&_h2]:text-20 [&_h2]:font-semibold [&_h2]:text-gray-900 [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:text-18 [&_h3]:font-semibold [&_h3]:text-gray-900 [&_h3]:mb-2 [&_h3]:mt-4 [&_p]:mb-4 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4 [&_ol]:space-y-2 [&_li]:mb-1 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_a]:text-brand-500 [&_a]:hover:text-brand-600 [&_a]:underline [&_ul]:rtl:pr-6 [&_ul]:rtl:pl-0 [&_ol]:rtl:pr-6 [&_ol]:rtl:pl-0"
           dir="auto"
-          style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
+          style={{
+            fontFamily:
+              'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          }}
           dangerouslySetInnerHTML={{ __html: blog.content || '' }}
         />
 
@@ -301,10 +334,14 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center justify-center gap-3">
             <EngagementButton
-              icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+              icon={
+                <Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />
+              }
               count={likes}
               label="Likes"
-              onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
+              onClick={
+                toggleLikeMutation.isPending ? undefined : handleLikeClick
+              }
               isActive={isLiked}
             />
             <EngagementButton
@@ -319,10 +356,18 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
               onClick={shareMutation.isPending ? undefined : handleShareClick}
             />
             <EngagementButton
-              icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+              icon={
+                <Star
+                  className={cn('h-5 w-5', isFavorited && 'fill-brand-500')}
+                />
+              }
               count={favorites}
               label="Favorites"
-              onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
+              onClick={
+                toggleFavoriteMutation.isPending
+                  ? undefined
+                  : handleFavoriteClick
+              }
               isActive={isFavorited}
             />
           </div>
@@ -382,7 +427,3 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
     </div>
   )
 }
-
-
-
-

@@ -6,7 +6,10 @@ import type { Product } from '@/types/product'
 /**
  * Hook to fetch product by ID
  */
-export const useProductDetails = (id: string | number | null, enabled = true) => {
+export const useProductDetails = (
+  id: string | number | null,
+  enabled = true
+) => {
   const productId = typeof id === 'string' ? parseInt(id, 10) : id
 
   return useQuery({
@@ -50,4 +53,3 @@ export const useProductBySlug = (slug: string | null, enabled = true) => {
     staleTime: 5 * 60 * 1000,
   })
 }
-

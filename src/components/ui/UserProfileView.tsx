@@ -3,7 +3,14 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, User, MessageSquare, BellOff, Ban, Phone } from 'lucide-react'
+import {
+  ArrowLeft,
+  User,
+  MessageSquare,
+  BellOff,
+  Ban,
+  Phone,
+} from 'lucide-react'
 import { BlockUserModal } from './BlockUserModal'
 import { ReportUserModal } from './ReportUserModal'
 
@@ -63,7 +70,12 @@ export const UserProfileView = ({
   }
 
   return (
-    <div className={cn('flex flex-col h-full bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden', className)}>
+    <div
+      className={cn(
+        'flex flex-col h-full bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden',
+        className
+      )}
+    >
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-gray-200">
         <button
@@ -83,7 +95,10 @@ export const UserProfileView = ({
           <div className="relative mb-4">
             <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-brand-500">
               <Image
-                src={user.avatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200'}
+                src={
+                  user.avatar ||
+                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200'
+                }
                 alt={user.name}
                 fill
                 sizes="128px"
@@ -102,9 +117,7 @@ export const UserProfileView = ({
 
           {/* Last Seen */}
           {user.lastSeen && (
-            <p className="text-14 text-gray-500 mb-6">
-              {user.lastSeen}
-            </p>
+            <p className="text-14 text-gray-500 mb-6">{user.lastSeen}</p>
           )}
 
           {/* Action Buttons */}
@@ -116,7 +129,9 @@ export const UserProfileView = ({
               <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-brand-50 transition-colors">
                 <User className="h-6 w-6 text-brand-500" />
               </div>
-              <span className="text-12 text-brand-500 font-medium">Profile</span>
+              <span className="text-12 text-brand-500 font-medium">
+                Profile
+              </span>
             </button>
 
             <button
@@ -165,7 +180,7 @@ export const UserProfileView = ({
 
             {/* Media Grid */}
             <div className="grid grid-cols-3 gap-2">
-              {mediaItems.map((item) => (
+              {mediaItems.map(item => (
                 <div
                   key={item.id}
                   className="aspect-square rounded-xl overflow-hidden bg-gray-100 cursor-pointer hover:opacity-90 transition-opacity"
@@ -211,4 +226,3 @@ export const UserProfileView = ({
     </div>
   )
 }
-

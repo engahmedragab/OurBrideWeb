@@ -10,7 +10,6 @@ import type {
   TaxClass,
   ShippingClass,
   SourceOfTruth,
-
 } from '@/../client/common/api/gen/ourbride-api'
 import type {
   ProductAttributeResponse,

@@ -1,6 +1,14 @@
 'use client'
 
-import { Package, Truck, CheckCircle2, XCircle, RotateCcw, Loader2, MapPin } from 'lucide-react'
+import {
+  Package,
+  Truck,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+  Loader2,
+  MapPin,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { DeliveryStatus } from '@/../client/common/api/gen/ourbride-api'
 
@@ -13,11 +21,13 @@ export interface DeliveryStatusBadgeProps {
 /**
  * Map DeliveryStatus enum to user-friendly display text
  */
-export const getDeliveryStatusLabel = (status: DeliveryStatus | string | null | undefined): string => {
+export const getDeliveryStatusLabel = (
+  status: DeliveryStatus | string | null | undefined
+): string => {
   if (!status) return 'Not Set'
-  
+
   const statusStr = String(status)
-  
+
   const statusMap: Record<string, string> = {
     Created: 'Created',
     ReadyForDelivery: 'Ready for Delivery',
@@ -27,14 +37,16 @@ export const getDeliveryStatusLabel = (status: DeliveryStatus | string | null | 
     Failed: 'Failed',
     Returned: 'Returned',
   }
-  
+
   return statusMap[statusStr] || statusStr
 }
 
 /**
  * Get delivery status configuration (colors, icons, etc.)
  */
-const getDeliveryStatusConfig = (status: DeliveryStatus | string | null | undefined) => {
+const getDeliveryStatusConfig = (
+  status: DeliveryStatus | string | null | undefined
+) => {
   if (!status) {
     return {
       bgColor: 'bg-gray-100',
@@ -42,9 +54,9 @@ const getDeliveryStatusConfig = (status: DeliveryStatus | string | null | undefi
       icon: Package,
     }
   }
-  
+
   const statusStr = String(status)
-  
+
   switch (statusStr) {
     case 'Created':
       return {
@@ -97,10 +109,10 @@ const getDeliveryStatusConfig = (status: DeliveryStatus | string | null | undefi
   }
 }
 
-export const DeliveryStatusBadge = ({ 
-  status, 
+export const DeliveryStatusBadge = ({
+  status,
   className,
-  showIcon = true 
+  showIcon = true,
 }: DeliveryStatusBadgeProps) => {
   const config = getDeliveryStatusConfig(status)
   const Icon = config.icon
@@ -120,6 +132,3 @@ export const DeliveryStatusBadge = ({
     </div>
   )
 }
-
-
-

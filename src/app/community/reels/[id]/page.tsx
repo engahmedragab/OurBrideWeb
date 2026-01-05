@@ -41,20 +41,3 @@ async function ReelDetailsContentWrapper({
   const { id } = await params
   return <ReelDetailsClient id={id} />
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

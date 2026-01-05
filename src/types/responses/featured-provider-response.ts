@@ -25,19 +25,3 @@ export interface FeaturedProviderResponse {
   // Additional fields for provider card display with multiple services
   topRatedServices?: ServiceSummary[]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

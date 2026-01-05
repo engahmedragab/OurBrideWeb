@@ -17,19 +17,35 @@ import {
 import { RefreshCw } from 'lucide-react'
 import type { Service } from '@/types/service'
 import type { Product } from '@/types/product'
-import { useFollows, useDeleteFollow, useAddProductToCart, useCartItems } from '@/hooks'
-import type { FollowResponse, ProductResponse, ServiceResponse, FeaturedProviderResponse } from '@/types/responses'
+import {
+  useFollows,
+  useDeleteFollow,
+  useAddProductToCart,
+  useCartItems,
+} from '@/hooks'
+import type {
+  FollowResponse,
+  ProductResponse,
+  ServiceResponse,
+  FeaturedProviderResponse,
+} from '@/types/responses'
 import { Source } from '@/../client/common/api/gen/ourbride-api'
 import { mapProductResponseToProduct } from '@/types/api/product.api.types'
 import { mapServiceResponseToService } from '@/utils/services-category.utils'
 import { useToggleServiceWishlist } from '@/hooks/services/useServiceInteractions'
 import { useToggleProductWishlist } from '@/hooks/products/useProductInteractions'
 import { useToggleProviderFollow } from '@/hooks/providers/useProviderInteractions'
-import { WishlistServiceCard, WishlistProductCard, WishlistProviderCard } from '@/components/ui'
+import {
+  WishlistServiceCard,
+  WishlistProductCard,
+  WishlistProviderCard,
+} from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
 export default function FollowsPage() {
-  const [followType, setFollowType] = useState<'services' | 'products'>('services')
+  const [followType, setFollowType] = useState<'services' | 'products'>(
+    'services'
+  )
   const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
   // Fetch follows using FollowResponse from API
@@ -124,14 +140,14 @@ export default function FollowsPage() {
   // Extract all services, products, and providers from sourceObject
   const allFollowServices: Service[] = useMemo(() => {
     return filteredFollows
-      .filter((follow) => {
+      .filter(follow => {
         return (
           follow.source === Source.Service &&
           follow.sourceObject &&
           'serviceStatus' in follow.sourceObject
         )
       })
-      .map((follow) => {
+      .map(follow => {
         const serviceResponse = follow.sourceObject as ServiceResponse
         try {
           return mapServiceResponseToService(serviceResponse)
@@ -144,14 +160,14 @@ export default function FollowsPage() {
 
   const allFollowProducts: Product[] = useMemo(() => {
     return filteredFollows
-      .filter((follow) => {
+      .filter(follow => {
         return (
           follow.source === Source.Product &&
           follow.sourceObject &&
           'productId' in follow.sourceObject
         )
       })
-      .map((follow) => {
+      .map(follow => {
         const productResponse = follow.sourceObject as ProductResponse
         try {
           return mapProductResponseToProduct(productResponse)
@@ -164,7 +180,7 @@ export default function FollowsPage() {
 
   const allFollowProviders: FeaturedProviderResponse[] = useMemo(() => {
     return filteredFollows
-      .filter((follow) => {
+      .filter(follow => {
         return (
           follow.source === Source.Provider &&
           follow.sourceObject &&
@@ -173,7 +189,7 @@ export default function FollowsPage() {
           ('nameEn' in follow.sourceObject || 'nameAr' in follow.sourceObject)
         )
       })
-      .map((follow) => {
+      .map(follow => {
         // Map the sourceObject to FeaturedProviderResponse format
         const sourceObj = follow.sourceObject as any
         const profileImage = sourceObj.profileURL || sourceObj.image || ''
@@ -192,16 +208,18 @@ export default function FollowsPage() {
           totalServices: sourceObj.servicesCount || 0,
           totalProducts: sourceObj.productsCount || 0,
           shortAddress: sourceObj.shortAddress || sourceObj.address || '',
-          publicProfileSlug: sourceObj.publicProfileSlug || `/providers/${sourceObj.id}`,
+          publicProfileSlug:
+            sourceObj.publicProfileSlug || `/providers/${sourceObj.id}`,
           uniqueCode: sourceObj.uniqueCode || `PROV-${sourceObj.id}`,
           topRatedService: sourceObj.topRatedService || null,
         } as FeaturedProviderResponse
       })
-      .filter((provider): provider is FeaturedProviderResponse =>
-        provider !== null &&
-        provider !== undefined &&
-        provider.id !== undefined &&
-        provider.id !== null
+      .filter(
+        (provider): provider is FeaturedProviderResponse =>
+          provider !== null &&
+          provider !== undefined &&
+          provider.id !== undefined &&
+          provider.id !== null
       )
   }, [filteredFollows])
 
@@ -229,7 +247,9 @@ export default function FollowsPage() {
       const productIdNum = parseInt(productId, 10)
       if (!isNaN(productIdNum)) {
         const product = allFollowProducts.find(p => p.id === productId)
-        const providerId = product?.provider?.id ? parseInt(product.provider.id, 10) : undefined
+        const providerId = product?.provider?.id
+          ? parseInt(product.provider.id, 10)
+          : undefined
 
         await toggleProductWishlistMutation.mutateAsync({
           productId: productIdNum,
@@ -266,7 +286,9 @@ export default function FollowsPage() {
     try {
       // Add to cart if not already in cart
       const productIdNum = parseInt(product.id, 10)
-      const providerId = product.provider?.id ? parseInt(product.provider.id, 10) : undefined
+      const providerId = product.provider?.id
+        ? parseInt(product.provider.id, 10)
+        : undefined
       const isInCart = isProductInCart(productIdNum, providerId)
 
       if (!isInCart) {
@@ -286,31 +308,37 @@ export default function FollowsPage() {
   // Calculate total items from follows
   // NOTE: This hook must be called before any conditional returns to follow Rules of Hooks
   const totalItems = useMemo(() => {
-    return filteredFollows.reduce((sum, follow) => sum + (follow.interactionCount || 0), 0)
+    return filteredFollows.reduce(
+      (sum, follow) => sum + (follow.interactionCount || 0),
+      0
+    )
   }, [filteredFollows])
 
   // Source filter options - common sources for follows
-  const sourceOptions = useMemo(() => [
-    { value: 'all', label: 'All Sources' },
-    { value: Source.Product, label: 'Products' },
-    { value: Source.Service, label: 'Services' },
-    { value: Source.Membership, label: 'Memberships' },
-    { value: Source.GiftCard, label: 'Gift Cards' },
-    { value: Source.ServiceReservation, label: 'Service Reservations' },
-    { value: Source.Provider, label: 'Providers' },
-    { value: Source.Offer, label: 'Offers' },
-    { value: Source.Preparation, label: 'Preparations' },
-    { value: Source.Post, label: 'Posts' },
-    { value: Source.Blog, label: 'Blogs' },
-    { value: Source.Article, label: 'Articles' },
-    { value: Source.Reel, label: 'Reels' },
-  ], [])
+  const sourceOptions = useMemo(
+    () => [
+      { value: 'all', label: 'All Sources' },
+      { value: Source.Product, label: 'Products' },
+      { value: Source.Service, label: 'Services' },
+      { value: Source.Membership, label: 'Memberships' },
+      { value: Source.GiftCard, label: 'Gift Cards' },
+      { value: Source.ServiceReservation, label: 'Service Reservations' },
+      { value: Source.Provider, label: 'Providers' },
+      { value: Source.Offer, label: 'Offers' },
+      { value: Source.Preparation, label: 'Preparations' },
+      { value: Source.Post, label: 'Posts' },
+      { value: Source.Blog, label: 'Blogs' },
+      { value: Source.Article, label: 'Articles' },
+      { value: Source.Reel, label: 'Reels' },
+    ],
+    []
+  )
 
   const headerRightContent = (
     <div className="flex items-center gap-2">
       <SelectPopover
         value={selectedSource}
-        onChange={(value) => setSelectedSource(value as Source | 'all')}
+        onChange={value => setSelectedSource(value as Source | 'all')}
         options={sourceOptions}
         placeholder="Filter by source"
         className="w-40"
@@ -332,10 +360,7 @@ export default function FollowsPage() {
   if (isLoadingFollows) {
     return (
       <UserPageLayout>
-        <PageHeader
-          title="Follows"
-          rightContent={headerRightContent}
-        />
+        <PageHeader title="Follows" rightContent={headerRightContent} />
         <LoadingOverlay
           open={true}
           title="Loading follows..."
@@ -349,10 +374,7 @@ export default function FollowsPage() {
   if (followsError) {
     return (
       <UserPageLayout>
-        <PageHeader
-          title="Follows"
-          rightContent={headerRightContent}
-        />
+        <PageHeader title="Follows" rightContent={headerRightContent} />
         <ErrorDisplay
           title="Error loading follows"
           message="Please try again later"
@@ -380,33 +402,36 @@ export default function FollowsPage() {
       {hasFollowItems ? (
         <div className="space-y-0">
           {/* Show all services with sourceObject */}
-          {allFollowServices.length > 0 && allFollowServices.map((service) => (
-            <WishlistServiceCard
-              key={`service-${service.id}`}
-              service={service}
-              onRemove={handleServiceFollowToggle}
-              onBookNow={handleBookNow}
-            />
-          ))}
+          {allFollowServices.length > 0 &&
+            allFollowServices.map(service => (
+              <WishlistServiceCard
+                key={`service-${service.id}`}
+                service={service}
+                onRemove={handleServiceFollowToggle}
+                onBookNow={handleBookNow}
+              />
+            ))}
 
           {/* Show all products with sourceObject */}
-          {allFollowProducts.length > 0 && allFollowProducts.map((product) => (
-            <WishlistProductCard
-              key={`product-${product.id}`}
-              product={product}
-              onRemove={handleProductFollowToggle}
-              onBuyNow={handleAddToCart}
-            />
-          ))}
+          {allFollowProducts.length > 0 &&
+            allFollowProducts.map(product => (
+              <WishlistProductCard
+                key={`product-${product.id}`}
+                product={product}
+                onRemove={handleProductFollowToggle}
+                onBuyNow={handleAddToCart}
+              />
+            ))}
 
           {/* Show all providers with sourceObject */}
-          {allFollowProviders.length > 0 && allFollowProviders.map((provider) => (
-            <WishlistProviderCard
-              key={`provider-${provider.id}`}
-              provider={provider}
-              onRemove={handleProviderFollowToggle}
-            />
-          ))}
+          {allFollowProviders.length > 0 &&
+            allFollowProviders.map(provider => (
+              <WishlistProviderCard
+                key={`provider-${provider.id}`}
+                provider={provider}
+                onRemove={handleProviderFollowToggle}
+              />
+            ))}
         </div>
       ) : hasFollows ? (
         // Show follows list when we have follows but no items to display
@@ -424,7 +449,10 @@ export default function FollowsPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-16 font-medium text-gray-900">
-                        {follow.displayName || follow.nameEn || follow.nameAr || `Follow #${follow.id}`}
+                        {follow.displayName ||
+                          follow.nameEn ||
+                          follow.nameAr ||
+                          `Follow #${follow.id}`}
                       </h4>
                       {follow.source && (
                         <span className="text-12 px-2 py-1 bg-gray-100 text-gray-600 rounded">
@@ -446,7 +474,10 @@ export default function FollowsPage() {
                       <span>{follow.interactionCount || 0} interactions</span>
                       {follow.lastModifiedDate && (
                         <span>
-                          Updated {new Date(follow.lastModifiedDate).toLocaleDateString()}
+                          Updated{' '}
+                          {new Date(
+                            follow.lastModifiedDate
+                          ).toLocaleDateString()}
                         </span>
                       )}
                     </div>
@@ -477,7 +508,12 @@ export default function FollowsPage() {
 
       {/* Loading Overlay for Mutations */}
       <LoadingOverlay
-        open={deleteFollowMutation.isPending || toggleServiceWishlistMutation.isPending || toggleProductWishlistMutation.isPending || toggleProviderFollowMutation.isPending}
+        open={
+          deleteFollowMutation.isPending ||
+          toggleServiceWishlistMutation.isPending ||
+          toggleProductWishlistMutation.isPending ||
+          toggleProviderFollowMutation.isPending
+        }
         title="Updating follows..."
         subtitle="Please wait a moment"
       />

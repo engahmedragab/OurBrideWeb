@@ -15,10 +15,7 @@ import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
 import { AccessoriesIcon } from '@/assets/icons/AccessoriesIcon'
 
 // Icon mapping for asset icons
-const ICON_MAP: Record<
-  string,
-  React.ComponentType<{ className?: string }>
-> = {
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   weddingDress: WeddingDressIcon,
   weddingHall: WeddingHallIcon,
   photography: PhotographyIcon,
@@ -54,7 +51,9 @@ export const ServiceCategoryTile = ({
     } else {
       const IconComponent = ICON_MAP[service.icon.value]
       if (IconComponent) {
-        return <IconComponent className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-primary" />
+        return (
+          <IconComponent className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-primary" />
+        )
       }
       return null
     }

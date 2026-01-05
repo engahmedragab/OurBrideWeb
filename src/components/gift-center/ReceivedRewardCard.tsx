@@ -26,7 +26,9 @@ const receivedRewardCardVariants = cva(
 /**
  * Received Reward Card Component Props
  */
-export interface ReceivedRewardCardProps extends VariantProps<typeof receivedRewardCardVariants> {
+export interface ReceivedRewardCardProps extends VariantProps<
+  typeof receivedRewardCardVariants
+> {
   title: string
   statusLabel?: string
   rank?: string
@@ -87,16 +89,10 @@ export const ReceivedRewardCard = ({
                 Discount Code : {discountCode}
               </>
             )}
-            {expiryDate && (
-              <>
-                {' '}
-                Due {expiryDate}
-              </>
-            )}
+            {expiryDate && <> Due {expiryDate}</>}
           </p>
         </div>
       </div>
     </div>
   )
 }
-

@@ -22,7 +22,10 @@ import { handleApiResponseForToast } from '@/utils/api-response.utils'
 /**
  * Hook to fetch user profile
  */
-export const useUserProfile = (userId: string | null, enabled: boolean = true) => {
+export const useUserProfile = (
+  userId: string | null,
+  enabled: boolean = true
+) => {
   const authenticated = isAuthenticated()
 
   return useQuery<CommunityProfileResponse | null>({
@@ -40,7 +43,10 @@ export const useUserProfile = (userId: string | null, enabled: boolean = true) =
 /**
  * Hook to fetch provider profile
  */
-export const useProviderProfile = (providerId: number | null, enabled: boolean = true) => {
+export const useProviderProfile = (
+  providerId: number | null,
+  enabled: boolean = true
+) => {
   const authenticated = isAuthenticated()
 
   return useQuery<CommunityProfileResponse | null>({
@@ -58,7 +64,10 @@ export const useProviderProfile = (providerId: number | null, enabled: boolean =
 /**
  * Hook to fetch bazaar event profile
  */
-export const useBazaarEventProfile = (bazaarEventId: number | null, enabled: boolean = true) => {
+export const useBazaarEventProfile = (
+  bazaarEventId: number | null,
+  enabled: boolean = true
+) => {
   const authenticated = isAuthenticated()
 
   return useQuery<CommunityProfileResponse | null>({
@@ -124,7 +133,7 @@ export const useToggleProfileLike = () => {
       queryClient.invalidateQueries({
         queryKey: ['communityProfile'],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Like toggled successfully',
@@ -132,8 +141,9 @@ export const useToggleProfileLike = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle like'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to toggle like'
       addToast(errorMessage, 'error')
     },
   })
@@ -159,7 +169,7 @@ export const useToggleProfileFollow = () => {
       queryClient.invalidateQueries({
         queryKey: ['communityProfile'],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Follow toggled successfully',
@@ -167,8 +177,9 @@ export const useToggleProfileFollow = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle follow'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to toggle follow'
       addToast(errorMessage, 'error')
     },
   })
@@ -194,7 +205,7 @@ export const useToggleProfileFavorite = () => {
       queryClient.invalidateQueries({
         queryKey: ['communityProfile'],
       })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Favorite toggled successfully',
@@ -202,8 +213,9 @@ export const useToggleProfileFavorite = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle favorite'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to toggle favorite'
       addToast(errorMessage, 'error')
     },
   })
@@ -222,7 +234,10 @@ export const useProfileIsLiked = (params: {
     queryFn: async () => {
       return await isLiked(params)
     },
-    enabled: !!(params.profileType && (params.profileId || params.profileUserId)),
+    enabled: !!(
+      params.profileType &&
+      (params.profileId || params.profileUserId)
+    ),
     staleTime: 2 * 60 * 1000, // 2 minutes
   })
 }
@@ -240,7 +255,10 @@ export const useProfileIsFollowing = (params: {
     queryFn: async () => {
       return await isFollowing(params)
     },
-    enabled: !!(params.profileType && (params.profileId || params.profileUserId)),
+    enabled: !!(
+      params.profileType &&
+      (params.profileId || params.profileUserId)
+    ),
     staleTime: 2 * 60 * 1000, // 2 minutes
   })
 }
@@ -258,25 +276,10 @@ export const useProfileIsFavorited = (params: {
     queryFn: async () => {
       return await isFavorited(params)
     },
-    enabled: !!(params.profileType && (params.profileId || params.profileUserId)),
+    enabled: !!(
+      params.profileType &&
+      (params.profileId || params.profileUserId)
+    ),
     staleTime: 2 * 60 * 1000, // 2 minutes
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

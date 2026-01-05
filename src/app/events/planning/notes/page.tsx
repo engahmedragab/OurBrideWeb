@@ -1,13 +1,24 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback, useRef, Suspense } from 'react'
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  useRef,
+  Suspense,
+} from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Save } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LoadingOverlay } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
-import { useNoteBook, useNoteSyncMutation, useInitNoteBooks } from '@/hooks/notes/noteBooks.hooks'
+import {
+  useNoteBook,
+  useNoteSyncMutation,
+  useInitNoteBooks,
+} from '@/hooks/notes/noteBooks.hooks'
 
 import { NoteCategoriesSidebar } from '@/components/notesBook/NoteCategoriesSidebar'
 import NoteMainPanel from '@/components/notesBook/NoteMainPanel'
@@ -29,7 +40,8 @@ function NotesPageContent() {
   // ✅ query params (never null)
   const userType = useMemo(() => {
     const v = searchParams?.get('userType')
-    if (v && ['Bride', 'Groom', 'WeddingPlanner'].includes(v)) return v as UserType
+    if (v && ['Bride', 'Groom', 'WeddingPlanner'].includes(v))
+      return v as UserType
     return undefined
   }, [searchParams])
 
@@ -61,7 +73,11 @@ function NotesPageContent() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingNote, setEditingNote] = useState<NoteLineResponse | null>(null)
 
-  const { data: noteBook, isLoading, refetch } = useNoteBook(normalizedQuery, {
+  const {
+    data: noteBook,
+    isLoading,
+    refetch,
+  } = useNoteBook(normalizedQuery, {
     enabled: typeof window !== 'undefined' && !!eventId,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -131,111 +147,132 @@ function NotesPageContent() {
   /**
    * ✅ Build payload minimal
    */
-  const buildSyncPayload = useCallback((draft: NoteBookDraft): NoteBookRequest => {
-    const now = new Date().toISOString()
-    const d: any = draft as any
+  const buildSyncPayload = useCallback(
+    (draft: NoteBookDraft): NoteBookRequest => {
+      const now = new Date().toISOString()
+      const d: any = draft as any
 
-    if (!d.id || d.id <= 0) {
-      throw new Error('Invalid note book id. Make sure the book is initialized and fetched first.')
-    }
+      if (!d.id || d.id <= 0) {
+        throw new Error(
+          'Invalid note book id. Make sure the book is initialized and fetched first.'
+        )
+      }
 
-    const bookId = d.id as number
+      const bookId = d.id as number
 
-    const lines = (d.lines || []).map((l: any) => {
-      const isTemp = typeof l.id === 'number' && l.id <= 0
+      const lines = (d.lines || []).map((l: any) => {
+        const isTemp = typeof l.id === 'number' && l.id <= 0
+
+        return {
+          id: isTemp ? 0 : (l.id ?? 0),
+          isDone: l.isDone ?? false,
+          isFavorite: l.isFavorite ?? false,
+          isDeleted: l.isDeleted ?? false,
+          isModelLine: l.isModelLine ?? false,
+
+          brideId: l.brideId ?? d.brideId ?? null,
+          groomId: l.groomId ?? d.groomId ?? null,
+
+          bookId,
+          creationDate: l.creationDate ?? now,
+          lastModifiedDate: l.lastModifiedDate ?? now,
+
+          title: l.title ?? '',
+          note: l.note ?? '',
+        }
+      })
 
       return {
-        id: isTemp ? 0 : (l.id ?? 0),
-        isDone: l.isDone ?? false,
-        isFavorite: l.isFavorite ?? false,
-        isDeleted: l.isDeleted ?? false,
-        isModelLine: l.isModelLine ?? false,
+        id: bookId,
+        groomId: d.groomId ?? null,
+        brideId: d.brideId ?? null,
+        weddingPlannerId: d.weddingPlannerId ?? null,
 
-        brideId: l.brideId ?? d.brideId ?? null,
-        groomId: l.groomId ?? d.groomId ?? null,
+        bookType: d.bookType,
+        bookClass: d.bookClass,
 
-        bookId,
-        creationDate: l.creationDate ?? now,
-        lastModifiedDate: l.lastModifiedDate ?? now,
+        title: d.title ?? null,
+        description: d.description ?? null,
 
-        title: l.title ?? '',
-        note: l.note ?? '',
+        createdBy: d.createdBy ?? d.brideId ?? null,
+        lastModifiedBy: d.lastModifiedBy ?? d.brideId ?? null,
+
+        isModelsAdd: d.isModelsAdd ?? false,
+        isBookInit: d.isBookInit ?? true,
+        isDeleted: d.isDeleted ?? false,
+        count: d.count ?? 0,
+
+        creationDate: d.creationDate ?? now,
+        lastModifiedDate: now,
+
+        lines,
+        slug: d.slug ?? '',
+      } as any as NoteBookRequest
+    },
+    []
+  )
+
+  const syncDraft = useCallback(
+    async (draft: NoteBookDraft) => {
+      if (!draft) return
+
+      const bookId = await ensureBookInitialized()
+
+      const draftWithId: NoteBookDraft = { ...draft, id: bookId }
+      const payload = buildSyncPayload(draftWithId)
+
+      if (!payload.id || payload.id <= 0)
+        throw new Error('Payload book id is invalid')
+      for (const line of payload.lines || []) {
+        if (line.bookId !== payload.id)
+          throw new Error(`Line "${line.title || 'untitled'}" has wrong bookId`)
       }
-    })
 
-    return {
-      id: bookId,
-      groomId: d.groomId ?? null,
-      brideId: d.brideId ?? null,
-      weddingPlannerId: d.weddingPlannerId ?? null,
+      await syncMutation.mutateAsync({
+        ...payload,
+        query: normalizedQuery,
+      })
 
-      bookType: d.bookType,
-      bookClass: d.bookClass,
+      const fresh = await refetch()
+      if (fresh.data) {
+        const updated = fresh.data as any as NoteBookDraft
+        setLocalDraft(updated)
 
-      title: d.title ?? null,
-      description: d.description ?? null,
-
-      createdBy: d.createdBy ?? d.brideId ?? null,
-      lastModifiedBy: d.lastModifiedBy ?? d.brideId ?? null,
-
-      isModelsAdd: d.isModelsAdd ?? false,
-      isBookInit: d.isBookInit ?? true,
-      isDeleted: d.isDeleted ?? false,
-      count: d.count ?? 0,
-
-      creationDate: d.creationDate ?? now,
-      lastModifiedDate: now,
-
-      lines,
-      slug: d.slug ?? '',
-    } as any as NoteBookRequest
-  }, [])
-
-  const syncDraft = useCallback(async (draft: NoteBookDraft) => {
-    if (!draft) return
-
-    const bookId = await ensureBookInitialized()
-
-    const draftWithId: NoteBookDraft = { ...draft, id: bookId }
-    const payload = buildSyncPayload(draftWithId)
-
-    if (!payload.id || payload.id <= 0) throw new Error('Payload book id is invalid')
-    for (const line of payload.lines || []) {
-      if (line.bookId !== payload.id) throw new Error(`Line "${line.title || 'untitled'}" has wrong bookId`)
-    }
-
-    await syncMutation.mutateAsync({
-      ...payload,
-      query: normalizedQuery,
-    })
-
-    const fresh = await refetch()
-    if (fresh.data) {
-      const updated = fresh.data as any as NoteBookDraft
-      setLocalDraft(updated)
-
-      // حاول تحافظ على الاختيار لو لسه موجود
-      const active = (updated.lines || []).filter((l: any) => !l.isDeleted)
-      if (!active.length) {
-        setSelectedNoteId(null)
-      } else {
-        const still = active.some((l: any) => l.id === selectedNoteId)
-        setSelectedNoteId(still ? selectedNoteId : (active[0]?.id ?? null))
+        // حاول تحافظ على الاختيار لو لسه موجود
+        const active = (updated.lines || []).filter((l: any) => !l.isDeleted)
+        if (!active.length) {
+          setSelectedNoteId(null)
+        } else {
+          const still = active.some((l: any) => l.id === selectedNoteId)
+          setSelectedNoteId(still ? selectedNoteId : (active[0]?.id ?? null))
+        }
       }
-    }
 
-    addToast('Notes saved successfully', 'success')
-    setHasUnsavedChanges(false)
-  }, [ensureBookInitialized, buildSyncPayload, syncMutation, normalizedQuery, refetch, addToast, selectedNoteId])
+      addToast('Notes saved successfully', 'success')
+      setHasUnsavedChanges(false)
+    },
+    [
+      ensureBookInitialized,
+      buildSyncPayload,
+      syncMutation,
+      normalizedQuery,
+      refetch,
+      addToast,
+      selectedNoteId,
+    ]
+  )
 
-  const updateDraft = useCallback((updater: (d: NoteBookDraft) => NoteBookDraft) => {
-    setLocalDraft(prev => {
-      if (!prev) return prev
-      const next = updater(prev)
-      setHasUnsavedChanges(true)
-      return next
-    })
-  }, [])
+  const updateDraft = useCallback(
+    (updater: (d: NoteBookDraft) => NoteBookDraft) => {
+      setLocalDraft(prev => {
+        if (!prev) return prev
+        const next = updater(prev)
+        setHasUnsavedChanges(true)
+        return next
+      })
+    },
+    []
+  )
 
   const activeNotes = useMemo(() => {
     return (localDraft?.lines || []).filter((l: any) => !l.isDeleted)
@@ -243,7 +280,11 @@ function NotesPageContent() {
 
   const selectedNote = useMemo(() => {
     if (!selectedNoteId) return null
-    return (localDraft?.lines || []).find((l: any) => l.id === selectedNoteId && !l.isDeleted) ?? null
+    return (
+      (localDraft?.lines || []).find(
+        (l: any) => l.id === selectedNoteId && !l.isDeleted
+      ) ?? null
+    )
   }, [localDraft, selectedNoteId])
 
   const handleAddNew = useCallback(() => {
@@ -257,87 +298,95 @@ function NotesPageContent() {
     setIsModalOpen(true)
   }, [selectedNote])
 
-  const handleDelete = useCallback((note: NoteLineResponse) => {
-    const now = new Date().toISOString()
-
-    updateDraft(draft => {
-      const next: any = { ...draft }
-      next.lines = (next.lines || []).map((l: any) => {
-        if (l.id === note.id) return { ...l, isDeleted: true, lastModifiedDate: now }
-        return l
-      })
-      next.lastModifiedDate = now
-      return next
-    })
-
-    const remaining = activeNotes.filter(n => n.id !== note.id)
-    setSelectedNoteId(remaining[0]?.id ?? null)
-  }, [updateDraft, activeNotes])
-
-  // ✅ Modal save (FIX: lock + prevent double add)
-  const handleSaveFromModal = useCallback((data: { title: string; note: string }) => {
-    if (modalSaveLock.current) return
-    modalSaveLock.current = true
-
-    try {
+  const handleDelete = useCallback(
+    (note: NoteLineResponse) => {
       const now = new Date().toISOString()
-      const title = data.title.trim()
-      const note = data.note.trim()
 
       updateDraft(draft => {
         const next: any = { ...draft }
-        next.lines = next.lines ?? []
-
-        if (editingNote) {
-          next.lines = next.lines.map((l: any) =>
-            l.id === editingNote.id
-              ? { ...l, title, note, lastModifiedDate: now }
-              : l
-          )
-        } else {
-          // ✅ يمنع تكرار نفس الإدخال لو اتنفذ مرتين بالغلط
-          const alreadyExists = next.lines.some((l: any) =>
-            !l.isDeleted &&
-            (l.title ?? '').trim() === title &&
-            (l.note ?? '').trim() === note
-          )
-
-          if (!alreadyExists) {
-            const tempId = generateTempId()
-            next.lines.push({
-              id: tempId,
-              bookId: next.id ?? 0,
-              title,
-              note,
-
-              isDone: false,
-              isFavorite: false,
-              isDeleted: false,
-              isModelLine: false,
-
-              brideId: next.brideId ?? null,
-              groomId: next.groomId ?? null,
-
-              creationDate: now,
-              lastModifiedDate: now,
-            })
-            setSelectedNoteId(tempId)
-          }
-        }
-
+        next.lines = (next.lines || []).map((l: any) => {
+          if (l.id === note.id)
+            return { ...l, isDeleted: true, lastModifiedDate: now }
+          return l
+        })
         next.lastModifiedDate = now
         return next
       })
 
-      setIsModalOpen(false)
-      setEditingNote(null)
-    } finally {
-      // unlock next tick
-      setTimeout(() => {
-        modalSaveLock.current = false
-      }, 0)
-    }
-  }, [updateDraft, editingNote])
+      const remaining = activeNotes.filter(n => n.id !== note.id)
+      setSelectedNoteId(remaining[0]?.id ?? null)
+    },
+    [updateDraft, activeNotes]
+  )
+
+  // ✅ Modal save (FIX: lock + prevent double add)
+  const handleSaveFromModal = useCallback(
+    (data: { title: string; note: string }) => {
+      if (modalSaveLock.current) return
+      modalSaveLock.current = true
+
+      try {
+        const now = new Date().toISOString()
+        const title = data.title.trim()
+        const note = data.note.trim()
+
+        updateDraft(draft => {
+          const next: any = { ...draft }
+          next.lines = next.lines ?? []
+
+          if (editingNote) {
+            next.lines = next.lines.map((l: any) =>
+              l.id === editingNote.id
+                ? { ...l, title, note, lastModifiedDate: now }
+                : l
+            )
+          } else {
+            // ✅ يمنع تكرار نفس الإدخال لو اتنفذ مرتين بالغلط
+            const alreadyExists = next.lines.some(
+              (l: any) =>
+                !l.isDeleted &&
+                (l.title ?? '').trim() === title &&
+                (l.note ?? '').trim() === note
+            )
+
+            if (!alreadyExists) {
+              const tempId = generateTempId()
+              next.lines.push({
+                id: tempId,
+                bookId: next.id ?? 0,
+                title,
+                note,
+
+                isDone: false,
+                isFavorite: false,
+                isDeleted: false,
+                isModelLine: false,
+
+                brideId: next.brideId ?? null,
+                groomId: next.groomId ?? null,
+
+                creationDate: now,
+                lastModifiedDate: now,
+              })
+              setSelectedNoteId(tempId)
+            }
+          }
+
+          next.lastModifiedDate = now
+          return next
+        })
+
+        setIsModalOpen(false)
+        setEditingNote(null)
+      } finally {
+        // unlock next tick
+        setTimeout(() => {
+          modalSaveLock.current = false
+        }, 0)
+      }
+    },
+    [updateDraft, editingNote]
+  )
 
   const handleSaveToServer = useCallback(async () => {
     if (!localDraft) return
@@ -362,9 +411,12 @@ function NotesPageContent() {
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => router.back()} className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => router.back()}
+              className="flex items-center gap-2"
+            >
               <ArrowLeft className="h-4 w-4" />
-              
             </Button>
             <h1 className="text-24 font-semibold text-gray-900">Notes</h1>
           </div>
@@ -388,7 +440,7 @@ function NotesPageContent() {
               selectedNoteId={selectedNoteId}
               onSelectNote={setSelectedNoteId}
               onAddNew={handleAddNew}
-              onEditNote={(n) => {
+              onEditNote={n => {
                 setEditingNote(n)
                 setIsModalOpen(true)
               }}

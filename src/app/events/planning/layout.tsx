@@ -19,15 +19,49 @@ function PlanningLayoutContent({ children }: { children: ReactNode }) {
   }
 
   const tabs = [
-    { label: 'overview', href: eventId ? `/dashboard/my-events?eventId=${eventId}` : '/dashboard/my-events', value: 'overview', },
-    { label: 'budget', href: buildHref('/events/planning/budget'), value: 'budget' },
-    { label: 'items', href: buildHref('/events/planning/items'), value: 'items' },
-    { label: 'events', href: buildHref('/events/planning/events'), value: 'events' },
-    { label: 'invitation', href: buildHref('/events/planning/invitation'), value: 'invitation' },
-    { label: 'occasions', href: buildHref('/events/planning/occasion'), value: 'occasion' },
-    { label: 'preparations', href: buildHref('/events/planning/preparations'), value: 'preparations' },
+    {
+      label: 'overview',
+      href: eventId
+        ? `/dashboard/my-events?eventId=${eventId}`
+        : '/dashboard/my-events',
+      value: 'overview',
+    },
+    {
+      label: 'budget',
+      href: buildHref('/events/planning/budget'),
+      value: 'budget',
+    },
+    {
+      label: 'items',
+      href: buildHref('/events/planning/items'),
+      value: 'items',
+    },
+    {
+      label: 'events',
+      href: buildHref('/events/planning/events'),
+      value: 'events',
+    },
+    {
+      label: 'invitation',
+      href: buildHref('/events/planning/invitation'),
+      value: 'invitation',
+    },
+    {
+      label: 'occasions',
+      href: buildHref('/events/planning/occasion'),
+      value: 'occasion',
+    },
+    {
+      label: 'preparations',
+      href: buildHref('/events/planning/preparations'),
+      value: 'preparations',
+    },
     { label: 'ToDo', href: buildHref('/events/planning/todo'), value: 'todo' },
-    { label: 'notes', href: buildHref('/events/planning/notes'), value: 'notes' },
+    {
+      label: 'notes',
+      href: buildHref('/events/planning/notes'),
+      value: 'notes',
+    },
   ]
 
   const getActiveTab = () => {
@@ -53,10 +87,12 @@ function PlanningLayoutContent({ children }: { children: ReactNode }) {
     <div className="w-full">
       {/* Page Header with Tabs */}
       <div className="mb-6 sm:mb-8 px-4 md:px-10">
-        <div className={cn(
-          "flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full",
-          "grid grid-cols-2 sm:flex sm:justify-between"
-        )}>
+        <div
+          className={cn(
+            'flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full',
+            'grid grid-cols-2 sm:flex sm:justify-between'
+          )}
+        >
           {tabs.map(tab => {
             const isActive = activeTab === tab.value
             return (
@@ -105,4 +141,3 @@ export default function PlanningLayout({ children }: { children: ReactNode }) {
     </Suspense>
   )
 }
-

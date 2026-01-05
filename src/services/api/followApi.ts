@@ -5,10 +5,7 @@ import type {
   CreateFollowRequest,
   UpdateFollowRequest,
 } from '@/../client/common/api/gen/ourbride-api'
-import type {
-  PaginatedList,
-  FollowResponse,
-} from '@/types/responses'
+import type { PaginatedList, FollowResponse } from '@/types/responses'
 
 /**
  * Get follow by ID
@@ -25,7 +22,9 @@ export const getFollowById = async (
   try {
     const response = await apiClient.api.getFollowGetById(id, query)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FollowResponse
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as FollowResponse
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch follow'
@@ -46,7 +45,9 @@ export const updateFollow = async (
   try {
     const response = await apiClient.api.putFollowUpdate(id, data, query)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FollowResponse
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as FollowResponse
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to update follow'
@@ -94,27 +95,27 @@ export const getAllFollows = async (query?: {
   try {
     const response = await apiClient.api.getFollowGetAll(query)
     const responseAny: any = response
-    
+
     // Handle the actual response structure: { data: [...], success, statusCode, message, errors }
     // The API might return: response.data.data or response.data
     if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
       return responseAny.data.data as FollowResponse[]
     }
-    
+
     if (responseAny?.data && Array.isArray(responseAny.data)) {
       return responseAny.data as FollowResponse[]
     }
-    
+
     // Fallback for paginated structure if API changes
     if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
       return responseAny.data.items as FollowResponse[]
     }
-    
+
     // Fallback for direct array
     if (Array.isArray(responseAny)) {
       return responseAny as FollowResponse[]
     }
-    
+
     return []
   } catch (error: unknown) {
     throw new Error(
@@ -135,7 +136,9 @@ export const createFollow = async (
   try {
     const response = await apiClient.api.postFollowCreate(data, query)
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FollowResponse
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as FollowResponse
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to create follow'
@@ -156,12 +159,20 @@ export const getFollowsBySource = async (
   }
 ): Promise<PaginatedList<FollowResponse>> => {
   try {
-    const response = await apiClient.api.getFollowGetBySource(source as any, sourceId, query)
+    const response = await apiClient.api.getFollowGetBySource(
+      source as any,
+      sourceId,
+      query
+    )
     const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<FollowResponse>
+    return (responseAny?.data?.data ??
+      responseAny?.data ??
+      responseAny) as PaginatedList<FollowResponse>
   } catch (error: unknown) {
     throw new Error(
-      error instanceof Error ? error.message : 'Failed to fetch follows by source'
+      error instanceof Error
+        ? error.message
+        : 'Failed to fetch follows by source'
     )
   }
 }

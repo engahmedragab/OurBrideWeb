@@ -26,10 +26,12 @@ export const useToggleProductFavorite = () => {
     },
     onSuccess: (response, variables) => {
       // Invalidate product queries to refetch updated favorite status
-      queryClient.invalidateQueries({ queryKey: ['product', variables.productId] })
+      queryClient.invalidateQueries({
+        queryKey: ['product', variables.productId],
+      })
       queryClient.invalidateQueries({ queryKey: ['products'] })
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Product favorite toggled successfully',
@@ -37,8 +39,11 @@ export const useToggleProductFavorite = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle product favorite'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to toggle product favorite'
       addToast(errorMessage, 'error')
     },
   })
@@ -64,11 +69,13 @@ export const useToggleProductWishlist = () => {
     },
     onSuccess: (response, variables) => {
       // Invalidate product queries to refetch updated wishlist status
-      queryClient.invalidateQueries({ queryKey: ['product', variables.productId] })
+      queryClient.invalidateQueries({
+        queryKey: ['product', variables.productId],
+      })
       queryClient.invalidateQueries({ queryKey: ['products'] })
       // Invalidate wishlist items to update card indicators
       queryClient.invalidateQueries({ queryKey: ['wishlists'] })
-      
+
       const { message, type } = handleApiResponseForToast(
         response,
         'Product wishlist toggled successfully',
@@ -76,8 +83,11 @@ export const useToggleProductWishlist = () => {
       )
       addToast(message, type)
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle product wishlist'
+    onError: error => {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to toggle product wishlist'
       addToast(errorMessage, 'error')
     },
   })
