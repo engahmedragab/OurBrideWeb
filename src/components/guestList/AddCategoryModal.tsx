@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { addCategoryFormSchema, type AddCategoryFormData } from '@/app/events/planning/invitation/schemas/category.schema'
+import { addCategoryFormSchema, type AddCategoryFormData } from '@/schema/category.schema'
 
 const slugify = (text: string): string => {
   return text

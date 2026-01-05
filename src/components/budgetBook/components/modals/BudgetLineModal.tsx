@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/Textarea'
 import { SelectMenu } from '@/components/ui/SelectMenu'
 import { Button } from '@/components/ui/Button'
 import { Checkbox } from '@/components/ui/Checkbox'
-import { budgetLineFormSchema, type BudgetLineFormData } from '@/app/events/planning/budget/schemas/budget-line.schema'
+import { budgetLineFormSchema, type BudgetLineFormData } from '@/schema/budgetSchema/budget-line.schema'
 import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
 
 interface BudgetLineModalProps {

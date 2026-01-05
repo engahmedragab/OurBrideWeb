@@ -14,7 +14,7 @@ import type { OccasionLineRequest, OccasionBookRequest, BookClass, UserType } fr
 import { OccasionType } from '@/../client/common/api/gen/ourbride-api'
 import { OccasionDetailView } from '@/components/occasion/components/OccasionDetailView'
 import { OccasionForm } from '@/components/occasion/components/OccasionForm'
-import type { OccasionFormData } from './schemas/occasion.schema'
+import type { OccasionFormData } from '@/schema/occasion.schema'
 
 /**
  * Format date from ISO string to readable format
