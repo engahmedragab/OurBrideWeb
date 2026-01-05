@@ -1139,7 +1139,7 @@ export default function CartPage() {
                     setMobileDropdownOpen(false)
                   }}
                   className={cn(
-                    'w-full flex items-center px-3 py-2.5 my-2 rounded- xl text-14 font-normal transition-colors text-left',
+                    'w-full flex items-center px-3 py-2.5 my-2 rounded-xl text-14 font-normal transition-colors text-left',
                     cartFilter === 'Services'
                       ? 'bg-red-50 text-red-500'
                       : 'text-gray-900 hover:bg-red-50 hover:text-red-500'
