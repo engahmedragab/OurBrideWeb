@@ -356,7 +356,7 @@ export const CartOrderSummary = ({
         size="lg"
         onClick={onCheckout}
         disabled={!acceptTerms}
-        className="hidden md:flex w-full text-white"
+        className="flex w-full text-white"
       >
         Checkout All
       </Button>

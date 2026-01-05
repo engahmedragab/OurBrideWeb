@@ -1283,75 +1283,99 @@ export default function CartPage() {
           {/* Cart Items */}
           <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
             {/* Products Section */}
-            {cartFilter === 'Products' && filteredCartProducts.length > 0 && (
-              <div className="space-y-3 sm:space-y-4">
-                {filteredCartProducts.map(product => (
-                  <CartItem
-                    key={product.purchaseId ?? `product-${product.id}`}
-                    id={product.id}
-                    title={product.title}
-                    image={product.image}
-                    originalPrice={product.originalPrice}
-                    discountedPrice={product.discountedPrice}
-                    quantity={product.quantity}
-                    onQuantityChange={handleQuantityChange}
-                    onRemove={handleRemoveItemClick}
-                    onBuyNow={handleBuyNow}
-                    deliveryDate={product.deliveryDate}
-                    discountPercentage={product.discountPercentage}
-                    purchasePrice={product.purchasePrice ?? undefined}
-                    purchaseDate={product.purchaseDate}
-                    type={product.type}
+            {cartFilter === 'Products' && (
+              <>
+                {filteredCartProducts.length > 0 ? (
+                  <div className="space-y-3 sm:space-y-4">
+                    {filteredCartProducts.map(product => (
+                      <CartItem
+                        key={product.purchaseId ?? `product-${product.id}`}
+                        id={product.id}
+                        title={product.title}
+                        image={product.image}
+                        originalPrice={product.originalPrice}
+                        discountedPrice={product.discountedPrice}
+                        quantity={product.quantity}
+                        onQuantityChange={handleQuantityChange}
+                        onRemove={handleRemoveItemClick}
+                        onBuyNow={handleBuyNow}
+                        deliveryDate={product.deliveryDate}
+                        discountPercentage={product.discountPercentage}
+                        purchasePrice={product.purchasePrice ?? undefined}
+                        purchaseDate={product.purchaseDate}
+                        type={product.type}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    illustration={orderEmptySvg}
+                    title="You don't have any items in your cart"
+                    description="Start exploring items to begin your journey"
+                    actionLabel="Start Shopping"
+                    actionHref="/products"
                   />
-                ))}
-              </div>
+                )}
+              </>
             )}
 
             {/* Services Section - using CartItem for compact display */}
-            {cartFilter === 'Services' && filteredServicePurchases.length > 0 && (
-              <div className="space-y-3 sm:space-y-4">
-                {filteredServicePurchases.map((purchase) => {
-                  // Priority: Use display properties from PurchaseResponse, then ServiceHeaderResponse
-                  const displayName = purchase.name ?? purchase.nameEn ?? purchase.nameAr
-                  const displayImage = purchase.imageUrl
+            {cartFilter === 'Services' && (
+              <>
+                {filteredServicePurchases.length > 0 ? (
+                  <div className="space-y-3 sm:space-y-4">
+                    {filteredServicePurchases.map((purchase) => {
+                      // Priority: Use display properties from PurchaseResponse, then ServiceHeaderResponse
+                      const displayName = purchase.name ?? purchase.nameEn ?? purchase.nameAr
+                      const displayImage = purchase.imageUrl
 
-                  // Use ServiceHeaderResponse from purchase.service if available
-                  const service = purchase.service
-                  const price = purchase.totalPrice ?? purchase.price ?? 0
+                      // Use ServiceHeaderResponse from purchase.service if available
+                      const service = purchase.service
+                      const price = purchase.totalPrice ?? purchase.price ?? 0
 
-                  // Use service name/image - prefer purchase display properties, then service object, then fallback
-                  // If all are empty, use a default name based on serviceId
-                  const serviceName = displayName || service?.nameEn || service?.nameAr || `Service #${purchase.serviceId || purchase.id}`
-                  const serviceImage = displayImage || service?.imageUrl || '/placeholder-service.png'
+                      // Use service name/image - prefer purchase display properties, then service object, then fallback
+                      // If all are empty, use a default name based on serviceId
+                      const serviceName = displayName || service?.nameEn || service?.nameAr || `Service #${purchase.serviceId || purchase.id}`
+                      const serviceImage = displayImage || service?.imageUrl || '/placeholder-service.png'
 
-                  // Format delivery date from endDate
-                  const deliveryDate = purchase.endDate
-                    ? new Date(purchase.endDate).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })
-                    : undefined
+                      // Format delivery date from endDate
+                      const deliveryDate = purchase.endDate
+                        ? new Date(purchase.endDate).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })
+                        : undefined
 
-                  return (
-                    <CartItem
-                      key={purchase.id}
-                      id={purchase.id.toString()}
-                      title={serviceName}
-                      image={serviceImage}
-                      originalPrice={price}
-                      discountedPrice={price}
-                      quantity={purchase.quantity || 1}
-                      onQuantityChange={handleQuantityChange}
-                      onRemove={handleRemoveItemClick}
-                      deliveryDate={deliveryDate}
-                      purchasePrice={purchase.totalPrice ?? purchase.price ?? undefined}
-                      purchaseDate={purchase.creationDate || purchase.buyDate || undefined}
-                      type="Service"
-                    />
-                  )
-                })}
-              </div>
+                      return (
+                        <CartItem
+                          key={purchase.id}
+                          id={purchase.id.toString()}
+                          title={serviceName}
+                          image={serviceImage}
+                          originalPrice={price}
+                          discountedPrice={price}
+                          quantity={purchase.quantity || 1}
+                          onQuantityChange={handleQuantityChange}
+                          onRemove={handleRemoveItemClick}
+                          deliveryDate={deliveryDate}
+                          purchasePrice={purchase.totalPrice ?? purchase.price ?? undefined}
+                          purchaseDate={purchase.creationDate || purchase.buyDate || undefined}
+                          type="Service"
+                        />
+                      )
+                    })}
+                  </div>
+                ) : (
+                  <EmptyState
+                    illustration={orderEmptySvg}
+                    title="You don't have any items in your cart"
+                    description="Start exploring services to begin your journey"
+                    actionLabel="View Services"
+                    actionHref="/services"
+                  />
+                )}
+              </>
             )}
 
             {/* Reservations Section - using ReservationResponse - Hidden on mobile */}
@@ -1441,15 +1465,15 @@ export default function CartPage() {
       ) : (
         <EmptyState
           illustration={orderEmptySvg}
-          title="Your cart is empty"
-          description="Start exploring services and products to begin your journey"
-          actionLabel="Start Shopping"
-          actionHref="/products"
+          title="You don't have any items in your cart"
+          description={`Start exploring ${cartFilter === 'Products' ? 'products' : 'services'} to begin your journey`}
+          actionLabel={cartFilter === 'Products' ? 'View Products' : 'View Services'}
+          actionHref={cartFilter === 'Products' ? '/products' : '/services/'}
         />
       )}
 
       {/* Mobile Fixed Bottom Bar */}
-      {hasFilteredItems && (
+      {/* {hasFilteredItems && (
         <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-6 z-50 shadow-lg">
           <div className="flex items-center justify-between mb-3">
             <span className="text-16 font-semibold text-gray-900">Total Price</span>
@@ -1466,7 +1490,7 @@ export default function CartPage() {
             Checkout All
           </button>
         </div>
-      )} 
+      )}  */}
 
       {/* Delete Cart Item Modal */}
       <DeleteCartItemModal
