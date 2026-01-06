@@ -30,6 +30,11 @@ import {
   MemberTestimonialCardSkeleton,
 } from '@/components/ui'
 
+import VerifiedIcon from '@/assets/home/VerifiedIcon.svg'
+import OffersIcons from '@/assets/home/OffersIcons.svg'
+import SecureIcon from '@/assets/home/SecureIcon.svg'
+import WeddingHubIcon from '@/assets/home/WeddingHubIcon.svg'
+
 import { StoreBadges } from '@/components/ui/StoreBadges'
 import {
   Users,
@@ -60,6 +65,8 @@ import {
 import user1Image from '@/assets/home/user1.svg'
 import user2Image from '@/assets/home/user2.svg'
 import { ActiveUsers } from '@/components/home/ActiveUsers'
+import { HomeOfferBanner } from '@/components/home/HomeOfferBanner'
+import TrustCards from '@/components/home/TrustCards'
 
 const activeUsers = [user1Image, user2Image, user1Image, user2Image]
 // Memoized Product Card Component
@@ -413,7 +420,7 @@ export default function Home() {
         {isLoading ? (
           <OfferBannerSkeleton />
         ) : (
-          banners.length > 0 && <OfferBanner offers={banners} />
+          banners.length > 0 && <HomeOfferBanner offers={banners} />
         )}
 
         {/* Section 3: Statistics */}
@@ -459,13 +466,21 @@ export default function Home() {
         </section>
 
         {/* Section 4: Benefits */}
-        <section className="container-custom pt-4 md:pt-6 pb-12 md:pb-16">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+
+        <section className="container-custom py-12 md:py-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-9 md:gap-8">
+            {/* Item 1 */}
             <div className="flex flex-col items-center text-center">
               <div className="mb-4">
-                <BadgeCheck className="h-12 w-12 text-brand-500" />
+                <Image
+                  src={VerifiedIcon}
+                  alt="Verified Trusted Providers"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12"
+                />
               </div>
-              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+              <h3 className="text-18 md:text-20 font-normal text-gray-900 mb-2">
                 Verified Trusted Providers
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
@@ -473,23 +488,38 @@ export default function Home() {
                 experience.
               </p>
             </div>
+
+            {/* Item 2 */}
             <div className="flex flex-col items-center text-center">
               <div className="mb-4">
-                <TargetIcon className="h-12 w-12 text-brand-500" />
+                <Image
+                  src={WeddingHubIcon}
+                  alt="All-in-One Wedding Hub"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12"
+                />
               </div>
-              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+              <h3 className="text-18 md:text-20 font-normal text-gray-900 mb-2">
                 All-in-One Wedding Hub
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
                 Plan, shop, book, and manage everything from one platform.
               </p>
             </div>
+
+            {/* Item 3 */}
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 relative inline-block">
-                <Shield className="h-12 w-12 text-brand-500" />
-                <CheckCircle2 className="h-4 w-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fill-brand-500" />
+              <div className="mb-4">
+                <Image
+                  src={SecureIcon}
+                  alt="Secure Payments"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12"
+                />
               </div>
-              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+              <h3 className="text-18 md:text-20 font-normal text-gray-900 mb-2">
                 Secure Payments
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
@@ -497,11 +527,19 @@ export default function Home() {
                 delivery.
               </p>
             </div>
+
+            {/* Item 4 */}
             <div className="flex flex-col items-center text-center">
               <div className="mb-4">
-                <Tag className="h-12 w-12 text-brand-500" />
+                <Image
+                  src={OffersIcons}
+                  alt="Exclusive Offers & Rewards"
+                  width={48}
+                  height={48}
+                  className="w-12 h-12"
+                />
               </div>
-              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+              <h3 className="text-18 md:text-20 font-normal text-gray-900 mb-2">
                 Exclusive Offers & Rewards
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
@@ -560,7 +598,7 @@ export default function Home() {
         </section>
 
         {/* Section 7: Why Trust Section */}
-        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
+        <section className="relative py-16 md:py-20 overflow-hidden bg-white">
           <div className="absolute inset-0 opacity-30 pointer-events-none">
             <Image
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
@@ -572,8 +610,8 @@ export default function Home() {
             />
           </div>
           <div className="container-custom relative z-10">
-            <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
+            <div className="text-center mb-10 md:mb-12">
+              <h2 className="text-5xl font-black">
                 <span className="font-normal text-gray-900">
                   Why{' '}
                   <span className="font-semibold text-gray-900">Brides</span>
@@ -588,24 +626,7 @@ export default function Home() {
               </h2>
             </div>
             <div className="relative min-h-[600px] md:min-h-[700px]">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 relative">
-                {TRUST_CARDS.map((card, index) => {
-                  const positionClass = TRUST_CARD_POSITION_CLASSES[index] || ''
-                  return (
-                    <div key={card.id} className={`relative ${positionClass}`}>
-                      <Card
-                        cardData={{
-                          type: 'trust',
-                          heading: card.heading,
-                          description: card.description,
-                          rotation: card.rotation,
-                        }}
-                        className="h-full"
-                      />
-                    </div>
-                  )
-                })}
-              </div>
+              <TrustCards cards={TRUST_CARDS} />
             </div>
           </div>
         </section>
@@ -626,7 +647,7 @@ export default function Home() {
               </span>
             </h2>
           </div>
-
+      
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
             {/* Left Side - Quote Icon and Heading */}
             <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
