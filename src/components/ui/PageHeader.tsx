@@ -32,13 +32,13 @@ export const PageHeader = ({
       <div>
         <h1
           className={cn(
-            'text-24 sm:text-28 md:text-32 font-semibold text-gray-900',
+            'text-2xl md:text-32 font-semibold text-gray-900',
             titleClassName
           )}
         >
           {title}
           {subtitle && (
-            <span className="text-20 font-normal text-gray-600 ml-2">
+            <span className="text-8 sm:text-10 md:text-12 border border-gray-300 rounded-full md:px-2 md:py-1 px-1 py-0.5  bg-gray-100 font-normal text-gray-600 ml-2">
               {subtitle}
             </span>
           )}

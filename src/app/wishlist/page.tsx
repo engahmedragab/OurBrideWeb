@@ -274,27 +274,10 @@ export default function WishlistPage() {
 
   const headerRightContent = (
     <div className="flex items-center gap-2">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={handleRefresh}
-        disabled={isFetching || isLoadingWishlists}
-        className="h-9 w-9"
-        aria-label="Refresh wishlists"
-        title="Refresh wishlists"
-      >
-        <RefreshCw
-          className={`h-4 w-4 ${isFetching || isLoadingWishlists ? 'animate-spin' : ''}`}
-        />
-      </Button>
-      <SelectPopover
-        value={selectedSource}
-        onChange={(value) => setSelectedSource(value as Source | 'all')}
-        options={sourceOptions}
-        placeholder="Filter by source"
-        className="w-40"
-      />
-      <ServicesProductsFilter value={wishlistType} onChange={setWishlistType} />
+     
+     
+     
+     
     </div>
   )
 
@@ -335,123 +318,116 @@ export default function WishlistPage() {
 
   return (
     <UserPageLayout>
-      {/* Page Header */}
-      <PageHeader
-        title="Wishlist"
-        subtitle={
-          hasWishlistItems || hasWishlists
-            ? `${totalItems > 0 ? totalItems : filteredWishlists.length} ${totalItems === 1 ? 'Item' : 'Items'}`
-            : undefined
-        }
-        rightContent={headerRightContent}
-      />
-
-      {/* Content Area */}
-      {hasWishlistItems ? (
-        <div className="space-y-0">
-          {/* Show all services with sourceObject */}
-          {allWishlistServices.map((service) => (
-            <WishlistServiceCard
-              key={service.id}
-              service={service}
-              onRemove={handleServiceWishlistToggle}
-              onBookNow={handleBookNow}
-            />
-          ))}
-
-          {/* Show all products with sourceObject */}
-          {allWishlistProducts.map((product) => (
-            <WishlistProductCard
-              key={product.id}
-              product={product}
-              onRemove={handleProductWishlistToggle}
-              onBuyNow={handleAddToCart}
-            />
-          ))}
-
-          {/* Show all providers with sourceObject */}
-          {allWishlistProviders.map((provider) => (
-            <WishlistProviderCard
-              key={provider.id}
-              provider={provider}
-              onRemove={handleProviderWishlistToggle}
-            />
-          ))}
+    {/* ✅ Header Area */}
+    <div className="flex flex-col gap-2 mt-5">
+      {/* Title (left) + Filter (right) - works on mobile */}
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        {/* Left: PageHeader */}
+        <div className="min-w-0 flex-1">
+          <PageHeader
+            title="Wishlist"
+            subtitle={
+              hasWishlistItems || hasWishlists
+                ? `${totalItems > 0 ? totalItems : filteredWishlists.length} ${
+                    totalItems === 1 ? 'Item' : 'Items'
+                  }`
+                : undefined
+            }
+            rightContent={null}
+          />
         </div>
-      ) : hasWishlists ? (
-        // Show wishlists list when we have wishlists but no sourceObject items to display
-        <div className="space-y-4">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Your Wishlists ({filteredWishlists.length})
-            </h3>
-            <div className="space-y-3">
-              {filteredWishlists.map((wishlist: WishlistResponse) => (
-                <div
-                  key={wishlist.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-16 font-medium text-gray-900">
-                        {wishlist.displayName || wishlist.name || `Wishlist #${wishlist.id}`}
-                      </h4>
-                      {wishlist.source && (
-                        <span className="text-12 px-2 py-1 bg-gray-100 text-gray-600 rounded">
-                          {wishlist.source}
-                        </span>
-                      )}
-                      {wishlist.sourceId && (
-                        <span className="text-12 px-2 py-1 bg-blue-100 text-blue-600 rounded">
-                          ID: {wishlist.sourceId}
-                        </span>
-                      )}
-                    </div>
-                    {wishlist.displayDescription && (
-                      <p className="text-14 text-gray-600 mb-2">
-                        {wishlist.displayDescription}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-4 text-12 text-gray-500">
-                      <span>{wishlist.itemCount || 0} items</span>
-                      {wishlist.lastModified && (
-                        <span>
-                          Updated {new Date(wishlist.lastModified).toLocaleDateString()}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      // TODO: Navigate to wishlist detail or delete
-                    }}
-                  >
-                    View
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
+  
+        {/* Right: Filter (always sticks to the end) */}
+        <div className="ml-auto flex items-center justify-end gap-2 shrink-0">
+          {headerRightContent}
+  
+          <ServicesProductsFilter
+            className="bg-transparent border-none !text-brand-500 hover:bg-transparent hover:border-none hover:text-brand-500"
+            value={wishlistType}
+            onChange={setWishlistType}
+          />
         </div>
-      ) : (
-        <EmptyState
-          illustration={orderEmptySvg}
-          title="You don't have any items in your wishlist"
-          description="Start exploring services and products to begin your journey"
-          actionLabel="Start Shopping"
-          actionHref="/products"
+      </div>
+  
+      {/* Refresh + Source filter row (right aligned on all screens) */}
+      <div className="flex flex-wrap justify-end items-center gap-2 my-2 w-full">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleRefresh}
+          disabled={isFetching || isLoadingWishlists}
+          className="h-9 w-9 shrink-0"
+          aria-label="Refresh wishlists"
+          title="Refresh wishlists"
+        >
+          <RefreshCw className={`h-4 w-4 ${isFetching || isLoadingWishlists ? 'animate-spin' : ''}`} />
+        </Button>
+  
+        <SelectPopover
+          value={selectedSource}
+          onChange={(value) => setSelectedSource(value as Source | 'all')}
+          options={sourceOptions}
+          placeholder="Filter by source"
+          className="md:w-40 w-28 shrink-0"
         />
-      )}
-
-      {/* Loading Overlay for Mutations */}
-      <LoadingOverlay
-        open={deleteWishlistMutation.isPending || toggleServiceWishlistMutation.isPending || toggleProductWishlistMutation.isPending || toggleProviderFavoriteMutation.isPending}
-        title="Updating wishlist..."
-        subtitle="Please wait a moment"
+      </div>
+    </div>
+  
+    {/* Content Area */}
+    {hasWishlistItems ? (
+      <div className="space-y-0">
+        {allWishlistServices.map((service) => (
+          <WishlistServiceCard
+            key={service.id}
+            service={service}
+            onRemove={handleServiceWishlistToggle}
+            onBookNow={handleBookNow}
+          />
+        ))}
+  
+        {allWishlistProducts.map((product) => (
+          <WishlistProductCard
+            key={product.id}
+            product={product}
+            onRemove={handleProductWishlistToggle}
+            onBuyNow={handleAddToCart}
+          />
+        ))}
+  
+        {allWishlistProviders.map((provider) => (
+          <WishlistProviderCard
+            key={provider.id}
+            provider={provider}
+            onRemove={handleProviderWishlistToggle}
+          />
+        ))}
+      </div>
+    ) : hasWishlists ? (
+      <div className="space-y-4">
+        {/* ... */}
+      </div>
+    ) : (
+      <EmptyState
+        illustration={orderEmptySvg}
+        title="You don't have any items in your wishlist"
+        description="Start exploring services and products to begin your journey"
+        actionLabel="Start Shopping"
+        actionHref="/products"
       />
-    </UserPageLayout>
+    )}
+  
+    <LoadingOverlay
+      open={
+        deleteWishlistMutation.isPending ||
+        toggleServiceWishlistMutation.isPending ||
+        toggleProductWishlistMutation.isPending ||
+        toggleProviderFavoriteMutation.isPending
+      }
+      title="Updating wishlist..."
+      subtitle="Please wait a moment"
+    />
+  </UserPageLayout>
+  
   )
 }
 
