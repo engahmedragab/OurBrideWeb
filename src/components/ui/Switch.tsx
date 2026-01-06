@@ -85,7 +85,7 @@ const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
         className={cn(
           toggleVariants({ variant, size }),
           // When checked (ON): solid red background with red border
-          checked && 'bg-white border-brand-500',
+          checked && 'bg-brand-500 border-brand-500',
           // When unchecked (OFF): white background with light gray border
           !checked && 'bg-white border border-gray-300',
           className
@@ -98,7 +98,7 @@ const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
           className={cn(
             toggleThumbVariants({ size }),
             // When checked (ON): white thumb
-            checked && 'bg-brand',
+            checked && 'bg-white',
             // When unchecked (OFF): light gray thumb (matching screenshot)
             !checked && 'bg-gray-300',
             getTranslateX()

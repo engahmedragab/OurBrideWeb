@@ -84,7 +84,7 @@ export const SelectPopover = ({
                   }}
                   className={cn(
                     'w-full my-1 flex items-center justify-between md:px-3 px-2 md:py-2.5 py-1 rounded-xl md:text-16 text-12 font-normal transition-colors',
-                    'hover:bg-brand/20 hover:text-white',
+                    'hover:bg-brand/10 hover:text-brand-500',
                     isSelected && 'bg-brand-500 text-white mb-2'
                   )}
                 >
