@@ -60,7 +60,7 @@ export const WishlistServiceCard = React.memo(
               className={cn(
                 'relative overflow-hidden bg-gray-100',
                 // ✅ Mobile: small square image
-                'w-16 h-full sm:w-20  rounded-xl',
+                'w-20 h-20 sm:w-20 md:h-full rounded-xl',
                 // ✅ md/lg: big image, flush left with rounded left corners only
                 'md:w-56  md:rounded-l-2xl md:rounded-r-none'
               )}
