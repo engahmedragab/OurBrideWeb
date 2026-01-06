@@ -160,7 +160,7 @@ export function RankingSystemSection({
     
 
       {/* Banner (top card with background image) */}    <div className="mt-2 px-2  md:px-0 md:mt-0 ">
-      <div className="relative overflow-hidden rounded-xl min-h-[90px] sm:min-h-[140px] md:rounded-none">
+      <div className="relative overflow-hidden rounded-xl min-h-[90px] sm:min-h-[100px] md:rounded-none">
   <Image
     src={rankingBackground}
     alt="Ranking background"
@@ -174,7 +174,7 @@ export function RankingSystemSection({
 
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(139, 124, 124, 0.1),transparent_90%)]" />
 
-          <div className="relative z-10 flex flex-col items-center justify-center py-4 sm:py-2.5 md:py-4 lg:py-6 xl:py-7 gap-0.5 sm:gap-1 md:gap-1.5 lg:gap-2">
+          <div className="relative z-10 flex flex-col items-center justify-center py-4 sm:py-2.5 md:py-6 lg:py-6 xl:py-7 gap-0.5 sm:gap-1 md:gap-1.5 lg:gap-2">
             <CurrentRankIcon className="h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 lg:h-10 lg:w-10 xl:h-12 xl:w-12" />
 
             <div className="text-center px-1 sm:px-1.5 md:px-2">

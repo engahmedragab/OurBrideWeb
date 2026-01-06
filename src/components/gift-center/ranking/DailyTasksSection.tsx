@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib'
+import { CheckCircle2 } from 'lucide-react'
 
 export interface DailyTask {
   id: string
@@ -73,11 +74,30 @@ export function DailyTasksSection({
           >
             {/* Left side */}
             <div className="flex flex-col">
-              <p className="text-12 sm:text-14 font-normal text-gray-900">{task.title}</p>
-              <p className="text-10 sm:text-12 font-normal text-gray-500 mt-0.5">
-                {task.subtitle}
-              </p>
-            </div>
+  <p className="text-12 sm:text-14 font-normal text-gray-900">
+    {task.title}
+
+    {task.completed && (
+      <span
+        className="
+          ml-2 inline-flex items-center gap-1
+          rounded-full border border-emerald-300
+          bg-emerald-50 px-2 py-[2px]
+          text-[9px] sm:text-[11px] font-medium text-emerald-600
+          leading-none align-middle
+        "
+      >
+        <CheckCircle2 className="h-2 w-2 md:h-3 md:w-3 shrink-0" />
+        Done
+      </span>
+    )}
+  </p>
+
+  <p className="text-10 sm:text-12 font-normal text-gray-500 mt-0.5">
+    {task.subtitle}
+  </p>
+</div>
+
 
             {/* Right side */}
             <div className="flex items-center text-10 sm:text-12 lg:text-14">
@@ -87,7 +107,7 @@ export function DailyTasksSection({
                   task.completed ? 'text-green-500' : 'text-gray-400'
                 )}
               >
-                {task.completed ? `Done +${task.points} Points` : `${task.points} Points`}
+                {task.completed ? `+${task.points} Points` : `${task.points} Points`}
               </span>
             </div>
           </div>
