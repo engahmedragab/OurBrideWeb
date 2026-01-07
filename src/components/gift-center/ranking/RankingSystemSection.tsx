@@ -68,15 +68,17 @@ function clampStep(step: number, total: number): number {
   return step
 }
 
+interface RankProgressBarProps {
+  totalSteps: number
+  currentStep: number
+  progressMeta: RankProgressMeta[]
+}
+
 function RankProgressBar({
   totalSteps,
   currentStep,
   progressMeta,
-}: {
-  totalSteps: number
-  currentStep: number
-  progressMeta: RankProgressMeta[]
-}) {
+}: RankProgressBarProps): React.ReactElement {
   const safeTotal = Math.max(1, totalSteps)
   const safeStep = clampStep(currentStep, safeTotal)
 
@@ -115,20 +117,32 @@ function RankProgressBar({
       </div>
 
       {/* Values under dots */}
-      <div className="mt-1 sm:mt-1.5 md:mt-2 lg:mt-3 px-0.5 sm:px-0.5 md:px-1 lg:px-2">
-        <div className="flex items-start justify-between gap-0 sm:gap-0 md:gap-0.5 lg:gap-1">
-          {Array.from({ length: safeTotal }).map((_, idx) => {
-            const text = progressMeta[idx]?.valueText ?? ''
-            return (
-              <div key={idx} className="min-w-0 flex-1 text-center">
-                <p className="text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] xl:text-11 font-medium text-gray-400 leading-tight">
-                  {text}
-                </p>
-              </div>
-            )
-          })}
+  {/* Values (centered between dots) */}
+<div className="mt-1 sm:mt-1.5 md:mt-2 lg:mt-3 px-0.5 sm:px-0.5 md:px-1 lg:px-2">
+  <div className="relative w-full h-4">
+    {Array.from({ length: Math.max(0, safeTotal - 1) }).map((_, idx) => {
+      const text = progressMeta[idx]?.valueText ?? ''
+
+      // midpoint between dot idx and dot idx+1
+      const leftPercent =
+        safeTotal > 1 ? ((idx + 0.5) / (safeTotal - 1)) * 100 : 0
+
+      return (
+        <div
+          key={idx}
+          className="absolute -translate-x-1/2 text-center"
+          style={{ left: `${leftPercent}%` }}
+        >
+          <p className="whitespace-nowrap text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] xl:text-11 font-medium text-gray-400 leading-tight">
+            {text}
+          </p>
         </div>
-      </div>
+      )
+    })}
+  </div>
+</div>
+
+      
     </div>
   )
 }
@@ -138,9 +152,8 @@ export function RankingSystemSection({
   rankingIcons = defaultRankingIcons,
   currentRank,
   totalPoints,
-  
   progressMeta,
-}: RankingSystemSectionProps) {
+}: RankingSystemSectionProps): React.ReactElement {
  
 
   const safeStep = clampStep(currentStep, rankingIcons.length)

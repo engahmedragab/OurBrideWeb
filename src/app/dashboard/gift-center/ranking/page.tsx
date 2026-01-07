@@ -25,7 +25,7 @@ import { useRouter } from 'next/navigation'
  */
 export default function RankingPage() {
   // Mock data
-  const currentStep = 0 // Current active step (0-indexed)
+  const currentStep = 0// Current active step (0-indexed)
   const totalPoints = 200
   const router = useRouter()
   const rankingIcons: RankingIcon[] = [
@@ -142,7 +142,7 @@ export default function RankingPage() {
   const currentUser = {
     name: 'Aya Mohamed',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
-    rankKey: 'bronze' as const,
+    rankKey: rankingIcons[currentStep].rankKey,
     rankingValue: 22568,
     rankText: 'New Member',
   }
