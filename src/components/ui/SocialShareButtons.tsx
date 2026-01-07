@@ -1,7 +1,10 @@
 'use client'
 
 import { Button } from './Button'
-import { Facebook, Instagram, MessageCircle, QrCode } from 'lucide-react'
+import { FaFacebook } from 'react-icons/fa'
+import { AiFillInstagram } from 'react-icons/ai'
+import { RiWhatsappFill } from 'react-icons/ri'
+import { CgQr } from 'react-icons/cg'
 
 export interface SocialShareButtonsProps {
   onFacebookClick?: () => void
@@ -24,42 +27,42 @@ export const SocialShareButtons = ({
   className = '',
 }: SocialShareButtonsProps) => {
   return (
-    <div className={`grid grid-cols-4 gap-2 ${className}`}>
+    <div className={`grid grid-cols-4 gap-3 ${className}`}>
       <Button
         variant="outline"
-        size="sm"
-        className="border-brand-500 text-brand-500 hover:bg-brand-50 flex-col sm:flex-row px-2 sm:px-3 gap-1 sm:gap-2"
+        size="md"
+        className="border-brand-500   text-brand-500 hover:bg-brand-500 hover:text-white py-2 flex px-2 sm:px-2  gap-1 sm:gap-2 rounded-lg bg-transparent "
         onClick={onFacebookClick}
       >
-        <Facebook className="h-4 w-4 sm:h-4 sm:w-4" />
-        <span className="text-10 sm:text-13 leading-tight">Facebook</span>
+        <FaFacebook className="h-4 w-4 sm:h-5 sm:w-5" />
+        <span className="text-10 sm:text-14  leading-tight hidden md:block ">Facebook</span>
       </Button>
       <Button
         variant="outline"
-        size="sm"
-        className="border-brand-500 text-brand-500 hover:bg-brand-50 flex-col sm:flex-row px-2 sm:px-3 gap-1 sm:gap-2"
+        size="md"
+        className="border-brand-500   text-brand-500 hover:bg-brand-500 hover:text-white py-2 flex px-2 sm:px-2  gap-1 sm:gap-2 rounded-lg bg-transparent "
         onClick={onInstagramClick}
       >
-        <Instagram className="h-4 w-4 sm:h-4 sm:w-4" />
-        <span className="text-10 sm:text-13 leading-tight">Instagram</span>
+        <AiFillInstagram className="h-4 w-4 sm:h-5 sm:w-5" />
+        <span className="text-10 sm:text-14  leading-tight hidden md:block">Instagram</span>
       </Button>
       <Button
         variant="outline"
-        size="sm"
-        className="border-brand-500 text-brand-500 hover:bg-brand-50 flex-col sm:flex-row px-2 sm:px-3 gap-1 sm:gap-2"
+        size="md"
+        className="border-brand-500   text-brand-500 hover:bg-brand-500 hover:text-white py-2 flex px-2 sm:px-2  gap-1 sm:gap-2 rounded-lg bg-transparent "
         onClick={onWhatsappClick}
       >
-        <MessageCircle className="h-4 w-4 sm:h-4 sm:w-4" />
-        <span className="text-10 sm:text-13 leading-tight">Whatsapp</span>
+        <RiWhatsappFill className="h-4 w-4 sm:h-5 sm:w-5" />
+        <span className="text-10 sm:text-14  leading-tight hidden md:block">Whatsapp</span>
       </Button>
       <Button
         variant="outline"
-        size="sm"
-        className="border-brand-500 text-brand-500 hover:bg-brand-50 flex-col sm:flex-row px-2 sm:px-3 gap-1 sm:gap-2"
+        size="md"
+        className="border-brand-500   text-brand-500 hover:bg-brand-500 hover:text-white py-2 flex  px-2 sm:px-2  gap-1 sm:gap-2 rounded-lg bg-transparent "
         onClick={onQrCodeClick}
       >
-        <QrCode className="h-4 w-4 sm:h-4 sm:w-4" />
-        <span className="text-10 sm:text-13 leading-tight">QR Code</span>
+        <CgQr  className="h-4 w-4 sm:h-5 sm:w-5" />
+        <span className="text-10 sm:text-14  leading-tight hidden md:block">QR Code</span>
       </Button>
     </div>
   )

@@ -63,17 +63,17 @@ export const ReferralOnboardingModal = ({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 z-50 transition-opacity"
+        className="fixed inset-0 bg-black/50 z-[9999] transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl w-full max-w-sm relative shadow-xl">
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-[9999]"
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -114,7 +114,7 @@ export const ReferralOnboardingModal = ({
                 {steps.map((_, index) => (
                   <div
                     key={index}
-                    className={`h-2 rounded-full transition-all duration-300 ${
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
                       index === currentStep
                         ? 'w-8 bg-brand-500'
                         : 'w-2 bg-gray-300'
@@ -125,8 +125,7 @@ export const ReferralOnboardingModal = ({
 
               {/* Navigation Button */}
               <button
-                onClick={handleNext}
-                className="w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center hover:bg-brand-600 transition-colors shadow-md flex-shrink-0"
+                onClick={handleNext} className=" text-brand-500 text-20 font-semibold flex items-center justify-center hover:scale-110 transition-colors flex-shrink-0"
                 aria-label={isLastStep ? 'Finish' : 'Next'}
               >
                 <ChevronRight className="h-5 w-5" />

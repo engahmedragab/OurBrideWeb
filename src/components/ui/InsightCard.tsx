@@ -1,36 +1,50 @@
-import { LucideIcon } from 'lucide-react'
+import * as React from 'react'
+
+type InsightIcon = React.ComponentType<{ className?: string }>
 
 export interface InsightCardProps {
-  icon: LucideIcon
+  icon: InsightIcon
   label: string
   value: number | string
-  currency?: string
+  currency?: string // مثال: "Points" أو "Egp" — لو مش عايزها سيبها undefined
   className?: string
 }
 
-/**
- * InsightCard Component
- * Reusable card for displaying insights/metrics with icon, label, and value
- */
-export const InsightCard = ({
+export const InsightCard: React.FC<InsightCardProps> = ({
   icon: Icon,
   label,
   value,
-  currency = 'Egp',
+  currency,
   className = '',
-}: InsightCardProps) => {
+}) => {
+  const showCurrency = Boolean(currency)
+
   return (
-    <div className={`flex items-start gap-3 ${className}`}>
-      <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0">
-        <Icon className="w-5 h-5 text-gray-600" />
-      </div>
-      <div>
-        <p className="text-14 text-gray-600 mb-1">{label}</p>
-        <p className="text-20 font-normal text-gray-900">
-          {value} <span className="text-12 text-gray-500">{currency}</span>
+    <div
+      className={[
+        'w-full rounded-2xl border border-gray-400/70 shadow-sm',
+        'px-4 py-3',
+        className,
+      ].join(' ')}
+    >
+      {/* Icon */}
+      <Icon className="h-7 w-7 text-gray-900 font-normal" />
+
+      {/* Label */}
+      <p className="mt-4 md:text-[15px] text-12  font-normal text-gray-900">{label}</p>
+
+      {/* Value + Currency */}
+      <div className="mt-2 flex items-baseline justify-between gap-3">
+        <p className="md:text-16 text-12  font-normal text-gray-500 tabular-nums leading-none">
+          {value}
         </p>
+
+        {showCurrency ? (
+          <span className="md:text-[16px] text-12  font-normal text-gray-900/50 leading-none">
+            {currency}
+          </span>
+        ) : null}
       </div>
     </div>
   )
 }
-
