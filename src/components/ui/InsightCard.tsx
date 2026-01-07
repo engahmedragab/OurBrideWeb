@@ -22,7 +22,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({
   return (
     <div
       className={[
-        'w-full rounded-2xl border border-gray-400/70 shadow-sm',
+        'w-full rounded-2xl border border-gray-400/40 shadow-sm',
         'px-4 py-3',
         className,
       ].join(' ')}

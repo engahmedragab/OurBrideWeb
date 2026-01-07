@@ -297,7 +297,7 @@ export default function ReferralsPage() {
               </h2>
               <div className="space-y-3">
                 {activityItems.map(item => (
-                  <div key={item.id} className="  border border-gray-300/70 rounded-lg p-3">
+                  <div key={item.id} className="  border border-gray-400/40 rounded-lg p-3">
                     <div className="flex items-start gap-3">
                       <div className="relative w-10 h-10 flex-shrink-0">
                         <Image
