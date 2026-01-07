@@ -136,7 +136,8 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
 
             // Check if iconName exists
             const hasIconName = line.iconName && line.iconName.trim() !== ''
-            const IconComponent = hasIconName ? getIconFromName(line.iconName) : null
+            const iconFromName = hasIconName ? getIconFromName(line.iconName) : null
+            const IconComponent = iconFromName || WeddingHallIcon
 
             return (
               <button
@@ -149,19 +150,19 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
                   {/* Left section: Icon + Title */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     {/* Icon */}
-                    {hasIconName && IconComponent && (
-                      <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center flex-shrink-0">
-                        <IconComponent className="w-5 h-5 text-brand-500" />
+                    {IconComponent && (
+                      <div className="w-10 h-10 rounded-lg  flex items-center justify-center flex-shrink-0">
+                        <IconComponent className="w-full h-full text-brand-500" />
                       </div>
                     )}
                     
                     {/* Title */}
                     <div className="flex flex-col min-w-0 flex-1">
-                      <p className="text-13 font-semibold text-gray-900 truncate">
+                      <p className="text-16 font-semibold text-gray-900 truncate">
                         {line.title || 'Untitled Service'}
                       </p>
                       {date && date !== '0001-01-01T00:00:00' && (
-                        <p className="text-11 text-gray-500 mt-0.5">
+                        <p className="text-14 font-medium text-gray-500 mt-0.5">
                           {format(new Date(date), 'dd MMM, yyyy')}
                         </p>
                       )}
