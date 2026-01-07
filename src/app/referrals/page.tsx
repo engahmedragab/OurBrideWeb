@@ -204,7 +204,7 @@ export default function ReferralsPage() {
                
                   className="w-full bg-gray-50 text-13 sm:text-14"
                 />
-                <Copy className='h-5 w-5 text-brand-500 md:hidden'/>
+                <button onClick={handleCopyLink}><Copy className='h-5 w-5 text-brand-500 md:hidden hover:text-brand-600 transition-colors'/></button>
                 
               </div>
 
