@@ -28,9 +28,9 @@ const buttonVariants = cva(
 
         // Outlined buttons - Green/Success
         outlineSuccess:
-          'border-2 border-green-500 bg-white text-white hover:bg-green-50',
+          'border-2 border-green-500 bg-white text-green-500 hover:bg-green-50',
         outlineSuccessLight:
-          'border-2 border-green-400 bg-white text-white hover:bg-green-50',
+          'border-2 border-green-400 bg-white text-green-400 hover:bg-green-50',
 
         // Legacy variants for backward compatibility
         default: 'bg-brand-500 !text-white hover:bg-brand-600',
