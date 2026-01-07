@@ -55,14 +55,18 @@ export const NotificationDropdown = ({
           variant="ghost"
           size="icon"
           className={cn(
-            'relative rounded-full border-0 bg-transparent',
+            'relative rounded-full border-0 bg-transparent w-fit h-fit ',
             'transition-colors duration-150',
-            'hover:bg-brand-50/50',
-            'focus:outline-none'
+            'focus:outline-none',
+            `hover:${isOpen ? 'bg-brand-500' : 'bg-transparent'}`,
+            isOpen ? 'bg-brand-500 p-2 rounded-full' : 'bg-transparent'
           )}
           aria-label="Notifications"
         >
-          <Bell className="h-5 w-5 text-brand-500" />
+          <Bell className={cn(
+            '!h-5 !w-5',
+            isOpen ? 'text-white ' : 'text-brand-500'
+          )} />
           {unreadCount > 0 && (
             <span className="absolute -right-1 -top-1 flex min-w-4 h-4 items-center justify-center rounded-full bg-brand-500 text-10 font-normal text-white shadow-sm px-1">
               {unreadCount > 99 ? '99+' : unreadCount}

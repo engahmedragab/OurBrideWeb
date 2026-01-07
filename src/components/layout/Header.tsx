@@ -24,6 +24,8 @@ import {
   CommunityIcon,
   WishlistIcon,
   ShoppingCartIcon,
+  ProfileIconDesktop,
+  ProfileIconMobile,
 } from '@/assets/icons/navbar-icons'
 
 import { useCart } from '@/hooks/cart'
@@ -108,14 +110,14 @@ export const Header = ({ className }: HeaderProps) => {
                           'h-5 w-5',
                           active
                             ? 'text-[#F14937]'
-                            : 'text-gray-500 group-hover:text-[#F14937]'
+                            : 'text-gray-500 hover:text-[#F14937]'
                         )}
                       />
                       <span
                         className={cn(
                           active
                             ? 'text-[#F14937]'
-                            : 'text-gray-700 group-hover:text-[#F14937]'
+                            : 'text-gray-700 hover:text-[#F14937]'
                         )}
                       >
                         {item.label}
@@ -137,10 +139,13 @@ export const Header = ({ className }: HeaderProps) => {
           </div>
 
           {/* Right Actions */}
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-4 ">
             {/* Wishlist + Cart + Notifications */}
-            <div className="hidden md:flex items-center gap-4 rounded-full border border-brand-500/30 px-4 py-1">
-              <Link href="/wishlist">
+            <div className="flex items-center gap-4 rounded-full border border-brand-500/30 px-4 py-0.5">
+              <Link href="/wishlist" className={[
+                'relative p-1 md:p-2 ',
+                isActive('/wishlist') ? 'bg-brand-500 rounded-full' : 'bg-transparent'
+              ].join(' ')}>
                 <WishlistIcon
                   active={isActive('/wishlist')}
                   className={cn(
@@ -152,13 +157,16 @@ export const Header = ({ className }: HeaderProps) => {
                 />
               </Link>
 
-              <Link href="/cart" className="relative">
+              <Link href="/cart" className={[
+                'relative p-1 md:p-2',
+                isActive('/cart') ? 'bg-brand-500 rounded-full' : 'bg-transparent'
+              ].join(' ')}>
                 <ShoppingCartIcon
                   active={isActive('/cart')}
                   className={cn(
                     'h-4 w-4',
                     isActive('/cart')
-                      ? 'text-[#F14937]'
+                      ? 'text-white'
                       : 'text-brand-500 hover:text-[#F14937]'
                   )}
                 />
@@ -188,7 +196,7 @@ export const Header = ({ className }: HeaderProps) => {
               className="hidden md:flex h-11 w-11 rounded-full"
             >
               <Link href="/profile">
-                <User className="h-5 w-5 text-white" />
+               <ProfileIconDesktop active={isActive('/profile')} />
               </Link>
             </Button>
 
@@ -199,11 +207,9 @@ export const Header = ({ className }: HeaderProps) => {
               className="md:hidden"
               onClick={toggleMobileMenu}
             >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6 text-brand-500" />
-              ) : (
+            
                 <Menu className="h-6 w-6 text-brand-500" />
-              )}
+              
             </Button>
           </div>
         </div>
@@ -216,11 +222,17 @@ export const Header = ({ className }: HeaderProps) => {
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
+
+       
         <div className="flex h-16 items-center justify-between border-b px-4">
           <Image src={brandLogo} alt="OurBride" width={100} height={40} />
-          <Button size="icon" variant="ghost" onClick={toggleMobileMenu}>
+           
+            
+            <Button size="icon" variant="ghost" onClick={toggleMobileMenu}>
             <X className="h-5 w-5" />
           </Button>
+         
+          
         </div>
 
         <nav className="flex flex-col gap-2 p-4">
@@ -250,9 +262,14 @@ export const Header = ({ className }: HeaderProps) => {
           <Link
             href="/profile"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center gap-3 rounded-lg px-4 py-3 font-semibold text-gray-700 hover:bg-gray-50"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-4 py-3 font-semibold',
+              isActive('/profile')
+                ? 'bg-brand-50 text-brand-600'
+                : 'text-gray-700 hover:bg-gray-50'
+            )}
           >
-            <User className="h-5 w-5" />
+            <ProfileIconMobile active={isActive('/profile')} />
             Profile
           </Link>
         </nav>

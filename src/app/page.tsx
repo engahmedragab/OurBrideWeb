@@ -14,6 +14,7 @@ import {
   type TestimonialCardData,
   type ProviderCardData,
   type MemberTestimonialCardData,
+  TestimonialsSection,
 } from '@/components/ui'
 import {
   useProductCardHandlers,
@@ -53,6 +54,7 @@ import heroCircularSvg from '@/assets/svg/Hero-circular.svg'
 import lineS2Svg from '@/assets/svg/Line-s2.svg'
 import lineS4Svg from '@/assets/svg/Line-s4.svg'
 import phoneImage from '@/assets/images/phone.png'
+import phoneFrame from '@/assets/home/phoneFrame.svg'
 import { useHome } from '@/hooks/home'
 import { extractHomeData } from '@/utils'
 import {
@@ -67,6 +69,9 @@ import user2Image from '@/assets/home/user2.svg'
 import { ActiveUsers } from '@/components/home/ActiveUsers'
 import { HomeOfferBanner } from '@/components/home/HomeOfferBanner'
 import TrustCards from '@/components/home/TrustCards'
+import QuoteIcon from '@/assets/home/Quote'
+import TestimonialsHomeSection from '@/components/home/TestimonialsSection'
+import ProvidersSliderSection from '@/components/home/ProvidersSlider'
 
 const activeUsers = [user1Image, user2Image, user1Image, user2Image]
 // Memoized Product Card Component
@@ -128,25 +133,7 @@ const ServiceCardItem = memo(({ service }: { service: ServiceCardData }) => {
 })
 ServiceCardItem.displayName = 'ServiceCardItem'
 
-// Memoized Provider Card Component
-const ProviderCardItem = memo(
-  ({ provider }: { provider: ProviderCardData }) => {
-    const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
-    return (
-      <Card
-        cardData={{
-          type: 'provider',
-          ...provider,
-          onFollowToggle: handlers.handleFollowToggle,
-          onFavoriteToggle: handlers.handleFavoriteToggle,
-          isLoadingFollow: handlers.isLoadingFollow,
-          isLoadingFavorite: handlers.isLoadingFavorite,
-        }}
-      />
-    )
-  }
-)
-ProviderCardItem.displayName = 'ProviderCardItem'
+
 
 export default function Home() {
   // Fetch home data from API
@@ -187,7 +174,7 @@ export default function Home() {
   //   memberTestimonials.length / PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
   // )
 
-  const currentTestimonials = useMemo(
+  const currentTestimonials= useMemo(
     () =>
       testimonials.slice(
         testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE,
@@ -566,7 +553,7 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              products.map(product => (
+              products.slice(0, 4).map(product => (
                 <ProductCardItem key={product.id} product={product} />
               ))
             )}
@@ -590,7 +577,7 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              services.map(service => (
+              services.slice(0, 4).map(service => (
                 <ServiceCardItem key={service.id} service={service} />
               ))
             )}
@@ -632,111 +619,11 @@ export default function Home() {
         </section>
 
         {/* Section 8: Testimonials */}
-        <section className="container-custom py-12 md:py-16">
-          {/* Centered Heading Above Section */}
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
-              <span className="font-normal text-gray-900">
-                Read{' '}
-                <span className="font-semibold text-gray-900">Reviews</span>
-              </span>
-              <br />
-              <span className="font-semibold text-gray-900">
-                Ride With{' '}
-                <span className="font-normal text-gray-900">Confidence</span>
-              </span>
-            </h2>
-          </div>
-      
-          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
-            {/* Left Side - Quote Icon and Heading */}
-            <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
-              <div className="flex-1 lg:max-w-md">
-                <div className="mb-4 md:mb-6">
-                  <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
-                  <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
-                    <span className="block">What Our</span>
-                    <span className="block font-semibold text-gray-900">
-                      Customers
-                    </span>
-                    <span className="block">Are Saying</span>
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 md:gap-4">
-                  <button
-                    onClick={goToTestimonialsPrevious}
-                    aria-label="Previous testimonials"
-                  >
-                    <ChevronLeft className="h-5 w-5 text-gray-700" />
-                  </button>
-                  <div className="flex-1 flex items-center gap-2">
-                    {Array.from({ length: testimonialsTotalPages }).map(
-                      (_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => goToTestimonialsPage(index)}
-                          className={cn(
-                            'flex-1 h-2 rounded-full transition-all',
-                            index === testimonialsIndex
-                              ? 'bg-red-500'
-                              : 'bg-gray-200 hover:bg-gray-300'
-                          )}
-                          aria-label={`Go to page ${index + 1}`}
-                        />
-                      )
-                    )}
-                  </div>
-                  <button
-                    onClick={goToTestimonialsNext}
-                    aria-label="Next testimonials"
-                  >
-                    <ChevronRight className="h-5 w-5 text-gray-700" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Side - Testimonial Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto">
-              {isLoading ? (
-                <TestimonialCardSkeleton count={3} />
-              ) : (
-                currentTestimonials.map((testimonial, index) => (
-                  <Card
-                    key={`${testimonialsIndex}-${index}`}
-                    cardData={{ type: 'testimonial', ...testimonial }}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        </section>
+        <TestimonialsHomeSection testimonials={testimonials} isLoading={isLoading} />
 
         {/* Section 9: Providers */}
-        <section className="container-custom py-12 md:py-16">
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
-              <span className="font-normal text-gray-900">
-                Discover{' '}
-                <span className="font-semibold text-gray-900">Trusted</span>
-              </span>
-              <br />
-              <span className="font-semibold text-gray-900">
-                Wedding{' '}
-                <span className="font-normal text-gray-900">Providers</span>
-              </span>
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {isLoading ? (
-              <ProviderCardSkeleton count={4} />
-            ) : (
-              providers.map(provider => (
-                <ProviderCardItem key={provider.id} provider={provider} />
-              ))
-            )}
-          </div>
-        </section>
+     
+        <ProvidersSliderSection providers={providers} isLoading={isLoading} />
 
         {/* Section 10: Wedding Journey */}
         <section className="relative py-16 md:py-24 overflow-hidden bg-white">

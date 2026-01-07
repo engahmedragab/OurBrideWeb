@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import { PriceDisplay } from './PriceDisplay'
+import VerifyIcon from '@/assets/icons/VerifiyIcon'
 
 // Base card variants
 const cardVariants = cva(
@@ -471,18 +472,19 @@ const ProductServiceCard = ({
 }
 
 // Testimonial Card Component
+
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   return (
     <div className="flex flex-col">
       {/* Card */}
-      <div className="bg-white rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow">
-        {/* Quote */}
-        <p className="text-16 text-gray-900 mb-6 flex-1 leading-relaxed">
+      <div className="bg-white border border-gray-100 rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow">
+        {/* Quote (fixed height) */}
+        <p className="text-16 text-gray-900 leading-relaxed min-h-[150px] line-clamp-4">
           &quot;{data.quote}&quot;
         </p>
 
-        {/* Stars - All red for 5-star rating */}
-        <div className="flex items-center gap-1">
+        {/* Stars */}
+        <div className="flex items-center gap-1 mt-6">
           {Array.from({ length: 5 }).map((_, index) => (
             <Star
               key={`star-${data.authorName}-${index}`}
@@ -492,35 +494,17 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
         </div>
       </div>
 
-      {/* Author Info - Below the card */}
-      <div className="flex items-center gap-3 mt-4 ml-4">
-        <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-          {data.authorImage && data.authorImage.trim() !== '' ? (
-            <Image
-              src={data.authorImage}
-              alt={data.authorName}
-              fill
-              sizes="48px"
-              className="object-cover grayscale"
-            />
-          ) : (
-            <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-              <span className="text-white text-16 font-semibold">
-                {data.authorName.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          )}
-        </div>
-        <div>
-          <p className="text-16 font-semibold text-gray-900">
-            {data.authorName}
-          </p>
-          <p className="text-14 text-gray-500">{data.timeAgo}</p>
-        </div>
+      {/* Author Info - Below the card (no image) */}
+      <div className="mt-4 ml-4">
+        <p className="text-16 font-semibold text-gray-900">
+          {data.authorName}
+        </p>
+        <p className="text-14 text-gray-500">{data.timeAgo}</p>
       </div>
     </div>
   )
 }
+
 
 // Provider Card Component
 const ProviderCard = ({ data }: { data: ProviderCardData }) => {
@@ -549,7 +533,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
   return (
     <div className="group relative bg-white rounded-xl p-6 md:p-8 text-center flex flex-col items-center border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       {/* Action Icons - Floating above the card */}
-      <div className="absolute top-3 right-3 z-20 flex items-center gap-2 pointer-events-auto">
+      <div className="absolute top-3 right-3 z-20 flex flex-col items-center gap-2 pointer-events-auto">
         {/* Favorite Icon */}
         {data.onFavoriteToggle && (
           <button
@@ -557,7 +541,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
             onClick={handleFavoriteToggle}
             disabled={data.isLoadingFavorite}
             className={cn(
-              'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+              'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow hover:scale-110 relative z-30',
               'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
               data.isFavorite
                 ? 'border-brand-500 bg-brand-500'
@@ -586,7 +570,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
             onClick={handleFollowToggle}
             disabled={data.isLoadingFollow}
             className={cn(
-              'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+              'w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-200 shadow hover:scale-110 relative z-30',
               'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
               data.isFollowed
                 ? 'border-brand-500 bg-brand-500'
@@ -646,7 +630,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
             className="flex-shrink-0"
             aria-label="Verified provider"
           >
-            <CheckCircle2 className="h-5 w-5 text-blue-500 hover:text-blue-600 transition-colors" />
+            <VerifyIcon />
           </Link>
         )}
       </div>
@@ -684,7 +668,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
         className="text-14 text-brand hover:text-brand-500 transition-colors flex items-center gap-1"
       >
         View Profile
-        <ArrowRight className="h-4 w-4" />
+      
       </Link>
     </div>
   )
