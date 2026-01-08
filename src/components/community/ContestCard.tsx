@@ -133,7 +133,9 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
   const status = getContestStatus(contest)
   const endDate = formatDate(contest.endDate)
   
-  const imageUrl = COMMUNITY_IMAGES.DEFAULT_CONTEST_IMAGE
+  // Extract images from medias array, fallback to default
+  const medias = (contest as any).medias || []
+  const imageUrl = medias.find((media: any) => media?.url)?.url || COMMUNITY_IMAGES.DEFAULT_CONTEST_IMAGE
 
   return (
     <div

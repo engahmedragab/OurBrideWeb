@@ -183,3 +183,35 @@ export const getProviderHome = async (): Promise<ProviderHomeResponse> => {
   }
 }
 
+/**
+ * Get store home page data by provider
+ * GET /api/v1/home/store/provider
+ * @param query Query parameters including providerId, branchId, staffId
+ * @returns Store home page data including banners, testimonials, FAQs, top bar texts
+ */
+export const getStoreHomeByProvider = async (query?: {
+  providerId?: number
+  branchId?: number
+  staffId?: string
+}): Promise<unknown> => {
+  try {
+    // Clean query parameters - remove undefined values
+    const cleanQuery = query
+      ? Object.fromEntries(
+          Object.entries(query).filter(([_, value]) => value !== undefined)
+        )
+      : undefined
+
+    const response = await apiClient.api.getHomeGetStoreHomeByProvider(
+      Object.keys(cleanQuery || {}).length > 0 ? cleanQuery : undefined
+    )
+    
+    // The API endpoint returns void, any, so we need to handle the response data
+    const responseData = response as { data?: unknown }
+    return responseData.data ?? response
+  } catch (error) {
+    console.error('Error fetching store home by provider:', error)
+    throw error
+  }
+}
+

@@ -72,6 +72,35 @@ export const getContestById = async (id: number): Promise<LeaderboardContestResp
 }
 
 /**
+ * Get contest by slug
+ */
+export const getContestBySlug = async (slug: string): Promise<LeaderboardContestResponse | null> => {
+  try {
+    // Try to use slug endpoint if available
+    const api: any = apiClient.api
+    if (api.getContestsGetBySlug) {
+      const response = await api.getContestsGetBySlug(slug)
+      const responseAny: any = response
+      
+      // Handle different response structures
+      if (responseAny?.data?.data) {
+        return responseAny.data.data as LeaderboardContestResponse
+      }
+      if (responseAny?.data) {
+        return responseAny.data as LeaderboardContestResponse
+      }
+      if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+        return responseAny as LeaderboardContestResponse
+      }
+    }
+    
+    return null
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch contest by slug')
+  }
+}
+
+/**
  * Get contest with leaderboard
  */
 export const getContestWithLeaderboard = async (id: number): Promise<LeaderboardContestResponse | null> => {

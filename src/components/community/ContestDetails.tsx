@@ -69,7 +69,9 @@ export const ContestDetails = ({
 
   const status = getContestStatus(contest)
 
-  const imageUrl = COMMUNITY_IMAGES.DEFAULT_CONTEST_IMAGE
+  // Extract images from medias array, fallback to default
+  const medias = (contest as any).medias || []
+  const imageUrl = medias.find((media: any) => media?.url)?.url || COMMUNITY_IMAGES.DEFAULT_CONTEST_IMAGE
 
   // Map reviews to comments format
   const comments = (contest.reviews || []).map((review: ReviewResponse) => ({

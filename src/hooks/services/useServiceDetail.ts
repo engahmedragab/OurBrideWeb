@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getServiceById } from '@/services/api/serviceApi'
+import { getServiceById, getServiceBySlug } from '@/services/api/serviceApi'
 import { mapServiceResponseToService } from '@/utils/services-category.utils'
 import type { Service } from '@/types/service'
 import type { ServiceResponse } from '@/types/responses/service-response'
@@ -9,18 +9,25 @@ export interface ServiceDetailData {
   rawServiceResponse: ServiceResponse | null
 }
 
+// Helper function to determine if a string is a number
+const isNumeric = (str: string): boolean => {
+  return /^\d+$/.test(str)
+}
+
 export const useServiceDetail = (serviceId: string, enabled = true) => {
   return useQuery({
     queryKey: ['service-detail', serviceId],
     queryFn: async (): Promise<ServiceDetailData> => {
       try {
-        const parsedId = parseInt(serviceId, 10)
-        if (isNaN(parsedId)) {
-          throw new Error('Invalid service ID')
-        }
+        let serviceResponse: ServiceResponse | null = null
 
-        // Fetch ServiceResponse from API
-        const serviceResponse: ServiceResponse | null = await getServiceById(parsedId)
+        // Support both ID and slug
+        if (isNumeric(serviceId)) {
+          const parsedId = parseInt(serviceId, 10)
+          serviceResponse = await getServiceById(parsedId)
+        } else {
+          serviceResponse = await getServiceBySlug(serviceId)
+        }
         
         if (!serviceResponse) {
           return { service: null, rawServiceResponse: null }

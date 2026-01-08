@@ -147,6 +147,11 @@ export enum Source {
   Contest = "Contest",
   Membership = "Membership",
   GiftCard = "GiftCard",
+  Testimonial = "Testimonial",
+  HomeCenterModel = "HomeCenterModel",
+  HomeCenterUpdate = "HomeCenterUpdate",
+  TopBarText = "TopBarText",
+  ProductBrand = "ProductBrand",
 }
 
 export enum SocialStatus {
@@ -5668,7 +5673,8 @@ export interface CreateBannerRequest {
   mediaId: number;
   type: BannerType;
   /** @format int32 */
-  bannerSectionId: number;
+  bannerSectionId?: number | null;
+  bannerSection?: CreateBannerSectionRequest;
   /** @format int32 */
   order?: number;
   linkType?: BannerLinkType;
@@ -5680,6 +5686,18 @@ export interface CreateBannerRequest {
   bgGradient?: string | null;
   offer?: string | null;
   badge?: string | null;
+  isActive?: boolean;
+  tags?: string | null;
+}
+
+export interface CreateBannerSectionRequest {
+  /** @minLength 1 */
+  nameAr: string;
+  /** @minLength 1 */
+  nameEn: string;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
+  type: BannerType;
   isActive?: boolean;
 }
 
@@ -6378,6 +6396,7 @@ export interface CreateFAQRequest {
   order?: number;
   isActive?: boolean;
   type: FAQType;
+  tags?: string | null;
 }
 
 export interface CreateFavoriteRequest {
@@ -6669,7 +6688,11 @@ export interface CreateHallRequest {
   notes?: string | null;
 }
 
-export interface CreateHomeCenterUpdateRequest {
+export interface CreateHomeCenterModelRequest {
+  nameAr?: string | null;
+  nameEn?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
   title?: string | null;
   description?: string | null;
   /** @format date-time */
@@ -6683,6 +6706,28 @@ export interface CreateHomeCenterUpdateRequest {
   featureLink?: string | null;
   /** @format int32 */
   tagId?: number | null;
+  tags?: string | null;
+}
+
+export interface CreateHomeCenterUpdateRequest {
+  nameAr?: string | null;
+  nameEn?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
+  title?: string | null;
+  description?: string | null;
+  /** @format date-time */
+  displayDate?: string;
+  /** @format date-time */
+  releaseDate?: string;
+  /** @format date-time */
+  expireDate?: string;
+  isActive?: boolean;
+  imageUrl?: string | null;
+  featureLink?: string | null;
+  /** @format int32 */
+  tagId?: number | null;
+  tags?: string | null;
 }
 
 export interface CreateInventoryRequest {
@@ -9233,6 +9278,7 @@ export interface CreateTestimonialRequest {
   orderId?: number | null;
   /** @format int32 */
   productId?: number | null;
+  tags?: string | null;
 }
 
 export interface CreateTierRequest {
@@ -9344,6 +9390,7 @@ export interface CreateTopBarTextRequest {
   priority?: number;
   customCSS?: string | null;
   customJS?: string | null;
+  tags?: string | null;
 }
 
 export interface CreateVariantInventoryRequest {
@@ -13158,6 +13205,16 @@ export interface LinkBrideAndGroomRequest {
   /** @format date-time */
   weddingDate?: string | null;
   eventLocation?: string | null;
+}
+
+export interface LinkContentRequest {
+  /**
+   * @minLength 0
+   * @maxLength 50
+   */
+  contentType: string;
+  /** @format int32 */
+  contentId: number;
 }
 
 export interface LinkExternalProviderRequest {
@@ -21227,6 +21284,10 @@ export interface SetFeaturedPortfolioItemRequest {
   featured: boolean;
 }
 
+export interface SetHelpfulnessRequest {
+  helpfulness: boolean;
+}
+
 export interface SetProcessingStatusRequest {
   status?: string | null;
   error?: string | null;
@@ -22539,6 +22600,16 @@ export interface UnassignUserFromProviderRequest {
   providerId: number;
 }
 
+export interface UnlinkContentRequest {
+  /**
+   * @minLength 0
+   * @maxLength 50
+   */
+  contentType: string;
+  /** @format int32 */
+  contentId: number;
+}
+
 export interface UnlinkExternalProviderRequest {
   providerType?: ExternalProvidersType;
 }
@@ -23171,7 +23242,8 @@ export interface UpdateBannerRequest {
   mediaId: number;
   type: BannerType;
   /** @format int32 */
-  bannerSectionId: number;
+  bannerSectionId?: number | null;
+  bannerSection?: CreateBannerSectionRequest;
   /** @format int32 */
   order?: number;
   linkType?: BannerLinkType;
@@ -23184,6 +23256,7 @@ export interface UpdateBannerRequest {
   offer?: string | null;
   badge?: string | null;
   isActive?: boolean;
+  tags?: string | null;
   /** @format int32 */
   id: number;
 }
@@ -23704,6 +23777,7 @@ export interface UpdateFAQRequest {
   order?: number;
   isActive?: boolean;
   type: FAQType;
+  tags?: string | null;
   /** @format int32 */
   id: number;
 }
@@ -24028,18 +24102,14 @@ export interface UpdateHallRequest {
   notes?: string | null;
 }
 
-export interface UpdateHomeCenterUpdateRequest {
+export interface UpdateHomeCenterModelRequest {
   /** @format int32 */
-  id: number;
-  /**
-   * @minLength 0
-   * @maxLength 200
-   */
+  id?: number;
+  nameAr?: string | null;
+  nameEn?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
   title?: string | null;
-  /**
-   * @minLength 0
-   * @maxLength 1000
-   */
   description?: string | null;
   /** @format date-time */
   displayDate?: string | null;
@@ -24048,18 +24118,34 @@ export interface UpdateHomeCenterUpdateRequest {
   /** @format date-time */
   expireDate?: string | null;
   isActive?: boolean | null;
-  /**
-   * @minLength 0
-   * @maxLength 500
-   */
   imageUrl?: string | null;
-  /**
-   * @minLength 0
-   * @maxLength 500
-   */
   featureLink?: string | null;
   /** @format int32 */
   tagId?: number | null;
+  tags?: string | null;
+}
+
+export interface UpdateHomeCenterUpdateRequest {
+  /** @format int32 */
+  id?: number;
+  nameAr?: string | null;
+  nameEn?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
+  title?: string | null;
+  description?: string | null;
+  /** @format date-time */
+  displayDate?: string | null;
+  /** @format date-time */
+  releaseDate?: string | null;
+  /** @format date-time */
+  expireDate?: string | null;
+  isActive?: boolean | null;
+  imageUrl?: string | null;
+  featureLink?: string | null;
+  /** @format int32 */
+  tagId?: number | null;
+  tags?: string | null;
 }
 
 export interface UpdateInventoryRequest {
@@ -26631,6 +26717,7 @@ export interface UpdateTestimonialRequest {
   orderId?: number | null;
   /** @format int32 */
   productId?: number | null;
+  tags?: string | null;
   /** @format int32 */
   id: number;
 }
@@ -26738,6 +26825,7 @@ export interface UpdateTopBarTextRequest {
   priority?: number;
   customCSS?: string | null;
   customJS?: string | null;
+  tags?: string | null;
   /** @format int32 */
   id: number;
 }
@@ -30029,6 +30117,42 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Address
+     * @name GetAddressGetForProvider
+     * @request GET:/api/v1/addresses/for-provider/{providerId}
+     * @secure
+     */
+    getAddressGetForProvider: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/addresses/for-provider/${providerId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Address
      * @name GetAddressGetByAddressType
      * @request GET:/api/v1/addresses/type/{addressType}
      * @secure
@@ -32970,6 +33094,42 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/areas/source/${source}/${sourceId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Area
+     * @name GetAreaGetForProvider
+     * @request GET:/api/v1/areas/for-provider/{providerId}
+     * @secure
+     */
+    getAreaGetForProvider: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/areas/for-provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
@@ -36811,6 +36971,38 @@ export class Api<SecurityDataType extends unknown> {
         path: `/api/v1/banners/global`,
         method: "GET",
         query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Banners
+     * @name PostBannersTrackClick
+     * @request POST:/api/v1/banners/{id}/track-click
+     * @secure
+     */
+    postBannersTrackClick: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/banners/${id}/track-click`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Banners
+     * @name PostBannersTrackImpression
+     * @request POST:/api/v1/banners/{id}/track-impression
+     * @secure
+     */
+    postBannersTrackImpression: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/banners/${id}/track-impression`,
+        method: "POST",
         secure: true,
         ...params,
       }),
@@ -51935,6 +52127,22 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Contests
+     * @name GetContestsGetBySlug
+     * @request GET:/api/v1/community/contests/slug/{slug}
+     * @secure
+     */
+    getContestsGetBySlug: (slug: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/contests/slug/${slug}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Contests
      * @name GetContestsGetWithLeaderboard
      * @request GET:/api/v1/community/contests/{id}/leaderboard
      * @secure
@@ -53371,6 +53579,22 @@ export class Api<SecurityDataType extends unknown> {
       this.http.request<void, any>({
         path: `/api/v1/community/decision-groups/${id}`,
         method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DecisionGroups
+     * @name GetDecisionGroupsGetBySlug
+     * @request GET:/api/v1/community/decision-groups/slug/{slug}
+     * @secure
+     */
+    getDecisionGroupsGetBySlug: (slug: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/decision-groups/slug/${slug}`,
+        method: "GET",
         secure: true,
         ...params,
       }),
@@ -56703,6 +56927,42 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Favorite
+     * @name GetFavoriteGetForProvider
+     * @request GET:/api/v1/favorites/for-provider/{providerId}
+     * @secure
+     */
+    getFavoriteGetForProvider: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/favorites/for-provider/${providerId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Favorite
      * @name GetFavoriteGetByFavoriteType
      * @request GET:/api/v1/favorites/type/{favoriteType}
      * @secure
@@ -59251,6 +59511,42 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/follows/source/${source}/${sourceId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Follow
+     * @name GetFollowGetForProvider
+     * @request GET:/api/v1/follows/for-provider/{providerId}
+     * @secure
+     */
+    getFollowGetForProvider: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/follows/for-provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
@@ -63242,6 +63538,33 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Home
+     * @name GetHomeGetStoreHomeByProvider
+     * @request GET:/api/v1/home/store/provider
+     * @secure
+     */
+    getHomeGetStoreHomeByProvider: (
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home/store/provider`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Home
      * @name GetHomeGetServiceHome
      * @request GET:/api/v1/home/service
      * @secure
@@ -63718,6 +64041,346 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
+     * @tags HomeCenterModel
+     * @name GetHomeCenterModelGetActive
+     * @request GET:/api/v1/home-center-models/active
+     * @secure
+     */
+    getHomeCenterModelGetActive: (
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/active`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name PostHomeCenterModelAddNewModel
+     * @request POST:/api/v1/home-center-models/legacy/add
+     * @secure
+     */
+    postHomeCenterModelAddNewModel: (
+      data: CreateHomeCenterModelRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/legacy/add`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name PatchHomeCenterModelMarkModelInactive
+     * @request PATCH:/api/v1/home-center-models/legacy/{id}/mark-inactive
+     * @secure
+     */
+    patchHomeCenterModelMarkModelInactive: (
+      id: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/legacy/${id}/mark-inactive`,
+        method: "PATCH",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name PostHomeCenterModelCreate
+     * @request POST:/api/v1/home-center-models
+     * @secure
+     */
+    postHomeCenterModelCreate: (
+      data: CreateHomeCenterModelRequest,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /** @format uuid */
+        userId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name PutHomeCenterModelUpdate
+     * @request PUT:/api/v1/home-center-models/{id}
+     * @secure
+     */
+    putHomeCenterModelUpdate: (
+      id: number,
+      data: UpdateHomeCenterModelRequest,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /** @format uuid */
+        userId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/${id}`,
+        method: "PUT",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name DeleteHomeCenterModelDelete
+     * @request DELETE:/api/v1/home-center-models/{id}
+     * @secure
+     */
+    deleteHomeCenterModelDelete: (
+      id: number,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /** @format uuid */
+        userId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/${id}`,
+        method: "DELETE",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name PatchHomeCenterModelToggleActive
+     * @request PATCH:/api/v1/home-center-models/{id}/toggle-active
+     * @secure
+     */
+    patchHomeCenterModelToggleActive: (
+      id: number,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /** @format uuid */
+        userId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/${id}/toggle-active`,
+        method: "PATCH",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name GetHomeCenterModelGetAllWithTenant
+     * @request GET:/api/v1/home-center-models/all
+     * @secure
+     */
+    getHomeCenterModelGetAllWithTenant: (
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /** @format uuid */
+        userId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/all`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name GetHomeCenterModelGetByIdWithTenant
+     * @request GET:/api/v1/home-center-models/{id}/tenant
+     * @secure
+     */
+    getHomeCenterModelGetByIdWithTenant: (
+      id: number,
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /** @format uuid */
+        userId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/${id}/tenant`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name GetHomeCenterModelGetProviderHomeCenterModels
+     * @request GET:/api/v1/home-center-models/provider/{providerId}
+     * @secure
+     */
+    getHomeCenterModelGetProviderHomeCenterModels: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /** @format uuid */
+        userId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/provider/${providerId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name GetHomeCenterModelGetAllGlobal
+     * @request GET:/api/v1/home-center-models/global
+     * @secure
+     */
+    getHomeCenterModelGetAllGlobal: (
+      query?: {
+        /** @format int32 */
+        providerId?: number;
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /** @format uuid */
+        userId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/global`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name PostHomeCenterModelTrackView
+     * @request POST:/api/v1/home-center-models/{id}/track-view
+     * @secure
+     */
+    postHomeCenterModelTrackView: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/${id}/track-view`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterModel
+     * @name PostHomeCenterModelTrackClick
+     * @request POST:/api/v1/home-center-models/{id}/track-click
+     * @secure
+     */
+    postHomeCenterModelTrackClick: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-models/${id}/track-click`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags HomeCenterUpdate
      * @name GetHomeCenterUpdateGetActive
      * @request GET:/api/v1/home-center-updates/active
@@ -64019,6 +64682,38 @@ export class Api<SecurityDataType extends unknown> {
         path: `/api/v1/home-center-updates/global`,
         method: "GET",
         query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterUpdate
+     * @name PostHomeCenterUpdateTrackView
+     * @request POST:/api/v1/home-center-updates/{id}/track-view
+     * @secure
+     */
+    postHomeCenterUpdateTrackView: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-updates/${id}/track-view`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags HomeCenterUpdate
+     * @name PostHomeCenterUpdateTrackClick
+     * @request POST:/api/v1/home-center-updates/{id}/track-click
+     * @secure
+     */
+    postHomeCenterUpdateTrackClick: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/home-center-updates/${id}/track-click`,
+        method: "POST",
         secure: true,
         ...params,
       }),
@@ -67461,6 +68156,42 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Link
+     * @name GetLinkGetForProvider
+     * @request GET:/api/v1/links/for-provider/{providerId}
+     * @secure
+     */
+    getLinkGetForProvider: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/links/for-provider/${providerId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Link
      * @name GetLinkGetByLinkType
      * @request GET:/api/v1/links/type/{linkType}
      * @secure
@@ -70836,6 +71567,42 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/media/source/${source}/${sourceId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Media
+     * @name GetMediaGetForProvider
+     * @request GET:/api/v1/media/for-provider/{providerId}
+     * @secure
+     */
+    getMediaGetForProvider: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/media/for-provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
@@ -79792,6 +80559,22 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Posts
+     * @name GetPostsGetBySlug
+     * @request GET:/api/v1/community/posts/slug/{slug}
+     * @secure
+     */
+    getPostsGetBySlug: (slug: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/posts/slug/${slug}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Posts
      * @name GetPostsGetPublished
      * @request GET:/api/v1/community/posts/published
      * @secure
@@ -85752,6 +86535,22 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Provider
+     * @name GetProviderGetBySlug
+     * @request GET:/api/v1/services/providers/slug/{slug}
+     * @secure
+     */
+    getProviderGetBySlug: (slug: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/providers/slug/${slug}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Provider
      * @name PutProviderUpdate
      * @request PUT:/api/v1/services/providers/update/{id}
      * @secure
@@ -86073,6 +86872,38 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Provider
+     * @name GetProviderGetPublicStoreBySlug
+     * @request GET:/api/v1/services/marketplace/providers/slug/{slug}/store
+     * @secure
+     */
+    getProviderGetPublicStoreBySlug: (
+      slug: string,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/marketplace/providers/slug/${slug}/store`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Provider
      * @name GetProviderGetPublicLinkee
      * @request GET:/api/v1/services/marketplace/providers/{providerId}/linkee
      * @secure
@@ -86083,6 +86914,25 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/services/marketplace/providers/${providerId}/linkee`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Provider
+     * @name GetProviderGetPublicLinkeeBySlug
+     * @request GET:/api/v1/services/marketplace/providers/slug/{slug}/linkee
+     * @secure
+     */
+    getProviderGetPublicLinkeeBySlug: (
+      slug: string,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/marketplace/providers/slug/${slug}/linkee`,
         method: "GET",
         secure: true,
         ...params,
@@ -87866,6 +88716,805 @@ export class Api<SecurityDataType extends unknown> {
         path: `/api/v1/provider/clients/${clientId}/unblock`,
         method: "PUT",
         query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PostProviderContentCreatePost
+     * @request POST:/api/v1/community/provider/{providerId}/content/posts
+     * @secure
+     */
+    postProviderContentCreatePost: (
+      providerId: number,
+      data: CreatePostRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/posts`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetPosts
+     * @request GET:/api/v1/community/provider/{providerId}/content/posts
+     * @secure
+     */
+    getProviderContentGetPosts: (
+      providerId: number,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/posts`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PutProviderContentUpdatePost
+     * @request PUT:/api/v1/community/provider/{providerId}/content/posts/{postId}
+     * @secure
+     */
+    putProviderContentUpdatePost: (
+      providerId: number,
+      postId: number,
+      data: UpdatePostRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/posts/${postId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name DeleteProviderContentDeletePost
+     * @request DELETE:/api/v1/community/provider/{providerId}/content/posts/{postId}
+     * @secure
+     */
+    deleteProviderContentDeletePost: (
+      providerId: number,
+      postId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/posts/${postId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetPost
+     * @request GET:/api/v1/community/provider/{providerId}/content/posts/{postId}
+     * @secure
+     */
+    getProviderContentGetPost: (
+      providerId: number,
+      postId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/posts/${postId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PostProviderContentCreateBlog
+     * @request POST:/api/v1/community/provider/{providerId}/content/blogs
+     * @secure
+     */
+    postProviderContentCreateBlog: (
+      providerId: number,
+      data: CreateBlogRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/blogs`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetBlogs
+     * @request GET:/api/v1/community/provider/{providerId}/content/blogs
+     * @secure
+     */
+    getProviderContentGetBlogs: (
+      providerId: number,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/blogs`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PutProviderContentUpdateBlog
+     * @request PUT:/api/v1/community/provider/{providerId}/content/blogs/{blogId}
+     * @secure
+     */
+    putProviderContentUpdateBlog: (
+      providerId: number,
+      blogId: number,
+      data: UpdateBlogRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/blogs/${blogId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name DeleteProviderContentDeleteBlog
+     * @request DELETE:/api/v1/community/provider/{providerId}/content/blogs/{blogId}
+     * @secure
+     */
+    deleteProviderContentDeleteBlog: (
+      providerId: number,
+      blogId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/blogs/${blogId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetBlog
+     * @request GET:/api/v1/community/provider/{providerId}/content/blogs/{blogId}
+     * @secure
+     */
+    getProviderContentGetBlog: (
+      providerId: number,
+      blogId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/blogs/${blogId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PostProviderContentCreateArticle
+     * @request POST:/api/v1/community/provider/{providerId}/content/articles
+     * @secure
+     */
+    postProviderContentCreateArticle: (
+      providerId: number,
+      data: CreateArticleRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/articles`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetArticles
+     * @request GET:/api/v1/community/provider/{providerId}/content/articles
+     * @secure
+     */
+    getProviderContentGetArticles: (
+      providerId: number,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/articles`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PutProviderContentUpdateArticle
+     * @request PUT:/api/v1/community/provider/{providerId}/content/articles/{articleId}
+     * @secure
+     */
+    putProviderContentUpdateArticle: (
+      providerId: number,
+      articleId: number,
+      data: UpdateArticleRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/articles/${articleId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name DeleteProviderContentDeleteArticle
+     * @request DELETE:/api/v1/community/provider/{providerId}/content/articles/{articleId}
+     * @secure
+     */
+    deleteProviderContentDeleteArticle: (
+      providerId: number,
+      articleId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/articles/${articleId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetArticle
+     * @request GET:/api/v1/community/provider/{providerId}/content/articles/{articleId}
+     * @secure
+     */
+    getProviderContentGetArticle: (
+      providerId: number,
+      articleId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/articles/${articleId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PostProviderContentCreateReel
+     * @request POST:/api/v1/community/provider/{providerId}/content/reels
+     * @secure
+     */
+    postProviderContentCreateReel: (
+      providerId: number,
+      data: CreateReelRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/reels`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetReels
+     * @request GET:/api/v1/community/provider/{providerId}/content/reels
+     * @secure
+     */
+    getProviderContentGetReels: (
+      providerId: number,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/reels`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PutProviderContentUpdateReel
+     * @request PUT:/api/v1/community/provider/{providerId}/content/reels/{reelId}
+     * @secure
+     */
+    putProviderContentUpdateReel: (
+      providerId: number,
+      reelId: number,
+      data: UpdateReelRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/reels/${reelId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name DeleteProviderContentDeleteReel
+     * @request DELETE:/api/v1/community/provider/{providerId}/content/reels/{reelId}
+     * @secure
+     */
+    deleteProviderContentDeleteReel: (
+      providerId: number,
+      reelId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/reels/${reelId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetReel
+     * @request GET:/api/v1/community/provider/{providerId}/content/reels/{reelId}
+     * @secure
+     */
+    getProviderContentGetReel: (
+      providerId: number,
+      reelId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/reels/${reelId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PostProviderContentCreateDecisionGroup
+     * @request POST:/api/v1/community/provider/{providerId}/content/decision-groups
+     * @secure
+     */
+    postProviderContentCreateDecisionGroup: (
+      providerId: number,
+      data: CreateDecisionGroupRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/decision-groups`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetDecisionGroups
+     * @request GET:/api/v1/community/provider/{providerId}/content/decision-groups
+     * @secure
+     */
+    getProviderContentGetDecisionGroups: (
+      providerId: number,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/decision-groups`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PutProviderContentUpdateDecisionGroup
+     * @request PUT:/api/v1/community/provider/{providerId}/content/decision-groups/{decisionGroupId}
+     * @secure
+     */
+    putProviderContentUpdateDecisionGroup: (
+      providerId: number,
+      decisionGroupId: number,
+      data: UpdateDecisionGroupRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/decision-groups/${decisionGroupId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name DeleteProviderContentDeleteDecisionGroup
+     * @request DELETE:/api/v1/community/provider/{providerId}/content/decision-groups/{decisionGroupId}
+     * @secure
+     */
+    deleteProviderContentDeleteDecisionGroup: (
+      providerId: number,
+      decisionGroupId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/decision-groups/${decisionGroupId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetDecisionGroup
+     * @request GET:/api/v1/community/provider/{providerId}/content/decision-groups/{decisionGroupId}
+     * @secure
+     */
+    getProviderContentGetDecisionGroup: (
+      providerId: number,
+      decisionGroupId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/decision-groups/${decisionGroupId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PostProviderContentCreateContest
+     * @request POST:/api/v1/community/provider/{providerId}/content/contests
+     * @secure
+     */
+    postProviderContentCreateContest: (
+      providerId: number,
+      data: CreateLeaderboardContestRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/contests`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetContests
+     * @request GET:/api/v1/community/provider/{providerId}/content/contests
+     * @secure
+     */
+    getProviderContentGetContests: (
+      providerId: number,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/contests`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PutProviderContentUpdateContest
+     * @request PUT:/api/v1/community/provider/{providerId}/content/contests/{contestId}
+     * @secure
+     */
+    putProviderContentUpdateContest: (
+      providerId: number,
+      contestId: number,
+      data: UpdateLeaderboardContestRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/contests/${contestId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name DeleteProviderContentDeleteContest
+     * @request DELETE:/api/v1/community/provider/{providerId}/content/contests/{contestId}
+     * @secure
+     */
+    deleteProviderContentDeleteContest: (
+      providerId: number,
+      contestId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/contests/${contestId}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetContest
+     * @request GET:/api/v1/community/provider/{providerId}/content/contests/{contestId}
+     * @secure
+     */
+    getProviderContentGetContest: (
+      providerId: number,
+      contestId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/contests/${contestId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentGetAllContent
+     * @request GET:/api/v1/community/provider/{providerId}/content
+     * @secure
+     */
+    getProviderContentGetAllContent: (
+      providerId: number,
+      query?: {
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PostProviderContentLinkContent
+     * @request POST:/api/v1/community/provider/{providerId}/content/link
+     * @secure
+     */
+    postProviderContentLinkContent: (
+      providerId: number,
+      data: LinkContentRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/link`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name PostProviderContentUnlinkContent
+     * @request POST:/api/v1/community/provider/{providerId}/content/unlink
+     * @secure
+     */
+    postProviderContentUnlinkContent: (
+      providerId: number,
+      data: UnlinkContentRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/unlink`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderContent
+     * @name GetProviderContentVerifyOwnership
+     * @request GET:/api/v1/community/provider/{providerId}/content/verify/{contentType}/{contentId}
+     * @secure
+     */
+    getProviderContentVerifyOwnership: (
+      providerId: number,
+      contentType: string,
+      contentId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/provider/${providerId}/content/verify/${contentType}/${contentId}`,
+        method: "GET",
         secure: true,
         ...params,
       }),
@@ -93640,6 +95289,22 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Reels
+     * @name GetReelsGetBySlug
+     * @request GET:/api/v1/community/reels/slug/{slug}
+     * @secure
+     */
+    getReelsGetBySlug: (slug: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/community/reels/slug/${slug}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Reels
      * @name GetReelsGetPublished
      * @request GET:/api/v1/community/reels/published
      * @secure
@@ -96057,6 +97722,42 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/reviews/source/${source}/${sourceId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Review
+     * @name GetReviewGetForProvider
+     * @request GET:/api/v1/reviews/for-provider/{providerId}
+     * @secure
+     */
+    getReviewGetForProvider: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/reviews/for-provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
@@ -100384,6 +102085,9 @@ export class Api<SecurityDataType extends unknown> {
         VenueType?: string;
         OffersDeals?: boolean;
         AcceptsGroups?: boolean;
+        /** @format int32 */
+        PreparationId?: number;
+        PreparationIds?: number[];
       },
       params: RequestParams = {},
     ) =>
@@ -100563,6 +102267,9 @@ export class Api<SecurityDataType extends unknown> {
         VenueType?: string;
         OffersDeals?: boolean;
         AcceptsGroups?: boolean;
+        /** @format int32 */
+        PreparationId?: number;
+        PreparationIds?: number[];
       },
       params: RequestParams = {},
     ) =>
@@ -100585,6 +102292,22 @@ export class Api<SecurityDataType extends unknown> {
     getServicesGet: (id: number, params: RequestParams = {}) =>
       this.http.request<void, any>({
         path: `/api/v1/services/${id}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Services
+     * @name GetServicesGetBySlug
+     * @request GET:/api/v1/services/slug/{slug}
+     * @secure
+     */
+    getServicesGetBySlug: (slug: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/services/slug/${slug}`,
         method: "GET",
         secure: true,
         ...params,
@@ -105028,6 +106751,44 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
+     * @tags Testimonial
+     * @name PostTestimonialTrackView
+     * @request POST:/api/v1/testimonials/{id}/track-view
+     * @secure
+     */
+    postTestimonialTrackView: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/testimonials/${id}/track-view`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Testimonial
+     * @name PostTestimonialSetHelpfulness
+     * @request POST:/api/v1/testimonials/{id}/set-helpfulness
+     * @secure
+     */
+    postTestimonialSetHelpfulness: (
+      id: number,
+      data: SetHelpfulnessRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/testimonials/${id}/set-helpfulness`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags TestPayments
      * @name PostTestPaymentsSimulatePayment
      * @request POST:/api/test-payments/simulate-success
@@ -106782,6 +108543,38 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
+     * @tags TopBarText
+     * @name PostTopBarTextTrackView
+     * @request POST:/api/v1/topbar-text/{id}/track-view
+     * @secure
+     */
+    postTopBarTextTrackView: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/topbar-text/${id}/track-view`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags TopBarText
+     * @name PostTopBarTextTrackClick
+     * @request POST:/api/v1/topbar-text/{id}/track-click
+     * @secure
+     */
+    postTopBarTextTrackClick: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/topbar-text/${id}/track-click`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags UGCContent
      * @name PostUgcContentCreateContent
      * @request POST:/api/v1/guider/ugc-content
@@ -108439,6 +110232,42 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/views/source/${source}/${sourceId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags View
+     * @name GetViewGetForProvider
+     * @request GET:/api/v1/views/for-provider/{providerId}
+     * @secure
+     */
+    getViewGetForProvider: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/views/for-provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,
@@ -113266,6 +115095,42 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/wishlists/source/${source}/${sourceId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Wishlist
+     * @name GetWishlistGetForProvider
+     * @request GET:/api/v1/wishlists/for-provider/{providerId}
+     * @secure
+     */
+    getWishlistGetForProvider: (
+      providerId: number,
+      query?: {
+        /** @format int32 */
+        branchId?: number;
+        /** @format uuid */
+        staffId?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/wishlists/for-provider/${providerId}`,
         method: "GET",
         query: query,
         secure: true,

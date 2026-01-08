@@ -4,10 +4,15 @@ import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { ReelPlayer, CommunitySidebar, CommunityRightSidebar, type CommunityTab } from '@/components/community'
 import { useCommunityHome } from '@/hooks/home/useHome'
-import { getReelById } from '@/services/api/reelsApi'
+import { getReelById, getReelBySlug } from '@/services/api/reelsApi'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { cn } from '@/lib/utils'
+
+// Helper function to determine if a string is a number
+const isNumeric = (str: string): boolean => {
+  return /^\d+$/.test(str)
+}
 
 export function ReelDetailsClient({ id }: { id: string }) {
   const activeTab: CommunityTab = 'reels'
@@ -21,13 +26,16 @@ export function ReelDetailsClient({ id }: { id: string }) {
     tagsCount: 10,
   }, true)
 
-  // Fetch reel data
+  // Fetch reel data - support both ID and slug
   const { data: reel, isLoading, error } = useQuery({
     queryKey: ['reel', id],
     queryFn: async () => {
-      const reelId = parseInt(id, 10)
-      if (isNaN(reelId)) throw new Error('Invalid reel ID')
-      return await getReelById(reelId)
+      if (isNumeric(id)) {
+        const reelId = parseInt(id, 10)
+        return await getReelById(reelId)
+      } else {
+        return await getReelBySlug(id)
+      }
     },
     enabled: !!id,
   })

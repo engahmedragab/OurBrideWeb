@@ -61,6 +61,37 @@ export const getPostById = async (id: number): Promise<PostResponse | null> => {
 }
 
 /**
+ * Get post by slug
+ */
+export const getPostBySlug = async (slug: string): Promise<PostResponse | null> => {
+  try {
+    // Try to use slug endpoint if available
+    const api: any = apiClient.api
+    if (api.getPostsGetBySlug) {
+      const response = await api.getPostsGetBySlug(slug)
+      const responseAny: any = response
+      
+      // Handle different response structures
+      if (responseAny?.data?.data) {
+        return responseAny.data.data as PostResponse
+      }
+      if (responseAny?.data) {
+        return responseAny.data as PostResponse
+      }
+      if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+        return responseAny as PostResponse
+      }
+      
+      return null
+    } else {
+      throw new Error('Slug endpoint not available. The backend endpoint /api/v1/community/posts/slug/{slug} needs to be implemented.')
+    }
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch post by slug')
+  }
+}
+
+/**
  * Get published posts
  */
 export const getPublishedPosts = async (params?: {

@@ -4,8 +4,8 @@ import { getApiLanguage } from '@/utils/language'
 
 // Get base URL and ensure it doesn't duplicate /api/v1
 // Note: The generated API endpoints already include /api/v1 in their paths
-// So baseURL should be just the domain (e.g., https://preprod.our-bride.com)
-// NOT https://preprod.our-bride.com/api/v1
+// So baseURL should be just the domain (e.g., http://localhost:5001)
+// NOT http://localhost:5001/api/v1
 const getBaseURL = (): string => {
   const url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://preprod.our-bride.com'
   // Remove trailing slash if present

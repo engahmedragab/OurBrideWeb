@@ -61,6 +61,35 @@ export const getReelById = async (id: number): Promise<ReelResponse | null> => {
 }
 
 /**
+ * Get reel by slug
+ */
+export const getReelBySlug = async (slug: string): Promise<ReelResponse | null> => {
+  try {
+    // Try to use slug endpoint if available
+    const api: any = apiClient.api
+    if (api.getReelsGetBySlug) {
+      const response = await api.getReelsGetBySlug(slug)
+      const responseAny: any = response
+      
+      // Handle different response structures
+      if (responseAny?.data?.data) {
+        return responseAny.data.data as ReelResponse
+      }
+      if (responseAny?.data) {
+        return responseAny.data as ReelResponse
+      }
+      if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+        return responseAny as ReelResponse
+      }
+    }
+    
+    return null
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch reel by slug')
+  }
+}
+
+/**
  * Get published reels
  */
 export const getPublishedReels = async (params?: {

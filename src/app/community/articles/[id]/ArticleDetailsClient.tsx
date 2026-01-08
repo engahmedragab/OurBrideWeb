@@ -5,11 +5,16 @@ import { Footer } from '@/components/layout'
 import { ArticleDetails } from '@/components/community'
 import { CommunitySidebar, CommunityRightSidebar, type CommunityTab } from '@/components/community'
 import { useCommunityHome } from '@/hooks/home/useHome'
-import { getArticleById } from '@/services/api/articlesApi'
+import { getArticleById, getArticleBySlug } from '@/services/api/articlesApi'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { cn } from '@/lib/utils'
 import type { ArticleResponse } from '@/types/responses/community'
+
+// Helper function to determine if a string is a number
+const isNumeric = (str: string): boolean => {
+  return /^\d+$/.test(str)
+}
 
 export function ArticleDetailsClient({ id }: { id: string }) {
   const activeTab: CommunityTab = 'articles'
@@ -23,13 +28,16 @@ export function ArticleDetailsClient({ id }: { id: string }) {
     tagsCount: 10,
   }, true)
 
-  // Fetch article data
+  // Fetch article data - support both ID and slug
   const { data: article, isLoading, error } = useQuery({
     queryKey: ['article', id],
     queryFn: async () => {
-      const articleId = parseInt(id, 10)
-      if (isNaN(articleId)) throw new Error('Invalid article ID')
-      return await getArticleById(articleId)
+      if (isNumeric(id)) {
+        const articleId = parseInt(id, 10)
+        return await getArticleById(articleId)
+      } else {
+        return await getArticleBySlug(id)
+      }
     },
     enabled: !!id,
   })

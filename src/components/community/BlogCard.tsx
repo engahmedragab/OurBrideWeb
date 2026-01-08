@@ -125,7 +125,9 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
   const avatar = getUserAvatar(blog.user)
   const date = formatDate(blog.publishedAt || blog.creationDate)
   
-  const imageUrl = COMMUNITY_IMAGES.DEFAULT_BLOG_IMAGE
+  // Extract images from medias array, fallback to default
+  const medias = (blog as any).medias || []
+  const imageUrl = medias.find((media: any) => media?.url)?.url || COMMUNITY_IMAGES.DEFAULT_BLOG_IMAGE
 
   return (
     <div

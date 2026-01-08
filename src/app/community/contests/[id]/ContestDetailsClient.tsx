@@ -4,11 +4,16 @@ import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { ContestDetails, CommunitySidebar, CommunityRightSidebar, type CommunityTab } from '@/components/community'
 import { useCommunityHome } from '@/hooks/home/useHome'
-import { getContestById } from '@/services/api/contestsApi'
+import { getContestById, getContestBySlug } from '@/services/api/contestsApi'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { cn } from '@/lib/utils'
 import type { LeaderboardContestResponse } from '@/types/responses/community'
+
+// Helper function to determine if a string is a number
+const isNumeric = (str: string): boolean => {
+  return /^\d+$/.test(str)
+}
 
 export function ContestDetailsClient({ id }: { id: string }) {
   const activeTab: CommunityTab = 'contests'
@@ -22,13 +27,16 @@ export function ContestDetailsClient({ id }: { id: string }) {
     tagsCount: 10,
   }, true)
 
-  // Fetch contest data
+  // Fetch contest data - support both ID and slug
   const { data: contest, isLoading, error } = useQuery({
     queryKey: ['contest', id],
     queryFn: async () => {
-      const contestId = parseInt(id, 10)
-      if (isNaN(contestId)) throw new Error('Invalid contest ID')
-      return await getContestById(contestId)
+      if (isNumeric(id)) {
+        const contestId = parseInt(id, 10)
+        return await getContestById(contestId)
+      } else {
+        return await getContestBySlug(id)
+      }
     },
     enabled: !!id,
   })

@@ -75,6 +75,41 @@ export const getProviderById = async (
 }
 
 /**
+ * Get provider details by slug
+ * GET /api/v1/services/providers/slug/{slug}
+ */
+export const getProviderBySlug = async (
+  slug: string
+): Promise<ProviderResponse> => {
+  try {
+    // Try to use slug endpoint if available
+    const api: any = apiClient.api
+    if (api.getProviderGetBySlug) {
+      const response = await api.getProviderGetBySlug(slug)
+      const responseAny: any = response
+      
+      // Handle different response structures
+      if (responseAny?.data?.data) {
+        return responseAny.data.data as ProviderResponse
+      }
+      if (responseAny?.data) {
+        return responseAny.data as ProviderResponse
+      }
+      if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+        return responseAny as ProviderResponse
+      }
+    }
+    
+    throw new Error('Invalid response structure')
+  } catch (error: unknown) {
+    console.error('Error fetching provider by slug:', error)
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch provider details by slug'
+    )
+  }
+}
+
+/**
  * Toggle follow for a provider
  * POST /api/v1/services/providers/follow/{providerId}
  */
@@ -146,6 +181,41 @@ export const submitProviderReview = async (
  * Get provider public profile by ID
  * GET /api/v1/services/marketplace/providers/{providerId}
  */
+/**
+ * Get provider public profile by slug
+ * GET /api/v1/services/providers/public/slug/{slug}
+ */
+export const getProviderPublicProfileBySlug = async (
+  slug: string
+): Promise<ProviderPublicProfileResponse> => {
+  try {
+    // Try to use slug endpoint if available
+    const api: any = apiClient.api
+    if (api.getProviderGetPublicProfileBySlug) {
+      const response = await api.getProviderGetPublicProfileBySlug(slug)
+      const responseAny: any = response
+      
+      // Handle different response structures
+      if (responseAny?.data?.data) {
+        return responseAny.data.data as ProviderPublicProfileResponse
+      }
+      if (responseAny?.data) {
+        return responseAny.data as ProviderPublicProfileResponse
+      }
+      if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+        return responseAny as ProviderPublicProfileResponse
+      }
+    }
+    
+    throw new Error('Invalid response structure')
+  } catch (error: unknown) {
+    console.error('Error fetching provider public profile by slug:', error)
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch provider public profile by slug'
+    )
+  }
+}
+
 export const getProviderPublicProfileById = async (
   providerId: number
 ): Promise<ProviderPublicProfileResponse> => {
@@ -570,6 +640,54 @@ export const getProviderPublicStore = async (
 }
 
 /**
+ * Get provider public store by slug
+ * GET /api/v1/services/marketplace/providers/slug/{slug}/store
+ */
+export const getProviderPublicStoreBySlug = async (
+  slug: string,
+  query?: {
+    page?: number
+    pageSize?: number
+  }
+): Promise<ProviderPublicStoreResponse> => {
+  try {
+    // Try to use slug endpoint if available
+    const api: any = apiClient.api
+    if (api.getProviderGetPublicStoreBySlug) {
+      // Clean query parameters - remove undefined values
+      const cleanQuery = query
+        ? Object.fromEntries(
+            Object.entries(query).filter(([_, value]) => value !== undefined)
+          )
+        : {}
+
+      const response = await api.getProviderGetPublicStoreBySlug(
+        slug,
+        Object.keys(cleanQuery).length > 0 ? cleanQuery : undefined
+      )
+      
+      const responseAny: any = response
+      
+      // Handle different response structures
+      if (responseAny?.data?.data) {
+        return responseAny.data.data as ProviderPublicStoreResponse
+      }
+      if (responseAny?.data) {
+        return responseAny.data as ProviderPublicStoreResponse
+      }
+      if (responseAny && typeof responseAny === 'object' && 'providerId' in responseAny) {
+        return responseAny as ProviderPublicStoreResponse
+      }
+    }
+    
+    throw new Error('Invalid response structure')
+  } catch (error: unknown) {
+    console.error('[getProviderPublicStoreBySlug] Error fetching provider public store by slug:', error)
+    throw error
+  }
+}
+
+/**
  * Get provider Linkee-style public page
  * GET /api/v1/services/marketplace/providers/{providerId}/linkee
  */
@@ -596,6 +714,41 @@ export const getProviderLinkee = async (
     console.error('Error fetching provider linkee:', error)
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch provider linkee'
+    )
+  }
+}
+
+/**
+ * Get provider Linkee-style public page by slug
+ * GET /api/v1/services/marketplace/providers/slug/{slug}/linkee
+ */
+export const getProviderLinkeeBySlug = async (
+  slug: string
+): Promise<ProviderLinkeeResponse> => {
+  try {
+    // Try to use slug endpoint if available
+    const api: any = apiClient.api
+    if (api.getProviderGetPublicLinkeeBySlug) {
+      const response = await api.getProviderGetPublicLinkeeBySlug(slug)
+      const responseAny: any = response
+      
+      // Handle different response structures
+      if (responseAny?.data?.data) {
+        return responseAny.data.data as ProviderLinkeeResponse
+      }
+      if (responseAny?.data) {
+        return responseAny.data as ProviderLinkeeResponse
+      }
+      if (responseAny && typeof responseAny === 'object' && 'providerId' in responseAny) {
+        return responseAny as ProviderLinkeeResponse
+      }
+    }
+    
+    throw new Error('Invalid response structure')
+  } catch (error: unknown) {
+    console.error('Error fetching provider Linkee by slug:', error)
+    throw new Error(
+      error instanceof Error ? error.message : 'Failed to fetch provider Linkee by slug'
     )
   }
 }

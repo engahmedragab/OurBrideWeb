@@ -3,27 +3,45 @@ import { getProductById, getProductBySlug } from '@/services/api/products.api'
 import { mapProductResponseToProduct } from '@/types/api/product.api.types'
 import type { Product } from '@/types/product'
 
+// Helper function to determine if a string is a number
+const isNumeric = (str: string): boolean => {
+  return /^\d+$/.test(str)
+}
+
 /**
- * Hook to fetch product by ID
+ * Hook to fetch product by ID or slug
  */
 export const useProductDetails = (id: string | number | null, enabled = true) => {
-  const productId = typeof id === 'string' ? parseInt(id, 10) : id
+  const idString = typeof id === 'number' ? String(id) : id
 
   return useQuery({
-    queryKey: ['product', productId],
+    queryKey: ['product', idString],
     queryFn: async (): Promise<Product | null> => {
-      if (!productId || isNaN(productId)) {
+      if (!idString) {
         return null
       }
 
-      const product = await getProductById(productId)
+      let product = null
+      
+      // Support both ID and slug
+      if (typeof id === 'number') {
+        product = await getProductById(id)
+      } else if (isNumeric(idString)) {
+        const productId = parseInt(idString, 10)
+        if (!isNaN(productId)) {
+          product = await getProductById(productId)
+        }
+      } else {
+        product = await getProductBySlug(idString)
+      }
+
       if (!product) {
         return null
       }
 
       return mapProductResponseToProduct(product)
     },
-    enabled: enabled && !!productId && !isNaN(productId),
+    enabled: enabled && !!idString,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }

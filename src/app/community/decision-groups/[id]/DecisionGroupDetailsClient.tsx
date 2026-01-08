@@ -4,11 +4,16 @@ import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { DecisionGroupDetails, CommunitySidebar, CommunityRightSidebar, type CommunityTab } from '@/components/community'
 import { useCommunityHome } from '@/hooks/home/useHome'
-import { getDecisionGroupById } from '@/services/api/decisionGroupsApi'
+import { getDecisionGroupById, getDecisionGroupBySlug } from '@/services/api/decisionGroupsApi'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { cn } from '@/lib/utils'
 import type { DecisionGroupResponse } from '@/types/responses/community'
+
+// Helper function to determine if a string is a number
+const isNumeric = (str: string): boolean => {
+  return /^\d+$/.test(str)
+}
 
 export function DecisionGroupDetailsClient({ id }: { id: string }) {
   const activeTab: CommunityTab = 'decision-groups'
@@ -22,13 +27,16 @@ export function DecisionGroupDetailsClient({ id }: { id: string }) {
     tagsCount: 10,
   }, true)
 
-  // Fetch decision group data
+  // Fetch decision group data - support both ID and slug
   const { data: decisionGroup, isLoading, error } = useQuery({
     queryKey: ['decision-group', id],
     queryFn: async () => {
-      const groupId = parseInt(id, 10)
-      if (isNaN(groupId)) throw new Error('Invalid decision group ID')
-      return await getDecisionGroupById(groupId)
+      if (isNumeric(id)) {
+        const groupId = parseInt(id, 10)
+        return await getDecisionGroupById(groupId)
+      } else {
+        return await getDecisionGroupBySlug(id)
+      }
     },
     enabled: !!id,
   })

@@ -125,7 +125,9 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
   const avatar = getUserAvatar(article.user)
   const date = formatDate(article.publishedAt || article.creationDate)
   
-  const imageUrl = COMMUNITY_IMAGES.DEFAULT_ARTICLE_IMAGE
+  // Extract images from medias array, fallback to default
+  const medias = (article as any).medias || []
+  const imageUrl = medias.find((media: any) => media?.url)?.url || COMMUNITY_IMAGES.DEFAULT_ARTICLE_IMAGE
 
   return (
     <div
