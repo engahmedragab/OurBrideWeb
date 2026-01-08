@@ -133,8 +133,6 @@ const ServiceCardItem = memo(({ service }: { service: ServiceCardData }) => {
 })
 ServiceCardItem.displayName = 'ServiceCardItem'
 
-
-
 export default function Home() {
   // Fetch home data from API
   const { data: homeData, isLoading } = useHome()
@@ -174,7 +172,7 @@ export default function Home() {
   //   memberTestimonials.length / PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
   // )
 
-  const currentTestimonials= useMemo(
+  const currentTestimonials = useMemo(
     () =>
       testimonials.slice(
         testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE,
@@ -205,8 +203,8 @@ export default function Home() {
       <main className="flex-1">
         {/* Section 1: Hero */}
         <section className="container-custom py-12 md:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-10 lg:gap-8 items-center">
-            {/* Center Image (يطلع أول حاجة على الموبايل) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-10 lg:gap-10 items-center">
+            {/* Center Image */}
             <div className="order-1 lg:order-2 flex justify-center">
               <div className="relative w-80 h-80 md:w-96 md:h-96">
                 {/* 1) Base SVG Border (no blur) */}
@@ -268,7 +266,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Left Content (يجي بعد الصورة على الموبايل) */}
+            {/* Left Content*/}
             <div className="order-2 lg:order-1 flex flex-col gap-4 md:gap-6 items-center lg:items-start text-center lg:text-left">
               {/* Active Users */}
               <div className="flex justify-center lg:justify-start w-full">
@@ -295,9 +293,9 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Right Content (آخر حاجة على الموبايل) */}
-            <div className="order-3 lg:order-3 relative flex flex-col items-center gap-4 z-10 w-full">
-              {/* Circular Badge Button (مخفي على الموبايل لأنه مش ظاهر بالصورة) */}
+            {/* Right Content */}
+            <div className="order-3 lg:order-3 relative flex flex-col items-center gap-4 z-10 w-full ">
+              {/* Circular Badge Button */}
               <div className="hidden lg:flex relative w-24 h-24 md:w-28 md:h-28 items-center justify-center">
                 <svg
                   viewBox="0 0 120 120"
@@ -341,7 +339,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Cards: على الموبايل جنب بعض، على lg تحت بعض */}
+              {/* Cards*/}
               <div className="w-full grid grid-cols-2 gap-3 lg:flex lg:flex-col lg:gap-4 lg:items-center">
                 {/* Products Card */}
                 <div className="relative w-full max-w-[190px] mx-auto lg:w-48 bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
@@ -366,7 +364,9 @@ export default function Home() {
                       className="w-full text-14 border rounded-full border-primary-500 text-primary-500 hover:text-primary-600 hover:border-primary-600"
                       asChild
                     >
-                      <Link href="/products">Explore Products</Link>
+                      <Link href="/products" className="text-14 text-nowrap">
+                        Explore Products
+                      </Link>
                     </Button>
                   </div>
                 </div>
@@ -394,7 +394,9 @@ export default function Home() {
                       className="w-full text-14 border rounded-full border-primary-500 text-primary-500 hover:text-primary-600 hover:border-primary-600"
                       asChild
                     >
-                      <Link href="/services">Explore Services</Link>
+                      <Link href="/services" className="text-14 text-nowrap">
+                        Explore Services
+                      </Link>
                     </Button>
                   </div>
                 </div>
@@ -453,7 +455,6 @@ export default function Home() {
         </section>
 
         {/* Section 4: Benefits */}
-
         <section className="container-custom py-12 md:py-16">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-9 md:gap-8">
             {/* Item 1 */}
@@ -539,12 +540,12 @@ export default function Home() {
         {/* Section 5: Suggested Products */}
         <section className="container-custom py-12 md:py-16">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-22 sm:text-26 md:text-30 lg:text-32 font-normal text-gray-900">
+            <h2 className="text-16 md:text-30 lg:text-32 font-normal text-gray-900">
               Products Suggested for You
             </h2>
             <Link
               href="/products"
-              className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
+              className="flex items-center gap-2 text-16 font-normal text-brand-500 hover:text-brand-600 transition-colors"
             >
               View All
             </Link>
@@ -553,9 +554,11 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              products.slice(0, 4).map(product => (
-                <ProductCardItem key={product.id} product={product} />
-              ))
+              products
+                .slice(0, 4)
+                .map(product => (
+                  <ProductCardItem key={product.id} product={product} />
+                ))
             )}
           </div>
         </section>
@@ -563,12 +566,12 @@ export default function Home() {
         {/* Section 6: Suggested Services */}
         <section className="container-custom py-12 md:py-16">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
+            <h2 className="text-16 md:text-28 lg:text-32 font-normal text-gray-900">
               Services Suggested for You
             </h2>
             <Link
               href="/services"
-              className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
+              className="flex items-center gap-2 text-16 font-normal text-brand-500 hover:text-brand-600 transition-colors"
             >
               View All
             </Link>
@@ -577,16 +580,18 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              services.slice(0, 4).map(service => (
-                <ServiceCardItem key={service.id} service={service} />
-              ))
+              services
+                .slice(0, 4)
+                .map(service => (
+                  <ServiceCardItem key={service.id} service={service} />
+                ))
             )}
           </div>
         </section>
 
         {/* Section 7: Why Trust Section */}
         <section className="relative py-16 md:py-20 overflow-hidden bg-white">
-          <div className="absolute inset-0 opacity-30 pointer-events-none">
+          <div className="absolute inset-0 opacity-30 pointer-events-none ">
             <Image
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
               alt=""
@@ -598,7 +603,7 @@ export default function Home() {
           </div>
           <div className="container-custom relative z-10">
             <div className="text-center mb-10 md:mb-12">
-              <h2 className="text-5xl font-black">
+              <h2 className="text-3xl md:text-5xl font-black">
                 <span className="font-normal text-gray-900">
                   Why{' '}
                   <span className="font-semibold text-gray-900">Brides</span>
@@ -619,10 +624,13 @@ export default function Home() {
         </section>
 
         {/* Section 8: Testimonials */}
-        <TestimonialsHomeSection testimonials={testimonials} isLoading={isLoading} />
+        <TestimonialsHomeSection
+          testimonials={testimonials}
+          isLoading={isLoading}
+        />
 
         {/* Section 9: Providers */}
-     
+
         <ProvidersSliderSection providers={providers} isLoading={isLoading} />
 
         {/* Section 10: Wedding Journey */}
@@ -633,13 +641,13 @@ export default function Home() {
               alt=""
               fill
               sizes="100vw"
-              className="object-cover"
+              className="object-cover object-[30%_90%]  -translate-y-16 md:translate-y-0"
               aria-hidden="true"
             />
           </div>
           <div className="container-custom relative z-10">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
+              <h2 className="text-28 md:text-36 lg:text-5xl font-black mb-4 md:mb-6">
                 <span className="font-normal text-gray-900">
                   Your Wedding{' '}
                   <span className="font-semibold text-gray-900">Journey</span>
@@ -756,39 +764,63 @@ export default function Home() {
         */}
 
         {/* Section: App Download */}
-        <section className="relative overflow-hidden bg-white py-0">
-          <div className="container-custom">
-            <div className="text-center mb-0">
-              <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900 leading-tight">
-                <span className="font-normal block">
-                  Make Wedding Planning Easier
+        <section className="relative overflow-hidden bg-white">
+          <div className="container-custom pt-16 md:pt-20">
+            <div className="text-center mb-4">
+              <h2 className="text-28  lg:text-5xl font-black text-gray-900 leading-normal">
+                <span className="font-semibold"> Make Wedding</span>
+
+                <span className="font-normal"> Planning Easier</span>
+                <span className="font-normal">
+                  <br />
+                  With
                 </span>
-                <span className="font-semibold">With OurBride</span>
+                <span className="font-semibold"> OurBride</span>
               </h2>
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center mb-0">
-                <StoreBadges size="2xl" />
+              <div className="flex items-center justify-center flex-nowrap mb-5 order-2 md:order-1">
+                <StoreBadges
+                  size="2xl"
+                  widthClassName="w-[150px] lg:w-[200px]"
+                  className="md:!flex-row"
+                />
               </div>
 
-              <div className="relative flex items-center justify-center w-full h-auto mt-0">
-                {/* Background Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-brand-400 via-brand-300 to-brand-200 rounded-full opacity-30 blur-3xl" />
+              {/* phone image */}
+              <div className="relative flex items-start justify-center w-full h-auto order-1 md:order-2">
+                <div className="relative w-[450px] md:w-[600px] lg:w-[700px] aspect-[3/2] flex items-center justify-center">
+                  {/* Frame */}
+                  <div className="absolute z-0 w-[70%] md:w-[65%] lg:w-[67%] -translate-y-14">
+                    <Image
+                      src={
+                        typeof phoneFrame === 'string'
+                          ? phoneFrame
+                          : phoneFrame.src
+                      }
+                      alt="Background Frame"
+                      width={600}
+                      height={600}
+                      className="object-contain blur-sm opacity-70"
+                    />
+                  </div>
 
-                {/* Phone Image */}
-                <div className="relative z-10 w-[650px] md:w-[850px] lg:w-[1000px] aspect-[26/16]">
-                  <Image
-                    src={
-                      typeof phoneImage === 'string'
-                        ? phoneImage
-                        : phoneImage.src
-                    }
-                    alt="OurBride Mobile App"
-                    fill
-                    sizes="(max-width: 768px) 650px, (max-width: 1024px) 850px, 1000px"
-                    className="object-contain drop-shadow-2xl"
-                  />
+                  {/* Phone */}
+                  <div className="relative z-10 w-full h-full">
+                    <Image
+                      src={
+                        typeof phoneImage === 'string'
+                          ? phoneImage
+                          : phoneImage.src
+                      }
+                      alt="OurBride Mobile App"
+                      fill
+                      sizes="(max-width: 768px) 450px, (max-width: 1024px) 550px, 700px"
+                      className="object-contain drop-shadow-2xl"
+                      priority
+                    />
+                  </div>
                 </div>
               </div>
             </div>

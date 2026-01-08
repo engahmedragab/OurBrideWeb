@@ -54,18 +54,18 @@ export const TRUST_CARDS = [
 export const JOURNEY_STEPS = [
   {
     stepNumber: 1,
-    title: 'Step #1',
-    description: 'Exclusive coupons and discounts designed for your budget.',
+    title: 'Discover Services',
+    description: 'Browse trusted providers and find what you need easily',
   },
   {
     stepNumber: 2,
-    title: 'Step #2',
-    description: 'Exclusive coupons and discounts designed for your budget.',
+    title: 'Book Instantly',
+    description: 'Choose your service and confirm your booking within minutes',
   },
   {
     stepNumber: 3,
-    title: 'Step #3',
-    description: 'Exclusive coupons and discounts designed for your budget.',
+    title: 'Plan Smoothly',
+    description: 'Manage events, track progress, and enjoy stress-free planning',
   },
 ] as const
 

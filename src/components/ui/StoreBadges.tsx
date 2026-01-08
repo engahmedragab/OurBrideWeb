@@ -4,7 +4,9 @@ export interface StoreBadgesProps {
   className?: string
   appStoreUrl?: string
   playStoreUrl?: string
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
+  /** optional override from parent */
+  widthClassName?: string
 }
 
 // App Store constants
@@ -19,22 +21,24 @@ export const StoreBadges = ({
   appStoreUrl = defaultAppStoreUrl,
   playStoreUrl = defaultPlayStoreUrl,
   size = 'md',
+  widthClassName,
 }: StoreBadgesProps) => {
   const sizeClasses: Record<string, string> = {
-    sm: 'h-8',
-    md: 'h-10',
-    lg: 'h-12',
-    xl: 'h-16',
-    '2xl': 'h-24',
+    sm: 'w-[105px] md:w-[115px] lg:w-[125px]',
+    md: 'w-[120px] md:w-[140px] lg:w-[155px]',
+    lg: 'w-[135px] md:w-[155px] lg:w-[175px]',
+    xl: 'w-[150px] md:w-[170px] lg:w-[190px]',
+    '2xl': 'w-[120px] md:w-[150px] lg:w-[180px]',
+    '3xl': 'w-[150px] md:w-[190px] lg:w-[230px]',
   }
 
+  const svgClassName = cn(
+    'block h-auto',
+    widthClassName ?? (sizeClasses[size] || sizeClasses.md)
+  )
+
   return (
-    <div
-      className={cn(
-        'flex md:flex-col md:gap-2 lg:flex-row gap-4 lg:gap-4',
-        className
-      )}
-    >
+    <div className={cn('flex md:flex-col md:gap-2 lg:flex-row gap-4 lg:gap-4', className)}>
       {/* Apple App Store */}
       <a
         href={appStoreUrl}
@@ -44,14 +48,13 @@ export const StoreBadges = ({
         className="inline-block hover:opacity-80 transition-opacity"
       >
         <svg
-          width="120"
-          height="112"
           viewBox="0 0 334 112"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className={sizeClasses[size] || sizeClasses.md}
+          preserveAspectRatio="xMidYMid meet"
+          className={svgClassName}
         >
-          <rect
+         <rect
             x="1.38909"
             y="1.38909"
             width="330.604"
@@ -96,12 +99,11 @@ export const StoreBadges = ({
         className="inline-block hover:opacity-80 transition-opacity"
       >
         <svg
-          width="120"
-          height="112"
           viewBox="0 0 334 112"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className={sizeClasses[size] || sizeClasses.md}
+          preserveAspectRatio="xMidYMid meet"
+          className={svgClassName}
         >
           <rect
             x="1.38905"

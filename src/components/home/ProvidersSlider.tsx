@@ -40,7 +40,7 @@ export default function ProvidersSliderSection({
   return (
     <section className="container-custom py-12 md:py-16">
       <div className="text-center mb-8 md:mb-12">
-        <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
+        <h2 className="text-28  lg:text-5xl font-black mb-4 md:mb-6">
           <span className="font-normal text-gray-900">
             Discover <span className="font-semibold text-gray-900">Trusted</span>
           </span>

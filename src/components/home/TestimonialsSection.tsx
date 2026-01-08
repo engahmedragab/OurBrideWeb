@@ -83,11 +83,11 @@ export default function TestimonialsHomeSection({
     <section className="container-custom py-12 md:py-16">
       <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
         {/* Left Side */}
-        <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
-          <div className="flex-1 lg:max-w-md">
-            <div className="mb-4 md:mb-6">
+        <div className="w-full lg:w-auto lg:flex-shrink-0 flex justify-center lg:justify-start">
+          <div className="w-full lg:max-w-md text-center lg:text-left">
+            <div className="mb-4 md:mb-6 flex flex-col items-center lg:items-start">
               <QuoteIcon />
-              <p className="text-18 sm:text-20 md:text-24 lg:text-28 pt-5 font-normal text-gray-900">
+              <p className="text-16 md:text-24 lg:text-4xl pt-5 font-normal text-gray-900 flex gap-1 md:block md:gap-0">
                 <span className="block">What Our</span>
                 <span className="block font-semibold text-gray-900">
                   Customers
@@ -122,12 +122,14 @@ export default function TestimonialsHomeSection({
                   768: { slidesPerView: 2 },
                   1024: { slidesPerView: 3 },
                 }}
-                onBreakpoint={(swiper) =>{    
-                      swiper.update()
-                     updateActiveGroup(swiper)} }
-                onSlideChange={(swiper) =>{    
-                    swiper.update()
-                   updateActiveGroup(swiper)}}
+                onBreakpoint={(swiper) => {
+                  swiper.update()
+                  updateActiveGroup(swiper)
+                }}
+                onSlideChange={(swiper) => {
+                  swiper.update()
+                  updateActiveGroup(swiper)
+                }}
               >
                 {testimonials.map((testimonial, index) => (
                   <SwiperSlide key={`t-${index}`} className="h-auto">
