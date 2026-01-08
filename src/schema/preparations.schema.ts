@@ -28,12 +28,10 @@ export const preparationLineSchema = z.object({
   providerUserName: z
     .string()
     .trim()
-    .optional()
-    .transform((val) => val || ''),
+    .default(''),
   purchaseDate: z
     .string()
-    .optional()
-    .transform((val) => val || ''),
+    .default(''),
   completed: z
     .boolean()
     .default(false),

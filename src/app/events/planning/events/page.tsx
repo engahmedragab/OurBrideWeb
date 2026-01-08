@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import Link from 'next/link'
 import {
   PlanningMiniCalendar,
@@ -15,6 +15,7 @@ import { useEventId } from '@/hooks/planning'
 import { useToast } from '@/components/ui/Toaster'
 import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
 import type { EventBookRequest, EventLineRequest, EventLineCategoryRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { UseMutationResult } from '@tanstack/react-query'
 
 /**
  * Extended EventBook type with categories for local state management
@@ -208,7 +209,7 @@ const hasActualChanges = (
  * Events Page
  * Displays the planning calendar with day details rendered in-place
  */
-export default function EventsPage() {
+function EventsPageContent() {
   const { addToast } = useToast()
   const eventId = useEventId()
   const today = getToday()
@@ -502,12 +503,26 @@ export default function EventsPage() {
                   }
                 }}
                 onSync={handleSave}
-                syncMutation={syncMutation}
+                syncMutation={syncMutation as UseMutationResult<unknown, Error, unknown, unknown>}
               />
             </div>
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+export default function EventsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <p className="text-gray-500">Loading events...</p>
+        </div>
+      </div>
+    }>
+      <EventsPageContent />
+    </Suspense>
   )
 }

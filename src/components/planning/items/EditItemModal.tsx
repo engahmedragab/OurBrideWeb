@@ -10,15 +10,31 @@ import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { X } from 'lucide-react'
 
+// Helper to convert string/number/empty to number | undefined
+const numberOrUndefined = z
+  .union([z.string(), z.number(), z.undefined()])
+  .transform((v): number | undefined => {
+    if (v === '' || v === null || v === undefined) return undefined
+    if (typeof v === 'number') return v
+    if (typeof v === 'string') {
+      const num = Number(v)
+      return Number.isNaN(num) ? undefined : num
+    }
+    return undefined
+  })
+  .pipe(z.number().optional())
+
 const itemSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
-  quantity: z
-    .preprocess((v) => (v === '' || v === null || v === undefined ? undefined : Number(v)), z.number().optional())
-    .refine((v) => v === undefined || (!Number.isNaN(v) && v >= 0), 'Quantity must be a valid number'),
-  totalPrice: z
-    .preprocess((v) => (v === '' || v === null || v === undefined ? undefined : Number(v)), z.number().optional())
-    .refine((v) => v === undefined || (!Number.isNaN(v) && v >= 0), 'Total price must be a valid number'),
+  quantity: numberOrUndefined.refine(
+    (v) => v === undefined || (!Number.isNaN(v) && v >= 0),
+    'Quantity must be a valid number'
+  ),
+  totalPrice: numberOrUndefined.refine(
+    (v) => v === undefined || (!Number.isNaN(v) && v >= 0),
+    'Total price must be a valid number'
+  ),
   providerName: z.string().optional(),
   buyDate: z.string().optional(),
   isDone: z.boolean().default(false),
@@ -65,7 +81,7 @@ export const EditItemModal = ({
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<EditItemFormValues>({
-    resolver: zodResolver(itemSchema),
+    resolver: zodResolver(itemSchema) as any,
     defaultValues: {
       name: '',
       description: '',
