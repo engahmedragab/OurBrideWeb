@@ -80,6 +80,66 @@ export interface ServicesProductsSliderProps {
  * Each card has image on left (1/4 width) and content on right.
  * Navigation buttons are vertically centered.
  */
+// Component to handle image errors per product
+const ProductCard = ({ product }: { product: Product }) => {
+  const [imageError, setImageError] = React.useState(false)
+  
+  return (
+    <Link href={product.href} className={productCardVariants({ hover: true })}>
+      {/* Product Image - Left side, ~1/4 width, full height */}
+      <div className="relative w-1/4 flex-shrink-0 h-full">
+        {product.image && !imageError ? (
+          <Image
+            src={product.image}
+            alt={product.title}
+            fill
+            className="object-cover rounded-l-lg"
+            sizes="(max-width: 640px) 25vw, 25vw"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+            <span className="text-gray-400 text-10 font-medium">
+              No image available
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Product Info - Right side, compact layout */}
+      <div className="flex-1 p-3 md:p-4 flex flex-col justify-between gap-2">
+        <div className="flex flex-col gap-1.5">
+          <h3 className="text-13 md:text-15 font-medium text-gray-900 leading-tight line-clamp-2">
+            {product.title}
+          </h3>
+          <div className="flex items-center justify-between gap-2">
+            {/* Rating and Price on same line */}
+            <RatingDisplay
+              rating={product.rating}
+              size="sm"
+              format="value-only"
+              variant="compact"
+              showValue={true}
+              className="gap-1"
+            />
+            <PriceDisplay
+              discounted={product.price}
+              currency={product.currency}
+              size="md"
+              variant="inline"
+              showOriginal={false}
+              discountedClassName="text-14 md:text-16 font-semibold"
+            />
+          </div>
+        </div>
+        <div className={ctaTextVariants({ intent: 'primary' })}>
+          {product.ctaText || 'Explore Now'}
+        </div>
+      </div>
+    </Link>
+  )
+}
+
 export const ServicesProductsSlider = ({
   products,
   className,
@@ -116,51 +176,7 @@ export const ServicesProductsSlider = ({
       >
         {products.map(product => (
           <SwiperSlide key={product.id}>
-            <Link href={product.href}>
-              <div className={productCardVariants({ hover: true })}>
-                {/* Product Image - Left side, ~1/4 width, full height */}
-                <div className="relative w-1/4 flex-shrink-0 h-full">
-                  <Image
-                    src={product.image}
-                    alt={product.title}
-                    fill
-                    className="object-cover rounded-l-lg"
-                    sizes="(max-width: 640px) 25vw, 25vw"
-                  />
-                </div>
-
-                {/* Product Info - Right side, compact layout */}
-                <div className="flex-1 p-3 md:p-4 flex flex-col justify-between gap-2">
-                  <div className="flex flex-col gap-1.5">
-                    <h3 className="text-13 md:text-15 font-medium text-gray-900 leading-tight line-clamp-2">
-                      {product.title}
-                    </h3>
-                    <div className="flex items-center justify-between gap-2">
-                      {/* Rating and Price on same line */}
-                      <RatingDisplay
-                        rating={product.rating}
-                        size="sm"
-                        format="value-only"
-                        variant="compact"
-                        showValue={true}
-                        className="gap-1"
-                      />
-                      <PriceDisplay
-                        discounted={product.price}
-                        currency={product.currency}
-                        size="md"
-                        variant="inline"
-                        showOriginal={false}
-                        discountedClassName="text-14 md:text-16 font-semibold"
-                      />
-                    </div>
-                  </div>
-                  <div className={ctaTextVariants({ intent: 'primary' })}>
-                    {product.ctaText || 'Explore Now'}
-                  </div>
-                </div>
-              </div>
-            </Link>
+            <ProductCard product={product} />
           </SwiperSlide>
         ))}
       </Swiper>

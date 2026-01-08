@@ -24,6 +24,7 @@ import {
   X,
   CreditCard,
   TrendingUp,
+  User,
 } from 'lucide-react'
 import affiliateStartingSvg from '@/assets/svg/Affiliate-starting.svg'
 
@@ -324,58 +325,58 @@ export default function AffiliatePage() {
     <UserPageLayout>
       {/* Tabs */}
       <div className="mb-4 sm:mb-6 -mx-4 sm:mx-0">
-        <div className="border-b border-gray-200 overflow-x-auto">
-          <nav className="flex gap-4 sm:gap-6 md:gap-8 px-4 sm:px-0 min-w-max sm:min-w-0">
+        <div className="border-b border-gray-200">
+          <nav className="flex w-full">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
+              className={`flex-1 pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'overview'
-                  ? 'text-brand-500'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-gray-900'
+                  : 'text-gray-500'
               }`}
             >
               Overview
               {activeTab === 'overview' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300" />
               )}
             </button>
             <button
               onClick={() => setActiveTab('campaigns')}
-              className={`pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
+              className={`flex-1 pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'campaigns'
-                  ? 'text-brand-500'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-gray-900'
+                  : 'text-gray-500'
               }`}
             >
               Campaigns
               {activeTab === 'campaigns' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300" />
               )}
             </button>
             <button
               onClick={() => setActiveTab('tools')}
-              className={`pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
+              className={`flex-1 pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'tools'
-                  ? 'text-brand-500'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-gray-900'
+                  : 'text-gray-500'
               }`}
             >
               Tools
               {activeTab === 'tools' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300" />
               )}
             </button>
             <button
               onClick={() => setActiveTab('wallet')}
-              className={`pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
+              className={`flex-1 pb-3 sm:pb-4 px-1 text-13 sm:text-14 font-medium transition-colors relative whitespace-nowrap ${
                 activeTab === 'wallet'
-                  ? 'text-brand-500'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-gray-900'
+                  : 'text-gray-500'
               }`}
             >
               Wallet
               {activeTab === 'wallet' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300" />
               )}
             </button>
           </nav>
@@ -450,14 +451,20 @@ export default function AffiliatePage() {
                 {activityItems.map(item => (
                   <div key={item.id} className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-start gap-3">
-                      <div className="relative w-10 h-10 flex-shrink-0">
-                        <Image
-                        src={item.userAvatar}
-                        alt={item.userName}
-                          fill
-                          sizes="40px"
-                          className="rounded-full object-cover"
-                      />
+                      <div className="relative w-10 h-10 flex-shrink-0 bg-gray-100 rounded-full overflow-hidden">
+                        {item.userAvatar && item.userAvatar.trim() !== '' ? (
+                          <Image
+                            src={item.userAvatar}
+                            alt={item.userName}
+                            fill
+                            sizes="40px"
+                            className="rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                            <User className="h-5 w-5 text-gray-400" />
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
@@ -550,7 +557,7 @@ export default function AffiliatePage() {
                       </p>
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <p className="text-13 sm:text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
-                        <Button variant="brand" size="md" className="text-white w-full sm:w-auto">
+                        <Button variant="outline" size="md" className="text-red-500 border-red-500 hover:bg-red-50 hover:text-red-500 w-full sm:w-auto">
                           Generate Link
                         </Button>
                       </div>
@@ -574,7 +581,7 @@ export default function AffiliatePage() {
                       </p>
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <p className="text-13 sm:text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
-                        <Button variant="brand" size="md" className="text-white w-full sm:w-auto">
+                        <Button variant="outline" size="md" className="text-red-500 border-red-500 hover:bg-red-50 hover:text-red-500 w-full sm:w-auto">
                           Generate Link
                         </Button>
                       </div>
@@ -598,14 +605,20 @@ export default function AffiliatePage() {
                 {activityItems.map(item => (
                   <div key={item.id} className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-start gap-3">
-                      <div className="relative w-10 h-10 flex-shrink-0">
-                        <Image
-                        src={item.userAvatar}
-                        alt={item.userName}
-                          fill
-                          sizes="40px"
-                          className="rounded-full object-cover"
-                      />
+                      <div className="relative w-10 h-10 flex-shrink-0 bg-gray-100 rounded-full overflow-hidden">
+                        {item.userAvatar && item.userAvatar.trim() !== '' ? (
+                          <Image
+                            src={item.userAvatar}
+                            alt={item.userName}
+                            fill
+                            sizes="40px"
+                            className="rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                            <User className="h-5 w-5 text-gray-400" />
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">
@@ -765,7 +778,7 @@ export default function AffiliatePage() {
                           readOnly
                           className="flex-1"
                         />
-                        <Button variant="brand" size="md" className="text-white px-4 whitespace-nowrap w-full sm:w-auto">
+                        <Button  size="md" className="text-red-500 border-red-500 hover:bg-red-50 hover:text-red-500 px-4 whitespace-nowrap w-full sm:w-auto">
                           Regenerate Link
                         </Button>
                       </div>
@@ -820,14 +833,20 @@ export default function AffiliatePage() {
                 {activityItems.map(item => (
                   <div key={item.id} className="bg-gray-50 rounded-lg p-3">
                     <div className="flex items-start gap-3">
-                      <div className="relative w-10 h-10 flex-shrink-0">
-                        <Image
-                        src={item.userAvatar}
-                        alt={item.userName}
-                          fill
-                          sizes="40px"
-                          className="rounded-full object-cover"
-                      />
+                      <div className="relative w-10 h-10 flex-shrink-0 bg-gray-100 rounded-full overflow-hidden">
+                        {item.userAvatar && item.userAvatar.trim() !== '' ? (
+                          <Image
+                            src={item.userAvatar}
+                            alt={item.userName}
+                            fill
+                            sizes="40px"
+                            className="rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                            <User className="h-5 w-5 text-gray-400" />
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-1">

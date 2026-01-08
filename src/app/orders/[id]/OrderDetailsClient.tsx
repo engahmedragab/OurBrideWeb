@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ChevronUp, ExternalLink, FileText, Download, Star, MessageSquare } from 'lucide-react'
+import { ChevronDown, ChevronUp, ExternalLink, FileText, Download, Star, MessageSquare, Package, Truck } from 'lucide-react'
 import { UserPageLayout } from '@/components/layout'
 import {
     PageHeader,
@@ -549,6 +549,52 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                             <div className="text-14 text-gray-600 mb-4">
                                 <p className="font-medium text-gray-900 mb-2">Delivery Status:</p>
                                 <DeliveryStatusBadge status={deliveryStatus} />
+                            </div>
+                        )}
+
+                        {/* Tracking Options */}
+                        {(orderNumber || orderIdString) && (
+                            <div className="text-14 text-gray-600 mb-4 space-y-3">
+                                <p className="font-medium text-gray-900">Track Your Order</p>
+                                
+                                {/* Tracking Number Option */}
+                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    <Package className="h-5 w-5 text-brand-500 flex-shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-12 text-gray-500 mb-1">Tracking Number</p>
+                                        <p className="text-14 font-medium text-gray-900 break-all">
+                                            {orderNumber || orderIdString || `#${order.id}`}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            const trackingNumber = orderNumber || orderIdString || `#${order.id}`
+                                            navigator.clipboard.writeText(trackingNumber)
+                                            addToast('Tracking number copied to clipboard', 'success')
+                                        }}
+                                        className="px-3 py-1.5 text-12 font-medium text-brand-500 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-colors flex-shrink-0"
+                                    >
+                                        Copy
+                                    </button>
+                                </div>
+
+                                {/* Track Order Link Option */}
+                                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    <Truck className="h-5 w-5 text-brand-500 flex-shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-12 text-gray-500 mb-1">Track Online</p>
+                                        <p className="text-14 text-gray-900">
+                                            Track your order status and delivery updates
+                                        </p>
+                                    </div>
+                                    <Link
+                                        href={`/orders/${order.id}`}
+                                        className="px-3 py-1.5 text-12 font-medium text-brand-500 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-colors flex items-center gap-1.5 flex-shrink-0"
+                                    >
+                                        Track
+                                        <ExternalLink className="h-3 w-3" />
+                                    </Link>
+                                </div>
                             </div>
                         )}
 

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Heart, MessageCircle, Share2, MoreVertical, Star } from 'lucide-react'
+import { Heart, MessageCircle, Share2, MoreVertical, Star, User } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
@@ -156,27 +156,18 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            {avatar ? (
+            {avatar && !imageError ? (
               <Image
                 src={avatar}
                 alt={displayName}
                 fill
                 sizes="40px"
                 className="object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
+                onError={() => setImageError(true)}
               />
-            ) : null}
-            {!avatar && (
-              <div className="w-full h-full flex items-center justify-center bg-white">
-                <Image
-                  src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                  alt="OurBride"
-                  width={24}
-                  height={24}
-                  className="object-contain"
-                />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                <User className="h-5 w-5 text-gray-400" />
               </div>
             )}
           </div>

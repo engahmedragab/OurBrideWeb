@@ -1,6 +1,8 @@
 'use client'
 
+import React from 'react'
 import Image from 'next/image'
+import { User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { RatingDisplay } from './RatingDisplay'
 
@@ -27,6 +29,7 @@ export const TestimonialCard = ({
   reviewerImage,
   className,
 }: TestimonialCardProps) => {
+  const [imageError, setImageError] = React.useState(false)
   return (
     <div
       className={cn(
@@ -49,17 +52,18 @@ export const TestimonialCard = ({
       <div className="flex items-center gap-3 pt-2 border-t border-gray-200">
         {/* Profile Picture */}
         <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-          {reviewerImage ? (
+          {reviewerImage && !imageError ? (
             <Image
               src={reviewerImage}
               alt={reviewerName}
               fill
               className="object-cover"
               sizes="48px"
+              onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600 text-white text-18 font-semibold">
-              {reviewerName.charAt(0).toUpperCase()}
+            <div className="w-full h-full flex items-center justify-center bg-gray-200">
+              <User className="h-6 w-6 text-gray-400" />
             </div>
           )}
         </div>

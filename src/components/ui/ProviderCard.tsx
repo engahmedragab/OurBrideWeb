@@ -40,6 +40,7 @@ export const ProviderCard = ({
   isLoadingFavorite = false,
   className,
 }: ProviderCardProps) => {
+  const [imageError, setImageError] = React.useState(false)
   const { isProviderInFavorite } = useFavoriteItems()
   const { isProviderFollowed } = useFollowItems()
   const providerId = parseInt(provider.id, 10)
@@ -137,18 +138,19 @@ export const ProviderCard = ({
       >
         {/* Image with inner border */}
         <div className="relative w-full h-full rounded-full border-2 border-pink-200 overflow-hidden shadow-[0_0_0_4px_rgba(251,207,232,0.4),0_0_0_6px_rgba(251,207,232,0.2)]">
-          {provider.image && provider.image.trim() !== '' ? (
+          {provider.image && provider.image.trim() !== '' && !imageError ? (
             <Image
               src={provider.image}
               alt={provider.name}
               fill
               sizes="112px"
               className="object-cover"
+              onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-              <span className="text-white text-32 font-semibold">
-                {provider.name.charAt(0).toUpperCase()}
+            <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
+              <span className="text-gray-400 text-10 font-medium">
+                No image available
               </span>
             </div>
           )}

@@ -22,6 +22,7 @@ export const ProductImageGallery = ({
   )
 
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
 
   const goToPrevious = () => {
     setSelectedIndex(prev => (prev === 0 ? validImages.length - 1 : prev - 1))
@@ -45,7 +46,7 @@ export const ProductImageGallery = ({
     <div className={cn('space-y-4', className)}>
       {/* Main Image */}
       <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden group">
-        {validImages[selectedIndex] ? (
+        {validImages[selectedIndex] && !imageErrors.has(selectedIndex) ? (
           <Image
             src={validImages[selectedIndex]}
             alt={`${productName} - Image ${selectedIndex + 1}`}
@@ -53,10 +54,13 @@ export const ProductImageGallery = ({
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             priority={selectedIndex === 0}
+            onError={() => setImageErrors(prev => new Set(prev).add(selectedIndex))}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            No image
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <span className="text-gray-400 text-12 font-medium">
+              No image available
+            </span>
           </div>
         )}
 
@@ -102,17 +106,20 @@ export const ProductImageGallery = ({
                   : 'border-gray-200 hover:border-gray-300'
               )}
             >
-              {image && image.trim() !== '' ? (
+              {image && image.trim() !== '' && !imageErrors.has(index) ? (
                 <Image
                   src={image}
                   alt={`${productName} thumbnail ${index + 1}`}
                   fill
                   sizes="(max-width: 768px) 25vw, 12vw"
                   className="object-cover"
+                  onError={() => setImageErrors(prev => new Set(prev).add(index))}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 text-10">
-                  No image
+                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                  <span className="text-gray-400 text-10 font-medium">
+                    No image available
+                  </span>
                 </div>
               )}
             </button>

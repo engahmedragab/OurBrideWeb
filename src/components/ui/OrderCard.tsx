@@ -80,6 +80,8 @@ export const OrderCard = ({
   className,
 }: OrderCardProps) => {
   const [isSummaryOpen, setIsSummaryOpen] = useState(true)
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
+  const [providerLogoError, setProviderLogoError] = useState(false)
   const isCompleted = status === 'delivered' || status === 'cancelled'
   const isInProgress = !isCompleted
 
@@ -148,14 +150,23 @@ export const OrderCard = ({
             {providerName && (
               <div className="flex items-center gap-2 mb-2">
                 {providerLogo && (
-                  <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                    <Image
-                      src={providerLogo}
-                      alt={providerName}
-                      fill
-                      sizes="24px"
-                      className="object-cover"
-                    />
+                  <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
+                    {providerLogo && providerLogo.trim() !== '' && !providerLogoError ? (
+                      <Image
+                        src={providerLogo}
+                        alt={providerName}
+                        fill
+                        sizes="24px"
+                        className="object-cover"
+                        onError={() => setProviderLogoError(true)}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-gray-400 text-8 font-medium">
+                          No image available
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
                 {providerId ? (
@@ -280,20 +291,20 @@ export const OrderCard = ({
                     className="flex items-center gap-3 bg-white rounded-lg p-3 border border-gray-200"
                   >
                     <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
-                      {product.image && product.image.trim() !== '' && product.image !== '/placeholder-product.png' && product.image !== '/images/placeholder-product.png' ? (
+                      {product.image && product.image.trim() !== '' && product.image !== '/placeholder-product.png' && product.image !== '/images/placeholder-product.png' && !imageErrors.has(product.id) ? (
                         <Image
                           src={product.image}
                           alt={product.title}
                           fill
                           sizes="64px"
                           className="object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none'
-                          }}
+                          onError={() => setImageErrors(prev => new Set(prev).add(product.id))}
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-10">
-                          No img
+                        <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                          <span className="text-gray-400 text-10 font-medium text-center px-1">
+                            No image available
+                          </span>
                         </div>
                       )}
                     </div>

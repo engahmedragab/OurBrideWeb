@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
-import { RefreshCw, Trash2, X } from 'lucide-react'
+import { RefreshCw, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { UserPageLayout } from '@/components/layout'
 import {
@@ -15,10 +15,12 @@ import {
   PageHeader,
   ErrorDisplay,
   LoadingOverlay,
+  ServicesProductsFilter,
+  Button,
 } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import { useCart, useCartProviders, useUpdatePurchase, useRemovePurchase, useClearCart, useCheckout } from '@/hooks'
-import { getCartByProvider, getCartByCartId } from '@/services/api/purchaseApi'
+import { getCartByProvider } from '@/services/api/purchaseApi'
 import { getProductById } from '@/services/api/products.api'
 import { getUser } from '@/auth/utils/token'
 import type { CheckoutRequest, CustomerRequest } from '@/../client/common/api/gen/ourbride-api'
@@ -34,7 +36,6 @@ import type {
 } from '@/types/responses'
 import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
 import type { CartItemType } from '@/components/ui/CartItem'
-import { ProviderMultiSelect } from '@/components/ui'
 
 /**
  * Map PurchaseResponse to CartProduct using display properties from PurchaseResponse
@@ -286,87 +287,23 @@ export default function CartPage() {
   const [clearAllModalOpen, setClearAllModalOpen] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  // Cart filter state - using cart IDs from CartProviderResponse
-  const [selectedCartIds, setSelectedCartIds] = useState<number[]>([])
+  // Filter by services/products
+  const [itemTypeFilter, setItemTypeFilter] = useState<'services' | 'products'>('products')
 
   // Fetch cart providers (includes cartId for each provider/general cart)
   const { data: cartProviders = [], refetch: refetchProviders, isLoading: isLoadingProviders } = useCartProviders()
-
-  // Find general cart (providerId is null)
-  const generalCartProvider = useMemo(() => {
-    return cartProviders.find(cp => cp.providerId === null || cp.providerId === undefined)
-  }, [cartProviders])
 
   // Get provider carts (excluding general cart)
   const providerCarts = useMemo(() => {
     return cartProviders.filter(cp => cp.providerId !== null && cp.providerId !== undefined)
   }, [cartProviders])
 
-  // Get selected provider IDs for display (for the tags and multi-select)
-  const selectedProviderIds = useMemo(() => {
-    return cartProviders
-      .filter(cp => {
-        const cartId = cp.cartId
-        return cartId !== null && cartId !== undefined && selectedCartIds.includes(cartId)
-      })
-      .map(cp => cp.providerId)
-      .filter((id): id is number => id !== null && id !== undefined)
-  }, [selectedCartIds, cartProviders])
+  // Always fetch general cart data
+  const { data: cartData, isLoading: isLoadingGeneralCart, error, refetch: refetchCart } = useCart(true)
 
-  // Determine if we should fetch general cart
-  // Fetch general cart if: no filters OR general cart is selected
-  const shouldFetchGeneralCart = selectedCartIds.length === 0 ||
-    !!(generalCartProvider && generalCartProvider.cartId && selectedCartIds.includes(generalCartProvider.cartId))
-
-  // Fetch general cart data
-  const { data: cartData, isLoading: isLoadingGeneralCart, error, refetch: refetchCart } = useCart(!!shouldFetchGeneralCart)
-
-  // Fetch carts by ID when filtering
-  // If no filters selected, fetch all provider carts by provider
-  // If filters selected, fetch selected carts by cartId (including general cart if selected)
-  const cartsToFetchById = useMemo(() => {
-    if (selectedCartIds.length === 0) {
-      // No filters - return empty array (we'll fetch provider carts by providerId)
-      return []
-    } else {
-      // Filters applied - fetch all selected carts by cartId
-      return selectedCartIds.filter(cartId => cartId !== null && cartId !== undefined)
-    }
-  }, [selectedCartIds])
-
-  const providerCartsToFetch = useMemo(() => {
-    if (selectedCartIds.length === 0) {
-      // No filters - fetch all provider carts
-      return providerCarts
-    } else {
-      // Filters applied - only fetch provider carts that are NOT in selectedCartIds
-      // (selected carts will be fetched by cartId instead)
-      const selectedCartIdsSet = new Set(selectedCartIds)
-      return providerCarts.filter(cp => {
-        const cartId = cp.cartId
-        return cartId !== null && cartId !== undefined && !selectedCartIdsSet.has(cartId)
-      })
-    }
-  }, [selectedCartIds, providerCarts])
-
-  // Fetch carts by cartId when filtering
-  const cartByIdQueries = useQueries({
-    queries: cartsToFetchById.map((cartId) => {
-      return {
-        queryKey: ['cart', 'cartId', cartId],
-        queryFn: async () => {
-          const cart = await getCartByCartId(cartId)
-          return { cartId, cart }
-        },
-        enabled: cartId !== null && cartId !== undefined && !isLoadingProviders,
-        staleTime: 1 * 60 * 1000, // 1 minute
-      }
-    }),
-  })
-
-  // Fetch provider carts by providerId (for carts not in selectedCartIds when filtering)
+  // Fetch all provider carts by providerId
   const cartQueries = useQueries({
-    queries: providerCartsToFetch.map((provider) => {
+    queries: providerCarts.map((provider) => {
       const cartId = provider.cartId
       const providerId = provider.providerId!
       return {
@@ -419,22 +356,8 @@ export default function CartPage() {
       }
     })
 
-    // Check carts fetched by cartId
-    cartByIdQueries.forEach((query) => {
-      if (query.data?.cart?.purchases) {
-        query.data.cart.purchases
-          .filter(
-            (p) =>
-              p.type === PurchaseType.Product &&
-              p.productId &&
-              !p.product
-          )
-          .forEach((p) => productIds.add(p.productId!))
-      }
-    })
-
     return Array.from(productIds)
-  }, [cartData, cartQueries, cartByIdQueries])
+  }, [cartData, cartQueries])
 
   // Fetch product details for purchases that have productId but product is null
   const productQueries = useQueries({
@@ -449,71 +372,13 @@ export default function CartPage() {
     })),
   })
 
-  // Combine purchases from all selected carts
-  // Important: Deduplicate purchases by ID since the same cart can appear as both general and provider cart
+  // Combine all purchases from all carts (general + provider carts)
+  // Remove duplicates based on purchase.id
   const allPurchases = useMemo(() => {
     const purchaseMap = new Map<number, PurchaseResponse>()
     const seenCartIds = new Set<number>()
 
-    // If filtering by specific carts
-    if (selectedCartIds.length > 0) {
-      // Add general cart purchases if general cart is selected
-      if (generalCartProvider && generalCartProvider.cartId && selectedCartIds.includes(generalCartProvider.cartId)) {
-        if (cartData?.purchases && cartData.id) {
-          // Mark this cart as processed
-          seenCartIds.add(cartData.id)
-          cartData.purchases.forEach((purchase) => {
-            purchaseMap.set(purchase.id, purchase)
-          })
-        }
-      }
-
-      // Add selected cart purchases (fetched by cartId)
-      cartByIdQueries.forEach((query) => {
-        if (query.data?.cart) {
-          const cart = query.data.cart
-          const cartId = cart.id
-
-          // Skip if this cart was already processed as general cart
-          if (seenCartIds.has(cartId)) {
-            return
-          }
-
-          if (cart.purchases) {
-            seenCartIds.add(cartId)
-            cart.purchases.forEach((purchase) => {
-              purchaseMap.set(purchase.id, purchase)
-            })
-          }
-        }
-      })
-
-      // Add remaining provider cart purchases (not in selectedCartIds, fetched by providerId)
-      cartQueries.forEach((query) => {
-        if (query.data?.cart) {
-          const cart = query.data.cart
-          const cartId = cart.id
-
-          // Skip if this cart was already processed
-          if (seenCartIds.has(cartId)) {
-            return
-          }
-
-          if (cart.purchases) {
-            seenCartIds.add(cartId)
-            cart.purchases.forEach((purchase) => {
-              purchaseMap.set(purchase.id, purchase)
-            })
-          }
-        }
-      })
-
-      const purchases = Array.from(purchaseMap.values())
-      return purchases
-    }
-
-    // If no filters, show all carts (general + all provider carts)
-    // Add general cart first
+    // Add general cart purchases
     if (cartData?.purchases && cartData.id) {
       seenCartIds.add(cartData.id)
       cartData.purchases.forEach((purchase) => {
@@ -527,13 +392,13 @@ export default function CartPage() {
         const cart = query.data.cart
         const cartId = cart.id
 
-        // Skip if this cart was already processed as general cart
+        // Skip if this cart was already processed
         if (seenCartIds.has(cartId)) {
           return
         }
 
+        seenCartIds.add(cartId)
         if (cart.purchases) {
-          seenCartIds.add(cartId)
           cart.purchases.forEach((purchase) => {
             purchaseMap.set(purchase.id, purchase)
           })
@@ -543,7 +408,7 @@ export default function CartPage() {
 
     const purchases = Array.from(purchaseMap.values())
     return purchases
-  }, [selectedCartIds, cartQueries, cartByIdQueries, cartData, generalCartProvider])
+  }, [cartQueries, cartData])
 
   // Create a map of productId -> ProductResponse for quick lookup
   // Used when ProductHeaderResponse is not available in purchase
@@ -621,39 +486,22 @@ export default function CartPage() {
   const hasGiftCards = giftCardPurchases.length > 0
   const hasItems = hasProducts || hasServices || hasReservations || hasMemberships || hasGiftCards
 
+  // Calculate total number of items in cart
+  const totalItems = useMemo(() => {
+    return (
+      cartProducts.reduce((sum, product) => sum + product.quantity, 0) +
+      servicePurchases.reduce((sum, service) => sum + (service.quantity || 1), 0) +
+      reservationPurchases.reduce((sum, reservation) => sum + reservation.quantity, 0) +
+      membershipPurchases.reduce((sum, membership) => sum + membership.quantity, 0) +
+      giftCardPurchases.reduce((sum, giftCard) => sum + giftCard.quantity, 0)
+    )
+  }, [cartProducts, servicePurchases, reservationPurchases, membershipPurchases, giftCardPurchases])
 
-  // Get the active cart data (from main cart or combined provider carts)
+
+  // Get the active cart data (use general cart data)
   const activeCartData = useMemo(() => {
-    if (selectedCartIds.length === 0) {
-      // No filters - use general cart data
-      return cartData
-    }
-
-    // If only one cart is selected, use its data
-    if (selectedCartIds.length === 1) {
-      const cartId = selectedCartIds[0]
-
-      // Check if it's general cart
-      if (generalCartProvider && cartId === generalCartProvider.cartId) {
-        return cartData
-      }
-
-      // Check carts fetched by cartId
-      const queryById = cartByIdQueries.find(q => q.data?.cartId === cartId)
-      if (queryById?.data?.cart) {
-        return queryById.data.cart
-      }
-
-      // Check provider carts (fetched by providerId)
-      const query = cartQueries.find(q => q.data?.cartId === cartId)
-      if (query?.data?.cart) {
-        return query.data.cart
-      }
-    }
-
-    // Multiple carts selected - calculate from items (no single cart data)
-    return null
-  }, [selectedCartIds, cartData, cartQueries, cartByIdQueries, generalCartProvider])
+    return cartData
+  }, [cartData])
 
   // Calculate totals from priceCalculation (most accurate), then cartSummary, otherwise calculate from all items
   const { subtotal, taxesAndFees, deliveryFee, total } = useMemo(() => {
@@ -773,13 +621,11 @@ export default function CartPage() {
     if (newQuantity === currentQuantity) return
 
     try {
-      // Build update data with providerId for products and services
+      // Build update data - only include fields to update, not the id
       const updateData: {
-        id: number
         quantity: number
         providerId?: number
       } = {
-        id: purchaseId,
         quantity: newQuantity,
       }
 
@@ -792,6 +638,12 @@ export default function CartPage() {
         id: purchaseId.toString(),
         data: updateData,
       })
+
+      // Invalidate all cart-related queries to ensure UI updates
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ['carts-with-providers'] })
+      queryClient.invalidateQueries({ queryKey: ['cart', 'provider'] })
+      queryClient.invalidateQueries({ queryKey: ['cart', 'cartId'] })
     } catch {
       // Error handling - silently fail
     }
@@ -862,33 +714,8 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     try {
-      // Get the active cart ID - use general cart or first selected cart
-      let cartIdToCheckout: number | null = null
-
-      if (selectedCartIds.length === 0) {
-        // No filters - use general cart
-        cartIdToCheckout = cartData?.id ?? null
-      } else if (selectedCartIds.length === 1) {
-        // Single cart selected
-        const selectedCartId = selectedCartIds[0]
-
-        // Check if it's general cart
-        if (generalCartProvider && selectedCartId === generalCartProvider.cartId) {
-          cartIdToCheckout = cartData?.id ?? null
-        } else {
-          // Check carts fetched by cartId
-          const queryById = cartByIdQueries.find(q => q.data?.cartId === selectedCartId)
-          if (queryById?.data?.cart?.id) {
-            cartIdToCheckout = queryById.data.cart.id
-          } else {
-            // Check provider carts
-            const query = cartQueries.find(q => q.data?.cartId === selectedCartId)
-            if (query?.data?.cart?.id) {
-              cartIdToCheckout = query.data.cart.id
-            }
-          }
-        }
-      }
+      // Use general cart for checkout
+      const cartIdToCheckout: number | null = cartData?.id ?? null
 
       if (!cartIdToCheckout) {
         return
@@ -962,15 +789,6 @@ export default function CartPage() {
 
       // Refetch providers
       await refetchProviders()
-
-      // If filtering by carts, refetch selected carts
-      if (selectedCartIds.length > 0) {
-        await Promise.all(
-          selectedCartIds.map((cartId) =>
-            queryClient.invalidateQueries({ queryKey: ['cart', 'cartId', cartId] })
-          )
-        )
-      }
     } finally {
       setIsRefreshing(false)
     }
@@ -991,19 +809,55 @@ export default function CartPage() {
   }
 
   // Check if any cart queries are loading
-  const isLoadingCarts = cartQueries.some((query) => query.isLoading) || cartByIdQueries.some((query) => query.isLoading)
+  const isLoadingCarts = cartQueries.some((query) => query.isLoading)
 
-  // Only wait for general cart if we need it (no filters or general cart is selected)
-  const needsGeneralCart = selectedCartIds.length === 0 ||
-    (generalCartProvider && generalCartProvider.cartId && selectedCartIds.includes(generalCartProvider.cartId))
+  const isLoadingData = isLoadingGeneralCart || isLoadingCarts
 
-  const isLoadingData = (needsGeneralCart && isLoadingGeneralCart) || isLoadingCarts
+  // Header right content with filters
+  const headerRightContent = (
+    <div className="flex items-center gap-2">
+      {hasItems && (
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={handleClearAllClick}
+          disabled={clearCartMutation.isPending}
+          className="hover:bg-red-50 hover:border-red-400"
+          aria-label="Clear all items"
+        >
+          <Trash2 className="h-4 w-4 text-gray-600" />
+        </Button>
+      )}
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        onClick={handleRefresh}
+        disabled={isRefreshing}
+        className="hover:border-brand-400"
+        aria-label="Refresh cart"
+      >
+        <RefreshCw
+          className={cn(
+            'h-4 w-4 text-gray-600',
+            isRefreshing && 'animate-spin'
+          )}
+        />
+      </Button>
+      <ServicesProductsFilter value={itemTypeFilter} onChange={setItemTypeFilter} />
+    </div>
+  )
 
   // Show loading state
   if (isLoadingData) {
     return (
       <UserPageLayout>
-        <PageHeader title="My Cart" />
+        <PageHeader
+          title="My Cart"
+          subtitle={hasItems ? `${totalItems} ${totalItems === 1 ? 'Item' : 'Items'}` : undefined}
+          rightContent={headerRightContent}
+        />
         <LoadingOverlay
           open={true}
           title="Loading cart..."
@@ -1017,7 +871,11 @@ export default function CartPage() {
   if (error) {
     return (
       <UserPageLayout>
-        <PageHeader title="My Cart" />
+        <PageHeader
+          title="My Cart"
+          subtitle={hasItems ? `${totalItems} ${totalItems === 1 ? 'Item' : 'Items'}` : undefined}
+          rightContent={headerRightContent}
+        />
         <ErrorDisplay
           title="Error loading cart"
           message="Please try again later"
@@ -1030,137 +888,12 @@ export default function CartPage() {
 
   return (
     <UserPageLayout>
-      {/* Page Header with Filter */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between gap-4 mb-4">
-          <PageHeader title="My Cart" />
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {hasItems && (
-              <button
-                type="button"
-                onClick={handleClearAllClick}
-                disabled={clearCartMutation.isPending}
-                className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-300 bg-white hover:bg-red-50 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label="Clear all items"
-              >
-                <Trash2 className="h-4 w-4 text-gray-600" />
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="flex items-center justify-center w-9 h-9 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 hover:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Refresh cart"
-            >
-              <RefreshCw
-                className={cn(
-                  'h-4 w-4 text-gray-600',
-                  isRefreshing && 'animate-spin'
-                )}
-              />
-            </button>
-          </div>
-        </div>
-
-        {/* Filter Section with Tags and Dropdown */}
-        {cartProviders.length > 0 && (
-          <div className="flex items-start gap-3">
-            {/* Selected Provider Tags */}
-            <div className="flex-1 flex flex-wrap items-center gap-2 min-h-[36px]">
-              {selectedProviderIds.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
-                  {selectedCartIds.map((cartId) => {
-                    const provider = cartProviders.find((p) => p.cartId === cartId)
-                    if (!provider) return null
-
-                    // Display name: "General" for general cart, provider name for provider carts
-                    const displayName = provider.providerId === null || provider.providerId === undefined
-                      ? 'General'
-                      : (provider.providerNameEn || provider.providerNameAr || 'Provider')
-
-                    return (
-                      <div
-                        key={cartId}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 border border-red-200 rounded-lg text-14 font-medium text-red-700 group"
-                      >
-                        <span className="truncate max-w-[120px]">
-                          {displayName}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedCartIds(
-                              selectedCartIds.filter((id) => id !== cartId)
-                            )
-                          }}
-                          className="flex-shrink-0 p-0.5 hover:bg-red-100 rounded transition-colors"
-                          aria-label={`Remove ${displayName}`}
-                        >
-                          <X className="h-3.5 w-3.5 text-red-600 group-hover:text-red-800" />
-                        </button>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Provider Multi-Select Dropdown */}
-            <div className="flex-shrink-0 flex items-center gap-2">
-              {/* General Cart Toggle */}
-              {generalCartProvider && generalCartProvider.cartId && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const generalCartId = generalCartProvider.cartId!
-                    const isSelected = selectedCartIds.includes(generalCartId)
-
-                    if (isSelected) {
-                      setSelectedCartIds(selectedCartIds.filter(id => id !== generalCartId))
-                    } else {
-                      setSelectedCartIds([...selectedCartIds, generalCartId])
-                    }
-                  }}
-                  className={cn(
-                    'px-3 py-1.5 rounded-lg border text-14 font-medium transition-colors',
-                    selectedCartIds.includes(generalCartProvider.cartId)
-                      ? 'bg-brand-500 text-white border-brand-500'
-                      : 'bg-white text-gray-700 border-gray-300 hover:border-brand-400'
-                  )}
-                >
-                  General
-                </button>
-              )}
-
-              <ProviderMultiSelect
-                providers={cartProviders}
-                selectedProviderIds={selectedProviderIds}
-                onChange={(providerIds) => {
-                  // Convert provider IDs to cart IDs
-                  const newCartIds: number[] = []
-
-                  providerIds.forEach(providerId => {
-                    const provider = cartProviders.find(cp => cp.providerId === providerId)
-                    if (provider?.cartId) {
-                      newCartIds.push(provider.cartId)
-                    }
-                  })
-
-                  // Keep general cart selection if it was already selected
-                  if (generalCartProvider && generalCartProvider.cartId && selectedCartIds.includes(generalCartProvider.cartId)) {
-                    newCartIds.push(generalCartProvider.cartId)
-                  }
-
-                  setSelectedCartIds(newCartIds)
-                }}
-                placeholder="Filter providers"
-                className="w-48"
-              />
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Page Header */}
+      <PageHeader
+        title="My Cart"
+        subtitle={hasItems ? `${totalItems} ${totalItems === 1 ? 'Item' : 'Items'}` : undefined}
+        rightContent={headerRightContent}
+      />
 
       {/* Content Area */}
       {hasItems ? (
@@ -1168,7 +901,7 @@ export default function CartPage() {
           {/* Cart Items */}
           <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
             {/* Products Section */}
-            {hasProducts && cartProducts.length > 0 && (
+            {hasProducts && cartProducts.length > 0 && itemTypeFilter === 'products' && (
               <div className="space-y-3 sm:space-y-4">
                 {cartProducts.map(product => (
                   <CartItem
@@ -1193,7 +926,7 @@ export default function CartPage() {
             )}
 
             {/* Services Section - using CartItem for compact display */}
-            {hasServices && (
+            {hasServices && itemTypeFilter === 'services' && (
               <div className="space-y-3 sm:space-y-4">
                 {servicePurchases.map((purchase) => {
                   // Priority: Use display properties from PurchaseResponse, then ServiceHeaderResponse
@@ -1240,7 +973,7 @@ export default function CartPage() {
             )}
 
             {/* Reservations Section - using ReservationResponse */}
-            {hasReservations && (
+            {hasReservations && itemTypeFilter === 'services' && (
               <div className="space-y-3 sm:space-y-4">
                 {reservationPurchases.map((reservation) => (
                   <CartItem
@@ -1263,7 +996,7 @@ export default function CartPage() {
             )}
 
             {/* Memberships Section */}
-            {hasMemberships && (
+            {hasMemberships && itemTypeFilter === 'products' && (
               <div className="space-y-3 sm:space-y-4">
                 {membershipPurchases.map((membership) => (
                   <CartItem
@@ -1285,7 +1018,7 @@ export default function CartPage() {
             )}
 
             {/* Gift Cards Section */}
-            {hasGiftCards && (
+            {hasGiftCards && itemTypeFilter === 'products' && (
               <div className="space-y-3 sm:space-y-4">
                 {giftCardPurchases.map((giftCard) => (
                   <CartItem

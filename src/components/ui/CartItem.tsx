@@ -1,10 +1,9 @@
 'use client'
 
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { Trash2, Minus, Plus, Package, Calendar, Crown, Gift, Scissors } from 'lucide-react'
-import { PriceDisplay } from './PriceDisplay'
 import { Button } from './Button'
-import { Badge } from './Badge'
 import { cn } from '@/lib/utils'
 
 export type CartItemType = 'Product' | 'Service' | 'Reservation' | 'Membership' | 'GiftCard'
@@ -89,6 +88,7 @@ export const CartItem = ({
   className,
   type,
 }: CartItemProps) => {
+  const [imageError, setImageError] = useState(false)
   const totalPrice = discountedPrice * quantity
   const TypeIcon = getTypeIcon(type)
   const typeLabel = getTypeLabel(type)
@@ -101,7 +101,8 @@ export const CartItem = ({
     image !== '/placeholder-product.png' &&
     image !== '/placeholder-service.png' &&
     image !== '/placeholder-membership.png' &&
-    image !== '/placeholder-giftcard.png'
+    image !== '/placeholder-giftcard.png' &&
+    !imageError
 
   const hasDiscount = originalPrice > discountedPrice
 
@@ -112,68 +113,87 @@ export const CartItem = ({
         className
       )}
     >
-      {/* Left: Product Image or Icon */}
-      <div className="relative flex-shrink-0 w-24 h-24">
-        {hasValidImage ? (
-          <div className="w-full h-full rounded-lg bg-gray-100 overflow-hidden">
-            <Image
-              src={image}
-              alt={title}
-              fill
-              sizes="96px"
-              className="object-cover"
-            />
-          </div>
-        ) : (
-          <div className="w-full h-full rounded-lg bg-gray-100 flex items-center justify-center">
-            <TypeIcon className="h-12 w-12 text-gray-400" />
-          </div>
-        )}
+      {/* Left: Product Image with Delete Button */}
+      <div className="flex flex-col items-center gap-2 flex-shrink-0">
+        <div className="relative w-20 h-20">
+          {hasValidImage ? (
+            <div className="w-full h-full rounded-lg bg-gray-100 overflow-hidden">
+              <Image
+                src={image}
+                alt={title}
+                fill
+                sizes="80px"
+                className="object-cover"
+                onError={() => setImageError(true)}
+              />
+            </div>
+          ) : (
+            <div className="w-full h-full rounded-lg bg-gray-100 flex items-center justify-center">
+              <span className="text-gray-400 text-10 font-medium text-center px-1">
+                No image available
+              </span>
+            </div>
+          )}
+        </div>
+        {/* Delete Button - Under Image */}
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={(e) => {
+            e.stopPropagation()
+            onRemove(id)
+          }}
+          className="p-2 rounded-full border-2 border-red-300 hover:bg-red-50 hover:border-red-400"
+          aria-label="Remove item"
+        >
+          <Trash2 className="h-4 w-4 text-red-500" />
+        </Button>
       </div>
 
       {/* Middle: Product Details */}
-      <div className="flex-1 min-w-0 flex flex-col pr-28">
+      <div className="flex-1 min-w-0 flex flex-col relative">
+        {/* Discount Badge - Top Right */}
+        {discountPercentage && (
+          <span className="absolute top-0 right-0 text-12 font-medium text-green-500">
+            {discountPercentage}% OFF
+          </span>
+        )}
+
         {/* Title */}
-        <h3 className="text-18 font-semibold text-gray-900 line-clamp-2 mb-2">
+        <h3 className="text-14 font-semibold text-gray-900 line-clamp-2 mb-2 pr-16">
           {title || typeLabel}
         </h3>
 
-        {/* Price Per Piece */}
-        <div className="mb-1 flex items-center gap-2">
-          <span className="text-14 text-gray-600">Price Per Piece</span>
-          <PriceDisplay
-            original={originalPrice}
-            discounted={discountedPrice}
-            currency={currency || 'EGP'}
-            size="md"
-            variant="compact"
-            showOriginal={hasDiscount}
-          />
+        {/* Price */}
+        <div className="mb-1 flex items-baseline gap-2">
+          <span className="text-14 font-semibold text-gray-900">
+            {discountedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
+          </span>
+          {hasDiscount && (
+            <span className="text-14 font-normal text-gray-400 line-through">
+              {originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
+            </span>
+          )}
         </div>
 
         {/* Delivery Date */}
         {deliveryDate && (
-          <p className="text-14 text-gray-600 mb-2">
+          <p className="text-12 text-gray-600 mb-2">
             Get In By {deliveryDate}
           </p>
         )}
 
         {/* Purchase Price and Date */}
-        <div className="flex flex-col gap-1 mb-3">
+        <div className="flex flex-col gap-1 mb-2">
           {purchasePrice !== undefined && purchasePrice !== null && (
-            <p className="text-14 text-gray-600">
+            <p className="text-12 text-gray-600">
               <span className="font-medium">Purchase Price: </span>
-              <PriceDisplay
-                discounted={purchasePrice}
-                currency={currency || 'EGP'}
-                size="sm"
-                variant="inline"
-                showOriginal={false}
-              />
+              <span>{purchasePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</span>
             </p>
           )}
           {purchaseDate && (
-            <p className="text-14 text-gray-600">
+            <p className="text-12 text-gray-600">
               <span className="font-medium">Added on: </span>
               <span>{new Date(purchaseDate).toLocaleDateString('en-GB', {
                 day: '2-digit',
@@ -184,71 +204,72 @@ export const CartItem = ({
           )}
         </div>
 
-        {/* Bottom: Total Price */}
+        {/* Bottom: Total Price and Quantity Selector */}
         <div className="mt-auto pt-3 border-t border-gray-200">
-          <div className="text-16 font-semibold text-gray-900">
-            <span className="font-normal">Total Price : </span>
-            <PriceDisplay
-              discounted={totalPrice}
-              currency={currency || 'EGP'}
-              size="md"
-              variant="inline"
-              showOriginal={false}
-              discountedClassName="font-semibold"
-            />
+          <div className="flex items-center justify-between">
+            {/* Total Price */}
+            <div className="text-14 font-semibold text-gray-900">
+              <span className="font-normal">Total Price : </span>
+              <span>{totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</span>
+            </div>
+
+            {/* Quantity Selector */}
+            {onQuantityChange && (
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (quantity > 1) {
+                      onQuantityChange(id, -1)
+                    }
+                  }}
+                  disabled={quantity <= 1}
+                  className="h-8 w-8 rounded-full border-2 border-gray-300 hover:bg-gray-50 text-gray-600"
+                  aria-label="Decrease quantity"
+                >
+                  <Minus className="h-3.5 w-3.5" />
+                </Button>
+                <span className="text-14 font-semibold text-gray-900 w-6 text-center">
+                  {quantity}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onQuantityChange(id, 1)
+                  }}
+                  className="h-8 w-8 rounded-full border-2 border-red-300 hover:bg-red-50 hover:border-red-400 text-red-500"
+                  aria-label="Increase quantity"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            )}
           </div>
+
+          {/* Checkout Button */}
+          {onBuyNow && (
+            <div className="mt-2 flex justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                size="md"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onBuyNow(id)
+                }}
+                className="!text-red-500 border-red-500 hover:bg-red-50 hover:text-red-500"
+              >
+                Checkout
+              </Button>
+            </div>
+          )}
         </div>
-      </div>
-
-      {/* Right: Remove Button, Discount Badge, Quantity Selector, and Checkout Button */}
-      <div className="flex flex-col items-end gap-3">
-        {/* Remove Button - Top Right Corner */}
-        <button
-          onClick={() => onRemove(id)}
-          className="p-1 text-red-500 hover:text-red-600 transition-colors"
-          aria-label="Remove item"
-        >
-          <Trash2 className="h-5 w-5" />
-        </button>
-
-        {/* Discount Badge - Below Remove Button */}
-        {discountPercentage && (
-          <span className="text-14 font-medium text-green-500">
-            {discountPercentage}% OFF
-          </span>
-        )}
-
-        {/* Quantity Selector */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onQuantityChange(id, -1)}
-            disabled={quantity <= 1}
-            className="w-8 h-8 rounded-full border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-            aria-label="Decrease quantity"
-          >
-            <Minus className="h-4 w-4" />
-          </button>
-          <span className="text-16 font-semibold text-gray-900 w-8 text-center">
-            {quantity}
-          </span>
-          <button
-            onClick={() => onQuantityChange(id, 1)}
-            className="w-8 h-8 rounded-full border-2 border-red-500 bg-white text-red-500 hover:bg-red-50 transition-colors flex items-center justify-center"
-            aria-label="Increase quantity"
-          >
-            <Plus className="h-4 w-4" />
-          </button>
-        </div>
-
-        {/* Checkout Button - Below Quantity Selector */}
-        {onBuyNow && (
-          <button
-            onClick={() => onBuyNow(id)}
-            className="px-4 py-2 text-14 font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors whitespace-nowrap"
-          >
-            Checkout
-          </button>
-        )}
       </div>
     </div>
   )

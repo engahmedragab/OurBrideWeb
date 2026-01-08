@@ -1,7 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { Star, ArrowRight, ThumbsUp, Send } from 'lucide-react'
 import {
   Badge,
   ProductImageGallery,
@@ -10,11 +13,13 @@ import {
   PriceDisplay,
   RatingDisplay,
   RatingInput,
+  OrderSummaryCard,
+  OfferBanner,
   BackButton,
-  Button,
-  QuantitySelector,
   useToast,
 } from '@/components/ui'
+import { cn } from '@/lib/utils'
+import productImage from '@/assets/svg/product-1.svg'
 import type { Product } from '@/types/product'
 import { useProductCardHandlers, useAddProductToCart } from '@/hooks/products'
 import { useProviderCardHandlers } from '@/hooks/providers'
@@ -24,8 +29,6 @@ import {
   useRelatedProducts,
   useProductReviews,
   useSubmitProductReview,
-  useProductVariations,
-  useProductAttributes,
 } from '@/hooks/products'
 import { ProductPageLayout } from '../../components/ProductPageLayout'
 import { ProductErrorState } from '../../components/ProductErrorState'
@@ -40,7 +43,6 @@ interface ProductDetailClientProps {
 // Wrapper component for provider card with handlers
 const ProviderCardWithHandlers = ({
   provider,
-  onViewProfile,
 }: {
   provider: {
     id: string
@@ -50,7 +52,6 @@ const ProviderCardWithHandlers = ({
     rating?: number
     profession?: string
   }
-  onViewProfile?: () => void
 }) => {
   const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
   return (
@@ -60,60 +61,6 @@ const ProviderCardWithHandlers = ({
       onFavoriteToggle={handlers.handleFavoriteToggle}
       isLoadingFollow={handlers.isLoadingFollow}
       isLoadingFavorite={handlers.isLoadingFavorite}
-      onViewProfile={onViewProfile}
-    />
-  )
-}
-
-// Wrapper component for product card with handlers
-const ProductCardWithHandlers = ({
-  product,
-  onCardClick,
-  addToast,
-}: {
-  product: Product
-  onCardClick: () => void
-  addToast: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void
-}) => {
-  const handlers = useProductCardHandlers(parseInt(product.id, 10), {
-    onFavoriteSuccess: (response) => {
-      const defaultMessage = response === true ? 'Added to favorites' : 'Removed from favorites'
-      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update favorite')
-      addToast(message, 'success')
-    },
-    onFavoriteError: (error) => {
-      addToast(error.message || 'Failed to update favorite. Please try again.', 'error')
-    },
-    onWishlistSuccess: (response) => {
-      const defaultMessage = response === true ? 'Added to wishlist' : 'Removed from wishlist'
-      const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update wishlist')
-      addToast(message, 'success')
-    },
-    onWishlistError: (error) => {
-      addToast(error.message || 'Failed to update wishlist. Please try again.', 'error')
-    },
-  })
-  return (
-    <Card
-      cardData={{
-        type: 'product',
-        id: product.id,
-        image: product.images?.[0] || '',
-        title: product.title,
-        providerName: product.provider?.name || '',
-        verified: product.provider?.verified || false,
-        originalPrice: product.price?.original || 0,
-        discountedPrice: product.price?.discounted || 0,
-        rating: product.rating?.value || 0,
-        tags: product.tags || [],
-        showTopOfferBadge: product.showTopOfferBadge || false,
-        onWishlistToggle: handlers.handleWishlistToggle,
-        onFavoriteToggle: handlers.handleFavoriteToggle,
-        isLoadingWishlist: handlers.isLoadingWishlist,
-        isLoadingFavorite: handlers.isLoadingFavorite,
-      }}
-      onClick={onCardClick}
-      className="cursor-pointer"
     />
   )
 }
@@ -132,31 +79,43 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     error: productError,
   } = useProductDetails(productId)
 
-  // Fetch related products
   const parsedProductId = parseProductId(productId)
-  const { data: relatedProducts = [] } = useRelatedProducts(
-    parsedProductId,
-    RELATED_PRODUCTS_LIMIT
-  )
 
   // Fetch product reviews
   const { data: reviews = [] } = useProductReviews(parsedProductId)
-
-  // Fetch product variations and attributes
-  const { data: variations = [] } = useProductVariations(parsedProductId)
-  const { data: attributes = [] } = useProductAttributes(parsedProductId)
-
-  // TODO: Use related category products when implementing category-based recommendations
-  // const { data: relatedCategoryProducts = [] } = useRelatedCategoryProducts(
-  //   parsedProductId,
-  //   product?.category?.id ? String(product.category.id) : null
-  // )
 
   // Submit review mutation
   const submitReviewMutation = useSubmitProductReview()
 
   // Add to cart hook - MUST be called before any conditional returns
   const { handleAddToCart: addToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+  // Fetch related products
+  const { data: relatedProducts = [] } = useRelatedProducts(
+    parsedProductId,
+    RELATED_PRODUCTS_LIMIT
+  )
+
+  // Calculate rating distribution from actual reviews
+  const ratingDistribution = useMemo(() => {
+    if (!reviews || reviews.length === 0) {
+      return [
+        { stars: 5, count: 0, percentage: 0 },
+        { stars: 4, count: 0, percentage: 0 },
+        { stars: 3, count: 0, percentage: 0 },
+        { stars: 2, count: 0, percentage: 0 },
+        { stars: 1, count: 0, percentage: 0 },
+      ]
+    }
+
+    const distribution = [5, 4, 3, 2, 1].map(stars => {
+      const count = reviews.filter(r => Math.round(r.rating) === stars).length
+      const percentage = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0
+      return { stars, count, percentage }
+    })
+
+    return distribution
+  }, [reviews])
 
   // Show loading state
   if (productLoading) {
@@ -175,12 +134,6 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           backLabel="Back to Products"
         />
       </ProductPageLayout>
-    )
-  }
-
-  const handleQuantityChange = (delta: number) => {
-    setQuantity(prev =>
-      Math.max(1, Math.min(prev + delta, product.stockQuantity || 99))
     )
   }
 
@@ -207,263 +160,215 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     router.push('/checkout')
   }
 
-  const handleSubmitReview = async () => {
-    if (!productId || !userRating || !reviewComment.trim()) return
+  const handleQuantityChange = (delta: number) => {
+    setQuantity(prev =>
+      Math.max(1, Math.min(prev + delta, product.stockQuantity || 99))
+    )
+  }
 
-    try {
-      if (!parsedProductId) return
-
-      const response = await submitReviewMutation.mutateAsync({
-        productId: parsedProductId,
-        rating: userRating,
-        review: reviewComment,
-      })
-      
-      const { message, type } = handleApiResponseForToast(
-        response,
-        'Review submitted successfully!',
-        'Failed to submit review'
-      )
-      
-      if (type === 'success') {
-        setUserRating(0)
-        setReviewComment('')
-      }
-      addToast(message, type)
-    } catch (error) {
-      console.error('Error submitting review:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
-      addToast(errorMessage, 'error')
+  const getRatingLabel = (stars: number) => {
+    const labels: Record<number, string> = {
+      5: 'Excellent',
+      4: 'Good',
+      3: 'Average',
+      2: 'Below Average',
+      1: 'Poor',
     }
+    return labels[stars] || ''
   }
 
   return (
     <ProductPageLayout>
-      <div className="container-custom py-6 md:py-8">
-        <BackButton onClick={() => router.back()} className="mb-6" />
+      <div className="container-custom max-w-[1600px] py-6 md:py-8">
+        {/* Back Button */}
+        <BackButton
+          href="/products"
+          label="Back to Products"
+          className="mb-6"
+        />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Product Images */}
-          <div>
+        {/* Main Product Section - 3 Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-12">
+          {/* Left: Image Gallery (4 columns) */}
+          <div className="lg:col-span-4">
             <ProductImageGallery
               images={product.images}
               productName={product.title}
             />
           </div>
 
-          {/* Product Details */}
-          <div className="space-y-6">
+          {/* Middle: Product Information (5 columns) */}
+          <div className="lg:col-span-5 space-y-4">
+            {/* Product Header */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
             {product.showTopOfferBadge && (
-              <Badge variant="success" className="inline-block">
-                Top Offer
+                  <Badge
+                    variant="default"
+                    className="bg-green-500 !text-white border-0 px-3 py-1 text-12 font-normal rounded"
+                  >
+                    Special Offer
               </Badge>
             )}
-
-            <h1 className="text-24 md:text-28 font-semibold text-gray-900">
+              </div>
+              <h1 className="text-32 md:text-40 font-normal text-gray-900 mb-3">
               {product.title}
             </h1>
-
-            <div className="flex items-center gap-4">
-              <RatingDisplay rating={product.rating.value} count={product.rating.count} />
-              <span className="text-14 text-gray-500">
-                ({product.rating.count} reviews)
-              </span>
+              <RatingDisplay
+                rating={product.rating?.value || 0}
+                count={product.rating?.count || 0}
+                format="rated-by"
+              />
             </div>
 
+            {/* Pricing */}
             <PriceDisplay
               original={product.price.original}
               discounted={product.price.discounted}
               currency={product.price.currency}
+              size="lg"
             />
 
-            {/* Product Attributes */}
-            {attributes.length > 0 && (
+            {/* Description */}
               <div className="space-y-2">
-                <h3 className="text-16 font-semibold text-gray-900">Attributes</h3>
-                <div className="flex flex-wrap gap-2">
-                  {attributes.map((attr, index) => {
-                    const attrName = attr.nameEn || attr.nameAr || attr.name || 'Attribute'
-                    
-                    // Handle attribute value - could be string, JSON string, or array
-                    let attrValue: string = 'N/A'
-                    const rawValue = attr.options || attr.attribute || attr.descriptionEn || attr.descriptionAr
-                    
-                    if (rawValue) {
-                      // Try to parse if it's a JSON string
-                      if (typeof rawValue === 'string') {
-                        try {
-                          const parsed = JSON.parse(rawValue)
-                          if (Array.isArray(parsed)) {
-                            attrValue = (parsed as string[]).join(', ')
-                          } else {
-                            attrValue = rawValue
-                          }
-                        } catch {
-                          // Not JSON, use as is
-                          attrValue = rawValue
-                        }
-                      } else if (Array.isArray(rawValue)) {
-                        attrValue = (rawValue as string[]).join(', ')
-                      } else {
-                        attrValue = String(rawValue)
-                      }
-                    }
-                    
-                    return (
-                      <div
-                        key={attr.id || index}
-                        className="px-3 py-1 bg-gray-100 rounded-full text-14 text-gray-700"
-                      >
-                        <span className="font-medium">{attrName}:</span>{' '}
-                        <span>{attrValue}</span>
-                      </div>
-                    )
-                  })}
+              <p className="text-16 text-gray-500 leading-[1.6]">
+                {product.longDescription || product.description}
+              </p>
+              </div>
+
+            {/* Delivery Date */}
+            <div className="text-14 text-brand-500 font-normal">
+              Buy now and get by <span className="text-gray-900">25 AUG 2025</span>
                 </div>
               </div>
-            )}
 
-            {/* Product Variations */}
-            {variations.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="text-16 font-semibold text-gray-900">Available Options</h3>
-                <div className="space-y-2">
-                  {variations.map((variation, index) => (
-                    <div
-                      key={variation.id || index}
-                      className="p-3 border border-gray-200 rounded-lg"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-14 font-medium text-gray-900">
-                            {variation.name || `Option ${index + 1}`}
-                          </span>
-                          {variation.price && (
-                            <span className="text-14 text-gray-600 ml-2">
-                              - {variation.price.toLocaleString()} {product.price.currency}
-                            </span>
-                          )}
-                        </div>
-                        {variation.inStock !== false && (
-                          <Badge variant="success" size="sm">In Stock</Badge>
-                        )}
-                      </div>
-                      {variation.description && (
-                        <p className="text-12 text-gray-500 mt-1">{variation.description}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-center gap-4">
-              <span className="text-14 text-gray-600">Quantity:</span>
-              <QuantitySelector
+          {/* Right: Provider & Purchase Card (3 columns) */}
+          <div className="lg:col-span-3">
+            <div className="space-y-6">
+              <ProviderCardWithHandlers
+                provider={{
+                  ...product.provider,
+                  rating: product.rating?.value || 0,
+                  profession: 'Makeup Artist',
+                }}
+              />
+              <OrderSummaryCard
+                totalPrice={product.price.discounted * quantity}
+                currency={product.price.currency}
                 quantity={quantity}
                 onQuantityChange={handleQuantityChange}
-                min={1}
-                max={product.stockQuantity || 99}
-                variant="default"
+                onAddToCart={handleAddToCart}
+                onBuyNow={handleBuyNow}
+                deliveryLocation="Giza, 6 Of O..."
+                fullAddress="Giza, 6 Of October City, Building 15, Apartment 42"
+                maxQuantity={product.stockQuantity || 99}
+                disabled={!product.inStock || isLoadingAddToCart}
               />
             </div>
-
-            <div className="flex gap-4">
-              <Button
-                variant="brand"
-                size="lg"
-                onClick={handleAddToCart}
-                disabled={isLoadingAddToCart || !product.inStock}
-                className="flex-1"
-              >
-                {isLoadingAddToCart ? 'Adding...' : 'Add to Cart'}
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={handleBuyNow}
-                className="flex-1"
-              >
-                Buy Now
-              </Button>
-            </div>
-
-            <ProviderCardWithHandlers
-              provider={product.provider}
-              onViewProfile={() => router.push(`/provider/${product.provider.id}`)}
-            />
           </div>
         </div>
 
-        {/* Product Description */}
-        {(product.longDescription || product.description) && (
-          <div className="mb-12">
-            <h2 className="text-20 font-semibold text-gray-900 mb-4">
-              Description
+        {/* Reviews and Rating Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 mb-12">
+          {/* Left: Reviews */}
+          <div className="lg:col-span-9">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-24 md:text-30 font-semibold text-gray-900">
+                Reviews
             </h2>
-            <p className="text-14 text-gray-700 leading-relaxed">
-              {product.longDescription || product.description}
-            </p>
+              <span className="text-14 text-gray-600">
+                {product.rating?.count || 0} reviews
+              </span>
           </div>
-        )}
 
-        {/* Reviews Section */}
-        <div className="mb-12">
-          <h2 className="text-20 font-semibold text-gray-900 mb-6">
-            Reviews ({reviews.length || product.rating.count})
-          </h2>
-
-          {/* Display Reviews */}
-          {reviews.length > 0 && (
-            <div className="space-y-4 mb-6">
-              {reviews.map(review => (
+            <div className="space-y-4">
+              {/* Use API reviews if available, otherwise show empty state */}
+              {reviews.length > 0 ? (
+                reviews.map(review => (
                 <div
                   key={review.id}
-                  className="bg-white border border-gray-200 rounded-lg p-4"
+                    className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                      <span className="text-14 font-semibold text-gray-600">
-                        {review.userName.charAt(0).toUpperCase()}
+                      {/* User Avatar */}
+                      <div className="flex-shrink-0">
+                        {review.userImage ? (
+                          <div className="relative w-12 h-12">
+                            <Image
+                              src={review.userImage}
+                              alt={review.userName}
+                              fill
+                              sizes="48px"
+                              className="rounded-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                            <span className="text-16 font-semibold text-gray-600">
+                              {review.userName?.charAt(0) || 'U'}
                       </span>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-14 font-semibold text-gray-900">
-                          {review.userName}
-                        </span>
-                        {review.verified && (
-                          <Badge variant="success" size="sm">
-                            Verified
-                          </Badge>
                         )}
-                        <span className="text-12 text-gray-500">
-                          {new Date(review.date).toLocaleDateString()}
-                        </span>
                       </div>
-                      <RatingDisplay
-                        rating={review.rating}
-                        size="sm"
-                        showCount={false}
-                      />
-                      <p className="text-14 text-gray-700 mt-2">
-                        {review.comment}
-                      </p>
-                      {review.helpful > 0 && (
-                        <div className="mt-2 text-12 text-gray-500">
-                          {review.helpful} people found this helpful
+
+                      {/* Review Content */}
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-16 font-semibold text-gray-900">
+                                {review.userName || 'Anonymous'}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-12 text-gray-500">
+                                {review.date ? new Date(review.date).toLocaleDateString() : 'Recently'}
+                              </span>
+                              <div className="flex items-center gap-0.5">
+                                {[1, 2, 3, 4, 5].map(star => (
+                                  <Star
+                                    key={star}
+                                    className={cn(
+                                      'h-4 w-4',
+                                      star <= review.rating
+                                        ? 'fill-brand-500 text-brand-500'
+                                        : 'fill-gray-200 text-gray-200'
+                                    )}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          {review.helpful !== undefined && review.helpful > 0 && (
+                            <button className="flex items-center gap-1 text-12 text-gray-500 hover:text-gray-700">
+                              <ThumbsUp className="h-4 w-4" />
+                              <span>{review.helpful}</span>
+                            </button>
+                          )}
                         </div>
-                      )}
+                        <p className="text-14 text-gray-600 leading-relaxed">
+                          {review.comment || ''}
+                        </p>
+                      </div>
                     </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  No reviews yet. Be the first to review this product!
                 </div>
-              ))}
+              )}
             </div>
-          )}
 
-          {/* Write Review Form */}
-          <div className="bg-white border border-gray-200 rounded-lg p-6">
-            <h3 className="text-16 font-semibold text-gray-900 mb-4">
+            <div className="mt-6 text-center">
+              <button className="text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
+                See more reviews
+              </button>
+            </div>
+
+            {/* Write Your Review Section */}
+            <div className="mt-8 p-6">
+              <h3 className="text-18 font-semibold text-gray-900 mb-4">
               Write Your Review
             </h3>
 
@@ -472,52 +377,194 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
               <RatingInput
                 rating={userRating}
                 onRatingChange={setUserRating}
-                size="lg"
+                  size="md"
+                  color="default"
               />
             </div>
 
+              {/* Comment Input Area */}
+              <div className="relative bg-white border border-gray-300 rounded-lg min-h-[120px] p-4">
+                {/* User Avatar inside input */}
+                <div className="absolute top-4 left-4 w-8 h-8 rounded-full overflow-hidden">
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-12 font-semibold text-gray-600">
+                      U
+                    </span>
+                  </div>
+                </div>
+
+                {/* Textarea */}
             <textarea
               value={reviewComment}
               onChange={e => setReviewComment(e.target.value)}
-              placeholder="Write your review here..."
-              className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand-500"
-            />
+                  placeholder="Share your Comments"
+                  className="w-full min-h-[100px] pl-12 pr-14 py-2 border-0 focus:outline-none text-14 text-gray-900 placeholder:text-gray-400 resize-none bg-transparent"
+                  rows={4}
+                />
 
-            <div className="flex justify-end mt-4">
-              <Button
-                variant="brand"
-                onClick={handleSubmitReview}
-                disabled={
-                  !userRating ||
-                  !reviewComment.trim() ||
-                  submitReviewMutation.isPending
-                }
+                {/* Send Button */}
+                <button
+                  onClick={async () => {
+                    if (reviewComment.trim() && userRating > 0 && parsedProductId) {
+                      try {
+                        const response = await submitReviewMutation.mutateAsync({
+                          productId: parsedProductId,
+                          rating: userRating,
+                          review: reviewComment.trim(),
+                        })
+                        
+                        const { message, type } = handleApiResponseForToast(
+                          response,
+                          'Review submitted successfully!',
+                          'Failed to submit review'
+                        )
+                        
+                        if (type === 'success') {
+                          setReviewComment('')
+                          setUserRating(0)
+                        }
+                        addToast(message, type)
+                      } catch (error) {
+                        console.error('Error submitting review:', error)
+                        const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+                        addToast(errorMessage, 'error')
+                      }
+                    }
+                  }}
+                  disabled={!reviewComment.trim() || userRating === 0 || submitReviewMutation.isPending || !parsedProductId}
+                  className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+                  aria-label="Send review"
               >
-                {submitReviewMutation.isPending
-                  ? 'Submitting...'
-                  : 'Submit Review'}
-              </Button>
+                  {submitReviewMutation.isPending ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Send className="h-5 w-5 text-white flex-shrink-0" />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Rating Summary Sidebar */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Overall Rating Display */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="text-center mb-4">
+                <div className="text-48 font-semibold text-gray-900 mb-2">
+                  {product.rating?.value || 0}
+                </div>
+                <div className="mb-2 flex justify-center">
+                  <RatingDisplay
+                    rating={product.rating?.value || 0}
+                    showCount={false}
+                    size="lg"
+                  />
+                </div>
+                <p className="text-14 text-gray-600">
+                  Based on {product.rating?.count || 0} reviews
+                </p>
+              </div>
+
+              {/* Rating Breakdown */}
+              <div className="space-y-3 mt-6">
+                {ratingDistribution.map(item => (
+                  <div key={item.stars} className="space-y-1">
+                    <div className="flex items-center justify-between text-12">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-900">
+                          {item.stars}
+                        </span>
+                        <Star className="h-4 w-4 fill-brand-500 text-brand-500" />
+                        <span className="text-gray-600">
+                          {getRatingLabel(item.stars)}
+                        </span>
+                      </div>
+                      <span className="text-gray-600">{item.count}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-brand-400 h-2 rounded-full"
+                        style={{ width: `${item.percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Related Products */}
+        {/* Newsletter/Offer Banner Section */}
+        <OfferBanner
+          offers={[{
+            heading: "24% Offer On our product!",
+            description: "Subscribe to our newsletter and get exclusive offers on premium wedding products.",
+            variant: "default",
+            productImage: productImage,
+          }]}
+          className="mb-12"
+        />
+
+        {/* Suggested for You Section */}
         {relatedProducts.length > 0 && (
-          <div>
-            <h2 className="text-20 font-semibold text-gray-900 mb-6">
-              Related Products
+          <section className="mb-12 max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-30 md:text-32 font-normal text-gray-900">
+                Suggested for You
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map(relatedProduct => (
-                <ProductCardWithHandlers
-                  key={relatedProduct.id}
-                  product={relatedProduct}
-                  onCardClick={() => router.push(`/products/${relatedProduct.id}`)}
-                  addToast={addToast}
-                />
-              ))}
+              <Link
+                href="/products"
+                className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
+              >
+                View All
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {relatedProducts.map(product => {
+                // Inline component to use hooks properly
+                const ProductCardItem = () => {
+                  const handlers = useProductCardHandlers(parseInt(product.id, 10))
+                  const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+
+                  const handleAddToCartClick = (e: React.MouseEvent) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleAddToCart(product, 1)
+                  }
+
+                  return (
+                    <Card
+                      cardData={{
+                        type: 'product',
+                        id: product.id,
+                        image: product.images?.[0]?.trim() || '',
+                        title: product.title,
+                        providerName: product.provider.name,
+                        providerId: product.provider.id,
+                        verified: product.provider.verified,
+                        rating: product.rating?.value || 0,
+                        originalPrice: product.price.original,
+                        discountedPrice: product.price.discounted,
+                        tags: product.tags,
+                        showTopOfferBadge: product.showTopOfferBadge,
+                        isWishlisted: product.isWishlisted,
+                        isFavorite: product.isFavorite,
+                        inStock: product.inStock,
+                        onWishlistToggle: handlers.handleWishlistToggle,
+                        onFavoriteToggle: handlers.handleFavoriteToggle,
+                        onAddToCart: handleAddToCartClick,
+                        isLoadingWishlist: handlers.isLoadingWishlist,
+                        isLoadingFavorite: handlers.isLoadingFavorite,
+                        isLoadingAddToCart,
+                      }}
+                />
+                  )
+                }
+                return <ProductCardItem key={product.id} />
+              })}
+            </div>
+          </section>
         )}
       </div>
     </ProductPageLayout>

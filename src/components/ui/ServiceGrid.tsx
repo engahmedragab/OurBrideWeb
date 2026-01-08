@@ -39,7 +39,7 @@ export const ServiceGrid = ({
   if (services.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-16 text-gray-500">No services found</p>
+        <p className="text-16 text-gray-500">No data available</p>
       </div>
     )
   }

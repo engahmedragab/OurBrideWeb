@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, Suspense } from 'react'
+import React, { useState, useMemo, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
@@ -16,6 +16,7 @@ import {
   LoadingSpinner,
 } from '@/components/ui'
 import { ErrorModal } from '@/components/ui/ErrorModal'
+import { HeroCarousel, type HeroSlide } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
 import type {
@@ -519,6 +520,34 @@ const sortOptions: ServiceSortOption[] = [
   { value: 'popular', label: 'Most Popular' },
 ]
 
+// Default hero carousel slides for services
+const DEFAULT_SERVICE_HERO_SLIDES: HeroSlide[] = [
+  {
+    id: '1',
+    label: 'Featured Service',
+    title: 'Bridal Makeup & Hair',
+    description:
+      'Professional bridal beauty services to make you look stunning on your special day. Expert makeup artists and hairstylists ready to create your perfect bridal look.',
+    ctaText: 'Book Now',
+    ctaLink: '/services/category',
+    productImage:
+      'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600',
+    discountText: '30% OFF',
+  },
+  {
+    id: '2',
+    label: 'Top Rated',
+    title: 'Wedding Photography',
+    description:
+      'Capture your precious moments with our professional wedding photography services. Experienced photographers dedicated to creating beautiful memories.',
+    ctaText: 'Explore Services',
+    ctaLink: '/services/category',
+    productImage:
+      'https://images.unsplash.com/photo-1519741497674-611481863552?w=600',
+    discountText: '50% OFF',
+  },
+]
+
 /**
  * ServicesCategoryPageContent - Main content component
  * Reads filters from URL query params and syncs changes back to URL
@@ -635,7 +664,14 @@ function ServicesCategoryPageContent() {
     }
 
     const queryString = params.toString()
-    router.push(`/services/category${queryString ? `?${queryString}` : ''}`)
+    const newUrl = `/services/category${queryString ? `?${queryString}` : ''}`
+    
+    // Update URL using replaceState to avoid scrolling to top
+    window.history.replaceState(
+      { ...window.history.state },
+      '',
+      newUrl
+    )
   }
 
   // Filter and sort services
@@ -781,6 +817,14 @@ function ServicesCategoryPageContent() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1">
+        {/* Hero Carousel */}
+        <HeroCarousel
+          slides={DEFAULT_SERVICE_HERO_SLIDES}
+          autoPlay={true}
+          autoPlayInterval={5000}
+          showBackground={false}
+        />
+        
         <div className="container-custom py-6 md:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
             {/* Sidebar: Filters */}

@@ -11,8 +11,6 @@ import type { DeliveryAddressResponse } from '@/types/responses'
 import type { DeliveryAddressRequest } from '@/../client/common/api/gen/ourbride-api'
 import { getUser } from '@/auth/utils/token'
 import { cn } from '@/lib/utils'
-import { SelectPopover } from './SelectPopover'
-import type { SelectOption } from './SelectPopover'
 import { LocationPickerModal, type LocationData } from './LocationPickerModal'
 
 export interface AddressModalProps {
@@ -150,7 +148,7 @@ export const AddressModal = ({
       }))
 
       addToast('Location selected successfully', 'success')
-    } catch (error) {
+    } catch {
       // Fallback: just set the address
       const displayName = typeof locationData === 'string' ? locationData : locationData.displayName || ''
       setFormData(prev => ({
@@ -268,18 +266,22 @@ export const AddressModal = ({
       isOpen={isOpen}
       onClose={onClose}
       title={address ? 'Edit Address' : 'Add Delivery Address'}
-      maxWidth="md"
+      maxWidth="lg"
       disabled={isLoading}
+      containerClassName="max-h-[90vh] flex flex-col overflow-hidden"
+      contentClassName="px-4 sm:px-6 py-4 sm:py-6 overflow-y-auto flex-1 min-h-0"
     >
-      <div className="space-y-4">
+      <div className="space-y-4 sm:space-y-5">
         {/* Location Picker Button */}
         <button
           type="button"
           onClick={() => setShowLocationPicker(true)}
+          disabled={isLoading}
           className={cn(
-            'w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 border-dashed transition-all',
+            'w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed transition-all',
             'border-brand-300 bg-brand-50 hover:bg-brand-100 hover:border-brand-400',
-            'text-brand-600 font-medium text-14'
+            'text-brand-600 font-medium text-14',
+            'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >
           <Navigation className="h-5 w-5" />
@@ -298,7 +300,7 @@ export const AddressModal = ({
         />
 
         {/* Contact Numbers */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
             type="tel"
             placeholder="Contact Number *"
@@ -349,7 +351,7 @@ export const AddressModal = ({
         />
 
         {/* City, State, Postcode */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Input
             type="text"
             placeholder="City *"
@@ -393,38 +395,40 @@ export const AddressModal = ({
             value={formData.addressComment}
             onChange={e => updateField('addressComment', e.target.value)}
             rows={3}
+            disabled={isLoading}
             className={cn(
-              'w-full px-4 py-3 rounded-md border bg-background text-16',
+              'w-full px-4 py-3 rounded-md border bg-background text-14 sm:text-16',
               'ring-offset-background transition-colors',
               'placeholder:text-gray-400 focus-visible:outline-none',
               'focus-visible:ring-2 focus-visible:ring-offset-2',
               'border-gray-300 focus-visible:border-brand-500 focus-visible:ring-brand-500',
-              'resize-none'
+              'resize-none disabled:opacity-50 disabled:cursor-not-allowed'
             )}
           />
         </div>
 
         {/* Default Address Checkbox */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 pt-2">
           <input
             type="checkbox"
             id="isDefault"
             checked={formData.isDefault}
             onChange={e => updateField('isDefault', e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+            disabled={isLoading}
+            className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           />
-          <label htmlFor="isDefault" className="text-14 text-gray-700">
+          <label htmlFor="isDefault" className="text-14 text-gray-700 cursor-pointer select-none">
             Set as default delivery address
           </label>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
           <Button
             variant="outline"
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1"
+            className="flex-1 order-2 sm:order-1"
           >
             Cancel
           </Button>
@@ -432,9 +436,9 @@ export const AddressModal = ({
             variant="default"
             onClick={handleSubmit}
             disabled={isLoading}
-            className="flex-1"
+            className="flex-1 order-1 sm:order-2 !text-white"
           >
-            {isLoading ? 'Saving...' : address ? 'Update' : 'Add Address'}
+            {isLoading ? 'Saving...' : address ? 'Update Address' : 'Add Address'}
           </Button>
         </div>
       </div>
@@ -452,4 +456,5 @@ export const AddressModal = ({
     </Modal>
   )
 }
+
 

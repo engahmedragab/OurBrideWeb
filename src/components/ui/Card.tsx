@@ -1,4 +1,4 @@
-import { HTMLAttributes, forwardRef } from 'react'
+import React, { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -18,6 +18,7 @@ import {
   UserPlus,
   Check,
   Star,
+  User,
 } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import { PriceDisplay } from './PriceDisplay'
@@ -153,6 +154,7 @@ const ProductServiceCard = ({
   data: ProductCardData | ServiceCardData
   cardType: 'product' | 'service'
 }) => {
+  const [imageError, setImageError] = React.useState(false)
   const hasDiscount = data.discountedPrice < data.originalPrice
   const { isProductInCart, isServiceInCart } = useCartItems()
   const { isProductInWishlist, isServiceInWishlist } = useWishlistItems()
@@ -246,8 +248,25 @@ const ProductServiceCard = ({
     router.push('/cart')
   }
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on interactive elements
+    const target = e.target as HTMLElement
+    if (
+      target.closest('button') ||
+      target.closest('a') ||
+      target.closest('[role="button"]')
+    ) {
+      return
+    }
+    const route = cardType === 'product' ? `/products/${data.id}` : `/services/category/${data.id}`
+    router.push(route)
+  }
+
   return (
-    <div className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg shadow-sm transition-shadow">
+    <div 
+      className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg shadow-sm transition-shadow cursor-pointer"
+      onClick={handleCardClick}
+    >
       {/* Action Icons - Floating above the card */}
       <div className="absolute top-0 right-2 z-20 flex items-center gap-2 pointer-events-auto">
         {/* Wishlist Icon */}
@@ -282,18 +301,28 @@ const ProductServiceCard = ({
 
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 custom-shaped-card">
-        {data.image && data.image.trim() !== '' ? (
+        {data.image && 
+         data.image.trim() !== '' && 
+         data.image !== '/' &&
+         !data.image.includes('placeholder') &&
+         data.image !== '/placeholder-product.png' &&
+         data.image !== '/placeholder-service.png' &&
+         data.image !== '/placeholder-membership.png' &&
+         data.image !== '/placeholder-giftcard.png' &&
+         data.image !== '/images/placeholder-product.png' &&
+         !imageError ? (
           <Image
             src={data.image}
             alt={data.title}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
-            <span className="text-white text-32 font-semibold">
-              {data.title.charAt(0).toUpperCase()}
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <span className="text-gray-400 text-12 font-medium">
+              No image available
             </span>
           </div>
         )}
@@ -451,6 +480,7 @@ const ProductServiceCard = ({
 
 // Testimonial Card Component
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
+  const [imageError, setImageError] = React.useState(false)
   return (
     <div className="flex flex-col">
       {/* Card */}
@@ -471,19 +501,18 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
       {/* Author Info - Below the card */}
       <div className="flex items-center gap-3 mt-4 ml-4">
         <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-          {data.authorImage && data.authorImage.trim() !== '' ? (
+          {data.authorImage && data.authorImage.trim() !== '' && !imageError ? (
             <Image
               src={data.authorImage}
               alt={data.authorName}
               fill
               sizes="48px"
               className="object-cover grayscale"
+              onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-              <span className="text-white text-16 font-semibold">
-                {data.authorName.charAt(0).toUpperCase()}
-              </span>
+            <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+              <User className="h-6 w-6 text-gray-400" />
             </div>
           )}
         </div>
@@ -500,6 +529,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
 
 // Provider Card Component
 const ProviderCard = ({ data }: { data: ProviderCardData }) => {
+  const [imageError, setImageError] = React.useState(false)
   const handleFollowToggle = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -589,18 +619,19 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
         className="relative w-20 h-20 md:w-24 md:h-24 mb-4 block hover:opacity-90 transition-opacity"
         onClick={(e) => e.stopPropagation()}
       >
-        {data.image && data.image.trim() !== '' ? (
+        {data.image && data.image.trim() !== '' && !imageError ? (
           <Image
             src={data.image}
             alt={data.name}
             fill
             sizes="(max-width: 768px) 80px, 96px"
             className="rounded-full object-cover"
+            onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400 text-20 font-semibold">
-              {data.name.charAt(0).toUpperCase()}
+          <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
+            <span className="text-gray-400 text-10 font-medium">
+              No image available
             </span>
           </div>
         )}
@@ -672,6 +703,7 @@ const MemberTestimonialCard = ({
 }: {
   data: MemberTestimonialCardData
 }) => {
+  const [imageErrors, setImageErrors] = React.useState<Set<number>>(new Set())
   const mainImage = data.productImages[0]
   const thumbnailImages = data.productImages.slice(1, 3)
 
@@ -681,19 +713,18 @@ const MemberTestimonialCard = ({
       <div className="flex items-center justify-between gap-3 mb-4 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-            {data.authorImage && data.authorImage.trim() !== '' ? (
+            {data.authorImage && data.authorImage.trim() !== '' && !imageErrors.has(-1) ? (
               <Image
                 src={data.authorImage}
                 alt={data.authorName}
                 fill
                 sizes="48px"
                 className="object-cover grayscale"
+                onError={() => setImageErrors(prev => new Set(prev).add(-1))}
               />
             ) : (
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-                <span className="text-white text-16 font-semibold">
-                  {data.authorName.charAt(0).toUpperCase()}
-                </span>
+              <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="h-6 w-6 text-gray-400" />
               </div>
             )}
           </div>
@@ -722,18 +753,19 @@ const MemberTestimonialCard = ({
       <div className="mb-4 flex-shrink-0">
         {data.productImages.length === 1 ? (
           <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-            {mainImage && mainImage.trim() !== '' ? (
+            {mainImage && mainImage.trim() !== '' && !imageErrors.has(0) ? (
               <Image
                 src={mainImage}
                 alt="Product"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
+                onError={() => setImageErrors(prev => new Set(prev).add(0))}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
-                <span className="text-white text-24 font-semibold">
-                  {data.authorName.charAt(0).toUpperCase()}
+              <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                <span className="text-gray-400 text-12 font-medium">
+                  No image available
                 </span>
               </div>
             )}
@@ -741,18 +773,19 @@ const MemberTestimonialCard = ({
         ) : (
           <div className="grid grid-cols-3 gap-2">
             <div className="col-span-2 relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-              {mainImage && mainImage.trim() !== '' ? (
+              {mainImage && mainImage.trim() !== '' && !imageErrors.has(0) ? (
                 <Image
                   src={mainImage}
                   alt="Product"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
+                  onError={() => setImageErrors(prev => new Set(prev).add(0))}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
-                  <span className="text-white text-24 font-semibold">
-                    {data.authorName.charAt(0).toUpperCase()}
+                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                  <span className="text-gray-400 text-12 font-medium">
+                    No image available
                   </span>
                 </div>
               )}
@@ -764,18 +797,19 @@ const MemberTestimonialCard = ({
                     key={index}
                     className="relative flex-1 rounded-lg overflow-hidden bg-gray-100"
                   >
-                    {image && image.trim() !== '' ? (
+                    {image && image.trim() !== '' && !imageErrors.has(index + 1) ? (
                       <Image
                         src={image}
                         alt={`Product ${index + 2}`}
                         fill
                         sizes="(max-width: 768px) 33vw, 25vw"
                         className="object-cover"
+                        onError={() => setImageErrors(prev => new Set(prev).add(index + 1))}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
-                        <span className="text-white text-14 font-semibold">
-                          {data.authorName.charAt(0).toUpperCase()}
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <span className="text-gray-400 text-10 font-medium">
+                          No image available
                         </span>
                       </div>
                     )}
