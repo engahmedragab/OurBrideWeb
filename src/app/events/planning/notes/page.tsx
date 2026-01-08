@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { LoadingOverlay } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
-import { useNoteBook, useNoteSyncMutation } from '@/hooks/notes'
+import { useNoteBook, useNoteSyncMutation } from '@/hooks/notes/noteBooks.hooks'
 import { useInitNoteBooks } from '@/hooks/bookInit'
 
 import { NoteCategoriesSidebar } from '@/components/notesBook/NoteCategoriesSidebar'

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { LoadingOverlay } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
-import { useBudgetBook, useBudgetSyncMutation } from '@/hooks/budget'
+import { useBudgetBook, useBudgetSyncMutation } from '@/hooks/budget/budgetBooks.hooks'
 
 import { BudgetFiltersBar, type FilterType } from '@/components/budgetBook/components/filters/BudgetFiltersBar'
 import { BudgetOverviewCard } from '@/components/budgetBook/components/BudgetOverviewCard'
