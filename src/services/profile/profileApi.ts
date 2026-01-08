@@ -146,6 +146,16 @@ export const updateUserProfile = async (
   data: UserRequest
 ): Promise<void> => {
   try {
+    // Ensure we have a valid request object
+    if (!data || (typeof data === 'object' && Object.keys(data).length === 0)) {
+      throw new Error('UserRequest cannot be null or empty')
+    }
+
+    // Log the request for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Updating user profile with data:', data)
+    }
+
     await apiClient.api.postProfileUpdate(data)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to update user profile')

@@ -52,7 +52,9 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
   const avatar = getUserAvatar(blog.user)
   const date = formatDate(blog.publishedAt || blog.creationDate)
 
-  const imageUrl = COMMUNITY_IMAGES.DEFAULT_BLOG_IMAGE
+  // Extract images from medias array, fallback to default
+  const medias = (blog as any).medias || []
+  const imageUrl = medias.find((media: any) => media?.url)?.url || COMMUNITY_IMAGES.DEFAULT_BLOG_IMAGE
 
   // Map reviews to comments format
   const comments = (blog.reviews || []).map((review: ReviewResponse) => ({

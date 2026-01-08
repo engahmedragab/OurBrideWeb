@@ -171,18 +171,23 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
   const service = serviceDetailData?.service
 
+  // Helper function to determine if a string is a number
+  const isNumeric = (str: string): boolean => {
+    return /^\d+$/.test(str)
+  }
+
   // Fetch service packages
   const {
     data: packagesData,
     isLoading: packagesLoading,
   } = useServicePackages(serviceId)
 
-  // Fetch service reviews
-  const parsedServiceId = parseInt(serviceId, 10)
+  // Fetch service reviews - only if we have a numeric ID (reviews endpoint may not support slug yet)
+  const parsedServiceId = isNumeric(serviceId) ? parseInt(serviceId, 10) : null
   const { data: reviews = [] } = useServiceReviews(
-    parsedServiceId,
+    parsedServiceId || 0,
     { page: 1, pageSize: 10 },
-    !isNaN(parsedServiceId)
+    !!parsedServiceId
   )
 
   // Calculate rating distribution from actual reviews
@@ -212,7 +217,9 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
   }
 
   // Use API handlers for service cards with toast callbacks
-  const serviceHandlers = useServiceCardHandlers(parseInt(serviceId, 10), {
+  // Only use numeric ID for handlers (they may not support slug yet)
+  const serviceIdNum = isNumeric(serviceId) ? parseInt(serviceId, 10) : 0
+  const serviceHandlers = useServiceCardHandlers(serviceIdNum, {
     onFavoriteSuccess: (response) => {
       const defaultMessage = response === true ? 'Added to favorites' : 'Removed from favorites'
       const { message } = handleApiResponseForToast(response, defaultMessage, 'Failed to update favorite')

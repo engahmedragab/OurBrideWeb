@@ -46,7 +46,8 @@ interface LinkItem {
 
 export function ProviderLinksClient({ providerId }: ProviderLinksClientProps) {
     const router = useRouter()
-    const { data: linkeeData, isLoading, error } = useProviderLinkee(parseInt(providerId))
+    // Support both ID and slug
+    const { data: linkeeData, isLoading, error } = useProviderLinkee(providerId)
 
     if (isLoading) {
         return (

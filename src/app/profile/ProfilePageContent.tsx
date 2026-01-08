@@ -37,12 +37,12 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
   const data = mineInfo?.data || mineInfo || {}
   const userProfile = data.userProfile || {}
   const user = userProfile.user || {}
-  
-  const displayName = 
+
+  const displayName =
     user.firstName && user.lastName
       ? `${user.firstName} ${user.lastName}`
       : user.userName || user.email || 'User'
-  
+
   const profileImage = user.profileUrl || 'https://via.placeholder.com/200'
   const email = user.email || ''
   const phone = user.phoneNumber || ''
@@ -51,7 +51,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
   const gender = user.gender || ''
   const status = user.status || ''
   const type = user.type || ''
-  
+
   // Extract statistics
   const itemBook = data.itemBook || {}
   const serviceBook = data.serviceBook || {}

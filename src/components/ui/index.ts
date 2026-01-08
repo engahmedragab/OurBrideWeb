@@ -469,3 +469,6 @@ export { ProviderFiltersModal } from './ProviderFiltersModal'
 export type { ProviderFiltersModalProps, ProviderFilters, SortOption, VenueType } from './ProviderFiltersModal'
 export { ProviderMap } from './ProviderMap'
 export type { ProviderMapProps } from './ProviderMap'
+
+export { ImageUploader } from './ImageUploader'
+export type { ImageUploaderProps } from './ImageUploader'

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
@@ -25,6 +25,11 @@ import { RatingDisplay } from '@/components/ui/RatingDisplay'
 import { cn } from '@/lib/utils'
 import { useProviderPublicStore } from '@/hooks/providers/useProviderPublicStore'
 import { useProductsHome } from '@/hooks/products/useProductsHome'
+import { useStoreHomeByProvider } from '@/hooks/home/useHome'
+import { extractStoreHomeData } from '@/utils/home-data.utils'
+import { OfferBanner } from '@/components/ui/OfferBanner'
+import { TestimonialsSection } from '@/components/ui/TestimonialsSection'
+import { Accordion } from '@/components/ui/Accordion'
 import { DEFAULT_CURRENCY } from '@/utils/currency'
 import type { ProductHeaderResponse } from '@/types/responses/product-header-response'
 import type { CategoryResponse } from '@/types/responses/category-response'
@@ -47,17 +52,54 @@ export function ProviderStoreClient({ providerId }: ProviderStoreClientProps) {
     const [selectedTag, setSelectedTag] = useState<string | null>(null)
     const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null)
     const [showFilters, setShowFilters] = useState(false)
+    const [topBarTextIndex, setTopBarTextIndex] = useState(0)
 
-    // Fetch provider store data
+    // Fetch provider store data - support both ID and slug
     const { data: storeData, isLoading: storeLoading, error: storeError } = useProviderPublicStore(
-        parseInt(providerId),
+        providerId,
         { page: 1, pageSize: 1000 }
     )
 
     // Fetch products home data for filters
     const { data: productsHomeData, isLoading: homeLoading } = useProductsHome()
 
-    const isLoading = storeLoading || homeLoading
+    // Fetch store home data (banners, testimonials, FAQs, top bar texts)
+    // Extract providerId from storeData or try to parse providerId from string
+    const providerIdNumber = useMemo(() => {
+        if (storeData?.providerId) {
+            return storeData.providerId
+        }
+        // Try to parse providerId if it's numeric
+        const parsed = parseInt(providerId, 10)
+        return isNaN(parsed) ? undefined : parsed
+    }, [storeData?.providerId, providerId])
+
+    const { data: storeHomeData, isLoading: storeHomeLoading } = useStoreHomeByProvider(
+        providerIdNumber ? { providerId: providerIdNumber } : undefined,
+        !!providerIdNumber
+    )
+
+    // Extract store home data
+    const storeHomeExtracted = useMemo(() => {
+        if (storeHomeData) {
+            return extractStoreHomeData(storeHomeData)
+        }
+        return {}
+    }, [storeHomeData])
+
+    // Auto-rotate top bar texts
+    const topBarTexts = storeHomeExtracted.topBarTexts || []
+    useEffect(() => {
+        if (topBarTexts.length <= 1) return
+
+        const interval = setInterval(() => {
+            setTopBarTextIndex((prevIndex) => (prevIndex + 1) % topBarTexts.length)
+        }, 4000) // Rotate every 4 seconds
+
+        return () => clearInterval(interval)
+    }, [topBarTexts.length])
+
+    const isLoading = storeLoading || homeLoading || storeHomeLoading
 
     // Get available filters from products home data (before conditional returns)
     const availableCategories = productsHomeData?.categories || storeData?.providerCategories || []
@@ -285,6 +327,79 @@ export function ProviderStoreClient({ providerId }: ProviderStoreClientProps) {
             <Header />
 
             <main className="flex-1">
+                {/* Top Bar Texts Section - Rotating Slider */}
+                {topBarTexts.length > 0 && (
+                    <div className="bg-gradient-to-r from-brand-500 to-purple-600 border-b border-gray-200 overflow-hidden w-full">
+                        <div className="relative h-8 flex items-center justify-center w-full">
+                            {/* Slider Container */}
+                            <div className="relative w-full h-full overflow-hidden">
+                                <div
+                                    className="flex transition-transform duration-500 ease-in-out h-full w-full"
+                                    style={{
+                                        transform: `translateX(-${topBarTextIndex * 100}%)`,
+                                    }}
+                                >
+                                    {topBarTexts.map((text, index) => (
+                                        <div
+                                            key={text.id}
+                                            className="min-w-full w-full flex items-center justify-center px-4"
+                                            style={{
+                                                color: text.textColor || '#FFFFFF',
+                                                backgroundColor: text.backgroundColor || 'transparent',
+                                            }}
+                                        >
+                                            <div
+                                                className="text-14 font-medium text-center whitespace-nowrap w-full"
+                                                style={{
+                                                    color: text.textColor || '#FFFFFF',
+                                                    fontSize: (text as any).fontSize || undefined,
+                                                    fontWeight: (text as any).fontWeight || ((text as any).isBold ? 'bold' : undefined),
+                                                    fontStyle: (text as any).isItalic ? 'italic' : undefined,
+                                                }}
+                                            >
+                                                {(text as any).icon && (
+                                                    <span className="mr-2">{(text as any).icon}</span>
+                                                )}
+                                                {(text as any).link ? (
+                                                    <a
+                                                        href={(text as any).link}
+                                                        target={(text as any).openInNewTab ? '_blank' : '_self'}
+                                                        rel={(text as any).openInNewTab ? 'noopener noreferrer' : undefined}
+                                                        className="hover:underline"
+                                                    >
+                                                        {text.text || text.textEn || text.textAr}
+                                                    </a>
+                                                ) : (
+                                                    text.text || text.textEn || text.textAr
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Slide Indicators */}
+                            {topBarTexts.length > 1 && (
+                                <div className="absolute right-4 flex items-center gap-1.5 z-10">
+                                    {topBarTexts.map((_, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => setTopBarTextIndex(index)}
+                                            className={cn(
+                                                'w-1.5 h-1.5 rounded-full transition-all duration-300',
+                                                index === topBarTextIndex
+                                                    ? 'bg-white w-6'
+                                                    : 'bg-white/50 hover:bg-white/75'
+                                            )}
+                                            aria-label={`Go to announcement ${index + 1}`}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
                 {/* Store Banner Section */}
                 {storeData?.providerPublicBannerImageUrl && (
                     <div className="relative h-48 md:h-64 lg:h-80 overflow-hidden bg-gradient-to-r from-brand-100 to-purple-100">
@@ -436,6 +551,16 @@ export function ProviderStoreClient({ providerId }: ProviderStoreClientProps) {
                                 )}
                             </div>
                         </div>
+                    </div>
+                )}
+
+                {/* Banners Section */}
+                {storeHomeExtracted.banners && storeHomeExtracted.banners.length > 0 && (
+                    <div className="container-custom py-6">
+                        <OfferBanner
+                            offers={storeHomeExtracted.banners}
+                            autoPlayInterval={5000}
+                        />
                     </div>
                 )}
 
@@ -845,6 +970,45 @@ export function ProviderStoreClient({ providerId }: ProviderStoreClientProps) {
                         </div>
                     </div>
                 </div>
+
+                {/* Testimonials Section */}
+                {storeHomeExtracted.testimonials && storeHomeExtracted.testimonials.length > 0 && (
+                    <div className="py-12 md:py-16 bg-white">
+                        <TestimonialsSection
+                            title="Customer Reviews"
+                            testimonials={storeHomeExtracted.testimonials.map((testimonial) => ({
+                                rating: testimonial.rating || 5,
+                                title: '',
+                                comment: testimonial.quote || '',
+                                reviewerName: testimonial.authorName || 'Anonymous',
+                                reviewerLocation: '',
+                                reviewerImage: testimonial.authorImage || null,
+                            }))}
+                        />
+                    </div>
+                )}
+
+                {/* FAQs Section */}
+                {storeHomeExtracted.faqs && storeHomeExtracted.faqs.length > 0 && (
+                    <section className="bg-gray-50 py-12 md:py-16">
+                        <div className="container-custom">
+                            <h2 className="text-28 md:text-36 font-bold text-gray-900 mb-8 text-center">
+                                Frequently Asked Questions
+                            </h2>
+                            <div className="max-w-3xl mx-auto">
+                                <Accordion
+                                    items={storeHomeExtracted.faqs.map((faq) => ({
+                                        question: faq.question || faq.questionEn || faq.questionAr || '',
+                                        answer: faq.answer || faq.answerEn || faq.answerAr || '',
+                                        defaultOpen: false,
+                                        className: 'rounded-xl',
+                                    }))}
+                                    className="space-y-3"
+                                />
+                            </div>
+                        </div>
+                    </section>
+                )}
             </main>
 
             <Footer />

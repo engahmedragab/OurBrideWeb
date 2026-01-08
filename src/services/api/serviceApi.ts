@@ -303,6 +303,40 @@ export const getServiceById = async (serviceId: number): Promise<ServiceResponse
 }
 
 /**
+ * Get service by slug
+ * GET /api/v1/services/slug/{slug}
+ */
+export const getServiceBySlug = async (slug: string): Promise<ServiceResponse | null> => {
+  try {
+    // Try to use slug endpoint if available
+    const api: any = apiClient.api
+    if (api.getServicesGetBySlug) {
+      const response = await api.getServicesGetBySlug(slug)
+      const responseData = response as unknown as { data?: { data?: ServiceResponse } | ServiceResponse } | ServiceResponse
+      
+      // Handle different response structures
+      if (responseData && typeof responseData === 'object' && 'data' in responseData && responseData.data) {
+        const data = responseData.data
+        if (typeof data === 'object' && 'data' in data && data.data) {
+          return data.data
+        }
+        if (typeof data === 'object' && 'id' in data) {
+          return data as ServiceResponse
+        }
+      }
+      if (responseData && typeof responseData === 'object' && 'id' in responseData) {
+        return responseData as ServiceResponse
+      }
+    }
+    
+    return null
+  } catch (error) {
+    console.error('Error fetching service by slug:', error)
+    throw error
+  }
+}
+
+/**
  * Search and filter services
  * GET /api/v1/services
  */

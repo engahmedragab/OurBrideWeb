@@ -52,7 +52,10 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
   const displayName = getUserDisplayName(post.user)
   const avatar = getUserAvatar(post.user)
   const timestamp = formatDate(post.publishedAt || post.creationDate)
-  const images: string[] = [] // TODO: Extract from post.media relations
+  // Extract images from medias array
+  const images: string[] = (post as any).medias
+    ?.filter((media: any) => media?.url)
+    .map((media: any) => media.url) || []
 
   // Map reviews to comments format
   const comments = (post.reviews || []).map((review: ReviewResponse) => ({

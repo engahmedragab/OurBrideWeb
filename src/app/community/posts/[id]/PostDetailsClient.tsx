@@ -4,11 +4,16 @@ import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { PostDetails, CommunitySidebar, CommunityRightSidebar, type CommunityTab } from '@/components/community'
 import { useCommunityHome } from '@/hooks/home/useHome'
-import { getPostById } from '@/services/api/postsApi'
+import { getPostById, getPostBySlug } from '@/services/api/postsApi'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { cn } from '@/lib/utils'
 import type { PostResponse } from '@/types/responses/community'
+
+// Helper function to determine if a string is a number
+const isNumeric = (str: string): boolean => {
+  return /^\d+$/.test(str)
+}
 
 export function PostDetailsClient({ id }: { id: string }) {
   const activeTab: CommunityTab = 'posts'
@@ -22,13 +27,16 @@ export function PostDetailsClient({ id }: { id: string }) {
     tagsCount: 10,
   }, true)
 
-  // Fetch post data
+  // Fetch post data - support both ID and slug
   const { data: post, isLoading, error } = useQuery({
     queryKey: ['post', id],
     queryFn: async () => {
-      const postId = parseInt(id, 10)
-      if (isNaN(postId)) throw new Error('Invalid post ID')
-      return await getPostById(postId)
+      if (isNumeric(id)) {
+        const postId = parseInt(id, 10)
+        return await getPostById(postId)
+      } else {
+        return await getPostBySlug(id)
+      }
     },
     enabled: !!id,
   })

@@ -142,6 +142,9 @@ export type {
   TestimonialResponse,
   HomeCenterUpdateResponse,
 } from './home-response'
+export type { StoreHomeResponse } from './store-home-response'
+export type { TopBarTextResponse } from './top-bar-text-response'
+export type { FAQResponse } from './faq-response'
 
 // Service types
 export type { PaginatedList } from './service-types'

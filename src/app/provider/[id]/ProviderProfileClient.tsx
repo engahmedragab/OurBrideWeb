@@ -55,7 +55,12 @@ export function ProviderProfileClient({
   const toggleFollow = useToggleProviderFollow()
   const toggleFavorite = useToggleProviderFavorite()
 
-  const providerIdNum = parseInt(providerId, 10)
+  // Helper function to determine if a string is a number
+  const isNumeric = (str: string): boolean => {
+    return /^\d+$/.test(str)
+  }
+
+  const providerIdNum = isNumeric(providerId) ? parseInt(providerId, 10) : 0
 
   // Local state for follow/favorite status (optimistic updates)
   const [isFollowed, setIsFollowed] = React.useState(false)
@@ -65,7 +70,8 @@ export function ProviderProfileClient({
   const sectionRefs = React.useRef<{ [key: string]: HTMLDivElement | null }>({})
 
   // Fetch provider public profile data from API - MUST be called before any conditional returns
-  const { data: providerData, isLoading, error } = useProviderPublicProfile(parseInt(providerId))
+  // Support both ID and slug
+  const { data: providerData, isLoading, error } = useProviderPublicProfile(providerId)
 
   // Update local state when providerData changes (if it includes follow/favorite status)
   React.useEffect(() => {
@@ -82,16 +88,17 @@ export function ProviderProfileClient({
   }, [providerData])
 
   // Fetch portfolio data for modals - MUST be called before any conditional returns
+  // Only fetch if we have a numeric ID (portfolio endpoints may not support slug yet)
   const { data: branchPortfolio } = useProviderBranchPortfolio(
-    parseInt(providerId),
+    providerIdNum,
     selectedBranchForPortfolio ? parseInt(selectedBranchForPortfolio.id) : 0,
-    { enabled: !!selectedBranchForPortfolio }
+    { enabled: !!selectedBranchForPortfolio && providerIdNum > 0 }
   )
 
   const { data: teamMemberPortfolio } = useProviderTeamMemberPortfolio(
-    parseInt(providerId),
+    providerIdNum,
     selectedTeamMemberForPortfolio?.id || '',
-    { enabled: !!selectedTeamMemberForPortfolio }
+    { enabled: !!selectedTeamMemberForPortfolio && providerIdNum > 0 }
   )
 
   // Calculate photos array from providerData (before early returns to avoid hook order issues)

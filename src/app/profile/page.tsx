@@ -13,12 +13,12 @@ function ProfileContent() {
 
   // Show error modal when error occurs
   useEffect(() => {
-    if (error || (!isLoading && !mineInfo)) {
+    if (error) {
       setShowErrorModal(true)
     } else {
       setShowErrorModal(false)
     }
-  }, [error, mineInfo, isLoading])
+  }, [error])
 
   if (isLoading) {
     return (
@@ -28,22 +28,52 @@ function ProfileContent() {
     )
   }
 
-  return (
-    <>
-      <ErrorModal
-        open={showErrorModal}
-        title="Failed to Load Profile"
-        message={
-          error instanceof Error
-            ? error.message
-            : 'Unable to load your profile information. Please try again later.'
-        }
-        onRetry={() => window.location.reload()}
-        onClose={() => setShowErrorModal(false)}
-      />
-      {!error && mineInfo && <ProfilePageContent mineInfo={mineInfo} />}
-    </>
-  )
+  if (error) {
+    return (
+      <>
+        <ErrorModal
+          open={showErrorModal}
+          title="Failed to Load Profile"
+          message={
+            error instanceof Error
+              ? error.message
+              : 'Unable to load your profile information. Please try again later.'
+          }
+          onRetry={() => window.location.reload()}
+          onClose={() => setShowErrorModal(false)}
+        />
+        <div className="min-h-[60vh] flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-gray-500 mb-4">Failed to load profile information</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </>
+    )
+  }
+
+  if (!mineInfo) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center py-12">
+        <div className="text-center">
+          <p className="text-gray-500 mb-4">No profile data available</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600"
+          >
+            Reload
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  return <ProfilePageContent mineInfo={mineInfo as Record<string, unknown>} />
 }
 
 export default function ProfilePage() {

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getHomeData, getStoreHomeData, getCommunityHome, getMineInfo, getProviderHome } from '@/services/api/home.api'
+import { getHomeData, getStoreHomeData, getCommunityHome, getMineInfo, getProviderHome, getStoreHomeByProvider } from '@/services/api/home.api'
 import type { CommunityHomeResponse } from '@/types/responses/community/community-home-response'
 import type { ProviderHomeResponse } from '@/types/responses/provider-home-response'
 
@@ -82,6 +82,29 @@ export const useProviderHome = (enabled = true) => {
     queryKey: ['provider-home'],
     queryFn: async () => {
       const data = await getProviderHome()
+      return data
+    },
+    enabled,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+  })
+}
+
+/**
+ * Hook to fetch store home page data by provider
+ */
+export const useStoreHomeByProvider = (
+  query?: {
+    providerId?: number
+    branchId?: number
+    staffId?: string
+  },
+  enabled = true
+) => {
+  return useQuery({
+    queryKey: ['store-home-by-provider', query],
+    queryFn: async () => {
+      const data = await getStoreHomeByProvider(query)
       return data
     },
     enabled,

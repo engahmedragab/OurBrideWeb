@@ -72,6 +72,35 @@ export const getDecisionGroupById = async (id: number): Promise<DecisionGroupRes
 }
 
 /**
+ * Get decision group by slug
+ */
+export const getDecisionGroupBySlug = async (slug: string): Promise<DecisionGroupResponse | null> => {
+  try {
+    // Try to use slug endpoint if available
+    const api: any = apiClient.api
+    if (api.getDecisionGroupsGetBySlug) {
+      const response = await api.getDecisionGroupsGetBySlug(slug)
+      const responseAny: any = response
+      
+      // Handle different response structures
+      if (responseAny?.data?.data) {
+        return responseAny.data.data as DecisionGroupResponse
+      }
+      if (responseAny?.data) {
+        return responseAny.data as DecisionGroupResponse
+      }
+      if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+        return responseAny as DecisionGroupResponse
+      }
+    }
+    
+    return null
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to fetch decision group by slug')
+  }
+}
+
+/**
  * Get decision group with options
  */
 export const getDecisionGroupWithOptions = async (id: number): Promise<DecisionGroupResponse | null> => {

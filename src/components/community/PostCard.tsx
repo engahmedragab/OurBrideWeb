@@ -142,7 +142,10 @@ export const PostCard = ({ post, className }: PostCardProps) => {
 
   // Extract images from content or use media if available
   // For now, we'll use a placeholder - in real app, images would come from media relations
-  const images: string[] = [] // TODO: Extract from post.media or content
+  // Extract images from medias array
+  const images: string[] = (post as any).medias
+    ?.filter((media: any) => media?.url)
+    .map((media: any) => media.url) || []
 
   return (
     <div
