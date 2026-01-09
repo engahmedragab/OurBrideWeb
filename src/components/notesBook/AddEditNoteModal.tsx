@@ -7,7 +7,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
-import { noteFormSchema, type NoteFormData } from '@/app/events/planning/notes/schemas/note.schema'
+import { noteFormSchema, type NoteFormData } from '@/schema/note.schema'
 import type { NoteLineResponse } from '@/types/responses'
 
 interface AddEditNoteModalProps {

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/Input'
 import { SelectPopover } from '@/components/ui/SelectPopover'
 import { Button } from '@/components/ui/Button'
 import type { GuestGroup, GuestGroupId, GuestStatus } from './mockGuests'
-import { addGuestFormSchema, type AddGuestFormData } from '@/app/events/planning/invitation/schemas/guest.schema'
+import { addGuestFormSchema, type AddGuestFormData } from '@/schema/guest.schema'
 
 const slugify = (text: string): string =>
   text

@@ -503,59 +503,56 @@ export default function CartPage() {
     return cartData
   }, [cartData])
 
-  // Calculate totals from priceCalculation (most accurate), then cartSummary, otherwise calculate from all items
-  const { subtotal, taxesAndFees, deliveryFee, total } = useMemo(() => {
-    // Priority 1: Use priceCalculation if available (most detailed and accurate)
-    if (activeCartData?.priceCalculation) {
-      const calc = activeCartData.priceCalculation
+
+  // Calculate filtered items based on current filter
+  const hasFilteredItems = useMemo(() => {
+    if (itemTypeFilter === 'products') {
+      return hasProducts || hasMemberships || hasGiftCards
+    } else {
+      return hasServices || hasReservations
+    }
+  }, [itemTypeFilter, hasProducts, hasServices, hasReservations, hasMemberships, hasGiftCards])
+
+  // Calculate filtered totals based on current filter
+  const filteredTotals = useMemo(() => {
+    if (itemTypeFilter === 'products') {
+      const productsTotal = cartProducts.reduce(
+        (sum, product) => sum + product.discountedPrice * product.quantity,
+        0
+      )
+      const membershipsTotal = membershipPurchases.reduce(
+        (sum, membership) => sum + membership.price * membership.quantity,
+        0
+      )
+      const giftCardsTotal = giftCardPurchases.reduce(
+        (sum, giftCard) => sum + giftCard.price * giftCard.quantity,
+        0
+      )
+      const sub = productsTotal + membershipsTotal + giftCardsTotal
       return {
-        subtotal: calc.subtotal,
-        taxesAndFees: calc.tax,
-        deliveryFee: calc.shippingCost,
-        total: calc.total,
+        subtotal: sub,
+        taxesAndFees: activeCartData?.priceCalculation?.tax ?? activeCartData?.cartSummary?.tax ?? 0,
+        deliveryFee: activeCartData?.priceCalculation?.shippingCost ?? activeCartData?.cartSummary?.shipping ?? 0,
+        total: sub + (activeCartData?.priceCalculation?.tax ?? activeCartData?.cartSummary?.tax ?? 0) + (activeCartData?.priceCalculation?.shippingCost ?? activeCartData?.cartSummary?.shipping ?? 0),
+      }
+    } else {
+      const servicesTotal = servicePurchases.reduce(
+        (sum, service) => sum + (service.totalPrice ?? service.price ?? 0) * (service.quantity || 1),
+        0
+      )
+      const reservationsTotal = reservationPurchases.reduce(
+        (sum, reservation) => sum + reservation.price * reservation.quantity,
+        0
+      )
+      const sub = servicesTotal + reservationsTotal
+      return {
+        subtotal: sub,
+        taxesAndFees: activeCartData?.priceCalculation?.tax ?? activeCartData?.cartSummary?.tax ?? 0,
+        deliveryFee: activeCartData?.priceCalculation?.shippingCost ?? activeCartData?.cartSummary?.shipping ?? 0,
+        total: sub + (activeCartData?.priceCalculation?.tax ?? activeCartData?.cartSummary?.tax ?? 0) + (activeCartData?.priceCalculation?.shippingCost ?? activeCartData?.cartSummary?.shipping ?? 0),
       }
     }
-
-    // Priority 2: Use cartSummary if available
-    if (activeCartData?.cartSummary) {
-      const summary = activeCartData.cartSummary
-      return {
-        subtotal: summary.subtotal,
-        taxesAndFees: summary.tax,
-        deliveryFee: summary.shipping,
-        total: summary.total,
-      }
-    }
-
-    // Fallback: calculate from all purchase types
-    const productsTotal = cartProducts.reduce(
-      (sum, product) => sum + product.discountedPrice * product.quantity,
-      0
-    )
-    const reservationsTotal = reservationPurchases.reduce(
-      (sum, reservation) => sum + reservation.price * reservation.quantity,
-      0
-    )
-    const membershipsTotal = membershipPurchases.reduce(
-      (sum, membership) => sum + membership.price * membership.quantity,
-      0
-    )
-    const giftCardsTotal = giftCardPurchases.reduce(
-      (sum, giftCard) => sum + giftCard.price * giftCard.quantity,
-      0
-    )
-    const sub = productsTotal + reservationsTotal + membershipsTotal + giftCardsTotal
-    const taxes = 0 // Will be calculated by API
-    const delivery = 0 // Will be calculated by API
-    const tot = sub + taxes + delivery
-
-    return {
-      subtotal: sub,
-      taxesAndFees: taxes,
-      deliveryFee: delivery,
-      total: tot,
-    }
-  }, [cartProducts, reservationPurchases, membershipPurchases, giftCardPurchases, activeCartData])
+  }, [itemTypeFilter, cartProducts, servicePurchases, reservationPurchases, membershipPurchases, giftCardPurchases, activeCartData])
 
   const handleQuantityChange = async (id: string, delta: number) => {
     // Find the item in any of the cart item types
@@ -897,7 +894,7 @@ export default function CartPage() {
 
       {/* Content Area */}
       {hasItems ? (
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 pb-24 md:pb-0">
           {/* Cart Items */}
           <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
             {/* Products Section */}
@@ -1040,15 +1037,15 @@ export default function CartPage() {
             )}
           </div>
 
-          {/* Order Summary Sidebar - Show for products and services */}
-          {hasItems && (
-            <div className="w-full lg:w-96 lg:flex-shrink-0">
+          {/* Order Summary Sidebar - Desktop only - Shows filtered totals */}
+          {hasFilteredItems && (
+            <div className="w-full lg:w-80 lg:flex-shrink-0">
               <div className="lg:sticky lg:top-6">
                 <CartOrderSummary
-                  subtotal={subtotal}
-                  taxesAndFees={taxesAndFees}
-                  deliveryFee={deliveryFee}
-                  total={total}
+                  subtotal={filteredTotals.subtotal}
+                  taxesAndFees={filteredTotals.taxesAndFees}
+                  deliveryFee={filteredTotals.deliveryFee}
+                  total={filteredTotals.total}
                   onCheckout={handleCheckout}
                   priceCalculation={activeCartData?.priceCalculation ?? null}
                 />
@@ -1059,12 +1056,32 @@ export default function CartPage() {
       ) : (
         <EmptyState
           illustration={orderEmptySvg}
-          title="Your cart is empty"
-          description="Start exploring services and products to begin your journey"
-          actionLabel="Start Shopping"
-          actionHref="/products"
+          title="You don't have any items in your cart"
+          description={`Start exploring ${itemTypeFilter === 'products' ? 'products' : 'services'} to begin your journey`}
+          actionLabel={itemTypeFilter === 'products' ? 'View Products' : 'View Services'}
+          actionHref={itemTypeFilter === 'products' ? '/products' : '/services'}
         />
       )}
+
+      {/* Mobile Fixed Bottom Bar */}
+      {/* {hasFilteredItems && (
+        <div className="fixed md:hidden bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-6 z-50 shadow-lg">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-16 font-semibold text-gray-900">Total Price</span>
+            <span className="text-16 font-semibold text-gray-900">
+              {filteredTotals.total.toLocaleString()} EGP
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleCheckout}
+            disabled={checkoutMutation.isPending}
+            className="w-full px-4 py-3 text-16 font-semibold text-white bg-red-500 rounded-full hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Checkout All
+          </button>
+        </div>
+      )}  */}
 
       {/* Delete Cart Item Modal */}
       <DeleteCartItemModal

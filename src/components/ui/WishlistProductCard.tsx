@@ -16,30 +16,26 @@ export interface WishlistProductCardProps {
   className?: string
 }
 
-export const WishlistProductCard = React.memo(({
-  product,
-  onRemove,
-  onBuyNow,
-  className,
-}: WishlistProductCardProps) => {
-  const router = useRouter()
-  const rating = product.rating.value || 0
-  const hasDiscount = product.price.discounted < product.price.original
+export const WishlistProductCard = React.memo(
+  ({ product, onRemove, onBuyNow, className }: WishlistProductCardProps) => {
+    const [imageError, setImageError] = React.useState(false)
+    const router = useRouter()
+    const hasDiscount = product.price.discounted < product.price.original
 
-  const handleBuyNow = () => {
-    router.push(`/products/category/${product.id}`)
-    onBuyNow?.(product.id)
-  }
+    const handleBuyNow = () => {
+      router.push(`/products/category/${product.id}`)
+      onBuyNow?.(product.id)
+    }
 
-  const handleRemove = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    onRemove?.(product.id)
-  }
+    const handleRemove = (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      onRemove?.(product.id)
+    }
 
-  const discountPercentage = hasDiscount
-    ? Math.round(((product.price.original - product.price.discounted) / product.price.original) * 100)
-    : undefined
+    const discountPercentage = hasDiscount
+      ? Math.round(((product.price.original - product.price.discounted) / product.price.original) * 100)
+      : undefined
 
   return (
     <div
@@ -136,8 +132,8 @@ export const WishlistProductCard = React.memo(({
         </div>
       </div>
     </div>
-  )
-})
+    )
+  }
+)
 
 WishlistProductCard.displayName = 'WishlistProductCard'
-

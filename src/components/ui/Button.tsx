@@ -10,33 +10,33 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // Solid filled buttons - Brand/Red
-        brand: 'bg-brand-500 text-white hover:bg-brand-600 ',
-        brandDark: 'bg-brand-600 text-white hover:bg-brand-700',
-        brandDarker: 'bg-brand-700 text-white hover:bg-brand-800',
+        brand: 'bg-brand-500 !text-white hover:bg-brand-600 ',
+        brandDark: 'bg-brand-600 !text-white hover:bg-brand-700',
+        brandDarker: 'bg-brand-700 !text-white hover:bg-brand-800',
 
         // Solid filled buttons - Gray
         gray: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
 
         // Solid filled buttons - Green/Success
-        success: 'bg-green-500 text-white hover:bg-green-600',
+        success: 'bg-green-500 !text-white hover:bg-green-600',
 
         // Outlined buttons - Brand/Red
         outlineBrand:
-          'border-2 border-brand-500 bg-white text-brand-500 hover:bg-brand-50',
+          'border-2 border-brand-500  !text-brand-500 hover:bg-brand-50',
         outlineBrandDark:
-          'border-2 border-brand-600 bg-white text-brand-600 hover:bg-brand-50',
+          'border-2 border-brand-600 bg-white !text-brand-600 hover:bg-brand-50',
 
         // Outlined buttons - Green/Success
         outlineSuccess:
-          'border-2 border-green-500 bg-white text-white hover:bg-green-50',
+          'border-2 border-green-500 bg-white text-green-500 hover:bg-green-50',
         outlineSuccessLight:
-          'border-2 border-green-400 bg-white text-white hover:bg-green-50',
+          'border-2 border-green-400 bg-white text-green-400 hover:bg-green-50',
 
         // Legacy variants for backward compatibility
-        default: 'bg-brand-500 text-white hover:bg-brand-600',
-        destructive: 'bg-red-500 text-white hover:bg-red-600',
+        default: 'bg-brand-500 !text-white hover:bg-brand-600',
+        destructive: 'bg-red-500 !text-white hover:bg-red-600',
         outline:
-          'border-2 border-gray-300 bg-white text-white hover:bg-gray-50',
+          'border-2 border-gray-400 bg-white  hover:bg-gray-50',
         secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
         ghost: 'hover:bg-gray-100 text-gray-900',
         link: 'text-brand-500 underline-offset-4 hover:underline',

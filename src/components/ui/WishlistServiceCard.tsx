@@ -24,18 +24,17 @@ export const WishlistServiceCard = React.memo(({
 }: WishlistServiceCardProps) => {
   const [imageError, setImageError] = React.useState(false)
   const router = useRouter()
-  const rating = service.rating.value || 0
 
   const handleBookNow = () => {
-    router.push(`/booking/${service.id}`)
-    onBookNow?.(service.id)
-  }
+      router.push(`/booking/${service.id}`)
+      onBookNow?.(service.id)
+    }
 
-  const handleRemove = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    onRemove?.(service.id)
-  }
+    const handleRemove = (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      onRemove?.(service.id)
+    }
 
   return (
     <div
@@ -120,8 +119,8 @@ export const WishlistServiceCard = React.memo(({
         </div>
       </div>
     </div>
-  )
-})
+    )
+  }
+)
 
 WishlistServiceCard.displayName = 'WishlistServiceCard'
-

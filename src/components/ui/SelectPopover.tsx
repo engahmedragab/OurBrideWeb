@@ -40,9 +40,9 @@ export const SelectPopover = ({
             type="button"
             disabled={disabled}
             className={cn(
-              'flex w-full items-center justify-between gap-2 rounded-xl border bg-white px-3 py-1.5 text-16 font-normal leading-6 transition-colors',
+              'flex w-full items-center justify-between gap-2 rounded-xl border bg-white md:px-3 px-2 md:py-1.5 py-1 text-12 md:text-16 font-normal leading-6 transition-colors',
               'h-11',
-              'focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2',
+              'focus:outline-none focus:ring-1 focus:ring-brand-500 ',
               errorMessage
                 ? 'border-red-500 bg-red-50'
                 : 'border-gray-300 hover:border-brand-400 focus:border-brand-500',
@@ -83,12 +83,12 @@ export const SelectPopover = ({
                     setOpen(false)
                   }}
                   className={cn(
-                    'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-16 font-normal transition-colors',
-                    'hover:bg-brand/50 hover:text-white',
+                    'w-full my-1 flex items-center justify-between md:px-3 px-2 md:py-2.5 py-1 rounded-xl md:text-16 text-12 font-normal transition-colors',
+                    'hover:bg-brand/10 hover:text-brand-500',
                     isSelected && 'bg-brand-500 text-white mb-2'
                   )}
                 >
-                  <span className="flex-1 text-left" dir="auto">{option.label}</span>
+                  <span className="flex-1 text-left md:text-16 text-12" dir="auto">{option.label}</span>
                   {isSelected && (
                     <Check className="h-4 w-4 text-white flex-shrink-0" />
                   )}

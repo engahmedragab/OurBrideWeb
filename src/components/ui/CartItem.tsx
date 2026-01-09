@@ -21,15 +21,12 @@ export interface CartItemProps {
   onBuyNow?: (id: string) => void
   deliveryDate?: string
   discountPercentage?: number
-  purchasePrice?: number | null // Price from PurchaseResponse (price or totalPrice)
-  purchaseDate?: string // Date from PurchaseResponse (creationDate or buyDate)
+  purchasePrice?: number | null
+  purchaseDate?: string
   className?: string
   type?: CartItemType
 }
 
-/**
- * Get icon component for cart item type
- */
 const getTypeIcon = (type?: CartItemType) => {
   switch (type) {
     case 'Product':
@@ -47,9 +44,6 @@ const getTypeIcon = (type?: CartItemType) => {
   }
 }
 
-/**
- * Get type label for display
- */
 const getTypeLabel = (type?: CartItemType): string => {
   switch (type) {
     case 'Product':
@@ -67,9 +61,6 @@ const getTypeLabel = (type?: CartItemType): string => {
   }
 }
 
-/**
- * CartItem - Displays a single product item in the cart
- */
 export const CartItem = ({
   id,
   title,
@@ -92,7 +83,7 @@ export const CartItem = ({
   const totalPrice = discountedPrice * quantity
   const TypeIcon = getTypeIcon(type)
   const typeLabel = getTypeLabel(type)
-  // Check if image is valid (not empty, not a placeholder, and not just a slash)
+
   const hasValidImage =
     image &&
     image.trim() !== '' &&
@@ -274,4 +265,3 @@ export const CartItem = ({
     </div>
   )
 }
-
