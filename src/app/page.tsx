@@ -60,7 +60,8 @@ import {
 // Memoized Product Card Component
 const ProductCardItem = memo(({ product }: { product: ProductCardData }) => {
   const handlers = useProductCardHandlers(parseInt(product.id, 10))
-  const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+  const { handleAddToCart, isLoading: isLoadingAddToCart } =
+    useAddProductToCart()
 
   const handleAddToCartClick = useCallback(
     (e: React.MouseEvent) => {
@@ -116,21 +117,23 @@ const ServiceCardItem = memo(({ service }: { service: ServiceCardData }) => {
 ServiceCardItem.displayName = 'ServiceCardItem'
 
 // Memoized Provider Card Component
-const ProviderCardItem = memo(({ provider }: { provider: ProviderCardData }) => {
-  const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
-  return (
-    <Card
-      cardData={{
-        type: 'provider',
-        ...provider,
-        onFollowToggle: handlers.handleFollowToggle,
-        onFavoriteToggle: handlers.handleFavoriteToggle,
-        isLoadingFollow: handlers.isLoadingFollow,
-        isLoadingFavorite: handlers.isLoadingFavorite,
-      }}
-    />
-  )
-})
+const ProviderCardItem = memo(
+  ({ provider }: { provider: ProviderCardData }) => {
+    const handlers = useProviderCardHandlers(parseInt(provider.id, 10))
+    return (
+      <Card
+        cardData={{
+          type: 'provider',
+          ...provider,
+          onFollowToggle: handlers.handleFollowToggle,
+          onFavoriteToggle: handlers.handleFavoriteToggle,
+          isLoadingFollow: handlers.isLoadingFollow,
+          isLoadingFavorite: handlers.isLoadingFavorite,
+        }}
+      />
+    )
+  }
+)
 ProviderCardItem.displayName = 'ProviderCardItem'
 
 export default function Home() {
@@ -177,7 +180,7 @@ export default function Home() {
       testimonials.slice(
         testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE,
         testimonialsIndex * PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE +
-        PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
+          PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
       ),
     [testimonials, testimonialsIndex]
   )
@@ -291,7 +294,7 @@ export default function Home() {
             {/* Right Content: Circular Text and Explore Products Card */}
             <div className="relative flex flex-col items-center lg:items-center gap-4 z-10">
               {/* Circular Badge Button */}
-              <div className="relative w-24 h-24 md:w-28 md:h-28 flex items-center justify-center">
+              <div className="relative w-[100px] h-[100px] flex items-center justify-center">
                 {/* Outer Rotating Text Ring */}
                 <svg
                   viewBox="0 0 120 120"
@@ -304,11 +307,11 @@ export default function Home() {
                     />
                   </defs>
                   <text
-                    fill="currentColor"
+                    fill="#F14836"
                     className="font-black text-12 uppercase tracking-wide"
                   >
                     <textPath href="#circle-text" startOffset="0%">
-                      START SHOPPING NOW WITH OURBRIDE
+                      OURBRIDE START SHOPPING NOW WITH
                     </textPath>
                   </text>
                 </svg>
@@ -316,7 +319,7 @@ export default function Home() {
                 {/* Inner Fixed Circle and Arrow */}
                 <div className="relative z-10 flex items-center justify-center">
                   {/* Inner Filled Circle */}
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-brand-400 flex items-center justify-center shadow-md">
+                  <div className="w-16 h-16 rounded-full bg-brand-500 flex items-center justify-center">
                     {/* White Arrow Icon (upward-right) */}
                     <svg
                       width="24"
@@ -514,9 +517,11 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              products.map(product => (
-                <ProductCardItem key={product.id} product={product} />
-              ))
+              products
+                .slice(0, 4)
+                .map(product => (
+                  <ProductCardItem key={product.id} product={product} />
+                ))
             )}
           </div>
         </section>
@@ -538,16 +543,18 @@ export default function Home() {
             {isLoading ? (
               <CardSkeleton count={4} />
             ) : (
-              services.map(service => (
-                <ServiceCardItem key={service.id} service={service} />
-              ))
+              services
+                .slice(0, 4)
+                .map(service => (
+                  <ServiceCardItem key={service.id} service={service} />
+                ))
             )}
           </div>
         </section>
 
         {/* Section 7: Why Trust Section */}
         <section className="relative py-16 md:py-24 overflow-hidden bg-white">
-          <div className="absolute inset-0 opacity-30 pointer-events-none">
+          <div className="absolute inset-0 bottom-1/4 pointer-events-none">
             <Image
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
               alt=""
@@ -585,6 +592,7 @@ export default function Home() {
                           heading: card.heading,
                           description: card.description,
                           rotation: card.rotation,
+                          background: card.background,
                         }}
                         className="h-full"
                       />
@@ -662,7 +670,7 @@ export default function Home() {
             </div>
 
             {/* Right Side - Testimonial Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto items-stretch">
               {isLoading ? (
                 <TestimonialCardSkeleton count={3} />
               ) : (
@@ -670,6 +678,7 @@ export default function Home() {
                   <Card
                     key={`${testimonialsIndex}-${index}`}
                     cardData={{ type: 'testimonial', ...testimonial }}
+                    className="h-full"
                   />
                 ))
               )}
@@ -704,14 +713,14 @@ export default function Home() {
         </section>
 
         {/* Section 10: Wedding Journey */}
-        < section className="relative py-16 md:py-24 overflow-hidden bg-white" >
-          <div className="absolute inset-0 opacity-30 pointer-events-none">
+        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
+          <div className="absolute inset-0 bottom-1/4 pointer-events-none">
             <Image
               src={typeof lineS4Svg === 'string' ? lineS4Svg : lineS4Svg.src}
               alt=""
               fill
               sizes="100vw"
-              className="object-cover"
+              className="object-fit"
               aria-hidden="true"
             />
           </div>
@@ -846,10 +855,11 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center mb-0">
-                <StoreBadges size="2xl" />
-              </div>
 
+              <div className="flex items-center justify-center">
+                <StoreBadges size='2xl' className='gap-4'/>
+      
+              </div>
               <div className="relative flex items-center justify-center w-full h-auto mt-0">
                 {/* Background Glow */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-brand-400 via-brand-300 to-brand-200 rounded-full opacity-30 blur-3xl" />

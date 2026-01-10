@@ -8,7 +8,7 @@ export const TRUST_CARDS = [
     heading: 'Made for Local Brides',
     description:
       'Tailored for brides across Egypt — especially those outside the capital.',
-    rotation: -3,
+    rotation: -30,
     background: 'gray' as const,
   },
   {
@@ -16,21 +16,21 @@ export const TRUST_CARDS = [
     heading: 'Simple & Beautiful Experience',
     description:
       'A feminine, easy-to-use design that makes planning delightful.',
-    rotation: 2,
+    rotation: 15,
     background: 'white' as const,
   },
   {
     id: '3',
     heading: 'Real Offers & Savings',
     description: 'Exclusive coupons and discounts designed for your budget.',
-    rotation: -2,
+    rotation: -15,
     background: 'gray' as const,
   },
   {
     id: '4',
     heading: 'All-in-One Platform',
     description: 'Plan, book, shop, and celebrate everything in one place.',
-    rotation: 3,
+    rotation:   15,
     background: 'white' as const,
   },
   {
@@ -38,7 +38,7 @@ export const TRUST_CARDS = [
     heading: 'Verified Trusted Providers',
     description:
       'All our service providers are carefully verified and trusted.',
-    rotation: -1.5,
+    rotation: -15,
     background: 'gray' as const,
   },
   {
@@ -46,7 +46,7 @@ export const TRUST_CARDS = [
     heading: 'Secure Payments',
     description:
       'Your payments are safe and secure with our trusted payment system.',
-    rotation: 2.5,
+    rotation: 30,
     background: 'white' as const,
   },
 ] as const

@@ -264,7 +264,8 @@ const ProductServiceCard = ({
 
   return (
     <div 
-      className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg shadow-sm transition-shadow cursor-pointer"
+      className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg transition-shadow cursor-pointer"
+      style={{ boxShadow: '0px 0px 9px 0px rgba(143,144,166,0.15)' }}
       onClick={handleCardClick}
     >
       {/* Action Icons - Floating above the card */}
@@ -329,10 +330,11 @@ const ProductServiceCard = ({
 
         {/* Top Offers Badge */}
         {data.showTopOfferBadge && (
-          <div className="absolute top-3 left-3 z-10">
+          <div className="absolute top-4 left-4 z-10">
             <Badge
               variant="default"
-              className="bg-brand-400 !text-white border-0 px-3 py-1 text-12 font-normal rounded-full"
+              className="!text-brand-500 border-0 px-2 py-1.5 text-16 font-normal rounded-full"
+              style={{ backgroundColor: '#FCDBD7' }}
             >
               Top Offers
             </Badge>
@@ -341,71 +343,70 @@ const ProductServiceCard = ({
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-3 relative">
-        {/* Title */}
-        <h3 className="text-16 font-semibold text-gray-900 line-clamp-2">
-          {data.title}
-        </h3>
+      <div className="p-3 space-y-2 relative bg-white rounded-b-xl">
+        <div className="flex flex-col gap-2">
+          {/* Title */}
+          <h3 className="text-24 font-medium text-gray-900 line-clamp-2 leading-[32px]">
+            {data.title}
+          </h3>
 
-        {/* Provider Name - Always clickable if providerId exists */}
-        <div className="flex items-center gap-1.5 relative z-50">
-          {data.providerId ? (
-            <button
-              type="button"
-              onClick={(e) => handleProviderClick(e, data.providerId!)}
-              className="text-14 text-gray-600 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
-            >
-              {data.providerName}
-            </button>
-          ) : (
-            <span className="text-14 text-gray-600">{data.providerName}</span>
-          )}
-          {data.verified && data.providerId && (
-            <button
-              type="button"
-              onClick={(e) => handleProviderClick(e, data.providerId!)}
-              className="flex-shrink-0 relative z-50 pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
-              aria-label="Verified provider"
-            >
-              <CheckCircle2 className="h-4 w-4 text-blue-500 hover:text-blue-600 transition-colors" />
-            </button>
-          )}
-          {data.verified && !data.providerId && (
-            <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
-          )}
+          {/* Provider Name - Always clickable if providerId exists */}
+          <div className="flex items-center gap-2 relative z-50">
+            {data.providerId ? (
+              <button
+                type="button"
+                onClick={(e) => handleProviderClick(e, data.providerId!)}
+                className="text-16 text-gray-500 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
+              >
+                {data.providerName}
+              </button>
+            ) : (
+              <span className="text-16 text-gray-500">{data.providerName}</span>
+            )}
+            {data.verified && (
+              <CheckCircle2 className="h-6 w-6 text-blue-500 flex-shrink-0" />
+            )}
+          </div>
         </div>
 
-        {/* Rating */}
-        <RatingDisplay
-          rating={data.rating}
-          showValue={true}
-          size="sm"
-          format="default"
-          variant="compact"
-        />
+        {/* Rating and Price Row */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Rating */}
+          <div className="flex items-center gap-1">
+            <Star className="h-6 w-6 fill-brand-500 text-brand-500" />
+            <span className="text-16 font-normal text-gray-500">
+              {data.rating.toFixed(1)}
+            </span>
+          </div>
 
-        {/* Pricing */}
-        <PriceDisplay
-          original={data.originalPrice}
-          discounted={data.discountedPrice}
-          currency="EGP"
-          size="md"
-          variant="compact"
-          showOriginal={hasDiscount}
-        />
+          {/* Pricing */}
+          <div className="flex items-center gap-2">
+            {hasDiscount && (
+              <span className="text-14 font-normal text-gray-500 line-through">
+                {data.originalPrice.toLocaleString()}
+              </span>
+            )}
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-24 font-semibold text-gray-900 leading-[32px]">
+                {data.discountedPrice.toLocaleString()}
+              </span>
+              <span className="text-14 font-normal text-gray-900">
+                egp
+              </span>
+            </div>
+          </div>
+        </div>
 
         {/* Action Buttons */}
         {cardType === 'product' ? (
           <div className="flex items-center gap-2 pt-1">
             {data.onAddToCart && (
               <Button
-                variant={isInCart ? "default" : "outline"}
+                variant="outline"
                 size="icon"
                 className={cn(
-                  "h-10 w-10 rounded-full",
-                  isInCart
-                    ? "border-brand-500 bg-brand-500 hover:bg-brand-600"
-                    : "border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
+                  "h-12 w-12 rounded-full border-brand-500 bg-white hover:bg-white",
+                  "disabled:opacity-50 disabled:cursor-not-allowed"
                 )}
                 aria-label={isInCart ? "Item in cart" : "Add to cart"}
                 onClick={handleAddToCart}
@@ -414,14 +415,14 @@ const ProductServiceCard = ({
                 {isInCart ? (
                   <Check
                     className={cn(
-                      'h-4 w-4 text-white',
+                      'h-6 w-6 text-brand-500',
                       data.isLoadingAddToCart && 'animate-pulse'
                     )}
                   />
                 ) : (
                   <ShoppingCart
                     className={cn(
-                      'h-4 w-4 text-brand-500',
+                      'h-6 w-6 text-brand-500',
                       data.isLoadingAddToCart && 'animate-pulse'
                     )}
                   />
@@ -432,7 +433,7 @@ const ProductServiceCard = ({
               <Button
                 variant="brand"
                 size="default"
-                className="flex-1 rounded-full text-14 font-normal bg-green-500 hover:bg-green-600 text-white"
+                className="flex-1 rounded-full text-20 font-medium bg-green-500 hover:bg-green-600 text-white py-[18px]"
                 onClick={handleViewCart}
               >
                 View in Cart
@@ -441,7 +442,7 @@ const ProductServiceCard = ({
               <Button
                 variant="brand"
                 size="default"
-                className="flex-1 rounded-full text-14 font-normal text-white"
+                className="flex-1 rounded-full text-20 font-medium bg-brand-500 hover:bg-brand-600 text-white py-[18px]"
                 onClick={handleBuyNow}
                 disabled={data.inStock === false || data.isLoadingAddToCart || addToCartMutation.isPending}
               >
@@ -462,11 +463,11 @@ const ProductServiceCard = ({
 
         {/* Tags */}
         {data.tags && data.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
+          <div className="flex flex-wrap gap-2 pt-1">
             {data.tags.slice(0, 4).map((tag, index) => (
               <span
                 key={`tag-${data.id || 'product'}-${tag}-${index}`}
-                className="px-2 py-1 rounded-md bg-gray-100 text-12 font-medium text-gray-700"
+                className="px-2 py-2 rounded-full bg-gray-50 text-14 font-normal text-gray-900"
               >
                 {tag}
               </span>
@@ -482,9 +483,9 @@ const ProductServiceCard = ({
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   const [imageError, setImageError] = React.useState(false)
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       {/* Card */}
-      <div className="bg-white rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow">
+      <div className="bg-white rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow flex-1">
         {/* Quote */}
         <p className="text-16 text-gray-900 mb-6 flex-1 leading-relaxed">
           &quot;{data.quote}&quot;
@@ -520,7 +521,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
           <p className="text-16 font-semibold text-gray-900">
             {data.authorName}
           </p>
-          <p className="text-14 text-gray-500">{data.timeAgo}</p>
+          <p className="text-14 text-gray-500">{data.timeAgo || 'Recently'}</p>
         </div>
       </div>
     </div>
