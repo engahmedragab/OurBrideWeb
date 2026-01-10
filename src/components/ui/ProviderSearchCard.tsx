@@ -11,6 +11,7 @@ import { PriceDisplay } from './PriceDisplay'
 import { cn } from '@/lib/utils'
 import type { FeaturedProviderResponse } from '@/types/responses/featured-provider-response'
 import { DEFAULT_CURRENCY } from '@/utils/currency'
+import React from 'react'
 
 export interface ProviderSearchCardProps {
     provider: FeaturedProviderResponse
@@ -136,8 +137,7 @@ export const ProviderSearchCard = ({
                     <div className="space-y-2 pt-2">
                         {displayServices.map((service, index) => {
                             // Handle service name - check nameEn, nameAr, or name field
-                            const serviceAny = service as any
-                            const serviceName = service.nameEn || service.nameAr || serviceAny.name || 'Service'
+                            const serviceName = service.nameEn || service.nameAr || service.name || 'Service'
                             const serviceNameAr = service.nameAr && service.nameEn !== service.nameAr ? service.nameAr : null
                             const duration = service.duration || service.durationMin
                             const durationMax = service.durationMax

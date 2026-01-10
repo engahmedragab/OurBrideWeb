@@ -31,7 +31,7 @@ export const AddEditNoteModal = ({
     formState: { errors, isSubmitting },
     reset,
   } = useForm<NoteFormData>({
-    resolver: zodResolver(noteFormSchema),
+    resolver: zodResolver(noteFormSchema) as any,
     defaultValues: { title: '', note: '' },
     mode: 'onSubmit',
   })

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, LoadingSpinner } from '@/components/ui'
 import { Plus, ChevronLeft, Save } from 'lucide-react'
@@ -183,7 +183,7 @@ const hasActualChanges = (
   return false
 }
 
-export default function PreparationsCategoriesPage() {
+function PreparationsCategoriesPageContent() {
   const router = useRouter()
   const eventId = useEventId()
   const { addToast } = useToast()
@@ -501,5 +501,23 @@ export default function PreparationsCategoriesPage() {
         isLoading={false} // No API call, just local state update
       />
     </div>
+  )
+}
+
+/**
+ * Preparations Categories Page
+ * Wrapped in Suspense for useSearchParams compatibility
+ */
+export default function PreparationsCategoriesPage() {
+  return (
+    <Suspense fallback={
+      <div className="space-y-6">
+        <div className="flex items-center justify-center py-12">
+          <LoadingSpinner size="lg" text="Loading..." />
+        </div>
+      </div>
+    }>
+      <PreparationsCategoriesPageContent />
+    </Suspense>
   )
 }

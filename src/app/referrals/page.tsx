@@ -12,20 +12,19 @@ import {
   InsightCard,
 } from '@/components/ui'
 import {
-
   CheckCircle,
   CheckCircle2Icon,
   Clock,
   Copy,
   Sparkle,
   XCircle,
-  
+  UserPlus,
+  UserCheck,
+  Gem,
+  Link2,
+  Percent,
+  Loader2,
 } from 'lucide-react'
-import {BsPersonPlus, BsPersonCheck, } from 'react-icons/bs'
-import {BiCheckCircle, BiLinkAlt} from 'react-icons/bi'
-import {CiDiscount1} from 'react-icons/ci'
-import {PiSpinnerThin} from 'react-icons/pi'
-import {IoDiamondOutline} from 'react-icons/io5'
 
 interface ActivityItem {
   id: string
@@ -161,17 +160,17 @@ export default function ReferralsPage() {
               </h2>
               <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 <InsightCard
-                  icon={BsPersonPlus}
+                  icon={UserPlus}
                   label="Total Invites Sent"
                   value={referralInsights.totalInvites}
                 />
                 <InsightCard
-                  icon={BsPersonCheck}
+                  icon={UserCheck}
                   label="Friends Joined"
                   value={referralInsights.friendsJoined}
                 />
                 <InsightCard
-                  icon={IoDiamondOutline}
+                  icon={Gem}
                   label="Pending Payout"
                   value={referralInsights.rewardsEarned}
                   currency="points"
@@ -189,7 +188,7 @@ export default function ReferralsPage() {
                   onClick={handleCopyLink}
                   className="flex items-center gap-1.5 sm:gap-2 text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
                 >
-                  <BiLinkAlt  className="h-3.5 w-3.5 sm:h-4 sm:w-4 hidden md:block" />
+                  <Link2  className="h-3.5 w-3.5 sm:h-4 sm:w-4 hidden md:block" />
                  
                   <span className="hidden sm:inline">Copy Link</span>
                  
@@ -248,7 +247,7 @@ export default function ReferralsPage() {
                       
                       <div className='flex flex-col gap-2'>
                      <div className="flex items-center gap-2 "><div className="  flex items-center justify-start flex-shrink-0">
-                        <CiDiscount1 size={24} className="text-gray-900" />
+                        <Percent size={24} className="text-gray-900" />
                       </div>
                         <p className="text-12 sm:text-16 font-normal text-gray-900 mb-0.5">
                           Coupon
@@ -264,7 +263,7 @@ export default function ReferralsPage() {
                     <div className="flex flex-col  items-center justify-between sm:justify-end gap-2 sm:gap-3">
                       {coupon.status === 'Valid' && (
                         <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-10 sm:text-12 font-medium bg-green-50 text-green-600 border border-green-200">
-                          <BiCheckCircle className="w-3 h-3" />
+                          <CheckCircle2Icon className="w-3 h-3" />
                           <span>Valid</span>
                         </div>
                       )}
@@ -335,7 +334,7 @@ export default function ReferralsPage() {
                           {item.status === 'Delivered' ? (
                             <CheckCircle2Icon className="w-3 h-3" />
                           ) : (
-                            <PiSpinnerThin className="w-3 h-3" />
+                            <Loader2 className="w-3 h-3" />
                           )}
                            
                           <span>

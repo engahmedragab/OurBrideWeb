@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { MessageCircle, CheckCircle2, UserPlus, Star } from 'lucide-react'
@@ -40,14 +41,13 @@ export const ProviderCard = ({
   isLoadingFavorite = false,
   className,
 }: ProviderCardProps) => {
-  const [imageError, setImageError] = React.useState(false)
+  const [imageError, setImageError] = useState(false)
   const { isProviderInFavorite } = useFavoriteItems()
   const { isProviderFollowed } = useFollowItems()
   const providerId = parseInt(provider.id, 10)
   const isInFavorite = isProviderInFavorite(providerId)
   const isFollowed = isProviderFollowed(providerId)
   const rating = provider.rating || 0
-  const roundedRating = Math.round(rating)
 
   const handleFollowToggle = (e: React.MouseEvent) => {
     e.preventDefault()

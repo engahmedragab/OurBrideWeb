@@ -691,7 +691,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   {/* Send Button */}
                   <button
                     onClick={async () => {
-                      if (reviewComment.trim() && userRating > 0 && !isNaN(parsedServiceId)) {
+                      if (reviewComment.trim() && userRating > 0 && parsedServiceId !== null && !isNaN(parsedServiceId)) {
                         try {
                           const providerId = service?.provider?.id
                             ? parseInt(service.provider.id, 10)
@@ -727,6 +727,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                       !reviewComment.trim() ||
                       userRating === 0 ||
                       submitReviewMutation.isPending ||
+                      parsedServiceId === null ||
                       isNaN(parsedServiceId)
                     }
                     className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors"

@@ -7,7 +7,6 @@ import { Checkbox } from './Checkbox'
 import { Percent, Gem, Gift, X, CheckCircle2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { PriceCalculationResponse } from '@/types/responses/price-calculation-response'
-import { CiDiscount1 } from 'react-icons/ci'
 
 export interface CartOrderSummaryProps {
   subtotal: number
@@ -127,7 +126,7 @@ export const CartOrderSummary = ({
                 'pl-10 border border-t-0 border-x-0 border-b border-gray-200 rounded-none'
               )}
             />
-        <CiDiscount1 className="h-6 w-6 text-brand-500  absolute left-2 top-1/2 -translate-y-1/2 me-2" />
+        <Percent className="h-6 w-6 text-brand-500  absolute left-2 top-1/2 -translate-y-1/2 me-2" />
             {/* Redeem inside input */}
             <button
               onClick={handleRedeemCoupon}

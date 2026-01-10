@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
 import Link from 'next/link'
 import {
   PlanningMiniCalendar,
@@ -13,6 +13,7 @@ import { useEventBooks, useSyncEventBooks, useGetEventBooksCategories } from '@/
 import { useInitEventBooks } from '@/hooks/eventBooks/useInitEventBooks'
 import { useEventId } from '@/hooks/planning'
 import { useToast } from '@/components/ui/Toaster'
+import type { UseMutationResult } from '@tanstack/react-query'
 import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
 import type { EventBookRequest, EventLineRequest, EventLineCategoryRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
 
@@ -205,10 +206,10 @@ const hasActualChanges = (
 }
 
 /**
- * Events Page
+ * Events Page Content
  * Displays the planning calendar with day details rendered in-place
  */
-export default function EventsPage() {
+function EventsPageContent() {
   const { addToast } = useToast()
   const eventId = useEventId()
   const today = getToday()
@@ -502,12 +503,28 @@ export default function EventsPage() {
                   }
                 }}
                 onSync={handleSave}
-                syncMutation={syncMutation}
+                syncMutation={syncMutation as UseMutationResult<unknown, Error, unknown, unknown>}
               />
             </div>
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * Events Page
+ * Wrapped in Suspense for useSearchParams compatibility
+ */
+export default function EventsPage() {
+  return (
+    <Suspense fallback={
+      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+        <div className="text-gray-600">Loading...</div>
+      </div>
+    }>
+      <EventsPageContent />
+    </Suspense>
   )
 }

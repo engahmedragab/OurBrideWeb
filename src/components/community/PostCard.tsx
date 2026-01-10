@@ -63,6 +63,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
   const [likes, setLikes] = useState(post.likeCount || 0)
   const [shares, setShares] = useState(post.shareCount || 0)
   const [favorites, setFavorites] = useState(post.favoriteCount || 0)
+  const [imageError, setImageError] = useState(false)
 
   const toggleLikeMutation = useMutation({
     mutationFn: async () => {

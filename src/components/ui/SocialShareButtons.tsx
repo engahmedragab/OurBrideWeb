@@ -1,10 +1,7 @@
 'use client'
 
 import { Button } from './Button'
-import { FaFacebook } from 'react-icons/fa'
-import { AiFillInstagram } from 'react-icons/ai'
-import { RiWhatsappFill } from 'react-icons/ri'
-import { CgQr } from 'react-icons/cg'
+import { Share2, MessageCircle, QrCode } from 'lucide-react'
 
 export interface SocialShareButtonsProps {
   onFacebookClick?: () => void
@@ -34,7 +31,7 @@ export const SocialShareButtons = ({
         className="border-brand-500   text-brand-500 hover:bg-brand-500 hover:text-white py-2 flex px-2 sm:px-2  gap-1 sm:gap-2 rounded-lg bg-transparent "
         onClick={onFacebookClick}
       >
-        <FaFacebook className="h-4 w-4 sm:h-5 sm:w-5" />
+        <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />
         <span className="text-10 sm:text-14  leading-tight hidden md:block ">Facebook</span>
       </Button>
       <Button
@@ -43,7 +40,7 @@ export const SocialShareButtons = ({
         className="border-brand-500   text-brand-500 hover:bg-brand-500 hover:text-white py-2 flex px-2 sm:px-2  gap-1 sm:gap-2 rounded-lg bg-transparent "
         onClick={onInstagramClick}
       >
-        <AiFillInstagram className="h-4 w-4 sm:h-5 sm:w-5" />
+        <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />
         <span className="text-10 sm:text-14  leading-tight hidden md:block">Instagram</span>
       </Button>
       <Button
@@ -52,7 +49,7 @@ export const SocialShareButtons = ({
         className="border-brand-500   text-brand-500 hover:bg-brand-500 hover:text-white py-2 flex px-2 sm:px-2  gap-1 sm:gap-2 rounded-lg bg-transparent "
         onClick={onWhatsappClick}
       >
-        <RiWhatsappFill className="h-4 w-4 sm:h-5 sm:w-5" />
+        <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
         <span className="text-10 sm:text-14  leading-tight hidden md:block">Whatsapp</span>
       </Button>
       <Button
@@ -61,7 +58,7 @@ export const SocialShareButtons = ({
         className="border-brand-500   text-brand-500 hover:bg-brand-500 hover:text-white py-2 flex  px-2 sm:px-2  gap-1 sm:gap-2 rounded-lg bg-transparent "
         onClick={onQrCodeClick}
       >
-        <CgQr  className="h-4 w-4 sm:h-5 sm:w-5" />
+        <QrCode className="h-4 w-4 sm:h-5 sm:w-5" />
         <span className="text-10 sm:text-14  leading-tight hidden md:block">QR Code</span>
       </Button>
     </div>
