@@ -12,13 +12,18 @@ import {
   InsightCard,
 } from '@/components/ui'
 import {
-  Send,
-  UserPlus,
-  Gift,
-  Copy,
   CheckCircle,
+  CheckCircle2Icon,
   Clock,
-  Ticket,
+  Copy,
+  Sparkle,
+  XCircle,
+  UserPlus,
+  UserCheck,
+  Gem,
+  Link2,
+  Percent,
+  Loader2,
 } from 'lucide-react'
 
 interface ActivityItem {
@@ -38,20 +43,26 @@ interface Coupon {
   status: 'Valid' | 'Expired'
 }
 
+interface ReferralInsights {
+  totalInvites: number
+  friendsJoined: number
+  rewardsEarned: number
+}
+
 /**
  * Referrals Page
  * User referral program page with invite links, insights, and activity tracking
  */
 export default function ReferralsPage() {
-  const [inviteLink] = useState('http://www.generatecode.ourbride.com')
-  const [showOnboarding, setShowOnboarding] = useState(true)
+  const [inviteLink] = useState<string>('http://www.generatecode.ourbride.com')
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(true)
 
-  const handleCloseOnboarding = () => {
+  const handleCloseOnboarding = (): void => {
     setShowOnboarding(false)
   }
 
   // Mock data
-  const referralInsights = {
+  const referralInsights: ReferralInsights = {
     totalInvites: 5200,
     friendsJoined: 200,
     rewardsEarned: 5000,
@@ -125,8 +136,10 @@ export default function ReferralsPage() {
     },
   ]
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(inviteLink)
+  const handleCopyLink = (): void => {
+    navigator.clipboard.writeText(inviteLink).catch((error: Error) => {
+      console.error('Failed to copy link:', error)
+    })
   }
 
   return (
@@ -137,35 +150,36 @@ export default function ReferralsPage() {
       />
 
       <UserPageLayout>
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-2 sm:gap-3">
           {/* Main Content */}
           <div className="flex-1 space-y-4 sm:space-y-6">
             {/* Referral Insights */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
+            <div className="  sm:p-3">
+              <h2 className="text-16 sm:text-20 font-normal text-gray-900 mb-3 sm:mb-4">
                 Referral Insights
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 <InsightCard
-                  icon={Send}
+                  icon={UserPlus}
                   label="Total Invites Sent"
                   value={referralInsights.totalInvites}
                 />
                 <InsightCard
-                  icon={UserPlus}
+                  icon={UserCheck}
                   label="Friends Joined"
                   value={referralInsights.friendsJoined}
                 />
                 <InsightCard
-                  icon={Gift}
-                  label="Rewards Earned"
+                  icon={Gem}
+                  label="Pending Payout"
                   value={referralInsights.rewardsEarned}
+                  currency="points"
                 />
               </div>
             </div>
 
             {/* Invite Link */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+            <div className=" rounded-xl border border-gray-400/70 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <h2 className="text-16 sm:text-18 font-normal text-gray-900">
                   Invite Link
@@ -174,20 +188,23 @@ export default function ReferralsPage() {
                   onClick={handleCopyLink}
                   className="flex items-center gap-1.5 sm:gap-2 text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
                 >
-                  <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <Link2  className="h-3.5 w-3.5 sm:h-4 sm:w-4 hidden md:block" />
+                 
                   <span className="hidden sm:inline">Copy Link</span>
-                  <span className="sm:hidden">Copy</span>
+                 
                 </button>
               </div>
 
               {/* Link Input */}
-              <div className="mb-3 sm:mb-4">
+              <div className="mb-3 sm:mb-4 flex items-center justify-between gap-3">
                 <Input
                   value={inviteLink}
                   readOnly
-                  suffix="EGP"
+               
                   className="w-full bg-gray-50 text-13 sm:text-14"
                 />
+                <button onClick={handleCopyLink}><Copy className='h-5 w-5 text-brand-500 md:hidden hover:text-brand-600 transition-colors'/></button>
+                
               </div>
 
               {/* Social Share Buttons */}
@@ -195,7 +212,7 @@ export default function ReferralsPage() {
             </div>
 
             {/* Bonus Progress */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+            <div className="rounded-xl border border-gray-400/70 p-4 sm:p-6">
               <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
                 Bonus Progress
               </h2>
@@ -206,17 +223,17 @@ export default function ReferralsPage() {
                     style={{ width: '10%' }}
                   />
                 </div>
-                <p className="text-13 sm:text-14 text-gray-500 mt-3">
+                <p className="text-13 sm:text-14 text-gray-500/70 mt-3">
                   Invite 10 Friends To Get Bonus Coupon
                 </p>
-                <p className="text-14 sm:text-16 font-normal text-gray-900 absolute right-0 -top-6 sm:-top-8">
+                <p className="text-14 sm:text-16 font-normal text-gray-500/70 absolute right-0 -top-6 sm:-top-8">
                   1/10 Invited
                 </p>
               </div>
             </div>
 
             {/* Your Coupons */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+            <div className="  p-4 sm:p-6">
               <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
                 Your Coupons
               </h2>
@@ -224,41 +241,42 @@ export default function ReferralsPage() {
                 {coupons.map(coupon => (
                   <div
                     key={coupon.id}
-                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 sm:p-4 rounded-lg border border-gray-200 bg-gray-50 gap-3"
+                    className="flex  items-center justify-between p-3 sm:p-4 rounded-lg border border-gray-300  gap-3"
                   >
                     <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center flex-shrink-0">
-                        <Ticket className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
+                      
+                      <div className='flex flex-col gap-2'>
+                     <div className="flex items-center gap-2 "><div className="  flex items-center justify-start flex-shrink-0">
+                        <Percent size={24} className="text-gray-900" />
                       </div>
-                      <div>
-                        <p className="text-12 sm:text-14 text-gray-600 mb-0.5">
+                        <p className="text-12 sm:text-16 font-normal text-gray-900 mb-0.5">
                           Coupon
-                        </p>
+                        </p></div> 
                         <p className="text-14 sm:text-16 font-normal text-gray-900 mb-0.5 sm:mb-1">
                           {coupon.discount}
                         </p>
-                        <p className="text-11 sm:text-12 text-gray-500">
+                        <p className="text-11 sm:text-14 text-gray-400/90">
                           {coupon.dueDate}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                    <div className="flex flex-col  items-center justify-between sm:justify-end gap-2 sm:gap-3">
                       {coupon.status === 'Valid' && (
-                        <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-11 sm:text-12 font-medium bg-green-50 text-green-600 border border-green-200">
-                          <CheckCircle className="w-3 h-3" />
+                        <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-10 sm:text-12 font-medium bg-green-50 text-green-600 border border-green-200">
+                          <CheckCircle2Icon className="w-3 h-3" />
                           <span>Valid</span>
                         </div>
                       )}
                       {coupon.status === 'Expired' && (
-                        <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-11 sm:text-12 font-medium bg-red-50 text-red-600 border border-red-200">
-                          <Clock className="w-3 h-3" />
+                        <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-10 sm:text-12 font-medium bg-red-50 text-red-600 border border-red-200">
+                          <XCircle className="w-3 h-3" />
                           <span>Expired</span>
                         </div>
                       )}
                       <Button
-                        variant={coupon.status === 'Valid' ? 'brand' : 'gray'}
-                        size="md"
-                        className={`${coupon.status === 'Valid' ? 'text-white' : 'text-gray-900'} text-13 sm:text-14 px-3 sm:px-4 text-white`}
+                        variant={coupon.status === 'Valid' ? 'outlineBrand' : 'outline'}
+                        size="sm"
+                        className={`${coupon.status === 'Valid' ? 'text-white' : 'text-gray-900'} text-10 sm:text-12 px-2 sm:px-2 `}
                         disabled={coupon.status === 'Expired'}
                       >
                         Redeem Now
@@ -271,14 +289,14 @@ export default function ReferralsPage() {
           </div>
 
           {/* Recent Activity Sidebar */}
-          <aside className="w-full lg:w-80 flex-shrink-0">
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+          <aside className="w-full lg:w-full flex-shrink-0">
+            <div className="  p-4 sm:p-6">
               <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
                 Recent Activity
               </h2>
               <div className="space-y-3">
                 {activityItems.map(item => (
-                  <div key={item.id} className="bg-gray-50 rounded-lg p-3">
+                  <div key={item.id} className="  border border-gray-400/40 rounded-lg p-3">
                     <div className="flex items-start gap-3">
                       <div className="relative w-10 h-10 flex-shrink-0">
                         <Image
@@ -294,9 +312,7 @@ export default function ReferralsPage() {
                           <p className="text-13 sm:text-14 font-normal text-gray-900">
                             {item.userName}
                           </p>
-                          <p className="text-13 sm:text-14 font-normal text-green-600 whitespace-nowrap">
-                            {item.earnings}
-                          </p>
+                        
                         </div>
                         <p className="text-11 sm:text-12 text-gray-500 mb-2">
                           {item.date}
@@ -304,27 +320,32 @@ export default function ReferralsPage() {
                         <p className="text-11 sm:text-12 text-gray-600 mb-2">
                           {item.bookings} Booking
                         </p>
+                        <div className='flex items-center justify-between gap-2'><p className="text-11 sm:text-12 font-normal text-green-600 whitespace-nowrap">
+                            {item.earnings}
+                          </p>
                         <Badge
                           variant={
                             item.status === 'Delivered'
                               ? 'confirmed'
-                              : 'processing'
+                              : 'pending'
                           }
-                          className="gap-1.5 px-2 sm:px-3 py-1 text-11 sm:text-12 font-medium"
+                          className="gap-1 px-2  !py-1.5 text-8 sm:text-[9px] font-regular"
                         >
                           {item.status === 'Delivered' ? (
-                            <CheckCircle className="w-3 h-3" />
+                            <CheckCircle2Icon className="w-3 h-3" />
                           ) : (
-                            <Clock className="w-3 h-3" />
+                            <Loader2 className="w-3 h-3" />
                           )}
+                           
                           <span>
                             {item.status === 'Processing'
-                              ? 'Pending Payout'
+                              ? 'Invite Sent'
                               : item.status === 'Delivered'
                                 ? 'Confirmed'
                                 : item.status}
                           </span>
-                        </Badge>
+                        </Badge></div>
+                        
                       </div>
                     </div>
                   </div>

@@ -24,7 +24,7 @@ import type {
   BudgetBooksQuery,
   BudgetBooksBaseQuery,
   ApiError,
-} from './budgetBooks.types'
+} from '@/types/responses/budgetBooks.types'
 
 /**
  * Initialize a budget book

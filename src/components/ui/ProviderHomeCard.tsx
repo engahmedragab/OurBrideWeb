@@ -3,6 +3,7 @@
  * Card design matching the screenshot for provider home sections
  */
 
+import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { RatingDisplay } from './RatingDisplay'
@@ -17,6 +18,7 @@ export interface ProviderHomeCardProps {
 }
 
 export const ProviderHomeCard = ({ provider, category, className }: ProviderHomeCardProps) => {
+  const [imageError, setImageError] = React.useState(false)
   const providerName = provider.nameEn || provider.nameAr || 'Provider'
   const providerImage = provider.publicBannerImageUrl || provider.publicLogoImageUrl
   const rating = provider.rate || 0
@@ -48,18 +50,19 @@ export const ProviderHomeCard = ({ provider, category, className }: ProviderHome
     >
       {/* Image Section - Full width, larger height */}
       <div className="relative w-full h-[200px] sm:h-[220px] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-        {providerImage ? (
+        {providerImage && !imageError ? (
           <Image
             src={providerImage}
             alt={providerName}
             fill
             sizes="(max-width: 640px) 280px, 300px"
             className="object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-100 to-brand-200">
-            <span className="text-40 font-bold text-brand-600">
-              {providerName.charAt(0).toUpperCase()}
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <span className="text-gray-400 text-12 font-medium">
+              No image available
             </span>
           </div>
         )}

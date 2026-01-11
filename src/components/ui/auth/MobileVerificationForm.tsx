@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { OTPInput } from '../OTPInput'
 import { Button } from '../Button'
 import { Typography } from '../Typography'
+import { AuthErrorDisplay } from './AuthErrorDisplay'
 import { ChevronLeft, Check } from 'lucide-react'
 import forgetIcon from '@/assets/images/forgetIcon.png'
 import { useAuth } from '@/auth'
@@ -303,11 +304,7 @@ export const MobileVerificationForm = ({
       </Typography>
 
       {/* Error Message */}
-      {error && (
-        <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
-      )}
+      <AuthErrorDisplay error={error} />
 
       {/* OTP Input */}
       <div className="w-full space-y-1 flex justify-center">

@@ -11,13 +11,15 @@ import {
   Button,
   OfferBanner,
   LoadingSpinner,
+  Pagination,
+  Badge,
   useToast,
 } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
 import type { ProductFilter, ProductViewMode } from '@/types/product'
 import {
-  useProductsHome,
+  useProductCategories,
   useFilteredProducts,
   useProducts,
   useAddProductToCart,
@@ -45,6 +47,7 @@ function ProductsContent() {
   const [filters, setFilters] = useState<ProductFilter>({})
   const [sortBy, setSortBy] = useState('default')
   const [searchQuery, setSearchQuery] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
   // Read search query from URL params
   useEffect(() => {
@@ -52,18 +55,17 @@ function ProductsContent() {
     setSearchQuery(query)
   }, [searchParams])
 
-  // Fetch categories from products home endpoint
-  const { data: productsHomeData, isLoading: categoriesLoading } = useProductsHome()
+  // Fetch categories from backend API
+  const { data: categoriesData = [] } = useProductCategories()
 
   // Map categories to ProductCategory format (id as string)
   const categories = useMemo(() => {
-    if (!productsHomeData?.categories) return []
-    return productsHomeData.categories.map(cat => ({
+    return categoriesData.map(cat => ({
       id: String(cat.id),
-      name: cat.nameEn || cat.nameAr || '',
+      name: cat.name || '',
       slug: cat.slug || '',
     }))
-  }, [productsHomeData?.categories])
+  }, [categoriesData])
 
   // Check if we have filters applied (beyond just search)
   const hasFilters = useMemo(() => {
@@ -197,6 +199,37 @@ function ProductsContent() {
     [products, filters, sortBy, advancedSearchParams]
   )
 
+  // Get selected category name and collect all unique tags
+  const selectedCategory = useMemo(() => {
+    if (filters.category && filters.category.length > 0) {
+      return categories.find(cat => cat.id === filters.category![0])
+    }
+    return null
+  }, [filters.category, categories])
+
+  // Collect all unique tags from filtered products
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>()
+    filteredAndSortedProducts.forEach(product => {
+      product.tags?.forEach(tag => tagSet.add(tag))
+    })
+    return Array.from(tagSet).slice(0, 10) // Limit to 10 tags
+  }, [filteredAndSortedProducts])
+
+  // Pagination
+  const PRODUCTS_PER_PAGE = 12
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / PRODUCTS_PER_PAGE)
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE
+    const endIndex = startIndex + PRODUCTS_PER_PAGE
+    return filteredAndSortedProducts.slice(startIndex, endIndex)
+  }, [filteredAndSortedProducts, currentPage])
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filters, searchQuery, sortBy])
+
   const handleWishlistToggle = (_productId: string) => {
     // TODO: Implement wishlist toggle
   }
@@ -224,10 +257,7 @@ function ProductsContent() {
   }
 
   return (
-    <ProductPageLayout
-      isLoading={categoriesLoading || isLoading}
-      loadingText="Loading products..."
-    >
+    <ProductPageLayout>
       {/* Hero Carousel */}
       <HeroCarousel
         slides={DEFAULT_HERO_SLIDES}
@@ -250,6 +280,30 @@ function ProductsContent() {
 
           {/* Main Content */}
           <div className="lg:col-span-3">
+            {/* Category Name and Tags */}
+            {(selectedCategory || allTags.length > 0) && (
+              <div className="mb-6 space-y-3">
+                {selectedCategory && (
+                  <h2 className="text-24 md:text-28 font-semibold text-gray-900">
+                    {selectedCategory.name}
+                  </h2>
+                )}
+                {allTags.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {allTags.map(tag => (
+                      <Badge
+                        key={tag}
+                        variant="outline"
+                        className="text-14 px-3 py-1.5 border-gray-300 text-gray-700"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Toolbar */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-2">
@@ -287,7 +341,7 @@ function ProductsContent() {
             </div>
 
             {/* Products */}
-            {productsLoading || searchLoading ? (
+            {isLoading ? (
               <div className="py-12">
                 <LoadingSpinner
                   size="lg"
@@ -296,17 +350,28 @@ function ProductsContent() {
               </div>
             ) : viewMode === 'grid' ? (
               <ProductGrid
-                products={filteredAndSortedProducts}
+                products={paginatedProducts}
                 onWishlistToggle={handleWishlistToggle}
                 onAddToCart={handleAddToCart}
                 columns={DEFAULT_PRODUCT_GRID_COLUMNS}
               />
             ) : (
               <ProductList
-                products={filteredAndSortedProducts}
+                products={paginatedProducts}
                 onWishlistToggle={handleWishlistToggle}
                 onAddToCart={handleAddToCart}
               />
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="mt-8 flex justify-center">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
             )}
           </div>
         </div>

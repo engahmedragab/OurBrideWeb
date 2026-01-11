@@ -14,6 +14,11 @@ import {
   AlertCircle,
   Percent,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Tag,
+  Sparkles,
+  Gift,
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
@@ -495,6 +500,7 @@ export default function CheckoutPage() {
   const [showOrderConfirmation, setShowOrderConfirmation] = useState(false)
   const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null)
   const [showAddressModal, setShowAddressModal] = useState(false)
+  const [addressSliderIndex, setAddressSliderIndex] = useState(0)
 
   const currency = 'EGP'
 
@@ -1071,71 +1077,176 @@ export default function CheckoutPage() {
                     Delivery Details
                   </h3>
 
-                  {/* Address Selector */}
+                  {/* Address Selector Slider */}
                   {isLoadingAddresses ? (
                     <div className="flex items-center justify-center py-8">
                       <p className="text-14 text-gray-500">Loading addresses...</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {/* Horizontal Address Selector */}
-                      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                        {addresses.map((address) => (
+                      {/* Address Slider Container */}
+                      <div className="flex items-center gap-2">
+                        {/* Slider Navigation - Previous */}
+                        {(addresses.length + 1) > 1 && (
                           <button
-                            key={address.id}
                             type="button"
-                            onClick={() => {
-                              setSelectedAddressId(address.id)
-                              // Update form data with selected address
-                              updateFormData('location', address.city || address.address1 || '')
-                              updateFormData('street', address.address1 || address.address2 || '')
-                            }}
+                            onClick={() => setAddressSliderIndex(prev => Math.max(0, prev - 1))}
+                            disabled={addressSliderIndex === 0}
                             className={cn(
-                              'flex-shrink-0 px-4 py-3 rounded-lg border-2 transition-all text-left min-w-[200px]',
-                              'hover:bg-gray-50',
-                              selectedAddressId === address.id
-                                ? 'border-brand-400 bg-white'
-                                : 'border-gray-300 bg-white'
+                              'flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-300 shadow-sm',
+                              'flex items-center justify-center',
+                              'hover:bg-gray-50 hover:border-brand-400 transition-colors',
+                              'disabled:opacity-50 disabled:cursor-not-allowed',
+                              addressSliderIndex === 0 && 'hidden'
                             )}
+                            aria-label="Previous address"
                           >
-                            <div className="flex items-start gap-2">
-                              <MapPin className={cn(
-                                'h-5 w-5 flex-shrink-0 mt-0.5',
-                                selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-400'
-                              )} />
-                              <div className="flex-1 min-w-0">
-                                <p className={cn(
-                                  'text-14 font-medium truncate',
-                                  selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-900'
-                                )}>
-                                  {address.contactName || 'Address'}
-                                </p>
-                                <p className="text-12 text-gray-600 line-clamp-2 mt-1">
-                                  {address.address1 || ''} {address.address2 || ''}
-                                  {address.city && `, ${address.city}`}
-                                </p>
-                              </div>
-                            </div>
+                            <ChevronLeft className="h-4 w-4 text-gray-600" />
                           </button>
-                        ))}
+                        )}
 
-                        {/* Add Address Button */}
-                        <button
-                          type="button"
-                          onClick={() => setShowAddressModal(true)}
-                          className={cn(
-                            'flex-shrink-0 px-4 py-3 rounded-lg border-2 border-dashed transition-all',
-                            'border-gray-300 bg-white hover:bg-gray-50 hover:border-brand-400',
-                            'flex items-center justify-center gap-2 min-w-[200px]'
-                          )}
-                        >
-                          <MapPin className="h-5 w-5 text-gray-400" />
-                          <span className="text-14 font-medium text-gray-600">Add Address</span>
-                        </button>
+                        {/* Address Cards Container */}
+                        <div className="flex-1 overflow-hidden">
+                          <div
+                            className="flex transition-transform duration-300 ease-in-out"
+                            style={{
+                              transform: `translateX(-${addressSliderIndex * 100}%)`,
+                            }}
+                          >
+                            {addresses.map((address) => (
+                              <div key={address.id} className="min-w-full flex-shrink-0 px-1">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setSelectedAddressId(address.id)
+                                    // Update form data with selected address
+                                    updateFormData('location', address.city || address.address1 || '')
+                                    updateFormData('street', address.address1 || address.address2 || '')
+                                  }}
+                                  className={cn(
+                                    'w-full px-4 py-3 rounded-lg border-2 transition-all text-left',
+                                    'hover:bg-gray-50',
+                                    selectedAddressId === address.id
+                                      ? 'border-brand-400 bg-white'
+                                      : 'border-gray-300 bg-white'
+                                  )}
+                                >
+                                  <div className="flex items-start gap-2">
+                                    <MapPin className={cn(
+                                      'h-5 w-5 flex-shrink-0 mt-0.5',
+                                      selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-400'
+                                    )} />
+                                    <div className="flex-1 min-w-0">
+                                      <p className={cn(
+                                        'text-14 font-medium',
+                                        selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-900'
+                                      )}>
+                                        {address.contactName || 'Address'}
+                                      </p>
+                                      <p className="text-12 text-gray-600 line-clamp-2 mt-1">
+                                        {address.address1 || ''} {address.address2 || ''}
+                                        {address.city && `, ${address.city}`}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </button>
+                              </div>
+                            ))}
+
+                            {/* Add Address Button as last slide */}
+                            <div className="min-w-full flex-shrink-0 px-1">
+                              <button
+                                type="button"
+                                onClick={() => setShowAddressModal(true)}
+                                className={cn(
+                                  'w-full px-4 py-3 rounded-lg border-2 border-dashed transition-all',
+                                  'border-gray-300 bg-white hover:bg-gray-50 hover:border-brand-400',
+                                  'flex items-center justify-center gap-2'
+                                )}
+                              >
+                                <MapPin className="h-5 w-5 text-gray-400" />
+                                <span className="text-14 font-medium text-gray-600">Add Address</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Slider Navigation - Next */}
+                        {(addresses.length + 1) > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => setAddressSliderIndex(prev => Math.min(addresses.length, prev + 1))}
+                            disabled={addressSliderIndex >= addresses.length}
+                            className={cn(
+                              'flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-300 shadow-sm',
+                              'flex items-center justify-center',
+                              'hover:bg-gray-50 hover:border-brand-400 transition-colors',
+                              'disabled:opacity-50 disabled:cursor-not-allowed',
+                              addressSliderIndex >= addresses.length && 'hidden'
+                            )}
+                            aria-label="Next address"
+                          >
+                            <ChevronRight className="h-4 w-4 text-gray-600" />
+                          </button>
+                        )}
                       </div>
 
-                    </div>
+                      {/* Slider Indicators - Only show when there are multiple slides */}
+                      {(addresses.length + 1) > 1 && (
+                        <div className="flex justify-center gap-1.5 mt-2">
+                          {Array.from({ length: addresses.length + 1 }).map((_, index) => (
+                            <button
+                              key={index}
+                              type="button"
+                              onClick={() => setAddressSliderIndex(index)}
+                              className={cn(
+                                'h-1.5 rounded-full transition-all',
+                                addressSliderIndex === index
+                                  ? 'w-6 bg-brand-400'
+                                  : 'w-1.5 bg-gray-300'
+                              )}
+                              aria-label={`Go to slide ${index + 1}`}
+                            />
+                          ))}
+                        </div>
+                      )}
 
+                      {/* Location and Street Inputs (shown when no address selected or for manual entry) */}
+                      {(!selectedAddressId || addresses.length === 0) && (
+                        <div className="space-y-4 pt-2">
+                          <Input
+                            type="text"
+                            placeholder="Location"
+                            prefixIcon={MapPin}
+                            value={formData.location}
+                            onChange={e => updateFormData('location', e.target.value)}
+                            onBlur={() => {
+                              const error = validateField('location', formData.location)
+                              if (error)
+                                setErrors(prev => ({ ...prev, location: error }))
+                            }}
+                            variant={errors.location ? 'error' : 'default'}
+                            errorMessage={errors.location}
+                            className="w-full"
+                          />
+                          <Input
+                            type="text"
+                            placeholder="Street / Apartment"
+                            prefixIcon={Building2}
+                            value={formData.street}
+                            onChange={e => updateFormData('street', e.target.value)}
+                            onBlur={() => {
+                              const error = validateField('street', formData.street)
+                              if (error)
+                                setErrors(prev => ({ ...prev, street: error }))
+                            }}
+                            variant={errors.street ? 'error' : 'default'}
+                            errorMessage={errors.street}
+                            className="w-full"
+                          />
+                        </div>
+                      )}
+                    </div>
                   )}
                   {/* Notes */}
                   <div className="relative">
@@ -1440,6 +1551,8 @@ export default function CheckoutPage() {
                           originalPrice={product.originalPrice}
                           discountedPrice={product.discountedPrice}
                           quantity={product.quantity}
+                          onQuantityChange={handleQuantityChange}
+                          onRemove={handleRemoveItemClick}
                           deliveryDate={product.deliveryDate}
                           discountPercentage={product.discountPercentage}
                           purchasePrice={product.purchasePrice ?? undefined}
@@ -1462,6 +1575,8 @@ export default function CheckoutPage() {
                           originalPrice={reservation.price}
                           discountedPrice={reservation.price}
                           quantity={reservation.quantity}
+                          onQuantityChange={handleQuantityChange}
+                          onRemove={handleRemoveItemClick}
                           deliveryDate={reservation.reservationDate}
                           purchasePrice={reservation.purchasePrice ?? undefined}
                           purchaseDate={reservation.purchaseDate}
@@ -1483,6 +1598,8 @@ export default function CheckoutPage() {
                           originalPrice={membership.price}
                           discountedPrice={membership.price}
                           quantity={membership.quantity}
+                          onQuantityChange={handleQuantityChange}
+                          onRemove={handleRemoveItemClick}
                           purchasePrice={membership.purchasePrice ?? undefined}
                           purchaseDate={membership.purchaseDate}
                           type={membership.type}
@@ -1503,6 +1620,8 @@ export default function CheckoutPage() {
                           originalPrice={giftCard.price}
                           discountedPrice={giftCard.price}
                           quantity={giftCard.quantity}
+                          onQuantityChange={handleQuantityChange}
+                          onRemove={handleRemoveItemClick}
                           purchasePrice={giftCard.purchasePrice ?? undefined}
                           purchaseDate={giftCard.purchaseDate}
                           type={giftCard.type}
@@ -1518,6 +1637,97 @@ export default function CheckoutPage() {
                     <span>{errors.items}</span>
                   </div>
                 )}
+
+                {/* Promo Code, Diamonds, and Gifts Cash */}
+                <div className="space-y-3 pt-4 border-t border-gray-200">
+                  {/* Promo Code */}
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 relative">
+                      <Input
+                        type="text"
+                        placeholder="Enter Promo Code"
+                        prefixIcon={Tag}
+                        value={formData.promoCode || ''}
+                        onChange={e => updateFormData('promoCode', e.target.value)}
+                        className="w-full pr-20"
+                        disabled={!!appliedCouponCode}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="default"
+                      size="sm"
+                      onClick={async () => {
+                        if (!formData.promoCode) {
+                          addToast('Please enter a promo code', 'error')
+                          return
+                        }
+                        try {
+                          await validateCouponMutation.mutateAsync(formData.promoCode)
+                          // Toast is handled by the hook
+                        } catch {
+                          // Error toast is handled by the hook
+                        }
+                      }}
+                      disabled={validateCouponMutation.isPending || !formData.promoCode || !!appliedCouponCode}
+                      className="flex-shrink-0 !text-white"
+                    >
+                      {validateCouponMutation.isPending ? '...' : 'Redeem'}
+                    </Button>
+                  </div>
+
+                  {/* Diamonds */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-brand-500" />
+                      <span className="text-14 text-gray-700">
+                        Diamonds: <span className="font-medium">250 Points</span>
+                      </span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        updateFormData('useDiamonds', !formData.useDiamonds)
+                        addToast(
+                          formData.useDiamonds ? 'Diamonds removed' : 'Diamonds applied',
+                          'success'
+                        )
+                      }}
+                      disabled={validateCouponMutation.isPending}
+                      className="flex-shrink-0 !text-white"
+                    >
+                      {formData.useDiamonds ? 'Applied' : 'Redeem'}
+                    </Button>
+                  </div>
+
+                  {/* Gifts Cash */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Gift className="h-5 w-5 text-brand-500" />
+                      <span className="text-14 text-gray-700">
+                        Gifts Cash: <span className="font-medium">500 {currency}</span>
+                      </span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        updateFormData('useGiftsCash', !formData.useGiftsCash)
+                        addToast(
+                          formData.useGiftsCash ? 'Gifts Cash removed' : 'Gifts Cash applied',
+                          'success'
+                        )
+                      }}
+                      disabled={validateCouponMutation.isPending}
+                      className="flex-shrink-0 !text-white"
+                    >
+                      {formData.useGiftsCash ? 'Applied' : 'Redeem'}
+                    </Button>
+                  </div>
+                </div>
 
                 {/* Price Breakdown */}
                 <div className="space-y-3 pt-4 border-t border-gray-200">
@@ -1627,7 +1837,7 @@ export default function CheckoutPage() {
                     disabled={isCheckoutDisabled || checkoutMutation.isPending || isSubmitting || !formData.acceptTerms}
                     className="w-full rounded-lg text-white"
                   >
-                    {isSubmitting || checkoutMutation.isPending ? 'Processing...' : 'Create Order'}
+                    {isSubmitting || checkoutMutation.isPending ? 'Processing...' : `Pay ( ${total.toLocaleString()} ${currency} )`}
                   </Button>
                 </div>
 

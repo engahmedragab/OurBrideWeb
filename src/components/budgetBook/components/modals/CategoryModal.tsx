@@ -20,7 +20,7 @@ import {
   categoryWithLineFormSchema,
   type CategoryFormData,
   type CategoryWithLineFormData,
-} from '@/app/events/planning/budget/schemas/category.schema'
+} from '@/schema/budgetSchema/category.schema'
 import type { BudgetLineCategoryResponse } from '@/types/responses'
 
 interface CategoryModalProps {

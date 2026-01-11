@@ -30,6 +30,24 @@ import type {
 import { setToken, getToken, getRefreshToken, removeToken } from '../utils/token'
 
 /**
+ * Check response for errors and throw if found
+ * Handles cases where API returns 200 status but with errors in body
+ */
+const checkResponseForErrors = (response: { data?: unknown }, defaultMessage: string): void => {
+  const responseData = response.data as Record<string, unknown> | undefined
+  if (responseData) {
+    // Check if response indicates failure
+    if (responseData.success === false || (responseData.errors && Array.isArray(responseData.errors))) {
+      const errors = Array.isArray(responseData.errors) ? responseData.errors : []
+      const errorMessage = errors.length > 0 
+        ? errors.join('\n')
+        : (typeof responseData.message === 'string' ? responseData.message : defaultMessage)
+      throw new Error(errorMessage)
+    }
+  }
+}
+
+/**
  * Extract error message from unknown error type
  */
 const getErrorMessage = (error: unknown, defaultMessage: string): string => {
@@ -41,20 +59,51 @@ const getErrorMessage = (error: unknown, defaultMessage: string): string => {
         data?: { 
           message?: string
           error?: string
-          errors?: string[]
+          errors?: string[] | Record<string, string[]>
           success?: boolean
         } 
       }
       
       if (response.data) {
-        // Handle validation errors (400 status with errors array)
-        if (response.status === 400 && Array.isArray(response.data.errors) && response.data.errors.length > 0) {
-          // Join all validation errors with newlines or commas
-          return response.data.errors.join('\n')
+        // Handle validation errors (400 status with errors array or object)
+        if (response.status === 400) {
+          // Check for array of error strings
+          if (Array.isArray(response.data.errors) && response.data.errors.length > 0) {
+            return response.data.errors.join('\n')
+          }
+          // Check for object with error messages (e.g., { email: ['Email is required'], password: ['Password is too short'] })
+          if (response.data.errors && typeof response.data.errors === 'object' && !Array.isArray(response.data.errors)) {
+            const errorObj = response.data.errors as Record<string, string[]>
+            const errorMessages: string[] = []
+            for (const key in errorObj) {
+              if (Array.isArray(errorObj[key])) {
+                errorMessages.push(...errorObj[key])
+              }
+            }
+            if (errorMessages.length > 0) {
+              return errorMessages.join('\n')
+            }
+          }
         }
         
         // Fallback to message or error field
         return response.data.message || response.data.error || defaultMessage
+      }
+      
+      // If no data but we have a status, provide a generic message based on status
+      if (response.status) {
+        if (response.status === 401) {
+          return 'Unauthorized. Please check your credentials.'
+        }
+        if (response.status === 403) {
+          return 'Access forbidden. You do not have permission to perform this action.'
+        }
+        if (response.status === 404) {
+          return 'Resource not found. Please try again.'
+        }
+        if (response.status >= 500) {
+          return 'Server error. Please try again later.'
+        }
       }
     }
     // Check for standard Error object
@@ -147,6 +196,9 @@ export const loginWithEmail = async (
 
     const response = await apiClient.api.postIdentityLogin(loginRequest)
     
+    // Check for errors in response body first (even if HTTP status is 200)
+    checkResponseForErrors(response, 'Login failed. Please check your credentials.')
+    
     const authData = extractAuthDataFromResponse(response)
     
     if (!authData) {
@@ -179,6 +231,9 @@ export const loginWithPhone = async (
     }
 
     const response = await apiClient.api.postIdentityLoginPhone(loginRequest)
+    
+    // Check for errors in response body first (even if HTTP status is 200)
+    checkResponseForErrors(response, 'Login failed. Please check your credentials.')
     
     const authData = extractAuthDataFromResponse(response)
     
@@ -279,6 +334,7 @@ export const guestLogin = async (
 
 /**
  * Refresh access token
+ * Uses a separate HTTP client to avoid circular dependency with the interceptor
  */
 export const refreshToken = async (): Promise<AuthResponse> => {
   try {
@@ -294,7 +350,29 @@ export const refreshToken = async (): Promise<AuthResponse> => {
       refreshToken: refreshTokenValue,
     }
 
-    const response = await apiClient.api.postIdentityRefresh(refreshRequest)
+    // Create a separate HTTP client for refresh to avoid interceptor loops
+    // Import dynamically to avoid circular dependency
+    const { HttpClient, Api } = await import('@/../client/common/api/gen/ourbride-api')
+    
+    const getBaseURL = (): string => {
+      const url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://preprod.our-bride.com'
+      let baseURL = url.replace(/\/$/, '')
+      baseURL = baseURL.replace(/\/api\/v1$/, '')
+      return baseURL
+    }
+
+    // Create a fresh HTTP client without interceptors for refresh token call
+    const refreshHttpClient = new HttpClient({
+      baseURL: getBaseURL(),
+      timeout: 30000,
+      withCredentials: process.env.NEXT_PUBLIC_API_WITH_CREDENTIALS === 'true',
+    })
+
+    const refreshApi = new Api(refreshHttpClient)
+    const response = await refreshApi.api.postIdentityRefresh(refreshRequest)
+    
+    // Check for errors in response body
+    checkResponseForErrors(response, 'Token refresh failed. Please login again.')
     
     const authData = extractAuthDataFromResponse(response)
     
@@ -345,6 +423,9 @@ export const adminLogin = async (
 
     const response = await apiClient.api.postIdentityLoginAdmin(loginRequest)
     
+    // Check for errors in response body first (even if HTTP status is 200)
+    checkResponseForErrors(response, 'Admin login failed. Please check your credentials.')
+    
     const authData = extractAuthDataFromResponse(response)
     
     if (!authData) {
@@ -379,6 +460,9 @@ export const signupFull = async (
     }
 
     const response = await apiClient.api.postIdentityFullRegister(signupRequest)
+    
+    // Check for errors in response body first (even if HTTP status is 200)
+    checkResponseForErrors(response, 'Registration failed. Please try again.')
     
     const authData = extractAuthDataFromResponse(response)
     
@@ -425,6 +509,9 @@ export const signupWithEmail = async (
 
     const response = await apiClient.api.postIdentityRegister(signupRequest)
     
+    // Check for errors in response body first (even if HTTP status is 200)
+    checkResponseForErrors(response, 'Registration failed. Please try again.')
+    
     const authData = extractAuthDataFromResponse(response)
     
     if (!authData) {
@@ -466,6 +553,9 @@ export const signupWithPhone = async (
     }
 
     const response = await apiClient.api.postIdentityPhoneRegister(signupRequest)
+    
+    // Check for errors in response body first (even if HTTP status is 200)
+    checkResponseForErrors(response, 'Registration failed. Please try again.')
     
     const authData = extractAuthDataFromResponse(response)
     

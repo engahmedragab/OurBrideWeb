@@ -42,7 +42,7 @@ const convertLineToRequest = (line: ServiceLineResponse, bookId: number): Servic
   // Map ServiceType enum from response to request type
   // ServiceType enum values: 0 = Rent, 1 = Buy
   const serviceType = (line.serviceType === 0 ? 0 : line.serviceType === 1 ? 1 : 0) as unknown as ServiceType
-  
+
   return {
     id: line.id,
     bookId: line.bookId || bookId,
@@ -504,11 +504,17 @@ function PreparationsCategoriesPageContent() {
   )
 }
 
+/**
+ * Preparations Categories Page
+ * Wrapped in Suspense for useSearchParams compatibility
+ */
 export default function PreparationsCategoriesPage() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Loading..." />
+      <div className="space-y-6">
+        <div className="flex items-center justify-center py-12">
+          <LoadingSpinner size="lg" text="Loading..." />
+        </div>
       </div>
     }>
       <PreparationsCategoriesPageContent />

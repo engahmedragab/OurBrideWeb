@@ -7,6 +7,7 @@ import {
   AuthDivider,
   LoginForm,
   WelcomeHeader,
+  AuthErrorDisplay,
 } from '@/components/ui/auth/index'
 import { SocialMediaButton } from '@/components/ui/SocialMediaButton'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
@@ -145,11 +146,7 @@ function LoginFormContent() {
         />
 
         {/* Error Message */}
-        {error && (
-          <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
+        <AuthErrorDisplay error={error} />
 
         {/* Download App Section - Mobile Only */}
         <div className="lg:hidden w-full pt-4">

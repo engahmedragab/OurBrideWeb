@@ -21,8 +21,8 @@ type QueueStatus = 'idle' | 'queued' | 'processing' | 'completed' | 'failed'
 /**
  * Polling configuration
  */
-const POLL_INTERVAL = 2000 // 2 seconds
-const MAX_POLL_ATTEMPTS = 60 // 2 minutes total (60 * 2 seconds)
+const POLL_INTERVAL = 1500 // 1.5 seconds
+const MAX_POLL_ATTEMPTS = 30 // 45 seconds total (30 * 1.5 seconds)
 
 /**
  * Create Order Content Component
@@ -116,7 +116,8 @@ function CreateOrderContent() {
             setError('Checkout failed. Please try again.')
             addToast('Checkout failed. Please try again.', 'error')
         } else {
-            // Default: try to create order (for immediate completion or unknown status)
+            // Default: try to create order immediately (skip polling for unknown/ready statuses)
+            setQueueStatus('completed')
             handleCreateOrder()
         }
 
@@ -274,18 +275,17 @@ function CreateOrderContent() {
                 sessionStorage.removeItem('cartData')
             }
 
-            // Success - navigate to order details
+            // Success - navigate to order details immediately
             addToast('Order created successfully!', 'success')
 
-            setTimeout(() => {
-                if (orderResponse.orderId) {
-                    router.push(`/orders/${orderResponse.orderId}`)
-                } else if (checkoutResponse?.orderId) {
-                    router.push(`/orders/${checkoutResponse.orderId}`)
-                } else {
-                    router.push('/orders')
-                }
-            }, 1500)
+            // Navigate immediately without delay for better UX
+            if (orderResponse.orderId) {
+                router.push(`/orders/${orderResponse.orderId}`)
+            } else if (checkoutResponse?.orderId) {
+                router.push(`/orders/${checkoutResponse.orderId}`)
+            } else {
+                router.push('/orders')
+            }
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Failed to create order'
             setError(errorMessage)

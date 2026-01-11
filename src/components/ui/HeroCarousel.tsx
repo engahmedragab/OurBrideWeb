@@ -34,6 +34,7 @@ export const HeroCarousel = ({
   showBackground = true,
 }: HeroCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
 
   useEffect(() => {
     if (!autoPlay || slides.length <= 1) return
@@ -140,14 +141,23 @@ export const HeroCarousel = ({
 
                 {/* Product Image - Full Height, 50% Width */}
                 <div className="relative z-10 w-full h-full">
-                  <Image
-                    src={currentSlide.productImage}
-                    alt={currentSlide.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover w-full h-full"
-                    priority={currentIndex === 0}
-                  />
+                  {currentSlide.productImage && !imageErrors.has(currentIndex) ? (
+                    <Image
+                      src={currentSlide.productImage}
+                      alt={currentSlide.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover w-full h-full"
+                      priority={currentIndex === 0}
+                      onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <span className="text-gray-400 text-14 font-medium">
+                        No image available
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

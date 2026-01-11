@@ -11,8 +11,10 @@ import { Button } from '../Button'
 import { PasswordStrength } from '../PasswordStrength'
 import { Typography } from '../Typography'
 import { StatusModal } from '../StatusModal'
+import { AuthErrorDisplay } from './AuthErrorDisplay'
 import { ChevronLeft, Phone } from 'lucide-react'
 import forgetIcon from '@/assets/images/forgetIcon.png'
+import { useAuth } from '@/auth'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 
@@ -40,6 +42,7 @@ export const ForgotPasswordForm = ({
   className,
 }: ForgotPasswordFormProps) => {
   const router = useRouter()
+  const { sendPhoneOTP, verifyPhoneOTP, isLoading, error, clearError } = useAuth()
 
   // Step management
   const [step, setStep] = useState<Step>(1)
@@ -294,12 +297,26 @@ export const ForgotPasswordForm = ({
   }
 
   // Step navigation
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (step === 1) {
       const validation = validatePhone(phone)
       if (validation.isValid) {
-        setStep(2)
-        setIsSubmitted(false)
+        try {
+          clearError()
+          await sendPhoneOTP({
+            phoneNumber: phone,
+          })
+          setStep(2)
+          setIsSubmitted(false)
+          // Clear any previous errors when moving to next step
+          setPhoneStatus('default')
+          setPhoneErrorMessage('')
+        } catch (err) {
+          // Error is handled by auth context and displayed via AuthErrorDisplay
+          setPhoneStatus('error')
+          const errorMsg = err instanceof Error ? err.message : (error || 'Failed to send OTP. Please try again.')
+          setPhoneErrorMessage(errorMsg)
+        }
       } else {
         setIsSubmitted(true)
         setPhoneStatus('error')
@@ -308,8 +325,24 @@ export const ForgotPasswordForm = ({
     } else if (step === 2) {
       const validation = validateOTP(otp)
       if (validation.isValid) {
-        setStep(3)
-        setIsSubmitted(false)
+        try {
+          clearError()
+          const otpCode = parseInt(otp.join(''), 10)
+          await verifyPhoneOTP({
+            phoneNumber: phone,
+            code: otpCode,
+          })
+          setStep(3)
+          setIsSubmitted(false)
+          // Clear any previous errors when moving to next step
+          setOtpStatus('default')
+          setOtpErrorMessage('')
+        } catch (err) {
+          // Error is handled by auth context and displayed via AuthErrorDisplay
+          setOtpStatus('error')
+          const errorMsg = err instanceof Error ? err.message : (error || 'Invalid OTP code. Please try again.')
+          setOtpErrorMessage(errorMsg)
+        }
       } else {
         setIsSubmitted(true)
         setOtpStatus('error')
@@ -318,15 +351,25 @@ export const ForgotPasswordForm = ({
     }
   }
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setIsSubmitted(true)
 
     const passwordValidation = validatePassword(password)
     const confirmValidation = validateConfirmPassword(confirmPassword, password)
 
     if (passwordValidation.isValid && confirmValidation.isValid) {
-      // Show loading first, then success modal after loading completes
-      onConfirmClick?.()
+      try {
+        clearError()
+        // TODO: Replace with actual password reset API call when available
+        // For now, call the callback which may handle the API call
+        // await resetPassword({ phoneNumber: phone, newPassword: password })
+        onConfirmClick?.()
+      } catch (err) {
+        // Error is handled by auth context and displayed via AuthErrorDisplay
+        setPasswordStatus('error')
+        const errorMsg = err instanceof Error ? err.message : (error || 'Failed to reset password. Please try again.')
+        setPasswordErrorMessage(errorMsg)
+      }
     } else {
       if (!passwordValidation.isValid) {
         setPasswordStatus('error')
@@ -449,6 +492,9 @@ export const ForgotPasswordForm = ({
             Please enter your mobile number to send an OTP
           </Typography>
 
+          {/* Error Message */}
+          <AuthErrorDisplay error={error} />
+
           {/* Phone Input */}
           <div className="w-full space-y-1">
             <Input
@@ -522,6 +568,9 @@ export const ForgotPasswordForm = ({
             Please enter the 4 numbers OTP We have sent to your phone number
           </Typography>
 
+          {/* Error Message */}
+          <AuthErrorDisplay error={error} />
+
           {/* OTP Input */}
           <div className="w-full space-y-1 flex justify-center">
             <OTPInput
@@ -585,8 +634,11 @@ export const ForgotPasswordForm = ({
             align="center"
             className="text-14 sm:text-14 text-gray-400 font-regular"
           >
-            Please enter your mobile number to send an OTP
+            Please enter your new password
           </Typography>
+
+          {/* Error Message */}
+          <AuthErrorDisplay error={error} />
 
           {/* Password Input */}
           <div className="w-full space-y-1">

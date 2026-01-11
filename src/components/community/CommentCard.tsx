@@ -1,8 +1,9 @@
 'use client'
 
+import React, { useState } from 'react'
 import Image from 'next/image'
+import { User } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface CommentCardProps {
   id: string
@@ -22,30 +23,22 @@ export const CommentCard = ({
   timestamp,
   className,
 }: CommentCardProps) => {
+  const [imageError, setImageError] = useState(false)
   return (
     <div className={cn('flex gap-3', className)}>
       <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-        {author.avatar ? (
+        {author.avatar && !imageError ? (
           <Image
             src={author.avatar}
             alt={author.name || 'OurBride'}
             fill
             sizes="40px"
             className="object-cover"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
-            }}
+            onError={() => setImageError(true)}
           />
-        ) : null}
-        {!author.avatar && (
-          <div className="w-full h-full flex items-center justify-center bg-white">
-            <Image
-              src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-              alt="OurBride"
-              width={24}
-              height={24}
-              className="object-contain"
-            />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+            <User className="h-5 w-5 text-gray-400" />
           </div>
         )}
       </div>

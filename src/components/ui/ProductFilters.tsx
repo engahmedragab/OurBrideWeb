@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Checkbox } from './Checkbox'
 import { Badge } from './Badge'
+import { Input } from './Input'
 import { X, SlidersHorizontal } from 'lucide-react'
 import type { ProductFilter, ProductCategory } from '@/types/product'
 
@@ -14,6 +15,16 @@ interface PriceRangeSliderProps {
   minValue: number
   maxValue: number
   onChange: (min: number, max: number) => void
+  onDragEnd?: (min: number, max: number) => void
+}
+
+interface PriceRangeSliderProps {
+  min: number
+  max: number
+  minValue: number
+  maxValue: number
+  onChange: (min: number, max: number) => void
+  onDragEnd?: (min: number, max: number) => void
 }
 
 const PriceRangeSlider = ({
@@ -22,6 +33,7 @@ const PriceRangeSlider = ({
   minValue,
   maxValue,
   onChange,
+  onDragEnd,
 }: PriceRangeSliderProps) => {
   const sliderRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState<'min' | 'max' | null>(null)
@@ -55,11 +67,11 @@ const PriceRangeSlider = ({
     if (type === 'min') {
       const newMin = Math.max(min, Math.min(value, localMax - 1))
       setLocalMin(newMin)
-      onChange(newMin, localMax)
+      // Don't call onChange here - only update local state for visual feedback
     } else {
       const newMax = Math.min(max, Math.max(value, localMin + 1))
       setLocalMax(newMax)
-      onChange(localMin, newMax)
+      // Don't call onChange here - only update local state for visual feedback
     }
   }
 
@@ -71,27 +83,48 @@ const PriceRangeSlider = ({
       if (isDragging === 'min') {
         const newMin = Math.max(min, Math.min(value, localMax - 1))
         setLocalMin(newMin)
-        onChange(newMin, localMax)
+        // Don't call onChange during drag - only update local state
       } else {
         const newMax = Math.min(max, Math.max(value, localMin + 1))
         setLocalMax(newMax)
-        onChange(localMin, newMax)
+        // Don't call onChange during drag - only update local state
       }
     },
-    [isDragging, localMin, localMax, min, max, onChange, getValueFromPosition]
+    [isDragging, localMin, localMax, min, max, getValueFromPosition]
   )
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => handleMove(e.clientX)
-    const handleMouseUp = () => setIsDragging(null)
+    const handleMouseMove = (e: MouseEvent) => {
+      e.preventDefault()
+      handleMove(e.clientX)
+    }
+    const handleMouseUp = () => {
+      if (isDragging) {
+        // Call onChange only when drag ends
+        onChange(localMin, localMax)
+        if (onDragEnd) {
+          onDragEnd(localMin, localMax)
+        }
+      }
+      setIsDragging(null)
+    }
     const handleTouchMove = (e: TouchEvent) => {
       e.preventDefault()
       if (e.touches[0]) handleMove(e.touches[0].clientX)
     }
-    const handleTouchEnd = () => setIsDragging(null)
+    const handleTouchEnd = () => {
+      if (isDragging) {
+        // Call onChange only when drag ends
+        onChange(localMin, localMax)
+        if (onDragEnd) {
+          onDragEnd(localMin, localMax)
+        }
+      }
+      setIsDragging(null)
+    }
 
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mousemove', handleMouseMove, { passive: false })
       document.addEventListener('mouseup', handleMouseUp)
       document.addEventListener('touchmove', handleTouchMove, {
         passive: false,
@@ -105,7 +138,7 @@ const PriceRangeSlider = ({
       document.removeEventListener('touchmove', handleTouchMove)
       document.removeEventListener('touchend', handleTouchEnd)
     }
-  }, [isDragging, handleMove])
+  }, [isDragging, localMin, localMax, onChange, onDragEnd, handleMove])
 
   const minPercentage = getPercentage(localMin)
   const maxPercentage = getPercentage(localMax)
@@ -234,6 +267,16 @@ export const ProductFilters = ({
     min: filters.priceRange?.min || 0,
     max: filters.priceRange?.max || 300,
   })
+  const priceInputTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (priceInputTimeoutRef.current) {
+        clearTimeout(priceInputTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const activeFiltersCount =
     (filters.category?.length || 0) +
@@ -371,6 +414,11 @@ export const ProductFilters = ({
             minValue={Math.min(priceRange.min, 300)}
             maxValue={Math.min(priceRange.max, 300)}
             onChange={(min, max) => {
+              // Only update local state during drag for visual feedback
+              setPriceRange({ min, max })
+            }}
+            onDragEnd={(min, max) => {
+              // Update filters only when drag ends
               const newRange = { min, max }
               setPriceRange(newRange)
               onFiltersChange({
@@ -379,6 +427,63 @@ export const ProductFilters = ({
               })
             }}
           />
+          {/* From and To Input Boxes */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <label className="text-12 text-gray-600 mb-1 block">From</label>
+              <Input
+                type="number"
+                value={priceRange.min || ''}
+                onChange={e => {
+                  const minValue = parseInt(e.target.value, 10) || 0
+                  const newRange = { min: Math.max(0, minValue), max: priceRange.max }
+                  setPriceRange(newRange)
+                  
+                  // Clear existing timeout
+                  if (priceInputTimeoutRef.current) {
+                    clearTimeout(priceInputTimeoutRef.current)
+                  }
+                  
+                  // Debounce the filter update
+                  priceInputTimeoutRef.current = setTimeout(() => {
+                    onFiltersChange({
+                      ...filters,
+                      priceRange: newRange,
+                    })
+                  }, 500)
+                }}
+                placeholder="0"
+                className="h-10"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-12 text-gray-600 mb-1 block">To</label>
+              <Input
+                type="number"
+                value={priceRange.max || ''}
+                onChange={e => {
+                  const maxValue = parseInt(e.target.value, 10) || 300
+                  const newRange = { min: priceRange.min, max: Math.min(300, maxValue) }
+                  setPriceRange(newRange)
+                  
+                  // Clear existing timeout
+                  if (priceInputTimeoutRef.current) {
+                    clearTimeout(priceInputTimeoutRef.current)
+                  }
+                  
+                  // Debounce the filter update
+                  priceInputTimeoutRef.current = setTimeout(() => {
+                    onFiltersChange({
+                      ...filters,
+                      priceRange: newRange,
+                    })
+                  }, 500)
+                }}
+                placeholder="300"
+                className="h-10"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Stock Status */}

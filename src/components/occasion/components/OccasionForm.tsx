@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Input } from '@/components/ui'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { occasionFormSchema, type OccasionFormData } from '@/app/events/planning/occasion/schemas/occasion.schema'
+import { occasionFormSchema, type OccasionFormData } from '@/schema/occasion.schema'
 import { OccasionType } from '@/../client/common/api/gen/ourbride-api'
 import type { OccasionLineResponse } from '@/types/responses'
 

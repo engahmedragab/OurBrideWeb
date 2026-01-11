@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import {
   Camera,
   Home,
@@ -59,7 +59,7 @@ type IconComponent = LucideIcon | ComponentType<{ className?: string }>
 
 // Mapping of common icon codepoints to Lucide icons
 // This is a fallback mapping - in a real app, you'd use an icon font
-const ICON_CODEPOINT_MAP: Record<number, IconComponent> = {
+const ICON_CODEPOINT_MAP: Record<number, LucideIcon | React.ComponentType<any>> = {
   // Existing (as-is)
   0xe333: Camera, // camera
   0xe88a: Home, // home

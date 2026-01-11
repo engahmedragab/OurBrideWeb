@@ -142,7 +142,7 @@ export default function SettingsPage() {
             label="Password"
             action={
               <Link
-                href="/reset-password"
+                href="/dashboard/settings/change-password"
                 className="flex items-center gap-1 text-14 font-medium text-brand-500 hover:text-brand-600"
               >
                 Change Password

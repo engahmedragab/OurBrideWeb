@@ -67,6 +67,7 @@ export const RequestCard = ({
 }: RequestCardProps) => {
   const [isSummaryOpen, setIsSummaryOpen] = useState(true)
   const [isAssignedToOpen, setIsAssignedToOpen] = useState(false)
+  const [imageError, setImageError] = useState(false)
   const isCompleted = status === 'completed' || status === 'cancelled'
   const isInProgress = !isCompleted
 
@@ -193,14 +194,23 @@ export const RequestCard = ({
               {/* Service Info */}
               <div className="mb-4 bg-white rounded-lg p-4 border border-gray-200">
                 <div className="flex items-start gap-3">
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                    <Image
-                      src={service.image}
-                      alt={service.title}
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                    />
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                    {service.image && service.image.trim() !== '' && !imageError ? (
+                      <Image
+                        src={service.image}
+                        alt={service.title}
+                        fill
+                        sizes="64px"
+                        className="object-cover"
+                        onError={() => setImageError(true)}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-gray-400 text-10 font-medium text-center px-1">
+                          No image available
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-14 font-semibold text-gray-900 mb-1">

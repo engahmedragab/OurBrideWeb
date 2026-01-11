@@ -13,9 +13,9 @@ import { useEventBooks, useSyncEventBooks, useGetEventBooksCategories } from '@/
 import { useInitEventBooks } from '@/hooks/eventBooks/useInitEventBooks'
 import { useEventId } from '@/hooks/planning'
 import { useToast } from '@/components/ui/Toaster'
+import type { UseMutationResult } from '@tanstack/react-query'
 import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
 import type { EventBookRequest, EventLineRequest, EventLineCategoryRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
-import type { UseMutationResult } from '@tanstack/react-query'
 
 /**
  * Extended EventBook type with categories for local state management
@@ -206,7 +206,7 @@ const hasActualChanges = (
 }
 
 /**
- * Events Page
+ * Events Page Content
  * Displays the planning calendar with day details rendered in-place
  */
 function EventsPageContent() {
@@ -232,7 +232,7 @@ function EventsPageContent() {
 
   const syncMutation = useSyncEventBooks()
   const initMutation = useInitEventBooks()
-  
+
   // Fetch categories from server (mandatory - do NOT derive from lines)
   const { data: categoriesData, refetch: refetchCategories } = useGetEventBooksCategories({
     clientId: null as unknown as string | undefined,
@@ -513,13 +513,15 @@ function EventsPageContent() {
   )
 }
 
+/**
+ * Events Page
+ * Wrapped in Suspense for useSearchParams compatibility
+ */
 export default function EventsPage() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <p className="text-gray-500">Loading events...</p>
-        </div>
+      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+        <div className="text-gray-600">Loading...</div>
       </div>
     }>
       <EventsPageContent />

@@ -23,6 +23,7 @@ export const WishlistProviderCard = React.memo(({
   onViewProfile,
   className,
 }: WishlistProviderCardProps) => {
+  const [imageError, setImageError] = React.useState(false)
   const router = useRouter()
   const rating = provider.rate || 0
   const providerName = provider.nameEn || provider.nameAr || `Provider #${provider.id}`
@@ -52,18 +53,19 @@ export const WishlistProviderCard = React.memo(({
         {/* Image Section (Top) */}
         <Link href={provider.publicProfileSlug || `/providers/${provider.id}`} className="block relative">
           <div className="relative w-full h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
-            {providerImage && providerImage.trim() !== '' ? (
+            {providerImage && providerImage.trim() !== '' && !imageError ? (
               <Image
                 src={providerImage}
                 alt={providerName}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-110"
+                onError={() => setImageError(true)}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-100 to-brand-200">
-                <span className="text-4xl font-bold text-brand-600">
-                  {providerName.charAt(0).toUpperCase()}
+              <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                <span className="text-gray-400 text-12 font-medium">
+                  No image available
                 </span>
               </div>
             )}

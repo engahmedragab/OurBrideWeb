@@ -11,6 +11,7 @@ import { PriceDisplay } from './PriceDisplay'
 import { cn } from '@/lib/utils'
 import type { FeaturedProviderResponse } from '@/types/responses/featured-provider-response'
 import { DEFAULT_CURRENCY } from '@/utils/currency'
+import React from 'react'
 
 export interface ProviderSearchCardProps {
     provider: FeaturedProviderResponse
@@ -40,6 +41,7 @@ export const ProviderSearchCard = ({
     className,
     onClick
 }: ProviderSearchCardProps) => {
+    const [imageError, setImageError] = React.useState(false)
     const providerName = provider.nameEn || provider.nameAr || 'Provider'
     const providerNameAr = provider.nameAr
     const providerImage = provider.publicBannerImageUrl || provider.publicLogoImageUrl
@@ -71,18 +73,19 @@ export const ProviderSearchCard = ({
         >
             {/* Image Section */}
             <div className="relative w-full h-[200px] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-                {providerImage ? (
+                {providerImage && !imageError ? (
                     <Image
                         src={providerImage}
                         alt={providerName}
                         fill
                         sizes="100%"
                         className="object-cover"
+                        onError={() => setImageError(true)}
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-100 to-brand-200">
-                        <span className="text-40 font-bold text-brand-600">
-                            {providerName.charAt(0).toUpperCase()}
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <span className="text-gray-400 text-12 font-medium">
+                            No image available
                         </span>
                     </div>
                 )}
@@ -134,8 +137,7 @@ export const ProviderSearchCard = ({
                     <div className="space-y-2 pt-2">
                         {displayServices.map((service, index) => {
                             // Handle service name - check nameEn, nameAr, or name field
-                            const serviceAny = service as any
-                            const serviceName = service.nameEn || service.nameAr || serviceAny.name || 'Service'
+                            const serviceName = service.nameEn || service.nameAr || service.name || 'Service'
                             const serviceNameAr = service.nameAr && service.nameEn !== service.nameAr ? service.nameAr : null
                             const duration = service.duration || service.durationMin
                             const durationMax = service.durationMax

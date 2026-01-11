@@ -36,6 +36,7 @@ export const ServiceCard = React.memo(({
   isLoadingFollow = false,
   className,
 }: ServiceCardProps) => {
+  const [imageError, setImageError] = React.useState(false)
   const router = useRouter()
   const { isServiceInWishlist } = useWishlistItems()
   const { isServiceFollowed } = useFollowItems()
@@ -67,17 +68,20 @@ export const ServiceCard = React.memo(({
       {/* Image Container */}
       <Link href={`/services/category/${service.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-          {service.images && service.images.length > 0 && service.images[0] && service.images[0].trim() !== '' ? (
+          {service.images && service.images.length > 0 && service.images[0] && service.images[0].trim() !== '' && !imageError ? (
             <Image
               src={service.images[0]}
               alt={service.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400 text-14">
-              No image
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <span className="text-gray-400 text-12 font-medium">
+                No image available
+              </span>
             </div>
           )}
 

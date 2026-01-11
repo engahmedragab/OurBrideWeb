@@ -1,4 +1,4 @@
-import { HTMLAttributes, forwardRef } from 'react'
+import React, { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -18,6 +18,7 @@ import {
   UserPlus,
   Check,
   Star,
+  User,
 } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import { PriceDisplay } from './PriceDisplay'
@@ -153,6 +154,7 @@ const ProductServiceCard = ({
   data: ProductCardData | ServiceCardData
   cardType: 'product' | 'service'
 }) => {
+  const [imageError, setImageError] = React.useState(false)
   const hasDiscount = data.discountedPrice < data.originalPrice
   const { isProductInCart, isServiceInCart } = useCartItems()
   const { isProductInWishlist, isServiceInWishlist } = useWishlistItems()
@@ -246,8 +248,26 @@ const ProductServiceCard = ({
     router.push('/cart')
   }
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on interactive elements
+    const target = e.target as HTMLElement
+    if (
+      target.closest('button') ||
+      target.closest('a') ||
+      target.closest('[role="button"]')
+    ) {
+      return
+    }
+    const route = cardType === 'product' ? `/products/${data.id}` : `/services/category/${data.id}`
+    router.push(route)
+  }
+
   return (
-    <div className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg shadow-sm transition-shadow">
+    <div 
+      className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg transition-shadow cursor-pointer"
+      style={{ boxShadow: '0px 0px 9px 0px rgba(143,144,166,0.15)' }}
+      onClick={handleCardClick}
+    >
       {/* Action Icons - Floating above the card */}
       <div className="absolute top-0 right-2 z-20 flex items-center gap-2 pointer-events-auto">
         {/* Wishlist Icon */}
@@ -282,28 +302,39 @@ const ProductServiceCard = ({
 
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 custom-shaped-card">
-        {data.image && data.image.trim() !== '' ? (
+        {data.image && 
+         data.image.trim() !== '' && 
+         data.image !== '/' &&
+         !data.image.includes('placeholder') &&
+         data.image !== '/placeholder-product.png' &&
+         data.image !== '/placeholder-service.png' &&
+         data.image !== '/placeholder-membership.png' &&
+         data.image !== '/placeholder-giftcard.png' &&
+         data.image !== '/images/placeholder-product.png' &&
+         !imageError ? (
           <Image
             src={data.image}
             alt={data.title}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
-            <span className="text-white text-32 font-semibold">
-              {data.title.charAt(0).toUpperCase()}
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <span className="text-gray-400 text-12 font-medium">
+              No image available
             </span>
           </div>
         )}
 
         {/* Top Offers Badge */}
         {data.showTopOfferBadge && (
-          <div className="absolute top-3 left-3 z-10">
+          <div className="absolute top-4 left-4 z-10">
             <Badge
               variant="default"
-              className="bg-brand-400 !text-white border-0 px-3 py-1 text-12 font-normal rounded-full"
+              className="!text-brand-500 border-0 px-2 py-1.5 text-16 font-normal rounded-full"
+              style={{ backgroundColor: '#FCDBD7' }}
             >
               Top Offers
             </Badge>
@@ -312,71 +343,70 @@ const ProductServiceCard = ({
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-3 relative">
-        {/* Title */}
-        <h3 className="text-16 font-semibold text-gray-900 line-clamp-2">
-          {data.title}
-        </h3>
+      <div className="p-3 space-y-2 relative bg-white rounded-b-xl">
+        <div className="flex flex-col gap-2">
+          {/* Title */}
+          <h3 className="text-24 font-medium text-gray-900 line-clamp-2 leading-[32px]">
+            {data.title}
+          </h3>
 
-        {/* Provider Name - Always clickable if providerId exists */}
-        <div className="flex items-center gap-1.5 relative z-50">
-          {data.providerId ? (
-            <button
-              type="button"
-              onClick={(e) => handleProviderClick(e, data.providerId!)}
-              className="text-14 text-gray-600 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
-            >
-              {data.providerName}
-            </button>
-          ) : (
-            <span className="text-14 text-gray-600">{data.providerName}</span>
-          )}
-          {data.verified && data.providerId && (
-            <button
-              type="button"
-              onClick={(e) => handleProviderClick(e, data.providerId!)}
-              className="flex-shrink-0 relative z-50 pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
-              aria-label="Verified provider"
-            >
-              <CheckCircle2 className="h-4 w-4 text-blue-500 hover:text-blue-600 transition-colors" />
-            </button>
-          )}
-          {data.verified && !data.providerId && (
-            <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
-          )}
+          {/* Provider Name - Always clickable if providerId exists */}
+          <div className="flex items-center gap-2 relative z-50">
+            {data.providerId ? (
+              <button
+                type="button"
+                onClick={(e) => handleProviderClick(e, data.providerId!)}
+                className="text-16 text-gray-500 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
+              >
+                {data.providerName}
+              </button>
+            ) : (
+              <span className="text-16 text-gray-500">{data.providerName}</span>
+            )}
+            {data.verified && (
+              <CheckCircle2 className="h-6 w-6 text-blue-500 flex-shrink-0" />
+            )}
+          </div>
         </div>
 
-        {/* Rating */}
-        <RatingDisplay
-          rating={data.rating}
-          showValue={true}
-          size="sm"
-          format="default"
-          variant="compact"
-        />
+        {/* Rating and Price Row */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Rating */}
+          <div className="flex items-center gap-1">
+            <Star className="h-6 w-6 fill-brand-500 text-brand-500" />
+            <span className="text-16 font-normal text-gray-500">
+              {data.rating.toFixed(1)}
+            </span>
+          </div>
 
-        {/* Pricing */}
-        <PriceDisplay
-          original={data.originalPrice}
-          discounted={data.discountedPrice}
-          currency="EGP"
-          size="md"
-          variant="compact"
-          showOriginal={hasDiscount}
-        />
+          {/* Pricing */}
+          <div className="flex items-center gap-2">
+            {hasDiscount && (
+              <span className="text-14 font-normal text-gray-500 line-through">
+                {data.originalPrice.toLocaleString()}
+              </span>
+            )}
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-24 font-semibold text-gray-900 leading-[32px]">
+                {data.discountedPrice.toLocaleString()}
+              </span>
+              <span className="text-14 font-normal text-gray-900">
+                egp
+              </span>
+            </div>
+          </div>
+        </div>
 
         {/* Action Buttons */}
         {cardType === 'product' ? (
           <div className="flex items-center gap-2 pt-1">
             {data.onAddToCart && (
               <Button
-                variant={isInCart ? "default" : "outline"}
+                variant="outline"
                 size="icon"
                 className={cn(
-                  "h-10 w-10 rounded-full",
-                  isInCart
-                    ? "border-brand-500 bg-brand-500 hover:bg-brand-600"
-                    : "border-gray-300 bg-white hover:border-brand-500 hover:bg-white"
+                  "h-12 w-12 rounded-full border-brand-500 bg-white hover:bg-white",
+                  "disabled:opacity-50 disabled:cursor-not-allowed"
                 )}
                 aria-label={isInCart ? "Item in cart" : "Add to cart"}
                 onClick={handleAddToCart}
@@ -385,14 +415,14 @@ const ProductServiceCard = ({
                 {isInCart ? (
                   <Check
                     className={cn(
-                      'h-4 w-4 text-white',
+                      'h-6 w-6 text-brand-500',
                       data.isLoadingAddToCart && 'animate-pulse'
                     )}
                   />
                 ) : (
                   <ShoppingCart
                     className={cn(
-                      'h-4 w-4 text-brand-500',
+                      'h-6 w-6 text-brand-500',
                       data.isLoadingAddToCart && 'animate-pulse'
                     )}
                   />
@@ -403,7 +433,7 @@ const ProductServiceCard = ({
               <Button
                 variant="brand"
                 size="default"
-                className="flex-1 rounded-full text-14 font-normal bg-green-500 hover:bg-green-600 text-white"
+                className="flex-1 rounded-full text-20 font-medium bg-green-500 hover:bg-green-600 text-white py-[18px]"
                 onClick={handleViewCart}
               >
                 View in Cart
@@ -412,7 +442,7 @@ const ProductServiceCard = ({
               <Button
                 variant="brand"
                 size="default"
-                className="flex-1 rounded-full text-14 font-normal text-white"
+                className="flex-1 rounded-full text-20 font-medium bg-brand-500 hover:bg-brand-600 text-white py-[18px]"
                 onClick={handleBuyNow}
                 disabled={data.inStock === false || data.isLoadingAddToCart || addToCartMutation.isPending}
               >
@@ -433,11 +463,11 @@ const ProductServiceCard = ({
 
         {/* Tags */}
         {data.tags && data.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
+          <div className="flex flex-wrap gap-2 pt-1">
             {data.tags.slice(0, 4).map((tag, index) => (
               <span
                 key={`tag-${data.id || 'product'}-${tag}-${index}`}
-                className="px-2 py-1 rounded-md bg-gray-100 text-12 font-medium text-gray-700"
+                className="px-2 py-2 rounded-full bg-gray-50 text-14 font-normal text-gray-900"
               >
                 {tag}
               </span>
@@ -451,10 +481,11 @@ const ProductServiceCard = ({
 
 // Testimonial Card Component
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
+  const [imageError, setImageError] = React.useState(false)
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       {/* Card */}
-      <div className="bg-white rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow">
+      <div className="bg-white rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow flex-1">
         {/* Quote */}
         <p className="text-16 text-gray-900 mb-6 flex-1 leading-relaxed">
           &quot;{data.quote}&quot;
@@ -471,19 +502,18 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
       {/* Author Info - Below the card */}
       <div className="flex items-center gap-3 mt-4 ml-4">
         <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-          {data.authorImage && data.authorImage.trim() !== '' ? (
+          {data.authorImage && data.authorImage.trim() !== '' && !imageError ? (
             <Image
               src={data.authorImage}
               alt={data.authorName}
               fill
               sizes="48px"
               className="object-cover grayscale"
+              onError={() => setImageError(true)}
             />
           ) : (
-            <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-              <span className="text-white text-16 font-semibold">
-                {data.authorName.charAt(0).toUpperCase()}
-              </span>
+            <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+              <User className="h-6 w-6 text-gray-400" />
             </div>
           )}
         </div>
@@ -491,7 +521,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
           <p className="text-16 font-semibold text-gray-900">
             {data.authorName}
           </p>
-          <p className="text-14 text-gray-500">{data.timeAgo}</p>
+          <p className="text-14 text-gray-500">{data.timeAgo || 'Recently'}</p>
         </div>
       </div>
     </div>
@@ -500,6 +530,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
 
 // Provider Card Component
 const ProviderCard = ({ data }: { data: ProviderCardData }) => {
+  const [imageError, setImageError] = React.useState(false)
   const handleFollowToggle = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -589,18 +620,19 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
         className="relative w-20 h-20 md:w-24 md:h-24 mb-4 block hover:opacity-90 transition-opacity"
         onClick={(e) => e.stopPropagation()}
       >
-        {data.image && data.image.trim() !== '' ? (
+        {data.image && data.image.trim() !== '' && !imageError ? (
           <Image
             src={data.image}
             alt={data.name}
             fill
             sizes="(max-width: 768px) 80px, 96px"
             className="rounded-full object-cover"
+            onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400 text-20 font-semibold">
-              {data.name.charAt(0).toUpperCase()}
+          <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
+            <span className="text-gray-400 text-10 font-medium">
+              No image available
             </span>
           </div>
         )}
@@ -672,6 +704,7 @@ const MemberTestimonialCard = ({
 }: {
   data: MemberTestimonialCardData
 }) => {
+  const [imageErrors, setImageErrors] = React.useState<Set<number>>(new Set())
   const mainImage = data.productImages[0]
   const thumbnailImages = data.productImages.slice(1, 3)
 
@@ -681,19 +714,18 @@ const MemberTestimonialCard = ({
       <div className="flex items-center justify-between gap-3 mb-4 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-            {data.authorImage && data.authorImage.trim() !== '' ? (
+            {data.authorImage && data.authorImage.trim() !== '' && !imageErrors.has(-1) ? (
               <Image
                 src={data.authorImage}
                 alt={data.authorName}
                 fill
                 sizes="48px"
                 className="object-cover grayscale"
+                onError={() => setImageErrors(prev => new Set(prev).add(-1))}
               />
             ) : (
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center">
-                <span className="text-white text-16 font-semibold">
-                  {data.authorName.charAt(0).toUpperCase()}
-                </span>
+              <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="h-6 w-6 text-gray-400" />
               </div>
             )}
           </div>
@@ -722,18 +754,19 @@ const MemberTestimonialCard = ({
       <div className="mb-4 flex-shrink-0">
         {data.productImages.length === 1 ? (
           <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-            {mainImage && mainImage.trim() !== '' ? (
+            {mainImage && mainImage.trim() !== '' && !imageErrors.has(0) ? (
               <Image
                 src={mainImage}
                 alt="Product"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
+                onError={() => setImageErrors(prev => new Set(prev).add(0))}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
-                <span className="text-white text-24 font-semibold">
-                  {data.authorName.charAt(0).toUpperCase()}
+              <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                <span className="text-gray-400 text-12 font-medium">
+                  No image available
                 </span>
               </div>
             )}
@@ -741,18 +774,19 @@ const MemberTestimonialCard = ({
         ) : (
           <div className="grid grid-cols-3 gap-2">
             <div className="col-span-2 relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-              {mainImage && mainImage.trim() !== '' ? (
+              {mainImage && mainImage.trim() !== '' && !imageErrors.has(0) ? (
                 <Image
                   src={mainImage}
                   alt="Product"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
+                  onError={() => setImageErrors(prev => new Set(prev).add(0))}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
-                  <span className="text-white text-24 font-semibold">
-                    {data.authorName.charAt(0).toUpperCase()}
+                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                  <span className="text-gray-400 text-12 font-medium">
+                    No image available
                   </span>
                 </div>
               )}
@@ -764,18 +798,19 @@ const MemberTestimonialCard = ({
                     key={index}
                     className="relative flex-1 rounded-lg overflow-hidden bg-gray-100"
                   >
-                    {image && image.trim() !== '' ? (
+                    {image && image.trim() !== '' && !imageErrors.has(index + 1) ? (
                       <Image
                         src={image}
                         alt={`Product ${index + 2}`}
                         fill
                         sizes="(max-width: 768px) 33vw, 25vw"
                         className="object-cover"
+                        onError={() => setImageErrors(prev => new Set(prev).add(index + 1))}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-400 to-brand-600">
-                        <span className="text-white text-14 font-semibold">
-                          {data.authorName.charAt(0).toUpperCase()}
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <span className="text-gray-400 text-10 font-medium">
+                          No image available
                         </span>
                       </div>
                     )}

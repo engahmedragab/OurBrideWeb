@@ -11,7 +11,6 @@ import {
   PageHeader,
   ErrorDisplay,
   LoadingOverlay,
-  SelectPopover,
   Button,
   WishlistServiceCard,
   WishlistProductCard,
@@ -32,7 +31,6 @@ import orderEmptySvg from '@/assets/svg/order-empty.svg'
 
 export default function WishlistPage() {
   const [wishlistType, setWishlistType] = useState<'services' | 'products'>('services')
-  const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
   // Fetch wishlists using WishlistResponse from API
   const {
@@ -61,30 +59,19 @@ export default function WishlistPage() {
     return wishlistsData || []
   }, [wishlistsData])
 
-  // Filter wishlists by type (services or products) and source
+  // Filter wishlists by type (services or products)
   const filteredWishlists = useMemo(() => {
     if (!wishlists.length) {
       return []
     }
 
     return wishlists.filter((wishlist: WishlistResponse) => {
-      // First filter by source if selected
-      if (selectedSource !== 'all' && wishlist.source !== selectedSource) {
-        return false
-      }
-
-      // If source filter is 'all', show all wishlists (since we don't have item details)
-      if (selectedSource === 'all') {
-        return true
-      }
-
-      // Then filter by type (services or products) for backward compatibility
+      // Filter by type (services or products)
       const type = wishlist.wishlistType || wishlist.type || ''
       const category = wishlist.category || ''
 
       if (wishlistType === 'services') {
         // Filter for service-related wishlists
-        // Check source first, then fallback to type/category
         return (
           wishlist.source === Source.Service ||
           type.toLowerCase().includes('service') ||
@@ -93,7 +80,6 @@ export default function WishlistPage() {
         )
       } else {
         // Filter for product-related wishlists
-        // Check source first, then fallback to type/category
         return (
           wishlist.source === Source.Product ||
           type.toLowerCase().includes('product') ||
@@ -102,7 +88,7 @@ export default function WishlistPage() {
         )
       }
     })
-  }, [wishlists, wishlistType, selectedSource])
+  }, [wishlists, wishlistType])
 
   // Extract all services and products from sourceObject (regardless of wishlistType filter)
   const allWishlistServices: Service[] = useMemo(() => {
@@ -251,22 +237,6 @@ export default function WishlistPage() {
     return filteredWishlists.reduce((sum, wishlist) => sum + (wishlist.itemCount || 0), 0)
   }, [filteredWishlists])
 
-  // Source filter options - common sources for wishlists
-  const sourceOptions = useMemo(() => [
-    { value: 'all', label: 'All Sources' },
-    { value: Source.Product, label: 'Products' },
-    { value: Source.Service, label: 'Services' },
-    { value: Source.Membership, label: 'Memberships' },
-    { value: Source.GiftCard, label: 'Gift Cards' },
-    { value: Source.ServiceReservation, label: 'Service Reservations' },
-    { value: Source.Provider, label: 'Providers' },
-    { value: Source.Offer, label: 'Offers' },
-    { value: Source.Preparation, label: 'Preparations' },
-    { value: Source.Post, label: 'Posts' },
-    { value: Source.Blog, label: 'Blogs' },
-    { value: Source.Article, label: 'Articles' },
-    { value: Source.Reel, label: 'Reels' },
-  ], [])
 
   const handleRefresh = () => {
     refetchWishlists()
@@ -274,26 +244,6 @@ export default function WishlistPage() {
 
   const headerRightContent = (
     <div className="flex items-center gap-2">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={handleRefresh}
-        disabled={isFetching || isLoadingWishlists}
-        className="h-9 w-9"
-        aria-label="Refresh wishlists"
-        title="Refresh wishlists"
-      >
-        <RefreshCw
-          className={`h-4 w-4 ${isFetching || isLoadingWishlists ? 'animate-spin' : ''}`}
-        />
-      </Button>
-      <SelectPopover
-        value={selectedSource}
-        onChange={(value) => setSelectedSource(value as Source | 'all')}
-        options={sourceOptions}
-        placeholder="Filter by source"
-        className="w-40"
-      />
       <ServicesProductsFilter value={wishlistType} onChange={setWishlistType} />
     </div>
   )
@@ -348,7 +298,7 @@ export default function WishlistPage() {
 
       {/* Content Area */}
       {hasWishlistItems ? (
-        <div className="space-y-0">
+        <div className="space-y-3">
           {/* Show all services with sourceObject */}
           {allWishlistServices.map((service) => (
             <WishlistServiceCard

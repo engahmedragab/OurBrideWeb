@@ -15,7 +15,12 @@ export * from './eventBooks'
 export * from './weddingEvents'
 export * from './occasionBooks'
 export * from './itemBooks'
-export * from './serviceBooks'
+// Export serviceBooks hooks except useInitServiceBooks (exported from bookInit)
+export * from './serviceBooks/useServiceBooks'
+export * from './serviceBooks/useServiceLines'
+export * from './serviceBooks/useGetServiceCategories'
+export * from './serviceBooks/useSyncServiceBooks'
+// useInitServiceBooks is exported from './bookInit' to avoid duplicate export
 export * from './planning'
 export * from './bookInit'
 export * from './community'

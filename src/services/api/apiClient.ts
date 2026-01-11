@@ -61,20 +61,101 @@ httpClient.instance.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// Add response interceptor for error handling
+// Track if we're currently refreshing the token to avoid infinite loops
+let isRefreshing = false
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void
+  reject: (reason?: unknown) => void
+}> = []
+
+// Process the queue of failed requests after token refresh
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error)
+    } else {
+      prom.resolve(token)
+    }
+  })
+  failedQueue = []
+}
+
+// Add response interceptor for error handling and automatic token refresh
 httpClient.instance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid - clear token and redirect to login
-      const { removeToken } = await import('@/auth/utils/token')
-      removeToken()
-      
-      // Only redirect if we're in the browser
-      if (typeof window !== 'undefined') {
-        window.location.href = '/auth/login'
+    const originalRequest = error.config
+
+    // If error is 401 and we haven't tried to refresh yet, and we have a request config
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      if (isRefreshing) {
+        // If we're already refreshing, queue this request
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject })
+        })
+          .then((token) => {
+            if (originalRequest.headers && token) {
+              originalRequest.headers.Authorization = `Bearer ${token}`
+            }
+            return httpClient.instance(originalRequest)
+          })
+          .catch((err) => {
+            return Promise.reject(err)
+          })
+      }
+
+      originalRequest._retry = true
+      isRefreshing = true
+
+      try {
+        // Try to refresh the token
+        const { getRefreshToken } = await import('@/auth/utils/token')
+        const refreshTokenValue = getRefreshToken()
+
+        if (!refreshTokenValue) {
+          // No refresh token available, logout
+          const { removeToken } = await import('@/auth/utils/token')
+          removeToken()
+          processQueue(new Error('No refresh token available'), null)
+          
+          if (typeof window !== 'undefined') {
+            window.location.href = '/auth/login'
+          }
+          return Promise.reject(error)
+        }
+
+        // Import refresh token function
+        const { refreshToken } = await import('@/auth/services/authApi')
+        
+        // Refresh the token
+        const authData = await refreshToken()
+        const newToken = authData.accessToken
+
+        // Update the original request with new token
+        if (originalRequest.headers && newToken) {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
+        }
+
+        // Process queued requests
+        processQueue(null, newToken)
+
+        // Retry the original request
+        return httpClient.instance(originalRequest)
+      } catch (refreshError) {
+        // Refresh failed, logout user
+        processQueue(refreshError, null)
+        const { removeToken } = await import('@/auth/utils/token')
+        removeToken()
+        
+        if (typeof window !== 'undefined') {
+          window.location.href = '/auth/login'
+        }
+        return Promise.reject(refreshError)
+      } finally {
+        isRefreshing = false
       }
     }
+
     return Promise.reject(error)
   }
 )

@@ -22,7 +22,7 @@ export const StoreBadges = ({
 }: StoreBadgesProps) => {
   const sizeClasses: Record<string, string> = {
     sm: 'h-8',
-    md: 'h-10',
+    md: 'h-9',
     lg: 'h-12',
     xl: 'h-16',
     '2xl': 'h-24',
@@ -31,7 +31,7 @@ export const StoreBadges = ({
   return (
     <div
       className={cn(
-        'flex md:flex-col md:gap-2 lg:flex-row gap-4 lg:gap-4',
+        '  flex  ',
         className
       )}
     >

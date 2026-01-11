@@ -40,6 +40,7 @@ export const ReservationCard = ({
   className,
 }: ReservationCardProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   const service = reservation.service
   const provider = reservation.provider
@@ -126,14 +127,23 @@ export const ReservationCard = ({
           {/* Service Info */}
           <div className="mb-4 bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-start gap-3">
-              <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-                <Image
-                  src={serviceImage}
-                  alt={serviceName}
-                  fill
-                  sizes="80px"
-                  className="object-cover"
-                />
+              <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                {serviceImage && serviceImage.trim() !== '' && serviceImage !== '/placeholder-service.png' && !imageError ? (
+                  <Image
+                    src={serviceImage}
+                    alt={serviceName}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-gray-400 text-10 font-medium text-center px-1">
+                      No image available
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <Link
