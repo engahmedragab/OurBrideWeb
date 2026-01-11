@@ -39,3 +39,6 @@ export type {
 
 export { PlanningPreferencesForm } from './PlanningPreferencesForm'
 export type { PlanningPreferencesFormProps } from './PlanningPreferencesForm'
+
+export { AuthErrorDisplay } from './AuthErrorDisplay'
+export type { AuthErrorDisplayProps } from './AuthErrorDisplay'

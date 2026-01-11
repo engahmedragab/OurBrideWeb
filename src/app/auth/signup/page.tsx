@@ -8,6 +8,7 @@ import {
   SignupForm,
   TermsAndConditionsModal,
   WelcomeHeader,
+  AuthErrorDisplay,
 } from '@/components/ui/auth/index'
 import { SocialMediaButton } from '@/components/ui/SocialMediaButton'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
@@ -168,20 +169,7 @@ export default function SignupPage() {
         />
 
         {/* Error Message */}
-        {error && (
-          <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-md">
-            {error.includes('\n') ? (
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-red-800 mb-1">Validation Errors:</p>
-                {error.split('\n').map((err, index) => (
-                  <p key={index} className="text-sm text-red-600">• {err}</p>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-red-600">{error}</p>
-            )}
-          </div>
-        )}
+        <AuthErrorDisplay error={error} />
 
         {/* Download App Section - Mobile Only */}
         <div className="lg:hidden w-full pt-4">
