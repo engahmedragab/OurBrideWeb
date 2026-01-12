@@ -442,6 +442,22 @@
   }
 }
 
+@keyframes deeplink-float {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-30px) translateX(20px);
+    opacity: 0.8;
+  }
+}
+
+.deeplink-particle {
+  animation: deeplink-float 8s ease-in-out infinite;
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(100%);
