@@ -113,3 +113,135 @@ export const handleApiResponseForToast = (
   }
 }
 
+/**
+ * Error codes from backend ExceptionMiddleware
+ * Based on ApiErrorCodes.General enum
+ */
+export enum ApiErrorCode {
+  UnknownError = 99999,
+  Unauthorized = 100000,
+  GuestOrAuthenticatedRequired = 100001,
+  EnsureAuthenticatedRequired = 100002,
+}
+
+/**
+ * Extract error code from API error response
+ * Returns the error code if found, null otherwise
+ */
+export const extractApiErrorCode = (error: unknown): number | null => {
+  if (!error || typeof error !== 'object') {
+    return null
+  }
+
+  // Check if it's an Axios error with response
+  const axiosError = error as { response?: { data?: unknown } }
+  if (axiosError.response?.data) {
+    const responseData = axiosError.response.data
+
+    // Check for errors array with code property
+    if (isRecord(responseData)) {
+      // Check direct errors array
+      if (Array.isArray(responseData.errors)) {
+        const firstError = responseData.errors[0]
+        if (isRecord(firstError) && typeof firstError.code === 'number') {
+          return firstError.code
+        }
+      }
+
+      // Check nested data.errors
+      if (isRecord(responseData.data) && Array.isArray(responseData.data.errors)) {
+        const firstError = responseData.data.errors[0]
+        if (isRecord(firstError) && typeof firstError.code === 'number') {
+          return firstError.code
+        }
+      }
+    }
+  }
+
+  return null
+}
+
+/**
+ * Check if error is a specific error code
+ */
+export const isApiErrorCode = (error: unknown, code: ApiErrorCode): boolean => {
+  const errorCode = extractApiErrorCode(error)
+  return errorCode === code
+}
+
+/**
+ * Check if error requires guest or authenticated user (code 100001)
+ * This means the endpoint should work for both guest and authenticated users
+ */
+export const isGuestOrAuthenticatedRequired = (error: unknown): boolean => {
+  return isApiErrorCode(error, ApiErrorCode.GuestOrAuthenticatedRequired)
+}
+
+/**
+ * Check if error requires full authentication (code 100002)
+ * This means the endpoint requires a fully authenticated user (not guest)
+ */
+export const isEnsureAuthenticatedRequired = (error: unknown): boolean => {
+  return isApiErrorCode(error, ApiErrorCode.EnsureAuthenticatedRequired)
+}
+
+/**
+ * Check if error is a general unauthorized error (code 100000)
+ * This could be role-based or permission-based authorization failure
+ */
+export const isUnauthorizedError = (error: unknown): boolean => {
+  return isApiErrorCode(error, ApiErrorCode.Unauthorized)
+}
+
+/**
+ * Check if error should allow guest access (code 100001)
+ * Returns true if the error indicates guest access is allowed
+ */
+export const shouldAllowGuestAccess = (error: unknown): boolean => {
+  return isGuestOrAuthenticatedRequired(error)
+}
+
+/**
+ * Check if error should redirect to login
+ * Returns true if the error requires authentication and user should be redirected
+ */
+export const shouldRedirectToLogin = (error: unknown): boolean => {
+  // Only redirect for EnsureAuthenticatedRequired (100002)
+  // Don't redirect for GuestOrAuthenticatedRequired (100001) - allow guest access
+  // Don't redirect for general Unauthorized (100000) - might be role-based, handle in UI
+  return isEnsureAuthenticatedRequired(error)
+}
+
+/**
+ * Check if error is a 401 authentication error
+ */
+export const isAuthenticationError = (error: unknown): boolean => {
+  if (!error || typeof error !== 'object') {
+    return false
+  }
+
+  const axiosError = error as { response?: { status?: number } }
+  return axiosError.response?.status === 401
+}
+
+/**
+ * Handle error for public endpoints
+ * Returns a default value if the error is an authentication error that allows guest access
+ * Otherwise, re-throws the error
+ */
+export const handlePublicEndpointError = <T>(
+  error: unknown,
+  defaultValue: T,
+  allowGuestAccess: boolean = true
+): T => {
+  // If guest access is allowed and this is a GuestOrAuthenticatedRequired error,
+  // return default value instead of throwing
+  if (allowGuestAccess && isGuestOrAuthenticatedRequired(error)) {
+    console.warn('Public endpoint returned guest/authenticated required error, using default value:', error)
+    return defaultValue
+  }
+
+  // For other errors, re-throw
+  throw error
+}
+
