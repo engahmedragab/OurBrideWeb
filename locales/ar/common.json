@@ -1,0 +1,15 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب"
+  }
+}

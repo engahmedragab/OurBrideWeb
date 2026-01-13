@@ -1,8 +1,11 @@
+import createMiddleware from 'next-intl/middleware'
+import { routing } from '@/i18n/routing'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 /**
  * Protected routes that require authentication
+ * Note: These paths are relative to the locale prefix (e.g., /ar/cart, /en/cart)
  */
 const protectedRoutes = [
   '/cart',
@@ -19,9 +22,12 @@ const protectedRoutes = [
 
 /**
  * Check if a path matches any of the protected routes
+ * Handles both locale-prefixed and non-prefixed paths
  */
 function isProtectedRoute(pathname: string): boolean {
-  return protectedRoutes.some(route => pathname.startsWith(route))
+  // Remove locale prefix if present (e.g., /ar/cart -> /cart)
+  const pathWithoutLocale = pathname.replace(/^\/(ar|en)/, '') || pathname
+  return protectedRoutes.some(route => pathWithoutLocale.startsWith(route))
 }
 
 /**
@@ -37,10 +43,19 @@ function isAuthenticated(request: NextRequest): boolean {
   return !!(token || userData)
 }
 
+/**
+ * Combined middleware: i18n routing + authentication
+ * 
+ * Order of execution:
+ * 1. i18n middleware handles locale detection and routing
+ * 2. Auth middleware checks protected routes
+ */
+const intlMiddleware = createMiddleware(routing)
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Allow public assets and API routes
+  // Allow public assets and API routes (skip i18n and auth)
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -50,19 +65,33 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Check if route is protected
-  if (isProtectedRoute(pathname)) {
+  // First, handle i18n routing
+  const intlResponse = intlMiddleware(request)
+  
+  // If i18n middleware redirects, return that redirect
+  if (intlResponse.status === 307 || intlResponse.status === 308) {
+    return intlResponse
+  }
+
+  // Extract locale from pathname for auth checks
+  const localeMatch = pathname.match(/^\/(ar|en)(\/|$)/)
+  const locale = localeMatch ? localeMatch[1] : null
+  const pathWithoutLocale = locale ? pathname.replace(`/${locale}`, '') || '/' : pathname
+
+  // Check if route is protected (using path without locale)
+  if (isProtectedRoute(pathWithoutLocale)) {
     // Check if user is authenticated
     if (!isAuthenticated(request)) {
-      // Redirect to login page with return URL
-      const loginUrl = new URL('/auth/login', request.url)
+      // Redirect to login page with return URL (preserve locale)
+      const loginPath = locale ? `/${locale}/auth/login` : '/auth/login'
+      const loginUrl = new URL(loginPath, request.url)
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
     }
   }
 
-  // Allow access to auth routes and public pages
-  return NextResponse.next()
+  // Return the i18n response (which may have been modified)
+  return intlResponse
 }
 
 export const config = {

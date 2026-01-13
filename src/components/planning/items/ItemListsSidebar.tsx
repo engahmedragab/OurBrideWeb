@@ -4,7 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import type { UiCategory } from '@/app/events/planning/items/page'
+import type { UiCategory } from '@/app/[locale]/events/planning/items/page'
 import { ItemListRow } from './ItemListRow'
 
 export function ItemListsSidebar({

@@ -1,7 +1,12 @@
 import type { Metadata } from 'next'
-import { Providers } from './providers'
 import '@/styles/globals.css'
 
+/**
+ * Root Layout
+ * 
+ * This is the root layout required by Next.js.
+ * Locale-specific attributes (lang, dir) are set dynamically via the locale layout.
+ */
 export const metadata: Metadata = {
   title: 'OurBride',
   description: 'Premium wedding products and services',
@@ -34,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html suppressHydrationWarning>
       <body>
         {/* SVG clipPath definition for card with rounded corners and smooth top-right cutout */}
         <svg width="0" height="0" className="absolute pointer-events-none">
@@ -57,8 +62,7 @@ export default function RootLayout({
             </clipPath>
           </defs>
         </svg>
-
-        <Providers>{children}</Providers>
+        {children}
       </body>
     </html>
   )

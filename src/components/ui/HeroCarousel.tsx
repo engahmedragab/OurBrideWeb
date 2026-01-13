@@ -131,26 +131,30 @@ export const HeroCarousel = ({
               {/* Right Column - Visual (50%) */}
               <div className="relative flex items-center justify-center h-full w-full overflow-hidden">
                 {/* Discount Text Background */}
-                {currentSlide.discountText && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 z-0">
-                    <span className="text-[120px] md:text-[180px] lg:text-[240px] font-black text-brand-200 leading-none opacity-60 select-none">
-                      {currentSlide.discountText}
-                    </span>
-                  </div>
-                )}
+                
 
                 {/* Product Image - Full Height, 50% Width */}
                 <div className="relative z-10 w-full h-full">
                   {currentSlide.productImage && !imageErrors.has(currentIndex) ? (
-                    <Image
-                      src={currentSlide.productImage}
-                      alt={currentSlide.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover w-full h-full"
-                      priority={currentIndex === 0}
-                      onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
-                    />
+                    typeof currentSlide.productImage === 'string' && currentSlide.productImage.endsWith('.svg') ? (
+                      // Render SVG directly using img tag for better compatibility
+                      <img
+                        src={currentSlide.productImage}
+                        alt={currentSlide.title}
+                        className="w-full h-full object-contain"
+                        onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
+                      />
+                    ) : (
+                      <Image
+                        src={currentSlide.productImage}
+                        alt={currentSlide.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-contain w-full h-full"
+                        priority={currentIndex === 0}
+                        onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
+                      />
+                    )
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-100">
                       <span className="text-gray-400 text-14 font-medium">

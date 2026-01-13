@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import type { UiTodo } from '@/app/events/planning/todo/page'
+import type { UiTodo } from '@/app/[locale]/events/planning/todo/page'
 import { CheckCircle2, Circle, Trash2 } from 'lucide-react'
 
 export function TodoLineRow({

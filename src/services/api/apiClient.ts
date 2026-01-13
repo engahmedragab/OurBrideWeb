@@ -1,6 +1,13 @@
 import { Api, HttpClient } from '@/../client/common/api/gen/ourbride-api'
 import { getToken } from '@/auth/utils/token'
 import { getApiLanguage } from '@/utils/language'
+import {
+  extractApiErrorCode,
+  ApiErrorCode,
+  isGuestOrAuthenticatedRequired,
+  isEnsureAuthenticatedRequired,
+  shouldRedirectToLogin,
+} from '@/utils/api-response.utils'
 
 // Get base URL and ensure it doesn't duplicate /api/v1
 // Note: The generated API endpoints already include /api/v1 in their paths
@@ -86,73 +93,161 @@ httpClient.instance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
-    // If error is 401 and we haven't tried to refresh yet, and we have a request config
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-      if (isRefreshing) {
-        // If we're already refreshing, queue this request
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject })
-        })
-          .then((token) => {
-            if (originalRequest.headers && token) {
-              originalRequest.headers.Authorization = `Bearer ${token}`
-            }
-            return httpClient.instance(originalRequest)
-          })
-          .catch((err) => {
-            return Promise.reject(err)
-          })
+    // Handle 401 errors based on backend error codes
+    if (error.response?.status === 401 && originalRequest) {
+      const errorCode = extractApiErrorCode(error)
+
+      // GuestOrAuthenticatedRequired (100001): Endpoint allows guest or authenticated users
+      // Don't try to refresh token or redirect - just reject gracefully
+      // This allows public pages to work without authentication
+      if (isGuestOrAuthenticatedRequired(error)) {
+        // For guest-accessible endpoints, reject without redirecting
+        // The UI can handle this appropriately (e.g., show guest-friendly UI)
+        return Promise.reject(error)
       }
 
-      originalRequest._retry = true
-      isRefreshing = true
+      // EnsureAuthenticatedRequired (100002): Endpoint requires full authentication
+      // Try to refresh token, and if that fails, redirect to login
+      if (isEnsureAuthenticatedRequired(error)) {
+        // Only try to refresh if we haven't already tried
+        if (!originalRequest._retry) {
+          if (isRefreshing) {
+            // If we're already refreshing, queue this request
+            return new Promise((resolve, reject) => {
+              failedQueue.push({ resolve, reject })
+            })
+              .then((token) => {
+                if (originalRequest.headers && token) {
+                  originalRequest.headers.Authorization = `Bearer ${token}`
+                }
+                return httpClient.instance(originalRequest)
+              })
+              .catch((err) => {
+                return Promise.reject(err)
+              })
+          }
 
-      try {
-        // Try to refresh the token
-        const { getRefreshToken } = await import('@/auth/utils/token')
-        const refreshTokenValue = getRefreshToken()
+          originalRequest._retry = true
+          isRefreshing = true
 
-        if (!refreshTokenValue) {
-          // No refresh token available, logout
+          try {
+            // Try to refresh the token
+            const { getRefreshToken } = await import('@/auth/utils/token')
+            const refreshTokenValue = getRefreshToken()
+
+            if (!refreshTokenValue) {
+              // No refresh token available, logout and redirect
+              const { removeToken } = await import('@/auth/utils/token')
+              removeToken()
+              processQueue(new Error('No refresh token available'), null)
+              
+              if (typeof window !== 'undefined') {
+                window.location.href = '/auth/login'
+              }
+              return Promise.reject(error)
+            }
+
+            // Import refresh token function
+            const { refreshToken } = await import('@/auth/services/authApi')
+            
+            // Refresh the token
+            const authData = await refreshToken()
+            const newToken = authData.accessToken
+
+            // Update the original request with new token
+            if (originalRequest.headers && newToken) {
+              originalRequest.headers.Authorization = `Bearer ${newToken}`
+            }
+
+            // Process queued requests
+            processQueue(null, newToken)
+
+            // Retry the original request
+            return httpClient.instance(originalRequest)
+          } catch (refreshError) {
+            // Refresh failed, logout user and redirect
+            processQueue(refreshError, null)
+            const { removeToken } = await import('@/auth/utils/token')
+            removeToken()
+            
+            if (typeof window !== 'undefined') {
+              window.location.href = '/auth/login'
+            }
+            return Promise.reject(refreshError)
+          } finally {
+            isRefreshing = false
+          }
+        }
+      }
+
+      // General Unauthorized (100000): Role or permission-based authorization failure
+      // Don't redirect - let the UI handle it (might be role-specific, show appropriate message)
+      if (errorCode === ApiErrorCode.Unauthorized) {
+        return Promise.reject(error)
+      }
+
+      // For other 401 errors without specific error code, try token refresh as fallback
+      // This maintains backward compatibility
+      if (!originalRequest._retry) {
+        if (isRefreshing) {
+          // If we're already refreshing, queue this request
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject })
+          })
+            .then((token) => {
+              if (originalRequest.headers && token) {
+                originalRequest.headers.Authorization = `Bearer ${token}`
+              }
+              return httpClient.instance(originalRequest)
+            })
+            .catch((err) => {
+              return Promise.reject(err)
+            })
+        }
+
+        originalRequest._retry = true
+        isRefreshing = true
+
+        try {
+          // Try to refresh the token
+          const { getRefreshToken } = await import('@/auth/utils/token')
+          const refreshTokenValue = getRefreshToken()
+
+          if (!refreshTokenValue) {
+            // No refresh token available, but don't redirect for unknown 401s
+            // Let the calling code decide what to do
+            const { removeToken } = await import('@/auth/utils/token')
+            removeToken()
+            processQueue(new Error('No refresh token available'), null)
+            return Promise.reject(error)
+          }
+
+          // Import refresh token function
+          const { refreshToken } = await import('@/auth/services/authApi')
+          
+          // Refresh the token
+          const authData = await refreshToken()
+          const newToken = authData.accessToken
+
+          // Update the original request with new token
+          if (originalRequest.headers && newToken) {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`
+          }
+
+          // Process queued requests
+          processQueue(null, newToken)
+
+          // Retry the original request
+          return httpClient.instance(originalRequest)
+        } catch (refreshError) {
+          // Refresh failed, but don't redirect for unknown 401s
+          processQueue(refreshError, null)
           const { removeToken } = await import('@/auth/utils/token')
           removeToken()
-          processQueue(new Error('No refresh token available'), null)
-          
-          if (typeof window !== 'undefined') {
-            window.location.href = '/auth/login'
-          }
-          return Promise.reject(error)
+          return Promise.reject(refreshError)
+        } finally {
+          isRefreshing = false
         }
-
-        // Import refresh token function
-        const { refreshToken } = await import('@/auth/services/authApi')
-        
-        // Refresh the token
-        const authData = await refreshToken()
-        const newToken = authData.accessToken
-
-        // Update the original request with new token
-        if (originalRequest.headers && newToken) {
-          originalRequest.headers.Authorization = `Bearer ${newToken}`
-        }
-
-        // Process queued requests
-        processQueue(null, newToken)
-
-        // Retry the original request
-        return httpClient.instance(originalRequest)
-      } catch (refreshError) {
-        // Refresh failed, logout user
-        processQueue(refreshError, null)
-        const { removeToken } = await import('@/auth/utils/token')
-        removeToken()
-        
-        if (typeof window !== 'undefined') {
-          window.location.href = '/auth/login'
-        }
-        return Promise.reject(refreshError)
-      } finally {
-        isRefreshing = false
       }
     }
 
@@ -164,4 +259,3 @@ httpClient.instance.interceptors.response.use(
 export const apiClient = new Api(httpClient)
 
 export default apiClient
-
