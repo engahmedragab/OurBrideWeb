@@ -66,12 +66,13 @@ export const ContestDetails = ({
   const [shares, setShares] = useState(contest.shareCount || 0)
   const [favorites, setFavorites] = useState(contest.favoriteCount || 0)
   const [hasJoined, setHasJoined] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   const status = getContestStatus(contest)
 
-  // Extract images from medias array, fallback to default
+  // Extract images from medias array
   const medias = (contest as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url || COMMUNITY_IMAGES.DEFAULT_CONTEST_IMAGE
+  const imageUrl = medias.find((media: any) => media?.url)?.url
 
   // Map reviews to comments format
   const comments = (contest.reviews || []).map((review: ReviewResponse) => ({
@@ -223,30 +224,43 @@ export const ContestDetails = ({
       {/* Contest Card */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         {/* Contest Image */}
-        <div className="relative w-full h-96">
-          <Image
-            src={imageUrl}
-            alt={contest.title}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
-          />
-          {status === 'active' && (
-            <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-14 font-semibold">
-              Active
-            </div>
-          )}
-          {status === 'ended' && (
-            <div className="absolute top-4 right-4 bg-gray-500 text-white px-4 py-2 rounded-full text-14 font-semibold">
-              Ended
-            </div>
-          )}
-          {status === 'upcoming' && (
-            <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-14 font-semibold">
-              Upcoming
-            </div>
-          )}
-        </div>
+        {imageUrl ? (
+          <div className="relative w-full h-96 bg-gray-100">
+            {!imageError ? (
+              <>
+                <Image
+                  src={imageUrl}
+                  alt={contest.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  onError={() => setImageError(true)}
+                />
+                {status === 'active' && (
+                  <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-14 font-semibold">
+                    Active
+                  </div>
+                )}
+                {status === 'ended' && (
+                  <div className="absolute top-4 right-4 bg-gray-500 text-white px-4 py-2 rounded-full text-14 font-semibold">
+                    Ended
+                  </div>
+                )}
+                {status === 'upcoming' && (
+                  <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-14 font-semibold">
+                    Upcoming
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                <span className="text-gray-400 text-12 font-medium">
+                  No image available
+                </span>
+              </div>
+            )}
+          </div>
+        ) : null}
 
         <div className="p-6">
           {/* Contest Title */}

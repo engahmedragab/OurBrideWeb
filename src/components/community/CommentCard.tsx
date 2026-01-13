@@ -27,7 +27,7 @@ export const CommentCard = ({
   return (
     <div className={cn('flex gap-3', className)}>
       <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-        {author.avatar && !imageError ? (
+        {author.avatar && author.avatar !== 'https://via.placeholder.com/100' && !imageError ? (
           <Image
             src={author.avatar}
             alt={author.name || 'OurBride'}
@@ -37,8 +37,10 @@ export const CommentCard = ({
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-200">
-            <User className="h-5 w-5 text-gray-400" />
+          <div className="w-full h-full flex items-center justify-center bg-brand-100">
+            <span className="text-14 font-semibold text-brand-600">
+              {(author.name || 'U').charAt(0).toUpperCase()}
+            </span>
           </div>
         )}
       </div>

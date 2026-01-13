@@ -35,7 +35,12 @@ const getUserDisplayName = (user: LeaderboardContestResponse['user']): string =>
   const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
   const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
-  return fullName || user.userName || 'OurBride'
+  if (fullName) return fullName
+  // If userName is admin@our-bride.com, display as OurBride
+  if (user.userName && user.userName.toLowerCase() === 'admin@our-bride.com') {
+    return 'OurBride'
+  }
+  return user.userName || 'OurBride'
 }
 
 // Helper function to get contest status
@@ -59,6 +64,7 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
   const [likes, setLikes] = useState(contest.likeCount || 0)
   const [shares, setShares] = useState(contest.shareCount || 0)
   const [favorites, setFavorites] = useState(contest.favoriteCount || 0)
+  const [imageError, setImageError] = useState(false)
 
   const toggleLikeMutation = useMutation({
     mutationFn: async () => {
@@ -133,9 +139,9 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
   const status = getContestStatus(contest)
   const endDate = formatDate(contest.endDate)
   
-  // Extract images from medias array, fallback to default
+  // Extract images from medias array
   const medias = (contest as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url || COMMUNITY_IMAGES.DEFAULT_CONTEST_IMAGE
+  const imageUrl = medias.find((media: any) => media?.url)?.url
 
   return (
     <div
@@ -146,30 +152,45 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
       )}
     >
       {/* Contest Image */}
-      <div className="relative h-48 w-full">
-        <Image
-          src={imageUrl}
-          alt={contest.title}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover"
-        />
-        {status === 'active' && (
-          <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-12 font-semibold">
-            Active
-          </div>
-        )}
-        {status === 'ended' && (
-          <div className="absolute top-4 right-4 bg-gray-500 text-white px-3 py-1 rounded-full text-12 font-semibold">
-            Ended
-          </div>
-        )}
-        {status === 'upcoming' && (
-          <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-12 font-semibold">
-            Upcoming
-          </div>
-        )}
-      </div>
+      {imageUrl ? (
+        <div className="relative h-48 w-full bg-gray-100">
+          {!imageError ? (
+            <Image
+              src={imageUrl}
+              alt={contest.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <span className="text-gray-400 text-12 font-medium">
+                No image available
+              </span>
+            </div>
+          )}
+          {!imageError && (
+            <>
+              {status === 'active' && (
+                <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-12 font-semibold">
+                  Active
+                </div>
+              )}
+              {status === 'ended' && (
+                <div className="absolute top-4 right-4 bg-gray-500 text-white px-3 py-1 rounded-full text-12 font-semibold">
+                  Ended
+                </div>
+              )}
+              {status === 'upcoming' && (
+                <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-12 font-semibold">
+                  Upcoming
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      ) : null}
 
       {/* Contest Info */}
       <div className="p-6">

@@ -20,6 +20,7 @@ import {
   LoadingSpinner,
   useToast,
 } from '@/components/ui'
+import { ProductErrorState } from '../../components/ProductErrorState'
 import { cn } from '@/lib/utils'
 import productImage from '@/assets/svg/product-1.svg'
 import {
@@ -139,13 +140,13 @@ export function ProductCategoryDetailClient({
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-18 text-gray-600 mb-4">
-              Product not found
-            </div>
-            <BackButton href="/products" label="Back to Products" />
-          </div>
+        <main className="flex-1">
+          <ProductErrorState
+            title="Product Not Found"
+            message="The product you're looking for doesn't exist or has been removed."
+            backHref="/products"
+            backLabel="Back to Products"
+          />
         </main>
         <Footer />
       </div>

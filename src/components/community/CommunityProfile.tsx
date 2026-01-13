@@ -218,15 +218,18 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         {/* Cover Image */}
         <div className="relative w-full h-64 bg-gradient-to-r from-brand-500 to-brand-600">
-          {profile.coverImageUrl && (
+          {profile.coverImageUrl ? (
             <Image
               src={profile.coverImageUrl}
               alt={`${profile.displayName} cover`}
               fill
               sizes="100vw"
               className="object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
             />
-          )}
+          ) : null}
         </div>
 
         {/* Profile Info */}
@@ -247,8 +250,7 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                         e.currentTarget.style.display = 'none'
                       }}
                     />
-                  ) : null}
-                  {(!profile.avatarUrl || profile.avatarUrl === 'https://via.placeholder.com/128') && (
+                  ) : (
                     <div className="w-full h-full flex items-center justify-center bg-brand-100">
                       <span className="text-32 font-semibold text-brand-600">
                         {profile.displayName.charAt(0).toUpperCase() || 'U'}

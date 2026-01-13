@@ -48,8 +48,8 @@ This i18n foundation provides a **strict, scalable localization base** for the O
 
 ### 3. Locale Configuration
 - **Supported locales**: `ar`, `en`
-- **Default locale**: `ar` (Arabic)
-- **Fallback locale**: `en` (English)
+- **Default locale**: `en` (English)
+- **Fallback locale**: `ar` (Arabic)
 - **Locale resolution order**:
   1. URL prefix (`/ar/...` or `/en/...`)
   2. Stored preference (cookie)

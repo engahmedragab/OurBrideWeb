@@ -6,7 +6,6 @@ import {
   ApiErrorCode,
   isGuestOrAuthenticatedRequired,
   isEnsureAuthenticatedRequired,
-  shouldRedirectToLogin,
 } from '@/utils/api-response.utils'
 
 // Get base URL and ensure it doesn't duplicate /api/v1
@@ -111,6 +110,18 @@ httpClient.instance.interceptors.response.use(
       if (isEnsureAuthenticatedRequired(error)) {
         // Only try to refresh if we haven't already tried
         if (!originalRequest._retry) {
+          // Check if we have a token or refresh token before attempting refresh
+          // If no token exists, this is likely a public page access - just reject
+          const currentToken = getToken()
+          const { getRefreshToken } = await import('@/auth/utils/token')
+          const refreshTokenValue = getRefreshToken()
+          
+          // If there's no token and no refresh token, don't try to refresh
+          // This prevents unnecessary redirects on public pages
+          if (!currentToken && !refreshTokenValue) {
+            return Promise.reject(error)
+          }
+
           if (isRefreshing) {
             // If we're already refreshing, queue this request
             return new Promise((resolve, reject) => {
@@ -132,9 +143,6 @@ httpClient.instance.interceptors.response.use(
 
           try {
             // Try to refresh the token
-            const { getRefreshToken } = await import('@/auth/utils/token')
-            const refreshTokenValue = getRefreshToken()
-
             if (!refreshTokenValue) {
               // No refresh token available, logout and redirect
               const { removeToken } = await import('@/auth/utils/token')
@@ -189,6 +197,18 @@ httpClient.instance.interceptors.response.use(
       // For other 401 errors without specific error code, try token refresh as fallback
       // This maintains backward compatibility
       if (!originalRequest._retry) {
+        // Check if we have a token or refresh token before attempting refresh
+        // If no token exists, this is likely a public page access - just reject
+        const currentToken = getToken()
+        const { getRefreshToken } = await import('@/auth/utils/token')
+        const refreshTokenValue = getRefreshToken()
+        
+        // If there's no token and no refresh token, don't try to refresh
+        // This prevents unnecessary redirects on public pages
+        if (!currentToken && !refreshTokenValue) {
+          return Promise.reject(error)
+        }
+
         if (isRefreshing) {
           // If we're already refreshing, queue this request
           return new Promise((resolve, reject) => {
@@ -210,9 +230,6 @@ httpClient.instance.interceptors.response.use(
 
         try {
           // Try to refresh the token
-          const { getRefreshToken } = await import('@/auth/utils/token')
-          const refreshTokenValue = getRefreshToken()
-
           if (!refreshTokenValue) {
             // No refresh token available, but don't redirect for unknown 401s
             // Let the calling code decide what to do

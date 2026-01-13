@@ -11,7 +11,6 @@ const protectedRoutes = [
   '/cart',
   '/wishlist',
   '/profile',
-  '/dashboard',
   '/planning',
   '/messages',
   '/orders',

@@ -12,10 +12,13 @@ import {
   ServicesProductsFilter,
   PageHeader,
   OrderCard,
+  OrderListItem,
   RequestCard,
   ErrorDisplay,
   LoadingOverlay,
 } from '@/components/ui'
+import { Grid3x3, List } from 'lucide-react'
+import { Button } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import type { OrderStatus } from '@/components/ui/OrderProgressIndicator'
 import type { RequestStatus } from '@/components/ui/RequestProgressIndicator'
@@ -224,6 +227,7 @@ export default function OrdersPage() {
   const [filterType, setFilterType] = useState<'services' | 'products'>(
     'products'
   )
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   // Fetch orders data - use single endpoint for all orders
   const {
@@ -493,13 +497,37 @@ export default function OrdersPage() {
             <PageHeader
               title="Order List"
               rightContent={
-                hasRequests ? (
-                  <ServicesProductsFilter
-                    value={filterType}
-                    onChange={setFilterType}
-                    variant="outline"
-                  />
-                ) : undefined
+                <div className="flex items-center gap-3">
+                  {hasRequests && (
+                    <ServicesProductsFilter
+                      value={filterType}
+                      onChange={setFilterType}
+                      variant="outline"
+                    />
+                  )}
+                  {ordersInProgress.length > 0 && (
+                    <div className="flex items-center gap-1 border border-gray-300 rounded-lg p-1">
+                      <Button
+                        variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => setViewMode('grid')}
+                        aria-label="Grid view"
+                      >
+                        <Grid3x3 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant={viewMode === 'list' ? 'default' : 'ghost'}
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => setViewMode('list')}
+                        aria-label="List view"
+                      >
+                        <List className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
               }
             />
 
@@ -549,42 +577,89 @@ export default function OrdersPage() {
                   suffix="Orders In Progress"
                 />
 
-                {/* Order Cards */}
-                <div className="space-y-6">
-                  {ordersInProgress.map(order => (
-                    <OrderCard
-                      key={order.orderId}
-                      orderId={order.orderId}
-                      orderDate={order.orderDate}
-                      status={order.status}
-                      products={order.products}
-                      subtotal={order.subtotal}
-                      taxesAndFees={order.taxesAndFees}
-                      deliveryFee={order.deliveryFee}
-                      total={order.total}
-                      arrivalDate={order.arrivalDate}
-                      arrivalTime={order.arrivalTime}
-                      providerName={order.providerName}
-                      providerLogo={order.providerLogo}
-                      providerId={order.providerId}
-                      paymentStatus={order.paymentStatus}
-                      paymentMethod={order.paymentMethod}
-                      totalPaidAmount={order.totalPaidAmount}
-                      totalRemainingAmount={order.totalRemainingAmount}
-                      paymentProgressPercentage={order.paymentProgressPercentage}
-                      discountAmount={order.discountAmount}
-                      depositAmount={order.depositAmount}
-                      itemCount={order.itemCount}
-                      deliveryStatus={order.deliveryStatus}
-                      onCancelOrder={() => handleCancelOrder(order.orderId)}
-                      onViewDetails={() => {
-                        const orderResponse = order.orderResponse
-                        const actualOrderId = orderResponse?.id || order.orderId
-                        handleViewDetails(actualOrderId.toString())
-                      }}
-                    />
-                  ))}
-                </div>
+                {/* Order Cards or List */}
+                {viewMode === 'grid' ? (
+                  <div className="space-y-6">
+                    {ordersInProgress.map(order => (
+                      <OrderCard
+                        key={order.orderId}
+                        orderId={order.orderId}
+                        orderDate={order.orderDate}
+                        status={order.status}
+                        products={order.products}
+                        subtotal={order.subtotal}
+                        taxesAndFees={order.taxesAndFees}
+                        deliveryFee={order.deliveryFee}
+                        total={order.total}
+                        arrivalDate={order.arrivalDate}
+                        arrivalTime={order.arrivalTime}
+                        providerName={order.providerName}
+                        providerLogo={order.providerLogo}
+                        providerId={order.providerId}
+                        paymentStatus={order.paymentStatus}
+                        paymentMethod={order.paymentMethod}
+                        totalPaidAmount={order.totalPaidAmount}
+                        totalRemainingAmount={order.totalRemainingAmount}
+                        paymentProgressPercentage={order.paymentProgressPercentage}
+                        discountAmount={order.discountAmount}
+                        depositAmount={order.depositAmount}
+                        itemCount={order.itemCount}
+                        deliveryStatus={order.deliveryStatus}
+                        onCancelOrder={() => handleCancelOrder(order.orderId)}
+                        onViewDetails={() => {
+                          const orderResponse = order.orderResponse
+                          const actualOrderId = orderResponse?.id || order.orderId
+                          handleViewDetails(actualOrderId.toString())
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="border border-gray-100 rounded-[24px] overflow-hidden">
+                    {/* Table Header */}
+                    <div className="flex items-center bg-white border-b border-gray-100">
+                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-5 py-0">
+                        <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
+                          Order Number
+                        </span>
+                      </div>
+                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                        <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
+                          Arrive in
+                        </span>
+                      </div>
+                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                        <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
+                          Paid
+                        </span>
+                      </div>
+                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                        <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
+                          Status
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Table Rows */}
+                    {ordersInProgress.map((order, index) => (
+                      <OrderListItem
+                        key={order.orderId}
+                        orderId={order.orderId}
+                        orderDate={order.orderDate}
+                        status={order.status}
+                        arrivalDate={order.arrivalDate}
+                        total={order.total}
+                        isEven={index % 2 === 1}
+                        onCancelOrder={() => handleCancelOrder(order.orderId)}
+                        onViewDetails={() => {
+                          const orderResponse = order.orderResponse
+                          const actualOrderId = orderResponse?.id || order.orderId
+                          handleViewDetails(actualOrderId.toString())
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
               </>
             )}
 
@@ -626,39 +701,85 @@ export default function OrdersPage() {
                 suffix="Orders"
                 onClearHistory={handleClearHistory}
               >
-                {ordersHistory.map(order => (
-                  <OrderCard
-                    key={order.orderId}
-                    orderId={order.orderId}
-                    orderDate={order.orderDate}
-                    status={order.status}
-                    products={order.products}
-                    subtotal={order.subtotal}
-                    taxesAndFees={order.taxesAndFees}
-                    deliveryFee={order.deliveryFee}
-                    total={order.total}
-                    arrivalDate={order.arrivalDate}
-                    arrivalTime={order.arrivalTime}
-                    providerName={order.providerName}
-                    providerLogo={order.providerLogo}
-                    providerId={order.providerId}
-                    paymentStatus={order.paymentStatus}
-                    paymentMethod={order.paymentMethod}
-                    totalPaidAmount={order.totalPaidAmount}
-                    totalRemainingAmount={order.totalRemainingAmount}
-                    paymentProgressPercentage={order.paymentProgressPercentage}
-                    discountAmount={order.discountAmount}
-                    depositAmount={order.depositAmount}
-                    itemCount={order.itemCount}
-                    deliveryStatus={order.deliveryStatus}
-                    onReorder={() => handleReorder(order.orderId)}
-                    onViewDetails={() => {
-                      const orderResponse = order.orderResponse
-                      const actualOrderId = orderResponse?.id || order.orderId
-                      handleViewDetails(actualOrderId.toString())
-                    }}
-                  />
-                ))}
+                {viewMode === 'grid' ? (
+                  ordersHistory.map(order => (
+                    <OrderCard
+                      key={order.orderId}
+                      orderId={order.orderId}
+                      orderDate={order.orderDate}
+                      status={order.status}
+                      products={order.products}
+                      subtotal={order.subtotal}
+                      taxesAndFees={order.taxesAndFees}
+                      deliveryFee={order.deliveryFee}
+                      total={order.total}
+                      arrivalDate={order.arrivalDate}
+                      arrivalTime={order.arrivalTime}
+                      providerName={order.providerName}
+                      providerLogo={order.providerLogo}
+                      providerId={order.providerId}
+                      paymentStatus={order.paymentStatus}
+                      paymentMethod={order.paymentMethod}
+                      totalPaidAmount={order.totalPaidAmount}
+                      totalRemainingAmount={order.totalRemainingAmount}
+                      paymentProgressPercentage={order.paymentProgressPercentage}
+                      discountAmount={order.discountAmount}
+                      depositAmount={order.depositAmount}
+                      itemCount={order.itemCount}
+                      deliveryStatus={order.deliveryStatus}
+                      onReorder={() => handleReorder(order.orderId)}
+                      onViewDetails={() => {
+                        const orderResponse = order.orderResponse
+                        const actualOrderId = orderResponse?.id || order.orderId
+                        handleViewDetails(actualOrderId.toString())
+                      }}
+                    />
+                  ))
+                ) : (
+                  <div className="border border-gray-100 rounded-[24px] overflow-hidden">
+                    {/* Table Header */}
+                    <div className="flex items-center bg-white border-b border-gray-100">
+                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-5 py-0">
+                        <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
+                          Order Number
+                        </span>
+                      </div>
+                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                        <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
+                          Arrive in
+                        </span>
+                      </div>
+                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                        <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
+                          Paid
+                        </span>
+                      </div>
+                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                        <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
+                          Status
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Table Rows */}
+                    {ordersHistory.map((order, index) => (
+                      <OrderListItem
+                        key={order.orderId}
+                        orderId={order.orderId}
+                        orderDate={order.orderDate}
+                        status={order.status}
+                        arrivalDate={order.arrivalDate}
+                        total={order.total}
+                        isEven={index % 2 === 1}
+                        onViewDetails={() => {
+                          const orderResponse = order.orderResponse
+                          const actualOrderId = orderResponse?.id || order.orderId
+                          handleViewDetails(actualOrderId.toString())
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
               </HistorySection>
             )}
           </>

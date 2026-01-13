@@ -342,7 +342,7 @@ export const ReelPlayer = ({
                   {(() => {
                     const avatar = getUserAvatar(reel.user)
                     const displayName = getUserDisplayName(reel.user)
-                    return avatar ? (
+                    return avatar && avatar !== 'https://via.placeholder.com/100' ? (
                       <Image
                         src={avatar}
                         alt={displayName}
@@ -353,19 +353,11 @@ export const ReelPlayer = ({
                           e.currentTarget.style.display = 'none'
                         }}
                       />
-                    ) : null
-                  })()}
-                  {(() => {
-                    const avatar = getUserAvatar(reel.user)
-                    return !avatar && (
-                      <div className="w-full h-full flex items-center justify-center bg-white">
-                        <Image
-                          src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                          alt="OurBride"
-                          width={24}
-                          height={24}
-                          className="object-contain"
-                        />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                        <span className="text-14 font-semibold text-brand-600">
+                          {displayName.charAt(0).toUpperCase() || 'U'}
+                        </span>
                       </div>
                     )
                   })()}
@@ -525,25 +517,28 @@ export const ReelPlayer = ({
             <div className="p-4 border-t border-gray-200 bg-white">
               <div className="flex gap-3">
                 <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-                  {reel && getUserAvatar(reel.user) ? (
-                    <Image
-                      src={getUserAvatar(reel.user)!}
-                      alt={getUserDisplayName(reel.user)}
-                      fill
-                      sizes="40px"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-white">
+                  {(() => {
+                    const avatar = reel ? getUserAvatar(reel.user) : null
+                    const displayName = reel ? getUserDisplayName(reel.user) : 'U'
+                    return avatar && avatar !== 'https://via.placeholder.com/100' ? (
                       <Image
-                        src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                        alt="OurBride"
-                        width={24}
-                        height={24}
-                        className="object-contain"
+                        src={avatar}
+                        alt={displayName}
+                        fill
+                        sizes="40px"
+                        className="object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                        }}
                       />
-                    </div>
-                  )}
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                        <span className="text-14 font-semibold text-brand-600">
+                          {displayName.charAt(0).toUpperCase() || 'U'}
+                        </span>
+                      </div>
+                    )
+                  })()}
                 </div>
                 <div className="flex-1">
                   <input

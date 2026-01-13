@@ -60,7 +60,7 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
                   {(() => {
                     const avatar = getUserAvatar(post.user)
                     const displayName = getUserDisplayName(post.user)
-                    return avatar ? (
+                    return avatar && avatar !== 'https://via.placeholder.com/100' ? (
                       <Image
                         src={avatar}
                         alt={displayName}
@@ -71,19 +71,11 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
                           e.currentTarget.style.display = 'none'
                         }}
                       />
-                    ) : null
-                  })()}
-                  {(() => {
-                    const avatar = getUserAvatar(post.user)
-                    return !avatar && (
-                      <div className="w-full h-full flex items-center justify-center bg-white">
-                        <Image
-                          src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                          alt="OurBride"
-                          width={24}
-                          height={24}
-                          className="object-contain"
-                        />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                        <span className="text-14 font-semibold text-brand-600">
+                          {displayName.charAt(0).toUpperCase() || 'U'}
+                        </span>
                       </div>
                     )
                   })()}

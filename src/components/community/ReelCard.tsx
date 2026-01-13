@@ -37,7 +37,12 @@ const getUserDisplayName = (user: ReelResponse['user']): string => {
   const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
   const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
-  return fullName || user.userName || 'OurBride'
+  if (fullName) return fullName
+  // If userName is admin@our-bride.com, display as OurBride
+  if (user.userName && user.userName.toLowerCase() === 'admin@our-bride.com') {
+    return 'OurBride'
+  }
+  return user.userName || 'OurBride'
 }
 
 // Helper function to get user avatar
@@ -63,6 +68,8 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
   const [likes, setLikes] = useState(reel.likeCount || 0)
   const [shares, setShares] = useState(reel.shareCount || 0)
   const [favorites, setFavorites] = useState(reel.favoriteCount || 0)
+  const [avatarError, setAvatarError] = useState(false)
+  const [thumbnailError, setThumbnailError] = useState(false)
 
   const toggleLikeMutation = useMutation({
     mutationFn: async () => {
@@ -149,23 +156,36 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
       )}
     >
       {/* Thumbnail with Play Overlay */}
-      <div className="relative w-full aspect-[9/16] bg-gray-900">
-        <Image
-          src={thumbnail}
-          alt={reel.title || reel.description}
-          fill
-          sizes="(max-width: 768px) 100vw, 400px"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-          <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
-            <Play className="h-8 w-8 text-gray-900 ml-1" fill="currentColor" />
+      <div className="relative w-full aspect-[9/16] bg-gray-100">
+        {!thumbnailError && thumbnail ? (
+          <Image
+            src={thumbnail}
+            alt={reel.title || reel.description}
+            fill
+            sizes="(max-width: 768px) 100vw, 400px"
+            className="object-cover"
+            onError={() => setThumbnailError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <span className="text-gray-400 text-12 font-medium">
+              No image available
+            </span>
           </div>
-        </div>
-        {reel.duration && (
-          <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-12 font-semibold">
-            {formatDuration(reel.duration)}
-          </div>
+        )}
+        {!thumbnailError && thumbnail && (
+          <>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+              <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
+                <Play className="h-8 w-8 text-gray-900 ml-1" fill="currentColor" />
+              </div>
+            </div>
+            {reel.duration && (
+              <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-12 font-semibold">
+                {formatDuration(reel.duration)}
+              </div>
+            )}
+          </>
         )}
       </div>
 
@@ -173,27 +193,20 @@ export const ReelCard = ({ reel, className, onClick }: ReelCardProps) => {
       <div className="p-4">
         <div className="flex items-start gap-3 mb-2">
           <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-            {avatar ? (
+            {avatar && avatar !== 'https://via.placeholder.com/100' && !avatarError ? (
               <Image
                 src={avatar}
                 alt={displayName}
                 fill
                 sizes="32px"
                 className="object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
+                onError={() => setAvatarError(true)}
               />
-            ) : null}
-            {!avatar && (
-              <div className="w-full h-full flex items-center justify-center bg-white">
-                <Image
-                  src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                  alt="OurBride"
-                  width={20}
-                  height={20}
-                  className="object-contain"
-                />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                <span className="text-12 font-semibold text-brand-600">
+                  {displayName.charAt(0).toUpperCase() || 'U'}
+                </span>
               </div>
             )}
           </div>

@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useRouter } from '@/i18n/navigation'
+import { useRouter, usePathname } from '@/i18n/navigation'
+import { useI18nLocale } from '@/i18n'
 import { UserPageLayout } from '@/components/layout'
-import { Button, Input, LoadingSpinner, Select, DatePicker } from '@/components/ui'
+import { Button, Input, LoadingSpinner, SelectPopover, DatePicker } from '@/components/ui'
 import { ImageUploader } from '@/components/ui/ImageUploader'
 import { useUserProfileData, useUpdateUserProfile } from '@/hooks/profile/useProfile'
 import { useMineInfo } from '@/hooks/home'
@@ -18,7 +19,9 @@ import type { MediaRequest, UserRequest } from '@/../client/common/api/gen/ourbr
  */
 export default function ProfileEditPage() {
   const router = useRouter()
+  const pathname = usePathname()
   const { user: authUser } = useAuth()
+  const currentLocale = useI18nLocale()
 
   // Fetch profile data
   const { data: profileData, isLoading: isLoadingProfile } = useUserProfileData()
@@ -110,6 +113,13 @@ export default function ProfileEditPage() {
         }
       }
 
+      // Map current locale to Language enum if user doesn't have a language preference
+      let languageValue: Language | '' = (userData.language as Language) || ''
+      if (!languageValue) {
+        // If no language preference, use current locale
+        languageValue = currentLocale === 'ar' ? Language.Arabic : Language.English
+      }
+
       setFormData({
         firstName: userData.firstName || '',
         lastName: userData.lastName || '',
@@ -122,11 +132,11 @@ export default function ProfileEditPage() {
         personalType: (userData.personalType as PersonalType) || '',
         birthDate: formattedBirthDate,
         customTag: userData.customTag || '',
-        language: (userData.language as Language) || '',
+        language: languageValue,
         countryId: userData.countryId || null,
       })
     }
-  }, [userData])
+  }, [userData, currentLocale])
 
   const handleInputChange = (field: string, value: string | number | null) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -305,17 +315,17 @@ export default function ProfileEditPage() {
                 <label className="block text-14 font-normal text-gray-700 mb-2">
                   Gender
                 </label>
-                <Select
-                  value={formData.gender}
-                  onChange={e => handleInputChange('gender', e.target.value as Gender)}
-                  variant="default"
-                  size="lg"
-                >
-                  <option value="">Select Gender</option>
-                  <option value={Gender.Unknown}>Unknown</option>
-                  <option value={Gender.Male}>Male</option>
-                  <option value={Gender.Female}>Female</option>
-                </Select>
+                <SelectPopover
+                  value={formData.gender || ''}
+                  onChange={value => handleInputChange('gender', value as Gender)}
+                  options={[
+                    { value: '', label: 'Select Gender' },
+                    { value: Gender.Unknown, label: 'Unknown' },
+                    { value: Gender.Male, label: 'Male' },
+                    { value: Gender.Female, label: 'Female' },
+                  ]}
+                  placeholder="Select Gender"
+                />
               </div>
 
               <div>
@@ -363,28 +373,35 @@ export default function ProfileEditPage() {
                 <label className="block text-14 font-normal text-gray-700 mb-2">
                   Personal ID Type
                 </label>
-                <Select
-                  value={formData.personalType}
-                  onChange={e => handleInputChange('personalType', e.target.value as PersonalType)}
-                  variant="default"
-                  size="lg"
-                >
-                  <option value="">Select Type</option>
-                  <option value={PersonalType.National}>National ID</option>
-                  <option value={PersonalType.Passport}>Passport</option>
-                </Select>
+                <SelectPopover
+                  value={formData.personalType || ''}
+                  onChange={value => handleInputChange('personalType', value as PersonalType)}
+                  options={[
+                    { value: '', label: 'Select Type' },
+                    { value: PersonalType.National, label: 'National ID' },
+                    { value: PersonalType.Passport, label: 'Passport' },
+                  ]}
+                  placeholder="Select Type"
+                />
               </div>
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
                   Birth Date
                 </label>
-                <Input
-                  type="date"
-                  value={formData.birthDate}
-                  onChange={e => handleInputChange('birthDate', e.target.value)}
-                  placeholder="Birth Date"
-                  variant="default"
+                <DatePicker
+                  value={formData.birthDate || undefined}
+                  onChange={date => {
+                    if (typeof date === 'string') {
+                      handleInputChange('birthDate', date)
+                    } else if (date instanceof Date) {
+                      handleInputChange('birthDate', date.toISOString().split('T')[0])
+                    } else {
+                      handleInputChange('birthDate', '')
+                    }
+                  }}
+                  placeholder="Select Birth Date"
+                  dateFormat="string"
                   size="lg"
                 />
               </div>
@@ -406,36 +423,56 @@ export default function ProfileEditPage() {
                 <label className="block text-14 font-normal text-gray-700 mb-2">
                   Language
                 </label>
-                <Select
-                  value={formData.language}
-                  onChange={e => handleInputChange('language', e.target.value as Language)}
-                  variant="default"
-                  size="lg"
-                >
-                  <option value="">Select Language</option>
-                  <option value={Language.Arabic}>Arabic</option>
-                  <option value={Language.English}>English</option>
-                </Select>
+                <SelectPopover
+                  value={formData.language || ''}
+                  onChange={value => {
+                    const newLanguage = value as Language
+                    handleInputChange('language', newLanguage)
+                    
+                    // Update the app locale when language changes
+                    // Map Language enum to locale
+                    const localeMap: Record<Language, 'ar' | 'en'> = {
+                      [Language.Arabic]: 'ar',
+                      [Language.English]: 'en',
+                    }
+                    
+                    const newLocale = localeMap[newLanguage]
+                    if (newLocale && newLocale !== currentLocale) {
+                      // Construct the new URL with the new locale prefix
+                      const newPath = `/${newLocale}${pathname === '/' ? '' : pathname}`
+                      
+                      // Use window.location to navigate to the new locale path
+                      // This will trigger the middleware to handle locale switching and direction change
+                      if (typeof window !== 'undefined') {
+                        window.location.href = newPath
+                      }
+                    }
+                  }}
+                  options={[
+                    { value: Language.Arabic, label: 'العربية' },
+                    { value: Language.English, label: 'English' },
+                  ]}
+                  placeholder="Select Language"
+                />
               </div>
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
                   Country
                 </label>
-                <Select
-                  value={formData.countryId || ''}
-                  onChange={e => handleInputChange('countryId', e.target.value ? parseInt(e.target.value, 10) : null)}
-                  variant="default"
-                  size="lg"
+                <SelectPopover
+                  value={formData.countryId?.toString() || ''}
+                  onChange={value => handleInputChange('countryId', value ? parseInt(value, 10) : null)}
+                  options={[
+                    { value: '', label: 'Select Country' },
+                    ...(countries?.map(country => ({
+                      value: country.id.toString(),
+                      label: country.nameEn || country.nameAr || `Country ${country.id}`,
+                    })) || []),
+                  ]}
+                  placeholder="Select Country"
                   disabled={isLoadingCountries}
-                >
-                  <option value="">Select Country</option>
-                  {countries?.map(country => (
-                    <option key={country.id} value={country.id}>
-                      {country.nameEn || country.nameAr || `Country ${country.id}`}
-                    </option>
-                  ))}
-                </Select>
+                />
               </div>
             </div>
           </div>

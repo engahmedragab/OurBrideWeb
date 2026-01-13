@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -25,6 +28,13 @@ export const LoadingSpinner = ({
   text,
   fullScreen = false,
 }: LoadingSpinnerProps) => {
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Prevent hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   const spinner = (
     <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
       <Loader2 className={cn('animate-spin text-brand-500', sizeClasses[size])} />
@@ -37,9 +47,14 @@ export const LoadingSpinner = ({
   if (fullScreen) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        {spinner}
+        {isMounted ? spinner : null}
       </div>
     )
+  }
+
+  // Return null during SSR to prevent hydration mismatch
+  if (!isMounted) {
+    return null
   }
 
   return spinner

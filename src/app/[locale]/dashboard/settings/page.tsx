@@ -1,17 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from '@/i18n/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, usePathname } from '@/i18n/navigation'
+import { useI18nLocale } from '@/i18n'
 import {
   Toggle,
   DeleteAccountModal,
   LogoutModal,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+  SelectPopover,
 } from '@/components/ui'
-import { ChevronRight, ChevronDown } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 
 /**
@@ -19,7 +17,21 @@ import { Link } from '@/i18n/navigation'
  */
 export default function SettingsPage() {
   const router = useRouter()
-  const [appLanguage, setAppLanguage] = useState('English')
+  const pathname = usePathname()
+  const currentLocale = useI18nLocale()
+  
+  // Map locale to language display name
+  const localeToLanguage: Record<string, string> = {
+    'en': 'English',
+    'ar': 'العربية',
+  }
+  
+  const languageToLocale: Record<string, string> = {
+    'English': 'en',
+    'العربية': 'ar',
+  }
+
+  const [appLanguage, setAppLanguage] = useState(localeToLanguage[currentLocale] || 'English')
   const [darkMode, setDarkMode] = useState(false)
   const [bookingConfirmations, setBookingConfirmations] = useState(true)
   const [offerAlerts, setOfferAlerts] = useState(true)
@@ -29,7 +41,32 @@ export default function SettingsPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [logoutModalOpen, setLogoutModalOpen] = useState(false)
 
-  const languages = ['English', 'Arabic', 'French', 'Spanish']
+  // Update language when locale changes
+  useEffect(() => {
+    setAppLanguage(localeToLanguage[currentLocale] || 'English')
+  }, [currentLocale])
+
+  const languages = [
+    { value: 'English', label: 'English' },
+    { value: 'العربية', label: 'العربية' },
+  ]
+
+  const handleLanguageChange = (newLanguage: string) => {
+    setAppLanguage(newLanguage)
+    
+    // Get the locale for the selected language
+    const newLocale = languageToLocale[newLanguage]
+    if (newLocale && newLocale !== currentLocale) {
+      // Construct the new URL with the new locale prefix
+      const newPath = `/${newLocale}${pathname === '/' ? '' : pathname}`
+      
+      // Use window.location to navigate to the new locale path
+      // This will trigger the middleware to handle locale switching and direction change
+      if (typeof window !== 'undefined') {
+        window.location.href = newPath
+      }
+    }
+  }
 
   const handleDeleteAccount = () => {
     // TODO: Implement delete account logic
@@ -103,25 +140,14 @@ export default function SettingsPage() {
           <SettingRow
             label="App Language"
             action={
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 text-14 font-medium text-brand-500 hover:text-brand-600">
-                    {appLanguage}
-                    <ChevronDown className="h-4 w-4 text-brand-500" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40">
-                  {languages.map(lang => (
-                    <DropdownMenuItem
-                      key={lang}
-                      onClick={() => setAppLanguage(lang)}
-                      className={appLanguage === lang ? 'bg-brand-50' : ''}
-                    >
-                      {lang}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="w-[140px]">
+                <SelectPopover
+                  value={appLanguage}
+                  onChange={handleLanguageChange}
+                  options={languages}
+                  placeholder="Select Language"
+                />
+              </div>
             }
           />
           <SettingRow

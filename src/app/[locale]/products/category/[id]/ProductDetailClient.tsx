@@ -129,7 +129,8 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     return (
       <ProductPageLayout>
         <ProductErrorState
-          message="Product not found"
+          title="Product Not Found"
+          message="The product you're looking for doesn't exist or has been removed."
           backHref="/products"
           backLabel="Back to Products"
         />

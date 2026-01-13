@@ -39,7 +39,12 @@ const getUserDisplayName = (user: PostResponse['user']): string => {
   const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
   const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
-  return fullName || user.userName || 'OurBride'
+  if (fullName) return fullName
+  // If userName is admin@our-bride.com, display as OurBride
+  if (user.userName && user.userName.toLowerCase() === 'admin@our-bride.com') {
+    return 'OurBride'
+  }
+  return user.userName || 'OurBride'
 }
 
 // Helper function to get user avatar
@@ -64,6 +69,8 @@ export const PostCard = ({ post, className }: PostCardProps) => {
   const [shares, setShares] = useState(post.shareCount || 0)
   const [favorites, setFavorites] = useState(post.favoriteCount || 0)
   const [imageError, setImageError] = useState(false)
+  const [postImageErrors, setPostImageErrors] = useState<Record<number, boolean>>({})
+  const [avatarError, setAvatarError] = useState(false)
 
   const toggleLikeMutation = useMutation({
     mutationFn: async () => {
@@ -159,19 +166,21 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       {/* Post Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            {avatar && !imageError ? (
+          <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+            {avatar && avatar !== 'https://via.placeholder.com/100' && !avatarError ? (
               <Image
                 src={avatar}
                 alt={displayName}
                 fill
                 sizes="40px"
                 className="object-cover"
-                onError={() => setImageError(true)}
+                onError={() => setAvatarError(true)}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                <User className="h-5 w-5 text-gray-400" />
+              <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                <span className="text-14 font-semibold text-brand-600">
+                  {displayName.charAt(0).toUpperCase() || 'U'}
+                </span>
               </div>
             )}
           </div>
@@ -212,70 +221,96 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       </p>
 
       {/* Post Images */}
-      <div className="mb-4">
-        {images.length > 0 ? (
-          images.length === 1 ? (
-            <div className="relative w-full aspect-video rounded-lg overflow-hidden">
-              <Image
-                src={images[0]}
-                alt="Post image"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
+      {images.length > 0 ? (
+        <div className="mb-4">
+          {images.length === 1 ? (
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
+              {!postImageErrors[0] ? (
+                <Image
+                  src={images[0]}
+                  alt="Post image"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  onError={() => setPostImageErrors(prev => ({ ...prev, 0: true }))}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                  <span className="text-gray-400 text-12 font-medium">
+                    No image available
+                  </span>
+                </div>
+              )}
             </div>
           ) : images.length === 2 ? (
             <div className="grid grid-cols-2 gap-2">
               {images.map((img, idx) => (
-                <div key={idx} className="relative w-full h-48 rounded-lg overflow-hidden">
-                  <Image
-                    src={img}
-                    alt={`Post image ${idx + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover"
-                  />
+                <div key={idx} className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
+                  {!postImageErrors[idx] ? (
+                    <Image
+                      src={img}
+                      alt={`Post image ${idx + 1}`}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      className="object-cover"
+                      onError={() => setPostImageErrors(prev => ({ ...prev, [idx]: true }))}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <span className="text-gray-400 text-12 font-medium">
+                        No image available
+                      </span>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-2">
-              <div className="col-span-1 row-span-2 relative w-full h-full rounded-lg overflow-hidden">
-                <Image
-                  src={images[0]}
-                  alt="Post image 1"
-                  fill
-                  sizes="(max-width: 768px) 33vw, 16vw"
-                  className="object-cover"
-                />
+              <div className="col-span-1 row-span-2 relative w-full h-full rounded-lg overflow-hidden bg-gray-100">
+                {!postImageErrors[0] ? (
+                  <Image
+                    src={images[0]}
+                    alt="Post image 1"
+                    fill
+                    sizes="(max-width: 768px) 33vw, 16vw"
+                    className="object-cover"
+                    onError={() => setPostImageErrors(prev => ({ ...prev, 0: true }))}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                    <span className="text-gray-400 text-12 font-medium">
+                      No image available
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="col-span-2 flex flex-col gap-2">
                 {images.slice(1, 3).map((img, idx) => (
-                  <div key={idx} className="relative w-full h-32 rounded-lg overflow-hidden">
-                    <Image
-                      src={img}
-                      alt={`Post image ${idx + 2}`}
-                      fill
-                      sizes="(max-width: 768px) 66vw, 33vw"
-                      className="object-cover"
-                    />
+                  <div key={idx} className="relative w-full h-32 rounded-lg overflow-hidden bg-gray-100">
+                    {!postImageErrors[idx + 1] ? (
+                      <Image
+                        src={img}
+                        alt={`Post image ${idx + 2}`}
+                        fill
+                        sizes="(max-width: 768px) 66vw, 33vw"
+                        className="object-cover"
+                        onError={() => setPostImageErrors(prev => ({ ...prev, [idx + 1]: true }))}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <span className="text-gray-400 text-12 font-medium">
+                          No image available
+                        </span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
-          )
-        ) : (
-          <div className="relative w-full aspect-video rounded-lg overflow-hidden">
-            <Image
-              src={COMMUNITY_IMAGES.DEFAULT_POST_IMAGE}
-              alt="OurBride"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      ) : null}
 
       {/* Tags */}
       {post.tags && post.tags.length > 0 && (

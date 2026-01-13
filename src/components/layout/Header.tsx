@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname } from '@/i18n/navigation'
+import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { SearchInput } from '@/components/ui/SearchInput'
+import { SearchInput, LanguageSwitcher } from '@/components/ui'
 import { useCart } from '@/hooks/cart'
 import brandLogo from '@/assets/svg/Brand-logo.svg'
 import {
@@ -156,8 +156,8 @@ export const Header = ({ className }: HeaderProps) => {
             href="/"
             className={cn(
               'flex items-center gap-2 transition-opacity duration-150',
-              // 'hover:opacity-80',
-              // 'focus:outline-none rounded-md'
+              'hover:opacity-80',
+              'focus:outline-none rounded-md'
             )}
           >
             <Image
@@ -358,6 +358,13 @@ export const Header = ({ className }: HeaderProps) => {
                 </Link>
               </Button>
             </div>
+
+            {/* Language Switcher */}
+            <ClientOnly>
+              <div className="hidden md:flex items-center">
+                <LanguageSwitcher variant="icon" />
+              </div>
+            </ClientOnly>
 
             {/* User Profile */}
             <Button
@@ -592,6 +599,18 @@ export const Header = ({ className }: HeaderProps) => {
               <User className="h-5 w-5" />
               My Profile
             </Link>
+
+            {/* Language Switcher in Mobile Menu */}
+            <ClientOnly>
+              <div className="pt-4 border-t border-gray-200">
+                <div className="px-4 py-2">
+                  <label className="block text-14 font-normal text-gray-700 mb-2">
+                    Language
+                  </label>
+                  <LanguageSwitcher variant="dropdown" />
+                </div>
+              </div>
+            </ClientOnly>
           </div>
         </nav>
       </div>
