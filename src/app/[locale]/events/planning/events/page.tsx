@@ -232,7 +232,7 @@ function EventsPageContent() {
 
   const syncMutation = useSyncEventBooks()
   const initMutation = useInitEventBooks()
-  
+
   // Fetch categories from server (mandatory - do NOT derive from lines)
   const { data: categoriesData, refetch: refetchCategories } = useGetEventBooksCategories({
     clientId: null as unknown as string | undefined,

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { LoadingOverlay, LoadingSpinner } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
-import { useGuestBook, useSyncGuestBook } from '@/hooks/guestBooks/useGuestBooks'
+import { useGuestBook, useSyncGuestBook } from '@/hooks/guestBooks'
 
 import {
   GuestsHeader,

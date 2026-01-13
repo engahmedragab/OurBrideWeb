@@ -53,3 +53,7 @@ Thumbs.db
 .next/
 out/
 next-env.d.ts
+
+# Case-sensitivity: Ignore capitalized Hooks directory (macOS case-insensitive filesystem issue)
+# Git tracks src/hooks/ (lowercase) but macOS may show src/Hooks/ as untracked
+src/Hooks/

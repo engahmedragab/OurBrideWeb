@@ -97,8 +97,8 @@ function PreparationsLinesContent() {
     if (!isLoading && !serviceBook && eventId && !initMutation.isPending) {
       initMutation.mutate({
         eventId,
-        clientId: null,
-        userType: null,
+        clientId: undefined,
+        userType: undefined,
       })
     }
   }, [isLoading, serviceBook, eventId, initMutation])

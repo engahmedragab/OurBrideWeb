@@ -79,99 +79,99 @@ export const BudgetCategoryBreakdownList = ({
       {/* Scrollable List Area */}
       <div className="flex-1 overflow-y-auto px-3 py-2">
         <div className="space-y-1.5">
-        {/* Category items */}
-        {categoryStats.length === 0 ? (
-  <div className="w-full rounded-lg border border-dashed border-gray-200  px-3 py-4 text-center">
-    <p className="text-13 font-medium text-gray-700">No categories yet</p>
-    <p className="mt-1 text-12 text-gray-500">Create a category to start organizing items.</p>
-  </div>
-) : (
-  categoryStats.map(stat => {
-    const color = getCategoryColor(stat.category)
-    const isActive = activeCategoryId === stat.category.id
-
-    return (
-      <div
-        key={stat.category.id}
-        className={cn(
-          'w-full flex items-center gap-3 py-1.5 px-2 rounded-lg transition-all relative group',
-          isActive
-            ? 'bg-white border border-gray-200 shadow-sm'
-            : 'hover:bg-gray-50 border border-transparent'
-        )}
-        style={isActive ? { borderColor: color + '40' } : undefined}
-      >
-        {/* Icon badge with color */}
-        <CategoryIcon
-          iconName={stat.category.iconName}
-          colorName={stat.category.colorName}
-          size="sm"
-        />
-
-        {/* Category name - clickable */}
-        <div
-          onClick={() => onCategoryClick(stat.category.id)}
-          className="flex-1 flex items-center justify-between text-left min-w-0 cursor-pointer"
-          role="button"
-          tabIndex={0}
-          onKeyDown={e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              onCategoryClick(stat.category.id)
-            }
-          }}
-        >
-          <span
-            className={cn(
-              'text-13 font-medium truncate',
-              isActive ? 'text-gray-900 font-semibold' : 'text-gray-600'
-            )}
-          >
-            {stat.category.name || 'Unnamed Category'}
-          </span>
-
-          {/* Action buttons */}
-          {(onEditCategory || onDeleteCategory) && (
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2">
-              {onEditCategory && (
-                <button
-                  onClick={e => {
-                    e.stopPropagation()
-                    onEditCategory(stat.category.id)
-                  }}
-                  className="p-1.5 rounded-md text-gray-400 hover:bg-gray-100 hover:text-brand-500 transition-colors"
-                  aria-label="Edit category"
-                  type="button"
-                >
-                  <Edit2 className="h-3.5 w-3.5" />
-                </button>
-              )}
-              {onDeleteCategory && (
-                <button
-                  onClick={e => {
-                    e.stopPropagation()
-                    onDeleteCategory(stat.category.id)
-                    if (activeCategoryId === stat.category.id) onCategoryClick(null)
-                  }}
-                  className="p-1.5 rounded-md text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
-                  aria-label="Delete category"
-                  type="button"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              )}
+          {/* Category items */}
+          {categoryStats.length === 0 ? (
+            <div className="w-full rounded-lg border border-dashed border-gray-200  px-3 py-4 text-center">
+              <p className="text-13 font-medium text-gray-700">No categories yet</p>
+              <p className="mt-1 text-12 text-gray-500">Create a category to start organizing items.</p>
             </div>
-          )}
-        </div>
+          ) : (
+            categoryStats.map(stat => {
+              const color = getCategoryColor(stat.category)
+              const isActive = activeCategoryId === stat.category.id
 
-        {/* Percentage */}
-        <span className="text-13 font-medium text-gray-500 flex-shrink-0 ml-2">
-          {stat.percentage.toFixed(0)}%
-        </span>
-      </div>
-    )
-  })
-)}
+              return (
+                <div
+                  key={stat.category.id}
+                  className={cn(
+                    'w-full flex items-center gap-3 py-1.5 px-2 rounded-lg transition-all relative group',
+                    isActive
+                      ? 'bg-white border border-gray-200 shadow-sm'
+                      : 'hover:bg-gray-50 border border-transparent'
+                  )}
+                  style={isActive ? { borderColor: color + '40' } : undefined}
+                >
+                  {/* Icon badge with color */}
+                  <CategoryIcon
+                    iconName={stat.category.iconName}
+                    colorName={stat.category.colorName}
+                    size="sm"
+                  />
+
+                  {/* Category name - clickable */}
+                  <div
+                    onClick={() => onCategoryClick(stat.category.id)}
+                    className="flex-1 flex items-center justify-between text-left min-w-0 cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        onCategoryClick(stat.category.id)
+                      }
+                    }}
+                  >
+                    <span
+                      className={cn(
+                        'text-13 font-medium truncate',
+                        isActive ? 'text-gray-900 font-semibold' : 'text-gray-600'
+                      )}
+                    >
+                      {stat.category.name || 'Unnamed Category'}
+                    </span>
+
+                    {/* Action buttons */}
+                    {(onEditCategory || onDeleteCategory) && (
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-2">
+                        {onEditCategory && (
+                          <button
+                            onClick={e => {
+                              e.stopPropagation()
+                              onEditCategory(stat.category.id)
+                            }}
+                            className="p-1.5 rounded-md text-gray-400 hover:bg-gray-100 hover:text-brand-500 transition-colors"
+                            aria-label="Edit category"
+                            type="button"
+                          >
+                            <Edit2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                        {onDeleteCategory && (
+                          <button
+                            onClick={e => {
+                              e.stopPropagation()
+                              onDeleteCategory(stat.category.id)
+                              if (activeCategoryId === stat.category.id) onCategoryClick(null)
+                            }}
+                            className="p-1.5 rounded-md text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                            aria-label="Delete category"
+                            type="button"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Percentage */}
+                  <span className="text-13 font-medium text-gray-500 flex-shrink-0 ml-2">
+                    {stat.percentage.toFixed(0)}%
+                  </span>
+                </div>
+              )
+            })
+          )}
 
         </div>
       </div>

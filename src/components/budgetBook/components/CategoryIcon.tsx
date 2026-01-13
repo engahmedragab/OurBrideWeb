@@ -52,6 +52,10 @@ import { PhotographyIcon } from '@/assets/icons/PhotographyIcon'
 import { AccessoriesIcon } from '@/assets/icons/AccessoriesIcon'
 import { BouquetIcon } from '@/assets/icons/BouquetIcon'
 import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
+import type { ComponentType } from 'react'
+
+// Type for icon components that can be used in the map
+type IconComponent = LucideIcon | ComponentType<{ className?: string }>
 
 // Mapping of common icon codepoints to Lucide icons
 // This is a fallback mapping - in a real app, you'd use an icon font

@@ -42,7 +42,7 @@ const convertLineToRequest = (line: ServiceLineResponse, bookId: number): Servic
   // Map ServiceType enum from response to request type
   // ServiceType enum values: 0 = Rent, 1 = Buy
   const serviceType = (line.serviceType === 0 ? 0 : line.serviceType === 1 ? 1 : 0) as unknown as ServiceType
-  
+
   return {
     id: line.id,
     bookId: line.bookId || bookId,

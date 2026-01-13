@@ -27,3 +27,5 @@ export * from './community'
 export * from './profile/useProfile'
 export * from './auth'
 export * from './orders/useOrderInvoice'
+// Budget, guestBooks, and notes hooks are imported directly from their respective directories
+// to avoid module resolution issues

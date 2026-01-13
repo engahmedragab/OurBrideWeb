@@ -314,7 +314,7 @@ function BudgetPageContent() {
 
     lines = lines.filter(line => {
       if (activeCategoryId !== null && line.lineCategoryId !== activeCategoryId) return false
-      
+
       return true
     })
 
@@ -327,7 +327,7 @@ function BudgetPageContent() {
         return lines.filter(l => l.isFavorite)
       case 'not-favorite':
         return lines.filter(l => !l.isFavorite)
- 
+
       default:
         return lines
     }
@@ -404,32 +404,32 @@ function BudgetPageContent() {
           lines: ((localDraft as any).lines || []).map((line: any) =>
             line.id === data.id
               ? {
-                  ...line,
-                  expense: data.expense,
-                  expenseAr: data.expenseAr,
-                  expenseEn: data.expenseEn,
+                ...line,
+                expense: data.expense,
+                expenseAr: data.expenseAr,
+                expenseEn: data.expenseEn,
 
-                  lineCategoryId: finalCategoryId,
-                  lineCategorySlug,
-                  lineCategoryCountId,
+                lineCategoryId: finalCategoryId,
+                lineCategorySlug,
+                lineCategoryCountId,
 
-                  estimated: data.estimated,
-                  paid: data.paid,
-                  final: data.final,
-                  dueDate: data.dueDate,
-                  count: data.count,
+                estimated: data.estimated,
+                paid: data.paid,
+                final: data.final,
+                dueDate: data.dueDate,
+                count: data.count,
 
-                  payer: data.payer,
-                  note: data.note,
-                  iconName: data.iconName,
-                  colorName: data.colorName,
+                payer: data.payer,
+                note: data.note,
+                iconName: data.iconName,
+                colorName: data.colorName,
 
-                  isDone: data.isDone,
-                  isFavorite: data.isFavorite,
-                  isDeleted: data.isDeleted,
+                isDone: data.isDone,
+                isFavorite: data.isFavorite,
+                isDeleted: data.isDeleted,
 
-                  lastModifiedDate: now,
-                }
+                lastModifiedDate: now,
+              }
               : line
           ),
         }
@@ -598,18 +598,18 @@ function BudgetPageContent() {
           lineCategories: ((localDraft as any).lineCategories || []).map((cat: any) =>
             cat.id === data.id
               ? {
-                  ...cat,
-                  name: data.name,
-                  nameAr: data.nameAr,
-                  nameEn: data.nameEn,
-                  description: data.description ?? null,
-                  descriptionAr: data.descriptionAr ?? null,
-                  descriptionEn: data.descriptionEn ?? null,
-                  estimated: data.estimated ?? 0,
-                  iconName: data.iconName ?? null,
-                  colorName: data.colorName ?? null,
-                  lastModifiedDate: now,
-                }
+                ...cat,
+                name: data.name,
+                nameAr: data.nameAr,
+                nameEn: data.nameEn,
+                description: data.description ?? null,
+                descriptionAr: data.descriptionAr ?? null,
+                descriptionEn: data.descriptionEn ?? null,
+                estimated: data.estimated ?? 0,
+                iconName: data.iconName ?? null,
+                colorName: data.colorName ?? null,
+                lastModifiedDate: now,
+              }
               : cat
           ),
         }

@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/Button'
 import { LoadingOverlay } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
-import { useNoteBook, useNoteSyncMutation, useInitNoteBooks } from '@/hooks/notes/noteBooks.hooks'
+import { useNoteBook, useNoteSyncMutation } from '@/hooks/notes'
+import { useInitNoteBooks } from '@/hooks/bookInit'
 
 import { NoteCategoriesSidebar } from '@/components/notesBook/NoteCategoriesSidebar'
 import NoteMainPanel from '@/components/notesBook/NoteMainPanel'
@@ -365,7 +366,7 @@ function NotesPageContent() {
           <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={() => router.back()} className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              
+
             </Button>
             <h1 className="text-24 font-semibold text-gray-900">Notes</h1>
           </div>
