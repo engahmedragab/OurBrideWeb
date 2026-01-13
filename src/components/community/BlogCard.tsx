@@ -36,7 +36,12 @@ const getUserDisplayName = (user: BlogResponse['user'], authorName?: string): st
   const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
   const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
-  return fullName || user.userName || authorName || 'OurBride'
+  if (fullName) return fullName
+  // If userName is admin@our-bride.com, display as OurBride
+  if (user.userName && user.userName.toLowerCase() === 'admin@our-bride.com') {
+    return 'OurBride'
+  }
+  return user.userName || authorName || 'OurBride'
 }
 
 // Helper function to get user avatar
@@ -54,6 +59,8 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
   const [likes, setLikes] = useState(blog.likeCount || 0)
   const [shares, setShares] = useState(blog.shareCount || 0)
   const [favorites, setFavorites] = useState(blog.favoriteCount || 0)
+  const [imageError, setImageError] = useState(false)
+  const [avatarError, setAvatarError] = useState(false)
 
   const toggleLikeMutation = useMutation({
     mutationFn: async () => {
@@ -125,9 +132,9 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
   const avatar = getUserAvatar(blog.user)
   const date = formatDate(blog.publishedAt || blog.creationDate)
   
-  // Extract images from medias array, fallback to default
+  // Extract images from medias array
   const medias = (blog as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url || COMMUNITY_IMAGES.DEFAULT_BLOG_IMAGE
+  const imageUrl = medias.find((media: any) => media?.url)?.url
 
   return (
     <div
@@ -137,15 +144,26 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
         className
       )}
     >
-      <div className="relative w-full h-64 rounded-lg overflow-hidden mb-4">
-        <Image
-          src={imageUrl}
-          alt={blog.title}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover"
-        />
-      </div>
+      {imageUrl ? (
+        <div className="relative w-full h-64 rounded-lg overflow-hidden mb-4 bg-gray-100">
+          {!imageError ? (
+            <Image
+              src={imageUrl}
+              alt={blog.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <span className="text-gray-400 text-12 font-medium">
+                No image available
+              </span>
+            </div>
+          )}
+        </div>
+      ) : null}
       <h3 className="text-20 font-normal text-gray-900 mb-3">{blog.title}</h3>
       <p className="text-14 text-gray-700 mb-4 line-clamp-3">
         {blog.summary || blog.excerpt || blog.content.substring(0, 150)}
@@ -153,27 +171,20 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-            {avatar ? (
+            {avatar && avatar !== 'https://via.placeholder.com/100' && !avatarError ? (
               <Image
                 src={avatar}
                 alt={displayName}
                 fill
                 sizes="32px"
                 className="object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
+                onError={() => setAvatarError(true)}
               />
-            ) : null}
-            {!avatar && (
-              <div className="w-full h-full flex items-center justify-center bg-white">
-                <Image
-                  src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                  alt="OurBride"
-                  width={20}
-                  height={20}
-                  className="object-contain"
-                />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                <span className="text-12 font-semibold text-brand-600">
+                  {displayName.charAt(0).toUpperCase() || 'U'}
+                </span>
               </div>
             )}
           </div>

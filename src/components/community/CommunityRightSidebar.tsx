@@ -53,6 +53,8 @@ export const CommunityRightSidebar = ({
   const [commentText, setCommentText] = useState('')
   const [isLiked, setIsLiked] = useState(false)
   const [likes, setLikes] = useState(selectedReel?.likeCount || 0)
+  const [providerImageErrors, setProviderImageErrors] = useState<Record<string, boolean>>({})
+  const [userImageErrors, setUserImageErrors] = useState<Record<string, boolean>>({})
 
   // Update likes when selectedReel changes
   useEffect(() => {
@@ -141,26 +143,29 @@ export const CommunityRightSidebar = ({
           {/* Reel Details Card */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200">
-                {getUserAvatar(selectedReel.user) ? (
-                  <Image
-                    src={getUserAvatar(selectedReel.user)!}
-                    alt={getUserDisplayName(selectedReel.user)}
-                    fill
-                    sizes="40px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-white">
+              <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+                {(() => {
+                  const avatar = getUserAvatar(selectedReel.user)
+                  const displayName = getUserDisplayName(selectedReel.user)
+                  return avatar && avatar !== 'https://via.placeholder.com/100' ? (
                     <Image
-                      src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                      alt="OurBride"
-                      width={24}
-                      height={24}
-                      className="object-contain"
+                      src={avatar}
+                      alt={displayName}
+                      fill
+                      sizes="40px"
+                      className="object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                      }}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                      <span className="text-14 font-semibold text-brand-600">
+                        {displayName.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                  )
+                })()}
               </div>
               <div>
                 <h4 className="text-16 font-normal text-gray-900">
@@ -228,8 +233,7 @@ export const CommunityRightSidebar = ({
                         e.currentTarget.style.display = 'none'
                       }}
                     />
-                  ) : null}
-                  {(!currentUser.avatar || currentUser.avatar === 'https://via.placeholder.com/100') && (
+                  ) : (
                     <div className="w-full h-full flex items-center justify-center bg-brand-100">
                       <span className="text-14 font-semibold text-brand-600">
                         {currentUser.name.charAt(0).toUpperCase() || 'U'}
@@ -285,23 +289,21 @@ export const CommunityRightSidebar = ({
                         {(() => {
                           const avatar = suggestion.profileImageUrl || 'https://via.placeholder.com/100'
                           const displayName = suggestion.displayName || suggestion.userName || 'User'
-                          return avatar && avatar !== 'https://via.placeholder.com/100' ? (
+                          const hasError = suggestion.userId && userImageErrors[suggestion.userId]
+                          return avatar && avatar !== 'https://via.placeholder.com/100' && !hasError ? (
                             <Image
                               src={avatar}
                               alt={displayName}
                               fill
                               sizes="40px"
                               className="object-cover"
-                              onError={(e) => {
-                                e.currentTarget.style.display = 'none'
+                              onError={() => {
+                                if (suggestion.userId) {
+                                  setUserImageErrors(prev => ({ ...prev, [suggestion.userId]: true }))
+                                }
                               }}
                             />
-                          ) : null
-                        })()}
-                        {(() => {
-                          const avatar = suggestion.profileImageUrl || 'https://via.placeholder.com/100'
-                          const displayName = suggestion.displayName || suggestion.userName || 'User'
-                          return (!avatar || avatar === 'https://via.placeholder.com/100') && (
+                          ) : (
                             <div className="w-full h-full flex items-center justify-center bg-brand-100">
                               <span className="text-14 font-semibold text-brand-600">
                                 {displayName.charAt(0).toUpperCase() || 'U'}
@@ -346,14 +348,25 @@ export const CommunityRightSidebar = ({
                     className="flex items-center gap-3 justify-between"
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                        <Image
-                          src={provider.profileImageUrl || 'https://via.placeholder.com/100'}
-                          alt={provider.providerName || 'Provider'}
-                          fill
-                          sizes="40px"
-                          className="object-cover"
-                        />
+                      <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+                        {provider.profileImageUrl && 
+                         provider.profileImageUrl !== 'https://via.placeholder.com/100' && 
+                         !providerImageErrors[provider.providerId] ? (
+                          <Image
+                            src={provider.profileImageUrl}
+                            alt={provider.providerName || 'Provider'}
+                            fill
+                            sizes="40px"
+                            className="object-cover"
+                            onError={() => setProviderImageErrors(prev => ({ ...prev, [provider.providerId]: true }))}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                            <span className="text-14 font-semibold text-brand-600">
+                              {(provider.providerName || 'P').charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-14 font-normal text-gray-900 truncate">

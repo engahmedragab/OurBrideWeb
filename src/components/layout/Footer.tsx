@@ -104,10 +104,10 @@ export const Footer = ({ className }: FooterProps) => {
     {
       title: 'Legal',
       links: [
+        { label: 'Privacy Policy', href: '/privacy-policy' },
+        { label: 'Terms & Conditions', href: '/terms-conditions' },
+        { label: 'Delete Account', href: '/delete-account' },
         { label: 'Settings', href: '/dashboard/settings' },
-        { label: 'Privacy', href: '/dashboard/settings/privacy' },
-        { label: 'Terms', href: '/dashboard/settings/terms' },
-        { label: 'Community Settings', href: '/dashboard/settings/community' },
       ],
     },
    

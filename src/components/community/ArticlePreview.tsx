@@ -1,9 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface ArticlePreviewProps {
   id: string
@@ -21,6 +21,7 @@ export const ArticlePreview = ({
   className,
 }: ArticlePreviewProps) => {
   const router = useRouter()
+  const [imageError, setImageError] = useState(false)
 
   const handleClick = () => {
     router.push(`/community/articles/${id}`)
@@ -34,15 +35,26 @@ export const ArticlePreview = ({
         className
       )}
     >
-      <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
-        <Image
-          src={thumbnail || COMMUNITY_IMAGES.DEFAULT_ARTICLE_IMAGE}
-          alt={title}
-          fill
-          sizes="80px"
-          className="object-cover"
-        />
-      </div>
+      {thumbnail ? (
+        <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+          {!imageError ? (
+            <Image
+              src={thumbnail}
+              alt={title}
+              fill
+              sizes="80px"
+              className="object-cover"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <span className="text-gray-400 text-10 font-medium">
+                No image
+              </span>
+            </div>
+          )}
+        </div>
+      ) : null}
       <div className="flex-1 min-w-0">
         <h4 className="text-14 font-normal text-gray-900 line-clamp-2 mb-1">
           {title}

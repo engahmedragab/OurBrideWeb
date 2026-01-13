@@ -207,11 +207,11 @@ export const DecisionGroupDetails = ({
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
               {(() => {
                 const avatar = getUserAvatar(decisionGroup.user)
                 const displayName = getUserDisplayName(decisionGroup.user)
-                return avatar ? (
+                return avatar && avatar !== 'https://via.placeholder.com/100' ? (
                   <Image
                     src={avatar}
                     alt={displayName}
@@ -222,19 +222,11 @@ export const DecisionGroupDetails = ({
                       e.currentTarget.style.display = 'none'
                     }}
                   />
-                ) : null
-              })()}
-              {(() => {
-                const avatar = getUserAvatar(decisionGroup.user)
-                return !avatar && (
-                  <div className="w-full h-full flex items-center justify-center bg-white">
-                    <Image
-                      src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                      alt="OurBride"
-                      width={24}
-                      height={24}
-                      className="object-contain"
-                    />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-brand-100">
+                    <span className="text-14 font-semibold text-brand-600">
+                      {displayName.charAt(0).toUpperCase() || 'U'}
+                    </span>
                   </div>
                 )
               })()}

@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
-import type { UiTodo } from '@/app/events/planning/todo/page'
+import type { UiTodo } from '@/app/[locale]/events/planning/todo/page'
 import { Button } from '@/components/ui/Button'
 import { Plus } from 'lucide-react'
 

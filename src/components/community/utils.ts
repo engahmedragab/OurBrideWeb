@@ -41,7 +41,15 @@ export const getUserDisplayName = (user: UserResponse | null, fallback?: string)
   const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   
-  return fullName || user.userName || fallback || 'OurBride'
+  // If we have a full name, use it
+  if (fullName) return fullName
+  
+  // If userName is admin@our-bride.com, display as OurBride
+  if (user.userName && user.userName.toLowerCase() === 'admin@our-bride.com') {
+    return 'OurBride'
+  }
+  
+  return user.userName || fallback || 'OurBride'
 }
 
 // Helper function to get user avatar

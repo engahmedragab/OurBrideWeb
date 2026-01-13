@@ -3,7 +3,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { ChevronRight, Trash2 } from 'lucide-react'
-import type { UiCategory } from '@/app/events/planning/items/page'
+import type { UiCategory } from '@/app/[locale]/events/planning/items/page'
 
 const STYLE_BY_COLOR: Record<
   string,

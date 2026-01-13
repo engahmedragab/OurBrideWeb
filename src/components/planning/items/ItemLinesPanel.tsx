@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
-import type { UiItem } from '@/app/events/planning/items/page'
+import type { UiItem } from '@/app/[locale]/events/planning/items/page'
 import { ItemLineRow } from './ItemLineRow'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'

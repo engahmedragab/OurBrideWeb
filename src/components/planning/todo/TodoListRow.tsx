@@ -3,7 +3,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { ChevronRight, Trash2 } from 'lucide-react'
-import type { UiTodoCategory } from '@/app/events/planning/todo/page'
+import type { UiTodoCategory } from '@/app/[locale]/events/planning/todo/page'
 
 const STYLE_BY_COLOR: Record<string, { bg: string; border: string }> = {
   gray: { bg: 'bg-gray-50', border: 'border-gray-200' },

@@ -37,7 +37,12 @@ const getUserDisplayName = (user: DecisionGroupResponse['user']): string => {
   const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
   const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
-  return fullName || user.userName || 'OurBride'
+  if (fullName) return fullName
+  // If userName is admin@our-bride.com, display as OurBride
+  if (user.userName && user.userName.toLowerCase() === 'admin@our-bride.com') {
+    return 'OurBride'
+  }
+  return user.userName || 'OurBride'
 }
 
 // Helper function to get user avatar
@@ -59,6 +64,7 @@ export const DecisionGroupCard = ({
   const [likes, setLikes] = useState(decisionGroup.likeCount || 0)
   const [shares, setShares] = useState(decisionGroup.shareCount || 0)
   const [favorites, setFavorites] = useState(decisionGroup.favoriteCount || 0)
+  const [avatarError, setAvatarError] = useState(false)
 
   const toggleLikeMutation = useMutation({
     mutationFn: async () => {
@@ -145,27 +151,20 @@ export const DecisionGroupCard = ({
       {/* Header */}
       <div className="flex items-start gap-4 mb-4">
         <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
-          {avatar ? (
+          {avatar && avatar !== 'https://via.placeholder.com/100' && !avatarError ? (
             <Image
               src={avatar}
               alt={displayName}
               fill
               sizes="40px"
               className="object-cover"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-              }}
+              onError={() => setAvatarError(true)}
             />
-          ) : null}
-          {!avatar && (
-            <div className="w-full h-full flex items-center justify-center bg-white">
-              <Image
-                src={COMMUNITY_IMAGES.DEFAULT_AVATAR_IMAGE}
-                alt="OurBride"
-                width={24}
-                height={24}
-                className="object-contain"
-              />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-brand-100">
+              <span className="text-14 font-semibold text-brand-600">
+                {displayName.charAt(0).toUpperCase() || 'U'}
+              </span>
             </div>
           )}
         </div>
