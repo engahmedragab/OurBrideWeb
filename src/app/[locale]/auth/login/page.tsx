@@ -22,15 +22,15 @@ import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-
 function LoginFormContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { loginWithEmail, loginWithExternalProvider, isLoading, error, clearError } = useAuth()
+  const { loginWithEmail, loginWithPhone, loginWithExternalProvider, isLoading, error, clearError } = useAuth()
   const [loginCredentials, setLoginCredentials] = useState<{
-    email: string
+    identifier: string
     password: string
-  }>({ email: '', password: '' })
+  }>({ identifier: '', password: '' })
   const [rememberMe, setRememberMe] = useState(false)
 
-  const handleEmailChange = useCallback((email: string) => {
-    setLoginCredentials(prev => ({ ...prev, email }))
+  const handleIdentifierChange = useCallback((identifier: string) => {
+    setLoginCredentials(prev => ({ ...prev, identifier }))
     if (error) clearError()
   }, [error, clearError])
 
@@ -42,10 +42,20 @@ function LoginFormContent() {
   const handleLogin = useCallback(async () => {
     try {
       clearError()
-      await loginWithEmail({
-        email: loginCredentials.email,
-        password: loginCredentials.password,
-      })
+      const { identifier, password } = loginCredentials
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)
+
+      if (isEmail) {
+        await loginWithEmail({
+          email: identifier,
+          password: password,
+        })
+      } else {
+        await loginWithPhone({
+          phoneNumber: identifier,
+          password: password,
+        })
+      }
 
       // After login, get planning preference init status from backend and update local user
       const { getPlanningPreferenceInit } = await import('@/services/profile/profileApi')
@@ -71,7 +81,7 @@ function LoginFormContent() {
       // Error is handled by auth context
       console.error('Login failed:', err)
     }
-  }, [loginCredentials, loginWithEmail, router, searchParams, clearError])
+  }, [loginCredentials, loginWithEmail, loginWithPhone, router, searchParams, clearError])
 
   const handleSocialLogin = useCallback(async (provider: 'google' | 'facebook') => {
     try {
@@ -138,7 +148,7 @@ function LoginFormContent() {
 
         {/* Login Form */}
         <LoginForm
-          onEmailChange={handleEmailChange}
+          onIdentifierChange={handleIdentifierChange}
           onPasswordChange={handlePasswordChange}
           onRememberMeChange={setRememberMe}
           onForgotPasswordClick={() => router.push('/auth/forgot-password')}

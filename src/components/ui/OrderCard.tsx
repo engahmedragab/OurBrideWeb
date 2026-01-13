@@ -15,7 +15,9 @@ import { cn } from '@/lib/utils'
 import type { DeliveryStatus } from '@/../client/common/api/gen/ourbride-api'
 
 export interface OrderProduct {
-  id: string
+  purchaseId: string
+  productId?: string
+  serviceId?: string
   title: string
   image: string
   price: number
@@ -287,18 +289,18 @@ export const OrderCard = ({
               <div className="space-y-3 mb-4">
                 {products.map(product => (
                   <div
-                    key={product.id}
+                    key={product.purchaseId}
                     className="flex items-center gap-3 bg-white rounded-lg p-3 border border-gray-200"
                   >
                     <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
-                      {product.image && product.image.trim() !== '' && product.image !== '/placeholder-product.png' && product.image !== '/images/placeholder-product.png' && !imageErrors.has(product.id) ? (
+                      {product.image && product.image.trim() !== '' && product.image !== '/placeholder-product.png' && product.image !== '/images/placeholder-product.png' && !imageErrors.has(product.purchaseId) ? (
                         <Image
                           src={product.image}
                           alt={product.title}
                           fill
                           sizes="64px"
                           className="object-cover"
-                          onError={() => setImageErrors(prev => new Set(prev).add(product.id))}
+                          onError={() => setImageErrors(prev => new Set(prev).add(product.purchaseId))}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gray-100">

@@ -27,7 +27,7 @@ import {
   useCancelOrder,
   useCartsWithProviders,
 } from '@/hooks'
-import type { OrderResponse, PurchaseResponse } from '@/types/responses'
+import type { OrderResponse, PurchaseResponse, UserCartWithProviderResponse } from '@/types/responses'
 import {
   OrderStatus as ApiOrderStatus,
   PurchaseType,
@@ -101,7 +101,9 @@ const mapOrderToOrderCard = (order: OrderResponse) => {
       const productImage = purchase.product?.image ?? purchase.imageUrl ?? '/images/placeholder-product.png'
 
       return {
-        id: purchase.productId?.toString() ?? purchase.serviceId?.toString() ?? purchase.id.toString(),
+        purchaseId: purchase.id.toString(),
+        productId: purchase.productId?.toString(),
+        serviceId: purchase.serviceId?.toString(),
         title: productName,
         image: productImage,
         price: purchase.totalPrice ?? purchase.price ?? 0,
@@ -252,16 +254,7 @@ export default function OrdersPage() {
 
   // Map orders to component format
   const ordersInProgress = useMemo(() => {
-    // Check for nested data structure (data.items vs items)
-    let allOrders: OrderResponse[] = []
-
-    if (clientOrdersData?.items && Array.isArray(clientOrdersData.items)) {
-      allOrders = clientOrdersData.items
-    } else if ((clientOrdersData as any)?.data?.items && Array.isArray((clientOrdersData as any).data.items)) {
-      allOrders = (clientOrdersData as any).data.items
-    } else {
-      return []
-    }
+    const allOrders: OrderResponse[] = clientOrdersData?.items ?? []
 
     // Filter for orders that are not completed and not cancelled
     // Don't require isActive to be true, as some orders may have isActive: false but are still in progress
@@ -273,16 +266,7 @@ export default function OrdersPage() {
   }, [clientOrdersData])
 
   const ordersHistory = useMemo(() => {
-    // Check for nested data structure (data.items vs items)
-    let allOrders: OrderResponse[] = []
-
-    if (clientOrdersData?.items && Array.isArray(clientOrdersData.items)) {
-      allOrders = clientOrdersData.items
-    } else if ((clientOrdersData as any)?.data?.items && Array.isArray((clientOrdersData as any).data.items)) {
-      allOrders = (clientOrdersData as any).data.items
-    } else {
-      return []
-    }
+    const allOrders: OrderResponse[] = clientOrdersData?.items ?? []
 
     // Filter for completed or cancelled orders
     const history = allOrders.filter(
@@ -297,9 +281,9 @@ export default function OrdersPage() {
     if (!cartsWithProviders) return []
 
     // Ensure cartsWithProviders is an array
-    const cartsArray = Array.isArray(cartsWithProviders) ? cartsWithProviders : []
+    const cartsArray: UserCartWithProviderResponse[] = Array.isArray(cartsWithProviders) ? cartsWithProviders : []
     const allPurchases: PurchaseResponse[] = []
-    cartsArray.forEach((cart: { purchases?: PurchaseResponse[] }) => {
+    cartsArray.forEach((cart) => {
       if (cart && cart.purchases && Array.isArray(cart.purchases)) {
         allPurchases.push(...cart.purchases)
       }
@@ -329,9 +313,9 @@ export default function OrdersPage() {
     if (!cartsWithProviders) return []
 
     // Ensure cartsWithProviders is an array
-    const cartsArray = Array.isArray(cartsWithProviders) ? cartsWithProviders : []
+    const cartsArray: UserCartWithProviderResponse[] = Array.isArray(cartsWithProviders) ? cartsWithProviders : []
     const allPurchases: PurchaseResponse[] = []
-    cartsArray.forEach((cart: { purchases?: PurchaseResponse[] }) => {
+    cartsArray.forEach((cart) => {
       if (cart && cart.purchases && Array.isArray(cart.purchases)) {
         allPurchases.push(...cart.purchases)
       }
@@ -542,7 +526,7 @@ export default function OrdersPage() {
                 <div className="space-y-6 mb-12">
                   {requestsInProgress.map(request => (
                     <RequestCard
-                      key={request.requestId}
+                      key={`request-in-progress-${request.requestId}`}
                       requestId={request.requestId}
                       requestDate={request.requestDate}
                       status={request.status}
@@ -582,7 +566,9 @@ export default function OrdersPage() {
                   <div className="space-y-6">
                     {ordersInProgress.map(order => (
                       <OrderCard
-                        key={order.orderId}
+                        key={`order-grid-in-progress-${
+                          order.orderResponse?.id.toString() || order.orderId
+                        }`}
                         orderId={order.orderId}
                         orderDate={order.orderDate}
                         status={order.status}
@@ -673,7 +659,7 @@ export default function OrdersPage() {
               >
                 {requestsHistory.map(request => (
                   <RequestCard
-                    key={request.requestId}
+                    key={`request-history-${request.requestId}`}
                     requestId={request.requestId}
                     requestDate={request.requestDate}
                     status={request.status}

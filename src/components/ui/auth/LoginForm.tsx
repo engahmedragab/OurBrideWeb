@@ -13,7 +13,7 @@ import { Mail, X, Check } from 'lucide-react'
 export type FieldStatus = 'default' | 'error' | 'success'
 
 export interface LoginFormProps {
-  onEmailChange?: (value: string) => void
+  onIdentifierChange?: (value: string) => void
   onPasswordChange?: (value: string) => void
   onRememberMeChange?: (checked: boolean) => void
   onForgotPasswordClick?: () => void
@@ -27,7 +27,7 @@ export interface LoginFormProps {
  * Validates email and password fields on blur and submit
  */
 export const LoginForm = ({
-  onEmailChange,
+  onIdentifierChange,
   onPasswordChange,
   onRememberMeChange,
   onForgotPasswordClick,
@@ -36,29 +36,39 @@ export const LoginForm = ({
   className,
 }: LoginFormProps) => {
   // Form values
-  const [email, setEmail] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
 
   // Validation states
-  const [emailStatus, setEmailStatus] = useState<FieldStatus>('default')
+  const [identifierStatus, setIdentifierStatus] =
+    useState<FieldStatus>('default')
   const [passwordStatus, setPasswordStatus] = useState<FieldStatus>('default')
-  const [emailErrorMessage, setEmailErrorMessage] = useState('')
+  const [identifierErrorMessage, setIdentifierErrorMessage] = useState('')
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
-  const [emailTouched, setEmailTouched] = useState(false)
+  const [identifierTouched, setIdentifierTouched] = useState(false)
   const [passwordTouched, setPasswordTouched] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [identifierFocused, setIdentifierFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
 
   // Validation helpers
-  const validateEmail = (
+  const validateIdentifier = (
     value: string
   ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: 'Wrong E-mail, Please Try Again' }
+      return {
+        isValid: false,
+        message: 'Wrong E-mail or phone number, Please Try Again',
+      }
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(value)) {
-      return { isValid: false, message: 'Wrong E-mail, Please Try Again' }
+    const phoneRegex = /^\+?[0-9]{10,15}$/
+    if (!emailRegex.test(value) && !phoneRegex.test(value)) {
+      return {
+        isValid: false,
+        message: 'Wrong E-mail or phone number, Please Try Again',
+      }
     }
     return { isValid: true, message: '' }
   }
@@ -82,41 +92,41 @@ export const LoginForm = ({
   }
 
   // Handlers
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIdentifierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    setEmail(value)
-    onEmailChange?.(value)
+    setIdentifier(value)
+    onIdentifierChange?.(value)
 
     // Validate in real-time if field was touched
-    if (emailTouched || isSubmitted) {
-      const validation = validateEmail(value)
+    if (identifierTouched || isSubmitted) {
+      const validation = validateIdentifier(value)
       if (validation.isValid) {
-        setEmailStatus('success')
-        setEmailErrorMessage('')
+        setIdentifierStatus('success')
+        setIdentifierErrorMessage('')
       } else {
-        setEmailStatus('error')
-        setEmailErrorMessage(validation.message)
+        setIdentifierStatus('error')
+        setIdentifierErrorMessage(validation.message)
       }
-    } else if (emailStatus === 'error') {
-      setEmailStatus('default')
-      setEmailErrorMessage('')
+    } else if (identifierStatus === 'error') {
+      setIdentifierStatus('default')
+      setIdentifierErrorMessage('')
     }
   }
 
-  const handleEmailFocus = () => {
-    setEmailFocused(true)
+  const handleIdentifierFocus = () => {
+    setIdentifierFocused(true)
   }
 
-  const handleEmailBlur = () => {
-    setEmailFocused(false)
-    setEmailTouched(true)
-    const validation = validateEmail(email)
+  const handleIdentifierBlur = () => {
+    setIdentifierFocused(false)
+    setIdentifierTouched(true)
+    const validation = validateIdentifier(identifier)
     if (validation.isValid) {
-      setEmailStatus('success')
-      setEmailErrorMessage('')
+      setIdentifierStatus('success')
+      setIdentifierErrorMessage('')
     } else {
-      setEmailStatus('error')
-      setEmailErrorMessage(validation.message)
+      setIdentifierStatus('error')
+      setIdentifierErrorMessage(validation.message)
     }
   }
 
@@ -168,15 +178,15 @@ export const LoginForm = ({
     setIsSubmitted(true)
 
     // Validate all fields
-    const emailValidation = validateEmail(email)
+    const identifierValidation = validateIdentifier(identifier)
     const passwordValidation = validatePassword(password)
 
-    if (emailValidation.isValid) {
-      setEmailStatus('success')
-      setEmailErrorMessage('')
+    if (identifierValidation.isValid) {
+      setIdentifierStatus('success')
+      setIdentifierErrorMessage('')
     } else {
-      setEmailStatus('error')
-      setEmailErrorMessage(emailValidation.message)
+      setIdentifierStatus('error')
+      setIdentifierErrorMessage(identifierValidation.message)
     }
 
     if (passwordValidation.isValid) {
@@ -188,7 +198,7 @@ export const LoginForm = ({
     }
 
     // Only proceed if all fields are valid
-    if (emailValidation.isValid && passwordValidation.isValid) {
+    if (identifierValidation.isValid && passwordValidation.isValid) {
       onLoginClick?.()
     }
   }
@@ -206,10 +216,11 @@ export const LoginForm = ({
     return 'default'
   }
 
-  const [emailFocused, setEmailFocused] = useState(false)
-  const [passwordFocused, setPasswordFocused] = useState(false)
-
-  const emailInputVariant = getInputVariant(emailStatus, email, emailFocused)
+  const identifierInputVariant = getInputVariant(
+    identifierStatus,
+    identifier,
+    identifierFocused
+  )
   const passwordInputVariant = getInputVariant(
     passwordStatus,
     password,
@@ -218,9 +229,9 @@ export const LoginForm = ({
 
   // Check if form is valid - validate values directly
   const isFormValid = (() => {
-    const emailValidation = validateEmail(email)
+    const identifierValidation = validateIdentifier(identifier)
     const passwordValidation = validatePassword(password)
-    return emailValidation.isValid && passwordValidation.isValid
+    return identifierValidation.isValid && passwordValidation.isValid
   })()
 
   return (
@@ -231,16 +242,16 @@ export const LoginForm = ({
       {/* Email Field */}
       <div className="w-full space-y-1.5">
         <Input
-          type="email"
-          placeholder="example@example.com"
-          value={email}
-          onChange={handleEmailChange}
-          onFocus={handleEmailFocus}
-          onBlur={handleEmailBlur}
-          variant={emailInputVariant}
+          type="text"
+          placeholder="Email or Phone Number"
+          value={identifier}
+          onChange={handleIdentifierChange}
+          onFocus={handleIdentifierFocus}
+          onBlur={handleIdentifierBlur}
+          variant={identifierInputVariant}
           prefixIcon={Mail}
-          errorMessage={emailErrorMessage}
-          showSuccessIcon={emailStatus === 'success'}
+          errorMessage={identifierErrorMessage}
+          showSuccessIcon={identifierStatus === 'success'}
           size="lg"
         />
       </div>
