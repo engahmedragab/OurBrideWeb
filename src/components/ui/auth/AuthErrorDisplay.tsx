@@ -27,7 +27,7 @@ export const AuthErrorDisplay = ({ error, className }: AuthErrorDisplayProps) =>
     >
       {hasMultipleErrors ? (
         <div className="space-y-1">
-          <p className="text-sm font-medium text-red-800 mb-1">Validation Errors:</p>
+          {/* <p className="text-sm font-medium text-red-800 mb-1">{t('auth.errors.validationTitle')}</p> */}
           <ul className="list-disc list-inside space-y-0.5">
             {errorMessages.map((err, index) => (
               <li key={index} className="text-sm text-red-600">

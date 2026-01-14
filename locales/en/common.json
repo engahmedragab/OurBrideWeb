@@ -127,6 +127,10 @@
         "title": "Password Reset Successful",
         "description": "Your password has been updated. You can now log in with your new password.",
         "confirmLabel": "Confirm"
+      },
+      "errors": {
+        "somethingWentWrong": "Something went wrong. Please try again.",
+        "successToast": "Password reset successfully"
       }
     },
     "mobileVerification": {
@@ -162,11 +166,12 @@
       "searchResults": "Search Results",
       "noLocationsFound": "No locations found. Try a different search term.",
       "searchForLocationOrUseYourCurrentLocation": "Search for a location or use your current location",
+      "savingButton": "Saving...",
       "successModal": {
         "title": "Success!",
         "description": "Your planning preferences have been saved",
         "confirmLabel": "Confirm",
-        "savingButton": "Saving...",
+        
         "skipButton": "Skip For Now"
       },
       "errors": {
@@ -184,7 +189,8 @@
         "locationAccessDenied": "Location access denied. Please enable location permissions in your browser settings.",
         "locationInformationUnavailable": "Location information is unavailable.",
         "locationRequestTimedOut": "Location request timed out. Please try again.",
-        "errorOccurredWhileGettingLocation": "An error occurred while getting your location."
+        "errorOccurredWhileGettingLocation": "An error occurred while getting your location.",
+        "somethingWentWrong": "Something went wrong while checking your preferences"
       }
     },
     "context": {
@@ -196,8 +202,8 @@
       "sendOtpFailed": "Failed to send OTP",
       "invalidOtpCode": "Invalid OTP code",
       "invalidConfirmationCode": "Invalid confirmation code",
-      "refreshUserFailed": "Failed to refresh user data",
-      "hookOutsideProvider": "useAuthContext must be used within an AuthProvider"
+      "refreshUserFailed": "Failed to refresh user data"
+     
     }},
     "api": {
     "errors": {

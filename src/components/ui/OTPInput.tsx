@@ -10,6 +10,9 @@ import {
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { X } from 'lucide-react'
+import { useIsRTL } from '@/i18n/hooks'
+
+
 
 const otpInputVariants = cva(
   'flex h-[79px] w-full items-center justify-center rounded-[5px] border text-center text-20 font-normal leading-6 transition-colors focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50',
@@ -33,10 +36,8 @@ const otpInputVariants = cva(
   }
 )
 
-export interface OTPInputProps extends Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'onChange' | 'value'
-> {
+export interface OTPInputProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> {
   length?: number
   value?: string[]
   onChange?: (value: string[]) => void
@@ -57,41 +58,88 @@ const OTPInput = forwardRef<HTMLDivElement, OTPInputProps>(
     },
     ref
   ) => {
+    const isRTL = useIsRTL()
     const [internalValue, setInternalValue] = useState<string[]>(
       Array(length).fill('')
     )
     const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+    const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
 
     const value = controlledValue ?? internalValue
     const setValue = onChange ?? setInternalValue
-    const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
 
-    const handleChange = (index: number, newValue: string) => {
-      if (!/^\d*$/.test(newValue)) return
+    const focusIndex = (index: number) => {
+      inputRefs.current[index]?.focus()
+      setFocusedIndex(index)
+    }
 
+    const handleChange = (index: number, raw: string) => {
+      // خليها أرقام فقط
+      const digits = raw.replace(/\D/g, '')
+      if (!digits) {
+        const newValues = [...value]
+        newValues[index] = ''
+        setValue(newValues)
+        return
+      }
+
+      // ✅ لو دخل أكتر من رقم (autofill / mobile / paste صغير)
+      // وزّعهم على الخانات من عند index
       const newValues = [...value]
-      newValues[index] = newValue.slice(-1)
+      let writeIndex = index
+
+      for (const d of digits) {
+        if (writeIndex >= length) break
+        newValues[writeIndex] = d
+        writeIndex++
+      }
+
       setValue(newValues)
 
-      // Auto-focus next input
-      if (newValue && index < length - 1) {
-        inputRefs.current[index + 1]?.focus()
-        setFocusedIndex(index + 1)
+      // نقل الفوكس لأبعد خانة اتكتبت
+      const nextIndex = Math.min(writeIndex, length - 1)
+      if (writeIndex <= length - 1) {
+        focusIndex(nextIndex)
+      } else {
+        // لو خلّص كل الخانات، خليه يطلع من آخر خانة
+        inputRefs.current[length - 1]?.blur()
+        setFocusedIndex(null)
       }
     }
 
-    const handleKeyDown = (
-      index: number,
-      e: KeyboardEvent<HTMLInputElement>
-    ) => {
-      if (e.key === 'Backspace' && !value[index] && index > 0) {
-        inputRefs.current[index - 1]?.focus()
+    const handleKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+      // ✅ Enter ينقل للخانة اللي بعدها بدل submit / بدل ما يفضل مكانه
+      if (e.key === 'Enter' || e.key === 'NumpadEnter') {
+        e.preventDefault()
+        if (index < length - 1) {
+          focusIndex(index + 1)
+        } else {
+          // آخر خانة: ممكن blur (والـ submit يحصل من زرار التأكيد)
+          inputRefs.current[index]?.blur()
+          setFocusedIndex(null)
+        }
+        return
       }
+
+      if (e.key === 'Backspace') {
+        // لو الخانة فاضية ارجع للي قبلها
+        if (!value[index] && index > 0) {
+          e.preventDefault()
+          focusIndex(index - 1)
+        }
+        return
+      }
+
       if (e.key === 'ArrowLeft' && index > 0) {
-        inputRefs.current[index - 1]?.focus()
+        e.preventDefault()
+        focusIndex(index - 1)
+        return
       }
+
       if (e.key === 'ArrowRight' && index < length - 1) {
-        inputRefs.current[index + 1]?.focus()
+        e.preventDefault()
+        focusIndex(index + 1)
+        return
       }
     }
 
@@ -114,39 +162,53 @@ const OTPInput = forwardRef<HTMLDivElement, OTPInputProps>(
             return (
               <input
                 key={index}
-                ref={el => {
+                ref={(el) => {
                   inputRefs.current[index] = el
                 }}
                 type="text"
                 inputMode="numeric"
-                maxLength={1}
+                autoComplete="one-time-code"
+                maxLength={length} // مهم عشان لو دخل أكتر من رقم (autofill) مايتقصش غلط
                 value={value[index] || ''}
-                onChange={e => handleChange(index, e.target.value)}
-                onKeyDown={e => handleKeyDown(index, e)}
-                onFocus={() => {
-                  setFocusedIndex(index)
-                }}
-                onBlur={() => {
-                  setFocusedIndex(null)
-                }}
+                onChange={(e) => handleChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                onFocus={() => setFocusedIndex(index)}
+                onBlur={() => setFocusedIndex(null)}
                 className={cn(otpInputVariants({ variant: inputVariant }))}
                 {...props}
               />
             )
           })}
         </div>
+
         {errorMessage && (
-          <div className="mt-2 flex items-center gap-2 text-14 font-normal leading-4 text-red-500">
-            <div className="flex h-4 w-4 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
-              <X className="h-2.5 w-2.5 text-red-500" />
-            </div>
-            <span>{errorMessage}</span>
+          <div className={cn("mt-2 flex items-center gap-2 md:text-14 text-10 font-normal leading-4 text-red-500 " ,
+           
+          )}>
+            {!isRTL ? (
+              <>
+                <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
+                  <X className="h-2 w-2 text-red-500 " />
+                </div>
+                <span>{errorMessage}</span>
+              </>
+            ) : (
+              <>
+                <span>{errorMessage}</span>
+                <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
+                  <X className="h-2 w-2 text-red-500 " />
+                </div>
+              </>
+            )}
+           
+            
           </div>
         )}
       </div>
     )
   }
 )
+
 OTPInput.displayName = 'OTPInput'
 
 export { OTPInput, otpInputVariants }

@@ -9,8 +9,8 @@ import { Checkbox } from '../Checkbox'
 import { GenderSelector } from '../GenderSelector'
 import { PasswordStrength } from '../PasswordStrength'
 import { Typography } from '@/components/ui/Typography'
-import { Mail, User, X, Check, Phone } from 'lucide-react'
-import { useI18nTranslations } from '@/i18n'
+import { Mail, User, X, Check, Phone, Smartphone } from 'lucide-react'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 
@@ -47,6 +47,7 @@ export const SignupForm = ({
 }: SignupFormProps) => {
   const t = useI18nTranslations('auth.signupForm')
   const tCommon = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   // Form values
   const [fullName, setFullName] = useState('')
   const [gender, setGender] = useState<'male' | 'female' | undefined>()
@@ -542,8 +543,8 @@ export const SignupForm = ({
         />
         {genderErrorMessage && (
           <div className="mt-2 flex items-center gap-2 text-14 font-normal leading-4 text-red-500">
-            <div className="flex h-4 w-4 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
-              <X className="h-2.5 w-2.5 text-red-500" />
+            <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
+              <X className="h-2 w-2 text-red-500" />
             </div>
             <span>{genderErrorMessage}</span>
           </div>
@@ -551,7 +552,7 @@ export const SignupForm = ({
       </div>
 
       {/* Email Field */}
-      <div className="w-full space-y-1.5">
+      <div className="w-full space-y-1.5 ">
         <Input
           type="email"
           placeholder={t('emailPlaceholder')}
@@ -571,16 +572,18 @@ export const SignupForm = ({
       <div className="w-full space-y-1.5">
         <Input
           type="tel"
+          dir={isRTL ? 'rtl' : 'ltr'}
           placeholder={t('mobilePlaceholder')}
           value={mobileNumber}
           onChange={handleMobileChange}
           onFocus={handleMobileFocus}
           onBlur={handleMobileBlur}
           variant={mobileInputVariant}
-          prefixIcon={<Phone className="h-6 w-6" />}
+          prefixIcon={<Smartphone className="h-5 w-5" />}
           errorMessage={mobileErrorMessage}
           showSuccessIcon={mobileStatus === 'success'}
           size="lg"
+         
         />
       </div>
 

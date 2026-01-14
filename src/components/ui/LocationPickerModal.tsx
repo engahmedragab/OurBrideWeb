@@ -111,7 +111,7 @@ export const LocationPickerModal = ({
       )
 
       if (!response.ok) {
-        throw new Error('Failed to search locations')
+        throw new Error(t('planningPreferences.errors.failedToSearchLocations'))
       }
 
       const data: SearchLocation[] = await response.json()

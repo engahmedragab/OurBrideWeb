@@ -11,6 +11,7 @@ import { Typography } from '../Typography'
 import { Mail } from 'lucide-react'
 import { useI18nTranslations } from '@/i18n'
 
+
 export type FieldStatus = 'default' | 'error' | 'success'
 
 export interface LoginFormProps {
@@ -237,18 +238,18 @@ export const LoginForm = ({
       </div>
 
       {/* Remember Me and Forgot Password */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between !mt-3">
         <div className="flex items-center gap-2">
           <Checkbox
             checked={rememberMe}
             onChange={handleRememberMeChange}
             variant="default"
-            size="md"
+            size="sm"
           />
           <Typography
             variant="bodySmall"
             textColor="secondary"
-            className="text-16 font-medium"
+            className="text-14 font-normal"
           >
             {t('loginForm.rememberMe')}
           </Typography>
@@ -257,7 +258,7 @@ export const LoginForm = ({
         <Link
           href="/auth/forgot-password"
           onClick={handleForgotPasswordClick}
-          className="text-16 font-normal text-gray-600 hover:text-brand-500 transition-colors"
+          className="text-14 font-normal text-gray-600 hover:text-brand-500 transition-colors "
         >
           {t('loginForm.forgotPasswordLink')}
         </Link>

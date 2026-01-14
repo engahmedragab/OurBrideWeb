@@ -252,7 +252,7 @@ export const PlanningPreferencesForm = ({
             variant="h6"
             weight="regular"
             textColor="default"
-            className="text-14 sm:text-16"
+            className="text-14 sm:text-16 text-center"
           >
             {t('servicesTitle')}
           </Typography>
@@ -272,13 +272,14 @@ export const PlanningPreferencesForm = ({
 
           {/* Services Grid */}
           {isLoadingPreferences ? (
-            <div className="flex justify-center py-8">
+            <div className="flex justify-center  py-8">
               <Typography variant="body" textColor="muted">
                 {t('loadingServices')}
               </Typography>
             </div>
           ) : availablePreferences.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5  gap-2 ">
+
               {availablePreferences.map((preference) => {
                 // Render icon from API data (image or Lucide icon based on service name)
                 const renderIcon = () => {
@@ -374,9 +375,10 @@ export const PlanningPreferencesForm = ({
                 className="pr-24"
               />
               <button
+             
                 type="button"
                 onClick={() => setShowLocationModal(true)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-brand-500 hover:text-brand-600 font-medium text-14 transition-colors"
+                className={cn("absolute  top-1/2 -translate-y-1/2 flex items-center !text-brand-500 hover:text-brand-600 font-medium text-10 sm:text-12 transition-colors", isRTL ? 'left-3 ' : '!right-3 ')}
               >
                 {t('setLocation')}
               </button>
@@ -398,7 +400,7 @@ export const PlanningPreferencesForm = ({
             variant="h6"
             weight="regular"
             textColor="default"
-            className="text-14 sm:text-16"
+            className={cn("text-14 sm:text-16 ", isRTL ? 'text-right' : 'text-left')}
           >
             {t('detailsTitle')}
           </Typography>

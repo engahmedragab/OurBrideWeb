@@ -12,10 +12,10 @@ import { PasswordStrength } from '../PasswordStrength'
 import { Typography } from '../Typography'
 import { StatusModal } from '../StatusModal'
 import { AuthErrorDisplay } from './AuthErrorDisplay'
-import { ChevronLeft, Phone } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Phone, Smartphone } from 'lucide-react'
 import forgetIcon from '@/assets/images/forgetIcon.png'
 import { useAuth } from '@/auth'
-import { useI18nTranslations } from '@/i18n'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 
@@ -44,6 +44,7 @@ export const ForgotPasswordForm = ({
 }: ForgotPasswordFormProps) => {
   const t = useI18nTranslations('auth')
   const tc = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   const router = useRouter()
   const { sendPhoneOTP, verifyPhoneOTP, isLoading, error, clearError } = useAuth()
 
@@ -275,6 +276,7 @@ export const ForgotPasswordForm = ({
       } else {
         setConfirmPasswordStatus('error')
         setConfirmPasswordErrorMessage(validation.message)
+        
       }
     } else if (confirmPasswordStatus === 'error') {
       setConfirmPasswordStatus('default')
@@ -459,7 +461,7 @@ export const ForgotPasswordForm = ({
           onClick={handleBack}
           className="flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors"
         >
-          <ChevronLeft className="h-5 w-5" />
+          {isRTL ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>
         <Typography
           variant="h6"
@@ -502,17 +504,18 @@ export const ForgotPasswordForm = ({
           <div className="w-full space-y-1">
             <Input
               type="tel"
+              dir={isRTL ? 'rtl' : 'ltr'}
               placeholder={t('forgotPassword.phonePlaceholder')}
               value={phone}
               onChange={handlePhoneChange}
               onFocus={handlePhoneFocus}
               onBlur={handlePhoneBlur}
               variant={phoneInputVariant}
-              prefixIcon={<Phone className="h-6 w-6" />}
+              prefixIcon={<Smartphone className="h-5 w-5" />}
               errorMessage={phoneErrorMessage}
               showSuccessIcon={phoneStatus === 'success'}
               size="lg"
-              className="h-20  px-5 text-16"
+              className="h-20  px-5 text-14"
             />
           </div>
 
@@ -535,7 +538,7 @@ export const ForgotPasswordForm = ({
               align="center"
               className="text-12 sm:text-14"
             >
-              {t('forgotPassword.providerTextPrefix')}{' '}
+             {t('forgotPassword.resendTextPrefix')}{' '}
               <button
                 type="button"
                 className="font-semibold text-gray-800 underline hover:text-brand-500 transition-colors"
@@ -575,8 +578,9 @@ export const ForgotPasswordForm = ({
           <AuthErrorDisplay error={error} />
 
           {/* OTP Input */}
-          <div className="w-full space-y-1 flex justify-center">
+          <div className="w-full space-y-1 flex justify-center" dir={isRTL ? 'ltr' : 'ltr' }>
             <OTPInput
+             
               length={4}
               value={otp}
               onChange={handleOTPChange}
@@ -604,7 +608,7 @@ export const ForgotPasswordForm = ({
               align="center"
               className="text-12 sm:text-14"
             >
-              {t('forgotPassword.providerTextPrefix')}{' '}
+             {t('forgotPassword.resendTextPrefix')}{' '}
               <button
                 type="button"
                 className="font-semibold text-gray-800 underline hover:text-brand-500 transition-colors"

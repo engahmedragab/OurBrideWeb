@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, Suspense } from 'react'
+import { useState, useCallback, Suspense, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from '@/i18n/navigation'
 import {
@@ -17,34 +17,71 @@ import { useAuth } from '@/auth'
 import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-api'
 import { useI18nTranslations } from '@/i18n'
 
+import {  useToast } from '@/components/ui/Toaster'
+
+
 /**
  * Login Form Component that uses search params
  */
 function LoginFormContent() {
   const router = useRouter()
-  const t =useI18nTranslations('auth')
-  const tCommon =useI18nTranslations('common')
+  const t = useI18nTranslations('auth')
+  const tCommon = useI18nTranslations('common')
+  const toast = useToast()
   const searchParams = useSearchParams()
-  const { loginWithEmail, loginWithExternalProvider, isLoading, error, clearError } = useAuth()
+
+  const { loginWithEmail, loginWithExternalProvider, isLoading, error, clearError } =
+    useAuth()
+
   const [loginCredentials, setLoginCredentials] = useState<{
     email: string
     password: string
   }>({ email: '', password: '' })
+
   const [rememberMe, setRememberMe] = useState(false)
 
-  const handleEmailChange = useCallback((email: string) => {
-    setLoginCredentials(prev => ({ ...prev, email }))
-    if (error) clearError()
-  }, [error, clearError])
+  // Prevent duplicate toast spam on rerenders for same error
+  const lastToastedErrorRef = useRef<string | null>(null)
 
-  const handlePasswordChange = useCallback((password: string) => {
-    setLoginCredentials(prev => ({ ...prev, password }))
-    if (error) clearError()
-  }, [error, clearError])
+  const showErrorToast = useCallback(
+    (message: string) => {
+      if (!message) return
+      if (lastToastedErrorRef.current === message) return
+      lastToastedErrorRef.current = message
+      toast.addToast(message, 'error')
+    },
+    [toast]
+  )
+
+  // Whenever auth context sets an error, show it as a toast (once)
+  useEffect(() => {
+    if (!error) {
+      lastToastedErrorRef.current = null
+      return
+    }
+    showErrorToast(error)
+  }, [error, showErrorToast])
+
+  const handleEmailChange = useCallback(
+    (email: string) => {
+      setLoginCredentials(prev => ({ ...prev, email }))
+      if (error) clearError()
+    },
+    [error, clearError]
+  )
+
+  const handlePasswordChange = useCallback(
+    (password: string) => {
+      setLoginCredentials(prev => ({ ...prev, password }))
+      if (error) clearError()
+    },
+    [error, clearError]
+  )
 
   const handleLogin = useCallback(async () => {
     try {
       clearError()
+
       await loginWithEmail({
         email: loginCredentials.email,
         password: loginCredentials.password,
@@ -53,67 +90,71 @@ function LoginFormContent() {
       // After login, get planning preference init status from backend and update local user
       const { getPlanningPreferenceInit } = await import('@/services/profile/profileApi')
       const { setPreferenceInit, isPreferenceInit } = await import('@/auth/utils/token')
+
       const backendPreferenceInit = await getPlanningPreferenceInit()
       setPreferenceInit(backendPreferenceInit)
 
-      // Now check (from backend) if preferences are initialized
       const preferencesInitialized = isPreferenceInit()
 
-      // Get redirect URL from query params or default based on preferences
       let redirectUrl = searchParams?.get('redirect') || '/dashboard'
-
-      // If preferences are not initialized, redirect to planning preferences
-      // (unless user was trying to access a specific page - then let dashboard layout handle it)
       if (!preferencesInitialized) {
         redirectUrl = '/auth/planning-preferences'
       }
 
-      // Redirect to the original page, planning preferences, or dashboard
       router.push(redirectUrl)
     } catch (err) {
-      // Error is handled by auth context
+      // If auth context already sets `error`, the effect above will toast it.
+      // But if it doesn't, we toast a fallback message here.
+      const message =
+        err instanceof Error
+          ? err.message
+          : tCommon?.('somethingWentWrong') || 'Login failed'
+
+      showErrorToast(message)
       console.error('Login failed:', err)
     }
-  }, [loginCredentials, loginWithEmail, router, searchParams, clearError])
+  }, [
+    loginCredentials,
+    loginWithEmail,
+    router,
+    searchParams,
+    clearError,
+    showErrorToast,
+    tCommon,
+  ])
 
-  const handleSocialLogin = useCallback(async (provider: 'google' | 'facebook') => {
-    try {
-      clearError()
+  const handleSocialLogin = useCallback(
+    async (provider: 'google' | 'facebook') => {
+      try {
+        clearError()
 
-      // Map provider names to ExternalProvidersType
-      // Note: API only supports Google, Facebook, LinkedIn - Apple not in enum
-      const providerMap: Record<string, ExternalProvidersType | null> = {
-        google: 'Google' as ExternalProvidersType,
-        facebook: 'Facebook' as ExternalProvidersType,
-        apple: null, // Apple not supported in API enum
+        const providerMap: Record<string, ExternalProvidersType | null> = {
+          google: 'Google' as ExternalProvidersType,
+          facebook: 'Facebook' as ExternalProvidersType,
+          apple: null,
+        }
+
+        const providerType = providerMap[provider]
+        if (!providerType) {
+          showErrorToast(`${provider} login is not supported`)
+          return
+        }
+
+        console.log(`Social login with ${provider} - OAuth integration needed`)
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Login failed'
+        showErrorToast(message)
+        console.error(`${provider} login failed:`, err)
       }
-
-      const providerType = providerMap[provider]
-
-      if (!providerType) {
-        console.warn(`${provider} login is not supported by the API`)
-        // TODO: Show user-friendly message
-        return
-      }
-
-      // TODO: Implement OAuth flow
-      // For now, this is a placeholder - you'll need to integrate with your OAuth provider
-      // Example: Get access token from OAuth provider, then call loginWithExternalProvider
-      console.log(`Social login with ${provider} - OAuth integration needed`)
-
-      // Placeholder - replace with actual OAuth implementation
-      // const accessToken = await getOAuthToken(provider)
-      // await loginWithExternalProvider({
-      //   accessToken,
-      //   provider: providerType,
-      // })
-
-      // router.push('/dashboard')
-    } catch (err) {
-      console.error(`${provider} login failed:`, err)
-    }
-  }, [loginWithExternalProvider, clearError, router])
-
+    },
+    [loginWithExternalProvider, clearError, showErrorToast]
+    
+  )
+  useEffect(() => {
+    if (!error) return
+    const t = window.setTimeout(() => clearError(), 3000)
+    return () => window.clearTimeout(t)
+  }, [error, clearError])
   return (
     <>
       <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
@@ -125,19 +166,18 @@ function LoginFormContent() {
 
         {/* Social Login */}
         <div className="flex items-center justify-center gap-2">
-          <SocialMediaButton
-            provider="google"
-            onClick={() => handleSocialLogin('google')}
-          />
+          <SocialMediaButton provider="google" onClick={() => handleSocialLogin('google')} />
           <SocialMediaButton
             provider="facebook"
             onClick={() => handleSocialLogin('facebook')}
           />
-
         </div>
 
         {/* Divider */}
         <AuthDivider />
+
+        {/* ✅ Better placement: error directly before the form (high visibility) */}
+        <AuthErrorDisplay error={error} />
 
         {/* Login Form */}
         <LoginForm
@@ -148,9 +188,6 @@ function LoginFormContent() {
           onLoginClick={handleLogin}
           onProviderClick={() => router.push('/auth/provider-login')}
         />
-
-        {/* Error Message */}
-        <AuthErrorDisplay error={error} />
 
         {/* Download App Section - Mobile Only */}
         <div className="lg:hidden w-full pt-4">
@@ -168,21 +205,29 @@ function LoginFormContent() {
  * Login Page with authentication integration
  */
 export default function LoginPage() {
-  const t =useI18nTranslations('auth')
-  const tCommon =useI18nTranslations('common')
+  const t = useI18nTranslations('auth')
+  const tCommon = useI18nTranslations('common')
+
   return (
-    <Suspense fallback={
-      <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
-        <WelcomeHeader welcomeText={t('welcomeHeader.defaultWelcome')} />
-        <AuthTabs />
-        <LoadingOverlay
-          open={true}
-          title={tCommon('loading')}
-          subtitle={tCommon('pleaseWait')}
-        />
-      </div>
-    }>
-      <LoginFormContent />
-    </Suspense>
+    <>
+      {/* ✅ Toast host should be mounted once at page root */}
+   
+
+      <Suspense
+        fallback={
+          <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
+            <WelcomeHeader welcomeText={t('welcomeHeader.defaultWelcome')} />
+            <AuthTabs />
+            <LoadingOverlay
+              open={true}
+              title={tCommon('loading')}
+              subtitle={tCommon('pleaseWait')}
+            />
+          </div>
+        }
+      >
+        <LoginFormContent />
+      </Suspense>
+    </>
   )
 }

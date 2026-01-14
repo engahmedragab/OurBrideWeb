@@ -16,13 +16,13 @@
   },
   "auth": {
     "hero": {
-      "backToHome": "العودة إلى الصفحة الرئيسية",
-      "title": "نظّمي زفافك",
-      "description": "نظّمي زفافك بسهولة ويجعله أكثر سهولة"
+      "backToHome": "  الصفحة الرئيسية",
+      "title": "نظّم زفافك",
+      "description": "نظّم زفافك بسهولة ويجعله أكثر سهولة"
     },
     "heroCard": {
-      "title": "نظّمي زفافك",
-      "subtitle": "نظّمي زفافك بسهولة ويجعله أكثر سهولة"
+      "title": "نظّم زفافك",
+      "subtitle": "نظّم زفافك بسهولة ويجعله أكثر سهولة"
     },
     "tabs": {
       "login": "تسجيل الدخول",
@@ -48,7 +48,7 @@
     },
     "loginForm": {
       "emailPlaceholder": "example@example.com",
-      "passwordPlaceholder": "أدخلي كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور",
       "rememberMe": "تذكرني",
       "forgotPasswordLink": "نسيتِ كلمة المرور؟",
       "loginButton": "تسجيل الدخول",
@@ -63,7 +63,7 @@
       "fullNamePlaceholder": "الاسم الكامل",
       "emailPlaceholder": "البريد الإلكتروني",
       "mobilePlaceholder": "رقم الموبايل",
-      "passwordPlaceholder": "أدخلي كلمة المرور",
+      "passwordPlaceholder": "أدخل كلمة المرور",
       "confirmPasswordPlaceholder": "تأكيد كلمة المرور",
       "female": "أنثى",
       "male": "ذكر",
@@ -102,7 +102,7 @@
       "instructionStep2": "يرجى إدخال رمز التحقق المكون من 4 أرقام الذي أرسلناه إلى رقم هاتفك",
       "instructionStep3": "يرجى إدخال كلمة المرور الجديدة",
       "phonePlaceholder": "رقم الموبايل",
-      "newPasswordPlaceholder": "أدخلي كلمة المرور الجديدة",
+      "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
       "confirmNewPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
       "otpErrorLength": "يرجى إدخال رمز التحقق المكون من 4 أرقام",
       "otpErrorNumbers": "يجب أن يحتوي رمز التحقق على أرقام فقط",
@@ -143,11 +143,11 @@
       "servicesTitle": "الخدمات التي تبحثين عنها",
       "loadingServices": "جاري تحميل الخدمات...",
       "noServices": "لا توجد خدمات متاحة",
-      "budgetPlaceholder": "أدخلي ميزانيتك",
+      "budgetPlaceholder": "أدخل ميزانيتك",
       "budgetSuffix": "جنيه",
       "locationPlaceholder": "الموقع",
       "setLocation": "تحديد الموقع",
-      "detailsTitle": "بيانات العروس/العريس",
+      "detailsTitle": "بيانات العروسة/العريس",
       "fullNamePlaceholder": "الاسم الكامل",
       "emailPlaceholder": "البريد الإلكتروني",
       "confirmButton": "تأكيد",
@@ -157,11 +157,12 @@
       "searchResults": "نتائج البحث",
       "noLocationsFound": "لا توجد مواقع متاحة. يرجى البحث عن موقع آخر.",
       "searchForLocationOrUseYourCurrentLocation": "بحث عن موقع أو استخدم الموقع الحالي",
+      "savingButton": "جاري الحفظ...",
       "successModal": {
         "title": "تم بنجاح!",
         "description": "تم حفظ تفضيلات التخطيط الخاصة بك",
         "confirmLabel": "تأكيد",
-        "savingButton": "جاري الحفظ...",
+       
         "skipButton": "تخطي الآن"
       },
       "errors": {
@@ -179,7 +180,8 @@
         "locationAccessDenied": "غير مصرح بالوصول إلى الموقع. يرجى تمكين صلاحيات الوصول إلى الموقع في إعدادات المتصفح.",
         "locationInformationUnavailable": "لا يوجد معلومات حول الموقع.",
         "locationRequestTimedOut": "انتهت مهلة الطلب عن الموقع. يرجى المحاولة مرة أخرى.",
-        "errorOccurredWhileGettingLocation": "حدث خطأ أثناء الحصول على الموقع."
+        "errorOccurredWhileGettingLocation": "حدث خطأ أثناء الحصول على الموقع.",
+        "somethingWentWrong": "حدث خطأ أثناء التحقق من تفضيلات التخطيط"
       }
     },
     "context": {
@@ -191,8 +193,8 @@
         "sendOtpFailed": "فشل إرسال رمز التحقق",
         "invalidOtpCode": "رمز التحقق غير صحيح",
         "invalidConfirmationCode": "رمز التأكيد غير صحيح",
-        "refreshUserFailed": "فشل تحديث بيانات المستخدم",
-        "hookOutsideProvider": "يجب استخدام useAuthContext داخل AuthProvider"
+        "refreshUserFailed": "فشل تحديث بيانات المستخدم"
+       
       }
     },
     "api": {

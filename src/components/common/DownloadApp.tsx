@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import AppleIcon from '@/assets/svg/Apple.svg'
 import PlaystoreIcon from '@/assets/svg/Playstore.svg'
-import { useI18nTranslations } from '@/i18n'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 const downloadAppVariants = cva('py-2 px-2', {
   variants: {
     variant: {
@@ -32,14 +32,16 @@ export interface DownloadAppProps extends VariantProps<
  */
 export default function DownloadApp({ variant, className }: DownloadAppProps) {
   const t = useI18nTranslations('auth.downloadApp')
+  const isRTL = useIsRTL()
   return (
     <div className={cn(downloadAppVariants({ variant }), className)}>
       {/* Title */}
       <Typography
         variant="h6"
         className={cn(
-          'mb-2 !text-10 md:!text-12 font-semibold text-left uppercase px-2',
-          variant === 'secondary' ? 'text-gray-900' : 'text-gray-900'
+          'mb-2 !text-10 md:!text-14 font-semibold   uppercase px-2',
+          variant === 'secondary' ? 'text-gray-900' : 'text-gray-900',
+          isRTL ? '!text-right' : '!text-left'
         )}
       >
         {t('title')}
