@@ -11,6 +11,7 @@ import { ChevronLeft, Check } from 'lucide-react'
 import forgetIcon from '@/assets/images/forgetIcon.png'
 import { useAuth } from '@/auth'
 import Image from 'next/image'
+import { useI18nTranslations } from '@/i18n'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 
@@ -36,6 +37,7 @@ export const MobileVerificationForm = ({
   onVerifySuccess,
 }: MobileVerificationFormProps) => {
   const router = useRouter()
+  const t = useI18nTranslations('auth')
   const { sendPhoneOTP, verifyPhoneOTP, isLoading, error, clearError } = useAuth()
 
   // Get phone number from props, localStorage, or signup flow
@@ -65,9 +67,7 @@ export const MobileVerificationForm = ({
   const [otpErrorMessage, setOtpErrorMessage] = useState('')
 
   // Resend state
-  const [resendState, setResendState] = useState<
-    'idle' | 'countdown' | 'success'
-  >('idle')
+  const [resendState, setResendState] = useState<'idle' | 'countdown' | 'success'>('idle')
   const [resendCountdown, setResendCountdown] = useState(30)
 
   // Track touched
@@ -95,15 +95,14 @@ export const MobileVerificationForm = ({
   }, [resendState, resendCountdown])
 
   // Validation helpers
-  const validateOTP = (
-    value: string[]
-  ): { isValid: boolean; message: string } => {
+  const validateOTP = (value: string[]): { isValid: boolean; message: string } => {
     const otpString = value.join('')
+
     if (!otpString || otpString.length !== 4) {
-      return { isValid: false, message: 'Please enter the 4-digit OTP' }
+      return { isValid: false, message: t('mobileVerification.otpErrorLength') }
     }
     if (!/^\d{4}$/.test(otpString)) {
-      return { isValid: false, message: 'OTP must contain only numbers' }
+      return { isValid: false, message: t('mobileVerification.otpErrorNumbers') }
     }
     return { isValid: true, message: '' }
   }
@@ -111,40 +110,33 @@ export const MobileVerificationForm = ({
   // Send OTP code
   const handleSendOTP = useCallback(async () => {
     if (!phoneNumber) {
-      setOtpErrorMessage('Phone number is required')
+      setOtpErrorMessage(t('mobileVerification.phoneRequired'))
       return
     }
 
     // Prevent duplicate calls - if already sent, return (unless explicitly resending)
-    if (otpSentRef.current) {
-      return
-    }
+    if (otpSentRef.current) return
 
     // Mark as sent immediately to prevent duplicate calls (before async operation)
     otpSentRef.current = true
 
     try {
       clearError()
-      await sendPhoneOTP({
-        phoneNumber,
-        countryCode,
-      })
+      await sendPhoneOTP({ phoneNumber, countryCode })
       setResendState('countdown')
       setResendCountdown(30)
     } catch {
       // On error, allow retry by resetting the ref
       otpSentRef.current = false
-      setOtpErrorMessage(error || 'Failed to send OTP. Please try again.')
+      setOtpErrorMessage(error || t('mobileVerification.sendOtpFailed'))
     }
-  }, [phoneNumber, countryCode, sendPhoneOTP, clearError, error])
+  }, [phoneNumber, countryCode, sendPhoneOTP, clearError, error, t])
 
   // Send OTP on component mount if phone number is available (only once)
   useEffect(() => {
     if (phoneNumber && !otpSentRef.current) {
       handleSendOTP()
     }
-    // handleSendOTP is memoized with useCallback and all dependencies
-    // We intentionally only want this to run once when phoneNumber is available
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phoneNumber])
 
@@ -184,7 +176,7 @@ export const MobileVerificationForm = ({
 
     if (!phoneNumber) {
       setOtpStatus('error')
-      setOtpErrorMessage('Phone number is required')
+      setOtpErrorMessage(t('mobileVerification.phoneRequired'))
       return
     }
 
@@ -207,7 +199,7 @@ export const MobileVerificationForm = ({
       }
 
       setOtpStatus('success')
-      
+
       // Always redirect to planning preferences after successful verification
       if (onVerifySuccess) {
         onVerifySuccess()
@@ -216,7 +208,7 @@ export const MobileVerificationForm = ({
       }
     } catch {
       setOtpStatus('error')
-      setOtpErrorMessage(error || 'Invalid OTP code. Please try again.')
+      setOtpErrorMessage(error || t('mobileVerification.invalidOtp'))
     }
   }
 
@@ -224,15 +216,12 @@ export const MobileVerificationForm = ({
     if (resendState === 'idle' && phoneNumber) {
       try {
         clearError()
-        // Reset the ref to allow resend
         otpSentRef.current = false
         await handleSendOTP()
-        // Show success toast
+
         setTimeout(() => {
           setResendState('success')
-          setTimeout(() => {
-            setResendState('countdown')
-          }, 3000)
+          setTimeout(() => setResendState('countdown'), 3000)
         }, 500)
       } catch {
         // Error handled in handleSendOTP
@@ -241,20 +230,13 @@ export const MobileVerificationForm = ({
   }
 
   const handleBack = () => {
-    if (onBackClick) {
-      onBackClick()
-    } else {
-      router.push('/auth/signup')
-    }
+    if (onBackClick) onBackClick()
+    else router.push('/auth/signup')
   }
 
   // Get input variant
   const otpInputVariant =
-    otpStatus === 'error'
-      ? 'error'
-      : otpStatus === 'success'
-        ? 'success'
-        : 'default'
+    otpStatus === 'error' ? 'error' : otpStatus === 'success' ? 'success' : 'default'
 
   return (
     <div className={cn('w-full space-y-2.5 sm:space-y-3', className)}>
@@ -264,16 +246,18 @@ export const MobileVerificationForm = ({
           type="button"
           onClick={handleBack}
           className="flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors"
+          aria-label="Back"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
+
         <Typography
           variant="h6"
           weight="semibold"
           textColor="default"
           className="text-16 sm:text-18"
         >
-          Mobile Verification
+          {t('mobileVerification.title')}
         </Typography>
       </div>
 
@@ -281,7 +265,7 @@ export const MobileVerificationForm = ({
       <div className="flex justify-center py-4">
         <Image
           src={typeof forgetIcon === 'string' ? forgetIcon : forgetIcon.src}
-          alt="Mobile Verification"
+          alt={t('mobileVerification.title')}
           width={128}
           height={128}
           className="h-32 w-auto"
@@ -295,12 +279,9 @@ export const MobileVerificationForm = ({
         align="center"
         className="text-14 sm:text-14 text-gray-400 font-regular"
       >
-        Please enter the 4 numbers OTP We have sent to{' '}
-        {phoneNumber ? (
-          <span className="font-semibold text-gray-600">{phoneNumber}</span>
-        ) : (
-          'your phone number'
-        )}
+        {phoneNumber
+          ? t('mobileVerification.instruction', { phoneNumber })
+          : t('mobileVerification.instructionFallback')}
       </Typography>
 
       {/* Error Message */}
@@ -325,7 +306,7 @@ export const MobileVerificationForm = ({
         className="w-full text-white"
         onClick={handleConfirm}
       >
-        Confirm
+        {t('common.confirm')}
       </Button>
 
       {/* Resend OTP */}
@@ -336,10 +317,10 @@ export const MobileVerificationForm = ({
           align="center"
           className="text-12 sm:text-14"
         >
-          Didn&apos;t receive the code?{' '}
+          {t('mobileVerification.didntReceive')}{' '}
           {resendState === 'countdown' ? (
             <span className="text-gray-400">
-              Resend After {resendCountdown} Sec
+              {t('mobileVerification.resendAfter', { seconds: resendCountdown })}
             </span>
           ) : (
             <button
@@ -347,7 +328,7 @@ export const MobileVerificationForm = ({
               onClick={handleResend}
               className="font-semibold text-gray-800 underline hover:text-brand-500 transition-colors"
             >
-              Resend
+              {t('mobileVerification.resend')}
             </button>
           )}
         </Typography>
@@ -361,7 +342,7 @@ export const MobileVerificationForm = ({
               <Check className="h-3 w-3 text-white" />
             </div>
             <span className="text-12 font-medium text-green-700">
-              Otp Resent Successfully
+              {t('mobileVerification.resentSuccess')}
             </span>
           </div>
         </div>

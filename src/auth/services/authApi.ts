@@ -33,6 +33,27 @@ import { setToken, getToken, getRefreshToken, removeToken } from '../utils/token
  * Check response for errors and throw if found
  * Handles cases where API returns 200 status but with errors in body
  */
+const DEFAULT_KEYS = {
+  loginFailedCredentials: 'api.errors.loginFailedCredentials',
+  noTokenReceived: 'api.errors.noTokenReceived',
+  externalLoginFailed: 'api.errors.externalLoginFailed',
+  guestLoginFailed: 'api.errors.guestLoginFailed',
+  noTokenAvailableToRefresh: 'api.errors.noTokenAvailableToRefresh',
+  tokenRefreshFailedLoginAgain: 'api.errors.tokenRefreshFailedLoginAgain',
+  adminLoginFailedCredentials: 'api.errors.adminLoginFailedCredentials',
+  registrationFailedTryAgain: 'api.errors.registrationFailedTryAgain',
+  sendOtpFailedTryAgain: 'api.errors.sendOtpFailedTryAgain',
+  invalidOtpTryAgain: 'api.errors.invalidOtpTryAgain',
+  invalidConfirmationTryAgain: 'api.errors.invalidConfirmationTryAgain',
+  unauthorizedCheckCredentials: 'api.errors.unauthorizedCheckCredentials',
+  forbiddenNoPermission: 'api.errors.forbiddenNoPermission',
+  notFoundTryAgain: 'api.errors.notFoundTryAgain',
+  serverErrorTryLater: 'api.errors.serverErrorTryLater',
+  validationFailed: 'api.errors.validationFailed',
+} as const
+
+
+
 const checkResponseForErrors = (response: { data?: unknown }, defaultMessage: string): void => {
   const responseData = response.data as Record<string, unknown> | undefined
   if (responseData) {

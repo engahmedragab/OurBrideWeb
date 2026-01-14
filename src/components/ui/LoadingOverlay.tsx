@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import brandLogo from '@/assets/svg/Brand-logo.svg'
+import { useI18nTranslations } from '@/i18n'
 
 export interface LoadingOverlayProps {
   open: boolean
@@ -16,12 +17,13 @@ export interface LoadingOverlayProps {
  */
 export const LoadingOverlay = ({
   open,
-  title = 'Loading….',
-  subtitle = "Just a moment, we're almost there",
+  title ,
+  subtitle ,
   className,
   containerClassName,
 }: LoadingOverlayProps) => {
   if (!open) return null
+  const t =useI18nTranslations('common')
 
   return (
     <div
@@ -50,11 +52,15 @@ export const LoadingOverlay = ({
         {/* Loading Text */}
         <div className="mt-4 sm:mt-5 flex flex-col items-center">
           <p className="text-base sm:text-lg font-semibold text-gray-900">
-            {title}
+            {title || t('loading')}
           </p>
-          {subtitle && (
+          {subtitle ? (
             <p className="mt-2 text-sm sm:text-base text-gray-500">
               {subtitle}
+            </p>
+          ) : (
+            <p className="mt-2 text-sm sm:text-base text-gray-500">
+              {t('pleaseWait')}
             </p>
           )}
         </div>

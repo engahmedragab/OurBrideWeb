@@ -11,7 +11,16 @@ import authHeroImage from '@/assets/images/authHero.jpg'
  * Displays a hero section with background image, floating card, and interactive elements
  * @returns {JSX.Element} Auth hero section component
  */
-export default function AuthHeroSection() {
+interface HeroSectionData {
+  backToHome: string
+  title: string
+  description: string
+  heroCard: {
+    title: string
+    subtitle: string
+  }
+}
+export default function AuthHeroSection({ heroSectionData }: { heroSectionData: HeroSectionData }) {
   return (
     <div className="relative w-full h-full max-w-4xl mx-auto lg:rounded-3xl overflow-hidden">
       {/* Background Image */}
@@ -32,12 +41,12 @@ export default function AuthHeroSection() {
         className="absolute -top-1 left-0 z-30 rounded-br-3xl px-4 py-3 md:py-4 bg-white text-14 sm:text-16 font-semibold text-gray-900 hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2 shadow-md"
       >
         <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-        <span>Back To home</span>
+        <span>{heroSectionData.backToHome}</span>
       </Link>
 
       {/* Floating Hero Card - Top Right */}
       <div className="absolute top-6 right-10 lg:top-4 lg:right-4  z-30 w-1/4 max-w-[12.5rem] min-w-[9.375rem]">
-        <AuthHeroCard />
+        <AuthHeroCard title={heroSectionData.heroCard.title} subtitle={heroSectionData.heroCard.subtitle} />
       </div>
 
       {/* Text Section - Bottom Left (overlaid on pink structure) */}
@@ -46,13 +55,10 @@ export default function AuthHeroSection() {
           variant="h1"
           className="!text-white font-bold text-20 sm:text-24 mb-2 sm:mb-3 drop-shadow-lg"
         >
-          Organize your Wedding
+        {heroSectionData.title}
         </Typography>
         <Typography className="!text-white text-12 sm:text-14 opacity-90 drop-shadow-md leading-relaxed">
-          Lorem ipsum dolor sit amet consectetur. Volutpat tincidunt nullam
-          lacus enim mus consectetur. Posuere eget aliquam nunc faucibus amet.
-          Laoreet egestas dapibus commodo tellus id lacus nisl egestas
-          consectetur. Id quam convallis nunc mi sem.
+        {heroSectionData.description}
         </Typography>
       </div>
 

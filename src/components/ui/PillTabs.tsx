@@ -63,7 +63,7 @@ export const PillTabs = forwardRef<HTMLDivElement, PillTabsProps>(
       <div
         ref={ref}
         className={cn(
-          'inline-flex items-center rounded-full border border-gray-300 bg-white p-1 gap-2 w-full max-w-[268px] transition-all duration-300 ease-in-out',
+          'inline-flex text-14 items-center rounded-full border border-gray-300 bg-white p-1 gap-2 w-full max-w-[268px] transition-all duration-300 ease-in-out',
           containerClassName
         )}
         {...props}

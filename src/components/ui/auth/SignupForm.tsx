@@ -10,6 +10,7 @@ import { GenderSelector } from '../GenderSelector'
 import { PasswordStrength } from '../PasswordStrength'
 import { Typography } from '@/components/ui/Typography'
 import { Mail, User, X, Check, Phone } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 
@@ -44,6 +45,8 @@ export const SignupForm = ({
   onProviderClick,
   className,
 }: SignupFormProps) => {
+  const t = useI18nTranslations('auth.signupForm')
+  const tCommon = useI18nTranslations('common')
   // Form values
   const [fullName, setFullName] = useState('')
   const [gender, setGender] = useState<'male' | 'female' | undefined>()
@@ -85,7 +88,7 @@ export const SignupForm = ({
     value: string
   ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: 'Full name is required' }
+      return { isValid: false, message: t('errors.fullNameRequired') }
     }
     return { isValid: true, message: '' }
   }
@@ -94,11 +97,11 @@ export const SignupForm = ({
     value: string
   ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: 'E-mail is required' }
+      return { isValid: false, message: t('errors.emailRequired') }
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(value)) {
-      return { isValid: false, message: 'Please enter a valid email address' }
+      return { isValid: false, message: t('errors.emailInvalid') }
     }
     return { isValid: true, message: '' }
   }
@@ -107,12 +110,12 @@ export const SignupForm = ({
     value: string
   ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: 'Mobile number is required' }
+      return { isValid: false, message: t('errors.mobileRequired') }
     }
     // Basic phone validation: starts with +20 or 01 and has enough digits
     const phoneRegex = /^(\+20|01)[0-9]{9,}$/
     if (!phoneRegex.test(value.replace(/\s/g, ''))) {
-      return { isValid: false, message: 'Please enter a valid mobile number' }
+      return { isValid: false, message: t('errors.mobileInvalid') }
     }
     return { isValid: true, message: '' }
   }
@@ -121,12 +124,12 @@ export const SignupForm = ({
     value: string
   ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: 'Password is required' }
+      return { isValid: false, message: t('errors.passwordRequired') }
     }
     if (value.length < 8) {
       return {
         isValid: false,
-        message: 'Password must be at least 8 characters',
+        message: t('errors.passwordMin'),
       }
     }
     return { isValid: true, message: '' }
@@ -137,10 +140,10 @@ export const SignupForm = ({
     originalPassword: string
   ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: 'Please confirm your password' }
+      return { isValid: false, message: t('errors.confirmPasswordRequired') }
     }
     if (value !== originalPassword) {
-      return { isValid: false, message: "Password Doesn't Match" }
+      return { isValid: false, message: t('errors.passwordNotMatch') }
     }
     return { isValid: true, message: '' }
   }
@@ -388,7 +391,7 @@ export const SignupForm = ({
     }
 
     if (!gender) {
-      setGenderErrorMessage('Please select your gender')
+      setGenderErrorMessage(t('errors.genderRequired'))
     } else {
       setGenderErrorMessage('')
     }
@@ -426,7 +429,7 @@ export const SignupForm = ({
     }
 
     if (!acceptedTerms) {
-      setTermsErrorMessage('You must accept Terms & Conditions')
+        setTermsErrorMessage(t('errors.termsErrorRequired'))
     } else {
       setTermsErrorMessage('')
     }
@@ -517,7 +520,7 @@ export const SignupForm = ({
       <div className="w-full space-y-1.5">
         <Input
           type="text"
-          placeholder="Full Name"
+          placeholder={t('fullNamePlaceholder')}
           value={fullName}
           onChange={handleFullNameChange}
           onFocus={handleFullNameFocus}
@@ -551,7 +554,7 @@ export const SignupForm = ({
       <div className="w-full space-y-1.5">
         <Input
           type="email"
-          placeholder="E-mail"
+          placeholder={t('emailPlaceholder')}
           value={email}
           onChange={handleEmailChange}
           onFocus={handleEmailFocus}
@@ -568,7 +571,7 @@ export const SignupForm = ({
       <div className="w-full space-y-1.5">
         <Input
           type="tel"
-          placeholder="Mobile Number"
+          placeholder={t('mobilePlaceholder')}
           value={mobileNumber}
           onChange={handleMobileChange}
           onFocus={handleMobileFocus}
@@ -584,7 +587,7 @@ export const SignupForm = ({
       {/* Password Field */}
       <div className="w-full space-y-1.5">
         <PasswordInput
-          placeholder="Enter Password"
+          placeholder={t('passwordPlaceholder')}
           value={password}
           onChange={handlePasswordChange}
           onFocus={handlePasswordFocus}
@@ -600,7 +603,7 @@ export const SignupForm = ({
       {/* Confirm Password Field */}
       <div className="w-full space-y-1.5">
         <PasswordInput
-          placeholder="Confirm Password"
+          placeholder={t('confirmPasswordPlaceholder')}
           value={confirmPassword}
           onChange={handleConfirmPasswordChange}
           onFocus={handleConfirmPasswordFocus}
@@ -626,13 +629,13 @@ export const SignupForm = ({
             textColor="secondary"
             className="text-14 font-normal"
           >
-            I Accepted{' '}
+            {t('terms.labelPrefix')} {' '}
             <button
               type="button"
               onClick={onTermsClick}
               className="font-medium text-brand-500 hover:text-brand-600 underline transition-colors"
             >
-              Terms & Conditions
+              {t('terms.linkLabel')}
             </button>
           </Typography>
         </div>
@@ -645,7 +648,7 @@ export const SignupForm = ({
         size="lg"
         className="w-full text-white"
       >
-        SignUp
+        {t('button.signup')}
       </Button>
 
       {/* Provider Link */}
@@ -656,13 +659,13 @@ export const SignupForm = ({
           align="center"
           className="text-14 font-normal"
         >
-          Are you providing your services?{' '}
+          {t('provider.text')} {' '}
           <button
             type="button"
             onClick={onProviderClick}
             className="font-normal text-gray-800 underline hover:text-brand-500 transition-colors"
           >
-            Continue as provider
+            {t('provider.action')}
           </button>
         </Typography>
       </div>

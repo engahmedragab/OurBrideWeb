@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Search, MapPin, Loader2 } from 'lucide-react'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface LocationData {
   displayName: string
@@ -55,6 +56,7 @@ export const LocationPickerModal = ({
   onClose,
   onSelect,
 }: LocationPickerModalProps) => {
+  const t  = useI18nTranslations("auth")
   const [searchQuery, setSearchQuery] = useState('')
   const [isGettingLocation, setIsGettingLocation] = useState(false)
   const [locationError, setLocationError] = useState<string | null>(null)
@@ -153,7 +155,7 @@ export const LocationPickerModal = ({
         setSearchResults(results)
         setSearchError(null)
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to search locations'
+        const errorMessage = error instanceof Error ? error.message : t('planningPreferences.errors.failedToSearchLocations')
         setSearchError(errorMessage)
         setSearchResults([])
       } finally {
@@ -185,7 +187,7 @@ export const LocationPickerModal = ({
       )
 
       if (!response.ok) {
-        throw new Error('Failed to get address')
+        throw new Error(t('planningPreferences.errors.failedToGetAddress'))
       }
 
       const data = await response.json()
@@ -214,7 +216,7 @@ export const LocationPickerModal = ({
 
   const handleUseCurrentLocation = async () => {
     if (!navigator.geolocation) {
-      setLocationError('Geolocation is not supported by your browser')
+      setLocationError(t('planningPreferences.errors.geolocationNotSupported'))
       return
     }
 
@@ -254,27 +256,27 @@ export const LocationPickerModal = ({
           onSelect(locationData)
           onClose()
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Failed to get location address'
+          const errorMessage = error instanceof Error ? error.message : t('planningPreferences.errors.failedToGetAddress')
           setLocationError(errorMessage)
         } finally {
           setIsGettingLocation(false)
         }
       },
       (error) => {
-        let errorMessage = 'Failed to get your location'
+        let errorMessage = t('planningPreferences.errors.failedToGetAddress')
 
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = 'Location access denied. Please enable location permissions in your browser settings.'
+            errorMessage = t('planningPreferences.errors.locationAccessDenied')
             break
           case error.POSITION_UNAVAILABLE:
-            errorMessage = 'Location information is unavailable.'
+            errorMessage = t('planningPreferences.errors.locationInformationUnavailable')
             break
           case error.TIMEOUT:
-            errorMessage = 'Location request timed out. Please try again.'
+            errorMessage = t('planningPreferences.errors.locationRequestTimedOut')
             break
           default:
-            errorMessage = 'An error occurred while getting your location.'
+            errorMessage = t('planningPreferences.errors.errorOccurredWhileGettingLocation')
             break
         }
 
@@ -293,7 +295,7 @@ export const LocationPickerModal = ({
     <Modal
       isOpen={open}
       onClose={handleClose}
-      title="Set Location"
+      title={t('planningPreferences.setLocation')}
       maxWidth="sm"
       containerClassName="max-w-[400px]"
       contentClassName="p-4 sm:p-6"
@@ -303,7 +305,7 @@ export const LocationPickerModal = ({
         <div className="relative">
           <input
             type="text"
-            placeholder="Search For Location ...."
+            placeholder={t('planningPreferences.searchForLocation')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             className="w-full h-10 px-4 pr-10 rounded-lg border border-gray-200 text-14 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-brand-500 transition-colors"
@@ -332,7 +334,7 @@ export const LocationPickerModal = ({
               <MapPin className="h-5 w-5 text-brand-500" />
             )}
             <span className="text-14 font-medium">
-              {isGettingLocation ? 'Getting your location...' : 'Use My Current location'}
+              {isGettingLocation ? t('planningPreferences.gettingYourLocation') : t('planningPreferences.useMyCurrentLocation')}
             </span>
           </button>
 
@@ -348,7 +350,7 @@ export const LocationPickerModal = ({
         {searchQuery.trim() && (
           <div className="space-y-4">
             <h3 className="text-14 font-semibold text-gray-900">
-              Search Results
+              {t('planningPreferences.searchResults')}
             </h3>
 
             {/* Search Error */}
@@ -386,7 +388,7 @@ export const LocationPickerModal = ({
                   })
                 ) : (
                   <p className="text-14 text-gray-500 text-center py-4">
-                    No locations found. Try a different search term.
+                    {t('planningPreferences.noLocationsFound')}
                   </p>
                 )}
               </div>
@@ -398,7 +400,7 @@ export const LocationPickerModal = ({
         {!searchQuery.trim() && !isGettingLocation && (
           <div className="text-center py-8">
             <p className="text-14 text-gray-500">
-              Search for a location or use your current location
+              {t('planningPreferences.searchForLocationOrUseYourCurrentLocation')}
             </p>
           </div>
         )}

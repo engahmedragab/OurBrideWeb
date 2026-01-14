@@ -1,10 +1,11 @@
+'use client'
 import Image from 'next/image'
 import { Typography } from '@/components/ui/Typography'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import AppleIcon from '@/assets/svg/Apple.svg'
 import PlaystoreIcon from '@/assets/svg/Playstore.svg'
-
+import { useI18nTranslations } from '@/i18n'
 const downloadAppVariants = cva('py-2 px-2', {
   variants: {
     variant: {
@@ -30,6 +31,7 @@ export interface DownloadAppProps extends VariantProps<
  * @returns {JSX.Element} Download app component
  */
 export default function DownloadApp({ variant, className }: DownloadAppProps) {
+  const t = useI18nTranslations('auth.downloadApp')
   return (
     <div className={cn(downloadAppVariants({ variant }), className)}>
       {/* Title */}
@@ -40,7 +42,7 @@ export default function DownloadApp({ variant, className }: DownloadAppProps) {
           variant === 'secondary' ? 'text-gray-900' : 'text-gray-900'
         )}
       >
-        Download Our APP
+        {t('title')}
       </Typography>
 
       {/* App Store Buttons */}
@@ -105,7 +107,7 @@ export default function DownloadApp({ variant, className }: DownloadAppProps) {
           />
           <div className="flex flex-col items-start">
             <span className="text-8 md:text-10 font-normal leading-tight text-gray-900">
-              GET IT ON
+             GET IT ON
             </span>
             <span className="text-12 md:text-14 font-semibold leading-tight text-gray-900">
               Google Play

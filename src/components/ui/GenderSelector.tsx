@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Mars, Venus } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
 export interface GenderSelectorProps {
   value?: 'male' | 'female'
@@ -18,7 +19,7 @@ export const GenderSelector = ({
   const [internalValue, setInternalValue] = useState<
     'male' | 'female' | undefined
   >(value)
-
+  const t = useI18nTranslations('auth.signupForm')
   const currentValue = value ?? internalValue
   const handleChange = (newValue: 'male' | 'female') => {
     if (onChange) {
@@ -41,7 +42,7 @@ export const GenderSelector = ({
         )}
       >
         <Mars className="h-4 w-4" />
-        <span>Male</span>
+        <span>{t('male')}</span>
       </button>
       <button
         type="button"
@@ -54,7 +55,7 @@ export const GenderSelector = ({
         )}
       >
         <Venus className="h-4 w-4" />
-        <span>Female</span>
+        <span>{t('female')}</span>
       </button>
     </div>
   )

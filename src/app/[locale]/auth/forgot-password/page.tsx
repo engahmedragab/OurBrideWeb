@@ -5,6 +5,7 @@ import { useRouter } from '@/i18n/navigation'
 import { WelcomeHeader } from '@/components/ui/auth/index'
 import { ForgotPasswordForm } from '@/components/ui/auth/ForgotPasswordForm'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Forgot Password Page - Multi-step password reset flow
@@ -16,6 +17,7 @@ export default function ForgotPasswordPage() {
   const router = useRouter()
   const [showLoading, setShowLoading] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const t =useI18nTranslations('auth')
 
   const handleConfirmClick = () => {
     // Show loading modal first
@@ -38,7 +40,7 @@ export default function ForgotPasswordPage() {
     <>
       <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
         {/* Welcome Header */}
-        <WelcomeHeader welcomeText="Welcome To OurBride" />
+        <WelcomeHeader welcomeText={t('welcomeHeader.defaultWelcome')} />
 
         {/* Forgot Password Form */}
         <ForgotPasswordForm

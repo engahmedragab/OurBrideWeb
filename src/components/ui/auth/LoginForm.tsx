@@ -8,7 +8,8 @@ import { PasswordInput } from '../PasswordInput'
 import { Button } from '../Button'
 import { Checkbox } from '../Checkbox'
 import { Typography } from '../Typography'
-import { Mail, X, Check } from 'lucide-react'
+import { Mail } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 
@@ -35,10 +36,16 @@ export const LoginForm = ({
   onProviderClick,
   className,
 }: LoginFormProps) => {
+  const t = useI18nTranslations('auth')
+
   // Form values
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
+
+  // UI states
+  const [emailFocused, setEmailFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
 
   // Validation states
   const [emailStatus, setEmailStatus] = useState<FieldStatus>('default')
@@ -50,36 +57,38 @@ export const LoginForm = ({
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   // Validation helpers
-  const validateEmail = (
-    value: string
-  ): { isValid: boolean; message: string } => {
-    if (!value.trim()) {
-      return { isValid: false, message: 'Wrong E-mail, Please Try Again' }
-    }
+  const validateEmail = (value: string): { isValid: boolean; message: string } => {
+    const msg = t('loginForm.errors.wrongEmail')
+    if (!value.trim()) return { isValid: false, message: msg }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(value)) {
-      return { isValid: false, message: 'Wrong E-mail, Please Try Again' }
-    }
+    if (!emailRegex.test(value)) return { isValid: false, message: msg }
+
     return { isValid: true, message: '' }
   }
 
-  const validatePassword = (
-    value: string
-  ): { isValid: boolean; message: string } => {
-    if (!value.trim()) {
-      return {
-        isValid: false,
-        message: "Password isn't correct, please try again",
-      }
-    }
-    if (value.length < 7) {
-      return {
-        isValid: false,
-        message: "Password isn't correct, please try again",
-      }
-    }
+  const validatePassword = (value: string): { isValid: boolean; message: string } => {
+    const msg = t('loginForm.errors.wrongPassword')
+    if (!value.trim()) return { isValid: false, message: msg }
+    if (value.length < 7) return { isValid: false, message: msg }
     return { isValid: true, message: '' }
   }
+
+  // Map field status to Input/PasswordInput variants
+  const getInputVariant = (
+    status: FieldStatus,
+    value: string,
+    isFocused: boolean
+  ): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
+    if (status === 'error') return 'error'
+    if (status === 'success') return 'success'
+    if (isFocused) return 'focused'
+    if (value && value.length > 0) return 'fill'
+    return 'default'
+  }
+
+  const emailInputVariant = getInputVariant(emailStatus, email, emailFocused)
+  const passwordInputVariant = getInputVariant(passwordStatus, password, passwordFocused)
 
   // Handlers
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +96,6 @@ export const LoginForm = ({
     setEmail(value)
     onEmailChange?.(value)
 
-    // Validate in real-time if field was touched
     if (emailTouched || isSubmitted) {
       const validation = validateEmail(value)
       if (validation.isValid) {
@@ -103,13 +111,12 @@ export const LoginForm = ({
     }
   }
 
-  const handleEmailFocus = () => {
-    setEmailFocused(true)
-  }
+  const handleEmailFocus = () => setEmailFocused(true)
 
   const handleEmailBlur = () => {
     setEmailFocused(false)
     setEmailTouched(true)
+
     const validation = validateEmail(email)
     if (validation.isValid) {
       setEmailStatus('success')
@@ -125,7 +132,6 @@ export const LoginForm = ({
     setPassword(value)
     onPasswordChange?.(value)
 
-    // Validate in real-time if field was touched
     if (passwordTouched || isSubmitted) {
       const validation = validatePassword(value)
       if (validation.isValid) {
@@ -141,13 +147,12 @@ export const LoginForm = ({
     }
   }
 
-  const handlePasswordFocus = () => {
-    setPasswordFocused(true)
-  }
+  const handlePasswordFocus = () => setPasswordFocused(true)
 
   const handlePasswordBlur = () => {
     setPasswordFocused(false)
     setPasswordTouched(true)
+
     const validation = validatePassword(password)
     if (validation.isValid) {
       setPasswordStatus('success')
@@ -163,11 +168,16 @@ export const LoginForm = ({
     onRememberMeChange?.(checked)
   }
 
+  const handleForgotPasswordClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!onForgotPasswordClick) return
+    e.preventDefault()
+    onForgotPasswordClick()
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitted(true)
 
-    // Validate all fields
     const emailValidation = validateEmail(email)
     const passwordValidation = validatePassword(password)
 
@@ -187,52 +197,18 @@ export const LoginForm = ({
       setPasswordErrorMessage(passwordValidation.message)
     }
 
-    // Only proceed if all fields are valid
     if (emailValidation.isValid && passwordValidation.isValid) {
       onLoginClick?.()
     }
   }
 
-  // Map field status to Input/PasswordInput variants
-  const getInputVariant = (
-    status: FieldStatus,
-    value: string,
-    isFocused: boolean
-  ): 'default' | 'error' | 'success' | 'focused' | 'fill' => {
-    if (status === 'error') return 'error'
-    if (status === 'success') return 'success'
-    if (isFocused) return 'focused'
-    if (value && value.length > 0) return 'fill'
-    return 'default'
-  }
-
-  const [emailFocused, setEmailFocused] = useState(false)
-  const [passwordFocused, setPasswordFocused] = useState(false)
-
-  const emailInputVariant = getInputVariant(emailStatus, email, emailFocused)
-  const passwordInputVariant = getInputVariant(
-    passwordStatus,
-    password,
-    passwordFocused
-  )
-
-  // Check if form is valid - validate values directly
-  const isFormValid = (() => {
-    const emailValidation = validateEmail(email)
-    const passwordValidation = validatePassword(password)
-    return emailValidation.isValid && passwordValidation.isValid
-  })()
-
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={cn('w-full space-y-2.5', className)}
-    >
+    <form onSubmit={handleSubmit} className={cn('w-full space-y-2.5', className)}>
       {/* Email Field */}
       <div className="w-full space-y-1.5">
         <Input
           type="email"
-          placeholder="example@example.com"
+          placeholder={t('loginForm.emailPlaceholder')}
           value={email}
           onChange={handleEmailChange}
           onFocus={handleEmailFocus}
@@ -248,7 +224,7 @@ export const LoginForm = ({
       {/* Password Field */}
       <div className="w-full space-y-1.5">
         <PasswordInput
-          placeholder="Enter Password"
+          placeholder={t('loginForm.passwordPlaceholder')}
           value={password}
           onChange={handlePasswordChange}
           onFocus={handlePasswordFocus}
@@ -274,25 +250,22 @@ export const LoginForm = ({
             textColor="secondary"
             className="text-16 font-medium"
           >
-            Remember Me
+            {t('loginForm.rememberMe')}
           </Typography>
         </div>
+
         <Link
           href="/auth/forgot-password"
+          onClick={handleForgotPasswordClick}
           className="text-16 font-normal text-gray-600 hover:text-brand-500 transition-colors"
         >
-          Forget Password?
+          {t('loginForm.forgotPasswordLink')}
         </Link>
       </div>
 
       {/* Login Button */}
-      <Button
-        type="submit"
-        variant="brand"
-        size="lg"
-        className="w-full text-white"
-      >
-        Login
+      <Button type="submit" variant="brand" size="lg" className="w-full text-white">
+        {t('loginForm.loginButton')}
       </Button>
 
       {/* Provider Link */}
@@ -303,13 +276,13 @@ export const LoginForm = ({
           align="center"
           className="text-14 font-normal"
         >
-          Are you providing your services?{' '}
+          {t('loginForm.providerTextPrefix')}{' '}
           <button
             type="button"
             onClick={onProviderClick}
             className="font-normal text-gray-800 underline hover:text-brand-500 transition-colors"
           >
-            Continue as provider
+            {t('loginForm.providerAction')}
           </button>
         </Typography>
       </div>

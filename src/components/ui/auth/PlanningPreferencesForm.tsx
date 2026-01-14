@@ -21,6 +21,7 @@ import { getPlanningPreferences, setPlanningPreferences, type PlanningPreference
 import { getServiceIcon } from '@/utils/serviceIconMapper'
 import { useAuth } from '@/auth'
 import { LoadingOverlay } from '../LoadingOverlay'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface PlanningPreferencesFormProps {
   onBackClick?: () => void
@@ -36,7 +37,9 @@ export const PlanningPreferencesForm = ({
   onBackClick: _onBackClick,
   className,
 }: PlanningPreferencesFormProps) => {
-  const router = useRouter()
+  const router = useRouter() 
+  const t = useI18nTranslations('auth.planningPreferences')
+  const tCommon = useI18nTranslations('common')
   const { user, refreshUser } = useAuth()
 
   // API state
@@ -47,6 +50,7 @@ export const PlanningPreferencesForm = ({
   
   // Track if preferences have been fetched to prevent duplicate calls
   const preferencesFetchedRef = useRef(false)
+  const isRTL = useIsRTL()
 
   // Form state - track selected preference IDs (preparationIds)
   const [selectedPreferenceIds, setSelectedPreferenceIds] = useState<number[]>([])
@@ -92,7 +96,7 @@ export const PlanningPreferencesForm = ({
       } catch (error) {
         // On error, allow retry by resetting the ref
         preferencesFetchedRef.current = false
-        const errorMessage = error instanceof Error ? error.message : 'Failed to load planning preferences'
+        const errorMessage = error instanceof Error ? error.message : t('errors.loadFailed')
         setApiError(errorMessage)
       } finally {
         setIsLoadingPreferences(false)
@@ -138,25 +142,25 @@ export const PlanningPreferencesForm = ({
     const newErrors: typeof errors = {}
 
     if (selectedPreferenceIds.length === 0) {
-      newErrors.preferences = 'Please select at least one service'
+      newErrors.preferences = t('errors.selectAtLeastOne')
     }
 
     if (!budget.trim()) {
-      newErrors.budget = 'Budget is required'
+      newErrors.budget = t('errors.budgetRequired')
     }
 
     if (!location.trim()) {
-      newErrors.location = 'Location is required'
+      newErrors.location = t('errors.locationRequired')
     }
 
     if (!fullName.trim()) {
-      newErrors.fullName = 'Full name is required'
+      newErrors.fullName = t('errors.fullNameRequired')
     }
 
     if (!email.trim()) {
-      newErrors.email = 'Email is required'
+      newErrors.email = t('errors.emailRequired')
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = 'Please enter a valid email'
+      newErrors.email = t('errors.emailInvalid')
     }
 
     setErrors(newErrors)
@@ -173,7 +177,7 @@ export const PlanningPreferencesForm = ({
     }
 
     if (selectedPreferenceIds.length === 0) {
-      setErrors(prev => ({ ...prev, preferences: 'Please select at least one service' }))
+      setErrors(prev => ({ ...prev, preferences: t('errors.selectAtLeastOne') }))
       return
     }
 
@@ -203,7 +207,7 @@ export const PlanningPreferencesForm = ({
       // Show success modal
       setShowSuccessModal(true)
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save planning preferences'
+      const errorMessage = error instanceof Error ? error.message : t('errors.saveFailed')
       setApiError(errorMessage)
     } finally {
       setIsSubmitting(false)
@@ -240,7 +244,7 @@ export const PlanningPreferencesForm = ({
         className={cn('w-full space-y-2.5 sm:space-y-3', className)}
       >
         {/* Logo and Title */}
-        <WelcomeHeader welcomeText="Planning Preferences" />
+        <WelcomeHeader welcomeText={t('title')} />
 
         {/* Services Section */}
         <div className="space-y-2">
@@ -250,7 +254,7 @@ export const PlanningPreferencesForm = ({
             textColor="default"
             className="text-14 sm:text-16"
           >
-            Services You&apos;re Looking For
+            {t('servicesTitle')}
           </Typography>
 
           {/* Error Message */}
@@ -270,7 +274,7 @@ export const PlanningPreferencesForm = ({
           {isLoadingPreferences ? (
             <div className="flex justify-center py-8">
               <Typography variant="body" textColor="muted">
-                Loading services...
+                {t('loadingServices')}
               </Typography>
             </div>
           ) : availablePreferences.length > 0 ? (
@@ -300,11 +304,13 @@ export const PlanningPreferencesForm = ({
                   )
                 }
                 
+
+                const label = isRTL ? preference.nameAr : preference.nameEn || preference.name
                 return (
                   <ServiceSelectCard
                     key={preference.id}
                     icon={renderIcon()}
-                    label={preference.name}
+                    label={label ?? ''}
                     selected={selectedPreferenceIds.includes(preference.id)}
                     onClick={() => handlePreferenceToggle(preference.id)}
                   />
@@ -314,7 +320,7 @@ export const PlanningPreferencesForm = ({
           ) : (
             <div className="flex justify-center py-8">
               <Typography variant="body" textColor="muted">
-                No services available
+                {t('noServices')}
               </Typography>
             </div>
           )}
@@ -324,7 +330,7 @@ export const PlanningPreferencesForm = ({
         <div className="space-y-0.5">
           <Input
             type="text"
-            placeholder="Enter Your Budget"
+            placeholder={t('budgetPlaceholder')}
             value={budget}
             onChange={e => {
               setBudget(e.target.value)
@@ -335,7 +341,7 @@ export const PlanningPreferencesForm = ({
             onFocus={() => setBudgetFocused(true)}
             onBlur={() => setBudgetFocused(false)}
             prefixIcon={<Wallet className="h-5 w-5" />}
-            suffix="EGP"
+            suffix={t('budgetSuffix')}
             variant={getInputVariant(
               isSubmitted && !!errors.budget,
               budget,
@@ -352,7 +358,7 @@ export const PlanningPreferencesForm = ({
             <div className="relative">
               <Input
                 type="text"
-                placeholder="Location"
+                placeholder={t('locationPlaceholder')}
                 value={location}
                 readOnly
                 onFocus={() => setLocationFocused(true)}
@@ -372,7 +378,7 @@ export const PlanningPreferencesForm = ({
                 onClick={() => setShowLocationModal(true)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center text-brand-500 hover:text-brand-600 font-medium text-14 transition-colors"
               >
-                Set Location
+                {t('setLocation')}
               </button>
             </div>
             {isSubmitted && errors.location && (
@@ -394,14 +400,14 @@ export const PlanningPreferencesForm = ({
             textColor="default"
             className="text-14 sm:text-16"
           >
-            Your Bride/Groom Details
+            {t('detailsTitle')}
           </Typography>
 
           {/* Full Name Input */}
           <div className="space-y-0.5">
             <Input
               type="text"
-              placeholder="Full Name"
+              placeholder={t('fullNamePlaceholder')}
               value={fullName}
               onChange={e => {
                 setFullName(e.target.value)
@@ -426,7 +432,7 @@ export const PlanningPreferencesForm = ({
           <div className="space-y-0.5">
             <Input
               type="email"
-              placeholder="E-mail"
+              placeholder={t('emailPlaceholder')}
               value={email}
               onChange={e => {
                 setEmail(e.target.value)
@@ -456,7 +462,7 @@ export const PlanningPreferencesForm = ({
           className="w-full text-white"
           disabled={isSubmitting || isLoadingPreferences}
         >
-          {isSubmitting ? 'Saving...' : 'Confirm'}
+          {isSubmitting ? t('savingButton') : t('confirmButton')}
         </Button>
 
         {/* Skip Link */}
@@ -466,7 +472,7 @@ export const PlanningPreferencesForm = ({
             onClick={handleSkip}
             className="text-14 font-medium text-gray-600 hover:text-gray-900 transition-colors"
           >
-            Skip For Now
+            {tCommon('skipButton')}
           </button>
         </div>
       </form>
@@ -481,9 +487,9 @@ export const PlanningPreferencesForm = ({
       {/* Success Modal */}
       <StatusModal
         open={showSuccessModal}
-        title="Success!"
-        description="Your planning preferences have been saved"
-        confirmLabel="Confirm"
+        title={t('successModal.title')}
+        description={t('successModal.description')}
+        confirmLabel={t('successModal.confirmLabel')}
         onConfirm={handleSuccessConfirm}
         onClose={handleSuccessConfirm}
       />
@@ -491,8 +497,8 @@ export const PlanningPreferencesForm = ({
       {/* Loading Overlay */}
       <LoadingOverlay
         open={isSubmitting || isLoadingPreferences}
-        title={isSubmitting ? "Saving..." : "Loading..."}
-        subtitle="Please wait a moment."
+        title={isSubmitting ? t('savingButton') : t('loadingServices')}
+        subtitle={tCommon('pleaseWait')}
       />
     </>
   )

@@ -15,12 +15,15 @@ import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { DownloadApp } from '@/components/common'
 import { useAuth } from '@/auth'
 import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-api'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Login Form Component that uses search params
  */
 function LoginFormContent() {
   const router = useRouter()
+  const t =useI18nTranslations('auth')
+  const tCommon =useI18nTranslations('common')
   const searchParams = useSearchParams()
   const { loginWithEmail, loginWithExternalProvider, isLoading, error, clearError } = useAuth()
   const [loginCredentials, setLoginCredentials] = useState<{
@@ -57,7 +60,7 @@ function LoginFormContent() {
       const preferencesInitialized = isPreferenceInit()
 
       // Get redirect URL from query params or default based on preferences
-      let redirectUrl = searchParams.get('redirect') || '/dashboard'
+      let redirectUrl = searchParams?.get('redirect') || '/dashboard'
 
       // If preferences are not initialized, redirect to planning preferences
       // (unless user was trying to access a specific page - then let dashboard layout handle it)
@@ -115,7 +118,7 @@ function LoginFormContent() {
     <>
       <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
         {/* Welcome Header */}
-        <WelcomeHeader welcomeText="Welcome To OurBride" />
+        <WelcomeHeader welcomeText={t('welcomeHeader.defaultWelcome')} />
 
         {/* Tabs */}
         <AuthTabs />
@@ -165,15 +168,17 @@ function LoginFormContent() {
  * Login Page with authentication integration
  */
 export default function LoginPage() {
+  const t =useI18nTranslations('auth')
+  const tCommon =useI18nTranslations('common')
   return (
     <Suspense fallback={
       <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
-        <WelcomeHeader welcomeText="Welcome To OurBride" />
+        <WelcomeHeader welcomeText={t('welcomeHeader.defaultWelcome')} />
         <AuthTabs />
         <LoadingOverlay
           open={true}
-          title="Loading..."
-          subtitle="Please wait a moment"
+          title={tCommon('loading')}
+          subtitle={tCommon('pleaseWait')}
         />
       </div>
     }>

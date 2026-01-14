@@ -15,6 +15,7 @@ import { AuthErrorDisplay } from './AuthErrorDisplay'
 import { ChevronLeft, Phone } from 'lucide-react'
 import forgetIcon from '@/assets/images/forgetIcon.png'
 import { useAuth } from '@/auth'
+import { useI18nTranslations } from '@/i18n'
 
 export type FieldStatus = 'default' | 'error' | 'success'
 
@@ -41,6 +42,8 @@ export const ForgotPasswordForm = ({
   onSuccessModalClose,
   className,
 }: ForgotPasswordFormProps) => {
+  const t = useI18nTranslations('auth')
+  const tc = useI18nTranslations('common')
   const router = useRouter()
   const { sendPhoneOTP, verifyPhoneOTP, isLoading, error, clearError } = useAuth()
 
@@ -93,12 +96,12 @@ export const ForgotPasswordForm = ({
     value: string
   ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: 'Mobile number is required' }
+      return { isValid: false, message: t('forgotPassword.phoneRequired') }
     }
     // Basic phone validation: starts with +20 or 01 and has enough digits
     const phoneRegex = /^(\+20|01)[0-9]{9,}$/
     if (!phoneRegex.test(value.replace(/\s/g, ''))) {
-      return { isValid: false, message: 'Please enter a valid mobile number' }
+      return { isValid: false, message: t('forgotPassword.phoneInvalid') }
     }
     return { isValid: true, message: '' }
   }
@@ -108,10 +111,10 @@ export const ForgotPasswordForm = ({
   ): { isValid: boolean; message: string } => {
     const otpString = value.join('')
     if (otpString.length !== 4) {
-      return { isValid: false, message: 'Please enter the 4-digit OTP' }
+      return { isValid: false, message: t('forgotPassword.otpErrorLength') }
     }
     if (!/^\d{4}$/.test(otpString)) {
-      return { isValid: false, message: 'OTP must contain only numbers' }
+      return { isValid: false, message: t('forgotPassword.otpErrorNumbers') }
     }
     return { isValid: true, message: '' }
   }
@@ -120,12 +123,12 @@ export const ForgotPasswordForm = ({
     value: string
   ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: 'Password is required' }
+      return { isValid: false, message: t('forgotPassword.passwordRequired') }
     }
     if (value.length < 8) {
       return {
         isValid: false,
-        message: 'Password must be at least 8 characters',
+        message: t('forgotPassword.passwordMin'),
       }
     }
     return { isValid: true, message: '' }
@@ -136,10 +139,10 @@ export const ForgotPasswordForm = ({
     originalPassword: string
   ): { isValid: boolean; message: string } => {
     if (!value.trim()) {
-      return { isValid: false, message: 'Please confirm your password' }
+      return { isValid: false, message: t('forgotPassword.confirmPasswordRequired') }
     }
     if (value !== originalPassword) {
-      return { isValid: false, message: "Password Doesn't Match" }
+      return { isValid: false, message: t('forgotPassword.passwordNotMatch') }
     }
     return { isValid: true, message: '' }
   }
@@ -314,7 +317,7 @@ export const ForgotPasswordForm = ({
         } catch (err) {
           // Error is handled by auth context and displayed via AuthErrorDisplay
           setPhoneStatus('error')
-          const errorMsg = err instanceof Error ? err.message : (error || 'Failed to send OTP. Please try again.')
+          const errorMsg = err instanceof Error ? err.message : (error || t('forgotPassword.sendOtpFailed'))
           setPhoneErrorMessage(errorMsg)
         }
       } else {
@@ -340,7 +343,7 @@ export const ForgotPasswordForm = ({
         } catch (err) {
           // Error is handled by auth context and displayed via AuthErrorDisplay
           setOtpStatus('error')
-          const errorMsg = err instanceof Error ? err.message : (error || 'Invalid OTP code. Please try again.')
+          const errorMsg = err instanceof Error ? err.message : (error || t('forgotPassword.invalidOtp'))
           setOtpErrorMessage(errorMsg)
         }
       } else {
@@ -367,7 +370,7 @@ export const ForgotPasswordForm = ({
       } catch (err) {
         // Error is handled by auth context and displayed via AuthErrorDisplay
         setPasswordStatus('error')
-        const errorMsg = err instanceof Error ? err.message : (error || 'Failed to reset password. Please try again.')
+        const errorMsg = err instanceof Error ? err.message : (error || t('forgotPassword.resetFailed'))
         setPasswordErrorMessage(errorMsg)
       }
     } else {
@@ -464,7 +467,7 @@ export const ForgotPasswordForm = ({
           textColor="default"
           className="text-16 sm:text-18"
         >
-          Forget Password
+          {t('forgotPassword.title')}
         </Typography>
       </div>
 
@@ -489,7 +492,7 @@ export const ForgotPasswordForm = ({
             align="center"
             className="text-14 sm:text-14 text-gray-400 font-regular"
           >
-            Please enter your mobile number to send an OTP
+            {t('forgotPassword.instructionStep1')}
           </Typography>
 
           {/* Error Message */}
@@ -499,7 +502,7 @@ export const ForgotPasswordForm = ({
           <div className="w-full space-y-1">
             <Input
               type="tel"
-              placeholder="Mobile Number"
+              placeholder={t('forgotPassword.phonePlaceholder')}
               value={phone}
               onChange={handlePhoneChange}
               onFocus={handlePhoneFocus}
@@ -521,7 +524,7 @@ export const ForgotPasswordForm = ({
             className="w-full text-white"
             onClick={handleNextStep}
           >
-            Confirm
+            {tc('confirm')}
           </Button>
 
           {/* Footer Link */}
@@ -532,12 +535,12 @@ export const ForgotPasswordForm = ({
               align="center"
               className="text-12 sm:text-14"
             >
-              Are you providing your services?{' '}
+              {t('forgotPassword.providerTextPrefix')}{' '}
               <button
                 type="button"
                 className="font-semibold text-gray-800 underline hover:text-brand-500 transition-colors"
               >
-                Resend
+                {t('forgotPassword.resendButton')}
               </button>
             </Typography>
           </div>
@@ -565,7 +568,7 @@ export const ForgotPasswordForm = ({
             align="center"
             className="text-14 sm:text-14 text-gray-400 font-regular"
           >
-            Please enter the 4 numbers OTP We have sent to your phone number
+            {t('forgotPassword.instructionStep2')}
           </Typography>
 
           {/* Error Message */}
@@ -590,7 +593,7 @@ export const ForgotPasswordForm = ({
             className="w-full text-white"
             onClick={handleNextStep}
           >
-            Confirm
+            {tc('confirm')}
           </Button>
 
           {/* Footer Link */}
@@ -601,12 +604,12 @@ export const ForgotPasswordForm = ({
               align="center"
               className="text-12 sm:text-14"
             >
-              Are you providing your services?{' '}
+              {t('forgotPassword.providerTextPrefix')}{' '}
               <button
                 type="button"
                 className="font-semibold text-gray-800 underline hover:text-brand-500 transition-colors"
               >
-                Resend
+                {t('forgotPassword.resendButton')}
               </button>
             </Typography>
           </div>
@@ -634,7 +637,7 @@ export const ForgotPasswordForm = ({
             align="center"
             className="text-14 sm:text-14 text-gray-400 font-regular"
           >
-            Please enter your new password
+            {t('forgotPassword.instructionStep3')}
           </Typography>
 
           {/* Error Message */}
@@ -643,7 +646,7 @@ export const ForgotPasswordForm = ({
           {/* Password Input */}
           <div className="w-full space-y-1">
             <PasswordInput
-              placeholder="Enter New Password"
+              placeholder={t('forgotPassword.newPasswordPlaceholder')}
               value={password}
               onChange={handlePasswordChange}
               onFocus={handlePasswordFocus}
@@ -665,7 +668,7 @@ export const ForgotPasswordForm = ({
           {/* Confirm Password Input */}
           <div className="w-full space-y-1">
             <PasswordInput
-              placeholder="Confirm New Password"
+              placeholder={t('forgotPassword.confirmNewPasswordPlaceholder')}
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               onFocus={handleConfirmPasswordFocus}
@@ -685,7 +688,7 @@ export const ForgotPasswordForm = ({
             className="w-full text-white"
             onClick={handleConfirm}
           >
-            Confirm
+            {tc('confirm')}
           </Button>
 
           {/* Footer Link */}
@@ -696,12 +699,12 @@ export const ForgotPasswordForm = ({
               align="center"
               className="text-12 sm:text-14"
             >
-              Are you providing your services?{' '}
+              {t('forgotPassword.resendTextPrefix')}{' '}
               <button
                 type="button"
                 className="font-semibold text-gray-800 underline hover:text-brand-500 transition-colors"
               >
-                Resend
+                {t('forgotPassword.resendButton')}
               </button>
             </Typography>
           </div>
@@ -711,9 +714,9 @@ export const ForgotPasswordForm = ({
       {/* Success Modal */}
       <StatusModal
         open={showSuccessModal}
-        title="Password Reset Successful"
-        description="Your password has been updated. You can now log in with your new password."
-        confirmLabel="Confirm"
+        title={t('forgotPassword.successModal.title')}
+        description={t('forgotPassword.successModal.description')}
+        confirmLabel={t('forgotPassword.successModal.confirmLabel')}
         onConfirm={handleSuccessModalConfirm}
         onClose={handleSuccessModalClose}
       />

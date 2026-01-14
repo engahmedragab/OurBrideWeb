@@ -16,6 +16,7 @@ import { DownloadApp } from '@/components/common'
 import { useAuth } from '@/auth'
 import { Gender, UserType } from '@/../client/common/api/gen/ourbride-api'
 import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-api'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Signup Page with authentication integration
@@ -37,8 +38,8 @@ export default function SignupPage() {
     mobileNumber: '',
     password: '',
   })
-  const [acceptedTerms, setAcceptedTerms] = useState(false)
-
+    const [acceptedTerms, setAcceptedTerms] = useState(false)
+    const t =useI18nTranslations('auth')
   // Map form gender to API Gender enum
   const mapGenderToApi = (gender: 'male' | 'female' | undefined): Gender => {
     if (gender === 'male') return 'Male' as Gender
@@ -134,7 +135,7 @@ export default function SignupPage() {
     <>
       <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
         {/* Welcome Header */}
-        <WelcomeHeader welcomeText="Welcome To OurBride" />
+        <WelcomeHeader welcomeText={t('welcomeHeader.defaultWelcome')} />
 
         {/* Tabs */}
         <AuthTabs />
