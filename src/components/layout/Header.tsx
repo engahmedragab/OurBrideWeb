@@ -34,6 +34,7 @@ import {
 import { NotificationDropdown } from '@/components/notifications'
 import { useNotifications } from '@/hooks/notifications/useNotifications'
 import { ClientOnly } from '@/components/ui/ClientOnly'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface HeaderProps {
   className?: string
@@ -43,7 +44,9 @@ export const Header = ({ className }: HeaderProps) => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-
+  const t = useI18nTranslations('navbar')
+  const tCommon = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   // Fetch cart data
   const { data: cartData } = useCart()
 
@@ -104,37 +107,37 @@ export const Header = ({ className }: HeaderProps) => {
 
   const navigationItems = [
     {
-      label: 'Home',
+      label: t('links.home'),
       path: '/',
       icon: Home,
     },
     {
-      label: 'Products',
+      label: t('links.products'),
       path: '/products/intro',
       icon: Store,
       hasDropdown: true,
       dropdownItems: [
-        { label: 'All Products', path: '/products' },
-        { label: 'Category', path: '/products/category' },
+        { label: t('links.allProducts'), path: '/products' },
+        { label: t('links.category'), path: '/products/category' },
       ],
     },
     {
-      label: 'Services',
+      label: t('links.services'),
       path: '/services',
       icon: FileHeart,
       hasDropdown: true,
       dropdownItems: [
-        { label: 'All Services', path: '/services' },
-        { label: 'Category', path: '/services/category' },
+          { label: t('links.allServices'), path: '/services' },
+          { label: t('links.category'), path: '/services/category' },
       ],
     },
     {
-      label: 'Providers',
+      label: t('links.providers'),
       path: '/providers',
       icon: Building2,
     },
     {
-      label: 'Community',
+      label: t('links.community'),
       path: '/community',
       icon: Globe,
     },
@@ -172,7 +175,7 @@ export const Header = ({ className }: HeaderProps) => {
           {/* Navigation Menu */}
           <ClientOnly>
             <NavigationMenu className="hidden md:flex">
-              <NavigationMenuList className="gap-0.5 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm h-12">
+              <NavigationMenuList dir={isRTL ? 'rtl' : 'ltr'} className="gap-0.5 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm h-12">
               {navigationItems.map(item => {
                 const Icon = item.icon
                 // For dropdown items, check if any dropdown item is active instead of the parent path
@@ -182,7 +185,7 @@ export const Header = ({ className }: HeaderProps) => {
 
                 if (item.hasDropdown) {
                   return (
-                    <NavigationMenuItem key={item.path}>
+                    <NavigationMenuItem key={item.path} dir={isRTL ? 'rtl' : 'ltr'}>
                       <NavigationMenuTrigger
                         className={cn(
                           'gap-2 rounded-md px-3 py-2 text-16 font-semibold transition-colors duration-150',
@@ -274,7 +277,7 @@ export const Header = ({ className }: HeaderProps) => {
           {/* Search Bar */}
           <div className="hidden flex-1 max-w-md lg:block">
             <SearchInput
-              placeholder="Search..."
+              placeholder={t('search.placeholder')}
               variant="default"
               size="md"
               className={cn(
@@ -298,7 +301,7 @@ export const Header = ({ className }: HeaderProps) => {
                 'focus:outline-none'
               )}
               onClick={() => setIsMobileMenuOpen(true)}
-              aria-label="Open menu"
+              aria-label={t('common.openMenu')}
             >
               <Menu className="h-7 w-7 text-brand-500" />
             </Button>
@@ -317,7 +320,7 @@ export const Header = ({ className }: HeaderProps) => {
                   'hover:bg-brand-50/50',
                   'focus:outline-none'
                 )}
-                aria-label="Wishlist"
+                aria-label={t('menu.wishlist')}
               >
                 <Link href="/wishlist">
                   <Heart className="h-5 w-5 text-brand-500" />
@@ -346,7 +349,7 @@ export const Header = ({ className }: HeaderProps) => {
                   'hover:bg-brand-50/50',
                   'focus:outline-none'
                 )}
-                aria-label="Shopping Cart"
+                aria-label={t('icons.cart')}
               >
                 <Link href="/cart" className="relative">
                   <ShoppingCart className="h-5 w-5 text-brand-500" />
@@ -377,7 +380,7 @@ export const Header = ({ className }: HeaderProps) => {
                 'hover:opacity-90',
                 'focus:outline-none'
               )}
-              aria-label="User Profile"
+              aria-label={t('icons.account')}
             >
               <Link href="/profile">
                 <User className="h-5 w-5 text-white" />
@@ -395,12 +398,12 @@ export const Header = ({ className }: HeaderProps) => {
               variant="ghost"
               size="icon"
               onClick={() => setIsSearchOpen(false)}
-              aria-label="Close search"
+              aria-label={tCommon('close')}
             >
               <X className="h-5 w-5 text-brand-500" />
             </Button>
             <SearchInput
-              placeholder="Search..."
+              placeholder={t('search.placeholder')}
               variant="default"
               size="md"
               className="flex-1 h-12 rounded-full"
@@ -440,7 +443,7 @@ export const Header = ({ className }: HeaderProps) => {
             variant="ghost"
             size="icon"
             onClick={() => setIsMobileMenuOpen(false)}
-            aria-label="Close menu"
+            aria-label={tCommon('close')}
           >
             <X className="h-5 w-5" />
           </Button>
@@ -532,7 +535,7 @@ export const Header = ({ className }: HeaderProps) => {
               )}
             >
               <Heart className="h-5 w-5" />
-              Wishlist
+              {t('menu.wishlist')}
             </Link>
 
             <Link
@@ -547,7 +550,7 @@ export const Header = ({ className }: HeaderProps) => {
               )}
             >
               <Star className="h-5 w-5" />
-              Favorites
+              {t('menu.favorites')}
             </Link>
 
             <Link
@@ -562,7 +565,7 @@ export const Header = ({ className }: HeaderProps) => {
               )}
             >
               <UserPlus className="h-5 w-5" />
-              Follows
+              {t('menu.follows')}
             </Link>
 
             <Link
@@ -577,7 +580,7 @@ export const Header = ({ className }: HeaderProps) => {
               )}
             >
               <ShoppingCart className="h-5 w-5" />
-              <span className="flex-1">My Cart</span>
+              <span className="flex-1">{t('menu.myCart')}</span>
               {cartCount > 0 && (
                 <span className="flex min-w-[20px] h-5 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white px-1">
                   {cartCount > 99 ? '99+' : cartCount}
@@ -597,7 +600,7 @@ export const Header = ({ className }: HeaderProps) => {
               )}
             >
               <User className="h-5 w-5" />
-              My Profile
+              {t('menu.myProfile')}
             </Link>
 
             {/* Language Switcher in Mobile Menu */}
@@ -605,7 +608,7 @@ export const Header = ({ className }: HeaderProps) => {
               <div className="pt-4 border-t border-gray-200">
                 <div className="px-4 py-2">
                   <label className="block text-14 font-normal text-gray-700 mb-2">
-                    Language
+                    {tCommon('language')}
                   </label>
                   <LanguageSwitcher variant="dropdown" />
                 </div>

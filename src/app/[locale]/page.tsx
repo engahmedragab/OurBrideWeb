@@ -56,6 +56,7 @@ import {
   TRUST_CARD_POSITION_CLASSES,
   PAGINATION_CONFIG,
 } from '@/constants'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 // Memoized Product Card Component
 const ProductCardItem = memo(({ product }: { product: ProductCardData }) => {
@@ -139,7 +140,9 @@ ProviderCardItem.displayName = 'ProviderCardItem'
 export default function Home() {
   // Fetch home data from API
   const { data: homeData, isLoading } = useHome()
-
+  const t = useI18nTranslations('home')
+  const tCommon = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   // Extract and map API data
   const apiData = useMemo(() => {
     if (homeData) {
@@ -162,7 +165,7 @@ export default function Home() {
   )
   const banners = useMemo(() => apiData.banners || [], [apiData.banners])
   const statistics = useMemo(() => apiData.statistics, [apiData.statistics])
-
+   console.log({apiData})
   // Testimonials carousel state
   const [testimonialsIndex, setTestimonialsIndex] = useState(0)
   const testimonialsTotalPages = Math.ceil(
@@ -216,7 +219,7 @@ export default function Home() {
                     {statistics?.activeUsers || '+0'}
                   </span>
                   <span className="text-gray-500 font-normal text-14">
-                    Active Users
+                    {t('hero.activeUsers')}
                   </span>
                 </span>
                 <div className="flex -space-x-2">
@@ -233,22 +236,21 @@ export default function Home() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 self-start">
                 <span className="px-4 py-1.5 rounded-full bg-brand-500 text-white text-14 font-semibold">
-                  All-in-one platform for wedding.
+                  {t('hero.badge')}
                 </span>
               </div>
 
               {/* Headline */}
               <h1 className="text-24 sm:text-30 md:text-40 lg:text-48 font-semibold text-gray-900 leading-tight mt-2">
-                YOUR BRIDE ALWAYS IS <br />
+                {t('hero.headline.line1')} <br />
                 <span className="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
-                  OUR RESPONSIBILITY.
+                  {t('hero.headline.line2')}
                 </span>
               </h1>
 
               {/* Description */}
               <p className="text-14 sm:text-16 md:text-18 text-gray-600 leading-relaxed max-w-lg">
-                OurBride is your all-in-one platform for wedding planning and
-                shopping. Find everything you need to create your perfect day.
+                {t('hero.description')}
               </p>
             </div>
 
@@ -280,7 +282,7 @@ export default function Home() {
                           ? heroBrideImage
                           : heroBrideImage.src
                       }
-                      alt="Happy Bride"
+                      alt={t('hero.images.brideAlt')}
                       fill
                       sizes="(max-width: 768px) 307px, 371px"
                       className="object-contain"
@@ -296,25 +298,44 @@ export default function Home() {
               {/* Circular Badge Button */}
               <div className="relative w-[100px] h-[100px] flex items-center justify-center">
                 {/* Outer Rotating Text Ring */}
-                <svg
-                  viewBox="0 0 120 120"
-                  className="absolute inset-0 w-full h-full animate-spin-slow"
-                >
-                  <defs>
-                    <path
-                      id="circle-text"
-                      d="M 60, 60 m -50, 0 a 50,50 0 1,1 100,0 a 50,50 0 1,1 -100,0"
-                    />
-                  </defs>
-                  <text
-                    fill="#F14836"
-                    className="font-black text-12 uppercase tracking-wide"
+                {isRTL ? (
+                  <svg
+                    viewBox="0 0 120 120"
+                    className="absolute inset-0 w-full h-full animate-spin-slow"
                   >
-                    <textPath href="#circle-text" startOffset="0%">
-                      OURBRIDE START SHOPPING NOW WITH
-                    </textPath>
-                  </text>
-                </svg>
+                    <defs>
+                      <path
+                        id="circle-text"
+                        d="M 60, 60 m -50, 0 a 50,50 0 1,1 100,0 a 50,50 0 1,1 -100,0"
+                      />
+                    </defs>
+                    <text fill="#F14836" className="font-black text-12 uppercase tracking-wide">
+                      <textPath href="#circle-text" startOffset="100%">
+                        {t('hero.circularText')}
+                      </textPath>
+                    </text>
+                  </svg>
+                ) : (
+                  <svg
+                    viewBox="0 0 120 120"
+                    className="absolute inset-0 w-full h-full animate-spin-slow"
+                  >
+                    <defs>
+                      <path
+                        id="circle-text"
+                        d="M 60, 60 m -50, 0 a 50,50 0 1,1 100,0 a 50,50 0 1,1 -100,0"
+                      />
+                    </defs>
+                    <text
+                      fill="#F14836"
+                      className="font-black text-12 uppercase tracking-wide"
+                    >
+                      <textPath href="#circle-text" startOffset="0%">
+                        {t('hero.circularText')}
+                      </textPath>
+                    </text>
+                  </svg>
+                )}
 
                 {/* Inner Fixed Circle and Arrow */}
                 <div className="relative z-10 flex items-center justify-center">
@@ -350,7 +371,7 @@ export default function Home() {
                         ? heroCardBrideImage
                         : heroCardBrideImage.src
                     }
-                    alt="Explore Products"
+                    alt={t('hero.images.productsAlt')}
                     fill
                     sizes="(max-width: 768px) 192px, 224px"
                     className="object-cover"
@@ -363,7 +384,7 @@ export default function Home() {
                     className="w-full text-14 font-semibold rounded-full"
                     asChild
                   >
-                    <Link href="/products">Explore Products</Link>
+                    <Link href="/products">{t('hero.cta.exploreProducts')}</Link>
                   </Button>
                 </div>
               </div>
@@ -377,7 +398,7 @@ export default function Home() {
                         ? heroCardBrideImage
                         : heroCardBrideImage.src
                     }
-                    alt="Explore Services"
+                    alt={t('hero.images.servicesAlt')}
                     fill
                     sizes="(max-width: 768px) 192px, 224px"
                     className="object-cover"
@@ -390,7 +411,7 @@ export default function Home() {
                     className="w-full text-14 font-semibold rounded-full"
                     asChild
                   >
-                    <Link href="/services">Explore Services</Link>
+                    <Link href="/services">{t('hero.cta.exploreServices')}</Link>
                   </Button>
                 </div>
               </div>
@@ -413,7 +434,7 @@ export default function Home() {
                 {statistics?.clients || '+0'}
               </div>
               <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
-                Clients
+                {t('stats.clients')}
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
@@ -422,7 +443,7 @@ export default function Home() {
                 {statistics?.serviceProviders || '+0'}
               </div>
               <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
-                Services Providers
+                {t('stats.serviceProviders')}
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
@@ -431,7 +452,7 @@ export default function Home() {
                 {statistics?.availableServices || '+0'}
               </div>
               <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
-                Available Services
+                {t('stats.availableServices')}
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
@@ -440,7 +461,7 @@ export default function Home() {
                 {statistics?.products || '+0'}
               </div>
               <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
-                Products
+                {t('stats.products')}
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
@@ -455,11 +476,10 @@ export default function Home() {
                 <BadgeCheck className="h-12 w-12 text-brand-500" />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                Verified Trusted Providers
+                {t('benefits.verifiedTrustedProviders.title')}
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Every service is identity-checked for a safe and reliable
-                experience.
+                {t('benefits.verifiedTrustedProviders.description')}
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -467,10 +487,10 @@ export default function Home() {
                 <TargetIcon className="h-12 w-12 text-brand-500" />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                All-in-One Wedding Hub
+                {t('benefits.allInOneWeddingHub.title')}
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Plan, shop, book, and manage everything from one platform.
+                {t('benefits.allInOneWeddingHub.description')}
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -479,11 +499,10 @@ export default function Home() {
                 <CheckCircle2 className="h-4 w-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fill-brand-500" />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                Secure Payments
+                {t('benefits.securePayments.title')}
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Safe transactions, transparent pricing, and guaranteed service
-                delivery.
+                {t('benefits.securePayments.description')}
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -491,10 +510,10 @@ export default function Home() {
                 <Tag className="h-12 w-12 text-brand-500" />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                Exclusive Offers & Rewards
+                {t('benefits.exclusiveOffersRewards.title')}
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Enjoy discounts, and gift options designed for your big day.
+                {t('benefits.exclusiveOffersRewards.description')}
               </p>
             </div>
           </div>
@@ -504,13 +523,13 @@ export default function Home() {
         <section className="container-custom py-12 md:py-16">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-22 sm:text-26 md:text-30 lg:text-32 font-normal text-gray-900">
-              Products Suggested for You
+              {t('suggestedProducts.title')}
             </h2>
             <Link
               href="/products"
               className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
             >
-              View All
+              {tCommon('viewAll')}
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -530,13 +549,13 @@ export default function Home() {
         <section className="container-custom py-12 md:py-16">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
-              Services Suggested for You
+              {t('suggestedServices.title')}
             </h2>
             <Link
               href="/services"
               className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
             >
-              View All
+              {tCommon('viewAll')}
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -568,14 +587,14 @@ export default function Home() {
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
                 <span className="font-normal text-gray-900">
-                  Why{' '}
-                  <span className="font-semibold text-gray-900">Brides</span>
+                  {t('trustSection.title.line1')}{' '}
+                  <span className="font-semibold text-gray-900">{t('trustSection.title.line2')}</span>
                 </span>
                 <br />
                 <span className="font-semibold text-gray-900">
-                  Trust{' '}
+                  {t('trustSection.title.line3')}{' '}
                   <span className="font-normal text-gray-900">
-                    Our Services
+                    {t('trustSection.title.line4')}
                   </span>
                 </span>
               </h2>
@@ -610,13 +629,13 @@ export default function Home() {
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
               <span className="font-normal text-gray-900">
-                Read{' '}
-                <span className="font-semibold text-gray-900">Reviews</span>
+                {t('testimonials.title.line1')}{' '}
+                <span className="font-semibold text-gray-900">{t('testimonials.title.line2')}</span>
               </span>
               <br />
               <span className="font-semibold text-gray-900">
-                Ride With{' '}
-                <span className="font-normal text-gray-900">Confidence</span>
+                {t('testimonials.title.line3')}{' '}
+                <span className="font-normal text-gray-900">{t('testimonials.title.line4')}</span>
               </span>
             </h2>
           </div>
@@ -628,11 +647,11 @@ export default function Home() {
                 <div className="mb-4 md:mb-6">
                   <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
                   <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
-                    <span className="block">What Our</span>
+                    <span className="block">{t('testimonials.whatOurCustomersAreSaying.line1')}</span>
                     <span className="block font-semibold text-gray-900">
-                      Customers
+                      {t('testimonials.whatOurCustomersAreSaying.line2')}
                     </span>
-                    <span className="block">Are Saying</span>
+                    <span className="block">{t('testimonials.whatOurCustomersAreSaying.line3')}</span>
                   </p>
                 </div>
                 <div className="flex items-center gap-3 md:gap-4">
@@ -661,7 +680,7 @@ export default function Home() {
                   </div>
                   <button
                     onClick={goToTestimonialsNext}
-                    aria-label="Next testimonials"
+                    aria-label={t('testimonials.aria.next')}
                   >
                     <ChevronRight className="h-5 w-5 text-gray-700" />
                   </button>
@@ -691,13 +710,13 @@ export default function Home() {
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
               <span className="font-normal text-gray-900">
-                Discover{' '}
-                <span className="font-semibold text-gray-900">Trusted</span>
+                {t('providers.title.line1')}{' '}
+                <span className="font-semibold text-gray-900">{t('providers.title.line2')}</span>
               </span>
               <br />
               <span className="font-semibold text-gray-900">
-                Wedding{' '}
-                <span className="font-normal text-gray-900">Providers</span>
+                {t('providers.title.line3')}{' '}
+                <span className="font-normal text-gray-900">{t('providers.title.line4')}</span>
               </span>
             </h2>
           </div>
@@ -728,12 +747,13 @@ export default function Home() {
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
                 <span className="font-normal text-gray-900">
-                  Your Wedding{' '}
-                  <span className="font-semibold text-gray-900">Journey</span>
+                  {t('journey.title.line1')}{' '}
+                  <span className="font-semibold text-gray-900">{t('journey.title.line2')}</span>
                 </span>
                 <br />
                 <span className="font-semibold text-gray-900">
-                  Starts <span className="font-normal text-gray-900">Here</span>
+                  {t('journey.title.line3')}{' '}
+                  <span className="font-normal text-gray-900">{t('journey.title.line4')}</span>
                 </span>
               </h2>
             </div>
@@ -848,17 +868,15 @@ export default function Home() {
             <div className="text-center mb-0">
               <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900 leading-tight">
                 <span className="font-normal block">
-                  Make Wedding Planning Easier
+                  {t('appDownload.title.line1')}
                 </span>
-                <span className="font-semibold">With OurBride</span>
+                <span className="font-semibold">{t('appDownload.title.line2')}</span>
               </h2>
             </div>
 
             <div className="flex flex-col items-center">
-
               <div className="flex items-center justify-center">
-                <StoreBadges size='2xl' className='gap-4'/>
-      
+                <StoreBadges size="2xl" className="gap-4" />
               </div>
               <div className="relative flex items-center justify-center w-full h-auto mt-0">
                 {/* Background Glow */}
@@ -872,7 +890,7 @@ export default function Home() {
                         ? phoneImage
                         : phoneImage.src
                     }
-                    alt="OurBride Mobile App"
+                    alt={t('appDownload.image.alt') || 'OurBride Mobile App'}
                     fill
                     sizes="(max-width: 768px) 650px, (max-width: 1024px) 850px, 1000px"
                     className="object-contain drop-shadow-2xl"

@@ -10,6 +10,200 @@
     "edit": "Edit",
     "search": "Search",
     "filter": "Filter",
-    "sort": "Sort"
+    "sort": "Sort",
+    "openMenu": "Open menu",
+    "new": "new",
+    "close": "Close",
+    "language": "Language",
+     "emailPlaceholder": "Enter your e-mail",
+    "subscribe": "Subscribe",
+     "startShopping": "Start Shopping",
+      "viewAll": "View All"
+  },
+  
+  "navbar": {
+    "search": {
+      "placeholder": "Search..."
+    },
+    "links": {
+      "home": "Home",
+      "products": "Products",
+      "services": "Services",
+      "providers": "Providers",
+      "community": "Community",
+      "allProducts": "All Products",
+      "category": "Category",
+      "allServices": "All Services"
+    },
+    "icons": {
+      "account": "Account",
+      "language": "Language",
+      "cart": "Cart",
+      "notifications": "Notifications",
+      "favorites": "Favorites"
+     
+    },
+    "notifications": {
+      "loading": "Loading notifications...",
+       "markAllAsRead": "Mark all as read",
+       "notifications": "Notifications",
+       "noNotificationsYet": "No notifications yet",
+        "viewAll": "View all notifications"
+    },
+    "menu": {
+      "wishlist": "Wishlist",
+      "favorites": "Favorites",
+      "follows": "Follows",
+      "myCart": "My Cart",
+      "myProfile": "My Profile"
+    }
+  } ,
+
+  "home":{
+    "hero": {
+      "activeUsers": "Active Users",
+      "badge": "All-in-one platform for wedding.",
+      "headline": {
+        "line1": "YOUR BRIDE ALWAYS IS",
+        "line2": "OUR RESPONSIBILITY."
+      },
+      "description": "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
+      "images": {
+        "brideAlt": "Happy Bride",
+        "exploreProductsAlt": "Explore Products",
+        "exploreServicesAlt": "Explore Services"
+      },
+      "cta": {
+        "exploreProducts": "Explore Products",
+        "exploreServices": "Explore Services"
+      },
+      "circularText": "OURBRIDE START SHOPPING NOW WITH"
+    },
+    "stats": {
+      "clients": "Clients",
+      "serviceProviders": "Services Providers",
+      "availableServices": "Available Services",
+      "products": "Products"
+    },
+    "benefits": {
+      "verifiedTrustedProviders": {
+        "title": "Verified Trusted Providers",
+        "description": "Every service is identity-checked for a safe and reliable experience."
+      },
+      "allInOneWeddingHub": {
+        "title": "All-in-One Wedding Hub",
+        "description": "Plan, shop, book, and manage everything from one platform."
+      },
+      "securePayments": {
+        "title": "Secure Payments",
+        "description": "Safe transactions, transparent pricing, and guaranteed service delivery."
+      },
+      "exclusiveOffersRewards": {
+        "title": "Exclusive Offers & Rewards",
+        "description": "Enjoy discounts, and gift options designed for your big day."
+      }
+    },
+    "suggestedProducts": {
+      "title": "Products Suggested for You"
+    },
+    "suggestedServices": {
+      "title": "Services Suggested for You"
+      
+    },
+    "trustSection": {
+      "title": {
+        "line1": "Why",
+        "line2": "Brides",
+        "line3": "Trust",
+        "line4": "Our Services"
+      }
+    },
+    "testimonials": {
+      "title": {
+        "line1": "Read",
+        "line2": "Reviews",
+        "line3": "Ride With",
+        "line4": "Confidence"
+      },
+      "whatOurCustomersAreSaying": {
+        "line1": "What Our",
+        "line2": "Customers",
+        "line3": "Are Saying"
+      },
+      "aria": {
+        "previous": "Previous testimonials",
+        "next": "Next testimonials",
+        "goToPage": "Go to page {page}"
+      }
+    },
+    "providers": {
+      "title": {
+        "line1": "Discover",
+        "line2": "Trusted",
+        "line3": "Wedding",
+        "line4": "Providers"
+      }
+    },
+    "journey": {
+      "title": {
+        "line1": "Your",
+        "line2": "Wedding Journey",
+        "line3": "Starts",
+        "line4": "Here"
+      }
+    },
+    "appDownload": {
+      "title": {
+        "line1": "Make Wedding Planning Easier",
+        "line2": "With OurBride"
+      },
+      "images": {
+        "phoneAlt": "OurBride Mobile App"
+      }
+    },
+    "trustCards": {
+    "items": {
+      "1": {
+        "heading": "Made for Local Brides",
+        "description": "Tailored for brides across Egypt — especially those outside the capital."
+      },
+      "2": {
+        "heading": "Simple & Beautiful Experience",
+        "description": "A feminine, easy-to-use design that makes planning delightful."
+      },
+      "3": {
+        "heading": "Real Offers & Savings",
+        "description": "Exclusive coupons and discounts designed for your budget."
+      },
+      "4": {
+        "heading": "All-in-One Platform",
+        "description": "Plan, book, shop, and celebrate everything in one place."
+      },
+      "5": {
+        "heading": "Verified Trusted Providers",
+        "description": "All our service providers are carefully verified and trusted."
+      },
+      "6": {
+        "heading": "Secure Payments",
+        "description": "Your payments are safe and secure with our trusted payment system."
+      }
+    }
+  },
+  "journeySteps": {
+    "steps": {
+      "1": {
+        "title": "Step #1",
+        "description": "Exclusive coupons and discounts designed for your budget."
+      },
+      "2": {
+        "title": "Step #2",
+        "description": "Exclusive coupons and discounts designed for your budget."
+      },
+      "3": {
+        "title": "Step #3",
+        "description": "Exclusive coupons and discounts designed for your budget."
+      }
+    }
+  }
   }
 }
