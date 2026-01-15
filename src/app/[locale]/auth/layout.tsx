@@ -34,7 +34,7 @@ export default async function AuthLayout({ children, params }: AuthLayoutProps) 
     >
     
       <div className="w-full lg:w-[55%] h-full bg-white overflow-y-auto py-6 overflow-x-hidden">
-        <div className="min-h-full w-full p-6  flex flex-col items-center lg:justify-center">
+        <div className="min-h-full w-full p-6  flex flex-col items-center sm:justify-center">
           
           {children}
         </div>
