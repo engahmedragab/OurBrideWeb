@@ -54,85 +54,208 @@ const DEFAULT_KEYS = {
 
 
 
-const checkResponseForErrors = (response: { data?: unknown }, defaultMessage: string): void => {
-  const responseData = response.data as Record<string, unknown> | undefined
-  if (responseData) {
-    // Check if response indicates failure
-    if (responseData.success === false || (responseData.errors && Array.isArray(responseData.errors))) {
-      const errors = Array.isArray(responseData.errors) ? responseData.errors : []
-      const errorMessage = errors.length > 0 
-        ? errors.join('\n')
-        : (typeof responseData.message === 'string' ? responseData.message : defaultMessage)
-      throw new Error(errorMessage)
+// const checkResponseForErrors = (response: { data?: unknown }, defaultMessage: string): void => {
+//   const responseData = response.data as Record<string, unknown> | undefined
+//   if (responseData) {
+//     // Check if response indicates failure
+//     if (responseData.success === false || (responseData.errors && Array.isArray(responseData.errors))) {
+//       const errors = Array.isArray(responseData.errors) ? responseData.errors : []
+//       const errorMessage = errors.length > 0 
+//         ? errors.join('\n')
+//         : (typeof responseData.message === 'string' ? responseData.message : defaultMessage)
+//       throw new Error(errorMessage)
+//     }
+//   }
+// }
+const isI18nKey = (val: unknown): val is string =>
+  typeof val === 'string' && val.includes('.') && /^[a-zA-Z0-9_.-]+$/.test(val)
+
+const normalizeToKeyIfPossible = (val: string): string => {
+  // لو الباك بيرجع "auth.api.errors.xxx" وانتِ بتستخدمي namespace "auth"
+  if (val.startsWith('auth.')) return val.replace(/^auth\./, '')
+  return val
+}
+
+const collectErrorMessages = (data: Record<string, unknown>): string[] => {
+  const msgs: string[] = []
+
+  // errors: string[]
+  if (Array.isArray(data.errors)) {
+    for (const e of data.errors) {
+      if (typeof e === 'string' && e.trim()) msgs.push(e.trim())
     }
   }
+
+  // errors: { field: string[] }
+  if (data.errors && typeof data.errors === 'object' && !Array.isArray(data.errors)) {
+    const obj = data.errors as Record<string, unknown>
+    for (const k of Object.keys(obj)) {
+      const arr = obj[k]
+      if (Array.isArray(arr)) {
+        for (const item of arr) {
+          if (typeof item === 'string' && item.trim()) msgs.push(item.trim())
+        }
+      }
+    }
+  }
+
+  if (typeof data.message === 'string' && data.message.trim()) msgs.push(data.message.trim())
+  if (typeof data.error === 'string' && data.error.trim()) msgs.push(data.error.trim())
+
+  return msgs
 }
+
+const checkResponseForErrors = (
+  response: { data?: unknown },
+  defaultKey: string
+): void => {
+  const responseData = response.data as Record<string, unknown> | undefined
+  if (!responseData) return
+
+  const hasFailure =
+    responseData.success === false ||
+    !!responseData.errors
+
+  if (!hasFailure) return
+
+  const rawMessages = collectErrorMessages(responseData)
+
+  // لو الباك بيرجع keys بالفعل، خديها كما هي
+  const keysOrMsgs = rawMessages.length
+    ? rawMessages.map(m => normalizeToKeyIfPossible(m))
+    : [defaultKey]
+
+  // لو ولا واحدة key ومفيش رسائل، رجعي defaultKey
+  throw new Error(keysOrMsgs.join('\n') || defaultKey)
+}
+
 
 /**
  * Extract error message from unknown error type
  */
-const getErrorMessage = (error: unknown, defaultMessage: string): string => {
+// const getErrorMessage = (error: unknown, defaultMessage: string): string => {
+//   if (error && typeof error === 'object') {
+//     // Check for Axios error structure
+//     if ('response' in error && error.response && typeof error.response === 'object') {
+//       const response = error.response as { 
+//         status?: number
+//         data?: { 
+//           message?: string
+//           error?: string
+//           errors?: string[] | Record<string, string[]>
+//           success?: boolean
+//         } 
+//       }
+      
+//       if (response.data) {
+//         // Handle validation errors (400 status with errors array or object)
+//         if (response.status === 400) {
+//           // Check for array of error strings
+//           if (Array.isArray(response.data.errors) && response.data.errors.length > 0) {
+//             return response.data.errors.join('\n')
+//           }
+//           // Check for object with error messages (e.g., { email: ['Email is required'], password: ['Password is too short'] })
+//           if (response.data.errors && typeof response.data.errors === 'object' && !Array.isArray(response.data.errors)) {
+//             const errorObj = response.data.errors as Record<string, string[]>
+//             const errorMessages: string[] = []
+//             for (const key in errorObj) {
+//               if (Array.isArray(errorObj[key])) {
+//                 errorMessages.push(...errorObj[key])
+//               }
+//             }
+//             if (errorMessages.length > 0) {
+//               return errorMessages.join('\n')
+//             }
+//           }
+//         }
+        
+//         // Fallback to message or error field
+//         return response.data.message || response.data.error || defaultMessage
+//       }
+      
+//       // If no data but we have a status, provide a generic message based on status
+//       if (response.status) {
+//         if (response.status === 401) {
+//           return 'Unauthorized. Please check your credentials.'
+//         }
+//         if (response.status === 403) {
+//           return 'Access forbidden. You do not have permission to perform this action.'
+//         }
+//         if (response.status === 404) {
+//           return 'Resource not found. Please try again.'
+//         }
+//         if (response.status >= 500) {
+//           return 'Server error. Please try again later.'
+//         }
+//       }
+//     }
+//     // Check for standard Error object
+//     if ('message' in error && typeof error.message === 'string') {
+//       return error.message
+//     }
+//   }
+//   return defaultMessage
+// }
+const getErrorMessage = (error: unknown, defaultKey: string): string => {
+  // لو Error معمول throw قبل كده (وmessage بتاعه key أو keys مفصولين)
+  if (error instanceof Error && error.message) {
+    return normalizeToKeyIfPossible(error.message)
+  }
+
   if (error && typeof error === 'object') {
-    // Check for Axios error structure
-    if ('response' in error && error.response && typeof error.response === 'object') {
-      const response = error.response as { 
+    // Axios-like
+    if ('response' in error && (error as any).response) {
+      const response = (error as any).response as {
         status?: number
-        data?: { 
+        data?: {
           message?: string
           error?: string
           errors?: string[] | Record<string, string[]>
           success?: boolean
-        } 
+        }
       }
-      
-      if (response.data) {
-        // Handle validation errors (400 status with errors array or object)
-        if (response.status === 400) {
-          // Check for array of error strings
-          if (Array.isArray(response.data.errors) && response.data.errors.length > 0) {
-            return response.data.errors.join('\n')
+
+      const status = response.status
+      const data = response.data
+
+      // لو فيه data errors/message نجمعهم
+      if (data) {
+        // validation 400
+        if (status === 400) {
+          // لو الباك رجّع list أو object
+          const merged: string[] = []
+
+          if (Array.isArray(data.errors) && data.errors.length) merged.push(...data.errors)
+          if (data.errors && typeof data.errors === 'object' && !Array.isArray(data.errors)) {
+            for (const key in data.errors) merged.push(...(data.errors[key] || []))
           }
-          // Check for object with error messages (e.g., { email: ['Email is required'], password: ['Password is too short'] })
-          if (response.data.errors && typeof response.data.errors === 'object' && !Array.isArray(response.data.errors)) {
-            const errorObj = response.data.errors as Record<string, string[]>
-            const errorMessages: string[] = []
-            for (const key in errorObj) {
-              if (Array.isArray(errorObj[key])) {
-                errorMessages.push(...errorObj[key])
-              }
-            }
-            if (errorMessages.length > 0) {
-              return errorMessages.join('\n')
-            }
-          }
+
+          if (merged.length) return merged.map(normalizeToKeyIfPossible).join('\n')
+
+          if (data.message) return normalizeToKeyIfPossible(data.message)
+          if (data.error) return normalizeToKeyIfPossible(data.error)
+
+          return DEFAULT_KEYS.validationFailed
         }
-        
-        // Fallback to message or error field
-        return response.data.message || response.data.error || defaultMessage
-      }
-      
-      // If no data but we have a status, provide a generic message based on status
-      if (response.status) {
-        if (response.status === 401) {
-          return 'Unauthorized. Please check your credentials.'
+
+        // أي status تاني: لو message موجود
+        if (typeof data.message === 'string' && data.message.trim()) {
+          return normalizeToKeyIfPossible(data.message)
         }
-        if (response.status === 403) {
-          return 'Access forbidden. You do not have permission to perform this action.'
-        }
-        if (response.status === 404) {
-          return 'Resource not found. Please try again.'
-        }
-        if (response.status >= 500) {
-          return 'Server error. Please try again later.'
+        if (typeof data.error === 'string' && data.error.trim()) {
+          return normalizeToKeyIfPossible(data.error)
         }
       }
-    }
-    // Check for standard Error object
-    if ('message' in error && typeof error.message === 'string') {
-      return error.message
+
+      // fallback حسب status → Keys
+      if (status === 401) return DEFAULT_KEYS.unauthorizedCheckCredentials
+      if (status === 403) return DEFAULT_KEYS.forbiddenNoPermission
+      if (status === 404) return DEFAULT_KEYS.notFoundTryAgain
+      if (typeof status === 'number' && status >= 500) return DEFAULT_KEYS.serverErrorTryLater
     }
   }
-  return defaultMessage
+
+  return defaultKey
 }
 
 /**
@@ -218,14 +341,14 @@ export const loginWithEmail = async (
     const response = await apiClient.api.postIdentityLogin(loginRequest)
     
     // Check for errors in response body first (even if HTTP status is 200)
-    checkResponseForErrors(response, 'Login failed. Please check your credentials.')
+    checkResponseForErrors(response, DEFAULT_KEYS.loginFailedCredentials)
     
     const authData = extractAuthDataFromResponse(response)
     
     if (!authData) {
       // If tokens are in cookies, we might need to fetch user info
       // For now, we'll assume the token is in cookies and try to get user
-      throw new Error('No token received from server')
+      throw new Error(DEFAULT_KEYS.noTokenReceived)
     }
 
     // Store tokens
@@ -233,7 +356,7 @@ export const loginWithEmail = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Login failed. Please check your credentials.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.loginFailedCredentials)
     throw new Error(errorMessage)
   }
 }
@@ -254,12 +377,12 @@ export const loginWithPhone = async (
     const response = await apiClient.api.postIdentityLoginPhone(loginRequest)
     
     // Check for errors in response body first (even if HTTP status is 200)
-    checkResponseForErrors(response, 'Login failed. Please check your credentials.')
+    checkResponseForErrors(response, DEFAULT_KEYS.loginFailedCredentials)
     
     const authData = extractAuthDataFromResponse(response)
     
     if (!authData) {
-      throw new Error('No token received from server')
+      throw new Error(DEFAULT_KEYS.noTokenReceived)
     }
 
     setToken(authData)
@@ -290,7 +413,7 @@ export const loginWithExternalProvider = async (
     const authData = extractAuthDataFromResponse(response)
     
     if (!authData) {
-      throw new Error('No token received from server')
+      throw new Error(DEFAULT_KEYS.noTokenReceived)
     }
 
     setToken(authData)
@@ -341,14 +464,14 @@ export const guestLogin = async (
     const authData = extractAuthDataFromResponse(response)
     
     if (!authData) {
-      throw new Error('No token received from server')
+      throw new Error(DEFAULT_KEYS.noTokenReceived)
     }
 
     setToken(authData)
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Guest login failed. Please try again.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.guestLoginFailed)
     throw new Error(errorMessage)
   }
 }
@@ -363,7 +486,7 @@ export const refreshToken = async (): Promise<AuthResponse> => {
     const refreshTokenValue = getRefreshToken()
 
     if (!currentToken || !refreshTokenValue) {
-      throw new Error('No token available to refresh')
+      throw new Error(DEFAULT_KEYS.noTokenAvailableToRefresh)
     }
 
     const refreshRequest: RefreshTokenRequest = {
@@ -393,12 +516,12 @@ export const refreshToken = async (): Promise<AuthResponse> => {
     const response = await refreshApi.api.postIdentityRefresh(refreshRequest)
     
     // Check for errors in response body
-    checkResponseForErrors(response, 'Token refresh failed. Please login again.')
+    checkResponseForErrors(response, DEFAULT_KEYS.tokenRefreshFailedLoginAgain)
     
     const authData = extractAuthDataFromResponse(response)
     
     if (!authData) {
-      throw new Error('No token received from server')
+      throw new Error(DEFAULT_KEYS.noTokenReceived)
     }
 
     setToken(authData)
@@ -408,7 +531,7 @@ export const refreshToken = async (): Promise<AuthResponse> => {
     // If refresh fails, clear tokens
     removeToken()
     
-    const errorMessage = getErrorMessage(error, 'Token refresh failed. Please login again.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.tokenRefreshFailedLoginAgain)
     throw new Error(errorMessage)
   }
 }
@@ -445,19 +568,19 @@ export const adminLogin = async (
     const response = await apiClient.api.postIdentityLoginAdmin(loginRequest)
     
     // Check for errors in response body first (even if HTTP status is 200)
-    checkResponseForErrors(response, 'Admin login failed. Please check your credentials.')
+    checkResponseForErrors(response, DEFAULT_KEYS.adminLoginFailedCredentials)
     
     const authData = extractAuthDataFromResponse(response)
     
     if (!authData) {
-      throw new Error('No token received from server')
+      throw new Error(DEFAULT_KEYS.noTokenReceived)
     }
 
     setToken(authData)
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Admin login failed. Please check your credentials.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.adminLoginFailedCredentials)
     throw new Error(errorMessage)
   }
 }
@@ -483,7 +606,7 @@ export const signupFull = async (
     const response = await apiClient.api.postIdentityFullRegister(signupRequest)
     
     // Check for errors in response body first (even if HTTP status is 200)
-    checkResponseForErrors(response, 'Registration failed. Please try again.')
+    checkResponseForErrors(response, DEFAULT_KEYS.registrationFailedTryAgain)
     
     const authData = extractAuthDataFromResponse(response)
     
@@ -508,7 +631,7 @@ export const signupFull = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Registration failed. Please try again.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.registrationFailedTryAgain)
     throw new Error(errorMessage)
   }
 }
@@ -531,7 +654,7 @@ export const signupWithEmail = async (
     const response = await apiClient.api.postIdentityRegister(signupRequest)
     
     // Check for errors in response body first (even if HTTP status is 200)
-    checkResponseForErrors(response, 'Registration failed. Please try again.')
+    checkResponseForErrors(response, DEFAULT_KEYS.registrationFailedTryAgain)
     
     const authData = extractAuthDataFromResponse(response)
     
@@ -552,7 +675,7 @@ export const signupWithEmail = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Registration failed. Please try again.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.registrationFailedTryAgain)
     throw new Error(errorMessage)
   }
 }
@@ -576,7 +699,7 @@ export const signupWithPhone = async (
     const response = await apiClient.api.postIdentityPhoneRegister(signupRequest)
     
     // Check for errors in response body first (even if HTTP status is 200)
-    checkResponseForErrors(response, 'Registration failed. Please try again.')
+    checkResponseForErrors(response, DEFAULT_KEYS.registrationFailedTryAgain)
     
     const authData = extractAuthDataFromResponse(response)
     
@@ -597,7 +720,7 @@ export const signupWithPhone = async (
 
     return authData
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Registration failed. Please try again.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.registrationFailedTryAgain)
     throw new Error(errorMessage)
   }
 }
@@ -616,7 +739,7 @@ export const sendPhoneOTP = async (
 
     await apiClient.api.postIdentitySendCode(request)
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Failed to send OTP. Please try again.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.sendOtpFailedTryAgain)
     throw new Error(errorMessage)
   }
 }
@@ -653,7 +776,7 @@ export const verifyPhoneOTP = async (
       } as AuthUser,
     }
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Invalid OTP code. Please try again.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.invalidOtpTryAgain)
     throw new Error(errorMessage)
   }
 }
@@ -688,7 +811,7 @@ export const confirmPhone = async (
       } as AuthUser,
     }
   } catch (error: unknown) {
-    const errorMessage = getErrorMessage(error, 'Invalid confirmation code. Please try again.')
+    const errorMessage = getErrorMessage(error, DEFAULT_KEYS.invalidConfirmationTryAgain)
     throw new Error(errorMessage)
   }
 }

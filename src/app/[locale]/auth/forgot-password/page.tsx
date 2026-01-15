@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { WelcomeHeader, AuthErrorDisplay } from '@/components/ui/auth/index'
 import { ForgotPasswordForm } from '@/components/ui/auth/ForgotPasswordForm'
@@ -8,12 +8,6 @@ import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { useI18nTranslations } from '@/i18n'
 import { useToast } from '@/components/ui/Toaster'
 
-/**
- * Forgot Password Page - Multi-step password reset flow
- * Step 1: Enter mobile number
- * Step 2: Enter 4-digit OTP
- * Step 3: Enter new password + confirm password
- */
 export default function ForgotPasswordPage() {
   const router = useRouter()
   const t = useI18nTranslations('auth')
@@ -22,52 +16,47 @@ export default function ForgotPasswordPage() {
   const [showLoading, setShowLoading] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
 
-  // ✅ local error for AuthErrorDisplay
+  // ✅ store "errorKeyOrMsg::id" to guarantee re-trigger even if same error repeats
   const [error, setError] = useState<string | null>(null)
 
-  // ✅ prevent duplicate toasts without useRef
-  const [lastToastedError, setLastToastedError] = useState<string | null>(null)
+  // ✅ Use a helper to show error for N seconds, then auto-hide
+  const showError = useCallback(
+    (msgOrKey: string, autoHideMs = 5000) => {
+      const stamped = `${msgOrKey}__${Date.now()}`
+      setError(stamped)
 
-  // ✅ Auto-hide AuthErrorDisplay after 5 seconds
-  useEffect(() => {
-    if (!error) return
-    const id = window.setTimeout(() => setError(null), 5000)
-    return () => window.clearTimeout(id)
-  }, [error])
+      // optional: toast (only once per call)
+      toast.addToast(msgOrKey, 'error')
 
-  // ✅ Toast once per error (no useRef)
-  useEffect(() => {
-    if (!error) {
-      setLastToastedError(null)
-      return
-    }
-    if (error !== lastToastedError) {
-      toast.addToast(error, 'error')
-      setLastToastedError(error)
-    }
-  }, [error, lastToastedError, toast])
+      // auto hide
+      window.setTimeout(() => {
+        setError(current => (current === stamped ? null : current))
+      }, autoHideMs)
+    },
+    [toast]
+  )
+
+  // ✅ AuthErrorDisplay should receive the original message/key (without stamp)
+  const displayError = error ? error.split('__')[0] : null
 
   const handleConfirmClick = () => {
-    // reset previous error
     setError(null)
-
-    // Show loading modal first
     setShowLoading(true)
 
-    // Simulate API call
     setTimeout(() => {
-      // Example: toggle this to test error UI
       const simulateError = false
-
       setShowLoading(false)
 
       if (simulateError) {
-        setError(t('forgotPassword.errors.somethingWentWrong'))
+        // ✅ pass key OR message (your AuthErrorDisplay will translate if it's a key)
+        showError('forgotPassword.errors.somethingWentWrong', 5000)
         return
       }
 
-      // Success
-      toast.addToast(t('forgotPassword?.successToast') ?? 'Password reset successfully', 'success')
+      toast.addToast(
+        t('forgotPassword.errors.successToast') ?? '',
+        'success'
+      )
       setShowSuccessModal(true)
     }, 2000)
   }
@@ -82,8 +71,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
         <WelcomeHeader welcomeText={t('welcomeHeader.defaultWelcome')} />
 
-   
-        <AuthErrorDisplay error={error} />
+        {/* <AuthErrorDisplay error={displayError} /> */}
 
         <ForgotPasswordForm
           onBackClick={() => router.push('/auth/login')}

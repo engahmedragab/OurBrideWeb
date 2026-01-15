@@ -259,7 +259,31 @@
       "title": "Download Our APP"
      
     }
+  },
+  
+    "changePassword": {
+      "title": "Change Password",
+      "saveChanges": "Save Changes",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password",
+      "enterPassword": "Enter Password",
+      "enterNewPassword": "Enter New Password",
+      "confirmNewPasswordPlaceholder": "Confirm New Password",
+      "success": {
+        "title": "Your Password has been changed",
+        "description": "Your Password has been changed. You can now login with the new password"
+      },
+      "errors": {
+        "currentInvalid": "Password isn't correct, please try again",
+        "newRequired": "Password is required",
+        "newMin": "Password must be at least 8 characters",
+        "confirmRequired": "Please confirm your password",
+        "notMatch": "Password doesn't match, please try again"
+      }
+    
   }
-
+  
+   
 
 }

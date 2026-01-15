@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -47,6 +47,37 @@ export const ForgotPasswordForm = ({
   const isRTL = useIsRTL()
   const router = useRouter()
   const { sendPhoneOTP, verifyPhoneOTP, isLoading, error, clearError } = useAuth()
+  
+
+  // ✅ Local visible error (stamped) to auto-dismiss even if same key repeats
+  const [uiError, setUiError] = useState<string | null>(null)
+  
+  // ✅ Whenever auth error changes -> show it then hide after 5s + clear global error
+  useEffect(() => {
+    if (!error) {
+      setUiError(null)
+      return
+    }
+  
+    const stamped = `${error}__${Date.now()}`
+    setUiError(stamped)
+  
+    const timer = window.setTimeout(() => {
+      // hide only if it's still the same stamped error
+      setUiError(current => (current === stamped ? null : current))
+      clearError()
+    }, 5000)
+  
+    return () => window.clearTimeout(timer)
+  }, [error, clearError])
+  
+  // ✅ remove stamp before passing to AuthErrorDisplay
+  const displayError = uiError ? uiError.split('__')[0] : null
+  
+
+
+
+
 
   // Step management
   const [step, setStep] = useState<Step>(1)
@@ -498,7 +529,7 @@ export const ForgotPasswordForm = ({
           </Typography>
 
           {/* Error Message */}
-          <AuthErrorDisplay error={error} />
+          <AuthErrorDisplay error={displayError} />
 
           {/* Phone Input */}
           <div className="w-full space-y-1">
@@ -512,7 +543,7 @@ export const ForgotPasswordForm = ({
               onBlur={handlePhoneBlur}
               variant={phoneInputVariant}
               prefixIcon={<Smartphone className="h-5 w-5" />}
-              errorMessage={phoneErrorMessage}
+              // errorMessage={phoneErrorMessage}
               showSuccessIcon={phoneStatus === 'success'}
               size="lg"
               className="h-20  px-5 text-14"
@@ -575,7 +606,7 @@ export const ForgotPasswordForm = ({
           </Typography>
 
           {/* Error Message */}
-          <AuthErrorDisplay error={error} />
+          <AuthErrorDisplay error={displayError} />
 
           {/* OTP Input */}
           <div className="w-full space-y-1 flex justify-center" dir={isRTL ? 'ltr' : 'ltr' }>
@@ -585,7 +616,7 @@ export const ForgotPasswordForm = ({
               value={otp}
               onChange={handleOTPChange}
               variant={otpInputVariant}
-              errorMessage={otpErrorMessage}
+              
             />
           </div>
 
@@ -645,7 +676,7 @@ export const ForgotPasswordForm = ({
           </Typography>
 
           {/* Error Message */}
-          <AuthErrorDisplay error={error} />
+          <AuthErrorDisplay error={displayError} />
 
           {/* Password Input */}
           <div className="w-full space-y-1">
