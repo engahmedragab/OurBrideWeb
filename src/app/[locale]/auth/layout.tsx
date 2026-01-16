@@ -1,20 +1,47 @@
+import type { ReactNode } from 'react'
 import AuthHeroSection from '@/auth/components/AuthHeroSection'
+import { getTranslations } from 'next-intl/server'
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+type AuthLayoutProps = {
+  children: ReactNode
+  params: {
+    locale: 'ar' | 'en'
+  }
+}
+
+export default async function AuthLayout({ children, params }: AuthLayoutProps) {
+  const t = await getTranslations('auth')
+
+  const heroSectionData = {
+    backToHome: t('hero.backToHome'),
+    title: t('hero.title'),
+    description: t('hero.description'),
+    heroCard: {
+      title: t('heroCard.title'),
+      subtitle: t('heroCard.subtitle'),
+    },
+  }
+
+  const isRTL = params.locale === 'ar'
+
   return (
-    <div className="flex min-h-screen w-full flex-col lg:flex-row overflow-hidden">
-      {/* Left Section - Hero (60%) - Hidden on mobile */}
-      <div className="hidden lg:flex w-full h-screen lg:w-[60%] items-center justify-center lg:py-6 lg:px-4 overflow-hidden">
-        <AuthHeroSection />
+    <div
+      className={[
+        'flex h-dvh w-full overflow-hidden', 
+        'flex-col',
+        isRTL ? 'lg:flex-row' : 'lg:flex-row-reverse', 
+      ].join(' ')}
+    >
+    
+      <div className="w-full lg:w-[55%] h-full bg-white overflow-y-auto py-6 overflow-x-hidden">
+        <div className="min-h-full w-full p-6  flex flex-col items-center sm:justify-center">
+          
+          {children}
+        </div>
       </div>
 
-      {/* Right Section - Form (40%) */}
-      <div className="w-full min-h-screen lg:w-[40%] flex flex-col bg-white p-6 items-center lg:justify-center overflow-y-auto overflow-x-hidden">
-        {children}
+      <div className="hidden lg:flex lg:w-[45%] h-full overflow-hidden items-center justify-center ">
+        <AuthHeroSection heroSectionData={heroSectionData} />
       </div>
     </div>
   )

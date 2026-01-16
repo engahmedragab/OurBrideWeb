@@ -5,11 +5,285 @@
     "success": "Success",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "save": "Save",
+    "save": "Save", 
     "delete": "Delete",
     "edit": "Edit",
     "search": "Search",
     "filter": "Filter",
-    "sort": "Sort"
+    "sort": "Sort",
+    "pleaseWait": "Just a moment, we're almost there...",
+    "skipButton": "Skip For Now"
+
+  },
+  
+  "auth": {
+    "hero": {
+      "backToHome": "Back To home",
+      "title": "Organize your Wedding",
+      "description": "Organize your wedding with ease and make it more easy"
+    },
+    "heroCard": {
+      "title": "Organize your Wedding",
+      "subtitle": "Organize your wedding with ease and make it more easy"
+    },
+    "tabs": {
+      "login": "Login",
+      "signup": "Signup"
+    },
+    "welcomeHeader": {
+      "defaultWelcome": "Welcome To OurBride",
+      "planningPreferences": "Planning Preferences"
+    },
+    "errors": {
+      "validationTitle": "Validation Errors:"
+    },
+    "common": {
+      "confirm": "Confirm",
+      "resend": "Resend",
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "pleaseWait": "Please wait a moment.",
+      "skipForNow": "Skip For Now",
+      "continueAsProvider": "Continue as provider",
+      "areYouProvider": "Are you providing your services?",
+      "skipButton": "Skip For Now"
+    },
+    "loginForm": {
+      "emailPlaceholder": "example@example.com",
+      "passwordPlaceholder": "Enter Password",
+      "rememberMe": "Remember Me",
+      "forgotPasswordLink": "Forget Password?",
+      "loginButton": "Login",
+      "providerTextPrefix": "Are you providing your services?",
+      "providerAction": "Continue as provider",
+      "errors": {
+        "wrongEmail": "Wrong E-mail, Please Try Again",
+        "wrongPassword": "Password isn't correct, please try again"
+      }
+    },
+    "signupForm": {
+      "fullNamePlaceholder": "Full Name",
+      "emailPlaceholder": "E-mail",
+      "mobilePlaceholder": "Mobile Number",
+      "passwordPlaceholder": "Enter Password",
+      "confirmPasswordPlaceholder": "Confirm Password",
+      "female": "Female",
+      "male": "Male",
+
+      "gender": {
+        "errorRequired": "Please select your gender"
+      },
+
+      "terms": {
+        "labelPrefix": "I Accepted",
+        "linkLabel": "Terms & Conditions",
+        "errorRequired": "You must accept Terms & Conditions"
+      },
+
+      "button": {
+        "signup": "SignUp"
+      },
+
+      "provider": {
+        "text": "Are you providing your services?",
+        "action": "Continue as provider"
+      },
+
+      "errors": {
+        "fullNameRequired": "Full name is required",
+        "genderRequired": "Gender is required",
+        "emailRequired": "E-mail is required",
+        "emailInvalid": "Please enter a valid email address",
+        "mobileRequired": "Mobile number is required",
+        "mobileInvalid": "Please enter a valid mobile number",
+        "passwordRequired": "Password is required",
+        "passwordMin": "Password must be at least 8 characters",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordNotMatch": "Password Doesn't Match"
+      }
+    },
+    "forgotPassword": {
+      "title": "Forget Password",
+      "instructionStep1": "Please enter your mobile number to send an OTP",
+      "instructionStep2": "Please enter the 4 numbers OTP We have sent to your phone number",
+      "instructionStep3": "Please enter your new password",
+      "phonePlaceholder": "Mobile Number",
+      "newPasswordPlaceholder": "Enter New Password",
+      "confirmNewPasswordPlaceholder": "Confirm New Password",
+      "otpErrorLength": "Please enter the 4-digit OTP",
+      "otpErrorNumbers": "OTP must contain only numbers",
+      "phoneRequired": "Mobile Number is required",
+      "phoneInvalid": "Please enter a valid mobile number",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 8 characters",
+      "confirmPasswordRequired": "Please confirm your password",
+      "passwordNotMatch": "Password Doesn't Match",
+      "sendOtpFailed": "Failed to send OTP. Please try again.",
+      "invalidOtp": "Invalid OTP code. Please try again.",
+      "resetFailed": "Failed to reset password. Please try again.",
+      "resendButton": "Resend OTP",
+      "resendTextPrefix": "Didn't receive the code?",
+      "successModal": {
+        "title": "Password Reset Successful",
+        "description": "Your password has been updated. You can now log in with your new password.",
+        "confirmLabel": "Confirm"
+      },
+      "errors": {
+        "somethingWentWrong": "Something went wrong. Please try again.",
+        "successToast": "Password reset successfully"
+      }
+    },
+    "mobileVerification": {
+      "title": "Mobile Verification",
+      "instruction": "Please enter the 4 numbers OTP We have sent to {{phoneNumber}}",
+      "instructionFallback": "Please enter the 4 numbers OTP We have sent to your phone number",
+      "otpErrorLength": "Please enter the 4-digit OTP",
+      "otpErrorNumbers": "OTP must contain only numbers",
+      "phoneRequired": "Phone number is required",
+      "sendOtpFailed": "Failed to send OTP. Please try again.",
+      "invalidOtp": "Invalid OTP code. Please try again.",
+      "didntReceive": "Didn't receive the code?",
+      "resendAfter": "Resend After {{seconds}} Sec",
+      "resend": "Resend",
+      "resentSuccess": "Otp Resent Successfully"
+    },
+    "planningPreferences": {
+      "title": "Planning Preferences",
+      "servicesTitle": "Services You're Looking For",
+      "loadingServices": "Loading services...",
+      "noServices": "No services available",
+      "budgetPlaceholder": "Enter Your Budget",
+      "budgetSuffix": "EGP",
+      "locationPlaceholder": "Location",
+      "setLocation": "Set Location",
+      "detailsTitle": "Your Bride/Groom Details",
+      "fullNamePlaceholder": "Full Name",
+      "emailPlaceholder": "E-mail",
+      "confirmButton": "Confirm",
+      "searchForLocation": "Search For Location ....",
+      "gettingYourLocation": "Getting your location...",
+      "useMyCurrentLocation": "Use My Current location",
+      "searchResults": "Search Results",
+      "noLocationsFound": "No locations found. Try a different search term.",
+      "searchForLocationOrUseYourCurrentLocation": "Search for a location or use your current location",
+      "savingButton": "Saving...",
+      "successModal": {
+        "title": "Success!",
+        "description": "Your planning preferences have been saved",
+        "confirmLabel": "Confirm",
+        
+        "skipButton": "Skip For Now"
+      },
+      "errors": {
+        "selectAtLeastOne": "Please select at least one service",
+        "budgetRequired": "Budget is required",
+        "locationRequired": "Location is required",
+        "fullNameRequired": "Full name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Please enter a valid email",
+        "loadFailed": "Failed to load planning preferences",
+        "saveFailed": "Failed to save planning preferences",
+        "failedToSearchLocations": "Failed to search locations",
+        "failedToGetAddress": "Failed to get address",
+        "geolocationNotSupported": "Geolocation is not supported by your browser",
+        "locationAccessDenied": "Location access denied. Please enable location permissions in your browser settings.",
+        "locationInformationUnavailable": "Location information is unavailable.",
+        "locationRequestTimedOut": "Location request timed out. Please try again.",
+        "errorOccurredWhileGettingLocation": "An error occurred while getting your location.",
+        "somethingWentWrong": "Something went wrong while checking your preferences"
+      }
+    },
+    "context": {
+    "errors": {
+      "loginFailed": "Login failed",
+      "externalLoginFailed": "External login failed",
+      "guestLoginFailed": "Guest login failed",
+      "registrationFailed": "Registration failed",
+      "sendOtpFailed": "Failed to send OTP",
+      "invalidOtpCode": "Invalid OTP code",
+      "invalidConfirmationCode": "Invalid confirmation code",
+      "refreshUserFailed": "Failed to refresh user data"
+     
+    }},
+    "api": {
+    "errors": {
+      "loginFailedCredentials": "Login failed. Please check your credentials.",
+      "noTokenReceived": "No token received from server",
+      "externalLoginFailed": "External login failed. Please try again.",
+      "guestLoginFailed": "Guest login failed. Please try again.",
+      "noTokenAvailableToRefresh": "No token available to refresh",
+      "tokenRefreshFailedLoginAgain": "Token refresh failed. Please login again.",
+      "adminLoginFailedCredentials": "Admin login failed. Please check your credentials.",
+      "registrationFailedTryAgain": "Registration failed. Please try again.",
+      "sendOtpFailedTryAgain": "Failed to send OTP. Please try again.",
+      "invalidOtpTryAgain": "Invalid OTP code. Please try again.",
+      "invalidConfirmationTryAgain": "Invalid confirmation code. Please try again.",
+      "unauthorizedCheckCredentials": "Unauthorized. Please check your credentials.",
+      "forbiddenNoPermission": "Access forbidden. You do not have permission to perform this action.",
+      "notFoundTryAgain": "Resource not found. Please try again.",
+      "serverErrorTryLater": "Server error. Please try again later.",
+      "validationFailed": "Validation failed. Please try again."
+    }
+  },
+    "terms": {
+      "title": "Terms & Conditions",
+      "acceptButton": "Accept Terms & Conditions",
+      "sections": {
+        "introduction": {
+          "title": "Introduction",
+          "body": "By using OurBride, you agree to the following terms and conditions."
+        },
+        "accountUsage": {
+          "title": "Account Usage",
+          "body": "Users must provide accurate personal information. You are responsible for keeping your account secure."
+        },
+        "bookingsServices": {
+          "title": "Bookings & Services",
+          "body": "Bookings depend on provider availability. Cancellations and refunds follow each provider's policy."
+        },
+        "paymentsFees": {
+          "title": "Payments & Fees",
+          "body": "All payments must be made through the app. OurBride deducts a 2% commission from provider earnings monthly."
+        },
+        "contentCommunity": {
+          "title": "Content & Community",
+          "body": "Users must not post offensive or harmful content. OurBride reserves the right to remove any inappropriate material."
+        },
+        "privacySecurity": {
+          "title": "Privacy & Security",
+          "body": "We protect your data under our Privacy Policy. Identity verification is required for providers."
+        }
+      }
+    },
+    "downloadApp": {
+      "title": "Download Our APP"
+     
+    }
+  },
+  
+    "changePassword": {
+      "title": "Change Password",
+      "saveChanges": "Save Changes",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password",
+      "enterPassword": "Enter Password",
+      "enterNewPassword": "Enter New Password",
+      "confirmNewPasswordPlaceholder": "Confirm New Password",
+      "success": {
+        "title": "Your Password has been changed",
+        "description": "Your Password has been changed. You can now login with the new password"
+      },
+      "errors": {
+        "currentInvalid": "Password isn't correct, please try again",
+        "newRequired": "Password is required",
+        "newMin": "Password must be at least 8 characters",
+        "confirmRequired": "Please confirm your password",
+        "notMatch": "Password doesn't match, please try again"
+      }
+    
   }
+  
+   
+
 }
