@@ -203,6 +203,12 @@ export default {
         28: ['1.75rem', { lineHeight: '1.4', letterSpacing: '0' }], // 28px
         30: ['1.875rem', { lineHeight: '1.4', letterSpacing: '0' }], // 30px
         32: ['2rem', { lineHeight: '1.4', letterSpacing: '0' }], // 32px
+        36: ['2.25rem', { lineHeight: '1.3', letterSpacing: '0' }], // 36px
+        40: ['2.5rem', { lineHeight: '1.3', letterSpacing: '0' }], // 40px
+        48: ['3rem', { lineHeight: '1.2', letterSpacing: '0' }], // 48px
+        56: ['3.5rem', { lineHeight: '1.2', letterSpacing: '0' }], // 56px
+        64: ['4rem', { lineHeight: '1.1', letterSpacing: '0' }], // 64px
+        72: ['4.5rem', { lineHeight: '1.1', letterSpacing: '0' }], // 72px
         // Legacy sizes for backward compatibility
         xs: ['0.75rem', { lineHeight: '1.4', letterSpacing: '0' }], // 12px
         sm: ['0.875rem', { lineHeight: '1.4', letterSpacing: '0' }], // 14px

@@ -29,7 +29,7 @@ const CURRENCY_CONFIG: Record<string, {
   locale: string
   decimalPlaces: number
 }> = {
-  EGP: { symbol: '£', symbolPosition: 'before', locale: 'en-EG', decimalPlaces: 2 }, // Default
+  EGP: { symbol: 'EGP', symbolPosition: 'after', locale: 'en-EG', decimalPlaces: 2 }, // Default
   SAR: { symbol: 'ر.س', symbolPosition: 'after', locale: 'ar-SA', decimalPlaces: 2 },
   USD: { symbol: '$', symbolPosition: 'before', locale: 'en-US', decimalPlaces: 2 },
   AED: { symbol: 'د.إ', symbolPosition: 'after', locale: 'ar-AE', decimalPlaces: 2 },

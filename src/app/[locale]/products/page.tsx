@@ -71,22 +71,23 @@ export default function ProductIntroPage() {
     }))
   }, [categories, categoryIconMap])
 
-  // Map API banners to hero carousel format
+  // Map API banners to hero carousel format - use same images as category page
   const mappedHeroSlides = useMemo(() => {
     if (apiBanners.length > 0) {
-      return apiBanners.slice(0, MAX_HERO_SLIDES).map((banner, index) => ({
-        id: String(index + 1),
-        label: 'Featured',
-        title: banner.heading,
-        description: banner.description || '',
-        ctaText: banner.ctaText || 'Shop Now',
-        ctaLink: banner.ctaLink || '/products',
-        productImage:
-          typeof banner.productImage === 'string'
-            ? banner.productImage
-            : 'https://images.unsplash.com/photo-1571875257727-256c39da42af?w=600',
-        discountText: '',
-      }))
+      return apiBanners.slice(0, MAX_HERO_SLIDES).map((banner, index) => {
+        // Use the same images from DEFAULT_HERO_SLIDES based on index
+        const defaultSlide = DEFAULT_HERO_SLIDES[index % DEFAULT_HERO_SLIDES.length]
+        return {
+          id: String(index + 1),
+          label: banner.heading ? 'Featured' : defaultSlide.label,
+          title: banner.heading || defaultSlide.title,
+          description: banner.description || defaultSlide.description,
+          ctaText: banner.ctaText || defaultSlide.ctaText,
+          ctaLink: banner.ctaLink || defaultSlide.ctaLink,
+          productImage: defaultSlide.productImage, // Use same images as category page
+          discountText: banner.offerPercentage ? `${banner.offerPercentage}% OFF` : defaultSlide.discountText || '',
+        }
+      })
     }
     return DEFAULT_HERO_SLIDES
   }, [apiBanners])
@@ -270,7 +271,7 @@ export default function ProductIntroPage() {
         )}
 
         {/* 6) Newsletter Banner */}
-        <div className="mb-12">
+        <div className="py-8 md:py-12">
           <OfferBanner
             offers={[
               {
@@ -283,6 +284,7 @@ export default function ProductIntroPage() {
               },
             ]}
             onSubscribe={handleSubscribe}
+            noContainer={true}
           />
         </div>
       </div>

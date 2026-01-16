@@ -31,7 +31,7 @@ export const ProductOffersSection = ({
 }: ProductOffersSectionProps) => {
   return (
     <section
-      className={cn('py-12 md:py-20', className)}
+      className={cn('py-8 md:py-12', className)}
     >
       {/* Section Header with Timer */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">

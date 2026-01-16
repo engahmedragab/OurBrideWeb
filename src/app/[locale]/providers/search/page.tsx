@@ -1,16 +1,29 @@
 'use client'
 
 import { useState, useMemo, useEffect, Suspense } from 'react'
+import Image from 'next/image'
 import { useRouter } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
-import { Search, MapPin, Calendar, Map, List, X, Navigation, Filter } from 'lucide-react'
+import { Search, MapPin, Calendar, Map, List, X, Navigation, Filter, Building2 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
 import { DatePicker } from '@/components/ui/DatePicker'
 import { Input } from '@/components/ui/Input'
-import { EmptyState, LoadingSpinner, ProviderSearchCard, ProviderMap } from '@/components/ui'
+import { EmptyState, LoadingSpinner, ProviderSearchCard, ProviderMap, Typography, CardWrapper, RatingDisplay } from '@/components/ui'
 import { ProviderFiltersModal, type ProviderFilters, type SortOption } from '@/components/ui/ProviderFiltersModal'
 import type { FeaturedProviderResponse } from '@/types/responses'
+
+// Type for providers with coordinates
+type ProviderWithCoords = FeaturedProviderResponse & { 
+  latitude?: number
+  longitude?: number
+}
+
+// Type guard to check if provider has coordinates
+function hasCoordinates(provider: FeaturedProviderResponse): provider is ProviderWithCoords & { latitude: number; longitude: number } {
+  const withCoords = provider as ProviderWithCoords
+  return typeof withCoords.latitude === 'number' && typeof withCoords.longitude === 'number'
+}
 import { cn } from '@/lib/utils'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import { useProvidersFilter } from '@/hooks/providers/useProvidersFilter'
@@ -170,12 +183,15 @@ function ProvidersSearchContent() {
     console.log('[ProvidersSearchContent] apiProviders length:', apiProviders?.length || 0)
     if (apiProviders && apiProviders.length > 0) {
       console.log('[ProvidersSearchContent] Sample provider:', apiProviders[0])
-      console.log('[ProvidersSearchContent] Provider with coords:', {
-        id: apiProviders[0].id,
-        name: apiProviders[0].nameEn,
-        latitude: (apiProviders[0] as any).latitude,
-        longitude: (apiProviders[0] as any).longitude,
-      })
+      const firstProvider = apiProviders[0]
+      if (hasCoordinates(firstProvider)) {
+        console.log('[ProvidersSearchContent] Provider with coords:', {
+          id: firstProvider.id,
+          name: firstProvider.nameEn,
+          latitude: firstProvider.latitude,
+          longitude: firstProvider.longitude,
+        })
+      }
     }
     return apiProviders || []
   }, [apiProviders])
@@ -269,9 +285,7 @@ function ProvidersSearchContent() {
     }
     // If we have providers, calculate center from their coordinates
     if (filteredProviders.length > 0) {
-      const providersWithCoords = filteredProviders.filter(
-        p => (p as any).latitude && (p as any).longitude
-      ) as Array<typeof filteredProviders[0] & { latitude: number; longitude: number }>
+      const providersWithCoords = filteredProviders.filter(hasCoordinates)
 
       if (providersWithCoords.length > 0) {
         const avgLat = providersWithCoords.reduce((sum, p) => sum + p.latitude, 0) / providersWithCoords.length
@@ -383,9 +397,9 @@ function ProvidersSearchContent() {
           <div className="container-custom py-4">
             <div className="flex items-center justify-between">
               {/* Results Count */}
-              <div className="text-16 text-gray-900">
+              <Typography variant="body" weight="regular">
                 <span className="font-semibold">{filteredProviders.length}</span> providers nearby
-              </div>
+              </Typography>
 
               {/* Action Buttons */}
               <div className="flex items-center gap-3">
@@ -525,17 +539,19 @@ function ProvidersSearchContent() {
                         const services = provider.topRatedServices || []
                         const totalServices = provider.totalServices || 0
 
+                        const isSelected = selectedProvider?.id === provider.id
                         return (
                           <div
                             key={provider.id}
                             onClick={() => setSelectedProvider(provider)}
-                            className={`cursor-pointer transition-all duration-200 ${selectedProvider?.id === provider.id
-                              ? 'ring-2 ring-brand-500 rounded-lg'
-                              : ''
-                              }`}
+                            className={cn(
+                              "cursor-pointer transition-all duration-200",
+                              isSelected && "outline-2 outline-brand-500 outline-offset-2 rounded-xl"
+                            )}
                           >
                             <ProviderSearchCard
                               provider={provider}
+                              className={isSelected ? "border-2 border-brand-500 shadow-lg" : ""}
                               services={services.map(svc => {
                                 // Determine price based on priceType (0 = Buy, 1 = Rent, etc.)
                                 const priceType = svc.priceType ?? 0
@@ -605,13 +621,16 @@ function ProvidersSearchContent() {
                         mapCenter,
                         mapZoom,
                         selectedProviderId: selectedProvider?.id,
-                        providers: filteredProviders.map(p => ({
-                          id: p.id,
-                          name: p.nameEn || p.nameAr,
-                          latitude: (p as any).latitude,
-                          longitude: (p as any).longitude,
-                          hasCoords: !!(p as any).latitude && (p as any).longitude,
-                        })),
+                        providers: filteredProviders.map(p => {
+                          const hasCoords = hasCoordinates(p)
+                          return {
+                            id: p.id,
+                            name: p.nameEn || p.nameAr,
+                            latitude: hasCoords ? p.latitude : undefined,
+                            longitude: hasCoords ? p.longitude : undefined,
+                            hasCoords,
+                          }
+                        }),
                       })
                       return (
                         <ProviderMap
@@ -626,41 +645,75 @@ function ProvidersSearchContent() {
                     })()
                   ) : (
                     <div className="w-full h-full min-h-[500px] bg-gray-100 flex items-center justify-center">
-                      <p className="text-gray-500">Loading map...</p>
+                      <Typography variant="body" textColor="secondary">
+                        Loading map...
+                      </Typography>
                     </div>
                   )}
 
                   {/* Selected Provider Info Overlay */}
                   {selectedProvider && (
-                    <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-xl p-4 z-10">
+                    <CardWrapper className="absolute bottom-4 left-4 right-4 shadow-xl z-10">
                       <button
                         onClick={() => setSelectedProvider(null)}
-                        className="absolute top-2 right-2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                        className="absolute top-3 right-3 p-1.5 hover:bg-gray-100 rounded-full transition-colors z-20"
+                        aria-label="Close"
                       >
                         <X className="h-4 w-4 text-gray-500" />
                       </button>
-                      <div className="flex items-center gap-4">
-                        <img
-                          src={selectedProvider.publicLogoImageUrl || '/placeholder-provider.png'}
-                          alt={selectedProvider.nameEn || 'Provider'}
-                          className="w-16 h-16 rounded-lg object-cover"
-                        />
-                        <div className="flex-1">
-                          <h3 className="text-16 font-semibold text-gray-900">
-                            {selectedProvider.nameEn || selectedProvider.nameAr}
-                          </h3>
-                          <p className="text-14 text-gray-600">
-                            {selectedProvider.descriptionEn || selectedProvider.descriptionAr}
-                          </p>
+                      <div className="flex items-start gap-4 pr-8">
+                        <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
+                          {(selectedProvider.publicBannerImageUrl || selectedProvider.publicLogoImageUrl) ? (
+                            <Image
+                              src={selectedProvider.publicBannerImageUrl || selectedProvider.publicLogoImageUrl || ''}
+                              alt={selectedProvider.nameEn || selectedProvider.nameAr || 'Provider'}
+                              fill
+                              sizes="64px"
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                              <div className="w-8 h-8 rounded-full bg-brand-500/20 flex items-center justify-center">
+                                <Building2 className="h-4 w-4 text-brand-600" />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0 flex items-center gap-4">
+                          <div className="flex-1 min-w-0">
+                            <Typography variant="h6" weight="semibold" className="mb-1">
+                              {selectedProvider.nameEn || selectedProvider.nameAr}
+                            </Typography>
+                            {selectedProvider.rate && (
+                              <div className="mb-2">
+                                <RatingDisplay
+                                  rating={selectedProvider.rate}
+                                  count={selectedProvider.totalReviews}
+                                  showCount={true}
+                                  showValue={true}
+                                  size="sm"
+                                  variant="compact"
+                                  starColor="brand"
+                                />
+                              </div>
+                            )}
+                            {selectedProvider.shortAddress && (
+                              <Typography variant="bodySmall" textColor="secondary" className="line-clamp-2">
+                                {selectedProvider.shortAddress}
+                              </Typography>
+                            )}
+                          </div>
                           <Button
                             onClick={() => handleProviderClick(selectedProvider.id)}
-                            className="mt-2 h-8 px-4 text-12 bg-brand-600 hover:bg-brand-700 !text-white"
+                            variant="default"
+                            size="md"
+                            className="!text-white flex-shrink-0"
                           >
-                            View Profile
+                            View Provider
                           </Button>
                         </div>
                       </div>
-                    </div>
+                    </CardWrapper>
                   )}
                 </div>
               </div>
@@ -681,7 +734,7 @@ function ProvidersSearchContent() {
         }}
         initialFilters={filters}
         maxPriceRange={{ min: 0, max: 5000 }}
-        currency="SAR"
+        currency="EGP"
       />
     </div>
   )

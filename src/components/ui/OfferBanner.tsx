@@ -23,6 +23,7 @@ export interface OfferBannerProps {
   autoPlayInterval?: number
   onSubscribe?: (email: string) => void
   className?: string
+  noContainer?: boolean
 }
 
 export const OfferBanner = ({
@@ -30,6 +31,7 @@ export const OfferBanner = ({
   autoPlayInterval = 5000,
   onSubscribe,
   className,
+  noContainer = false,
 }: OfferBannerProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [email, setEmail] = useState('')
@@ -69,12 +71,12 @@ export const OfferBanner = ({
   }
 
   return (
-    <section className={cn('container-custom', className)}>
-      <div className="relative">
-        <div className="border border-brand-500 rounded-2xl overflow-hidden bg-white">
+    <section className={cn(noContainer ? 'py-4 md:py-6' : 'container-custom py-4 md:py-6', className)}>
+      <div className="relative w-full">
+        <div className="border border-brand-500 rounded-2xl overflow-hidden bg-white w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 relative w-full">
             {/* Left Content - Text and Buttons */}
-            <div className="text-center lg:text-left px-4 md:px-5 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center">
+            <div className="text-center lg:text-left px-4 md:px-6 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center">
               <h2 className="text-18 md:text-20 font-medium text-gray-900 mb-1.5 md:mb-2">
                 {currentOffer.heading}
               </h2>
