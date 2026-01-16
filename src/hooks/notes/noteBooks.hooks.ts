@@ -6,10 +6,11 @@ import {
   type UseMutationOptions,
 } from '@tanstack/react-query'
 import { noteBookKeys } from './noteBooks.keys'
-import { initNoteBooks, syncNoteBook, getNoteBook } from '@/services/api/noteBooksApi'
+import { initNoteBooks, syncNoteBook, syncNoteBookDelta, getNoteBook } from '@/services/api/noteBooksApi'
 import type { NoteBooksQuery } from '@/services/api/noteBooksApi'
 import type { NoteBookResponse } from '@/types/responses'
-import type { NoteBookRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { NoteBookRequest, NoteLineRequest, NoteLineCategoryRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 const normalizeQuerySafe = (query?: NoteBooksQuery): NoteBooksQuery | undefined => {
   if (!query) return undefined
@@ -74,6 +75,36 @@ export const useNoteSyncMutation = (
     mutationFn: async ({ query, ...data }) => {
       const normalizedQuery = normalizeQuerySafe(query)
       await syncNoteBook(data, normalizedQuery)
+    },
+    onSuccess: (_data, variables) => {
+      invalidateNoteBookQueries(queryClient, normalizeQuerySafe(variables.query))
+    },
+    ...options,
+  })
+}
+
+export const useNoteSyncDeltaMutation = (
+  options?: Omit<
+    UseMutationOptions<
+      SyncBookDeltaResponse<NoteBookResponse | null>,
+      Error,
+      { data: SyncBookDeltaRequest<NoteLineRequest, NoteLineCategoryRequest>; query?: NoteBooksQuery },
+      unknown
+    >,
+    'mutationFn'
+  >
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    SyncBookDeltaResponse<NoteBookResponse | null>,
+    Error,
+    { data: SyncBookDeltaRequest<NoteLineRequest, NoteLineCategoryRequest>; query?: NoteBooksQuery },
+    unknown
+  >({
+    mutationFn: async ({ data, query }) => {
+      const normalizedQuery = normalizeQuerySafe(query)
+      return await syncNoteBookDelta(data, normalizedQuery)
     },
     onSuccess: (_data, variables) => {
       invalidateNoteBookQueries(queryClient, normalizeQuerySafe(variables.query))

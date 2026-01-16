@@ -1,16 +1,10 @@
-// This file contains helper functions and types for Budget Book feature
-// Note: mapApiToDraft and mapDraftToSyncPayload are not used anymore
-// The payload is built directly in page.tsx (similar to Guest List approach)
-
 import type {
   BudgetLineResponse,
   BudgetLineCategoryResponse,
+  NoteLineResponse,
+  NoteLineCategoryResponse,
 } from '@/types/responses'
 
-/**
- * Budget Book Draft - Local state that mirrors the API payload
- * Includes ALL fields even if not used in UI
- */
 export type BudgetBookDraft = {
   id?: number
   groomId?: string | null
@@ -36,22 +30,28 @@ export type BudgetBookDraft = {
   creationDate?: string | null
   lastModifiedDate?: string | null
   slug?: string | null
+  isModelsAdd?: boolean
 }
 
-/**
- * Generate temporary negative ID for new items
- */
-export const generateTempId = (): number => -Math.floor(Date.now() + Math.random() * 1000)
-
-/**
- * Slugify text for category slugs
- */
-export const slugify = (text: string): string =>
-  text
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-
+export type NoteBookDraft = {
+  id?: number
+  groomId?: string | null
+  brideId?: string | null
+  weddingPlannerId?: string | null
+  bookType: any
+  bookClass: any
+  title?: string | null
+  clientName?: string | null
+  weddingDate?: string | null
+  eventLocation?: string | null
+  lines?: NoteLineResponse[]
+  lineCategories?: NoteLineCategoryResponse[]
+  count?: number | null
+  createdBy?: string | null
+  lastModifiedBy?: string | null
+  isDeleted?: boolean
+  creationDate?: string | null
+  lastModifiedDate?: string | null
+  slug?: string | null
+  isModelsAdd?: boolean
+}

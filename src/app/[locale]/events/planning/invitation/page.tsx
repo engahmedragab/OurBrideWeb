@@ -1,18 +1,21 @@
 'use client'
 
-import { useMemo, useEffect, useState, Suspense } from 'react'
+import { useMemo, useState, useEffect, Suspense } from 'react'
 import { Plus, Save } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LoadingOverlay, LoadingSpinner } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
-import { useGuestBook, useSyncGuestBook } from '@/hooks/guestBooks'
+import { useGuestBook, useSyncGuestBook, useSyncGuestBookDelta } from '@/hooks/guestBooks'
+import { usePlanningBookController } from '@/hooks/planning/usePlanningBookController'
+import { useInitGuestBooks, useAddGuestBookModels } from '@/hooks/bookInit'
 
 import {
   GuestsHeader,
   GuestsTabs,
   GuestsSummary,
   GuestGroupCard,
+  GuestsTable,
   AddGuestDialog,
   AddCategoryModal,
   type Guest,
@@ -28,24 +31,53 @@ import type { GuestLineResponse, GuestLineCategoryResponse, GuestBookResponse } 
 import type { UserType, GuestBookRequest } from '@/../client/common/api/gen/ourbride-api'
 import { GuestStatus as GuestStatusEnum, GuestTitle, GuestRelevant } from '@/types/responses/book-enums'
 import { generateClientId } from '@/utils/guestbook/uuid'
-
-/** temp negative id for new lines */
-const generateTempId = () => -Math.floor(Date.now() + Math.random() * 1000)
+import { generateTempId } from '@/utils/sync/tempIds'
+import { buildBookRequestFromLocal, convertLineToRequest, convertCategoryToRequest } from '@/utils/planning/mappers/invitationMappers'
 
 type GuestBookDraft = GuestBookResponse & {
   lineCategories?: Array<GuestLineCategoryResponse & { clientId?: string }>
   lines?: Array<GuestLineResponse & { clientId?: string }>
 }
 
-const toSideFromFamily = (family?: string | null): GuestSide => {
-  const f = (family || '').trim().toLowerCase()
-  return f === 'groom' ? 'groom' : 'bride'
+/**
+ * Normalize guestRelevant value to GuestRelevant enum
+ */
+const normalizeGuestRelevant = (value?: string | number | null): GuestRelevant => {
+  if (value === 0 || value === 'Others' || value === '0' || value === GuestRelevant.Others) {
+    return GuestRelevant.Others
+  }
+  if (value === 1 || value === 'Bride' || value === '1' || value === GuestRelevant.Bride) {
+    return GuestRelevant.Bride
+  }
+  if (value === 2 || value === 'Groom' || value === '2' || value === GuestRelevant.Groom) {
+    return GuestRelevant.Groom
+  }
+  // Default to Others
+  return GuestRelevant.Others
+}
+
+const toSideFromGuestRelevant = (guestRelevant?: string | number | null, activeSide?: GuestSide): GuestSide => {
+  const normalized = normalizeGuestRelevant(guestRelevant)
+  // If guestRelevant is "Others", show in the active side
+  if (normalized === GuestRelevant.Others) {
+    return activeSide || 'bride'
+  }
+  // Map guestRelevant to side
+  if (normalized === GuestRelevant.Bride) {
+    return 'bride'
+  }
+  if (normalized === GuestRelevant.Groom) {
+    return 'groom'
+  }
+  // Default fallback
+  return activeSide || 'bride'
 }
 
 const toUiStatus = (isDone?: boolean): GuestStatus => (isDone ? 'confirmed' : 'none')
 
-const mapLineToGuest = (line: GuestLineResponse, selectedIds: Set<string>): Guest => {
-  const side = toSideFromFamily((line as any).family)
+const mapLineToGuest = (line: GuestLineResponse, selectedIds: Set<string>, activeSide: GuestSide): Guest => {
+  const guestRelevant = (line as any).guestRelevant
+  const side = toSideFromGuestRelevant(guestRelevant, activeSide)
   const groupId: GuestGroupId =
     line.lineCategoryId != null ? String(line.lineCategoryId) : 'uncategorized'
 
@@ -89,8 +121,6 @@ function InvitationPageContent() {
   const eventId = useEventId()
 
   const [activeSide, setActiveSide] = useState<GuestSide>('bride')
-  const [localDraft, setLocalDraft] = useState<GuestBookDraft | null>(null)
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   const [isAddGuestOpen, setIsAddGuestOpen] = useState(false)
   const [forcedGroupId, setForcedGroupId] = useState<GuestGroupId | undefined>(undefined)
@@ -99,39 +129,136 @@ function InvitationPageContent() {
   // const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false)
 
   const [selectedGuestIds, setSelectedGuestIds] = useState<Set<string>>(new Set())
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Prevent hydration mismatch by only enabling query after mount
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const { data: guestBook, isLoading, error, refetch } = useGuestBook({
     eventId: eventId || undefined,
     userType: undefined as unknown as UserType | undefined,
     clientId: undefined as unknown as string | undefined,
-    enabled: typeof window !== 'undefined' && !!eventId,
+    enabled: isMounted && !!eventId,
   })
 
   const syncMutation = useSyncGuestBook()
+  const syncDeltaMutation = useSyncGuestBookDelta()
+  const initMutation = useInitGuestBooks()
+  const addModelsMutation = useAddGuestBookModels()
+  const {
+    localBook: localDraft,
+    hasUnsavedChanges,
+    setHasUnsavedChanges,
+    save,
+    applyLocalUpdate,
+    getActiveCategories,
+    getActiveLines,
+    isInitializing,
+    isAddingModels,
+  } = usePlanningBookController<GuestBookDraft, GuestLineResponse, GuestLineCategoryResponse>({
+    book: (guestBook as unknown as GuestBookDraft) ?? null,
+    isLoading,
+    eventId: eventId ?? undefined,
+    requireEventId: true,
+    syncFn: async (draft) => {
+      const payload = buildBookRequestFromLocal(draft)
+      await syncMutation.mutateAsync({
+        data: payload,
+        query: {
+          eventId: eventId || undefined,
+          userType: undefined as unknown as UserType | undefined,
+          clientId: undefined as unknown as string | undefined,
+        },
+      })
+      refetch()
+    },
+    syncDeltaFn: async (delta) => {
+      const response = await syncDeltaMutation.mutateAsync({
+        data: delta,
+        query: {
+          eventId: eventId || undefined,
+          userType: undefined as unknown as UserType | undefined,
+          clientId: undefined as unknown as string | undefined,
+        },
+      })
+      return response as any
+    },
+    refetch,
+    shouldInit: (b) => !b?.id,
+    initFn: async () => {
+      await initMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: undefined as unknown as UserType | undefined,
+        clientId: undefined as unknown as string | undefined,
+      })
+    },
+    shouldAddModels: (b) => b?.isModelsAdd === false,
+    addModelsFn: async () => {
+      await addModelsMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: undefined as unknown as UserType | undefined,
+        clientId: undefined as unknown as string | undefined,
+      })
+    },
+    initMutation,
+    addModelsMutation,
+    isSameBookBase: (current, last) =>
+      current.id === last.id &&
+      current.groomId === last.groomId &&
+      current.brideId === last.brideId &&
+      current.title === last.title,
+    getLines: (book) => book.lines || [],
+    getCategories: (book) => book.lineCategories || [],
+    getLineId: (line) => line.id,
+    getCategoryId: (cat) => cat.id,
+    convertLineToRequest,
+    convertCategoryToRequest,
+    isSameLine: (current, last) =>
+      (current as any).nickName === (last as any).nickName &&
+      (current as any).isDeleted === (last as any).isDeleted &&
+      (current as any).isDone === (last as any).isDone,
+    isSameCategory: (current, last) =>
+      (current as any).name === (last as any).name &&
+      (current as any).isDeleted === (last as any).isDeleted,
+    getLineCategoryId: (line) => (line as any).lineCategoryId ?? null,
+    isLineDeleted: (line) => !!(line as any).isDeleted,
+    isLineDone: (line) => !!(line as any).isDone,
+    isCategoryDeleted: (cat) => !!(cat as any).isDeleted,
+  })
 
-  /** hydrate local draft from server when safe */
-  useEffect(() => {
-    if (!guestBook) {
-      if (!isLoading && !hasUnsavedChanges) setLocalDraft(null)
-      return
-    }
-    if (!hasUnsavedChanges) {
-      setLocalDraft(guestBook as unknown as GuestBookDraft)
-    }
-  }, [guestBook, isLoading, hasUnsavedChanges])
 
-  /** groups (categories) - shared */
+  /** groups (tables) - filtered by guestRelevant */
   const categoryGroups: GuestGroup[] = useMemo(() => {
-    if (!localDraft) return []
+    const cats = getActiveCategories()
 
-    const cats = (localDraft.lineCategories || []).filter(c => !c.isDeleted)
+    // Filter categories by guestRelevant: show current side + "Others"
+    const filteredCats = cats.filter((cat) => {
+      const catGuestRelevant = normalizeGuestRelevant((cat as any).guestRelevant)
+      // Show if it matches the active side or is "Others"
+      if (catGuestRelevant === GuestRelevant.Others) return true // Always show "Others"
+      if (activeSide === 'bride' && catGuestRelevant === GuestRelevant.Bride) return true
+      if (activeSide === 'groom' && catGuestRelevant === GuestRelevant.Groom) return true
+      return false
+    })
 
-    const mapped = cats.map((cat, idx) => {
+    const mapped = filteredCats.map((cat, idx) => {
       const anyCat: any = cat
-      const id =
-        cat.id && cat.id !== 0
-          ? String(cat.id)
-          : String(anyCat.clientId || cat.slug || `tmp-${idx}`)
+      // Preserve numeric ID (positive or negative) as string for display
+      // But ensure we always have a valid identifier
+      let id: string
+      if (cat.id && cat.id !== 0) {
+        // Use the numeric ID (can be positive for saved, negative for temp)
+        id = String(cat.id)
+      } else if (anyCat.clientId) {
+        id = String(anyCat.clientId)
+      } else if (cat.slug) {
+        id = String(cat.slug)
+      } else {
+        // Fallback to temp ID
+        id = `tmp-${idx}`
+      }
 
       return {
         id,
@@ -139,39 +266,43 @@ function InvitationPageContent() {
       }
     })
 
-    // لو فيه lines بدون category
-    const hasUncategorized = (localDraft.lines || []).some(l => !l.isDeleted && l.lineCategoryId == null)
+    // Check if there are uncategorized lines using controller helper (filtered by guestRelevant)
+    const activeLines = getActiveLines()
+    const hasUncategorized = activeLines.some(l => {
+      const lineCatId = (l as any).lineCategoryId
+      const lineGuestRelevant = normalizeGuestRelevant((l as any).guestRelevant)
+
+      const matchesSide =
+        lineGuestRelevant === GuestRelevant.Others ||
+        (activeSide === 'bride' && lineGuestRelevant === GuestRelevant.Bride) ||
+        (activeSide === 'groom' && lineGuestRelevant === GuestRelevant.Groom)
+      return lineCatId == null && matchesSide
+    })
     if (hasUncategorized) {
       mapped.unshift({ id: 'uncategorized', title: 'Uncategorized' })
     }
 
     return mapped
-  }, [localDraft])
+  }, [getActiveCategories, getActiveLines, activeSide])
 
-  /** active group selection */
-  const [activeGroupId, setActiveGroupId] = useState<GuestGroupId | null>(null)
 
-  useEffect(() => {
-    if (!categoryGroups.length) {
-      setActiveGroupId(null)
-      return
-    }
-    setActiveGroupId(prev => (prev && categoryGroups.some(g => g.id === prev) ? prev : categoryGroups[0].id))
-  }, [categoryGroups])
-
-  const activeGroup = useMemo(() => {
-    if (!activeGroupId) return null
-    return categoryGroups.find(g => g.id === activeGroupId) || null
-  }, [categoryGroups, activeGroupId])
-
-  /** map lines -> UI guests */
+  /** map lines -> UI guests (filtered by guestRelevant) */
   const guests: Guest[] = useMemo(() => {
-    if (!localDraft) return []
-    const lines = (localDraft.lines || []).filter(l => !l.isDeleted)
-    return lines.map(l => mapLineToGuest(l, selectedGuestIds))
-  }, [localDraft, selectedGuestIds])
+    const lines = getActiveLines() as GuestLineResponse[]
+    return lines
+      .filter((l) => {
+        // Filter by guestRelevant: show current side + "Others"
+        const lineGuestRelevant = normalizeGuestRelevant((l as any).guestRelevant)
 
-  /** filter guests by side */
+        if (lineGuestRelevant === GuestRelevant.Others) return true // Always show "Others"
+        if (activeSide === 'bride' && lineGuestRelevant === GuestRelevant.Bride) return true
+        if (activeSide === 'groom' && lineGuestRelevant === GuestRelevant.Groom) return true
+        return false
+      })
+      .map(l => mapLineToGuest(l, selectedGuestIds, activeSide))
+  }, [getActiveLines, selectedGuestIds, activeSide])
+
+  /** filter guests by side (already filtered by guestRelevant, but ensure side matches) */
   const filteredGuests = useMemo(() => {
     return guests.filter(g => g.side === activeSide)
   }, [guests, activeSide])
@@ -195,12 +326,9 @@ function InvitationPageContent() {
   }
 
   const handleToggleStatus = (id: string) => {
-    if (!localDraft) return
     const lineIdNum = Number(id)
-
-    setLocalDraft(prev => {
-      if (!prev) return prev
-      const nextLines = (prev.lines || []).map(line => {
+    applyLocalUpdate((prev) => {
+      const nextLines = (prev.lines || []).map((line) => {
         if (Number(line.id) !== lineIdNum) return line
         const anyLine: any = line
         const nextIsDone = !anyLine.isDone
@@ -215,62 +343,31 @@ function InvitationPageContent() {
 
       return { ...prev, lines: nextLines }
     })
-
-    setHasUnsavedChanges(true)
   }
 
   const handleDelete = (id: string) => {
-    if (!localDraft) return
     const lineIdNum = Number(id)
-
-    setLocalDraft(prev => {
-      if (!prev) return prev
-      const nextLines = (prev.lines || []).map(line =>
-        Number(line.id) === lineIdNum ? ({ ...line, isDeleted: true } as any) : line
+    applyLocalUpdate((prev) => {
+      const nextLines = (prev.lines || []).map((line) =>
+        Number(line.id) === lineIdNum ? ({ ...line, isDeleted: true, lastModifiedDate: new Date().toISOString() } as any) : line
       )
       return { ...prev, lines: nextLines }
     })
-
-    setHasUnsavedChanges(true)
     addToast('Guest deleted', 'info')
   }
 
-  const buildSyncPayload = (draft: GuestBookDraft): GuestBookRequest => {
-    // غالبًا نفس shape — هنcast بس مع الحفاظ على fields
-    return {
-      ...(draft as any),
-      lastModifiedDate: new Date().toISOString(),
-      lineCategories: (draft.lineCategories || []).map(c => ({ ...(c as any) })),
-      lines: (draft.lines || []).map(l => ({ ...(l as any) })),
-    } as GuestBookRequest
-  }
 
-  const handleSync = async (draftOverride?: GuestBookDraft) => {
-    try {
-      const draft = draftOverride || localDraft
-      if (!draft) {
-        addToast('Guest book not found. Please refresh the page.', 'error')
+  const handleSync = async () => {
+    const result = await save()
+    if (!result.ok) {
+      if (result.reason === 'loading' || result.reason === 'no-changes') {
+        if (result.reason === 'no-changes') setHasUnsavedChanges(false)
         return
       }
-
-      const payload = buildSyncPayload(draft)
-
-      await syncMutation.mutateAsync({
-        data: payload,
-        query: {
-          eventId: eventId || undefined,
-          userType: undefined as unknown as UserType | undefined,
-          clientId: undefined as unknown as string | undefined,
-        },
-      })
-
-      setHasUnsavedChanges(false)
-      addToast('Changes saved successfully', 'success')
-      refetch()
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Failed to save changes'
-      addToast(msg, 'error')
+      addToast(result.message || 'Failed to save changes', 'error')
+      return
     }
+    addToast(result.message || 'Changes saved successfully', 'success')
   }
 
   /** open guest modal */
@@ -295,7 +392,7 @@ function InvitationPageContent() {
     setIsAddGuestOpen(true)
   }
 
-  /** add category: يضيف في lineCategories فقط + يعمل sync فوري عشان يجيب id */
+  /** add table: يضيف في lineCategories فقط + يعمل sync فوري عشان يجيب id */
   // const handleSubmitCategory = async (categoryData: { name: string; slug?: string; description?: string }) => {
   //   if (!localDraft) return
 
@@ -334,81 +431,118 @@ function InvitationPageContent() {
       | { mode: 'new'; category: { name: string; slug: string; description?: string }; nickName: string; peopleCount: number; status: GuestStatus }
   ) => {
     if (!localDraft) return
-  
+
     const isDone = payload.status === 'confirmed'
-    const apiStatus = isDone ? 'Confirmed' : 'None' // حسب الـ API عندك
+    const apiStatus = isDone ? 'Confirmed' : 'None'
     const now = new Date().toISOString()
-  
-    // 1) لو new: ضيف category في lineCategories
-    let categoryIdForLine: number | 0 = payload.mode === 'existing' ? payload.lineCategoryId : 0
-    let categorySlugForLine: string | null = null
-  
-    let nextDraft = localDraft
-  
-    if (payload.mode === 'new') {
-      categorySlugForLine = payload.category.slug
-  
-      const newCategory = {
-        id: 0,
-        name: payload.category.name,
-        description: payload.category.description || null,
-        slug: payload.category.slug,
-        count_id: 0,
+
+    applyLocalUpdate((currentDraft) => {
+      // 1) لو new: ضيف category في lineCategories
+      let categoryIdForLine: number | null = payload.mode === 'existing' ? payload.lineCategoryId : null
+      let categoryCountIdForLine: number | null = null
+      let categorySlugForLine: string | null = null
+
+      let nextDraft = currentDraft
+
+      if (payload.mode === 'new') {
+        categorySlugForLine = payload.category.slug
+        const tempCategoryId = generateTempId()
+        const tempCountId = Date.now()
+        categoryIdForLine = tempCategoryId
+        categoryCountIdForLine = tempCountId
+
+        const newCategory = {
+          id: tempCategoryId,
+          name: payload.category.name,
+          description: payload.category.description || null,
+          slug: payload.category.slug,
+          count_id: tempCountId,
+          isDeleted: false,
+          isModelLine: false,
+          creationDate: now,
+          lastModifiedDate: now,
+          guestRelevant: activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom,
+        } as any
+
+        nextDraft = {
+          ...nextDraft,
+          lineCategories: [...(nextDraft.lineCategories || []), newCategory],
+        }
+      } else {
+        // existing: get category from current draft
+        const cat = (nextDraft.lineCategories || []).find((c) => Number((c as any).id) === payload.lineCategoryId) as any
+        categorySlugForLine = cat?.slug || null
+        categoryCountIdForLine = cat?.count_id ?? null
+      }
+
+      // Determine guestRelevant for the new line
+      // If using existing category, use its guestRelevant (or activeSide if it's "Others")
+      // If creating new category, use activeSide
+      let lineGuestRelevant: GuestRelevant
+      if (payload.mode === 'existing') {
+        const cat = (nextDraft.lineCategories || []).find((c) => Number((c as any).id) === payload.lineCategoryId) as any
+        const catGuestRelevant = normalizeGuestRelevant(cat?.guestRelevant)
+        // If category is "Others", use the active side; otherwise use the category's guestRelevant
+        if (catGuestRelevant === GuestRelevant.Others) {
+          lineGuestRelevant = activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom
+        } else {
+          // Use the category's guestRelevant (already normalized to enum)
+          lineGuestRelevant = catGuestRelevant
+        }
+      } else {
+        // New category: use activeSide
+        lineGuestRelevant = activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom
+      }
+
+      // 2) ضيف line
+      const newLine = {
+        id: generateTempId(),
+        isDone,
+        isFavorite: false,
         isDeleted: false,
         isModelLine: false,
+        brideId: activeSide === 'bride' ? nextDraft.brideId : null,
+        groomId: activeSide === 'groom' ? nextDraft.groomId : null,
+        bookId: nextDraft.id,
+        lineCategoryId: categoryIdForLine,
+        lineCategoryCountId: categoryCountIdForLine,
+        lineCategorySlug: categorySlugForLine,
         creationDate: now,
         lastModifiedDate: now,
-        guestRelevant: activeSide === 'bride' ? 'Bride' : 'Groom',
+        nickName: payload.nickName,
+        title: 'NoFormalities',
+        attended: false,
+        family: activeSide === 'bride' ? 'Bride' : 'Groom',
+        status: apiStatus,
+        guestRelevant: lineGuestRelevant,
       } as any
-  
-      nextDraft = {
+
+      return {
         ...nextDraft,
-        lineCategories: [...(nextDraft.lineCategories || []), newCategory],
+        lines: [...(nextDraft.lines || []), newLine],
+        lastModifiedDate: now,
       }
-    } else {
-      // existing: حاول تجيب slug من الـ category لو موجود
-      const cat = (nextDraft.lineCategories || []).find(c => Number((c as any).id) === payload.lineCategoryId) as any
-      categorySlugForLine = cat?.slug || null
-    }
-  
-    // 2) ضيف line
-    const newLine = {
-      id: generateTempId(),
-      isDone,
-      isFavorite: false,
-      isDeleted: false,
-      isModelLine: false,
-      brideId: activeSide === 'bride' ? nextDraft.brideId : null,
-      groomId: activeSide === 'groom' ? nextDraft.groomId : null,
-      bookId: nextDraft.id,
-      lineCategoryId: categoryIdForLine,         // existing => رقم / new => 0
-      lineCategoryCountId: 0,
-      lineCategorySlug: categorySlugForLine,     // مهم جدًا في حالة new
-      creationDate: now,
-      lastModifiedDate: now,
-      nickName: payload.nickName,
-      title: 'NoFormalities',
-      attended: false,
-      family: activeSide === 'bride' ? 'Bride' : 'Groom',
-      status: apiStatus,
-      guestRelevant: activeSide === 'bride' ? 'Bride' : 'Groom',
-    } as any
-  
-    nextDraft = {
-      ...nextDraft,
-      lines: [...(nextDraft.lines || []), newLine],
-      lastModifiedDate: now,
-    }
-  
-    setLocalDraft(nextDraft)
-    setHasUnsavedChanges(true)
+    })
+
     addToast('Guest added', 'info')
   }
-  
-  if (isLoading) {
+
+  // Show loading state if not mounted yet (to prevent hydration mismatch) or if actually loading
+  if (!isMounted || isLoading || isInitializing || isAddingModels) {
+    const loadingTitle = isInitializing
+      ? 'Initializing guest book...'
+      : isAddingModels
+        ? 'Adding default models...'
+        : 'Loading guests...'
+    const loadingSubtitle = isInitializing
+      ? 'Setting up your guest book'
+      : isAddingModels
+        ? 'Please wait while we add default categories'
+        : 'Please wait a moment'
+
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingOverlay open={true} title="Loading guests..." />
+        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
       </div>
     )
   }
@@ -439,24 +573,29 @@ function InvitationPageContent() {
     )
   }
 
-  const hasAnyGroups = categoryGroups.length > 0
-
   return (
     <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <div className="flex items-center justify-between mb-4">
         <GuestsHeader onRefresh={handleRefresh} />
 
         {(hasUnsavedChanges || syncMutation.isPending) && (
-          <Button
-            variant="brand"
-            onClick={() => handleSync()}
-            disabled={syncMutation.isPending}
-            className="text-white"
-            type="button"
-          >
-            <Save className="h-4 w-4 mr-2" />
-            {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="brand"
+              size="md"
+              onClick={() => handleSync()}
+              disabled={syncMutation.isPending}
+              className="flex items-center gap-2 rounded-xl !text-white"
+              type="button"
+            >
+              <Save className="h-4 w-4" />
+              {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </Button>
+
+            {hasUnsavedChanges && (
+              <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+            )}
+          </div>
         )}
       </div>
 
@@ -464,56 +603,17 @@ function InvitationPageContent() {
 
       <GuestsSummary side={activeSide} invitationsCount={invitationsCount} peopleTotal={peopleTotal} />
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 sm:gap-6 mb-20 sm:mb-6">
-  {/* ✅ Right (Categories) FIRST on small screens */}
-  <div className="order-1 md:order-2 md:col-span-2">
-    <GuestGroupCard
-      group={categoryGroups}
-      guests={filteredGuests}
-      activeGroupId={activeGroup?.id}
-      onSelectGroup={(groupId: GuestGroupId) => setActiveGroupId(groupId)}
-      onAddGroup={() => handleOpenAddGuest(undefined, true)}
-    />
-  </div>
-
-  {/* ✅ Left (Lines) SECOND on small screens */}
-  <div className="order-2 md:order-1 md:col-span-3">
-    {!hasAnyGroups || !activeGroup ? (
-      <div className="rounded-xl border border-gray-200 bg-white p-6">
-        <div className="flex items-center justify-between">
-          <p className="text-16 font-medium text-gray-900">categories</p>
-
-          <Button
-            variant="outlineBrand"
-            size="sm"
-            onClick={() => handleOpenAddGuest()}
-            className="text-brand-500 rounded-md hover:bg-brand-500 hover:text-white"
-            type="button"
-          >
-            <Plus className="h-4 w-4" /> Add new guest
-          </Button>
-        </div>
-
-        <p className="mt-2 text-14 text-gray-500">
-          Add a category first, then you can start adding guests.
-        </p>
+      <div className="mb-6">
+        <GuestsTable
+          categories={categoryGroups}
+          guests={filteredGuests}
+          onToggleSelect={handleToggleSelect}
+          onToggleStatus={handleToggleStatus}
+          onDelete={handleDelete}
+          onAddGuest={(groupId: GuestGroupId) => handleOpenAddGuest(groupId)}
+          onAddCategory={() => handleOpenAddGuest(undefined, true)}
+        />
       </div>
-    ) : (
-      <GuestGroupCard
-        key={`active-${String(activeGroup.id)}`}
-        group={activeGroup}
-        guests={filteredGuests}
-        isExpanded={true}
-        onToggleExpand={() => {}}
-        onToggleSelect={handleToggleSelect}
-        onToggleStatus={handleToggleStatus}
-        onDelete={handleDelete}
-        onAddGuest={(groupId: string) => handleOpenAddGuest(groupId as GuestGroupId)}
-        scrollIntoView={false}
-      />
-    )}
-  </div>
-</div>
 
 
 

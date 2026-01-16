@@ -11,6 +11,7 @@ import { budgetBookKeys } from './budgetBooks.keys'
 import {
   initBudgetBook,
   syncBudgetBook,
+  syncBudgetBookDelta,
   getBudgetBook,
   getBudgetLines,
   createBudgetLine,
@@ -53,6 +54,7 @@ import type {
   ApiError,
   UserType,
 } from '@/types/responses/budgetBooks.types'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 // Helper functions for cache invalidation
 const invalidateBudgetBookQueries = (queryClient: ReturnType<typeof useQueryClient>) => {
@@ -274,6 +276,35 @@ export const useBudgetSyncMutation = (
 
   return useMutation<void, ApiError, BudgetBookRequest & { query?: BudgetBooksQuery }>({
     mutationFn: ({ query, ...data }) => syncBudgetBook(data, query),
+    onSuccess: () => {
+      invalidateBudgetBookQueries(queryClient)
+      invalidateBudgetLinesQueries(queryClient)
+    },
+    ...options,
+  })
+}
+
+/**
+ * Hook to sync a budget book (delta)
+ */
+export const useBudgetSyncDeltaMutation = (
+  options?: Omit<
+    UseMutationOptions<
+      SyncBookDeltaResponse<GetBudgetBookResponse>,
+      ApiError,
+      { data: SyncBookDeltaRequest<BudgetLineRequest, BudgetLineCategoryRequest>; query?: BudgetBooksQuery }
+    >,
+    'mutationFn'
+  >
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    SyncBookDeltaResponse<GetBudgetBookResponse>,
+    ApiError,
+    { data: SyncBookDeltaRequest<BudgetLineRequest, BudgetLineCategoryRequest>; query?: BudgetBooksQuery }
+  >({
+    mutationFn: ({ data, query }) => syncBudgetBookDelta(data as any, query),
     onSuccess: () => {
       invalidateBudgetBookQueries(queryClient)
       invalidateBudgetLinesQueries(queryClient)

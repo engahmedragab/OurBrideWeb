@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { syncEventBooks } from '@/services/api/eventBooksApi'
-import type { EventBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import { syncEventBooks, syncEventBooksDelta } from '@/services/api/eventBooksApi'
+import type { EventBookRequest, EventLineRequest, EventLineCategoryRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
+import type { EventBook } from '@/../client/common/api/gen/ourbride-api'
 
 export interface UseSyncEventBooksParams {
   clientId?: string
@@ -22,21 +24,32 @@ export const useSyncEventBooks = () => {
       eventBook: EventBookRequest
       params?: UseSyncEventBooksParams
     }) => syncEventBooks(data.eventBook, data.params),
-    onSuccess: (response) => {
+    onSuccess: () => {
       // Invalidate event books query to refetch after sync
       queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
-      
-      const { message, type } = handleApiResponseForToast(
-        response,
-        'Event books synced successfully',
-        'Failed to sync event books'
-      )
-      addToast(message, type)
+      // Note: Toast is handled in the component's handleSave function
     },
-    onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to sync event books'
-      addToast(errorMessage, 'error')
-    },
+    // Note: Error handling is done in the component
   })
 }
 
+/**
+ * Hook to sync event books (delta)
+ */
+export const useSyncEventBooksDelta = () => {
+  const queryClient = useQueryClient()
+  const { addToast } = useToast()
+
+  return useMutation({
+    mutationFn: (data: {
+      delta: SyncBookDeltaRequest<EventLineRequest, EventLineCategoryRequest>
+      params?: UseSyncEventBooksParams
+    }): Promise<SyncBookDeltaResponse<EventBook | null>> => syncEventBooksDelta(data.delta, data.params),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
+    },
+    onError: (error: any) => {
+      handleApiResponseForToast(error, addToast)
+    },
+  })
+}

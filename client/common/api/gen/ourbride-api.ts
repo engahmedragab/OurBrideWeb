@@ -967,6 +967,35 @@ export enum Language {
   English = "English",
 }
 
+export enum JobStatus {
+  Created = "Created",
+  Queued = "Queued",
+  Running = "Running",
+  Processing = "Processing",
+  Completed = "Completed",
+  Failed = "Failed",
+  Cancelled = "Cancelled",
+}
+
+export enum JobPriority {
+  Low = "Low",
+  Normal = "Normal",
+  High = "High",
+  Critical = "Critical",
+}
+
+export enum JobOwnerType {
+  System = "System",
+  User = "User",
+  Provider = "Provider",
+  Admin = "Admin",
+}
+
+export enum JobFailType {
+  Retryable = "Retryable",
+  Permanent = "Permanent",
+}
+
 export enum InventoryStatus {
   InStock = "InStock",
   OutOfStock = "OutOfStock",
@@ -1337,6 +1366,15 @@ export enum ContentStatus {
   Flagged = "Flagged",
   Escalated = "Escalated",
   RevisionRequested = "RevisionRequested",
+}
+
+export enum CommunityContentType {
+  Post = "Post",
+  Blog = "Blog",
+  Article = "Article",
+  Reel = "Reel",
+  DecisionGroup = "DecisionGroup",
+  Contest = "Contest",
 }
 
 export enum CommonEntityStatus {
@@ -1884,11 +1922,7 @@ export interface AddProviderRoleRequest {
 export interface AddReviewRequest {
   /** @format int32 */
   contentId?: number | null;
-  /**
-   * @minLength 0
-   * @maxLength 50
-   */
-  contentType?: string | null;
+  contentType?: CommunityContentType;
   /**
    * @format double
    * @min 1
@@ -3590,6 +3624,13 @@ export interface BudgetLineCategoryRequest {
   colorName?: string | null;
 }
 
+export interface BudgetLineCategoryRequestDeltaSet {
+  created?: BudgetLineCategoryRequest[] | null;
+  updated?: BudgetLineCategoryRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
+}
+
 export interface BudgetLineCategoryUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -3639,6 +3680,13 @@ export interface BudgetLineRequest {
   note?: string | null;
 }
 
+export interface BudgetLineRequestDeltaSet {
+  created?: BudgetLineRequest[] | null;
+  updated?: BudgetLineRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
+}
+
 export interface BudgetLineUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -3682,6 +3730,18 @@ export interface BulkCreateTicketsRequest {
 
 export interface BulkEnrollUsersRequest {
   providerUserIds?: string[] | null;
+}
+
+export interface BulkProviderJobActionRequest {
+  providerIds?: number[] | null;
+  action?: string | null;
+  jobType?: string | null;
+  /** @format int32 */
+  extraQuota?: number | null;
+  /** @format int32 */
+  planId?: number | null;
+  /** @format date-time */
+  expireAt?: string | null;
 }
 
 export interface BulkProviderPurchaseRequest {
@@ -4771,6 +4831,10 @@ export interface CollaborativePaymentPlanRequest {
   /** @minItems 1 */
   paymentItems: CollaborativePaymentPlanItemRequest[];
   isValid?: boolean;
+}
+
+export interface CompleteJobRequest {
+  result?: any;
 }
 
 export interface CompleteModerationWorkflowRequest {
@@ -6801,6 +6865,31 @@ export interface CreateInventoryRequest {
   branchId?: number | null;
   /** @format uuid */
   staffId?: string | null;
+}
+
+export interface CreateJobRequest {
+  jobType?: string | null;
+  priority?: JobPriority;
+  ownerType?: JobOwnerType;
+  /** @format int32 */
+  ownerId?: number | null;
+  relatedEntityType?: string | null;
+  /** @format int32 */
+  relatedEntityId?: number | null;
+  input?: any;
+  metadata?: any;
+  workerKey?: string | null;
+}
+
+export interface CreateJobTypeDefinitionRequest {
+  jobType?: string | null;
+  displayName?: string | null;
+  description?: string | null;
+  schema?: any;
+  ui?: any;
+  /** @format int32 */
+  displayOrder?: number;
+  isEnabled?: boolean;
 }
 
 export interface CreateLeaderboardContestRequest {
@@ -10353,6 +10442,13 @@ export interface EventLineCategoryRequest {
   date?: string;
 }
 
+export interface EventLineCategoryRequestDeltaSet {
+  created?: EventLineCategoryRequest[] | null;
+  updated?: EventLineCategoryRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
+}
+
 export interface EventLineCategoryUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -10394,6 +10490,13 @@ export interface EventLineRequest {
   name?: string | null;
   desctiption?: string | null;
   highlighted?: boolean;
+}
+
+export interface EventLineRequestDeltaSet {
+  created?: EventLineRequest[] | null;
+  updated?: EventLineRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
 }
 
 export interface EventLineUpdateRequest {
@@ -10527,6 +10630,12 @@ export interface ExternalLinkedInCallbackRequest {
   state?: string | null;
   userType?: UserType;
   referralCode?: string | null;
+}
+
+export interface FailJobRequest {
+  errorCode?: string | null;
+  errorMessage?: string | null;
+  failType?: JobFailType;
 }
 
 export interface FailPayoutRequest {
@@ -11712,6 +11821,15 @@ export interface GiftCardTemplateRequest {
   isActive?: boolean;
 }
 
+export interface GrantProviderQuotaRequest {
+  jobType?: string | null;
+  /** @format int32 */
+  extraQuota?: number;
+  /** @format date-time */
+  expireAt?: string | null;
+  reason?: string | null;
+}
+
 export interface Groom {
   /** @format uuid */
   id?: string;
@@ -12078,6 +12196,13 @@ export interface GuestLineCategoryRequest {
   guestRelevant?: GuestRelevant;
 }
 
+export interface GuestLineCategoryRequestDeltaSet {
+  created?: GuestLineCategoryRequest[] | null;
+  updated?: GuestLineCategoryRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
+}
+
 export interface GuestLineCategoryUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -12117,6 +12242,13 @@ export interface GuestLineRequest {
   family?: string | null;
   status?: GuestStatus;
   guestRelevant?: GuestRelevant;
+}
+
+export interface GuestLineRequestDeltaSet {
+  created?: GuestLineRequest[] | null;
+  updated?: GuestLineRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
 }
 
 export interface GuestLineUpdateRequest {
@@ -12901,6 +13033,13 @@ export interface ItemLineCategoryRequest {
   colorName?: string | null;
 }
 
+export interface ItemLineCategoryRequestDeltaSet {
+  created?: ItemLineCategoryRequest[] | null;
+  updated?: ItemLineCategoryRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
+}
+
 export interface ItemLineCategoryUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -12968,6 +13107,13 @@ export interface ItemLineRequest {
   budget?: boolean;
   iconName?: string | null;
   colorName?: string | null;
+}
+
+export interface ItemLineRequestDeltaSet {
+  created?: ItemLineRequest[] | null;
+  updated?: ItemLineRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
 }
 
 export interface ItemLineUpdateRequest {
@@ -13208,11 +13354,7 @@ export interface LinkBrideAndGroomRequest {
 }
 
 export interface LinkContentRequest {
-  /**
-   * @minLength 0
-   * @maxLength 50
-   */
-  contentType: string;
+  contentType: CommunityContentType;
   /** @format int32 */
   contentId: number;
 }
@@ -14411,6 +14553,13 @@ export interface NoteLineCategoryRequest {
   lastModifiedDate?: string | null;
 }
 
+export interface NoteLineCategoryRequestDeltaSet {
+  created?: NoteLineCategoryRequest[] | null;
+  updated?: NoteLineCategoryRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
+}
+
 export interface NoteLineCategoryUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -14445,6 +14594,13 @@ export interface NoteLineRequest {
   lastModifiedDate?: string | null;
   title?: string | null;
   note?: string | null;
+}
+
+export interface NoteLineRequestDeltaSet {
+  created?: NoteLineRequest[] | null;
+  updated?: NoteLineRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
 }
 
 export interface NoteLineUpdateRequest {
@@ -14700,6 +14856,13 @@ export interface OccasionLineCategoryRequest {
   lastModifiedDate?: string | null;
 }
 
+export interface OccasionLineCategoryRequestDeltaSet {
+  created?: OccasionLineCategoryRequest[] | null;
+  updated?: OccasionLineCategoryRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
+}
+
 export interface OccasionLineCategoryUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -14748,6 +14911,13 @@ export interface OccasionLineRequest {
   lineCategory?: OccasionLineCategoryRequest;
   colorName?: string | null;
   iconName?: string | null;
+}
+
+export interface OccasionLineRequestDeltaSet {
+  created?: OccasionLineRequest[] | null;
+  updated?: OccasionLineRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
 }
 
 export interface OccasionLineUpdateRequest {
@@ -20751,6 +20921,13 @@ export interface ServiceLineCategoryRequest {
   lastModifiedDate?: string | null;
 }
 
+export interface ServiceLineCategoryRequestDeltaSet {
+  created?: ServiceLineCategoryRequest[] | null;
+  updated?: ServiceLineCategoryRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
+}
+
 export interface ServiceLineCategoryUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -20843,6 +21020,13 @@ export interface ServiceLineRequest {
   serviceDate?: string | null;
   serviceNotes?: string | null;
   reservationNotes?: string | null;
+}
+
+export interface ServiceLineRequestDeltaSet {
+  created?: ServiceLineRequest[] | null;
+  updated?: ServiceLineRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
 }
 
 export interface ServiceLineUpdateRequest {
@@ -21291,6 +21475,24 @@ export interface SetHelpfulnessRequest {
 export interface SetProcessingStatusRequest {
   status?: string | null;
   error?: string | null;
+}
+
+export interface SetProviderJobOverrideRequest {
+  jobType?: string | null;
+  isEnabled?: boolean;
+  /** @format int32 */
+  extraQuota?: number | null;
+  /** @format date-time */
+  expireAt?: string | null;
+}
+
+export interface SetProviderPlanRequest {
+  /** @format int32 */
+  planId?: number;
+  /** @format int32 */
+  durationDays?: number;
+  startNow?: boolean;
+  autoRenew?: boolean;
 }
 
 export interface SetSharingRequest {
@@ -21855,6 +22057,94 @@ export interface SuspendWalletRequest {
   reason?: string | null;
 }
 
+export interface SyncBudgetBookDeltaRequest {
+  /** @format int32 */
+  bookId?: number | null;
+  /** @format int32 */
+  eventId?: number | null;
+  /** @format date-time */
+  lastSyncAt?: string | null;
+  lines?: BudgetLineRequestDeltaSet;
+  lineCategories?: BudgetLineCategoryRequestDeltaSet;
+}
+
+export interface SyncEventBookDeltaRequest {
+  /** @format int32 */
+  bookId?: number | null;
+  /** @format int32 */
+  eventId?: number | null;
+  /** @format date-time */
+  lastSyncAt?: string | null;
+  lines?: EventLineRequestDeltaSet;
+  lineCategories?: EventLineCategoryRequestDeltaSet;
+}
+
+export interface SyncGuestBookDeltaRequest {
+  /** @format int32 */
+  bookId?: number | null;
+  /** @format int32 */
+  eventId?: number | null;
+  /** @format date-time */
+  lastSyncAt?: string | null;
+  lines?: GuestLineRequestDeltaSet;
+  lineCategories?: GuestLineCategoryRequestDeltaSet;
+}
+
+export interface SyncItemBookDeltaRequest {
+  /** @format int32 */
+  bookId?: number | null;
+  /** @format int32 */
+  eventId?: number | null;
+  /** @format date-time */
+  lastSyncAt?: string | null;
+  lines?: ItemLineRequestDeltaSet;
+  lineCategories?: ItemLineCategoryRequestDeltaSet;
+}
+
+export interface SyncNoteBookDeltaRequest {
+  /** @format int32 */
+  bookId?: number | null;
+  /** @format int32 */
+  eventId?: number | null;
+  /** @format date-time */
+  lastSyncAt?: string | null;
+  lines?: NoteLineRequestDeltaSet;
+  lineCategories?: NoteLineCategoryRequestDeltaSet;
+}
+
+export interface SyncOccasionBookDeltaRequest {
+  /** @format int32 */
+  bookId?: number | null;
+  /** @format int32 */
+  eventId?: number | null;
+  /** @format date-time */
+  lastSyncAt?: string | null;
+  lines?: OccasionLineRequestDeltaSet;
+  lineCategories?: OccasionLineCategoryRequestDeltaSet;
+}
+
+export interface SyncServiceBookDeltaRequest {
+  /** @format int32 */
+  bookId?: number | null;
+  /** @format int32 */
+  eventId?: number | null;
+  /** @format date-time */
+  lastSyncAt?: string | null;
+  lines?: ServiceLineRequestDeltaSet;
+  lineCategories?: ServiceLineCategoryRequestDeltaSet;
+}
+
+export interface SyncTodoBookDeltaRequest {
+  /** @format int32 */
+  bookId?: number | null;
+  /** @format int32 */
+  eventId?: number | null;
+  /** @format date-time */
+  lastSyncAt?: string | null;
+  lines?: TodoLineRequestDeltaSet;
+  lineCategories?: TodoLineCategoryRequestDeltaSet;
+}
+
 export interface Tag {
   /** @format int32 */
   id: number;
@@ -22230,6 +22520,13 @@ export interface TodoLineCategoryRequest {
   date?: string | null;
 }
 
+export interface TodoLineCategoryRequestDeltaSet {
+  created?: TodoLineCategoryRequest[] | null;
+  updated?: TodoLineCategoryRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
+}
+
 export interface TodoLineCategoryUpdateRequest {
   /** @format int32 */
   id?: number;
@@ -22270,6 +22567,13 @@ export interface TodoLineRequest {
   task?: string | null;
   subTask?: string | null;
   hasSubline?: boolean;
+}
+
+export interface TodoLineRequestDeltaSet {
+  created?: TodoLineRequest[] | null;
+  updated?: TodoLineRequest[] | null;
+  deletedIds?: number[] | null;
+  tempIdMap?: Record<string, number | null>;
 }
 
 export interface TodoLineUpdateRequest {
@@ -22601,11 +22905,7 @@ export interface UnassignUserFromProviderRequest {
 }
 
 export interface UnlinkContentRequest {
-  /**
-   * @minLength 0
-   * @maxLength 50
-   */
-  contentType: string;
+  contentType: CommunityContentType;
   /** @format int32 */
   contentId: number;
 }
@@ -24227,6 +24527,25 @@ export interface UpdateInventoryStockRequest {
   notes?: string | null;
 }
 
+export interface UpdateJobStatusRequest {
+  status?: JobStatus;
+  /** @format int32 */
+  progress?: number;
+  currentStep?: string | null;
+  message?: string | null;
+  data?: any;
+}
+
+export interface UpdateJobTypeDefinitionRequest {
+  displayName?: string | null;
+  description?: string | null;
+  schema?: any;
+  ui?: any;
+  /** @format int32 */
+  displayOrder?: number | null;
+  isEnabled?: boolean | null;
+}
+
 export interface UpdateLeaderboardContestRequest {
   /** @format int32 */
   id: number;
@@ -24433,6 +24752,9 @@ export interface UpdateLoyaltyGoalRequest {
 export interface UpdateMediaRequest {
   /** @format int32 */
   id: number;
+  /** @format int32 */
+  sourceId?: number | null;
+  source?: Source;
   /**
    * @minLength 0
    * @maxLength 200
@@ -44342,6 +44664,32 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags BudgetBooks
+     * @name PostBudgetBooksAddModels
+     * @request POST:/api/v1/books/budgetbooks/add-models
+     * @secure
+     */
+    postBudgetBooksAddModels: (
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/budgetbooks/add-models`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags BudgetBooks
      * @name PostBudgetBooksSyncBook
      * @request POST:/api/v1/books/budgetbooks/sync
      * @secure
@@ -44359,6 +44707,35 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/books/budgetbooks/sync`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags BudgetBooks
+     * @name PostBudgetBooksSyncBookDelta
+     * @request POST:/api/v1/books/budgetbooks/sync-delta
+     * @secure
+     */
+    postBudgetBooksSyncBookDelta: (
+      data: SyncBudgetBookDeltaRequest,
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/budgetbooks/sync-delta`,
         method: "POST",
         query: query,
         body: data,
@@ -54256,6 +54633,32 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags EventBooks
+     * @name PostEventBooksAddModels
+     * @request POST:/api/v1/books/eventbooks/add-models
+     * @secure
+     */
+    postEventBooksAddModels: (
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/eventbooks/add-models`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags EventBooks
      * @name PostEventBooksSyncBook
      * @request POST:/api/v1/books/eventbooks/sync
      * @secure
@@ -54273,6 +54676,35 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/books/eventbooks/sync`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags EventBooks
+     * @name PostEventBooksSyncBookDelta
+     * @request POST:/api/v1/books/eventbooks/sync-delta
+     * @secure
+     */
+    postEventBooksSyncBookDelta: (
+      data: SyncEventBookDeltaRequest,
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/eventbooks/sync-delta`,
         method: "POST",
         query: query,
         body: data,
@@ -62086,6 +62518,32 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags GuestBooks
+     * @name PostGuestBooksAddModels
+     * @request POST:/api/v1/books/guestbooks/add-models
+     * @secure
+     */
+    postGuestBooksAddModels: (
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/guestbooks/add-models`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags GuestBooks
      * @name PostGuestBooksSyncBook
      * @request POST:/api/v1/books/guestbooks/sync
      * @secure
@@ -62103,6 +62561,35 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/books/guestbooks/sync`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags GuestBooks
+     * @name PostGuestBooksSyncBookDelta
+     * @request POST:/api/v1/books/guestbooks/sync-delta
+     * @secure
+     */
+    postGuestBooksSyncBookDelta: (
+      data: SyncGuestBookDeltaRequest,
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/guestbooks/sync-delta`,
         method: "POST",
         query: query,
         body: data,
@@ -66908,6 +67395,32 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags ItemBooks
+     * @name PostItemBooksAddModels
+     * @request POST:/api/v1/books/itembooks/add-models
+     * @secure
+     */
+    postItemBooksAddModels: (
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/itembooks/add-models`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ItemBooks
      * @name PostItemBooksSyncBook
      * @request POST:/api/v1/books/itembooks/sync
      * @secure
@@ -66925,6 +67438,35 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/books/itembooks/sync`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ItemBooks
+     * @name PostItemBooksSyncBookDelta
+     * @request POST:/api/v1/books/itembooks/sync-delta
+     * @secure
+     */
+    postItemBooksSyncBookDelta: (
+      data: SyncItemBookDeltaRequest,
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/itembooks/sync-delta`,
         method: "POST",
         query: query,
         body: data,
@@ -67812,6 +68354,419 @@ export class Api<SecurityDataType extends unknown> {
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name PostJobsCreate
+     * @request POST:/api/v1/jobs
+     * @secure
+     */
+    postJobsCreate: (data: CreateJobRequest, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name GetJobsList
+     * @request GET:/api/v1/jobs
+     * @secure
+     */
+    getJobsList: (
+      query?: {
+        jobType?: string;
+        status?: JobStatus;
+        /** @format int32 */
+        ownerId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name GetJobsGet
+     * @request GET:/api/v1/jobs/{id}
+     * @secure
+     */
+    getJobsGet: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs/${id}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name PostJobsUpdateStatus
+     * @request POST:/api/v1/jobs/{id}/status
+     * @secure
+     */
+    postJobsUpdateStatus: (
+      id: number,
+      data: UpdateJobStatusRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs/${id}/status`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name PostJobsComplete
+     * @request POST:/api/v1/jobs/{id}/complete
+     * @secure
+     */
+    postJobsComplete: (
+      id: number,
+      data: CompleteJobRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs/${id}/complete`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name PostJobsFail
+     * @request POST:/api/v1/jobs/{id}/fail
+     * @secure
+     */
+    postJobsFail: (
+      id: number,
+      data: FailJobRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs/${id}/fail`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name PostJobsN8NUpdateStatus
+     * @request POST:/api/v1/jobs/n8n/{id}/status
+     * @secure
+     */
+    postJobsN8NUpdateStatus: (
+      id: number,
+      data: UpdateJobStatusRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs/n8n/${id}/status`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name PostJobsN8NComplete
+     * @request POST:/api/v1/jobs/n8n/{id}/complete
+     * @secure
+     */
+    postJobsN8NComplete: (
+      id: number,
+      data: CompleteJobRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs/n8n/${id}/complete`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name PostJobsN8NFail
+     * @request POST:/api/v1/jobs/n8n/{id}/fail
+     * @secure
+     */
+    postJobsN8NFail: (
+      id: number,
+      data: FailJobRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs/n8n/${id}/fail`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name GetJobsEvents
+     * @request GET:/api/v1/jobs/{id}/events
+     * @secure
+     */
+    getJobsEvents: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs/${id}/events`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name PostJobsDispatch
+     * @request POST:/api/v1/jobs/{id}/dispatch
+     * @secure
+     */
+    postJobsDispatch: (id: number, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/jobs/${id}/dispatch`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name GetJobsGetEnabled
+     * @request GET:/api/v1/job-types
+     * @secure
+     */
+    getJobsGetEnabled: (params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/job-types`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name GetJobsGetByJobType
+     * @request GET:/api/v1/job-types/{jobType}
+     * @secure
+     */
+    getJobsGetByJobType: (jobType: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/job-types/${jobType}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Jobs
+     * @name GetJobsGetUsage
+     * @request GET:/api/v1/provider/jobs/usage
+     * @secure
+     */
+    getJobsGetUsage: (params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/v1/provider/jobs/usage`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags JobTypeDefinitionAdmin
+     * @name GetJobTypeDefinitionAdminGetAll
+     * @request GET:/api/v1/admin/job-types
+     * @secure
+     */
+    getJobTypeDefinitionAdminGetAll: (
+      query?: {
+        /** @default false */
+        includeDisabled?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/admin/job-types`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags JobTypeDefinitionAdmin
+     * @name PostJobTypeDefinitionAdminCreate
+     * @request POST:/api/v1/admin/job-types
+     * @secure
+     */
+    postJobTypeDefinitionAdminCreate: (
+      data: CreateJobTypeDefinitionRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/admin/job-types`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags JobTypeDefinitionAdmin
+     * @name GetJobTypeDefinitionAdminGetByJobType
+     * @request GET:/api/v1/admin/job-types/{jobType}
+     * @secure
+     */
+    getJobTypeDefinitionAdminGetByJobType: (
+      jobType: string,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/admin/job-types/${jobType}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags JobTypeDefinitionAdmin
+     * @name PutJobTypeDefinitionAdminUpdate
+     * @request PUT:/api/v1/admin/job-types/{jobType}
+     * @secure
+     */
+    putJobTypeDefinitionAdminUpdate: (
+      jobType: string,
+      data: UpdateJobTypeDefinitionRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/admin/job-types/${jobType}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags JobTypeDefinitionAdmin
+     * @name DeleteJobTypeDefinitionAdminDelete
+     * @request DELETE:/api/v1/admin/job-types/{jobType}
+     * @secure
+     */
+    deleteJobTypeDefinitionAdminDelete: (
+      jobType: string,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/admin/job-types/${jobType}`,
+        method: "DELETE",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags JobTypeDefinitionAdmin
+     * @name PatchJobTypeDefinitionAdminEnable
+     * @request PATCH:/api/v1/admin/job-types/{jobType}/enable
+     * @secure
+     */
+    patchJobTypeDefinitionAdminEnable: (
+      jobType: string,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/admin/job-types/${jobType}/enable`,
+        method: "PATCH",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags JobTypeDefinitionAdmin
+     * @name PatchJobTypeDefinitionAdminDisable
+     * @request PATCH:/api/v1/admin/job-types/{jobType}/disable
+     * @secure
+     */
+    patchJobTypeDefinitionAdminDisable: (
+      jobType: string,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/admin/job-types/${jobType}/disable`,
+        method: "PATCH",
+        secure: true,
         ...params,
       }),
 
@@ -74109,6 +75064,32 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags NoteBooks
+     * @name PostNoteBooksAddModels
+     * @request POST:/api/v1/books/notebooks/add-models
+     * @secure
+     */
+    postNoteBooksAddModels: (
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/notebooks/add-models`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags NoteBooks
      * @name PostNoteBooksSyncBook
      * @request POST:/api/v1/books/notebooks/sync
      * @secure
@@ -74126,6 +75107,35 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/books/notebooks/sync`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags NoteBooks
+     * @name PostNoteBooksSyncBookDelta
+     * @request POST:/api/v1/books/notebooks/sync-delta
+     * @secure
+     */
+    postNoteBooksSyncBookDelta: (
+      data: SyncNoteBookDeltaRequest,
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/notebooks/sync-delta`,
         method: "POST",
         query: query,
         body: data,
@@ -75221,6 +76231,32 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags OccasionsBooks
+     * @name PostOccasionsBooksAddModels
+     * @request POST:/api/v1/books/occasionbooks/add-models
+     * @secure
+     */
+    postOccasionsBooksAddModels: (
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/occasionbooks/add-models`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags OccasionsBooks
      * @name PostOccasionsBooksSyncBook
      * @request POST:/api/v1/books/occasionbooks/sync
      * @secure
@@ -75238,6 +76274,35 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/books/occasionbooks/sync`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags OccasionsBooks
+     * @name PostOccasionsBooksSyncBookDelta
+     * @request POST:/api/v1/books/occasionbooks/sync-delta
+     * @secure
+     */
+    postOccasionsBooksSyncBookDelta: (
+      data: SyncOccasionBookDeltaRequest,
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/occasionbooks/sync-delta`,
         method: "POST",
         query: query,
         body: data,
@@ -89508,12 +90573,155 @@ export class Api<SecurityDataType extends unknown> {
      */
     getProviderContentVerifyOwnership: (
       providerId: number,
-      contentType: string,
+      contentType: CommunityContentType,
       contentId: number,
       params: RequestParams = {},
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/community/provider/${providerId}/content/verify/${contentType}/${contentId}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderJobAdmin
+     * @name GetProviderJobAdminListProvidersJobs
+     * @request GET:/api/admin/providers/jobs
+     * @secure
+     */
+    getProviderJobAdminListProvidersJobs: (
+      query?: {
+        search?: string;
+        planCode?: string;
+        jobType?: string;
+        usageStatus?: string;
+        isActive?: boolean;
+        sort?: string;
+        /**
+         * @format int32
+         * @default 1
+         */
+        page?: number;
+        /**
+         * @format int32
+         * @default 20
+         */
+        pageSize?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/admin/providers/jobs`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderJobAdmin
+     * @name PostProviderJobAdminBulkAction
+     * @request POST:/api/admin/providers/jobs/bulk
+     * @secure
+     */
+    postProviderJobAdminBulkAction: (
+      data: BulkProviderJobActionRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/admin/providers/jobs/bulk`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderJobAdmin
+     * @name PostProviderJobAdminSetJobOverride
+     * @request POST:/api/admin/providers/{providerId}/jobs/overrides
+     * @secure
+     */
+    postProviderJobAdminSetJobOverride: (
+      providerId: number,
+      data: SetProviderJobOverrideRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/admin/providers/${providerId}/jobs/overrides`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderJobAdmin
+     * @name PostProviderJobAdminGrantQuota
+     * @request POST:/api/admin/providers/{providerId}/jobs/quota/grant
+     * @secure
+     */
+    postProviderJobAdminGrantQuota: (
+      providerId: number,
+      data: GrantProviderQuotaRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/admin/providers/${providerId}/jobs/quota/grant`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderJobAdmin
+     * @name PostProviderJobAdminSetPlan
+     * @request POST:/api/admin/providers/{providerId}/jobs/subscription/set-plan
+     * @secure
+     */
+    postProviderJobAdminSetPlan: (
+      providerId: number,
+      data: SetProviderPlanRequest,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/admin/providers/${providerId}/jobs/subscription/set-plan`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ProviderJobAdmin
+     * @name GetProviderJobAdminGetUsage
+     * @request GET:/api/admin/providers/{providerId}/jobs/usage
+     * @secure
+     */
+    getProviderJobAdminGetUsage: (
+      providerId: number,
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/admin/providers/${providerId}/jobs/usage`,
         method: "GET",
         secure: true,
         ...params,
@@ -100860,6 +102068,32 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags ServiceBooks
+     * @name PostServiceBooksAddModels
+     * @request POST:/api/v1/books/servicebooks/add-models
+     * @secure
+     */
+    postServiceBooksAddModels: (
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/servicebooks/add-models`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ServiceBooks
      * @name PostServiceBooksSyncBook
      * @request POST:/api/v1/books/servicebooks/sync
      * @secure
@@ -100877,6 +102111,35 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/books/servicebooks/sync`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ServiceBooks
+     * @name PostServiceBooksSyncBookDelta
+     * @request POST:/api/v1/books/servicebooks/sync-delta
+     * @secure
+     */
+    postServiceBooksSyncBookDelta: (
+      data: SyncServiceBookDeltaRequest,
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/servicebooks/sync-delta`,
         method: "POST",
         query: query,
         body: data,
@@ -107432,6 +108695,32 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags TodoBooks
+     * @name PostTodoBooksAddModels
+     * @request POST:/api/v1/books/todobooks/add-models
+     * @secure
+     */
+    postTodoBooksAddModels: (
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/todobooks/add-models`,
+        method: "POST",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags TodoBooks
      * @name PostTodoBooksSyncBook
      * @request POST:/api/v1/books/todobooks/sync
      * @secure
@@ -107449,6 +108738,35 @@ export class Api<SecurityDataType extends unknown> {
     ) =>
       this.http.request<void, any>({
         path: `/api/v1/books/todobooks/sync`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags TodoBooks
+     * @name PostTodoBooksSyncBookDelta
+     * @request POST:/api/v1/books/todobooks/sync-delta
+     * @secure
+     */
+    postTodoBooksSyncBookDelta: (
+      data: SyncTodoBookDeltaRequest,
+      query?: {
+        /** @format uuid */
+        clientId?: string;
+        userType?: UserType;
+        /** @format int32 */
+        eventId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<void, any>({
+        path: `/api/v1/books/todobooks/sync-delta`,
         method: "POST",
         query: query,
         body: data,

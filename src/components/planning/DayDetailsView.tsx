@@ -12,10 +12,9 @@ import { Button } from '@/components/ui/Button'
 import { Clock, Trash2 } from 'lucide-react'
 import { parseDateSafe, formatDateSafe } from '@/lib/date-utils'
 import { format } from 'date-fns'
-import { useCreateEventBookCategory, useDeleteEventBookCategory } from '@/hooks/eventBooks'
 import { useToast } from '@/components/ui/Toaster'
+import { generateTempId } from '@/utils/sync/tempIds'
 import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
-import type { UseMutationResult } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
 
 /**
@@ -176,13 +175,11 @@ export interface DayDetailsViewProps {
   showBackButton?: boolean
   className?: string
   localEventBook: EventBookWithCategories | null
-  setLocalEventBook: (book: EventBookWithCategories | null | ((prev: EventBookWithCategories | null) => EventBookWithCategories | null)) => void
-  hasUnsavedChanges: boolean
-  setHasUnsavedChanges: (value: boolean) => void
-  onSync: () => Promise<void>
-  syncMutation: UseMutationResult<unknown, Error, unknown, unknown>
+  applyLocalUpdate: (
+    updater: (current: EventBookWithCategories) => EventBookWithCategories,
+    options?: { markUnsaved?: boolean; setUnsavedTo?: boolean }
+  ) => { ok: boolean; reason?: string; message?: string }
   eventId?: number
-  onCategoriesRefetch?: () => void
 }
 
 /**
@@ -193,9 +190,7 @@ export const DayDetailsView = ({
   dayId,
   className,
   localEventBook,
-  setLocalEventBook,
-  setHasUnsavedChanges,
-  onCategoriesRefetch,
+  applyLocalUpdate,
 }: DayDetailsViewProps) => {
   const { addToast } = useToast()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -204,38 +199,58 @@ export const DayDetailsView = ({
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
   const [prefilledTime, setPrefilledTime] = useState<string>('')
   const [prefilledDuration, setPrefilledDuration] = useState<string>('')
-  
-  const createCategoryMutation = useCreateEventBookCategory()
-  const deleteCategoryMutation = useDeleteEventBookCategory()
 
-  // Get active categories (not deleted, slug === "event-day" or "big day" for backward compatibility)
+  // Get active categories (not deleted)
   const activeCategories = useMemo(() => {
     if (!localEventBook?.lineCategories) return []
-    return localEventBook.lineCategories.filter(
-      cat => !cat.isDeleted && (cat.slug === 'event-day' || cat.slug === 'big day')
-    )
+    return localEventBook.lineCategories.filter(cat => !cat.isDeleted)
   }, [localEventBook])
 
   // Get selected category for selected day
+  // First try to match by category date, then find category from lines on that day
   const selectedCategory = useMemo(() => {
-    return activeCategories.find(cat => toDayKey(cat.date) === dayId)
-  }, [activeCategories, dayId])
+    // First, try to find category by date match
+    let category = activeCategories.find(cat => toDayKey(cat.date) === dayId)
+
+    // If no category found by date, find category from lines on the selected day
+    if (!category && localEventBook?.lines) {
+      const linesOnDay = localEventBook.lines.filter(line => {
+        if (!line.time || line.isDeleted || !line.lineCategoryId) return false
+        const lineDayKey = toDayKey(line.time)
+        return lineDayKey === dayId
+      })
+
+      // Get the category ID from the first line on this day
+      if (linesOnDay.length > 0 && linesOnDay[0].lineCategoryId) {
+        category = activeCategories.find(cat => cat.id === linesOnDay[0].lineCategoryId)
+      }
+    }
+
+    return category || null
+  }, [activeCategories, dayId, localEventBook])
 
   const isEventDay = Boolean(selectedCategory)
   const customTitle = selectedCategory?.nameEn || selectedCategory?.nameAr || selectedCategory?.name || ''
 
   // Get visible lines for selected category (sorted by time, exclude deleted)
+  // Filter by both category ID and the selected day
   const visibleLines = useMemo(() => {
     if (!selectedCategory || !localEventBook?.lines) return []
     const lines = localEventBook.lines.filter(
-      line => line.lineCategoryId === selectedCategory.id && !line.isDeleted
+      line => {
+        if (line.isDeleted) return false
+        if (line.lineCategoryId !== selectedCategory.id) return false
+        // Also filter by day to ensure we only show lines for the selected day
+        const lineDayKey = toDayKey(line.time)
+        return lineDayKey === dayId
+      }
     )
     return lines.sort((a, b) => {
       const timeA = a.time ? new Date(a.time).getTime() : 0
       const timeB = b.time ? new Date(b.time).getTime() : 0
       return timeA - timeB
     })
-  }, [selectedCategory, localEventBook])
+  }, [selectedCategory, localEventBook, dayId])
 
   // Convert EventLine to ItineraryEvent
   const events: ItineraryEvent[] = useMemo(() => {
@@ -257,18 +272,15 @@ export const DayDetailsView = ({
   const handleTitleEdit = (newTitle: string) => {
     if (!localEventBook || !selectedCategory) return
 
-    setLocalEventBook(prev => {
-      if (!prev) return prev
-      return {
-        ...prev,
-        lineCategories: prev.lineCategories?.map(cat =>
+    applyLocalUpdate(prev => ({
+      ...prev,
+      lineCategories:
+        prev.lineCategories?.map(cat =>
           cat.id === selectedCategory.id
             ? { ...cat, name: newTitle.trim(), nameEn: newTitle.trim() }
             : cat
         ) || [],
-      }
-    })
-    setHasUnsavedChanges(true)
+    }))
   }
 
   const handleDeleteEventDay = () => {
@@ -286,89 +298,58 @@ export const DayDetailsView = ({
     setIsDeleteConfirmOpen(false)
   }
 
-  const handleToggleEventDay = async () => {
+  const handleToggleEventDay = () => {
     if (!localEventBook) return
 
     if (isEventDay && selectedCategory) {
-      // Unmark: delete category via DELETE endpoint
-      if (!selectedCategory.id || selectedCategory.id <= 0) {
-        // If category has no real ID, just remove from local state
-        setLocalEventBook(prev => {
-          if (!prev) return prev
-          return {
-            ...prev,
-            lineCategories: (prev.lineCategories || []).filter(cat => cat.id !== selectedCategory.id),
-          }
-        })
-        setHasUnsavedChanges(false)
-        return
-      }
-
-      try {
-        await deleteCategoryMutation.mutateAsync({
-          lineCategoryId: selectedCategory.id,
-          params: {
-            clientId: null as unknown as string | undefined,
-          },
-        })
-        // On success: refetch categories and update local state
-        if (onCategoriesRefetch) {
-          onCategoriesRefetch()
-        }
-        setHasUnsavedChanges(false)
-        addToast('Event Day deleted successfully', 'success')
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to delete Event Day'
-        addToast(errorMessage, 'error')
-      }
+      // Unmark: mark category as deleted in local state
+      applyLocalUpdate(prev => ({
+        ...prev,
+        lineCategories: (prev.lineCategories || []).map(cat =>
+          cat.id === selectedCategory.id
+            ? { ...cat, isDeleted: true, lastModifiedDate: new Date().toISOString() }
+            : cat
+        ),
+      }))
     } else {
       // Mark: check if category already exists for this day (prevent duplicates)
       const existingCategory = (localEventBook.lineCategories || []).find(cat => {
         const catDayKey = toDayKey(cat.date)
-        return (cat.slug === 'event-day' || cat.slug === 'big day') && catDayKey === dayId && cat.isDeleted !== true
+        return catDayKey === dayId && !cat.isDeleted
       })
 
-      if (existingCategory && existingCategory.id && existingCategory.id > 0) {
-        // Category already exists with real ID, just reactivate if needed
-        setLocalEventBook(prev => {
-          if (!prev) return prev
-          return {
-            ...prev,
-            lineCategories: (prev.lineCategories || []).map(cat =>
-              cat.id === existingCategory.id
-                ? { ...cat, isDeleted: false, name: 'Event Day', nameEn: 'Event Day', slug: 'event-day' }
-                : cat
-            ),
-          }
-        })
-        setHasUnsavedChanges(true)
+      if (existingCategory) {
+        // Category already exists, just reactivate if needed
+        applyLocalUpdate(prev => ({
+          ...prev,
+          lineCategories: (prev.lineCategories || []).map(cat =>
+            cat.id === existingCategory.id
+              ? { ...cat, isDeleted: false, lastModifiedDate: new Date().toISOString() }
+              : cat
+          ),
+        }))
       } else {
-        // Mark: create new category via POST endpoint
+        // Mark: create new category in local state with temp ID
         const categoryDate = makeCategoryDateFromDayKey(dayId)
-        const categoryRequest = {
-          name: 'Event Day',
-          slug: 'event-day',
+        const now = new Date().toISOString()
+        const newCategory: EventLineCategory = {
+          id: generateTempId(), // Temporary ID for new category
           date: categoryDate,
+          name: 'Event Day',
+          nameEn: 'Event Day',
+          nameAr: 'يوم الحدث',
+          slug: 'event-day',
           isDeleted: false,
-        }
+          creationDate: now,
+          lastModifiedDate: now,
+          createdBy: '',
+          lastModifiedBy: '',
+        } as EventLineCategory
 
-        try {
-          await createCategoryMutation.mutateAsync({
-            category: categoryRequest,
-            params: {
-              clientId: null as unknown as string | undefined,
-            },
-          })
-          // On success: refetch categories to get the created category with real ID
-          if (onCategoriesRefetch) {
-            onCategoriesRefetch()
-          }
-          setHasUnsavedChanges(false)
-          addToast('Event Day marked successfully', 'success')
-        } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Failed to mark Event Day'
-          addToast(errorMessage, 'error')
-        }
+        applyLocalUpdate(prev => ({
+          ...prev,
+          lineCategories: [...(prev.lineCategories || []), newCategory],
+        }))
       }
     }
   }
@@ -389,33 +370,34 @@ export const DayDetailsView = ({
     if (!localEventBook || !selectedCategory) return
 
     const endTime = new Date(eventData.startTime.getTime() + eventData.duration * 60 * 1000)
+    const now = new Date().toISOString()
     const newLine: EventLine = {
-      id: 0, // Temporary ID for new lines
+      id: generateTempId(), // Temporary ID for new lines
       bookId: localEventBook.id,
       lineCategoryId: selectedCategory.id,
       time: eventData.startTime.toISOString(),
       duration: endTime.toISOString(),
       nameEn: eventData.title,
+      nameAr: eventData.title,
+      name: eventData.title,
       descriptionEn: '',
+      descriptionAr: '',
+      description: '',
       highlighted: false,
       isDone: false,
       isFavorite: false,
       isDeleted: false,
       isModelLine: false,
-      creationDate: new Date().toISOString(),
-      lastModifiedDate: new Date().toISOString(),
+      creationDate: now,
+      lastModifiedDate: now,
       createdBy: '',
       lastModifiedBy: '',
-    }
+    } as EventLine
 
-    setLocalEventBook(prev => {
-      if (!prev) return prev
-      return {
-        ...prev,
-        lines: [...(prev.lines || []), newLine],
-      }
-    })
-    setHasUnsavedChanges(true)
+    applyLocalUpdate(prev => ({
+      ...prev,
+      lines: [...(prev.lines || []), newLine],
+    }))
   }
 
   const handleEditEvent = (event: ItineraryEvent) => {
@@ -429,41 +411,39 @@ export const DayDetailsView = ({
     const lineId = parseInt(eventId, 10)
     const endTime = new Date(eventData.startTime.getTime() + eventData.duration * 60 * 1000)
 
-    setLocalEventBook(prev => {
-      if (!prev) return prev
-      return {
-        ...prev,
-        lines: prev.lines?.map(line => {
+    applyLocalUpdate(prev => ({
+      ...prev,
+      lines:
+        prev.lines?.map(line => {
           if (line.id === lineId) {
             return {
               ...line,
               time: eventData.startTime.toISOString(),
               duration: endTime.toISOString(),
               nameEn: eventData.title,
+              nameAr: eventData.title,
+              name: eventData.title,
               lastModifiedDate: new Date().toISOString(),
             }
           }
           return line
         }) || [],
-      }
-    })
-    setHasUnsavedChanges(true)
+    }))
   }
 
   const handleDeleteEvent = (event: ItineraryEvent) => {
     if (!localEventBook) return
 
     const lineId = parseInt(event.id, 10)
-    setLocalEventBook(prev => {
-      if (!prev) return prev
-      return {
-        ...prev,
-        lines: prev.lines?.map(line =>
-          line.id === lineId ? { ...line, isDeleted: true } : line
+    applyLocalUpdate(prev => ({
+      ...prev,
+      lines:
+        prev.lines?.map(line =>
+          line.id === lineId
+            ? { ...line, isDeleted: true, lastModifiedDate: new Date().toISOString() }
+            : line
         ) || [],
-      }
-    })
-    setHasUnsavedChanges(true)
+    }))
   }
 
   const handleRefresh = () => {
@@ -507,7 +487,7 @@ export const DayDetailsView = ({
           />
         </div>
       )}
-      
+
       <AddEventModal
         open={isAddModalOpen}
         onOpenChange={setIsAddModalOpen}
@@ -516,7 +496,7 @@ export const DayDetailsView = ({
         initialTime={prefilledTime}
         initialDuration={prefilledDuration}
       />
-      
+
       <EditEventModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}

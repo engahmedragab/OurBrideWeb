@@ -1,8 +1,9 @@
 // Profile API service functions
 
 import { apiClient } from '@/services/api/apiClient'
-import type { UserPlanningPreferenceRequest, Preparation, UserRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { UserPlanningPreferenceRequest, Preparation, UserRequest, ServiceClass } from '@/../client/common/api/gen/ourbride-api'
 import type { UserResponse } from '@/types/responses'
+import { getServiceClassNumber } from '@/utils/serviceIconMapper'
 
 export interface PlanningPreference {
   id: number
@@ -15,6 +16,7 @@ export interface PlanningPreference {
   imageUrl?: string
   iconName?: string | null
   colorName?: string | null
+  class?: number // ServiceClass enum value
 }
 
 /**
@@ -84,18 +86,31 @@ export const getPlanningPreferences = async (): Promise<PlanningPreference[]> =>
       preparations = response as Preparation[];
     }
     // Map preparations to PlanningPreference type
-    return preparations.map((prep) => ({
-      id: prep.id,
-      name: prep.nameEn || prep.nameAr || 'Unknown',
-      nameEn: prep.nameEn,
-      nameAr: prep.nameAr,
-      description: prep.descriptionEn || prep.descriptionAr || prep.bioEn || prep.bioAr,
-      descriptionEn: prep.descriptionEn || prep.bioEn,
-      descriptionAr: prep.descriptionAr || prep.bioAr,
-      imageUrl: prep.image?.url || prep.image?.thumbnailUrl || prep.image?.previewUrl || undefined,
-      iconName: prep.iconName ?? undefined,
-      colorName: prep.colorName ?? undefined,
-    }));
+    return preparations.map((prep) => {
+      // Convert ServiceClass enum (string) to number
+      let classNumber: number | undefined = undefined
+      if (prep.class) {
+        if (typeof prep.class === 'string') {
+          classNumber = getServiceClassNumber(prep.class)
+        } else if (typeof prep.class === 'number') {
+          classNumber = prep.class
+        }
+      }
+
+      return {
+        id: prep.id,
+        name: prep.nameEn || prep.nameAr || 'Unknown',
+        nameEn: prep.nameEn,
+        nameAr: prep.nameAr,
+        description: prep.descriptionEn || prep.descriptionAr || prep.bioEn || prep.bioAr,
+        descriptionEn: prep.descriptionEn || prep.bioEn,
+        descriptionAr: prep.descriptionAr || prep.bioAr,
+        imageUrl: prep.image?.url || prep.image?.thumbnailUrl || prep.image?.previewUrl || undefined,
+        iconName: prep.iconName ?? undefined,
+        colorName: prep.colorName ?? undefined,
+        class: classNumber, // Converted to number
+      }
+    });
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch planning preferences');
   }

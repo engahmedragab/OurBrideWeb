@@ -1,2 +1,2 @@
-export { useBudgetBook, useBudgetSyncMutation } from './budgetBooks.hooks'
+export { useBudgetBook, useBudgetSyncMutation, useBudgetSyncDeltaMutation } from './budgetBooks.hooks'
 

@@ -1,54 +1,204 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useCallback, Suspense } from 'react'
 import { Link } from '@/i18n/navigation'
-import { ArrowLeft, ChevronLeft } from 'lucide-react'
-
+import { ChevronLeft, Save } from 'lucide-react'
+import { ErrorModal } from '@/components/ui/ErrorModal'
+import { Button, LoadingOverlay } from '@/components/ui'
+import { cn } from '@/lib/utils'
 import { TodoLinesPanel } from '@/components/planning/todo/TodoLinesPanel'
 import { TodoListsSidebar } from '@/components/planning/todo/TodoListsSidebar'
 import { CreateItemListModal } from '@/components/planning/items/CreateItemListModal'
 import type { ColorKey } from '@/components/planning/items/CreateItemListModal'
+import { useTodoBook, useSyncTodoBook, useSyncTodoBookDelta } from '@/hooks/todoBooks'
+import { useEventId } from '@/hooks/planning'
+import { usePlanningBookController } from '@/hooks/planning/usePlanningBookController'
+import { useInitTodoBooks, useAddTodoBookModels } from '@/hooks/bookInit'
+import type { TodoLineResponse, TodoBookResponse, TodoLineCategoryResponse } from '@/types/responses'
+import type { TodoBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import { generateTempId } from '@/utils/sync/tempIds'
+import {
+  type UiTodo,
+  type UiTodoCategory,
+  convertLineToUiTodo,
+  convertUiTodoToLineRequest,
+  convertCategoryToUi,
+  buildBookRequestFromLocal as buildTodoBookRequest,
+  convertLineToRequest,
+  convertCategoryToRequest,
+} from '@/utils/planning/mappers/todoMappers'
 
-export type UiTodo = {
-  id: number
-  title: string
-  isDone: boolean
-  isDeleted?: boolean
-  categoryId: number
-  categoryName: string
-}
-
-export type UiTodoCategory = {
-  id: number
-  name: string
-  color?: string
-}
-
-const INITIAL_CATEGORIES: UiTodoCategory[] = [
-  { id: 0, name: 'Untitled List', color: 'gray' },
-  { id: 1, name: 'Home', color: 'blue' },
-  { id: 2, name: 'Work', color: 'orange' },
-]
-
-const INITIAL_TODOS: UiTodo[] = [
-  { id: 1, title: 'Buy milk', isDone: false, categoryId: 0, categoryName: 'Untitled List' },
-  { id: 2, title: 'Call the provider', isDone: true, categoryId: 0, categoryName: 'Untitled List' },
-]
-
-export default function TodoPage() {
-  const [todos, setTodos] = useState<UiTodo[]>(INITIAL_TODOS)
-  const [categories, setCategories] = useState<UiTodoCategory[]>(INITIAL_CATEGORIES)
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(INITIAL_CATEGORIES[0]?.id ?? 0)
-
+function TodoPageContent() {
+  const eventId = useEventId()
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [createListOpen, setCreateListOpen] = useState(false)
 
-  const selectedCategory = useMemo(() => {
-    return categories.find((c) => c.id === selectedCategoryId) ?? null
-  }, [categories, selectedCategoryId])
+  // Fetch todo book (includes lines and categories) - GET endpoint only
+  const { data: todoBook, isLoading, error, refetch } = useTodoBook({
+    eventId: eventId || undefined,
+    userType: null as unknown as UserType | undefined,
+    clientId: null as unknown as string | undefined,
+    enabled: typeof window !== 'undefined',
+  })
 
+  const syncMutation = useSyncTodoBook()
+  const syncDeltaMutation = useSyncTodoBookDelta()
+  const initMutation = useInitTodoBooks()
+  const addModelsMutation = useAddTodoBookModels()
+  const {
+    localBook: localTodoBook,
+    hasUnsavedChanges,
+    save,
+    applyLocalUpdate,
+    getActiveCategories,
+    getCategoriesWithCounts,
+    getCategoryById,
+    getLinesByCategory,
+    isInitializing,
+    isAddingModels,
+  } = usePlanningBookController<TodoBookResponse, TodoLineResponse, TodoLineCategoryResponse>({
+    book: todoBook ?? null,
+    isLoading,
+    eventId: eventId ?? undefined,
+    requireEventId: true,
+    syncFn: async () => {
+      if (!localTodoBook) throw new Error('Todo book not found')
+      const bookRequest = buildTodoBookRequest(localTodoBook)
+      await syncMutation.mutateAsync({
+        data: bookRequest,
+        query: {
+          eventId: eventId || undefined,
+          userType: null as unknown as UserType | undefined,
+          clientId: null as unknown as string | undefined,
+        },
+      })
+    },
+    syncDeltaFn: async (delta) => {
+      const response = await syncDeltaMutation.mutateAsync({
+        data: delta,
+        query: {
+          eventId: eventId || undefined,
+          userType: null as unknown as UserType | undefined,
+          clientId: null as unknown as string | undefined,
+        },
+      })
+      return response as any
+    },
+    refetch,
+    shouldInit: (b) => !b?.id,
+    initFn: async () => {
+      await initMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: null as unknown as UserType | undefined,
+        clientId: null as unknown as string | undefined,
+      })
+    },
+    shouldAddModels: (b) => b?.isModelsAdd === false,
+    addModelsFn: async () => {
+      await addModelsMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: null as unknown as UserType | undefined,
+        clientId: null as unknown as string | undefined,
+      })
+    },
+    initMutation,
+    addModelsMutation,
+    onFirstLoad: (book) => {
+      if (book.lineCategories && book.lineCategories.length > 0) {
+        setSelectedCategoryId(book.lineCategories[0].id)
+      }
+    },
+    onHydrate: (book) => {
+      if (selectedCategoryId && book.lineCategories) {
+        const categoryExists = book.lineCategories.some(cat => cat.id === selectedCategoryId)
+        if (!categoryExists && book.lineCategories.length > 0) {
+          setSelectedCategoryId(book.lineCategories[0].id)
+        }
+      }
+    },
+    isSameBookBase: (current, last) =>
+      current.id === last.id &&
+      current.groomId === last.groomId &&
+      current.brideId === last.brideId &&
+      current.title === last.title,
+    getLines: (book) => book.lines || [],
+    getCategories: (book) => book.lineCategories || [],
+    getLineId: (line) => line.id,
+    getCategoryId: (cat) => cat.id,
+    convertLineToRequest,
+    convertCategoryToRequest,
+    isSameLine: (current, last) =>
+      current.task === last.task &&
+      current.isDeleted === last.isDeleted &&
+      current.isDone === last.isDone &&
+      current.lineCategoryId === last.lineCategoryId,
+    isSameCategory: (current, last) =>
+      current.name === last.name &&
+      (current as any).colorName === (last as any).colorName &&
+      current.isDeleted === last.isDeleted,
+    getLineCategoryId: (line) => line.lineCategoryId ?? null,
+    isLineDeleted: (line) => line.isDeleted ?? false,
+    isLineDone: (line) => line.isDone ?? false,
+    isCategoryDeleted: (cat) => cat.isDeleted ?? false,
+  })
+
+  const updateTodoBook = useCallback(
+    (updater: (current: TodoBookResponse) => TodoBookResponse) => {
+      applyLocalUpdate((current) => updater(current))
+    },
+    [applyLocalUpdate]
+  )
+
+
+  // Get categories with counts from controller
+  const categories: UiTodoCategory[] = useMemo(() => {
+    const categoriesWithCounts = getCategoriesWithCounts()
+    return categoriesWithCounts.map(cat => ({
+      ...convertCategoryToUi(cat),
+      lineCount: cat.lineCount,
+      completedCount: cat.completedCount,
+    }))
+  }, [getCategoriesWithCounts])
+
+  // Get todos from local state (filter by category and exclude deleted)
+  const todos: UiTodo[] = useMemo(() => {
+    if (!localTodoBook?.lines) return []
+
+    const categoryMap = new Map(
+      (localTodoBook.lineCategories || [])
+        .filter(cat => !cat.isDeleted)
+        .map(cat => [cat.id, cat.name || cat.nameEn || cat.nameAr || ''])
+    )
+
+    return localTodoBook.lines
+      .filter(line => !line.isDeleted && (!selectedCategoryId || line.lineCategoryId === selectedCategoryId))
+      .map(line => {
+        const categoryName = categoryMap.get(line.lineCategoryId || 0) || 'Uncategorized'
+        return convertLineToUiTodo(line as TodoLineResponse, categoryName)
+      })
+  }, [localTodoBook, selectedCategoryId])
+
+  // Get selected category using controller helper
+  const selectedCategory = useMemo(() => {
+    if (!selectedCategoryId) return null
+    const category = getCategoryById(selectedCategoryId)
+    return category ? convertCategoryToUi(category as TodoLineCategoryResponse) : null
+  }, [selectedCategoryId, getCategoryById])
+
+  // Get visible todos using controller helper
   const visibleTodos = useMemo(() => {
-    return todos.filter((t) => !t.isDeleted && t.categoryId === selectedCategoryId)
-  }, [todos, selectedCategoryId])
+    if (!selectedCategoryId) return []
+    const categoryLines = getLinesByCategory(selectedCategoryId)
+    const categoryMap = new Map(
+      (localTodoBook?.lineCategories || [])
+        .filter((cat: TodoLineCategoryResponse) => !cat.isDeleted)
+        .map((cat: TodoLineCategoryResponse) => [cat.id, cat.name || cat.nameEn || cat.nameAr || ''])
+    )
+    return categoryLines.map((line: TodoLineResponse) => {
+      const categoryName = categoryMap.get(line.lineCategoryId || 0) || 'Uncategorized'
+      return convertLineToUiTodo(line, categoryName)
+    })
+  }, [selectedCategoryId, getLinesByCategory, localTodoBook])
 
   const stats = useMemo(() => {
     const total = visibleTodos.length
@@ -57,67 +207,254 @@ export default function TodoPage() {
     return { total, completed, pending }
   }, [visibleTodos])
 
+
+
   const handleToggleDone = (todoId: number) => {
-    setTodos((prev) => prev.map((t) => (t.id === todoId ? { ...t, isDone: !t.isDone } : t)))
+    updateTodoBook(prev => ({
+      ...prev,
+      lines:
+        prev.lines?.map(line =>
+          line.id === todoId
+            ? { ...line, isDone: !line.isDone, lastModifiedDate: new Date().toISOString() }
+            : line
+        ) || [],
+    }))
   }
 
   const handleDeleteTodo = (todoId: number) => {
-    setTodos((prev) => prev.map((t) => (t.id === todoId ? { ...t, isDeleted: true } : t)))
+    updateTodoBook(prev => ({
+      ...prev,
+      lines:
+        prev.lines?.map(line =>
+          line.id === todoId
+            ? { ...line, isDeleted: true, lastModifiedDate: new Date().toISOString() }
+            : line
+        ) || [],
+    }))
   }
 
   const handleCreateTodo = async (data: { title: string; isDone?: boolean }) => {
-    if (!selectedCategory) return
-    setTodos((prev) => {
-      const nextId = prev.length ? Math.max(...prev.map((t) => t.id)) + 1 : 1
-      const newTodo: UiTodo = {
-        id: nextId,
-        title: data.title,
-        isDone: Boolean(data.isDone),
-        categoryId: selectedCategory.id,
-        categoryName: selectedCategory.name,
-      }
-      return [newTodo, ...prev]
-    })
+    if (!localTodoBook || !selectedCategory) return
+
+    // Validate task: must be 2-40 characters
+    const taskValue = (data.title || '').trim()
+    if (taskValue.length < 2 || taskValue.length > 40) {
+      console.error('Task must be between 2 and 40 characters')
+      return
+    }
+
+    const now = new Date().toISOString()
+    const newLine: TodoLineResponse = {
+      id: generateTempId(), // Temporary ID for new lines
+      bookId: localTodoBook.id,
+      task: taskValue,
+      subTask: '',
+      hasSubline: false,
+      lineCategoryId: selectedCategory.id,
+      isDone: data.isDone || false,
+      isFavorite: false,
+      isDeleted: false,
+      isModelLine: false,
+      brideId: null,
+      groomId: null,
+      count: 0,
+      completed: 0,
+      isSubDone: false,
+      creationDate: now,
+      lastModifiedDate: now,
+      // Required fields from LineResponse
+      bookClass: localTodoBook.bookClass,
+      lineType: localTodoBook.bookType as unknown as UserType,
+      createdBy: '',
+      lastModifiedBy: '',
+      slug: '',
+    } as unknown as TodoLineResponse
+
+    updateTodoBook(prev => ({
+      ...prev,
+      lines: [...(prev.lines || []), newLine],
+    }))
   }
 
   const handleEditTodo = async (todoId: number, data: { title: string; isDone?: boolean }) => {
-    setTodos((prev) =>
-      prev.map((t) => {
-        if (t.id !== todoId) return t
-        return { ...t, title: data.title, isDone: Boolean(data.isDone) }
-      }),
-    )
+    // Validate task: must be 2-40 characters
+    const taskValue = (data.title || '').trim()
+    if (taskValue.length < 2 || taskValue.length > 40) {
+      console.error('Task must be between 2 and 40 characters')
+      return
+    }
+
+    updateTodoBook(prev => ({
+      ...prev,
+      lines:
+        prev.lines?.map(line => {
+          if (line.id !== todoId) return line
+          return {
+            ...line,
+            task: taskValue,
+            isDone: data.isDone || false,
+            lastModifiedDate: new Date().toISOString(),
+          }
+        }) || [],
+    }))
   }
 
-  const handleAddNewList = () => setCreateListOpen(true)
+  const handleAddNewList = () => {
+    setCreateListOpen(true)
+  }
 
   const handleCreateList = async (data: { name: string; color: ColorKey }) => {
-    const nextId = categories.length ? Math.max(...categories.map((c) => c.id)) + 1 : 0
-    const newCategory: UiTodoCategory = { id: nextId, name: data.name, color: data.color }
+    if (!localTodoBook) return
 
-    setCategories((prev) => [newCategory, ...prev])
-    setSelectedCategoryId(nextId)
+    const now = new Date().toISOString()
+    const tempCategoryId = generateTempId()
+    const newCategory: TodoLineCategoryResponse = {
+      id: tempCategoryId, // Temporary ID
+      name: data.name,
+      nameAr: data.name,
+      nameEn: data.name,
+      description: null,
+      descriptionAr: null,
+      descriptionEn: null,
+      iconName: null,
+      colorName: data.color,
+      isDeleted: false,
+      isModelLine: false,
+      date: now,
+      creationDate: now,
+      lastModifiedDate: now,
+      // Required fields
+      bookClass: localTodoBook.bookClass,
+      createdBy: '',
+      lastModifiedBy: '',
+      slug: '',
+    } as unknown as TodoLineCategoryResponse
+
+    updateTodoBook(prev => {
+      const newCategories = [...(prev.lineCategories || []), newCategory]
+      return {
+        ...prev,
+        lineCategories: newCategories,
+      }
+    })
+
+    // Set the new category as selected
+    setSelectedCategoryId(tempCategoryId)
     setCreateListOpen(false)
   }
 
   const handleDeleteList = (categoryId: number) => {
-    console.log('Delete todo list', categoryId)
+    updateTodoBook(prev => ({
+      ...prev,
+      lineCategories:
+        prev.lineCategories?.map(cat =>
+          cat.id === categoryId
+            ? { ...cat, isDeleted: true, lastModifiedDate: new Date().toISOString() }
+            : cat
+        ) || [],
+    }))
+
+    // If deleted category was selected, select first available
+    if (selectedCategoryId === categoryId) {
+      const remainingCategories = (localTodoBook?.lineCategories || [])
+        .filter(cat => !cat.isDeleted && cat.id !== categoryId)
+      if (remainingCategories.length > 0) {
+        setSelectedCategoryId(remainingCategories[0].id)
+      } else {
+        setSelectedCategoryId(null)
+      }
+    }
+
+  }
+
+  const handleSync = async () => {
+    const result = await save()
+    if (!result.ok) {
+      if (result.reason === 'loading' || result.reason === 'no-changes') {
+        if (result.reason === 'no-changes') {
+          applyLocalUpdate(prev => prev, { setUnsavedTo: false })
+        }
+        return
+      }
+      console.error(result.message || 'Failed to save changes')
+      return
+    }
+  }
+
+  if (isLoading || isInitializing || isAddingModels) {
+    const loadingTitle = isInitializing
+      ? 'Initializing todo book...'
+      : isAddingModels
+        ? 'Adding default models...'
+        : 'Loading todos...'
+    const loadingSubtitle = isInitializing
+      ? 'Setting up your todo book'
+      : isAddingModels
+        ? 'Please wait while we add default categories'
+        : 'Please wait a moment'
+
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <ErrorModal
+          open={true}
+          title="Failed to Load Todos"
+          message="Failed to load todos. Please try again."
+          onRetry={() => window.location.reload()}
+          onClose={() => { }}
+        />
+      </div>
+    )
+  }
+
+  if (!localTodoBook) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <p className="text-16 text-gray-500">No todo book found. Please initialize it first.</p>
+      </div>
+    )
   }
 
   return (
     <div className="w-full">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-1">
-        <Link
-          href="/dashboard/my-events"
-          className="inline-flex h-9 w-9 items-center justify-center"
-          aria-label="Back to My Events"
-        >
-        <ChevronLeft className="w-5 h-5 text-gray-700" />
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-1">
+          <Link
+            href="/dashboard/my-events"
+            className="inline-flex h-9 w-9 items-center justify-center"
+            aria-label="Back to My Events"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-700" />
+          </Link>
+          <h1 className="text-xl font-semibold text-gray-900">Todo</h1>
+        </div>
 
-        </Link>
+        {(hasUnsavedChanges || syncMutation.isPending || syncDeltaMutation.isPending) && (
+          <div className="flex items-center gap-3">
+            <Button
+              variant="brand"
+              size="md"
+              onClick={handleSync}
+              disabled={syncMutation.isPending || syncDeltaMutation.isPending || !localTodoBook || isLoading}
+              className="flex items-center gap-2 rounded-xl !text-white"
+              type="button"
+            >
+              <Save className="h-4 w-4" />
+              {(syncMutation.isPending || syncDeltaMutation.isPending) ? 'Saving...' : 'Save Changes'}
+            </Button>
 
-        <h1 className="text-xl font-semibold text-gray-900">Todo</h1>
+            {hasUnsavedChanges && (
+              <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -136,18 +473,33 @@ export default function TodoPage() {
           actionLabel="Add New"
           onAction={handleAddNewList}
           categories={categories}
-          selectedCategoryId={selectedCategoryId}
+          selectedCategoryId={selectedCategoryId || 0}
           onSelectCategory={setSelectedCategoryId}
           onDeleteCategory={handleDeleteList}
         />
       </div>
 
-      {/* نفس مودال إنشاء الليست بتاع items (Reusable) */}
       <CreateItemListModal
         open={createListOpen}
         onClose={() => setCreateListOpen(false)}
         onSubmit={handleCreateList}
       />
     </div>
+  )
+}
+
+export default function TodoPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <LoadingOverlay open={true} title="Loading todos..." />
+          </div>
+        </div>
+      }
+    >
+      <TodoPageContent />
+    </Suspense>
   )
 }

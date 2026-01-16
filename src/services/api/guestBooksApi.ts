@@ -13,6 +13,7 @@ import type {
   GuestLineCategoryUpdateRequest,
   UserType,
 } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 export interface GuestBooksQuery {
   clientId?: string
@@ -53,6 +54,26 @@ export const initGuestBooks = async (params?: {
 }
 
 /**
+ * Add models to guest books
+ */
+export const addGuestBookModels = async (params?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<void> => {
+  try {
+    const normalizedParams = params ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: params.eventId,
+    } : undefined
+    await apiClient.api.postGuestBooksAddModels(normalizedParams)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to add guest book models')
+  }
+}
+
+/**
  * Sync guest book data
  */
 export const syncGuestBook = async (
@@ -73,6 +94,50 @@ export const syncGuestBook = async (
     await apiClient.api.postGuestBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync guest book')
+  }
+}
+
+/**
+ * Sync guest book data (delta)
+ */
+export const syncGuestBookDelta = async (
+  data: SyncBookDeltaRequest<GuestLineRequest, GuestLineCategoryRequest>,
+  query?: GuestBooksQuery
+): Promise<SyncBookDeltaResponse<GuestBookResponse | null>> => {
+  try {
+    const params = normalizeQuery(query)
+    const response = await apiClient.api.postGuestBooksSyncBookDelta(data, params)
+    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
+    
+    // Extract the actual response data
+    let extractedResponse = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    
+    // Ensure the response has the required structure
+    if (extractedResponse && typeof extractedResponse === 'object') {
+      // Log for debugging
+      console.log('[GuestBooks API] Sync Delta Response:', {
+        hasBook: !!extractedResponse.book,
+        hasCategoryIdMap: !!extractedResponse.categoryIdMap,
+        hasLineIdMap: !!extractedResponse.lineIdMap,
+        categoryIdMapKeys: extractedResponse.categoryIdMap ? Object.keys(extractedResponse.categoryIdMap) : [],
+        lineIdMapKeys: extractedResponse.lineIdMap ? Object.keys(extractedResponse.lineIdMap) : [],
+      })
+      
+      // Ensure categoryIdMap and lineIdMap exist (even if empty)
+      if (!extractedResponse.categoryIdMap) {
+        console.warn('[GuestBooks API] Response missing categoryIdMap, using empty object')
+        extractedResponse.categoryIdMap = {}
+      }
+      if (!extractedResponse.lineIdMap) {
+        console.warn('[GuestBooks API] Response missing lineIdMap, using empty object')
+        extractedResponse.lineIdMap = {}
+      }
+    }
+    
+    return extractedResponse as SyncBookDeltaResponse<GuestBookResponse | null>
+  } catch (error: unknown) {
+    console.error('[GuestBooks API] Sync Delta Error:', error)
+    throw new Error(error instanceof Error ? error.message : 'Failed to sync guest book (delta)')
   }
 }
 

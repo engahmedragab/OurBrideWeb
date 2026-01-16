@@ -1,26 +1,37 @@
 'use client'
 
-import { SERVICE_OPTIONS } from './ServiceSelect'
 import { RowActionsMenu } from './RowActionsMenu'
 import { cn } from '@/lib/utils'
+import { getServiceIcon, getServiceIconByClass } from '@/utils/serviceIconMapper'
 
 export interface ServiceCellProps {
-  serviceKey: string
+  serviceKey: string // iconName or "class:X" format from the line
   title: string
+  onView?: () => void
   onEdit: () => void
   onDelete: () => void
   className?: string
 }
 
 export const ServiceCell = ({
-  serviceKey,
+  serviceKey, // This can be iconName or "class:X" format
   title,
+  onView,
   onEdit,
   onDelete,
   className,
 }: ServiceCellProps) => {
-  const service = SERVICE_OPTIONS.find(s => s.serviceKey === serviceKey)
-  const IconComponent = service?.Icon
+  // Check if serviceKey is in "class:X" format (from serviceClass)
+  let IconComponent
+  if (serviceKey.startsWith('class:')) {
+    const serviceClass = parseInt(serviceKey.replace('class:', ''), 10)
+    IconComponent = getServiceIconByClass(serviceClass)
+  } else {
+    // Use getServiceIcon to convert iconName to icon component
+    // If serviceKey is empty, use title to determine icon
+    const iconName = serviceKey || title
+    IconComponent = getServiceIcon(iconName)
+  }
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
@@ -38,7 +49,7 @@ export const ServiceCell = ({
 
       {/* Actions Menu */}
       <div className="flex-shrink-0">
-        <RowActionsMenu onEdit={onEdit} onDelete={onDelete} />
+        <RowActionsMenu onView={onView} onEdit={onEdit} onDelete={onDelete} />
       </div>
     </div>
   )

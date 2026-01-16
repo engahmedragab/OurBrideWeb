@@ -1,3 +1,3 @@
 // Export item books hooks
-export { useItemBook, useSyncItemBook } from './useItemBooks'
+export { useItemBook, useSyncItemBook, useSyncItemBookDelta } from './useItemBooks'
 

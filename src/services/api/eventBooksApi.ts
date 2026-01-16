@@ -9,6 +9,7 @@ import type {
   EventBook,
   UserType,
 } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 /**
  * Initialize event books for a client
@@ -32,6 +33,26 @@ export const initEventBooks = async (params?: {
 }
 
 /**
+ * Add models to event books
+ */
+export const addEventBookModels = async (params?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<void> => {
+  try {
+    const normalizedParams = params ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: params.eventId,
+    } : undefined
+    await apiClient.api.postEventBooksAddModels(normalizedParams)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to add event book models')
+  }
+}
+
+/**
  * Sync event book data
  */
 export const syncEventBooks = async (
@@ -46,6 +67,26 @@ export const syncEventBooks = async (
     await apiClient.api.postEventBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync event books')
+  }
+}
+
+/**
+ * Sync event book data (delta)
+ */
+export const syncEventBooksDelta = async (
+  data: SyncBookDeltaRequest<EventLineRequest, EventLineCategoryRequest>,
+  params?: {
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  }
+): Promise<SyncBookDeltaResponse<EventBook | null>> => {
+  try {
+    const response = await apiClient.api.postEventBooksSyncBookDelta(data, params)
+    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<EventBook | null>
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to sync event books (delta)')
   }
 }
 

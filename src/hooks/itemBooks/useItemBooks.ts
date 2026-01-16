@@ -6,10 +6,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getItemBook,
   syncItemBook,
+  syncItemBookDelta,
   type ItemBooksQuery,
 } from '@/services/api/itemBooksApi'
 import type { ItemBookResponse } from '@/types/responses'
-import type { ItemBookRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { ItemBookRequest, ItemLineRequest, ItemLineCategoryRequest } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 import { isAuthenticated } from '@/auth/utils/token'
 
 /**
@@ -46,3 +48,24 @@ export const useSyncItemBook = () => {
   })
 }
 
+/**
+ * Hook to sync item book (delta)
+ */
+export const useSyncItemBookDelta = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      data,
+      query,
+    }: {
+      data: SyncBookDeltaRequest<ItemLineRequest, ItemLineCategoryRequest>
+      query?: ItemBooksQuery
+    }): Promise<SyncBookDeltaResponse<ItemBookResponse | null>> => {
+      return await syncItemBookDelta(data, query)
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['itemBook', variables.query] })
+    },
+  })
+}

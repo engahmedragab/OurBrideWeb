@@ -1,6 +1,6 @@
 'use client'
 
-import { MoreVertical, Edit, Trash2 } from 'lucide-react'
+import { MoreVertical, Edit, Trash2, Eye } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,12 +10,14 @@ import {
 import { cn } from '@/lib/utils'
 
 export interface RowActionsMenuProps {
+  onView?: () => void
   onEdit: () => void
   onDelete: () => void
   className?: string
 }
 
 export const RowActionsMenu = ({
+  onView,
   onEdit,
   onDelete,
   className,
@@ -34,7 +36,16 @@ export const RowActionsMenu = ({
           <MoreVertical className="h-4 w-4 text-gray-500" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-32">
+      <DropdownMenuContent align="end" className="w-40">
+        {onView && (
+          <DropdownMenuItem
+            onClick={onView}
+            className="cursor-pointer flex items-center gap-2"
+          >
+            <Eye className="h-4 w-4" />
+            <span>View Details</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           onClick={onEdit}
           className="cursor-pointer flex items-center gap-2"

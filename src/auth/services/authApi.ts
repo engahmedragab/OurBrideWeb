@@ -355,7 +355,7 @@ export const refreshToken = async (): Promise<AuthResponse> => {
     const { HttpClient, Api } = await import('@/../client/common/api/gen/ourbride-api')
     
     const getBaseURL = (): string => {
-      const url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://preprod.our-bride.com'
+      const url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:5001'
       let baseURL = url.replace(/\/$/, '')
       baseURL = baseURL.replace(/\/api\/v1$/, '')
       return baseURL

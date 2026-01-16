@@ -6,26 +6,25 @@ import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Save } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { LoadingOverlay } from '@/components/ui'
-import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
-import { useNoteBook, useNoteSyncMutation } from '@/hooks/notes'
-import { useInitNoteBooks } from '@/hooks/bookInit'
+import { useNoteBook, useNoteSyncMutation, useNoteSyncDeltaMutation } from '@/hooks/notes'
+import { useInitNoteBooks, useAddNoteBookModels } from '@/hooks/bookInit'
+import { usePlanningBookController } from '@/hooks/planning/usePlanningBookController'
 
 import { NoteCategoriesSidebar } from '@/components/notesBook/NoteCategoriesSidebar'
 import NoteMainPanel from '@/components/notesBook/NoteMainPanel'
 import { AddEditNoteModal } from '@/components/notesBook/AddEditNoteModal'
 
-import { generateTempId } from '@/utils/noteAdapters'
-import type { NoteBookDraft } from '@/utils/noteAdapters'
+import type { NoteBookDraft } from '@/hooks/planning/bookDrafts'
+import { generateTempId } from '@/utils/sync/tempIds'
+import { buildNoteBookRequestFromLocal, convertLineToRequest } from '@/utils/planning/mappers/noteMappers'
 
-import type { NoteBookRequest } from '@/../client/common/api/gen/ourbride-api'
 import type { NoteLineResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 
 function NotesPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { addToast } = useToast()
   const eventId = useEventId()
 
   // ✅ query params (never null)
@@ -48,11 +47,6 @@ function NotesPageContent() {
     return Object.keys(q).length ? q : undefined
   }, [eventId, userType, clientId])
 
-  // Local draft state
-  const [localDraft, setLocalDraft] = useState<NoteBookDraft | null>(null)
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
-  const isInitialLoadRef = useRef(true)
-
   // ✅ يمنع double save من المودال (سبب التكرار غالبًا)
   const modalSaveLock = useRef(false)
 
@@ -69,184 +63,140 @@ function NotesPageContent() {
     refetchOnWindowFocus: false,
   })
 
-  const syncMutation = useNoteSyncMutation()
   const initMutation = useInitNoteBooks()
+  const addModelsMutation = useAddNoteBookModels()
+  const syncMutation = useNoteSyncMutation()
+  const syncDeltaMutation = useNoteSyncDeltaMutation()
 
-  // Initial load from API
+  const {
+    localBook: localDraft,
+    hasUnsavedChanges,
+    setHasUnsavedChanges,
+    save,
+    applyLocalUpdate,
+    getActiveLines,
+    getLineById,
+    isInitializing,
+    isAddingModels,
+  } = usePlanningBookController<NoteBookDraft, NoteLineResponse>({
+    book: (noteBook as any as NoteBookDraft) ?? null,
+    isLoading,
+    eventId: eventId ?? undefined,
+    requireEventId: true,
+    syncFn: async (draft) => {
+      const payload = buildNoteBookRequestFromLocal(draft)
+      await syncMutation.mutateAsync({
+        ...payload,
+        query: normalizedQuery,
+      })
+    },
+    syncDeltaFn: async (delta) => {
+      console.log('[NotesPage] syncDeltaFn payload:', {
+        hasDelta: !!delta,
+        lines: {
+          created: delta?.lines?.created?.length,
+          updated: delta?.lines?.updated?.length,
+          deletedIds: delta?.lines?.deletedIds?.length,
+        },
+        lineCategories: {
+          created: delta?.lineCategories?.created?.length,
+          updated: delta?.lineCategories?.updated?.length,
+          deletedIds: delta?.lineCategories?.deletedIds?.length,
+        },
+        eventId: delta?.eventId,
+        bookId: delta?.bookId,
+      })
+      const response = await syncDeltaMutation.mutateAsync({
+        data: delta,
+        query: normalizedQuery,
+      })
+      console.log('[NotesPage] syncDeltaFn response:', response)
+      return response as any
+    },
+    refetch,
+    refetchAfterSave: true,
+    getBookId: (book) => (book as any).id ?? null,
+    convertLineToRequest,
+    convertCategoryToRequest: undefined, // Notes don't have categories
+    shouldInit: (b) => !b?.id,
+    initFn: async () => {
+      await initMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: null as unknown as UserType | undefined,
+        clientId: null as unknown as string | undefined,
+      })
+    },
+    shouldAddModels: (b) => (b as any)?.isModelsAdd === false,
+    addModelsFn: async () => {
+      await addModelsMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: null as unknown as UserType | undefined,
+        clientId: null as unknown as string | undefined,
+      })
+    },
+    initMutation,
+    addModelsMutation,
+    onFirstLoad: (book) => {
+      // Will be handled after controller is set up
+    },
+    onHydrate: (book) => {
+      // Will be handled after controller is set up
+    },
+    isSameBookBase: (current, last) =>
+      current.id === last.id &&
+      current.groomId === last.groomId &&
+      current.brideId === last.brideId &&
+      current.title === last.title,
+    getLines: (book) => book.lines || [],
+    getCategories: () => [], // Notes don't have categories
+    getLineId: (line) => (line as any).id,
+    getCategoryId: () => -1, // Notes don't have categories
+    isSameLine: (current, last) =>
+      (current as any).title === (last as any).title &&
+      (current as any).note === (last as any).note &&
+      (current as any).isDeleted === (last as any).isDeleted &&
+      (current as any).isDone === (last as any).isDone,
+    isLineDeleted: (line) => (line as any).isDeleted ?? false,
+  })
+
+  // Set initial selected note on first load
   useEffect(() => {
-    if (isInitialLoadRef.current && noteBook && !localDraft) {
-      const draft = noteBook as any as NoteBookDraft
-      setLocalDraft(draft)
-      isInitialLoadRef.current = false
-
-      const firstActive = (draft.lines || []).find((l: any) => !l.isDeleted)
-      setSelectedNoteId(firstActive?.id ?? null)
-    }
-  }, [noteBook, localDraft])
-
-  // Keep local state in sync if no unsaved changes
-  useEffect(() => {
-    if (!noteBook) return
-    if (hasUnsavedChanges) return
-    if (isInitialLoadRef.current) return
-
-    const draft = noteBook as any as NoteBookDraft
-    setLocalDraft(draft)
-
-    const active = (draft.lines || []).filter((l: any) => !l.isDeleted)
-    if (!active.length) {
-      setSelectedNoteId(null)
-      return
-    }
-
-    const stillExists = active.some((l: any) => l.id === selectedNoteId)
-    if (!stillExists) setSelectedNoteId(active[0].id ?? null)
-  }, [noteBook, hasUnsavedChanges, selectedNoteId])
-
-  /**
-   * Ensure book is initialized before sync
-   */
-  const ensureBookInitialized = useCallback(async (): Promise<number> => {
-    if (!eventId) throw new Error('Event ID is required')
-
-    const currentId = localDraft?.id
-    if (typeof currentId === 'number' && currentId > 0) return currentId
-
-    await initMutation.mutateAsync({
-      eventId,
-      userType,
-      clientId,
-    })
-
-    const fresh = await refetch()
-    const freshId = (fresh.data as any)?.id
-
-    if (typeof freshId === 'number' && freshId > 0) {
-      const draft = fresh.data as any as NoteBookDraft
-      setLocalDraft(draft)
-      return freshId
-    }
-
-    throw new Error('Failed to initialize note book: no ID returned')
-  }, [eventId, localDraft?.id, initMutation, userType, clientId, refetch])
-
-  /**
-   * ✅ Build payload minimal
-   */
-  const buildSyncPayload = useCallback((draft: NoteBookDraft): NoteBookRequest => {
-    const now = new Date().toISOString()
-    const d: any = draft as any
-
-    if (!d.id || d.id <= 0) {
-      throw new Error('Invalid note book id. Make sure the book is initialized and fetched first.')
-    }
-
-    const bookId = d.id as number
-
-    const lines = (d.lines || []).map((l: any) => {
-      const isTemp = typeof l.id === 'number' && l.id <= 0
-
-      return {
-        id: isTemp ? 0 : (l.id ?? 0),
-        isDone: l.isDone ?? false,
-        isFavorite: l.isFavorite ?? false,
-        isDeleted: l.isDeleted ?? false,
-        isModelLine: l.isModelLine ?? false,
-
-        brideId: l.brideId ?? d.brideId ?? null,
-        groomId: l.groomId ?? d.groomId ?? null,
-
-        bookId,
-        creationDate: l.creationDate ?? now,
-        lastModifiedDate: l.lastModifiedDate ?? now,
-
-        title: l.title ?? '',
-        note: l.note ?? '',
+    if (localDraft && getActiveLines && !selectedNoteId) {
+      const activeLines = getActiveLines()
+      if (activeLines.length > 0) {
+        const firstActive = activeLines[0] as NoteLineResponse
+        setSelectedNoteId(firstActive?.id ?? null)
       }
-    })
-
-    return {
-      id: bookId,
-      groomId: d.groomId ?? null,
-      brideId: d.brideId ?? null,
-      weddingPlannerId: d.weddingPlannerId ?? null,
-
-      bookType: d.bookType,
-      bookClass: d.bookClass,
-
-      title: d.title ?? null,
-      description: d.description ?? null,
-
-      createdBy: d.createdBy ?? d.brideId ?? null,
-      lastModifiedBy: d.lastModifiedBy ?? d.brideId ?? null,
-
-      isModelsAdd: d.isModelsAdd ?? false,
-      isBookInit: d.isBookInit ?? true,
-      isDeleted: d.isDeleted ?? false,
-      count: d.count ?? 0,
-
-      creationDate: d.creationDate ?? now,
-      lastModifiedDate: now,
-
-      lines,
-      slug: d.slug ?? '',
-    } as any as NoteBookRequest
-  }, [])
-
-  const syncDraft = useCallback(async (draft: NoteBookDraft) => {
-    if (!draft) return
-
-    const bookId = await ensureBookInitialized()
-
-    const draftWithId: NoteBookDraft = { ...draft, id: bookId }
-    const payload = buildSyncPayload(draftWithId)
-
-    if (!payload.id || payload.id <= 0) throw new Error('Payload book id is invalid')
-    for (const line of payload.lines || []) {
-      if (line.bookId !== payload.id) throw new Error(`Line "${line.title || 'untitled'}" has wrong bookId`)
     }
+  }, [localDraft, getActiveLines, selectedNoteId])
 
-    await syncMutation.mutateAsync({
-      ...payload,
-      query: normalizedQuery,
-    })
-
-    const fresh = await refetch()
-    if (fresh.data) {
-      const updated = fresh.data as any as NoteBookDraft
-      setLocalDraft(updated)
-
-      // حاول تحافظ على الاختيار لو لسه موجود
-      const active = (updated.lines || []).filter((l: any) => !l.isDeleted)
-      if (!active.length) {
+  // Update selected note on hydrate
+  useEffect(() => {
+    if (localDraft && getActiveLines && selectedNoteId) {
+      const activeLines = getActiveLines()
+      if (activeLines.length === 0) {
         setSelectedNoteId(null)
       } else {
-        const still = active.some((l: any) => l.id === selectedNoteId)
-        setSelectedNoteId(still ? selectedNoteId : (active[0]?.id ?? null))
+        const stillExists = activeLines.some((l: any) => l.id === selectedNoteId)
+        if (!stillExists && activeLines.length > 0) {
+          const firstActive = activeLines[0] as NoteLineResponse
+          setSelectedNoteId(firstActive?.id ?? null)
+        }
       }
     }
+  }, [localDraft, getActiveLines, selectedNoteId])
 
-    addToast('Notes saved successfully', 'success')
-    setHasUnsavedChanges(false)
-  }, [ensureBookInitialized, buildSyncPayload, syncMutation, normalizedQuery, refetch, addToast, selectedNoteId])
 
-  const updateDraft = useCallback((updater: (d: NoteBookDraft) => NoteBookDraft) => {
-    setLocalDraft(prev => {
-      if (!prev) return prev
-      const next = updater(prev)
-      setHasUnsavedChanges(true)
-      return next
-    })
-  }, [])
-
+  // Get active notes using controller helper
   const activeNotes = useMemo(() => {
-    return (localDraft?.lines || []).filter((l: any) => !l.isDeleted)
-  }, [localDraft])
+    return getActiveLines() as NoteLineResponse[]
+  }, [getActiveLines])
 
+  // Get selected note using controller helper
   const selectedNote = useMemo(() => {
     if (!selectedNoteId) return null
-    return (localDraft?.lines || []).find((l: any) => l.id === selectedNoteId && !l.isDeleted) ?? null
-  }, [localDraft, selectedNoteId])
+    return getLineById(selectedNoteId) as NoteLineResponse | null
+  }, [selectedNoteId, getLineById])
 
   const handleAddNew = useCallback(() => {
     setEditingNote(null)
@@ -262,7 +212,7 @@ function NotesPageContent() {
   const handleDelete = useCallback((note: NoteLineResponse) => {
     const now = new Date().toISOString()
 
-    updateDraft(draft => {
+    const result = applyLocalUpdate((draft) => {
       const next: any = { ...draft }
       next.lines = (next.lines || []).map((l: any) => {
         if (l.id === note.id) return { ...l, isDeleted: true, lastModifiedDate: now }
@@ -272,9 +222,15 @@ function NotesPageContent() {
       return next
     })
 
-    const remaining = activeNotes.filter(n => n.id !== note.id)
-    setSelectedNoteId(remaining[0]?.id ?? null)
-  }, [updateDraft, activeNotes])
+    if (result.ok && result.book) {
+      // Calculate remaining active notes from the updated book
+      const updated = result.book as NoteBookDraft
+      const remaining = (updated.lines || []).filter(
+        (l: any) => !(l.isDeleted ?? false) && l.id !== note.id
+      ) as NoteLineResponse[]
+      setSelectedNoteId(remaining[0]?.id ?? null)
+    }
+  }, [applyLocalUpdate])
 
   // ✅ Modal save (FIX: lock + prevent double add)
   const handleSaveFromModal = useCallback((data: { title: string; note: string }) => {
@@ -286,11 +242,13 @@ function NotesPageContent() {
       const title = data.title.trim()
       const note = data.note.trim()
 
-      updateDraft(draft => {
+      const result = applyLocalUpdate((draft) => {
         const next: any = { ...draft }
-        next.lines = next.lines ?? []
+        // Clone lines to avoid mutating shared references used by lastSyncedRef
+        next.lines = [...(next.lines ?? [])]
 
         if (editingNote) {
+          // Update existing note
           next.lines = next.lines.map((l: any) =>
             l.id === editingNote.id
               ? { ...l, title, note, lastModifiedDate: now }
@@ -299,7 +257,7 @@ function NotesPageContent() {
         } else {
           // ✅ يمنع تكرار نفس الإدخال لو اتنفذ مرتين بالغلط
           const alreadyExists = next.lines.some((l: any) =>
-            !l.isDeleted &&
+            !(l.isDeleted ?? false) &&
             (l.title ?? '').trim() === title &&
             (l.note ?? '').trim() === note
           )
@@ -331,29 +289,53 @@ function NotesPageContent() {
         return next
       })
 
-      setIsModalOpen(false)
-      setEditingNote(null)
+      if (result.ok) {
+        setIsModalOpen(false)
+        setEditingNote(null)
+      }
     } finally {
       // unlock next tick
       setTimeout(() => {
         modalSaveLock.current = false
       }, 0)
     }
-  }, [updateDraft, editingNote])
+  }, [applyLocalUpdate, editingNote])
 
-  const handleSaveToServer = useCallback(async () => {
-    if (!localDraft) return
-    try {
-      await syncDraft(localDraft)
-    } catch {
-      // toast already handled upstream if needed
+  const handleSync = useCallback(async () => {
+    console.log('[NotesPage] Save click', {
+      hasUnsavedChanges,
+      isLoading,
+      isInitializing,
+      isAddingModels,
+      hasLocalDraft: !!localDraft,
+    })
+    const result = await save()
+    console.log('[NotesPage] Save result', result)
+    if (!result.ok) {
+      if (result.reason === 'loading' || result.reason === 'no-changes') {
+        if (result.reason === 'no-changes') setHasUnsavedChanges(false)
+        return
+      }
+      console.error(result.message || 'Failed to save changes')
+      return
     }
-  }, [localDraft, syncDraft])
+  }, [save, setHasUnsavedChanges, hasUnsavedChanges, isLoading, isInitializing, isAddingModels, localDraft])
 
-  if (isLoading && !localDraft) {
+  if ((isLoading || isInitializing || isAddingModels) && !localDraft) {
+    const loadingTitle = isInitializing
+      ? 'Initializing notes book...'
+      : isAddingModels
+        ? 'Adding default models...'
+        : 'Loading notes...'
+    const loadingSubtitle = isInitializing
+      ? 'Setting up your notes book'
+      : isAddingModels
+        ? 'Please wait while we add default categories'
+        : 'Please wait a moment'
+
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <LoadingOverlay open={true} title="Loading notes..." />
+        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
       </div>
     )
   }
@@ -371,15 +353,25 @@ function NotesPageContent() {
             <h1 className="text-24 font-semibold text-gray-900">Notes</h1>
           </div>
 
-          <Button
-            variant="brand"
-            onClick={handleSaveToServer}
-            disabled={!hasUnsavedChanges || syncMutation.isPending}
-            className="flex items-center gap-2 text-white"
-          >
-            <Save className="h-4 w-4" />
-            {syncMutation.isPending ? 'Saving...' : 'Save'}
-          </Button>
+          {(hasUnsavedChanges || syncMutation.isPending || syncDeltaMutation.isPending) && (
+            <div className="flex items-center gap-3">
+              <Button
+                variant="brand"
+                size="md"
+                onClick={handleSync}
+                disabled={!hasUnsavedChanges || syncDeltaMutation.isPending}
+                className="flex items-center gap-2 rounded-xl !text-white"
+                type="button"
+              >
+                <Save className="h-4 w-4" />
+                {syncDeltaMutation.isPending ? 'Saving...' : 'Save Changes'}
+              </Button>
+
+              {hasUnsavedChanges && (
+                <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-[300px_1fr] gap-4 sm:gap-6">

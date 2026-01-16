@@ -13,6 +13,7 @@ import type {
   NoteLineCategoryUpdateRequest,
   UserType,
 } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 export interface NoteBooksQuery {
   clientId?: string
@@ -55,6 +56,22 @@ export const initNoteBooks = async (params?: {
 }
 
 /**
+ * Add models to note books
+ */
+export const addNoteBookModels = async (params?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<void> => {
+  try {
+    const normalizedParams = normalizeQuery(params)
+    await apiClient.api.postNoteBooksAddModels(normalizedParams)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to add note book models')
+  }
+}
+
+/**
  * Sync note book data
  */
 export const syncNoteBook = async (
@@ -66,6 +83,23 @@ export const syncNoteBook = async (
     await apiClient.api.postNoteBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync note book')
+  }
+}
+
+/**
+ * Sync note book data (delta)
+ */
+export const syncNoteBookDelta = async (
+  data: SyncBookDeltaRequest<NoteLineRequest, NoteLineCategoryRequest>,
+  query?: NoteBooksQuery
+): Promise<SyncBookDeltaResponse<NoteBookResponse | null>> => {
+  try {
+    const params = normalizeQuery(query)
+    const response = await apiClient.api.postNoteBooksSyncBookDelta(data, params)
+    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<NoteBookResponse | null>
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to sync note book (delta)')
   }
 }
 
