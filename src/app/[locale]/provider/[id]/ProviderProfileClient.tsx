@@ -19,6 +19,7 @@ import {
   ImageIcon,
   Store,
   ThumbsUp,
+  Building2,
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
@@ -50,6 +51,7 @@ export function ProviderProfileClient({
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
   const [selectedBranchForPortfolio, setSelectedBranchForPortfolio] = useState<{ id: string; name: string } | null>(null)
   const [selectedTeamMemberForPortfolio, setSelectedTeamMemberForPortfolio] = useState<{ id: string; name: string; role: string } | null>(null)
+  const [imageErrors, setImageErrors] = React.useState<Record<string, boolean>>({})
 
   // Follow and Favorite hooks - only mutations, no automatic fetching
   const toggleFollow = useToggleProviderFollow()
@@ -560,17 +562,26 @@ export function ProviderProfileClient({
                 const currentPhoto = isValidIndex ? photos[currentPhotoIndex] : null
                 const isValidPhoto = currentPhoto && typeof currentPhoto === 'string' && currentPhoto.trim() !== ''
 
-                return isValidPhoto ? (
+                const photoKey = `photo-${currentPhotoIndex}`
+                const hasError = imageErrors[photoKey]
+                
+                return isValidPhoto && !hasError ? (
                   <Image
                     src={currentPhoto}
                     alt={`${provider.name} - Photo ${currentPhotoIndex + 1}`}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 1200px"
+                    onError={() => setImageErrors(prev => ({ ...prev, [photoKey]: true }))}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <ImageIcon className="h-24 w-24 text-gray-400" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-20 h-20 rounded-full bg-brand-500/20 flex items-center justify-center">
+                        <Building2 className="h-10 w-10 text-brand-600" />
+                      </div>
+                      <span className="text-14 text-gray-500 font-medium">No image available</span>
+                    </div>
                   </div>
                 )
               })()}
@@ -692,17 +703,24 @@ export function ProviderProfileClient({
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
                               <div className="flex items-start gap-3 mb-2">
-                                {service.image && (
-                                  <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden">
+                                <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                                  {service.image && !imageErrors[`service-${service.id}`] ? (
                                     <Image
                                       src={service.image}
                                       alt={service.name}
                                       fill
                                       className="object-cover"
                                       sizes="80px"
+                                      onError={() => setImageErrors(prev => ({ ...prev, [`service-${service.id}`]: true }))}
                                     />
-                                  </div>
-                                )}
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                                      <div className="w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center">
+                                        <Store className="h-5 w-5 text-brand-600" />
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
                                 <div className="flex-1">
                                   <h3 className="text-16 font-semibold text-gray-900 mb-1">
                                     {service.name}
@@ -787,17 +805,26 @@ export function ProviderProfileClient({
                             const imageUrl = typeof product.image === 'string' && product.image.trim() !== ''
                               ? product.image
                               : null
-                            return imageUrl ? (
+                            const productKey = `product-${product.id}`
+                            const hasError = imageErrors[productKey]
+                            
+                            return imageUrl && !hasError ? (
                               <Image
                                 src={imageUrl}
                                 alt={product.name}
                                 fill
                                 className="object-cover"
                                 sizes="(max-width: 640px) 50vw, 33vw"
+                                onError={() => setImageErrors(prev => ({ ...prev, [productKey]: true }))}
                               />
                             ) : (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <ImageIcon className="h-12 w-12 text-gray-400" />
+                              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                                <div className="flex flex-col items-center gap-2">
+                                  <div className="w-12 h-12 rounded-full bg-brand-500/20 flex items-center justify-center">
+                                    <Store className="h-6 w-6 text-brand-600" />
+                                  </div>
+                                  <span className="text-12 text-gray-500 font-medium">No image</span>
+                                </div>
                               </div>
                             )
                           })()}

@@ -32,7 +32,7 @@ export const PageHeader = ({
       <div>
         <h1
           className={cn(
-            'text-2xl md:text-32 font-semibold text-gray-900',
+            'text-2xl md:text-32 font-normal text-gray-900',
             titleClassName
           )}
         >

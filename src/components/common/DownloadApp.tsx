@@ -1,10 +1,11 @@
+'use client'
 import Image from 'next/image'
 import { Typography } from '@/components/ui/Typography'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import AppleIcon from '@/assets/svg/Apple.svg'
 import PlaystoreIcon from '@/assets/svg/Playstore.svg'
-
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 const downloadAppVariants = cva('py-2 px-2', {
   variants: {
     variant: {
@@ -30,21 +31,24 @@ export interface DownloadAppProps extends VariantProps<
  * @returns {JSX.Element} Download app component
  */
 export default function DownloadApp({ variant, className }: DownloadAppProps) {
+  const t = useI18nTranslations('auth.downloadApp')
+  const isRTL = useIsRTL()
   return (
     <div className={cn(downloadAppVariants({ variant }), className)}>
       {/* Title */}
       <Typography
         variant="h6"
         className={cn(
-          'mb-2 !text-10 md:!text-12 font-semibold text-left uppercase px-2',
-          variant === 'secondary' ? 'text-gray-900' : 'text-gray-900'
+          'mb-2 !text-12 md:!text-14 font-semibold !text-center   uppercase px-2',
+          variant === 'secondary' ? 'text-gray-900' : 'text-gray-900',
+          isRTL ? 'lg:!text-right' : 'lg:!text-left'
         )}
       >
-        Download Our APP
+        {t('title')}
       </Typography>
 
       {/* App Store Buttons */}
-      <div className={cn('flex flex-row gap-1.5 md:gap-2')}>
+      <div className={cn('flex flex-row gap-1.5 md:gap-2 items-center justify-center sm:items-none sm:justify-none')}>
         {/* App Store Button */}
         <button
           className={cn(
@@ -52,7 +56,8 @@ export default function DownloadApp({ variant, className }: DownloadAppProps) {
             'px-2 py-1 md:px-4 md:py-2',
             'hover:opacity-90 transition-opacity duration-200',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-            'bg-white border border-gray-300 text-gray-900 hover:bg-gray-100'
+            'bg-white border border-gray-300 text-gray-900 hover:bg-gray-100',
+            isRTL ? '!flex-row-reverse' : '!flex-row'
           )}
           aria-label="Download on the App Store"
           type="button"
@@ -69,11 +74,11 @@ export default function DownloadApp({ variant, className }: DownloadAppProps) {
             className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0"
             aria-hidden="true"
           />
-          <div className="flex flex-col items-start">
-            <span className="text-8 md:text-10 font-normal leading-tight text-gray-900">
+          <div className="flex flex-col items-start" dir="ltr">
+            <span className="text-8 md:text-10 font-normal leading-tight text-gray-900 ">
               Download on the
             </span>
-            <span className="text-12 md:text-14 font-semibold leading-tight text-gray-900">
+            <span className="text-12 md:text-14 font-semibold leading-tight text-gray-900 ">
               App Store
             </span>
           </div>
@@ -86,7 +91,8 @@ export default function DownloadApp({ variant, className }: DownloadAppProps) {
             'px-2 py-1 md:px-4 md:py-2',
             'hover:opacity-90 transition-opacity duration-200',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-            'bg-white border border-gray-300 text-gray-900 hover:bg-gray-100'
+            'bg-white border border-gray-300 text-gray-900 hover:bg-gray-100',
+            isRTL ? '!flex-row-reverse' : '!flex-row'
           )}
           aria-label="GET IT ON Google Play"
           type="button"
@@ -103,11 +109,11 @@ export default function DownloadApp({ variant, className }: DownloadAppProps) {
             className="h-4 w-4 md:h-5 md:w-5 flex-shrink-0"
             aria-hidden="true"
           />
-          <div className="flex flex-col items-start">
-            <span className="text-8 md:text-10 font-normal leading-tight text-gray-900">
-              GET IT ON
+          <div className="flex flex-col items-start" dir="ltr">
+            <span className="text-8 md:text-10 font-normal leading-tight text-gray-900 text-left">
+             GET IT ON
             </span>
-            <span className="text-12 md:text-14 font-semibold leading-tight text-gray-900">
+            <span className="text-12 md:text-14 font-semibold leading-tight text-gray-900 text-left">
               Google Play
             </span>
           </div>

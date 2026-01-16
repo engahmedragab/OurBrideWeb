@@ -2,6 +2,7 @@
 
 import { usePathname } from '@/i18n/navigation'
 import { PillTabs, type PillTabItem } from '../PillTabs'
+import { useI18nTranslations } from '@/i18n'
 
 export interface AuthTabsProps {
   className?: string
@@ -14,7 +15,7 @@ export interface AuthTabsProps {
 export const AuthTabs = ({ className }: AuthTabsProps) => {
   const pathname = usePathname()
   const currentPath = pathname || ''
-
+const t = useI18nTranslations('auth')
   // Check if current path is login (handles both /auth/login and /en/auth/login, /ar/auth/login)
   // Remove locale prefix if present for comparison
   const pathWithoutLocale = currentPath.replace(/^\/(en|ar)/, '') || currentPath
@@ -25,12 +26,12 @@ export const AuthTabs = ({ className }: AuthTabsProps) => {
   const tabs: PillTabItem[] = [
     {
       value: 'login',
-      label: 'Login',
+      label: t('tabs.login'),
       href: '/auth/login', // Locale will be added automatically by PillTabs if it uses Link
     },
     {
       value: 'signup',
-      label: 'Signup',
+      label: t('tabs.signup'),
       href: '/auth/signup', // Locale will be added automatically by PillTabs if it uses Link
     },
   ]
@@ -38,7 +39,7 @@ export const AuthTabs = ({ className }: AuthTabsProps) => {
   return (
     <div className="flex w-full justify-center">
       <PillTabs
-        items={tabs}
+        items={tabs} 
         activeValue={activeValue}
         containerClassName={className}
       />

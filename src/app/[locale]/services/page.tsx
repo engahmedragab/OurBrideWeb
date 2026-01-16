@@ -113,24 +113,50 @@ function ServicesIntroPageContent() {
     [router]
   )
 
-  // Map API data to component props - memoized
+  // Default hero slides for services (same as category page)
+  const DEFAULT_SERVICE_HERO_SLIDES: HeroSlide[] = [
+    {
+      id: '1',
+      label: 'Featured Service',
+      title: 'Bridal Makeup & Hair',
+      description:
+        'Professional bridal beauty services to make you look stunning on your special day. Expert makeup artists and hairstylists ready to create your perfect bridal look.',
+      ctaText: 'Book Now',
+      ctaLink: '/services/category',
+      productImage:
+        'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600',
+      discountText: '30% OFF',
+    },
+    {
+      id: '2',
+      label: 'Top Rated',
+      title: 'Wedding Photography',
+      description:
+        'Capture your precious moments with our professional wedding photography services. Experienced photographers dedicated to creating beautiful memories.',
+      ctaText: 'Explore Services',
+      ctaLink: '/services/category',
+      productImage:
+        'https://images.unsplash.com/photo-1519741497674-611481863552?w=600',
+      discountText: '50% OFF',
+    },
+  ]
+
+  // Map API data to hero slides - use same images as category page
   const heroSlides: HeroSlide[] = useMemo(
-    () =>
-      data?.heroSlides && data.heroSlides.length > 0
-        ? data.heroSlides
-        : [
-            {
-              id: '1',
-              label: 'Limited Offer',
-              title: 'Services',
-              description:
-                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
-              ctaText: 'Book Now',
-              ctaLink: '/services/category',
-              productImage: '',
-              discountText: '',
-            },
-          ],
+    () => {
+      if (data?.heroSlides && data.heroSlides.length > 0) {
+        return data.heroSlides.map((slide, index) => {
+          // Use the same images from DEFAULT_SERVICE_HERO_SLIDES based on index
+          const defaultSlide = DEFAULT_SERVICE_HERO_SLIDES[index % DEFAULT_SERVICE_HERO_SLIDES.length]
+          return {
+            ...slide,
+            productImage: defaultSlide.productImage, // Use same images as category page
+            discountText: slide.discountText || defaultSlide.discountText,
+          }
+        })
+      }
+      return DEFAULT_SERVICE_HERO_SLIDES
+    },
     [data?.heroSlides]
   )
 
@@ -275,7 +301,7 @@ function ServicesIntroPageContent() {
 
           {/* Today's Offers Section */}
           {offersServiceCards.length > 0 && (
-            <section className="py-12 md:py-16">
+            <section className="py-8 md:py-12">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
                 <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
                   Today&apos;s Offers
@@ -319,7 +345,7 @@ function ServicesIntroPageContent() {
           )}
 
           {/* Newsletter Banner */}
-          <div className="mb-12">
+          <div className="py-8 md:py-12">
             <OfferBanner
               offers={[
                 {
@@ -334,6 +360,7 @@ function ServicesIntroPageContent() {
               onSubscribe={_email => {
                 // TODO: Implement newsletter subscription
               }}
+              noContainer={true}
             />
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { Link } from '@/i18n/navigation'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
+import { Typography, CardWrapper } from '@/components/ui'
 import type { Metadata } from 'next'
 import {
   Home,
@@ -110,7 +111,7 @@ export default function SitemapPage() {
   ]
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-background-secondary">
       <Header />
       <main className="flex-1">
         <div className="container-custom py-8 md:py-12">
@@ -118,17 +119,17 @@ export default function SitemapPage() {
             {/* Page Header */}
             <div className="mb-8 md:mb-12 text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-brand-500/10 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-brand-50 flex items-center justify-center">
                   <Settings className="h-6 w-6 text-brand-500" />
                 </div>
-                <h1 className="text-24 md:text-32 font-normal text-gray-900">
+                <Typography variant="h1" className="text-24 md:text-32 font-normal">
                   Sitemap
-                </h1>
+                </Typography>
               </div>
               <div className="w-20 h-1 bg-brand-500 mx-auto md:mx-0" />
-              <p className="text-16 text-gray-600 mt-4 max-w-2xl">
+              <Typography variant="bodyLarge" textColor="secondary" className="mt-4 max-w-2xl">
                 Find all pages and sections of OurBride
-              </p>
+              </Typography>
             </div>
 
             {/* Sitemap Grid */}
@@ -136,17 +137,18 @@ export default function SitemapPage() {
               {sitemapSections.map((section, index) => {
                 const Icon = section.icon
                 return (
-                  <div
+                  <CardWrapper
                     key={index}
-                    className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow"
+                    className="border-gray-200 hover:shadow-md transition-shadow"
+                    padding="md"
                   >
                     <div className="flex items-center gap-3 mb-4 pb-3 border-b border-gray-200">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${section.iconColor}`}>
                         <Icon className="h-5 w-5" />
                       </div>
-                      <h2 className="text-18 md:text-20 font-normal text-gray-900">
+                      <Typography variant="h3" className="text-18 md:text-20 font-normal">
                         {section.title}
-                      </h2>
+                      </Typography>
                     </div>
                     <ul className="space-y-2">
                       {section.links.map((link, linkIndex) => (
@@ -156,12 +158,12 @@ export default function SitemapPage() {
                             className="flex items-center gap-2 text-14 md:text-16 text-gray-700 hover:text-brand-500 transition-colors group"
                           >
                             <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-brand-500 transition-colors" />
-                            <span>{link.label}</span>
+                            <Typography variant="body" as="span">{link.label}</Typography>
                           </Link>
                         </li>
                       ))}
                     </ul>
-                  </div>
+                  </CardWrapper>
                 )
               })}
             </div>

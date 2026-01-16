@@ -31,23 +31,17 @@ import {
 } from '@/components/ui'
 
 import { StoreBadges } from '@/components/ui/StoreBadges'
-import {
-  Users,
-  ChevronLeft,
-  ChevronRight,
-  BadgeCheck,
-  CheckCircle2,
-  Tag,
-  Shield,
-  TargetIcon,
-  Quote,
-} from 'lucide-react'
+import { Users, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
 import heroBrideImage from '@/assets/images/Hero-Bride.png'
 import heroCardBrideImage from '@/assets/images/HeroCard-Bride.png'
 import heroCircularSvg from '@/assets/svg/Hero-circular.svg'
 import lineS2Svg from '@/assets/svg/Line-s2.svg'
 import lineS4Svg from '@/assets/svg/Line-s4.svg'
 import phoneImage from '@/assets/images/phone.png'
+import verifiedIcon from '@/assets/svg/verified.svg'
+import allInIcon from '@/assets/svg/all-in.svg'
+import securePaymentsIcon from '@/assets/svg/secure-payments.svg'
+import exclusiveIcon from '@/assets/svg/exclusive.svg'
 import { useHome } from '@/hooks/home'
 import { extractHomeData } from '@/utils'
 import {
@@ -205,10 +199,10 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         {/* Section 1: Hero */}
-        <section className="container-custom py-12 md:py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-center">
+        <section className="container-custom py-8 md:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-start">
             {/* Left Content */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4">
               {/* Active Users */}
               <div className="flex items-center gap-3 -mt-2">
                 <span className="text-14 font-semibold text-gray-700">
@@ -232,32 +226,35 @@ export default function Home() {
               </div>
               {/* Badge */}
               <div className="inline-flex items-center gap-2 self-start">
-                <span className="px-4 py-1.5 rounded-full bg-brand-500 text-white text-14 font-semibold">
+                <span className=" rounded-full text-brand-500 text-18 font-semibold">
                   All-in-one platform for wedding.
                 </span>
               </div>
 
               {/* Headline */}
-              <h1 className="text-24 sm:text-30 md:text-40 lg:text-48 font-semibold text-gray-900 leading-tight mt-2">
-                YOUR BRIDE ALWAYS IS <br />
-                <span className="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
-                  OUR RESPONSIBILITY.
+              <div className="text-16 sm:text-20 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2">
+                YOUR BRIDE <br />
+                <span className="text-16 sm:text-20 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2  ">
+                  ALWAYS IS OUR <br />
                 </span>
-              </h1>
+                <span className="text-16 sm:text-20 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2  ">
+                  RESPONSIBILITY.
+                </span>
+              </div>
 
               {/* Description */}
-              <p className="text-14 sm:text-16 md:text-18 text-gray-600 leading-relaxed max-w-lg">
+              <p className="text-16 sm:text-18 md:text-20 lg:text-22 text-gray-500 leading-relaxed max-w-lg">
                 OurBride is your all-in-one platform for wedding planning and
                 shopping. Find everything you need to create your perfect day.
               </p>
             </div>
 
             {/* Center: Bride Image */}
-            <div className="relative flex items-center justify-center">
+            <div className="relative flex items-start justify-start lg:pt-0 lg:-mr-24 md:-mr-12">
               {/* Main Bride Image - Centered */}
               <div className="relative">
                 {/* Circular Image Container with Gradient Border */}
-                <div className="relative w-80 h-80 md:w-96 md:h-96">
+                <div className="relative w-96 h-96 md:w-[450px] md:h-[450px] lg:w-[500px] lg:h-[500px]">
                   {/* SVG Border */}
                   <Image
                     src={
@@ -267,13 +264,13 @@ export default function Home() {
                     }
                     alt=""
                     fill
-                    sizes="(max-width: 768px) 320px, 384px"
+                    sizes="(max-width: 768px) 384px, (max-width: 1024px) 450px, 500px"
                     className="absolute inset-0"
                     aria-hidden="true"
                     priority
                   />
                   {/* Bride Image */}
-                  <div className="absolute inset-[6.52px] rounded-full overflow-hidden z-10">
+                  <div className="absolute inset-[9px] rounded-full overflow-hidden z-10">
                     <Image
                       src={
                         typeof heroBrideImage === 'string'
@@ -282,7 +279,7 @@ export default function Home() {
                       }
                       alt="Happy Bride"
                       fill
-                      sizes="(max-width: 768px) 307px, 371px"
+                      sizes="(max-width: 768px) 371px, (max-width: 1024px) 437px, 487px"
                       className="object-contain"
                       priority
                     />
@@ -292,9 +289,9 @@ export default function Home() {
             </div>
 
             {/* Right Content: Circular Text and Explore Products Card */}
-            <div className="relative flex flex-col items-center lg:items-center gap-4 z-10">
-              {/* Circular Badge Button */}
-              <div className="relative w-[100px] h-[100px] flex items-center justify-center">
+            <div className="relative flex flex-col items-center lg:items-start gap-4 z-10 w-full lg:justify-start lg:pb-4 md:pb-6">
+              {/* Circular Badge Button - Positioned higher, centered above cards */}
+              <div className="relative w-[100px] h-[100px] flex items-center justify-center lg:ml-auto lg:mr-0 lg:-translate-x-[62px]">
                 {/* Outer Rotating Text Ring */}
                 <svg
                   viewBox="0 0 120 120"
@@ -342,7 +339,7 @@ export default function Home() {
               </div>
 
               {/* Products Card */}
-              <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+              <div className="relative w-48 md:w-56 rounded-xl shadow-lg overflow-hidden border border-gray-100 lg:ml-auto lg:mr-0">
                 <div className="aspect-[5/2] overflow-hidden relative">
                   <Image
                     src={
@@ -369,7 +366,7 @@ export default function Home() {
               </div>
 
               {/* Services Card */}
-              <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+              <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 lg:ml-auto lg:mr-0">
                 <div className="aspect-[5/2] overflow-hidden relative">
                   <Image
                     src={
@@ -406,40 +403,40 @@ export default function Home() {
         )}
 
         {/* Section 3: Statistics */}
-        <section className="container-custom pt-12 md:pt-16 pb-4 md:pb-6">
+        <section className="container-custom pt-6 md:pt-8 pb-4 md:pb-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
+              <div className="text-28 md:text-36 lg:text-40 xl:text-48 font-medium text-brand-500 mb-2">
                 {statistics?.clients || '+0'}
               </div>
-              <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
+              <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
                 Clients
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
+              <div className="text-28 md:text-36 lg:text-40 xl:text-48 font-medium text-brand-500 mb-2">
                 {statistics?.serviceProviders || '+0'}
               </div>
-              <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
+              <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
                 Services Providers
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
+              <div className="text-28 md:text-36 lg:text-40 xl:text-48 font-medium text-brand-500 mb-2">
                 {statistics?.availableServices || '+0'}
               </div>
-              <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
+              <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
                 Available Services
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
             <div className="text-center">
-              <div className="text-32 md:text-40 lg:text-48 font-medium text-brand-500 mb-2">
+              <div className="text-28 md:text-36 lg:text-40 xl:text-48 font-medium text-brand-500 mb-2">
                 {statistics?.products || '+0'}
               </div>
-              <div className="text-14 md:text-16 font-medium text-gray-600 mb-2">
+              <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
                 Products
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
@@ -448,11 +445,21 @@ export default function Home() {
         </section>
 
         {/* Section 4: Benefits */}
-        <section className="container-custom pt-4 md:pt-6 pb-12 md:pb-16">
+        <section className="container-custom pt-4 md:pt-6 pb-8 md:pb-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             <div className="flex flex-col items-center text-center">
               <div className="mb-4">
-                <BadgeCheck className="h-12 w-12 text-brand-500" />
+                <Image
+                  src={
+                    typeof verifiedIcon === 'string'
+                      ? verifiedIcon
+                      : verifiedIcon.src
+                  }
+                  alt="Verified"
+                  width={67}
+                  height={67}
+                  className="h-12 w-12 md:h-16 md:w-16"
+                />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
                 Verified Trusted Providers
@@ -464,7 +471,15 @@ export default function Home() {
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="mb-4">
-                <TargetIcon className="h-12 w-12 text-brand-500" />
+                <Image
+                  src={
+                    typeof allInIcon === 'string' ? allInIcon : allInIcon.src
+                  }
+                  alt="All-in-One"
+                  width={67}
+                  height={67}
+                  className="h-12 w-12 md:h-16 md:w-16"
+                />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
                 All-in-One Wedding Hub
@@ -474,9 +489,18 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
-              <div className="mb-4 relative inline-block">
-                <Shield className="h-12 w-12 text-brand-500" />
-                <CheckCircle2 className="h-4 w-4 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 fill-brand-500" />
+              <div className="mb-4">
+                <Image
+                  src={
+                    typeof securePaymentsIcon === 'string'
+                      ? securePaymentsIcon
+                      : securePaymentsIcon.src
+                  }
+                  alt="Secure Payments"
+                  width={67}
+                  height={67}
+                  className="h-12 w-12 md:h-16 md:w-16"
+                />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
                 Secure Payments
@@ -488,7 +512,17 @@ export default function Home() {
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="mb-4">
-                <Tag className="h-12 w-12 text-brand-500" />
+                <Image
+                  src={
+                    typeof exclusiveIcon === 'string'
+                      ? exclusiveIcon
+                      : exclusiveIcon.src
+                  }
+                  alt="Exclusive Offers"
+                  width={80}
+                  height={80}
+                  className="h-12 w-12 md:h-16 md:w-16"
+                />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
                 Exclusive Offers & Rewards
@@ -501,7 +535,7 @@ export default function Home() {
         </section>
 
         {/* Section 5: Suggested Products */}
-        <section className="container-custom py-12 md:py-16">
+        <section className="container-custom py-8 md:py-12">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-22 sm:text-26 md:text-30 lg:text-32 font-normal text-gray-900">
               Products Suggested for You
@@ -527,7 +561,7 @@ export default function Home() {
         </section>
 
         {/* Section 6: Suggested Services */}
-        <section className="container-custom py-12 md:py-16">
+        <section className="container-custom py-8 md:py-12">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
               Services Suggested for You
@@ -553,7 +587,7 @@ export default function Home() {
         </section>
 
         {/* Section 7: Why Trust Section */}
-        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
+        <section className="relative py-12 md:py-16 overflow-hidden bg-white">
           <div className="absolute inset-0 bottom-1/4 pointer-events-none">
             <Image
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
@@ -605,7 +639,7 @@ export default function Home() {
         </section>
 
         {/* Section 8: Testimonials */}
-        <section className="container-custom py-12 md:py-16">
+        <section className="container-custom py-8 md:py-12">
           {/* Centered Heading Above Section */}
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
@@ -687,7 +721,7 @@ export default function Home() {
         </section>
 
         {/* Section 9: Providers */}
-        <section className="container-custom py-12 md:py-16">
+        <section className="container-custom py-8 md:py-12">
           <div className="text-center mb-8 md:mb-12">
             <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
               <span className="font-normal text-gray-900">
@@ -713,18 +747,18 @@ export default function Home() {
         </section>
 
         {/* Section 10: Wedding Journey */}
-        <section className="relative py-16 md:py-24 overflow-hidden bg-white">
-          <div className="absolute inset-0 bottom-1/4 pointer-events-none">
+        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden min-h-[700px] md:min-h-[800px] lg:min-h-[900px]">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-full pointer-events-none">
             <Image
               src={typeof lineS4Svg === 'string' ? lineS4Svg : lineS4Svg.src}
               alt=""
               fill
               sizes="100vw"
-              className="object-fit"
+              className="object-contain object-top"
               aria-hidden="true"
             />
           </div>
-          <div className="container-custom relative z-10">
+          <div className="container-custom relative z-10 pt-10 md:pt-14">
             <div className="text-center mb-12 md:mb-16">
               <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
                 <span className="font-normal text-gray-900">
@@ -855,17 +889,15 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col items-center">
-
               <div className="flex items-center justify-center">
-                <StoreBadges size='2xl' className='gap-4'/>
-      
+                <StoreBadges size="5xl" className="gap-4" />
               </div>
-              <div className="relative flex items-center justify-center w-full h-auto mt-0">
+              <div className="relative flex items-center justify-center w-full h-auto -mt-12 md:-mt-20 lg:-mt-24">
                 {/* Background Glow */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-brand-400 via-brand-300 to-brand-200 rounded-full opacity-30 blur-3xl" />
 
                 {/* Phone Image */}
-                <div className="relative z-10 w-[650px] md:w-[850px] lg:w-[1000px] aspect-[26/16]">
+                <div className="relative z-10 w-[750px] md:w-[950px] lg:w-[1200px] aspect-[26/16]">
                   <Image
                     src={
                       typeof phoneImage === 'string'
@@ -874,7 +906,7 @@ export default function Home() {
                     }
                     alt="OurBride Mobile App"
                     fill
-                    sizes="(max-width: 768px) 650px, (max-width: 1024px) 850px, 1000px"
+                    sizes="(max-width: 768px) 750px, (max-width: 1024px) 950px, 1200px"
                     className="object-contain drop-shadow-2xl"
                   />
                 </div>

@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 
 import brandLogo from '@/assets/svg/Brand-logo.svg'
 import { Typography } from '@/components/ui/Typography'
+import { useI18nTranslations } from '@/i18n'
 
 export interface WelcomeHeaderProps {
   welcomeText?: string
@@ -16,9 +17,10 @@ export interface WelcomeHeaderProps {
  * Displays logo, welcome text, and underline
  */
 export const WelcomeHeader = ({
-  welcomeText = 'Welcome To OurBride',
+  welcomeText ,
   className,
 }: WelcomeHeaderProps) => {
+  const t = useI18nTranslations('auth')
   return (
     <div className={cn('flex flex-col items-center space-y-1.5', className)}>
       {/* Logo */}

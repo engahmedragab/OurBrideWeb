@@ -33,7 +33,7 @@ export const WhyBridesChooseProductsSection = ({
   headerAlignment = 'center',
 }: WhyBridesChooseProductsSectionProps) => {
   return (
-    <section className={cn('w-full py-5 md:py-7 lg:py-9', className)}>
+    <section className={cn('w-full py-8 md:py-12', className)}>
       <div className="w-full">
         {/* Header */}
         <div className="mb-5 md:mb-7">
