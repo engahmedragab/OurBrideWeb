@@ -4,12 +4,13 @@ import { getTranslations } from 'next-intl/server'
 
 type AuthLayoutProps = {
   children: ReactNode
-  params: {
-    locale: 'ar' | 'en'
-  }
+  params: Promise<{
+    locale: string
+  }>
 }
 
 export default async function AuthLayout({ children, params }: AuthLayoutProps) {
+  const { locale } = await params
   const t = await getTranslations('auth')
 
   const heroSectionData = {
@@ -22,7 +23,7 @@ export default async function AuthLayout({ children, params }: AuthLayoutProps) 
     },
   }
 
-  const isRTL = params.locale === 'ar'
+  const isRTL = locale === 'ar'
 
   return (
     <div
