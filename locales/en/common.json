@@ -281,9 +281,125 @@
         "confirmRequired": "Please confirm your password",
         "notMatch": "Password doesn't match, please try again"
       }
-    
-  }
+    },
+    "home": {
+      "hero": {
+        "activeUsers": "Active Users",
+        "badge": "All-in-one platform for wedding.",
+        "headline": {
+          "line1": "YOUR BRIDE",
+          "line2": "ALWAYS IS OUR",
+          "line3": "RESPONSIBILITY."
+        },
+        "description": "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
+        "circularText": "START SHOPPING NOW WITH OURBRIDE",
+        "exploreProducts": "Explore Products",
+        "exploreServices": "Explore Services"
+      },
+      "statistics": {
+        "clients": "Clients",
+        "serviceProviders": "Services Providers",
+        "availableServices": "Available Services",
+        "products": "Products"
+      },
+      "benefits": {
+        "verifiedTrustedProviders": {
+          "title": "Verified Trusted Providers",
+          "description": "Every service is identity-checked for a safe and reliable experience."
+        },
+        "allInOneWeddingHub": {
+          "title": "All-in-One Wedding Hub",
+          "description": "Plan, shop, book, and manage everything from one platform."
+        },
+        "securePayments": {
+          "title": "Secure Payments",
+          "description": "Safe transactions, transparent pricing, and guaranteed service delivery."
+        },
+        "exclusiveOffers": {
+          "title": "Exclusive Offers & Rewards",
+          "description": "Enjoy discounts, and gift options designed for your big day."
+        }
+      },
+      "sections": {
+        "productsSuggested": "Products Suggested for You",
+        "servicesSuggested": "Services Suggested for You",
+        "viewAll": "View All",
+        "whyTrust": {
+          "title": "Why",
+          "brides": "Brides",
+          "trust": "Trust",
+          "ourServices": "Our Services"
+        },
+        "testimonials": {
+          "title": "Read",
+          "reviews": "Reviews",
+          "rideWith": "Ride With",
+          "confidence": "Confidence",
+          "whatOurCustomers": "What Our",
+          "customers": "Customers",
+          "areSaying": "Are Saying",
+          "previous": "Previous testimonials",
+          "next": "Next testimonials",
+          "goToPage": "Go to page"
+        },
+        "providers": {
+          "title": "Discover",
+          "trusted": "Trusted",
+          "wedding": "Wedding",
+          "providers": "Providers"
+        },
+        "journey": {
+          "title": "Your Wedding",
+          "journey": "Journey",
+          "starts": "Starts",
+          "here": "Here"
+        },
+        "appDownload": {
+          "title": "Make Wedding Planning Easier",
+          "subtitle": "With OurBride"
+        }
+      },
+      "trustCards": {
+        "madeForLocalBrides": {
+          "heading": "Made for Local Brides",
+          "description": "Tailored for brides across Egypt — especially those outside the capital."
+        },
+        "simpleBeautifulExperience": {
+          "heading": "Simple & Beautiful Experience",
+          "description": "A feminine, easy-to-use design that makes planning delightful."
+        },
+        "realOffersSavings": {
+          "heading": "Real Offers & Savings",
+          "description": "Exclusive coupons and discounts designed for your budget."
+        },
+        "allInOnePlatform": {
+          "heading": "All-in-One Platform",
+          "description": "Plan, book, shop, and celebrate everything in one place."
+        },
+        "verifiedTrustedProviders": {
+          "heading": "Verified Trusted Providers",
+          "description": "All our service providers are carefully verified and trusted."
+        },
+        "securePayments": {
+          "heading": "Secure Payments",
+          "description": "Your payments are safe and secure with our trusted payment system."
+        }
+      },
+      "journeySteps": {
+        "step1": {
+          "title": "Step #1",
+          "description": "Exclusive coupons and discounts designed for your budget."
+        },
+        "step2": {
+          "title": "Step #2",
+          "description": "Exclusive coupons and discounts designed for your budget."
+        },
+        "step3": {
+          "title": "Step #3",
+          "description": "Exclusive coupons and discounts designed for your budget."
+        }
+      }
+    }
   
-   
 
 }

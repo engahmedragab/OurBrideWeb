@@ -264,9 +264,14 @@ export default {
         'slide-out': 'slideOut 0.3s ease-in',
         'slide-in-right': 'slideInRight 0.3s ease-out',
         'spin-slow': 'spin 3s linear infinite',
+        'spin-slow-reverse': 'spin-reverse 3s linear infinite',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
+        'spin-reverse': {
+          '0%': { transform: 'rotate(360deg)' },
+          '100%': { transform: 'rotate(0deg)' },
+        },
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },

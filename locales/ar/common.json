@@ -272,7 +272,124 @@
         "confirmRequired": "يرجى تأكيد كلمة المرور",
         "notMatch": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى"
       }
+    },
+    "home": {
+      "hero": {
+        "activeUsers": "المستخدمون النشطون",
+        "badge": "منصة شاملة لحفلات الزفاف.",
+        "headline": {
+          "line1": "عروستك",
+          "line2": "دائمًا هي",
+          "line3": "مسؤوليتنا."
+        },
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
+        "circularText": "ابدأي التسوق الآن",
+        "exploreProducts": "استكشفي المنتجات",
+        "exploreServices": "استكشفي الخدمات"
+      },
+      "statistics": {
+        "clients": "العملاء",
+        "serviceProviders": "مقدمو الخدمات",
+        "availableServices": "الخدمات المتاحة",
+        "products": "المنتجات"
+      },
+      "benefits": {
+        "verifiedTrustedProviders": {
+          "title": "مقدمو خدمات موثوقون ومتحققون",
+          "description": "يتم التحقق من هوية كل خدمة لضمان تجربة آمنة وموثوقة."
+        },
+        "allInOneWeddingHub": {
+          "title": "مركز شامل لحفلات الزفاف",
+          "description": "خططي، تسوقي، احجزي، وأديري كل شيء من منصة واحدة."
+        },
+        "securePayments": {
+          "title": "مدفوعات آمنة",
+          "description": "معاملات آمنة، أسعار شفافة، وضمان تقديم الخدمة."
+        },
+        "exclusiveOffers": {
+          "title": "عروض ومكافآت حصرية",
+          "description": "استمتعي بخصومات وخيارات هدايا مصممة ليومك الكبير."
+        }
+      },
+      "sections": {
+        "productsSuggested": "المنتجات المقترحة لك",
+        "servicesSuggested": "الخدمات المقترحة لك",
+        "viewAll": "عرض الكل",
+        "whyTrust": {
+          "title": "لماذا",
+          "brides": "العرائس",
+          "trust": "تثق",
+          "ourServices": "بخدماتنا"
+        },
+        "testimonials": {
+          "title": "اقرأي",
+          "reviews": "التقييمات",
+          "rideWith": "وتنقلي",
+          "confidence": "بثقة",
+          "whatOurCustomers": "ماذا يقول",
+          "customers": "عملاؤنا",
+          "areSaying": "",
+          "previous": "التقييمات السابقة",
+          "next": "التقييمات التالية",
+          "goToPage": "الانتقال إلى الصفحة"
+        },
+        "providers": {
+          "title": "اكتشفي",
+          "trusted": "مقدمي",
+          "wedding": "خدمات الزفاف",
+          "providers": "الموثوقين"
+        },
+        "journey": {
+          "title": "رحلة",
+          "journey": "زفافك",
+          "starts": "تبدأ",
+          "here": "من هنا"
+        },
+        "appDownload": {
+          "title": "اجعلي تخطيط حفل الزفاف أسهل",
+          "subtitle": "مع OurBride"
+        }
+      },
+      "trustCards": {
+        "madeForLocalBrides": {
+          "heading": "مصمم للعروسات المحليات",
+          "description": "مصمم خصيصًا للعروسات في جميع أنحاء مصر — خاصة خارج العاصمة."
+        },
+        "simpleBeautifulExperience": {
+          "heading": "تجربة بسيطة وجميلة",
+          "description": "تصميم أنثوي وسهل الاستخدام يجعل التخطيط ممتعًا."
+        },
+        "realOffersSavings": {
+          "heading": "عروض ومدخرات حقيقية",
+          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+        },
+        "allInOnePlatform": {
+          "heading": "منصة شاملة",
+          "description": "خططي، احجزي، تسوقي، واحتفلي بكل شيء في مكان واحد."
+        },
+        "verifiedTrustedProviders": {
+          "heading": "مقدمو خدمات موثوقون ومتحققون",
+          "description": "جميع مقدمي الخدمات لدينا تم التحقق منهم بعناية وهم موثوقون."
+        },
+        "securePayments": {
+          "heading": "مدفوعات آمنة",
+          "description": "مدفوعاتك آمنة ومضمونة مع نظام الدفع الموثوق لدينا."
+        }
+      },
+      "journeySteps": {
+        "step1": {
+          "title": "الخطوة #1",
+          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+        },
+        "step2": {
+          "title": "الخطوة #2",
+          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+        },
+        "step3": {
+          "title": "الخطوة #3",
+          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+        }
+      }
     }
-  
   
 }

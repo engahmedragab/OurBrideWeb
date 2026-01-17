@@ -7,6 +7,7 @@ import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
+import { useTranslations, useIsRTL } from '@/i18n/hooks'
 import {
   Card,
   type ProductCardData,
@@ -131,6 +132,10 @@ const ProviderCardItem = memo(
 ProviderCardItem.displayName = 'ProviderCardItem'
 
 export default function Home() {
+  // Translations
+  const t = useTranslations('home')
+  const isRTL = useIsRTL()
+
   // Fetch home data from API
   const { data: homeData, isLoading } = useHome()
 
@@ -194,6 +199,76 @@ export default function Home() {
     setTestimonialsIndex(index)
   }, [])
 
+  // Get translated trust cards
+  const translatedTrustCards = useMemo(() => {
+    return TRUST_CARDS.map((card) => {
+      let heading: string = card.heading
+      let description: string = card.description
+
+      switch (card.id) {
+        case '1':
+          heading = t('trustCards.madeForLocalBrides.heading')
+          description = t('trustCards.madeForLocalBrides.description')
+          break
+        case '2':
+          heading = t('trustCards.simpleBeautifulExperience.heading')
+          description = t('trustCards.simpleBeautifulExperience.description')
+          break
+        case '3':
+          heading = t('trustCards.realOffersSavings.heading')
+          description = t('trustCards.realOffersSavings.description')
+          break
+        case '4':
+          heading = t('trustCards.allInOnePlatform.heading')
+          description = t('trustCards.allInOnePlatform.description')
+          break
+        case '5':
+          heading = t('trustCards.verifiedTrustedProviders.heading')
+          description = t('trustCards.verifiedTrustedProviders.description')
+          break
+        case '6':
+          heading = t('trustCards.securePayments.heading')
+          description = t('trustCards.securePayments.description')
+          break
+      }
+
+      return {
+        ...card,
+        heading: heading as typeof card.heading,
+        description: description as typeof card.description,
+      }
+    })
+  }, [t])
+
+  // Get translated journey steps
+  const translatedJourneySteps = useMemo(() => {
+    return JOURNEY_STEPS.map((step) => {
+      let title: string = step.title
+      let description: string = step.description
+
+      switch (step.stepNumber) {
+        case 1:
+          title = t('journeySteps.step1.title')
+          description = t('journeySteps.step1.description')
+          break
+        case 2:
+          title = t('journeySteps.step2.title')
+          description = t('journeySteps.step2.description')
+          break
+        case 3:
+          title = t('journeySteps.step3.title')
+          description = t('journeySteps.step3.description')
+          break
+      }
+
+      return {
+        ...step,
+        title: title as typeof step.title,
+        description: description as typeof step.description,
+      }
+    })
+  }, [t])
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -210,7 +285,7 @@ export default function Home() {
                     {statistics?.activeUsers || '+0'}
                   </span>
                   <span className="text-gray-500 font-normal text-14">
-                    Active Users
+                    {t('hero.activeUsers')}
                   </span>
                 </span>
                 <div className="flex -space-x-2">
@@ -227,30 +302,32 @@ export default function Home() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 self-start">
                 <span className=" rounded-full text-brand-500 text-18 font-semibold">
-                  All-in-one platform for wedding.
+                  {t('hero.badge')}
                 </span>
               </div>
 
               {/* Headline */}
               <div className="text-16 sm:text-20 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2">
-                YOUR BRIDE <br />
+                {t('hero.headline.line1')} <br />
                 <span className="text-16 sm:text-20 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2  ">
-                  ALWAYS IS OUR <br />
+                  {t('hero.headline.line2')} <br />
                 </span>
                 <span className="text-16 sm:text-20 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2  ">
-                  RESPONSIBILITY.
+                  {t('hero.headline.line3')}
                 </span>
               </div>
 
               {/* Description */}
               <p className="text-16 sm:text-18 md:text-20 lg:text-22 text-gray-500 leading-relaxed max-w-lg">
-                OurBride is your all-in-one platform for wedding planning and
-                shopping. Find everything you need to create your perfect day.
+                {t('hero.description')}
               </p>
             </div>
 
             {/* Center: Bride Image */}
-            <div className="relative flex items-start justify-start lg:pt-0 lg:-mr-24 md:-mr-12">
+            <div className={cn(
+              "relative flex items-start justify-start lg:pt-0",
+              isRTL ? "lg:-ml-24 md:-ml-12" : "lg:-mr-24 md:-mr-12"
+            )}>
               {/* Main Bride Image - Centered */}
               <div className="relative">
                 {/* Circular Image Container with Gradient Border */}
@@ -289,15 +366,28 @@ export default function Home() {
             </div>
 
             {/* Right Content: Circular Text and Explore Products Card */}
-            <div className="relative flex flex-col items-center lg:items-start gap-4 z-10 w-full lg:justify-start lg:pb-4 md:pb-6">
+            <div className={cn(
+              "relative flex flex-col items-center lg:items-start gap-4 z-10 w-full lg:justify-start lg:pb-4 md:pb-6",
+              isRTL && "lg:items-end"
+            )}>
               {/* Circular Badge Button - Positioned higher, centered above cards */}
-              <div className="relative w-[100px] h-[100px] flex items-center justify-center lg:ml-auto lg:mr-0 lg:-translate-x-[62px]">
+              <div className={cn(
+                "relative w-[100px] h-[100px] flex items-center justify-center",
+                isRTL 
+                  ? "lg:mr-auto lg:ml-0 lg:translate-x-[62px]" 
+                  : "lg:ml-auto lg:mr-0 lg:-translate-x-[62px]"
+              )}>
                 {/* Outer Rotating Text Ring */}
                 <svg
                   viewBox="0 0 120 120"
-                  className="absolute inset-0 w-full h-full animate-spin-slow"
+                  className={cn(
+                    "absolute inset-0 w-full h-full",
+                    isRTL ? "animate-spin-slow-reverse" : "animate-spin-slow"
+                  )}
+                  xmlns="http://www.w3.org/2000/svg"
                 >
                   <defs>
+                    {/* Path for circular text - same for both directions */}
                     <path
                       id="circle-text"
                       d="M 60, 60 m -50, 0 a 50,50 0 1,1 100,0 a 50,50 0 1,1 -100,0"
@@ -306,9 +396,17 @@ export default function Home() {
                   <text
                     fill="#F14836"
                     className="font-black text-12 uppercase tracking-wide"
+                    style={{ 
+                      direction: isRTL ? 'rtl' : 'ltr',
+                      textAnchor: 'start'
+                    }}
                   >
-                    <textPath href="#circle-text" startOffset="0%">
-                      OURBRIDE START SHOPPING NOW WITH
+                    <textPath 
+                      href="#circle-text" 
+                      startOffset={isRTL ? "50%" : "0%"}
+                      method="align"
+                    >
+                      {t('hero.circularText')}
                     </textPath>
                   </text>
                 </svg>
@@ -339,7 +437,10 @@ export default function Home() {
               </div>
 
               {/* Products Card */}
-              <div className="relative w-48 md:w-56 rounded-xl shadow-lg overflow-hidden border border-gray-100 lg:ml-auto lg:mr-0">
+              <div className={cn(
+                "relative w-48 md:w-56 rounded-xl shadow-lg overflow-hidden border border-gray-100",
+                isRTL ? "lg:mr-auto lg:ml-0" : "lg:ml-auto lg:mr-0"
+              )}>
                 <div className="aspect-[5/2] overflow-hidden relative">
                   <Image
                     src={
@@ -360,13 +461,16 @@ export default function Home() {
                     className="w-full text-14 font-semibold rounded-full"
                     asChild
                   >
-                    <Link href="/products">Explore Products</Link>
+                    <Link href="/products">{t('hero.exploreProducts')}</Link>
                   </Button>
                 </div>
               </div>
 
               {/* Services Card */}
-              <div className="relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 lg:ml-auto lg:mr-0">
+              <div className={cn(
+                "relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100",
+                isRTL ? "lg:mr-auto lg:ml-0" : "lg:ml-auto lg:mr-0"
+              )}>
                 <div className="aspect-[5/2] overflow-hidden relative">
                   <Image
                     src={
@@ -387,7 +491,7 @@ export default function Home() {
                     className="w-full text-14 font-semibold rounded-full"
                     asChild
                   >
-                    <Link href="/services">Explore Services</Link>
+                    <Link href="/services">{t('hero.exploreServices')}</Link>
                   </Button>
                 </div>
               </div>
@@ -410,7 +514,7 @@ export default function Home() {
                 {statistics?.clients || '+0'}
               </div>
               <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
-                Clients
+                {t('statistics.clients')}
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
@@ -419,7 +523,7 @@ export default function Home() {
                 {statistics?.serviceProviders || '+0'}
               </div>
               <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
-                Services Providers
+                {t('statistics.serviceProviders')}
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
@@ -428,7 +532,7 @@ export default function Home() {
                 {statistics?.availableServices || '+0'}
               </div>
               <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
-                Available Services
+                {t('statistics.availableServices')}
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
@@ -437,7 +541,7 @@ export default function Home() {
                 {statistics?.products || '+0'}
               </div>
               <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
-                Products
+                {t('statistics.products')}
               </div>
               <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
             </div>
@@ -462,11 +566,10 @@ export default function Home() {
                 />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                Verified Trusted Providers
+                {t('benefits.verifiedTrustedProviders.title')}
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Every service is identity-checked for a safe and reliable
-                experience.
+                {t('benefits.verifiedTrustedProviders.description')}
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -482,10 +585,10 @@ export default function Home() {
                 />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                All-in-One Wedding Hub
+                {t('benefits.allInOneWeddingHub.title')}
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Plan, shop, book, and manage everything from one platform.
+                {t('benefits.allInOneWeddingHub.description')}
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -503,11 +606,10 @@ export default function Home() {
                 />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                Secure Payments
+                {t('benefits.securePayments.title')}
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Safe transactions, transparent pricing, and guaranteed service
-                delivery.
+                {t('benefits.securePayments.description')}
               </p>
             </div>
             <div className="flex flex-col items-center text-center">
@@ -525,10 +627,10 @@ export default function Home() {
                 />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
-                Exclusive Offers & Rewards
+                {t('benefits.exclusiveOffers.title')}
               </h3>
               <p className="text-14 text-gray-600 leading-relaxed">
-                Enjoy discounts, and gift options designed for your big day.
+                {t('benefits.exclusiveOffers.description')}
               </p>
             </div>
           </div>
@@ -538,13 +640,13 @@ export default function Home() {
         <section className="container-custom py-8 md:py-12">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-22 sm:text-26 md:text-30 lg:text-32 font-normal text-gray-900">
-              Products Suggested for You
+              {t('sections.productsSuggested')}
             </h2>
             <Link
               href="/products"
               className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
             >
-              View All
+              {t('sections.viewAll')}
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -564,13 +666,13 @@ export default function Home() {
         <section className="container-custom py-8 md:py-12">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
-              Services Suggested for You
+              {t('sections.servicesSuggested')}
             </h2>
             <Link
               href="/services"
               className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
             >
-              View All
+              {t('sections.viewAll')}
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -600,23 +702,30 @@ export default function Home() {
           </div>
           <div className="container-custom relative z-10">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
-                <span className="font-normal text-gray-900">
-                  Why{' '}
-                  <span className="font-semibold text-gray-900">Brides</span>
+              <h2 className={cn(
+                "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black",
+                isRTL && "leading-relaxed"
+              )}>
+                <span className="font-normal text-gray-900 block">
+                  {t('sections.whyTrust.title')}{' '}
+                  <span className="font-semibold text-gray-900">
+                    {t('sections.whyTrust.brides')}
+                  </span>
                 </span>
-                <br />
-                <span className="font-semibold text-gray-900">
-                  Trust{' '}
+                <span className={cn(
+                  "font-semibold text-gray-900 block",
+                  isRTL ? "mt-3 md:mt-4" : "mt-0"
+                )}>
+                  {t('sections.whyTrust.trust')}{' '}
                   <span className="font-normal text-gray-900">
-                    Our Services
+                    {t('sections.whyTrust.ourServices')}
                   </span>
                 </span>
               </h2>
             </div>
             <div className="relative min-h-[600px] md:min-h-[700px]">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 relative">
-                {TRUST_CARDS.map((card, index) => {
+                {translatedTrustCards.map((card, index) => {
                   const positionClass = TRUST_CARD_POSITION_CLASSES[index] || ''
                   return (
                     <div key={card.id} className={`relative ${positionClass}`}>
@@ -641,16 +750,25 @@ export default function Home() {
         {/* Section 8: Testimonials */}
         <section className="container-custom py-8 md:py-12">
           {/* Centered Heading Above Section */}
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
-              <span className="font-normal text-gray-900">
-                Read{' '}
-                <span className="font-semibold text-gray-900">Reviews</span>
+            <div className="text-center mb-8 md:mb-12">
+            <h2 className={cn(
+              "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black",
+              isRTL && "leading-relaxed"
+            )}>
+              <span className="font-normal text-gray-900 block">
+                {t('sections.testimonials.title')}{' '}
+                <span className="font-semibold text-gray-900">
+                  {t('sections.testimonials.reviews')}
+                </span>
               </span>
-              <br />
-              <span className="font-semibold text-gray-900">
-                Ride With{' '}
-                <span className="font-normal text-gray-900">Confidence</span>
+              <span className={cn(
+                "font-semibold text-gray-900 block",
+                isRTL ? "mt-3 md:mt-4" : "mt-0"
+              )}>
+                {t('sections.testimonials.rideWith')}{' '}
+                <span className="font-normal text-gray-900">
+                  {t('sections.testimonials.confidence')}
+                </span>
               </span>
             </h2>
           </div>
@@ -662,19 +780,21 @@ export default function Home() {
                 <div className="mb-4 md:mb-6">
                   <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
                   <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
-                    <span className="block">What Our</span>
+                    <span className="block">{t('sections.testimonials.whatOurCustomers')}</span>
                     <span className="block font-semibold text-gray-900">
-                      Customers
+                      {t('sections.testimonials.customers')}
                     </span>
-                    <span className="block">Are Saying</span>
+                    {t('sections.testimonials.areSaying') && (
+                      <span className="block">{t('sections.testimonials.areSaying')}</span>
+                    )}
                   </p>
                 </div>
                 <div className="flex items-center gap-3 md:gap-4">
                   <button
                     onClick={goToTestimonialsPrevious}
-                    aria-label="Previous testimonials"
+                    aria-label={t('sections.testimonials.previous')}
                   >
-                    <ChevronLeft className="h-5 w-5 text-gray-700" />
+                    <ChevronLeft className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
                   </button>
                   <div className="flex-1 flex items-center gap-2">
                     {Array.from({ length: testimonialsTotalPages }).map(
@@ -688,16 +808,16 @@ export default function Home() {
                               ? 'bg-red-500'
                               : 'bg-gray-200 hover:bg-gray-300'
                           )}
-                          aria-label={`Go to page ${index + 1}`}
+                          aria-label={`${t('sections.testimonials.goToPage')} ${index + 1}`}
                         />
                       )
                     )}
                   </div>
                   <button
                     onClick={goToTestimonialsNext}
-                    aria-label="Next testimonials"
+                    aria-label={t('sections.testimonials.next')}
                   >
-                    <ChevronRight className="h-5 w-5 text-gray-700" />
+                    <ChevronRight className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
                   </button>
                 </div>
               </div>
@@ -723,15 +843,24 @@ export default function Home() {
         {/* Section 9: Providers */}
         <section className="container-custom py-8 md:py-12">
           <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
-              <span className="font-normal text-gray-900">
-                Discover{' '}
-                <span className="font-semibold text-gray-900">Trusted</span>
+            <h2 className={cn(
+              "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6",
+              isRTL && "leading-relaxed"
+            )}>
+              <span className="font-normal text-gray-900 block">
+                {t('sections.providers.title')}{' '}
+                <span className="font-semibold text-gray-900">
+                  {t('sections.providers.trusted')}
+                </span>
               </span>
-              <br />
-              <span className="font-semibold text-gray-900">
-                Wedding{' '}
-                <span className="font-normal text-gray-900">Providers</span>
+              <span className={cn(
+                "font-semibold text-gray-900 block",
+                isRTL ? "mt-3 md:mt-4" : "mt-0"
+              )}>
+                {t('sections.providers.wedding')}{' '}
+                <span className="font-normal text-gray-900">
+                  {t('sections.providers.providers')}
+                </span>
               </span>
             </h2>
           </div>
@@ -760,20 +889,30 @@ export default function Home() {
           </div>
           <div className="container-custom relative z-10 pt-10 md:pt-14">
             <div className="text-center mb-12 md:mb-16">
-              <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6">
-                <span className="font-normal text-gray-900">
-                  Your Wedding{' '}
-                  <span className="font-semibold text-gray-900">Journey</span>
+              <h2 className={cn(
+                "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6",
+                isRTL && "leading-relaxed"
+              )}>
+                <span className="font-normal text-gray-900 block">
+                  {t('sections.journey.title')}{' '}
+                  <span className="font-semibold text-gray-900">
+                    {t('sections.journey.journey')}
+                  </span>
                 </span>
-                <br />
-                <span className="font-semibold text-gray-900">
-                  Starts <span className="font-normal text-gray-900">Here</span>
+                <span className={cn(
+                  "font-semibold text-gray-900 block",
+                  isRTL ? "mt-3 md:mt-4" : "mt-0"
+                )}>
+                  {t('sections.journey.starts')}{' '}
+                  <span className="font-normal text-gray-900">
+                    {t('sections.journey.here')}
+                  </span>
                 </span>
               </h2>
             </div>
             <div className="relative">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 items-start">
-                {JOURNEY_STEPS.map((step, index) => (
+                {translatedJourneySteps.map((step, index) => (
                   <Card
                     key={step.stepNumber}
                     cardData={{
@@ -882,9 +1021,9 @@ export default function Home() {
             <div className="text-center mb-0">
               <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900 leading-tight">
                 <span className="font-normal block">
-                  Make Wedding Planning Easier
+                  {t('sections.appDownload.title')}
                 </span>
-                <span className="font-semibold">With OurBride</span>
+                <span className="font-semibold">{t('sections.appDownload.subtitle')}</span>
               </h2>
             </div>
 
