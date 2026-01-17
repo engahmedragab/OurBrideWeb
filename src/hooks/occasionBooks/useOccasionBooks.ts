@@ -10,11 +10,19 @@ import {
   updateOccasionLine,
   deleteOccasionLine,
   syncOccasionBook,
+  syncOccasionBookDelta,
   initOccasionBooks,
   type OccasionBooksQuery,
 } from '@/services/api/occasionBooksApi'
 import type { OccasionBookResponse, OccasionLineResponse } from '@/types/responses'
-import type { OccasionLineRequest, OccasionLineUpdateRequest, OccasionBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type {
+  OccasionLineRequest,
+  OccasionLineUpdateRequest,
+  OccasionBookRequest,
+  OccasionLineCategoryRequest,
+  UserType,
+} from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 import { isAuthenticated } from '@/auth/utils/token'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
@@ -165,6 +173,35 @@ export const useSyncOccasionBook = () => {
         'Failed to sync occasion book'
       )
       addToast(message, type)
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to sync occasion book'
+      addToast(errorMessage, 'error')
+    },
+  })
+}
+
+/**
+ * Hook to sync occasion book (delta)
+ */
+export const useSyncOccasionBookDelta = () => {
+  const queryClient = useQueryClient()
+  const { addToast } = useToast()
+
+  return useMutation({
+    mutationFn: async ({
+      data,
+      query,
+    }: {
+      data: SyncBookDeltaRequest<OccasionLineRequest, OccasionLineCategoryRequest>
+      query?: OccasionBooksQuery
+    }): Promise<SyncBookDeltaResponse<OccasionBookResponse | null>> => {
+      return await syncOccasionBookDelta(data, query)
+    },
+    onSuccess: (_response, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['occasionBook', variables.query] })
+      queryClient.invalidateQueries({ queryKey: ['occasionLines', variables.query] })
+      addToast('Occasion book synced successfully', 'success')
     },
     onError: (error) => {
       const errorMessage = error instanceof Error ? error.message : 'Failed to sync occasion book'

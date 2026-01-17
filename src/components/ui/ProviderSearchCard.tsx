@@ -65,14 +65,14 @@ export const ProviderSearchCard = ({
     return (
         <div
             className={cn(
-                'bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm',
+                'bg-white rounded-xl border border-gray-200 shadow-sm',
                 'hover:shadow-md transition-shadow duration-200',
                 className
             )}
             onClick={onClick}
         >
-            {/* Image Section */}
-            <div className="relative w-full h-[200px] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+            {/* Image Section - rounded top corners to match card border */}
+            <div className="relative w-full h-[200px] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden rounded-t-xl">
                 {providerImage && !imageError ? (
                     <Image
                         src={providerImage}
@@ -121,7 +121,7 @@ export const ProviderSearchCard = ({
                         showValue={true}
                         size="md"
                         variant="default"
-                        starColor="yellow"
+                        starColor="brand"
                     />
                 )}
 

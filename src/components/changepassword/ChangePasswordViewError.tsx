@@ -3,22 +3,24 @@
 import { Lock, EyeOff } from 'lucide-react'
 import { Input } from '@/components/ui/Input'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Change Password View with Error States - Pure UI Only (No Logic)
  * Static error variant for visual verification
  */
 export function ChangePasswordViewError() {
+  const t = useI18nTranslations('changePassword')
   return (
     <div className="max-w-2xl">
       {/* Page Header */}
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-normal text-gray-900">Change Password</h1>
+        <h1 className="text-2xl font-normal text-gray-900">{t('changePassword')}</h1>
         <button
           type="button"
           className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
         >
-          Save Changes
+          {t('saveChanges')}
         </button>
       </div>
 
@@ -27,15 +29,15 @@ export function ChangePasswordViewError() {
         {/* Current Password Field - WITH ERROR */}
         <div className="mb-6">
           <label className="block text-14 font-normal text-gray-900 mb-2">
-            Current Password
+            {t('currentPassword')}
           </label>
           <Input
             type="password"
-            placeholder="Enter Password"
+            placeholder={t('enterPassword')}
             prefixIcon={Lock}
             variant="error"
             suffix={<EyeOff className="h-6 w-6 text-red-500" />}
-            errorMessage="Password isn't correct, please try again"
+            errorMessage={t('passwordIncorrect')}
             readOnly
           />
           <div className="mt-2 flex justify-end">
@@ -43,7 +45,7 @@ export function ChangePasswordViewError() {
               type="button"
               className="text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
             >
-              Forget Password?
+              {t('forgetPassword')}
             </button>
           </div>
         </div>
@@ -51,7 +53,7 @@ export function ChangePasswordViewError() {
         {/* New Password Field - NO ERROR */}
         <div className="mb-6">
           <label className="block text-14 font-normal text-gray-900 mb-2">
-            New Password
+            {t('newPassword')}
           </label>
           <Input
             type="password"
@@ -65,15 +67,15 @@ export function ChangePasswordViewError() {
         {/* Confirm New Password Field - WITH ERROR */}
         <div>
           <label className="block text-14 font-normal text-gray-900 mb-2">
-            Confirm New Password
+            {t('confirmNewPassword')}
           </label>
           <Input
             type="password"
-            placeholder="Confirm New Password"
+            placeholder={t('confirmNewPassword')}
             prefixIcon={Lock}
             variant="error"
             suffix={<EyeOff className="h-6 w-6 text-red-500" />}
-            errorMessage="Password doesn't match, please try again"
+            errorMessage={t('passwordDoesNotMatch')}
             readOnly
           />
         </div>

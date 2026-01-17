@@ -2,7 +2,7 @@
   "common": {
     "loading": "جاري التحميل...",
     "error": "حدث خطأ",
-    "success": "نجح",
+    "success": "تم بنجاح",
     "cancel": "إلغاء",
     "confirm": "تأكيد",
     "save": "حفظ",
@@ -10,6 +10,386 @@
     "edit": "تعديل",
     "search": "بحث",
     "filter": "تصفية",
-    "sort": "ترتيب"
-  }
+    "sort": "ترتيب",
+    "pleaseWait": "لحظه واحده، نحن هنا بالفعل ...",
+    "skipButton": "تخطي الآن"
+  },
+  "auth": {
+    "hero": {
+      "backToHome": "  الصفحة الرئيسية",
+      "title": "نظّم زفافك",
+      "description": "نظّم زفافك بسهولة ويجعله أكثر سهولة"
+    },
+    "heroCard": {
+      "title": "نظّم زفافك",
+      "subtitle": "نظّم زفافك بسهولة ويجعله أكثر سهولة"
+    },
+    "tabs": {
+      "login": "تسجيل الدخول",
+      "signup": "إنشاء حساب"
+    },
+    "welcomeHeader": {
+      "defaultWelcome": "مرحبًا بك في OurBride",
+      "planningPreferences": "تفضيلات التخطيط"
+    },
+    "errors": {
+      "validationTitle": "أخطاء التحقق:"
+    },
+    "common": {
+      "confirm": "تأكيد",
+      "resend": "إعادة الإرسال",
+      "loading": "جاري التحميل...",
+      "saving": "جاري الحفظ...",
+      "pleaseWait": "يرجى الانتظار قليلًا.",
+      "skipForNow": "تخطي الآن",
+      "continueAsProvider": "المتابعة كمزوّد خدمة",
+      "areYouProvider": "هل تقدم خدمات؟",
+      "skipButton": "تخطي الآن"
+    },
+    "loginForm": {
+      "emailPlaceholder": "example@example.com",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "rememberMe": "تذكرني",
+      "forgotPasswordLink": "نسيتِ كلمة المرور؟",
+      "loginButton": "تسجيل الدخول",
+      "providerTextPrefix": "هل تقدمين خدماتك؟",
+      "providerAction": "المتابعة كمزوّد خدمة",
+      "errors": {
+        "wrongEmail": "البريد الإلكتروني غير صحيح، يرجى المحاولة مرة أخرى",
+        "wrongPassword": "كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى"
+      }
+    },
+    "signupForm": {
+      "fullNamePlaceholder": "الاسم الكامل",
+      "emailPlaceholder": "البريد الإلكتروني",
+      "mobilePlaceholder": "رقم الموبايل",
+      "passwordPlaceholder": "أدخل كلمة المرور",
+      "confirmPasswordPlaceholder": "تأكيد كلمة المرور",
+      "female": "أنثى",
+      "male": "ذكر",
+      "gender": {
+
+        "errorRequired": "يرجى اختيار النوع"
+      },
+      "terms": {
+        "labelPrefix": "أوافق على",
+        "linkLabel": "الشروط والأحكام",
+        "errorRequired": "يجب الموافقة على الشروط والأحكام"
+      },
+      "button": {
+        "signup": "إنشاء حساب"
+      },
+      "provider": {
+        "text": "هل تقدمين خدماتك؟",
+        "action": "المتابعة كمزوّد خدمة"
+      },
+      "errors": {
+        "fullNameRequired": "الاسم الكامل مطلوب",
+        "genderRequired": "النوع مطلوب",
+        "emailRequired": "البريد الإلكتروني مطلوب",
+        "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح",
+        "mobileRequired": "رقم الموبايل مطلوب",
+        "mobileInvalid": "يرجى إدخال رقم موبايل صحيح",
+        "passwordRequired": "كلمة المرور مطلوبة",
+        "passwordMin": "يجب ألا تقل كلمة المرور عن 8 أحرف",
+        "confirmPasswordRequired": "يرجى تأكيد كلمة المرور",
+        "passwordNotMatch": "كلمتا المرور غير متطابقتين"
+      }
+    },
+    "forgotPassword": {
+      "title": "نسيتِ كلمة المرور",
+      "instructionStep1": "يرجى إدخال رقم الموبايل لإرسال رمز التحقق (OTP)",
+      "instructionStep2": "يرجى إدخال رمز التحقق المكون من 4 أرقام الذي أرسلناه إلى رقم هاتفك",
+      "instructionStep3": "يرجى إدخال كلمة المرور الجديدة",
+      "phonePlaceholder": "رقم الموبايل",
+      "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+      "confirmNewPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
+      "otpErrorLength": "يرجى إدخال رمز التحقق المكون من 4 أرقام",
+      "otpErrorNumbers": "يجب أن يحتوي رمز التحقق على أرقام فقط",
+      "phoneRequired": "رقم الموبايل مطلوب",
+      "phoneInvalid": "يرجى إدخال رقم موبايل صحيح",
+      "passwordRequired": "كلمة المرور مطلوبة",
+      "passwordMin": "يجب ألا تقل كلمة المرور عن 8 أحرف",
+      "confirmPasswordRequired": "يرجى تأكيد كلمة المرور",
+      "passwordNotMatch": "كلمتا المرور غير متطابقتين",
+      "sendOtpFailed": "فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.",
+      "invalidOtp": "رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.",
+      "resetFailed": "فشل إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى.",
+      "resendButton": "إعادة إرسال رمز التحقق",
+      "resendTextPrefix": "لم يصلك الرمز؟"
+      ,
+      "successModal": {
+        "title": "تمت إعادة تعيين كلمة المرور بنجاح",
+        "description": "تم تحديث كلمة المرور. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.",
+        "confirmLabel": "تأكيد"
+      }
+    },
+    "mobileVerification": {
+      "title": "التحقق من رقم الموبايل",
+      "instruction": "يرجى إدخال رمز التحقق المكون من 4 أرقام الذي أرسلناه إلى {{phoneNumber}}",
+      "instructionFallback": "يرجى إدخال رمز التحقق المكون من 4 أرقام الذي أرسلناه إلى رقم هاتفك",
+      "otpErrorLength": "يرجى إدخال رمز التحقق المكون من 4 أرقام",
+      "otpErrorNumbers": "يجب أن يحتوي رمز التحقق على أرقام فقط",
+      "phoneRequired": "رقم الهاتف مطلوب",
+      "sendOtpFailed": "فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.",
+      "invalidOtp": "رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.",
+      "didntReceive": "لم يصلك الرمز؟",
+      "resendAfter": "إعادة الإرسال بعد {{seconds}} ثانية",
+      "resend": "إعادة الإرسال",
+      "resentSuccess": "تمت إعادة إرسال رمز التحقق بنجاح"
+    },
+    "planningPreferences": {
+      "title": "تفضيلات التخطيط",
+      "servicesTitle": "الخدمات التي تبحثين عنها",
+      "loadingServices": "جاري تحميل الخدمات...",
+      "noServices": "لا توجد خدمات متاحة",
+      "budgetPlaceholder": "أدخل ميزانيتك",
+      "budgetSuffix": "جنيه",
+      "locationPlaceholder": "الموقع",
+      "setLocation": "تحديد الموقع",
+      "detailsTitle": "بيانات العروسة/العريس",
+      "fullNamePlaceholder": "الاسم الكامل",
+      "emailPlaceholder": "البريد الإلكتروني",
+      "confirmButton": "تأكيد",
+      "searchForLocation": "بحث عن الموقع ....",
+      "gettingYourLocation": "جاري الحصول على الموقع...",
+      "useMyCurrentLocation": "استخدم الموقع الحالي",
+      "searchResults": "نتائج البحث",
+      "noLocationsFound": "لا توجد مواقع متاحة. يرجى البحث عن موقع آخر.",
+      "searchForLocationOrUseYourCurrentLocation": "بحث عن موقع أو استخدم الموقع الحالي",
+      "savingButton": "جاري الحفظ...",
+      "successModal": {
+        "title": "تم بنجاح!",
+        "description": "تم حفظ تفضيلات التخطيط الخاصة بك",
+        "confirmLabel": "تأكيد",
+       
+        "skipButton": "تخطي الآن"
+      },
+      "errors": {
+        "selectAtLeastOne": "يرجى اختيار خدمة واحدة على الأقل",
+        "budgetRequired": "الميزانية مطلوبة",
+        "locationRequired": "الموقع مطلوب",
+        "fullNameRequired": "الاسم الكامل مطلوب",
+        "emailRequired": "البريد الإلكتروني مطلوب",
+        "emailInvalid": "يرجى إدخال بريد إلكتروني صحيح",
+        "loadFailed": "فشل تحميل تفضيلات التخطيط",
+        "saveFailed": "فشل حفظ تفضيلات التخطيط",
+        "failedToSearchLocations": "فشل البحث عن المواقع",
+        "failedToGetAddress": "فشل الحصول على العنوان",
+        "geolocationNotSupported": "الخريطة غير مدعومة من قبل المتصفح",
+        "locationAccessDenied": "غير مصرح بالوصول إلى الموقع. يرجى تمكين صلاحيات الوصول إلى الموقع في إعدادات المتصفح.",
+        "locationInformationUnavailable": "لا يوجد معلومات حول الموقع.",
+        "locationRequestTimedOut": "انتهت مهلة الطلب عن الموقع. يرجى المحاولة مرة أخرى.",
+        "errorOccurredWhileGettingLocation": "حدث خطأ أثناء الحصول على الموقع.",
+        "somethingWentWrong": "حدث خطأ أثناء التحقق من تفضيلات التخطيط"
+      }
+    },
+    "context": {
+      "errors": {
+        "loginFailed": "فشل تسجيل الدخول",
+        "externalLoginFailed": "فشل تسجيل الدخول عبر مزود خارجي",
+        "guestLoginFailed": "فشل تسجيل الدخول كضيف",
+        "registrationFailed": "فشل إنشاء الحساب",
+        "sendOtpFailed": "فشل إرسال رمز التحقق",
+        "invalidOtpCode": "رمز التحقق غير صحيح",
+        "invalidConfirmationCode": "رمز التأكيد غير صحيح",
+        "refreshUserFailed": "فشل تحديث بيانات المستخدم"
+       
+      }
+    },
+    "api": {
+      "errors": {
+        "loginFailedCredentials": "فشل تسجيل الدخول. يرجى التحقق من البيانات.",
+        "noTokenReceived": "لم يتم استلام رمز الدخول من الخادم",
+        "externalLoginFailed": "فشل تسجيل الدخول عبر مزود خارجي. يرجى المحاولة مرة أخرى.",
+        "guestLoginFailed": "فشل تسجيل الدخول كضيف. يرجى المحاولة مرة أخرى.",
+        "noTokenAvailableToRefresh": "لا يوجد رمز متاح للتحديث",
+        "tokenRefreshFailedLoginAgain": "فشل تحديث الرمز. يرجى تسجيل الدخول مرة أخرى.",
+        "adminLoginFailedCredentials": "فشل تسجيل دخول المدير. يرجى التحقق من البيانات.",
+        "registrationFailedTryAgain": "فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.",
+        "sendOtpFailedTryAgain": "فشل إرسال رمز التحقق. يرجى المحاولة مرة أخرى.",
+        "invalidOtpTryAgain": "رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.",
+        "invalidConfirmationTryAgain": "رمز التأكيد غير صحيح. يرجى المحاولة مرة أخرى.",
+        "unauthorizedCheckCredentials": "غير مصرح. يرجى التحقق من البيانات.",
+        "forbiddenNoPermission": "غير مسموح. ليس لديك صلاحية لتنفيذ هذا الإجراء.",
+        "notFoundTryAgain": "المورد غير موجود. يرجى المحاولة مرة أخرى.",
+        "serverErrorTryLater": "خطأ في الخادم. يرجى المحاولة لاحقًا.",
+        "validationFailed": "فشل التحقق. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "terms": {
+      "title": "الشروط والأحكام",
+      "acceptButton": "أوافق على الشروط والأحكام",
+      "sections": {
+        "introduction": {
+          "title": "مقدمة",
+          "body": "باستخدام OurBride، فإنك توافق على الشروط والأحكام التالية."
+        },
+        "accountUsage": {
+          "title": "استخدام الحساب",
+          "body": "يجب على المستخدمين تقديم معلومات شخصية دقيقة. أنت مسؤول عن الحفاظ على أمان حسابك."
+        },
+        "bookingsServices": {
+          "title": "الحجوزات والخدمات",
+          "body": "تعتمد الحجوزات على توفر مقدم الخدمة. الإلغاءات والاستردادات تخضع لسياسة كل مقدم خدمة."
+        },
+        "paymentsFees": {
+          "title": "المدفوعات والرسوم",
+          "body": "يجب إجراء جميع المدفوعات من خلال التطبيق. تخصم OurBride عمولة 2% من أرباح مقدمي الخدمات شهريًا."
+        },
+        "contentCommunity": {
+          "title": "المحتوى والمجتمع",
+          "body": "يجب على المستخدمين عدم نشر محتوى مسيء أو ضار. تحتفظ OurBride بحق إزالة أي محتوى غير مناسب."
+        },
+        "privacySecurity": {
+          "title": "الخصوصية والأمان",
+          "body": "نحمي بياناتك وفقًا لسياسة الخصوصية الخاصة بنا. قد يُطلب التحقق من الهوية لمقدمي الخدمات."
+        }
+      }
+    },
+    "downloadApp": {
+      "title": "تحميل التطبيق"
+    }
+  },
+   
+    "changePassword": {
+      "title": "تغيير    الكلمة المرور",
+      "saveChanges": "حفظ التغييرات",
+      "currentPassword": "كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+      "enterPassword": "أدخل كلمة المرور",
+      "enterNewPassword": "أدخل كلمة المرور الجديدة",
+      "confirmNewPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
+      "success": {
+        "title": "تم تغيير كلمة المرور بنجاح",
+        "description": "تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة"
+      },
+      "errors": {
+        "currentInvalid": "كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى",
+        "newRequired": "كلمة المرور مطلوبة",
+        "newMin": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
+        "confirmRequired": "يرجى تأكيد كلمة المرور",
+        "notMatch": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى"
+      }
+    },
+    "home": {
+      "hero": {
+        "activeUsers": "المستخدمون النشطون",
+        "badge": "منصة شاملة لحفلات الزفاف.",
+        "headline": {
+          "line1": "عروستك",
+          "line2": "دائمًا هي",
+          "line3": "مسؤوليتنا."
+        },
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
+        "circularText": "ابدأي التسوق الآن",
+        "exploreProducts": "استكشفي المنتجات",
+        "exploreServices": "استكشفي الخدمات"
+      },
+      "statistics": {
+        "clients": "العملاء",
+        "serviceProviders": "مقدمو الخدمات",
+        "availableServices": "الخدمات المتاحة",
+        "products": "المنتجات"
+      },
+      "benefits": {
+        "verifiedTrustedProviders": {
+          "title": "مقدمو خدمات موثوقون ومتحققون",
+          "description": "يتم التحقق من هوية كل خدمة لضمان تجربة آمنة وموثوقة."
+        },
+        "allInOneWeddingHub": {
+          "title": "مركز شامل لحفلات الزفاف",
+          "description": "خططي، تسوقي، احجزي، وأديري كل شيء من منصة واحدة."
+        },
+        "securePayments": {
+          "title": "مدفوعات آمنة",
+          "description": "معاملات آمنة، أسعار شفافة، وضمان تقديم الخدمة."
+        },
+        "exclusiveOffers": {
+          "title": "عروض ومكافآت حصرية",
+          "description": "استمتعي بخصومات وخيارات هدايا مصممة ليومك الكبير."
+        }
+      },
+      "sections": {
+        "productsSuggested": "المنتجات المقترحة لك",
+        "servicesSuggested": "الخدمات المقترحة لك",
+        "viewAll": "عرض الكل",
+        "whyTrust": {
+          "title": "لماذا",
+          "brides": "العرائس",
+          "trust": "تثق",
+          "ourServices": "بخدماتنا"
+        },
+        "testimonials": {
+          "title": "اقرأي",
+          "reviews": "التقييمات",
+          "rideWith": "وتنقلي",
+          "confidence": "بثقة",
+          "whatOurCustomers": "ماذا يقول",
+          "customers": "عملاؤنا",
+          "areSaying": "",
+          "previous": "التقييمات السابقة",
+          "next": "التقييمات التالية",
+          "goToPage": "الانتقال إلى الصفحة"
+        },
+        "providers": {
+          "title": "اكتشفي",
+          "trusted": "مقدمي",
+          "wedding": "خدمات الزفاف",
+          "providers": "الموثوقين"
+        },
+        "journey": {
+          "title": "رحلة",
+          "journey": "زفافك",
+          "starts": "تبدأ",
+          "here": "من هنا"
+        },
+        "appDownload": {
+          "title": "اجعلي تخطيط حفل الزفاف أسهل",
+          "subtitle": "مع OurBride"
+        }
+      },
+      "trustCards": {
+        "madeForLocalBrides": {
+          "heading": "مصمم للعروسات المحليات",
+          "description": "مصمم خصيصًا للعروسات في جميع أنحاء مصر — خاصة خارج العاصمة."
+        },
+        "simpleBeautifulExperience": {
+          "heading": "تجربة بسيطة وجميلة",
+          "description": "تصميم أنثوي وسهل الاستخدام يجعل التخطيط ممتعًا."
+        },
+        "realOffersSavings": {
+          "heading": "عروض ومدخرات حقيقية",
+          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+        },
+        "allInOnePlatform": {
+          "heading": "منصة شاملة",
+          "description": "خططي، احجزي، تسوقي، واحتفلي بكل شيء في مكان واحد."
+        },
+        "verifiedTrustedProviders": {
+          "heading": "مقدمو خدمات موثوقون ومتحققون",
+          "description": "جميع مقدمي الخدمات لدينا تم التحقق منهم بعناية وهم موثوقون."
+        },
+        "securePayments": {
+          "heading": "مدفوعات آمنة",
+          "description": "مدفوعاتك آمنة ومضمونة مع نظام الدفع الموثوق لدينا."
+        }
+      },
+      "journeySteps": {
+        "step1": {
+          "title": "الخطوة #1",
+          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+        },
+        "step2": {
+          "title": "الخطوة #2",
+          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+        },
+        "step3": {
+          "title": "الخطوة #3",
+          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+        }
+      }
+    }
+  
 }

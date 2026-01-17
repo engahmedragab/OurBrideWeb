@@ -6,11 +6,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   getGuestBook,
   syncGuestBook,
+  syncGuestBookDelta,
   initGuestBooks,
   type GuestBooksQuery,
 } from '@/services/api/guestBooksApi'
 import type { GuestBookResponse } from '@/types/responses'
-import type { GuestBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { GuestBookRequest, GuestLineRequest, GuestLineCategoryRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 import { isAuthenticated } from '@/auth/utils/token'
 
 /**
@@ -40,6 +42,28 @@ export const useSyncGuestBook = () => {
   return useMutation({
     mutationFn: async ({ data, query }: { data: GuestBookRequest; query?: GuestBooksQuery }) => {
       await syncGuestBook(data, query)
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['guestBook', variables.query] })
+    },
+  })
+}
+
+/**
+ * Hook to sync guest book (delta)
+ */
+export const useSyncGuestBookDelta = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      data,
+      query,
+    }: {
+      data: SyncBookDeltaRequest<GuestLineRequest, GuestLineCategoryRequest>
+      query?: GuestBooksQuery
+    }): Promise<SyncBookDeltaResponse<GuestBookResponse | null>> => {
+      return await syncGuestBookDelta(data, query)
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['guestBook', variables.query] })

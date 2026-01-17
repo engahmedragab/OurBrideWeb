@@ -4,9 +4,38 @@ import { useEffect, useRef, useState } from 'react'
 import type { FeaturedProviderResponse } from '@/types/responses'
 import { MarkerClusterer } from '@googlemaps/markerclusterer'
 
+// Google Maps API types
+interface GoogleMapsLatLng {
+    lat(): number
+    lng(): number
+}
+
+interface GoogleMapsMap {
+    panTo(latLng: GoogleMapsLatLng): void
+    panBy(x: number, y: number): void
+}
+
+interface GoogleMapsOverlayView {
+    getPanes(): {
+        overlayLayer: HTMLElement
+    }
+    getProjection(): {
+        fromLatLngToDivPixel(latLng: GoogleMapsLatLng): { x: number; y: number } | null
+    } | null
+    setMap(map: GoogleMapsMap | null): void
+}
+
+interface GoogleMaps {
+    maps: {
+        Map: new (element: HTMLElement, options?: Record<string, unknown>) => GoogleMapsMap
+        LatLng: new (lat: number, lng: number) => GoogleMapsLatLng
+        OverlayView: new () => GoogleMapsOverlayView
+    }
+}
+
 declare global {
     interface Window {
-        google?: any
+        google?: GoogleMaps
     }
 }
 
@@ -28,8 +57,8 @@ export const ProviderMap = ({
     className = '',
 }: ProviderMapProps) => {
     const mapRef = useRef<HTMLDivElement>(null)
-    const mapInstanceRef = useRef<any>(null)
-    const markersRef = useRef<any[]>([])
+    const mapInstanceRef = useRef<GoogleMapsMap | null>(null)
+    const markersRef = useRef<GoogleMapsOverlayView[]>([])
     const clustererRef = useRef<MarkerClusterer | null>(null)
 
     // Use external selectedProviderId if provided, otherwise use internal state
@@ -82,20 +111,20 @@ export const ProviderMap = ({
         clustererRef.current?.clearMarkers()
 
         /* ---------------- Custom Overlay Marker ---------------- */
-        class CustomMarker extends window.google.maps.OverlayView {
-            position: any
+        class CustomMarker extends window.google.maps.OverlayView implements GoogleMapsOverlayView {
+            position: GoogleMapsLatLng
             div: HTMLDivElement | null = null
             provider: FeaturedProviderResponse
             private visible: boolean = true
 
-            constructor(position: any, provider: FeaturedProviderResponse) {
+            constructor(position: GoogleMapsLatLng, provider: FeaturedProviderResponse) {
                 super()
                 this.position = position
                 this.provider = provider
             }
 
             // Required methods for MarkerClusterer compatibility
-            getPosition(): any {
+            getPosition(): GoogleMapsLatLng {
                 return this.position
             }
 
@@ -165,7 +194,9 @@ export const ProviderMap = ({
 
             draw() {
                 if (!this.div) return
-                const point = this.getProjection().fromLatLngToDivPixel(this.position)
+                const projection = this.getProjection()
+                if (!projection) return
+                const point = projection?.fromLatLngToDivPixel(this.position)
                 if (!point) return
                 this.div.style.left = `${point.x}px`
                 this.div.style.top = `${point.y}px`
@@ -181,10 +212,11 @@ export const ProviderMap = ({
         }
 
         /* ---------------- Create Markers ---------------- */
-        const overlays: any[] = []
+        const overlays: GoogleMapsOverlayView[] = []
 
         providers.forEach(p => {
             if (typeof p.latitude !== 'number' || typeof p.longitude !== 'number') return
+            if (!window.google) return
             const pos = new window.google.maps.LatLng(p.latitude, p.longitude)
             const marker = new CustomMarker(pos, p)
             marker.setMap(map)
@@ -196,19 +228,20 @@ export const ProviderMap = ({
         /* ---------------- Clusterer (OurBride style) ---------------- */
         try {
             // Custom cluster marker class that extends OverlayView
-            class ClusterMarker extends window.google.maps.OverlayView {
-                position: any
+            if (!window.google) throw new Error('Google Maps API not loaded')
+            class ClusterMarker extends window.google.maps.OverlayView implements GoogleMapsOverlayView {
+                position: GoogleMapsLatLng
                 div: HTMLDivElement | null = null
                 count: number
                 private visible: boolean = true
 
-                constructor(position: any, count: number) {
+                constructor(position: GoogleMapsLatLng, count: number) {
                     super()
                     this.position = position
                     this.count = count
                 }
 
-                getPosition(): any {
+                getPosition(): GoogleMapsLatLng {
                     return this.position
                 }
 
@@ -243,7 +276,9 @@ export const ProviderMap = ({
 
                 draw() {
                     if (!this.div) return
-                    const point = this.getProjection().fromLatLngToDivPixel(this.position)
+                    const projection = this.getProjection()
+                    if (!projection) return
+                    const point = projection.fromLatLngToDivPixel(this.position)
                     if (!point) return
                     this.div.style.left = `${point.x}px`
                     this.div.style.top = `${point.y}px`
@@ -259,13 +294,13 @@ export const ProviderMap = ({
 
             clustererRef.current = new MarkerClusterer({
                 map,
-                markers: overlays as any,
+                markers: overlays,
                 renderer: {
-                    render({ count, position }: { count: number; position: any }) {
+                    render({ count, position }: { count: number; position: GoogleMapsLatLng }) {
                         // Use custom ClusterMarker instead of AdvancedMarkerElement
                         const clusterMarker = new ClusterMarker(position, count)
                         clusterMarker.setMap(map)
-                        return clusterMarker as any
+                        return clusterMarker
                     },
                 },
             })
@@ -283,40 +318,7 @@ export const ProviderMap = ({
     return (
         <div className={`relative w-full h-full min-h-[500px] ${className}`}>
             <div ref={mapRef} className="absolute inset-0" />
-
-            {selectedProvider && (
-                <div className="
-          absolute bottom-6 left-1/2 -translate-x-1/2
-          bg-white rounded-2xl shadow-xl
-          w-[320px] p-4 z-50
-        ">
-                    <h3 className="text-lg font-semibold">
-                        {selectedProvider.nameEn || selectedProvider.nameAr}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                        {selectedProvider.shortAddress}
-                    </p>
-
-                    {selectedProvider.rate && (
-                        <div className="mt-2 text-sm">
-                            ★ {selectedProvider.rate.toFixed(1)}
-                        </div>
-                    )}
-
-                    <button
-                        onClick={() =>
-                            (window.location.href = `/provider/${selectedProvider.id}`)
-                        }
-                        className="
-              mt-4 w-full rounded-xl py-2
-              bg-gradient-to-r from-[#f7b733] to-[#fc4a1a]
-              text-white font-medium
-            "
-                    >
-                        View Profile
-                    </button>
-                </div>
-            )}
+            {/* Provider card is now handled by the parent component */}
         </div>
     )
 }

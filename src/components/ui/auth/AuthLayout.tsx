@@ -1,6 +1,8 @@
+'use client'
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { WelcomeHeader } from './WelcomeHeader'
+import { useI18nTranslations } from '@/i18n'
 
 export interface AuthLayoutProps {
   children: ReactNode
@@ -16,9 +18,10 @@ export interface AuthLayoutProps {
 export const AuthLayout = ({
   children,
   className,
-  welcomeText = 'Welcome To OurBride',
+  welcomeText = 'welcomeHeader.defaultWelcome',
   showWelcomeHeader = true,
 }: AuthLayoutProps) => {
+  const t = useI18nTranslations('auth')
   return (
     <div
       className={cn(
@@ -28,7 +31,7 @@ export const AuthLayout = ({
     >
       <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-3">
         {/* Welcome Header */}
-        {showWelcomeHeader && <WelcomeHeader welcomeText={welcomeText} />}
+        {showWelcomeHeader && <WelcomeHeader welcomeText={t(welcomeText)} />}
 
         {/* Auth Content */}
         <div className="w-full">{children}</div>

@@ -4,7 +4,7 @@ export interface StoreBadgesProps {
   className?: string
   appStoreUrl?: string
   playStoreUrl?: string
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl'
 }
 
 // App Store constants
@@ -21,20 +21,18 @@ export const StoreBadges = ({
   size = 'md',
 }: StoreBadgesProps) => {
   const sizeClasses: Record<string, string> = {
-    sm: 'h-8',
-    md: 'h-9',
-    lg: 'h-12',
-    xl: 'h-16',
-    '2xl': 'h-24',
+    sm: 'w-8',
+    md: 'w-9',
+    lg: 'w-12',
+    xl: 'w-16',
+    '2xl': 'w-24',
+    '3xl': 'w-32',
+    '4xl': 'w-40',
+    '5xl': 'w-48',
   }
 
   return (
-    <div
-      className={cn(
-        '  flex  ',
-        className
-      )}
-    >
+    <div className={cn('  flex  ', className)}>
       {/* Apple App Store */}
       <a
         href={appStoreUrl}

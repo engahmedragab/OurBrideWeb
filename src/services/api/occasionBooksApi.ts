@@ -13,6 +13,7 @@ import type {
   OccasionLineCategoryUpdateRequest,
   UserType,
 } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 export interface OccasionBooksQuery {
   clientId?: string
@@ -54,6 +55,26 @@ export const initOccasionBooks = async (params?: {
 }
 
 /**
+ * Add models to occasion books
+ */
+export const addOccasionBookModels = async (params?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<void> => {
+  try {
+    const normalizedParams = params ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: params.eventId,
+    } : undefined
+    await apiClient.api.postOccasionsBooksAddModels(normalizedParams)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to add occasion book models')
+  }
+}
+
+/**
  * Sync occasion book data
  */
 export const syncOccasionBook = async (
@@ -65,6 +86,23 @@ export const syncOccasionBook = async (
     await apiClient.api.postOccasionsBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync occasion book')
+  }
+}
+
+/**
+ * Sync occasion book data (delta)
+ */
+export const syncOccasionBookDelta = async (
+  data: SyncBookDeltaRequest<OccasionLineRequest, OccasionLineCategoryRequest>,
+  query?: OccasionBooksQuery
+): Promise<SyncBookDeltaResponse<OccasionBookResponse | null>> => {
+  try {
+    const params = normalizeQuery(query)
+    const response = await apiClient.api.postOccasionsBooksSyncBookDelta(data, params)
+    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<OccasionBookResponse | null>
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to sync occasion book (delta)')
   }
 }
 

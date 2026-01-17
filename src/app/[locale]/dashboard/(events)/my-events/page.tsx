@@ -5,6 +5,16 @@ import { useRouter, usePathname } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
 import { Plus } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Wallet,
+  Package,
+  Calendar,
+  Mail,
+  Sparkles,
+  CheckSquare,
+  FileText,
+} from 'lucide-react'
 import { EventCard, AddEventModal } from '@/components/events'
 import { ErrorModal } from '@/components/ui/ErrorModal'
 import { Button, LoadingOverlay, LoadingSpinner } from '@/components/ui'
@@ -27,6 +37,7 @@ import {
   TodoBookCard,
   OccasionBookCard,
 } from '@/components/events'
+import { PlanningSideMenu } from '@/components/planning'
 import {
   useInitItemBooks,
   useInitServiceBooks,
@@ -131,6 +142,7 @@ function MyEventsPageContent() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null)
   const [isMounted, setIsMounted] = useState(false)
+  const [isInitializingTab, setIsInitializingTab] = useState<string | null>(null)
 
   // Track mount state to prevent hydration mismatch
   useEffect(() => {
@@ -154,7 +166,27 @@ function MyEventsPageContent() {
   })
   const createEventMutation = useCreateWeddingEvent()
 
-  // Fetch event info for selected event
+  // Get active tab based on current pathname (for when navigating to planning pages)
+  const pathname = usePathname()
+  const getActivePlanningTab = () => {
+    if (pathname?.includes('/items')) return 'items'
+    if (pathname?.includes('/budget')) return 'budget'
+    if (pathname?.includes('/overview')) return 'overview'
+    if (pathname?.includes('/events/planning/events')) return 'events'
+    if (pathname?.includes('/invitation')) return 'invitation'
+    if (pathname?.includes('/occasion')) return 'occasion'
+    if (pathname?.includes('/preparations')) return 'preparations'
+    if (pathname?.includes('/todo')) return 'todo'
+    if (pathname?.includes('/notes')) return 'noteBook'
+    // When on my-events page with selected event, default to overview
+    if (pathname?.includes('/my-events') && selectedEventId !== null) return 'overview'
+    return 'overview'
+  }
+
+  const activePlanningTab = getActivePlanningTab()
+
+  // Fetch event info for selected event - Always load to show correct tab indicators
+  // Individual tabs will fetch their own book data
   const { data: eventInfo, isLoading: isLoadingEventInfo } = useEventInfo(
     selectedEventId,
     isMounted && selectedEventId !== null
@@ -169,7 +201,31 @@ function MyEventsPageContent() {
   const initNoteBooks = useInitNoteBooks()
   const initTodoBooks = useInitTodoBooks()
   const initOccasionBooks = useInitOccasionBooks()
-  
+
+
+  // Helper function to map tab value to book type
+  const getBookTypeFromTabValue = (tabValue: string): 'item' | 'service' | 'budget' | 'event' | 'guest' | 'note' | 'todo' | 'occasion' | null => {
+    switch (tabValue) {
+      case 'items':
+        return 'item'
+      case 'preparations':
+        return 'service'
+      case 'budget':
+        return 'budget'
+      case 'events':
+        return 'event'
+      case 'invitation':
+        return 'guest'
+      case 'noteBook':
+        return 'note'
+      case 'todo':
+        return 'todo'
+      case 'occasion':
+        return 'occasion'
+      default:
+        return null
+    }
+  }
 
   // Helper function to handle book initialization and navigation
   const handleBookInit = async (
@@ -212,7 +268,7 @@ function MyEventsPageContent() {
   }
 
   const handleBookNavigate = (
-    bookType: 'item' | 'service' | 'budget' | 'event' | 'guest' | 'note' | 'todo' | 'occasion'|'noteBook'
+    bookType: 'item' | 'service' | 'budget' | 'event' | 'guest' | 'note' | 'todo' | 'occasion' | 'noteBook'
   ) => {
     if (!selectedEventId) return
 
@@ -353,13 +409,19 @@ function MyEventsPageContent() {
   }
 
   // Get isBookInit status for each book type
+  // Always try to get from eventInfo if available, otherwise assume needs init
   const getBookInitStatus = (bookType: string) => {
-    if (!eventInfo) return false
+    // If eventInfo is not loaded, we can't determine status - assume needs init
+    if (!eventInfo) {
+      return false // Needs init
+    }
     switch (bookType) {
       case 'budget':
         return eventInfo.budgetBook?.isBookInit ?? false
       case 'items':
         return eventInfo.itemBook?.isBookInit ?? false
+      case 'events':
+        return eventInfo.eventBook?.isBookInit ?? false
       case 'occasion':
         return eventInfo.occasionBook?.isBookInit ?? false
       case 'preparations':
@@ -383,76 +445,110 @@ function MyEventsPageContent() {
       label: 'overview',
       href: selectedEventId ? `/dashboard/my-events?eventId=${selectedEventId}` : '/dashboard/my-events',
       value: 'overview',
-      needsInit: false // Overview doesn't have a book
+      needsInit: false, // Overview doesn't have a book
+      icon: LayoutDashboard
     },
     {
       label: 'budget',
       href: buildPlanningHref('/events/planning/budget'),
       value: 'budget',
-      needsInit: !getBookInitStatus('budget')
+      needsInit: !getBookInitStatus('budget'),
+      icon: Wallet
     },
     {
       label: 'items',
       href: buildPlanningHref('/events/planning/items'),
       value: 'items',
-      needsInit: !getBookInitStatus('items')
+      needsInit: !getBookInitStatus('items'),
+      icon: Package
     },
     {
       label: 'events',
       href: buildPlanningHref('/events/planning/events'),
       value: 'events',
-      needsInit: false // Events doesn't have a book
+      needsInit: !getBookInitStatus('events'),
+      icon: Calendar
     },
     {
       label: 'invitation',
       href: buildPlanningHref('/events/planning/invitation'),
       value: 'invitation',
-      needsInit: !getBookInitStatus('invitation')
+      needsInit: !getBookInitStatus('invitation'),
+      icon: Mail
     },
     {
       label: 'occasions',
       href: buildPlanningHref('/events/planning/occasion'),
       value: 'occasion',
-      needsInit: !getBookInitStatus('occasion')
+      needsInit: !getBookInitStatus('occasion'),
+      icon: Sparkles
     },
     {
       label: 'preparations',
       href: buildPlanningHref('/events/planning/preparations'),
       value: 'preparations',
-      needsInit: !getBookInitStatus('preparations')
+      needsInit: !getBookInitStatus('preparations'),
+      icon: Sparkles
     },
     {
       label: 'ToDo',
       href: buildPlanningHref('/events/planning/todo'),
       value: 'todo',
-      needsInit: !getBookInitStatus('todo')
+      needsInit: !getBookInitStatus('todo'),
+      icon: CheckSquare
     },
     {
       label: 'notes',
       href: buildPlanningHref('/events/planning/notes'),
       value: 'noteBook',
-      needsInit: !getBookInitStatus('noteBook')
+      needsInit: !getBookInitStatus('noteBook'),
+      icon: FileText
     },
   ]
 
-  // Get active tab based on current pathname (for when navigating to planning pages)
-  const pathname = usePathname()
-  const getActivePlanningTab = () => {
-    if (pathname?.includes('/items')) return 'items'
-    if (pathname?.includes('/budget')) return 'budget'
-    if (pathname?.includes('/overview')) return 'overview'
-    if (pathname?.includes('/events/planning/events')) return 'events'
-    if (pathname?.includes('/invitation')) return 'invitation'
-    if (pathname?.includes('/occasion')) return 'occasion'
-    if (pathname?.includes('/preparations')) return 'preparations'
-    if (pathname?.includes('/todo')) return 'todo'
-    if (pathname?.includes('/notes')) return 'noteBook'
-    // When on my-events page with selected event, default to overview
-    if (pathname?.includes('/my-events') && selectedEventId !== null) return 'overview'
-    return 'overview'
+  const handlePlanningTabClick = async (
+    tab: { label: string; href: string; value: string; needsInit?: boolean },
+    e: MouseEvent<HTMLAnchorElement>
+  ) => {
+    // If tab needs initialization, prevent default navigation and init first
+    if (tab.needsInit && selectedEventId) {
+      e.preventDefault()
+      const bookType = getBookTypeFromTabValue(tab.value)
+
+      if (bookType) {
+        setIsInitializingTab(tab.value)
+        try {
+          await handleBookInit(bookType)
+          // After init, navigate to the tab
+          router.push(tab.href)
+        } catch (error) {
+          console.error(`Failed to initialize ${tab.value} book:`, error)
+          const errorMessage = error instanceof Error ? error.message : `Failed to initialize ${tab.label}`
+          addToast(errorMessage, 'error')
+          // Still navigate even if init fails
+          router.push(tab.href)
+        } finally {
+          setIsInitializingTab(null)
+        }
+      } else {
+        // If no book type mapping, just navigate
+        router.push(tab.href)
+      }
+    }
+    // For tabs that don't need init, let Link handle navigation normally
   }
 
-  const activePlanningTab = getActivePlanningTab()
+  // Check if any book initialization is in progress
+  const isAnyInitPending =
+    initItemBooks.isPending ||
+    initServiceBooks.isPending ||
+    initBudgetBooks.isPending ||
+    initEventBooks.isPending ||
+    initGuestBooks.isPending ||
+    initNoteBooks.isPending ||
+    initTodoBooks.isPending ||
+    initOccasionBooks.isPending ||
+    isInitializingTab !== null
 
   // If event is selected, show event info with overview and all books
   if (selectedEventId !== null) {
@@ -469,170 +565,105 @@ function MyEventsPageContent() {
           </Button>
         </div>
 
-        {/* Planning Tabs */}
-        <div className="mb-6 sm:mb-8">
-          <div className={cn(
-            "flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full",
-            "grid grid-cols-2 sm:flex sm:justify-between"
-          )}>
-            {planningTabs.map(tab => {
-              const isActive = activePlanningTab === tab.value
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="order-2 lg:order-1 flex-1 min-w-0">
+            {/* Loading State for Event Info - Only show on overview tab */}
+            {isMounted && isLoadingEventInfo && activePlanningTab === 'overview' && (
+              <div className="flex items-center justify-center py-12">
+                <LoadingOverlay open={true} title="Loading event details..." />
+              </div>
+            )}
 
-              // Handle tab click - if needs init, call init first then navigate
-              const handleTabClick = async (e: MouseEvent<HTMLAnchorElement>) => {
-                // Only handle init for occasion tab when it needs init
-                if (tab.value === 'occasion' && tab.needsInit && selectedEventId) {
-                  e.preventDefault()
-                  try {
-                    await handleBookInit('occasion')
-                    // After init, navigate to the tab
-                    router.push(tab.href)
-                  } catch (error) {
-                    console.error('Failed to initialize occasion book:', error)
-                    // Still navigate even if init fails
-                    router.push(tab.href)
-                  }
-                }
-                // For other tabs or if no init needed, let Link handle navigation normally
-              }
-
-              return (
-                <Link
-                  key={tab.value}
-                  href={tab.href}
-                  onClick={handleTabClick}
-                  className={cn(
-                    'px-1 py-3 text-[13px] sm:text-14 font-medium transition-all duration-200 text-center relative shrink-0',
-                    'focus-visible:outline-none w-full sm:w-auto flex items-center gap-2',
-                    isActive
-                      ? 'text-brand-600'
-                      : 'text-gray-500 hover:text-gray-900'
-                  )}
-                >
-                  <span>{tab.label}</span>
-                  {tab.needsInit && (
-  <span
-    className={cn(
-      "ml-2 inline-flex items-center justify-center",
-      "h-4 w-4 rounded-full",
-      "bg-yellow-100 text-yellow-700 ring-1 ring-yellow-200",
-      "relative"
-    )}
-    title="Needs init"
-  >
-    <span className="absolute inset-0 rounded-full bg-yellow-200/60 animate-ping" />
-    <span className="relative h-1.5 w-1.5 rounded-full bg-yellow-600" />
-  </span>
-)}
-
-{!tab.needsInit && tab.value !== "overview" && tab.value !== "events" && (
-  <span
-    className={cn(
-      "ml-2 inline-flex items-center justify-center",
-      "h-4 w-4 rounded-full",
-      "bg-green-100 text-green-700 ring-1 ring-green-200"
-    )}
-    title="Ready"
-  >
-    <span className="text-[10px] leading-none">✓</span>
-  </span>
-)}
-
-                  {isActive && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full animate-in fade-in slide-in-from-bottom-1" />
-                  )}
-                </Link>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Loading State */}
-        {isMounted && isLoadingEventInfo && (
-          <div className="flex items-center justify-center py-12">
-            <LoadingOverlay open={true} title="Loading event details..." />
-          </div>
-        )}
-
-        {/* Event Info with Overview and All Books */}
-        {eventInfo && selectedEvent && !isLoadingEventInfo && (
-          <div className="space-y-6 sm:space-y-8">
-            {/* SECTION 1: Event Summary */}
-            <div className="mb-6 sm:mb-8">
-              <EventSummaryCard
-                eventName={selectedEvent.title}
-                eventDate={selectedEvent.startDate ? new Date(selectedEvent.startDate) : new Date()}
-                imageSrc={authHeroImage}
-              />
-            </div>
-
-            {/* SECTION 2: Quick Stats Cards */}
-            <div className="mb-6 sm:mb-8">
-              <div className={cn('grid gap-3 sm:gap-4', 'grid-cols-1', 'sm:grid-cols-3')}>
-                <QuickStatsCard
-                  title="Completed services"
-                  book={eventInfo.serviceBook}
-                  eventId={selectedEventId || undefined}
+            {/* Loading State for Book Initialization - Only show on overview tab */}
+            {isMounted && isAnyInitPending && !isLoadingEventInfo && activePlanningTab === 'overview' && (
+              <div className="flex items-center justify-center py-12">
+                <LoadingOverlay
+                  open={true}
+                  title="Initializing..."
+                  subtitle={isInitializingTab ? `Setting up ${planningTabs.find(t => t.value === isInitializingTab)?.label || 'book'}...` : 'Please wait'}
                 />
-                <QuickStatsCard
-                  title="Complete Lists"
-                  book={eventInfo.todoBook}
-                  eventId={selectedEventId || undefined}
-            
-                />
-                  <ItemsOverview
-      book={eventInfo.itemBook}
-      onInit={() => handleBookInit('item')}
-      onNavigate={() => handleBookNavigate('item')}
-      eventId={selectedEventId || undefined}
-    />
-                {/* <QuickStatsCard
+              </div>
+            )}
+
+            {/* Event Info with Overview and All Books - Only show on overview tab */}
+            {activePlanningTab === 'overview' && eventInfo && selectedEvent && !isLoadingEventInfo && !isAnyInitPending && (
+              <div className="space-y-6 sm:space-y-8">
+                {/* SECTION 1: Event Summary */}
+                <div className="mb-6 sm:mb-8">
+                  <EventSummaryCard
+                    eventName={selectedEvent.title}
+                    eventDate={selectedEvent.startDate ? new Date(selectedEvent.startDate) : new Date()}
+                    imageSrc={authHeroImage}
+                  />
+                </div>
+
+                {/* SECTION 2: Quick Stats Cards */}
+                <div className="mb-6 sm:mb-8">
+                  <div className={cn('grid gap-3 sm:gap-4', 'grid-cols-1', 'sm:grid-cols-3')}>
+                    <QuickStatsCard
+                      title="Completed services"
+                      book={eventInfo.serviceBook}
+                      eventId={selectedEventId || undefined}
+                    />
+                    <QuickStatsCard
+                      title="Complete Lists"
+                      book={eventInfo.todoBook}
+                      eventId={selectedEventId || undefined}
+
+                    />
+                    <ItemsOverview
+                      book={eventInfo.itemBook}
+                      onInit={() => handleBookInit('item')}
+                      onNavigate={() => handleBookNavigate('item')}
+                      eventId={selectedEventId || undefined}
+                    />
+                    {/* <QuickStatsCard
                   title="Invite Your Guests"
                   book={eventInfo.guestBook}
                   eventId={selectedEventId || undefined}
                 /> */}
-              </div>
-            </div>
+                  </div>
+                </div>
 
-            {/* SECTION 3: Tasks Reminder - Full Width */}
-            <div className="mb-6 sm:mb-8">
-              <TasksReminder     
-                     book={eventInfo.todoBook}
+                {/* SECTION 3: Tasks Reminder - Full Width */}
+                <div className="mb-6 sm:mb-8">
+                  <TasksReminder
+                    book={eventInfo.todoBook}
                     onInit={() => handleBookInit('todo')}
                     onNavigate={() => handleBookNavigate('todo')}
-                    eventId={selectedEventId || undefined}/>
-            </div>
+                    eventId={selectedEventId || undefined} />
+                </div>
 
-            {/* SECTION 4: Upcoming Bookings - Full Width */}
-            <div className="mb-6 sm:mb-8">
-              <UpcomingBookings 
-               book={eventInfo.serviceBook}
+                {/* SECTION 4: Upcoming Bookings - Full Width */}
+                <div className="mb-6 sm:mb-8">
+                  <UpcomingBookings
+                    book={eventInfo.serviceBook}
                     onInit={() => handleBookInit('service')}
                     onNavigate={() => handleBookNavigate('service')}
                     eventId={selectedEventId || undefined}
-                     imageSrc={authHeroImage} />
-            </div>
+                    imageSrc={authHeroImage} />
+                </div>
 
-            {/* SECTION 5: Budget & Guests - Two Columns */}
-            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 mb-6 sm:mb-8">
-              <BudgetPayments
-                 book={eventInfo.budgetBook}
-                 onInit={() => handleBookInit('budget')}
-                 onNavigate={() => handleBookNavigate('budget')}
-                 eventId={selectedEventId || undefined}
-              />
-              <GuestsInvitation
-                 book={eventInfo.guestBook}
-                 onInit={() => handleBookInit('guest')}
-                 onNavigate={() => handleBookNavigate('guest')}
-                 eventId={selectedEventId || undefined}
-                imageSrc={authHeroImage}
-              />
-            </div>
+                {/* SECTION 5: Budget & Guests - Two Columns */}
+                <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 mb-6 sm:mb-8">
+                  <BudgetPayments
+                    book={eventInfo.budgetBook}
+                    onInit={() => handleBookInit('budget')}
+                    onNavigate={() => handleBookNavigate('budget')}
+                    eventId={selectedEventId || undefined}
+                  />
+                  <GuestsInvitation
+                    book={eventInfo.guestBook}
+                    onInit={() => handleBookInit('guest')}
+                    onNavigate={() => handleBookNavigate('guest')}
+                    eventId={selectedEventId || undefined}
+                    imageSrc={authHeroImage}
+                  />
+                </div>
 
-            {/* SECTION 6: Items, Notes & Occasions - Three Columns */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
-  {/* <div className="self-start h-fit">
+                {/* SECTION 6: Items, Notes & Occasions - Three Columns */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start mb-6 sm:mb-8">
+                  {/* <div className="self-start h-fit">
     <ItemsOverview
       book={eventInfo.itemBook}
       onInit={() => handleBookInit('item')}
@@ -641,28 +672,28 @@ function MyEventsPageContent() {
     />
   </div> */}
 
-  <div className="self-start h-fit">
-    <NotesOverview
-      book={eventInfo.noteBook}
-      onInit={() => handleBookInit('note')}
-      onNavigate={() => handleBookNavigate('note')}
-      eventId={selectedEventId || undefined}
-    />
-  </div>
+                  <div className="self-start h-fit">
+                    <NotesOverview
+                      book={eventInfo.noteBook}
+                      onInit={() => handleBookInit('note')}
+                      onNavigate={() => handleBookNavigate('note')}
+                      eventId={selectedEventId || undefined}
+                    />
+                  </div>
 
-  <div className="self-start h-fit">
-    <OccasionsOverview
-      book={eventInfo.occasionBook}
-      onInit={() => handleBookInit('occasion')}
-      onNavigate={() => handleBookNavigate('occasion')}
-      eventId={selectedEventId || undefined}
-    />
-  </div>
-</div>
+                  <div className="self-start h-fit">
+                    <OccasionsOverview
+                      book={eventInfo.occasionBook}
+                      onInit={() => handleBookInit('occasion')}
+                      onNavigate={() => handleBookNavigate('occasion')}
+                      eventId={selectedEventId || undefined}
+                    />
+                  </div>
+                </div>
 
 
-            {/* SECTION 6: Book Cards */}
-            {/* <div>
+                {/* SECTION 6: Book Cards */}
+                {/* <div>
               <h2 className="text-24 font-semibold text-gray-900 mb-6">Planning Books</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {eventInfo.itemBook && (
@@ -731,21 +762,33 @@ function MyEventsPageContent() {
                 )}
               </div>
             </div> */}
-          </div>
-        )}
+              </div>
+            )}
 
-        {/* Error State */}
-        {isMounted && !eventInfo && !isLoadingEventInfo && (
-          <div className="flex flex-col items-center justify-center py-12">
-            <ErrorModal
-              open={true}
-              title="Failed to Load Event Details"
-              message="Failed to load event details. Please try again."
-              onRetry={() => window.location.reload()}
-              onClose={handleBackToEvents}
-            />
+            {/* Error State - Only show on overview tab */}
+            {isMounted && activePlanningTab === 'overview' && !eventInfo && !isLoadingEventInfo && (
+              <div className="flex flex-col items-center justify-center py-12">
+                <ErrorModal
+                  open={true}
+                  title="Failed to Load Event Details"
+                  message="Failed to load event details. Please try again."
+                  onRetry={() => window.location.reload()}
+                  onClose={handleBackToEvents}
+                />
+              </div>
+            )}
           </div>
-        )}
+          <aside className="order-1 lg:order-2 lg:w-64 flex-shrink-0">
+            <div className="lg:sticky lg:top-6">
+              <PlanningSideMenu
+                tabs={planningTabs}
+                activeValue={activePlanningTab}
+                isInitializingTab={isInitializingTab}
+                onTabClick={handlePlanningTabClick}
+              />
+            </div>
+          </aside>
+        </div>
       </div>
     )
   }
@@ -800,7 +843,7 @@ function MyEventsPageContent() {
             title="Failed to Load Events"
             message="Failed to load events. Please try again."
             onRetry={() => window.location.reload()}
-            onClose={() => {}}
+            onClose={() => { }}
           />
         </div>
       )}

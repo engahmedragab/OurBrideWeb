@@ -85,7 +85,7 @@ export const ProviderHomeCard = ({ provider, category, className }: ProviderHome
                 size="sm"
                 format="default"
                 variant="compact"
-                starColor="yellow"
+                starColor="brand"
                 valueClassName="text-14 font-semibold text-gray-900"
               />
             </div>

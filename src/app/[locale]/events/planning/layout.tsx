@@ -1,15 +1,37 @@
 'use client'
 
-import { ReactNode, Suspense } from 'react'
+import { ReactNode, Suspense, useEffect, useState } from 'react'
 import { usePathname } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
-import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
+import { useEventInfo } from '@/hooks/weddingEvents'
+import { PlanningSideMenu, type PlanningSideMenuTab } from '@/components/planning'
+import {
+  LayoutDashboard,
+  Wallet,
+  Package,
+  Calendar,
+  Mail,
+  Sparkles,
+  CheckSquare,
+  FileText,
+} from 'lucide-react'
 
 function PlanningLayoutContent({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const eventId = searchParams?.get('eventId')
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  const selectedEventId = eventId ? parseInt(eventId, 10) : null
+  const { data: eventInfo } = useEventInfo(
+    selectedEventId,
+    isMounted && selectedEventId !== null
+  )
 
   // Build href with eventId if present
   const buildHref = (path: string) => {
@@ -19,16 +41,40 @@ function PlanningLayoutContent({ children }: { children: ReactNode }) {
     return path
   }
 
-  const tabs = [
-    { label: 'overview', href: eventId ? `/dashboard/my-events?eventId=${eventId}` : '/dashboard/my-events', value: 'overview', },
-    { label: 'budget', href: buildHref('/events/planning/budget'), value: 'budget' },
-    { label: 'items', href: buildHref('/events/planning/items'), value: 'items' },
-    { label: 'events', href: buildHref('/events/planning/events'), value: 'events' },
-    { label: 'invitation', href: buildHref('/events/planning/invitation'), value: 'invitation' },
-    { label: 'occasions', href: buildHref('/events/planning/occasion'), value: 'occasion' },
-    { label: 'preparations', href: buildHref('/events/planning/preparations'), value: 'preparations' },
-    { label: 'ToDo', href: buildHref('/events/planning/todo'), value: 'todo' },
-    { label: 'notes', href: buildHref('/events/planning/notes'), value: 'notes' },
+  const getBookInitStatus = (bookType: string) => {
+    if (!eventInfo) return false
+    switch (bookType) {
+      case 'budget':
+        return !!eventInfo.budgetBook?.id
+      case 'items':
+        return !!eventInfo.itemBook?.id
+      case 'events':
+        return eventInfo.eventBook?.isBookInit ?? false
+      case 'invitation':
+        return !!eventInfo.guestBook?.id
+      case 'occasion':
+        return !!eventInfo.occasionBook?.id
+      case 'preparations':
+        return !!eventInfo.serviceBook?.id
+      case 'todo':
+        return !!eventInfo.todoBook?.id
+      case 'notes':
+        return !!eventInfo.noteBook?.id
+      default:
+        return false
+    }
+  }
+
+  const tabs: PlanningSideMenuTab[] = [
+    { label: 'overview', href: eventId ? `/dashboard/my-events?eventId=${eventId}` : '/dashboard/my-events', value: 'overview', icon: LayoutDashboard },
+    { label: 'budget', href: buildHref('/events/planning/budget'), value: 'budget', needsInit: eventInfo ? !getBookInitStatus('budget') : false, icon: Wallet },
+    { label: 'items', href: buildHref('/events/planning/items'), value: 'items', needsInit: eventInfo ? !getBookInitStatus('items') : false, icon: Package },
+    { label: 'events', href: buildHref('/events/planning/events'), value: 'events', needsInit: eventInfo ? !getBookInitStatus('events') : false, icon: Calendar },
+    { label: 'invitation', href: buildHref('/events/planning/invitation'), value: 'invitation', needsInit: eventInfo ? !getBookInitStatus('invitation') : false, icon: Mail },
+    { label: 'occasions', href: buildHref('/events/planning/occasion'), value: 'occasion', needsInit: eventInfo ? !getBookInitStatus('occasion') : false, icon: Sparkles },
+    { label: 'preparations', href: buildHref('/events/planning/preparations'), value: 'preparations', needsInit: eventInfo ? !getBookInitStatus('preparations') : false, icon: Sparkles },
+    { label: 'ToDo', href: buildHref('/events/planning/todo'), value: 'todo', needsInit: eventInfo ? !getBookInitStatus('todo') : false, icon: CheckSquare },
+    { label: 'notes', href: buildHref('/events/planning/notes'), value: 'notes', needsInit: eventInfo ? !getBookInitStatus('notes') : false, icon: FileText },
   ]
 
   const getActiveTab = () => {
@@ -46,44 +92,22 @@ function PlanningLayoutContent({ children }: { children: ReactNode }) {
 
   const activeTab = getActiveTab()
 
-  // Split tabs into two rows for mobile (3 tabs per row)
-  const firstRowTabs = tabs.slice(0, 3)
-  const secondRowTabs = tabs.slice(3)
-
   return (
     <div className="w-full">
-      {/* Page Header with Tabs */}
-      <div className="mb-6 sm:mb-8 px-4 md:px-10">
-        <div className={cn(
-          "flex flex-wrap items-center justify-center gap-y-2 gap-x-4 sm:gap-x-8 w-full",
-          "grid grid-cols-2 sm:flex sm:justify-between"
-        )}>
-          {tabs.map(tab => {
-            const isActive = activeTab === tab.value
-            return (
-              <Link
-                key={tab.value}
-                href={tab.href}
-                className={cn(
-                  'px-1 py-3 text-[13px] sm:text-14 font-medium transition-all duration-200 text-center relative shrink-0',
-                  'focus-visible:outline-none w-full sm:w-auto',
-                  isActive
-                    ? 'text-brand-600'
-                    : 'text-gray-500 hover:text-gray-900'
-                )}
-              >
-                {tab.label}
-                {isActive && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 rounded-full animate-in fade-in slide-in-from-bottom-1" />
-                )}
-              </Link>
-            )
-          })}
+      <div className={cn('flex flex-col lg:flex-row gap-6 px-4 md:px-10')}>
+        <div className="order-2 lg:order-1 flex-1 min-w-0">
+          {children}
         </div>
+        <aside className="order-1 lg:order-2 lg:w-64 flex-shrink-0">
+          <div className="lg:sticky lg:top-6">
+            <PlanningSideMenu
+              tabs={tabs}
+              activeValue={activeTab}
+              showIndicators={true}
+            />
+          </div>
+        </aside>
       </div>
-
-      {/* Nested Page Content */}
-      {children}
     </div>
   )
 }

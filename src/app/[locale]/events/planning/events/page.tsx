@@ -1,28 +1,30 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import { Link } from '@/i18n/navigation'
 import {
   PlanningMiniCalendar,
 } from '@/components/events'
 import { DayDetailsView } from '@/components/planning/DayDetailsView'
-import { formatDateSafe, getToday } from '@/lib/date-utils'
+import { formatDateSafe, getToday, parseDateSafe } from '@/lib/date-utils'
 import { ChevronLeft, Save } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
-import { useEventBooks, useSyncEventBooks, useGetEventBooksCategories } from '@/hooks/eventBooks'
+import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
+import { Button, LoadingOverlay, ErrorModal } from '@/components/ui'
+import { useEventBooks, useSyncEventBooks, useSyncEventBooksDelta } from '@/hooks/eventBooks'
 import { useInitEventBooks } from '@/hooks/eventBooks/useInitEventBooks'
 import { useEventId } from '@/hooks/planning'
+import { useAddEventBookModels } from '@/hooks/bookInit'
+import { usePlanningBookController } from '@/hooks/planning/usePlanningBookController'
 import { useToast } from '@/components/ui/Toaster'
-import type { UseMutationResult } from '@tanstack/react-query'
 import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
-import type { EventBookRequest, EventLineRequest, EventLineCategoryRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
-
-/**
- * Extended EventBook type with categories for local state management
- */
-interface EventBookWithCategories extends EventBook {
-  lineCategories?: EventLineCategory[] | null
-}
+import type { EventBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import {
+  type EventBookWithCategories,
+  buildEventBookRequestFromLocal,
+  convertLineToRequest,
+  convertCategoryToRequest,
+} from '@/utils/planning/mappers/eventsMappers'
 
 /**
  * Convert date-time to day key (YYYY-MM-DD)
@@ -39,173 +41,6 @@ const toDayKey = (dateTime: string | null | undefined): string => {
 
 
 /**
- * Convert EventLine to EventLineRequest
- */
-const convertLineToRequest = (line: EventLine, bookId: number): EventLineRequest => {
-  return {
-    id: line.id || null,
-    bookId,
-    lineCategoryId: line.lineCategoryId || null,
-    lineCategoryCountId: line.lineCategoryCountId || null,
-    lineCategorySlug: line.lineCategorySlug || null,
-    time: line.time || undefined,
-    duration: line.duration || undefined,
-    name: line.nameEn || line.nameAr || null,
-    desctiption: line.descriptionEn || line.descriptionAr || null,
-    highlighted: Boolean(line.highlighted),
-    isDone: Boolean(line.isDone),
-    isFavorite: Boolean(line.isFavorite),
-    isDeleted: Boolean(line.isDeleted),
-    isModelLine: Boolean(line.isModelLine),
-    brideId: line.brideId || null,
-    groomId: line.groomId || null,
-    creationDate: line.creationDate || null,
-    lastModifiedDate: line.lastModifiedDate || null,
-  }
-}
-
-/**
- * Convert EventLineCategory to EventLineCategoryRequest
- */
-const convertCategoryToRequest = (category: EventLineCategory): EventLineCategoryRequest => {
-  return {
-    id: category.id || null,
-    name: category.nameEn || category.nameAr || category.name || null,
-    description: category.descriptionEn || category.descriptionAr || null,
-    slug: category.slug || null,
-    count_id: category.count_id || null,
-    isDeleted: Boolean(category.isDeleted),
-    isModelLine: Boolean(category.isModelLine),
-    date: category.date || undefined,
-    creationDate: category.creationDate || null,
-    lastModifiedDate: category.lastModifiedDate || null,
-  }
-}
-
-/**
- * Build EventBookRequest from local EventBook state
- */
-const buildEventBookRequestFromLocal = (localEventBook: EventBookWithCategories): EventBookRequest => {
-  const allLines = (localEventBook.lines || []).map(line =>
-    convertLineToRequest(line, localEventBook.id)
-  )
-  const allCategories = (localEventBook.lineCategories || []).map(category =>
-    convertCategoryToRequest(category)
-  )
-
-  return {
-    id: localEventBook.id,
-    groomId: localEventBook.groomId || null,
-    brideId: localEventBook.brideId || null,
-    weddingPlannerId: localEventBook.weddingPlannerId || null,
-    bookType: localEventBook.bookType,
-    bookClass: localEventBook.bookClass,
-    title: localEventBook.title || null,
-    clientName: localEventBook.clientName || null,
-    weddingDate: localEventBook.weddingDate || null,
-    eventLocation: localEventBook.eventLocation || null,
-    lines: allLines,
-    lineCategories: allCategories.length > 0 ? allCategories : null,
-    lastModifiedDate: new Date().toISOString(),
-  }
-}
-
-/**
- * Check if there are actual changes between current state and last synced state
- */
-const hasActualChanges = (
-  localEventBook: EventBookWithCategories | null,
-  lastSyncedRef: EventBookWithCategories | null
-): boolean => {
-  if (!localEventBook) {
-    return false
-  }
-
-  if (!lastSyncedRef) {
-    return true
-  }
-
-  const current = localEventBook
-  const lastSynced = lastSyncedRef
-
-  // Compare basic book properties
-  if (
-    current.id !== lastSynced.id ||
-    current.groomId !== lastSynced.groomId ||
-    current.brideId !== lastSynced.brideId ||
-    current.title !== lastSynced.title ||
-    current.clientName !== lastSynced.clientName ||
-    current.weddingDate !== lastSynced.weddingDate ||
-    current.eventLocation !== lastSynced.eventLocation
-  ) {
-    return true
-  }
-
-  // Compare categories
-  const currentCategories = current.lineCategories || []
-  const lastSyncedCategories = lastSynced.lineCategories || []
-
-  if (currentCategories.length !== lastSyncedCategories.length) {
-    return true
-  }
-
-  for (let i = 0; i < currentCategories.length; i++) {
-    const currentCategory = currentCategories[i]
-    const lastSyncedCategory = lastSyncedCategories.find(c => c.id === currentCategory.id)
-
-    if (!lastSyncedCategory) {
-      return true
-    }
-
-    if (
-      currentCategory.date !== lastSyncedCategory.date ||
-      currentCategory.name !== lastSyncedCategory.name ||
-      currentCategory.nameEn !== lastSyncedCategory.nameEn ||
-      currentCategory.nameAr !== lastSyncedCategory.nameAr ||
-      currentCategory.slug !== lastSyncedCategory.slug ||
-      currentCategory.isDeleted !== lastSyncedCategory.isDeleted
-    ) {
-      return true
-    }
-  }
-
-  // Compare lines
-  const currentLines = current.lines || []
-  const lastSyncedLines = lastSynced.lines || []
-
-  if (currentLines.length !== lastSyncedLines.length) {
-    return true
-  }
-
-  for (let i = 0; i < currentLines.length; i++) {
-    const currentLine = currentLines[i]
-    const lastSyncedLine = lastSyncedLines.find(l => l.id === currentLine.id)
-
-    if (!lastSyncedLine) {
-      return true
-    }
-
-    if (
-      currentLine.time !== lastSyncedLine.time ||
-      currentLine.duration !== lastSyncedLine.duration ||
-      currentLine.nameEn !== lastSyncedLine.nameEn ||
-      currentLine.nameAr !== lastSyncedLine.nameAr ||
-      currentLine.descriptionEn !== lastSyncedLine.descriptionEn ||
-      currentLine.descriptionAr !== lastSyncedLine.descriptionAr ||
-      currentLine.lineCategoryId !== lastSyncedLine.lineCategoryId ||
-      currentLine.isDeleted !== lastSyncedLine.isDeleted ||
-      currentLine.isDone !== lastSyncedLine.isDone ||
-      currentLine.isFavorite !== lastSyncedLine.isFavorite ||
-      Boolean(currentLine.highlighted) !== Boolean(lastSyncedLine.highlighted)
-    ) {
-      return true
-    }
-  }
-
-  return false
-}
-
-/**
  * Events Page Content
  * Displays the planning calendar with day details rendered in-place
  */
@@ -214,174 +49,182 @@ function EventsPageContent() {
   const eventId = useEventId()
   const today = getToday()
   const [selectedDayId, setSelectedDayId] = useState(formatDateSafe(today))
+  const [isMounted, setIsMounted] = useState(false)
 
-  // Local state to keep the book in memory
-  const [localEventBook, setLocalEventBook] = useState<EventBookWithCategories | null>(null)
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
-  const lastSyncedRef = useRef<EventBookWithCategories | null>(null)
-  const isInitialLoadRef = useRef(true)
-  const hasInitAttemptedRef = useRef(false)
+  // Ensure we're mounted before enabling queries to avoid hydration mismatch
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Fetch event book (includes lines) - GET endpoint only
-  const { data: eventBook, isLoading, refetch } = useEventBooks({
+  const { data: eventBook, isLoading, error, refetch } = useEventBooks({
     eventId: eventId || undefined,
     userType: null as unknown as UserType | undefined,
     clientId: null as unknown as string | undefined,
-    enabled: typeof window !== 'undefined',
+    enabled: isMounted,
   })
 
   const syncMutation = useSyncEventBooks()
+  const syncDeltaMutation = useSyncEventBooksDelta()
   const initMutation = useInitEventBooks()
+  const addModelsMutation = useAddEventBookModels()
 
-  // Fetch categories from server (mandatory - do NOT derive from lines)
-  const { data: categoriesData, refetch: refetchCategories } = useGetEventBooksCategories({
-    clientId: null as unknown as string | undefined,
-    enabled: typeof window !== 'undefined' && Boolean(eventId),
-  })
-
-  // Determine if book is initialized (same pattern as Occasions: check if book?.id exists)
-  const isBookInit = Boolean(eventBook?.id)
-
-  // On first load, use the book from GET endpoint immediately
-  // Categories source of truth: categories from GET /categories endpoint (do NOT derive from lines)
-  useEffect(() => {
-    if (isInitialLoadRef.current && eventBook && !localEventBook) {
-      // Use categories from GET /categories endpoint, not from eventBook
-      const initialBook: EventBookWithCategories = {
-        ...eventBook,
-        lineCategories: categoriesData ?? [],
-      }
-      setLocalEventBook(initialBook)
-      lastSyncedRef.current = initialBook
-      isInitialLoadRef.current = false
-    }
-  }, [eventBook, localEventBook, categoriesData])
-
-  // Initialize book if missing (same pattern as Occasions would use)
-  useEffect(() => {
-    // If eventId is missing → do nothing
-    if (!eventId) {
-      return
-    }
-
-    // If the book is already initialized (book?.id exists) → do nothing
-    if (isBookInit) {
-      return
-    }
-
-    // If already attempted init (hasInitAttemptedRef.current === true) → do nothing
-    if (hasInitAttemptedRef.current) {
-      return
-    }
-
-    // Skip if still loading
-    if (isLoading) {
-      return
-    }
-
-    // Skip if mutation is already in progress
-    if (initMutation.isPending) {
-      return
-    }
-
-    // Set the ref guard to true
-    hasInitAttemptedRef.current = true
-
-    // Call init mutation
-    const initializeBook = async () => {
-      try {
-        await initMutation.mutateAsync({
-          eventId,
+  const {
+    localBook: localEventBook,
+    hasUnsavedChanges,
+    setHasUnsavedChanges,
+    save,
+    applyLocalUpdate,
+    getActiveCategories,
+    getActiveLines,
+    getCategoryById,
+    isInitializing,
+    isAddingModels,
+  } = usePlanningBookController<EventBookWithCategories, EventLine, EventLineCategory>({
+    book: eventBook as EventBookWithCategories | null,
+    isLoading,
+    eventId: eventId ?? undefined,
+    requireEventId: true,
+    syncFn: async (book) => {
+      const bookRequest = buildEventBookRequestFromLocal(book)
+      await syncMutation.mutateAsync({
+        eventBook: bookRequest,
+        params: {
+          eventId: eventId || undefined,
           userType: null as unknown as UserType | undefined,
           clientId: null as unknown as string | undefined,
-        })
-        // On success: trigger refetch (same timing and style as Occasions)
-        refetch()
-        // Also refetch categories after init
-        refetchCategories()
-      } catch (error) {
-        // On failure: follow the same error handling as Occasions
-        const errorMessage = error instanceof Error ? error.message : 'Failed to initialize event book'
-        addToast(errorMessage, 'error')
-        // Allow retry by resetting the ref (same behavior as Occasions would allow)
-        hasInitAttemptedRef.current = false
+        },
+      })
+      refetch()
+    },
+    syncDeltaFn: async (delta) => {
+      const response = await syncDeltaMutation.mutateAsync({
+        delta,
+        params: {
+          eventId: eventId || undefined,
+          userType: null as unknown as UserType | undefined,
+          clientId: null as unknown as string | undefined,
+        },
+      })
+      return response as any
+    },
+    refetch,
+    shouldInit: (b) => !b?.id,
+    initFn: async () => {
+      await initMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: null as unknown as UserType | undefined,
+        clientId: null as unknown as string | undefined,
+      })
+    },
+    shouldAddModels: (b) => b?.isModelsAdd === false,
+    addModelsFn: async () => {
+      await addModelsMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: null as unknown as UserType | undefined,
+        clientId: null as unknown as string | undefined,
+      })
+    },
+    initMutation,
+    addModelsMutation,
+    isSameBookBase: (current, last) =>
+      current.id === last.id &&
+      current.groomId === last.groomId &&
+      current.brideId === last.brideId &&
+      current.title === last.title &&
+      current.clientName === last.clientName &&
+      current.weddingDate === last.weddingDate &&
+      current.eventLocation === last.eventLocation,
+    getLines: (book) => book.lines || [],
+    getCategories: (book) => {
+      // If lineCategories exist, use them; otherwise extract from lines
+      if (book.lineCategories && book.lineCategories.length > 0) {
+        return book.lineCategories
       }
-    }
+      // Extract categories from lines
+      return (book.lines || [])
+        .map(line => line.eventLineCategory)
+        .filter((cat): cat is EventLineCategory => Boolean(cat))
+        .filter((cat, index, self) =>
+          // Remove duplicates by ID
+          index === self.findIndex(c => c.id === cat.id)
+        )
+    },
+    getLineId: (line) => line.id,
+    getCategoryId: (cat) => cat.id,
+    convertLineToRequest,
+    convertCategoryToRequest,
+    isSameLine: (current, last) =>
+      current.time === last.time &&
+      current.duration === last.duration &&
+      current.nameEn === last.nameEn &&
+      current.nameAr === last.nameAr &&
+      current.descriptionEn === last.descriptionEn &&
+      current.descriptionAr === last.descriptionAr &&
+      current.lineCategoryId === last.lineCategoryId &&
+      current.isDeleted === last.isDeleted &&
+      current.isDone === last.isDone &&
+      current.isFavorite === last.isFavorite &&
+      Boolean(current.highlighted) === Boolean(last.highlighted),
+    isSameCategory: (current, last) =>
+      current.date === last.date &&
+      current.name === last.name &&
+      current.nameEn === last.nameEn &&
+      current.nameAr === last.nameAr &&
+      current.slug === last.slug &&
+      current.isDeleted === last.isDeleted,
+    getLineCategoryId: (line) => line.lineCategoryId ?? null,
+    isLineDeleted: (line) => line.isDeleted ?? false,
+    isLineDone: (line) => line.isDone ?? false,
+    isCategoryDeleted: (cat) => cat.isDeleted ?? false,
+  })
 
-    initializeBook()
-  }, [eventId, isBookInit, isLoading, initMutation, refetch, refetchCategories, addToast])
-
-  // Sync fetched data to local state when it changes (only if no unsaved changes)
-  // Categories source of truth: categories from GET /categories endpoint (do NOT derive from lines)
-  // CRITICAL: Do NOT extract categories from lines - Event Day categories exist independently
-  useEffect(() => {
-    if (eventBook && !hasUnsavedChanges && !isInitialLoadRef.current) {
-      // Use categories from GET /categories endpoint, preserve local if categories not loaded yet
-      const updatedBook: EventBookWithCategories = {
-        ...eventBook,
-        lineCategories: categoriesData ?? localEventBook?.lineCategories ?? [],
-      }
-      setLocalEventBook(updatedBook)
-      lastSyncedRef.current = updatedBook
-    } else if (eventBook === null && !isLoading && !hasUnsavedChanges) {
-      setLocalEventBook(null)
-    }
-  }, [eventBook, hasUnsavedChanges, isLoading, categoriesData, localEventBook?.lineCategories])
-
-  // After sync, update local state from refetched data
-  // Use categories from GET /categories endpoint, do NOT rebuild from lines
-  // CRITICAL: Do NOT extract categories from lines - Event Day categories exist independently
-  useEffect(() => {
-    if (eventBook && !hasUnsavedChanges && syncMutation.isSuccess) {
-      // Refetch categories after sync to get latest from server
-      refetchCategories()
-      // Use categories from GET /categories endpoint
-      const updatedBook: EventBookWithCategories = {
-        ...eventBook,
-        lineCategories: categoriesData ?? localEventBook?.lineCategories ?? [],
-      }
-      setLocalEventBook(updatedBook)
-      lastSyncedRef.current = updatedBook
-      isInitialLoadRef.current = false
-    }
-  }, [eventBook, hasUnsavedChanges, syncMutation.isSuccess, categoriesData, localEventBook?.lineCategories, refetchCategories])
-
-  // Auto-sync every 2 minutes (only if there are actual changes)
-  useEffect(() => {
-    if (!eventId || !localEventBook || hasUnsavedChanges) return
-
-    const interval = setInterval(async () => {
-      try {
-        if (!hasActualChanges(localEventBook, lastSyncedRef.current)) {
-          return
-        }
-
-        const bookRequest = buildEventBookRequestFromLocal(localEventBook)
-        await syncMutation.mutateAsync({
-          eventBook: bookRequest,
-          params: {
-            eventId: eventId || undefined,
-            userType: null as unknown as UserType | undefined,
-            clientId: null as unknown as string | undefined,
-          },
-        })
-        lastSyncedRef.current = localEventBook
-        refetch()
-      } catch {
-        // Auto-sync failed silently
-      }
-    }, 2 * 60 * 1000) // 2 minutes
-
-    return () => clearInterval(interval)
-  }, [eventId, localEventBook, hasUnsavedChanges, syncMutation, refetch])
-
-  // Get active categories (not deleted, slug === "event-day" or "big day" for backward compatibility)
+  // Get all active categories from controller
   const activeCategories = useMemo(() => {
-    if (!localEventBook?.lineCategories) return []
-    return localEventBook.lineCategories.filter(
-      cat => !cat.isDeleted && (cat.slug === 'event-day' || cat.slug === 'big day')
-    )
-  }, [localEventBook])
+    return getActiveCategories()
+  }, [getActiveCategories])
+
+  // Get event days with data: group by day and find category for each day
+  const eventDaysWithData = useMemo(() => {
+    const activeLines = getActiveLines()
+    if (!activeLines.length || !activeCategories.length) return []
+
+    // Get all unique days that have lines
+    const daysWithLines = new Map<string, { dayId: string; category: EventLineCategory | null; lineDate: Date | null }>()
+
+    activeLines
+      .filter(line => line.time && line.lineCategoryId)
+      .forEach(line => {
+        const lineDayId = toDayKey(line.time)
+        if (!lineDayId) return
+
+        // If we haven't seen this day yet, add it
+        if (!daysWithLines.has(lineDayId)) {
+          // Find the category for this line using controller method
+          const category = getCategoryById(line.lineCategoryId) as EventLineCategory | null
+          const lineDate = line.time ? new Date(line.time) : null
+          daysWithLines.set(lineDayId, { dayId: lineDayId, category, lineDate })
+        }
+      })
+
+    // Convert to array and sort by date
+    return Array.from(daysWithLines.values()).sort((a, b) => {
+      const dateA = a.lineDate ? a.lineDate.getTime() : 0
+      const dateB = b.lineDate ? b.lineDate.getTime() : 0
+      return dateA - dateB
+    })
+  }, [getActiveLines, activeCategories, getCategoryById])
+
+  // Auto-select first day with data if available (only once when data loads)
+  useEffect(() => {
+    if (eventDaysWithData.length > 0 && localEventBook && !isLoading && !isInitializing && !isAddingModels) {
+      const firstDay = eventDaysWithData[0]
+      if (firstDay.dayId && firstDay.dayId !== selectedDayId) {
+        setSelectedDayId(firstDay.dayId)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventDaysWithData.length, localEventBook?.id, isLoading, isInitializing, isAddingModels])
 
   // Get marked days set for calendar highlighting
   const markedDaysSet = useMemo(() => {
@@ -398,43 +241,55 @@ function EventsPageContent() {
   }
 
   const handleSave = async () => {
-    if (!localEventBook) {
-      if (isLoading) {
-        addToast('Please wait while the event book is loading...', 'info')
+    const result = await save()
+    if (!result.ok) {
+      if (result.reason === 'loading' || result.reason === 'no-changes') {
+        if (result.reason === 'no-changes') setHasUnsavedChanges(false)
         return
       }
-      addToast('Event book not found. Please refresh the page.', 'error')
+      addToast(result.message || 'Failed to save changes', 'error')
       return
     }
+    addToast(result.message || 'Changes saved successfully', 'success')
+  }
 
-    if (!hasActualChanges(localEventBook, lastSyncedRef.current)) {
-      addToast('No changes to save', 'info')
-      setHasUnsavedChanges(false)
-      return
-    }
+  // Loading State - Show loading only after mount to avoid hydration mismatch
+  if (!isMounted || isLoading || isInitializing || isAddingModels) {
+    const loadingTitle = !isMounted
+      ? 'Loading events...'
+      : isInitializing
+        ? 'Initializing event book...'
+        : isAddingModels
+          ? 'Adding default models...'
+          : 'Loading events...'
+    const loadingSubtitle = !isMounted
+      ? 'Please wait a moment'
+      : isInitializing
+        ? 'Setting up your event book'
+        : isAddingModels
+          ? 'Please wait while we add default categories'
+          : 'Please wait a moment'
 
-    try {
-      const bookRequest = buildEventBookRequestFromLocal(localEventBook)
-      await syncMutation.mutateAsync({
-        eventBook: bookRequest,
-        params: {
-          eventId: eventId || undefined,
-          userType: null as unknown as UserType | undefined,
-          clientId: null as unknown as string | undefined,
-        },
-      })
-      // On success: follow Occasions pattern exactly
-      setHasUnsavedChanges(false)
-      lastSyncedRef.current = localEventBook
-      addToast('Changes saved successfully', 'success')
-      // Refetch to get latest from server (same as Occasions)
-      refetch()
-      // Also refetch categories after sync (categories are managed separately)
-      refetchCategories()
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save changes'
-      addToast(errorMessage, 'error')
-    }
+    return (
+      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+      </div>
+    )
+  }
+
+  // Error State
+  if (error) {
+    return (
+      <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
+        <ErrorModal
+          open={true}
+          title="Failed to Load Events"
+          message="Failed to load events. Please try again."
+          onRetry={() => window.location.reload()}
+          onClose={() => { }}
+        />
+      </div>
+    )
   }
 
   return (
@@ -451,19 +306,62 @@ function EventsPageContent() {
       </div>
 
       {/* Save Row - directly under navigation */}
-      {hasUnsavedChanges && (
+      {(hasUnsavedChanges || syncMutation.isPending) && (
         <div className="mb-4 flex items-center gap-3">
           <Button
-            className="text-white rounded-xl"
+            className="flex items-center gap-2 rounded-xl !text-white"
             onClick={handleSave}
             variant="brand"
             size="md"
-            disabled={syncMutation.isPending}
+            disabled={syncMutation.isPending || !localEventBook || isLoading}
+            type="button"
           >
-            <Save className="w-5 h-5 mr-2" />
-            Save
+            <Save className="h-4 w-4" />
+            {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
           </Button>
-          <span className="text-14 text-brand-500">Unsaved changes</span>
+
+          {hasUnsavedChanges && (
+            <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+          )}
+        </div>
+      )}
+
+      {/* Horizontal Scrollable Event Days List */}
+      {eventDaysWithData.length > 0 && (
+        <div className="mb-6">
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="flex gap-3 pb-2 min-w-max">
+              {eventDaysWithData.map((dayData) => {
+                const isSelected = selectedDayId === dayData.dayId
+                const categoryName = dayData.category
+                  ? (dayData.category.nameEn || dayData.category.nameAr || dayData.category.name || 'Event Day')
+                  : 'Event Day'
+
+                return (
+                  <button
+                    key={dayData.dayId}
+                    onClick={() => setSelectedDayId(dayData.dayId)}
+                    className={cn(
+                      'flex-shrink-0 px-4 py-3 rounded-xl border-2 transition-all',
+                      'min-w-[180px] text-left',
+                      isSelected
+                        ? 'bg-brand-50 border-brand-500 shadow-sm'
+                        : 'bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    )}
+                  >
+                    <div className="font-semibold text-14 text-gray-900 mb-1 line-clamp-1">
+                      {categoryName}
+                    </div>
+                    {dayData.lineDate && (
+                      <div className="text-12 text-gray-600">
+                        {format(dayData.lineDate, 'MMM dd, yyyy')}
+                      </div>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </div>
       )}
 
@@ -486,24 +384,8 @@ function EventsPageContent() {
               <DayDetailsView
                 dayId={selectedDayId}
                 localEventBook={localEventBook}
-                setLocalEventBook={setLocalEventBook}
-                hasUnsavedChanges={hasUnsavedChanges}
-                setHasUnsavedChanges={setHasUnsavedChanges}
+                applyLocalUpdate={applyLocalUpdate}
                 eventId={eventId || undefined}
-                onCategoriesRefetch={async () => {
-                  const refetchedCategories = await refetchCategories()
-                  if (refetchedCategories.data) {
-                    setLocalEventBook(prev => {
-                      if (!prev) return prev
-                      return {
-                        ...prev,
-                        lineCategories: refetchedCategories.data ?? [],
-                      }
-                    })
-                  }
-                }}
-                onSync={handleSave}
-                syncMutation={syncMutation as UseMutationResult<unknown, Error, unknown, unknown>}
               />
             </div>
           </div>

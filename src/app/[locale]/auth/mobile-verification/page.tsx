@@ -5,6 +5,7 @@ import { useRouter } from '@/i18n/navigation'
 import { MobileVerificationForm } from '@/components/ui/auth/MobileVerificationForm'
 import { AuthLayout } from '@/components/ui/auth/AuthLayout'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+import { useI18nTranslations } from '@/i18n'
 
 /**
  * Mobile Verification Page - OTP verification after signup
@@ -15,6 +16,7 @@ export default function MobileVerificationPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState<string>('')
   const [countryCode, setCountryCode] = useState<number | undefined>()
+  const tCommon =useI18nTranslations('common')
 
   // Get phone number from localStorage (set during signup)
   useEffect(() => {
@@ -56,8 +58,8 @@ export default function MobileVerificationPage() {
       {/* Loading Overlay */}
       <LoadingOverlay
         open={isLoading}
-        title="Loading…"
-        subtitle="Please wait a moment."
+        title={tCommon('loading')}
+        subtitle={tCommon('pleaseWait')}
       />
     </>
   )

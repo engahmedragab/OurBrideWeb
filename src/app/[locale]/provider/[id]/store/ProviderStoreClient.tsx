@@ -436,7 +436,7 @@ export function ProviderStoreClient({ providerId }: ProviderStoreClientProps) {
                                                     size="sm"
                                                     format="default"
                                                     variant="compact"
-                                                    starColor="yellow"
+                                                    starColor="brand"
                                                 />
                                                 <span className="text-14 text-white/90">
                                                     ({storeData.totalProducts || 0} products)

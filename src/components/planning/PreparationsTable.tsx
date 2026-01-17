@@ -7,8 +7,10 @@ import { cn } from '@/lib/utils'
 
 export interface PreparationsTableProps {
   services: PreparationService[]
+  onView?: (service: PreparationService) => void
   onEdit: (service: PreparationService) => void
   onDelete: (service: PreparationService) => void
+  onRowClick?: (service: PreparationService) => void
 }
 
 // Format currency
@@ -40,8 +42,10 @@ const formatDate = (dateString: string | null | undefined): string => {
 
 export const PreparationsTable = ({
   services,
+  onView,
   onEdit,
   onDelete,
+  onRowClick,
 }: PreparationsTableProps) => {
   if (services.length === 0) {
     return (
@@ -87,9 +91,11 @@ export const PreparationsTable = ({
               return (
                 <tr
                   key={service.id}
+                  onClick={() => onRowClick?.(service)}
                   className={cn(
                     'hover:bg-gray-50 transition-colors',
-                    !isLastRow && 'border-b border-gray-100'
+                    !isLastRow && 'border-b border-gray-100',
+                    onRowClick && 'cursor-pointer'
                   )}
                 >
                   {/* Service Column */}
@@ -97,6 +103,7 @@ export const PreparationsTable = ({
                     <ServiceCell
                       serviceKey={serviceKey}
                       title={service.title}
+                      onView={onView ? () => onView(service) : undefined}
                       onEdit={() => onEdit(service)}
                       onDelete={() => onDelete(service)}
                     />

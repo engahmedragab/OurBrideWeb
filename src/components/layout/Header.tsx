@@ -172,7 +172,7 @@ export const Header = ({ className }: HeaderProps) => {
           {/* Navigation Menu */}
           <ClientOnly>
             <NavigationMenu className="hidden md:flex">
-              <NavigationMenuList className="gap-0.5 rounded-full border border-gray-200 bg-white px-2 py-1.5 shadow-sm h-12">
+              <NavigationMenuList className="gap-0.5 rounded-full border border-gray-100 bg-white px-2 py-1.5 shadow-sm h-12">
               {navigationItems.map(item => {
                 const Icon = item.icon
                 // For dropdown items, check if any dropdown item is active instead of the parent path
@@ -185,26 +185,28 @@ export const Header = ({ className }: HeaderProps) => {
                     <NavigationMenuItem key={item.path}>
                       <NavigationMenuTrigger
                         className={cn(
-                          'gap-2 rounded-md px-3 py-2 text-16 font-semibold transition-colors duration-150',
+                          'gap-2 rounded-md px-3 py-2 text-16 font-medium antialiased',
+                          'transition-all duration-200 ease-in-out',
                           'hover:bg-brand-50/50 hover:text-brand-600',
                           'focus:outline-none',
                           active
                             ? 'bg-brand-50/70 text-brand-600'
-                            : 'text-gray-700'
+                            : 'text-gray-600'
                         )}
                       >
                         <Icon
                           className={cn(
-                            'h-5 w-5 transition-colors duration-150',
+                            'h-5 w-5 transition-all duration-200 ease-in-out',
+                            'antialiased',
                             active
                               ? 'text-brand-600'
-                              : 'text-gray-500 group-hover:text-brand-600'
+                              : 'text-gray-400 group-hover:text-brand-600'
                           )}
                         />
                         {item.label}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
-                        <div className="w-56 p-1.5 bg-white rounded-lg shadow-lg border border-gray-100">
+                        <div className="w-56 p-1.5 bg-white rounded-lg shadow-lg border border-gray-50">
                           {item.dropdownItems?.map(dropdownItem => {
                             const isDropdownActive = isDropdownItemActive(dropdownItem.path, item.dropdownItems || [])
                             return (
@@ -212,13 +214,13 @@ export const Header = ({ className }: HeaderProps) => {
                                 key={dropdownItem.path}
                                 href={dropdownItem.path}
                                 className={cn(
-                                  'group relative flex items-center gap-3 rounded-md px-3 py-2 text-14 font-medium',
-                                  'transition-colors duration-150',
+                                  'group relative flex items-center gap-3 rounded-md px-3 py-2 text-14 font-normal antialiased',
+                                  'transition-all duration-200 ease-in-out',
                                   'hover:text-brand-600',
                                   'focus:outline-none',
                                   isDropdownActive
-                                    ? 'text-brand-600 font-semibold'
-                                    : 'text-gray-700 hover:text-brand-600'
+                                    ? 'text-brand-600 font-medium'
+                                    : 'text-gray-600 hover:text-brand-600'
                                 )}
                               >
                                 {isDropdownActive && (
@@ -244,24 +246,25 @@ export const Header = ({ className }: HeaderProps) => {
                     <Link
                       href={item.path}
                       className={cn(
-                        'group relative flex items-center gap-2 rounded-full px-3 py-2 text-16 font-semibold',
-                        'transition-colors duration-150',
+                        'group relative flex items-center gap-2 rounded-full px-3 py-2 text-16 font-medium antialiased',
+                        'transition-all duration-200 ease-in-out',
                         'hover:bg-brand-50/50 hover:text-brand-600',
                         'focus:outline-none',
-                        active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-700'
+                        active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600'
                       )}
                     >
                       <Icon
                         className={cn(
-                          'h-5 w-5 transition-colors duration-150',
+                          'h-5 w-5 transition-all duration-200 ease-in-out',
+                          'antialiased',
                           active
                             ? 'text-brand-600'
-                            : 'text-gray-500 group-hover:text-brand-600'
+                            : 'text-gray-400 group-hover:text-brand-600'
                         )}
                       />
                       {item.label}
                       {active && (
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-brand-600 rounded-full" />
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-brand-600 rounded-full transition-all duration-200" />
                       )}
                     </Link>
                   </NavigationMenuItem>
@@ -280,7 +283,7 @@ export const Header = ({ className }: HeaderProps) => {
               className={cn(
                 'w-full h-12 rounded-full transition-all duration-200',
                 'focus:border-brand-500',
-                'hover:border-gray-300'
+                'hover:border-gray-200'
               )}
             />
           </div>
@@ -293,14 +296,14 @@ export const Header = ({ className }: HeaderProps) => {
               size="icon"
               className={cn(
                 'relative rounded-md border-0 md:hidden',
-                'transition-colors duration-150',
+                'transition-all duration-200 ease-in-out',
                 'hover:bg-brand-50/50',
                 'focus:outline-none'
               )}
               onClick={() => setIsMobileMenuOpen(true)}
               aria-label="Open menu"
             >
-              <Menu className="h-7 w-7 text-brand-500" />
+              <Menu className="h-7 w-7 text-brand-500 transition-all duration-200 ease-in-out antialiased" />
             </Button>
 
 
@@ -313,14 +316,14 @@ export const Header = ({ className }: HeaderProps) => {
                 size="icon"
                 className={cn(
                   'relative rounded-full border-0 bg-transparent',
-                  'transition-colors duration-150',
+                  'transition-all duration-200 ease-in-out',
                   'hover:bg-brand-50/50',
                   'focus:outline-none'
                 )}
                 aria-label="Wishlist"
               >
                 <Link href="/wishlist">
-                  <Heart className="h-5 w-5 text-brand-500" />
+                  <Heart className="h-5 w-5 text-brand-500 transition-all duration-200 ease-in-out antialiased" />
                 </Link>
               </Button>
 
@@ -342,14 +345,14 @@ export const Header = ({ className }: HeaderProps) => {
                 size="icon"
                 className={cn(
                   'relative rounded-full border-0 bg-transparent',
-                  'transition-colors duration-150',
+                  'transition-all duration-200 ease-in-out',
                   'hover:bg-brand-50/50',
                   'focus:outline-none'
                 )}
                 aria-label="Shopping Cart"
               >
                 <Link href="/cart" className="relative">
-                  <ShoppingCart className="h-5 w-5 text-brand-500" />
+                  <ShoppingCart className="h-5 w-5 text-brand-500 transition-all duration-200 ease-in-out antialiased" />
                   {cartCount > 0 && (
                     <span className="absolute -right-1 -top-1 flex min-w-[16px] h-4 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white shadow-sm px-1">
                       {cartCount > 99 ? '99+' : cartCount}
@@ -390,7 +393,7 @@ export const Header = ({ className }: HeaderProps) => {
       {/* Mobile Search Overlay */}
       {isSearchOpen && (
         <div className="fixed inset-0 z-[60] bg-white md:hidden">
-          <div className="flex h-16 items-center gap-4 px-4 border-b border-gray-200">
+          <div className="flex h-16 items-center gap-4 px-4 border-b border-gray-100">
             <Button
               variant="ghost"
               size="icon"
@@ -428,7 +431,7 @@ export const Header = ({ className }: HeaderProps) => {
         )}
       >
         {/* Drawer Header */}
-        <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200">
+        <div className="flex h-16 items-center justify-between px-4 border-b border-gray-100">
           <Image
             src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src}
             alt="OurBride Logo"
@@ -463,11 +466,11 @@ export const Header = ({ className }: HeaderProps) => {
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                      'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-semibold',
-                      'transition-colors duration-150',
+                      'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                      'transition-all duration-200 ease-in-out',
                       active
                         ? 'bg-brand-50 text-brand-600'
-                        : 'text-gray-700 hover:bg-gray-50'
+                        : 'text-gray-600 hover:bg-gray-50'
                     )}
                   >
                     <Icon className="h-5 w-5" />
@@ -482,9 +485,9 @@ export const Header = ({ className }: HeaderProps) => {
                           key={dropdownItem.path}
                           href={dropdownItem.path}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className={cn(
-                            'flex items-center gap-2 rounded-lg px-4 py-2 text-14 font-medium',
-                            'transition-colors duration-150',
+                            className={cn(
+                            'flex items-center gap-2 rounded-lg px-4 py-2 text-14 font-normal antialiased',
+                            'transition-all duration-200 ease-in-out',
                             isDropdownActive
                               ? 'bg-brand-50 text-brand-600'
                               : 'text-gray-600 hover:bg-gray-50'
@@ -504,34 +507,34 @@ export const Header = ({ className }: HeaderProps) => {
                 key={item.path}
                 href={item.path}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-semibold',
-                  'transition-colors duration-150',
-                  active
-                    ? 'bg-brand-50 text-brand-600'
-                    : 'text-gray-700 hover:bg-gray-50'
-                )}
-              >
-                <Icon className="h-5 w-5" />
+                    className={cn(
+                      'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                      'transition-all duration-200 ease-in-out',
+                      active
+                        ? 'bg-brand-50 text-brand-600'
+                        : 'text-gray-600 hover:bg-gray-50'
+                    )}
+                  >
+                    <Icon className="h-5 w-5 transition-all duration-200 ease-in-out antialiased" />
                 {item.label}
               </Link>
             )
           })}
 
           {/* User Menu Section */}
-          <div className="mt-auto pt-4 border-t border-gray-200 space-y-1">
+          <div className="mt-auto pt-4 border-t border-gray-100 space-y-1">
             <Link
               href="/wishlist"
               onClick={() => setIsMobileMenuOpen(false)}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-semibold',
-                'transition-colors duration-150',
+                className={cn(
+                  'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                  'transition-all duration-200 ease-in-out',
                 isActive('/wishlist')
                   ? 'bg-brand-50 text-brand-600'
-                  : 'text-gray-700 hover:bg-gray-50'
-              )}
-            >
-              <Heart className="h-5 w-5" />
+                  : 'text-gray-600 hover:bg-gray-50'
+                )}
+              >
+                <Heart className="h-5 w-5 transition-all duration-200 ease-in-out antialiased" />
               Wishlist
             </Link>
 
@@ -539,14 +542,14 @@ export const Header = ({ className }: HeaderProps) => {
               href="/favorites"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-semibold',
-                'transition-colors duration-150',
+                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
                 isActive('/favorites')
                   ? 'bg-brand-50 text-brand-600'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  : 'text-gray-600 hover:bg-gray-50'
               )}
             >
-              <Star className="h-5 w-5" />
+              <Star className="h-5 w-5 transition-all duration-200 ease-in-out antialiased" />
               Favorites
             </Link>
 
@@ -554,14 +557,14 @@ export const Header = ({ className }: HeaderProps) => {
               href="/follows"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-semibold',
-                'transition-colors duration-150',
+                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
                 isActive('/follows')
                   ? 'bg-brand-50 text-brand-600'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  : 'text-gray-600 hover:bg-gray-50'
               )}
             >
-              <UserPlus className="h-5 w-5" />
+              <UserPlus className="h-5 w-5 transition-all duration-200 ease-in-out antialiased" />
               Follows
             </Link>
 
@@ -569,14 +572,14 @@ export const Header = ({ className }: HeaderProps) => {
               href="/cart"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-semibold',
-                'transition-colors duration-150',
+                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
                 isActive('/cart')
                   ? 'bg-brand-50 text-brand-600'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  : 'text-gray-600 hover:bg-gray-50'
               )}
             >
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-5 w-5 transition-all duration-200 ease-in-out antialiased" />
               <span className="flex-1">My Cart</span>
               {cartCount > 0 && (
                 <span className="flex min-w-[20px] h-5 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white px-1">
@@ -589,22 +592,22 @@ export const Header = ({ className }: HeaderProps) => {
               href="/profile"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-semibold',
-                'transition-colors duration-150',
+                'flex items-center gap-3 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                'transition-all duration-200 ease-in-out',
                 isActive('/profile')
                   ? 'bg-brand-50 text-brand-600'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  : 'text-gray-600 hover:bg-gray-50'
               )}
             >
-              <User className="h-5 w-5" />
+              <User className="h-5 w-5 transition-all duration-200 ease-in-out antialiased" />
               My Profile
             </Link>
 
             {/* Language Switcher in Mobile Menu */}
             <ClientOnly>
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-4 border-t border-gray-100">
                 <div className="px-4 py-2">
-                  <label className="block text-14 font-normal text-gray-700 mb-2">
+                  <label className="block text-14 font-normal text-gray-600 mb-2">
                     Language
                   </label>
                   <LanguageSwitcher variant="dropdown" />

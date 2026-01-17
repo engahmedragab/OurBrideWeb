@@ -32,7 +32,7 @@ export const ServiceSelectCard = ({
     // If it's a LucideIcon component (function)
     if (typeof icon === 'function') {
       const IconComponent = icon as LucideIcon
-      return <IconComponent className="h-6 w-6 sm:h-7 sm:w-7" />
+      return <IconComponent className="h-4 w-4 sm:h-7 sm:w-7" />
     }
 
     // Fallback
@@ -69,7 +69,7 @@ export const ServiceSelectCard = ({
       {/* Label */}
       <span
         className={cn(
-          'text-10 sm:text-12 text-center leading-tight text-gray-400 font-regular'
+          'text-[10px] sm:text-10 text-center leading-tight text-gray-400 font-normal'
         )}
       >
         {label}

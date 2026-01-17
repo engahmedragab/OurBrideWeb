@@ -13,6 +13,7 @@ import type {
   TodoLineCategoryUpdateRequest,
   UserType,
 } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 export interface TodoBooksQuery {
   clientId?: string
@@ -53,6 +54,26 @@ export const initTodoBooks = async (params?: {
 }
 
 /**
+ * Add models to todo books
+ */
+export const addTodoBookModels = async (params?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<void> => {
+  try {
+    const normalizedParams = params ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: params.eventId,
+    } : undefined
+    await apiClient.api.postTodoBooksAddModels(normalizedParams)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to add todo book models')
+  }
+}
+
+/**
  * Sync todo book data
  */
 export const syncTodoBook = async (
@@ -64,6 +85,23 @@ export const syncTodoBook = async (
     await apiClient.api.postTodoBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync todo book')
+  }
+}
+
+/**
+ * Sync todo book data (delta)
+ */
+export const syncTodoBookDelta = async (
+  data: SyncBookDeltaRequest<TodoLineRequest, TodoLineCategoryRequest>,
+  query?: TodoBooksQuery
+): Promise<SyncBookDeltaResponse<TodoBookResponse | null>> => {
+  try {
+    const params = normalizeQuery(query)
+    const response = await apiClient.api.postTodoBooksSyncBookDelta(data, params)
+    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<TodoBookResponse | null>
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to sync todo book (delta)')
   }
 }
 

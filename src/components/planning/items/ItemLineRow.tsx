@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import type { UiItem } from '@/app/[locale]/events/planning/items/page'
+import type { UiItem } from '@/utils/planning/mappers/itemsMappers'
 import { CheckCircle2, Circle, Trash2 } from 'lucide-react'
 
 export function ItemLineRow({

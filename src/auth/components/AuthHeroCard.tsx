@@ -7,7 +7,11 @@ import authHeroCardImage from '@/assets/images/authHeroCard.png'
  * Floating glass card with image header and text content
  * @returns {JSX.Element} Auth hero card component
  */
-export default function AuthHeroCard() {
+interface AuthHeroCardProps {
+  title: string
+  subtitle: string
+}
+export default function AuthHeroCard({ title, subtitle }: AuthHeroCardProps) {
   return (
     <div className="overflow-hidden w-full shadow-lg rounded-3xl bg-glassCard/10 backdrop-blur-sm">
       {/* Top Section - Image Header */}
@@ -27,11 +31,11 @@ export default function AuthHeroCard() {
           variant="h4"
           className="mb-1 !text-white text-center drop-shadow-md font-semibold text-14"
         >
-          Organize your Wedding
+         {title}
         </Typography>
 
         <span className="text-12 text-white block drop-shadow-sm">
-          Lorem ipsum dolor sit amet consectetur
+         {subtitle}
         </span>
       </div>
     </div>

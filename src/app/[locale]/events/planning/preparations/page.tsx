@@ -1,380 +1,103 @@
 'use client'
 
-import { useState, useEffect, useRef, useMemo, Suspense } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { Button, LoadingSpinner } from '@/components/ui'
-import { Plus, ChevronLeft, Save } from 'lucide-react'
-import { CategoryCard } from '@/components/planning/CategoryCard'
-import { CreateCategoryModal } from '@/components/planning/CreateCategoryModal'
-import { useServiceBook, useSyncServiceBook, useServiceCategories } from '@/hooks/serviceBooks'
+import { ChevronLeft, Save, Plus } from 'lucide-react'
+import { useServiceBook, useSyncServiceBook, useSyncServiceBookDelta } from '@/hooks/serviceBooks'
 import { useEventId } from '@/hooks/planning'
+import { usePlanningBookController } from '@/hooks/planning/usePlanningBookController'
+import { useInitServiceBooks, useAddServiceBookModels } from '@/hooks/bookInit'
 import { useToast } from '@/components/ui/Toaster'
-import type { ServiceBookResponse, ServiceLineCategoryResponse, ServiceLineResponse } from '@/types/responses'
-import type { ServiceLineCategoryRequest, ServiceBookRequest, ServiceLineRequest, UserType, ServiceType, BookClass } from '@/../client/common/api/gen/ourbride-api'
+import type { ServiceBookResponse, ServiceLineResponse } from '@/types/responses'
+import type { ServiceBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import { buildBookRequestFromLocal, convertLineToRequest } from '@/utils/planning/mappers/preparationsMappers'
+import {
+  PreparationsSummaryCard,
+  PreparationsTable,
+  ServiceModal,
+  ConfirmDialog,
+} from '@/components/planning'
+import type { PreparationService } from '@/types/planning'
+import { usePreparations } from '@/hooks/planning/usePreparations'
+import { normalizeIconName, getServiceClassNumber } from '@/utils/serviceIconMapper'
 
 /**
- * Extended ServiceBook type with categories for local state management
+ * Convert ServiceLineResponse to PreparationService format
  */
-interface ServiceBookWithCategories extends ServiceBookResponse {
-  lineCategories?: ServiceLineCategoryResponse[] | null
-}
+const convertServiceLineToPreparationService = (line: ServiceLineResponse): PreparationService => {
+  const serviceTypeStr = line.serviceType === 0 ? 'rent' : line.serviceType === 1 ? 'buy' : 'rent'
 
-/**
- * Convert ServiceLineCategoryResponse to ServiceLineCategoryRequest
- */
-const convertCategoryToRequest = (category: ServiceLineCategoryResponse): ServiceLineCategoryRequest => {
-  return {
-    id: category.id || null,
-    name: category.name || category.nameEn || category.nameAr || null,
-    description: category.description || category.descriptionEn || category.descriptionAr || null,
-    slug: category.slug || null,
-    isDeleted: Boolean(category.isDeleted),
-    isModelLine: Boolean(category.isModelLine),
-    creationDate: category.creationDate || null,
-    lastModifiedDate: category.lastModifiedDate || null,
-  }
-}
-
-/**
- * Convert ServiceLineResponse to ServiceLineRequest
- */
-const convertLineToRequest = (line: ServiceLineResponse, bookId: number): ServiceLineRequest => {
-  // Map ServiceType enum from response to request type
-  // ServiceType enum values: 0 = Rent, 1 = Buy
-  const serviceType = (line.serviceType === 0 ? 0 : line.serviceType === 1 ? 1 : 0) as unknown as ServiceType
+  // Priority: serviceClass > line iconName
+  // Store serviceClass in "class:X" format for ServiceCell to use getServiceIconByClass
+  const iconValue = line.serviceClass !== undefined && line.serviceClass !== null
+    ? `class:${line.serviceClass}`
+    : (line.iconName || '')
 
   return {
-    id: line.id,
-    bookId: line.bookId || bookId,
-    lineCategoryId: line.lineCategoryId || null,
-    title: line.title || line.titleEn || line.titleAr || null,
-    quantity: line.quantity || null,
-    price: line.price || null,
-    advanceAmount: line.advanceAmount || null,
-    providerName: line.providerName || null,
-    seller: line.seller || null,
-    buyDate: line.buyDate || null,
-    isDone: line.isDone,
-    isFavorite: line.isFavorite,
-    isDeleted: line.isDeleted,
-    isModelLine: line.isModelLine,
-    serviceType,
-    iconName: line.iconName || null,
-    notes: line.notes || null,
-    hasReminder: line.hasReminder || false,
-    reminderDate: line.reminderDate || null,
-    reminderText: line.reminderText || null,
-    reminderType: line.reminderType || undefined,
-    colorName: line.colorName || null,
+    id: String(line.id),
+    title: line.title || line.titleEn || line.titleAr || '',
+    icon: { kind: 'asset', value: iconValue },
+    serviceType: serviceTypeStr,
+    quantity: line.quantity || 1,
+    cost: line.price || 0,
+    advancePayment: line.advanceAmount || 0,
+    providerUserName: line.providerName || line.seller || '',
+    purchaseDate: line.buyDate || '',
+    completed: line.isDone || false,
   }
 }
 
-/**
- * Build ServiceBookRequest from local state
- * Includes all categories (including deleted ones) for sync
- */
-const buildBookRequestFromLocal = (localServiceBook: ServiceBookWithCategories): ServiceBookRequest => {
-  const allLines = (localServiceBook.lines || []).map(line => convertLineToRequest(line, localServiceBook.id))
-  const allCategories = (localServiceBook.lineCategories || []).map(convertCategoryToRequest)
-
-  return {
-    id: localServiceBook.id,
-    groomId: localServiceBook.groomId || null,
-    brideId: localServiceBook.brideId || null,
-    weddingPlannerId: undefined,
-    bookType: (localServiceBook.bookType as unknown) as UserType | undefined,
-    bookClass: localServiceBook.bookClass as unknown as BookClass | undefined,
-    title: localServiceBook.title || null,
-    clientName: null,
-    weddingDate: null,
-    eventLocation: null,
-    lines: allLines,
-    lineCategories: allCategories.length > 0 ? allCategories : null,
-    lastModifiedDate: new Date().toISOString(),
-  }
-}
-
-/**
- * Check if there are actual changes between current state and last synced state
- */
-const hasActualChanges = (
-  localServiceBook: ServiceBookWithCategories | null,
-  lastSyncedRef: ServiceBookWithCategories | null
-): boolean => {
-  if (!localServiceBook) {
-    return false
-  }
-
-  if (!lastSyncedRef) {
-    return true
-  }
-
-  const current = localServiceBook
-  const lastSynced = lastSyncedRef
-
-  // Compare basic book properties
-  if (
-    current.id !== lastSynced.id ||
-    current.groomId !== lastSynced.groomId ||
-    current.brideId !== lastSynced.brideId ||
-    current.title !== lastSynced.title
-  ) {
-    return true
-  }
-
-  // Compare categories
-  const currentCategories = current.lineCategories || []
-  const lastSyncedCategories = lastSynced.lineCategories || []
-
-  if (currentCategories.length !== lastSyncedCategories.length) {
-    return true
-  }
-
-  for (let i = 0; i < currentCategories.length; i++) {
-    const currentCategory = currentCategories[i]
-    const lastSyncedCategory = lastSyncedCategories.find(c => c.id === currentCategory.id)
-
-    if (!lastSyncedCategory) {
-      return true
-    }
-
-    if (
-      currentCategory.name !== lastSyncedCategory.name ||
-      currentCategory.nameEn !== lastSyncedCategory.nameEn ||
-      currentCategory.nameAr !== lastSyncedCategory.nameAr ||
-      currentCategory.description !== lastSyncedCategory.description ||
-      currentCategory.descriptionEn !== lastSyncedCategory.descriptionEn ||
-      currentCategory.descriptionAr !== lastSyncedCategory.descriptionAr ||
-      currentCategory.slug !== lastSyncedCategory.slug ||
-      currentCategory.isDeleted !== lastSyncedCategory.isDeleted
-    ) {
-      return true
-    }
-  }
-
-  // Compare lines
-  const currentLines = current.lines || []
-  const lastSyncedLines = lastSynced.lines || []
-
-  if (currentLines.length !== lastSyncedLines.length) {
-    return true
-  }
-
-  for (let i = 0; i < currentLines.length; i++) {
-    const currentLine = currentLines[i]
-    const lastSyncedLine = lastSyncedLines.find(l => l.id === currentLine.id)
-
-    if (!lastSyncedLine) {
-      return true
-    }
-
-    if (
-      currentLine.title !== lastSyncedLine.title ||
-      currentLine.titleEn !== lastSyncedLine.titleEn ||
-      currentLine.titleAr !== lastSyncedLine.titleAr ||
-      currentLine.isDeleted !== lastSyncedLine.isDeleted ||
-      currentLine.isDone !== lastSyncedLine.isDone ||
-      currentLine.isFavorite !== lastSyncedLine.isFavorite
-    ) {
-      return true
-    }
-  }
-
-  return false
-}
-
-function PreparationsCategoriesPageContent() {
+function PreparationsPageContent() {
   const router = useRouter()
   const eventId = useEventId()
   const { addToast } = useToast()
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-  // Local state to keep the book in memory
-  const [localServiceBook, setLocalServiceBook] = useState<ServiceBookWithCategories | null>(null)
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
-  const lastSyncedRef = useRef<ServiceBookWithCategories | null>(null)
-  const isInitialLoadRef = useRef(true)
+  const [isMounted, setIsMounted] = useState(false)
+  const [currentService, setCurrentService] = useState<PreparationService | undefined>()
+  const [modalMode, setModalMode] = useState<'add' | 'edit' | 'view'>('add')
+  const [serviceToDelete, setServiceToDelete] = useState<PreparationService | undefined>()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Fetch service book (includes lines) - GET endpoint only
   const { data: serviceBook, isLoading, refetch } = useServiceBook({
     eventId: eventId || undefined,
     userType: null as unknown as UserType | undefined,
     clientId: null as unknown as string | undefined,
-    enabled: typeof window !== 'undefined',
+    enabled: isMounted,
+  })
+
+  // Fetch preparations (services) for dropdown
+  const { data: preparations = [] } = usePreparations({
+    enabled: isMounted,
   })
 
   const syncMutation = useSyncServiceBook()
+  const syncDeltaMutation = useSyncServiceBookDelta()
+  const initMutation = useInitServiceBooks()
+  const addModelsMutation = useAddServiceBookModels()
 
-  // Fetch categories separately (ServiceBook doesn't include lineCategories in response)
-  const { data: categories, refetch: refetchCategories } = useServiceCategories({
-    enabled: typeof window !== 'undefined',
-  })
-
-  // On first load, use the book from GET endpoint and merge categories
-  useEffect(() => {
-    if (isInitialLoadRef.current && serviceBook && !localServiceBook) {
-      const initialBook: ServiceBookWithCategories = {
-        ...serviceBook,
-        lineCategories: categories || [],
-      }
-      setLocalServiceBook(initialBook)
-      lastSyncedRef.current = initialBook
-      isInitialLoadRef.current = false
-    }
-  }, [serviceBook, categories, localServiceBook])
-
-  // Sync fetched data to local state when it changes (only if no unsaved changes)
-  useEffect(() => {
-    if (serviceBook && categories && !hasUnsavedChanges && !isInitialLoadRef.current) {
-      const updatedBook: ServiceBookWithCategories = {
-        ...serviceBook,
-        lineCategories: categories, // Use fetched categories
-      }
-      setLocalServiceBook(updatedBook)
-      lastSyncedRef.current = updatedBook
-    } else if (serviceBook === null && !isLoading && !hasUnsavedChanges) {
-      setLocalServiceBook(null)
-    }
-  }, [serviceBook, categories, hasUnsavedChanges, isLoading, refetchCategories])
-
-  // After sync, update local state from refetched data
-  useEffect(() => {
-    if (serviceBook && categories && !hasUnsavedChanges && syncMutation.isSuccess) {
-      const updatedBook: ServiceBookWithCategories = {
-        ...serviceBook,
-        lineCategories: categories,
-      }
-      setLocalServiceBook(updatedBook)
-      lastSyncedRef.current = updatedBook
-      isInitialLoadRef.current = false
-    }
-  }, [serviceBook, categories, hasUnsavedChanges, syncMutation.isSuccess])
-
-  // Auto-sync every 2 minutes (only if there are actual changes)
-  useEffect(() => {
-    if (!eventId || !localServiceBook || hasUnsavedChanges) return
-
-    const interval = setInterval(async () => {
-      try {
-        if (!hasActualChanges(localServiceBook, lastSyncedRef.current)) {
-          return
-        }
-
-        const bookRequest = buildBookRequestFromLocal(localServiceBook)
-        await syncMutation.mutateAsync({
-          data: bookRequest,
-          query: {
-            eventId: eventId || undefined,
-            userType: null as unknown as UserType | undefined,
-            clientId: null as unknown as string | undefined,
-          },
-        })
-        lastSyncedRef.current = localServiceBook
-        refetch()
-        refetchCategories()
-      } catch {
-        // Auto-sync failed silently
-      }
-    }, 2 * 60 * 1000) // 2 minutes
-
-    return () => clearInterval(interval)
-  }, [eventId, localServiceBook, hasUnsavedChanges, syncMutation, refetch, refetchCategories])
-
-  // Get active categories (not deleted) for display
-  const activeCategories = useMemo(() => {
-    if (!localServiceBook?.lineCategories) return []
-    return localServiceBook.lineCategories.filter(cat => !cat.isDeleted)
-  }, [localServiceBook])
-
-  // Calculate counts for each category
-  const categoriesWithCounts = useMemo(() => {
-    return activeCategories.map(category => {
-      // Count lines in this category
-      const categoryLines = (localServiceBook?.lines || []).filter(
-        line => line.lineCategoryId === category.id && !line.isDeleted
-      )
-      const completedCount = categoryLines.filter(line => line.isDone).length
-
-      return {
-        ...category,
-        lineCount: categoryLines.length,
-        completedCount,
-      }
-    })
-  }, [activeCategories, localServiceBook?.lines])
-
-  const handleCategoryClick = (categoryId: number) => {
-    router.push(`/events/planning/preparations/${categoryId}`)
-  }
-
-  const handlePinnedCategoryClick = () => {
-    router.push('/events/planning/preparations/1')
-  }
-
-  const handleCreateClick = () => {
-    setIsCreateModalOpen(true)
-  }
-
-  const handleModalClose = () => {
-    setIsCreateModalOpen(false)
-  }
-
-  const handleCreateCategory = async (data: { name: string; description?: string }) => {
-    if (!localServiceBook) {
-      addToast('Service book not found. Please refresh the page.', 'error')
-      return
-    }
-
-    // Create new category locally
-    const newCategory: ServiceLineCategoryResponse = {
-      id: 0, // Temporary ID, will be assigned by backend on sync
-      name: data.name,
-      nameEn: data.name,
-      nameAr: '',
-      description: data.description || '',
-      descriptionEn: data.description || '',
-      descriptionAr: '',
-      slug: '',
-      isDeleted: false,
-      isModelLine: false,
-      creationDate: new Date().toISOString(),
-      lastModifiedDate: new Date().toISOString(),
-      createdBy: '',
-      lastModifiedBy: '',
-    }
-
-    // Add to local state
-    setLocalServiceBook(prev => {
-      if (!prev) return prev
-      return {
-        ...prev,
-        lineCategories: [...(prev.lineCategories || []), newCategory],
-      }
-    })
-
-    setHasUnsavedChanges(true)
-    setIsCreateModalOpen(false)
-    addToast('Category added. Click Save to persist changes.', 'info')
-  }
-
-  const handleSync = async () => {
-    if (!localServiceBook) {
-      if (isLoading) {
-        addToast('Please wait while the service book is loading...', 'info')
-        return
-      }
-      addToast('Service book not found. Please refresh the page.', 'error')
-      return
-    }
-
-    if (!hasActualChanges(localServiceBook, lastSyncedRef.current)) {
-      addToast('No changes to save', 'info')
-      setHasUnsavedChanges(false)
-      return
-    }
-
-    try {
-      const bookRequest = buildBookRequestFromLocal(localServiceBook)
+  const {
+    localBook: localServiceBook,
+    hasUnsavedChanges,
+    setHasUnsavedChanges,
+    save,
+    applyLocalUpdate,
+    getActiveLines,
+    isInitializing,
+    isAddingModels,
+  } = usePlanningBookController<ServiceBookResponse, ServiceLineResponse>({
+    book: serviceBook ?? null,
+    isLoading,
+    eventId: eventId ?? undefined,
+    requireEventId: true,
+    syncFn: async (book) => {
+      const bookRequest = buildBookRequestFromLocal(book)
       await syncMutation.mutateAsync({
         data: bookRequest,
         query: {
@@ -383,141 +106,450 @@ function PreparationsCategoriesPageContent() {
           clientId: null as unknown as string | undefined,
         },
       })
-
-      setHasUnsavedChanges(false)
-      lastSyncedRef.current = localServiceBook
-      addToast('Changes saved successfully', 'success')
-
-      // Refetch to get latest from server
       refetch()
-      refetchCategories()
+    },
+    syncDeltaFn: async (delta) => {
+      const response = await syncDeltaMutation.mutateAsync({
+        data: delta,
+        query: {
+          eventId: eventId || undefined,
+          userType: null as unknown as UserType | undefined,
+          clientId: null as unknown as string | undefined,
+        },
+      })
+      return response as any
+    },
+    refetch,
+    shouldInit: (b) => !b?.id,
+    initFn: async () => {
+      await initMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: null as unknown as UserType | undefined,
+        clientId: null as unknown as string | undefined,
+      })
+    },
+    shouldAddModels: (b) => b?.isModelsAdd === false,
+    addModelsFn: async () => {
+      await addModelsMutation.mutateAsync({
+        eventId: eventId ?? undefined,
+        userType: null as unknown as UserType | undefined,
+        clientId: null as unknown as string | undefined,
+      })
+    },
+    initMutation,
+    addModelsMutation,
+    isSameBookBase: (current, last) =>
+      current.id === last.id &&
+      current.groomId === last.groomId &&
+      current.brideId === last.brideId &&
+      current.title === last.title,
+    getLines: (book) => book.lines || [],
+    getCategories: () => [],
+    getLineId: (line) => line.id,
+    getCategoryId: () => -1,
+    convertLineToRequest,
+    isSameLine: (current, last) =>
+      current.title === last.title &&
+      current.titleEn === last.titleEn &&
+      current.titleAr === last.titleAr &&
+      current.isDeleted === last.isDeleted &&
+      current.isDone === last.isDone &&
+      current.isFavorite === last.isFavorite,
+    isLineDeleted: (line) => line.isDeleted ?? false,
+    isLineDone: (line) => line.isDone ?? false,
+  })
+
+  // Get active lines from controller
+  const activeLines = useMemo(() => getActiveLines() as ServiceLineResponse[], [getActiveLines])
+
+  // Convert lines to PreparationService format and resolve icons from service class
+  const services: PreparationService[] = useMemo(() => {
+    return activeLines.map((line) => {
+      const service = convertServiceLineToPreparationService(line)
+
+      // Prefer serviceClass from line, fallback to preparation class
+      const prepClass =
+        line.preparation?.class ??
+        preparations.find(p => p.id === line.preparationId)?.class
+      const rawClass = line.serviceClass ?? prepClass
+      const resolvedClass =
+        typeof rawClass === 'string' ? getServiceClassNumber(rawClass) : rawClass
+
+      const iconValue =
+        resolvedClass !== undefined && resolvedClass !== null && resolvedClass !== 0
+          ? `class:${resolvedClass}`
+          : ''
+
+      if (process.env.NODE_ENV === 'development') {
+        // Debug icon resolution for preparations
+        console.log('[Preparations] icon resolution', {
+          lineId: line.id,
+          title: line.title || line.titleEn || line.titleAr,
+          lineServiceClass: line.serviceClass,
+          preparationId: line.preparationId,
+          preparationClass: prepClass,
+          resolvedClass,
+          iconName: line.iconName,
+          iconValue,
+        })
+      }
+
+      service.icon = { kind: 'asset', value: iconValue }
+      return service
+    })
+  }, [activeLines, preparations])
+
+  const completed = services.filter(s => s.completed).length
+  const total = services.length
+
+  const handleAdd = () => {
+    setCurrentService(undefined)
+    setModalMode('add')
+    setIsModalOpen(true)
+  }
+
+  const handleEdit = (service: PreparationService) => {
+    setCurrentService(service)
+    setModalMode('edit')
+    setIsModalOpen(true)
+  }
+
+  const handleView = (service: PreparationService) => {
+    setCurrentService(service)
+    setModalMode('view')
+    setIsModalOpen(true)
+  }
+
+  const handleDelete = (service: PreparationService) => {
+    setServiceToDelete(service)
+    setIsConfirmDialogOpen(true)
+  }
+
+  const handleSave = async (serviceData: {
+    completed: boolean
+    serviceKey: string
+    title: string
+    serviceType: 'rent' | 'buy'
+    quantity: number
+    cost: number
+    advancePayment: number
+    providerUserName: string
+    purchaseDate: string
+  }) => {
+    try {
+      if (!localServiceBook) {
+        addToast('Service book not found', 'error')
+        return
+      }
+
+      // Find the selected preparation to get serviceClass and iconName
+      let iconName = 'Sparkles'
+      let serviceClass: number | undefined = undefined
+      if (serviceData.serviceKey) {
+        const selectedPreparation = preparations.find(p => String(p.id) === serviceData.serviceKey)
+        if (selectedPreparation) {
+          // Priority: use serviceClass if available, otherwise use iconName
+          // ServiceClass from API might be string enum, convert to number if needed
+          const prepClass = selectedPreparation.class
+          if (prepClass !== undefined && prepClass !== null) {
+            // Convert string enum to number if needed
+            serviceClass = typeof prepClass === 'string'
+              ? getServiceClassNumber(prepClass)
+              : prepClass
+            // Store serviceClass in iconName format for consistency
+            iconName = `class:${serviceClass}`
+          } else {
+            iconName = normalizeIconName(selectedPreparation.iconName, selectedPreparation.name || selectedPreparation.nameEn || selectedPreparation.nameAr)
+          }
+        }
+      }
+
+      const preparationId = serviceData.serviceKey ? parseInt(serviceData.serviceKey, 10) : null
+
+      if (currentService && modalMode === 'edit') {
+        // Update existing line
+        const result = applyLocalUpdate((current) => {
+          const updatedLines = (current.lines || []).map((line: ServiceLineResponse) => {
+            if (String(line.id) === currentService.id) {
+              return {
+                ...line,
+                title: serviceData.title,
+                titleEn: serviceData.title,
+                titleAr: serviceData.title,
+                quantity: serviceData.quantity,
+                price: serviceData.cost,
+                advanceAmount: serviceData.advancePayment,
+                providerName: serviceData.providerUserName,
+                seller: serviceData.providerUserName,
+                buyDate: serviceData.purchaseDate || undefined,
+                isDone: serviceData.completed,
+                iconName,
+                serviceClass: serviceClass ?? line.serviceClass ?? 0,
+                preparationId: preparationId ?? undefined,
+                lastModifiedDate: new Date().toISOString(),
+              }
+            }
+            return line
+          })
+          return { ...current, lines: updatedLines }
+        })
+        if (!result.ok) return
+      } else if (modalMode === 'add') {
+        // Create new line
+        const newLine: ServiceLineResponse = {
+          id: -Date.now(), // Temporary ID
+          bookId: localServiceBook.id,
+          title: serviceData.title,
+          titleEn: serviceData.title,
+          titleAr: serviceData.title,
+          quantity: serviceData.quantity,
+          price: serviceData.cost,
+          advanceAmount: serviceData.advancePayment,
+          providerName: serviceData.providerUserName,
+          seller: serviceData.providerUserName,
+          providerAddress: '',
+          providerLink: '',
+          buyDate: serviceData.purchaseDate || undefined,
+          isDone: serviceData.completed,
+          isFavorite: false,
+          isDeleted: false,
+          isModelLine: false,
+          iconName,
+          preparationId: preparationId ?? undefined,
+          serviceType: serviceData.serviceType === 'rent' ? 0 : 1,
+          serviceClass: serviceClass ?? 0,
+          lineType: 0,
+          bookClass: 0,
+          hasReminder: false,
+          reminderText: '',
+          hasProvider: false,
+          budget: false,
+          isLinkedToService: false,
+          isLinkedToReservation: false,
+          serviceNotes: '',
+          reservationNotes: '',
+          notes: '',
+          colorName: '',
+          slug: '',
+          creationDate: new Date().toISOString(),
+          lastModifiedDate: new Date().toISOString(),
+          createdBy: '',
+          lastModifiedBy: '',
+        }
+
+        const result = applyLocalUpdate((current) => ({
+          ...current,
+          lines: [...(current.lines || []), newLine],
+        }))
+        if (!result.ok) return
+        setIsModalOpen(false)
+        setCurrentService(undefined)
+        addToast('Preparation saved. Click "Save Changes" to persist.', 'info')
+      } else {
+        // View mode - just close the modal
+        setIsModalOpen(false)
+        setCurrentService(undefined)
+      }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save changes'
+      const errorMessage = error instanceof Error ? error.message : 'Failed to save preparation'
       addToast(errorMessage, 'error')
     }
+  }
+
+  const handleConfirmDelete = () => {
+    if (!serviceToDelete || !localServiceBook) return
+
+    const result = applyLocalUpdate((current) => {
+      const lineId = parseInt(serviceToDelete.id, 10)
+      const updatedLines = (current.lines || []).map((line: ServiceLineResponse) =>
+        line.id === lineId ? { ...line, isDeleted: true } : line
+      )
+      return { ...current, lines: updatedLines }
+    })
+
+    if (result.ok) {
+      setIsConfirmDialogOpen(false)
+      setServiceToDelete(undefined)
+      addToast('Preparation deleted. Click "Save Changes" to persist.', 'info')
+    }
+  }
+
+  const handleSync = async () => {
+    const result = await save()
+    if (!result.ok) {
+      if (result.reason === 'loading' || result.reason === 'no-changes') {
+        addToast(result.message || 'No changes to save', 'info')
+        if (result.reason === 'no-changes') setHasUnsavedChanges(false)
+        return
+      }
+      addToast(result.message || 'Failed to save changes', 'error')
+      return
+    }
+    addToast(result.message || 'Changes saved successfully', 'success')
   }
 
   const handleBack = () => {
     router.push('/dashboard/my-events')
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleBack}
-            className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
-            aria-label="Back to My Events"
-          >
-            <ChevronLeft className="w-5 h-5 text-gray-700" />
-          </button>
-          <h1 className="text-24 font-semibold text-gray-900">Preparations</h1>
+  const handleRowClick = (service: PreparationService) => {
+    // Open view modal when clicking row
+    handleView(service)
+  }
+
+  // Check if initializing or adding models
+  const showLoading = !isMounted || isLoading || isInitializing || isAddingModels
+
+  if (showLoading) {
+    const loadingText = isInitializing
+      ? 'Initializing preparations book...'
+      : isAddingModels
+        ? 'Adding default models...'
+        : 'Loading preparations...'
+
+    return (
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-center py-12">
+          <LoadingSpinner size="lg" text={loadingText} />
         </div>
-        <div className="flex items-center gap-3">
-          {hasUnsavedChanges && (
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-full min-h-screen">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleBack}
+              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+              aria-label="Back to My Events"
+            >
+              <ChevronLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            <h1 className="text-24 font-semibold text-gray-900">Preparations</h1>
+          </div>
+          <div className="flex items-center gap-3">
+            {(hasUnsavedChanges || syncMutation.isPending) && (
+              <>
+                <Button
+                  onClick={handleSync}
+                  variant="brand"
+                  size="md"
+                  className="flex items-center gap-2 rounded-xl !text-white"
+                  disabled={syncMutation.isPending || !localServiceBook || isLoading}
+                  type="button"
+                >
+                  <Save className="h-4 w-4" />
+                  {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+                </Button>
+
+                {hasUnsavedChanges && (
+                  <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+                )}
+              </>
+            )}
             <Button
-              onClick={handleSync}
+              onClick={handleAdd}
               variant="brand"
               size="md"
               className="text-white"
-              disabled={syncMutation.isPending || !localServiceBook || isLoading}
             >
-              <Save className="w-5 h-5 mr-2" />
-              {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+              <Plus className="w-5 h-5 mr-2" />
+              Add new Preparation
             </Button>
-          )}
-          <Button
-            onClick={handleCreateClick}
-            variant="brand"
-            size="md"
-            className="text-white"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Add new Category
-          </Button>
+          </div>
         </div>
-      </div>
 
-      {/* Loading State */}
-      {isLoading && (
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Loading categories..." />
+        {/* Summary Card */}
+        <div className="mb-8">
+          <PreparationsSummaryCard total={total} completed={completed} />
         </div>
-      )}
 
-      {/* Categories List */}
-      {!isLoading && (
-        <div className="space-y-4">
-          {/* Pinned Default Card - Always First */}
-          <CategoryCard
-            category={{
-              id: 1,
-              name: 'Default Preparations',
-              nameEn: 'Default Preparations',
-              nameAr: '',
-              description: 'Tap to view preparations list',
-              descriptionEn: 'Tap to view preparations list',
-              descriptionAr: '',
-              slug: '',
-              isDeleted: false,
-              isModelLine: false,
-              creationDate: new Date().toISOString(),
-              lastModifiedDate: new Date().toISOString(),
-              createdBy: '',
-              lastModifiedBy: '',
-              lineCount: 0,
-              completedCount: 0,
-            } as ServiceLineCategoryResponse & { lineCount: number; completedCount: number }}
-            onClick={handlePinnedCategoryClick}
-            variant="pinned"
+        {/* Preparations Table */}
+        <div className="mb-8">
+          <PreparationsTable
+            services={services}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onRowClick={handleRowClick}
           />
-
-          {/* Empty State */}
-          {categoriesWithCounts.length === 0 && (
-            <div className="bg-white border rounded-2xl p-12 text-center">
-              <p className="text-16 text-gray-500 mb-4">No categories yet</p>
-              <p className="text-14 text-gray-400">Create your first category to get started</p>
-            </div>
-          )}
-
-          {/* Category Cards */}
-          {categoriesWithCounts.map(category => (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              onClick={() => handleCategoryClick(category.id!)}
-            />
-          ))}
         </div>
-      )}
 
-      {/* Create Category Modal */}
-      <CreateCategoryModal
-        open={isCreateModalOpen}
-        onClose={handleModalClose}
-        onSubmit={handleCreateCategory}
-        isLoading={false} // No API call, just local state update
-      />
+        {/* Unified Modal - Handles Add, Edit, and View modes */}
+        <ServiceModal
+          open={isModalOpen}
+          mode={modalMode}
+          initialValue={
+            currentService
+              ? (() => {
+                // Find the actual line from the book to get all details
+                const line = activeLines.find(l => String(l.id) === currentService.id)
+
+                // Get preparationId from the line (this is the serviceKey for the modal)
+                const serviceKey = line?.preparationId ? String(line.preparationId) : ''
+                const rawServiceClass = line?.serviceClass ?? line?.preparation?.class ?? undefined
+                const serviceClass =
+                  typeof rawServiceClass === 'string'
+                    ? getServiceClassNumber(rawServiceClass)
+                    : rawServiceClass
+
+                return {
+                  id: currentService.id,
+                  serviceKey: serviceKey, // Use preparationId as serviceKey
+                  serviceClass,
+                  title: currentService.title,
+                  serviceType: currentService.serviceType as 'rent' | 'buy',
+                  quantity: currentService.quantity,
+                  cost: currentService.cost,
+                  advancePayment: currentService.advancePayment,
+                  providerUserName: currentService.providerUserName,
+                  purchaseDate: currentService.purchaseDate || '',
+                  completed: currentService.completed,
+                }
+              })()
+              : undefined
+          }
+          onClose={() => {
+            setIsModalOpen(false)
+            setCurrentService(undefined)
+            setModalMode('add')
+          }}
+          onSave={handleSave}
+        />
+
+        <ConfirmDialog
+          open={isConfirmDialogOpen}
+          title="Are you sure?"
+          description="This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => {
+            setIsConfirmDialogOpen(false)
+            setServiceToDelete(undefined)
+          }}
+        />
+      </div>
     </div>
   )
 }
 
 /**
- * Preparations Categories Page
- * Wrapped in Suspense for useSearchParams compatibility
+ * Preparations Page
+ * Shows all preparation lines in a table
  */
-export default function PreparationsCategoriesPage() {
+export default function PreparationsPage() {
   return (
     <Suspense fallback={
-      <div className="space-y-6">
-        <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Loading..." />
-        </div>
+      <div className="w-full min-h-screen flex items-center justify-center">
+        <LoadingSpinner size="lg" text="Loading..." />
       </div>
     }>
-      <PreparationsCategoriesPageContent />
+      <PreparationsPageContent />
     </Suspense>
   )
 }

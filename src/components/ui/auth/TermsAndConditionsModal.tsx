@@ -1,6 +1,7 @@
 import { Modal } from '../Modal'
 import { Button } from '../Button'
 import { Typography } from '../Typography'
+import { useI18nTranslations } from '@/i18n'
 
 export interface TermsAndConditionsModalProps {
   isOpen: boolean
@@ -17,6 +18,7 @@ export const TermsAndConditionsModal = ({
   onClose,
   onAccept,
 }: TermsAndConditionsModalProps) => {
+  const t = useI18nTranslations('auth.terms')
   const handleAccept = () => {
     onAccept?.()
     onClose()
@@ -26,7 +28,7 @@ export const TermsAndConditionsModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Terms & Conditions"
+      title={t('title')}
       maxWidth="md"
       showCloseButton
       containerClassName="flex flex-col max-h-[90vh] w-[90vw] sm:w-full max-w-[420px] md:max-w-[520px]"
@@ -43,15 +45,14 @@ export const TermsAndConditionsModal = ({
                 weight="semibold"
                 className="text-gray-900 text-14 sm:text-16"
               >
-                Introduction
+                {t('sections.introduction.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                By using OurBride, you agree to the following terms and
-                conditions.
+                {t('sections.introduction.body')}
               </Typography>
             </div>
 
@@ -62,15 +63,14 @@ export const TermsAndConditionsModal = ({
                 weight="semibold"
                 className="text-gray-900 text-14 sm:text-16"
               >
-                Account Usage
+                {t('sections.accountUsage.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                Users must provide accurate personal information. You are
-                responsible for keeping your account secure.
+                {t('sections.accountUsage.body')}
               </Typography>
             </div>
 
@@ -81,15 +81,14 @@ export const TermsAndConditionsModal = ({
                 weight="semibold"
                 className="text-gray-900 text-14 sm:text-16"
               >
-                Bookings & Services
+                {t('sections.bookingsServices.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                Bookings depend on provider availability. Cancellations and
-                refunds follow each provider&apos;s policy.
+                {t('sections.bookingsServices.body')}
               </Typography>
             </div>
 
@@ -100,15 +99,14 @@ export const TermsAndConditionsModal = ({
                 weight="semibold"
                 className="text-gray-900 text-14 sm:text-16"
               >
-                Payments & Fees
+                {t('sections.paymentsFees.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                All payments must be made through the app. OurBride deducts a 2%
-                commission from provider earnings monthly.
+                 { t('sections.paymentsFees.body')}
               </Typography>
             </div>
 
@@ -119,15 +117,14 @@ export const TermsAndConditionsModal = ({
                 weight="semibold"
                 className="text-gray-900 text-14 sm:text-16"
               >
-                Content & Community
+                {t('sections.contentCommunity.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                Users must not post offensive or harmful content. OurBride
-                reserves the right to remove any inappropriate material.
+                 {t('sections.contentCommunity.body')}
               </Typography>
             </div>
 
@@ -138,15 +135,14 @@ export const TermsAndConditionsModal = ({
                 weight="semibold"
                 className="text-gray-900 text-14 sm:text-16"
               >
-                Privacy & Security
+                {t('sections.privacySecurity.title')}
               </Typography>
               <Typography
                 variant="body"
                 textColor="secondary"
                 className="text-gray-700 text-12 sm:text-13"
               >
-                We protect your data under our Privacy Policy. Identity
-                verification is required for providers.
+                {t('sections.privacySecurity.body')}
               </Typography>
             </div>
           </div>
@@ -160,7 +156,7 @@ export const TermsAndConditionsModal = ({
             onClick={handleAccept}
             className="w-full text-white"
           >
-            Accept Terms & Conditions
+            {t('acceptButton')}
           </Button>
         </div>
       </div>

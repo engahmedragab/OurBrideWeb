@@ -1,3 +1,5 @@
+'use client'
+
 import React, { HTMLAttributes, forwardRef } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import Link from 'next/link'
@@ -264,12 +266,11 @@ const ProductServiceCard = ({
 
   return (
     <div 
-      className="group relative bg-white rounded-xl overflow-visible hover:shadow-lg transition-shadow cursor-pointer"
-      style={{ boxShadow: '0px 0px 9px 0px rgba(143,144,166,0.15)' }}
+      className="group relative bg-transparent rounded-xl overflow-visible transition-shadow cursor-pointer flex flex-col"
       onClick={handleCardClick}
     >
       {/* Action Icons - Floating above the card */}
-      <div className="absolute top-0 right-2 z-20 flex items-center gap-2 pointer-events-auto">
+      <div className="absolute top-2 right-2 z-20 flex items-center gap-2 pointer-events-auto">
         {/* Wishlist Icon */}
         {data.onWishlistToggle && (
           <button
@@ -277,11 +278,9 @@ const ProductServiceCard = ({
             onClick={handleWishlistToggle}
             disabled={data.isLoadingWishlist}
             className={cn(
-              'w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-200 shadow-lg hover:scale-110 relative z-30',
+              'w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 relative z-30',
               'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
-              isInWishlist || data.isWishlisted
-                ? 'border-brand-500 bg-brand-500'
-                : 'border-gray-300 bg-white hover:border-brand-500 hover:bg-brand-50'
+              'bg-gray-200/80 backdrop-blur-sm'
             )}
             aria-label={
               isInWishlist || data.isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'
@@ -292,16 +291,16 @@ const ProductServiceCard = ({
                 'h-4 w-4 transition-colors',
                 data.isLoadingWishlist && 'animate-pulse',
                 isInWishlist || data.isWishlisted
-                  ? 'fill-white text-white'
-                  : 'fill-gray-300 text-gray-400'
+                  ? 'text-brand-500'
+                  : 'text-white'
               )}
             />
           </button>
         )}
       </div>
 
-      {/* Image Container */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 custom-shaped-card">
+      {/* Image Container - 75% of card height */}
+      <div className="relative flex-[3] min-h-[280px] overflow-hidden bg-gray-100 custom-shaped-card flex items-center justify-center">
         {data.image && 
          data.image.trim() !== '' && 
          data.image !== '/' &&
@@ -321,8 +320,8 @@ const ProductServiceCard = ({
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100">
-            <span className="text-gray-400 text-12 font-medium">
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+            <span className="text-gray-400 text-12 font-medium text-center">
               No image available
             </span>
           </div>
@@ -343,10 +342,10 @@ const ProductServiceCard = ({
       </div>
 
       {/* Content */}
-      <div className="p-3 space-y-2 relative bg-white rounded-b-xl">
+      <div className="p-3 space-y-2 relative bg-transparent rounded-b-xl flex-1">
         <div className="flex flex-col gap-2">
           {/* Title */}
-          <h3 className="text-24 font-medium text-gray-900 line-clamp-2 leading-[32px]">
+          <h3 className="text-18 font-medium text-gray-900 line-clamp-2 leading-[24px]">
             {data.title}
           </h3>
 
@@ -371,11 +370,11 @@ const ProductServiceCard = ({
 
         {/* Rating and Price Row */}
         <div className="flex items-center justify-between gap-4">
-          {/* Rating */}
+          {/* Rating - Converted to 1-10 scale */}
           <div className="flex items-center gap-1">
             <Star className="h-6 w-6 fill-brand-500 text-brand-500" />
             <span className="text-16 font-normal text-gray-500">
-              {data.rating.toFixed(1)}
+              {(data.rating / 5).toFixed(1)}
             </span>
           </div>
 
@@ -433,7 +432,7 @@ const ProductServiceCard = ({
               <Button
                 variant="brand"
                 size="default"
-                className="flex-1 rounded-full text-20 font-medium bg-green-500 hover:bg-green-600 text-white py-[18px]"
+                className="flex-1 rounded-full text-20 font-medium bg-green-500 hover:bg-green-600 text-white h-12"
                 onClick={handleViewCart}
               >
                 View in Cart
@@ -442,7 +441,7 @@ const ProductServiceCard = ({
               <Button
                 variant="brand"
                 size="default"
-                className="flex-1 rounded-full text-20 font-medium bg-brand-500 hover:bg-brand-600 text-white py-[18px]"
+                className="flex-1 rounded-full text-20 font-medium bg-brand-500 hover:bg-brand-600 text-white h-12"
                 onClick={handleBuyNow}
                 disabled={data.inStock === false || data.isLoadingAddToCart || addToCartMutation.isPending}
               >
@@ -454,7 +453,7 @@ const ProductServiceCard = ({
           <Button
             variant="brand"
             size="default"
-            className="w-full rounded-full text-14 font-normal text-white"
+            className="w-full rounded-full text-14 font-normal text-white h-12"
             asChild
           >
             <Link href={`/booking/${data.id}`}>Book Now</Link>
@@ -907,6 +906,12 @@ const JourneyStep = ({
 // Main Card Component
 const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ cardData, className, ...props }, ref) => {
+    // Guard against undefined cardData
+    if (!cardData) {
+      console.warn('Card component requires cardData prop')
+      return null
+    }
+
     const renderCardContent = () => {
       switch (cardData.type) {
         case 'product':

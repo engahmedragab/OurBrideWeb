@@ -63,11 +63,11 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         >
           <Lock
             className={cn(
-              'h-6 w-6 flex-shrink-0',
+              'h-5 w-5 flex-shrink-0',
               variant === 'error'
                 ? 'text-red-500'
                 : variant === 'focused'
-                  ? 'text-gray-400'
+                  ? 'text-gray-900'
                   : variant === 'success'
                     ? 'text-gray-400'
                     : variant === 'fill'
@@ -78,7 +78,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           <input
             type={showPassword ? 'text' : 'password'}
             className={cn(
-              'flex-1 bg-transparent outline-none focus:outline-none font-normal text-16 leading-6',
+              'flex-1 bg-transparent outline-none focus:outline-none font-normal md:text-14 text-10 leading-6',
               variant === 'error' && 'text-red-500 placeholder:text-red-500',
               variant === 'default' &&
               'text-gray-900 placeholder:text-gray-400',
@@ -108,14 +108,14 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             )}
           >
             {showPassword ? (
-              <Eye className="h-6 w-6" />
+              <Eye className="h-5 w-5" />
             ) : (
-              <EyeOff className="h-6 w-6" />
+              <EyeOff className="h-5 w-5" />
             )}
           </button>
           {showSuccessIcon && variant === 'success' && (
             <div className="flex-shrink-0">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-green-500">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full border border-green-500">
                 <Check className="h-4 w-4 text-green-500" />
               </div>
             </div>
@@ -123,8 +123,8 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         </div>
         {errorMessage && (
           <div className="mt-2 flex items-center gap-2 text-14 font-normal leading-4 text-red-500">
-            <div className="flex h-4 w-4 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
-              <X className="h-2.5 w-2.5 text-red-500" />
+            <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full border border-red-500 flex-shrink-0">
+              <X className="h-2 w-2 text-red-500" />
             </div>
             <span>{errorMessage}</span>
           </div>
