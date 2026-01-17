@@ -108,11 +108,7 @@ export const convertCategoryToRequest = (category: TodoLineCategoryResponse): To
   return {
     id: category.id ?? null,
     name: category.name || category.nameEn || category.nameAr || null,
-    nameAr: catAny.nameAr ?? null,
-    nameEn: catAny.nameEn ?? null,
     description: category.description ?? null,
-    descriptionAr: catAny.descriptionAr ?? null,
-    descriptionEn: catAny.descriptionEn ?? null,
     slug: category.slug ?? null,
     count_id: catAny.count_id ?? null,
     date: catAny.date ?? null,
@@ -163,14 +159,15 @@ export const convertUiTodoToLineRequest = (todo: UiTodo, localTodoBook: TodoBook
     }
   }
 
+  const originalLineAny = originalLine as any
   return {
     id: todo.id,
     bookId: localTodoBook.id,
     task: task,
     subTask: originalLine?.subTask || null,
     lineCategoryId: todo.categoryId ?? null,
-    lineCategoryCountId: originalLine?.lineCategoryCountId ?? (category as any)?.count_id ?? null,
-    lineCategorySlug: originalLine?.lineCategorySlug ?? category?.slug ?? null,
+    lineCategoryCountId: originalLineAny?.lineCategoryCountId ?? (category as any)?.count_id ?? null,
+    lineCategorySlug: originalLineAny?.lineCategorySlug ?? category?.slug ?? null,
     isDone: todo.isDone || false,
     isFavorite: originalLine?.isFavorite || false,
     isDeleted: todo.isDeleted || false,
@@ -180,6 +177,7 @@ export const convertUiTodoToLineRequest = (todo: UiTodo, localTodoBook: TodoBook
     parentLineId: originalLine?.parentLineId || null,
     hasSubline: originalLine?.hasSubline || false,
     sublines: originalLine?.sublines?.map(sub => {
+      const subAny = sub as any
       let subTask: string | null = null
       if (!sub.isDeleted) {
         const subTaskValue = (sub.task || '').trim()
@@ -198,8 +196,8 @@ export const convertUiTodoToLineRequest = (todo: UiTodo, localTodoBook: TodoBook
         task: subTask,
         subTask: sub.subTask || null,
         lineCategoryId: sub.lineCategoryId ?? null,
-        lineCategoryCountId: sub.lineCategoryCountId ?? null,
-        lineCategorySlug: sub.lineCategorySlug ?? null,
+        lineCategoryCountId: subAny?.lineCategoryCountId ?? null,
+        lineCategorySlug: subAny?.lineCategorySlug ?? null,
         isDone: sub.isDone || false,
         isFavorite: sub.isFavorite || false,
         isDeleted: sub.isDeleted || false,

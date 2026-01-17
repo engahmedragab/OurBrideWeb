@@ -642,7 +642,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
         })
         
         // Update local IDs from the response (maps temp IDs to server IDs)
-        const updatedBook = updateLocalIdsFromDeltaResponse(response, localBook)
+        const updatedBook = localBook ? updateLocalIdsFromDeltaResponse(response, localBook) : null
         
         // Use the updated book (with mapped IDs) as the final book
         const finalBook = updatedBook || response.book

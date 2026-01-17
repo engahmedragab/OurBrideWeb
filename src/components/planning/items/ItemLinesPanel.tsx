@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
-import type { UiItem } from '@/app/[locale]/events/planning/items/page'
+import type { UiItem } from '@/utils/planning/mappers/itemsMappers'
 import { ItemLineRow } from './ItemLineRow'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -110,7 +110,7 @@ export function ItemLinesPanel({
           editingItem
             ? {
                 name: editingItem.title,
-                description: editingItem.description,
+                description: editingItem.description ?? undefined,
                 quantity: editingItem.quantity,
                 totalPrice: editingItem.totalPrice,
                 providerName: editingItem.providerName,

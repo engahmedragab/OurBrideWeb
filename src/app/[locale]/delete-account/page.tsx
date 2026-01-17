@@ -19,7 +19,7 @@ export default function DeleteAccountPage() {
     setError(null)
 
     try {
-      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001'
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com'
       const response = await axios.post(
         `${baseURL}/api/v1/identity/delete`,
         {

@@ -49,7 +49,12 @@ export const useSyncEventBooksDelta = () => {
       queryClient.invalidateQueries({ queryKey: ['eventBooks'] })
     },
     onError: (error: any) => {
-      handleApiResponseForToast(error, addToast)
+      const { message, type } = handleApiResponseForToast(
+        error,
+        'Event book synced successfully',
+        'Failed to sync event book'
+      )
+      addToast(message, type)
     },
   })
 }
