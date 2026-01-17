@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import { PriceDisplay } from './PriceDisplay'
+import { useI18nTranslations } from '@/i18n'
 
 // Base card variants
 const cardVariants = cva(
@@ -851,6 +852,8 @@ const MemberTestimonialCard = ({
 
 // Trust Card Component
 const TrustCard = ({ data }: { data: TrustCardData }) => {
+  // localization
+  const t = useI18nTranslations('home.trustCards')
   const backgroundColor = data.background === 'gray' ? '#F4F4F6' : 'white'
 
   return (
@@ -862,10 +865,10 @@ const TrustCard = ({ data }: { data: TrustCardData }) => {
       }}
     >
       <h3 className="text-20 md:text-24 font-normal text-gray-900 mb-3">
-        {data.heading}
+      {t(data.heading)}
       </h3>
       <p className="text-16 text-gray-600 leading-relaxed">
-        {data.description}
+      {t(data.description)}
       </p>
     </div>
   )
@@ -879,6 +882,10 @@ const JourneyStep = ({
   data: JourneyStepData
   className?: string
 }) => {
+
+  // localization
+  const t = useI18nTranslations('home.journeySteps')
+
   return (
     <div className={cn('flex flex-col items-center gap-4', className)}>
       {/* Step Circle */}
@@ -893,10 +900,10 @@ const JourneyStep = ({
       {/* Step Content */}
       <div className="text-center max-w-[280px]">
         <h3 className="text-16 md:text-18 font-semibold text-gray-900 mb-2">
-          {data.title}
+         {t(`steps.${data.stepNumber}.title`)}
         </h3>
         <p className="text-14 md:text-16 text-gray-600 leading-relaxed">
-          {data.description}
+        {t(`steps.${data.stepNumber}.description`)}
         </p>
       </div>
     </div>

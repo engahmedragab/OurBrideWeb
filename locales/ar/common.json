@@ -12,7 +12,15 @@
     "filter": "تصفية",
     "sort": "ترتيب",
     "pleaseWait": "لحظه واحده، نحن هنا بالفعل ...",
-    "skipButton": "تخطي الآن"
+    "skipButton": "تخطي الآن",
+    "openMenu": "فتح القائمة",
+    "new": "جديد",
+    "close": "إغلاق",
+    "language": "اللغة",
+    "emailPlaceholder": "أدخلي بريدك الإلكتروني",
+    "subscribe": "اشتركي",
+    "startShopping": "ابدئي التسوق",
+    "viewAll": "عرض الكل"
   },
   "auth": {
     "hero": {
@@ -68,7 +76,6 @@
       "female": "أنثى",
       "male": "ذكر",
       "gender": {
-
         "errorRequired": "يرجى اختيار النوع"
       },
       "terms": {
@@ -116,8 +123,7 @@
       "invalidOtp": "رمز التحقق غير صحيح. يرجى المحاولة مرة أخرى.",
       "resetFailed": "فشل إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى.",
       "resendButton": "إعادة إرسال رمز التحقق",
-      "resendTextPrefix": "لم يصلك الرمز؟"
-      ,
+      "resendTextPrefix": "لم يصلك الرمز؟",
       "successModal": {
         "title": "تمت إعادة تعيين كلمة المرور بنجاح",
         "description": "تم تحديث كلمة المرور. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.",
@@ -162,7 +168,7 @@
         "title": "تم بنجاح!",
         "description": "تم حفظ تفضيلات التخطيط الخاصة بك",
         "confirmLabel": "تأكيد",
-       
+
         "skipButton": "تخطي الآن"
       },
       "errors": {
@@ -194,7 +200,6 @@
         "invalidOtpCode": "رمز التحقق غير صحيح",
         "invalidConfirmationCode": "رمز التأكيد غير صحيح",
         "refreshUserFailed": "فشل تحديث بيانات المستخدم"
-       
       }
     },
     "api": {
@@ -251,28 +256,212 @@
       "title": "تحميل التطبيق"
     }
   },
-   
-    "changePassword": {
-      "title": "تغيير    الكلمة المرور",
-      "saveChanges": "حفظ التغييرات",
-      "currentPassword": "كلمة المرور الحالية",
-      "newPassword": "كلمة المرور الجديدة",
-      "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
-      "enterPassword": "أدخل كلمة المرور",
-      "enterNewPassword": "أدخل كلمة المرور الجديدة",
-      "confirmNewPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
-      "success": {
-        "title": "تم تغيير كلمة المرور بنجاح",
-        "description": "تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة"
+
+  "changePassword": {
+    "title": "تغيير    الكلمة المرور",
+    "saveChanges": "حفظ التغييرات",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "enterPassword": "أدخل كلمة المرور",
+    "enterNewPassword": "أدخل كلمة المرور الجديدة",
+    "confirmNewPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
+    "success": {
+      "title": "تم تغيير كلمة المرور بنجاح",
+      "description": "تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة"
+    },
+    "errors": {
+      "currentInvalid": "كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى",
+      "newRequired": "كلمة المرور مطلوبة",
+      "newMin": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
+      "confirmRequired": "يرجى تأكيد كلمة المرور",
+      "notMatch": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى"
+    }
+  },
+  "navbar": {
+    "search": {
+      "placeholder": "بحث..."
+    },
+    "links": {
+      "home": "الرئيسية",
+      "products": "المنتجات",
+      "services": "الخدمات",
+      "providers": "المزودون",
+      "community": "المجتمع",
+      "allProducts": "جميع المنتجات",
+      "category": "الفئة",
+      "allServices": "جميع الخدمات"
+    },
+    "icons": {
+      "account": "الحساب",
+      "language": "اللغة",
+      "cart": "السلة",
+      "notifications": "الإشعارات",
+      "favorites": "المفضلة",
+      "markAllAsRead": "تحديد الكل كمقروء"
+    },
+    "notifications": {
+      "loading": "جاري تحميل الإشعارات...",
+      "markAllAsRead": "تحديد الكل كمقروء",
+      "notifications": "الإشعارات",
+      "noNotificationsYet": "لا توجد إشعارات حتى الآن",
+      "viewAll": "عرض كل الإشعارات"
+
+    },
+    "menu": {
+      "wishlist": "قائمة الأمنيات",
+      "favorites": "المفضلة",
+      "follows": "المتابعات",
+      "myCart": "سلّتي",
+      "myProfile": "الحساب الشخصي"
+    }
+  },
+  "home":{
+    
+  "hero": {
+    "activeUsers": "مستخدمون نشطون",
+    "badge": "منصة متكاملة لكل ما يخص الزفاف.",
+    "headline": {
+      "line1": "عروستك دائمًا",
+      "line2": "مسؤوليتنا."
+    },
+    "description": "OurBride هي منصتك المتكاملة لتخطيط الزفاف والتسوق. اعثر على كل ما تحتاجه لصناعة يومك المثالي.",
+    "images": {
+      "brideAlt": "عروس سعيدة",
+      "exploreProductsAlt": "استكشف المنتجات",
+      "exploreServicesAlt": "استكشف الخدمات"
+    },
+    "cta": {
+      "exploreProducts": "استكشف المنتجات",
+      "exploreServices": "استكشف الخدمات"
+    },
+    "circularText": "OURBRIDE ابدأ التسوق الآن مع"
+  },
+  "stats": {
+    "clients": "العملاء",
+    "serviceProviders": "مقدمو الخدمات",
+    "availableServices": "الخدمات المتاحة",
+    "products": "المنتجات"
+  },
+  "benefits": {
+    "verifiedTrustedProviders": {
+      "title": "مزودون موثوقون ومعتمدون",
+      "description": "يتم التحقق من هوية كل خدمة لتجربة آمنة وموثوقة."
+    },
+    "allInOneWeddingHub": {
+      "title": "مركز زفاف متكامل",
+      "description": "خطّط، تسوّق، احجز، وادِر كل شيء من منصة واحدة."
+    },
+    "securePayments": {
+      "title": "مدفوعات آمنة",
+      "description": "معاملات آمنة، أسعار واضحة، وضمان تنفيذ الخدمة."
+    },
+    "exclusiveOffersRewards": {
+      "title": "عروض ومكافآت حصرية",
+      "description": "استمتع بالخصومات وخيارات الهدايا المصممة ليومك الكبير."
+    }
+  },
+  "suggestedProducts": {
+    "title": "منتجات مقترحة لك"
+  },
+  "suggestedServices": {
+    "title": "خدمات مقترحة لك"
+  },
+  "trustSection": {
+    "title": {
+      "line1": "لماذا ",
+      "line2": " العرائس",
+      "line3": "تثق",
+      "line4": "بخدماتنا"
+    }
+  },
+  "testimonials": {
+    "title": {
+      "line1": "اقرئي",
+      "line2": "التقييمات",
+      "line3": "واختاري",
+      "line4": "بثقة"
+    },
+    "whatOurCustomersAreSaying": {
+      "line1": "ماذا يقول",
+      "line2": "عملاؤنا",
+      "line3": "عنّا"
+    },
+    "aria": {
+      "previous": "التقييمات السابقة",
+      "next": "التقييمات التالية",
+      "goToPage": "الانتقال إلى الصفحة {page}"
+    }
+  },
+  "providers": {
+    "title": {
+      "line1": "اكتشف",
+      "line2": "مزودي",
+      "line3": "زفاف",
+      "line4": "موثوقين"
+    }
+  },
+  "journey": {
+    "title": {
+      "line1": "رحلة",
+      "line2": "زفافك",
+      "line3": "تبدأ",
+      "line4": "هنا"
+    }
+  },
+  "appDownload": {
+    "title": {
+      "line1": "خلّي تخطيط الزفاف أسهل",
+      "line2": "مع OurBride"
+    },
+    "images": {
+      "phoneAlt": "تطبيق OurBride على الموبايل"
+    }
+  },
+  
+  "trustCards": {
+    "items": {
+      "1": {
+        "heading": "مصممة للعرايس في كل مصر",
+        "description": "مناسبة للعرايس في جميع المحافظات، خصوصًا خارج العاصمة."
       },
-      "errors": {
-        "currentInvalid": "كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى",
-        "newRequired": "كلمة المرور مطلوبة",
-        "newMin": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
-        "confirmRequired": "يرجى تأكيد كلمة المرور",
-        "notMatch": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى"
+      "2": {
+        "heading": "تجربة بسيطة وجميلة",
+        "description": "تصميم أنثوي وسهل الاستخدام يخلي التخطيط ممتع."
+      },
+      "3": {
+        "heading": "عروض حقيقية وتوفير",
+        "description": "كوبونات وخصومات حصرية تناسب ميزانيتك."
+      },
+      "4": {
+        "heading": "منصة متكاملة",
+        "description": "خطّطي، احجزي، اتسوّقي، واحتفلي — كل شيء في مكان واحد."
+      },
+      "5": {
+        "heading": "مزودون موثوقون ومعتمدون",
+        "description": "نتأكد من مزودي الخدمات بعناية عشان تجربة مضمونة وآمنة."
+      },
+      "6": {
+        "heading": "مدفوعات آمنة",
+        "description": "مدفوعاتك محمية وآمنة من خلال نظام دفع موثوق."
       }
     }
-  
-  
+  },
+  "journeySteps": {
+    "steps": {
+      "1": {
+        "title": "الخطوة 1",
+        "description": "كوبونات وخصومات حصرية تناسب ميزانيتك."
+      },
+      "2": {
+        "title": "الخطوة 2",
+        "description": "كوبونات وخصومات حصرية تناسب ميزانيتك."
+      },
+      "3": {
+        "title": "الخطوة 3",
+        "description": "كوبونات وخصومات حصرية تناسب ميزانيتك."
+      }
+    }
+  }
+  }
 }

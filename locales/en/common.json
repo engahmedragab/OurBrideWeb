@@ -5,17 +5,24 @@
     "success": "Success",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "save": "Save", 
+    "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort",
     "pleaseWait": "Just a moment, we're almost there...",
-    "skipButton": "Skip For Now"
-
+    "skipButton": "Skip For Now",
+    "openMenu": "Open menu",
+    "new": "new",
+    "close": "Close",
+    "language": "Language",
+    "emailPlaceholder": "Enter your e-mail",
+    "subscribe": "Subscribe",
+    "startShopping": "Start Shopping",
+    "viewAll": "View All"
   },
-  
+
   "auth": {
     "hero": {
       "backToHome": "Back To home",
@@ -171,7 +178,7 @@
         "title": "Success!",
         "description": "Your planning preferences have been saved",
         "confirmLabel": "Confirm",
-        
+
         "skipButton": "Skip For Now"
       },
       "errors": {
@@ -194,37 +201,37 @@
       }
     },
     "context": {
-    "errors": {
-      "loginFailed": "Login failed",
-      "externalLoginFailed": "External login failed",
-      "guestLoginFailed": "Guest login failed",
-      "registrationFailed": "Registration failed",
-      "sendOtpFailed": "Failed to send OTP",
-      "invalidOtpCode": "Invalid OTP code",
-      "invalidConfirmationCode": "Invalid confirmation code",
-      "refreshUserFailed": "Failed to refresh user data"
-     
-    }},
+      "errors": {
+        "loginFailed": "Login failed",
+        "externalLoginFailed": "External login failed",
+        "guestLoginFailed": "Guest login failed",
+        "registrationFailed": "Registration failed",
+        "sendOtpFailed": "Failed to send OTP",
+        "invalidOtpCode": "Invalid OTP code",
+        "invalidConfirmationCode": "Invalid confirmation code",
+        "refreshUserFailed": "Failed to refresh user data"
+      }
+    },
     "api": {
-    "errors": {
-      "loginFailedCredentials": "Login failed. Please check your credentials.",
-      "noTokenReceived": "No token received from server",
-      "externalLoginFailed": "External login failed. Please try again.",
-      "guestLoginFailed": "Guest login failed. Please try again.",
-      "noTokenAvailableToRefresh": "No token available to refresh",
-      "tokenRefreshFailedLoginAgain": "Token refresh failed. Please login again.",
-      "adminLoginFailedCredentials": "Admin login failed. Please check your credentials.",
-      "registrationFailedTryAgain": "Registration failed. Please try again.",
-      "sendOtpFailedTryAgain": "Failed to send OTP. Please try again.",
-      "invalidOtpTryAgain": "Invalid OTP code. Please try again.",
-      "invalidConfirmationTryAgain": "Invalid confirmation code. Please try again.",
-      "unauthorizedCheckCredentials": "Unauthorized. Please check your credentials.",
-      "forbiddenNoPermission": "Access forbidden. You do not have permission to perform this action.",
-      "notFoundTryAgain": "Resource not found. Please try again.",
-      "serverErrorTryLater": "Server error. Please try again later.",
-      "validationFailed": "Validation failed. Please try again."
-    }
-  },
+      "errors": {
+        "loginFailedCredentials": "Login failed. Please check your credentials.",
+        "noTokenReceived": "No token received from server",
+        "externalLoginFailed": "External login failed. Please try again.",
+        "guestLoginFailed": "Guest login failed. Please try again.",
+        "noTokenAvailableToRefresh": "No token available to refresh",
+        "tokenRefreshFailedLoginAgain": "Token refresh failed. Please login again.",
+        "adminLoginFailedCredentials": "Admin login failed. Please check your credentials.",
+        "registrationFailedTryAgain": "Registration failed. Please try again.",
+        "sendOtpFailedTryAgain": "Failed to send OTP. Please try again.",
+        "invalidOtpTryAgain": "Invalid OTP code. Please try again.",
+        "invalidConfirmationTryAgain": "Invalid confirmation code. Please try again.",
+        "unauthorizedCheckCredentials": "Unauthorized. Please check your credentials.",
+        "forbiddenNoPermission": "Access forbidden. You do not have permission to perform this action.",
+        "notFoundTryAgain": "Resource not found. Please try again.",
+        "serverErrorTryLater": "Server error. Please try again later.",
+        "validationFailed": "Validation failed. Please try again."
+      }
+    },
     "terms": {
       "title": "Terms & Conditions",
       "acceptButton": "Accept Terms & Conditions",
@@ -257,33 +264,212 @@
     },
     "downloadApp": {
       "title": "Download Our APP"
-     
     }
   },
-  
-    "changePassword": {
-      "title": "Change Password",
-      "saveChanges": "Save Changes",
-      "currentPassword": "Current Password",
-      "newPassword": "New Password",
-      "confirmNewPassword": "Confirm New Password",
-      "enterPassword": "Enter Password",
-      "enterNewPassword": "Enter New Password",
-      "confirmNewPasswordPlaceholder": "Confirm New Password",
-      "success": {
-        "title": "Your Password has been changed",
-        "description": "Your Password has been changed. You can now login with the new password"
-      },
-      "errors": {
-        "currentInvalid": "Password isn't correct, please try again",
-        "newRequired": "Password is required",
-        "newMin": "Password must be at least 8 characters",
-        "confirmRequired": "Please confirm your password",
-        "notMatch": "Password doesn't match, please try again"
-      }
-    
-  }
-  
-   
 
+  "changePassword": {
+    "title": "Change Password",
+    "saveChanges": "Save Changes",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "enterPassword": "Enter Password",
+    "enterNewPassword": "Enter New Password",
+    "confirmNewPasswordPlaceholder": "Confirm New Password",
+    "success": {
+      "title": "Your Password has been changed",
+      "description": "Your Password has been changed. You can now login with the new password"
+    },
+    "errors": {
+      "currentInvalid": "Password isn't correct, please try again",
+      "newRequired": "Password is required",
+      "newMin": "Password must be at least 8 characters",
+      "confirmRequired": "Please confirm your password",
+      "notMatch": "Password doesn't match, please try again"
+    }
+  },
+
+  "navbar": {
+    "search": {
+      "placeholder": "Search..."
+    },
+    "links": {
+      "home": "Home",
+      "products": "Products",
+      "services": "Services",
+      "providers": "Providers",
+      "community": "Community",
+      "allProducts": "All Products",
+      "category": "Category",
+      "allServices": "All Services"
+    },
+    "icons": {
+      "account": "Account",
+      "language": "Language",
+      "cart": "Cart",
+      "notifications": "Notifications",
+      "favorites": "Favorites"
+    },
+    "notifications": {
+      "loading": "Loading notifications...",
+      "markAllAsRead": "Mark all as read",
+      "notifications": "Notifications",
+      "noNotificationsYet": "No notifications yet",
+      "viewAll": "View all notifications"
+    },
+    "menu": {
+      "wishlist": "Wishlist",
+      "favorites": "Favorites",
+      "follows": "Follows",
+      "myCart": "My Cart",
+      "myProfile": "My Profile"
+    }
+  },
+
+  "home": {
+    "hero": {
+      "activeUsers": "Active Users",
+      "badge": "All-in-one platform for wedding.",
+      "headline": {
+        "line1": "YOUR BRIDE ALWAYS IS",
+        "line2": "OUR RESPONSIBILITY."
+      },
+      "description": "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
+      "images": {
+        "brideAlt": "Happy Bride",
+        "exploreProductsAlt": "Explore Products",
+        "exploreServicesAlt": "Explore Services"
+      },
+      "cta": {
+        "exploreProducts": "Explore Products",
+        "exploreServices": "Explore Services"
+      },
+      "circularText": "OURBRIDE START SHOPPING NOW WITH"
+    },
+    "stats": {
+      "clients": "Clients",
+      "serviceProviders": "Services Providers",
+      "availableServices": "Available Services",
+      "products": "Products"
+    },
+    "benefits": {
+      "verifiedTrustedProviders": {
+        "title": "Verified Trusted Providers",
+        "description": "Every service is identity-checked for a safe and reliable experience."
+      },
+      "allInOneWeddingHub": {
+        "title": "All-in-One Wedding Hub",
+        "description": "Plan, shop, book, and manage everything from one platform."
+      },
+      "securePayments": {
+        "title": "Secure Payments",
+        "description": "Safe transactions, transparent pricing, and guaranteed service delivery."
+      },
+      "exclusiveOffersRewards": {
+        "title": "Exclusive Offers & Rewards",
+        "description": "Enjoy discounts, and gift options designed for your big day."
+      }
+    },
+    "suggestedProducts": {
+      "title": "Products Suggested for You"
+    },
+    "suggestedServices": {
+      "title": "Services Suggested for You"
+    },
+    "trustSection": {
+      "title": {
+        "line1": "Why",
+        "line2": "Brides",
+        "line3": "Trust",
+        "line4": "Our Services"
+      }
+    },
+    "testimonials": {
+      "title": {
+        "line1": "Read",
+        "line2": "Reviews",
+        "line3": "Ride With",
+        "line4": "Confidence"
+      },
+      "whatOurCustomersAreSaying": {
+        "line1": "What Our",
+        "line2": "Customers",
+        "line3": "Are Saying"
+      },
+      "aria": {
+        "previous": "Previous testimonials",
+        "next": "Next testimonials",
+        "goToPage": "Go to page {page}"
+      }
+    },
+    "providers": {
+      "title": {
+        "line1": "Discover",
+        "line2": "Trusted",
+        "line3": "Wedding",
+        "line4": "Providers"
+      }
+    },
+    "journey": {
+      "title": {
+        "line1": "Your",
+        "line2": "Wedding Journey",
+        "line3": "Starts",
+        "line4": "Here"
+      }
+    },
+    "appDownload": {
+      "title": {
+        "line1": "Make Wedding Planning Easier",
+        "line2": "With OurBride"
+      },
+      "images": {
+        "phoneAlt": "OurBride Mobile App"
+      }
+    },
+    "trustCards": {
+      "items": {
+        "1": {
+          "heading": "Made for Local Brides",
+          "description": "Tailored for brides across Egypt — especially those outside the capital."
+        },
+        "2": {
+          "heading": "Simple & Beautiful Experience",
+          "description": "A feminine, easy-to-use design that makes planning delightful."
+        },
+        "3": {
+          "heading": "Real Offers & Savings",
+          "description": "Exclusive coupons and discounts designed for your budget."
+        },
+        "4": {
+          "heading": "All-in-One Platform",
+          "description": "Plan, book, shop, and celebrate everything in one place."
+        },
+        "5": {
+          "heading": "Verified Trusted Providers",
+          "description": "All our service providers are carefully verified and trusted."
+        },
+        "6": {
+          "heading": "Secure Payments",
+          "description": "Your payments are safe and secure with our trusted payment system."
+        }
+      }
+    },
+    "journeySteps": {
+      "steps": {
+        "1": {
+          "title": "Step #1",
+          "description": "Exclusive coupons and discounts designed for your budget."
+        },
+        "2": {
+          "title": "Step #2",
+          "description": "Exclusive coupons and discounts designed for your budget."
+        },
+        "3": {
+          "title": "Step #3",
+          "description": "Exclusive coupons and discounts designed for your budget."
+        }
+      }
+    }
+  }
 }

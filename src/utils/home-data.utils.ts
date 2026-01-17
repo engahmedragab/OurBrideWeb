@@ -303,25 +303,23 @@ const extractBanners = (data: Record<string, unknown>): OfferItem[] => {
           imageUrl && imageUrl.trim() !== '' ? imageUrl : undefined
 
         return {
-          heading: (b.title || b.nameEn || b.nameAr || '') as string,
-          description: (b.description ||
-            b.subtitle ||
-            b.descriptionEn ||
-            b.descriptionAr ||
-            '') as string,
+          headingEn: ( b.nameEn || b.nameAr || b.title  || '') as string,
+          headingAr: (b.nameAr || b.nameEn || b.title  || '') as string,
+          description: ( b.descriptionEn || b.description || b.subtitle || '') as string,
+          descriptionAr: (b.descriptionAr || b.descriptionEn || b.subtitle || '') as string,
           ctaText: (b.buttonText || 'Start Shopping') as string,
           ctaLink: (b.buttonLink || b.linkUrl || '/products') as string,
-          productImage,
-        } as OfferItem
+          productImage: imageUrl,
+        } as unknown as OfferItem
       })
-      .filter((banner) => banner.heading) // Only include banners with a heading
+      .filter((banner) => banner.headingEn || banner.headingAr) // Only include banners with a heading
       .sort(
         (a, b) =>
           ((data.banners as Record<string, unknown>[]).find(
-            (banner) => banner.title === a.heading
+            (banner) => banner.title ===  (a.headingEn || a.headingAr)
           )?.order as number) -
           ((data.banners as Record<string, unknown>[]).find(
-            (banner) => banner.title === b.heading
+            (banner) => banner.title ===  (a.headingEn || a.headingAr)
           )?.order as number)
       )
   }

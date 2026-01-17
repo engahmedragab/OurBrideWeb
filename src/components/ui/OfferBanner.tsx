@@ -7,10 +7,13 @@ import { Button } from './Button'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { StaticImageData } from 'next/image'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface OfferItem {
-  heading: string
+  headingEn: string
+  headingAr: string
   description?: string
+  descriptionAr?: string
   offerPercentage?: number
   ctaText?: string
   ctaLink?: string
@@ -35,6 +38,10 @@ export const OfferBanner = ({
 }: OfferBannerProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [email, setEmail] = useState('')
+
+  // localization
+  const isRTL = useIsRTL();
+  const tCommon = useI18nTranslations('common')
 
   // Auto-play carousel
   useEffect(() => {
@@ -77,19 +84,21 @@ export const OfferBanner = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 relative w-full">
             {/* Left Content - Text and Buttons */}
             <div className="text-center lg:text-left px-4 md:px-6 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center">
-              <h2 className="text-18 md:text-20 font-medium text-gray-900 mb-1.5 md:mb-2">
-                {currentOffer.heading}
+            <h2 className={cn("text-18 md:text-20 font-medium text-gray-900 mb-1.5 md:mb-2", isRTL ? 'text-right' : 'text-left')}>
+                {isRTL ? currentOffer.headingAr : currentOffer.headingEn}
+
               </h2>
-              {currentOffer.description && (
-                <p className="text-13 md:text-14 text-gray-500 mb-3 md:mb-4 max-w-lg mx-auto lg:mx-0">
-                  {currentOffer.description}
+              {currentOffer.description || currentOffer.descriptionAr && (
+                <p className={cn("text-13 md:text-14 text-gray-500 mb-3 md:mb-4 max-w-lg mx-auto lg:mx-0", isRTL ? 'text-right' : 'text-left')}>
+
+                {isRTL ? currentOffer.descriptionAr : currentOffer.description}
                 </p>
               )}
               {currentOffer.variant === 'newsletter' ? (
                 <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto lg:mx-0 items-stretch sm:items-center">
                   <input
                     type="email"
-                    placeholder="Enter Your E-mail"
+                    placeholder={tCommon('emailPlaceholder')}
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     className="flex-1 min-w-0 h-9 md:h-10 px-3 md:px-4 rounded-full border border-gray-300 text-13 md:text-14 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -99,7 +108,7 @@ export const OfferBanner = ({
                     className="h-9 md:h-10 px-4 md:px-5 text-13 md:text-14 font-semibold border border-brand-500 rounded-full bg-white text-brand-500 hover:bg-gray-50 whitespace-nowrap flex-shrink-0"
                     onClick={handleSubscribe}
                   >
-                    {currentOffer.ctaText || 'Subscribe'}
+                    {currentOffer.ctaText || tCommon('subscribe')}
                   </Button>
                 </div>
               ) : (
@@ -111,7 +120,7 @@ export const OfferBanner = ({
                     asChild
                   >
                     <Link href={currentOffer.ctaLink || '/products'}>
-                      {currentOffer.ctaText || 'Start Shopping'}
+                      {currentOffer.ctaText || tCommon('startShopping')}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>

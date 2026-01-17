@@ -5,47 +5,47 @@
 export const TRUST_CARDS = [
   {
     id: '1',
-    heading: 'Made for Local Brides',
+    heading: "items.1.heading",
     description:
-      'Tailored for brides across Egypt — especially those outside the capital.',
+    "items.1.description",
     rotation: -30,
     background: 'gray' as const,
   },
   {
     id: '2',
-    heading: 'Simple & Beautiful Experience',
+    heading: "items.2.heading",
     description:
-      'A feminine, easy-to-use design that makes planning delightful.',
+    "items.2.description",
     rotation: 15,
     background: 'white' as const,
   },
   {
     id: '3',
-    heading: 'Real Offers & Savings',
-    description: 'Exclusive coupons and discounts designed for your budget.',
+    heading: "items.3.heading",
+    description: "items.3.description",
     rotation: -15,
     background: 'gray' as const,
   },
   {
     id: '4',
-    heading: 'All-in-One Platform',
-    description: 'Plan, book, shop, and celebrate everything in one place.',
+    heading: "items.4.heading",
+    description: "items.4.description",
     rotation:   15,
     background: 'white' as const,
   },
   {
     id: '5',
-    heading: 'Verified Trusted Providers',
+    heading: "items.5.heading",
     description:
-      'All our service providers are carefully verified and trusted.',
+    "items.5.description",
     rotation: -15,
     background: 'gray' as const,
   },
   {
     id: '6',
-    heading: 'Secure Payments',
+    heading: "items.6.heading",
     description:
-      'Your payments are safe and secure with our trusted payment system.',
+    "items.6.description",
     rotation: 30,
     background: 'white' as const,
   },
@@ -54,18 +54,18 @@ export const TRUST_CARDS = [
 export const JOURNEY_STEPS = [
   {
     stepNumber: 1,
-    title: 'Step #1',
-    description: 'Exclusive coupons and discounts designed for your budget.',
+    title:  "journeySteps.steps.1.title",
+    description: "journeySteps.steps.1.description",
   },
   {
     stepNumber: 2,
-    title: 'Step #2',
-    description: 'Exclusive coupons and discounts designed for your budget.',
+    title: "journeySteps.steps.2.title",
+    description: "journeySteps.steps.2.description",
   },
   {
     stepNumber: 3,
-    title: 'Step #3',
-    description: 'Exclusive coupons and discounts designed for your budget.',
+    title: "journeySteps.steps.3.title",
+    description: "journeySteps.steps.3.description",
   },
 ] as const
 

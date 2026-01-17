@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import type { Notification, NotificationType } from '@/types/notification'
+import { useI18nTranslations } from '@/i18n'
 
 export interface NotificationCardProps {
   notification: Notification
@@ -78,6 +79,8 @@ export const NotificationCard = ({
   showActions = true,
 }: NotificationCardProps) => {
   const [isHovered, setIsHovered] = useState(false)
+  // localization
+  const t = useI18nTranslations('navbar.notifications');
 
   const handleCardClick = () => {
     if (!notification.isRead) {
@@ -149,7 +152,7 @@ export const NotificationCard = ({
                 <span className={cn('text-gray-500', compact ? 'text-11' : 'text-12')}>{notification.timestamp}</span>
                 {notification.actionUrl && !compact && (
                   <span className="text-12 text-brand-500 font-medium flex items-center gap-1">
-                    View
+                    {t('view')}
                     <ExternalLink className="h-3 w-3" />
                   </span>
                 )}

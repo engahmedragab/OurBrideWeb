@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import { Bell, Loader2 } from 'lucide-react'
 import type { Notification } from '@/types/notification'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { useI18nTranslations } from '@/i18n'
 
 export interface NotificationDropdownProps {
   notifications: Notification[]
@@ -30,6 +31,9 @@ export const NotificationDropdown = ({
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
 
+  // localization
+  const t = useI18nTranslations('navbar.notifications');
+  const tCommon = useI18nTranslations('common');
   // Get recent notifications (last 5)
   const recentNotifications = notifications.slice(0, 5)
   const unreadCount = notifications.filter(n => !n.isRead).length
@@ -56,7 +60,7 @@ export const NotificationDropdown = ({
             'hover:bg-brand-50/50',
             'focus:outline-none'
           )}
-          aria-label="Notifications"
+          aria-label={t('notifications')}
         >
           <Bell className="h-5 w-5 text-brand-500" />
           {unreadCount > 0 && (
@@ -74,10 +78,10 @@ export const NotificationDropdown = ({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center gap-2">
-            <h3 className="text-18 font-normal text-gray-900">Notifications</h3>
+            <h3 className="text-18 font-normal text-gray-900">{t('notifications')}</h3>
             {unreadCount > 0 && (
               <Badge variant="default" className="bg-brand-500 text-white border-0">
-                {unreadCount} new
+                {unreadCount} {tCommon('new')}
               </Badge>
             )}
           </div>
@@ -88,7 +92,7 @@ export const NotificationDropdown = ({
               onClick={onMarkAllAsRead}
               className="text-12 text-brand-500 hover:text-brand-600"
             >
-              Mark all read
+              {t('markAllAsRead')}
             </Button>
           )}
         </div>
@@ -97,13 +101,13 @@ export const NotificationDropdown = ({
         <div className="overflow-y-auto flex-1">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 px-4">
-              <LoadingSpinner size="md" text="Loading notifications..." />
+              <LoadingSpinner size="md" text={t('loading')} />
             </div>
           ) : recentNotifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-4">
               <Bell className="h-12 w-12 text-gray-400 mb-3" />
               <p className="text-14 text-gray-600 text-center">
-                No notifications yet
+                {t('noNotificationsYet')}
               </p>
             </div>
           ) : (
@@ -135,7 +139,7 @@ export const NotificationDropdown = ({
               onClick={() => setIsOpen(false)}
               className="block w-full text-center text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
             >
-              View all notifications
+              {t('viewAll')}
             </Link>
           </div>
         )}
