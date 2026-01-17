@@ -15,6 +15,7 @@ import type {
   UserType,
   RequestParams,
 } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBudgetBookDeltaRequest } from '@/../client/common/api/gen/ourbride-api'
 import type {
   GetBudgetBookResponse,
   GetBudgetLinesResponse,
@@ -25,6 +26,7 @@ import type {
   BudgetBooksBaseQuery,
   ApiError,
 } from '@/types/responses/budgetBooks.types'
+import type { SyncBookDeltaResponse } from '@/types/syncDelta'
 
 /**
  * Initialize a budget book
@@ -41,6 +43,29 @@ export const initBudgetBook = async (
   } catch (error: unknown) {
     const apiError: ApiError = {
       message: error instanceof Error ? error.message : 'Failed to initialize budget book',
+      status: (error as { response?: { status?: number } })?.response?.status,
+      details: error,
+    }
+    throw apiError
+  }
+}
+
+/**
+ * Add models to a budget book
+ */
+export const addBudgetBookModels = async (
+  query?: {
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  },
+  params?: RequestParams
+): Promise<void> => {
+  try {
+    await apiClient.api.postBudgetBooksAddModels(query, params)
+  } catch (error: unknown) {
+    const apiError: ApiError = {
+      message: error instanceof Error ? error.message : 'Failed to add budget book models',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }
@@ -94,6 +119,32 @@ export const syncBudgetBook = async (
   } catch (error: unknown) {
     const apiError: ApiError = {
       message: error instanceof Error ? error.message : 'Failed to sync budget book',
+      status: (error as { response?: { status?: number } })?.response?.status,
+      details: error,
+    }
+    throw apiError
+  }
+}
+
+/**
+ * Sync a budget book (delta)
+ */
+export const syncBudgetBookDelta = async (
+  data: SyncBudgetBookDeltaRequest,
+  query?: {
+    clientId?: string
+    userType?: UserType
+    eventId?: number
+  },
+  params?: RequestParams
+): Promise<SyncBookDeltaResponse<GetBudgetBookResponse>> => {
+  try {
+    const response = await apiClient.api.postBudgetBooksSyncBookDelta(data, query, params)
+    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<GetBudgetBookResponse>
+  } catch (error: unknown) {
+    const apiError: ApiError = {
+      message: error instanceof Error ? error.message : 'Failed to sync budget book (delta)',
       status: (error as { response?: { status?: number } })?.response?.status,
       details: error,
     }

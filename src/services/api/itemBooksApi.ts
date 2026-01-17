@@ -13,6 +13,8 @@ import type {
   ItemLineCategoryUpdateRequest,
   UserType,
 } from '@/../client/common/api/gen/ourbride-api'
+import { ContentType } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 export interface ItemBooksQuery {
   clientId?: string
@@ -53,6 +55,26 @@ export const initItemBooks = async (params?: {
 }
 
 /**
+ * Add models to item books
+ */
+export const addItemBookModels = async (params?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<void> => {
+  try {
+    const normalizedParams = params ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: params.eventId,
+    } : undefined
+    await apiClient.api.postItemBooksAddModels(normalizedParams)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to add item book models')
+  }
+}
+
+/**
  * Sync item book data
  */
 export const syncItemBook = async (
@@ -64,6 +86,23 @@ export const syncItemBook = async (
     await apiClient.api.postItemBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync item book')
+  }
+}
+
+/**
+ * Sync item book data (delta)
+ */
+export const syncItemBookDelta = async (
+  data: SyncBookDeltaRequest<ItemLineRequest, ItemLineCategoryRequest>,
+  query?: ItemBooksQuery
+): Promise<SyncBookDeltaResponse<ItemBookResponse | null>> => {
+  try {
+    const params = normalizeQuery(query)
+    const response = await apiClient.api.postItemBooksSyncBookDelta(data, params)
+    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<ItemBookResponse | null>
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to sync item book (delta)')
   }
 }
 

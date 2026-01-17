@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import type { UiTodoCategory } from '@/app/[locale]/events/planning/todo/page'
+import type { UiTodoCategory } from '@/utils/planning/mappers/todoMappers'
 import { TodoListRow } from '@/components/planning/todo/TodoListRow'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/Button'

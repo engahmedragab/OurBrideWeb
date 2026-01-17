@@ -19,8 +19,11 @@ import {
   Scissors,
   Gift,
   Gem,
+  FileText,
+  Plane,
   type LucideIcon
 } from 'lucide-react'
+import type { ServiceClass } from '@/types/responses/book-enums'
 
 /**
  * Map service names to Lucide icons
@@ -193,6 +196,140 @@ export const getServiceIconName = (serviceName: string): string => {
   
   // Default fallback
   return 'Sparkles'
+}
+
+/**
+ * Get icon based on ServiceClass enum
+ * This is the primary method for determining icons based on service class
+ */
+export const getServiceIconByClass = (serviceClass: ServiceClass | number | null | undefined): LucideIcon => {
+  if (serviceClass === null || serviceClass === undefined) {
+    return Sparkles
+  }
+
+  const classValue = typeof serviceClass === 'number' ? serviceClass : serviceClass
+
+  switch (classValue) {
+    case 0: // None
+      return Sparkles
+    case 1: // WeddingHall
+      return Building2
+    case 2: // WeddingPlanner
+      return Sparkles
+    case 3: // WeddingCar
+      return Car
+    case 4: // Photographer
+      return Camera
+    case 5: // PhotoSetion
+      return Camera
+    case 6: // MakeupArtist
+      return Sparkles
+    case 7: // WeddingDress
+      return Heart
+    case 8: // FlowerBouquet
+      return Flower2
+    case 9: // Invitations
+      return FileText
+    case 10: // Mazoons
+      return Gift
+    case 11: // BeautyCenter
+      return Sparkles
+    case 12: // Catering
+      return UtensilsCrossed
+    case 13: // WeddingCake
+      return Cake
+    case 14: // Dress
+      return Heart
+    case 15: // Videography
+      return Camera
+    case 16: // Jewelry
+      return Crown
+    case 17: // Travel
+      return Plane
+    case 18: // DJ
+      return Music
+    case 19: // CeremonyMusic
+      return Music
+    case 25: // EngagementDress
+      return Heart
+    case 26: // HennaOutfit
+      return Heart
+    case 27: // PhotoSection
+      return Camera
+    default:
+      return Sparkles
+  }
+}
+
+/**
+ * Convert ServiceClass string enum to number
+ * Maps API string enum values to number enum values used in the app
+ */
+export const getServiceClassNumber = (serviceClass: string): number => {
+  const classMap: Record<string, number> = {
+    'None': 0,
+    'WeddingHall': 1,
+    'WeddingPlanner': 2,
+    'WeddingCar': 3,
+    'Photographer': 4,
+    'PhotoSetion': 5,
+    'MakeupArtist': 6,
+    'WeddingDress': 7,
+    'FlowerBouquet': 8,
+    'Invitations': 9,
+    'Mazoons': 10,
+    'BeautyCenter': 11,
+    'Catering': 12,
+    'WeddingCake': 13,
+    'Dress': 14,
+    'Videography': 15,
+    'Jewelry': 16,
+    'Travel': 17,
+    'DJ': 18,
+    'CeremonyMusic': 19,
+    'EngagementDress': 25,
+    'HennaOutfit': 26,
+    'PhotoSection': 27,
+  }
+  return classMap[serviceClass] ?? 0
+}
+
+/**
+ * Convert ServiceClass number to its name string
+ * Maps number enum values to their string names
+ */
+export const getServiceClassName = (serviceClass: number | null | undefined): string => {
+  if (serviceClass === null || serviceClass === undefined) {
+    return 'Unknown'
+  }
+
+  const nameMap: Record<number, string> = {
+    0: 'None',
+    1: 'Wedding Hall',
+    2: 'Wedding Planner',
+    3: 'Wedding Car',
+    4: 'Photographer',
+    5: 'Photo Section',
+    6: 'Makeup Artist',
+    7: 'Wedding Dress',
+    8: 'Flower Bouquet',
+    9: 'Invitations',
+    10: 'Mazoons',
+    11: 'Beauty Center',
+    12: 'Catering',
+    13: 'Wedding Cake',
+    14: 'Dress',
+    15: 'Videography',
+    16: 'Jewelry',
+    17: 'Travel',
+    18: 'DJ',
+    19: 'Ceremony Music',
+    25: 'Engagement Dress',
+    26: 'Henna Outfit',
+    27: 'Photo Section',
+  }
+
+  return nameMap[serviceClass] ?? 'Unknown'
 }
 
 /**

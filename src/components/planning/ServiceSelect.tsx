@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { planningTypography } from './typography'
-import { getServiceIcon } from '@/utils/serviceIconMapper'
+import { getServiceIcon, getServiceIconByClass } from '@/utils/serviceIconMapper'
 import type { PlanningPreference } from '@/services/profile/profileApi'
 import type { LucideIcon } from 'lucide-react'
 
@@ -41,9 +41,15 @@ export const ServiceSelect = ({
   // Map services from API to ServiceOption format
   const serviceOptions: ServiceOption[] = useMemo(() => {
     return services.map((service) => {
-      // Use icon from API if available, otherwise use getServiceIcon fallback
-      const Icon = getServiceIcon(service.name)
-      
+      // Priority: use serviceClass if available, otherwise use iconName, then fallback to service name
+      let Icon
+      if (service.class !== undefined && service.class !== null) {
+        Icon = getServiceIconByClass(service.class)
+      } else {
+        const iconName = service.iconName || service.name || ''
+        Icon = getServiceIcon(iconName)
+      }
+
       return {
         serviceKey: String(service.id), // Use preparation ID as serviceKey
         label: service.nameEn || service.nameAr || service.name || 'Unknown',

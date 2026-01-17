@@ -6,6 +6,7 @@ export { GuestsTabs } from './GuestsTabs'
 export { GuestRow } from './GuestRow'
 export { GuestsHeader } from './GuestsHeader'
 export { GuestsSummary } from './GuestsSummary'
+export { GuestsTable } from './GuestsTable'
 
 
 

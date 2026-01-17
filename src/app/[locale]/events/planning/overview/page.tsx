@@ -20,13 +20,8 @@ function OverviewPageContent() {
     }
   }, [eventId, router])
 
-  return (
-    <div className="w-full min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <LoadingOverlay open={true} title="Redirecting to event overview..." />
-      </div>
-    </div>
-  )
+  // Don't show anything, just redirect silently
+  return null
 }
 
 /**

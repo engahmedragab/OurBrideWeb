@@ -3,7 +3,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { ChevronRight, Trash2 } from 'lucide-react'
-import type { UiTodoCategory } from '@/app/[locale]/events/planning/todo/page'
+import type { UiTodoCategory } from '@/utils/planning/mappers/todoMappers'
 
 const STYLE_BY_COLOR: Record<string, { bg: string; border: string }> = {
   gray: { bg: 'bg-gray-50', border: 'border-gray-200' },
@@ -41,11 +41,23 @@ export function TodoListRow({
       )}
     >
       <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-medium text-gray-900">{category.name}</div>
+          {(category.lineCount !== undefined || category.completedCount !== undefined) && (
+            <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+              {category.lineCount !== undefined && (
+                <span>{category.lineCount} {category.lineCount === 1 ? 'item' : 'items'}</span>
+              )}
+              {category.completedCount !== undefined && category.completedCount > 0 && (
+                <span className="text-green-600">
+                  {category.completedCount} completed
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 flex-shrink-0">
           {onDelete ? (
             <span
               onClick={(e) => {

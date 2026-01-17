@@ -13,6 +13,7 @@ import type {
   ServiceLineCategoryUpdateRequest,
   UserType,
 } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 export interface ServiceBooksQuery {
   clientId?: string
@@ -53,6 +54,26 @@ export const initServiceBooks = async (params?: {
 }
 
 /**
+ * Add models to service books
+ */
+export const addServiceBookModels = async (params?: {
+  clientId?: string
+  userType?: UserType
+  eventId?: number
+}): Promise<void> => {
+  try {
+    const normalizedParams = params ? {
+      clientId: null as unknown as string | undefined,
+      userType: null as unknown as UserType | undefined,
+      eventId: params.eventId,
+    } : undefined
+    await apiClient.api.postServiceBooksAddModels(normalizedParams)
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to add service book models')
+  }
+}
+
+/**
  * Sync service book data
  */
 export const syncServiceBook = async (
@@ -64,6 +85,23 @@ export const syncServiceBook = async (
     await apiClient.api.postServiceBooksSyncBook(data, params)
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync service book')
+  }
+}
+
+/**
+ * Sync service book data (delta)
+ */
+export const syncServiceBookDelta = async (
+  data: SyncBookDeltaRequest<ServiceLineRequest, ServiceLineCategoryRequest>,
+  query?: ServiceBooksQuery
+): Promise<SyncBookDeltaResponse<ServiceBookResponse | null>> => {
+  try {
+    const params = normalizeQuery(query)
+    const response = await apiClient.api.postServiceBooksSyncBookDelta(data, params)
+    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
+    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<ServiceBookResponse | null>
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : 'Failed to sync service book (delta)')
   }
 }
 

@@ -2,16 +2,16 @@ import PreparationsLinesClient from '@/components/planning/preparations/Preparat
 
 // Generate static params for static export
 export function generateStaticParams() {
-  // Return array of category IDs to pre-generate at build time
-  // Generate IDs 1-5 to cover common category IDs
-  return Array.from({ length: 5 }, (_, i) => ({ categoryId: String(i + 1) }))
+  // Return empty array for dynamic routes
+  // This route will be generated on-demand
+  return []
 }
 
-export default async function PreparationsLinesPage({
+export default async function PreparationsCategoryPage({
   params,
 }: {
-  params: Promise<{ categoryId: string }>
+  params: Promise<{ categoryId: string; locale: string }>
 }) {
-  await params // Await params for Next.js static export compatibility
+  await params // Ensure params are awaited
   return <PreparationsLinesClient />
 }

@@ -1,2 +1,2 @@
-export { useNoteBook, useNoteSyncMutation } from './noteBooks.hooks'
+export { useNoteBook, useNoteSyncMutation, useNoteSyncDeltaMutation } from './noteBooks.hooks'
 

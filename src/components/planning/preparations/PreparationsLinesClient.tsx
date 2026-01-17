@@ -30,7 +30,7 @@ import { normalizeIconName } from '@/utils/serviceIconMapper'
 const convertServiceLineToPreparationService = (line: ServiceLineResponse): PreparationService => {
   // Map serviceType enum to string
   const serviceTypeStr = line.serviceType === 0 ? 'rent' : line.serviceType === 1 ? 'buy' : 'rent'
-  
+
   return {
     id: String(line.id),
     // Service column: show line.title (fallback to titleEn then titleAr)
@@ -67,7 +67,7 @@ function PreparationsLinesContent() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
   const lastSyncedRef = useRef<ServiceBookResponse | null>(null)
   const isInitialLoadRef = useRef(true)
-  
+
   // Optimistic UI: pending lines added locally before sync/refetch
   const [pendingLines, setPendingLines] = useState<Array<ServiceLineResponse & { clientTempId?: string }>>([])
 
@@ -128,21 +128,21 @@ function PreparationsLinesContent() {
       setLocalServiceBook(serviceBook)
       lastSyncedRef.current = serviceBook
       isInitialLoadRef.current = false
-      
+
       // Remove pending lines that have been saved (deduplicate)
       // Match by checking if line exists in server response with same title and similar timestamp
       const bookData = (serviceBook as unknown as { data?: ServiceBookResponse } | ServiceBookResponse)
       const actualBook: ServiceBookResponse = 'data' in bookData && bookData.data ? bookData.data : bookData as ServiceBookResponse
       const serverLineIds = new Set((actualBook?.lines || []).map(line => line.id))
-      
-      setPendingLines(prev => 
+
+      setPendingLines(prev =>
         prev.filter(pendingLine => {
           // If pending line has a real ID now, it was saved
           if (pendingLine.id && pendingLine.id > 0 && serverLineIds.has(pendingLine.id)) {
             return false
           }
           // Also match by title and creation timestamp if available
-          const matchingServerLine = (actualBook?.lines || []).find(serverLine => 
+          const matchingServerLine = (actualBook?.lines || []).find(serverLine =>
             serverLine.title === pendingLine.title &&
             serverLine.lineCategoryId === pendingLine.lineCategoryId &&
             Math.abs(new Date(serverLine.creationDate || '').getTime() - new Date(pendingLine.creationDate || '').getTime()) < 5000 // Within 5 seconds
@@ -190,13 +190,13 @@ function PreparationsLinesContent() {
   // The API returns { success: true, data: { lines: [...] } }
   const serverLines: ServiceLineResponse[] = useMemo(() => {
     if (!serviceBook) return []
-    
+
     // Check if serviceBook has a 'data' property (wrapped response)
     // If yes, use serviceBook.data.lines, otherwise use serviceBook.lines
     const bookData = (serviceBook as unknown as { data?: ServiceBookResponse } | ServiceBookResponse)
     const actualBook: ServiceBookResponse = 'data' in bookData && bookData.data ? bookData.data : bookData as ServiceBookResponse
     const allLines = actualBook?.lines || []
-    
+
     // Only filter by isDeleted (temporarily remove category filter)
     return allLines.filter((line: ServiceLineResponse) => line.isDeleted !== true)
   }, [serviceBook])
@@ -221,17 +221,17 @@ function PreparationsLinesContent() {
     if (!date || date === '0001-01-01' || date === '0001-01-01T00:00:00' || date === '0001-01-01T00:00:00Z') {
       return '0001-01-01T00:00:00Z'
     }
-    
+
     // If already ISO format, return as is
     if (date.includes('T')) {
       return date.endsWith('Z') ? date : `${date}Z`
     }
-    
+
     // If YYYY-MM-DD format, convert to ISO
     if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return `${date}T00:00:00.000Z`
     }
-    
+
     // Try to parse and convert
     try {
       const parsed = new Date(date)
@@ -250,8 +250,8 @@ function PreparationsLinesContent() {
    * For new lines, omits id completely
    */
   const prepareLineForSync = (line: ServiceLineResponse): Record<string, unknown> => {
-    const isNewLine = !line.id || line.id === 0
-    
+    const isNewLine = line.id === null || line.id === undefined
+
     // Start with full line object (matches backend response shape)
     const preparedLine: Record<string, unknown> = {
       titleAr: line.titleAr || line.title || '',
@@ -300,15 +300,15 @@ function PreparationsLinesContent() {
       isDeleted: line.isDeleted || false,
       isModelLine: isNewLine ? false : (line.isModelLine || false),
       bookId: line.bookId || localServiceBook?.id || 0,
-      lineCategoryId: line.lineCategoryId || categoryId || null,
+      lineCategoryId: line.lineCategoryId ?? categoryId ?? null,
       slug: line.slug || '',
     }
-    
-    // Only include id if it's a real positive number (existing line)
-    if (!isNewLine) {
+
+    // Always include id if present (keep negative temp IDs for new lines)
+    if (line.id !== null && line.id !== undefined) {
       preparedLine.id = line.id
     }
-    
+
     return preparedLine
   }
 
@@ -324,27 +324,29 @@ function PreparationsLinesContent() {
 
     // Clone the entire book object to maintain shape
     const payload = structuredClone(localServiceBook) as unknown as Record<string, unknown>
-    
+
     // Prepare all lines to match backend shape
     payload.lines = (localServiceBook.lines || []).map(prepareLineForSync)
-    
+
     // Remove server-managed fields from root
     delete payload.createdBy
     delete payload.lastModifiedBy
     delete payload.creationDate
     delete payload.lastModifiedDate
-    
+
     // Ensure required root fields exist
     payload.completed = payload.completed ?? 0
     payload.pending = payload.pending ?? 0
     payload.isSubDone = payload.isSubDone ?? false
     payload.isModelsAdd = payload.isModelsAdd ?? true
     payload.count = payload.count ?? (Array.isArray(payload.lines) ? payload.lines.length : 0)
-    
+
     // Debug: Log final payload to verify structure
     if (process.env.NODE_ENV === 'development') {
       const linesArray = Array.isArray(payload.lines) ? payload.lines : []
-      const newLines = linesArray.filter((l: Record<string, unknown>) => !l.id || l.id === 0)
+      const newLines = linesArray.filter((l: Record<string, unknown>) =>
+        typeof l.id !== 'number' || l.id <= 0
+      )
       console.log('Sync payload (matching backend shape):', {
         rootFields: {
           id: payload.id,
@@ -515,28 +517,28 @@ function PreparationsLinesContent() {
         // Add new line - create full line object matching backend response shape
         const templateLine = localServiceBook.lines?.[0]
         const baseLine = templateLine || {} as ServiceLineResponse
-        
+
         const clientTempId = crypto.randomUUID()
         const newLine: ServiceLineResponse & { clientTempId?: string } = {
           // ID will be omitted in sync (set to 0 locally for tracking)
           id: 0,
           bookId: localServiceBook.id,
           lineCategoryId: categoryId || undefined,
-          
+
           // Title fields
           titleAr: mappedService.title,
           titleEn: mappedService.title,
           title: mappedService.title,
-          
+
           // Quantity and pricing
           quantity: mappedService.quantity,
           advanceAmount: mappedService.advancePayment,
           price: mappedService.cost,
           totalPrice: undefined,
-          
+
           // Date fields
           buyDate: mappedService.purchaseDate || undefined,
-          
+
           // Provider fields
           seller: mappedService.providerUserName || '',
           providerName: mappedService.providerUserName || '',
@@ -544,23 +546,23 @@ function PreparationsLinesContent() {
           providerLink: baseLine.providerLink || '',
           providingType: baseLine.providingType || undefined,
           hasProvider: !!mappedService.providerUserName,
-          
+
           // Notes
           notes: baseLine.notes || '',
-          
+
           // Reminder fields
           hasReminder: baseLine.hasReminder || false,
           reminderDate: baseLine.reminderDate || undefined,
           reminderText: baseLine.reminderText || '',
           reminderType: baseLine.reminderType || undefined,
-          
+
           // Service fields
           budget: baseLine.budget || false,
           serviceType: mappedService.serviceType === 'rent' ? 0 : 1,
           serviceClass: baseLine.serviceClass || (localServiceBook.bookClass as unknown as number) || 0,
           iconName: mappedService.icon.value,
           colorName: baseLine.colorName || '',
-          
+
           // Linked entities
           preparationId: preparationId || undefined,
           preparation: undefined,
@@ -570,43 +572,43 @@ function PreparationsLinesContent() {
           service: undefined,
           reservationId: baseLine.reservationId || undefined,
           reservation: undefined,
-          
+
           // Link flags
           isLinkedToService: baseLine.isLinkedToService || false,
           isLinkedToReservation: baseLine.isLinkedToReservation || false,
-          
+
           // Service date and notes
           serviceDate: baseLine.serviceDate || undefined,
           serviceNotes: baseLine.serviceNotes || '',
           reservationNotes: baseLine.reservationNotes || '',
-          
+
           // Line metadata
           groomId: baseLine.groomId || localServiceBook.groomId || undefined,
           brideId: baseLine.brideId || localServiceBook.brideId || undefined,
           lineType: baseLine.lineType || localServiceBook.bookType,
           bookClass: baseLine.bookClass || localServiceBook.bookClass,
-          
+
           // Status flags
           isDone: mappedService.completed,
           isFavorite: false,
           isDeleted: false,
           isModelLine: false,
-          
+
           // Server-managed fields (will be removed in sync)
           createdBy: baseLine.createdBy || '',
           lastModifiedBy: baseLine.lastModifiedBy || '',
           slug: baseLine.slug || '',
           creationDate: new Date().toISOString(),
           lastModifiedDate: new Date().toISOString(),
-          
+
           // Client-only field for deduplication (not sent to backend)
           clientTempId,
         }
 
         // Add to pendingLines for optimistic UI
         setPendingLines(prev => [...prev, newLine])
-          
-          setLocalServiceBook(prev => {
+
+        setLocalServiceBook(prev => {
           if (!prev) return prev
           return {
             ...prev,
@@ -785,23 +787,23 @@ function PreparationsLinesContent() {
           initialValue={
             editingService
               ? (() => {
-                  // Find the line to get preparationId
-                  const line = localServiceBook?.lines?.find(l => String(l.id) === editingService.id)
-                  const serviceKey = line?.preparationId ? String(line.preparationId) : undefined
-                  
-                  return {
-                    id: editingService.id,
-                    serviceKey: serviceKey || (editingService.icon.kind === 'asset' ? editingService.icon.value : undefined),
-                    title: editingService.title,
-                    serviceType: editingService.serviceType as 'rent' | 'buy',
-                    quantity: editingService.quantity,
-                    cost: editingService.cost,
-                    advancePayment: editingService.advancePayment,
-                    providerUserName: editingService.providerUserName,
-                    purchaseDate: editingService.purchaseDate || '',
-                    completed: editingService.completed,
-                  }
-                })()
+                // Find the line to get preparationId
+                const line = localServiceBook?.lines?.find(l => String(l.id) === editingService.id)
+                const serviceKey = line?.preparationId ? String(line.preparationId) : undefined
+
+                return {
+                  id: editingService.id,
+                  serviceKey: serviceKey || (editingService.icon.kind === 'asset' ? editingService.icon.value : undefined),
+                  title: editingService.title,
+                  serviceType: editingService.serviceType as 'rent' | 'buy',
+                  quantity: editingService.quantity,
+                  cost: editingService.cost,
+                  advancePayment: editingService.advancePayment,
+                  providerUserName: editingService.providerUserName,
+                  purchaseDate: editingService.purchaseDate || '',
+                  completed: editingService.completed,
+                }
+              })()
               : undefined
           }
           onClose={() => {
