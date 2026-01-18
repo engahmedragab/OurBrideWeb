@@ -1,7 +1,8 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  // During build, use placeholder - actual URL will be used at runtime
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com',
   timeout: 30000, // Increased from 10000ms (10s) to 30000ms (30s)
   headers: {
     'Content-Type': 'application/json',

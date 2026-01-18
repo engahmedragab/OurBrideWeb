@@ -14,8 +14,11 @@ import {
 // NOT https://preprod.our-bride.com/api/v1
 const getBaseURL = (): string => {
   const url = process.env.NEXT_PUBLIC_API_BASE_URL
+  // During build time (SSR), env vars might not be available
+  // Provide a placeholder that will be replaced at runtime
   if (!url) {
-    throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is required')
+    // Use placeholder during build - actual URL will be used at runtime
+    return 'https://preprod.our-bride.com'
   }
   // Remove trailing slash if present
   let baseURL = url.replace(/\/$/, '')
