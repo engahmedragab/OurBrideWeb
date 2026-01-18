@@ -1,8 +1,7 @@
 import axios from 'axios'
 
 const apiClient = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:5001',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   timeout: 30000, // Increased from 10000ms (10s) to 30000ms (30s)
   headers: {
     'Content-Type': 'application/json',

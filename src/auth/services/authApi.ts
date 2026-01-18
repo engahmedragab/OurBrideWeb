@@ -499,7 +499,10 @@ export const refreshToken = async (): Promise<AuthResponse> => {
     const { HttpClient, Api } = await import('@/../client/common/api/gen/ourbride-api')
     
     const getBaseURL = (): string => {
-      const url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:5001'
+      const url = process.env.NEXT_PUBLIC_API_BASE_URL
+      if (!url) {
+        throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is required')
+      }
       let baseURL = url.replace(/\/$/, '')
       baseURL = baseURL.replace(/\/api\/v1$/, '')
       return baseURL

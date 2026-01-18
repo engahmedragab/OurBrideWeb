@@ -82,7 +82,10 @@ export default function DeepLinkHandlerPage() {
 
       ; (async () => {
         try {
-          const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001'
+          const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL
+          if (!baseURL) {
+            throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is required')
+          }
           const res = await axios.get(`${baseURL}/api/v1/deep-links/${shortCode}`, {
             withCredentials: true,
           })
