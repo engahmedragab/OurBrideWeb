@@ -499,10 +499,8 @@ export const refreshToken = async (): Promise<AuthResponse> => {
     const { HttpClient, Api } = await import('@/../client/common/api/gen/ourbride-api')
     
     const getBaseURL = (): string => {
-      const url = process.env.NEXT_PUBLIC_API_BASE_URL
-      if (!url) {
-        throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is required')
-      }
+      // During build, use placeholder - actual URL will be used at runtime
+      const url = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com/api/v1'
       let baseURL = url.replace(/\/$/, '')
       baseURL = baseURL.replace(/\/api\/v1$/, '')
       return baseURL
