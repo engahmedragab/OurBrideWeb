@@ -82,7 +82,8 @@ export default function DeepLinkHandlerPage() {
 
       ; (async () => {
         try {
-          const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001'
+          // During build, use placeholder - actual URL will be used at runtime
+          const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com/api/v1'
           const res = await axios.get(`${baseURL}/api/v1/deep-links/${shortCode}`, {
             withCredentials: true,
           })

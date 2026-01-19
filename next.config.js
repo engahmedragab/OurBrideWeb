@@ -22,11 +22,6 @@ const nextConfig = {
       },
       // Allow images from API base URL (supports multiple environments)
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '5001',
-      },
-      {
         protocol: 'https',
         hostname: '*.our-bride.com',
       },

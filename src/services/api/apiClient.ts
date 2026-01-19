@@ -10,10 +10,16 @@ import {
 
 // Get base URL and ensure it doesn't duplicate /api/v1
 // Note: The generated API endpoints already include /api/v1 in their paths
-// So baseURL should be just the domain (e.g., http://localhost:5001)
-// NOT http://localhost:5001/api/v1
+// So baseURL should be just the domain (e.g., https://preprod.our-bride.com)
+// NOT https://preprod.our-bride.com/api/v1
 const getBaseURL = (): string => {
-  const url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL || 'http://localhost:5001'
+  const url = process.env.NEXT_PUBLIC_API_BASE_URL
+  // During build time (SSR), env vars might not be available
+  // Provide a placeholder that will be replaced at runtime
+  if (!url) {
+    // Use placeholder during build - actual URL will be used at runtime
+    return 'https://preprod.our-bride.com'
+  }
   // Remove trailing slash if present
   let baseURL = url.replace(/\/$/, '')
   // Remove /api/v1 if it's at the end of the baseURL (since endpoints already include it)

@@ -85,7 +85,7 @@ export const getCommunityHome = async (query?: {
     
     // Log API call for debugging
     console.log('[getCommunityHome] Calling API with query:', cleanQuery)
-    console.log('[getCommunityHome] Base URL:', process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VITE_API_BASE_URL)
+    console.log('[getCommunityHome] Base URL:', process.env.NEXT_PUBLIC_API_BASE_URL)
     
     const response = await apiClient.api.getHomeGetCommunityHome(cleanQuery)
     
