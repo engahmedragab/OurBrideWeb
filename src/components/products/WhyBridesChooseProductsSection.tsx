@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { StaticImageData } from 'next/image'
 import { cn } from '@/lib/utils'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface Feature {
   title: string
@@ -32,6 +33,9 @@ export const WhyBridesChooseProductsSection = ({
   bottomHighlightText = 'OurBride Products',
   headerAlignment = 'center',
 }: WhyBridesChooseProductsSectionProps) => {
+  // localization
+  const t = useI18nTranslations('products')
+  const isRTL = useIsRTL()
   return (
     <section className={cn('w-full py-8 md:py-12', className)}>
       <div className="w-full">
@@ -60,13 +64,12 @@ export const WhyBridesChooseProductsSection = ({
           >
           
             <div
-              className="
+              className={cn(`
                 absolute inset-0
-                rounded-2xl md:rounded-l-2xl md:rounded-br-none 
                 border-2 border-brand-500
-                -translate-x-3 md:-translate-x-5 -translate-y-3 md:translate-y-5   
                 pointer-events-none
-              "
+              `,
+               isRTL ? 'translate-x-3 md:translate-x-5 translate-y-3 md:translate-y-5 rounded-2xl md:rounded-r-none md:rounded-br-none ' : '-translate-x-3 md:-translate-x-5 -translate-y-3 md:translate-y-5 rounded-2xl md:rounded-l-2xl md:rounded-br-none ')}
             />
  
             <div className="relative w-full h-full rounded-2xl md:rounded-l-2xl md:rounded-tr-none md:rounded-br-none   overflow-hidden">
@@ -85,13 +88,13 @@ export const WhyBridesChooseProductsSection = ({
           {features.map((feature, index) => (
             <div
               key={index}
-              className="border-l-[3px] border-brand-500 pl-3 md:pl-3.5 flex flex-col gap-2"
+              className={cn(" border-brand-500 pl-3 md:pl-3.5 flex flex-col gap-2", isRTL ? 'border-r-[3px] border-brand-500 pr-3 md:pr-3.5' : 'border-l-[3px] border-brand-500 pl-3 md:pl-3.5')}
             >
               <h3 className="text-15 md:text-17 lg:text-19 font-medium text-gray-900 leading-tight">
-                {feature.title}
+                {t(feature.title)}
               </h3>
               <p className="text-12 md:text-13 lg:text-14 font-normal text-gray-500 leading-snug">
-                {feature.description}
+                {t(feature.description)}
               </p>
             </div>
           ))}

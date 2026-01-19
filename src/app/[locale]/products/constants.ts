@@ -54,23 +54,23 @@ export const DEFAULT_HERO_SLIDES: HeroSlide[] = [
 // Features for "Why Brides Choose Products" section
 export const PRODUCT_FEATURES: Feature[] = [
   {
-    title: 'Premium Brands',
+    title: 'productFeatures.premiumBrands.title',
     description:
-      'Handpicked items from trusted, high-quality wedding suppliers',
+      'productFeatures.premiumBrands.description',
   },
   {
-    title: 'Bridal-Friendly Formulas',
+    title: 'productFeatures.bridalFriendlyFormulas.title',
     description:
-      'Products selected to suit sensitive skin and long event days',
+      'productFeatures.bridalFriendlyFormulas.description',
   },
   {
-    title: 'Exclusive Discounts',
-    description: "Special offers crafted to fit every bride's budget",
+    title: 'productFeatures.exclusiveDiscounts.title',
+    description: 'productFeatures.exclusiveDiscounts.description',
   },
   {
-    title: 'Verified Sellers',
+    title: 'productFeatures.verifiedSellers.title',
     description:
-      'We work only with reliable, vetted beauty providers',
+      'productFeatures.verifiedSellers.description',
   },
 ]
 

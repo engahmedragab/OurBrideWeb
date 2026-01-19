@@ -12,7 +12,12 @@
     "filter": "Filter",
     "sort": "Sort",
     "pleaseWait": "Just a moment, we're almost there...",
-    "skipButton": "Skip For Now"
+    "skipButton": "Skip For Now",
+    "enterYourEmail": "Enter Your E-mail",
+     "productsLoading": "Loading products...",
+     "anonymous":"Anonymous",
+     "recently":"Recently",
+     "viewAll":"View All"
 
   },
   
@@ -282,6 +287,45 @@
         "notMatch": "Password doesn't match, please try again"
       }
     },
+      
+  "navbar": {
+    "search": {
+      "placeholder": "Search..."
+    },
+    "links": {
+      "home": "Home",
+      "products": "Products",
+      "services": "Services",
+      "providers": "Providers",
+      "community": "Community",
+      "allProducts": "All Products",
+      "category": "Category",
+      "allServices": "All Services"
+    },
+    "icons": {
+      "account": "Account",
+      "language": "Language",
+      "cart": "Cart",
+      "notifications": "Notifications",
+      "favorites": "Favorites"
+     
+    },
+    "notifications": {
+      "loading": "Loading notifications...",
+       "markAllAsRead": "Mark all as read",
+       "notifications": "Notifications",
+       "noNotificationsYet": "No notifications yet",
+        "viewAll": "View all notifications"
+    },
+    "menu": {
+      "wishlist": "Wishlist",
+      "favorites": "Favorites",
+      "follows": "Follows",
+      "myCart": "My Cart",
+      "myProfile": "My Profile"
+    }
+  } ,
+
     "home": {
       "hero": {
         "activeUsers": "Active Users",
@@ -399,6 +443,105 @@
           "description": "Exclusive coupons and discounts designed for your budget."
         }
       }
+    }, 
+    "products": {
+      "whyBridesChooseProducts": {
+        "why": "Why",
+        "brides": "Brides",
+        "choose": "Choose",
+        "ourBrideProducts": "OurBride Products"
+      } ,
+      "productFeatures": {
+        "premiumBrands": {
+          "title": "Premium Brands",
+          "description": "Handpicked items from trusted, high-quality wedding suppliers"
+        },
+        "bridalFriendlyFormulas": {
+          "title": "Bridal-Friendly Formulas",
+          "description": "Products selected to suit sensitive skin and long event days"
+        },
+        "exclusiveDiscounts": {
+          "title": "Exclusive Discounts",
+          "description": "Special offers crafted to fit every bride's budget"
+        },
+        "verifiedSellers": {
+          "title": "Verified Sellers",
+          "description": "We work only with reliable, vetted beauty providers"
+        }
+      },
+      "newsletterBanner": {
+        "heading": "Get Products Updates & Offers",
+        "description": "Stay informed about new providers, offers, and wedding planning tips",
+        "ctaText": "Subscribe"
+      },
+      "bestProvidersSection": {
+        "topText": "Best",
+        "highlightText": "Providers",
+        "bottomText": "With",
+        "bottomHighlightText": "Best Products",
+        "buttonText": "Explore Now"
+      },
+      
+  "productOffersSection": {
+    "title": "Today's Best Product Offers",
+    "timerText": "23 H 45 Min"
+  },
+  "productCategoriesSection": {
+    "choose": "Choose",
+    "from": "From",
+    "ourProduct": "Our Product",
+    "categories": "Categories"
+  },
+   "exclusiveCoupons": {
+    "text": "Exclusive coupons and discounts designed for your budget."
+  },
+  "productCommon": {
+    "productNotFound": "Product Not Found",
+    "productNotFoundMessage": "The product you're looking for doesn't exist or has been removed.",
+    "backToProducts": "Back to Products",
+    "addToCartSuccess": "Product added to cart successfully!",
+    "addToCartError": "Failed to add product to cart"
+  },
+  "offerCommon": {
+    "specialOffer": "Special Offer",
+    "buyNowAndGetBy": "Buy now and get by",
+    "reviews": "Reviews"
+  },
+  "date": {
+    "aug25_2025": "25 AUG 2025"
+  },
+  "provider": {
+    "makeupArtist": "Makeup Artist"
+  },
+  "location": {
+    "gizaShort": "Giza, 6 Of O...",
+    "gizaFull": "Giza, 6 Of October City, Building 15, Apartment 42"
+  },
+  "reviewsSection": {
+    "noReviews": "No reviews yet. Be the first to review this product!",
+    "seeMore": "See more reviews",
+    "writeReview": "Write Your Review",
+    "submitSuccess": "Review submitted successfully!",
+    "submitError": "Failed to submit review",
+    "submitErrorWithReason": "Error submitting review:",
+    "submitRetry": "Failed to submit review. Please try again.",
+     "shareComments": "Share your comments"
+  },
+  "ratingSummary": {
+    "basedOnReviews": "Based on",
+    "reviews": "reviews",
+    "starsLabel": {
+      "5": "Excellent",
+      "4": "Very Good",
+      "3": "Good",
+      "2": "Fair",
+      "1": "Poor"
+    }
+  },
+  "offerBanner": {
+    "heading": "24% Offer On our product!",
+    "description": "Subscribe to our newsletter and get exclusive offers on premium wedding products."
+  }
     }
   
 

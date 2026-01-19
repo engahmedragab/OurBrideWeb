@@ -7,6 +7,7 @@ import { Button } from './Button'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { StaticImageData } from 'next/image'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface OfferItem {
   heading: string
@@ -35,6 +36,9 @@ export const OfferBanner = ({
 }: OfferBannerProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [email, setEmail] = useState('')
+  // localization
+  const t = useI18nTranslations('common')
+  const isRTL = useIsRTL()
 
   // Auto-play carousel
   useEffect(() => {
@@ -76,7 +80,7 @@ export const OfferBanner = ({
         <div className="border border-brand-500 rounded-2xl overflow-hidden bg-white w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 relative w-full">
             {/* Left Content - Text and Buttons */}
-            <div className="text-center lg:text-left px-4 md:px-6 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center">
+            <div className={cn("text-center lg:text-left px-4 md:px-6 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center", isRTL ? 'lg:text-right' : 'lg:text-left')}>
               <h2 className="text-18 md:text-20 font-medium text-gray-900 mb-1.5 md:mb-2">
                 {currentOffer.heading}
               </h2>
@@ -89,7 +93,7 @@ export const OfferBanner = ({
                 <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto lg:mx-0 items-stretch sm:items-center">
                   <input
                     type="email"
-                    placeholder="Enter Your E-mail"
+                    placeholder={t('enterYourEmail')}
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     className="flex-1 min-w-0 h-9 md:h-10 px-3 md:px-4 rounded-full border border-gray-300 text-13 md:text-14 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500"

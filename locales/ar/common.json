@@ -12,9 +12,14 @@
     "filter": "تصفية",
     "sort": "ترتيب",
     "pleaseWait": "لحظه واحده، نحن هنا بالفعل ...",
-    "skipButton": "تخطي الآن"
+    "skipButton": "تخطي الآن",
+    "enterYourEmail": "أدخل بريدك الإلكتروني",
+    "productsLoading":"جاري تحميل المنتجات...",
+    "Anonymous":"مجهول",
+    "recently":"مؤخرا",
+    "viewAll":"عرض الكل"
   },
-  "auth": {
+    "auth": {
     "hero": {
       "backToHome": "  الصفحة الرئيسية",
       "title": "نظّم زفافك",
@@ -250,7 +255,7 @@
     "downloadApp": {
       "title": "تحميل التطبيق"
     }
-  },
+     },
    
     "changePassword": {
       "title": "تغيير    الكلمة المرور",
@@ -273,6 +278,45 @@
         "notMatch": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى"
       }
     },
+
+  "navbar": {
+    "search": {
+      "placeholder": "بحث..."
+    },
+    "links": {
+      "home": "الرئيسية",
+      "products": "المنتجات",
+      "services": "الخدمات",
+      "providers": "المزودون",
+      "community": "المجتمع",
+      "allProducts": "جميع المنتجات",
+      "category": "الفئة",
+      "allServices": "جميع الخدمات"
+    },
+    "icons": {
+      "account": "الحساب",
+      "language": "اللغة",
+      "cart": "السلة",
+      "notifications": "الإشعارات",
+      "favorites": "المفضلة",
+      "markAllAsRead": "تحديد الكل كمقروء"
+    },
+    "notifications": {
+      "loading": "جاري تحميل الإشعارات...",
+      "markAllAsRead": "تحديد الكل كمقروء",
+      "notifications": "الإشعارات",
+      "noNotificationsYet": "لا توجد إشعارات حتى الآن",
+      "viewAll": "عرض كل الإشعارات"
+
+    },
+    "menu": {
+      "wishlist": "قائمة الأمنيات",
+      "favorites": "المفضلة",
+      "follows": "المتابعات",
+      "myCart": "سلّتي",
+      "myProfile": "الحساب الشخصي"
+    }
+  },
     "home": {
       "hero": {
         "activeUsers": "المستخدمون النشطون",
@@ -390,6 +434,108 @@
           "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
         }
       }
+    }, 
+    "products": {
+  "whyBridesChooseProducts": {
+    "why": "لماذا",
+    "brides": "العرائس",
+    "choose": "يخترن",
+    "ourBrideProducts": "منتجات OurBride"
+  },
+  "productFeatures": {
+    "premiumBrands": {
+      "title": "علامات تجارية فاخرة",
+      "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف"
+    },
+    "bridalFriendlyFormulas": {
+      "title": "تركيبات مناسبة للعرائس",
+      "description": "منتجات مناسبة للبشرة الحساسة وتتحمل أيام المناسبات الطويلة"
+    },
+    "exclusiveDiscounts": {
+      "title": "خصومات حصرية",
+      "description": "عروض خاصة مصممة لتناسب ميزانية كل عروس"
+    },
+    "verifiedSellers": {
+      "title": "بائعون موثوقون",
+      "description": "نتعامل فقط مع مزودي خدمات تجميل موثوقين ومعتمدين"
     }
+  },
+  "newsletterBanner": {
+    "heading": "احصلي على آخر التحديثات والعروض",
+    "description": "كوني على اطلاع دائم بأحدث مقدمي الخدمات والعروض ونصائح التخطيط للزفاف",
+    "ctaText": "اشتركي الآن"
+  },
+  "bestProvidersSection": {
+    "topText": "أفضل",
+    "highlightText": "المزودين",
+    "bottomText": "مع",
+    "bottomHighlightText": "أفضل المنتجات",
+    "buttonText": "اكتشفي الآن"
+  },
+  "productOffersSection": {
+    "title": "أفضل عروض المنتجات اليوم",
+    "timerText": "23 ساعة 45 دقيقة"
+  },
+  "productCategoriesSection": {
+    "choose": "اختاري",
+    "from": "من",
+    "ourProduct": "منتجاتنا",
+    "categories": " حسب الفئات"
+  },
+  "exclusiveCoupons": {
+    "text": "كوبونات وخصومات حصرية مصممة لتناسب ميزانيتك."
+  },
+  "productCommon":{
+     "productNotFound":"المنتج غير موجود",
+     "productNotFoundMessage":"المنتج الذي تبحثين عنه غير موجود أو تم حذفه",
+     "backToProducts":"العودة إلى المنتجات",
+    "addToCartSuccess": "تمت إضافة المنتج إلى سلة التسوق بنجاح!",
+    "addToCartError": "فشل في إضافة المنتج إلى سلة التسوق"
+  },
+  "offerCommon": {
+    "specialOffer": "عرض خاص",
+    "buyNowAndGetBy": "اشترِ الآن واحصل عليه قبل",
+    "reviews": "التقييمات"
+  },
+  "date": {
+    "aug25_2025": "25 أغسطس 2025"
+  },
+  "provider": {
+    "makeupArtist": "خبيرة مكياج"
+  },
+  "location": {
+    "gizaShort": "الجيزة، 6 أكتو...",
+    "gizaFull": "الجيزة، مدينة السادس من أكتوبر، مبنى 15، شقة 42"
+  },
+  
+  "reviewsSection": {
+    "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذا المنتج!",
+    "seeMore": "عرض المزيد من التقييمات",
+    "writeReview": "اكتبي تقييمك",
+    "submitSuccess": "تم إرسال التقييم بنجاح!",
+    "submitError": "فشل في إرسال التقييم",
+    "submitErrorWithReason": "حدث خطأ أثناء إرسال التقييم:",
+    "submitRetry": "فشل في إرسال التقييم. من فضلكِ حاولي مرة أخرى.",
+    "shareComments": "شاركي تعليقك"
+  },
+  
+    "ratingSummary": {
+      "basedOnReviews": "بناءً على",
+      "reviews": "تقييمات",
+      
+    "starsLabel": {
+      "5": "ممتاز",
+      "4": "جيد جدًا",
+      "3": "جيد",
+      "2": "مقبول",
+      "1": "ضعيف"
+    }
+    },
+    
+  "offerBanner": {
+    "heading": "خصم 24٪ على منتجاتنا!",
+    "description": "اشتركي في النشرة البريدية واحصلي على عروض حصرية على منتجات الزفاف الفاخرة."
+  }
+}
   
 }
