@@ -12,8 +12,20 @@
     "filter": "Filter",
     "sort": "Sort",
     "pleaseWait": "Just a moment, we're almost there...",
-    "skipButton": "Skip For Now"
-
+    "skipButton": "Skip For Now",
+    "currency": "EGP",
+    "ctaText": "Submit",
+    "viewProfile": "View Profile",
+    "subscribeButton": "Subscribe",
+    "startShopping": "Start Shopping",
+    "bookNow": "Book Now",
+    "buyNow": "Buy Now",
+    "pending": "Pending",
+    "topOffers": "Top Offers",
+    "notAvailable": "Not Available",
+  "noDataAvailable": "No data available",
+  "noImageAvailable": "No image available" 
+    
   },
   
   "auth": {
@@ -261,7 +273,7 @@
     }
   },
   
-    "changePassword": {
+  "changePassword": {
       "title": "Change Password",
       "saveChanges": "Save Changes",
       "currentPassword": "Current Password",
@@ -282,7 +294,7 @@
         "notMatch": "Password doesn't match, please try again"
       }
     },
-    "home": {
+  "home": {
       "hero": {
         "activeUsers": "Active Users",
         "badge": "All-in-one platform for wedding.",
@@ -399,7 +411,312 @@
           "description": "Exclusive coupons and discounts designed for your budget."
         }
       }
+    },
+    "services": {
+      "intro": {
+        
+        "error": {
+          "loadFailed": "Error loading services. Please try again later."
+        },
+        "hero": {
+          "defaultSlides": {
+            "slide1": {
+              "label": "Featured Service",
+              "title": "Bridal Makeup & Hair",
+              "description": "Professional bridal beauty services to make you look stunning on your special day. Expert makeup artists and hairstylists ready to create your perfect bridal look.",
+              "ctaText": "Book Now",
+              "discountText": "30% OFF"
+            },
+            "slide2": {
+              "label": "Top Rated",
+              "title": "Wedding Photography",
+              "description": "Capture your precious moments with our professional wedding photography services. Experienced photographers dedicated to creating beautiful memories.",
+              "ctaText": "Explore Services",
+              "discountText": "50% OFF"
+            }
+          }
+        },
+        "sections": {
+          "why": "Why",
+          "brides": "Brides",
+          "trust": "Trust",
+          "ourBride": "OurBride",
+          "todayOffersTitle": "Today's Offers",
+          "best": "Best",
+          "providers": "Providers",
+          "with": "With",
+          "bestProducts": "Best Products",
+          "exploreNow": "Explore Now"
+        },
+        "categories": {
+          "fallbackDescription": "Exclusive coupons and discounts designed for your budget.",
+          "Choose": "Choose",
+          "From": "From",
+          "OurProduct": "Our Product",
+          "Categories": "Categories"
+       
+        },
+        "providers": {
+          "defaultProfession": "Service Provider",
+          "fallbackProductTitle": "View Services"
+        },
+        "trustFeatures": {
+          "title": "Usp Title",
+          "description": "OurBride is your all-in-one platform for wedding planning."
+        },
+        "newsletter": {
+          "emailPlaceholder": "Enter Your E-mail",
+          "heading": "Ready To Get Our News ?",
+          "description": "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
+         
+        }
+       
+      },
+      "serviceCategories": {
+        "loading": "Loading services...",
+        "FailedtoLoadServices":"Failed to Load Services",
+        "failedPleaseTryAgain ":"Failed to load services. Please try again later.",
+        "searchPlaceholder": "Search for a Service...",
+        "servicesFound": "services found",
+        "page": "Page",
+        "of": "of",
+        "topOffers": "Top Offers",
+        "servicefilters":{
+          "categories": "Categories",
+          "clear": "Clear",
+          "price": "Price",
+          "from": "From",
+          "to": "To",
+          "inStock": "In Stock",
+          "priceFromValue": "From {value} {currency}",
+          "priceToValue": "To {value} {currency}",
+          "availability": "Availability",
+          "inStockOnly": "In stock only"
+        },
+        "sortServicesOptions":{
+          "default": "Default",
+          "priceLowToHigh": "Low to High",
+          "priceHighToLow": "High to Low",
+          "highestRated": "Highest Rated",
+          "newestFirst": "Newest First",
+          "mostPopular": "Most Popular"
+        },
+        "heroSlides": {
+          "slide1": {
+            "label": "Featured Service",
+            "title": "Bridal Makeup & Hair",
+            "description": "Professional bridal beauty services to make you look stunning on your special day. Expert makeup artists and hairstylists ready to create your perfect bridal look.",
+            "ctaText": "Book Now",
+            "discountText": "30% OFF"
+          },
+          "slide2": {
+            "label": "Top Rated",
+            "title": "Wedding Photography",
+            "description": "Capture your precious moments with our professional wedding photography services. Experienced photographers dedicated to creating beautiful memories.",
+            "ctaText": "Explore Services",
+            "discountText": "50% OFF"
+          }
+        }
+      },
+      "serviceDetail": {
+        "loading": {
+          "title": "Loading service..."
+        },
+        "error": {
+          "notFound": "Service not found. Please try again later.",
+          "backToServices": "Back to Services"
+        },
+        "backButton": {
+          "label": "Back to Services"
+        },
+        "badges": {
+          "topOffer": "Top Offer",
+          "verified": "Verified"
+        },
+        "delivery": {
+          "bookNowAndGetBy": "Book now and get by",
+          "dateFallback": "25 AUG 2025"
+        },
+        "branchExpanded":{
+          "6OfOctober": "Giza, 6 Of October",
+          "maadi": "Cairo, Maadi",
+          "elshikhZayed": "Giza, Elshikh Zayed",
+          "mansoura": "Mansoura, Glaa' St.",
+          "dokki": "Giza, Dokki",
+          "nasrCity": "Cairo, Nasr City",
+          "corniche": "Alexandria, Corniche",
+          "zamalek": "Cairo, Zamalek",
+          "agouza": "Giza, Agouza",
+          "heliopolis": "Cairo, Heliopolis"
+        },
+        "bookingCard": {
+          "startFrom": "Start From",
+          "availableBranches": "Available Branches",
+          "seeMore": "See More",
+          "seeLess": "See Less",
+          "packagesDetails": "Packages Details",
+          "loadingPackages": "Loading packages...",
+          "bookNow": "Book Now",
+          "chatAriaLabel": "Chat with provider"
+        },
+        "reviews": {
+          "title": "Reviews",
+          "reviewsCount": "{count} reviews",
+          "noReviews": "No reviews yet. Be the first to review this service!",
+          "seeMoreReviews": "See more reviews",
+          "writeYourReview": "Write Your Review",
+          "commentPlaceholder": "Share your Comments",
+          "sendReviewAriaLabel": "Send review",
+          "ratingCount": " Ratings",
+          "userAvatar": "User "
+        },
+        "reviewSubmit": {
+          "success": "Review submitted successfully!",
+          "fail": "Failed to submit review",
+          "failTryAgain": "Failed to submit review. Please try again."
+        },
+        "favorite": {
+          "added": "Added to favorites",
+          "removed": "Removed from favorites",
+          "fail": "Failed to update favorite",
+          "failTryAgain": "Failed to update favorite. Please try again."
+        },
+        "wishlist": {
+          "added": "Added to wishlist",
+          "removed": "Removed from wishlist",
+          "fail": "Failed to update wishlist",
+          "failTryAgain": "Failed to update wishlist. Please try again."
+        },
+        "ratingLabels": {
+          "excellent": "Excellent",
+          "good": "Good",
+          "average": "Average",
+          "belowAverage": "Below Average",
+          "poor": "Poor"
+        },
+        "newsletterOffer": {
+          "heading": "25% Offer On our products",
+          "description": "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day."
+        },
+        "suggested": {
+          "title": "Suggested for You",
+          "viewAll": "View All",
+          "noRelated": "No related services found."
+        },
+        "relativeTime": {
+          "justNow": "Just now",
+          "minute": "{count} minute ago",
+          "minutes": "{count} minutes ago",
+          "hour": "{count} hour ago",
+          "hours": "{count} hours ago",
+          "day": "{count} day ago",
+          "days": "{count} days ago",
+          "month": "{count} month ago",
+          "months": "{count} months ago",
+          "year": "{count} year ago",
+          "years": "{count} years ago"
+        }
+      },
+      "bookingPage": {
+        "min":"min",
+         "pageTitle": "Book Appointment",
+         "loadingBookingDetails": "Loading booking details...",
+      "steps": {
+        "details": "Booking Details",
+        "datetime": "Select Date & Time",
+        "confirm": "Confirm Booking"
+      },
+    
+      "sections": {
+        "bookingDetails": "Booking Details",
+        "availableBranches": "Available Branches",
+        "selectStaff": "Select Staff",
+        "selectYourPackage": "Select Your Package",
+        "packageDetails": "Package Details",
+    
+        "selectDate": "Select Date",
+        "selectTime": "Select Time",
+    
+        "reviewTitle": "Review Your Booking",
+        "reviewDesc": "Please review your booking details on the right. Once you're ready, click \"Confirm Booking\" below to complete your appointment.",
+    
+        "almostDoneTitle": "Almost Done!",
+        "almostDoneDesc": "Your appointment will be confirmed and you'll receive a confirmation message.",
+    
+        "totalPrice": "Total Price",
+        "duration": "Duration",
+        "total": "Total",
+    
+        "bookingSummaryTitle": "Booking Summary",
+        "serviceLabel": "Service",
+        "servicesLabel": "Services",
+        "serviceSelectedCount": "{count} service selected",
+    
+        "bookingDetailsSummary": "Booking Details",
+        "branch": "Branch",
+        "staff": "Staff",
+        "package": "Package",
+        "dateTime": "Date & Time",
+        "termsBodyDesc": "will leave your order at the door. By placing your order, you agree to take full responsibility for it once it's delivered.",
+        "termsTitle": "I Accept Terms & Conditions",
+        "termsBody": "If you are not around when the delivery person arrives, they will leave your order at the door. By placing your order, you agree to take full responsibility for it once it's delivered."
+      },
+    
+      "actions": {
+        "continue": "Continue",
+        "confirmBooking": "Confirm Booking",
+        "processing": "Processing..."
+      },
+    
+      "states": {
+        "failedToCreateReservation": "Failed to create reservation. Please try again.",
+        "invalidRequest": "Invalid request. Please check your input.",
+        "pollingTimeout": "Reservations are taking longer than expected. Please check your reservations page.",
+        "reservationRejected": "Reservation was rejected. Please check your reservations page for details.",
+        "missingReservationId": "Reservation ID is missing. Please check your reservations page.",
+        "processingReservationTitle": "Processing Reservation",
+        "processingReservationMessage": "Reservation creation queued. Processing...",
+        "loadingBookingDetails": "Loading booking details...",
+        "loadingDates": "Loading dates...",
+        "loadingTimeSlots": "Loading time slots...",
+        "noTimeSlots": "No time slots available for this date",
+        "failedLoadTimeSlots": "Failed to load time slots",
+        "serviceNotFoundTitle": "Service Not Found",
+        "serviceNotFoundMsg": "The service you're looking for doesn't exist or has been removed.",
+        "backToServices": "Back to Services",
+        "serviceNotFound": "Service Not Found",
+        "failedLoadServiceTitle": "Failed to Load Service Details",
+        "missingServiceIdMsg": "Please provide a service ID in the URL",
+        "failedLoadServiceMsg": "Failed to load service details. Please try again."
+      },
+    
+      "validation": {
+        "selectBranch": "Please select a branch",
+        "selectDate": "Please select a date",
+        "selectTime": "Please select a time",
+        "selectDateAndTime": "Please select a date and time",
+        "acceptTerms": "You must accept the terms and conditions"
+      },
+    
+      "processingModal": {
+        "title": "Processing Reservation",
+        "message": "Reservation creation queued. Processing..."
+      },
+    
+      "labels": {
+        "pricePrefix": "Price |"
+      }
+     
+    },
+    "bookingConfirmationModal": {
+      "title": "Booking Confirmation",
+      "message": "Your booking has been confirmed. Please check your email for details.",
+      "successMessage": "Your Request Has Been Sent!",
+      "successDescription": "Your service request has been successfully submitted. The provider has been notified and you will receive an update once they respond.",
+      "trackRequest": "Track Request"
+      
     }
   
 
+}
 }

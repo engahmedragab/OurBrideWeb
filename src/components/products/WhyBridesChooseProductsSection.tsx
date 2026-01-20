@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { StaticImageData } from 'next/image'
 import { cn } from '@/lib/utils'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import {  useIsRTL } from '@/i18n'
 
 export interface Feature {
   title: string
@@ -32,6 +33,9 @@ export const WhyBridesChooseProductsSection = ({
   bottomHighlightText = 'OurBride Products',
   headerAlignment = 'center',
 }: WhyBridesChooseProductsSectionProps) => {
+  
+  const isRTL = useIsRTL()
+
   return (
     <section className={cn('w-full py-8 md:py-12', className)}>
       <div className="w-full">
@@ -47,7 +51,7 @@ export const WhyBridesChooseProductsSection = ({
         </div>
 
         {/* Main Content */}
-        <div className="flex flex-col md:flex-row items-stretch gap-0">
+        <div className="flex flex-col md:flex-row items-stretch ">
         {/* Left Image with offset border */}
         {image && (
           <div
@@ -60,16 +64,15 @@ export const WhyBridesChooseProductsSection = ({
           >
           
             <div
-              className="
-                absolute inset-0
-                rounded-2xl md:rounded-l-2xl md:rounded-br-none 
-                border-2 border-brand-500
-                -translate-x-3 md:-translate-x-5 -translate-y-3 md:translate-y-5   
-                pointer-events-none
-              "
-            />
+              className={cn(
+                "absolute inset-0 rounded-2xl md:rounded-l-2xl border-2 border-brand-500 pointer-events-none",
+                isRTL
+                  ? "md:rounded-tl-none md:rounded-bl-none translate-x-3 md:translate-x-5 -translate-y-3 md:translate-y-5 "
+                  :  "md:rounded-tr-none md:rounded-br-none -translate-x-3 md:-translate-x-5 -translate-y-3 md:translate-y-5 "
+              )}
+              />
  
-            <div className="relative w-full h-full rounded-2xl md:rounded-l-2xl md:rounded-tr-none md:rounded-br-none   overflow-hidden">
+            <div className={cn("relative w-full h-full rounded-2xl md:rounded-l-2xl  overflow-hidden", isRTL ? "md:rounded-tl-none md:rounded-bl-none" : "md:rounded-tr-none md:rounded-br-none")}>
               <Image
                 src={typeof image === 'string' ? image : image.src}
                 alt="Product showcase"
@@ -85,10 +88,10 @@ export const WhyBridesChooseProductsSection = ({
           {features.map((feature, index) => (
             <div
               key={index}
-              className="border-l-[3px] border-brand-500 pl-3 md:pl-3.5 flex flex-col gap-2"
+              className={cn(" flex flex-col gap-2", isRTL ? "border-r-[3px] border-brand-500 pr-3 md:pr-4" : "border-l-[3px] border-brand-500 pl-3 md:pl-4")}
             >
               <h3 className="text-15 md:text-17 lg:text-19 font-medium text-gray-900 leading-tight">
-                {feature.title}
+                {feature.title  }
               </h3>
               <p className="text-12 md:text-13 lg:text-14 font-normal text-gray-500 leading-snug">
                 {feature.description}

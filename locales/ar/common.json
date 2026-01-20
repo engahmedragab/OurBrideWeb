@@ -12,7 +12,19 @@
     "filter": "تصفية",
     "sort": "ترتيب",
     "pleaseWait": "لحظه واحده، نحن هنا بالفعل ...",
-    "skipButton": "تخطي الآن"
+    "skipButton": "تخطي الآن",
+    "currency": "EGP",
+    "ctaText": "إرسال",
+      "noImageAvailable": "لا يوجد صورة متاحة",
+      "subscribeButton": "اشترك",
+      "startShopping": "ابدأ التسوق",
+      "bookNow": "احجز الآن",
+      "buyNow": "شراء الآن",
+      "pending": "قيد الإنتظار",
+      "viewProfile": "عرض الحساب",
+        "noDataAvailable": "لا يوجد بيانات متاحة",
+      "topOffers": "العروض العليا",
+      "notAvailable": "غير متاح"
   },
   "auth": {
     "hero": {
@@ -144,7 +156,7 @@
       "loadingServices": "جاري تحميل الخدمات...",
       "noServices": "لا توجد خدمات متاحة",
       "budgetPlaceholder": "أدخل ميزانيتك",
-      "budgetSuffix": "جنيه",
+      "budgetSuffix": "EGP",
       "locationPlaceholder": "الموقع",
       "setLocation": "تحديد الموقع",
       "detailsTitle": "بيانات العروسة/العريس",
@@ -390,6 +402,315 @@
           "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
         }
       }
-    }
+    },
+    
+      "services": {
+        "intro": {
+          
+          "error": {
+            "loadFailed": "حدث خطأ أثناء تحميل الخدمات. من فضلك حاول مرة أخرى لاحقًا."
+          },
+          "hero": {
+            "defaultSlides": {
+              "slide1": {
+                "label": "خدمة مميزة",
+                "title": "مكياج وتصفيف شعر العروس",
+                "description": "خدمات تجميل احترافية للعروس لتظهري بأفضل إطلالة في يومك المميز. خبراء مكياج ومصففو شعر جاهزون لتنفيذ إطلالتك المثالية.",
+                "ctaText": "احجزي الآن",
+                "discountText": "خصم 30%"
+              },
+              "slide2": {
+                "label": "الأعلى تقييمًا",
+                "title": "تصوير حفلات الزفاف",
+                "description": "التقطي أجمل لحظاتك مع خدمات تصوير زفاف احترافية. مصورون ذوو خبرة لصناعة ذكريات جميلة تدوم.",
+                "ctaText": "استكشفي الخدمات",
+                "discountText": "خصم 50%"
+              }
+            }
+          },
+          "sections": {
+            "why": "لماذا",
+            "brides": "العرايس",
+            "trust": "يثقن في",
+            "ourBride": "OurBride",
+            "todayOffersTitle": "عروض اليوم",
+            "best": "أفضل",
+            "providers": "المزودين",
+            "with": "مع",
+            "bestProducts": "أفضل المنتجات",
+            "exploreNow": "استكشفي الآن"
+          },
+          "categories": {
+            "fallbackDescription": "كوبونات وخصومات حصرية تناسب ميزانيتك.",
+            "Choose": "اختر",
+            "From": "من",
+            "OurProduct": "منتجاتنا",
+            "Categories": "الفئات"
+          },
+          "providers": {
+            "defaultProfession": "مزود خدمة",
+            "fallbackProductTitle": "عرض الخدمات"
+          },
+          "trustFeatures": {
+            "title": "عنوان الميزة",
+            "description": "OurBride منصتك المتكاملة لتخطيط الزفاف."
+          },
+          "newsletter": {
+            "emailPlaceholder": "أدخل بريدك الإلكتروني",
+            "heading": "جاهزة توصلك أخبارنا؟",
+            "description": "OurBride منصتك المتكاملة لتخطيط الزفاف والتسوق. هتلاقي كل اللي تحتاجيه عشان تعملي يومك المثالي."
+            
+          }
+          
+        },
+        "serviceCategories": {
+        "loading": "جاري تحميل الخدمات...",
+        "FailedtoLoadServices":"فشل تحميل الخدمات",
+        "failedPleaseTryAgain ":"فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا.",
+        "searchPlaceholder": "ابحث عن خدمة...",
+        "servicesFound": "خدمات متاحة",
+        "page": "الصفحة",
+        "of": "من",
+        "topOffers": "عروض اليوم",
+        "servicefilters":{
+          "categories": "الفئات",
+          "clear": "مسح",
+          "price": "السعر",
+          "from": "من",
+          "to": "إلى",
+          "inStock": "في المخزن",
+          "priceFromValue": "من {value} {currency}",
+          "priceToValue": "إلى {value} {currency}",
+          "availability": "المتاح",
+          "inStockOnly": "فقط في المخزن"
+        },
+        "sortServicesOptions":{
+          "default": "افتراضي",
+          "priceLowToHigh": "السعر من الأقل إلى الأعلى",
+          "priceHighToLow": "السعر من الأعلى إلى الأقل",
+          "highestRated": "الأعلى تقييمًا",
+          "newestFirst": "الأحدث أولا",
+          "mostPopular": "الأكثر شعبية"
+        },
+        "heroSlides": {
+          "slide1": {
+            "label": "خدمة مميزة",
+            "title": "مكياج وتصفيف شعر العروس",
+            "description": "خدمات تجميل احترافية للعروس لتظهري بأفضل إطلالة في يومك المميز. خبراء مكياج ومصففو شعر جاهزون لتنفيذ إطلالتك المثالية.",
+            "ctaText": "احجزي الآن",
+            "discountText": "خصم 30%"
+          },
+          "slide2": {
+            "label": "الأعلى تقييمًا",
+            "title": "تصوير حفلات الزفاف",
+            "description": "التقطي أجمل لحظاتك مع خدمات تصوير زفاف احترافية. مصورون ذوو خبرة لصناعة ذكريات جميلة تدوم.",
+            "ctaText": "استكشفي الخدمات",
+            "discountText": "خصم 50%"
+          }
+        }
+      },
+      "serviceDetail": {
+        "loading": {
+          "title": "جاري تحميل الخدمة..."
+        },
+        "error": {
+          "notFound": "الخدمة غير متاحة حالياً. برجاء المحاولة لاحقاً.",
+          "backToServices": "الرجوع إلى الخدمات"
+        },
+        "backButton": {
+          "label": "الرجوع إلى الخدمات"
+        },
+        "badges": {
+          "topOffer": "أفضل عرض",
+          "verified": "موثّق"
+        },
+        "delivery": {
+          "bookNowAndGetBy": "احجزي الآن واستلمي قبل",
+          "dateFallback": "25 أغسطس 2025"
+        },
+        "branchExpanded":{
+          "6OfOctober": "الجيزة, 6 أكتوبر",
+          "maadi": "القاهرة, مادي",
+          "elshikhZayed": "الجيزة, الشيخ زايد",
+          "mansoura": "منصورة, الغلا الشارع",
+          "dokki": "الجيزة, دقي",
+          "nasrCity": "القاهرة, نصر المدينة",
+          "corniche": "الإسكندرية, القاهرة, نصر المدينة",
+          "zamalek": "القاهرة, زمالك",
+          "agouza": "الجيزة, أكتوبر",
+          "heliopolis": "القاهرة, الهليوبوليس"
+        },
+        "bookingCard": {
+          "startFrom": "يبدأ من",
+          "availableBranches": "الفروع المتاحة",
+          "seeMore": "عرض المزيد",
+          "seeLess": "عرض أقل",
+          "packagesDetails": "تفاصيل الباقات",
+          "loadingPackages": "جاري تحميل الباقات...",
+          "bookNow": "احجزي الآن",
+          "chatAriaLabel": "محادثة مع المزوّد"
+        },
+        "reviews": {
+          "title": "التقييمات",
+          "reviewsCount": "{count} تقييم",
+          "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذه الخدمة!",
+          "seeMoreReviews": "عرض المزيد من التقييمات",
+          "writeYourReview": "اكتبي تقييمك",
+          "commentPlaceholder": "شاركي تعليقك",
+          "sendReviewAriaLabel": "إرسال التقييم",
+          "ratingCount": "تقييم",
+          "userAvatar": "المستخدم "
+        },
+        "reviewSubmit": {
+          "success": "تم إرسال التقييم بنجاح!",
+          "fail": "فشل إرسال التقييم",
+          "failTryAgain": "فشل إرسال التقييم. برجاء المحاولة مرة أخرى."
+        },
+        "favorite": {
+          "added": "تمت الإضافة إلى المفضلة",
+          "removed": "تمت الإزالة من المفضلة",
+          "fail": "فشل تحديث المفضلة",
+          "failTryAgain": "فشل تحديث المفضلة. برجاء المحاولة مرة أخرى."
+        },
+        "wishlist": {
+          "added": "تمت الإضافة إلى قائمة الرغبات",
+          "removed": "تمت الإزالة من قائمة الرغبات",
+          "fail": "فشل تحديث قائمة الرغبات",
+          "failTryAgain": "فشل تحديث قائمة الرغبات. برجاء المحاولة مرة أخرى."
+        },
+        "ratingLabels": {
+          "excellent": "ممتاز",
+          "good": "جيد",
+          "average": "متوسط",
+          "belowAverage": "أقل من المتوسط",
+          "poor": "ضعيف"
+        },
+        "newsletterOffer": {
+          "heading": "خصم 25% على منتجاتنا",
+          "description": "OurBride منصتك الشاملة لتخطيط الزفاف والتسوق. ستجدين كل ما تحتاجينه ليومك المثالي."
+        },
+        "suggested": {
+          "title": "مقترح لك",
+          "viewAll": "عرض الكل",
+          "noRelated": "لا توجد خدمات مشابهة."
+        },
+        "relativeTime": {
+          "justNow": "الآن",
+          "minute": "منذ دقيقة",
+          "minutes": "منذ {count} دقائق",
+          "hour": "منذ ساعة",
+          "hours": "منذ {count} ساعات",
+          "day": "منذ يوم",
+          "days": "منذ {count} أيام",
+          "month": "منذ شهر",
+          "months": "منذ {count} أشهر",
+          "year": "منذ سنة",
+          "years": "منذ {count} سنوات"
+        }
+      },
+      "bookingPage": {
+        "min":"دقيقة",
+        "loadingBookingDetails": "جارٍ تحميل تفاصيل الحجز...",
+        "pageTitle": "حجز موعد",
+        "steps": {
+          "details": "تفاصيل الحجز",
+          "datetime": "اختيار التاريخ والوقت",
+          "confirm": "تأكيد الحجز"
+        },
+      
+        "sections": {
+          "bookingDetails": "تفاصيل الحجز",
+          "availableBranches": "الفروع المتاحة",
+          "selectStaff": "اختيار الموظف",
+          "selectYourPackage": "اختيار الباقة",
+          "packageDetails": "تفاصيل الباقة",
+      
+          "selectDate": "اختيار التاريخ",
+          "selectTime": "اختيار الوقت",
+      
+          "reviewTitle": "مراجعة الحجز",
+          "reviewDesc": "راجعي تفاصيل الحجز في الجانب الأيمن. وعندما تكونين جاهزة، اضغطي على \"تأكيد الحجز\" لإتمام الموعد.",
+      
+          "almostDoneTitle": "باقي خطوة!",
+          "almostDoneDesc": "سيتم تأكيد موعدك وستصلك رسالة تأكيد.",
+      
+          "totalPrice": "السعر الإجمالي",
+          "duration": "المدة",
+          "total": "الإجمالي",
+      
+          "bookingSummaryTitle": "ملخص الحجز",
+          "serviceLabel": "الخدمة",
+          "servicesLabel": "الخدمات",
+          "serviceSelectedCount": "تم اختيار {count} خدمة",
+      
+          "bookingDetailsSummary": "تفاصيل الحجز",
+          "branch": "الفرع",
+          "staff": "الموظف",
+          "package": "الباقة",
+          "dateTime": "التاريخ والوقت",
+          "termsBodyDesc": "سيترك الطلب عند الباب. بإتمامك للطلب، فإنك توافقين على تحمّل المسؤولية كاملة بعد تسليمه.",
+          "termsTitle": "أوافق على الشروط والأحكام",
+          "termsBody": "إذا لم تكوني متواجدة عند وصول مندوب التوصيل، سيترك الطلب عند الباب. بإتمامك للطلب، فإنك توافقين على تحمّل المسؤولية كاملة بعد تسليمه."
+        },
+      
+        "actions": {
+          "continue": "متابعة",
+          "confirmBooking": "تأكيد الحجز",
+          "processing": "جارٍ المعالجة..."
+        },
+      
+        "states": {
+          "failedToCreateReservation": "فشل إنشاء الحجز. برجاء المحاولة مرة أخرى.",
+          "invalidRequest": "طلب غير صالح. يرجى التحقق من المدخلات.",
+          "pollingTimeout": "الحجوزات تستغرق وقتًا أطول مما متوقع. يرجى التحقق من صفحة الحجوزات.",
+          "reservationRejected": "تم رفض الحجز. يرجى التحقق من صفحة الحجوزات للتفاصيل.",
+          "missingReservationId": "معرف الحجز مفقود. يرجى التحقق من صفحة الحجوزات.",
+          "processingReservationTitle": "جارٍ معالجة الحجز",
+          "processingReservationMessage": "تم إدراج الحجز في قائمة الانتظار. جارٍ المعالجة...",
+          "loadingBookingDetails": "جارٍ تحميل تفاصيل الحجز...",
+          "loadingDates": "جارٍ تحميل التواريخ...",
+          "loadingTimeSlots": "جارٍ تحميل المواعيد...",
+          "noTimeSlots": "لا توجد مواعيد متاحة لهذا التاريخ",
+          "failedLoadTimeSlots": "فشل تحميل المواعيد",
+          "serviceNotFoundTitle": "الخدمة غير موجودة",
+          "serviceNotFoundMsg": "الخدمة التي تبحثين عنها غير موجودة أو تم حذفها.",
+          "backToServices": "الرجوع للخدمات",
+      
+          "serviceNotFound": "الخدمة غير موجودة",
+          "failedLoadServiceTitle": "فشل تحميل تفاصيل الخدمة",
+          "missingServiceIdMsg": "من فضلك أضيفي رقم الخدمة في الرابط",
+          "failedLoadServiceMsg": "فشل تحميل تفاصيل الخدمة. حاولي مرة أخرى."
+        },
+      
+        "validation": {
+          "selectBranch": "من فضلك اختاري فرعًا",
+          "selectDate": "من فضلك اختاري تاريخًا",
+          "selectTime": "من فضلك اختاري وقتًا",
+          "selectDateAndTime": "من فضلك اختاري التاريخ والوقت",
+          "acceptTerms": "يجب الموافقة على الشروط والأحكام"
+        },
+      
+        "processingModal": {
+          "title": "جارٍ معالجة الحجز",
+          "message": "تم إدراج الحجز في قائمة الانتظار. جارٍ المعالجة..."
+        },
+      
+        "labels": {
+          "pricePrefix": "السعر |"
+        }
+        
+      },
+      "bookingConfirmationModal": {
+        "title": "تأكيد الحجز",
+        "message": "تم تأكيد الحجز. يرجى التحقق من بريدك الإلكتروني للتفاصيل.",
+        "successMessage": "تم إرسال طلبك بنجاح!",
+        "successDescription": "تم إرسال طلبك بنجاح. المزود سيتم إعلامه وستتلقى تحديثاً مرة واحدة عندما يرد.",
+        "trackRequest": "تتبع الطلب"
+      }
+      
+ 
+      }
+    
+    
   
 }

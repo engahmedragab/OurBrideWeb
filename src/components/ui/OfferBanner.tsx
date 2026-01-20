@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import Image, { StaticImageData } from 'next/image'
 import { Button } from './Button'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { StaticImageData } from 'next/image'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface OfferItem {
   heading: string
@@ -35,15 +35,15 @@ export const OfferBanner = ({
 }: OfferBannerProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [email, setEmail] = useState('')
+  const tC = useI18nTranslations('common')
+  const tS = useI18nTranslations('services.intro')
+  const isRTL = useIsRTL()
 
-  // Auto-play carousel
   useEffect(() => {
     if (offers.length <= 1) return
-
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % offers.length)
+      setCurrentIndex((prev) => (prev + 1) % offers.length)
     }, autoPlayInterval)
-
     return () => clearInterval(interval)
   }, [offers.length, autoPlayInterval])
 
@@ -54,89 +54,133 @@ export const OfferBanner = ({
     }
   }
 
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index)
-  }
+  const goToSlide = (index: number) => setCurrentIndex(index)
 
-  // Early return if no offers
-  if (!offers || offers.length === 0) {
-    return null
-  }
-
+  if (!offers || offers.length === 0) return null
   const currentOffer = offers[currentIndex]
+  if (!currentOffer) return null
 
-  // Safety check - return null if currentOffer is undefined
-  if (!currentOffer) {
-    return null
-  }
+  const wrapperClass = cn(
+    noContainer ? 'py-4 md:py-6' : 'container-custom py-4 md:py-6',
+    className
+  )
 
   return (
-    <section className={cn(noContainer ? 'py-4 md:py-6' : 'container-custom py-4 md:py-6', className)}>
+    <section className={wrapperClass}>
       <div className="relative w-full">
-        <div className="border border-brand-500 rounded-2xl overflow-hidden bg-white w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 relative w-full">
-            {/* Left Content - Text and Buttons */}
-            <div className="text-center lg:text-left px-4 md:px-6 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center">
-              <h2 className="text-18 md:text-20 font-medium text-gray-900 mb-1.5 md:mb-2">
+        {/* Card */}
+        <div className="relative w-full rounded-2xl border border-brand-500 bg-white overflow-visible">
+          <div
+            className={cn(
+             
+              'grid grid-cols-1 md:grid-cols-[1fr_360px] xl:md:grid-cols-[1fr_420px]',
+              'items-center',
+              'gap-0 md:gap-6',
+              'w-full overflow-visible'
+            )}
+          >
+            {/* Image (Mobile first) */}
+            {currentOffer.productImage && (
+              <div
+             
+                className={cn(
+                  'relative overflow-visible',
+                  
+                  'order-1 md:order-2',
+                  // Mobile alignment
+                  'flex ',
+                  // Pull up a bit on mobile like screenshot
+                  '-mt-10 sm:-mt-8 md:mt-0',
+                  'pt-4 md:pt-0 pr-0',
+                  isRTL ? 'scale-x-[-1] justify-start' : 'scale-x-100 justify-end',
+                  
+                )}
+              >
+                <Image
+                  src={
+                    typeof currentOffer.productImage === 'string'
+                      ? currentOffer.productImage
+                      : currentOffer.productImage.src
+                  }
+                  alt=""
+                  width={520}
+                  height={360}
+                  aria-hidden="true"
+                  className={cn(
+                    // Mobile sizes
+                    'h-[220px] w-auto sm:h-[260px]',
+                    // Desktop sizes
+                    'md:h-[220px] xl:h-[250px]',
+                    'object-contain object-bottom select-none pointer-events-none',
+                   
+                   
+                  )}
+                />
+              </div>
+            )}
+
+            {/* Content */}
+            <div
+              className={cn(
+                'order-2 md:order-1',
+                'flex flex-col justify-center',
+                
+                'px-6 sm:px-8 md:px-10',
+                'pb-6 pt-2 sm:pt-0 md:py-8',
+                // Text alignment
+                'text-center',
+                isRTL ? 'md:text-right' : 'md:text-left',
+                
+                isRTL ? 'md:pr-3' : 'md:pr-10'
+              )}
+            >
+              <h2 className="font-semibold text-gray-900 text-[16px] sm:text-[18px] md:text-[20px]">
                 {currentOffer.heading}
               </h2>
+
               {currentOffer.description && (
-                <p className="text-13 md:text-14 text-gray-500 mb-3 md:mb-4 max-w-lg mx-auto lg:mx-0">
+                <p className="mt-2 text-gray-500 text-[12px] sm:text-[13px] md:text-[14px] leading-relaxed max-w-[52ch] mx-auto md:mx-0">
                   {currentOffer.description}
                 </p>
               )}
+
               {currentOffer.variant === 'newsletter' ? (
-                <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto lg:mx-0 items-stretch sm:items-center">
-                  <input
-                    type="email"
-                    placeholder="Enter Your E-mail"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    className="flex-1 min-w-0 h-9 md:h-10 px-3 md:px-4 rounded-full border border-gray-300 text-13 md:text-14 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  />
-                  <Button
-                    variant="outline"
-                    className="h-9 md:h-10 px-4 md:px-5 text-13 md:text-14 font-semibold border border-brand-500 rounded-full bg-white text-brand-500 hover:bg-gray-50 whitespace-nowrap flex-shrink-0"
-                    onClick={handleSubscribe}
-                  >
-                    {currentOffer.ctaText || 'Subscribe'}
-                  </Button>
+                <div className="mt-4 w-full max-w-md mx-auto md:mx-0">
+                  {/* Mobile: stacked | Desktop: row */}
+                  <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center">
+                    <input
+                      type="email"
+                      placeholder={tS('newsletter.emailPlaceholder')}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full md:flex-1 h-10 md:h-10 px-4 rounded-full border border-gray-200 text-[13px] md:text-[14px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    />
+
+                    <Button
+                      variant="outline"
+                      onClick={handleSubscribe}
+                      className="w-full md:w-auto h-10 px-8 text-[13px] md:text-[14px] font-semibold border border-brand-500 rounded-full bg-white text-brand-500 hover:bg-gray-50 whitespace-nowrap"
+                    >
+                      {currentOffer.ctaText || tC('subscribeButton')}
+                    </Button>
+                  </div>
                 </div>
               ) : (
-                <div className="flex justify-center lg:justify-start">
+                <div className="mt-4 flex justify-center md:justify-start">
                   <Button
                     variant="outline"
-                    size="lg"
-                    className="px-5 md:px-6 py-3 md:py-4 text-13 md:text-14 font-semibold rounded-full bg-white text-brand-500 hover:bg-gray-50 border-brand-500"
+                    size="md"
+                    className="px-6 py-4 text-[13px] md:text-[14px] font-semibold rounded-full bg-white text-brand-500 hover:bg-gray-50 border-brand-500"
                     asChild
                   >
                     <Link href={currentOffer.ctaLink || '/products'}>
-                      {currentOffer.ctaText || 'Start Shopping'}
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      {currentOffer.ctaText || tC('startShopping')}
+                      <ArrowRight className={cn('h-4 w-4', isRTL ? 'mr-2 rotate-180' : "ml-1")} />
                     </Link>
                   </Button>
                 </div>
               )}
             </div>
-            {/* Product Image - Right side, aligned from top border to bottom with form */}
-            {currentOffer.productImage && (
-              <div className="flex justify-end items-end order-1 lg:order-2 relative overflow-hidden">
-                <div className="relative w-full h-full flex items-end justify-end">
-                  <Image
-                    src={
-                      typeof currentOffer.productImage === 'string'
-                        ? currentOffer.productImage
-                        : currentOffer.productImage.src
-                    }
-                    alt=""
-                    width={300}
-                    height={230}
-                    className="w-auto h-[140px] md:h-[170px] lg:h-[200px] xl:h-[230px] object-contain object-bottom"
-                    aria-hidden="true"
-                  />
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
@@ -150,9 +194,7 @@ export const OfferBanner = ({
                 onClick={() => goToSlide(index)}
                 className={cn(
                   'h-1.5 rounded-full transition-all duration-300',
-                  index === currentIndex
-                    ? 'w-12 bg-brand-500'
-                    : 'w-4 bg-gray-300'
+                  index === currentIndex ? 'w-12 bg-brand-500' : 'w-4 bg-gray-300'
                 )}
                 aria-label={`Go to slide ${index + 1}`}
               />

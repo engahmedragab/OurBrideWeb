@@ -26,13 +26,13 @@ export const StoreBadges = ({
     lg: 'w-12',
     xl: 'w-16',
     '2xl': 'w-24',
-    '3xl': 'w-32',
+    '3xl': 'w-28 lg:w-32',
     '4xl': 'w-40',
     '5xl': 'w-48',
   }
 
   return (
-    <div className={cn('  flex  ', className)}>
+    <div className={cn('  flex gap-x-2  ', className)}>
       {/* Apple App Store */}
       <a
         href={appStoreUrl}

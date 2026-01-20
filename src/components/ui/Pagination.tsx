@@ -4,6 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useIsRTL } from '@/i18n/hooks'
 
 export interface PaginationProps {
   currentPage: number
@@ -20,9 +21,11 @@ export const Pagination = ({
   className,
   maxVisiblePages = 5,
 }: PaginationProps) => {
+  const isRTL = useIsRTL()
   if (totalPages <= 1) return null
 
   const getPageNumbers = () => {
+   
     const pages: (number | string)[] = []
     const halfVisible = Math.floor(maxVisiblePages / 2)
 
@@ -92,7 +95,6 @@ export const Pagination = ({
     e.preventDefault()
     onPageChange(page)
   }
-
   return (
     <div
       className={cn(
@@ -110,7 +112,7 @@ export const Pagination = ({
         aria-label="Previous page"
         type="button"
       >
-        <ChevronLeft className="h-5 w-5" />
+        <ChevronLeft className={cn("h-5 w-5", isRTL ? "rotate-180" : "rotate-0")}/>
       </Button>
 
       {/* Page Numbers */}
@@ -164,7 +166,7 @@ export const Pagination = ({
         aria-label="Next page"
         type="button"
       >
-        <ChevronRight className="h-5 w-5" />
+        <ChevronRight className={cn("h-5 w-5", isRTL ? "rotate-180" : "rotate-0")} />
       </Button>
     </div>
   )

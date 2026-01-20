@@ -7,6 +7,7 @@ import {
 } from './DropdownMenu'
 import { ArrowUpDown } from 'lucide-react'
 import type { ProductSortOption } from '@/types/product'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ProductSortProps {
   sortOptions: ProductSortOption[]
@@ -22,14 +23,15 @@ export const ProductSort = ({
   className,
 }: ProductSortProps) => {
   const currentOption = sortOptions.find(opt => opt.value === currentSort)
-
+const tC = useI18nTranslations('common')
+const tS = useI18nTranslations('services.serviceCategories.sortServicesOptions')
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className={`gap-2 ${className || ''}`}>
           <ArrowUpDown className="h-4 w-4" />
           <span className="text-14">
-            Sort: {currentOption?.label || 'Default'}
+          {tC('sort')} {currentOption?.label || tS('default')}
           </span>
         </Button>
       </DropdownMenuTrigger>

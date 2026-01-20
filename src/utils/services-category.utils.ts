@@ -6,14 +6,12 @@ import type { Service } from '@/types/service'
 import type { ProductCategory } from '@/types/product'
 import type { ServiceResponse } from '@/types/responses/service-response'
 import type { PreparationResponse } from '@/types/responses/preparation-response'
-// ServiceStatus is imported from ServiceResponse type, not from book-enums
+import { pickLocalizedText } from './translation/i18nText'
 
 /**
  * Type guard to check if value is an object
  */
-const isObject = (
-  value: unknown
-): value is Record<string, unknown> => {
+const isObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
@@ -22,23 +20,26 @@ const isObject = (
  */
 export const mapServiceResponseToService = (
   service: ServiceResponse | Record<string, unknown>,
+  locale: string,
   preparationId?: number,
   preparationName?: string,
   preparationSlug?: string
 ): Service => {
   const serviceObj = service as ServiceResponse & Record<string, unknown>
 
-  // Get service name
-  const name = (serviceObj.nameEn ||
-    serviceObj.nameAr ||
-    serviceObj.name ||
-    '') as string
+  // ✅ Get service name (localized)
+  const name = pickLocalizedText(locale, {
+    en: (serviceObj.nameEn as string) ?? '',
+    ar: (serviceObj.nameAr as string) ?? '',
+    fallback: (serviceObj.name as string) ?? '',
+  })
 
-  // Get description
-  const description = (serviceObj.descriptionEn ||
-    serviceObj.descriptionAr ||
-    serviceObj.description ||
-    '') as string
+  // ✅ Get description (localized)
+  const description = pickLocalizedText(locale, {
+    en: (serviceObj.descriptionEn as string) ?? '',
+    ar: (serviceObj.descriptionAr as string) ?? '',
+    fallback: (serviceObj.description as string) ?? '',
+  })
 
   // Get images
   const images: string[] = []
@@ -49,7 +50,7 @@ export const mapServiceResponseToService = (
     const mediaUrls = serviceObj.medias
       .filter(isObject)
       .map((m) => {
-        const media = (m as unknown) as Record<string, unknown>
+        const media = m as unknown as Record<string, unknown>
         return (media.url || media.thumbnailUrl || media.previewUrl || '') as string
       })
       .filter(Boolean)
@@ -71,13 +72,15 @@ export const mapServiceResponseToService = (
       }
     | null
 
-  const providerName =
-    provider?.nameEn || provider?.nameAr || provider?.name || ''
+  // ✅ Provider name (localized)
+  const providerName = pickLocalizedText(locale, {
+    en: (provider?.nameEn as string) ?? '',
+    ar: (provider?.nameAr as string) ?? '',
+    fallback: (provider?.name as string) ?? '',
+  })
 
   const verified =
-    provider?.isVerified === true ||
-    provider?.providerStatus === 'Active' ||
-    false
+    provider?.isVerified === true || provider?.providerStatus === 'Active' || false
 
   // Get provider image
   const providerImage = provider?.profileURL || undefined
@@ -88,8 +91,7 @@ export const mapServiceResponseToService = (
     : undefined
 
   // Get provider rating
-  const providerRating =
-    typeof provider?.rate === 'number' ? provider.rate : undefined
+  const providerRating = typeof provider?.rate === 'number' ? provider.rate : undefined
 
   // Get rating
   const ratingValue =
@@ -108,12 +110,9 @@ export const mapServiceResponseToService = (
 
   // Get prices
   const priceType = (serviceObj.priceType as string) || 'Fixed'
-  const directPrice =
-    typeof serviceObj.price === 'number' ? serviceObj.price : null
-  const rentPrice =
-    typeof serviceObj.rentPrice === 'number' ? serviceObj.rentPrice : null
-  const buyPrice =
-    typeof serviceObj.buyPrice === 'number' ? serviceObj.buyPrice : null
+  const directPrice = typeof serviceObj.price === 'number' ? serviceObj.price : null
+  const rentPrice = typeof serviceObj.rentPrice === 'number' ? serviceObj.rentPrice : null
+  const buyPrice = typeof serviceObj.buyPrice === 'number' ? serviceObj.buyPrice : null
   const saleRentPrice =
     typeof serviceObj.saleRentPrice === 'number' ? serviceObj.saleRentPrice : null
   const saleBuyPrice =
@@ -132,16 +131,10 @@ export const mapServiceResponseToService = (
 
   // Get tags
   const tags: string[] = []
-  if (serviceObj.class) {
-    tags.push(String(serviceObj.class))
-  }
-  if (serviceObj.type) {
-    tags.push(String(serviceObj.type))
-  }
+  if (serviceObj.class) tags.push(String(serviceObj.class))
+  if (serviceObj.type) tags.push(String(serviceObj.type))
 
-  // Get availability
-  // serviceStatus is a number enum: 0=Pending, 1=Active, 2=Suspended
-  // Use numeric comparison (1 = Active)
+  // Get availability (1 = Active)
   const available =
     (typeof serviceObj.serviceStatus === 'number' && serviceObj.serviceStatus === 1) ||
     serviceObj.isAvailable === true ||
@@ -160,20 +153,18 @@ export const mapServiceResponseToService = (
   }
 
   // Get category info
-  const categoryId = preparationId
-    ? String(preparationId)
-    : String(serviceObj.preparationId || '')
+  const categoryId = preparationId ? String(preparationId) : String(serviceObj.preparationId || '')
   const categoryName = preparationName || ''
   const categorySlug = preparationSlug || String(serviceObj.preparationId || '')
 
   return {
     id: String(serviceObj.id || ''),
-    title: name,
-    description,
+    title: name.trim(),
+    description: description.trim(),
     images: images.length > 0 ? images : [''],
     provider: {
       id: String(provider?.id || ''),
-      name: providerName,
+      name: providerName.trim(),
       verified,
       image: providerImage,
       profession,
@@ -208,24 +199,32 @@ export const mapServiceResponseToService = (
  * Map API preparation response to ProductCategory type
  */
 export const mapPreparationToCategory = (
-  preparation: PreparationResponse | Record<string, unknown>
+  preparation: PreparationResponse | Record<string, unknown>,
+  locale: string
 ): ProductCategory => {
   const prep = preparation as PreparationResponse & Record<string, unknown>
 
-  const name = (prep.nameEn || prep.nameAr || prep.name || '') as string
-  const slug = (prep.slug || String(prep.id || '')) as string
-  const description = (prep.bioEn || prep.bioAr || prep.descriptionEn || prep.descriptionAr || '') as string
+  const name = pickLocalizedText(locale, {
+    en: (prep.nameEn as string) ?? '',
+    ar: (prep.nameAr as string) ?? '',
+    fallback: (prep.name as string) ?? '',
+  })
 
-  // Count services in this preparation
-  const serviceCount = Array.isArray(prep.services)
-    ? prep.services.length
-    : 0
+  const slug = String(prep.slug ?? prep.id ?? '')
+
+  const description = pickLocalizedText(locale, {
+    en: (prep.bioEn as string) ?? (prep.descriptionEn as string) ?? '',
+    ar: (prep.bioAr as string) ?? (prep.descriptionAr as string) ?? '',
+    fallback: (prep.bio as string) ?? (prep.description as string) ?? '',
+  })
+
+  const serviceCount = Array.isArray(prep.services) ? prep.services.length : 0
 
   return {
-    id: String(prep.id || ''),
-    name,
+    id: String(prep.id ?? ''),
+    name: name.trim(),
     slug,
-    description,
+    description: description.trim(),
     image: prep.imageUrl as string | undefined,
     productCount: serviceCount,
   }
@@ -234,17 +233,14 @@ export const mapPreparationToCategory = (
 /**
  * Extract services and categories from preparations API response
  */
-export const extractServicesCategoryData = (apiResponse: unknown) => {
-  const result: {
-    services?: Service[]
-    categories?: ProductCategory[]
-  } = {}
+export const extractServicesCategoryData = (apiResponse: unknown, locale: string) => {
+  const result: { services?: Service[]; categories?: ProductCategory[] } = {}
 
-  // Handle different response structures
   const responseObj = isObject(apiResponse) ? apiResponse : {}
-  const data = (isObject(responseObj.data)
-    ? responseObj.data
-    : responseObj) as Record<string, unknown>
+  const data = (isObject(responseObj.data) ? responseObj.data : responseObj) as Record<
+    string,
+    unknown
+  >
 
   // Extract preparations array
   let preparations: Array<Record<string, unknown>> = []
@@ -252,34 +248,28 @@ export const extractServicesCategoryData = (apiResponse: unknown) => {
   if (Array.isArray(data)) {
     preparations = data.filter((p): p is Record<string, unknown> => isObject(p))
   } else if (Array.isArray(data.preparations)) {
-    preparations = data.preparations.filter(
-      (p): p is Record<string, unknown> => isObject(p)
-    )
+    preparations = data.preparations.filter((p): p is Record<string, unknown> => isObject(p))
   } else if (Array.isArray(data.data)) {
-    preparations = data.data.filter(
-      (p): p is Record<string, unknown> => isObject(p)
-    )
+    preparations = data.data.filter((p): p is Record<string, unknown> => isObject(p))
   }
 
-  // Map preparations to categories
   const categories: ProductCategory[] = []
   const allServices: Service[] = []
 
   preparations.forEach((preparation) => {
-    // Only include active preparations
     if (preparation.isActive !== false) {
-      const category = mapPreparationToCategory(preparation)
+      const category = mapPreparationToCategory(preparation, locale)
       categories.push(category)
 
-      // Extract services from this preparation
       if (Array.isArray(preparation.services)) {
         const services = preparation.services
           .filter((s): s is Record<string, unknown> => isObject(s))
           .map((s) =>
             mapServiceResponseToService(
               s,
+              locale,
               typeof preparation.id === 'number' ? preparation.id : undefined,
-              category.name,
+              category.name, // ✅ localized category name
               category.slug
             )
           )
@@ -290,8 +280,5 @@ export const extractServicesCategoryData = (apiResponse: unknown) => {
 
   result.categories = categories
   result.services = allServices
-
   return result
 }
-
-

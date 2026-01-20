@@ -15,6 +15,7 @@ import {
   SearchInput,
   Pagination,
   LoadingSpinner,
+  LoadingOverlay,
 } from '@/components/ui'
 import { ErrorModal } from '@/components/ui/ErrorModal'
 import { HeroCarousel, type HeroSlide } from '@/components/ui'
@@ -26,6 +27,7 @@ import type {
 } from '@/types/service'
 import type { ProductFilter } from '@/types/product'
 import { useServicesPreparations } from '@/hooks/services'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 // Removed mock data - using API data from useServicesPreparations hook
 /*
@@ -512,48 +514,18 @@ const mockServices: Service[] = [
 ]
 */
 
-const sortOptions: ServiceSortOption[] = [
-  { value: 'default', label: 'Default' },
-  { value: 'price-low', label: 'Price: Low to High' },
-  { value: 'price-high', label: 'Price: High to Low' },
-  { value: 'rating', label: 'Highest Rated' },
-  { value: 'newest', label: 'Newest First' },
-  { value: 'popular', label: 'Most Popular' },
-]
 
 // Default hero carousel slides for services
-const DEFAULT_SERVICE_HERO_SLIDES: HeroSlide[] = [
-  {
-    id: '1',
-    label: 'Featured Service',
-    title: 'Bridal Makeup & Hair',
-    description:
-      'Professional bridal beauty services to make you look stunning on your special day. Expert makeup artists and hairstylists ready to create your perfect bridal look.',
-    ctaText: 'Book Now',
-    ctaLink: '/services/category',
-    productImage:
-      'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600',
-    discountText: '30% OFF',
-  },
-  {
-    id: '2',
-    label: 'Top Rated',
-    title: 'Wedding Photography',
-    description:
-      'Capture your precious moments with our professional wedding photography services. Experienced photographers dedicated to creating beautiful memories.',
-    ctaText: 'Explore Services',
-    ctaLink: '/services/category',
-    productImage:
-      'https://images.unsplash.com/photo-1519741497674-611481863552?w=600',
-    discountText: '50% OFF',
-  },
-]
+
 
 /**
  * ServicesCategoryPageContent - Main content component
  * Reads filters from URL query params and syncs changes back to URL
  */
 function ServicesCategoryPageContent() {
+  const tS = useI18nTranslations('services.serviceCategories')
+  const tC = useI18nTranslations('common')
+  const tSI = useI18nTranslations('services.intro')
   const router = useRouter()
   const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<ServiceViewMode>('grid')
@@ -569,18 +541,51 @@ function ServicesCategoryPageContent() {
   // Extract services and categories from API data
   const apiServices = useMemo(() => data?.services || [], [data?.services])
   const apiCategories = useMemo(() => data?.categories || [], [data?.categories])
+  
+  const sortOptions: ServiceSortOption[] = [
+    { value: 'default', label: tS('sortServicesOptions.default')  },
+    { value: 'price-low', label: tS('sortServicesOptions.priceLowToHigh') },
+    { value: 'price-high', label: tS('sortServicesOptions.priceHighToLow') },
+    { value: 'rating', label: tS('sortServicesOptions.highestRated') },
+    { value: 'newest', label: tS('sortServicesOptions.newestFirst') },
+    { value: 'popular', label: tS('sortServicesOptions.mostPopular') },
+  ]
+  const DEFAULT_SERVICE_HERO_SLIDES: HeroSlide[] = [
+    {
+      id: '1',
+      label: tS('heroSlides.slide1.label'),
+      title: tS('heroSlides.slide1.title'), 
+      description: tS('heroSlides.slide1.description'),
+      ctaText: tS('heroSlides.slide1.ctaText'),
+      ctaLink: '/services/category',
+      productImage:
+        'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600',
+      discountText: tS('heroSlides.slide1.discountText'),
+    },
+    {
+      id: '2',
+      label: tS('heroSlides.slide2.label'),
+      title: tS('heroSlides.slide2.title'),
+      description: tS('heroSlides.slide2.description'),
+      ctaText: tS('heroSlides.slide2.ctaText'),
+      ctaLink: '/services/category',
+      productImage:
+        'https://images.unsplash.com/photo-1519741497674-611481863552?w=600',
+      discountText: tS('heroSlides.slide2.discountText'),
+    },
+  ]
 
   // Read filters from URL on mount and when URL changes
   useEffect(() => {
-    const category = searchParams.get('category')
-    const subCategory = searchParams.get('subCategory')
-    const priceMin = searchParams.get('priceRangeMin')
-    const priceMax = searchParams.get('priceRangeMax')
-    const rating = searchParams.get('rating')
-    const availability = searchParams.get('availability')
-    const sort = searchParams.get('sort')
-    const page = searchParams.get('page')
-    const search = searchParams.get('search')
+    const category = searchParams?.get('category')
+    const subCategory = searchParams?.get('subCategory')
+    const priceMin = searchParams?.get('priceRangeMin')
+    const priceMax = searchParams?.get('priceRangeMax')
+    const rating = searchParams?.get('rating')
+    const availability = searchParams?.get('availability')
+    const sort = searchParams?.get('sort')
+    const page = searchParams?.get('page')
+    const search = searchParams?.get('search')
 
     const newFilters: ProductFilter = {}
 
@@ -784,10 +789,9 @@ function ServicesCategoryPageContent() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <LoadingSpinner
-            size="lg"
-            text="Loading services..."
-            fullScreen={true}
+          <LoadingOverlay
+            open={true}
+            
           />
         </main>
         <Footer />
@@ -803,8 +807,8 @@ function ServicesCategoryPageContent() {
         <main className="flex-1 flex items-center justify-center">
           <ErrorModal
             open={true}
-            title="Failed to Load Services"
-            message="Failed to load services. Please try again later."
+            title={tS('FailedtoLoadServices')}
+            message={tS('failedPleaseTryAgain')}
             onRetry={() => window.location.reload()}
             onClose={() => {}}
           />
@@ -847,7 +851,7 @@ function ServicesCategoryPageContent() {
               {/* Search Bar */}
               <div className="mb-6">
                 <SearchInput
-                  placeholder="Search for a Service..."
+                  placeholder={tS('searchPlaceholder')}
                   value={searchQuery}
                   onChange={e => handleSearchChange(e.target.value)}
                   size="lg"
@@ -859,10 +863,10 @@ function ServicesCategoryPageContent() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-2">
                   <span className="text-14 text-gray-600">
-                    {filteredAndSortedServices.length} services found
+                    {filteredAndSortedServices.length} {tS('servicesFound')}
                     {totalPages > 1 && (
                       <span className="ml-2 text-gray-500">
-                        (Page {currentPage} of {totalPages})
+                        ({tS('page')} {currentPage} {tS('of')} {totalPages})
                       </span>
                     )}
                   </span>
@@ -944,11 +948,11 @@ function ServicesCategoryPageContent() {
           <OfferBanner
             offers={[
               {
-                heading: 'Ready To Get Our News ?',
+                heading: tSI('newsletter.heading'),
                 description:
-                  'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+                  tSI('newsletter.description'),
                 variant: 'newsletter',
-                ctaText: 'Submit',
+                ctaText: tC('subscribeButton'),
                 productImage: flowersImage,
               },
             ]}
@@ -969,14 +973,14 @@ function ServicesCategoryPageContent() {
  * Route: /services/category
  */
 export default function ServicesCategoryPage() {
+ 
   return (
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <LoadingSpinner
-            size="lg"
-            text="Loading..."
-            fullScreen={true}
+          <LoadingOverlay
+           
+            open={true}
           />
         </div>
       }

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { searchServices } from '@/services/api/serviceApi'
 import { extractServicesCategoryData } from '@/utils/services-category.utils'
 import type { Service, ServiceCategory } from '@/types/service'
+import { useI18nLocale } from '@/i18n/hooks'
 
 export interface ServicesSearchData {
   services: Service[]
@@ -29,6 +30,7 @@ export const useServicesSearch = (
   params?: ServicesSearchParams,
   enabled = true
 ) => {
+  const locale = useI18nLocale()
   return useQuery({
     queryKey: ['services-search', params],
     queryFn: async (): Promise<ServicesSearchData> => {
@@ -50,7 +52,7 @@ export const useServicesSearch = (
         const result = await searchServices(query)
         
         // Try to extract data from different response structures
-        const extractedData = extractServicesCategoryData(result)
+        const extractedData = extractServicesCategoryData(result, locale)
         
         return {
           services: extractedData.services || [],

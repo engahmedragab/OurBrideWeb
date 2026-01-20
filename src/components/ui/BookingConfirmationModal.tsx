@@ -6,6 +6,7 @@ import { Modal } from './Modal'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
 import modalSuccessSvg from '@/assets/svg/Modal-success.svg'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface BookingConfirmationModalProps {
   isOpen: boolean
@@ -21,7 +22,7 @@ export const BookingConfirmationModal = ({
   className,
 }: BookingConfirmationModalProps) => {
   const router = useRouter()
-
+const tSD = useI18nTranslations('services.bookingConfirmationModal')
   const handleTrackRequest = () => {
     if (onTrackRequest) {
       onTrackRequest()
@@ -35,7 +36,7 @@ export const BookingConfirmationModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Booking Confirmation"
+      title={tSD('title')}
       maxWidth="md"
       zIndex={7}
       className={className}
@@ -50,7 +51,7 @@ export const BookingConfirmationModal = ({
                 ? modalSuccessSvg
                 : modalSuccessSvg.src
             }
-            alt="Booking Confirmation"
+            alt={tSD('title')}
             width={281}
             height={281}
             className="w-full max-w-[281px] h-auto"
@@ -60,11 +61,10 @@ export const BookingConfirmationModal = ({
         {/* Success Message */}
         <div className="text-center mb-4">
           <p className="text-20 md:text-24 font-normal text-gray-900 mb-3">
-            Your Request Has Been Sent!
+            {tSD('successMessage')}
           </p>
           <p className="text-14 md:text-16 text-gray-600 leading-relaxed">
-            Your service request has been successfully submitted. The provider
-            has been notified and you will receive an update once they respond.
+            {tSD('successDescription')}
           </p>
         </div>
 
@@ -80,7 +80,7 @@ export const BookingConfirmationModal = ({
               'transition-colors'
             )}
           >
-            Track My Request
+              {tSD('trackRequest')}
           </Button>
         </div>
       </div>

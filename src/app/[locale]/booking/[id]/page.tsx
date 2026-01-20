@@ -2,12 +2,24 @@ import { BookingPageClient } from './BookingPageClient'
 import { getServicesPreparations } from '@/services/api/serviceApi'
 import { extractServicesCategoryData } from '@/utils/services-category.utils'
 
+type Params = {
+  locale: string
+  id: string
+}
+
 // Generate static params for static export
-export async function generateStaticParams() {
+export async function generateStaticParams(
+  {
+    params,
+  }: {
+    params: Params
+  }) {
+    const { locale } = params
+
   try {
     // Fetch all services from the API to get actual service IDs
     const result = await getServicesPreparations()
-    const extractedData = extractServicesCategoryData(result)
+    const extractedData = extractServicesCategoryData(result, locale)
     
     // Extract all service IDs from the services array
     const serviceIds = extractedData.services?.map((service) => ({

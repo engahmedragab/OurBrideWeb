@@ -7,7 +7,7 @@ import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
-import { useTranslations, useIsRTL } from '@/i18n/hooks'
+import { useTranslations, useIsRTL, useI18nLocale } from '@/i18n/hooks'
 import {
   Card,
   type ProductCardData,
@@ -132,6 +132,7 @@ const ProviderCardItem = memo(
 ProviderCardItem.displayName = 'ProviderCardItem'
 
 export default function Home() {
+  const locale = useI18nLocale()
   // Translations
   const t = useTranslations('home')
   const isRTL = useIsRTL()
@@ -142,10 +143,10 @@ export default function Home() {
   // Extract and map API data
   const apiData = useMemo(() => {
     if (homeData) {
-      return extractHomeData(homeData)
+      return extractHomeData(homeData, locale)
     }
     return {}
-  }, [homeData])
+  }, [homeData, locale])
 
   // Use API data, return empty arrays if not available
   const products = useMemo(() => apiData.products || [], [apiData.products])

@@ -133,7 +133,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState)
-  const t = useI18nTranslations('auth')
+ 
 
   // Initialize auth state from localStorage
   useEffect(() => {
@@ -271,7 +271,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.externalLoginFailed')
+      const errorMessage = error instanceof Error ? error.message : "External login failed" 
       dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage })
       throw error
     }
@@ -289,7 +289,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       dispatch({ type: 'LOGIN_SUCCESS', payload: authData })
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.guestLoginFailed')
+      const errorMessage = error instanceof Error ? error.message : "Guest login failed"
       dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage })
       throw error
     }
@@ -313,7 +313,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       return authData
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.registrationFailed')
+      const errorMessage = error instanceof Error ? error.message : "Registration failed"
       dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage })
       throw error
     }
@@ -336,7 +336,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       return authData
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.registrationFailed')
+      const errorMessage = error instanceof Error ? error.message : "Registration failed"
       dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage })
       throw error
     }
@@ -359,7 +359,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       return authData
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.registrationFailed')
+      const errorMessage = error instanceof Error ? error.message : "Registration failed"
       dispatch({ type: 'SIGNUP_FAILURE', payload: errorMessage })
       throw error
     }
@@ -371,7 +371,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await authApi.sendPhoneOTP(credentials)
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.sendOtpFailed')
+      const errorMessage = error instanceof Error ? error.message : "Failed to send OTP"
       dispatch({ type: 'SET_ERROR', payload: errorMessage })
       throw error
     } finally {
@@ -395,7 +395,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       return authData
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.invalidOtpCode')
+      const errorMessage = error instanceof Error ? error.message : "Invalid OTP code"
       dispatch({ type: 'SET_ERROR', payload: errorMessage })
       throw error
     } finally {
@@ -419,7 +419,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       return authData
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : t('errors.invalidConfirmationCode')
+      const errorMessage = error instanceof Error ? error.message : "Invalid confirmation code"
       dispatch({ type: 'SET_ERROR', payload: errorMessage })
       throw error
     } finally {
