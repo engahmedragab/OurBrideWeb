@@ -8,6 +8,7 @@ import { Badge } from './Badge'
 import { Input } from './Input'
 import { X, SlidersHorizontal } from 'lucide-react'
 import type { ProductFilter, ProductCategory } from '@/types/product'
+import { useI18nTranslations } from '@/i18n'
 
 interface PriceRangeSliderProps {
   min: number
@@ -268,6 +269,7 @@ export const ProductFilters = ({
     max: filters.priceRange?.max || 300,
   })
   const priceInputTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const t = useI18nTranslations('products.filtersPanel')
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -317,7 +319,7 @@ export const ProductFilters = ({
       >
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4" />
-          <span>Filters</span>
+          <span>{t('filters')}</span>
           {activeFiltersCount > 0 && (
             <Badge
               variant="default"
@@ -341,7 +343,7 @@ export const ProductFilters = ({
         {/* Categories */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-14 font-semibold text-gray-900">Categories</h4>
+            <h4 className="text-14 font-semibold text-gray-900">{t('categories')}</h4>
             {filters.category && filters.category.length > 0 && (
               <Button
                 variant="ghost"
@@ -354,7 +356,7 @@ export const ProductFilters = ({
                 }}
                 className="text-12 text-gray-500 hover:text-gray-700 h-auto p-2"
               >
-                Clear
+                {t('clear')}
               </Button>
             )}
           </div>
@@ -407,7 +409,7 @@ export const ProductFilters = ({
 
         {/* Price Range */}
         <div className="space-y-3">
-          <h4 className="text-14 font-semibold text-gray-900">Price</h4>
+          <h4 className="text-14 font-semibold text-gray-900">{t('price')}</h4>
           <PriceRangeSlider
             min={0}
             max={300}
@@ -430,7 +432,7 @@ export const ProductFilters = ({
           {/* From and To Input Boxes */}
           <div className="flex items-center gap-3">
             <div className="flex-1">
-              <label className="text-12 text-gray-600 mb-1 block">From</label>
+              <label className="text-12 text-gray-600 mb-1 block">{t('from')}</label>
               <Input
                 type="number"
                 value={priceRange.min || ''}
@@ -457,7 +459,7 @@ export const ProductFilters = ({
               />
             </div>
             <div className="flex-1">
-              <label className="text-12 text-gray-600 mb-1 block">To</label>
+              <label className="text-12 text-gray-600 mb-1 block">{t('to')}</label>
               <Input
                 type="number"
                 value={priceRange.max || ''}
@@ -488,7 +490,7 @@ export const ProductFilters = ({
 
         {/* Stock Status */}
         <div className="space-y-3">
-          <h4 className="text-14 font-semibold text-gray-900">Availability</h4>
+          <h4 className="text-14 font-semibold text-gray-900">{t('availability')}</h4>
           <div className="flex items-center gap-2">
             <Checkbox
               checked={filters.inStock === true}
@@ -509,7 +511,7 @@ export const ProductFilters = ({
                 })
               }}
             >
-              In Stock Only
+              {t('inStockOnly')}
             </label>
           </div>
         </div>
@@ -541,7 +543,7 @@ export const ProductFilters = ({
                   variant="outline"
                   className="text-12 px-2 py-1 flex items-center gap-1"
                 >
-                  In Stock
+                  {t('inStock')}
                   <button onClick={handleStockToggle} className="ml-1">
                     <X className="h-3 w-3" />
                   </button>

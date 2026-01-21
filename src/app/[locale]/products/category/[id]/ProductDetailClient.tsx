@@ -514,7 +514,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           <section className="mb-12 max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-30 md:text-32 font-normal text-gray-900">
-                Suggested for You
+                {tCommon('suggestedForYou')}
             </h2>
               <Link
                 href="/products"

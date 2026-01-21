@@ -17,7 +17,10 @@
     "productsLoading":"جاري تحميل المنتجات...",
     "Anonymous":"مجهول",
     "recently":"مؤخرا",
-    "viewAll":"عرض الكل"
+    "viewAll":"عرض الكل",
+    "suggestedForYou":"مقترح لك",
+    "startShopping":"ابدئي التسوق",
+    "subscribe":"اشتركي"
   },
     "auth": {
     "hero": {
@@ -490,12 +493,14 @@
      "productNotFoundMessage":"المنتج الذي تبحثين عنه غير موجود أو تم حذفه",
      "backToProducts":"العودة إلى المنتجات",
     "addToCartSuccess": "تمت إضافة المنتج إلى سلة التسوق بنجاح!",
-    "addToCartError": "فشل في إضافة المنتج إلى سلة التسوق"
+    "addToCartError": "فشل في إضافة المنتج إلى سلة التسوق",
+    "productsFound": "منتج متوفر"
   },
   "offerCommon": {
     "specialOffer": "عرض خاص",
     "buyNowAndGetBy": "اشترِ الآن واحصل عليه قبل",
     "reviews": "التقييمات"
+    
   },
   "date": {
     "aug25_2025": "25 أغسطس 2025"
@@ -535,6 +540,33 @@
   "offerBanner": {
     "heading": "خصم 24٪ على منتجاتنا!",
     "description": "اشتركي في النشرة البريدية واحصلي على عروض حصرية على منتجات الزفاف الفاخرة."
+  },
+  
+  "productSortOptions": {
+    "default": "الافتراضي",
+    "price-low": "السعر: من الأقل إلى الأعلى",
+    "price-high": "السعر: من الأعلى إلى الأقل",
+    "rating": "الأعلى تقييمًا",
+    "newest": "الأحدث أولاً",
+    "popular": "الأكثر شيوعًا"
+  },
+  "categoryBanner": {
+    
+      "heading": "جاهزة توصلك أخبارنا؟",
+      "description": "OurBride هي منصتك الشاملة لتخطيط الزفاف والتسوق. هتلاقي كل اللي محتاجاه علشان تعملي يومك المثالي.",
+      "ctaText": "إرسال"
+    
+  },
+  "filtersPanel": {
+    "filters": "الفلاتر",
+    "categories": "الفئات",
+    "clear": "مسح",
+    "price": "السعر",
+    "from": "من",
+    "to": "إلى",
+    "availability": "التوفر",
+    "inStockOnly": "المتوفر فقط",
+    "inStock": "متوفر"
   }
 }
   

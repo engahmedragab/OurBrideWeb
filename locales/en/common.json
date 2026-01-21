@@ -17,7 +17,10 @@
      "productsLoading": "Loading products...",
      "anonymous":"Anonymous",
      "recently":"Recently",
-     "viewAll":"View All"
+     "viewAll":"View All",
+     "suggestedForYou":"Suggested For You",
+     "startShopping":"Start Shopping",
+     "subscribe":"Subscribe"
 
   },
   
@@ -500,7 +503,8 @@
     "productNotFoundMessage": "The product you're looking for doesn't exist or has been removed.",
     "backToProducts": "Back to Products",
     "addToCartSuccess": "Product added to cart successfully!",
-    "addToCartError": "Failed to add product to cart"
+    "addToCartError": "Failed to add product to cart",
+    "productsFound": "products found"
   },
   "offerCommon": {
     "specialOffer": "Special Offer",
@@ -541,6 +545,30 @@
   "offerBanner": {
     "heading": "24% Offer On our product!",
     "description": "Subscribe to our newsletter and get exclusive offers on premium wedding products."
+  },
+  "productSortOptions": {
+    "default": "Default",
+    "price-low": "Price: Low to High",
+    "price-high": "Price: High to Low",
+    "rating": "Highest Rated",
+    "newest": "Newest First",
+    "popular": "Most Popular"
+  },
+  "categoryBanner": {
+    "heading": "Ready To Get Our News?",
+    "description": "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
+    "ctaText": "Submit"
+  },
+  "filtersPanel": {
+    "filters": "Filters",
+    "categories": "Categories",
+    "clear": "Clear",
+    "price": "Price",
+    "from": "From",
+    "to": "To",
+    "availability": "Availability",
+    "inStockOnly": "In Stock Only",
+    "inStock": "In Stock"
   }
     }
   

@@ -47,7 +47,7 @@ export default function ProductIntroPage() {
 
   // Fetch data from products home endpoint (getProductGetProductsHome) - for categories and products
   const { data: productsHomeData, isLoading: productsHomeLoading } = useProductsHome()
-
+  
   // Extract and map data from store home API (for banners)
   const storeData = useMemo(() => {
     if (storeHomeData) {
@@ -63,6 +63,7 @@ export default function ProductIntroPage() {
   )
 
   const apiBanners = useMemo(() => storeData.banners || [], [storeData.banners])
+  
   const apiProvidersData = useMemo(() => storeData.providers || [], [storeData.providers])
 
   const isLoading = storeHomeLoading || productsHomeLoading
@@ -107,12 +108,12 @@ export default function ProductIntroPage() {
     
     return productsHomeData.headers.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map((header): Product => ({
       id: String(header.id),
-      title: header.name || header.nameEn || header.nameAr || '',
-      description: header.shortDescription || header.bio || '',
+      title:isRTL ? header.nameAr || header.nameEn || header.name : header.name || header.nameEn || header.nameAr || '',
+      description: isRTL ? header.shortDescriptionAr || header.shortDescriptionEn || header.shortDescription : header.shortDescription || header.shortDescriptionAr || header.shortDescriptionEn || '',
       images: header.image ? [header.image] : [],
       provider: {
         id: header.providerId ? String(header.providerId) : '',
-        name: header.provider?.nameEn || header.provider?.nameAr || '',
+        name: isRTL ? header.provider?.nameAr || header.provider?.nameEn || '' : header.provider?.nameEn || header.provider?.nameAr || '',
         verified: false,
         image: header.provider?.profileURL || undefined,
       },
@@ -136,7 +137,6 @@ export default function ProductIntroPage() {
       sku: header.sku,
     }))
   }, [productsHomeData?.headers])
-
   // Map providers to BestProvidersSection format
   const mappedProviders: BestProviderType[] = useMemo(() => {
     if (apiProvidersData.length === 0 || displayProducts.length === 0) {
