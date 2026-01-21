@@ -32,15 +32,29 @@ import { ArticleCard } from './ArticleCard'
 import { ReelCard } from './ReelCard'
 import { DecisionGroupCard } from './DecisionGroupCard'
 import { ContestCard } from './ContestCard'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface CommunityProfileProps {
   profile: CommunityProfileResponse
   className?: string
 }
 
-type ContentTab = 'all' | 'posts' | 'blogs' | 'articles' | 'reels' | 'decision-groups' | 'contests'
+type ContentTab =
+  | 'all'
+  | 'posts'
+  | 'blogs'
+  | 'articles'
+  | 'reels'
+  | 'decision-groups'
+  | 'contests'
 
-export const CommunityProfile = ({ profile, className }: CommunityProfileProps) => {
+export const CommunityProfile = ({
+  profile,
+  className,
+}: CommunityProfileProps) => {
+  const t = useI18nTranslations('community')
+  const tC = useI18nTranslations('common')
+
   const router = useRouter()
   const { addToast } = useToast()
   const [activeTab, setActiveTab] = useState<ContentTab>('all')
@@ -63,70 +77,67 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
     return {
       profileType: profile.profileType,
       profileId: profile.profileType !== 'User' ? profile.profileId : undefined,
-      profileUserId: profile.profileType === 'User' ? profile.userInfo?.userId : undefined,
+      profileUserId:
+        profile.profileType === 'User' ? profile.userInfo?.userId : undefined,
     }
   }
 
   const handleFollow = async () => {
     try {
       await toggleFollowMutation.mutateAsync(getProfileParams())
-      // Optimistic update - the query will refetch automatically
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed' : 'Followed', 'success')
+      addToast(
+        isFollowing
+          ? t('articleDetails.unfollowedSuccessfully')
+          : t('articleDetails.followedSuccessfully'),
+        'success'
+      )
     } catch (error) {
-      // Revert on error
       setIsFollowing(profile.isFollowing)
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+      addToast(
+        error instanceof Error
+          ? error.message
+          : t('articleDetails.failedToToggleFollow'),
+        'error'
+      )
     }
   }
 
   const handleLike = async () => {
     try {
       await toggleLikeMutation.mutateAsync(getProfileParams())
-      // Optimistic update - the query will refetch automatically
       setIsLiked(!isLiked)
-      addToast(isLiked ? 'Unliked' : 'Liked', 'success')
+      addToast(
+        isLiked ? t('profile.toasts.unliked') : t('profile.toasts.liked'),
+        'success'
+      )
     } catch (error) {
-      // Revert on error
       setIsLiked(profile.isLiked)
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('articleDetails.failedToToggleLike'),
+        'error'
+      )
     }
   }
 
   const handleFavorite = async () => {
     try {
       await toggleFavoriteMutation.mutateAsync(getProfileParams())
-      // Optimistic update - the query will refetch automatically
       setIsFavorited(!isFavorited)
       addToast(
-        isFavorited ? 'Removed from favorites' : 'Added to favorites',
+        isFavorited
+          ? t('profile.toasts.removedFromFavorites')
+          : t('profile.toasts.addedToFavorites'),
         'success'
       )
     } catch (error) {
-      // Revert on error
       setIsFavorited(profile.isFavorited)
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
-    }
-  }
-
-  const getContentPath = (contentType: string, id: number): string => {
-    const type = contentType.toLowerCase()
-    switch (type) {
-      case 'post':
-        return `/community/posts/${id}`
-      case 'blog':
-        return `/community/blogs/${id}`
-      case 'article':
-        return `/community/articles/${id}`
-      case 'reel':
-        return `/community/reels/${id}`
-      case 'decisiongroup':
-      case 'decision group':
-        return `/community/decision-groups/${id}`
-      case 'contest':
-        return `/community/contests/${id}`
-      default:
-        return `/community`
+      addToast(
+        error instanceof Error
+          ? error.message
+          : t('articleDetails.failedToToggleFavorite'),
+        'error'
+      )
     }
   }
 
@@ -135,24 +146,21 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
 
     switch (contentType) {
       case 'post':
-        return content.post ? (
-          <PostCard key={content.id} post={content.post} />
-        ) : null
+        return content.post ? <PostCard key={content.id} post={content.post} /> : null
       case 'blog':
-        return content.blog ? (
-          <BlogCard key={content.id} blog={content.blog} />
-        ) : null
+        return content.blog ? <BlogCard key={content.id} blog={content.blog} /> : null
       case 'article':
         return content.article ? (
           <ArticleCard key={content.id} article={content.article} />
         ) : null
       case 'reel':
-        return content.reel ? (
-          <ReelCard key={content.id} reel={content.reel} />
-        ) : null
+        return content.reel ? <ReelCard key={content.id} reel={content.reel} /> : null
       case 'decisiongroup':
         return content.decisionGroup ? (
-          <DecisionGroupCard key={content.id} decisionGroup={content.decisionGroup} />
+          <DecisionGroupCard
+            key={content.id}
+            decisionGroup={content.decisionGroup}
+          />
         ) : null
       case 'contest':
         return content.contest ? (
@@ -165,7 +173,7 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
 
   const filterContent = (content: UnifiedCommunityContentResponse[]) => {
     if (activeTab === 'all') return content
-    return content.filter(c => {
+    return content.filter((c) => {
       const type = c.contentType.toLowerCase()
       switch (activeTab) {
         case 'posts':
@@ -186,8 +194,14 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
     })
   }
 
-  const allContent = [...(profile.recentContent || []), ...(profile.featuredContent || [])]
+  const allContent = [
+    ...(profile.recentContent || []),
+    ...(profile.featuredContent || []),
+  ]
   const filteredContent = filterContent(allContent)
+
+  const activeTabLabel =
+    activeTab === 'all' ? t('profile.tabs.all') : t(`tabs.${activeTab}`)
 
   return (
     <div className={cn('space-y-6', className)}>
@@ -198,16 +212,17 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
           size="icon"
           onClick={() => router.push('/community')}
           className="h-10 w-10"
-          aria-label="Go back"
+          aria-label={t('profile.aria.goBack')}
         >
           <ArrowLeft className="h-5 w-5 text-gray-600" />
         </Button>
+
         <div className="flex items-center gap-2 text-14 text-gray-600">
           <button
             onClick={() => router.push('/community')}
             className="hover:text-brand-500 transition-colors"
           >
-            Community
+            {t('tabs.community')}
           </button>
           <span>/</span>
           <span className="text-gray-900">{profile.displayName}</span>
@@ -221,7 +236,7 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
           {profile.coverImageUrl ? (
             <Image
               src={profile.coverImageUrl}
-              alt={`${profile.displayName} cover`}
+              alt={t('profile.aria.coverAlt', { name: profile.displayName })}
               fill
               sizes="100vw"
               className="object-cover"
@@ -239,10 +254,11 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
               {/* Avatar */}
               <div className="relative -mt-16">
                 <div className="relative w-32 h-32 rounded-full border-4 border-white overflow-hidden shadow-lg bg-gray-200">
-                  {profile.avatarUrl && profile.avatarUrl !== 'https://via.placeholder.com/128' ? (
+                  {profile.avatarUrl &&
+                  profile.avatarUrl !== 'https://via.placeholder.com/128' ? (
                     <Image
                       src={profile.avatarUrl}
-                      alt={profile.displayName}
+                      alt={t('profile.aria.avatarAlt', { name: profile.displayName })}
                       fill
                       sizes="128px"
                       className="object-cover"
@@ -265,18 +281,19 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 <h1 className="text-28 font-semibold text-gray-900 mb-2">
                   {profile.displayName}
                 </h1>
-                {profile.bio && (
-                  <p className="text-14 text-gray-700 mb-2">{profile.bio}</p>
-                )}
-                {/* Additional Info Based on Type */}
+
+                {profile.bio && <p className="text-14 text-gray-700 mb-2">{profile.bio}</p>}
+
                 {profile.userInfo && (
                   <p className="text-12 text-gray-500">@{profile.userInfo.userName}</p>
                 )}
+
                 {profile.providerInfo && (
                   <p className="text-12 text-gray-500">
-                    {profile.providerInfo.category} Provider
+                    {profile.providerInfo.category} {t('communityRightSidebar.provider')}
                   </p>
                 )}
+
                 {profile.bazaarEventInfo && (
                   <p className="text-12 text-gray-500">
                     {profile.bazaarEventInfo.eventName}
@@ -296,36 +313,39 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
               >
                 <UserPlus className="h-4 w-4" />
                 {toggleFollowMutation.isPending
-                  ? 'Loading...'
+                  ? tC('loading')
                   : isFollowing
-                    ? 'Following'
-                    : 'Follow'}
+                    ? t('actions.following')
+                    : t('actions.follow')}
               </Button>
+
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleLike}
                 disabled={toggleLikeMutation.isPending}
                 className={cn(isLiked && 'text-red-500')}
-                aria-label={isLiked ? 'Unlike' : 'Like'}
+                aria-label={isLiked ? t('profile.aria.unlike') : t('profile.aria.like')}
               >
                 <Heart className={cn('h-5 w-5', isLiked && 'fill-current')} />
               </Button>
+
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleFavorite}
                 disabled={toggleFavoriteMutation.isPending}
                 className={cn(isFavorited && 'text-yellow-500')}
-                aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                aria-label={
+                  isFavorited
+                    ? t('profile.aria.removeFromFavorites')
+                    : t('profile.aria.addToFavorites')
+                }
               >
                 <Star className={cn('h-5 w-5', isFavorited && 'fill-current')} />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="More options"
-              >
+
+              <Button variant="ghost" size="icon" aria-label={t('profile.aria.moreOptions')}>
                 <MoreVertical className="h-5 w-5 text-gray-500" />
               </Button>
             </div>
@@ -334,34 +354,28 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
           {/* Statistics */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6 pt-6 border-t border-gray-200">
             <div className="text-center">
-              <div className="text-20 font-semibold text-gray-900">
-                {profile.totalContent}
-              </div>
-              <div className="text-12 text-gray-600">Total Content</div>
+              <div className="text-20 font-semibold text-gray-900">{profile.totalContent}</div>
+              <div className="text-12 text-gray-600">{t('profile.stats.totalContent')}</div>
             </div>
+
             <div className="text-center">
-              <div className="text-20 font-semibold text-gray-900">
-                {profile.totalFollowers}
-              </div>
-              <div className="text-12 text-gray-600">Followers</div>
+              <div className="text-20 font-semibold text-gray-900">{profile.totalFollowers}</div>
+              <div className="text-12 text-gray-600">{t('profile.stats.followers')}</div>
             </div>
+
             <div className="text-center">
-              <div className="text-20 font-semibold text-gray-900">
-                {profile.totalFollowing}
-              </div>
-              <div className="text-12 text-gray-600">Following</div>
+              <div className="text-20 font-semibold text-gray-900">{profile.totalFollowing}</div>
+              <div className="text-12 text-gray-600">{t('profile.stats.following')}</div>
             </div>
+
             <div className="text-center">
-              <div className="text-20 font-semibold text-gray-900">
-                {profile.totalLikes}
-              </div>
-              <div className="text-12 text-gray-600">Likes</div>
+              <div className="text-20 font-semibold text-gray-900">{profile.totalLikes}</div>
+              <div className="text-12 text-gray-600">{t('profile.stats.likes')}</div>
             </div>
+
             <div className="text-center">
-              <div className="text-20 font-semibold text-gray-900">
-                {profile.totalViews}
-              </div>
-              <div className="text-12 text-gray-600">Views</div>
+              <div className="text-20 font-semibold text-gray-900">{profile.totalViews}</div>
+              <div className="text-12 text-gray-600">{t('profile.stats.views')}</div>
             </div>
           </div>
 
@@ -372,42 +386,47 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 <Globe className="h-4 w-4" />
                 <span className="font-semibold">{profile.totalPosts}</span>
               </div>
-              <div className="text-12 text-gray-600">Posts</div>
+              <div className="text-12 text-gray-600">{t('tabs.posts')}</div>
             </div>
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-14 text-gray-700 mb-1">
                 <BookOpen className="h-4 w-4" />
                 <span className="font-semibold">{profile.totalBlogs}</span>
               </div>
-              <div className="text-12 text-gray-600">Blogs</div>
+              <div className="text-12 text-gray-600">{t('tabs.blogs')}</div>
             </div>
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-14 text-gray-700 mb-1">
                 <FileText className="h-4 w-4" />
                 <span className="font-semibold">{profile.totalArticles}</span>
               </div>
-              <div className="text-12 text-gray-600">Articles</div>
+              <div className="text-12 text-gray-600">{t('tabs.articles')}</div>
             </div>
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-14 text-gray-700 mb-1">
                 <Monitor className="h-4 w-4" />
                 <span className="font-semibold">{profile.totalReels}</span>
               </div>
-              <div className="text-12 text-gray-600">Reels</div>
+              <div className="text-12 text-gray-600">{t('tabs.reels')}</div>
             </div>
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-14 text-gray-700 mb-1">
                 <Users className="h-4 w-4" />
                 <span className="font-semibold">{profile.totalDecisionGroups}</span>
               </div>
-              <div className="text-12 text-gray-600">Decisions</div>
+              <div className="text-12 text-gray-600">{t('tabs.decision-groups')}</div>
             </div>
+
             <div className="text-center">
               <div className="flex items-center justify-center gap-1 text-14 text-gray-700 mb-1">
                 <Trophy className="h-4 w-4" />
                 <span className="font-semibold">{profile.totalContests}</span>
               </div>
-              <div className="text-12 text-gray-600">Contests</div>
+              <div className="text-12 text-gray-600">{t('tabs.contests')}</div>
             </div>
           </div>
         </div>
@@ -425,8 +444,9 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 : 'text-gray-700 hover:bg-gray-50'
             )}
           >
-            All
+            {t('profile.tabs.all')}
           </button>
+
           <button
             onClick={() => setActiveTab('posts')}
             className={cn(
@@ -436,8 +456,9 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 : 'text-gray-700 hover:bg-gray-50'
             )}
           >
-            Posts ({profile.totalPosts})
+            {t('profile.tabs.withCount', { label: t('tabs.posts'), count: profile.totalPosts })}
           </button>
+
           <button
             onClick={() => setActiveTab('blogs')}
             className={cn(
@@ -447,8 +468,9 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 : 'text-gray-700 hover:bg-gray-50'
             )}
           >
-            Blogs ({profile.totalBlogs})
+            {t('profile.tabs.withCount', { label: t('tabs.blogs'), count: profile.totalBlogs })}
           </button>
+
           <button
             onClick={() => setActiveTab('articles')}
             className={cn(
@@ -458,8 +480,12 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 : 'text-gray-700 hover:bg-gray-50'
             )}
           >
-            Articles ({profile.totalArticles})
+            {t('profile.tabs.withCount', {
+              label: t('tabs.articles'),
+              count: profile.totalArticles,
+            })}
           </button>
+
           <button
             onClick={() => setActiveTab('reels')}
             className={cn(
@@ -469,8 +495,9 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 : 'text-gray-700 hover:bg-gray-50'
             )}
           >
-            Reels ({profile.totalReels})
+            {t('profile.tabs.withCount', { label: t('tabs.reels'), count: profile.totalReels })}
           </button>
+
           <button
             onClick={() => setActiveTab('decision-groups')}
             className={cn(
@@ -480,8 +507,12 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 : 'text-gray-700 hover:bg-gray-50'
             )}
           >
-            Decisions ({profile.totalDecisionGroups})
+            {t('profile.tabs.withCount', {
+              label: t('tabs.decision-groups'),
+              count: profile.totalDecisionGroups,
+            })}
           </button>
+
           <button
             onClick={() => setActiveTab('contests')}
             className={cn(
@@ -491,7 +522,10 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
                 : 'text-gray-700 hover:bg-gray-50'
             )}
           >
-            Contests ({profile.totalContests})
+            {t('profile.tabs.withCount', {
+              label: t('tabs.contests'),
+              count: profile.totalContests,
+            })}
           </button>
         </div>
       </div>
@@ -499,9 +533,12 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
       {/* Featured Content */}
       {profile.featuredContent && profile.featuredContent.length > 0 && (
         <div>
-          <h2 className="text-20 font-semibold text-gray-900 mb-4">Featured Content</h2>
+          <h2 className="text-20 font-semibold text-gray-900 mb-4">
+            {t('profile.headings.featuredContent')}
+          </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {profile.featuredContent.map(content => renderContentCard(content))}
+            {profile.featuredContent.map((content) => renderContentCard(content))}
           </div>
         </div>
       )}
@@ -509,36 +546,19 @@ export const CommunityProfile = ({ profile, className }: CommunityProfileProps) 
       {/* All Content */}
       <div>
         <h2 className="text-20 font-semibold text-gray-900 mb-4">
-          {activeTab === 'all' ? 'All Content' : `${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`}
+          {activeTab === 'all' ? t('profile.headings.allContent') : activeTabLabel}
         </h2>
+
         {filteredContent.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredContent.map(content => renderContentCard(content))}
+            {filteredContent.map((content) => renderContentCard(content))}
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <p className="text-16 text-gray-500">No content found</p>
+            <p className="text-16 text-gray-500">{t('profile.states.noContentFound')}</p>
           </div>
         )}
       </div>
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

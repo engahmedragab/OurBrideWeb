@@ -17,6 +17,7 @@ import { COMMUNITY_IMAGES } from '@/constants/community-images'
 import type { TagResponse } from '@/types/responses/community'
 import type { ReelResponse } from '@/types/responses/community'
 import { formatDate, getUserDisplayName, getUserAvatar } from './utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface CommunityRightSidebarProps {
   className?: string
@@ -48,6 +49,7 @@ export const CommunityRightSidebar = ({
   tags = [],
   selectedReel = null,
 }: CommunityRightSidebarProps) => {
+  const t = useI18nTranslations("community")
   const router = useRouter()
   const { addToast } = useToast()
   const [commentText, setCommentText] = useState('')
@@ -70,7 +72,7 @@ export const CommunityRightSidebar = ({
     // TODO: Call API to add comment/review
     // For now, just clear the input
     setCommentText('')
-    addToast('Comment added!', 'success')
+    addToast(t("communityRightSidebar.commentAdded"), 'success')
   }
 
   const handleLikeClick = async () => {
@@ -84,7 +86,7 @@ export const CommunityRightSidebar = ({
     const url = `${window.location.origin}/community/reels/${selectedReel?.id}`
     try {
       await navigator.clipboard.writeText(url)
-      addToast('Link copied to clipboard!', 'success')
+      addToast(t("communityRightSidebar.linkCopied"), 'success')
     } catch {
       const textArea = document.createElement('textarea')
       textArea.value = url
@@ -92,7 +94,7 @@ export const CommunityRightSidebar = ({
       textArea.select()
       document.execCommand('copy')
       document.body.removeChild(textArea)
-      addToast('Link copied to clipboard!', 'success')
+      addToast(t("communityRightSidebar.linkCopied"), 'success')
     }
   }
 
@@ -120,7 +122,7 @@ export const CommunityRightSidebar = ({
               {(!currentUser.avatar || currentUser.avatar === 'https://via.placeholder.com/100') && (
                 <div className="w-full h-full flex items-center justify-center bg-brand-100">
                   <span className="text-16 font-semibold text-brand-600">
-                    {currentUser.name.charAt(0).toUpperCase() || 'U'}
+                    {currentUser.name.charAt(0).toUpperCase() || t("user.fallbackName")}
                   </span>
                 </div>
               )}
@@ -161,7 +163,7 @@ export const CommunityRightSidebar = ({
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-brand-100">
                       <span className="text-14 font-semibold text-brand-600">
-                        {displayName.charAt(0).toUpperCase() || 'U'}
+                        {displayName.charAt(0).toUpperCase() || t("user.fallbackName")}
                       </span>
                     </div>
                   )
@@ -185,7 +187,7 @@ export const CommunityRightSidebar = ({
               <EngagementButton
                 icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
                 count={likes}
-                label="Likes"
+                label={t("postCard.likes")}
                 onClick={handleLikeClick}
                 isActive={isLiked}
                 size="sm"
@@ -193,13 +195,13 @@ export const CommunityRightSidebar = ({
               <EngagementButton
                 icon={<MessageCircle className="h-4 w-4" />}
                 count={selectedReel.commentCount || 0}
-                label="Comments"
+                label={t("postCard.comments")}
                 size="sm"
               />
               <EngagementButton
                 icon={<Share2 className="h-4 w-4" />}
                 count={selectedReel.shareCount || 0}
-                label="Shares"
+                label={t("postCard.shares")}
                 onClick={handleShareClick}
                 size="sm"
               />
@@ -207,14 +209,14 @@ export const CommunityRightSidebar = ({
           </div>
 
           {/* Comments Section */}
-          <h3 className="text-16 font-normal text-gray-900">Comments</h3>
+          <h3 className="text-16 font-normal text-gray-900">{t("postCard.comments")}</h3>
 
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             {/* Comments List - TODO: Fetch from API */}
             <div className="space-y-6 mb-6">
               {/* Placeholder for comments - will be replaced with API data */}
               <p className="text-14 text-gray-500 text-center py-4">
-                No comments yet. Be the first to comment!
+                {t("communityRightSidebar.noComments")}
               </p>
             </div>
 
@@ -246,7 +248,7 @@ export const CommunityRightSidebar = ({
                     type="text"
                     value={commentText}
                     onChange={e => setCommentText(e.target.value)}
-                    placeholder="Share your Comments"
+                    placeholder={t("communityRightSidebar.shareYourComments")}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-14"
                     onKeyDown={e => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -276,7 +278,7 @@ export const CommunityRightSidebar = ({
           {suggestedUsers.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
               <h3 className="text-16 font-normal text-gray-900 mb-4">
-                Suggests To Follow
+                {t("communityRightSidebar.suggestsToFollow")}
               </h3>
               <div className="space-y-4">
                 {suggestedUsers.map(suggestion => (
@@ -306,7 +308,7 @@ export const CommunityRightSidebar = ({
                           ) : (
                             <div className="w-full h-full flex items-center justify-center bg-brand-100">
                               <span className="text-14 font-semibold text-brand-600">
-                                {displayName.charAt(0).toUpperCase() || 'U'}
+                                {displayName.charAt(0).toUpperCase() || t("user.fallbackName")}
                               </span>
                             </div>
                           )
@@ -314,7 +316,7 @@ export const CommunityRightSidebar = ({
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-14 font-normal text-gray-900 truncate">
-                          {suggestion.displayName || suggestion.userName || 'User'}
+                          {suggestion.displayName || suggestion.userName || t("user.fallbackName")}
                         </h4>
                         <p className="text-12 text-gray-500 truncate">
                           OurBride
@@ -327,7 +329,7 @@ export const CommunityRightSidebar = ({
                       className="flex-shrink-0 text-10 text-white font-normal"
                       disabled={suggestion.isFollowing}
                     >
-                      {suggestion.isFollowing ? 'Following' : 'Follow'}
+                      {suggestion.isFollowing ? t("actions.following") : t("actions.follow")}
                     </Button>
                   </div>
                 ))}
@@ -339,7 +341,7 @@ export const CommunityRightSidebar = ({
           {topProviders.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
               <h3 className="text-16 font-normal text-gray-900 mb-4">
-                Top Providers
+                {t("topProviders")}
               </h3>
               <div className="space-y-4">
                 {topProviders.map(provider => (
@@ -370,7 +372,7 @@ export const CommunityRightSidebar = ({
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-14 font-normal text-gray-900 truncate">
-                          {provider.providerName || 'Provider'}
+                          {provider.providerName || t("communityRightSidebar.provider")}
                         </h4>
                         <p className="text-12 text-gray-500 truncate">
                           {provider.category || provider.email || ''}
@@ -383,7 +385,7 @@ export const CommunityRightSidebar = ({
                       className="flex-shrink-0 text-10 text-white font-normal"
                       disabled={provider.isFollowing}
                     >
-                      {provider.isFollowing ? 'Following' : 'Follow'}
+                      {provider.isFollowing ? t("actions.following") : t("actions.follow")}
                     </Button>
                   </div>
                 ))}
@@ -395,7 +397,7 @@ export const CommunityRightSidebar = ({
           {tags.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
               <h3 className="text-16 font-normal text-gray-900 mb-4">
-                Popular Tags
+                {t("communityRightSidebar.popularTags")}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
@@ -414,7 +416,7 @@ export const CommunityRightSidebar = ({
           {activeTab === 'articles' && recentArticles.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
               <h3 className="text-16 font-normal text-gray-900 mb-4">
-                Top Articles
+                {t("communityRightSidebar.topArticles")}
               </h3>
               <div className="space-y-4">
                 {recentArticles.slice(0, 5).map(article => (

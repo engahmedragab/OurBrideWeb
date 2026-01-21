@@ -8,12 +8,14 @@ import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { formatDateShort, getUserDisplayName, getUserAvatar } from './utils'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
 import { CommunityEmptyState } from './CommunityEmptyState'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface CommunityPostsListProps {
   className?: string
 }
 
 export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
+  const t = useI18nTranslations("community")
   const router = useRouter()
 
   // Fetch posts for sidebar preview (limited to 3-4 posts)
@@ -31,12 +33,12 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
     <div className={cn('space-y-4', className)}>
       {/* Title */}
       <div className="flex items-center justify-between">
-        <h3 className="text-16 font-normal text-gray-900">Community Posts</h3>
+        <h3 className="text-16 font-normal text-gray-900">{t("communityRightSidebar.communityPosts")}</h3>
         <button
           onClick={handleSeeAllPosts}
           className="text-14 font-normal text-brand-500 hover:text-brand-600 transition-colors"
         >
-          See All
+          {t("actions.seeAll")}
         </button>
       </div>
 
@@ -44,7 +46,7 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm overflow-hidden flex flex-col">
         {isLoading ? (
           <div className="flex justify-center items-center py-8 min-h-[200px]">
-            <LoadingOverlay open={true} title="Loading..." />
+            <LoadingOverlay open={true}  />
           </div>
         ) : posts && posts.length > 0 ? (
           <div 
@@ -97,8 +99,8 @@ export const CommunityPostsList = ({ className }: CommunityPostsListProps) => {
         ) : (
           <div className="py-4">
             <CommunityEmptyState
-              title="No Posts Available"
-              message="There are no posts to display at the moment."
+              title={t("states.noPostsTitle")}
+              message={t("states.noPostsMessage")}
               compact
             />
           </div>

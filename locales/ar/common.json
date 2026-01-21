@@ -707,10 +707,313 @@
         "successDescription": "تم إرسال طلبك بنجاح. المزود سيتم إعلامه وستتلقى تحديثاً مرة واحدة عندما يرد.",
         "trackRequest": "تتبع الطلب"
       }
-      
- 
+      },
+     "community": {
+      "recentPosts": "المنشورات الأخيرة",
+      "recentArticles": "المقالات الأخيرة",
+      "topProviders": "المزودين الأعلى تقييمًا",
+      "communityFeed": {
+      "createPostPlaceholder": "شارك ما يدور في ذهنك، {name} ....",
+      "emptyMessage": "لا توجد منشورات للعرض الآن. كوني أول من يشارك شيئًا!",
+      "aria": {
+        "uploadImage": "رفع صورة",
+        "addReels": "إضافة ريلز",
+        "textFormat": "تنسيق نص"
       }
+    },
+      
+    "tabs": {
+    "community": "المجتمع",
+    "posts": "المنشورات",
+    "blogs": "المدونات",
+    "articles": "المقالات",
+    "reels": "ريلز",
+    "decision-groups": "القرارات",
+    "contests": "المسابقات",
+    "profile": "الملف الشخصي"
+  },
+  "links": {
+    "myProfile": "الملف الشخصي"
+  },
+  "actions": {
+    "search": "بحث",
+    "clearSearch": "مسح البحث",
+    "close": "إغلاق",
+    "seeAll": "عرض الكل",
+    "follow": "تابع",
+    "following": "تابع"
+  },
+  "placeholders": {
+    "searchInTab": "ابحث في {tab}..."
+  },
+  "labels": {
+    "showingResultsFor": "عرض نتائج البحث عن: \"{query}\""
+  },
+  "errors": {
+    "failedToLoadCommunityData": "فشل تحميل بيانات المجتمع",
+    "unknownError": "خطأ غير معروف"
+  },
+  "user": {
+    "fallbackName": "مستخدم"
+  },
+  "states":{
+    "loading": "جاري التحميل...",
+    "noArticlesTitle": "لا توجد مقالات متاحة",
+    "noArticlesMessage": "لا توجد مقالات لعرض حالياً.",
+    "noContentTitle": "لا يوجد محتوى متاح",
+    "noContentMessage": "لا يوجد محتوى لعرض حالياً. يرجى التحقق لاحقاً أو كون/ي أول من يشارك/ي شيئاً!",
+    "noPostsTitle": "لا توجد منشورات متاحة",
+    "noPostsMessage": "لا توجد منشورات لعرض حالياً.",
+    "noReelsTitle": "لا توجد ريلز متاحة",
+    "noReelsMessage": "لا توجد ريلز لعرض حالياً."
+  },
+  "search": {
+    "title": {
+      "page": "بحث في المجتمع"
+    },
+    "searchBar": {
+      "placeholder": "ابحث في المنشورات والمقالات والمدونات والريلز والمسابقات...",
+      "button": "بحث",
+      "filtersButton": "الفلاتر",
+      "applyFilters": "تطبيق الفلاتر",
+      "searching": "جاري البحث...",
+      "all": "الكل"
+    },
+    "filters": {
+      "title": "الفلاتر",
+      "clearAll": "مسح الكل",
+      "categoryIdLabel": "رقم التصنيف",
+      "categoryIdPlaceholder": "رقم التصنيف",
+      "itemIdLabel": "رقم العنصر",
+      "itemIdPlaceholder": "رقم العنصر",
+      "providerIdLabel": "رقم المزوّد",
+      "providerIdPlaceholder": "رقم المزوّد",
+      "tagIdsLabel": "أرقام الوسوم (مفصولة بفاصلة)",
+      "tagIdsPlaceholder": "1,2,3"
+    },
+    "contentTypes": {
+      "all": "الكل",
+      "post": "منشور",
+      "blog": "مدونة",
+      "article": "مقال",
+      "reel": "ريلز",
+      "decisionGroup": "مجموعة قرار",
+      "contest": "مسابقة"
+    },
+    "notices": {
+      
+      "textSearchNotSupported": {
+        "title": "ملاحظة:",
+        "body": "البحث بالنص غير مدعوم حاليًا من الـ API. لا يمكن استخدام عبارة البحث \"{query}\". من فضلك استخدم/ي الفلاتر بالأعلى للبحث حسب رقم التصنيف أو رقم العنصر أو رقم المزوّد أو أرقام الوسوم."
+      }
+    },
+    "empty": {
+      "startTitle": "ابدأ البحث",
+      "startSubtitle": "استخدم/ي الفلاتر للعثور على محتوى المجتمع حسب التصنيف أو العنصر أو المزوّد أو الوسوم"
+    },
+    "results": {
+      "found": "تم العثور على {count} نتيجة"
+    },
+    "states": {
+      "errorTitle": "حدث خطأ أثناء البحث",
+      "errorFallback": "حدث خطأ أثناء البحث",
+      "noResultsTitle": "لا توجد نتائج",
+      "noResultsSubtitle": "جرّب/ي تعديل البحث أو الفلاتر"
+    },
+    "actions": {
+      "search": "بحث",
+      "close": "إغلاق",
+      "clearSearch": "مسح البحث"
+    }
+  },
+  "postCard": {
+    "failedToToggleLike": "فشل تحديث الإعجاب",
+    "sharedSuccessfully": "تم المشاركة بنجاح! الرابط تم النسخ إلى الحافظة.",
+    "failedToSharePost": "فشل مشاركة المنشور",
+    "failedToToggleFavorite": "فشل تحديث المفضلة",
+    "fallbackName": "مستخدم",
+    "likes": "الإعجابات",
+    "comments": "التعليقات",
+    "shares": "المشاركات"  ,
+    "favorites": "المفضلة"
+  },
+  "communityRightSidebar": {
+      "commentAdded": "تم إضافة التعليق بنجاح!",
+    "linkCopied": "تم النسخ إلى الحافظة!",
+    "noComments": "لا توجد تعليقات بعد. كوني أول من يعلق!",
+    "shareYourComments": "شاركي تعليقك",
+    "suggestsToFollow": "مقترحات للتابعة",
+    "provider": "المزوّد",
+    "popularTags": "الوسوم الشائعة",
+    "topArticles": "المقالات الأعلى تقييمًا",
+    "communityPosts": "المنشورات المجتمعية"
     
+  },
+ "articleDetails": {
+  "loading": "جاري تحميل المقال...",
+  "notFoundTitle": "المقال غير موجود",
+  "notFoundMessage": "المقال الذي تبحث عنه غير موجود أو تم حذفه.",
+  "commentAdded": "تمت إضافة التعليق بنجاح!",
+  "failedToAddComment": "فشل إضافة التعليق",
+  "failedToToggleLike": "فشل تحديث الإعجاب",
+  "sharedSuccessfully": "تمت المشاركة بنجاح! تم نسخ الرابط إلى الحافظة.",
+  "failedToShareArticle": "فشل مشاركة المقال",
+  "failedToToggleFavorite": "فشل تحديث المفضلة",
+  "userIDNotAvailable": "معرّف المستخدم غير متاح",
+  "unfollowedSuccessfully": "تم إلغاء المتابعة بنجاح",
+  "followedSuccessfully": "تمت المتابعة بنجاح",
+  "failedToToggleFollow": "فشل تحديث المتابعة",
+  "load": "جاري التحميل...",
+  "following": "متابع",
+  "follow": "متابعة",
+  "noComments": "لا توجد تعليقات بعد. كن أول من يعلّق!",
+  "writeComment": "اكتب تعليقًا...",
+  "postComment": "نشر التعليق",
+  "posting": "جاري النشر...",
+  "articleCard": {
+    "readMore": "اقرأ المزيد",
+    "minRead": "دقيقة للقراءة"
+  }
+},
+"blogDetails": {
+  "loading": "جاري تحميل المدونة...",
+  "blogNotFoundTitle": "المدونة غير موجودة",
+  "blogNotFoundMessage": "المدونة التي تبحث عنها غير موجودة أو تم حذفها.",
+  "Anonymous": "مجهول",
+  "user": "المستخدم",
+  "failedToShareBlog": "فشل مشاركة المدونة"
+},
+"contestDetails": {
+  "loading": "جاري تحميل المسابقة...",
+  "contestNotFoundTitle": "المسابقة غير موجودة",
+  "contestNotFoundMessage": "المسابقة التي تبحث عنها غير موجودة أو تم حذفها.",
+  "failedToShareContest": "فشل مشاركة المسابقة",
+  "alreadyJoined": "لقد قمت بالمشاركة في هذه المسابقة بالفعل!",
+  "joinedSuccessfully": "تمت المشاركة بنجاح!",
+  "active": "نشط",
+  "ended": "نهاية",
+  "upcoming": "قادم",
+  "prize": "جائزة",
+  "participants": "المشاركين",
+  "ends": "الانتهاء",
+  "joinContest": "مشاركة في المسابقة",
+  "contestEnded": "نهاية المسابقة",
+  "joined": "مشارك",
+  "noContestsTitle": "لا توجد مسابقات متاحة",
+  "noContestsMessage": "لا توجد مسابقات لعرض حالياً."
+},
+"decisionGroupDetails": {
+  "loading": "جاري تحميل مجموعة القرار...",
+  "decisionGroupNotFoundTitle": "مجموعة القرار غير موجودة",
+  "decisionGroupNotFoundMessage": "مجموعة القرار التي تبحث عنها غير موجودة أو تم حذفها.",
+  "haveAlreadyVoted": "لقد قمت بالتصويت بالفعل!",
+  "voteCastSuccessfully": "تم تسجيل تصويتك بنجاح!",
+  "failedToVote": "فشل التصويت",
+  "votes": "صوت",
+  "participants": "مشارك",
+  "totalVotes": "إجمالي الأصوات",
+  "moreOptions": "خيارات إضافية"
+  },
+  "profile": {
+    "profileIdRequired": "معرف الملف الشخصي مطلوب",
+    "profileIdRequiredMessage": "يرجى توفير معرف الملف الشخصي في الرابط.",
+    "loading": "جاري تحميل الملف الشخصي...",
+    "profileNotFoundTitle": "الملف الشخصي غير موجود",
+    "profileNotFoundMessage": "الملف الشخصي الذي تبحث عنه غير موجود أو تم حذفه.",
+    "tabs": {
+      "all": "الكل",
+      "withCount": "{label} ({count})"
+    },
+    "headings": {
+      "featuredContent": "محتوى مميز",
+      "allContent": "كل المحتوى"
+    },
+    "stats": {
+      "totalContent": "إجمالي المحتوى",
+      "followers": "المتابعون",
+      "following": "يتابع",
+      "likes": "الإعجابات",
+      "views": "المشاهدات"
+    },
+    "states": {
+      "noContentFound": "لا يوجد محتوى"
+    },
+    "aria": {
+      "goBack": "رجوع",
+      "like": "إعجاب",
+      "unlike": "إلغاء الإعجاب",
+      "addToFavorites": "إضافة إلى المفضلة",
+      "removeFromFavorites": "إزالة من المفضلة",
+      "moreOptions": "خيارات إضافية",
+      "coverAlt": "غلاف {name}",
+      "avatarAlt": "صورة {name}"
+    },
+    "toasts": {
+      "liked": "تم الإعجاب",
+      "unliked": "تم إلغاء الإعجاب",
+      "addedToFavorites": "تمت الإضافة إلى المفضلة",
+      "removedFromFavorites": "تمت الإزالة من المفضلة"
+    }
+  },
+  "createPostModal": {
+    "title": "إنشاء منشور",
+    "privacy": {
+      "public": "عام",
+      "friends": "الأصدقاء",
+      "private": "خاص"
+    },
+    "fields": {
+      "titlePlaceholder": "عنوان المنشور (اختياري)",
+      "contentPlaceholder": "شارك ما يدور في ذهنك، {name}..."
+    },
+    "buttons": {
+      "post": "نشر",
+      "posting": "جاري النشر..."
+    },
+    "aria": {
+      "close": "إغلاق النافذة",
+      "removeImage": "إزالة الصورة",
+      "uploadImage": "رفع صورة",
+      "generateAi": "توليد محتوى بالذكاء الاصطناعي",
+      "addReels": "إضافة ريلز",
+      "textFormat": "تنسيق نص"
+    },
+    "tooltips": {
+      "maxImages": "الحد الأقصى {max} صور",
+      "uploadImage": "رفع صورة",
+      "generateAi": "توليد محتوى بالذكاء الاصطناعي",
+      "addVideoComingSoon": "إضافة فيديو (قريبًا)",
+      "textFormatComingSoon": "تنسيق نص (قريبًا)"
+    },
+    "toasts": {
+      "uploadLimit": "يمكنك رفع بحد أقصى {max} صور. سيتم رفع أول {count} فقط.",
+      "uploadFileFail": "فشل رفع {fileName}",
+      "uploadSuccess": "تم رفع {count} صورة بنجاح",
+      "uploadFail": "فشل رفع الصور",
+      "generateNeedInput": "من فضلك أدخل عنوانًا أو بعض المحتوى للتوليد منه",
+      "generateSuccess": "تم توليد المحتوى بنجاح!",
+      "generateFail": "فشل توليد المحتوى. حاول مرة أخرى.",
+      "postNeedInput": "من فضلك أدخل عنوانًا أو محتوى للمنشور",
+      "postSuccess": "تم إنشاء المنشور بنجاح!",
+      "postFail": "فشل إنشاء المنشور. حاول مرة أخرى.",
+      "postNoResponse": "فشل إنشاء المنشور: لا توجد استجابة من الخادم"
+    },
+    "fallback": {
+      "newPostTitle": "منشور جديد"
+    }
+  },
+  "reelDetails": {
+    "loading": "جاري تحميل الريلز...",
+    "reelNotFoundTitle": "الريلز غير موجود",
+    "reelNotFoundMessage": "الريلز الذي تبحث عنه غير موجود أو تم حذفه."
+  },
+  "postDetails": {
+    "loading": "جاري تحميل المنشور...",
+    "postNotFoundTitle": "المنشور غير موجود",
+    "postNotFoundMessage": "المنشور الذي تبحث عنه غير موجود أو تم حذفه."
+  }
+ 
     
+}
   
 }

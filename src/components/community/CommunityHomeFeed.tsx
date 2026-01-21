@@ -6,6 +6,7 @@ import { PostCard } from './PostCard'
 import { ArticleCard } from './ArticleCard'
 import { CommunityEmptyState } from './CommunityEmptyState'
 import type { CommunityHomeResponse } from '@/types/responses/community/community-home-response'
+import { useI18nTranslations } from '@/i18n'
 
 export interface CommunityHomeFeedProps {
   className?: string
@@ -17,6 +18,7 @@ export interface CommunityHomeFeedProps {
 }
 
 export const CommunityHomeFeed = ({ className, data, currentUser }: CommunityHomeFeedProps) => {
+  const t = useI18nTranslations("community")
   const router = useRouter()
 
   return (
@@ -25,12 +27,12 @@ export const CommunityHomeFeed = ({ className, data, currentUser }: CommunityHom
       {data.recentPosts && data.recentPosts.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-20 font-semibold text-gray-900">Recent Posts</h2>
+            <h2 className="text-20 font-semibold text-gray-900">{t("recentPosts")}</h2>
             <button
               onClick={() => router.push('/community?tab=posts')}
               className="text-14 font-normal text-brand-500 hover:text-brand-600 transition-colors"
             >
-              See All
+              {t("actions.seeAll")}
             </button>
           </div>
           <div className="space-y-6">
@@ -45,12 +47,12 @@ export const CommunityHomeFeed = ({ className, data, currentUser }: CommunityHom
       {data.recentArticles && data.recentArticles.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-20 font-semibold text-gray-900">Recent Articles</h2>
+            <h2 className="text-20 font-semibold text-gray-900">{t("recentArticles")}</h2>
             <button
               onClick={() => router.push('/community?tab=articles')}
               className="text-14 font-normal text-brand-500 hover:text-brand-600 transition-colors"
             >
-              See All
+              {t("actions.seeAll")}
             </button>
           </div>
           <div className="space-y-6">
@@ -65,8 +67,8 @@ export const CommunityHomeFeed = ({ className, data, currentUser }: CommunityHom
       {(!data.recentPosts || data.recentPosts.length === 0) &&
         (!data.recentArticles || data.recentArticles.length === 0) && (
           <CommunityEmptyState
-            title="No Content Available"
-            message="There is no content to display at the moment. Check back later or be the first to share something!"
+            title={t("states.noContentTitle")}
+            message={t("states.noContentMessage")}
             compact
           />
         )}

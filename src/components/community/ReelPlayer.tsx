@@ -33,6 +33,7 @@ import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './
 import Link from 'next/link'
 import type { ReviewResponse } from '@/types/responses/review-response'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ReelPlayerProps {
   id: string
@@ -40,13 +41,13 @@ export interface ReelPlayerProps {
   className?: string
 }
 
-export const ReelPlayer = ({
-  id,
-  videoUrl: _videoUrl,
-  className,
-}: ReelPlayerProps) => {
+export const ReelPlayer = ({ id, videoUrl: _videoUrl, className }: ReelPlayerProps) => {
   const { addToast } = useToast()
   const queryClient = useQueryClient()
+
+  const t = useI18nTranslations('community')
+  const tC = useI18nTranslations('common')
+
   const [isPlaying, setIsPlaying] = useState(true)
   const [isMuted, setIsMuted] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
@@ -75,7 +76,7 @@ export const ReelPlayer = ({
   const comments = (reel?.reviews || []).map((review: ReviewResponse) => ({
     id: String(review.id),
     author: {
-      name: review.isAnonymous ? 'Anonymous' : 'User', // TODO: Get actual user name from review.userId
+      name: review.isAnonymous ? t('blogDetails.Anonymous') : t('blogDetails.user'),
       avatar: 'https://via.placeholder.com/100',
     },
     content: review.comment || review.summary || '',
@@ -132,7 +133,7 @@ export const ReelPlayer = ({
       queryClient.invalidateQueries({ queryKey: ['reel', id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(error instanceof Error ? error.message : t('postCard.failedToToggleLike'), 'error')
     },
   })
 
@@ -143,12 +144,11 @@ export const ReelPlayer = ({
     },
     onSuccess: () => {
       setCommentText('')
-      addToast('Comment added successfully!', 'success')
-      // Invalidate queries to refresh comments/reviews
+      addToast(t('articleDetails.commentAdded'), 'success')
       queryClient.invalidateQueries({ queryKey: ['reel', id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+      addToast(error instanceof Error ? error.message : t('articleDetails.failedToAddComment'), 'error')
     },
   })
 
@@ -169,15 +169,15 @@ export const ReelPlayer = ({
     onSuccess: (data) => {
       if (data) {
         setShares(data.shareCount)
-        // Copy share URL to clipboard
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/reels/${reel?.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
-        addToast('Shared successfully! Link copied to clipboard.', 'success')
+        const urlToShare =
+          data.shortUrl || data.fullUrl || `${window.location.origin}/community/reels/${reel?.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
+        addToast(t('postCard.sharedSuccessfully'), 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['reel', id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share reel', 'error')
+      addToast(error instanceof Error ? error.message : t('blogDetails.failedToShareBlog'), 'error')
     },
   })
 
@@ -192,13 +192,13 @@ export const ReelPlayer = ({
       queryClient.invalidateQueries({ queryKey: ['reel', id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(error instanceof Error ? error.message : t('postCard.failedToToggleFavorite'), 'error')
     },
   })
 
   const toggleFollowMutation = useMutation({
     mutationFn: async () => {
-      if (!reel || !reel.userId) throw new Error('User ID not available')
+      if (!reel || !reel.userId) throw new Error(t('articleDetails.userIDNotAvailable'))
       await toggleFollow({
         profileType: 'User',
         profileUserId: reel.userId,
@@ -206,10 +206,10 @@ export const ReelPlayer = ({
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(isFollowing ? t('articleDetails.unfollowedSuccessfully') : t('articleDetails.followedSuccessfully'), 'success')
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+      addToast(error instanceof Error ? error.message : t('articleDetails.failedToToggleFollow'), 'error')
     },
   })
 
@@ -236,7 +236,7 @@ export const ReelPlayer = ({
   if (isLoading) {
     return (
       <div className={cn('flex items-center justify-center w-full min-h-[400px]', className)}>
-        <LoadingOverlay open={true} title="Loading reel..." />
+        <LoadingOverlay open={true} title={tC('loading')} />
       </div>
     )
   }
@@ -245,7 +245,7 @@ export const ReelPlayer = ({
     return (
       <div className={cn('flex items-center justify-center w-full min-h-[400px]', className)}>
         <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-          <p className="text-gray-500">Reel not found</p>
+          <p className="text-gray-500">{t('states.noContentTitle')}</p>
         </div>
       </div>
     )
@@ -279,11 +279,7 @@ export const ReelPlayer = ({
                   className="h-12 w-12 rounded-full bg-transparent hover:bg-transparent border-0 flex items-center justify-center"
                   aria-label={isPlaying ? 'Pause' : 'Play'}
                 >
-                  {isPlaying ? (
-                    <Pause className="h-6 w-6 text-white" />
-                  ) : (
-                    <Play className="h-6 w-6 text-white" />
-                  )}
+                  {isPlaying ? <Pause className="h-6 w-6 text-white" /> : <Play className="h-6 w-6 text-white" />}
                 </Button>
 
                 {/* Mute/Unmute Button */}
@@ -294,11 +290,7 @@ export const ReelPlayer = ({
                   className="h-12 w-12 rounded-full bg-transparent hover:bg-transparent border-0 flex items-center justify-center"
                   aria-label={isMuted ? 'Unmute' : 'Mute'}
                 >
-                  {isMuted ? (
-                    <VolumeX className="h-6 w-6 text-white" />
-                  ) : (
-                    <Volume2 className="h-6 w-6 text-white" />
-                  )}
+                  {isMuted ? <VolumeX className="h-6 w-6 text-white" /> : <Volume2 className="h-6 w-6 text-white" />}
                 </Button>
               </div>
             </div>
@@ -313,11 +305,7 @@ export const ReelPlayer = ({
                 className="p-2 rounded-full bg-black/30 backdrop-blur-sm text-white hover:bg-black/50 transition-colors"
                 aria-label={isPlaying ? 'Pause' : 'Play'}
               >
-                {isPlaying ? (
-                  <Pause className="h-5 w-5" />
-                ) : (
-                  <Play className="h-5 w-5" />
-                )}
+                {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
               </button>
               <button
                 onClick={e => {
@@ -327,11 +315,7 @@ export const ReelPlayer = ({
                 className="p-2 rounded-full bg-black/30 backdrop-blur-sm text-white hover:bg-black/50 transition-colors"
                 aria-label={isMuted ? 'Unmute' : 'Mute'}
               >
-                {isMuted ? (
-                  <VolumeX className="h-5 w-5" />
-                ) : (
-                  <Volume2 className="h-5 w-5" />
-                )}
+                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
               </button>
             </div>
 
@@ -356,12 +340,13 @@ export const ReelPlayer = ({
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-brand-100">
                         <span className="text-14 font-semibold text-brand-600">
-                          {displayName.charAt(0).toUpperCase() || 'U'}
+                          {displayName.charAt(0).toUpperCase() || t('postCard.fallbackName').charAt(0)}
                         </span>
                       </div>
                     )
                   })()}
                 </div>
+
                 <div className="flex-1 text-white">
                   <div className="flex items-center gap-2 mb-1">
                     {reel.userId && getProfileUrl(reel.userId, reel.user?.type) ? (
@@ -369,15 +354,12 @@ export const ReelPlayer = ({
                         href={getProfileUrl(reel.userId, reel.user?.type)!}
                         className="hover:text-brand-300 transition-colors"
                       >
-                        <h4 className="text-14 font-normal">
-                          {getUserDisplayName(reel.user)}
-                        </h4>
+                        <h4 className="text-14 font-normal">{getUserDisplayName(reel.user)}</h4>
                       </Link>
                     ) : (
-                      <h4 className="text-14 font-normal">
-                        {getUserDisplayName(reel.user)}
-                      </h4>
+                      <h4 className="text-14 font-normal">{getUserDisplayName(reel.user)}</h4>
                     )}
+
                     {reel.userId && (
                       <Button
                         variant={isFollowing ? 'outline' : 'brand'}
@@ -388,16 +370,18 @@ export const ReelPlayer = ({
                       >
                         <UserPlus className={cn('h-3 w-3 mr-1', isFollowing && 'hidden')} />
                         {toggleFollowMutation.isPending
-                          ? '...'
+                          ? tC('loading')
                           : isFollowing
-                            ? 'Following'
-                            : 'Follow'}
+                            ? t('actions.following')
+                            : t('actions.follow')}
                       </Button>
                     )}
                   </div>
+
                   <p className="text-12 text-white/80 mb-2">
                     {formatDate(reel.publishedAt || reel.creationDate)}
                   </p>
+
                   <p className="text-14 text-white/90 line-clamp-2">
                     {reel.description || reel.caption || reel.title || ''}
                   </p>
@@ -407,10 +391,7 @@ export const ReelPlayer = ({
 
             {/* Mobile Engagement Buttons - Right Side */}
             <div className="md:hidden absolute right-4 bottom-20 flex flex-col gap-4 z-10 pointer-events-auto">
-              <button
-                onClick={handleLikeClick}
-                className="flex flex-col items-center gap-1 text-white"
-              >
+              <button onClick={handleLikeClick} className="flex flex-col items-center gap-1 text-white">
                 <div
                   className={cn(
                     'p-2 rounded-full bg-black/30 backdrop-blur-sm',
@@ -427,10 +408,7 @@ export const ReelPlayer = ({
                 <span className="text-12 font-normal">{likes}</span>
               </button>
 
-              <button
-                onClick={handleCommentClick}
-                className="flex flex-col items-center gap-1 text-white"
-              >
+              <button onClick={handleCommentClick} className="flex flex-col items-center gap-1 text-white">
                 <div className="p-2 rounded-full bg-black/30 backdrop-blur-sm">
                   <MessageCircle className="h-6 w-6" />
                 </div>
@@ -488,11 +466,11 @@ export const ReelPlayer = ({
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl max-h-[85vh] flex flex-col animate-[slideUp_0.3s_ease-out]">
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
-              <h2 className="text-16 font-normal text-gray-900">Comments</h2>
+              <h2 className="text-16 font-normal text-gray-900">{t('postCard.comments')}</h2>
               <button
                 onClick={() => setIsCommentsOpen(false)}
                 className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                aria-label="Close comments"
+                aria-label={t('actions.close')}
               >
                 <X className="h-5 w-5" />
               </button>
@@ -502,12 +480,10 @@ export const ReelPlayer = ({
             <div className="flex-1 overflow-y-auto px-4 py-4">
               <div className="space-y-6">
                 {comments.length > 0 ? (
-                  comments.map(comment => (
-                    <CommentCard key={comment.id} {...comment} />
-                  ))
+                  comments.map(comment => <CommentCard key={comment.id} {...comment} />)
                 ) : (
                   <p className="text-14 text-gray-500 text-center py-4">
-                    No comments yet. Be the first to comment!
+                    {t('communityRightSidebar.noComments')}
                   </p>
                 )}
               </div>
@@ -519,7 +495,7 @@ export const ReelPlayer = ({
                 <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
                   {(() => {
                     const avatar = reel ? getUserAvatar(reel.user) : null
-                    const displayName = reel ? getUserDisplayName(reel.user) : 'U'
+                    const displayName = reel ? getUserDisplayName(reel.user) : t('postCard.fallbackName')
                     return avatar && avatar !== 'https://via.placeholder.com/100' ? (
                       <Image
                         src={avatar}
@@ -534,18 +510,19 @@ export const ReelPlayer = ({
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-brand-100">
                         <span className="text-14 font-semibold text-brand-600">
-                          {displayName.charAt(0).toUpperCase() || 'U'}
+                          {displayName.charAt(0).toUpperCase() || t('postCard.fallbackName').charAt(0)}
                         </span>
                       </div>
                     )
                   })()}
                 </div>
+
                 <div className="flex-1">
                   <input
                     type="text"
                     value={commentText}
                     onChange={e => setCommentText(e.target.value)}
-                    placeholder="Share your Comments"
+                    placeholder={t('communityRightSidebar.shareYourComments')}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-14"
                     onKeyDown={e => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -555,6 +532,7 @@ export const ReelPlayer = ({
                     }}
                   />
                 </div>
+
                 <Button
                   variant="brand"
                   size="icon"

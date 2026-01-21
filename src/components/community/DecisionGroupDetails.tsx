@@ -31,6 +31,7 @@ import {
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface DecisionGroupDetailsProps {
   decisionGroup: DecisionGroupResponse
@@ -41,6 +42,8 @@ export const DecisionGroupDetails = ({
   decisionGroup,
   className,
 }: DecisionGroupDetailsProps) => {
+  const t = useI18nTranslations("community")
+  const tC = useI18nTranslations("common")
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
@@ -58,7 +61,7 @@ export const DecisionGroupDetails = ({
   const comments = (decisionGroup.reviews || []).map((review: ReviewResponse) => ({
     id: String(review.id),
     author: {
-      name: review.isAnonymous ? 'Anonymous' : 'User', // TODO: Get actual user name from review.userId
+      name: review.isAnonymous ? t("blogDetails.anonymous") : t("blogDetails.user"), // TODO: Get actual user name from review.userId
       avatar: 'https://via.placeholder.com/100',
     },
     content: review.comment || review.summary || '',
@@ -71,12 +74,12 @@ export const DecisionGroupDetails = ({
     },
     onSuccess: () => {
       setCommentText('')
-      addToast('Comment added successfully!', 'success')
+      addToast(t("articleDetails.commentAdded"), 'success')
       // Invalidate queries to refresh comments/reviews
       queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+      addToast(error instanceof Error ? error.message : t("articleDetails.failedToAddComment"), 'error')
     },
   })
 
@@ -90,7 +93,7 @@ export const DecisionGroupDetails = ({
       queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(error instanceof Error ? error.message : t("articleDetails.failedToToggleLike"), 'error')
     },
   })
 
@@ -113,12 +116,12 @@ export const DecisionGroupDetails = ({
         // Copy share URL to clipboard
         const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/decision-groups/${decisionGroup.id}`
         navigator.clipboard.writeText(urlToShare).catch(() => { })
-        addToast('Shared successfully! Link copied to clipboard.', 'success')
+        addToast(t("articleDetails.sharedSuccessfully"), 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share decision group', 'error')
+      addToast(error instanceof Error ? error.message : t("articleDetails.failedToShareDecisionGroup"), 'error')
     },
   })
 
@@ -132,13 +135,13 @@ export const DecisionGroupDetails = ({
       queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(error instanceof Error ? error.message : t("articleDetails.failedToToggleFavorite"), 'error')
     },
   })
 
   const toggleFollowMutation = useMutation({
     mutationFn: async () => {
-      if (!decisionGroup.userId) throw new Error('User ID not available')
+      if (!decisionGroup.userId) throw new Error(t("articleDetails.userIDNotAvailable"))
       await toggleFollow({
         profileType: 'User',
         profileUserId: decisionGroup.userId,
@@ -146,10 +149,10 @@ export const DecisionGroupDetails = ({
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(isFollowing ? t("articleDetails.unfollowedSuccessfully") : t("articleDetails.followedSuccessfully"), 'success')
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+      addToast(error instanceof Error ? error.message : t("articleDetails.failedToToggleFollow"), 'error')
     },
   })
 
@@ -167,12 +170,12 @@ export const DecisionGroupDetails = ({
 
   const handleVote = (optionId: number) => {
     if (hasVoted) {
-      addToast('You have already voted!', 'info')
+      addToast(t("decisionGroupDetails.haveAlreadyVoted"), 'info')
       return
     }
     setSelectedOption(optionId)
     setHasVoted(true)
-    addToast('Your vote has been cast!', 'success')
+    addToast(t("decisionGroupDetails.voteCastSuccessfully"), 'success')
   }
 
   return (
@@ -193,10 +196,10 @@ export const DecisionGroupDetails = ({
             onClick={() => router.push('/community?tab=decision-groups')}
             className="hover:text-brand-500 transition-colors"
           >
-            Community
+            {t("tabs.community")}
           </button>
           <span>/</span>
-          <span>Decision Groups</span>
+          <span>{t("tabs.decisionGroups")}</span>
           <span>/</span>
           <span className="text-gray-900">{decisionGroup.title}</span>
         </div>
@@ -264,10 +267,10 @@ export const DecisionGroupDetails = ({
               >
                 <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
                 {toggleFollowMutation.isPending
-                  ? 'Loading...'
+                  ? tC("loading")
                   : isFollowing
-                    ? 'Following'
-                    : 'Follow'}
+                    ? t("articleDetails.following")
+                    : t("articleDetails.follow")}
               </Button>
             )}
             <Button
@@ -319,7 +322,7 @@ export const DecisionGroupDetails = ({
                 {hasVoted && (
                   <div className="ml-4 text-right min-w-[100px]">
                     <div className="text-14 font-semibold text-gray-900">
-                      {option.voteCount} votes
+                      {option.voteCount} {t("decisionGroupDetails.votes")}
                     </div>
                     <div className="text-12 text-gray-600">
                       {option.percentage}%
@@ -342,8 +345,8 @@ export const DecisionGroupDetails = ({
         {/* Stats */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-200 mb-4">
           <div className="flex items-center gap-4 text-14 text-gray-600">
-            <span>{decisionGroup.totalVotes} total votes</span>
-            <span>{decisionGroup.totalParticipants} participants</span>
+            <span>{decisionGroup.totalVotes} {t("decisionGroupDetails.totalVotes")}</span>
+            <span>{decisionGroup.totalParticipants} {t("decisionGroupDetails.participants")}</span>
           </div>
         </div>
 
@@ -353,25 +356,25 @@ export const DecisionGroupDetails = ({
             <EngagementButton
               icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
               count={likes}
-              label="Likes"
+              label={t("postCard.likes")}
               onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
               isActive={isLiked}
             />
             <EngagementButton
               icon={<MessageCircle className="h-5 w-5" />}
               count={decisionGroup.reviewCount || decisionGroup.commentCount || 0}
-              label="Comments"
+              label={t("postCard.comments")}
             />
             <EngagementButton
               icon={<Share2 className="h-5 w-5" />}
               count={shares}
-              label="Shares"
+              label={t("postCard.shares")}
               onClick={shareMutation.isPending ? undefined : handleShareClick}
             />
             <EngagementButton
               icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
               count={favorites}
-              label="Favorites"
+              label={t("postCard.favorites")}
               onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
               isActive={isFavorited}
             />
@@ -380,7 +383,7 @@ export const DecisionGroupDetails = ({
       </div>
 
       {/* Comments Section */}
-      <h3 className="text-16 font-normal text-gray-900">Comments</h3>
+      <h3 className="text-16 font-normal text-gray-900">{t("postCard.comments")}</h3>
 
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         {/* Comments List */}
@@ -391,7 +394,7 @@ export const DecisionGroupDetails = ({
             ))
           ) : (
             <p className="text-14 text-gray-500 text-center py-4">
-              No comments yet. Be the first to comment!
+              {t("articleDetails.noCommentsYet")}
             </p>
           )}
         </div>
@@ -410,7 +413,7 @@ export const DecisionGroupDetails = ({
               <textarea
                 value={commentText}
                 onChange={e => setCommentText(e.target.value)}
-                placeholder="Write a comment..."
+                placeholder={t("articleDetails.writeComment")}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-14 resize-none"
                 rows={3}
               />
@@ -422,7 +425,7 @@ export const DecisionGroupDetails = ({
                   disabled={!commentText.trim() || addCommentMutation.isPending}
                   className="text-10 text-white font-normal"
                 >
-                  {addCommentMutation.isPending ? 'Posting...' : 'Post Comment'}
+                  {addCommentMutation.isPending ? t("articleDetails.posting") : t("articleDetails.postComment")}
                 </Button>
               </div>
             </div>

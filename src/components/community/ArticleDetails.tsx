@@ -30,6 +30,7 @@ import {
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ArticleDetailsProps {
   article: ArticleResponse
@@ -37,6 +38,10 @@ export interface ArticleDetailsProps {
 }
 
 export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
+  const tCommunity = useI18nTranslations("community")
+  const t = useI18nTranslations("community.articleDetails")
+  const tC = useI18nTranslations("common")
+  const tCP = useI18nTranslations("community.postCard")
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
@@ -76,12 +81,12 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
     },
     onSuccess: () => {
       setCommentText('')
-      addToast('Comment added successfully!', 'success')
+      addToast(t("commentAdded"), 'success')
       // Invalidate queries to refresh comments/reviews
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+      addToast(error instanceof Error ? error.message : t("failedToAddComment"), 'error')
     },
   })
 
@@ -96,7 +101,7 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(error instanceof Error ? error.message : t("failedToToggleLike"), 'error')
     },
   })
 
@@ -119,12 +124,12 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
         // Copy share URL to clipboard
         const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/articles/${article.id}`
         navigator.clipboard.writeText(urlToShare).catch(() => { })
-        addToast('Shared successfully! Link copied to clipboard.', 'success')
+        addToast(t("sharedSuccessfully"), 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share article', 'error')
+      addToast(error instanceof Error ? error.message : t("failedToShareArticle"), 'error')
     },
   })
 
@@ -138,13 +143,13 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(error instanceof Error ? error.message : t("failedToToggleFavorite"), 'error')
     },
   })
 
   const toggleFollowMutation = useMutation({
     mutationFn: async () => {
-      if (!article.userId) throw new Error('User ID not available')
+      if (!article.userId) throw new Error(t("userIDNotAvailable"))
       await toggleFollow({
         profileType: 'User',
         profileUserId: article.userId,
@@ -152,10 +157,10 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(isFollowing ? t("unfollowedSuccessfully") : t("followedSuccessfully"), 'success')
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+      addToast(error instanceof Error ? error.message : t("failedToToggleFollow"), 'error')
     },
   })
 
@@ -189,10 +194,10 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
             onClick={() => router.push('/community?tab=articles')}
             className="hover:text-brand-500 transition-colors"
           >
-            Community
+            {tCommunity("tabs.community")}
           </button>
           <span>/</span>
-          <span>Articles</span>
+          <span>{tCommunity("tabs.articles")}</span>
           <span>/</span>
           <span className="text-gray-900">{article.title}</span>
         </div>
@@ -254,10 +259,10 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
               >
                 <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
                 {toggleFollowMutation.isPending
-                  ? 'Loading...'
+                  ? tC("loading")
                   : isFollowing
-                    ? 'Following'
-                    : 'Follow'}
+                    ? t("following")
+                    : t("follow")}
               </Button>
             )}
             <Button
@@ -286,7 +291,7 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
                 <span className="text-gray-400 text-12 font-medium">
-                  No image available
+                  {tC("noImageAvailable")}
                 </span>
               </div>
             )}
@@ -310,25 +315,25 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
             <EngagementButton
               icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
               count={likes}
-              label="Likes"
+              label={tCP("likes")}
               onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
               isActive={isLiked}
             />
             <EngagementButton
               icon={<MessageCircle className="h-5 w-5" />}
               count={article.reviewCount || article.commentCount || 0}
-              label="Comments"
+              label={tCP("comments")}
             />
             <EngagementButton
               icon={<Share2 className="h-5 w-5" />}
               count={shares}
-              label="Shares"
+              label={tCP("shares")}
               onClick={shareMutation.isPending ? undefined : handleShareClick}
             />
             <EngagementButton
               icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
               count={favorites}
-              label="Favorites"
+              label={tCP("favorites")}
               onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
               isActive={isFavorited}
             />
@@ -337,7 +342,7 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
       </div>
 
       {/* Comments Section */}
-      <h3 className="text-16 font-normal text-gray-900">Comments</h3>
+      <h3 className="text-16 font-normal text-gray-900">{tCP("comments")}</h3>
 
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         {/* Comments List */}
@@ -348,7 +353,7 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
             ))
           ) : (
             <p className="text-14 text-gray-500 text-center py-4">
-              No comments yet. Be the first to comment!
+              {t("noComments")}
             </p>
           )}
         </div>
@@ -367,7 +372,7 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
               <textarea
                 value={commentText}
                 onChange={e => setCommentText(e.target.value)}
-                placeholder="Write a comment..."
+                placeholder={t("writeComment")}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-14 resize-none"
                 rows={3}
               />
@@ -379,7 +384,7 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
                   disabled={!commentText.trim() || addCommentMutation.isPending}
                   className="text-10 text-white font-normal"
                 >
-                  {addCommentMutation.isPending ? 'Posting...' : 'Post Comment'}
+                  {addCommentMutation.isPending ? t("posting") : t("postComment")}
                 </Button>
               </div>
             </div>

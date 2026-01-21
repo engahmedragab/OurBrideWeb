@@ -4,8 +4,10 @@ import { useEffect } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { useAuth } from '@/auth/hooks'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+import { useI18nTranslations } from '@/i18n'
 
 export default function CommunityProfilePage() {
+  const t = useI18nTranslations("common")
   const router = useRouter()
   const { user } = useAuth()
 
@@ -21,7 +23,7 @@ export default function CommunityProfilePage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <div className="flex-1 flex items-center justify-center">
-        <LoadingOverlay open={true} title="Loading..." />
+        <LoadingOverlay open={true} title={t("loading")} />
       </div>
     </div>
   )
