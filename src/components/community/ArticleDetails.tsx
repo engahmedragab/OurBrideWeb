@@ -19,6 +19,7 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { ArticleResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
+import type { AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
 import Link from 'next/link'
 import {
@@ -29,8 +30,11 @@ import {
 } from '@/services/api/articlesApi'
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
 import { useI18nTranslations } from '@/i18n/hooks'
+
+
 
 export interface ArticleDetailsProps {
   article: ArticleResponse
@@ -60,8 +64,10 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
   const date = formatDate(article.publishedAt || article.creationDate)
 
   // Extract images from medias array
-  const medias = (article as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url
+  type ArticleWithMedias = ArticleResponse & { medias?: Array<{ url?: string }> }
+  const articleWithMedias = article as ArticleWithMedias
+  const medias = articleWithMedias.medias || []
+  const imageUrl = medias.find((media: { url?: string }) => media?.url)?.url
 
   // Map reviews to comments format
   const comments = (article.reviews || []).map((review: ReviewResponse) => ({
@@ -77,7 +83,8 @@ export const ArticleDetails = ({ article, className }: ArticleDetailsProps) => {
   // Mutation for adding review/comment
   const addCommentMutation = useMutation({
     mutationFn: async (content: string) => {
-      await addArticleReview(article.id, { comment: content } as any)
+      const reviewData: AddReviewRequest = { comment: content }
+      await addArticleReview(article.id, reviewData)
     },
     onSuccess: () => {
       setCommentText('')

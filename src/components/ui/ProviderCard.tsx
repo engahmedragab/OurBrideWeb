@@ -213,7 +213,7 @@ export const ProviderCard = ({
         <Button
           variant="outlineBrand"
           size="lg"
-          className="flex-1 rounded-full font-normal text-brand-500"
+          className="flex-1 h-11 rounded-full font-normal text-brand-500"
           asChild
         >
           <Link href={`/provider/${provider.id}`} onClick={onViewProfile}>

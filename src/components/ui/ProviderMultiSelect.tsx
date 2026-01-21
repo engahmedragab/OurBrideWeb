@@ -155,7 +155,12 @@ export const ProviderMultiSelect = ({
                               e.preventDefault()
                               e.stopPropagation()
                               if (provider.providerId !== null && provider.providerId !== undefined) {
-                                handleRemoveProvider(provider.providerId, e as any)
+                                // Create a synthetic mouse event for keyboard accessibility
+                                const syntheticEvent = {
+                                  ...e,
+                                  stopPropagation: e.stopPropagation.bind(e),
+                                } as unknown as React.MouseEvent
+                                handleRemoveProvider(provider.providerId, syntheticEvent)
                               }
                             }
                           }}
@@ -186,7 +191,12 @@ export const ProviderMultiSelect = ({
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
-                      handleClearAll(e as any)
+                      // Create a synthetic mouse event for keyboard accessibility
+                      const syntheticEvent = {
+                        ...e,
+                        stopPropagation: e.stopPropagation.bind(e),
+                      } as unknown as React.MouseEvent
+                      handleClearAll(syntheticEvent)
                     }
                   }}
                   className="p-0.5 text-gray-400 hover:text-gray-600 cursor-pointer focus:outline-none focus:ring-1 focus:ring-brand-500 rounded"

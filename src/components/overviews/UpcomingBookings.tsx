@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { MainServiceBookResponse } from '@/types/responses'
+import type { ServiceLineResponse } from '@/types/responses'
 import { WeddingHallIcon } from '@/assets/icons/WeddingHallIcon'
 import { BridalBeautyIcon } from '@/assets/icons/BridalBeautyIcon'
 import { PhotographyIcon } from '@/assets/icons/PhotographyIcon'
@@ -86,13 +87,13 @@ export interface UpcomingBookingsProps {
 export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }: UpcomingBookingsProps) => {
   // Get active lines (not deleted) - use services if available, otherwise use lines
   const activeLines = useMemo(() => {
-    const lines = (book.services || book.lines || []) as any[]
-    return lines.filter((line: any) => !line?.isDeleted)
+    const lines = (book.services || book.lines || []) as ServiceLineResponse[]
+    return lines.filter((line: ServiceLineResponse) => !line?.isDeleted)
   }, [book.services, book.lines])
 
   // Sort by lastModifiedDate (newest first), fallback to creationDate
   const sortedLines = useMemo(() => {
-    return [...activeLines].sort((a: any, b: any) => {
+    return [...activeLines].sort((a: ServiceLineResponse, b: ServiceLineResponse) => {
       const dateA = new Date(a.lastModifiedDate || a.creationDate || 0).getTime()
       const dateB = new Date(b.lastModifiedDate || b.creationDate || 0).getTime()
       return dateB - dateA
@@ -130,7 +131,7 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
       </div>
       <div className="space-y-3">
         {displayBookings.length > 0 ? (
-          displayBookings.map((line: any) => {
+          displayBookings.map((line: ServiceLineResponse) => {
             // Use lastModifiedDate, fallback to creationDate
             const date = line.lastModifiedDate || line.creationDate
 

@@ -34,20 +34,20 @@ export const useServicesSearch = (
   return useQuery({
     queryKey: ['services-search', params],
     queryFn: async (): Promise<ServicesSearchData> => {
-      try {
-        const query = {
-          Search: params?.search,
-          ServiceClass: params?.serviceClass,
-          ServiceType: params?.serviceType,
-          MinPrice: params?.minPrice,
-          MaxPrice: params?.maxPrice,
-          MinRating: params?.minRating,
-          IsOurBrideService: params?.isOurBrideService,
-          HasPackages: params?.hasPackages,
-          HasInstallment: params?.hasInstallment,
-          Page: params?.page,
-          PageSize: params?.pageSize,
-        }
+      const query = {
+        Search: params?.search,
+        ServiceClass: params?.serviceClass,
+        ServiceType: params?.serviceType,
+        MinPrice: params?.minPrice,
+        MaxPrice: params?.maxPrice,
+        MinRating: params?.minRating,
+        IsOurBrideService: params?.isOurBrideService,
+        HasPackages: params?.hasPackages,
+        HasInstallment: params?.hasInstallment,
+        Page: params?.page,
+        PageSize: params?.pageSize,
+      }
+
 
         const result = await searchServices(query)
         
@@ -63,6 +63,7 @@ export const useServicesSearch = (
         }
       } catch (error) {
         throw error
+
       }
     },
     enabled,

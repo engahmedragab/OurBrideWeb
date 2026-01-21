@@ -21,6 +21,8 @@ import { buildNoteBookRequestFromLocal, convertLineToRequest } from '@/utils/pla
 
 import type { NoteLineResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
+import { BookClass, UserType as LocalUserType } from '@/types/responses/book-enums'
 
 function NotesPageContent() {
   const router = useRouter()
@@ -40,7 +42,7 @@ function NotesPageContent() {
   }, [searchParams])
 
   const normalizedQuery = useMemo(() => {
-    const q: any = {}
+    const q: Record<string, unknown> = {}
     if (eventId) q.eventId = eventId
     if (userType) q.userType = userType
     if (clientId) q.clientId = clientId
@@ -79,7 +81,7 @@ function NotesPageContent() {
     isInitializing,
     isAddingModels,
   } = usePlanningBookController<NoteBookDraft, NoteLineResponse>({
-    book: (noteBook as any as NoteBookDraft) ?? null,
+    book: (noteBook as unknown as NoteBookDraft) ?? null,
     isLoading,
     eventId: eventId ?? undefined,
     requireEventId: true,
@@ -107,16 +109,16 @@ function NotesPageContent() {
         bookId: delta?.bookId,
       })
       const response = await syncDeltaMutation.mutateAsync({
-        data: delta,
+        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').NoteLineRequest, import('@/../client/common/api/gen/ourbride-api').NoteLineCategoryRequest>,
         query: normalizedQuery,
       })
       console.log('[NotesPage] syncDeltaFn response:', response)
-      return response as any
+      return response as unknown as SyncBookDeltaResponse<NoteBookDraft>
     },
     refetch,
     refetchAfterSave: true,
-    getBookId: (book) => (book as any).id ?? null,
-    convertLineToRequest,
+    getBookId: (book) => ((book as Record<string, unknown>).id as number | undefined) ?? null,
+    convertLineToRequest: (line: NoteLineResponse, bookId: number) => convertLineToRequest(line as unknown as Record<string, unknown>, bookId),
     convertCategoryToRequest: undefined, // Notes don't have categories
     shouldInit: (b) => !b?.id,
     initFn: async () => {
@@ -126,7 +128,7 @@ function NotesPageContent() {
         clientId: null as unknown as string | undefined,
       })
     },
-    shouldAddModels: (b) => (b as any)?.isModelsAdd === false,
+    shouldAddModels: (b) => ((b as Record<string, unknown>)?.isModelsAdd as boolean | undefined) === false,
     addModelsFn: async () => {
       await addModelsMutation.mutateAsync({
         eventId: eventId ?? undefined,
@@ -136,10 +138,10 @@ function NotesPageContent() {
     },
     initMutation,
     addModelsMutation,
-    onFirstLoad: (book) => {
+    onFirstLoad: (_book) => {
       // Will be handled after controller is set up
     },
-    onHydrate: (book) => {
+    onHydrate: (_book) => {
       // Will be handled after controller is set up
     },
     isSameBookBase: (current, last) =>
@@ -149,14 +151,19 @@ function NotesPageContent() {
       current.title === last.title,
     getLines: (book) => book.lines || [],
     getCategories: () => [], // Notes don't have categories
-    getLineId: (line) => (line as any).id,
+    getLineId: (line) => (line as NoteLineResponse).id,
     getCategoryId: () => -1, // Notes don't have categories
-    isSameLine: (current, last) =>
-      (current as any).title === (last as any).title &&
-      (current as any).note === (last as any).note &&
-      (current as any).isDeleted === (last as any).isDeleted &&
-      (current as any).isDone === (last as any).isDone,
-    isLineDeleted: (line) => (line as any).isDeleted ?? false,
+    isSameLine: (current, last) => {
+      const currentLine = current as NoteLineResponse
+      const lastLine = last as NoteLineResponse
+      return (
+        currentLine.title === lastLine.title &&
+        currentLine.note === lastLine.note &&
+        (currentLine.isDeleted ?? false) === (lastLine.isDeleted ?? false) &&
+        (currentLine.isDone ?? false) === (lastLine.isDone ?? false)
+      )
+    },
+    isLineDeleted: (line) => ((line as NoteLineResponse).isDeleted ?? false),
   })
 
   // Set initial selected note on first load
@@ -177,7 +184,7 @@ function NotesPageContent() {
       if (activeLines.length === 0) {
         setSelectedNoteId(null)
       } else {
-        const stillExists = activeLines.some((l: any) => l.id === selectedNoteId)
+        const stillExists = activeLines.some((l: NoteLineResponse) => l.id === selectedNoteId)
         if (!stillExists && activeLines.length > 0) {
           const firstActive = activeLines[0] as NoteLineResponse
           setSelectedNoteId(firstActive?.id ?? null)
@@ -213,8 +220,8 @@ function NotesPageContent() {
     const now = new Date().toISOString()
 
     const result = applyLocalUpdate((draft) => {
-      const next: any = { ...draft }
-      next.lines = (next.lines || []).map((l: any) => {
+      const next = { ...draft } as NoteBookDraft
+      next.lines = (next.lines || []).map((l: NoteLineResponse) => {
         if (l.id === note.id) return { ...l, isDeleted: true, lastModifiedDate: now }
         return l
       })
@@ -226,7 +233,7 @@ function NotesPageContent() {
       // Calculate remaining active notes from the updated book
       const updated = result.book as NoteBookDraft
       const remaining = (updated.lines || []).filter(
-        (l: any) => !(l.isDeleted ?? false) && l.id !== note.id
+        (l: NoteLineResponse) => !(l.isDeleted ?? false) && l.id !== note.id
       ) as NoteLineResponse[]
       setSelectedNoteId(remaining[0]?.id ?? null)
     }
@@ -243,20 +250,20 @@ function NotesPageContent() {
       const note = data.note.trim()
 
       const result = applyLocalUpdate((draft) => {
-        const next: any = { ...draft }
+        const next: NoteBookDraft = { ...draft }
         // Clone lines to avoid mutating shared references used by lastSyncedRef
         next.lines = [...(next.lines ?? [])]
 
         if (editingNote) {
           // Update existing note
-          next.lines = next.lines.map((l: any) =>
+          next.lines = next.lines.map((l: NoteLineResponse) =>
             l.id === editingNote.id
               ? { ...l, title, note, lastModifiedDate: now }
               : l
           )
         } else {
           // ✅ يمنع تكرار نفس الإدخال لو اتنفذ مرتين بالغلط
-          const alreadyExists = next.lines.some((l: any) =>
+          const alreadyExists = next.lines.some((l: NoteLineResponse) =>
             !(l.isDeleted ?? false) &&
             (l.title ?? '').trim() === title &&
             (l.note ?? '').trim() === note
@@ -264,23 +271,26 @@ function NotesPageContent() {
 
           if (!alreadyExists) {
             const tempId = generateTempId()
-            next.lines.push({
+            const newNote: NoteLineResponse = {
               id: tempId,
               bookId: next.id ?? 0,
               title,
               note,
-
               isDone: false,
               isFavorite: false,
               isDeleted: false,
               isModelLine: false,
-
-              brideId: next.brideId ?? null,
-              groomId: next.groomId ?? null,
-
+              brideId: next.brideId ?? undefined,
+              groomId: next.groomId ?? undefined,
               creationDate: now,
               lastModifiedDate: now,
-            })
+              lineType: (next.bookType as unknown as LocalUserType) ?? LocalUserType.Bride,
+              bookClass: (next.bookClass as unknown as BookClass) ?? BookClass.Note,
+              createdBy: next.createdBy ?? '',
+              lastModifiedBy: next.lastModifiedBy ?? '',
+              slug: '',
+            }
+            next.lines.push(newNote)
             setSelectedNoteId(tempId)
           }
         }

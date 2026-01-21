@@ -25,7 +25,7 @@ export type UiTodoCategory = {
  * Convert TodoLineResponse to TodoLineRequest
  */
 export const convertLineToRequest = (line: TodoLineResponse, bookId: number): TodoLineRequest => {
-  const lineAny = line as any
+  const lineAny = line as unknown as Record<string, unknown>
   // Ensure task is a valid string (2-40 chars) or null for deleted items
   // If task is invalid, use a default value or skip the line (for deleted items, null is fine)
   let task: string | null = null
@@ -48,14 +48,14 @@ export const convertLineToRequest = (line: TodoLineResponse, bookId: number): To
     id: line.id ?? null,
     bookId: line.bookId ?? bookId,
     lineCategoryId: line.lineCategoryId ?? null,
-    lineCategoryCountId: lineAny.lineCategoryCountId ?? null,
-    lineCategorySlug: lineAny.lineCategorySlug ?? null,
+    lineCategoryCountId: (lineAny.lineCategoryCountId as number | null | undefined) ?? null,
+    lineCategorySlug: (lineAny.lineCategorySlug as string | null | undefined) ?? null,
     task: task || null,
     subTask: line.subTask ?? null,
-    hasSubline: lineAny.hasSubline ?? false,
-    parentLineId: lineAny.parentLineId ?? null,
-    sublines: lineAny.sublines
-      ? lineAny.sublines.map((sub: any) => {
+    hasSubline: (lineAny.hasSubline as boolean | undefined) ?? false,
+    parentLineId: (lineAny.parentLineId as number | null | undefined) ?? null,
+    sublines: Array.isArray(lineAny.sublines)
+      ? (lineAny.sublines as TodoLineResponse[]).map((sub: TodoLineResponse) => {
           let subTask: string | null = null
           if (!sub.isDeleted) {
             const subTaskValue = (sub.task || '').trim()
@@ -68,12 +68,13 @@ export const convertLineToRequest = (line: TodoLineResponse, bookId: number): To
               subTask = 'Task'
             }
           }
+          const subAny = sub as unknown as Record<string, unknown>
           return {
             id: sub.id ?? null,
             bookId: sub.bookId ?? bookId,
             lineCategoryId: sub.lineCategoryId ?? null,
-            lineCategoryCountId: sub.lineCategoryCountId ?? null,
-            lineCategorySlug: sub.lineCategorySlug ?? null,
+            lineCategoryCountId: (subAny.lineCategoryCountId as number | null | undefined) ?? null,
+            lineCategorySlug: (subAny.lineCategorySlug as string | null | undefined) ?? null,
             task: subTask,
             subTask: sub.subTask ?? null,
             hasSubline: sub.hasSubline ?? false,
@@ -104,14 +105,14 @@ export const convertLineToRequest = (line: TodoLineResponse, bookId: number): To
  * Convert TodoLineCategoryResponse to TodoLineCategoryRequest
  */
 export const convertCategoryToRequest = (category: TodoLineCategoryResponse): TodoLineCategoryRequest => {
-  const catAny = category as any
+  const catAny = category as unknown as Record<string, unknown>
   return {
     id: category.id ?? null,
     name: category.name || category.nameEn || category.nameAr || null,
     description: category.description ?? null,
     slug: category.slug ?? null,
-    count_id: catAny.count_id ?? null,
-    date: catAny.date ?? null,
+    count_id: (catAny.count_id as number | null | undefined) ?? null,
+    date: (catAny.date as string | null | undefined) ?? null,
     isDeleted: category.isDeleted ?? false,
     isModelLine: category.isModelLine ?? false,
     creationDate: category.creationDate ?? null,
@@ -159,15 +160,16 @@ export const convertUiTodoToLineRequest = (todo: UiTodo, localTodoBook: TodoBook
     }
   }
 
-  const originalLineAny = originalLine as any
+  const originalLineAny = originalLine as unknown as Record<string, unknown>
+  const categoryAny = category as unknown as Record<string, unknown>
   return {
     id: todo.id,
     bookId: localTodoBook.id,
     task: task,
     subTask: originalLine?.subTask || null,
     lineCategoryId: todo.categoryId ?? null,
-    lineCategoryCountId: originalLineAny?.lineCategoryCountId ?? (category as any)?.count_id ?? null,
-    lineCategorySlug: originalLineAny?.lineCategorySlug ?? category?.slug ?? null,
+    lineCategoryCountId: (originalLineAny?.lineCategoryCountId as number | null | undefined) ?? (categoryAny?.count_id as number | null | undefined) ?? null,
+    lineCategorySlug: (originalLineAny?.lineCategorySlug as string | null | undefined) ?? category?.slug ?? null,
     isDone: todo.isDone || false,
     isFavorite: originalLine?.isFavorite || false,
     isDeleted: todo.isDeleted || false,
@@ -177,7 +179,7 @@ export const convertUiTodoToLineRequest = (todo: UiTodo, localTodoBook: TodoBook
     parentLineId: originalLine?.parentLineId || null,
     hasSubline: originalLine?.hasSubline || false,
     sublines: originalLine?.sublines?.map(sub => {
-      const subAny = sub as any
+      const subAny = sub as unknown as Record<string, unknown>
       let subTask: string | null = null
       if (!sub.isDeleted) {
         const subTaskValue = (sub.task || '').trim()
@@ -196,8 +198,8 @@ export const convertUiTodoToLineRequest = (todo: UiTodo, localTodoBook: TodoBook
         task: subTask,
         subTask: sub.subTask || null,
         lineCategoryId: sub.lineCategoryId ?? null,
-        lineCategoryCountId: subAny?.lineCategoryCountId ?? null,
-        lineCategorySlug: subAny?.lineCategorySlug ?? null,
+        lineCategoryCountId: (subAny?.lineCategoryCountId as number | null | undefined) ?? null,
+        lineCategorySlug: (subAny?.lineCategorySlug as string | null | undefined) ?? null,
         isDone: sub.isDone || false,
         isFavorite: sub.isFavorite || false,
         isDeleted: sub.isDeleted || false,
@@ -217,10 +219,11 @@ export const convertUiTodoToLineRequest = (todo: UiTodo, localTodoBook: TodoBook
  * Convert TodoLineCategoryResponse to UiTodoCategory
  */
 export const convertCategoryToUi = (category: TodoLineCategoryResponse): UiTodoCategory => {
+  const catAny = category as unknown as Record<string, unknown>
   return {
     id: category.id,
     name: category.name || category.nameEn || category.nameAr || '',
-    color: (category as any).colorName || undefined,
+    color: (catAny.colorName as string | undefined) || undefined,
   }
 }
 
@@ -239,22 +242,25 @@ export const buildBookRequestFromLocal = (localTodoBook: TodoBookResponse): Todo
   )
 
   // Include ALL categories (including deleted) for sync
-  const allCategories: TodoLineCategoryRequest[] = (localTodoBook.lineCategories || []).map(cat => ({
-    id: cat.id ?? null,
-    name: cat.name ?? null,
-    nameAr: (cat as any).nameAr ?? null,
-    nameEn: (cat as any).nameEn ?? null,
-    description: cat.description ?? null,
-    descriptionAr: (cat as any).descriptionAr ?? null,
-    descriptionEn: (cat as any).descriptionEn ?? null,
-    slug: cat.slug ?? null,
-    count_id: (cat as any).count_id ?? null,
-    date: (cat as any).date ?? null,
-    isDeleted: cat.isDeleted ?? false,
-    isModelLine: cat.isModelLine ?? false,
-    creationDate: cat.creationDate ?? new Date().toISOString(),
-    lastModifiedDate: cat.lastModifiedDate ?? new Date().toISOString(),
-  }))
+  const allCategories: TodoLineCategoryRequest[] = (localTodoBook.lineCategories || []).map(cat => {
+    const catAny = cat as unknown as Record<string, unknown>
+    return {
+      id: cat.id ?? null,
+      name: cat.name ?? null,
+      nameAr: (catAny.nameAr as string | null | undefined) ?? null,
+      nameEn: (catAny.nameEn as string | null | undefined) ?? null,
+      description: cat.description ?? null,
+      descriptionAr: (catAny.descriptionAr as string | null | undefined) ?? null,
+      descriptionEn: (catAny.descriptionEn as string | null | undefined) ?? null,
+      slug: cat.slug ?? null,
+      count_id: (catAny.count_id as number | null | undefined) ?? null,
+      date: (catAny.date as string | null | undefined) ?? null,
+      isDeleted: cat.isDeleted ?? false,
+      isModelLine: cat.isModelLine ?? false,
+      creationDate: cat.creationDate ?? new Date().toISOString(),
+      lastModifiedDate: cat.lastModifiedDate ?? new Date().toISOString(),
+    }
+  })
 
   return {
     id: localTodoBook.id,

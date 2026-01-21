@@ -98,8 +98,19 @@ export const syncServiceBookDelta = async (
   try {
     const params = normalizeQuery(query)
     const response = await apiClient.api.postServiceBooksSyncBookDelta(data, params)
-    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<ServiceBookResponse | null>
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as SyncBookDeltaResponse<ServiceBookResponse | null>
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as SyncBookDeltaResponse<ServiceBookResponse | null>
+      }
+    }
+    return responseAny as unknown as SyncBookDeltaResponse<ServiceBookResponse | null>
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync service book (delta)')
   }
@@ -114,7 +125,7 @@ export const getServiceBook = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getServiceBooksGetBook(normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ServiceBookResponse } | ServiceBookResponse } | ServiceBookResponse
+    const responseAny = response as unknown as { data?: { data?: ServiceBookResponse } | ServiceBookResponse } | ServiceBookResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -144,7 +155,7 @@ export const getServiceLines = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getServiceBooksGetAll(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[]; items?: ServiceLineResponse[] } } | ServiceLineResponse[]
+    const responseAny = response as unknown as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[]; items?: ServiceLineResponse[] } } | ServiceLineResponse[]
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -184,7 +195,7 @@ export const getServiceLineById = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getServiceBooksGet(lineId, String(lineId), normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ServiceLineResponse } | ServiceLineResponse } | ServiceLineResponse
+    const responseAny = response as unknown as { data?: { data?: ServiceLineResponse } | ServiceLineResponse } | ServiceLineResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -215,7 +226,7 @@ export const createServiceLine = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.postServiceBooksCreate(data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ServiceLineResponse } | ServiceLineResponse } | ServiceLineResponse
+    const responseAny = response as unknown as { data?: { data?: ServiceLineResponse } | ServiceLineResponse } | ServiceLineResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -266,7 +277,7 @@ export const updateServiceLine = async (
       // eventId is excluded if the API doesn't accept it
     } : undefined
     const response = await apiClient.api.putServiceBooksUpdate(lineId, String(lineId), data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ServiceLineResponse } | ServiceLineResponse } | ServiceLineResponse
+    const responseAny = response as unknown as { data?: { data?: ServiceLineResponse } | ServiceLineResponse } | ServiceLineResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -383,7 +394,7 @@ export const getServiceLinesCustom = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getServiceBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
+    const responseAny = response as unknown as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -409,7 +420,7 @@ export const getServiceLinesDone = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getServiceBooksGetAllDone(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
+    const responseAny = response as unknown as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -439,7 +450,7 @@ export const getServiceLinesNotDone = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getServiceBooksGetAllNotDone(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
+    const responseAny = response as unknown as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -465,7 +476,7 @@ export const getServiceLinesFavorite = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getServiceBooksGetAllFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
+    const responseAny = response as unknown as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -495,7 +506,7 @@ export const getServiceLinesNotFavorite = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getServiceBooksGetAllNotFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
+    const responseAny = response as unknown as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -521,7 +532,7 @@ export const getServiceLinesDeleted = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getServiceBooksGetAllDelete(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
+    const responseAny = response as unknown as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -547,7 +558,7 @@ export const getServiceLinesNotDeleted = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getServiceBooksGetAllNotDelete(normalizedQuery)
-    const responseAny: any = response as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
+    const responseAny = response as unknown as { data?: ServiceLineResponse[] | { data?: ServiceLineResponse[] } } | ServiceLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -612,7 +623,7 @@ export const getServiceCategories = async (
 ): Promise<ServiceLineCategoryResponse[]> => {
   try {
     const response = await apiClient.api.getServiceBooksGetAllCategories(query)
-    const responseAny: any = response as { data?: ServiceLineCategoryResponse[] | { data?: ServiceLineCategoryResponse[] } } | ServiceLineCategoryResponse[]
+    const responseAny = response as unknown as { data?: ServiceLineCategoryResponse[] | { data?: ServiceLineCategoryResponse[] } } | ServiceLineCategoryResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -641,7 +652,7 @@ export const getServiceCategory = async (
 ): Promise<ServiceLineCategoryResponse | null> => {
   try {
     const response = await apiClient.api.getServiceBooksGetCategory(categoryId, query)
-    const responseAny: any = response as { data?: { data?: ServiceLineCategoryResponse } | ServiceLineCategoryResponse } | ServiceLineCategoryResponse
+    const responseAny = response as unknown as { data?: { data?: ServiceLineCategoryResponse } | ServiceLineCategoryResponse } | ServiceLineCategoryResponse
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data

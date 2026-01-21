@@ -140,8 +140,19 @@ export const syncBudgetBookDelta = async (
 ): Promise<SyncBookDeltaResponse<GetBudgetBookResponse>> => {
   try {
     const response = await apiClient.api.postBudgetBooksSyncBookDelta(data, query, params)
-    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<GetBudgetBookResponse>
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as SyncBookDeltaResponse<GetBudgetBookResponse>
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as SyncBookDeltaResponse<GetBudgetBookResponse>
+      }
+    }
+    return responseAny as unknown as SyncBookDeltaResponse<GetBudgetBookResponse>
   } catch (error: unknown) {
     const apiError: ApiError = {
       message: error instanceof Error ? error.message : 'Failed to sync budget book (delta)',
@@ -161,19 +172,22 @@ export const getBudgetBook = async (
 ): Promise<GetBudgetBookResponse> => {
   try {
     const response = await apiClient.api.getBudgetBooksGetBook(query, params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    // Handle different response structures (similar to occasion API)
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as GetBudgetBookResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as GetBudgetBookResponse
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as GetBudgetBookResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as GetBudgetBookResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as GetBudgetBookResponse
+      return responseAny as unknown as GetBudgetBookResponse
     }
-    return null
+    return null as unknown as GetBudgetBookResponse
   } catch (error: unknown) {
     const apiError: ApiError = {
       message: error instanceof Error ? error.message : 'Failed to fetch budget book',

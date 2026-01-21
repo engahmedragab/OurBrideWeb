@@ -502,7 +502,10 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                         {tSD('bookingCard.packagesDetails')}
                       </h4>
                       {packagesLoading ? (
+
                         <LoadingSpinner size="sm" text={tSD('bookingCard.loadingPackages')} />
+
+
                       ) : (
                         <>
                           <div
@@ -763,7 +766,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                     aria-label="Send review"
                   >
                     {submitReviewMutation.isPending ? (
-                      <LoadingSpinner size="sm" />
+                      <LoadingSpinner size="sm" text="Submitting review..." fullScreen={true} />
                     ) : (
                       <Send className="h-5 w-5 text-white flex-shrink-0" />
                     )}

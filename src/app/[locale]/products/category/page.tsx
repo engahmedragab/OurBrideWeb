@@ -346,6 +346,7 @@ function ProductsContent() {
                 <LoadingSpinner
                   size="lg"
                   text="Loading products..."
+                  fullScreen={true}
                 />
               </div>
             ) : viewMode === 'grid' ? (

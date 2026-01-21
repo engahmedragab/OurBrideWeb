@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Heart, MessageCircle, Share2, MoreVertical, Star, User } from 'lucide-react'
+import { Heart, MessageCircle, Share2, MoreVertical, Star } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
@@ -13,8 +13,11 @@ import { getProfileUrl } from './utils'
 import type { PostResponse } from '@/types/responses/community'
 import { toggleLike as togglePostLike, toggleFavorite as togglePostFavorite, sharePost } from '@/services/api/postsApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
 import { useI18nTranslations } from '@/i18n'
+
+
 
 export interface PostCardProps {
   post: PostResponse
@@ -61,17 +64,11 @@ export const PostCard = ({ post, className }: PostCardProps) => {
   const { addToast } = useToast()
   const queryClient = useQueryClient()
 
-  // Guard against undefined/null post
-  if (!post) {
-    return null
-  }
-
   const [isLiked, setIsLiked] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
-  const [likes, setLikes] = useState(post.likeCount || 0)
-  const [shares, setShares] = useState(post.shareCount || 0)
-  const [favorites, setFavorites] = useState(post.favoriteCount || 0)
-  const [imageError, setImageError] = useState(false)
+  const [likes, setLikes] = useState(post?.likeCount || 0)
+  const [shares, setShares] = useState(post?.shareCount || 0)
+  const [favorites, setFavorites] = useState(post?.favoriteCount || 0)
   const [postImageErrors, setPostImageErrors] = useState<Record<number, boolean>>({})
   const [avatarError, setAvatarError] = useState(false)
 
@@ -154,9 +151,12 @@ export const PostCard = ({ post, className }: PostCardProps) => {
   // Extract images from content or use media if available
   // For now, we'll use a placeholder - in real app, images would come from media relations
   // Extract images from medias array
-  const images: string[] = (post as any).medias
-    ?.filter((media: any) => media?.url)
-    .map((media: any) => media.url) || []
+  type PostWithMedias = PostResponse & { medias?: Array<{ url?: string }> }
+  const postWithMedias = post as PostWithMedias
+  const images: string[] = postWithMedias.medias
+    ?.filter((media: { url?: string }) => media?.url)
+    .map((media: { url?: string }) => media.url)
+    .filter((url): url is string => typeof url === 'string') || []
 
   return (
     <div

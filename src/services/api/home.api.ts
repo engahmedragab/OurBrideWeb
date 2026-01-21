@@ -90,7 +90,7 @@ export const getCommunityHome = async (query?: {
     const response = await apiClient.api.getHomeGetCommunityHome(cleanQuery)
     
     console.log('[getCommunityHome] API response received:', response)
-    const responseAny: any = response as { data?: { data?: CommunityHomeResponse } | CommunityHomeResponse } | CommunityHomeResponse
+    const responseAny = response as unknown as { data?: { data?: CommunityHomeResponse } | CommunityHomeResponse } | CommunityHomeResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -106,7 +106,7 @@ export const getCommunityHome = async (query?: {
       return responseAny as CommunityHomeResponse
     }
     throw new Error('Invalid response format from community home endpoint')
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[getCommunityHome] Error fetching community home data:', error)
     if (error instanceof Error) {
       console.error('[getCommunityHome] Error message:', error.message)
@@ -114,21 +114,37 @@ export const getCommunityHome = async (query?: {
     }
     
     // Log additional Axios error details if available
-    if (error?.isAxiosError) {
+    if (error && typeof error === 'object' && 'isAxiosError' in error && error.isAxiosError) {
+      const axiosError = error as {
+        message?: string
+        code?: string
+        config?: {
+          url?: string
+          method?: string
+          baseURL?: string
+          params?: unknown
+          headers?: unknown
+        }
+        response?: {
+          status?: number
+          statusText?: string
+          data?: unknown
+        }
+      }
       console.error('[getCommunityHome] Axios error details:', {
-        message: error.message,
-        code: error.code,
-        config: {
-          url: error.config?.url,
-          method: error.config?.method,
-          baseURL: error.config?.baseURL,
-          params: error.config?.params,
-          headers: error.config?.headers,
-        },
-        response: error.response ? {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data,
+        message: axiosError.message,
+        code: axiosError.code,
+        config: axiosError.config ? {
+          url: axiosError.config.url,
+          method: axiosError.config.method,
+          baseURL: axiosError.config.baseURL,
+          params: axiosError.config.params,
+          headers: axiosError.config.headers,
+        } : undefined,
+        response: axiosError.response ? {
+          status: axiosError.response.status,
+          statusText: axiosError.response.statusText,
+          data: axiosError.response.data,
         } : 'No response received',
       })
     }
@@ -145,8 +161,11 @@ export const getCommunityHome = async (query?: {
 export const getMineInfo = async (): Promise<unknown> => {
   try {
     const response = await apiClient.api.getHomemineInfo()
-    const responseAny: any = response as { data?: unknown } | unknown
-    return responseAny.data ?? responseAny
+    const responseAny = response as unknown as Record<string, unknown>
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      return responseAny.data ?? responseAny
+    }
+    return responseAny
   } catch (error) {
     console.error('Error fetching mine info:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch mine info')
@@ -161,7 +180,7 @@ export const getMineInfo = async (): Promise<unknown> => {
 export const getProviderHome = async (): Promise<ProviderHomeResponse> => {
   try {
     const response = await apiClient.api.getHomeGetProviderHome()
-    const responseAny: any = response as { data?: { data?: ProviderHomeResponse } | ProviderHomeResponse } | ProviderHomeResponse
+    const responseAny = response as unknown as { data?: { data?: ProviderHomeResponse } | ProviderHomeResponse } | ProviderHomeResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {

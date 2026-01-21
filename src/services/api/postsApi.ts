@@ -13,17 +13,20 @@ export const getAllPosts = async (params?: {
 }): Promise<PostResponse[]> => {
   try {
     const response = await apiClient.api.getPostsGetAll(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as PostResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as PostResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as PostResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as PostResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as PostResponse[]
@@ -41,17 +44,20 @@ export const getAllPosts = async (params?: {
 export const getPostById = async (id: number): Promise<PostResponse | null> => {
   try {
     const response = await apiClient.api.getPostsGetById(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as PostResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as PostResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as PostResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as PostResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as PostResponse
+      return responseAny as unknown as PostResponse
     }
     
     return null
@@ -66,20 +72,23 @@ export const getPostById = async (id: number): Promise<PostResponse | null> => {
 export const getPostBySlug = async (slug: string): Promise<PostResponse | null> => {
   try {
     // Try to use slug endpoint if available
-    const api: any = apiClient.api
-    if (api.getPostsGetBySlug) {
-      const response = await api.getPostsGetBySlug(slug)
-      const responseAny: any = response
+    const api = apiClient.api as Record<string, unknown>
+    if (typeof api.getPostsGetBySlug === 'function') {
+      const response = await (api.getPostsGetBySlug as (slug: string) => Promise<unknown>)(slug)
+      const responseAny = response as unknown as Record<string, unknown>
       
       // Handle different response structures
-      if (responseAny?.data?.data) {
-        return responseAny.data.data as PostResponse
-      }
-      if (responseAny?.data) {
-        return responseAny.data as PostResponse
+      if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+        const data = responseAny.data
+        if (data && typeof data === 'object' && 'data' in data) {
+          return data.data as unknown as PostResponse
+        }
+        if (data && typeof data === 'object' && 'id' in data) {
+          return data as unknown as PostResponse
+        }
       }
       if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-        return responseAny as PostResponse
+        return responseAny as unknown as PostResponse
       }
       
       return null
@@ -100,17 +109,20 @@ export const getPublishedPosts = async (params?: {
 }): Promise<PostResponse[]> => {
   try {
     const response = await apiClient.api.getPostsGetPublished(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as PostResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as PostResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as PostResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as PostResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as PostResponse[]
@@ -131,17 +143,20 @@ export const getFeaturedPosts = async (params?: {
 }): Promise<PostResponse[]> => {
   try {
     const response = await apiClient.api.getPostsGetFeatured(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as PostResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as PostResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as PostResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as PostResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as PostResponse[]
@@ -159,17 +174,20 @@ export const getFeaturedPosts = async (params?: {
 export const getPostsByUserId = async (userId: string): Promise<PostResponse[]> => {
   try {
     const response = await apiClient.api.getPostsGetByUserId(userId)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as PostResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as PostResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as PostResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as PostResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as PostResponse[]
@@ -193,17 +211,20 @@ export const getPostsByCategoryId = async (
 ): Promise<PostResponse[]> => {
   try {
     const response = await apiClient.api.getPostsGetByCategory(categoryId, params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as PostResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as PostResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as PostResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as PostResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as PostResponse[]
@@ -227,17 +248,20 @@ export const getPostsByItemId = async (
 ): Promise<PostResponse[]> => {
   try {
     const response = await apiClient.api.getPostsGetByItem(itemId, params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as PostResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as PostResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as PostResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as PostResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as PostResponse[]
@@ -261,17 +285,20 @@ export const getPostsByPreparationId = async (
 ): Promise<PostResponse[]> => {
   try {
     const response = await apiClient.api.getPostsGetByPreparation(preparationId, params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as PostResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as PostResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as PostResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as PostResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as PostResponse[]
@@ -295,17 +322,20 @@ export const getPostsByTagId = async (
 ): Promise<PostResponse[]> => {
   try {
     const response = await apiClient.api.getPostsGetByTag(tagId, params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as PostResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as PostResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as PostResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as PostResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as PostResponse[]
@@ -327,17 +357,20 @@ export const searchPosts = async (params?: {
 }): Promise<PostResponse[]> => {
   try {
     const response = await apiClient.api.getPostsSearch(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as PostResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as PostResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as PostResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as PostResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as PostResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as PostResponse[]
@@ -355,17 +388,20 @@ export const searchPosts = async (params?: {
 export const createPost = async (data: CreatePostRequest): Promise<PostResponse | null> => {
   try {
     const response = await apiClient.api.postPostsCreate(data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as PostResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as PostResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as PostResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as PostResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as PostResponse
+      return responseAny as unknown as PostResponse
     }
     
     return null
@@ -380,17 +416,20 @@ export const createPost = async (data: CreatePostRequest): Promise<PostResponse 
 export const updatePost = async (id: number, data: UpdatePostRequest): Promise<PostResponse | null> => {
   try {
     const response = await apiClient.api.putPostsUpdate(id, data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as PostResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as PostResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as PostResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as PostResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as PostResponse
+      return responseAny as unknown as PostResponse
     }
     
     return null
@@ -441,14 +480,17 @@ export const toggleLike = async (id: number): Promise<boolean> => {
 export const isLiked = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getPostsIsLiked(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (typeof responseAny?.data === 'boolean') {
-      return responseAny.data
-    }
-    if (typeof responseAny?.data?.data === 'boolean') {
-      return responseAny.data.data
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (typeof data === 'boolean') {
+        return data
+      }
+      if (data && typeof data === 'object' && 'data' in data && typeof data.data === 'boolean') {
+        return data.data
+      }
     }
     if (typeof responseAny === 'boolean') {
       return responseAny
@@ -479,14 +521,17 @@ export const toggleFavorite = async (id: number): Promise<boolean> => {
 export const isFavorite = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getPostsIsFavorite(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (typeof responseAny?.data === 'boolean') {
-      return responseAny.data
-    }
-    if (typeof responseAny?.data?.data === 'boolean') {
-      return responseAny.data.data
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (typeof data === 'boolean') {
+        return data
+      }
+      if (data && typeof data === 'object' && 'data' in data && typeof data.data === 'boolean') {
+        return data.data
+      }
     }
     if (typeof responseAny === 'boolean') {
       return responseAny
@@ -526,17 +571,20 @@ export const removeMedia = async (id: number, mediaId: number): Promise<void> =>
 export const getMediaIds = async (id: number): Promise<number[]> => {
   try {
     const response = await apiClient.api.getPostsGetMedia(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as number[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as number[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as number[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as number[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as number[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as number[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as number[]
@@ -569,20 +617,20 @@ export const sharePost = async (
 ): Promise<SharePostResponse | null> => {
   try {
     const response = await apiClient.api.postPostsShare(id, { shareSource })
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = (responseAny as { data?: unknown }).data
-      if (data && typeof data === 'object' && 'data' in data) {
+      if (data && typeof data === 'object' && data !== null && 'data' in data) {
         return (data as { data: SharePostResponse }).data
       }
-      if (data && typeof data === 'object' && 'postId' in data) {
-        return data as SharePostResponse
+      if (data && typeof data === 'object' && data !== null && 'postId' in data) {
+        return data as unknown as SharePostResponse
       }
     }
     if (responseAny && typeof responseAny === 'object' && 'postId' in responseAny) {
-      return responseAny as SharePostResponse
+      return responseAny as unknown as SharePostResponse
     }
     
     return null

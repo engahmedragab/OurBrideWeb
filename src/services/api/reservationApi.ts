@@ -11,9 +11,25 @@ import type {
 import type {
   ReservationResponse,
   TimeSlotResponse,
-  CartResponse,
 } from '@/types/responses'
 import { ReservationStatus } from '@/types/responses/common'
+
+/**
+ * Helper function to safely extract data from API response
+ */
+const extractResponseData = (response: unknown): unknown => {
+  const responseAny = response as unknown as { data?: { data?: unknown } | unknown } | Record<string, unknown>
+  if (responseAny && typeof responseAny === 'object') {
+    if ('data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return (data as { data?: unknown }).data ?? data
+      }
+      return data
+    }
+  }
+  return responseAny
+}
 
 /**
  * Get available time slots for a service
@@ -42,10 +58,8 @@ export const getAvailableTimeSlots = async (
         startDate: options?.startDate,
       }
     )
-    const responseAny: any = response
-    
     // Extract time slots from response
-    const timeSlots = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const timeSlots = extractResponseData(response)
     
     // Ensure it's an array
     return Array.isArray(timeSlots) ? timeSlots : []
@@ -64,10 +78,8 @@ export const getAvailableTimeSlotsForMultipleServices = async (
 ): Promise<TimeSlotResponse[]> => {
   try {
     const response = await apiClient.api.postReservationGenerateTimeSlotsForMultipleServices(request)
-    const responseAny: any = response
-    
     // Extract time slots from response
-    const timeSlots = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const timeSlots = extractResponseData(response)
     
     // Ensure it's an array
     return Array.isArray(timeSlots) ? timeSlots : []
@@ -88,23 +100,28 @@ export const createReservation = async (
   try {
     // Use the client reservation creation endpoint
     const response = await apiClient.api.postReservationCreateByClient(data)
-    const responseAny: any = response
+    const responseAny = response as unknown as { status?: number; statusCode?: number; data?: { statusCode?: number; data?: unknown } | unknown } | Record<string, unknown>
     
     // Check if response indicates queued status (202)
     // Check both the response status and the data statusCode
-    const responseStatus = responseAny?.status || responseAny?.statusCode
-    const dataStatusCode = responseAny?.data?.statusCode
+    const responseStatus = (responseAny && typeof responseAny === 'object' && ('status' in responseAny || 'statusCode' in responseAny))
+      ? (responseAny.status ?? (responseAny as { statusCode?: number }).statusCode)
+      : undefined
+    const dataStatusCode = (responseAny && typeof responseAny === 'object' && 'data' in responseAny && responseAny.data && typeof responseAny.data === 'object' && 'statusCode' in responseAny.data)
+      ? (responseAny.data as { statusCode?: number }).statusCode
+      : undefined
     const isQueued = responseStatus === 202 || dataStatusCode === 202
     
     // Extract response data
-    const responseData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const responseData = extractResponseData(response)
     
     if (isQueued) {
       // Operation queued - return with queued flag
       // Note: When queued, data might be null, so reservationId might not be available
-      const reservationId = responseData?.reservationId || responseData?.data?.reservationId || responseData?.id
+      const responseObj = responseData as { reservationId?: string; data?: { reservationId?: string }; id?: string } | null
+      const reservationId = responseObj?.reservationId || (responseObj && typeof responseObj === 'object' && 'data' in responseObj && responseObj.data && typeof responseObj.data === 'object' && 'reservationId' in responseObj.data ? (responseObj.data as { reservationId?: string }).reservationId : undefined) || responseObj?.id
       return {
-        ...responseData,
+        ...(responseObj as unknown as ReservationResponse || {} as unknown as ReservationResponse),
         reservationId: reservationId || undefined,
         statusCode: 202,
         queued: true,
@@ -119,8 +136,12 @@ export const createReservation = async (
       const axiosError = error as { response?: { status?: number; data?: unknown } }
       if (axiosError.response?.status === 202) {
         // Reservation was queued - extract reservation ID if available
-        const queuedData = axiosError.response.data as any
-        const reservationId = queuedData?.reservationId || queuedData?.data?.reservationId
+        const queuedData = axiosError.response.data as unknown as { reservationId?: string; data?: { reservationId?: string } } | Record<string, unknown>
+        const reservationId = (queuedData && typeof queuedData === 'object' && 'reservationId' in queuedData)
+          ? queuedData.reservationId
+          : (queuedData && typeof queuedData === 'object' && 'data' in queuedData && queuedData.data && typeof queuedData.data === 'object' && 'reservationId' in queuedData.data)
+            ? (queuedData.data as { reservationId?: string }).reservationId
+            : undefined
         
         // Return a response indicating the reservation was queued
         return {
@@ -158,73 +179,96 @@ export const createGroupReservation = async (
 ): Promise<GroupReservationResponse> => {
   try {
     const response = await apiClient.api.postReservationCreateGroupReservations(data)
-    const responseAny: any = response
+    const responseAny = response as unknown as { status?: number; statusCode?: number; data?: { statusCode?: number; data?: unknown; message?: string } | unknown; message?: string } | Record<string, unknown>
     
     // Check if response indicates queued status (202)
-    const responseStatus = responseAny?.status || responseAny?.statusCode
-    const dataStatusCode = responseAny?.data?.statusCode
+    const responseStatus = (responseAny && typeof responseAny === 'object' && ('status' in responseAny || 'statusCode' in responseAny))
+      ? (responseAny.status ?? (responseAny as { statusCode?: number }).statusCode)
+      : undefined
+    const dataStatusCode = (responseAny && typeof responseAny === 'object' && 'data' in responseAny && responseAny.data && typeof responseAny.data === 'object' && 'statusCode' in responseAny.data)
+      ? (responseAny.data as { statusCode?: number }).statusCode
+      : undefined
     const isQueued = responseStatus === 202 || dataStatusCode === 202
     
     // Extract response data - new structure: data.createdReservations contains array of ReservationResponse
-    const responseData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const responseData = extractResponseData(response)
     
     // Handle queued response (202)
     if (isQueued) {
       // When queued, data might be null or have createdReservations
-      const reservations = responseData?.createdReservations || (Array.isArray(responseData) ? responseData : [])
+      const responseObj = responseData as { createdReservations?: unknown[]; failedReservations?: unknown[]; totalRequested?: number; successCount?: number; failureCount?: number; allSucceeded?: boolean } | unknown[] | null
+      const reservations = (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'createdReservations' in responseObj)
+        ? responseObj.createdReservations
+        : (Array.isArray(responseObj) ? responseObj : [])
       return {
         reservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
         createdReservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
-        failedReservations: responseData?.failedReservations || [],
-        totalRequested: responseData?.totalRequested,
-        successCount: responseData?.successCount,
-        failureCount: responseData?.failureCount,
-        allSucceeded: responseData?.allSucceeded,
+        failedReservations: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'failedReservations' in responseObj && Array.isArray(responseObj.failedReservations)) ? (responseObj.failedReservations as ReservationResponse[]) : [],
+        totalRequested: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'totalRequested' in responseObj) ? responseObj.totalRequested : undefined,
+        successCount: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'successCount' in responseObj) ? responseObj.successCount : undefined,
+        failureCount: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'failureCount' in responseObj) ? responseObj.failureCount : undefined,
+        allSucceeded: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'allSucceeded' in responseObj) ? responseObj.allSucceeded : undefined,
         queued: true,
         statusCode: 202,
-        message: responseAny?.data?.message || responseAny?.message || 'Group reservation queued for processing',
+        message: (responseAny && typeof responseAny === 'object' && 'data' in responseAny && responseAny.data && typeof responseAny.data === 'object' && 'message' in responseAny.data)
+          ? (responseAny.data as { message?: string }).message
+          : (responseAny && typeof responseAny === 'object' && 'message' in responseAny)
+            ? (responseAny as { message?: string }).message
+            : 'Group reservation queued for processing',
       }
     }
     
     // Immediate completion (200) - data.createdReservations contains array of ReservationResponse
-    const reservations = responseData?.createdReservations || 
-      (Array.isArray(responseData) ? responseData : []) ||
-      (responseData?.reservations || [])
+    const responseObj = responseData as { createdReservations?: unknown[]; reservations?: unknown[]; failedReservations?: unknown[]; totalRequested?: number; successCount?: number; failureCount?: number; allSucceeded?: boolean } | unknown[] | null
+    const reservations = (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'createdReservations' in responseObj)
+      ? responseObj.createdReservations
+      : (Array.isArray(responseObj) ? responseObj : [])
+        || (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'reservations' in responseObj ? responseObj.reservations : [])
     
     return {
       reservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
       createdReservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
-      failedReservations: responseData?.failedReservations || [],
-      totalRequested: responseData?.totalRequested,
-      successCount: responseData?.successCount,
-      failureCount: responseData?.failureCount,
-      allSucceeded: responseData?.allSucceeded,
+      failedReservations: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'failedReservations' in responseObj && Array.isArray(responseObj.failedReservations)) ? (responseObj.failedReservations as ReservationResponse[]) : [],
+      totalRequested: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'totalRequested' in responseObj) ? responseObj.totalRequested : undefined,
+      successCount: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'successCount' in responseObj) ? responseObj.successCount : undefined,
+      failureCount: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'failureCount' in responseObj) ? responseObj.failureCount : undefined,
+      allSucceeded: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'allSucceeded' in responseObj) ? responseObj.allSucceeded : undefined,
       queued: false,
       statusCode: 200,
-      message: responseAny?.data?.message || responseAny?.message,
+      message: (responseAny && typeof responseAny === 'object' && 'data' in responseAny && responseAny.data && typeof responseAny.data === 'object' && 'message' in responseAny.data)
+        ? (responseAny.data as { message?: string }).message
+        : (responseAny && typeof responseAny === 'object' && 'message' in responseAny)
+          ? (responseAny as { message?: string }).message
+          : undefined,
     }
   } catch (error: unknown) {
     // Check if error response has 202 status (queued)
     const axiosError = error as { response?: { status?: number; data?: unknown }; message?: string }
     if (axiosError.response?.status === 202) {
       // Reservation was queued
-      const queuedData = axiosError.response.data as any
-      const responseData = queuedData?.data ?? queuedData
-      const reservations = responseData?.createdReservations || 
-        (Array.isArray(responseData) ? responseData : []) ||
-        (responseData?.reservations || [])
+      const queuedData = axiosError.response.data as unknown as { data?: unknown; message?: string; createdReservations?: unknown[]; reservations?: unknown[]; failedReservations?: unknown[]; totalRequested?: number; successCount?: number; failureCount?: number; allSucceeded?: boolean } | Record<string, unknown>
+      const responseData = (queuedData && typeof queuedData === 'object' && 'data' in queuedData) ? queuedData.data : queuedData
+      const responseObj = responseData as { createdReservations?: unknown[]; reservations?: unknown[]; failedReservations?: unknown[]; totalRequested?: number; successCount?: number; failureCount?: number; allSucceeded?: boolean; message?: string } | unknown[] | null
+      const reservations = (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'createdReservations' in responseObj)
+        ? responseObj.createdReservations
+        : (Array.isArray(responseObj) ? responseObj : [])
+          || (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'reservations' in responseObj ? responseObj.reservations : [])
       
       return {
         reservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
         createdReservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
-        failedReservations: responseData?.failedReservations || [],
-        totalRequested: responseData?.totalRequested,
-        successCount: responseData?.successCount,
-        failureCount: responseData?.failureCount,
-        allSucceeded: responseData?.allSucceeded,
+        failedReservations: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'failedReservations' in responseObj && Array.isArray(responseObj.failedReservations)) ? (responseObj.failedReservations as ReservationResponse[]) : [],
+        totalRequested: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'totalRequested' in responseObj) ? responseObj.totalRequested : undefined,
+        successCount: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'successCount' in responseObj) ? responseObj.successCount : undefined,
+        failureCount: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'failureCount' in responseObj) ? responseObj.failureCount : undefined,
+        allSucceeded: (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'allSucceeded' in responseObj) ? responseObj.allSucceeded : undefined,
         queued: true,
         statusCode: 202,
-        message: queuedData?.message || responseData?.message || 'Group reservation queued for processing',
+        message: (queuedData && typeof queuedData === 'object' && 'message' in queuedData)
+          ? (queuedData as { message?: string }).message
+          : (responseObj && typeof responseObj === 'object' && !Array.isArray(responseObj) && 'message' in responseObj)
+            ? responseObj.message
+            : 'Group reservation queued for processing',
       }
     }
     
@@ -253,17 +297,16 @@ export const getClientReservationsPaginated = async (options?: {
       clientId: options?.clientId,
       providerId: options?.providerId,
     })
-    const responseAny: any = response
-    
-    const responseData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const responseData = extractResponseData(response)
     
     // Extract reservations and total count
     // Handle both 'reservations' and 'items' field names
-    if (responseData && typeof responseData === 'object') {
-      const reservations = responseData.reservations ?? responseData.items ?? []
+    if (responseData && typeof responseData === 'object' && ('reservations' in responseData || 'items' in responseData || 'totalCount' in responseData)) {
+      const responseObj = responseData as { reservations?: unknown[]; items?: unknown[]; totalCount?: number }
+      const reservations = responseObj.reservations ?? responseObj.items ?? []
       return {
-        reservations: Array.isArray(reservations) ? reservations : [],
-        totalCount: responseData.totalCount ?? 0,
+        reservations: Array.isArray(reservations) ? (reservations as ReservationResponse[]) : [],
+        totalCount: (responseData as { totalCount?: number }).totalCount ?? 0,
       }
     }
     
@@ -281,9 +324,7 @@ export const getClientReservationsPaginated = async (options?: {
 export const getUserReservations = async (): Promise<ReservationResponse[]> => {
   try {
     const response = await apiClient.api.getReservationGetByUser()
-    const responseAny: any = response
-    
-    const responseData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const responseData = extractResponseData(response)
     
     return Array.isArray(responseData) ? responseData : []
   } catch (error: unknown) {
@@ -301,9 +342,7 @@ export const getReservationById = async (
 ): Promise<ReservationResponse | null> => {
   try {
     const response = await apiClient.api.getReservationGetDetails(reservationId)
-    const responseAny: any = response
-    
-    const reservationData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse | null
   } catch (error: unknown) {
     console.error('Error fetching reservation:', error)
@@ -325,11 +364,10 @@ export const getReservationsByIds = async (
     }
 
     const response = await apiClient.api.postReservationGetReservationsByIds(reservationIds)
-    const responseAny: any = response
     
     // Extract reservations from response
     // Response structure might be: { data: ReservationResponse[] } or direct array
-    const reservations = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservations = extractResponseData(response)
     
     // Ensure we return an array
     if (Array.isArray(reservations)) {
@@ -358,9 +396,7 @@ export const updateReservation = async (
 ): Promise<ReservationResponse> => {
   try {
     const response = await apiClient.api.putReservationUpdateByClient(reservationId, data)
-    const responseAny: any = response
-    
-    const reservationData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
     console.error('Error updating reservation:', error)
@@ -394,9 +430,7 @@ export const completeReservation = async (
     const response = await apiClient.api.postReservationCompleteReservation({
       reservationId,
     })
-    const responseAny: any = response
-    
-    const reservationData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
     console.error('Error completing reservation:', error)
@@ -419,9 +453,7 @@ export const submitReview = async (
       comment,
       rating,
     })
-    const responseAny: any = response
-    
-    const reservationData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
     console.error('Error submitting review:', error)
@@ -442,9 +474,7 @@ export const confirmReservationPayment = async (
       reservationId,
       paymentReference,
     })
-    const responseAny: any = response
-    
-    const reservationData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
     console.error('Error confirming reservation payment:', error)
@@ -465,9 +495,7 @@ export const checkSlotAvailability = async (
       slotId,
       serviceId,
     })
-    const responseAny: any = response
-    
-    const availability = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const availability = extractResponseData(response)
     return Boolean(availability)
   } catch (error: unknown) {
     console.error('Error checking slot availability:', error)
@@ -484,9 +512,7 @@ export const submitClientTestFeedback = async (
 ): Promise<ReservationResponse> => {
   try {
     const response = await apiClient.api.postReservationClientTestFeedback(data)
-    const responseAny: any = response
-    
-    const reservationData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
     console.error('Error submitting client test feedback:', error)
@@ -507,9 +533,7 @@ export const updateReservationStatus = async (
       reservationId,
       reservationStatus: status,
     })
-    const responseAny: any = response
-    
-    const reservationData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
     console.error('Error updating reservation status:', error)
@@ -530,9 +554,7 @@ export const createReservationByProvider = async (
 ): Promise<ReservationResponse> => {
   try {
     const response = await apiClient.api.postReservationCreateReservation(data)
-    const responseAny: any = response
-    
-    const reservationData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
     console.error('Error creating reservation by provider:', error)
@@ -550,9 +572,7 @@ export const updateReservationByProvider = async (
 ): Promise<ReservationResponse> => {
   try {
     const response = await apiClient.api.putReservationUpdateReservation(reservationId, data)
-    const responseAny: any = response
-    
-    const reservationData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const reservationData = extractResponseData(response)
     return reservationData as ReservationResponse
   } catch (error: unknown) {
     console.error('Error updating reservation by provider:', error)
@@ -569,10 +589,8 @@ export const getReservationsByProviderId = async (
 ): Promise<ReservationResponse[]> => {
   try {
     const response = await apiClient.api.getReservationGetProviderAll(providerId)
-    const responseAny: any = response
-    
-    const reservations = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    return Array.isArray(reservations) ? reservations : []
+    const reservations = extractResponseData(response)
+    return Array.isArray(reservations) ? (reservations as ReservationResponse[]) : []
   } catch (error: unknown) {
     console.error('Error fetching reservations by provider:', error)
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch reservations by provider')

@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import { MainBudgetBookResponse } from '@/types/responses'
+import type { BudgetLineResponse } from '@/types/responses'
 import { DonutChart } from './DonutChart'
 
 export interface BudgetData {
@@ -46,9 +47,9 @@ export const BudgetPayments = ({
 
   // Calculate paid from lines (lines may contain paid/estimated even if not in type definition)
   const paid = useMemo(() => {
-    const lines = (book.lines || []) as any[]
-    const activeLines = lines.filter((line: any) => !line?.isDeleted)
-    return activeLines.reduce((sum: number, line: any) => {
+    const lines = (book.lines || []) as BudgetLineResponse[]
+    const activeLines = lines.filter((line: BudgetLineResponse) => !line?.isDeleted)
+    return activeLines.reduce((sum: number, line: BudgetLineResponse) => {
       return sum + (Number(line.paid) || 0)
     }, 0)
   }, [book.lines])

@@ -83,8 +83,19 @@ export const syncEventBooksDelta = async (
 ): Promise<SyncBookDeltaResponse<EventBook | null>> => {
   try {
     const response = await apiClient.api.postEventBooksSyncBookDelta(data, params)
-    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<EventBook | null>
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as SyncBookDeltaResponse<EventBook | null>
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as SyncBookDeltaResponse<EventBook | null>
+      }
+    }
+    return responseAny as unknown as SyncBookDeltaResponse<EventBook | null>
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync event books (delta)')
   }

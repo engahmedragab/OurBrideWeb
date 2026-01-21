@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { format } from 'date-fns'
 import { FileText } from 'lucide-react'
 import { MainNoteBookResponse } from '@/types/responses'
+import type { NoteLineResponse } from '@/types/responses'
 
 export interface NotesOverviewProps {
   book?: MainNoteBookResponse
@@ -36,13 +37,13 @@ export const NotesOverview = ({
 
   // Get active notes (not deleted) - use notes if available, otherwise use lines
   const activeNotes = useMemo(() => {
-    const notes = (book.notes || book.lines || []) as any[]
-    return notes.filter((note: any) => !note?.isDeleted)
+    const notes = (book.notes || book.lines || []) as NoteLineResponse[]
+    return notes.filter((note: NoteLineResponse) => !note?.isDeleted)
   }, [book.notes, book.lines])
 
   // Sort by lastModifiedDate (newest first), fallback to creationDate
   const sortedNotes = useMemo(() => {
-    return [...activeNotes].sort((a: any, b: any) => {
+    return [...activeNotes].sort((a: NoteLineResponse, b: NoteLineResponse) => {
       const dateA = new Date(a.lastModifiedDate || a.creationDate || 0).getTime()
       const dateB = new Date(b.lastModifiedDate || b.creationDate || 0).getTime()
       return dateB - dateA
@@ -71,7 +72,7 @@ export const NotesOverview = ({
       
       <div className="space-y-3">
         {displayNotes.length > 0 ? (
-          displayNotes.map((note: any) => {
+          displayNotes.map((note: NoteLineResponse) => {
             // Use title field, fallback to note field (first 50 chars)
             const noteTitle = note.title || (note.note ? note.note.substring(0, 50) + (note.note.length > 50 ? '...' : '') : 'Untitled Note')
             const noteContent = note.note || ''

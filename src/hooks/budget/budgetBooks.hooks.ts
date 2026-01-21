@@ -304,7 +304,7 @@ export const useBudgetSyncDeltaMutation = (
     ApiError,
     { data: SyncBookDeltaRequest<BudgetLineRequest, BudgetLineCategoryRequest>; query?: BudgetBooksQuery }
   >({
-    mutationFn: ({ data, query }) => syncBudgetBookDelta(data as any, query),
+    mutationFn: ({ data, query }) => syncBudgetBookDelta(data as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<BudgetLineRequest, BudgetLineCategoryRequest>, query),
     onSuccess: () => {
       invalidateBudgetBookQueries(queryClient)
       invalidateBudgetLinesQueries(queryClient)

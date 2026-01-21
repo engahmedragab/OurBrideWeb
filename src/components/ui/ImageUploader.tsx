@@ -100,16 +100,26 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         console.error('Upload result missing URL:', result)
         throw new Error('No URL returned from upload service. Please check the server response.')
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorResponse = error && typeof error === 'object' && 'response' in error 
+        ? (error as { response?: { data?: { message?: string } } }).response 
+        : undefined
+      
+      let errorMessage = 'Failed to upload image. Please try again.'
+      
+      if (errorResponse?.data?.message) {
+        errorMessage = errorResponse.data.message
+      } else if (error instanceof Error) {
+        errorMessage = error.message
+      }
+      
       console.error('Error uploading image:', {
         error,
-        errorMessage: error?.message,
-        errorResponse: error?.response,
-        errorData: error?.response?.data,
+        errorMessage,
+        errorResponse,
+        errorData: errorResponse?.data,
       })
-      const errorMessage = error?.response?.data?.message || 
-                          error?.message || 
-                          'Failed to upload image. Please try again.'
+      
       addToast(errorMessage, 'error')
       // Revert preview on error
       setPreviewUrl(existingImageUrl || null)
@@ -188,7 +198,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             circular ? 'rounded-full' : 'rounded-lg'
           )}>
             {uploading ? (
-              <LoadingSpinner size="sm" />
+              <LoadingSpinner size="sm" text="Uploading image..." fullScreen={true} />
             ) : (
               <Upload className="w-8 h-8 text-gray-400" />
             )}

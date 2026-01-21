@@ -99,8 +99,19 @@ export const syncOccasionBookDelta = async (
   try {
     const params = normalizeQuery(query)
     const response = await apiClient.api.postOccasionsBooksSyncBookDelta(data, params)
-    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<OccasionBookResponse | null>
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as SyncBookDeltaResponse<OccasionBookResponse | null>
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as SyncBookDeltaResponse<OccasionBookResponse | null>
+      }
+    }
+    return responseAny as unknown as SyncBookDeltaResponse<OccasionBookResponse | null>
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync occasion book (delta)')
   }
@@ -115,17 +126,20 @@ export const getOccasionBook = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getOccasionsBooksGetBook(normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as OccasionBookResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as OccasionBookResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as OccasionBookResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as OccasionBookResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as OccasionBookResponse
+      return responseAny as unknown as OccasionBookResponse
     }
     return null
   } catch (error: unknown) {
@@ -142,17 +156,20 @@ export const getOccasionLines = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getOccasionsBooksGetAll(normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as OccasionLineResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as OccasionLineResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as OccasionLineResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as OccasionLineResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as OccasionLineResponse[]
@@ -177,17 +194,20 @@ export const getOccasionLineById = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getOccasionsBooksGet(lineId, String(lineId), normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as OccasionLineResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as OccasionLineResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as OccasionLineResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as OccasionLineResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as OccasionLineResponse
+      return responseAny as unknown as OccasionLineResponse
     }
     return null
   } catch (error: unknown) {
@@ -205,17 +225,20 @@ export const createOccasionLine = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.postOccasionsBooksCreate(data, normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as OccasionLineResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as OccasionLineResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as OccasionLineResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as OccasionLineResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as OccasionLineResponse
+      return responseAny as unknown as OccasionLineResponse
     }
     throw new Error('Invalid response format from create occasion line endpoint')
   } catch (error: unknown) {
@@ -254,17 +277,20 @@ export const updateOccasionLine = async (
       // eventId is excluded if the API doesn't accept it
     } : undefined
     const response = await apiClient.api.putOccasionsBooksUpdate(lineId, String(lineId), data, normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as OccasionLineResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as OccasionLineResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as OccasionLineResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as OccasionLineResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as OccasionLineResponse
+      return responseAny as unknown as OccasionLineResponse
     }
     throw new Error('Invalid response format from update occasion line endpoint')
   } catch (error: unknown) {
@@ -368,13 +394,16 @@ export const getOccasionLinesCustom = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getOccasionsBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as OccasionLineResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as OccasionLineResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as OccasionLineResponse[]
+      }
     }
     return []
   } catch (error: unknown) {
@@ -391,13 +420,16 @@ export const getOccasionLinesDone = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getOccasionsBooksGetAllDone(normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as OccasionLineResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as OccasionLineResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as OccasionLineResponse[]
+      }
     }
     return []
   } catch (error: unknown) {
@@ -418,13 +450,16 @@ export const getOccasionLinesNotDone = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getOccasionsBooksGetAllNotDone(normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as OccasionLineResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as OccasionLineResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as OccasionLineResponse[]
+      }
     }
     return []
   } catch (error: unknown) {
@@ -441,13 +476,16 @@ export const getOccasionLinesFavorite = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getOccasionsBooksGetAllFavorite(normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as OccasionLineResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as OccasionLineResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as OccasionLineResponse[]
+      }
     }
     return []
   } catch (error: unknown) {
@@ -468,13 +506,16 @@ export const getOccasionLinesNotFavorite = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getOccasionsBooksGetAllNotFavorite(normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as OccasionLineResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as OccasionLineResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as OccasionLineResponse[]
+      }
     }
     return []
   } catch (error: unknown) {
@@ -491,13 +532,16 @@ export const getOccasionLinesDeleted = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getOccasionsBooksGetAllDelete(normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as OccasionLineResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as OccasionLineResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as OccasionLineResponse[]
+      }
     }
     return []
   } catch (error: unknown) {
@@ -514,13 +558,16 @@ export const getOccasionLinesNotDeleted = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getOccasionsBooksGetAllNotDelete(normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as OccasionLineResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as OccasionLineResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as OccasionLineResponse[]
+      }
     }
     return []
   } catch (error: unknown) {
@@ -576,13 +623,16 @@ export const getOccasionCategories = async (
 ): Promise<OccasionLineResponse[]> => {
   try {
     const response = await apiClient.api.getOccasionsBooksGetAllCategories(query)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as OccasionLineResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as OccasionLineResponse[]
+      }
     }
     return []
   } catch (error: unknown) {
@@ -613,13 +663,19 @@ export const getOccasionCategory = async (
 ): Promise<OccasionLineCategoryResponse | null> => {
   try {
     const response = await apiClient.api.getOccasionsBooksGetCategory(categoryId, query)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    if (responseAny?.data?.data) {
-      return responseAny.data.data
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as OccasionLineCategoryResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as OccasionLineCategoryResponse
+      }
     }
-    if (responseAny?.data) {
-      return responseAny.data
+    if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
+      return responseAny as unknown as OccasionLineCategoryResponse
     }
     return null
   } catch (error: unknown) {

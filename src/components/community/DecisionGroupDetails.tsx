@@ -20,6 +20,7 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { DecisionGroupResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
+import type { AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
 import Link from 'next/link'
 import {
@@ -70,7 +71,8 @@ export const DecisionGroupDetails = ({
 
   const addCommentMutation = useMutation({
     mutationFn: async (content: string) => {
-      await addDecisionGroupReview(decisionGroup.id, { comment: content } as any)
+      const reviewData: AddReviewRequest = { comment: content }
+      await addDecisionGroupReview(decisionGroup.id, reviewData)
     },
     onSuccess: () => {
       setCommentText('')

@@ -213,7 +213,9 @@ function CreateOrderContent() {
         const orderStatus = order.status?.toLowerCase() || ''
         // Note: queueStatus might not be in OrderResponse, check status directly
         // If the API returns queueStatus, it would be in a different field
-        const queueStatusValue = (order as any).queueStatus?.toLowerCase() || ''
+        type OrderWithQueueStatus = OrderResponse & { queueStatus?: string }
+        const orderWithQueue = order as OrderWithQueueStatus
+        const queueStatusValue = orderWithQueue.queueStatus?.toLowerCase() || ''
 
         // Check both status and queueStatus
         const currentStatus = queueStatusValue || orderStatus

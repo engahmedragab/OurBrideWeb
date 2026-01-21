@@ -305,6 +305,9 @@ export type { LoadingOverlayProps } from './LoadingOverlay'
 export { LoadingSpinner } from './LoadingSpinner'
 export type { LoadingSpinnerProps } from './LoadingSpinner'
 
+export { GlobalLoader } from './GlobalLoader'
+export type { GlobalLoaderProps } from './GlobalLoader'
+
 export { StatusModal } from './StatusModal'
 export type { StatusModalProps } from './StatusModal'
 

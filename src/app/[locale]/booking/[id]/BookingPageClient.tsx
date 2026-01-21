@@ -1034,7 +1034,10 @@ const staff = useMemo(
             <div className="min-h-screen flex flex-col bg-white">
                 <Header />
                 <main className="flex-1 flex items-center justify-center">
+
                     <LoadingSpinner size="lg" text={tSD('loadingBookingDetails')} />
+
+
                 </main>
                 <Footer />
             </div>
@@ -1321,7 +1324,9 @@ const staff = useMemo(
                                                 </div>
                                             ) : (
                                                 <div className="flex justify-center items-center py-8">
+
                                                     <LoadingSpinner size="md" text={tSD('states.loadingDates')} />
+
                                                 </div>
                                             )}
                                         </div>
@@ -1331,7 +1336,9 @@ const staff = useMemo(
                                             <h2 className="text-20 font-semibold text-gray-900 mb-4">{tSD('sections.selectTime')}</h2>
                                             {timeSlotsLoading ? (
                                                 <div className="flex justify-center items-center py-8">
+
                                                     <LoadingSpinner size="md" text={tSD('states.loadingTimeSlots')} />
+
                                                 </div>
                                             ) : timeSlotsError ? (
                                                 <div className="bg-red-50 border border-red-200 rounded-xl p-4">

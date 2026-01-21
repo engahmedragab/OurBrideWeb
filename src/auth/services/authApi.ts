@@ -204,8 +204,9 @@ const getErrorMessage = (error: unknown, defaultKey: string): string => {
 
   if (error && typeof error === 'object') {
     // Axios-like
-    if ('response' in error && (error as any).response) {
-      const response = (error as any).response as {
+    const errorObj = error as Record<string, unknown>
+    if ('response' in errorObj && errorObj.response) {
+      const response = errorObj.response as {
         status?: number
         data?: {
           message?: string

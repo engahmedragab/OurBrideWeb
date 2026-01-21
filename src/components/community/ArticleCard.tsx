@@ -154,8 +154,10 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
   const date = formatDate(article.publishedAt || article.creationDate)
 
   // Extract images from medias array
-  const medias = (article as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url
+  type ArticleWithMedias = ArticleResponse & { medias?: Array<{ url?: string }> }
+  const articleWithMedias = article as ArticleWithMedias
+  const medias = articleWithMedias.medias || []
+  const imageUrl = medias.find((media: { url?: string }) => media?.url)?.url
 
   return (
     <div

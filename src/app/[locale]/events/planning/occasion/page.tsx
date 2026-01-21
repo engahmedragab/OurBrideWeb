@@ -16,6 +16,7 @@ import { usePlanningBookController } from '@/hooks/planning/usePlanningBookContr
 import { useInitOccasionBooks, useAddOccasionBookModels } from '@/hooks/bookInit'
 import type { OccasionLineResponse, OccasionBookResponse } from '@/types/responses'
 import type { OccasionBookRequest, OccasionLineRequest, UserType, BookClass } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { OccasionType } from '@/../client/common/api/gen/ourbride-api'
 import {
   buildBookRequestFromLocal as buildOccasionBookRequest,
@@ -143,14 +144,14 @@ function OccasionsPageContent() {
     },
     syncDeltaFn: async (delta) => {
       const response = await syncDeltaMutation.mutateAsync({
-        data: delta,
+        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').OccasionLineRequest, import('@/../client/common/api/gen/ourbride-api').OccasionLineCategoryRequest>,
         query: {
           eventId: eventId || undefined,
           userType: null as unknown as UserType | undefined,
           clientId: null as unknown as string | undefined,
         },
       })
-      return response as any
+      return response as unknown as SyncBookDeltaResponse<OccasionBookResponse>
     },
     refetch,
     shouldInit: (b) => !b?.id,

@@ -24,8 +24,19 @@ export const getFollowById = async (
 ): Promise<FollowResponse> => {
   try {
     const response = await apiClient.api.getFollowGetById(id, query)
-    const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FollowResponse
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as FollowResponse
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as FollowResponse
+      }
+    }
+    return responseAny as unknown as FollowResponse
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch follow'
@@ -45,8 +56,19 @@ export const updateFollow = async (
 ): Promise<FollowResponse> => {
   try {
     const response = await apiClient.api.putFollowUpdate(id, data, query)
-    const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FollowResponse
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as FollowResponse
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as FollowResponse
+      }
+    }
+    return responseAny as unknown as FollowResponse
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to update follow'
@@ -93,21 +115,21 @@ export const getAllFollows = async (query?: {
 }): Promise<FollowResponse[]> => {
   try {
     const response = await apiClient.api.getFollowGetAll(query)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle the actual response structure: { data: [...], success, statusCode, message, errors }
     // The API might return: response.data.data or response.data
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as FollowResponse[]
-    }
-    
-    if (responseAny?.data && Array.isArray(responseAny.data)) {
-      return responseAny.data as FollowResponse[]
-    }
-    
-    // Fallback for paginated structure if API changes
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as FollowResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as FollowResponse[]
+      }
+      if (Array.isArray(data)) {
+        return data as FollowResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as FollowResponse[]
+      }
     }
     
     // Fallback for direct array
@@ -134,8 +156,19 @@ export const createFollow = async (
 ): Promise<FollowResponse> => {
   try {
     const response = await apiClient.api.postFollowCreate(data, query)
-    const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as FollowResponse
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as FollowResponse
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as FollowResponse
+      }
+    }
+    return responseAny as unknown as FollowResponse
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to create follow'
@@ -156,9 +189,21 @@ export const getFollowsBySource = async (
   }
 ): Promise<PaginatedList<FollowResponse>> => {
   try {
-    const response = await apiClient.api.getFollowGetBySource(source as any, sourceId, query)
-    const responseAny: any = response
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as PaginatedList<FollowResponse>
+    // Cast source to the expected Source type from the API client
+    const response = await apiClient.api.getFollowGetBySource(source as unknown as Parameters<typeof apiClient.api.getFollowGetBySource>[0], sourceId, query)
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as PaginatedList<FollowResponse>
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as PaginatedList<FollowResponse>
+      }
+    }
+    return responseAny as unknown as PaginatedList<FollowResponse>
   } catch (error: unknown) {
     throw new Error(
       error instanceof Error ? error.message : 'Failed to fetch follows by source'

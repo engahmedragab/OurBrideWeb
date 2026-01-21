@@ -144,8 +144,10 @@ export const BlogCard = ({ blog, className }: BlogCardProps) => {
   const date = formatDate(blog.publishedAt || blog.creationDate)
 
   // Extract images from medias array
-  const medias = (blog as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url
+  type BlogWithMedias = BlogResponse & { medias?: Array<{ url?: string }> }
+  const blogWithMedias = blog as BlogWithMedias
+  const medias = blogWithMedias.medias || []
+  const imageUrl = medias.find((media: { url?: string }) => media?.url)?.url
 
   return (
     <div
