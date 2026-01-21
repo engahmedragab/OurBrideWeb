@@ -48,22 +48,25 @@ export const useServicesSearch = (
         PageSize: params?.pageSize,
       }
 
-
-        const result = await searchServices(query)
-        
-        // Try to extract data from different response structures
-        const extractedData = extractServicesCategoryData(result, locale)
-        
-        return {
-          services: extractedData.services || [],
-          categories: extractedData.categories,
-          totalCount: (result as any)?.totalCount || (result as any)?.total || extractedData.services?.length || 0,
-          page: params?.page || 1,
-          pageSize: params?.pageSize || 10,
-        }
-      } catch (error) {
-        throw error
-
+      const result = await searchServices(query)
+      
+      // Try to extract data from different response structures
+      const extractedData = extractServicesCategoryData(result, locale)
+      
+      // Safely extract totalCount from result
+      const resultObj = result && typeof result === 'object' ? result as Record<string, unknown> : null
+      const totalCount = 
+        (typeof resultObj?.totalCount === 'number' ? resultObj.totalCount : null) ||
+        (typeof resultObj?.total === 'number' ? resultObj.total : null) ||
+        extractedData.services?.length ||
+        0
+      
+      return {
+        services: extractedData.services || [],
+        categories: extractedData.categories,
+        totalCount,
+        page: params?.page || 1,
+        pageSize: params?.pageSize || 10,
       }
     },
     enabled,
