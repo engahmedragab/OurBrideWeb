@@ -198,7 +198,7 @@ function CommunityContent() {
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
         <div className="fixed inset-0 z-50">
-              <LoadingSpinner />
+              <LoadingOverlay open={true} />
             </div>
         <Footer />
       </div>
