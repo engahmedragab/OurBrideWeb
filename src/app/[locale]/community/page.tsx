@@ -35,9 +35,12 @@ import {
   type CommunityTab,
 } from '@/components/community'
 import { CommunityHomeFeed } from '@/components/community/CommunityHomeFeed'
+import { useI18nTranslations } from '@/i18n'
+import { LoadingSpinner } from '@/components/ui'
 
 function CommunityContent() {
-  const router = useRouter()
+  const t =useI18nTranslations("community")
+    const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams?.get('tab')
   const validTabs: CommunityTab[] = ['community', 'posts', 'blogs', 'articles', 'reels', 'decision-groups', 'contests', 'profile']
@@ -194,9 +197,9 @@ function CommunityContent() {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
-        <main className="flex-1 flex items-center justify-center min-h-[400px]">
-          <LoadingOverlay open={true} title="Loading..." />
-        </main>
+        <div className="fixed inset-0 z-50">
+              <LoadingSpinner />
+            </div>
         <Footer />
       </div>
     )
@@ -210,8 +213,8 @@ function CommunityContent() {
         <main className="flex-1 flex items-center justify-center">
           <ErrorModal
             open={true}
-            title="Failed to Load Community Data"
-            message={homeError instanceof Error ? homeError.message : 'Unknown error'}
+            title={t("errors.failedToLoadCommunityData")}
+            message={homeError instanceof Error ? homeError.message : t("errors.unknownError")}
             onRetry={() => window.location.reload()}
             onClose={() => {}}
           />
@@ -238,7 +241,7 @@ function CommunityContent() {
                     : 'text-gray-700 hover:bg-gray-50'
                 )}
               >
-                Community
+                {t("tabs.community")}
               </button>
               <button
                 onClick={() => handleTabChange('posts')}
@@ -249,7 +252,7 @@ function CommunityContent() {
                     : 'text-gray-700 hover:bg-gray-50'
                 )}
               >
-                Posts
+                {t("tabs.posts")}
               </button>
               <button
                 onClick={() => handleTabChange('blogs')}
@@ -260,7 +263,7 @@ function CommunityContent() {
                     : 'text-gray-700 hover:bg-gray-50'
                 )}
               >
-                Blogs
+                {t("tabs.blogs")}
               </button>
               <button
                 onClick={() => handleTabChange('articles')}
@@ -271,7 +274,7 @@ function CommunityContent() {
                     : 'text-gray-700 hover:bg-gray-50'
                 )}
               >
-                Articles
+                {t("tabs.articles")}
               </button>
               <button
                 onClick={() => handleTabChange('reels')}
@@ -282,7 +285,7 @@ function CommunityContent() {
                     : 'text-gray-700 hover:bg-gray-50'
                 )}
               >
-                Reels
+                {t("tabs.reels")}
               </button>
               <button
                 onClick={() => handleTabChange('decision-groups')}
@@ -293,7 +296,7 @@ function CommunityContent() {
                     : 'text-gray-700 hover:bg-gray-50'
                 )}
               >
-                Decisions
+                {t("tabs.decision-groups")}
               </button>
               <button
                 onClick={() => handleTabChange('contests')}
@@ -304,7 +307,7 @@ function CommunityContent() {
                     : 'text-gray-700 hover:bg-gray-50'
                 )}
               >
-                Contests
+                {t("tabs.contests")}
               </button>
               {communityData?.currentUser?.id && (
                 <button
@@ -316,7 +319,7 @@ function CommunityContent() {
                       : 'text-gray-700 hover:bg-gray-50'
                   )}
                 >
-                  Profile
+                  {t("tabs.profile")}
                 </button>
               )}
             </div>
@@ -353,7 +356,7 @@ function CommunityContent() {
                     <button
                       onClick={() => setIsSearchOpen(true)}
                       className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                      title="Search"
+                      title={t("actions.search")}
                     >
                       <svg
                         className="w-4 h-4"
@@ -375,7 +378,7 @@ function CommunityContent() {
                         <div className="flex-1 relative">
                           <input
                             type="text"
-                            placeholder={`Search ${activeTab}...`}
+                            placeholder={t("placeholders.searchInTab", { tab: t(`tabs.${activeTab}`) })}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => {
@@ -403,7 +406,7 @@ function CommunityContent() {
                         <button
                           onClick={() => handleSearch(searchQuery)}
                           className="flex items-center justify-center w-8 h-8 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
-                          title="Search"
+                          title={t("actions.search")}
                         >
                           <svg
                             className="w-4 h-4"
@@ -423,7 +426,7 @@ function CommunityContent() {
                           <button
                             onClick={handleClearSearch}
                             className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                            title="Clear search"
+                            title={t("actions.clearSearch")}
                           >
                             <svg
                               className="w-4 h-4"
@@ -448,7 +451,7 @@ function CommunityContent() {
                             }
                           }}
                           className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                          title="Close"
+                          title={t("actions.close")}
                         >
                           <svg
                             className="w-4 h-4"
@@ -469,7 +472,7 @@ function CommunityContent() {
                   )}
                   {searchQuery && (
                     <div className="mt-2 text-sm text-gray-600">
-                      Showing results for: <span className="font-semibold">"{searchQuery}"</span>
+                      {t("labels.showingResultsFor", { query: searchQuery })} <span className="font-semibold">&quot;{searchQuery}&quot;</span>
                     </div>
                   )}
                 </div>
@@ -557,8 +560,7 @@ export default function CommunityPage() {
           <main className="flex-1 flex items-center justify-center">
             <LoadingOverlay
               open={true}
-              title="Loading..."
-              subtitle="Please wait a moment"
+              
             />
           </main>
           <Footer />
