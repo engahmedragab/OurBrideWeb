@@ -11,9 +11,9 @@ import {
 export const useServiceCardHandlers = (
   serviceId: number,
   options?: {
-    onFavoriteSuccess?: (response: any) => void
+    onFavoriteSuccess?: (response: boolean) => void
     onFavoriteError?: (error: Error) => void
-    onWishlistSuccess?: (response: any) => void
+    onWishlistSuccess?: (response: boolean) => void
     onWishlistError?: (error: Error) => void
   }
 ) => {

@@ -32,6 +32,7 @@ import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
 import Link from 'next/link'
 import type { ReviewResponse } from '@/types/responses/review-response'
+import type { AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface ReelPlayerProps {
@@ -139,7 +140,8 @@ export const ReelPlayer = ({
   const addCommentMutation = useMutation({
     mutationFn: async (content: string) => {
       if (!reel) throw new Error('Reel not loaded')
-      await addReelReview(reel.id, { comment: content } as any)
+      const reviewData: AddReviewRequest = { comment: content }
+      await addReelReview(reel.id, reviewData)
     },
     onSuccess: () => {
       setCommentText('')

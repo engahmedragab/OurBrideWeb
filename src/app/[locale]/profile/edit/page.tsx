@@ -30,10 +30,10 @@ export default function ProfileEditPage() {
 
   // Extract user data from mineInfo (fallback to profileData)
   // Handle different response structures: mineInfo.data.userProfile.user or mineInfo.userProfile.user
-  const mineInfoAny = mineInfo as any
-  const data: any = mineInfoAny?.data || mineInfoAny || {}
-  const userProfile: any = data?.userProfile || {}
-  const userData = userProfile?.user || profileData || authUser
+  const mineInfoAny = mineInfo as unknown as { data?: { userProfile?: { user?: unknown } }; userProfile?: { user?: unknown } } | Record<string, unknown>
+  const data = (mineInfoAny?.data || mineInfoAny || {}) as { userProfile?: { user?: unknown } }
+  const userProfile = (data?.userProfile || {}) as { user?: unknown }
+  const userData = (userProfile?.user || profileData || authUser) as Record<string, unknown>
 
   const [formData, setFormData] = useState<{
     firstName: string
@@ -75,11 +75,14 @@ export default function ProfileEditPage() {
       let formattedBirthDate = ''
       if (userData.birthDate) {
         try {
-          const date = new Date(userData.birthDate)
-          if (!isNaN(date.getTime())) {
-            formattedBirthDate = date.toISOString().split('T')[0]
+          const birthDateValue = userData.birthDate
+          if (typeof birthDateValue === 'string' || typeof birthDateValue === 'number' || birthDateValue instanceof Date) {
+            const date = new Date(birthDateValue)
+            if (!isNaN(date.getTime())) {
+              formattedBirthDate = date.toISOString().split('T')[0]
+            }
           }
-        } catch (e) {
+        } catch {
           console.warn('Invalid birthDate format:', userData.birthDate)
         }
       }
@@ -121,19 +124,19 @@ export default function ProfileEditPage() {
       }
 
       setFormData({
-        firstName: userData.firstName || '',
-        lastName: userData.lastName || '',
+        firstName: (typeof userData.firstName === 'string' ? userData.firstName : '') || '',
+        lastName: (typeof userData.lastName === 'string' ? userData.lastName : '') || '',
         gender: genderValue,
-        mobileNumber: userData.phoneNumber || '',
-        email: userData.email || '',
-        profileUrl: userData.profileUrl || '',
+        mobileNumber: (typeof userData.phoneNumber === 'string' ? userData.phoneNumber : '') || '',
+        email: (typeof userData.email === 'string' ? userData.email : '') || '',
+        profileUrl: (typeof userData.profileUrl === 'string' ? userData.profileUrl : '') || '',
         profileMedia: null,
-        personal: userData.personal || '',
+        personal: (typeof userData.personal === 'string' ? userData.personal : '') || '',
         personalType: (userData.personalType as PersonalType) || '',
         birthDate: formattedBirthDate,
-        customTag: userData.customTag || '',
+        customTag: (typeof userData.customTag === 'string' ? userData.customTag : '') || '',
         language: languageValue,
-        countryId: userData.countryId || null,
+        countryId: (typeof userData.countryId === 'number' ? userData.countryId : null),
       })
     }
   }, [userData, currentLocale])
@@ -152,7 +155,7 @@ export default function ProfileEditPage() {
           if (!isNaN(date.getTime())) {
             formattedBirthDate = date.toISOString()
           }
-        } catch (e) {
+        } catch {
           console.warn('Invalid birthDate format:', formData.birthDate)
         }
       }
@@ -256,7 +259,7 @@ export default function ProfileEditPage() {
     return (
       <UserPageLayout>
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Loading profile..." />
+          <LoadingSpinner size="lg" text="Loading profile..." fullScreen={true} />
         </div>
       </UserPageLayout>
     )

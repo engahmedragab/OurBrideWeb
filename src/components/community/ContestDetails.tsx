@@ -22,6 +22,7 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { LeaderboardContestResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
+import type { AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { formatDateShort, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
 import Link from 'next/link'
 import {
@@ -71,8 +72,10 @@ export const ContestDetails = ({
   const status = getContestStatus(contest)
 
   // Extract images from medias array
-  const medias = (contest as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url
+  type ContestWithMedias = LeaderboardContestResponse & { medias?: Array<{ url?: string }> }
+  const contestWithMedias = contest as ContestWithMedias
+  const medias = contestWithMedias.medias || []
+  const imageUrl = medias.find((media: { url?: string }) => media?.url)?.url
 
   // Map reviews to comments format
   const comments = (contest.reviews || []).map((review: ReviewResponse) => ({
@@ -87,7 +90,8 @@ export const ContestDetails = ({
 
   const addCommentMutation = useMutation({
     mutationFn: async (content: string) => {
-      await addContestReview(contest.id, { comment: content } as any)
+      const reviewData: AddReviewRequest = { comment: content }
+      await addContestReview(contest.id, reviewData)
     },
     onSuccess: () => {
       setCommentText('')

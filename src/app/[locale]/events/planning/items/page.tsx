@@ -18,6 +18,7 @@ import { usePlanningBookController } from '@/hooks/planning/usePlanningBookContr
 import { useInitItemBooks, useAddItemBookModels } from '@/hooks/bookInit'
 import type { ItemLineResponse, ItemBookResponse, ItemLineCategoryResponse } from '@/types/responses'
 import type { ItemBookRequest, UserType, BookClass } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { generateTempId } from '@/utils/sync/tempIds'
 import {
   type UiItem,
@@ -77,14 +78,14 @@ function ItemsPageContent() {
     },
     syncDeltaFn: async (delta) => {
       const response = await syncDeltaMutation.mutateAsync({
-        data: delta,
+        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').ItemLineRequest, import('@/../client/common/api/gen/ourbride-api').ItemLineCategoryRequest>,
         query: {
           eventId: eventId || undefined,
           userType: null as unknown as UserType | undefined,
           clientId: null as unknown as string | undefined,
         },
       })
-      return response as any
+      return response as unknown as SyncBookDeltaResponse<ItemBookResponse>
     },
     refetch,
     shouldInit: (b) => !b?.id,

@@ -10,7 +10,8 @@ import { usePlanningBookController } from '@/hooks/planning/usePlanningBookContr
 import { useInitServiceBooks, useAddServiceBookModels } from '@/hooks/bookInit'
 import { useToast } from '@/components/ui/Toaster'
 import type { ServiceBookResponse, ServiceLineResponse } from '@/types/responses'
-import type { ServiceBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { buildBookRequestFromLocal, convertLineToRequest } from '@/utils/planning/mappers/preparationsMappers'
 import {
   PreparationsSummaryCard,
@@ -110,14 +111,14 @@ function PreparationsPageContent() {
     },
     syncDeltaFn: async (delta) => {
       const response = await syncDeltaMutation.mutateAsync({
-        data: delta,
+        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').ServiceLineRequest, import('@/../client/common/api/gen/ourbride-api').ServiceLineCategoryRequest>,
         query: {
           eventId: eventId || undefined,
           userType: null as unknown as UserType | undefined,
           clientId: null as unknown as string | undefined,
         },
       })
-      return response as any
+      return response as unknown as SyncBookDeltaResponse<ServiceBookResponse>
     },
     refetch,
     shouldInit: (b) => !b?.id,
@@ -410,7 +411,7 @@ function PreparationsPageContent() {
     return (
       <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text={loadingText} />
+          <LoadingSpinner size="lg" text={loadingText} fullScreen={true} />
         </div>
       </div>
     )
@@ -546,7 +547,7 @@ export default function PreparationsPage() {
   return (
     <Suspense fallback={
       <div className="w-full min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" text="Loading..." />
+        <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
       </div>
     }>
       <PreparationsPageContent />

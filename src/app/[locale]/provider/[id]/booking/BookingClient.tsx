@@ -1,12 +1,11 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import {
   X,
   Check,
   Clock,
-  Calendar as CalendarIcon,
   ChevronLeft,
   User,
   MapPin,
@@ -15,14 +14,13 @@ import {
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
 import { LoadingSpinner, ErrorDisplay, ProcessingModal } from '@/components/ui'
-import { useToast } from '@/components/ui/Toaster'
 import { ErrorModal } from '@/components/ui/ErrorModal'
 import { getAvailableTimeSlots, getAvailableTimeSlotsForMultipleServices, createGroupReservation, getReservationsByIds, type GroupReservationResponse } from '@/services/api/reservationApi'
-import { addPurchase, addBulkPurchases, getCart, getCartByProvider } from '@/services/api/purchaseApi'
+import { addBulkPurchases, getCart, getCartByProvider } from '@/services/api/purchaseApi'
 import type { TimeSlotResponse } from '@/types/responses'
 import type { GroupReservationRequest, PurchaseRequest, ReservationRequest, BulkPurchaseRequest } from '@/../client/common/api/gen/ourbride-api'
 import { PurchaseType, ServiceType } from '@/../client/common/api/gen/ourbride-api'
-import type { ReservationResponse } from '@/types/responses'
+import type { ReservationResponse, PurchaseResponse } from '@/types/responses'
 import { ReservationStatus } from '@/types/responses/common'
 import { useUserFromToken } from '@/hooks/auth'
 import { cn } from '@/lib/utils'
@@ -72,14 +70,12 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
   const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState(false)
   const [timeSlotsError, setTimeSlotsError] = useState<Error | null>(null)
   const [serviceDurations, setServiceDurations] = useState<Map<string, number>>(new Map())
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [showProcessingModal, setShowProcessingModal] = useState(false)
   const [queueStatus, setQueueStatus] = useState<'queued' | 'processing' | 'completed' | 'failed'>('queued')
   const [errorModal, setErrorModal] = useState<{ isOpen: boolean; message: string }>({ isOpen: false, message: '' })
   const pollingIntervalRef = React.useRef<NodeJS.Timeout | null>(null)
   const reservationIdsRef = React.useRef<string[]>([])
   const userInfo = useUserFromToken()
-  const { addToast } = useToast()
 
   // Fetch services by provider ID from API
   const { data: servicesData, isLoading: isLoadingServices, error: servicesError } = useServicesByProviderId(parseInt(providerId))
@@ -125,7 +121,7 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
     }
 
     // If more than one service is selected, use all provider team users
-    if (selectedServices.length > 1 && allTeamUsers && allTeamUsers.length > 0) {
+    if (selectedServices.length > 1 && allTeamUsers && Array.isArray(allTeamUsers) && allTeamUsers.length > 0) {
       allTeamUsers.forEach((assignment: ProviderUserAssignmentResponse) => {
         // Extract ProviderUserResponse from assignment
         const user: ProviderUserResponse | null = assignment.user
@@ -486,7 +482,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
           stopPolling()
           setQueueStatus('completed')
           setShowProcessingModal(false)
-          setIsSubmitting(false)
           await createBulkPurchases(reservationIds, providerId, clientId)
           return
         }
@@ -502,7 +497,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
           setQueueStatus('failed')
           setShowProcessingModal(false)
           stopPolling()
-          setIsSubmitting(false)
           setErrorModal({
             isOpen: true,
             message: 'Some reservations were rejected. Please check your reservations page for details.'
@@ -516,7 +510,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
           setQueueStatus('failed')
           setShowProcessingModal(false)
           stopPolling()
-          setIsSubmitting(false)
           setErrorModal({
             isOpen: true,
             message: 'Reservations are taking longer than expected. Please check your reservations page.'
@@ -538,7 +531,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
             setQueueStatus('failed')
             setShowProcessingModal(false)
             stopPolling()
-            setIsSubmitting(false)
             setErrorModal({
               isOpen: true,
               message: 'Reservations are taking longer than expected. Please check your reservations page.'
@@ -555,7 +547,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
           setQueueStatus('failed')
           setShowProcessingModal(false)
           stopPolling()
-          setIsSubmitting(false)
           setErrorModal({
             isOpen: true,
             message: 'Failed to check reservation status. Please try again.'
@@ -690,8 +681,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
       return
     }
 
-    setIsSubmitting(true)
-
     try {
       console.log('🟢 Starting group reservation creation...')
 
@@ -772,7 +761,7 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
               // Extract reservation IDs from cart purchases
               const ids: string[] = []
               if (cart?.purchases) {
-                cart.purchases.forEach((purchase: any) => {
+                cart.purchases.forEach((purchase: PurchaseResponse) => {
                   if (purchase.reservationId && purchase.type === 'Service') {
                     ids.push(purchase.reservationId)
                   }
@@ -783,7 +772,7 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
               if (finalProviderId && ids.length === 0) {
                 const providerCart = await getCartByProvider(finalProviderId)
                 if (providerCart?.purchases) {
-                  providerCart.purchases.forEach((purchase: any) => {
+                  providerCart.purchases.forEach((purchase: PurchaseResponse) => {
                     if (purchase.reservationId && purchase.type === 'Service') {
                       ids.push(purchase.reservationId)
                     }
@@ -817,7 +806,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
       console.log('🟢 Extracted reservation IDs:', reservationIds)
 
       // Start polling
-      setIsSubmitting(false)
       setShowProcessingModal(true)
       setQueueStatus('queued')
 
@@ -828,7 +816,6 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
       console.error('❌ Error creating group reservations:', error)
       setQueueStatus('failed')
       setShowProcessingModal(false)
-      setIsSubmitting(false)
       stopPolling()
 
       const err = error as { response?: { status?: number; data?: { message?: string } }; message?: string }
@@ -859,7 +846,7 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <LoadingSpinner size="lg" />
+          <LoadingSpinner size="lg" text="Loading booking..." fullScreen={true}/>
         </main>
         <Footer />
       </div>
@@ -1163,7 +1150,7 @@ export function BookingClient({ providerId, preSelectedServiceId }: BookingClien
                       <h2 className="text-20 font-semibold text-gray-900 mb-4">Select Time</h2>
                       {isLoadingTimeSlots ? (
                         <div className="flex items-center justify-center py-8">
-                          <LoadingSpinner size="md" />
+                          <LoadingSpinner size="md" text="Loading time slots..." fullScreen={true} />
                         </div>
                       ) : timeSlotsError ? (
                         <div className="py-8">

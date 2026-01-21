@@ -473,7 +473,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                         Packages Details
                       </h4>
                       {packagesLoading ? (
-                        <LoadingSpinner size="sm" text="Loading packages..." />
+                        <LoadingSpinner size="sm" text="Loading packages..." fullScreen={true} />
                       ) : (
                         <>
                           <div
@@ -734,7 +734,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                     aria-label="Send review"
                   >
                     {submitReviewMutation.isPending ? (
-                      <LoadingSpinner size="sm" />
+                      <LoadingSpinner size="sm" text="Submitting review..." fullScreen={true} />
                     ) : (
                       <Send className="h-5 w-5 text-white flex-shrink-0" />
                     )}

@@ -33,7 +33,7 @@ type GuestGroupCardProps = DetailsProps | SidebarProps
 const getRowKey = (guest: Guest) => {
   const idNum = Number(guest.id)
   if (!Number.isNaN(idNum) && idNum > 0) return `srv-${guest.id}`
-  if ((guest as any).clientId) return `tmp-${String((guest as any).clientId)}`
+  if (guest.clientId) return `tmp-${String(guest.clientId)}`
   return `tmp-${guest.id}`
 }
 

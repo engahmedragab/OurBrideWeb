@@ -139,7 +139,7 @@ export const setPlanningPreferences = async (
 export const getUserProfile = async (): Promise<UserResponse | null> => {
   try {
     const response = await apiClient.api.getProfileGet()
-    const responseAny: any = response as { data?: unknown } | unknown
+    const responseAny = response as unknown as { data?: unknown } | Record<string, unknown>
     
     // Handle different response structures
     const data = responseAny?.data ?? responseAny

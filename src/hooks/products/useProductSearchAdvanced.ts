@@ -30,7 +30,7 @@ export const useProductSearchAdvanced = (
           { providerId, branchId, staffId }
         )
         
-        const resultAny = result as any
+        const resultAny = result as unknown as { data?: unknown } | Record<string, unknown>
         
         // Extract products from response
         if (resultAny && 'data' in resultAny && resultAny.data) {

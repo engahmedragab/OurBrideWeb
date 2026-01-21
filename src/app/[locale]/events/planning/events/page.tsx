@@ -6,7 +6,7 @@ import {
   PlanningMiniCalendar,
 } from '@/components/events'
 import { DayDetailsView } from '@/components/planning/DayDetailsView'
-import { formatDateSafe, getToday, parseDateSafe } from '@/lib/date-utils'
+import { formatDateSafe, getToday } from '@/lib/date-utils'
 import { ChevronLeft, Save } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
@@ -15,10 +15,10 @@ import { useEventBooks, useSyncEventBooks, useSyncEventBooksDelta } from '@/hook
 import { useInitEventBooks } from '@/hooks/eventBooks/useInitEventBooks'
 import { useEventId } from '@/hooks/planning'
 import { useAddEventBookModels } from '@/hooks/bookInit'
-import { usePlanningBookController } from '@/hooks/planning/usePlanningBookController'
+import { usePlanningBookController, type SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { useToast } from '@/components/ui/Toaster'
-import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
-import type { EventBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
+import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 import {
   type EventBookWithCategories,
   buildEventBookRequestFromLocal,
@@ -99,14 +99,14 @@ function EventsPageContent() {
     },
     syncDeltaFn: async (delta) => {
       const response = await syncDeltaMutation.mutateAsync({
-        delta,
+        delta: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').EventLineRequest, import('@/../client/common/api/gen/ourbride-api').EventLineCategoryRequest>,
         params: {
           eventId: eventId || undefined,
           userType: null as unknown as UserType | undefined,
           clientId: null as unknown as string | undefined,
         },
       })
-      return response as any
+      return response as unknown as SyncBookDeltaResponse<EventBookWithCategories>
     },
     refetch,
     shouldInit: (b) => !b?.id,

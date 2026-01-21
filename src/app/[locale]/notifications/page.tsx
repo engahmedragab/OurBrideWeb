@@ -95,7 +95,7 @@ export default function NotificationsPage() {
     return (
       <UserPageLayout>
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Loading notifications..." />
+          <LoadingSpinner size="lg" text="Loading notifications..." fullScreen={true} />
         </div>
       </UserPageLayout>
     )
@@ -184,7 +184,7 @@ export default function NotificationsPage() {
       {/* Notifications List */}
       {isLoading && currentPage > 1 ? (
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="md" text="Loading more notifications..." />
+          <LoadingSpinner size="md" text="Loading more notifications..." fullScreen={true} />
         </div>
       ) : filteredNotifications.length === 0 ? (
         <EmptyState

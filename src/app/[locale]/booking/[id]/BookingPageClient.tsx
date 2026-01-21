@@ -1055,7 +1055,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             <div className="min-h-screen flex flex-col bg-white">
                 <Header />
                 <main className="flex-1 flex items-center justify-center">
-                    <LoadingSpinner size="lg" text="Loading booking details..." />
+                    <LoadingSpinner size="lg" text="Loading booking details..." fullScreen={true} />
                 </main>
                 <Footer />
             </div>
@@ -1339,7 +1339,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                 </div>
                                             ) : (
                                                 <div className="flex justify-center items-center py-8">
-                                                    <LoadingSpinner size="md" text="Loading dates..." />
+                                                    <LoadingSpinner size="md" text="Loading dates..." fullScreen={true} />
                                                 </div>
                                             )}
                                         </div>
@@ -1349,7 +1349,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                             <h2 className="text-20 font-semibold text-gray-900 mb-4">Select Time</h2>
                                             {timeSlotsLoading ? (
                                                 <div className="flex justify-center items-center py-8">
-                                                    <LoadingSpinner size="md" text="Loading time slots..." />
+                                                    <LoadingSpinner size="md" text="Loading time slots..." fullScreen={true} />
                                                 </div>
                                             ) : timeSlotsError ? (
                                                 <div className="bg-red-50 border border-red-200 rounded-xl p-4">

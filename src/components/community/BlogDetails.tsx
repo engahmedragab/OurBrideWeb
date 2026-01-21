@@ -19,6 +19,7 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { BlogResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
+import type { AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
 import Link from 'next/link'
 import {
@@ -55,8 +56,10 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
   const date = formatDate(blog.publishedAt || blog.creationDate)
 
   // Extract images from medias array
-  const medias = (blog as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url
+  type BlogWithMedias = BlogResponse & { medias?: Array<{ url?: string }> }
+  const blogWithMedias = blog as BlogWithMedias
+  const medias = blogWithMedias.medias || []
+  const imageUrl = medias.find((media: { url?: string }) => media?.url)?.url
 
   // Map reviews to comments format
   const comments = (blog.reviews || []).map((review: ReviewResponse) => ({
@@ -71,7 +74,8 @@ export const BlogDetails = ({ blog, className }: BlogDetailsProps) => {
 
   const addCommentMutation = useMutation({
     mutationFn: async (content: string) => {
-      await addBlogReview(blog.id, { comment: content } as any)
+      const reviewData: AddReviewRequest = { comment: content }
+      await addBlogReview(blog.id, reviewData)
     },
     onSuccess: () => {
       setCommentText('')

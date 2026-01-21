@@ -7,6 +7,7 @@ import { Button } from './Button'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { StaticImageData } from 'next/image'
+import { useIsRTL } from '@/i18n/hooks'
 
 export interface OfferItem {
   heading: string
@@ -33,6 +34,7 @@ export const OfferBanner = ({
   className,
   noContainer = false,
 }: OfferBannerProps) => {
+  const isRTL = useIsRTL()
   const [currentIndex, setCurrentIndex] = useState(0)
   const [email, setEmail] = useState('')
 
@@ -76,17 +78,26 @@ export const OfferBanner = ({
         <div className="border border-brand-500 rounded-2xl overflow-hidden bg-white w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-8 relative w-full">
             {/* Left Content - Text and Buttons */}
-            <div className="text-center lg:text-left px-4 md:px-6 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center">
+            <div className={cn(
+              "px-4 md:px-6 py-3 md:py-4 order-1 lg:order-1 flex flex-col justify-center",
+              isRTL ? "text-center lg:text-right" : "text-center lg:text-left"
+            )}>
               <h2 className="text-18 md:text-20 font-medium text-gray-900 mb-1.5 md:mb-2">
                 {currentOffer.heading}
               </h2>
               {currentOffer.description && (
-                <p className="text-13 md:text-14 text-gray-500 mb-3 md:mb-4 max-w-lg mx-auto lg:mx-0">
+                <p className={cn(
+                  "text-13 md:text-14 text-gray-500 mb-3 md:mb-4 max-w-lg",
+                  isRTL ? "mx-auto lg:mr-0 lg:ml-auto" : "mx-auto lg:mx-0"
+                )}>
                   {currentOffer.description}
                 </p>
               )}
               {currentOffer.variant === 'newsletter' ? (
-                <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto lg:mx-0 items-stretch sm:items-center">
+                <div className={cn(
+                  "flex flex-col sm:flex-row gap-2 max-w-md items-stretch sm:items-center",
+                  isRTL ? "mx-auto lg:mr-0 lg:ml-auto" : "mx-auto lg:mx-0"
+                )}>
                   <input
                     type="email"
                     placeholder="Enter Your E-mail"
@@ -103,7 +114,10 @@ export const OfferBanner = ({
                   </Button>
                 </div>
               ) : (
-                <div className="flex justify-center lg:justify-start">
+                <div className={cn(
+                  "flex",
+                  isRTL ? "justify-center lg:justify-end" : "justify-center lg:justify-start"
+                )}>
                   <Button
                     variant="outline"
                     size="lg"
@@ -112,7 +126,7 @@ export const OfferBanner = ({
                   >
                     <Link href={currentOffer.ctaLink || '/products'}>
                       {currentOffer.ctaText || 'Start Shopping'}
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className={cn("h-4 w-4", isRTL ? "mr-2 rotate-180" : "ml-2")} />
                     </Link>
                   </Button>
                 </div>
@@ -120,8 +134,14 @@ export const OfferBanner = ({
             </div>
             {/* Product Image - Right side, aligned from top border to bottom with form */}
             {currentOffer.productImage && (
-              <div className="flex justify-end items-end order-1 lg:order-2 relative overflow-hidden">
-                <div className="relative w-full h-full flex items-end justify-end">
+              <div className={cn(
+                "flex items-end order-1 lg:order-2 relative overflow-hidden",
+                isRTL ? "justify-start" : "justify-end"
+              )}>
+                <div className={cn(
+                  "relative w-full h-full flex items-end",
+                  isRTL ? "justify-start" : "justify-end"
+                )}>
                   <Image
                     src={
                       typeof currentOffer.productImage === 'string'

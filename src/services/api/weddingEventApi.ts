@@ -19,21 +19,22 @@ export const getWeddingEvents = async (params?: {
   staffId?: string
 }): Promise<WeddingEventResponse[]> => {
   try {
-    // Pass query parameters via RequestParams
-    const response = await apiClient.api.getWeddingEventGetAllEvents({
-      params: params || {},
-    } as any)
-    const responseAny: any = response
+    // Pass query parameters directly
+    const response = await apiClient.api.getWeddingEventGetAllEvents(params as unknown as Parameters<typeof apiClient.api.getWeddingEventGetAllEvents>[0])
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as WeddingEventResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as WeddingEventResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as WeddingEventResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as WeddingEventResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as WeddingEventResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as WeddingEventResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as WeddingEventResponse[]
@@ -51,17 +52,20 @@ export const getWeddingEvents = async (params?: {
 export const getWeddingEventById = async (eventId: number): Promise<WeddingEventResponse | null> => {
   try {
     const response = await apiClient.api.getWeddingEventGetEventById(eventId)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as WeddingEventResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as WeddingEventResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as WeddingEventResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as WeddingEventResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as WeddingEventResponse
+      return responseAny as unknown as WeddingEventResponse
     }
     
     return null
@@ -76,17 +80,20 @@ export const getWeddingEventById = async (eventId: number): Promise<WeddingEvent
 export const createWeddingEvent = async (data: WeddingEventCreateRequest): Promise<WeddingEventResponse> => {
   try {
     const response = await apiClient.api.postWeddingEventCreateEvent(data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as WeddingEventResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as WeddingEventResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as WeddingEventResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as WeddingEventResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as WeddingEventResponse
+      return responseAny as unknown as WeddingEventResponse
     }
     
     throw new Error('Invalid response format from create wedding event endpoint')
@@ -104,17 +111,20 @@ export const updateWeddingEvent = async (
 ): Promise<WeddingEventResponse> => {
   try {
     const response = await apiClient.api.putWeddingEventUpdateEvent(eventId, data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as WeddingEventResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as WeddingEventResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as WeddingEventResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as WeddingEventResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as WeddingEventResponse
+      return responseAny as unknown as WeddingEventResponse
     }
     
     throw new Error('Invalid response format from update wedding event endpoint')
@@ -186,13 +196,13 @@ const convertBookClass = (bookClass: string | number | undefined): BookClass => 
 /**
  * Normalize book object by converting string enums to proper enum types
  */
-const normalizeBook = (book: any, expectedBookClass: BookClass): any => {
+const normalizeBook = (book: Record<string, unknown> | null | undefined, expectedBookClass: BookClass): Record<string, unknown> | null | undefined => {
   if (!book) return book
   
   return {
     ...book,
-    bookType: convertBookType(book.bookType),
-    bookClass: book.bookClass === 'Main' ? expectedBookClass : convertBookClass(book.bookClass),
+    bookType: convertBookType(book.bookType as string | number | undefined),
+    bookClass: book.bookClass === 'Main' ? expectedBookClass : convertBookClass(book.bookClass as string | number | undefined),
   }
 }
 
@@ -202,15 +212,18 @@ const normalizeBook = (book: any, expectedBookClass: BookClass): any => {
 export const getEventInfo = async (eventId: number): Promise<EventInfoResponse | null> => {
   try {
     const response = await apiClient.api.getWeddingEventGetEventInfo(eventId)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
-    let eventInfo: any = null
+    let eventInfo: Record<string, unknown> | null = null
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      eventInfo = responseAny.data.data
-    } else if (responseAny?.data) {
-      eventInfo = responseAny.data
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        eventInfo = data.data as Record<string, unknown>
+      } else if (data && typeof data === 'object') {
+        eventInfo = data as Record<string, unknown>
+      }
     } else if (responseAny && typeof responseAny === 'object' && 'itemBook' in responseAny) {
       eventInfo = responseAny
     }
@@ -221,14 +234,14 @@ export const getEventInfo = async (eventId: number): Promise<EventInfoResponse |
     
     // Normalize all books by converting string enums to proper enum types
     return {
-      itemBook: normalizeBook(eventInfo.itemBook, BookClass.Item),
-      serviceBook: normalizeBook(eventInfo.serviceBook, BookClass.Service),
-      budgetBook: normalizeBook(eventInfo.budgetBook, BookClass.Budget),
-      eventBook: normalizeBook(eventInfo.eventBook, BookClass.Event),
-      guestBook: normalizeBook(eventInfo.guestBook, BookClass.Guest),
-      noteBook: normalizeBook(eventInfo.noteBook, BookClass.Note),
-      todoBook: normalizeBook(eventInfo.todoBook, BookClass.Todo),
-      occasionBook: normalizeBook(eventInfo.occasionBook, BookClass.Occasion),
+      itemBook: normalizeBook(eventInfo.itemBook as Record<string, unknown> | null | undefined, BookClass.Item) as unknown as EventInfoResponse['itemBook'],
+      serviceBook: normalizeBook(eventInfo.serviceBook as Record<string, unknown> | null | undefined, BookClass.Service) as unknown as EventInfoResponse['serviceBook'],
+      budgetBook: normalizeBook(eventInfo.budgetBook as Record<string, unknown> | null | undefined, BookClass.Budget) as unknown as EventInfoResponse['budgetBook'],
+      eventBook: normalizeBook(eventInfo.eventBook as Record<string, unknown> | null | undefined, BookClass.Event) as unknown as EventInfoResponse['eventBook'],
+      guestBook: normalizeBook(eventInfo.guestBook as Record<string, unknown> | null | undefined, BookClass.Guest) as unknown as EventInfoResponse['guestBook'],
+      noteBook: normalizeBook(eventInfo.noteBook as Record<string, unknown> | null | undefined, BookClass.Note) as unknown as EventInfoResponse['noteBook'],
+      todoBook: normalizeBook(eventInfo.todoBook as Record<string, unknown> | null | undefined, BookClass.Todo) as unknown as EventInfoResponse['todoBook'],
+      occasionBook: normalizeBook(eventInfo.occasionBook as Record<string, unknown> | null | undefined, BookClass.Occasion) as unknown as EventInfoResponse['occasionBook'],
     } as EventInfoResponse
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to fetch event info')

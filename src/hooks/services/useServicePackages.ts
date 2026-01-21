@@ -28,51 +28,85 @@ export const useServicePackages = (serviceId: string, enabled = true) => {
       }
       try {
         const result = await getServicePackages(parsedServiceId)
-        const resultAny = result as any
+        const resultAny = result as unknown as Record<string, unknown> | unknown[]
         
         // Extract packages from response
         let packages: ServicePackage[] = []
         
+        type PackageResponse = {
+          id?: number | string
+          name?: string
+          nameEn?: string
+          nameAr?: string
+          description?: string
+          descriptionEn?: string
+          descriptionAr?: string
+          price?: number
+          salePrice?: number
+          originalPrice?: number
+          buyPrice?: number
+          rentPrice?: number
+          currency?: string
+          features?: string[]
+          includedServices?: string[]
+          duration?: string | number
+          validityPeriod?: string | number
+          images?: string[]
+          imageUrl?: string
+        }
+        
         if (Array.isArray(resultAny)) {
-          packages = resultAny.map((pkg: any) => ({
-            id: String(pkg.id || ''),
-            name: pkg.name || pkg.nameEn || pkg.nameAr || '',
-            description: pkg.description || pkg.descriptionEn || pkg.descriptionAr,
-            price: pkg.price || pkg.salePrice || 0,
-            originalPrice: pkg.originalPrice || pkg.buyPrice || pkg.rentPrice,
-            currency: pkg.currency || 'egp',
-            features: pkg.features || pkg.includedServices || [],
-            duration: pkg.duration || pkg.validityPeriod,
-            images: pkg.images || (pkg.imageUrl ? [pkg.imageUrl] : []),
-          }))
-        } else if (resultAny?.data && Array.isArray(resultAny.data)) {
-          packages = resultAny.data.map((pkg: any) => ({
-            id: String(pkg.id || ''),
-            name: pkg.name || pkg.nameEn || pkg.nameAr || '',
-            description: pkg.description || pkg.descriptionEn || pkg.descriptionAr,
-            price: pkg.price || pkg.salePrice || 0,
-            originalPrice: pkg.originalPrice || pkg.buyPrice || pkg.rentPrice,
-            currency: pkg.currency || 'egp',
-            features: pkg.features || pkg.includedServices || [],
-            duration: pkg.duration || pkg.validityPeriod,
-            images: pkg.images || (pkg.imageUrl ? [pkg.imageUrl] : []),
-          }))
-        } else if (resultAny?.packages && Array.isArray(resultAny.packages)) {
-          packages = resultAny.packages.map((pkg: any) => ({
-            id: String(pkg.id || ''),
-            name: pkg.name || pkg.nameEn || pkg.nameAr || '',
-            description: pkg.description || pkg.descriptionEn || pkg.descriptionAr,
-            price: pkg.price || pkg.salePrice || 0,
-            originalPrice: pkg.originalPrice || pkg.buyPrice || pkg.rentPrice,
-            currency: pkg.currency || 'egp',
-            features: pkg.features || pkg.includedServices || [],
-            duration: pkg.duration || pkg.validityPeriod,
-            images: pkg.images || (pkg.imageUrl ? [pkg.imageUrl] : []),
-          }))
+          packages = resultAny.map((pkg: unknown) => {
+            const pkgTyped = pkg as PackageResponse
+            const durationValue = pkgTyped.duration || pkgTyped.validityPeriod
+            return {
+              id: String(pkgTyped.id || ''),
+              name: pkgTyped.name || pkgTyped.nameEn || pkgTyped.nameAr || '',
+              description: pkgTyped.description || pkgTyped.descriptionEn || pkgTyped.descriptionAr,
+              price: pkgTyped.price || pkgTyped.salePrice || 0,
+              originalPrice: pkgTyped.originalPrice || pkgTyped.buyPrice || pkgTyped.rentPrice,
+              currency: pkgTyped.currency || 'egp',
+              features: pkgTyped.features || pkgTyped.includedServices || [],
+              duration: typeof durationValue === 'string' ? durationValue : (typeof durationValue === 'number' ? String(durationValue) : undefined),
+              images: pkgTyped.images || (pkgTyped.imageUrl ? [pkgTyped.imageUrl] : []),
+            }
+          })
+        } else if (resultAny && typeof resultAny === 'object' && 'data' in resultAny && Array.isArray(resultAny.data)) {
+          packages = (resultAny.data as unknown[]).map((pkg: unknown) => {
+            const pkgTyped = pkg as PackageResponse
+            const durationValue = pkgTyped.duration || pkgTyped.validityPeriod
+            return {
+              id: String(pkgTyped.id || ''),
+              name: pkgTyped.name || pkgTyped.nameEn || pkgTyped.nameAr || '',
+              description: pkgTyped.description || pkgTyped.descriptionEn || pkgTyped.descriptionAr,
+              price: pkgTyped.price || pkgTyped.salePrice || 0,
+              originalPrice: pkgTyped.originalPrice || pkgTyped.buyPrice || pkgTyped.rentPrice,
+              currency: pkgTyped.currency || 'egp',
+              features: pkgTyped.features || pkgTyped.includedServices || [],
+              duration: typeof durationValue === 'string' ? durationValue : (typeof durationValue === 'number' ? String(durationValue) : undefined),
+              images: pkgTyped.images || (pkgTyped.imageUrl ? [pkgTyped.imageUrl] : []),
+            }
+          })
+        } else if (resultAny && typeof resultAny === 'object' && 'packages' in resultAny && Array.isArray(resultAny.packages)) {
+          packages = (resultAny.packages as unknown[]).map((pkg: unknown) => {
+            const pkgTyped = pkg as PackageResponse
+            const durationValue = pkgTyped.duration || pkgTyped.validityPeriod
+            return {
+              id: String(pkgTyped.id || ''),
+              name: pkgTyped.name || pkgTyped.nameEn || pkgTyped.nameAr || '',
+              description: pkgTyped.description || pkgTyped.descriptionEn || pkgTyped.descriptionAr,
+              price: pkgTyped.price || pkgTyped.salePrice || 0,
+              originalPrice: pkgTyped.originalPrice || pkgTyped.buyPrice || pkgTyped.rentPrice,
+              currency: pkgTyped.currency || 'egp',
+              features: pkgTyped.features || pkgTyped.includedServices || [],
+              duration: typeof durationValue === 'string' ? durationValue : (typeof durationValue === 'number' ? String(durationValue) : undefined),
+              images: pkgTyped.images || (pkgTyped.imageUrl ? [pkgTyped.imageUrl] : []),
+            }
+          })
         }
         
         return { packages }
-      } catch (error) {
+      } catch {
         return { packages: [] }
       }
     },

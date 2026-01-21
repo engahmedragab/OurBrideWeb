@@ -50,11 +50,11 @@ export const SearchField = ({
     onFocus?.()
     // Also trigger focus on the child input if it exists
     if (isValidElement(children)) {
-      const childrenProps = children.props as any
+      const childrenProps = children.props as unknown as { children?: React.ReactNode; onFocus?: (e: React.FocusEvent) => void }
       const nestedChildren = childrenProps?.children
-      const input = (isValidElement(nestedChildren) && (nestedChildren.props as any)?.children) || children
+      const input = (isValidElement(nestedChildren) && ((nestedChildren.props as unknown as { children?: React.ReactNode })?.children)) || children
       if (isValidElement(input)) {
-        const inputProps = input.props as any
+        const inputProps = input.props as unknown as { onFocus?: (e: React.FocusEvent) => void }
         if (inputProps?.onFocus) {
           inputProps.onFocus(e)
         }
@@ -67,11 +67,11 @@ export const SearchField = ({
     onBlur?.()
     // Also trigger blur on the child input if it exists
     if (isValidElement(children)) {
-      const childrenProps = children.props as any
+      const childrenProps = children.props as unknown as { children?: React.ReactNode; onBlur?: (e: React.FocusEvent) => void }
       const nestedChildren = childrenProps?.children
-      const input = (isValidElement(nestedChildren) && (nestedChildren.props as any)?.children) || children
+      const input = (isValidElement(nestedChildren) && ((nestedChildren.props as unknown as { children?: React.ReactNode })?.children)) || children
       if (isValidElement(input)) {
-        const inputProps = input.props as any
+        const inputProps = input.props as unknown as { onBlur?: (e: React.FocusEvent) => void }
         if (inputProps?.onBlur) {
           inputProps.onBlur(e)
         }
@@ -84,7 +84,7 @@ export const SearchField = ({
     ? cloneElement(children, {
       onFocus: handleFocus,
       onBlur: handleBlur,
-    } as any)
+    } as Record<string, unknown>)
     : children
 
   return (

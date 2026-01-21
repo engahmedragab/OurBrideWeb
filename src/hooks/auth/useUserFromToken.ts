@@ -31,7 +31,7 @@ export interface ExtractedUserInfo {
 const extractUserName = (userData: AuthUser | UserResponse | null | undefined): string => {
   if (!userData) return ''
   
-  const userAny = userData as any
+  const userAny = userData as Record<string, unknown>
   
   // Check for fullName (AuthUser)
   if (userAny.fullName && typeof userAny.fullName === 'string') {
@@ -58,7 +58,7 @@ const extractUserName = (userData: AuthUser | UserResponse | null | undefined): 
 const extractUserPhone = (userData: AuthUser | UserResponse | null | undefined): string => {
   if (!userData) return ''
   
-  const userAny = userData as any
+  const userAny = userData as Record<string, unknown>
   
   // Check multiple possible phone number fields
   if (userAny.phoneNumber && typeof userAny.phoneNumber === 'string') {
@@ -101,7 +101,7 @@ export const useUserFromToken = (): ExtractedUserInfo => {
       return defaultInfo
     }
     
-    const userAny = currentUser as any
+    const userAny = currentUser as unknown as Record<string, unknown>
     
     // If it's a login response with token, decode the token
     if (userAny.token && typeof userAny.token === 'string') {
@@ -110,9 +110,9 @@ export const useUserFromToken = (): ExtractedUserInfo => {
       return {
         ...tokenInfo,
         fullName: tokenInfo.name || extractUserName(currentUser),
-        firstName: (currentUser as any).firstName,
-        lastName: (currentUser as any).lastName,
-        userName: (currentUser as any).userName,
+        firstName: (userAny.firstName as string | undefined),
+        lastName: (userAny.lastName as string | undefined),
+        userName: (userAny.userName as string | undefined),
         decodedToken: tokenInfo.decoded,
         rawUser: currentUser,
       }
@@ -123,16 +123,16 @@ export const useUserFromToken = (): ExtractedUserInfo => {
     const extractedPhone = extractUserPhone(currentUser)
     
     return {
-      id: (currentUser as any).id || (currentUser as any).userId || null,
-      email: (currentUser as any).email || '',
+      id: (userAny.id as string | undefined) || (userAny.userId as string | undefined) || null,
+      email: (userAny.email as string | undefined) || '',
       name: extractedName,
       phoneNumber: extractedPhone,
-      userType: (currentUser as any).userType || (currentUser as any).type || '',
-      sub: (currentUser as any).sub || null,
-      fullName: (currentUser as any).fullName,
-      firstName: (currentUser as any).firstName,
-      lastName: (currentUser as any).lastName,
-      userName: (currentUser as any).userName,
+      userType: (userAny.userType as string | undefined) || (userAny.type as string | undefined) || '',
+      sub: (userAny.sub as string | undefined) || null,
+      fullName: (userAny.fullName as string | undefined),
+      firstName: (userAny.firstName as string | undefined),
+      lastName: (userAny.lastName as string | undefined),
+      userName: (userAny.userName as string | undefined),
       rawUser: currentUser,
     }
   }, [user])

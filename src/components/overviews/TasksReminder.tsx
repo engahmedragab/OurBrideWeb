@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/Checkbox'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { MainTodoBookResponse } from '@/types/responses'
+import type { TodoLineResponse } from '@/types/responses'
 
 export interface TasksReminderProps {
   book: MainTodoBookResponse
@@ -16,13 +17,13 @@ export interface TasksReminderProps {
 export const TasksReminder = ({ book, onInit, onNavigate, eventId }: TasksReminderProps) => {
   // Get active lines (not deleted) - use todos if available, otherwise use lines
   const activeLines = useMemo(() => {
-    const lines = (book.todos || book.lines || []) as any[]
-    return lines.filter((line: any) => !line?.isDeleted)
+    const lines = (book.todos || book.lines || []) as TodoLineResponse[]
+    return lines.filter((line: TodoLineResponse) => !line?.isDeleted)
   }, [book.todos, book.lines])
 
   // Sort: incomplete tasks first, then by lastModifiedDate (newest first)
   const sortedLines = useMemo(() => {
-    return [...activeLines].sort((a: any, b: any) => {
+    return [...activeLines].sort((a: TodoLineResponse, b: TodoLineResponse) => {
       // Incomplete tasks first
       if (a.isDone !== b.isDone) {
         return a.isDone ? 1 : -1
@@ -65,7 +66,7 @@ export const TasksReminder = ({ book, onInit, onNavigate, eventId }: TasksRemind
       </div>
       <div className="space-y-3">
         {displayTasks.length > 0 ? (
-          displayTasks.map((line: any) => {
+          displayTasks.map((line: TodoLineResponse) => {
             // Use task field as the task name/description
             const taskName = line.task || 'Untitled Task'
             // Use lastModifiedDate, fallback to creationDate

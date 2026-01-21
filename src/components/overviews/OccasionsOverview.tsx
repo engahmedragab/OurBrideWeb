@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { format } from 'date-fns'
 import { Calendar, Star, ChevronRight } from 'lucide-react'
 import { MainOccasionBookResponse } from '@/types/responses'
+import type { OccasionLineResponse } from '@/types/responses'
 import flowerImg from '@/assets/images/flowers.png'
 
 export interface OccasionsOverviewProps {
@@ -31,7 +32,7 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
   const needsInit = !!book && !book.isBookInit
 
   const activeOccasions = useMemo(() => {
-    const occasions = (book?.occasions || book?.lines || []) as any[]
+    const occasions = (book?.occasions || book?.lines || []) as OccasionLineResponse[]
     return occasions.filter((o) => !o?.isDeleted)
   }, [book?.occasions, book?.lines])
 
@@ -44,8 +45,6 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
   }, [activeOccasions])
 
   const displayOccasions = useMemo(() => sortedOccasions.slice(0, 3), [sortedOccasions])
-
-  const count = activeOccasions.length
 
   const handleClickAll = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -74,9 +73,9 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
       <div className="px-2 pb-2">
         {displayOccasions.length > 0 ? (
           <div className="divide-y divide-gray-100 rounded-lg">
-            {displayOccasions.map((occasion: any) => {
+            {displayOccasions.map((occasion: OccasionLineResponse) => {
               const title = occasion?.titleEn || occasion?.titleAr || 'Untitled Occasion'
-              const provider = occasion?.providerName || occasion?.subTitleEn || occasion?.subTitleAr || ''
+              const provider = occasion?.subTitleEn || occasion?.subTitleAr || ''
               const date = occasion?.date
 
               return (

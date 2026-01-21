@@ -188,12 +188,12 @@ export const Footer = ({ className }: FooterProps) => {
                 everything you need to create your perfect day.
               </p>
 
-              <div className="flex flex-col items-start gap-4">
+              <div className="flex flex-col items-start gap-2">
                 <h3 className="text-18 md:text-20 font-semibold text-gray-900">
                   Download Ourbride App
                 </h3>
-                <div className="flex flex-wrap items-center gap-3">
-                  <StoreBadges size="md" />
+                <div className="flex flex-wrap items-center gap-4">
+                  <StoreBadges size="3xl" className='gap-2'/>
                 </div>
               </div>
 

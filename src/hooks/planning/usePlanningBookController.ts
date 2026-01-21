@@ -23,15 +23,15 @@ type PlanningBookControllerOptions<TBook, TLine = unknown, TCategory = unknown> 
   refetchAfterSave?: boolean
   // Delta sync (optional - if provided, will be used instead of syncFn)
   syncDeltaFn?: (delta: {
-    lines: DeltaSet<any>
-    lineCategories: DeltaSet<any>
+    lines: DeltaSet<TLine>
+    lineCategories: DeltaSet<TCategory>
     bookId?: number
     eventId?: number
     lastSyncAt?: string
   }) => Promise<SyncBookDeltaResponse<TBook>>
   // Mappers for converting lines/categories to request format
-  convertLineToRequest?: (line: TLine, bookId: number) => any
-  convertCategoryToRequest?: (category: TCategory, bookId: number) => any
+  convertLineToRequest?: (line: TLine, bookId: number) => unknown
+  convertCategoryToRequest?: (category: TCategory, bookId: number) => unknown
   refetch?: () => Promise<unknown>
   onFirstLoad?: (book: TBook) => void
   onHydrate?: (book: TBook) => void
@@ -144,8 +144,8 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
 
   // Build delta payload for sync
   const buildDeltaPayload = useCallback((): {
-    lines: DeltaSet<any>
-    lineCategories: DeltaSet<any>
+    lines: DeltaSet<TLine>
+    lineCategories: DeltaSet<TCategory>
     bookId?: number
     eventId?: number
   } | null => {
@@ -159,7 +159,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
     const currentCategories = getCategoriesSafe(localBook)
     const lastCategories = getCategoriesSafe(lastSynced)
 
-    const bookId = getBookId ? getBookId(localBook) : (localBook as any).id
+    const bookId = getBookId ? getBookId(localBook) : (localBook as Record<string, unknown>).id as number | null | undefined
 
     // Separate lines into created, updated, deleted
     const createdLines: TLine[] = []
@@ -197,7 +197,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
         if (!currentLine) {
           deletedLineIds.push(idNum)
         } else {
-          const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as any).isDeleted)
+          const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as Record<string, unknown>).isDeleted)
           if (isDeletedFn(currentLine)) {
             deletedLineIds.push(idNum)
           }
@@ -240,7 +240,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
         if (!currentCat) {
           deletedCategoryIds.push(idNum)
         } else {
-          const isDeletedFn = isCategoryDeleted || ((cat: TCategory) => !!(cat as any).isDeleted)
+          const isDeletedFn = isCategoryDeleted || ((cat: TCategory) => !!(cat as Record<string, unknown>).isDeleted)
           if (isDeletedFn(currentCat)) {
             deletedCategoryIds.push(idNum)
           }
@@ -249,20 +249,20 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
     })
 
     // Convert to request format if converters provided
-    const convertLine = convertLineToRequest || ((line: TLine, bookId: number) => line as any)
-    const convertCategory = convertCategoryToRequest || ((cat: TCategory, bookId: number) => cat as any)
+    const convertLine = convertLineToRequest || ((line: TLine, _bookId: number) => line as unknown)
+    const convertCategory = convertCategoryToRequest || ((cat: TCategory, _bookId: number) => cat as unknown)
 
     return {
       bookId: bookId ?? undefined,
       eventId: eventId ?? undefined,
       lines: {
-        created: createdLines.map((line) => convertLine(line, bookId || 0)),
-        updated: updatedLines.map((line) => convertLine(line, bookId || 0)),
+        created: createdLines.map((line) => convertLine(line, bookId || 0) as TLine),
+        updated: updatedLines.map((line) => convertLine(line, bookId || 0) as TLine),
         deletedIds: deletedLineIds,
       },
       lineCategories: {
-        created: createdCategories.map((cat) => convertCategory(cat, bookId || 0)),
-        updated: updatedCategories.map((cat) => convertCategory(cat, bookId || 0)),
+        created: createdCategories.map((cat) => convertCategory(cat, bookId || 0) as TCategory),
+        updated: updatedCategories.map((cat) => convertCategory(cat, bookId || 0) as TCategory),
         deletedIds: deletedCategoryIds,
       },
     }
@@ -300,7 +300,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
           const idNum = typeof id === 'string' ? parseInt(id, 10) : id
           if (idNum < 0 && categoryIdMap[String(idNum)]) {
             // Replace temp ID with server ID
-            return { ...(cat as any), id: categoryIdMap[String(idNum)] } as TCategory
+            return { ...(cat as Record<string, unknown>), id: categoryIdMap[String(idNum)] } as TCategory
           }
           return cat
         })
@@ -308,11 +308,11 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
         // Update lineCategoryId references in lines
         const lines = getLines(updatedBook) || []
         const updatedLines = lines.map((line) => {
-          const lineCatId = getLineCategoryId ? getLineCategoryId(line) : (line as any).lineCategoryId
+          const lineCatId = getLineCategoryId ? getLineCategoryId(line) : (line as Record<string, unknown>).lineCategoryId as number | string | null | undefined
           if (lineCatId != null) {
             const lineCatIdNum = typeof lineCatId === 'string' ? parseInt(lineCatId, 10) : lineCatId
             if (lineCatIdNum < 0 && categoryIdMap[String(lineCatIdNum)]) {
-              return { ...(line as any), lineCategoryId: categoryIdMap[String(lineCatIdNum)] } as TLine
+              return { ...(line as Record<string, unknown>), lineCategoryId: categoryIdMap[String(lineCatIdNum)] } as TLine
             }
           }
           return line
@@ -328,7 +328,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
           const id = getLineId(line)
           const idNum = typeof id === 'string' ? parseInt(id, 10) : id
           if (idNum < 0 && lineIdMap[String(idNum)]) {
-            return { ...(line as any), id: lineIdMap[String(idNum)] } as TLine
+            return { ...(line as Record<string, unknown>), id: lineIdMap[String(idNum)] } as TLine
           }
           return line
         })
@@ -348,8 +348,8 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
     if (isCategoryDeleted) {
       return allCategories.filter(cat => !isCategoryDeleted(cat))
     }
-    // Default: check (cat as any).isDeleted
-    return allCategories.filter(cat => !(cat as any).isDeleted)
+    // Default: check (cat as Record<string, unknown>).isDeleted
+    return allCategories.filter(cat => !(cat as Record<string, unknown>).isDeleted)
   }, [localBook, getCategories, isCategoryDeleted])
 
   // Get categories with line counts
@@ -359,9 +359,9 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
     const activeCategories = getActiveCategories()
     const allLines = getLinesSafe(localBook)
     
-    const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as any).isDeleted)
-    const isDoneFn = isLineDone || ((line: TLine) => !!(line as any).isDone)
-    const getLineCatId = getLineCategoryId || ((line: TLine) => (line as any).lineCategoryId ?? null)
+    const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as Record<string, unknown>).isDeleted)
+    const isDoneFn = isLineDone || ((line: TLine) => !!(line as Record<string, unknown>).isDone)
+    const getLineCatId = getLineCategoryId || ((line: TLine) => (line as Record<string, unknown>).lineCategoryId as number | string | null | undefined ?? null)
     
     return activeCategories.map(category => {
       const categoryId = getCategoryId(category)
@@ -393,7 +393,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
   const getActiveLines = useCallback((): TLine[] => {
     if (!localBook || !getLines) return []
     const allLines = getLinesSafe(localBook)
-    const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as any).isDeleted)
+    const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as Record<string, unknown>).isDeleted)
     return allLines.filter(line => !isDeletedFn(line))
   }, [localBook, getLines, isLineDeleted, getLinesSafe])
 
@@ -401,8 +401,8 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
   const getLinesByCategory = useCallback((categoryId: number | string | null | undefined): TLine[] => {
     if (!localBook || !getLines || categoryId == null) return []
     const allLines = getLinesSafe(localBook)
-    const getLineCatId = getLineCategoryId || ((line: TLine) => (line as any).lineCategoryId ?? null)
-    const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as any).isDeleted)
+    const getLineCatId = getLineCategoryId || ((line: TLine) => (line as Record<string, unknown>).lineCategoryId as number | string | null | undefined ?? null)
+    const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as Record<string, unknown>).isDeleted)
     return allLines.filter(line => {
       const lineCatId = getLineCatId(line)
       return lineCatId != null && String(lineCatId) === String(categoryId) && !isDeletedFn(line)
@@ -413,7 +413,7 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
   const getLineById = useCallback((lineId: number | string | null | undefined): TLine | null => {
     if (!localBook || !getLines || !getLineId || lineId == null) return null
     const allLines = getLinesSafe(localBook)
-    const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as any).isDeleted)
+    const isDeletedFn = isLineDeleted || ((line: TLine) => !!(line as Record<string, unknown>).isDeleted)
     return allLines.find(line => {
       const id = getLineId(line)
       return id != null && String(id) === String(lineId) && !isDeletedFn(line)
@@ -661,7 +661,8 @@ export const usePlanningBookController = <TBook, TLine = unknown, TCategory = un
 
         if (refetchAfterSave && refetch) {
           const refreshed = await refetch()
-          const refreshedBook = (refreshed as any)?.data ?? (refreshed as any)
+          const refreshedAny = refreshed as unknown as { data?: TBook } | TBook
+          const refreshedBook = ('data' in (refreshedAny as object) ? (refreshedAny as { data?: TBook }).data : refreshedAny) as TBook | undefined
           if (refreshedBook) {
             setLocalBook(refreshedBook)
             if (markSyncedOnSave !== false) {

@@ -24,17 +24,20 @@ export const getAllContests = async (params?: {
 }): Promise<LeaderboardContestResponse[]> => {
   try {
     const response = await apiClient.api.getContestsGetAll(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as LeaderboardContestResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as LeaderboardContestResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
@@ -52,17 +55,20 @@ export const getAllContests = async (params?: {
 export const getContestById = async (id: number): Promise<LeaderboardContestResponse | null> => {
   try {
     const response = await apiClient.api.getContestsGetById(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as LeaderboardContestResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as LeaderboardContestResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as LeaderboardContestResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as LeaderboardContestResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as LeaderboardContestResponse
+      return responseAny as unknown as LeaderboardContestResponse
     }
     
     return null
@@ -77,20 +83,23 @@ export const getContestById = async (id: number): Promise<LeaderboardContestResp
 export const getContestBySlug = async (slug: string): Promise<LeaderboardContestResponse | null> => {
   try {
     // Try to use slug endpoint if available
-    const api: any = apiClient.api
-    if (api.getContestsGetBySlug) {
-      const response = await api.getContestsGetBySlug(slug)
-      const responseAny: any = response
+    const api = apiClient.api as Record<string, unknown>
+    if (typeof api.getContestsGetBySlug === 'function') {
+      const response = await (api.getContestsGetBySlug as (slug: string) => Promise<unknown>)(slug)
+      const responseAny = response as unknown as Record<string, unknown>
       
       // Handle different response structures
-      if (responseAny?.data?.data) {
-        return responseAny.data.data as LeaderboardContestResponse
-      }
-      if (responseAny?.data) {
-        return responseAny.data as LeaderboardContestResponse
+      if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+        const data = responseAny.data
+        if (data && typeof data === 'object' && 'data' in data) {
+          return data.data as unknown as LeaderboardContestResponse
+        }
+        if (data && typeof data === 'object' && 'id' in data) {
+          return data as unknown as LeaderboardContestResponse
+        }
       }
       if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-        return responseAny as LeaderboardContestResponse
+        return responseAny as unknown as LeaderboardContestResponse
       }
     }
     
@@ -106,17 +115,20 @@ export const getContestBySlug = async (slug: string): Promise<LeaderboardContest
 export const getContestWithLeaderboard = async (id: number): Promise<LeaderboardContestResponse | null> => {
   try {
     const response = await apiClient.api.getContestsGetWithLeaderboard(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as LeaderboardContestResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as LeaderboardContestResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as LeaderboardContestResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as LeaderboardContestResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as LeaderboardContestResponse
+      return responseAny as unknown as LeaderboardContestResponse
     }
     
     return null
@@ -134,17 +146,20 @@ export const getPublishedContests = async (params?: {
 }): Promise<LeaderboardContestResponse[]> => {
   try {
     const response = await apiClient.api.getContestsGetPublished(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as LeaderboardContestResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as LeaderboardContestResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
@@ -165,17 +180,20 @@ export const getActiveContests = async (params?: {
 }): Promise<LeaderboardContestResponse[]> => {
   try {
     const response = await apiClient.api.getContestsGetActive(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as LeaderboardContestResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as LeaderboardContestResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
@@ -193,17 +211,20 @@ export const getActiveContests = async (params?: {
 export const getContestsByUserId = async (userId: string): Promise<LeaderboardContestResponse[]> => {
   try {
     const response = await apiClient.api.getContestsGetByUserId(userId)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as LeaderboardContestResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as LeaderboardContestResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
@@ -223,17 +244,20 @@ export const searchContests = async (params?: {
 }): Promise<LeaderboardContestResponse[]> => {
   try {
     const response = await apiClient.api.getContestsSearch(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as LeaderboardContestResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as LeaderboardContestResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as LeaderboardContestResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as LeaderboardContestResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as LeaderboardContestResponse[]
@@ -251,17 +275,20 @@ export const searchContests = async (params?: {
 export const createContest = async (data: CreateLeaderboardContestRequest): Promise<LeaderboardContestResponse | null> => {
   try {
     const response = await apiClient.api.postContestsCreate(data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as LeaderboardContestResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as LeaderboardContestResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as LeaderboardContestResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as LeaderboardContestResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as LeaderboardContestResponse
+      return responseAny as unknown as LeaderboardContestResponse
     }
     
     return null
@@ -276,17 +303,20 @@ export const createContest = async (data: CreateLeaderboardContestRequest): Prom
 export const updateContest = async (id: number, data: UpdateLeaderboardContestRequest): Promise<LeaderboardContestResponse | null> => {
   try {
     const response = await apiClient.api.putContestsUpdate(id, data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as LeaderboardContestResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as LeaderboardContestResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as LeaderboardContestResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as LeaderboardContestResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as LeaderboardContestResponse
+      return responseAny as unknown as LeaderboardContestResponse
     }
     
     return null
@@ -325,17 +355,20 @@ export const approveContest = async (id: number): Promise<boolean> => {
 export const registerParticipant = async (id: string, data: RegisterContestParticipantRequest): Promise<ContestParticipantResponse | null> => {
   try {
     const response = await apiClient.api.postContestsRegister(id, data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ContestParticipantResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ContestParticipantResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as ContestParticipantResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as ContestParticipantResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as ContestParticipantResponse
+      return responseAny as unknown as ContestParticipantResponse
     }
     
     return null
@@ -350,17 +383,20 @@ export const registerParticipant = async (id: string, data: RegisterContestParti
 export const submitContestEntry = async (id: string, data: SubmitContestEntryRequest): Promise<ContestParticipantResponse | null> => {
   try {
     const response = await apiClient.api.postContestsSubmitEntry(id, data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ContestParticipantResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ContestParticipantResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as ContestParticipantResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as ContestParticipantResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as ContestParticipantResponse
+      return responseAny as unknown as ContestParticipantResponse
     }
     
     return null
@@ -377,17 +413,20 @@ export const getLeaderboard = async (id: number, params?: {
 }): Promise<ContestLeaderboardResponse[]> => {
   try {
     const response = await apiClient.api.getContestsGetLeaderboard(id, params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as ContestLeaderboardResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as ContestLeaderboardResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as ContestLeaderboardResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as ContestLeaderboardResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as ContestLeaderboardResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as ContestLeaderboardResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as ContestLeaderboardResponse[]
@@ -429,14 +468,17 @@ export const toggleLike = async (id: number): Promise<boolean> => {
 export const isLiked = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getContestsIsLiked(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (typeof responseAny?.data === 'boolean') {
-      return responseAny.data
-    }
-    if (typeof responseAny?.data?.data === 'boolean') {
-      return responseAny.data.data
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (typeof data === 'boolean') {
+        return data
+      }
+      if (data && typeof data === 'object' && 'data' in data && typeof data.data === 'boolean') {
+        return data.data
+      }
     }
     if (typeof responseAny === 'boolean') {
       return responseAny
@@ -467,14 +509,17 @@ export const toggleFavorite = async (id: number): Promise<boolean> => {
 export const isFavorite = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getContestsIsFavorite(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (typeof responseAny?.data === 'boolean') {
-      return responseAny.data
-    }
-    if (typeof responseAny?.data?.data === 'boolean') {
-      return responseAny.data.data
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (typeof data === 'boolean') {
+        return data
+      }
+      if (data && typeof data === 'object' && 'data' in data && typeof data.data === 'boolean') {
+        return data.data
+      }
     }
     if (typeof responseAny === 'boolean') {
       return responseAny
@@ -514,17 +559,20 @@ export const removeMedia = async (id: number, mediaId: number): Promise<void> =>
 export const getMediaIds = async (id: number): Promise<number[]> => {
   try {
     const response = await apiClient.api.getContestsGetMedia(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as number[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as number[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as number[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as number[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as number[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as number[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as number[]
@@ -557,20 +605,20 @@ export const shareContest = async (
 ): Promise<ShareLeaderboardContestResponse | null> => {
   try {
     const response = await apiClient.api.postContestsShare(id, { shareSource })
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = (responseAny as { data?: unknown }).data
-      if (data && typeof data === 'object' && 'data' in data) {
+      if (data && typeof data === 'object' && data !== null && 'data' in data) {
         return (data as { data: ShareLeaderboardContestResponse }).data
       }
-      if (data && typeof data === 'object' && 'contestId' in data) {
-        return data as ShareLeaderboardContestResponse
+      if (data && typeof data === 'object' && data !== null && 'contestId' in data) {
+        return data as unknown as ShareLeaderboardContestResponse
       }
     }
     if (responseAny && typeof responseAny === 'object' && 'contestId' in responseAny) {
-      return responseAny as ShareLeaderboardContestResponse
+      return responseAny as unknown as ShareLeaderboardContestResponse
     }
     
     return null

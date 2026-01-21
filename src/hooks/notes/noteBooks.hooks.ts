@@ -14,7 +14,7 @@ import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDe
 
 const normalizeQuerySafe = (query?: NoteBooksQuery): NoteBooksQuery | undefined => {
   if (!query) return undefined
-  const q: any = { ...query }
+  const q = { ...query } as Record<string, unknown>
 
   for (const key of Object.keys(q)) {
     if (q[key] === null) q[key] = undefined
@@ -45,22 +45,22 @@ export const useNoteBook = (
 
 export const useInitNoteBooks = (
   options?: Omit<
-    UseMutationOptions<void, Error, { eventId?: number; clientId?: string; userType?: any }, unknown>,
+    UseMutationOptions<void, Error, { eventId?: number; clientId?: string; userType?: string | number }, unknown>,
     'mutationFn'
   >
 ) => {
   const queryClient = useQueryClient()
 
-  return useMutation<void, Error, { eventId?: number; clientId?: string; userType?: any }, unknown>({
+  return useMutation<void, Error, { eventId?: number; clientId?: string; userType?: string | number }, unknown>({
     mutationFn: async (params) => {
-      const safe: any = { ...params }
+      const safe = { ...params } as Record<string, unknown>
       Object.keys(safe).forEach((k) => safe[k] == null && delete safe[k])
       if (typeof safe.clientId === 'string' && !safe.clientId.trim()) delete safe.clientId
 
       await initNoteBooks(safe)
     },
     onSuccess: (_data, variables) => {
-      invalidateNoteBookQueries(queryClient, normalizeQuerySafe(variables as any))
+      invalidateNoteBookQueries(queryClient, normalizeQuerySafe(variables as unknown as NoteBooksQuery))
     },
     ...options,
   })

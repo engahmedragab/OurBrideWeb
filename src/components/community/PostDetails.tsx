@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
@@ -10,7 +10,6 @@ import {
   MoreVertical,
   ArrowLeft,
   Star,
-  Bookmark,
   UserPlus,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -20,6 +19,7 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { PostResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
+import type { AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
 import Link from 'next/link'
 import {
@@ -30,7 +30,6 @@ import {
 } from '@/services/api/postsApi'
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { COMMUNITY_IMAGES } from '@/constants/community-images'
 
 export interface PostDetailsProps {
   post: PostResponse
@@ -55,9 +54,12 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
   const avatar = getUserAvatar(post.user)
   const timestamp = formatDate(post.publishedAt || post.creationDate)
   // Extract images from medias array
-  const images: string[] = (post as any).medias
-    ?.filter((media: any) => media?.url)
-    .map((media: any) => media.url) || []
+  type PostWithMedias = PostResponse & { medias?: Array<{ url?: string }> }
+  const postWithMedias = post as PostWithMedias
+  const images: string[] = postWithMedias.medias
+    ?.filter((media: { url?: string }) => media?.url)
+    .map((media: { url?: string }) => media.url)
+    .filter((url): url is string => typeof url === 'string') || []
 
   // Map reviews to comments format
   const comments = (post.reviews || []).map((review: ReviewResponse) => ({
@@ -72,7 +74,8 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
 
   const addCommentMutation = useMutation({
     mutationFn: async (content: string) => {
-      await addPostReview(post.id, { comment: content } as any)
+      const reviewData: AddReviewRequest = { comment: content }
+      await addPostReview(post.id, reviewData)
     },
     onSuccess: () => {
       setCommentText('')

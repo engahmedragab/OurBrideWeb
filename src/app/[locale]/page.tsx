@@ -1028,7 +1028,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center relative z-20">
                 <StoreBadges size="5xl" className="gap-4" />
               </div>
               <div className="relative flex items-center justify-center w-full h-auto -mt-12 md:-mt-20 lg:-mt-24">

@@ -81,7 +81,7 @@ export const EditItemModal = ({
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<EditItemFormValues>({
-    resolver: zodResolver(itemSchema) as any,
+    resolver: zodResolver(itemSchema) as never,
     defaultValues: {
       name: '',
       description: '',

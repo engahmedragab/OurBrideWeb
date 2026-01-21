@@ -693,7 +693,7 @@ function PreparationsLinesContent() {
   if (isLoading || initMutation.isPending) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Loading preparations..." />
+        <LoadingSpinner size="lg" text="Loading preparations..." fullScreen={true} />
       </div>
     )
   }
@@ -836,7 +836,7 @@ export default function PreparationsLinesClient() {
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingSpinner size="lg" text="Loading preparations..." />
+            <LoadingSpinner size="lg" text="Loading preparations..." fullScreen={true} />
           </div>
         </div>
       }

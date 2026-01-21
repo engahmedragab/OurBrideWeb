@@ -133,7 +133,7 @@ export const getProvidersMap = async (
       : undefined
 
     const response = await apiClient.api.getProviderMap(cleanQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     console.log('[getProvidersMap] Raw API response:', JSON.stringify(responseAny, null, 2))
     console.log('[getProvidersMap] Response type:', typeof responseAny)
@@ -161,28 +161,28 @@ export const getProvidersMap = async (
         if (typeof dataObj === 'object') {
           if ('providers' in dataObj && Array.isArray(dataObj.providers)) {
             providersData = dataObj.providers
-            console.log('[getProvidersMap] ✓ Found providers in data.data.providers, count:', (providersData as any[]).length)
+            console.log('[getProvidersMap] ✓ Found providers in data.data.providers, count:', Array.isArray(providersData) ? providersData.length : 0)
           } else if (Array.isArray(dataObj)) {
             providersData = dataObj
-            console.log('[getProvidersMap] ✓ Found providers in data.data (array), count:', (providersData as any[]).length)
+            console.log('[getProvidersMap] ✓ Found providers in data.data (array), count:', Array.isArray(providersData) ? providersData.length : 0)
           } else if ('data' in dataObj && Array.isArray(dataObj.data)) {
             providersData = dataObj.data
-            console.log('[getProvidersMap] ✓ Found providers in data.data.data, count:', (providersData as any[]).length)
+            console.log('[getProvidersMap] ✓ Found providers in data.data.data, count:', Array.isArray(providersData) ? providersData.length : 0)
           } else if ('items' in dataObj && Array.isArray(dataObj.items)) {
             providersData = dataObj.items
-            console.log('[getProvidersMap] ✓ Found providers in data.data.items, count:', (providersData as any[]).length)
+            console.log('[getProvidersMap] ✓ Found providers in data.data.items, count:', Array.isArray(providersData) ? providersData.length : 0)
           }
         }
       } 
       // Check for direct { providers: [...] } in actual response
       else if ('providers' in actualResponse && Array.isArray(actualResponse.providers)) {
         providersData = actualResponse.providers
-        console.log('[getProvidersMap] ✓ Found providers in root providers, count:', (providersData as any[]).length)
+        console.log('[getProvidersMap] ✓ Found providers in root providers, count:', Array.isArray(providersData) ? providersData.length : 0)
       }
       // Check if actual response is directly an array
       else if (Array.isArray(actualResponse)) {
         providersData = actualResponse
-        console.log('[getProvidersMap] ✓ Response is directly an array, count:', (providersData as any[]).length)
+        console.log('[getProvidersMap] ✓ Response is directly an array, count:', Array.isArray(providersData) ? providersData.length : 0)
       }
     }
     
@@ -249,7 +249,7 @@ export const getNearbyProviders = async (
     
     console.log('[getNearbyProviders] API response received:', response)
     
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
     let providersData: unknown = null

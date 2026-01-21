@@ -140,8 +140,10 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
   const endDate = formatDate(contest.endDate)
   
   // Extract images from medias array
-  const medias = (contest as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url
+  type ContestWithMedias = LeaderboardContestResponse & { medias?: Array<{ url?: string }> }
+  const contestWithMedias = contest as ContestWithMedias
+  const medias = contestWithMedias.medias || []
+  const imageUrl = medias.find((media: { url?: string }) => media?.url)?.url
 
   return (
     <div
