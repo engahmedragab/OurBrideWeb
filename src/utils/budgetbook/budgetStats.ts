@@ -8,7 +8,7 @@ type CategoryStat = {
   percentage: number // based on totalEstimated
 }
 
-export function calculateBudgetStats(draft: BudgetBookDraft, p0: any) {
+export function calculateBudgetStats(draft: BudgetBookDraft, _p0?: unknown) {
   const categories = (draft.lineCategories || []).filter(c => !c.isDeleted)
   const lines = (draft.lines || []).filter(l => !l.isDeleted)
 

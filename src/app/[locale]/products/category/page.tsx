@@ -17,6 +17,7 @@ import {
 } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
 import flowersImage from '@/assets/images/flowers.png'
+import flowersImageRight from '@/assets/images/flowersRight.png'
 import type { ProductFilter, ProductViewMode } from '@/types/product'
 import {
   useProductCategories,
@@ -35,6 +36,7 @@ import {
 } from '../constants'
 import { buildProductQueryParams, applyClientSideFilters } from '../utils'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 /**
  * ProductsContent - Main content component
@@ -48,7 +50,23 @@ function ProductsContent() {
   const [sortBy, setSortBy] = useState('default')
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
+  const tCommon = useI18nTranslations('common')
+  const t = useI18nTranslations('products')
+  const isRTL = useIsRTL()
 
+  // Get translated hero slides
+  const translatedHeroSlides = useMemo(() => {
+    return DEFAULT_HERO_SLIDES.map((slide, index) => {
+      const slideKey = `slide${index + 1}` as 'slide1' | 'slide2'
+      return {
+        ...slide,
+        label: t(`productHeroSlides.${slideKey}.label`),
+        title: t(`productHeroSlides.${slideKey}.title`),
+        description: t(`productHeroSlides.${slideKey}.description`),
+        ctaText: t(`productHeroSlides.${slideKey}.ctaText`),
+      }
+    })
+  }, [t])
   // Read search query from URL params
   useEffect(() => {
     const query = searchParams.get('search') || ''
@@ -243,15 +261,15 @@ function ProductsContent() {
 
     try {
       const response = await addToCart(product, 1)
-      const { message, type } = handleApiResponseForToast(
-        response,
-        'Product added to cart successfully!',
-        'Failed to add product to cart'
-      )
+        const { message, type } = handleApiResponseForToast(
+          response,
+          tCommon('productCommon.addToCartSuccess'),
+          tCommon('productCommon.addToCartError')
+        )
       addToast(message, type)
     } catch (error) {
       console.error('Failed to add product to cart:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      const errorMessage = error instanceof Error ? error.message : tCommon('productCommon.addToCartErrorRetry')
       addToast(errorMessage, 'error')
     }
   }
@@ -260,7 +278,7 @@ function ProductsContent() {
     <ProductPageLayout>
       {/* Hero Carousel */}
       <HeroCarousel
-        slides={DEFAULT_HERO_SLIDES}
+        slides={translatedHeroSlides}
         autoPlay={true}
         autoPlayInterval={5000}
         showBackground={false}
@@ -308,7 +326,7 @@ function ProductsContent() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-2">
                 <span className="text-14 text-gray-600">
-                  {filteredAndSortedProducts.length} products found
+                  {filteredAndSortedProducts.length} {tCommon('productCommon.productsFound')}
                 </span>
               </div>
               <div className="flex items-center gap-3">
@@ -323,7 +341,7 @@ function ProductsContent() {
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => setViewMode('grid')}
-                    aria-label="Grid view"
+                    aria-label={tCommon('productCommon.gridView')}
                   >
                     <Grid3x3 className="h-4 w-4" />
                   </Button>
@@ -332,7 +350,7 @@ function ProductsContent() {
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => setViewMode('list')}
-                    aria-label="List view"
+                    aria-label={tCommon('productCommon.listView')}
                   >
                     <List className="h-4 w-4" />
                   </Button>
@@ -345,7 +363,8 @@ function ProductsContent() {
               <div className="py-12">
                 <LoadingSpinner
                   size="lg"
-                  text="Loading products..."
+                  text={tCommon('productsLoading')}
+                  fullScreen={true}
                 />
               </div>
             ) : viewMode === 'grid' ? (
@@ -382,12 +401,12 @@ function ProductsContent() {
         <OfferBanner
           offers={[
             {
-              heading: 'Ready To Get Our News ?',
+              heading: t('categoryBanner.heading'),
               description:
-                'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+                t('categoryBanner.description'),
               variant: 'newsletter',
-              ctaText: 'Submit',
-              productImage: flowersImage,
+              ctaText: t('categoryBanner.ctaText'),
+              productImage: isRTL ? flowersImageRight : flowersImage,
             },
           ]}
           onSubscribe={_email => {
@@ -405,10 +424,11 @@ function ProductsContent() {
  * Route: /products/category
  */
 export default function Products() {
+  const tCommon = useI18nTranslations('common')
   return (
     <Suspense
       fallback={
-        <ProductPageLayout isLoading={true} loadingText="Loading products..." />
+        <ProductPageLayout isLoading={true} loadingText={tCommon('productsLoading')} />
       }
     >
       <ProductsContent />

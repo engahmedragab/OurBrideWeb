@@ -7,11 +7,12 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
-import { Heart, CheckCircle2, UserPlus } from 'lucide-react'
+import { Heart, CheckCircle2,  } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import { PriceDisplay } from './PriceDisplay'
 import { useWishlistItems, useFollowItems } from '@/hooks'
 import type { Service } from '@/types/service'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ServiceCardProps {
   service: Service
@@ -44,6 +45,7 @@ export const ServiceCard = React.memo(({
   const isInWishlist = isServiceInWishlist(serviceId)
   const isFollowed = isServiceFollowed(serviceId)
   const hasDiscount = service.price.discounted < service.price.original
+  const t = useI18nTranslations('common')
 
   const handleProviderClick = (e: React.MouseEvent, providerId: string) => {
     e.preventDefault()
@@ -80,7 +82,7 @@ export const ServiceCard = React.memo(({
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
               <span className="text-gray-400 text-12 font-medium">
-                No image available
+                {t('noImageAvailable')}
               </span>
             </div>
           )}
@@ -109,7 +111,7 @@ export const ServiceCard = React.memo(({
                 variant="default"
                 className="bg-brand-100 text-brand-500 border-0 px-3 py-1 text-12 font-normal rounded"
               >
-                Top Offers
+                {t('topOffers')}
               </Badge>
             </div>
           )}
@@ -121,7 +123,7 @@ export const ServiceCard = React.memo(({
                 variant="default"
                 className="bg-gray-800 !text-white border-0 px-4 py-2 text-14 font-semibold"
               >
-                Not Available
+                {t('notAvailable')}
               </Badge>
             </div>
           )}
@@ -224,7 +226,7 @@ export const ServiceCard = React.memo(({
               onBookNow?.(service.id)
             }}
           >
-            Book Now
+            {t('bookNow')}
           </Button>
         </div>
 

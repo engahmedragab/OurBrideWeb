@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { searchServices } from '@/services/api/serviceApi'
 import { extractServicesCategoryData } from '@/utils/services-category.utils'
 import type { Service, ServiceCategory } from '@/types/service'
+import { useI18nLocale } from '@/i18n/hooks'
 
 export interface ServicesSearchData {
   services: Service[]
@@ -29,38 +30,43 @@ export const useServicesSearch = (
   params?: ServicesSearchParams,
   enabled = true
 ) => {
+  const locale = useI18nLocale()
   return useQuery({
     queryKey: ['services-search', params],
     queryFn: async (): Promise<ServicesSearchData> => {
-      try {
-        const query = {
-          Search: params?.search,
-          ServiceClass: params?.serviceClass,
-          ServiceType: params?.serviceType,
-          MinPrice: params?.minPrice,
-          MaxPrice: params?.maxPrice,
-          MinRating: params?.minRating,
-          IsOurBrideService: params?.isOurBrideService,
-          HasPackages: params?.hasPackages,
-          HasInstallment: params?.hasInstallment,
-          Page: params?.page,
-          PageSize: params?.pageSize,
-        }
+      const query = {
+        Search: params?.search,
+        ServiceClass: params?.serviceClass,
+        ServiceType: params?.serviceType,
+        MinPrice: params?.minPrice,
+        MaxPrice: params?.maxPrice,
+        MinRating: params?.minRating,
+        IsOurBrideService: params?.isOurBrideService,
+        HasPackages: params?.hasPackages,
+        HasInstallment: params?.hasInstallment,
+        Page: params?.page,
+        PageSize: params?.pageSize,
+      }
 
-        const result = await searchServices(query)
-        
-        // Try to extract data from different response structures
-        const extractedData = extractServicesCategoryData(result)
-        
-        return {
-          services: extractedData.services || [],
-          categories: extractedData.categories,
-          totalCount: (result as any)?.totalCount || (result as any)?.total || extractedData.services?.length || 0,
-          page: params?.page || 1,
-          pageSize: params?.pageSize || 10,
-        }
-      } catch (error) {
-        throw error
+      const result = await searchServices(query)
+      
+      // Try to extract data from different response structures
+      const extractedData = extractServicesCategoryData(result, locale)
+      
+      // Safely extract totalCount from result
+      const resultObj = result && typeof result === 'object' ? result as Record<string, unknown> : null
+      const totalCount = 
+        (typeof resultObj?.totalCount === 'number' ? resultObj.totalCount : null) ||
+        (typeof resultObj?.total === 'number' ? resultObj.total : null) ||
+        extractedData.services?.length ||
+        0
+      
+      return {
+        services: extractedData.services || [],
+        categories: extractedData.categories,
+        totalCount,
+        page: params?.page || 1,
+        pageSize: params?.pageSize || 10,
       }
     },
     enabled,

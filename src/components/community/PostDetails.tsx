@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
@@ -10,7 +10,6 @@ import {
   MoreVertical,
   ArrowLeft,
   Star,
-  Bookmark,
   UserPlus,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -20,6 +19,7 @@ import { CommentCard } from './CommentCard'
 import { EngagementButton } from './EngagementButton'
 import type { PostResponse } from '@/types/responses/community'
 import type { ReviewResponse } from '@/types/responses/review-response'
+import type { AddReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { formatDate, getUserDisplayName, getUserAvatar, getProfileUrl } from './utils'
 import Link from 'next/link'
 import {
@@ -30,7 +30,10 @@ import {
 } from '@/services/api/postsApi'
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n'
+
 
 export interface PostDetailsProps {
   post: PostResponse
@@ -41,6 +44,10 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
+
+  const t = useI18nTranslations('community')
+  const tC = useI18nTranslations('common')
+
   const [commentText, setCommentText] = useState('')
   const [isLiked, setIsLiked] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
@@ -54,16 +61,22 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
   const displayName = getUserDisplayName(post.user)
   const avatar = getUserAvatar(post.user)
   const timestamp = formatDate(post.publishedAt || post.creationDate)
+
   // Extract images from medias array
-  const images: string[] = (post as any).medias
-    ?.filter((media: any) => media?.url)
-    .map((media: any) => media.url) || []
+
+  type PostWithMedias = PostResponse & { medias?: Array<{ url?: string }> }
+  const postWithMedias = post as PostWithMedias
+  const images: string[] = postWithMedias.medias
+    ?.filter((media: { url?: string }) => media?.url)
+    .map((media: { url?: string }) => media.url)
+    .filter((url): url is string => typeof url === 'string') || []
+
 
   // Map reviews to comments format
   const comments = (post.reviews || []).map((review: ReviewResponse) => ({
     id: String(review.id),
     author: {
-      name: review.isAnonymous ? 'Anonymous' : 'User', // TODO: Get actual user name from review.userId
+      name: review.isAnonymous ? t('blogDetails.Anonymous') : t('blogDetails.user'),
       avatar: 'https://via.placeholder.com/100',
     },
     content: review.comment || review.summary || '',
@@ -72,16 +85,16 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
 
   const addCommentMutation = useMutation({
     mutationFn: async (content: string) => {
-      await addPostReview(post.id, { comment: content } as any)
+      const reviewData: AddReviewRequest = { comment: content }
+      await addPostReview(post.id, reviewData)
     },
     onSuccess: () => {
       setCommentText('')
-      addToast('Comment added successfully!', 'success')
-      // Invalidate queries to refresh comments/reviews
+      addToast(t('articleDetails.commentAdded'), 'success')
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+      addToast(error instanceof Error ? error.message : t('articleDetails.failedToAddComment'), 'error')
     },
   })
 
@@ -95,7 +108,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(error instanceof Error ? error.message : t('postCard.failedToToggleLike'), 'error')
     },
   })
 
@@ -115,15 +128,14 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
     onSuccess: (data) => {
       if (data) {
         setShares(data.shareCount)
-        // Copy share URL to clipboard
         const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/posts/${post.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
-        addToast('Shared successfully! Link copied to clipboard.', 'success')
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
+        addToast(t('postCard.sharedSuccessfully'), 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share post', 'error')
+      addToast(error instanceof Error ? error.message : t('postCard.failedToSharePost'), 'error')
     },
   })
 
@@ -137,13 +149,13 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(error instanceof Error ? error.message : t('postCard.failedToToggleFavorite'), 'error')
     },
   })
 
   const toggleFollowMutation = useMutation({
     mutationFn: async () => {
-      if (!post.userId) throw new Error('User ID not available')
+      if (!post.userId) throw new Error(t('articleDetails.userIDNotAvailable'))
       await toggleFollow({
         profileType: 'User',
         profileUserId: post.userId,
@@ -151,10 +163,10 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(isFollowing ? t('articleDetails.unfollowedSuccessfully') : t('articleDetails.followedSuccessfully'), 'success')
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+      addToast(error instanceof Error ? error.message : t('articleDetails.failedToToggleFollow'), 'error')
     },
   })
 
@@ -179,7 +191,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
           size="icon"
           onClick={() => router.push('/community?tab=posts')}
           className="h-10 w-10"
-          aria-label="Go back"
+          aria-label={t('profile.aria.goBack')}
         >
           <ArrowLeft className="h-5 w-5 text-gray-600" />
         </Button>
@@ -188,10 +200,10 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
             onClick={() => router.push('/community?tab=posts')}
             className="hover:text-brand-500 transition-colors"
           >
-            Community
+            {t('tabs.community')}
           </button>
           <span>/</span>
-          <span>Posts</span>
+          <span>{t('tabs.posts')}</span>
           <span>/</span>
           <span className="text-gray-900">{post.title || displayName + "'s Post"}</span>
         </div>
@@ -215,7 +227,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-brand-100">
                   <span className="text-14 font-semibold text-brand-600">
-                    {displayName.charAt(0).toUpperCase() || 'U'}
+                    {displayName.charAt(0).toUpperCase() || t('postCard.fallbackName').charAt(0)}
                   </span>
                 </div>
               )}
@@ -226,18 +238,15 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                   href={getProfileUrl(post.userId, post.user?.type)!}
                   className="hover:text-brand-500 transition-colors"
                 >
-                  <h4 className="text-16 font-normal text-gray-900 truncate">
-                    {displayName}
-                  </h4>
+                  <h4 className="text-16 font-normal text-gray-900 truncate">{displayName}</h4>
                 </Link>
               ) : (
-                <h4 className="text-16 font-normal text-gray-900 truncate">
-                  {displayName}
-                </h4>
+                <h4 className="text-16 font-normal text-gray-900 truncate">{displayName}</h4>
               )}
               <p className="text-12 text-gray-500">{timestamp}</p>
             </div>
           </div>
+
           <div className="flex items-center gap-2">
             {/* Follow Button */}
             {post.userId && (
@@ -246,24 +255,22 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                 size="sm"
                 onClick={handleFollowClick}
                 disabled={toggleFollowMutation.isPending}
-                className={cn(
-                  'text-12 flex-shrink-0',
-                  !isFollowing && 'text-white'
-                )}
+                className={cn('text-12 flex-shrink-0', !isFollowing && 'text-white')}
               >
                 <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
                 {toggleFollowMutation.isPending
-                  ? 'Loading...'
+                  ? tC('loading')
                   : isFollowing
-                    ? 'Following'
-                    : 'Follow'}
+                    ? t('actions.following')
+                    : t('actions.follow')}
               </Button>
             )}
+
             <Button
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              aria-label="More options"
+              aria-label={t('profile.aria.moreOptions')}
             >
               <MoreVertical className="h-5 w-5 text-gray-500" />
             </Button>
@@ -271,9 +278,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
         </div>
 
         {/* Post Content */}
-        <p className="text-14 text-gray-700 mb-4 whitespace-pre-wrap">
-          {post.content}
-        </p>
+        <p className="text-14 text-gray-700 mb-4 whitespace-pre-wrap">{post.content}</p>
 
         {/* Post Images */}
         {images && images.length > 0 ? (
@@ -291,9 +296,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                    <span className="text-gray-400 text-12 font-medium">
-                      No image available
-                    </span>
+                    <span className="text-gray-400 text-12 font-medium">{tC('noImageAvailable')}</span>
                   </div>
                 )}
               </div>
@@ -312,9 +315,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                        <span className="text-gray-400 text-12 font-medium">
-                          No image available
-                        </span>
+                        <span className="text-gray-400 text-12 font-medium">{tC('noImageAvailable')}</span>
                       </div>
                     )}
                   </div>
@@ -334,9 +335,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <span className="text-gray-400 text-12 font-medium">
-                        No image available
-                      </span>
+                      <span className="text-gray-400 text-12 font-medium">{tC('noImageAvailable')}</span>
                     </div>
                   )}
                 </div>
@@ -354,9 +353,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                          <span className="text-gray-400 text-12 font-medium">
-                            No image available
-                          </span>
+                          <span className="text-gray-400 text-12 font-medium">{tC('noImageAvailable')}</span>
                         </div>
                       )}
                     </div>
@@ -373,25 +370,25 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
             <EngagementButton
               icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
               count={likes}
-              label="Likes"
+              label={t('postCard.likes')}
               onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
               isActive={isLiked}
             />
             <EngagementButton
               icon={<MessageCircle className="h-5 w-5" />}
               count={post.reviewCount || post.commentCount || 0}
-              label="Comments"
+              label={t('postCard.comments')}
             />
             <EngagementButton
               icon={<Share2 className="h-5 w-5" />}
               count={shares}
-              label="Shares"
+              label={t('postCard.shares')}
               onClick={shareMutation.isPending ? undefined : handleShareClick}
             />
             <EngagementButton
               icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
               count={favorites}
-              label="Favorites"
+              label={t('postCard.favorites')}
               onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
               isActive={isFavorited}
             />
@@ -400,20 +397,16 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
       </div>
 
       {/* Comments Title */}
-      <h3 className="text-16 font-normal text-gray-900">Comments</h3>
+      <h3 className="text-16 font-normal text-gray-900">{t('postCard.comments')}</h3>
 
       {/* Comments Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         {/* Comments List */}
         <div className="space-y-6 mb-6">
           {comments.length > 0 ? (
-            comments.map(comment => (
-              <CommentCard key={comment.id} {...comment} />
-            ))
+            comments.map(comment => <CommentCard key={comment.id} {...comment} />)
           ) : (
-            <p className="text-14 text-gray-500 text-center py-4">
-              No comments yet. Be the first to comment!
-            </p>
+            <p className="text-14 text-gray-500 text-center py-4">{t('communityRightSidebar.noComments')}</p>
           )}
         </div>
 
@@ -423,7 +416,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
             <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
               <div className="w-full h-full flex items-center justify-center bg-brand-100">
                 <span className="text-14 font-semibold text-brand-600">
-                  {displayName.charAt(0).toUpperCase() || 'U'}
+                  {displayName.charAt(0).toUpperCase() || t('postCard.fallbackName').charAt(0)}
                 </span>
               </div>
             </div>
@@ -431,7 +424,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
               <textarea
                 value={commentText}
                 onChange={e => setCommentText(e.target.value)}
-                placeholder="Write a comment..."
+                placeholder={t('articleDetails.writeComment')}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-14 resize-none"
                 rows={3}
               />
@@ -443,7 +436,7 @@ export const PostDetails = ({ post, className }: PostDetailsProps) => {
                   disabled={!commentText.trim() || addCommentMutation.isPending}
                   className="text-10 text-white font-normal"
                 >
-                  {addCommentMutation.isPending ? 'Posting...' : 'Post Comment'}
+                  {addCommentMutation.isPending ? t('articleDetails.posting') : t('articleDetails.postComment')}
                 </Button>
               </div>
             </div>

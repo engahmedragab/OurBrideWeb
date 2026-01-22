@@ -4,8 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from '@/i18n/navigation'
 import {
-    User,
-    Phone,
+  
     Calendar,
     Star,
     Users,
@@ -16,7 +15,7 @@ import {
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
+
 import { Checkbox } from '@/components/ui/Checkbox'
 import { LoadingSpinner, ErrorDisplay, ProcessingModal } from '@/components/ui'
 import { ErrorModal } from '@/components/ui/ErrorModal'
@@ -27,13 +26,14 @@ import { createReservation, getAvailableTimeSlots, getReservationById } from '@/
 import { addPurchase } from '@/services/api/purchaseApi'
 import type { ReservationRequest, PurchaseRequest } from '@/../client/common/api/gen/ourbride-api'
 import { PurchaseType, ServiceType } from '@/../client/common/api/gen/ourbride-api'
-import type { ServiceResponse } from '@/types/responses/service-response'
-import type { ServicePlaceAssignmentResponse } from '@/types/responses/service-place-assignment-response'
-import type { ServiceStaffAssignmentResponse } from '@/types/responses/service-staff-assignment-response'
+
 import type { TimeSlotResponse } from '@/types/responses/time-slot-response'
 import type { ReservationResponse } from '@/types/responses'
 import { ReservationStatus } from '@/types/responses/common'
 import { useUserFromToken } from '@/hooks/auth'
+import { useI18nLocale, useI18nTranslations, useIsRTL,     } from '@/i18n/hooks'
+
+import { mapBranchesFromService, mapPackagesFromService, mapStaffFromService } from '@/utils/bookingMappers'
 
 export interface Branch {
     id: string
@@ -92,61 +92,39 @@ interface BookingPageClientProps {
 
 export function BookingPageClient({ serviceId }: BookingPageClientProps) {
     const router = useRouter()
+    const isRTL = useIsRTL()
     const userInfo = useUserFromToken()
-
+    const locale = useI18nLocale()
+    const tSD = useI18nTranslations('services.bookingPage')
     // Fetch service detail (includes both transformed service and raw response)
     const {
         data: serviceDetailData,
         isLoading: serviceLoading,
         error: serviceError,
     } = useServiceDetail(serviceId, !!serviceId)
+    
 
     const service = serviceDetailData?.service
     // Use raw service response from the hook instead of making a duplicate API call
     const rawServiceResponse = serviceDetailData?.rawServiceResponse || null
+    console.log('🟡 Raw service response:', rawServiceResponse)
+    
 
     // Extract packages from service response (packages are included in the service response)
-    const packages: Package[] = useMemo(() => {
-        if (!rawServiceResponse?.packages || rawServiceResponse.packages.length === 0) {
-            return []
-        }
+const packages = useMemo(
+  () => mapPackagesFromService(rawServiceResponse, locale),
+  [rawServiceResponse, locale]
+)
 
-        return rawServiceResponse.packages.map((pkg) => ({
-            id: String(pkg.id),
-            title: pkg.nameEn || pkg.nameAr || '',
-            price: pkg.price,
-            description: pkg.descriptionEn || pkg.descriptionAr || undefined,
-        }))
-    }, [rawServiceResponse?.packages])
+const branches = useMemo(
+  () => mapBranchesFromService(rawServiceResponse, locale),
+  [rawServiceResponse, locale]
+)
 
-    // Extract branches from service place assignments
-    const branches: Branch[] = useMemo(() => {
-        if (!rawServiceResponse?.servicePlaceAssignments || rawServiceResponse.servicePlaceAssignments.length === 0) {
-            return []
-        }
-
-        return rawServiceResponse.servicePlaceAssignments
-            .filter((assignment: ServicePlaceAssignmentResponse) => assignment.place !== null)
-            .map((assignment: ServicePlaceAssignmentResponse, index: number) => ({
-                id: String(assignment.placeId || assignment.id || index),
-                name: assignment.place?.nameEn || assignment.place?.nameAr || `Branch ${index + 1}`,
-                address: assignment.place?.address?.fullAddress || '',
-            }))
-    }, [rawServiceResponse])
-
-    // Extract staff from service staff assignments
-    const staff: Staff[] = useMemo(() => {
-        if (!rawServiceResponse?.serviceStaffAssignments || rawServiceResponse.serviceStaffAssignments.length === 0) {
-            return []
-        }
-
-        return rawServiceResponse.serviceStaffAssignments.map((assignment: ServiceStaffAssignmentResponse) => ({
-            id: String(assignment.staffId || assignment.id),
-            name: assignment.staffName || assignment.staffEmail || `Staff ${assignment.id}`,
-            email: assignment.staffEmail,
-            role: formatRole(assignment.staffRole),
-        }))
-    }, [rawServiceResponse])
+const staff = useMemo(
+  () => mapStaffFromService(rawServiceResponse, locale),
+  [rawServiceResponse, locale]
+)
 
     // Package upgrades - removed as not available in API
     // If needed in future, can be added as a separate API call
@@ -544,13 +522,13 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         const newErrors: Record<string, string> = {}
 
         if (!formData.selectedDate) {
-            newErrors.selectedDate = 'Please select a date'
+            newErrors.selectedDate = tSD('validation.selectDate')
         }
         if (!formData.selectedTime) {
-            newErrors.selectedTime = 'Please select a time'
+            newErrors.selectedTime = tSD('validation.selectTime')
         }
         if (!formData.acceptTerms) {
-            newErrors.acceptTerms = 'You must accept the terms and conditions'
+            newErrors.acceptTerms = tSD('validation.acceptTerms')
         }
 
         setErrors(newErrors)
@@ -581,7 +559,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             setQueueStatus('failed')
             setShowProcessingModal(false)
             setIsSubmitting(false)
-            alert('Reservation ID is missing. Please check your reservations page.')
+            alert(tSD('states.missingReservationId'))
             return
         }
 
@@ -677,7 +655,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             setShowProcessingModal(false)
             stopPolling()
             setIsSubmitting(false)
-            alert('Reservation found but missing ID. Please check your reservations page.')
+            alert(tSD('states.missingReservationId'))
             return
         }
 
@@ -712,7 +690,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 setShowProcessingModal(false)
                 stopPolling()
                 setIsSubmitting(false)
-                alert('Reservation was rejected. Please check your reservations page for details.')
+                alert(tSD('states.reservationRejected'))
                 break
 
             case ReservationStatus.TestRequested:
@@ -798,7 +776,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         setShowProcessingModal(false)
         stopPolling()
         setIsSubmitting(false)
-        alert('Reservation is taking longer than expected. Please check your reservations page.')
+        alert(tSD('states.pollingTimeout'))
     }
 
     // Cleanup polling on unmount
@@ -813,7 +791,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
         if (step === 'details') {
             // Validate details (branch, staff, package if required)
             if (branches.length > 0 && !formData.selectedBranch) {
-                setErrors({ ...errors, selectedBranch: 'Please select a branch' })
+                setErrors({ ...errors, selectedBranch: tSD('validation.selectBranch') })
                 return
             }
             // Reset currentDate to today when moving to datetime step
@@ -824,10 +802,11 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             setSelectedSlotId(undefined)
             setSelectedDate(null)
             setStep('datetime')
+          
         } else if (step === 'datetime') {
             // Validate date/time selection
             if (!formData.selectedTime) {
-                setErrors({ ...errors, selectedTime: 'Please select a date and time' })
+                setErrors({ ...errors, selectedTime: tSD('validation.selectDateAndTime') })
                 return
             }
             setStep('confirm')
@@ -972,7 +951,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
                 if (!reservationId) {
                     console.error('❌ Reservation ID not found in response')
-                    throw new Error('Reservation ID not found in response. Please try again.')
+                    throw new Error(tSD('states.missingReservationId'))
                 }
 
                 // Always start polling
@@ -1025,7 +1004,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 if (errorStatus === 400) {
                     const errorMessage = err?.response?.data?.message ||
                         err?.response?.data?.errors?.[0]?.error ||
-                        'Invalid request. Please check your input.'
+                        tSD('states.invalidRequest')
                     setQueueStatus('failed')
                     setShowProcessingModal(false)
                     setIsSubmitting(false)
@@ -1045,7 +1024,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             setShowProcessingModal(false)
             setIsSubmitting(false)
             stopPolling()
-            alert(error instanceof Error ? error.message : 'Failed to create reservation. Please try again.')
+            alert(error instanceof Error ? error.message : tSD('states.failedToCreateReservation'))
         }
     }
 
@@ -1055,7 +1034,10 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             <div className="min-h-screen flex flex-col bg-white">
                 <Header />
                 <main className="flex-1 flex items-center justify-center">
-                    <LoadingSpinner size="lg" text="Loading booking details..." />
+
+                    <LoadingSpinner size="lg" text={tSD('loadingBookingDetails')} />
+
+
                 </main>
                 <Footer />
             </div>
@@ -1070,13 +1052,13 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 <main className="flex-1">
                     <ErrorModal
                         open={true}
-                        title="Failed to Load Service Details"
+                        title={tSD('states.failedToLoadServiceTitle')}
                         message={
                             !serviceId
-                                ? 'Please provide a service ID in the URL'
+                                ? tSD('states.missingServiceIdMsg')
                                 : serviceError instanceof Error
                                     ? serviceError.message
-                                    : 'Failed to load service details. Please try again.'
+                                    : tSD('states.failedLoadServiceMsg')
                         }
                         onRetry={() => window.location.reload()}
                         onClose={() => router.push('/services')}
@@ -1095,9 +1077,9 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                 <main className="flex-1">
                     <div className="container-custom py-6 md:py-8">
                         <ErrorDisplay
-                            title="Service Not Found"
-                            message="The service you're looking for doesn't exist or has been removed."
-                            actionLabel="Back to Services"
+                            title={tSD('states.serviceNotFoundTitle')}
+                            message= {tSD('states.serviceNotFoundMsg')}
+                            actionLabel={tSD('states.backToServices')}
                             onAction={() => router.push('/services')}
                         />
                     </div>
@@ -1117,22 +1099,25 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-4">
                             <button
+                                title="button"
                                 onClick={handleBack}
                                 className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
                             >
-                                <ArrowLeft className="h-5 w-5 text-gray-700" />
+                                <ArrowLeft className={cn("h-5 w-5 text-gray-700", isRTL ? "rotate-180" : "rotate-0")} />
                             </button>
                             <div>
-                                <h1 className="text-24 font-semibold text-gray-900">Book Appointment</h1>
+                                <h1 className="text-24 font-semibold text-gray-900">{tSD('pageTitle')}</h1>
                                 <p className="text-14 text-gray-600">
-                                    {step === 'details' && 'Booking Details'}
-                                    {step === 'datetime' && 'Select Date & Time'}
-                                    {step === 'confirm' && 'Confirm Booking'}
+                                    {step === 'details' && tSD('steps.details')}
+                                    {step === 'datetime' && tSD('steps.datetime')}
+                                    {step === 'confirm' && tSD('steps.confirm')}
                                 </p>
                             </div>
                         </div>
                         <button
+                            type="button"
                             onClick={() => router.back()}
+                            
                             className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition-colors"
                         >
                             <X className="h-5 w-5 text-gray-700" />
@@ -1164,14 +1149,14 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                 {step === 'details' && (
                                     <div className="space-y-6">
                                         <h2 className="text-20 font-semibold text-gray-900 mb-4">
-                                            Booking Details
+                                            {tSD('sections.bookingDetails')}
                                         </h2>
 
                                         {/* Available Branches */}
                                         {branches.length > 0 && (
                                             <div>
                                                 <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                                                    Available Branches
+                                                   {tSD('sections.availableBranches')}
                                                 </h3>
                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                                     {branches.map(branch => (
@@ -1199,7 +1184,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                         {staff.length > 0 && (
                                             <div>
                                                 <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                                                    Select Staff
+                                                    {tSD('sections.selectStaff')}
                                                 </h3>
                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                                     {staff.map(staffMember => (
@@ -1235,8 +1220,8 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                         {packages.length > 0 && (
                                             <div>
                                                 <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                                                    Select Your Package
-                                                </h3>
+                                                       {tSD('sections.selectYourPackage')}
+                                                    </h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                                     {packages.map(pkg => (
                                                         <button
@@ -1256,7 +1241,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                                 {pkg.title}
                                                             </div>
                                                             <div className="text-14 text-gray-600">
-                                                                Price | {pkg.price.toLocaleString()}{' '}
+                                                                {tSD('labels.pricePrefix')} | {pkg.price.toLocaleString()}{' '}
                                                                 {service.price.currency.toUpperCase()}
                                                             </div>
                                                             {pkg.description && (
@@ -1274,7 +1259,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                         {packageUpgrades.length > 0 && (
                                             <div>
                                                 <h3 className="text-16 font-semibold text-gray-900 mb-4">
-                                                    Package Details
+                                                    {tSD('sections.packageDetails')}
                                                 </h3>
                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                                     {packageUpgrades.map(upgrade => (
@@ -1293,7 +1278,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                                 {upgrade.title}
                                                             </div>
                                                             <div className="text-14 text-gray-600">
-                                                                Price | {upgrade.price.toLocaleString()}{' '}
+                                                                {tSD('labels.pricePrefix')} | {upgrade.price.toLocaleString()}{' '}
                                                                 {service.price.currency.toUpperCase()}
                                                             </div>
                                                         </button>
@@ -1309,7 +1294,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                     <div className="space-y-6">
                                         {/* Date Selection */}
                                         <div>
-                                            <h2 className="text-20 font-semibold text-gray-900 mb-4">Select Date</h2>
+                                            <h2 className="text-20 font-semibold text-gray-900 mb-4">{tSD('sections.selectDate')}</h2>
                                             {uniqueDates.length > 0 ? (
                                                 <div className="flex gap-2 overflow-x-auto pb-2">
                                                     {uniqueDates.map((dateLabel) => {
@@ -1339,22 +1324,26 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                 </div>
                                             ) : (
                                                 <div className="flex justify-center items-center py-8">
-                                                    <LoadingSpinner size="md" text="Loading dates..." />
+
+                                                    <LoadingSpinner size="md" text={tSD('states.loadingDates')} />
+
                                                 </div>
                                             )}
                                         </div>
 
                                         {/* Time Selection */}
                                         <div>
-                                            <h2 className="text-20 font-semibold text-gray-900 mb-4">Select Time</h2>
+                                            <h2 className="text-20 font-semibold text-gray-900 mb-4">{tSD('sections.selectTime')}</h2>
                                             {timeSlotsLoading ? (
                                                 <div className="flex justify-center items-center py-8">
-                                                    <LoadingSpinner size="md" text="Loading time slots..." />
+
+                                                    <LoadingSpinner size="md" text={tSD('states.loadingTimeSlots')} />
+
                                                 </div>
                                             ) : timeSlotsError ? (
                                                 <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                                                     <p className="text-14 text-red-800">
-                                                        {timeSlotsError.message || 'Failed to load time slots'}
+                                                        {timeSlotsError.message || tSD('states.failedLoadTimeSlots')}
                                                     </p>
                                                 </div>
                                             ) : timeSlots.length === 0 || !hasAvailableSlots ? (
@@ -1362,7 +1351,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                     <div className="text-center">
                                                         <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                                                         <p className="text-14 text-gray-600">
-                                                            No time slots available for this date
+                                                            {tSD('states.noTimeSlots')}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -1400,9 +1389,9 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                 {/* Confirmation Step */}
                                 {step === 'confirm' && (
                                     <div className="space-y-6">
-                                        <h2 className="text-20 font-semibold text-gray-900 mb-4">Review Your Booking</h2>
+                                        <h2 className="text-20 font-semibold text-gray-900 mb-4">{tSD('sections.reviewTitle')}</h2>
                                         <p className="text-14 text-gray-600">
-                                            Please review your booking details on the right. Once you&apos;re ready, click &quot;Confirm Booking&quot; below to complete your appointment.
+                                            {tSD('sections.reviewDesc')}
                                         </p>
 
                                         <div className="bg-brand-50 border border-brand-200 rounded-xl p-4">
@@ -1411,9 +1400,9 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                     <Check className="h-5 w-5 text-brand-600" />
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-16 font-semibold text-gray-900 mb-1">Almost Done!</h3>
+                                                    <h3 className="text-16 font-semibold text-gray-900 mb-1">{tSD('sections.almostDoneTitle')}</h3>
                                                     <p className="text-14 text-gray-600">
-                                                        Your appointment will be confirmed and you&apos;ll receive a confirmation message.
+                                                        {tSD('sections.almostDoneDesc')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -1426,7 +1415,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                             <div className="bg-white rounded-xl border border-gray-200 p-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <div>
-                                        <p className="text-14 text-gray-600">Total Price</p>
+                                        <p className="text-14 text-gray-600">{tSD('sections.totalPrice')}</p>
                                         <p className="text-24 font-semibold text-brand-600">
                                             {total.toLocaleString()}{' '}
                                             {service.price.currency.toUpperCase()}
@@ -1455,7 +1444,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                     }
                                     className="w-full !text-white"
                                 >
-                                    {isSubmitting ? 'Processing...' : step === 'confirm' ? 'Confirm Booking' : 'Continue'}
+                                    {isSubmitting ? tSD('actions.processing') : step === 'confirm' ? tSD('actions.confirmBooking') : tSD('actions.continue')}
                                 </Button>
                                 {step === 'confirm' && errors.selectedTime && (
                                     <p className="text-12 text-red-500 mt-2 text-center">
@@ -1474,12 +1463,12 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                         <div className="lg:col-span-1">
                             <div className="sticky top-8 space-y-6">
                                 <h3 className="text-20 font-semibold text-gray-900">
-                                    Booking Summary
+                                    {tSD('sections.bookingSummaryTitle')}
                                 </h3>
 
                                 {/* Service Card */}
                                 <div className="bg-white rounded-xl p-6 border border-gray-200">
-                                    <p className="text-14 font-medium text-gray-700 mb-3">Service</p>
+                                    <p className="text-14 font-medium text-gray-700 mb-3">{tSD('sections.serviceLabel')}</p>
                                     <div className="flex items-start gap-4">
                                         <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                                             {service.images && service.images.length > 0 && service.images[0] && service.images[0].trim() !== '' ? (
@@ -1531,13 +1520,13 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                 {/* Booking Summary - Services and Totals */}
                                 <div className="bg-white rounded-xl p-6 border border-gray-200">
                                     {/* Service count indicator */}
-                                    <p className="text-12 text-gray-500 mb-4">1 service selected</p>
+                                    <p className="text-12 text-gray-500 mb-4">{tSD('sections.serviceSelectedCount', { count: 1 })}</p>
 
-                                    <h3 className="text-18 font-semibold text-gray-900 mb-4">Booking Summary</h3>
+                                    <h3 className="text-18 font-semibold text-gray-900 mb-4">{tSD('sections.bookingSummaryTitle')}</h3>
 
                                     {/* Services Section */}
                                     <div className="mb-4">
-                                        <p className="text-14 font-medium text-gray-700 mb-3">Services</p>
+                                        <p className="text-14 font-medium text-gray-700 mb-3">{tSD('sections.servicesLabel')}</p>
                                         <div className="space-y-2">
                                             <div className="flex items-start justify-between">
                                                 <div className="flex-1">
@@ -1546,7 +1535,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                     </p>
                                                     <div className="flex items-center gap-1.5 text-12 text-gray-600">
                                                         <Clock className="w-3.5 h-3.5" />
-                                                        <span>{serviceDuration} min</span>
+                                                        <span>{serviceDuration} {tSD('min')}</span>
                                                     </div>
                                                 </div>
                                                 <div className="text-14 font-semibold text-gray-900 ml-4">
@@ -1559,12 +1548,12 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                     {/* Selected Details - Show when staff, branch, package, or time slot is selected */}
                                     {(formData.selectedBranch || formData.selectedStaff || formData.selectedPackage || formData.selectedTime || selectedSlotId) && (
                                         <div className="mb-4 pt-4 border-t border-gray-200">
-                                            <p className="text-14 font-medium text-gray-700 mb-3">Booking Details</p>
+                                            <p className="text-14 font-medium text-gray-700 mb-3">{tSD('sections.bookingDetailsSummary')}</p>
                                             <div className="space-y-2">
                                                 {/* Branch */}
                                                 {formData.selectedBranch && (
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-12 text-gray-600">Branch</span>
+                                                        <span className="text-12 text-gray-600">{tSD('sections.branch')}</span>
                                                         <span className="text-12 text-gray-900 font-medium">
                                                             {branches.find(b => b.id === formData.selectedBranch)?.name || 'N/A'}
                                                         </span>
@@ -1573,7 +1562,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                 {/* Staff */}
                                                 {formData.selectedStaff && (
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-12 text-gray-600">Staff</span>
+                                                        <span className="text-12 text-gray-600">{tSD('sections.staff')}</span>
                                                         <span className="text-12 text-gray-900 font-medium">
                                                             {staff.find(s => s.id === formData.selectedStaff)?.name || 'N/A'}
                                                         </span>
@@ -1582,14 +1571,14 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                 {/* Package */}
                                                 {formData.selectedPackage && (
                                                     <div className="flex justify-between items-center">
-                                                        <span className="text-12 text-gray-600">Package</span>
+                                                        <span className="text-12 text-gray-600">{tSD('sections.package')}</span>
                                                         <span className="text-12 text-gray-900 font-medium">
                                                             {packages.find(p => p.id === formData.selectedPackage)?.title || 'N/A'}
                                                         </span>
                                                     </div>
                                                 )}
                                                 {/* Date & Time */}
-                                                {(formData.selectedTime || selectedSlotId) && (() => {
+                                                {/* {(formData.selectedTime || selectedSlotId) && (() => {
                                                     const selectedSlot = selectedSlotId ? timeSlots.find(slot => slot.id === selectedSlotId) : null
                                                     const slotDate = selectedSlot ? new Date(selectedSlot.start) : (formData.selectedDate ? new Date(formData.selectedDate) : null)
                                                     const slotTime = selectedSlot ? formatTime(new Date(selectedSlot.start)) : formData.selectedTime
@@ -1597,7 +1586,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
 
                                                     return (
                                                         <div className="flex justify-between items-center">
-                                                            <span className="text-12 text-gray-600">Date & Time</span>
+                                                            <span className="text-12 text-gray-600">{tSD('sections.dateTime')}</span>
                                                             <div className="text-right">
                                                                 {formattedDate && (
                                                                     <span className="text-12 text-gray-900 font-medium block">{formattedDate}</span>
@@ -1608,7 +1597,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                             </div>
                                                         </div>
                                                     )
-                                                })()}
+                                                })()} */}
                                             </div>
                                         </div>
                                     )}
@@ -1616,13 +1605,13 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                     {/* Summary Totals */}
                                     <div className="pt-4 border-t border-gray-200 space-y-3">
                                         <div className="flex justify-between items-center">
-                                            <span className="text-14 text-gray-600">Duration</span>
+                                            <span className="text-14 text-gray-600">{tSD('sections.duration')}</span>
                                             <span className="text-14 font-semibold text-gray-900">
-                                                {serviceDuration} min
+                                                {serviceDuration} {tSD('min')}
                                             </span>
                                         </div>
                                         <div className="flex justify-between items-center">
-                                            <span className="text-14 font-medium text-gray-900">Total</span>
+                                            <span className="text-14 font-medium text-gray-900">{tSD('sections.total')}</span>
                                             <span className="text-18 font-semibold text-red-600">
                                                 {service.price.currency.toUpperCase()} {total.toLocaleString()}
                                             </span>
@@ -1642,7 +1631,7 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                                 variant={errors.acceptTerms ? 'error' : 'default'}
                                             />
                                             <label className="text-14 text-gray-900 cursor-pointer">
-                                                I Accept Terms & Conditions
+                                                {tSD('sections.termsTitle')}
                                             </label>
                                         </div>
                                         {errors.acceptTerms && (
@@ -1651,10 +1640,8 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
                                             </p>
                                         )}
                                         <p className="text-12 text-gray-600 leading-relaxed ml-8">
-                                            If you are not around when the delivery person arrives, they
-                                            will leave your order at the door. By placing your order, you
-                                            agree to take full responsibility for it once it&apos;s
-                                            delivered.
+                                            {tSD('sections.termsBody')}
+                                           {tSD('sections.termsBodyDesc')}
                                         </p>
                                     </div>
                                 )}
@@ -1669,8 +1656,8 @@ export function BookingPageClient({ serviceId }: BookingPageClientProps) {
             {/* Processing Modal */}
             <ProcessingModal
                 isOpen={showProcessingModal}
-                title="Processing Reservation"
-                message="Reservation creation queued. Processing..."
+                title={tSD('states.processingReservationTitle')}
+                message={tSD('states.processingReservationMessage')}
                 onClose={() => {
                     // Only allow closing if not actively processing
                     if (queueStatus === 'failed' || queueStatus === 'completed') {

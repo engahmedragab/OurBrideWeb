@@ -3,6 +3,8 @@ import type {
   BudgetLineCategoryResponse,
   NoteLineResponse,
   NoteLineCategoryResponse,
+  UserType,
+  BookClass,
 } from '@/types/responses'
 
 export type BudgetBookDraft = {
@@ -10,8 +12,8 @@ export type BudgetBookDraft = {
   groomId?: string | null
   brideId?: string | null
   weddingPlannerId?: string | null
-  bookType: any
-  bookClass: any
+  bookType: UserType | string | number
+  bookClass: BookClass | string | number
   title?: string | null
   clientName?: string | null
   weddingDate?: string | null
@@ -38,8 +40,8 @@ export type NoteBookDraft = {
   groomId?: string | null
   brideId?: string | null
   weddingPlannerId?: string | null
-  bookType: any
-  bookClass: any
+  bookType: UserType | string | number
+  bookClass: BookClass | string | number
   title?: string | null
   clientName?: string | null
   weddingDate?: string | null

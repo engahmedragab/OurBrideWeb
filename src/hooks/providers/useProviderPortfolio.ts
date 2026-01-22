@@ -5,7 +5,6 @@ import {
   getProviderTeamUsers,
   getProviderBranches,
 } from '@/services/api/providerApi'
-import type { MediaResponse } from '@/types/responses'
 import type { BranchPortfolioResponse } from '@/types/responses/branch-portfolio-response'
 import type { PlaceResponse } from '@/types/responses'
 import type { ProviderUserAssignmentResponse } from '@/types/responses/provider-user-assignment-response'
@@ -57,7 +56,10 @@ export const useProviderTeamUsers = (
 ) => {
   return useQuery<ProviderUserAssignmentResponse[], Error>({
     queryKey: ['provider-team-users', providerId],
-    queryFn: () => getProviderTeamUsers(providerId),
+    queryFn: async () => {
+      const result = await getProviderTeamUsers(providerId)
+      return result as ProviderUserAssignmentResponse[]
+    },
     enabled: options?.enabled !== false && !!providerId && providerId > 0,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })

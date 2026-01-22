@@ -76,7 +76,7 @@ export const ServiceModal = ({
     reset,
     setValue,
   } = useForm<PreparationLineFormValues>({
-    resolver: zodResolver(preparationLineSchema) as any,
+    resolver: zodResolver(preparationLineSchema) as never,
     defaultValues: {
       completed: false,
       serviceKey: '',

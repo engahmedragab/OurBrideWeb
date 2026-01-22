@@ -7,7 +7,7 @@ import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
-import { useTranslations, useIsRTL } from '@/i18n/hooks'
+import { useTranslations, useIsRTL, useI18nLocale } from '@/i18n/hooks'
 import {
   Card,
   type ProductCardData,
@@ -132,6 +132,7 @@ const ProviderCardItem = memo(
 ProviderCardItem.displayName = 'ProviderCardItem'
 
 export default function Home() {
+  const locale = useI18nLocale()
   // Translations
   const t = useTranslations('home')
   const isRTL = useIsRTL()
@@ -142,10 +143,10 @@ export default function Home() {
   // Extract and map API data
   const apiData = useMemo(() => {
     if (homeData) {
-      return extractHomeData(homeData)
+      return extractHomeData(homeData, locale)
     }
     return {}
-  }, [homeData])
+  }, [homeData, locale])
 
   // Use API data, return empty arrays if not available
   const products = useMemo(() => apiData.products || [], [apiData.products])
@@ -1028,7 +1029,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center relative z-20">
                 <StoreBadges size="5xl" className="gap-4" />
               </div>
               <div className="relative flex items-center justify-center w-full h-auto -mt-12 md:-mt-20 lg:-mt-24">

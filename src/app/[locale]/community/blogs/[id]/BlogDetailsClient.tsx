@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { cn } from '@/lib/utils'
 import type { BlogResponse } from '@/types/responses/community'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 // Helper function to determine if a string is a number
 const isNumeric = (str: string): boolean => {
@@ -16,6 +17,7 @@ const isNumeric = (str: string): boolean => {
 }
 
 export function BlogDetailsClient({ id }: { id: string }) {
+  const t = useI18nTranslations("community")
   const activeTab: CommunityTab = 'blogs'
 
   // Fetch community home data for sidebars
@@ -46,7 +48,7 @@ export function BlogDetailsClient({ id }: { id: string }) {
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
         <main className="flex-1 flex items-center justify-center min-h-[60vh] py-12">
-          <LoadingOverlay open={true} title="Loading blog..." />
+          <LoadingOverlay open={true} title={t("blogDetails.loading")} />
         </main>
         <Footer />
       </div>
@@ -60,8 +62,8 @@ export function BlogDetailsClient({ id }: { id: string }) {
         <main className="flex-1 flex items-center justify-center min-h-[60vh] py-12">
           <div className="w-full max-w-md mx-auto px-4">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-10 text-center">
-              <p className="text-gray-600 text-base sm:text-lg font-medium">Blog not found</p>
-              <p className="text-gray-500 text-sm mt-2">The blog you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+              <p className="text-gray-600 text-base sm:text-lg font-medium">{t("blogDetails.blogNotFoundTitle")}</p>
+              <p className="text-gray-500 text-sm mt-2">{t("blogDetails.blogNotFoundMessage")}</p>
             </div>
           </div>
         </main>

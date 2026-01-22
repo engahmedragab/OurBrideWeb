@@ -1,3 +1,5 @@
+'use client'
+
 import { useQuery } from '@tanstack/react-query'
 import {
   getServicesByPreparationId,
@@ -5,6 +7,7 @@ import {
 } from '@/services/api/serviceApi'
 import { extractServicesCategoryData } from '@/utils/services-category.utils'
 import type { Service } from '@/types/service'
+import { useI18nLocale } from '@/i18n/hooks'
 
 export interface RelatedServicesData {
   services: Service[]
@@ -14,26 +17,20 @@ export const useRelatedServicesByPreparation = (
   preparationId: number | null,
   enabled = true
 ) => {
+  const locale = useI18nLocale()
+
   return useQuery({
-    queryKey: ['related-services-preparation', preparationId],
+    queryKey: ['related-services-preparation', preparationId, locale],
     queryFn: async (): Promise<RelatedServicesData> => {
-      try {
-        if (!preparationId) {
-          return { services: [] }
-        }
+      if (!preparationId) return { services: [] }
 
-        const result = await getServicesByPreparationId(preparationId)
-        const extractedData = extractServicesCategoryData(result)
+      const result = await getServicesByPreparationId(preparationId)
+      const extractedData = extractServicesCategoryData(result, locale)
 
-        return {
-          services: extractedData.services || [],
-        }
-      } catch (error) {
-        throw error
-      }
+      return { services: extractedData.services || [] }
     },
-    enabled: enabled && !!preparationId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: enabled && !!preparationId && !!locale,
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   })
 }
@@ -42,27 +39,20 @@ export const useRelatedServicesByProvider = (
   providerId: number | null,
   enabled = true
 ) => {
+  const locale = useI18nLocale()
+
   return useQuery({
-    queryKey: ['related-services-provider', providerId],
+    queryKey: ['related-services-provider', providerId, locale],
     queryFn: async (): Promise<RelatedServicesData> => {
-      try {
-        if (!providerId) {
-          return { services: [] }
-        }
+      if (!providerId) return { services: [] }
 
-        const result = await getServicesByProviderId(providerId)
-        const extractedData = extractServicesCategoryData(result)
+      const result = await getServicesByProviderId(providerId)
+      const extractedData = extractServicesCategoryData(result, locale)
 
-        return {
-          services: extractedData.services || [],
-        }
-      } catch (error) {
-        throw error
-      }
+      return { services: extractedData.services || [] }
     },
-    enabled: enabled && !!providerId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: enabled && !!providerId && !!locale,
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   })
 }
-

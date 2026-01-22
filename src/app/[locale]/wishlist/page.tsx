@@ -28,8 +28,10 @@ import { Source } from '@/../client/common/api/gen/ourbride-api'
 import { mapProductResponseToProduct } from '@/types/api/product.api.types'
 import { mapServiceResponseToService } from '@/utils/services-category.utils'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
+import { useLocale } from '@/i18n'
 
 export default function WishlistPage() {
+  const locale = useLocale()
   const [wishlistType, setWishlistType] = useState<'services' | 'products'>('services')
 
   // Fetch wishlists using WishlistResponse from API
@@ -103,13 +105,13 @@ export default function WishlistPage() {
       .map((wishlist) => {
         const serviceResponse = wishlist.sourceObject as ServiceResponse
         try {
-          return mapServiceResponseToService(serviceResponse)
+          return mapServiceResponseToService(serviceResponse, locale)
         } catch (error) {
           return null
         }
       })
       .filter((service): service is Service => service !== null)
-  }, [filteredWishlists])
+  }, [filteredWishlists, locale])
 
   const allWishlistProducts: Product[] = useMemo(() => {
     return filteredWishlists

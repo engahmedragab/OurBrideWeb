@@ -28,17 +28,17 @@ export type UiCategory = {
  * Convert ItemLineResponse to ItemLineRequest
  */
 export const convertLineToRequest = (line: ItemLineResponse, bookId: number): ItemLineRequest => {
-  const lineAny = line as any
+  const lineAny = line as unknown as Record<string, unknown>
   return {
     id: line.id ?? null,
     bookId: line.bookId ?? bookId,
     lineCategoryId: line.lineCategoryId ?? null,
-    lineCategoryCountId: lineAny.lineCategoryCountId ?? null,
-    lineCategorySlug: lineAny.lineCategorySlug ?? null,
+    lineCategoryCountId: (lineAny.lineCategoryCountId as number | null | undefined) ?? null,
+    lineCategorySlug: (lineAny.lineCategorySlug as string | null | undefined) ?? null,
     name: line.name || line.nameEn || line.nameAr || null,
     description: line.description || line.descriptionEn || line.descriptionAr || null,
     quantity: line.quantity ?? null,
-    estimatedQuantity: lineAny.estimatedQuantity ?? null,
+    estimatedQuantity: (lineAny.estimatedQuantity as number | null | undefined) ?? null,
     price: line.price ?? null,
     totalPrice: line.totalPrice ?? null,
     hasReminder: line.hasReminder ?? false,
@@ -75,13 +75,13 @@ export const convertLineToRequest = (line: ItemLineResponse, bookId: number): It
  * Convert ItemLineCategoryResponse to ItemLineCategoryRequest
  */
 export const convertCategoryToRequest = (category: ItemLineCategoryResponse): ItemLineCategoryRequest => {
-  const catAny = category as any
+  const catAny = category as unknown as Record<string, unknown>
   return {
     id: category.id ?? null,
     name: category.name || category.nameEn || category.nameAr || null,
     description: category.description ?? null,
     slug: category.slug ?? null,
-    count_id: catAny.count_id ?? null,
+    count_id: (catAny.count_id as number | null | undefined) ?? null,
     isDeleted: category.isDeleted ?? false,
     isModelLine: category.isModelLine ?? false,
     creationDate: category.creationDate ?? null,
@@ -120,8 +120,9 @@ export const convertUiItemToLineRequest = (item: UiItem, localItemBook: ItemBook
 
   // Find the original line to preserve all fields
   const originalLine = (localItemBook.lines || []).find(l => l.id === item.id)
-  const originalLineAny = originalLine as any
+  const originalLineAny = originalLine as unknown as Record<string, unknown>
   const category = (localItemBook.lineCategories || []).find(c => c.id === item.categoryId)
+  const categoryAny = category as unknown as Record<string, unknown>
 
   return {
     id: item.id,
@@ -133,8 +134,8 @@ export const convertUiItemToLineRequest = (item: UiItem, localItemBook: ItemBook
     providerName: item.providerName || null,
     buyDate: item.buyDate || null,
     lineCategoryId: item.categoryId ?? null,
-    lineCategoryCountId: originalLineAny?.lineCategoryCountId ?? (category as any)?.count_id ?? null,
-    lineCategorySlug: originalLineAny?.lineCategorySlug ?? category?.slug ?? null,
+    lineCategoryCountId: (originalLineAny?.lineCategoryCountId as number | null | undefined) ?? (categoryAny?.count_id as number | null | undefined) ?? null,
+    lineCategorySlug: (originalLineAny?.lineCategorySlug as string | null | undefined) ?? category?.slug ?? null,
     isDone: item.isDone || false,
     isFavorite: originalLine?.isFavorite || false,
     isDeleted: item.isDeleted || false,
@@ -184,23 +185,26 @@ export const buildBookRequestFromLocal = (localItemBook: ItemBookResponse): Item
   )
 
   // Include ALL categories (including deleted) for sync
-  const allCategories: ItemLineCategoryRequest[] = (localItemBook.lineCategories || []).map(cat => ({
-    id: cat.id ?? null,
-    name: cat.name ?? null,
-    nameAr: (cat as any).nameAr ?? null,
-    nameEn: (cat as any).nameEn ?? null,
-    description: cat.description ?? null,
-    descriptionAr: (cat as any).descriptionAr ?? null,
-    descriptionEn: (cat as any).descriptionEn ?? null,
-    slug: cat.slug ?? null,
-    count_id: (cat as any).count_id ?? null,
-    isDeleted: cat.isDeleted ?? false,
-    isModelLine: cat.isModelLine ?? false,
-    creationDate: cat.creationDate ?? new Date().toISOString(),
-    lastModifiedDate: cat.lastModifiedDate ?? new Date().toISOString(),
-    iconName: cat.iconName ?? null,
-    colorName: cat.colorName ?? null,
-  }))
+  const allCategories: ItemLineCategoryRequest[] = (localItemBook.lineCategories || []).map(cat => {
+    const catAny = cat as unknown as Record<string, unknown>
+    return {
+      id: cat.id ?? null,
+      name: cat.name ?? null,
+      nameAr: (catAny.nameAr as string | null | undefined) ?? null,
+      nameEn: (catAny.nameEn as string | null | undefined) ?? null,
+      description: cat.description ?? null,
+      descriptionAr: (catAny.descriptionAr as string | null | undefined) ?? null,
+      descriptionEn: (catAny.descriptionEn as string | null | undefined) ?? null,
+      slug: cat.slug ?? null,
+      count_id: (catAny.count_id as number | null | undefined) ?? null,
+      isDeleted: cat.isDeleted ?? false,
+      isModelLine: cat.isModelLine ?? false,
+      creationDate: cat.creationDate ?? new Date().toISOString(),
+      lastModifiedDate: cat.lastModifiedDate ?? new Date().toISOString(),
+      iconName: cat.iconName ?? null,
+      colorName: cat.colorName ?? null,
+    }
+  })
 
   return {
     id: localItemBook.id,

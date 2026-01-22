@@ -97,7 +97,7 @@ export const NotificationDropdown = ({
         <div className="overflow-y-auto flex-1">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 px-4">
-              <LoadingSpinner size="md" text="Loading notifications..." />
+              <LoadingSpinner size="md" text="Loading notifications..." fullScreen={true}/>
             </div>
           ) : recentNotifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-4">

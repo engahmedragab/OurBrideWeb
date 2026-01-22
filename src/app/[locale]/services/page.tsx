@@ -12,6 +12,7 @@ import {
   LoadingSpinner,
   type ServiceCardData,
   type HeroSlide,
+  LoadingOverlay,
 } from '@/components/ui'
 import { WhyBridesChooseProductsSection } from '@/components/products/WhyBridesChooseProductsSection'
 import {
@@ -31,6 +32,7 @@ import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
 import flowersImage from '@/assets/images/flowers.png'
 import why_trust_ourBrideImage from '@/assets/images/why_trust_ourBride.svg'
 import { useServicesHome } from '@/hooks/services/useServicesHome'
+import { useI18nTranslations } from '@/i18n'
 
 // Icon map - created once to avoid recreation
 const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
@@ -50,54 +52,35 @@ const getCategoryIcon = (categoryName: string): React.ReactNode => {
   return CATEGORY_ICON_MAP[normalizedName] || CATEGORY_ICON_MAP[Object.keys(CATEGORY_ICON_MAP)[0]] || null
 }
 
-// Static features for "Why Brides Trust OurBride" section
-const TRUST_FEATURES = [
-  {
-    title: 'Usp Title',
-    description:
-      'OurBride is your all-in-one platform for wedding planning .',
-  },
-  {
-    title: 'Usp Title',
-    description:
-      'OurBride is your all-in-one platform for wedding planning .',
-  },
-  {
-    title: 'Usp Title',
-    description:
-      'OurBride is your all-in-one platform for wedding planning .',
-  },
-  {
-    title: 'Usp Title',
-    description:
-      'OurBride is your all-in-one platform for wedding planning .',
-  },
-]
 
 /**
  * ServicesIntroPageContent - Main content component
  * Redirects to /services/category if filter params are present in URL
  */
 function ServicesIntroPageContent() {
+ 
   const router = useRouter()
   const searchParams = useSearchParams()
+ 
+  const tC = useI18nTranslations('common')
+  const tS= useI18nTranslations('services.intro')
   const { data, isLoading, error } = useServicesHome()
-
+  console.log("data", data)
   // Redirect logic: If any filter params are present, redirect to /services/category
   useEffect(() => {
     const hasFilterParams =
-      searchParams.has('category') ||
-      searchParams.has('subCategory') ||
-      searchParams.has('priceRangeMin') ||
-      searchParams.has('priceRangeMax') ||
-      searchParams.has('rating') ||
-      searchParams.has('availability') ||
-      searchParams.has('sort') ||
-      searchParams.has('page') ||
-      searchParams.has('search')
+      searchParams?.has('category') ||
+      searchParams?.has('subCategory') ||
+      searchParams?.has('priceRangeMin') ||
+      searchParams?.has('priceRangeMax') ||
+      searchParams?.has('rating') ||
+      searchParams?.has('availability') ||
+      searchParams?.has('sort') ||
+      searchParams?.has('page') ||
+      searchParams?.has('search')
 
     if (hasFilterParams) {
-      const queryString = searchParams.toString()
+      const queryString = searchParams?.toString()
       router.replace(`/services/category?${queryString}`)
     }
   }, [searchParams, router])
@@ -112,32 +95,55 @@ function ServicesIntroPageContent() {
     },
     [router]
   )
+// Static features for "Why Brides Trust OurBride" section
+const TRUST_FEATURES = [
+  {
+    title: tS('trustFeatures.title'),
+    description:
+      tS('trustFeatures.description'),
+  },
+  {
+    title: tS('trustFeatures.title'),
+    description:
+      tS('trustFeatures.description'),
+  },
+  {
+    title: tS('trustFeatures.title'),
+    description:
+      tS('trustFeatures.description'),
+  },
+  {
+    title: tS('trustFeatures.title'),
+    description:
+      tS('trustFeatures.description'),
+  },
+]
 
   // Default hero slides for services (same as category page)
   const DEFAULT_SERVICE_HERO_SLIDES: HeroSlide[] = [
     {
       id: '1',
-      label: 'Featured Service',
-      title: 'Bridal Makeup & Hair',
+      label: tS('hero.defaultSlides.slide1.label'),
+      title: tS('hero.defaultSlides.slide1.title'),
       description:
-        'Professional bridal beauty services to make you look stunning on your special day. Expert makeup artists and hairstylists ready to create your perfect bridal look.',
-      ctaText: 'Book Now',
+        tS('hero.defaultSlides.slide1.description'),
+      ctaText: tS('hero.defaultSlides.slide1.ctaText'),
       ctaLink: '/services/category',
       productImage:
         'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600',
-      discountText: '30% OFF',
+      discountText: tS('hero.defaultSlides.slide1.discountText'),
     },
     {
       id: '2',
-      label: 'Top Rated',
-      title: 'Wedding Photography',
+      label: tS('hero.defaultSlides.slide2.label'),
+      title: tS('hero.defaultSlides.slide2.title'),
       description:
-        'Capture your precious moments with our professional wedding photography services. Experienced photographers dedicated to creating beautiful memories.',
-      ctaText: 'Explore Services',
+        tS('hero.defaultSlides.slide2.description'),
+      ctaText: tS('hero.defaultSlides.slide2.ctaText'),
       ctaLink: '/services/category',
       productImage:
         'https://images.unsplash.com/photo-1519741497674-611481863552?w=600',
-      discountText: '50% OFF',
+      discountText: tS('hero.defaultSlides.slide2.discountText'),
     },
   ]
 
@@ -152,6 +158,7 @@ function ServicesIntroPageContent() {
             ...slide,
             productImage: defaultSlide.productImage, // Use same images as category page
             discountText: slide.discountText || defaultSlide.discountText,
+            ctaText: tS('hero.defaultSlides.slide1.ctaText'),
           }
         })
       }
@@ -180,7 +187,7 @@ function ServicesIntroPageContent() {
             title: category.name,
             description:
               category.description ||
-              'Exclusive coupons and discounts designed for your budget.',
+              tS('categories.fallbackDescription'),
             href: `/services/category?category=${category.id}`,
             icon: getCategoryIcon(category.name),
           }))
@@ -192,10 +199,11 @@ function ServicesIntroPageContent() {
   // Map providers to BestProvider format - memoized
   const bestProviders: BestProvider[] = useMemo(() => {
     if (!data?.providers || data.providers.length === 0) return []
+    console.log("data.providers", data.providers)
 
     // Format profession helper - moved outside map for better performance
     const formatProfession = (profession: string): string => {
-      if (!profession) return 'Service Provider'
+      if (!profession) return tS('providers.defaultProfession')
       const services = profession.split(',').map(s => s.trim())
       if (services.length <= 2) {
         return profession
@@ -217,7 +225,7 @@ function ServicesIntroPageContent() {
           id: provider.id,
           name: provider.name,
           image: provider.image || '',
-          profession: formatProfession(provider.profession || 'Service Provider'),
+          profession: formatProfession(provider.profession || tS('providers.defaultProfession')),
           verified: provider.verified || false,
           rating: provider.rating || 0,
           product: providerService
@@ -227,16 +235,16 @@ function ServicesIntroPageContent() {
                 image: providerService.image,
                 rating: providerService.rating,
                 price: providerService.originalPrice,
-                currency: 'egp',
+                currency: tC('currency'),
                 href: `/services/category/${providerService.id}`,
               }
             : {
                 id: provider.id,
-                title: 'View Services',
+                title: tS('providers.fallbackProductTitle'),
                 image: '',
                 rating: provider.rating || 0,
                 price: 0,
-                currency: 'egp',
+                currency: tC('currency'),
                 href: `/services?provider=${provider.id}`,
               },
         }
@@ -249,7 +257,7 @@ function ServicesIntroPageContent() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
+          <LoadingOverlay  title={tC('loading')} open={true} />
         </main>
         <Footer />
       </div>
@@ -263,7 +271,7 @@ function ServicesIntroPageContent() {
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-16 text-red-600">
-            Error loading services. Please try again later.
+            {tS('error.loadFailed')}
           </div>
         </main>
         <Footer />
@@ -291,10 +299,10 @@ function ServicesIntroPageContent() {
           {trustCategories.length > 0 && (
             <ProductCategoriesSection
               categories={trustCategories}
-              topText="Why"
-              highlightText="Brides"
-              bottomText="Trust"
-              bottomHighlightText="OurBride"
+              topText={tS('categories.Choose')}
+              highlightText={tS('categories.From')}
+              bottomText={tS('categories.OurProduct')}
+              bottomHighlightText={tS('categories.Categories')}
               headerAlignment="center"
             />
           )}
@@ -304,11 +312,11 @@ function ServicesIntroPageContent() {
             <section className="py-8 md:py-12">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
                 <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
-                  Today&apos;s Offers
+                  {tS('sections.todayOffersTitle')}
                 </h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3  xl:grid-cols-4 gap-6">
                 {offersServiceCards.map(cardData => (
                   <Card key={cardData.id} cardData={{ type: 'service', ...cardData }} />
                 ))}
@@ -322,10 +330,10 @@ function ServicesIntroPageContent() {
               <WhyBridesChooseProductsSection
                 image={why_trust_ourBrideImage}
                 features={TRUST_FEATURES}
-                topText="Why"
-                highlightText="Brides"
-                bottomText="Trust"
-                bottomHighlightText="OurBride"
+                topText={tS('sections.why')}
+                highlightText={tS('sections.brides')}
+                bottomText={tS('sections.trust')}
+                bottomHighlightText={tS('sections.ourBride')}
                 headerAlignment="center"
               />
             </section>
@@ -335,12 +343,12 @@ function ServicesIntroPageContent() {
           {bestProviders.length > 0 && (
             <BestProvidersSection
               providers={bestProviders}
-              topText="Best"
-              highlightText="Providers"
-              bottomText="With"
-              bottomHighlightText="Best Products"
+              topText={tS('sections.best')}
+              highlightText={tS('sections.providers')}
+              bottomText={tS('sections.with')}
+              bottomHighlightText={tS('sections.bestProducts')}
               headerAlignment="center"
-              buttonText="Explore Now"
+              buttonText={tS('sections.exploreNow')}
             />
           )}
 
@@ -349,11 +357,11 @@ function ServicesIntroPageContent() {
             <OfferBanner
               offers={[
                 {
-                  heading: 'Ready To Get Our News ?',
+                  heading: tS('newsletter.heading'),
                   description:
-                    'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+                    tS('newsletter.description'),
                   variant: 'newsletter',
-                  ctaText: 'Submit',
+                  ctaText: tC('ctaText'),
                   productImage: flowersImage,
                 },
               ]}
@@ -376,11 +384,12 @@ function ServicesIntroPageContent() {
  * Route: /services
  */
 export default function ServicesIntroPage() {
+  
   return (
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
+          <LoadingOverlay  open={true} />
         </div>
       }
     >

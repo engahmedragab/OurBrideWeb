@@ -72,7 +72,7 @@ export const CreateItemModal = ({
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<CreateItemFormValues>({
-    resolver: zodResolver(createItemSchema) as any,
+    resolver: zodResolver(createItemSchema) as never,
     defaultValues: {
       name: '',
       description: '',

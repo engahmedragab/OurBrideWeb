@@ -9,10 +9,15 @@ import { cn } from '@/lib/utils'
 import { EngagementButton } from './EngagementButton'
 import { getProfileUrl } from './utils'
 import type { ArticleResponse } from '@/types/responses/community'
-import { toggleLike as toggleArticleLike, toggleFavorite as toggleArticleFavorite, shareArticle } from '@/services/api/articlesApi'
+import {
+  toggleLike as toggleArticleLike,
+  toggleFavorite as toggleArticleFavorite,
+  shareArticle,
+} from '@/services/api/articlesApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ArticleCardProps {
   article: ArticleResponse
@@ -33,8 +38,8 @@ const formatDate = (dateString: string | null): string => {
 // Helper function to get user display name
 const getUserDisplayName = (user: ArticleResponse['user']): string => {
   if (!user) return 'OurBride'
-  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
-  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+  const firstName = user.firstName && user.firstName !== 'null' ? user.firstName : ''
+  const lastName = user.lastName && user.lastName !== 'null' ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   if (fullName) return fullName
   // If userName is admin@our-bride.com, display as OurBride
@@ -51,9 +56,13 @@ const getUserAvatar = (user: ArticleResponse['user']): string | null => {
 }
 
 export const ArticleCard = ({ article, className }: ArticleCardProps) => {
+  const t = useI18nTranslations('community')
+  const tC = useI18nTranslations('common')
+
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
+
   const [isLiked, setIsLiked] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
   const [likes, setLikes] = useState(article.likeCount || 0)
@@ -72,7 +81,10 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('articleDetails.failedToToggleLike'),
+        'error'
+      )
     },
   })
 
@@ -83,14 +95,20 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
     onSuccess: (data) => {
       if (data) {
         setShares(data.shareCount)
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/articles/${article.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
-        addToast('Shared successfully! Link copied to clipboard.', 'success')
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/articles/${article.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
+        addToast(t('articleDetails.sharedSuccessfully'), 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share article', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('articleDetails.failedToShareArticle'),
+        'error'
+      )
     },
   })
 
@@ -104,7 +122,10 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
       queryClient.invalidateQueries({ queryKey: ['article', article.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('articleDetails.failedToToggleFavorite'),
+        'error'
+      )
     },
   })
 
@@ -131,10 +152,12 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
   const displayName = getUserDisplayName(article.user)
   const avatar = getUserAvatar(article.user)
   const date = formatDate(article.publishedAt || article.creationDate)
-  
+
   // Extract images from medias array
-  const medias = (article as any).medias || []
-  const imageUrl = medias.find((media: any) => media?.url)?.url
+  type ArticleWithMedias = ArticleResponse & { medias?: Array<{ url?: string }> }
+  const articleWithMedias = article as ArticleWithMedias
+  const medias = articleWithMedias.medias || []
+  const imageUrl = medias.find((media: { url?: string }) => media?.url)?.url
 
   return (
     <div
@@ -158,16 +181,19 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
               <span className="text-gray-400 text-12 font-medium">
-                No image available
+                {tC('noImageAvailable')}
               </span>
             </div>
           )}
         </div>
       ) : null}
+
       <h3 className="text-20 font-normal text-gray-900 mb-3">{article.title}</h3>
+
       <p className="text-14 text-gray-700 mb-4 line-clamp-3">
         {article.summary || article.excerpt || article.content.substring(0, 150)}
       </p>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
@@ -188,6 +214,7 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
               </div>
             )}
           </div>
+
           <div>
             {article.userId && getProfileUrl(article.userId, article.user?.type) ? (
               <Link
@@ -203,19 +230,21 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
             <p className="text-12 text-gray-500">{date}</p>
           </div>
         </div>
+
         <span
-          onClick={e => {
+          onClick={(e) => {
             e.stopPropagation()
             router.push(`/community/articles/${article.id}`)
           }}
           className="text-14 font-normal text-brand-500 hover:text-brand-600 transition-colors"
         >
-          Read More
+          {t('articleDetails.articleCard.readMore')}
         </span>
       </div>
+
       {article.readingTime > 0 && (
         <div className="mt-2 text-12 text-gray-500">
-          {article.readingTime} min read
+          {article.readingTime} {t('articleDetails.articleCard.minRead')}
         </div>
       )}
 
@@ -225,34 +254,37 @@ export const ArticleCard = ({ article, className }: ArticleCardProps) => {
           <EngagementButton
             icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
             count={likes}
-            label="Likes"
+            label={t('postCard.likes')}
             onClick={handleLikeClick}
             isActive={isLiked}
             disabled={toggleLikeMutation.isPending}
           />
         </div>
+
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
             icon={<MessageCircle className="h-5 w-5" />}
             count={article.reviewCount || article.commentCount || 0}
-            label="Comments"
+            label={t('postCard.comments')}
             onClick={handleCommentClick}
           />
         </div>
+
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
             icon={<Share2 className="h-5 w-5" />}
             count={shares}
-            label="Shares"
+            label={t('postCard.shares')}
             onClick={handleShareClick}
             disabled={shareMutation.isPending}
           />
         </div>
+
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
             icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
             count={favorites}
-            label="Favorites"
+            label={t('postCard.favorites')}
             onClick={handleFavoriteClick}
             isActive={isFavorited}
             disabled={toggleFavoriteMutation.isPending}

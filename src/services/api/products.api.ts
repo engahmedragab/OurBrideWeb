@@ -188,7 +188,7 @@ export const getProductsHome = async (): Promise<ApiResult<ProductsHomeResponse>
       }
     }
   }
-  return { data: null as any, success: false, statusCode: 0, message: '', errors: undefined } as ApiResult<ProductsHomeResponse>
+  return { data: null, success: false, statusCode: 0, message: '', errors: undefined } as unknown as ApiResult<ProductsHomeResponse>
 }
 
 /**

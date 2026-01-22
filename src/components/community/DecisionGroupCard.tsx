@@ -9,10 +9,15 @@ import { cn } from '@/lib/utils'
 import { EngagementButton } from './EngagementButton'
 import { getProfileUrl } from './utils'
 import type { DecisionGroupResponse } from '@/types/responses/community'
-import { toggleLike as toggleDecisionGroupLike, toggleFavorite as toggleDecisionGroupFavorite, shareDecisionGroup } from '@/services/api/decisionGroupsApi'
+import {
+  toggleLike as toggleDecisionGroupLike,
+  toggleFavorite as toggleDecisionGroupFavorite,
+  shareDecisionGroup,
+} from '@/services/api/decisionGroupsApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n' // ✅
 
 export interface DecisionGroupCardProps {
   decisionGroup: DecisionGroupResponse
@@ -38,7 +43,6 @@ const getUserDisplayName = (user: DecisionGroupResponse['user']): string => {
   const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
   const fullName = `${firstName} ${lastName}`.trim()
   if (fullName) return fullName
-  // If userName is admin@our-bride.com, display as OurBride
   if (user.userName && user.userName.toLowerCase() === 'admin@our-bride.com') {
     return 'OurBride'
   }
@@ -56,6 +60,8 @@ export const DecisionGroupCard = ({
   className,
   onClick,
 }: DecisionGroupCardProps) => {
+  const t = useI18nTranslations('community') // ✅
+
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
@@ -76,7 +82,10 @@ export const DecisionGroupCard = ({
       queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('postCard.failedToToggleLike'),
+        'error'
+      )
     },
   })
 
@@ -87,14 +96,20 @@ export const DecisionGroupCard = ({
     onSuccess: (data) => {
       if (data) {
         setShares(data.shareCount)
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/decision-groups/${decisionGroup.id}`
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/decision-groups/${decisionGroup.id}`
         navigator.clipboard.writeText(urlToShare).catch(() => { })
-        addToast('Shared successfully! Link copied to clipboard.', 'success')
+        addToast(t('postCard.sharedSuccessfully'), 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share decision group', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('postCard.failedToSharePost'),
+        'error'
+      )
     },
   })
 
@@ -108,33 +123,27 @@ export const DecisionGroupCard = ({
       queryClient.invalidateQueries({ queryKey: ['decision-group', decisionGroup.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('postCard.failedToToggleFavorite'),
+        'error'
+      )
     },
   })
 
   const handleCardClick = () => {
-    if (onClick) {
-      onClick()
-    } else {
-      router.push(`/community/decision-groups/${decisionGroup.id}`)
-    }
+    if (onClick) onClick()
+    else router.push(`/community/decision-groups/${decisionGroup.id}`)
   }
 
-  const handleLikeClick = () => {
-    toggleLikeMutation.mutate()
-  }
+  const handleLikeClick = () => toggleLikeMutation.mutate()
 
   const handleCommentClick = () => {
     router.push(`/community/decision-groups/${decisionGroup.id}`)
   }
 
-  const handleShareClick = () => {
-    shareMutation.mutate('ShareButtonClick')
-  }
+  const handleShareClick = () => shareMutation.mutate('ShareButtonClick')
 
-  const handleFavoriteClick = () => {
-    toggleFavoriteMutation.mutate()
-  }
+  const handleFavoriteClick = () => toggleFavoriteMutation.mutate()
 
   const displayName = getUserDisplayName(decisionGroup.user)
   const avatar = getUserAvatar(decisionGroup.user)
@@ -168,6 +177,7 @@ export const DecisionGroupCard = ({
             </div>
           )}
         </div>
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             {decisionGroup.userId && getProfileUrl(decisionGroup.userId, decisionGroup.user?.type) ? (
@@ -176,24 +186,17 @@ export const DecisionGroupCard = ({
                 onClick={(e) => e.stopPropagation()}
                 className="hover:text-brand-500 transition-colors"
               >
-                <span className="text-14 font-semibold text-gray-900">
-                  {displayName}
-                </span>
+                <span className="text-14 font-semibold text-gray-900">{displayName}</span>
               </Link>
             ) : (
-              <span className="text-14 font-semibold text-gray-900">
-                {displayName}
-              </span>
+              <span className="text-14 font-semibold text-gray-900">{displayName}</span>
             )}
             <span className="text-12 text-gray-500">{timestamp}</span>
           </div>
-          <h3 className="text-18 font-semibold text-gray-900 mb-2">
-            {decisionGroup.title}
-          </h3>
+
+          <h3 className="text-18 font-semibold text-gray-900 mb-2">{decisionGroup.title}</h3>
           <p className="text-14 text-gray-700 mb-1">{decisionGroup.question}</p>
-          <p className="text-14 text-gray-600 line-clamp-2">
-            {decisionGroup.description}
-          </p>
+          <p className="text-14 text-gray-600 line-clamp-2">{decisionGroup.description}</p>
         </div>
       </div>
 
@@ -204,12 +207,14 @@ export const DecisionGroupCard = ({
             <div key={option.id} className="space-y-1">
               <div className="flex items-center justify-between text-14">
                 <span className="text-gray-900">{option.optionText}</span>
+
                 {decisionGroup.showResultsBeforeEnd && (
                   <span className="text-gray-600">
-                    {option.voteCount} votes ({option.percentage}%)
+                    {option.voteCount} {t('decisionGroupDetails.votes')} ({option.percentage}%)
                   </span>
                 )}
               </div>
+
               {decisionGroup.showResultsBeforeEnd && (
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
@@ -220,9 +225,10 @@ export const DecisionGroupCard = ({
               )}
             </div>
           ))}
+
           {decisionGroup.options.length > 3 && (
             <p className="text-12 text-gray-500">
-              +{decisionGroup.options.length - 3} more options
+              +{decisionGroup.options.length - 3} {t('decisionGroupDetails.moreOptions')}
             </p>
           )}
         </div>
@@ -233,9 +239,13 @@ export const DecisionGroupCard = ({
         <div className="flex items-center gap-4 text-14 text-gray-600">
           <div className="flex items-center gap-1">
             <Users className="h-4 w-4" />
-            <span>{decisionGroup.totalVotes} votes</span>
+            <span>
+              {decisionGroup.totalVotes} {t('decisionGroupDetails.votes')}
+            </span>
           </div>
-          <span>{decisionGroup.totalParticipants} participants</span>
+          <span>
+            {decisionGroup.totalParticipants} {t('decisionGroupDetails.participants')}
+          </span>
         </div>
       </div>
 
@@ -245,34 +255,37 @@ export const DecisionGroupCard = ({
           <EngagementButton
             icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
             count={likes}
-            label="Likes"
+            label={t('postCard.likes')}
             onClick={handleLikeClick}
             isActive={isLiked}
             disabled={toggleLikeMutation.isPending}
           />
         </div>
+
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
             icon={<MessageCircle className="h-4 w-4" />}
             count={decisionGroup.reviewCount || decisionGroup.commentCount || 0}
-            label="Comments"
+            label={t('postCard.comments')}
             onClick={handleCommentClick}
           />
         </div>
+
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
             icon={<Share2 className="h-4 w-4" />}
             count={shares}
-            label="Shares"
+            label={t('postCard.shares')}
             onClick={handleShareClick}
             disabled={shareMutation.isPending}
           />
         </div>
+
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
             icon={<Star className={cn('h-4 w-4', isFavorited && 'fill-brand-500')} />}
             count={favorites}
-            label="Favorites"
+            label={t('postCard.favorites')}
             onClick={handleFavoriteClick}
             isActive={isFavorited}
             disabled={toggleFavoriteMutation.isPending}
@@ -282,8 +295,3 @@ export const DecisionGroupCard = ({
     </div>
   )
 }
-
-
-
-
-

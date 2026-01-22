@@ -22,6 +22,7 @@ import { extractStoreHomeData } from '@/utils/home-data.utils'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
 import type { Product } from '@/types/product'
 import flowersImage from '@/assets/images/flowers.png'
+import flowersImageRight from '@/assets/images/flowersRight.png'
 import whyBridesChooseProductsImage from '@/assets/images/bridProductSection.png'
 import { ProductPageLayout } from './components/ProductPageLayout'
 import {
@@ -31,22 +32,30 @@ import {
   DEFAULT_HOME_PRODUCTS_COUNT,
 } from './constants'
 import { getCategoryIconMap } from './utils/category-icons'
+import { useI18nTranslations, useIsRTL, useLocale } from '@/i18n'
 
 export default function ProductIntroPage() {
   const { addToast } = useToast()
+ 
+  // localization
+  const t = useI18nTranslations('products')
+  const tCommon = useI18nTranslations('common')
+  const isRTL = useIsRTL()
+  const locale = useLocale()
+
   // Fetch data from store home endpoint (getHomeGetStoreHome) - for banners
   const { data: storeHomeData, isLoading: storeHomeLoading } = useStoreHome()
 
   // Fetch data from products home endpoint (getProductGetProductsHome) - for categories and products
   const { data: productsHomeData, isLoading: productsHomeLoading } = useProductsHome()
-
+  
   // Extract and map data from store home API (for banners)
   const storeData = useMemo(() => {
     if (storeHomeData) {
-      return extractStoreHomeData(storeHomeData)
+      return extractStoreHomeData(storeHomeData, locale)
     }
     return {}
-  }, [storeHomeData])
+  }, [storeHomeData, locale])
 
   // Use products home data for categories
   const categories = useMemo(() =>
@@ -55,6 +64,7 @@ export default function ProductIntroPage() {
   )
 
   const apiBanners = useMemo(() => storeData.banners || [], [storeData.banners])
+  
   const apiProvidersData = useMemo(() => storeData.providers || [], [storeData.providers])
 
   const isLoading = storeHomeLoading || productsHomeLoading
@@ -65,32 +75,46 @@ export default function ProductIntroPage() {
     return categories.map(category => ({
       id: String(category.id),
       title: category.nameEn || category.nameAr || '',
-      description: 'Exclusive coupons and discounts designed for your budget.',
+      description: t('exclusiveCoupons.text'),
       href: `/products/category/${category.slug || category.id}`,
       icon: categoryIconMap[category.slug || ''] || categoryIconMap.default,
     }))
-  }, [categories, categoryIconMap])
+  }, [categories, categoryIconMap, t])
+
+  // Get translated hero slides
+  const translatedHeroSlides = useMemo(() => {
+    return DEFAULT_HERO_SLIDES.map((slide, index) => {
+      const slideKey = `slide${index + 1}` as 'slide1' | 'slide2'
+      return {
+        ...slide,
+        label: t(`productHeroSlides.${slideKey}.label`),
+        title: t(`productHeroSlides.${slideKey}.title`),
+        description: t(`productHeroSlides.${slideKey}.description`),
+        ctaText: t(`productHeroSlides.${slideKey}.ctaText`),
+      }
+    })
+  }, [t])
 
   // Map API banners to hero carousel format - use same images as category page
   const mappedHeroSlides = useMemo(() => {
     if (apiBanners.length > 0) {
       return apiBanners.slice(0, MAX_HERO_SLIDES).map((banner, index) => {
-        // Use the same images from DEFAULT_HERO_SLIDES based on index
-        const defaultSlide = DEFAULT_HERO_SLIDES[index % DEFAULT_HERO_SLIDES.length]
+        // Use the same images from translated hero slides based on index
+        const defaultSlide = translatedHeroSlides[index % translatedHeroSlides.length]
         return {
           id: String(index + 1),
-          label: banner.heading ? 'Featured' : defaultSlide.label,
+          label: banner.heading ? tCommon('productCommon.featured') : defaultSlide.label,
           title: banner.heading || defaultSlide.title,
           description: banner.description || defaultSlide.description,
           ctaText: banner.ctaText || defaultSlide.ctaText,
           ctaLink: banner.ctaLink || defaultSlide.ctaLink,
           productImage: defaultSlide.productImage, // Use same images as category page
-          discountText: banner.offerPercentage ? `${banner.offerPercentage}% OFF` : defaultSlide.discountText || '',
+          discountText: banner.offerPercentage ? `${banner.offerPercentage}${tCommon('productCommon.percentOff')}` : defaultSlide.discountText || '',
         }
       })
     }
-    return DEFAULT_HERO_SLIDES
-  }, [apiBanners])
+    return translatedHeroSlides
+  }, [apiBanners, tCommon, translatedHeroSlides])
 
   // Use products from products home endpoint (headers contains ProductHeaderResponse[])
   // Map ProductHeaderResponse to Product type
@@ -99,19 +123,19 @@ export default function ProductIntroPage() {
     
     return productsHomeData.headers.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map((header): Product => ({
       id: String(header.id),
-      title: header.name || header.nameEn || header.nameAr || '',
-      description: header.shortDescription || header.bio || '',
+      title:isRTL ? header.nameAr || header.nameEn || header.name : header.name || header.nameEn || header.nameAr || '',
+      description: isRTL ? header.shortDescriptionAr || header.shortDescriptionEn || header.shortDescription : header.shortDescription || header.shortDescriptionAr || header.shortDescriptionEn || '',
       images: header.image ? [header.image] : [],
       provider: {
         id: header.providerId ? String(header.providerId) : '',
-        name: header.provider?.nameEn || header.provider?.nameAr || '',
+        name: isRTL ? header.provider?.nameAr || header.provider?.nameEn || '' : header.provider?.nameEn || header.provider?.nameAr || '',
         verified: false,
         image: header.provider?.profileURL || undefined,
       },
       price: {
         original: header.regularPrice || header.price || 0,
         discounted: header.salePrice || header.price || 0,
-        currency: 'USD', // Default currency, adjust if available in response
+        currency: tCommon('productCommon.currencyUSD'),
       },
       rating: {
         value: parseFloat(header.rate) || 0,
@@ -127,8 +151,7 @@ export default function ProductIntroPage() {
       stockQuantity: header.stockQuantity || undefined,
       sku: header.sku,
     }))
-  }, [productsHomeData?.headers])
-
+  }, [productsHomeData?.headers, isRTL])
   // Map providers to BestProvidersSection format
   const mappedProviders: BestProviderType[] = useMemo(() => {
     if (apiProvidersData.length === 0 || displayProducts.length === 0) {
@@ -146,7 +169,7 @@ export default function ProductIntroPage() {
         image: featuredProduct.images?.[0] || '',
         rating: featuredProduct.rating?.value || 0,
         price: featuredProduct.price?.discounted || featuredProduct.price?.original || 0,
-        currency: featuredProduct.price?.currency || 'USD',
+        currency: featuredProduct.price?.currency || tCommon('productCommon.currencyUSD'),
         href: `/products/${featuredProduct.id}`,
       }
 
@@ -178,8 +201,8 @@ export default function ProductIntroPage() {
         const response = await addToCart(product, 1)
         const { message, type } = handleApiResponseForToast(
           response,
-          'Product added to cart successfully!',
-          'Failed to add product to cart'
+          tCommon('productCommon.addToCartSuccess'),
+          tCommon('productCommon.addToCartError')
         )
         addToast(message, type)
       } catch (error) {
@@ -187,7 +210,7 @@ export default function ProductIntroPage() {
         const errorMessage =
           error instanceof Error
             ? error.message
-            : 'Failed to add product to cart. Please try again.'
+            : tCommon('productCommon.addToCartErrorRetry')
         addToast(errorMessage, 'error')
       }
     },
@@ -204,7 +227,7 @@ export default function ProductIntroPage() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 bg-white flex items-center justify-center">
-          <LoadingSpinner size="lg" text="Loading products..." fullScreen={true} />
+          <LoadingSpinner size="lg" text={tCommon('productsLoading')} fullScreen={true} />
         </main>
         <Footer />
       </div>
@@ -212,7 +235,7 @@ export default function ProductIntroPage() {
   }
 
   return (
-    <ProductPageLayout isLoading={isLoading} loadingText="Loading products...">
+    <ProductPageLayout isLoading={isLoading} loadingText={tCommon('productsLoading')}>
       {/* Hero Carousel */}
       <HeroCarousel
         slides={mappedHeroSlides}
@@ -227,10 +250,10 @@ export default function ProductIntroPage() {
         {mappedCategories.length > 0 && (
           <ProductCategoriesSection
             categories={mappedCategories}
-            topText="Choose"
-            highlightText="From"
-            bottomText="Our Product"
-            bottomHighlightText="Categories"
+            topText={t('productCategoriesSection.choose')}
+            highlightText={t('productCategoriesSection.from')}
+            bottomText={t('productCategoriesSection.ourProduct')}
+            bottomHighlightText={t('productCategoriesSection.categories')}
             headerAlignment="center"
           />
         )}
@@ -239,8 +262,8 @@ export default function ProductIntroPage() {
         {displayProducts.length > 0 && (
           <ProductOffersSection
             products={displayProducts}
-            timerText="23 H 45 Min"
-            title="Today's Best Product Offers"
+            timerText={t('productOffersSection.timerText')}
+            title={t('productOffersSection.title')}
             onWishlistToggle={handleWishlistToggle}
             onAddToCart={handleAddToCart}
           />
@@ -250,10 +273,10 @@ export default function ProductIntroPage() {
         <WhyBridesChooseProductsSection
           image={whyBridesChooseProductsImage}
           features={PRODUCT_FEATURES}
-          topText="Why"
-          highlightText="Brides"
-          bottomText="Choose"
-          bottomHighlightText="OurBride Products"
+          topText={t('whyBridesChooseProducts.why')}
+          highlightText={t('whyBridesChooseProducts.brides')}
+          bottomText={t('whyBridesChooseProducts.choose')}
+          bottomHighlightText={t('whyBridesChooseProducts.ourBrideProducts')}
           headerAlignment="center"
         />
 
@@ -261,12 +284,12 @@ export default function ProductIntroPage() {
         {mappedProviders.length > 0 && (
           <BestProvidersSection
             providers={mappedProviders}
-            topText="Best"
-            highlightText="Providers"
-            bottomText="With"
-            bottomHighlightText="Best Products"
+            topText={t('bestProvidersSection.topText')}
+            highlightText={t('bestProvidersSection.highlightText')}
+            bottomText={t('bestProvidersSection.bottomText')}
+            bottomHighlightText={t('bestProvidersSection.bottomHighlightText')}
             headerAlignment="center"
-            buttonText="Explore Now"
+            buttonText={t('bestProvidersSection.buttonText')}
           />
         )}
 
@@ -275,12 +298,12 @@ export default function ProductIntroPage() {
           <OfferBanner
             offers={[
               {
-                heading: 'Get Products Updates & Offers',
+                heading: t('newsletterBanner.heading'),
                 description:
-                  'Stay informed about new providers, offers, and wedding planning tips',
+                  t('newsletterBanner.description'),
                 variant: 'newsletter',
-                ctaText: 'Subscribe',
-                productImage: flowersImage,
+                ctaText: t('newsletterBanner.ctaText'),
+                productImage: isRTL ? flowersImageRight : flowersImage,
               },
             ]}
             onSubscribe={handleSubscribe}

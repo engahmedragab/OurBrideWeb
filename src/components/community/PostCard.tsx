@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Heart, MessageCircle, Share2, MoreVertical, Star, User } from 'lucide-react'
+import { Heart, MessageCircle, Share2, MoreVertical, Star } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
@@ -13,7 +13,11 @@ import { getProfileUrl } from './utils'
 import type { PostResponse } from '@/types/responses/community'
 import { toggleLike as togglePostLike, toggleFavorite as togglePostFavorite, sharePost } from '@/services/api/postsApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n'
+
+
 
 export interface PostCardProps {
   post: PostResponse
@@ -54,21 +58,17 @@ const getUserAvatar = (user: PostResponse['user']): string | null => {
 }
 
 export const PostCard = ({ post, className }: PostCardProps) => {
+  const t = useI18nTranslations("community.postCard")
+  const tC = useI18nTranslations("common")
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
 
-  // Guard against undefined/null post
-  if (!post) {
-    return null
-  }
-
   const [isLiked, setIsLiked] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
-  const [likes, setLikes] = useState(post.likeCount || 0)
-  const [shares, setShares] = useState(post.shareCount || 0)
-  const [favorites, setFavorites] = useState(post.favoriteCount || 0)
-  const [imageError, setImageError] = useState(false)
+  const [likes, setLikes] = useState(post?.likeCount || 0)
+  const [shares, setShares] = useState(post?.shareCount || 0)
+  const [favorites, setFavorites] = useState(post?.favoriteCount || 0)
   const [postImageErrors, setPostImageErrors] = useState<Record<number, boolean>>({})
   const [avatarError, setAvatarError] = useState(false)
 
@@ -82,7 +82,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(error instanceof Error ? error.message : t("failedToToggleLike"), 'error')
     },
   })
 
@@ -96,12 +96,12 @@ export const PostCard = ({ post, className }: PostCardProps) => {
         // Copy share URL to clipboard
         const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/posts/${post.id}`
         navigator.clipboard.writeText(urlToShare).catch(() => { })
-        addToast('Shared successfully! Link copied to clipboard.', 'success')
+        addToast(t("sharedSuccessfully"), 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share post', 'error')
+      addToast(error instanceof Error ? error.message : t("failedToSharePost"), 'error')
     },
   })
 
@@ -115,7 +115,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       queryClient.invalidateQueries({ queryKey: ['post', post.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(error instanceof Error ? error.message : t("failedToToggleFavorite"), 'error')
     },
   })
 
@@ -151,9 +151,12 @@ export const PostCard = ({ post, className }: PostCardProps) => {
   // Extract images from content or use media if available
   // For now, we'll use a placeholder - in real app, images would come from media relations
   // Extract images from medias array
-  const images: string[] = (post as any).medias
-    ?.filter((media: any) => media?.url)
-    .map((media: any) => media.url) || []
+  type PostWithMedias = PostResponse & { medias?: Array<{ url?: string }> }
+  const postWithMedias = post as PostWithMedias
+  const images: string[] = postWithMedias.medias
+    ?.filter((media: { url?: string }) => media?.url)
+    .map((media: { url?: string }) => media.url)
+    .filter((url): url is string => typeof url === 'string') || []
 
   return (
     <div
@@ -179,7 +182,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-brand-100">
                 <span className="text-14 font-semibold text-brand-600">
-                  {displayName.charAt(0).toUpperCase() || 'U'}
+                  {displayName.charAt(0).toUpperCase() || t("fallbackName")}
                 </span>
               </div>
             )}
@@ -237,7 +240,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-100">
                   <span className="text-gray-400 text-12 font-medium">
-                    No image available
+                    {tC("noImageAvailable")}
                   </span>
                 </div>
               )}
@@ -258,7 +261,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-100">
                       <span className="text-gray-400 text-12 font-medium">
-                        No image available
+                        {tC("noImageAvailable")}
                       </span>
                     </div>
                   )}
@@ -280,7 +283,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gray-100">
                     <span className="text-gray-400 text-12 font-medium">
-                      No image available
+                      {tC("noImageAvailable")}
                     </span>
                   </div>
                 )}
@@ -300,7 +303,7 @@ export const PostCard = ({ post, className }: PostCardProps) => {
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gray-100">
                         <span className="text-gray-400 text-12 font-medium">
-                          No image available
+                          {tC("noImageAvailable")}
                         </span>
                       </div>
                     )}
@@ -330,9 +333,9 @@ export const PostCard = ({ post, className }: PostCardProps) => {
       <div className="flex items-center justify-center gap-3 pt-4 border-t border-gray-100">
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
+            icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
             count={likes}
-            label="Likes"
+            label={t("likes")}
             onClick={handleLikeClick}
             isActive={isLiked}
             disabled={toggleLikeMutation.isPending}
@@ -340,26 +343,26 @@ export const PostCard = ({ post, className }: PostCardProps) => {
         </div>
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<MessageCircle className="h-5 w-5" />}
+            icon={<MessageCircle className="h-4 w-4" />}
             count={post.reviewCount || post.commentCount || 0}
-            label="Comments"
+            label={t("comments")}
             onClick={handleCommentClick}
           />
         </div>
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Share2 className="h-5 w-5" />}
+            icon={<Share2 className="h-4 w-4" />}
             count={shares}
-            label="Shares"
+            label={t("shares")}
             onClick={handleShareClick}
             disabled={shareMutation.isPending}
           />
         </div>
         <div onClick={e => e.stopPropagation()}>
           <EngagementButton
-            icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
+            icon={<Star className={cn('h-4 w-4', isFavorited && 'fill-brand-500')} />}
             count={favorites}
-            label="Favorites"
+            label={t("favorites")}
             onClick={handleFavoriteClick}
             isActive={isFavorited}
             disabled={toggleFavoriteMutation.isPending}

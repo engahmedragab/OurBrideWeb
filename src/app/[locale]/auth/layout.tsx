@@ -34,8 +34,8 @@ export default async function AuthLayout({ children, params }: AuthLayoutProps) 
       ].join(' ')}
     >
     
-      <div className="w-full lg:w-[55%] h-full bg-white overflow-y-auto py-6 overflow-x-hidden">
-        <div className="min-h-full w-full p-6  flex flex-col items-center sm:justify-center">
+      <div dir='ltr' className="w-full lg:w-[55%] h-full bg-white overflow-y-auto py-6 overflow-x-hidden">
+        <div dir={isRTL ? 'rtl' : 'ltr'} className="min-h-full w-full p-6  flex flex-col items-center sm:justify-center">
           
           {children}
         </div>

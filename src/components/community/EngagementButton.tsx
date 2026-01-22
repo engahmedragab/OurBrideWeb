@@ -26,7 +26,7 @@ export const EngagementButton = ({
   className,
   isActive = false,
   disabled = false,
-  size = 'lg',
+  size = 'md',
 }: EngagementButtonProps) => {
   // Responsive sizing: xs on mobile, specified size on desktop
   const responsiveSizeClasses = {
@@ -50,7 +50,7 @@ export const EngagementButton = ({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'flex items-center justify-center',
+        'flex items-center justify-center ',
         'bg-white border',
         'font-normal',
         'transition-colors',
@@ -75,12 +75,12 @@ export const EngagementButton = ({
       <span
         className={cn(
           'transition-colors',
-          'ml-1 md:ml-0',
+          'mx-1  md:ml-',
           isActive ? 'text-brand-500' : 'text-gray-900'
         )}
       >
         <span>{count}</span>
-        <span className="hidden md:inline md:ml-1">{label}</span>
+        <span className="hidden md:inline md:mx-1">{label}</span>
       </span>
     </button>
   )

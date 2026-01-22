@@ -98,8 +98,19 @@ export const syncTodoBookDelta = async (
   try {
     const params = normalizeQuery(query)
     const response = await apiClient.api.postTodoBooksSyncBookDelta(data, params)
-    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<TodoBookResponse | null>
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as SyncBookDeltaResponse<TodoBookResponse | null>
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as SyncBookDeltaResponse<TodoBookResponse | null>
+      }
+    }
+    return responseAny as unknown as SyncBookDeltaResponse<TodoBookResponse | null>
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync todo book (delta)')
   }
@@ -114,7 +125,7 @@ export const getTodoBook = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetBook(normalizedQuery)
-    const responseAny: any = response as { data?: { data?: TodoBookResponse } | TodoBookResponse } | TodoBookResponse
+    const responseAny = response as unknown as { data?: { data?: TodoBookResponse } | TodoBookResponse } | TodoBookResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -144,7 +155,7 @@ export const getTodoLines = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetAll(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[]; items?: TodoLineResponse[] } } | TodoLineResponse[]
+    const responseAny = response as unknown as { data?: TodoLineResponse[] | { data?: TodoLineResponse[]; items?: TodoLineResponse[] } } | TodoLineResponse[]
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -184,7 +195,7 @@ export const getTodoLineById = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getTodoBooksGet(lineId, String(lineId), normalizedQuery)
-    const responseAny: any = response as { data?: { data?: TodoLineResponse } | TodoLineResponse } | TodoLineResponse
+    const responseAny = response as unknown as { data?: { data?: TodoLineResponse } | TodoLineResponse } | TodoLineResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -215,7 +226,7 @@ export const createTodoLine = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.postTodoBooksCreate(data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: TodoLineResponse } | TodoLineResponse } | TodoLineResponse
+    const responseAny = response as unknown as { data?: { data?: TodoLineResponse } | TodoLineResponse } | TodoLineResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -266,7 +277,7 @@ export const updateTodoLine = async (
       // eventId is excluded if the API doesn't accept it
     } : undefined
     const response = await apiClient.api.putTodoBooksUpdate(lineId, String(lineId), data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: TodoLineResponse } | TodoLineResponse } | TodoLineResponse
+    const responseAny = response as unknown as { data?: { data?: TodoLineResponse } | TodoLineResponse } | TodoLineResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -383,7 +394,7 @@ export const getTodoLinesCustom = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
+    const responseAny = response as unknown as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -409,7 +420,7 @@ export const getTodoLinesDone = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetAllDone(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
+    const responseAny = response as unknown as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -439,7 +450,7 @@ export const getTodoLinesNotDone = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getTodoBooksGetAllNotDone(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
+    const responseAny = response as unknown as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -465,7 +476,7 @@ export const getTodoLinesFavorite = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetAllFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
+    const responseAny = response as unknown as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -495,7 +506,7 @@ export const getTodoLinesNotFavorite = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getTodoBooksGetAllNotFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
+    const responseAny = response as unknown as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -521,7 +532,7 @@ export const getTodoLinesDeleted = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetAllDelete(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
+    const responseAny = response as unknown as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -547,7 +558,7 @@ export const getTodoLinesNotDeleted = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getTodoBooksGetAllNotDelete(normalizedQuery)
-    const responseAny: any = response as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
+    const responseAny = response as unknown as { data?: TodoLineResponse[] | { data?: TodoLineResponse[] } } | TodoLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -612,7 +623,7 @@ export const getTodoCategories = async (
 ): Promise<TodoLineCategoryResponse[]> => {
   try {
     const response = await apiClient.api.getTodoBooksGetAllCategories(query)
-    const responseAny: any = response as { data?: TodoLineCategoryResponse[] | { data?: TodoLineCategoryResponse[] } } | TodoLineCategoryResponse[]
+    const responseAny = response as unknown as { data?: TodoLineCategoryResponse[] | { data?: TodoLineCategoryResponse[] } } | TodoLineCategoryResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -652,7 +663,7 @@ export const getTodoCategory = async (
 ): Promise<TodoLineCategoryResponse | null> => {
   try {
     const response = await apiClient.api.getTodoBooksGetCategory(categoryId, query)
-    const responseAny: any = response as { data?: { data?: TodoLineCategoryResponse } | TodoLineCategoryResponse } | TodoLineCategoryResponse
+    const responseAny = response as unknown as { data?: { data?: TodoLineCategoryResponse } | TodoLineCategoryResponse } | TodoLineCategoryResponse
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data

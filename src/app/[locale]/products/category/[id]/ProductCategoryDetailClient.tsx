@@ -33,6 +33,7 @@ import {
 } from '@/hooks/products'
 import { useProviderCardHandlers } from '@/hooks/providers'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n'
 
 
 interface ProductCategoryDetailClientProps {
@@ -69,6 +70,8 @@ export function ProductCategoryDetailClient({
 }: ProductCategoryDetailClientProps) {
   const router = useRouter()
   const { addToast } = useToast()
+  const tCommon = useI18nTranslations('common')
+  const t = useI18nTranslations('products')
   const [quantity, setQuantity] = useState(1)
   const [userRating, setUserRating] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
@@ -142,10 +145,7 @@ export function ProductCategoryDetailClient({
         <Header />
         <main className="flex-1">
           <ProductErrorState
-            title="Product Not Found"
-            message="The product you're looking for doesn't exist or has been removed."
             backHref="/products"
-            backLabel="Back to Products"
           />
         </main>
         <Footer />
@@ -159,13 +159,13 @@ export function ProductCategoryDetailClient({
       const response = await addToCart(product, quantity)
       const { message, type } = handleApiResponseForToast(
         response,
-        'Product added to cart successfully!',
-        'Failed to add product to cart'
+        tCommon('productCommon.addToCartSuccess'),
+        tCommon('productCommon.addToCartError')
       )
       addToast(message, type)
     } catch (error) {
       console.error('Failed to add product to cart:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      const errorMessage = error instanceof Error ? error.message : tCommon('productCommon.addToCartErrorRetry')
       addToast(errorMessage, 'error')
     }
   }
@@ -183,14 +183,7 @@ export function ProductCategoryDetailClient({
   }
 
   const getRatingLabel = (stars: number) => {
-    const labels: Record<number, string> = {
-      5: 'Excellent',
-      4: 'Good',
-      3: 'Average',
-      2: 'Below Average',
-      1: 'Poor',
-    }
-    return labels[stars] || ''
+    return tCommon(`ratingSummary.starsLabel.${stars}`) || ''
   }
 
   return (
@@ -201,7 +194,7 @@ export function ProductCategoryDetailClient({
           {/* Back Button */}
           <BackButton
             href="/products"
-            label="Back to Products"
+            label={tCommon('productCommon.backToProducts')}
             className="mb-6"
           />
 
@@ -267,7 +260,7 @@ export function ProductCategoryDetailClient({
                   provider={{
                     ...product.provider,
                     rating: product.rating.value,
-                    profession: 'Makeup Artist',
+                    profession: tCommon('provider.makeupArtist'),
                   }}
                 />
                 <OrderSummaryCard
@@ -335,12 +328,12 @@ export function ProductCategoryDetailClient({
                             <div>
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="text-16 font-semibold text-gray-900">
-                                  {review.userName || 'Anonymous'}
+                                  {review.userName || tCommon('productCommon.anonymous')}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="text-12 text-gray-500">
-                                  {review.date ? new Date(review.date).toLocaleDateString() : 'Recently'}
+                                  {review.date ? new Date(review.date).toLocaleDateString() : tCommon('productCommon.recently')}
                                 </span>
                                 <div className="flex items-center gap-0.5">
                                   {[1, 2, 3, 4, 5].map(star => (
@@ -373,21 +366,21 @@ export function ProductCategoryDetailClient({
                   ))
                 ) : (
                   <div className="text-center py-8 text-gray-500">
-                    No reviews yet. Be the first to review this product!
+                    {tCommon('reviewsSection.noReviews')}
                   </div>
                 )}
               </div>
 
               <div className="mt-6 text-center">
                 <button className="text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
-                  See more reviews
+                  {tCommon('reviewsSection.seeMore')}
                 </button>
               </div>
 
               {/* Write Your Review Section */}
               <div className="mt-8 p-6">
                 <h3 className="text-18 font-semibold text-gray-900 mb-4">
-                  Write Your Review
+                  {tCommon('reviewsSection.writeReview')}
                 </h3>
 
                 {/* Star Rating - Centered */}
@@ -415,7 +408,7 @@ export function ProductCategoryDetailClient({
                   <textarea
                     value={reviewComment}
                     onChange={e => setReviewComment(e.target.value)}
-                    placeholder="Share your Comments"
+                    placeholder={tCommon('reviewsSection.shareComments')}
                     className="w-full min-h-[100px] pl-12 pr-14 py-2 border-0 focus:outline-none text-14 text-gray-900 placeholder:text-gray-400 resize-none bg-transparent"
                     rows={4}
                   />
@@ -433,8 +426,8 @@ export function ProductCategoryDetailClient({
                           
                           const { message, type } = handleApiResponseForToast(
                             response,
-                            'Review submitted successfully!',
-                            'Failed to submit review'
+                            tCommon('reviewsSection.submitSuccess'),
+                            tCommon('reviewsSection.submitError')
                           )
                           
                           if (type === 'success') {
@@ -444,14 +437,14 @@ export function ProductCategoryDetailClient({
                           addToast(message, type)
                         } catch (error) {
                           console.error('Error submitting review:', error)
-                          const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+                          const errorMessage = error instanceof Error ? error.message : tCommon('reviewsSection.submitRetry')
                           addToast(errorMessage, 'error')
                         }
                       }
                     }}
                     disabled={!reviewComment.trim() || userRating === 0 || submitReviewMutation.isPending || !parsedProductId}
                     className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-brand-500 hover:bg-brand-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
-                    aria-label="Send review"
+                    aria-label={tCommon('productCommon.sendReview')}
                   >
                     {submitReviewMutation.isPending ? (
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

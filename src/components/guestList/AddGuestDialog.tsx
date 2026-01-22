@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
@@ -62,17 +62,24 @@ export const AddGuestDialog = ({
     watch,
     formState: { errors },
   } = useForm<AddGuestFormData>({
-    resolver: zodResolver(addGuestFormSchema) as any,
-    defaultValues: {
-      categoryMode: forceNewCategory ? 'new' : forcedGroupId ? 'existing' : 'existing',
-      lineCategoryId: forcedGroupId ? String(forcedGroupId) : '',
-      nickName: '',
-      peopleCount: 1,
-      status: 'none',
-      categoryName: '',
-      categorySlug: '',
-      categoryDescription: '',
-    } as any,
+    resolver: zodResolver(addGuestFormSchema) as never,
+    defaultValues: (forceNewCategory
+      ? {
+          categoryMode: 'new' as const,
+          categoryName: '',
+          categorySlug: '',
+          categoryDescription: '',
+          nickName: '',
+          peopleCount: 1,
+          status: 'none' as const,
+        }
+      : {
+          categoryMode: 'existing' as const,
+          lineCategoryId: forcedGroupId ? String(forcedGroupId) : '',
+          nickName: '',
+          peopleCount: 1,
+          status: 'none' as const,
+        }) as AddGuestFormData,
   })
 
   const categoryMode = watch('categoryMode')
@@ -81,16 +88,25 @@ export const AddGuestDialog = ({
 
   useEffect(() => {
     if (!isOpen) return
-    reset({
-      categoryMode: forceNewCategory ? 'new' : forcedGroupId ? 'existing' : 'existing',
-      lineCategoryId: forcedGroupId ? String(forcedGroupId) : '',
-      nickName: '',
-      peopleCount: 1,
-      status: 'none',
-      categoryName: '',
-      categorySlug: '',
-      categoryDescription: '',
-    } as any)
+    reset(
+      (forceNewCategory
+        ? {
+            categoryMode: 'new' as const,
+            categoryName: '',
+            categorySlug: '',
+            categoryDescription: '',
+            nickName: '',
+            peopleCount: 1,
+            status: 'none' as const,
+          }
+        : {
+            categoryMode: 'existing' as const,
+            lineCategoryId: forcedGroupId ? String(forcedGroupId) : '',
+            nickName: '',
+            peopleCount: 1,
+            status: 'none' as const,
+          }) as AddGuestFormData
+    )
   }, [isOpen, forcedGroupId, forceNewCategory, reset])
 
   useEffect(() => {
@@ -109,7 +125,7 @@ export const AddGuestDialog = ({
     setValue('lineCategoryId', String(forcedGroupId), { shouldValidate: true })
   }, [forcedGroupId, forceNewCategory, setValue, selectableGroups.length])
 
-  const submit = (data: AddGuestFormData | any) => {
+  const submit: SubmitHandler<AddGuestFormData> = (data) => {
     if (data.categoryMode === 'existing') {
       const categoryIdStr = String(data.lineCategoryId || '')
       // Handle both numeric IDs (positive/negative) and string IDs (like "tmp-0")
@@ -190,7 +206,7 @@ export const AddGuestDialog = ({
                 type="button"
                 variant={categoryMode === 'existing' ? 'brand' : 'outline'}
                 className={categoryMode === 'existing' ? 'text-white' : ''}
-                onClick={() => setValue('categoryMode', 'existing' as any)}
+                onClick={() => setValue('categoryMode', 'existing' as const)}
               >
                 Select Table
               </Button>
@@ -198,7 +214,7 @@ export const AddGuestDialog = ({
                 type="button"
                 variant={categoryMode === 'new' ? 'brand' : 'outline'}
                 className={categoryMode === 'new' ? 'text-white' : ''}
-                onClick={() => setValue('categoryMode', 'new' as any)}
+                onClick={() => setValue('categoryMode', 'new' as const)}
               >
                 New Table
               </Button>
@@ -209,7 +225,7 @@ export const AddGuestDialog = ({
           {!forcedGroupId && !forceNewCategory && selectableGroups.length === 0 && (
             <div className="mb-2 p-3 bg-blue-50 border border-blue-200 rounded-xl">
               <p className="text-14 text-blue-700 font-medium">No tables available</p>
-              <p className="text-12 text-blue-600 mt-1">You'll create a new table when adding this guest.</p>
+              <p className="text-12 text-blue-600 mt-1">You&apos;ll create a new table when adding this guest.</p>
             </div>
           )}
 
@@ -226,19 +242,19 @@ export const AddGuestDialog = ({
             ) : forceNewCategory || categoryMode === 'new' ? (
               <div className="space-y-3">
                 <Input
-                  {...register('categoryName' as any)}
+                  {...register('categoryName')}
                   placeholder="Table name"
-                  variant={(errors as any).categoryName ? 'error' : 'default'}
-                  errorMessage={(errors as any).categoryName?.message}
+                  variant={categoryMode === 'new' && 'categoryName' in errors && errors.categoryName ? 'error' : 'default'}
+                  errorMessage={categoryMode === 'new' && 'categoryName' in errors && errors.categoryName ? errors.categoryName.message : undefined}
                   size="md"
                 />
                 <Input
-                  {...register('categorySlug' as any)}
+                  {...register('categorySlug')}
                   placeholder="Slug (optional)"
                   size="md"
                 />
                 <Input
-                  {...register('categoryDescription' as any)}
+                  {...register('categoryDescription')}
                   placeholder="Description (optional)"
                   size="md"
                 />
@@ -254,8 +270,8 @@ export const AddGuestDialog = ({
                   }))}
                   placeholder="Select table"
                 />
-                {'lineCategoryId' in errors && (errors as any).lineCategoryId?.message && (
-                  <p className="mt-1 text-12 text-red-600">{(errors as any).lineCategoryId.message}</p>
+                {categoryMode === 'existing' && 'lineCategoryId' in errors && errors.lineCategoryId && (
+                  <p className="mt-1 text-12 text-red-600">{errors.lineCategoryId.message}</p>
                 )}
 
                 {selectableGroups.length === 0 && (
@@ -301,7 +317,7 @@ export const AddGuestDialog = ({
             <label className="block text-14 font-medium text-gray-700 mb-2">Status</label>
             <SelectPopover
               value={status}
-              onChange={value => setValue('status', value as any)}
+              onChange={value => setValue('status', value as 'none' | 'confirmed')}
               options={[
                 { value: 'none', label: 'None' },
                 { value: 'confirmed', label: 'Confirmed' },

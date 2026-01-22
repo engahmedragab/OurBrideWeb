@@ -5,7 +5,6 @@ import { Link } from '@/i18n/navigation'
 import { ChevronLeft, Save } from 'lucide-react'
 import { ErrorModal } from '@/components/ui/ErrorModal'
 import { Button, LoadingOverlay } from '@/components/ui'
-import { cn } from '@/lib/utils'
 import { TodoLinesPanel } from '@/components/planning/todo/TodoLinesPanel'
 import { TodoListsSidebar } from '@/components/planning/todo/TodoListsSidebar'
 import { CreateItemListModal } from '@/components/planning/items/CreateItemListModal'
@@ -15,13 +14,12 @@ import { useEventId } from '@/hooks/planning'
 import { usePlanningBookController } from '@/hooks/planning/usePlanningBookController'
 import { useInitTodoBooks, useAddTodoBookModels } from '@/hooks/bookInit'
 import type { TodoLineResponse, TodoBookResponse, TodoLineCategoryResponse } from '@/types/responses'
-import type { TodoBookRequest, UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { generateTempId } from '@/utils/sync/tempIds'
 import {
-  type UiTodo,
   type UiTodoCategory,
   convertLineToUiTodo,
-  convertUiTodoToLineRequest,
   convertCategoryToUi,
   buildBookRequestFromLocal as buildTodoBookRequest,
   convertLineToRequest,
@@ -50,7 +48,6 @@ function TodoPageContent() {
     hasUnsavedChanges,
     save,
     applyLocalUpdate,
-    getActiveCategories,
     getCategoriesWithCounts,
     getCategoryById,
     getLinesByCategory,
@@ -75,14 +72,14 @@ function TodoPageContent() {
     },
     syncDeltaFn: async (delta) => {
       const response = await syncDeltaMutation.mutateAsync({
-        data: delta,
+        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').TodoLineRequest, import('@/../client/common/api/gen/ourbride-api').TodoLineCategoryRequest>,
         query: {
           eventId: eventId || undefined,
           userType: null as unknown as UserType | undefined,
           clientId: null as unknown as string | undefined,
         },
       })
-      return response as any
+      return response as unknown as SyncBookDeltaResponse<TodoBookResponse>
     },
     refetch,
     shouldInit: (b) => !b?.id,
@@ -132,10 +129,15 @@ function TodoPageContent() {
       current.isDeleted === last.isDeleted &&
       current.isDone === last.isDone &&
       current.lineCategoryId === last.lineCategoryId,
-    isSameCategory: (current, last) =>
-      current.name === last.name &&
-      (current as any).colorName === (last as any).colorName &&
-      current.isDeleted === last.isDeleted,
+    isSameCategory: (current, last) => {
+      const currentAny = current as unknown as Record<string, unknown>
+      const lastAny = last as unknown as Record<string, unknown>
+      return (
+        current.name === last.name &&
+        (currentAny.colorName as string | undefined) === (lastAny.colorName as string | undefined) &&
+        current.isDeleted === last.isDeleted
+      )
+    },
     getLineCategoryId: (line) => line.lineCategoryId ?? null,
     isLineDeleted: (line) => line.isDeleted ?? false,
     isLineDone: (line) => line.isDone ?? false,
@@ -159,24 +161,6 @@ function TodoPageContent() {
       completedCount: cat.completedCount,
     }))
   }, [getCategoriesWithCounts])
-
-  // Get todos from local state (filter by category and exclude deleted)
-  const todos: UiTodo[] = useMemo(() => {
-    if (!localTodoBook?.lines) return []
-
-    const categoryMap = new Map(
-      (localTodoBook.lineCategories || [])
-        .filter(cat => !cat.isDeleted)
-        .map(cat => [cat.id, cat.name || cat.nameEn || cat.nameAr || ''])
-    )
-
-    return localTodoBook.lines
-      .filter(line => !line.isDeleted && (!selectedCategoryId || line.lineCategoryId === selectedCategoryId))
-      .map(line => {
-        const categoryName = categoryMap.get(line.lineCategoryId || 0) || 'Uncategorized'
-        return convertLineToUiTodo(line as TodoLineResponse, categoryName)
-      })
-  }, [localTodoBook, selectedCategoryId])
 
   // Get selected category using controller helper
   const selectedCategory = useMemo(() => {

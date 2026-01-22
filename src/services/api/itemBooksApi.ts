@@ -13,7 +13,6 @@ import type {
   ItemLineCategoryUpdateRequest,
   UserType,
 } from '@/../client/common/api/gen/ourbride-api'
-import { ContentType } from '@/../client/common/api/gen/ourbride-api'
 import type { SyncBookDeltaRequest, SyncBookDeltaResponse } from '@/types/syncDelta'
 
 export interface ItemBooksQuery {
@@ -99,8 +98,19 @@ export const syncItemBookDelta = async (
   try {
     const params = normalizeQuery(query)
     const response = await apiClient.api.postItemBooksSyncBookDelta(data, params)
-    const responseAny: any = response as { data?: { data?: unknown } | unknown } | unknown
-    return (responseAny?.data?.data ?? responseAny?.data ?? responseAny) as SyncBookDeltaResponse<ItemBookResponse | null>
+    const responseAny = response as unknown as Record<string, unknown>
+    
+    // Handle different response structures
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as SyncBookDeltaResponse<ItemBookResponse | null>
+      }
+      if (data && typeof data === 'object') {
+        return data as unknown as SyncBookDeltaResponse<ItemBookResponse | null>
+      }
+    }
+    return responseAny as unknown as SyncBookDeltaResponse<ItemBookResponse | null>
   } catch (error: unknown) {
     throw new Error(error instanceof Error ? error.message : 'Failed to sync item book (delta)')
   }
@@ -115,17 +125,20 @@ export const getItemBook = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetBook(normalizedQuery)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ItemBookResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ItemBookResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as ItemBookResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as ItemBookResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as ItemBookResponse
+      return responseAny as unknown as ItemBookResponse
     }
     return null
   } catch (error: unknown) {
@@ -142,7 +155,7 @@ export const getItemLines = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetAll(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[]; items?: ItemLineResponse[] } } | ItemLineResponse[]
+    const responseAny = response as unknown as { data?: ItemLineResponse[] | { data?: ItemLineResponse[]; items?: ItemLineResponse[] } } | ItemLineResponse[]
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -182,7 +195,7 @@ export const getItemLineById = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getItemBooksGet(lineId, String(lineId), normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ItemLineResponse } | ItemLineResponse } | ItemLineResponse
+    const responseAny = response as unknown as { data?: { data?: ItemLineResponse } | ItemLineResponse } | ItemLineResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -213,7 +226,7 @@ export const createItemLine = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.postItemBooksCreate(data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ItemLineResponse } | ItemLineResponse } | ItemLineResponse
+    const responseAny = response as unknown as { data?: { data?: ItemLineResponse } | ItemLineResponse } | ItemLineResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -264,7 +277,7 @@ export const updateItemLine = async (
       // eventId is excluded if the API doesn't accept it
     } : undefined
     const response = await apiClient.api.putItemBooksUpdate(lineId, String(lineId), data, normalizedQuery)
-    const responseAny: any = response as { data?: { data?: ItemLineResponse } | ItemLineResponse } | ItemLineResponse
+    const responseAny = response as unknown as { data?: { data?: ItemLineResponse } | ItemLineResponse } | ItemLineResponse
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
@@ -381,7 +394,7 @@ export const getItemLinesCustom = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetAllCustom(isDeleted, isDone, isFavorite, normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
+    const responseAny = response as unknown as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -407,7 +420,7 @@ export const getItemLinesDone = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetAllDone(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
+    const responseAny = response as unknown as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -437,7 +450,7 @@ export const getItemLinesNotDone = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getItemBooksGetAllNotDone(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
+    const responseAny = response as unknown as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -463,7 +476,7 @@ export const getItemLinesFavorite = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetAllFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
+    const responseAny = response as unknown as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -493,7 +506,7 @@ export const getItemLinesNotFavorite = async (
       eventId: query.eventId,
     } : undefined
     const response = await apiClient.api.getItemBooksGetAllNotFavorite(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
+    const responseAny = response as unknown as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -519,7 +532,7 @@ export const getItemLinesDeleted = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetAllDelete(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
+    const responseAny = response as unknown as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -545,7 +558,7 @@ export const getItemLinesNotDeleted = async (
   try {
     const normalizedQuery = normalizeQuery(query)
     const response = await apiClient.api.getItemBooksGetAllNotDelete(normalizedQuery)
-    const responseAny: any = response as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
+    const responseAny = response as unknown as { data?: ItemLineResponse[] | { data?: ItemLineResponse[] } } | ItemLineResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -610,7 +623,7 @@ export const getItemCategories = async (
 ): Promise<ItemLineCategoryResponse[]> => {
   try {
     const response = await apiClient.api.getItemBooksGetAllCategories(query)
-    const responseAny: any = response as { data?: ItemLineCategoryResponse[] | { data?: ItemLineCategoryResponse[] } } | ItemLineCategoryResponse[]
+    const responseAny = response as unknown as { data?: ItemLineCategoryResponse[] | { data?: ItemLineCategoryResponse[] } } | ItemLineCategoryResponse[]
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data
@@ -650,7 +663,7 @@ export const getItemCategory = async (
 ): Promise<ItemLineCategoryResponse | null> => {
   try {
     const response = await apiClient.api.getItemBooksGetCategory(categoryId, query)
-    const responseAny: any = response as { data?: { data?: ItemLineCategoryResponse } | ItemLineCategoryResponse } | ItemLineCategoryResponse
+    const responseAny = response as unknown as { data?: { data?: ItemLineCategoryResponse } | ItemLineCategoryResponse } | ItemLineCategoryResponse
     
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = responseAny.data

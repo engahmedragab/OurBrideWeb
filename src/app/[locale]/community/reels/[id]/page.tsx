@@ -2,6 +2,8 @@ import { Suspense } from 'react'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { ReelDetailsClient } from './ReelDetailsClient'
+import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
+import { LoadingSpinner } from '@/components/ui'
 
 // Generate static params for static export
 export function generateStaticParams() {
@@ -22,7 +24,7 @@ export default function ReelDetailsPage({
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Header />
           <main className="flex-1 flex items-center justify-center">
-            <div className="text-gray-500">Loading...</div>
+            <LoadingSpinner />
           </main>
           <Footer />
         </div>

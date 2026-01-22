@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ProductImageGalleryProps {
   images: string[]
@@ -20,7 +21,7 @@ export const ProductImageGallery = ({
   const validImages = images.filter(
     img => img && typeof img === 'string' && img.trim() !== ''
   )
-
+  const t = useI18nTranslations('common')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
 
@@ -36,7 +37,7 @@ export const ProductImageGallery = ({
     return (
       <div className={cn('aspect-square bg-gray-100 rounded-xl', className)}>
         <div className="w-full h-full flex items-center justify-center text-gray-400">
-          No image available
+          {t('noImageAvailable')}
         </div>
       </div>
     )
@@ -45,7 +46,8 @@ export const ProductImageGallery = ({
   return (
     <div className={cn('space-y-4', className)}>
       {/* Main Image */}
-      <div className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden group">
+      <div className="relative aspect-square md:aspect-[5/3] lg:aspect-square bg-gray-100 rounded-xl overflow-hidden group">
+
         {validImages[selectedIndex] && !imageErrors.has(selectedIndex) ? (
           <Image
             src={validImages[selectedIndex]}
@@ -59,7 +61,7 @@ export const ProductImageGallery = ({
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-100">
             <span className="text-gray-400 text-12 font-medium">
-              No image available
+              {t('noImageAvailable')}
             </span>
           </div>
         )}
@@ -118,7 +120,7 @@ export const ProductImageGallery = ({
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-100">
                   <span className="text-gray-400 text-10 font-medium">
-                    No image available
+                    {t('noImageAvailable')}
                   </span>
                 </div>
               )}

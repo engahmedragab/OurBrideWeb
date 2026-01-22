@@ -28,11 +28,12 @@ import {
 } from '@/components/guestList'
 
 import type { GuestLineResponse, GuestLineCategoryResponse, GuestBookResponse } from '@/types/responses'
-import type { UserType, GuestBookRequest } from '@/../client/common/api/gen/ourbride-api'
-import { GuestStatus as GuestStatusEnum, GuestTitle, GuestRelevant } from '@/types/responses/book-enums'
-import { generateClientId } from '@/utils/guestbook/uuid'
+import type { UserType } from '@/../client/common/api/gen/ourbride-api'
+import { GuestStatus as GuestStatusEnum, GuestRelevant } from '@/types/responses/book-enums'
 import { generateTempId } from '@/utils/sync/tempIds'
 import { buildBookRequestFromLocal, convertLineToRequest, convertCategoryToRequest } from '@/utils/planning/mappers/invitationMappers'
+import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
+import { BookClass, UserType as LocalUserType } from '@/types/responses/book-enums'
 
 type GuestBookDraft = GuestBookResponse & {
   lineCategories?: Array<GuestLineCategoryResponse & { clientId?: string }>
@@ -75,15 +76,14 @@ const toSideFromGuestRelevant = (guestRelevant?: string | number | null, activeS
 
 const toUiStatus = (isDone?: boolean): GuestStatus => (isDone ? 'confirmed' : 'none')
 
-const mapLineToGuest = (line: GuestLineResponse, selectedIds: Set<string>, activeSide: GuestSide): Guest => {
-  const guestRelevant = (line as any).guestRelevant
+const mapLineToGuest = (line: GuestLineResponse & { clientId?: string }, selectedIds: Set<string>, activeSide: GuestSide): Guest => {
+  const guestRelevant = line.guestRelevant
   const side = toSideFromGuestRelevant(guestRelevant, activeSide)
   const groupId: GuestGroupId =
     line.lineCategoryId != null ? String(line.lineCategoryId) : 'uncategorized'
 
   const idStr = String(line.id ?? '')
-  const anyLine: any = line
-  const stableClientId = anyLine.clientId ? String(anyLine.clientId) : idStr
+  const stableClientId = line.clientId ? String(line.clientId) : idStr
 
   const registeredAt = line.creationDate
     ? new Date(line.creationDate).toISOString().split('T')[0]
@@ -96,7 +96,7 @@ const mapLineToGuest = (line: GuestLineResponse, selectedIds: Set<string>, activ
     name: (line.nickName || '').trim(),
     peopleCount: 1,
     registeredAt,
-    status: toUiStatus((line as any).isDone),
+    status: toUiStatus(line.isDone),
     selected: selectedIds.has(idStr),
     clientId: stableClientId,
   }
@@ -176,14 +176,14 @@ function InvitationPageContent() {
     },
     syncDeltaFn: async (delta) => {
       const response = await syncDeltaMutation.mutateAsync({
-        data: delta,
+        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').GuestLineRequest, import('@/../client/common/api/gen/ourbride-api').GuestLineCategoryRequest>,
         query: {
           eventId: eventId || undefined,
           userType: undefined as unknown as UserType | undefined,
           clientId: undefined as unknown as string | undefined,
         },
       })
-      return response as any
+      return response as unknown as SyncBookDeltaResponse<GuestBookDraft>
     },
     refetch,
     shouldInit: (b) => !b?.id,
@@ -216,16 +216,16 @@ function InvitationPageContent() {
     convertLineToRequest,
     convertCategoryToRequest,
     isSameLine: (current, last) =>
-      (current as any).nickName === (last as any).nickName &&
-      (current as any).isDeleted === (last as any).isDeleted &&
-      (current as any).isDone === (last as any).isDone,
+      current.nickName === last.nickName &&
+      current.isDeleted === last.isDeleted &&
+      current.isDone === last.isDone,
     isSameCategory: (current, last) =>
-      (current as any).name === (last as any).name &&
-      (current as any).isDeleted === (last as any).isDeleted,
-    getLineCategoryId: (line) => (line as any).lineCategoryId ?? null,
-    isLineDeleted: (line) => !!(line as any).isDeleted,
-    isLineDone: (line) => !!(line as any).isDone,
-    isCategoryDeleted: (cat) => !!(cat as any).isDeleted,
+      current.name === last.name &&
+      current.isDeleted === last.isDeleted,
+    getLineCategoryId: (line) => line.lineCategoryId ?? null,
+    isLineDeleted: (line) => !!line.isDeleted,
+    isLineDone: (line) => !!line.isDone,
+    isCategoryDeleted: (cat) => !!cat.isDeleted,
   })
 
 
@@ -235,7 +235,7 @@ function InvitationPageContent() {
 
     // Filter categories by guestRelevant: show current side + "Others"
     const filteredCats = cats.filter((cat) => {
-      const catGuestRelevant = normalizeGuestRelevant((cat as any).guestRelevant)
+      const catGuestRelevant = normalizeGuestRelevant(cat.guestRelevant)
       // Show if it matches the active side or is "Others"
       if (catGuestRelevant === GuestRelevant.Others) return true // Always show "Others"
       if (activeSide === 'bride' && catGuestRelevant === GuestRelevant.Bride) return true
@@ -244,7 +244,7 @@ function InvitationPageContent() {
     })
 
     const mapped = filteredCats.map((cat, idx) => {
-      const anyCat: any = cat
+      const anyCat = cat as unknown as Record<string, unknown>
       // Preserve numeric ID (positive or negative) as string for display
       // But ensure we always have a valid identifier
       let id: string
@@ -269,8 +269,8 @@ function InvitationPageContent() {
     // Check if there are uncategorized lines using controller helper (filtered by guestRelevant)
     const activeLines = getActiveLines()
     const hasUncategorized = activeLines.some(l => {
-      const lineCatId = (l as any).lineCategoryId
-      const lineGuestRelevant = normalizeGuestRelevant((l as any).guestRelevant)
+      const lineCatId = l.lineCategoryId
+      const lineGuestRelevant = normalizeGuestRelevant(l.guestRelevant)
 
       const matchesSide =
         lineGuestRelevant === GuestRelevant.Others ||
@@ -292,7 +292,7 @@ function InvitationPageContent() {
     return lines
       .filter((l) => {
         // Filter by guestRelevant: show current side + "Others"
-        const lineGuestRelevant = normalizeGuestRelevant((l as any).guestRelevant)
+        const lineGuestRelevant = normalizeGuestRelevant(l.guestRelevant)
 
         if (lineGuestRelevant === GuestRelevant.Others) return true // Always show "Others"
         if (activeSide === 'bride' && lineGuestRelevant === GuestRelevant.Bride) return true
@@ -330,15 +330,15 @@ function InvitationPageContent() {
     applyLocalUpdate((prev) => {
       const nextLines = (prev.lines || []).map((line) => {
         if (Number(line.id) !== lineIdNum) return line
-        const anyLine: any = line
-        const nextIsDone = !anyLine.isDone
+        const anyLine = line as unknown as Record<string, unknown>
+        const nextIsDone = !(anyLine.isDone as boolean)
 
         return {
           ...line,
           isDone: nextIsDone,
           status: nextIsDone ? GuestStatusEnum.Confirmed : GuestStatusEnum.None,
           lastModifiedDate: new Date().toISOString(),
-        } as any
+        } as GuestLineResponse
       })
 
       return { ...prev, lines: nextLines }
@@ -349,7 +349,7 @@ function InvitationPageContent() {
     const lineIdNum = Number(id)
     applyLocalUpdate((prev) => {
       const nextLines = (prev.lines || []).map((line) =>
-        Number(line.id) === lineIdNum ? ({ ...line, isDeleted: true, lastModifiedDate: new Date().toISOString() } as any) : line
+        Number(line.id) === lineIdNum ? ({ ...line, isDeleted: true, lastModifiedDate: new Date().toISOString() } as GuestLineResponse) : line
       )
       return { ...prev, lines: nextLines }
     })
@@ -451,18 +451,24 @@ function InvitationPageContent() {
         categoryIdForLine = tempCategoryId
         categoryCountIdForLine = tempCountId
 
-        const newCategory = {
+        const newCategory: GuestLineCategoryResponse = {
           id: tempCategoryId,
           name: payload.category.name,
+          nameAr: payload.category.name,
+          nameEn: payload.category.name,
           description: payload.category.description || null,
+          descriptionAr: payload.category.description || null,
+          descriptionEn: payload.category.description || null,
           slug: payload.category.slug,
           count_id: tempCountId,
           isDeleted: false,
           isModelLine: false,
           creationDate: now,
           lastModifiedDate: now,
+          createdBy: nextDraft.createdBy || '',
+          lastModifiedBy: nextDraft.lastModifiedBy || '',
           guestRelevant: activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom,
-        } as any
+        } as unknown as GuestLineCategoryResponse
 
         nextDraft = {
           ...nextDraft,
@@ -470,9 +476,9 @@ function InvitationPageContent() {
         }
       } else {
         // existing: get category from current draft
-        const cat = (nextDraft.lineCategories || []).find((c) => Number((c as any).id) === payload.lineCategoryId) as any
+        const cat = (nextDraft.lineCategories || []).find((c) => Number(c.id) === payload.lineCategoryId) as GuestLineCategoryResponse | undefined
         categorySlugForLine = cat?.slug || null
-        categoryCountIdForLine = cat?.count_id ?? null
+        categoryCountIdForLine = (cat as unknown as Record<string, unknown>)?.count_id as number | null | undefined ?? null
       }
 
       // Determine guestRelevant for the new line
@@ -480,8 +486,8 @@ function InvitationPageContent() {
       // If creating new category, use activeSide
       let lineGuestRelevant: GuestRelevant
       if (payload.mode === 'existing') {
-        const cat = (nextDraft.lineCategories || []).find((c) => Number((c as any).id) === payload.lineCategoryId) as any
-        const catGuestRelevant = normalizeGuestRelevant(cat?.guestRelevant)
+        const cat = (nextDraft.lineCategories || []).find((c) => Number(c.id) === payload.lineCategoryId) as GuestLineCategoryResponse | undefined
+        const catGuestRelevant = normalizeGuestRelevant((cat as unknown as Record<string, unknown>)?.guestRelevant as string | number | null | undefined)
         // If category is "Others", use the active side; otherwise use the category's guestRelevant
         if (catGuestRelevant === GuestRelevant.Others) {
           lineGuestRelevant = activeSide === 'bride' ? GuestRelevant.Bride : GuestRelevant.Groom
@@ -495,27 +501,32 @@ function InvitationPageContent() {
       }
 
       // 2) ضيف line
-      const newLine = {
+      const newLine: GuestLineResponse = {
         id: generateTempId(),
         isDone,
         isFavorite: false,
         isDeleted: false,
         isModelLine: false,
-        brideId: activeSide === 'bride' ? nextDraft.brideId : null,
-        groomId: activeSide === 'groom' ? nextDraft.groomId : null,
+        brideId: activeSide === 'bride' ? nextDraft.brideId : undefined,
+        groomId: activeSide === 'groom' ? nextDraft.groomId : undefined,
         bookId: nextDraft.id,
-        lineCategoryId: categoryIdForLine,
+        lineCategoryId: categoryIdForLine ?? undefined,
+        lineType: (nextDraft.bookType as unknown as LocalUserType) ?? LocalUserType.Bride,
+        bookClass: BookClass.Guest,
+        createdBy: nextDraft.createdBy || '',
+        lastModifiedBy: nextDraft.lastModifiedBy || '',
+        slug: '',
         lineCategoryCountId: categoryCountIdForLine,
         lineCategorySlug: categorySlugForLine,
         creationDate: now,
         lastModifiedDate: now,
         nickName: payload.nickName,
-        title: 'NoFormalities',
+        title: 'NoFormalities' as unknown as import('@/types/responses/book-enums').GuestTitle,
         attended: false,
         family: activeSide === 'bride' ? 'Bride' : 'Groom',
-        status: apiStatus,
+        status: apiStatus as unknown as import('@/types/responses/book-enums').GuestStatus,
         guestRelevant: lineGuestRelevant,
-      } as any
+      } as unknown as GuestLineResponse
 
       return {
         ...nextDraft,

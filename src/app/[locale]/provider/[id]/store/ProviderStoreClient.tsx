@@ -4,1015 +4,1230 @@ import React, { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from '@/i18n/navigation'
 import {
-    Filter,
-    Grid3x3,
-    List,
-    Search,
-    X,
-    Tag,
-    Package,
-    Award,
-    TrendingUp,
-    Calendar,
+  Grid3x3,
+  List,
+  X,
+  SlidersHorizontal,
+  Store,
+  Package,
+  TrendingUp,
+  Tag,
+  CheckCircle2,
+  Percent,
+  Calendar,
+  CreditCard,
+  Gift,
+  Crown,
+  Globe,
+  ExternalLink,
+  ImageIcon,
+  Video,
+  UserPlus,
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
-import { Button } from '@/components/ui/Button'
-import { LoadingSpinner, ErrorDisplay, Select } from '@/components/ui'
-import { ProductGrid } from '@/components/ui/ProductGrid'
-import { ProductList } from '@/components/ui/ProductList'
-import { PriceDisplay } from '@/components/ui/PriceDisplay'
-import { RatingDisplay } from '@/components/ui/RatingDisplay'
+import {
+  Button,
+  Typography,
+  CardWrapper,
+  SearchInput,
+  ProductGrid,
+  ProductList,
+  Badge,
+  RatingDisplay,
+  LoadingSpinner,
+  ErrorDisplay,
+  SelectPopover,
+  EmptyState,
+  Pagination,
+} from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { useProviderPublicStore } from '@/hooks/providers/useProviderPublicStore'
 import { useProductsHome } from '@/hooks/products/useProductsHome'
 import { useStoreHomeByProvider } from '@/hooks/home/useHome'
 import { extractStoreHomeData } from '@/utils/home-data.utils'
+import { useLocale } from '@/i18n'
 import { OfferBanner } from '@/components/ui/OfferBanner'
-import { TestimonialsSection } from '@/components/ui/TestimonialsSection'
-import { Accordion } from '@/components/ui/Accordion'
-import { DEFAULT_CURRENCY } from '@/utils/currency'
 import type { ProductHeaderResponse } from '@/types/responses/product-header-response'
 import type { CategoryResponse } from '@/types/responses/category-response'
 import type { ProductBrandResponse } from '@/types/responses/product-brand-response'
+import type { ProviderCategoryResponse } from '@/types/responses/provider-category-response'
+import type { ProviderProductBrandResponse } from '@/types/responses/provider-product-brand-response'
+import type { Visibility } from '@/types/responses/common'
 
 interface ProviderStoreClientProps {
-    providerId: string
+  providerId: string
 }
 
 type ViewMode = 'grid' | 'list'
 type SortOption = 'default' | 'price-asc' | 'price-desc' | 'rating' | 'name'
 
+const PAGE_SIZE = 8
+
 export function ProviderStoreClient({ providerId }: ProviderStoreClientProps) {
-    const router = useRouter()
-    const [viewMode, setViewMode] = useState<ViewMode>('grid')
-    const [sortOption, setSortOption] = useState<SortOption>('default')
-    const [searchQuery, setSearchQuery] = useState('')
-    const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
-    const [selectedBrand, setSelectedBrand] = useState<number | null>(null)
-    const [selectedTag, setSelectedTag] = useState<string | null>(null)
-    const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null)
-    const [showFilters, setShowFilters] = useState(false)
-    const [topBarTextIndex, setTopBarTextIndex] = useState(0)
+  const router = useRouter()
+  const locale = useLocale()
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [sortOption, setSortOption] = useState<SortOption>('default')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
+  const [selectedBrand, setSelectedBrand] = useState<number | null>(null)
+  const [showFilters, setShowFilters] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
 
-    // Fetch provider store data - support both ID and slug
-    const { data: storeData, isLoading: storeLoading, error: storeError } = useProviderPublicStore(
-        providerId,
-        { page: 1, pageSize: 1000 }
-    )
+  // Fetch provider store data
+  const { data: storeData, isLoading: storeLoading, error: storeError } = useProviderPublicStore(
+    providerId,
+    { page: 1, pageSize: 1000 }
+  )
 
-    // Fetch products home data for filters
-    const { data: productsHomeData, isLoading: homeLoading } = useProductsHome()
+  // Fetch products home data for filters
+  const { data: productsHomeData, isLoading: homeLoading } = useProductsHome()
 
-    // Fetch store home data (banners, testimonials, FAQs, top bar texts)
-    // Extract providerId from storeData or try to parse providerId from string
-    const providerIdNumber = useMemo(() => {
-        if (storeData?.providerId) {
-            return storeData.providerId
+  // Extract providerId number
+  const providerIdNumber = useMemo(() => {
+    if (storeData?.providerId) {
+      return storeData.providerId
+    }
+    const parsed = parseInt(providerId, 10)
+    return isNaN(parsed) ? undefined : parsed
+  }, [storeData?.providerId, providerId])
+
+  const { data: storeHomeData, isLoading: storeHomeLoading } = useStoreHomeByProvider(
+    providerIdNumber ? { providerId: providerIdNumber } : undefined,
+    !!providerIdNumber
+  )
+
+  // Extract store home data
+  const storeHomeExtracted = useMemo(() => {
+    if (storeHomeData) {
+      return extractStoreHomeData(storeHomeData, locale)
+    }
+    return {}
+  }, [storeHomeData, locale])
+
+  const isLoading = storeLoading || homeLoading || storeHomeLoading
+
+  // Get available filters
+  const availableCategories = productsHomeData?.categories || storeData?.providerCategories || []
+  const availableBrands = productsHomeData?.brands || storeData?.providerProductBrands || []
+
+  // Convert products to ProductHeaderResponse format
+  const products = useMemo(() => {
+    if (!storeData?.products) return []
+    return storeData.products.map(p => {
+      const productId = p.productId || 0
+      const nameEn = p.nameEn || ''
+      const nameAr = p.nameAr || ''
+      const rate = p.rate?.toString() || '0'
+      const price = p.price || 0
+      const salePrice = p.salePrice || null
+      const regularPrice = p.hasDiscount && p.price ? p.price : null
+      const image = p.image || p.url || ''
+      const tags = p.tagsString || ''
+      const categoryId = p.categoryId || 0
+      const subCategoryId = p.subCategoryId || 0
+      const inStock = p.inStock ?? true
+      const stockQuantity = p.stock || null
+      const hasDiscount = p.hasDiscount || false
+
+      return {
+        id: productId,
+        productId,
+        nameEn,
+        nameAr,
+        name: nameEn || nameAr,
+        bioAr: '',
+        bioEn: '',
+        bio: p.bio || '',
+        slug: '',
+        isActive: p.isActive ?? true,
+        rate,
+        ratingCount: 0,
+        likes: p.likes || null,
+        url: p.url || '',
+        price,
+        amount: p.amount || null,
+        stockQuantity,
+        sku: '',
+        shortDescriptionAr: p.shortDescriptionAr || '',
+        shortDescriptionEn: p.shortDescriptionEn || '',
+        shortDescription: p.shortDescriptionEn || p.shortDescriptionAr || '',
+        isFeatured: p.isFeatured || false,
+        published: p.published ?? true,
+        visibility: (p.visibility as unknown as Visibility) || (0 as unknown as Visibility),
+        buttonText: '',
+        youtubeUrl: p.youtubeUrl || '',
+        image,
+        hasDiscount,
+        discountDateStart: p.discountDateStart || null,
+        discountDateEnd: p.discountDateEnd || null,
+        isTaagerProduct: p.isTaagerProduct || null,
+        inStock,
+        tags,
+        attributes: '',
+        categories: '',
+        categoryId,
+        subCategoryId,
+        providerId: p.providerId || storeData?.providerId || 0,
+        provider: p.provider || null,
+        providerProductAttributes: storeData?.providerProductAttributes || [],
+        providerProductTags: storeData?.providerProductTags || [],
+        providerCategories: storeData?.providerCategories || [],
+        providerSubCategories: [],
+        regularPrice,
+        salePrice,
+        dateOnSaleFrom: null,
+        dateOnSaleFromGmt: null,
+        dateOnSaleTo: null,
+        dateOnSaleToGmt: null,
+        priceHtml: '',
+        onSale: null,
+        purchasable: null,
+        totalSales: null,
+        conflictInfo: null,
+      } as ProductHeaderResponse
+    })
+  }, [storeData?.products, storeData?.providerProductAttributes, storeData?.providerProductTags, storeData?.providerCategories, storeData?.providerId])
+
+  // Get flash sale products (products with discount dates or on sale)
+  const flashSaleProducts = useMemo(() => {
+    if (!storeData?.products || storeData.products.length === 0) return []
+    const now = new Date()
+    return storeData.products
+      .filter(p => {
+        // Include products with discounts
+        if (p.hasDiscount) {
+          // If product has discount dates, check if they're active
+          if (p.discountDateStart && p.discountDateEnd) {
+            try {
+              const startDate = new Date(p.discountDateStart)
+              const endDate = new Date(p.discountDateEnd)
+              return now >= startDate && now <= endDate
+            } catch {
+              // If date parsing fails, include it if hasDiscount is true
+              return true
+            }
+          }
+          // If hasDiscount but no dates, include it
+          return true
         }
-        // Try to parse providerId if it's numeric
-        const parsed = parseInt(providerId, 10)
-        return isNaN(parsed) ? undefined : parsed
-    }, [storeData?.providerId, providerId])
+        // Also include products that are on sale
+        if (p.onSale) return true
+        return false
+      })
+      .slice(0, 8) // Limit to 8 products
+  }, [storeData?.products])
 
-    const { data: storeHomeData, isLoading: storeHomeLoading } = useStoreHomeByProvider(
-        providerIdNumber ? { providerId: providerIdNumber } : undefined,
-        !!providerIdNumber
-    )
+  // Get active memberships
+  const activeMemberships = useMemo(() => {
+    if (!storeData?.memberships || storeData.memberships.length === 0) return []
+    return storeData.memberships.filter(m => m.isActive)
+  }, [storeData?.memberships])
 
-    // Extract store home data
-    const storeHomeExtracted = useMemo(() => {
-        if (storeHomeData) {
-            return extractStoreHomeData(storeHomeData)
-        }
-        return {}
-    }, [storeHomeData])
+  // Filter and sort products
+  const filteredAndSortedProducts = useMemo(() => {
+    let productsList = products
 
-    // Auto-rotate top bar texts
-    const topBarTexts = storeHomeExtracted.topBarTexts || []
-    useEffect(() => {
-        if (topBarTexts.length <= 1) return
-
-        const interval = setInterval(() => {
-            setTopBarTextIndex((prevIndex) => (prevIndex + 1) % topBarTexts.length)
-        }, 4000) // Rotate every 4 seconds
-
-        return () => clearInterval(interval)
-    }, [topBarTexts.length])
-
-    const isLoading = storeLoading || homeLoading || storeHomeLoading
-
-    // Get available filters from products home data (before conditional returns)
-    const availableCategories = productsHomeData?.categories || storeData?.providerCategories || []
-    const availableBrands = productsHomeData?.brands || storeData?.providerProductBrands || []
-    const availableTags = productsHomeData?.tags || []
-    const availableAttributes = productsHomeData?.attributes || []
-
-    // Convert ProductResponse from storeData to ProductHeaderResponse format for filtering
-    // Note: storeData.products is ProductResponse[] from ProviderPublicStoreResponse
-    // This must be called before any conditional returns to maintain hook order
-    const products = useMemo(() => {
-        if (!storeData?.products) return []
-        return storeData.products.map(p => {
-            const productId = p.productId || 0
-            const nameEn = p.nameEn || ''
-            const nameAr = p.nameAr || ''
-            const rate = p.rate?.toString() || '0'
-            const price = p.price || 0
-            const salePrice = p.salePrice || null
-            const regularPrice = p.hasDiscount && p.price ? p.price : null
-            const image = p.image || p.url || ''
-            const tags = p.tagsString || ''
-            const categoryId = p.categoryId || 0
-            const subCategoryId = p.subCategoryId || 0
-            const inStock = p.inStock ?? true
-            const stockQuantity = p.stock || null
-            const hasDiscount = p.hasDiscount || false
-
-            return {
-                id: productId,
-                productId,
-                nameEn,
-                nameAr,
-                name: nameEn || nameAr,
-                bioAr: '',
-                bioEn: '',
-                bio: p.bio || '',
-                slug: '',
-                isActive: p.isActive ?? true,
-                rate,
-                ratingCount: 0, // Not available in ProductResponse
-                likes: p.likes || null,
-                url: p.url || '',
-                price,
-                amount: p.amount || null,
-                stockQuantity,
-                sku: '', // Not available in ProductResponse
-                shortDescriptionAr: p.shortDescriptionAr || '',
-                shortDescriptionEn: p.shortDescriptionEn || '',
-                shortDescription: p.shortDescriptionEn || p.shortDescriptionAr || '',
-                isFeatured: p.isFeatured || false,
-                published: p.published ?? true,
-                visibility: p.visibility as any, // Type compatibility issue between Visibility enums
-                buttonText: '',
-                youtubeUrl: p.youtubeUrl || '',
-                image,
-                hasDiscount,
-                discountDateStart: p.discountDateStart || null,
-                discountDateEnd: p.discountDateEnd || null,
-                isTaagerProduct: p.isTaagerProduct || null,
-                inStock,
-                tags,
-                attributes: '', // Not directly available
-                categories: '',
-                categoryId,
-                subCategoryId,
-                providerId: p.providerId || storeData?.providerId || 0,
-                provider: p.provider || null,
-                providerProductAttributes: storeData?.providerProductAttributes || [],
-                providerProductTags: storeData?.providerProductTags || [],
-                providerCategories: storeData?.providerCategories || [],
-                providerSubCategories: [],
-                regularPrice,
-                salePrice,
-                dateOnSaleFrom: null,
-                dateOnSaleFromGmt: null,
-                dateOnSaleTo: null,
-                dateOnSaleToGmt: null,
-                priceHtml: '',
-                onSale: null,
-                purchasable: null,
-                totalSales: null,
-                conflictInfo: null,
-            } as ProductHeaderResponse
-        })
-    }, [storeData?.products, storeData?.providerProductAttributes, storeData?.providerProductTags, storeData?.providerCategories, storeData?.providerId])
-
-    // Filter and sort products
-    const filteredAndSortedProducts = useMemo(() => {
-        let productsList = products
-
-        // Apply search filter
-        if (searchQuery.trim()) {
-            const query = searchQuery.toLowerCase()
-            productsList = productsList.filter(
-                p =>
-                    (p.nameEn?.toLowerCase().includes(query) ||
-                        p.nameAr?.toLowerCase().includes(query) ||
-                        p.shortDescriptionEn?.toLowerCase().includes(query) ||
-                        p.shortDescriptionAr?.toLowerCase().includes(query)) ??
-                    false
-            )
-        }
-
-        // Apply category filter
-        if (selectedCategory) {
-            productsList = productsList.filter(p => p.categoryId === selectedCategory)
-        }
-
-        // Apply brand filter
-        if (selectedBrand) {
-            productsList = productsList.filter(p => {
-                // Check if product has the selected brand through providerProductBrands
-                // This is a simplified check - in a real scenario, you'd need to link products to brands
-                return storeData?.providerProductBrands?.some(
-                    b => b.productBrandId === selectedBrand && b.isActive
-                ) || false
-            })
-        }
-
-        // Apply tag filter
-        if (selectedTag) {
-            productsList = productsList.filter(p =>
-                p.tags?.includes(selectedTag) ||
-                p.providerProductTags?.some(pt => pt.productTagId.toString() === selectedTag) ||
-                false
-            )
-        }
-
-        // Apply attribute filter
-        if (selectedAttribute) {
-            productsList = productsList.filter(p =>
-                p.attributes?.includes(selectedAttribute) ||
-                p.providerProductAttributes?.some(pa => pa.productAttributeId.toString() === selectedAttribute) ||
-                false
-            )
-        }
-
-        // Apply sorting
-        switch (sortOption) {
-            case 'price-asc':
-                productsList.sort((a, b) => (a.salePrice || a.price || 0) - (b.salePrice || b.price || 0))
-                break
-            case 'price-desc':
-                productsList.sort((a, b) => (b.salePrice || b.price || 0) - (a.salePrice || a.price || 0))
-                break
-            case 'rating':
-                productsList.sort((a, b) => {
-                    const ratingA = parseFloat(a.rate || '0')
-                    const ratingB = parseFloat(b.rate || '0')
-                    return ratingB - ratingA
-                })
-                break
-            case 'name':
-                productsList.sort((a, b) => (a.nameEn || a.nameAr || '').localeCompare(b.nameEn || b.nameAr || ''))
-                break
-            default:
-                // Keep original order
-                break
-        }
-
-        return productsList
-    }, [
-        products,
-        storeData?.providerProductBrands,
-        searchQuery,
-        selectedCategory,
-        selectedBrand,
-        selectedTag,
-        selectedAttribute,
-        sortOption,
-    ])
-
-    // Get flash sales from products home data
-    const flashSales = productsHomeData?.flashSaleGrouped || {}
-
-    const clearFilters = () => {
-        setSearchQuery('')
-        setSelectedCategory(null)
-        setSelectedBrand(null)
-        setSelectedTag(null)
-        setSelectedAttribute(null)
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      productsList = productsList.filter(
+        p =>
+          (p.nameEn?.toLowerCase().includes(query) ||
+            p.nameAr?.toLowerCase().includes(query) ||
+            p.shortDescription?.toLowerCase().includes(query) ||
+            p.tags?.toLowerCase().includes(query)) &&
+          p.isActive
+      )
+    } else {
+      productsList = productsList.filter(p => p.isActive)
     }
 
-    const hasActiveFilters =
-        searchQuery.trim() !== '' ||
-        selectedCategory !== null ||
-        selectedBrand !== null ||
-        selectedTag !== null ||
-        selectedAttribute !== null
+    // Apply category filter
+    if (selectedCategory) {
+      productsList = productsList.filter(p => p.categoryId === selectedCategory)
+    }
 
-    // Show loading state (after all hooks)
-    if (isLoading) {
-        return (
-            <div className="min-h-screen flex flex-col bg-gray-50">
-                <Header />
-                <main className="flex-1 flex items-center justify-center">
-                    <LoadingSpinner size="lg" />
-                </main>
-                <Footer />
-            </div>
+    // Apply brand filter
+    if (selectedBrand) {
+      productsList = productsList.filter(p => {
+        // Check if product has matching brand attribute
+        const brandAttribute = p.providerProductAttributes?.find(
+          attr => attr.productAttributeId === selectedBrand
         )
+        return !!brandAttribute
+      })
     }
 
-    // Show error state (after all hooks)
-    if (storeError || !storeData) {
-        return (
-            <div className="min-h-screen flex flex-col bg-gray-50">
-                <Header />
-                <main className="flex-1 flex items-center justify-center">
-                    <ErrorDisplay
-                        title="Store not found"
-                        message="The provider store you're looking for doesn't exist or has been removed."
-                        actionLabel="Back to Provider"
-                        actionHref={`/provider/${providerId}`}
-                    />
-                </main>
-                <Footer />
-            </div>
-        )
+    // Apply sorting
+    switch (sortOption) {
+      case 'price-asc':
+        productsList.sort((a, b) => ((a.salePrice ?? a.price) || 0) - ((b.salePrice ?? b.price) || 0))
+        break
+      case 'price-desc':
+        productsList.sort((a, b) => ((b.salePrice ?? b.price) || 0) - ((a.salePrice ?? a.price) || 0))
+        break
+      case 'rating':
+        productsList.sort((a, b) => parseFloat(b.rate || '0') - parseFloat(a.rate || '0'))
+        break
+      case 'name':
+        productsList.sort((a, b) => (a.nameEn || a.nameAr || '').localeCompare(b.nameEn || b.nameAr || ''))
+        break
+      default:
+        // Keep original order
+        break
     }
 
+    return productsList
+  }, [products, searchQuery, selectedCategory, selectedBrand, sortOption])
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, selectedCategory, selectedBrand, sortOption])
+
+  // Paginate products
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * PAGE_SIZE
+    const endIndex = startIndex + PAGE_SIZE
+    return filteredAndSortedProducts.slice(startIndex, endIndex)
+  }, [filteredAndSortedProducts, currentPage])
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / PAGE_SIZE)
+
+  // Error state
+  if (storeError) {
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50">
-            <Header />
-
-            <main className="flex-1">
-                {/* Top Bar Texts Section - Rotating Slider */}
-                {topBarTexts.length > 0 && (
-                    <div className="bg-gradient-to-r from-brand-500 to-purple-600 border-b border-gray-200 overflow-hidden w-full">
-                        <div className="relative h-8 flex items-center justify-center w-full">
-                            {/* Slider Container */}
-                            <div className="relative w-full h-full overflow-hidden">
-                                <div
-                                    className="flex transition-transform duration-500 ease-in-out h-full w-full"
-                                    style={{
-                                        transform: `translateX(-${topBarTextIndex * 100}%)`,
-                                    }}
-                                >
-                                    {topBarTexts.map((text, index) => (
-                                        <div
-                                            key={text.id}
-                                            className="min-w-full w-full flex items-center justify-center px-4"
-                                            style={{
-                                                color: text.textColor || '#FFFFFF',
-                                                backgroundColor: text.backgroundColor || 'transparent',
-                                            }}
-                                        >
-                                            <div
-                                                className="text-14 font-medium text-center whitespace-nowrap w-full"
-                                                style={{
-                                                    color: text.textColor || '#FFFFFF',
-                                                    fontSize: (text as any).fontSize || undefined,
-                                                    fontWeight: (text as any).fontWeight || ((text as any).isBold ? 'bold' : undefined),
-                                                    fontStyle: (text as any).isItalic ? 'italic' : undefined,
-                                                }}
-                                            >
-                                                {(text as any).icon && (
-                                                    <span className="mr-2">{(text as any).icon}</span>
-                                                )}
-                                                {(text as any).link ? (
-                                                    <a
-                                                        href={(text as any).link}
-                                                        target={(text as any).openInNewTab ? '_blank' : '_self'}
-                                                        rel={(text as any).openInNewTab ? 'noopener noreferrer' : undefined}
-                                                        className="hover:underline"
-                                                    >
-                                                        {text.text || text.textEn || text.textAr}
-                                                    </a>
-                                                ) : (
-                                                    text.text || text.textEn || text.textAr
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Slide Indicators */}
-                            {topBarTexts.length > 1 && (
-                                <div className="absolute right-4 flex items-center gap-1.5 z-10">
-                                    {topBarTexts.map((_, index) => (
-                                        <button
-                                            key={index}
-                                            onClick={() => setTopBarTextIndex(index)}
-                                            className={cn(
-                                                'w-1.5 h-1.5 rounded-full transition-all duration-300',
-                                                index === topBarTextIndex
-                                                    ? 'bg-white w-6'
-                                                    : 'bg-white/50 hover:bg-white/75'
-                                            )}
-                                            aria-label={`Go to announcement ${index + 1}`}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                {/* Store Banner Section */}
-                {storeData?.providerPublicBannerImageUrl && (
-                    <div className="relative h-48 md:h-64 lg:h-80 overflow-hidden bg-gradient-to-r from-brand-100 to-purple-100">
-                        <Image
-                            src={storeData.providerPublicBannerImageUrl}
-                            alt={storeData?.providerNameEn || storeData?.providerNameAr || 'Store Banner'}
-                            fill
-                            className="object-cover"
-                            sizes="100vw"
-                        />
-                        <div className="absolute inset-0 bg-black/20" />
-                        <div className="absolute inset-0 flex items-end">
-                            <div className="container-custom pb-6">
-                                <div className="flex items-center gap-3">
-                                    {storeData?.providerPublicLogoImageUrl && (
-                                        <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-4 border-white shadow-lg bg-white">
-                                            <Image
-                                                src={storeData.providerPublicLogoImageUrl}
-                                                alt={storeData?.providerNameEn || storeData?.providerNameAr || 'Logo'}
-                                                fill
-                                                className="object-cover"
-                                                sizes="80px"
-                                            />
-                                        </div>
-                                    )}
-                                    <div>
-                                        <h1 className="text-24 md:text-32 font-bold text-white mb-1 drop-shadow-lg">
-                                            {storeData?.providerNameEn || storeData?.providerNameAr || 'Provider Store'}
-                                        </h1>
-                                        {storeData?.providerRate && (
-                                            <div className="flex items-center gap-2">
-                                                <RatingDisplay
-                                                    rating={storeData.providerRate}
-                                                    size="sm"
-                                                    format="default"
-                                                    variant="compact"
-                                                    starColor="brand"
-                                                />
-                                                <span className="text-14 text-white/90">
-                                                    ({storeData.totalProducts || 0} products)
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Store Header */}
-                <div className="bg-white border-b border-gray-200 shadow-sm">
-                    <div className="container-custom py-4">
-                        {/* Breadcrumb */}
-                        <div className="flex items-center gap-2 text-14 text-gray-600 mb-3">
-                            <button onClick={() => router.push('/')} className="hover:text-brand-600 transition-colors">
-                                Home
-                            </button>
-                            <span>/</span>
-                            <button onClick={() => router.push('/providers')} className="hover:text-brand-600 transition-colors">
-                                Providers
-                            </button>
-                            <span>/</span>
-                            <button onClick={() => router.push(`/provider/${providerId}`)} className="hover:text-brand-600 transition-colors">
-                                {storeData?.providerNameEn || storeData?.providerNameAr || 'Provider'}
-                            </button>
-                            <span>/</span>
-                            <span className="text-gray-900 font-medium">Store</span>
-                        </div>
-
-                        {!storeData?.providerPublicBannerImageUrl && (
-                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                <div>
-                                    <h1 className="text-28 md:text-36 font-bold text-gray-900 mb-2">
-                                        {storeData?.providerNameEn || storeData?.providerNameAr || 'Provider Store'}
-                                    </h1>
-                                    <p className="text-16 text-gray-600 max-w-2xl">
-                                        {storeData?.providerDescriptionEn || storeData?.providerDescriptionAr || ''}
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Store Stats */}
-                        <div className="flex items-center gap-6 mt-4 pt-4 border-t border-gray-200">
-                            <div className="flex items-center gap-2">
-                                <Package className="h-5 w-5 text-brand-600" />
-                                <span className="text-14 font-semibold text-gray-900">{storeData?.totalProducts || 0}</span>
-                                <span className="text-14 text-gray-600">Products</span>
-                            </div>
-                            {(storeData?.totalProductsInStock || 0) > 0 && (
-                                <div className="flex items-center gap-2">
-                                    <div className="h-2 w-2 rounded-full bg-green-500" />
-                                    <span className="text-14 text-gray-600">{storeData?.totalProductsInStock || 0} In Stock</span>
-                                </div>
-                            )}
-                            {(storeData?.totalProductsOnSale || 0) > 0 && (
-                                <div className="flex items-center gap-2">
-                                    <Tag className="h-4 w-4 text-red-600" />
-                                    <span className="text-14 font-semibold text-red-600">{storeData?.totalProductsOnSale || 0} On Sale</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Statistics Section - E-commerce Style */}
-                {productsHomeData?.statistics && (
-                    <div className="bg-gradient-to-r from-brand-50 to-purple-50 border-b border-gray-200">
-                        <div className="container-custom py-6">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                {productsHomeData.statistics.customers && (
-                                    <div className="bg-white rounded-xl p-5 text-center shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                                        <div className="text-32 font-bold text-brand-600 mb-1">
-                                            {productsHomeData.statistics.customers}
-                                        </div>
-                                        <div className="text-14 text-gray-600 font-medium">Happy Customers</div>
-                                    </div>
-                                )}
-                                {productsHomeData.statistics.orders && (
-                                    <div className="bg-white rounded-xl p-5 text-center shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                                        <div className="text-32 font-bold text-brand-600 mb-1">
-                                            {productsHomeData.statistics.orders}
-                                        </div>
-                                        <div className="text-14 text-gray-600 font-medium">Total Orders</div>
-                                    </div>
-                                )}
-                                {productsHomeData.statistics.reviews && (
-                                    <div className="bg-white rounded-xl p-5 text-center shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                                        <div className="text-32 font-bold text-brand-600 mb-1">
-                                            {productsHomeData.statistics.reviews}
-                                        </div>
-                                        <div className="text-14 text-gray-600 font-medium">Customer Reviews</div>
-                                    </div>
-                                )}
-                                {productsHomeData.statistics.rating > 0 && (
-                                    <div className="bg-white rounded-xl p-5 text-center shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                                        <div className="flex items-center justify-center gap-1 mb-1">
-                                            <RatingDisplay
-                                                rating={productsHomeData.statistics.rating}
-                                                size="md"
-                                                format="value-only"
-                                                variant="compact"
-                                                valueClassName="text-28 font-bold text-brand-600"
-                                            />
-                                        </div>
-                                        <div className="text-14 text-gray-600 font-medium">Average Rating</div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Banners Section */}
-                {storeHomeExtracted.banners && storeHomeExtracted.banners.length > 0 && (
-                    <div className="container-custom py-6">
-                        <OfferBanner
-                            offers={storeHomeExtracted.banners}
-                            autoPlayInterval={5000}
-                        />
-                    </div>
-                )}
-
-                {/* Flash Sales Section - E-commerce Style */}
-                {Object.keys(flashSales).length > 0 && (
-                    <div className="bg-gradient-to-r from-red-500 via-orange-500 to-red-600 border-b border-gray-200">
-                        <div className="container-custom py-8">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2">
-                                    <TrendingUp className="h-6 w-6 text-white" />
-                                </div>
-                                <div>
-                                    <h2 className="text-24 font-bold text-white">Flash Sales</h2>
-                                    <p className="text-14 text-white/90">Limited time offers - Don't miss out!</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                {Object.entries(flashSales).slice(0, 4).map(([date, products]) => (
-                                    <div key={date} className="bg-white rounded-xl p-5 border border-white/20 shadow-lg hover:shadow-xl transition-shadow">
-                                        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-200">
-                                            <Calendar className="h-4 w-4 text-red-600" />
-                                            <span className="text-14 font-bold text-gray-900">
-                                                {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                            </span>
-                                        </div>
-                                        <div className="space-y-3">
-                                            {products.slice(0, 3).map(product => (
-                                                <div key={product.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                                                    <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-gray-200">
-                                                        {product.image ? (
-                                                            <Image
-                                                                src={product.image}
-                                                                alt={product.nameEn || product.nameAr || 'Product'}
-                                                                fill
-                                                                className="object-cover"
-                                                                sizes="48px"
-                                                            />
-                                                        ) : (
-                                                            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                                                                <Package className="h-5 w-5 text-gray-400" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-13 font-semibold text-gray-900 truncate mb-1">
-                                                            {product.nameEn || product.nameAr}
-                                                        </p>
-                                                        <PriceDisplay
-                                                            original={product.regularPrice || undefined}
-                                                            discounted={product.salePrice || product.price || 0}
-                                                            currency={DEFAULT_CURRENCY}
-                                                            size="xs"
-                                                            variant="compact"
-                                                            showOriginal={product.hasDiscount}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Main Content Area - E-commerce Layout */}
-                <div className="container-custom py-6">
-                    <div className="flex flex-col lg:flex-row gap-6">
-                        {/* Sidebar Filters - E-commerce Style */}
-                        <aside className={cn(
-                            "lg:w-64 flex-shrink-0",
-                            showFilters ? "block" : "hidden lg:block"
-                        )}>
-                            <div className="bg-white rounded-xl border border-gray-200 shadow-sm sticky top-20">
-                                {/* Filters Header */}
-                                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                                    <h2 className="text-18 font-bold text-gray-900 flex items-center gap-2">
-                                        <Filter className="h-5 w-5 text-brand-600" />
-                                        Filters
-                                    </h2>
-                                    {hasActiveFilters && (
-                                        <button
-                                            onClick={clearFilters}
-                                            className="text-14 text-red-600 hover:text-red-700 font-medium"
-                                        >
-                                            Clear All
-                                        </button>
-                                    )}
-                                </div>
-
-                                {/* Filter Content */}
-                                <div className="p-4 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide">
-                                    {/* Category Filter */}
-                                    {availableCategories.length > 0 && (
-                                        <div>
-                                            <label className="block text-14 font-semibold text-gray-900 mb-2">
-                                                <Package className="h-4 w-4 inline mr-1" />
-                                                Category
-                                            </label>
-                                            <Select
-                                                value={selectedCategory || ''}
-                                                onChange={e => setSelectedCategory(e.target.value ? parseInt(e.target.value) : null)}
-                                                size="md"
-                                                variant="default"
-                                            >
-                                                <option value="">All Categories</option>
-                                                {availableCategories.map(cat => {
-                                                    // Handle both CategoryResponse and ProviderCategoryResponse
-                                                    const name = 'nameEn' in cat ? (cat.nameEn || cat.nameAr) : ('customName' in cat ? cat.customName : null)
-                                                    return (
-                                                        <option key={cat.id} value={cat.id}>
-                                                            {name || `Category ${cat.id}`}
-                                                        </option>
-                                                    )
-                                                })}
-                                            </Select>
-                                        </div>
-                                    )}
-
-                                    {/* Brand Filter */}
-                                    {availableBrands.length > 0 && (
-                                        <div>
-                                            <label className="block text-14 font-semibold text-gray-900 mb-2">
-                                                <Award className="h-4 w-4 inline mr-1" />
-                                                Brand
-                                            </label>
-                                            <Select
-                                                value={selectedBrand || ''}
-                                                onChange={e => setSelectedBrand(e.target.value ? parseInt(e.target.value) : null)}
-                                                size="md"
-                                                variant="default"
-                                            >
-                                                <option value="">All Brands</option>
-                                                {availableBrands.map(brand => {
-                                                    // Handle both ProductBrandResponse and ProviderProductBrandResponse
-                                                    const name = 'nameEn' in brand ? (brand.nameEn || brand.nameAr) : ('customName' in brand ? brand.customName : null)
-                                                    return (
-                                                        <option key={brand.id} value={brand.id}>
-                                                            {name || `Brand ${brand.id}`}
-                                                        </option>
-                                                    )
-                                                })}
-                                            </Select>
-                                        </div>
-                                    )}
-
-                                    {/* Tag Filter */}
-                                    {availableTags.length > 0 && (
-                                        <div>
-                                            <label className="block text-14 font-semibold text-gray-900 mb-2">
-                                                <Tag className="h-4 w-4 inline mr-1" />
-                                                Tag
-                                            </label>
-                                            <Select
-                                                value={selectedTag || ''}
-                                                onChange={e => setSelectedTag(e.target.value || null)}
-                                                size="md"
-                                                variant="default"
-                                            >
-                                                <option value="">All Tags</option>
-                                                {availableTags.map(tag => (
-                                                    <option key={tag.id} value={tag.id.toString()}>
-                                                        {tag.nameEn || tag.nameAr || `Tag ${tag.id}`}
-                                                    </option>
-                                                ))}
-                                            </Select>
-                                        </div>
-                                    )}
-
-                                    {/* Attribute Filter */}
-                                    {availableAttributes.length > 0 && (
-                                        <div>
-                                            <label className="block text-14 font-semibold text-gray-900 mb-2">
-                                                <Filter className="h-4 w-4 inline mr-1" />
-                                                Attribute
-                                            </label>
-                                            <Select
-                                                value={selectedAttribute || ''}
-                                                onChange={e => setSelectedAttribute(e.target.value || null)}
-                                                size="md"
-                                                variant="default"
-                                            >
-                                                <option value="">All Attributes</option>
-                                                {availableAttributes.map(attr => (
-                                                    <option key={attr.id} value={attr.id.toString()}>
-                                                        {attr.nameEn || attr.nameAr || `Attribute ${attr.id}`}
-                                                    </option>
-                                                ))}
-                                            </Select>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </aside>
-
-                        {/* Main Content Area */}
-                        <div className="flex-1 min-w-0">
-                            {/* Search and Toolbar */}
-                            <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6 p-4">
-                                <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-                                    {/* Search Bar */}
-                                    <div className="flex-1 w-full relative">
-                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                                        <input
-                                            type="text"
-                                            placeholder="Search products..."
-                                            value={searchQuery}
-                                            onChange={e => setSearchQuery(e.target.value)}
-                                            className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-14"
-                                        />
-                                        {searchQuery && (
-                                            <button
-                                                onClick={() => setSearchQuery('')}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2"
-                                            >
-                                                <X className="h-4 w-4 text-gray-400 hover:text-gray-600" />
-                                            </button>
-                                        )}
-                                    </div>
-
-                                    {/* Toolbar */}
-                                    <div className="flex items-center gap-3">
-                                        {/* Sort */}
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-14 text-gray-600 whitespace-nowrap">Sort:</span>
-                                            <Select
-                                                value={sortOption}
-                                                onChange={e => setSortOption(e.target.value as SortOption)}
-                                                size="md"
-                                                variant="default"
-                                                className="min-w-[160px]"
-                                            >
-                                                <option value="default">Default</option>
-                                                <option value="price-asc">Price: Low to High</option>
-                                                <option value="price-desc">Price: High to Low</option>
-                                                <option value="rating">Rating</option>
-                                                <option value="name">Name</option>
-                                            </Select>
-                                        </div>
-
-                                        {/* View Toggle */}
-                                        <div className="flex items-center gap-1 border border-gray-300 rounded-lg p-1">
-                                            <button
-                                                onClick={() => setViewMode('grid')}
-                                                className={cn(
-                                                    "p-2 rounded transition-colors",
-                                                    viewMode === 'grid'
-                                                        ? "bg-brand-600 text-white"
-                                                        : "text-gray-600 hover:bg-gray-100"
-                                                )}
-                                            >
-                                                <Grid3x3 className="h-4 w-4" />
-                                            </button>
-                                            <button
-                                                onClick={() => setViewMode('list')}
-                                                className={cn(
-                                                    "p-2 rounded transition-colors",
-                                                    viewMode === 'list'
-                                                        ? "bg-brand-600 text-white"
-                                                        : "text-gray-600 hover:bg-gray-100"
-                                                )}
-                                            >
-                                                <List className="h-4 w-4" />
-                                            </button>
-                                        </div>
-
-                                        {/* Mobile Filter Toggle */}
-                                        <Button
-                                            variant={showFilters ? 'brand' : 'outline'}
-                                            size="sm"
-                                            onClick={() => setShowFilters(!showFilters)}
-                                            className="lg:hidden flex items-center gap-2"
-                                        >
-                                            <Filter className="h-4 w-4" />
-                                            Filters
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                {/* Results Count */}
-                                <div className="mt-4 pt-4 border-t border-gray-200 flex items-center justify-between">
-                                    <span className="text-14 text-gray-600">
-                                        Showing <span className="font-semibold text-gray-900">{filteredAndSortedProducts.length}</span> of{' '}
-                                        <span className="font-semibold text-gray-900">{storeData?.totalProducts || 0}</span> products
-                                    </span>
-                                    {hasActiveFilters && (
-                                        <button
-                                            onClick={clearFilters}
-                                            className="text-14 text-red-600 hover:text-red-700 font-medium flex items-center gap-1"
-                                        >
-                                            <X className="h-4 w-4" />
-                                            Clear Filters
-                                        </button>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Products Grid/List */}
-                            {filteredAndSortedProducts.length > 0 ? (
-                                viewMode === 'grid' ? (
-                                    <ProductGrid
-                                        products={filteredAndSortedProducts.map(p => {
-                                            const productId = p.productId?.toString() || p.id?.toString() || '0'
-                                            const title = p.nameEn || p.nameAr || p.name || 'Product'
-                                            const images = p.image ? [p.image] : []
-                                            const originalPrice = p.regularPrice || p.price || 0
-                                            const discountedPrice = p.salePrice || p.price || originalPrice
-                                            const tags = p.tags ? (typeof p.tags === 'string' ? p.tags.split(',').map(t => t.trim()) : []) : []
-
-                                            return {
-                                                id: productId,
-                                                title,
-                                                description: p.shortDescriptionEn || p.shortDescriptionAr || p.shortDescription || '',
-                                                images,
-                                                provider: {
-                                                    id: storeData?.providerId?.toString() || '0',
-                                                    name: storeData?.providerNameEn || storeData?.providerNameAr || 'Provider',
-                                                    verified: storeData?.providerIsVerified || false,
-                                                },
-                                                rating: {
-                                                    value: parseFloat(p.rate || '0'),
-                                                    count: p.ratingCount || 0,
-                                                },
-                                                price: {
-                                                    original: originalPrice,
-                                                    discounted: discountedPrice,
-                                                    currency: DEFAULT_CURRENCY,
-                                                },
-                                                category: {
-                                                    id: p.categoryId?.toString() || '',
-                                                    name: '',
-                                                    slug: '',
-                                                },
-                                                tags,
-                                                inStock: p.inStock ?? true,
-                                                stockQuantity: p.stockQuantity || undefined,
-                                                sku: p.sku || undefined,
-                                                showTopOfferBadge: p.hasDiscount || false,
-                                                isWishlisted: false,
-                                                isFavorite: false,
-                                            }
-                                        })}
-                                        columns={4}
-                                    />
-                                ) : (
-                                    <ProductList
-                                        products={filteredAndSortedProducts.map(p => {
-                                            const productId = p.productId?.toString() || p.id?.toString() || '0'
-                                            const title = p.nameEn || p.nameAr || p.name || 'Product'
-                                            const images = p.image ? [p.image] : []
-                                            const originalPrice = p.regularPrice || p.price || 0
-                                            const discountedPrice = p.salePrice || p.price || originalPrice
-                                            const tags = p.tags ? (typeof p.tags === 'string' ? p.tags.split(',').map(t => t.trim()) : []) : []
-
-                                            return {
-                                                id: productId,
-                                                title,
-                                                description: p.shortDescriptionEn || p.shortDescriptionAr || p.shortDescription || '',
-                                                images,
-                                                provider: {
-                                                    id: storeData?.providerId?.toString() || '0',
-                                                    name: storeData?.providerNameEn || storeData?.providerNameAr || 'Provider',
-                                                    verified: storeData?.providerIsVerified || false,
-                                                },
-                                                rating: {
-                                                    value: parseFloat(p.rate || '0'),
-                                                    count: p.ratingCount || 0,
-                                                },
-                                                price: {
-                                                    original: originalPrice,
-                                                    discounted: discountedPrice,
-                                                    currency: DEFAULT_CURRENCY,
-                                                },
-                                                category: {
-                                                    id: p.categoryId?.toString() || '',
-                                                    name: '',
-                                                    slug: '',
-                                                },
-                                                tags,
-                                                inStock: p.inStock ?? true,
-                                                stockQuantity: p.stockQuantity || undefined,
-                                                sku: p.sku || undefined,
-                                                showTopOfferBadge: p.hasDiscount || false,
-                                                isWishlisted: false,
-                                                isFavorite: false,
-                                            }
-                                        })}
-                                    />
-                                )
-                            ) : (
-                                <div className="bg-white border border-gray-200 rounded-xl p-12 text-center shadow-sm">
-                                    <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                                    <h3 className="text-20 font-semibold text-gray-900 mb-2">No products found</h3>
-                                    <p className="text-16 text-gray-600 mb-4">
-                                        {hasActiveFilters
-                                            ? 'Try adjusting your filters to see more products.'
-                                            : 'This store currently has no products available.'}
-                                    </p>
-                                    {hasActiveFilters && (
-                                        <Button variant="outline" onClick={clearFilters}>
-                                            Clear Filters
-                                        </Button>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Testimonials Section */}
-                {storeHomeExtracted.testimonials && storeHomeExtracted.testimonials.length > 0 && (
-                    <div className="py-12 md:py-16 bg-white">
-                        <TestimonialsSection
-                            title="Customer Reviews"
-                            testimonials={storeHomeExtracted.testimonials.map((testimonial) => ({
-                                rating: testimonial.rating || 5,
-                                title: '',
-                                comment: testimonial.quote || '',
-                                reviewerName: testimonial.authorName || 'Anonymous',
-                                reviewerLocation: '',
-                                reviewerImage: testimonial.authorImage || null,
-                            }))}
-                        />
-                    </div>
-                )}
-
-                {/* FAQs Section */}
-                {storeHomeExtracted.faqs && storeHomeExtracted.faqs.length > 0 && (
-                    <section className="bg-gray-50 py-12 md:py-16">
-                        <div className="container-custom">
-                            <h2 className="text-28 md:text-36 font-bold text-gray-900 mb-8 text-center">
-                                Frequently Asked Questions
-                            </h2>
-                            <div className="max-w-3xl mx-auto">
-                                <Accordion
-                                    items={storeHomeExtracted.faqs.map((faq) => ({
-                                        question: faq.question || faq.questionEn || faq.questionAr || '',
-                                        answer: faq.answer || faq.answerEn || faq.answerAr || '',
-                                        defaultOpen: false,
-                                        className: 'rounded-xl',
-                                    }))}
-                                    className="space-y-3"
-                                />
-                            </div>
-                        </div>
-                    </section>
-                )}
-            </main>
-
-            <Footer />
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container-custom py-12">
+          <ErrorDisplay
+            title="Failed to load store"
+            message={storeError.message || 'An error occurred while loading the store.'}
+            onAction={() => window.location.reload()}
+            actionLabel="Retry"
+          />
         </div>
+        <Footer />
+      </div>
     )
-}
+  }
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <LoadingSpinner size="lg" text="Loading store..." fullScreen={true} />
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (!storeData) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="container-custom py-12">
+          <EmptyState
+            title="Store not found"
+            description="The store you're looking for doesn't exist or has been removed."
+          />
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  const activeFiltersCount = (selectedCategory ? 1 : 0) + (selectedBrand ? 1 : 0)
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+
+      <main>
+        {/* Hero Section */}
+        <div className="relative bg-brand-600 text-white overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                backgroundSize: '60px 60px'
+              }}
+            />
+          </div>
+
+          <div className="container-custom py-12 md:py-16 relative z-10">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+              {/* Provider Logo */}
+              {storeData?.providerPublicLogoImageUrl ? (
+                <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-white/30 shadow-2xl bg-white flex-shrink-0">
+                  <Image
+                    src={storeData.providerPublicLogoImageUrl}
+                    alt={storeData?.providerNameEn || storeData?.providerNameAr || 'Provider Logo'}
+                    fill
+                    className="object-cover"
+                    sizes="128px"
+                  />
+                </div>
+              ) : (
+                <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-white/30 shadow-2xl bg-white/20 backdrop-blur-sm flex-shrink-0 flex items-center justify-center">
+                  <Store className="h-12 w-12 md:h-16 md:w-16 text-white/80" />
+                </div>
+              )}
+
+              {/* Provider Info */}
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <Typography variant="h2" className="text-white font-bold">
+                    {storeData?.providerNameEn || storeData?.providerNameAr || 'Provider Store'}
+                  </Typography>
+                  {storeData?.providerIsVerified && (
+                    <Badge variant="default" className="bg-white/20 text-white border-white/30">
+                      <CheckCircle2 className="h-4 w-4 mr-1" />
+                      Verified
+                    </Badge>
+                  )}
+                </div>
+
+                {storeData?.providerDescriptionEn || storeData?.providerDescriptionAr ? (
+                  <Typography variant="body" className="text-white/95 mb-6 max-w-2xl leading-relaxed">
+                    {storeData?.providerDescriptionEn || storeData?.providerDescriptionAr}
+                  </Typography>
+                ) : null}
+
+                {/* Stats */}
+                <div className="flex flex-wrap items-center gap-6">
+                  {storeData?.providerRate && storeData.providerRate > 0 && (
+                    <CardWrapper padding="sm" className="bg-white/10 backdrop-blur-sm border-white/20">
+                      <div className="flex items-center gap-2">
+                        <RatingDisplay
+                          rating={storeData.providerRate}
+                          size="sm"
+                          format="stars-only"
+                          variant="compact"
+                          starColor="brand"
+                        />
+                      </div>
+                    </CardWrapper>
+                  )}
+                  <CardWrapper padding="sm" className="bg-white/10 backdrop-blur-sm border-white/20">
+                    <div className="flex items-center gap-2">
+                      <Package className="h-5 w-5" />
+                      <Typography variant="bodySmall" className="text-white font-semibold">
+                        {storeData?.totalProducts || 0} Products
+                      </Typography>
+                    </div>
+                  </CardWrapper>
+                  <CardWrapper padding="sm" className="bg-white/10 backdrop-blur-sm border-white/20">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 rounded-full bg-green-300 animate-pulse" />
+                      <Typography variant="bodySmall" className="text-white font-semibold">
+                        {storeData?.totalProductsInStock || 0} In Stock
+                      </Typography>
+                    </div>
+                  </CardWrapper>
+                  <CardWrapper padding="sm" className="bg-white/10 backdrop-blur-sm border-white/20">
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-5 w-5" />
+                      <Typography variant="bodySmall" className="text-white font-semibold">
+                        {storeData?.totalProductsOnSale || 0} On Sale
+                      </Typography>
+                    </div>
+                  </CardWrapper>
+                  {storeData?.totalViews && storeData.totalViews > 0 && (
+                    <CardWrapper padding="sm" className="bg-white/10 backdrop-blur-sm border-white/20">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5" />
+                        <Typography variant="bodySmall" className="text-white font-semibold">
+                          {storeData.totalViews} Views
+                        </Typography>
+                      </div>
+                    </CardWrapper>
+                  )}
+                  <CardWrapper padding="sm" className="bg-white/10 backdrop-blur-sm border-white/20">
+                    <div className="flex items-center gap-2">
+                      <UserPlus className="h-5 w-5" />
+                      <Typography variant="bodySmall" className="text-white font-semibold">
+                        {storeData?.totalFollowers || 0} Followers
+                      </Typography>
+                    </div>
+                  </CardWrapper>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Banners Section */}
+        {storeHomeExtracted.banners && storeHomeExtracted.banners.length > 0 && (
+          <div className="bg-white border-b border-gray-200">
+            <div className="container-custom py-6">
+              <OfferBanner
+                offers={storeHomeExtracted.banners}
+                autoPlayInterval={5000}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Flash Sale Section */}
+        {flashSaleProducts.length > 0 && (
+          <>
+            {/* Flash Sale Header with Pattern Background */}
+            <div className="relative bg-brand-600 border-b border-gray-200 overflow-hidden">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-5">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+                    backgroundSize: '60px 60px'
+                  }}
+                />
+              </div>
+
+              <div className="container-custom py-8 relative z-10">
+                <div className="flex items-center gap-3">
+                  <div className="bg-white/20 backdrop-blur-sm rounded-lg p-2">
+                    <TrendingUp className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <Typography variant="h4" className="text-white font-bold">
+                      Flash Sale
+                    </Typography>
+                    <Typography variant="bodySmall" className="text-white/90">
+                      Limited time offers - Don&apos;t miss out!
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Flash Sale Products - Outside Pattern Background */}
+            <div className="bg-white border-b border-gray-200">
+              <div className="container-custom py-8">
+                <ProductGrid
+                  products={flashSaleProducts.map((p, index) => {
+                    const productId = p.productId || 0
+                    const nameEn = p.nameEn || ''
+                    const nameAr = p.nameAr || ''
+                    const rate = p.rate?.toString() || '0'
+                    const price = p.price || 0
+                    const salePrice = p.salePrice || null
+                    const regularPrice = p.hasDiscount && p.price ? p.price : null
+                    const image = p.image || p.url || ''
+                    const tags = p.tagsString || ''
+                    const categoryId = p.categoryId || 0
+                    const inStock = p.inStock ?? true
+                    const providerIdValue = storeData?.providerId || providerId
+
+                    return {
+                      id: productId > 0 ? `${providerIdValue}-${productId}` : `flash-sale-${providerIdValue}-${index}`,
+                      title: nameEn || nameAr || 'Product',
+                      description: p.shortDescriptionEn || p.shortDescriptionAr || '',
+                      provider: {
+                        id: storeData?.providerId?.toString() || providerId,
+                        name: storeData?.providerNameEn || storeData?.providerNameAr || 'Provider',
+                        verified: storeData?.providerIsVerified || false,
+                      },
+                      price: {
+                        original: regularPrice || price,
+                        discounted: salePrice || price,
+                        currency: 'EGP',
+                      },
+                      rating: {
+                        value: parseFloat(rate || '0'),
+                        count: 0,
+                      },
+                      category: {
+                        id: categoryId.toString(),
+                        name: '',
+                        slug: '',
+                      },
+                      images: image ? [image] : [],
+                      tags: tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+                      inStock: inStock ?? true,
+                      isWishlisted: false,
+                      showTopOfferBadge: p.hasDiscount || false,
+                    }
+                  })}
+                  columns={4}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Memberships Section */}
+        {activeMemberships.length > 0 && (
+          <div className="bg-white border-b border-gray-200">
+            <div className="container-custom py-12">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="bg-brand-100 rounded-lg p-2">
+                  <Crown className="h-6 w-6 text-brand-600" />
+                </div>
+                <div>
+                  <Typography variant="h4" className="font-bold">
+                    Membership Plans
+                  </Typography>
+                  <Typography variant="bodySmall" textColor="secondary">
+                    Choose the perfect plan for your needs
+                  </Typography>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {activeMemberships.map((membership) => (
+                  <CardWrapper
+                    key={membership.id}
+                    padding="lg"
+                    className="hover:shadow-xl transition-all border-2 hover:border-brand-300 group"
+                  >
+                    <div className="flex flex-col h-full">
+                      {/* Header */}
+                      <div className="mb-4">
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <Typography variant="h5" className="flex-1 font-bold">
+                            {membership.name}
+                          </Typography>
+                          {membership.discountPercent && (
+                            <Badge
+                              variant="default"
+                              className="bg-red-500 text-white border-0 flex-shrink-0"
+                            >
+                              <Percent className="h-3 w-3 mr-1" />
+                              {membership.discountPercent}% OFF
+                            </Badge>
+                          )}
+                        </div>
+                        {membership.description && (
+                          <Typography variant="bodySmall" textColor="secondary" className="line-clamp-2">
+                            {membership.description}
+                          </Typography>
+                        )}
+                      </div>
+
+                      {/* Features */}
+                      <div className="flex-1 space-y-3 mb-6">
+                        {membership.discountPercent && (
+                          <div className="flex items-center gap-3">
+                            <div className="bg-brand-100 rounded-lg p-2">
+                              <Percent className="h-4 w-4 text-brand-600 flex-shrink-0" />
+                            </div>
+                            <Typography variant="bodySmall" className="flex-1">
+                              {membership.discountPercent}% discount on all services
+                            </Typography>
+                          </div>
+                        )}
+                        {membership.includedSessions && (
+                          <div className="flex items-center gap-3">
+                            <div className="bg-brand-100 rounded-lg p-2">
+                              <Gift className="h-4 w-4 text-brand-600 flex-shrink-0" />
+                            </div>
+                            <Typography variant="bodySmall" className="flex-1">
+                              {membership.includedSessions} included sessions
+                            </Typography>
+                          </div>
+                        )}
+                        {membership.creditAmount && (
+                          <div className="flex items-center gap-3">
+                            <div className="bg-brand-100 rounded-lg p-2">
+                              <CreditCard className="h-4 w-4 text-brand-600 flex-shrink-0" />
+                            </div>
+                            <Typography variant="bodySmall" className="flex-1">
+                              {membership.creditAmount.toLocaleString()} EGP credit
+                            </Typography>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-3">
+                          <div className="bg-brand-100 rounded-lg p-2">
+                            <Calendar className="h-4 w-4 text-brand-600 flex-shrink-0" />
+                          </div>
+                          <Typography variant="bodySmall" className="flex-1">
+                            Valid for {membership.durationDays} days
+                          </Typography>
+                        </div>
+                      </div>
+
+                      {/* Price and Button */}
+                      <div className="pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <Typography variant="h4" className="text-brand-600 font-bold">
+                              {membership.price.toLocaleString()} EGP
+                            </Typography>
+                            {membership.durationDays && (
+                              <Typography variant="bodyTiny" textColor="secondary">
+                                {Math.round(membership.price / membership.durationDays).toLocaleString()} EGP/day
+                              </Typography>
+                            )}
+                          </div>
+                        </div>
+                        <Button
+                          variant="brand"
+                          size="md"
+                          className="w-full !text-white font-semibold"
+                          onClick={() => {
+                            router.push(`/provider/${providerId}/membership/${membership.id}`)
+                          }}
+                        >
+                          Get Membership
+                        </Button>
+                      </div>
+                    </div>
+                  </CardWrapper>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Search and Filters Bar */}
+        <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 shadow-sm">
+          <div className="container-custom py-4">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+              {/* Search */}
+              <div className="flex-1 min-w-0">
+                <SearchInput
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search products..."
+                  className="w-full"
+                />
+              </div>
+
+              {/* View Mode Toggle */}
+              <div className="flex items-center border border-gray-200 rounded-lg p-1 bg-gray-50">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setViewMode('grid')}
+                  className={cn(
+                    'h-9 w-9 rounded-md transition-all',
+                    viewMode === 'grid'
+                      ? 'bg-brand-500 text-white shadow-sm'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  )}
+                  aria-label="Grid view"
+                >
+                  <Grid3x3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setViewMode('list')}
+                  className={cn(
+                    'h-9 w-9 rounded-md transition-all',
+                    viewMode === 'list'
+                      ? 'bg-brand-500 text-white shadow-sm'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  )}
+                  aria-label="List view"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Sort */}
+              <SelectPopover
+                value={sortOption}
+                onChange={(value) => setSortOption(value as SortOption)}
+                options={[
+                  { value: 'default', label: 'Default' },
+                  { value: 'price-asc', label: 'Price: Low to High' },
+                  { value: 'price-desc', label: 'Price: High to Low' },
+                  { value: 'rating', label: 'Highest Rated' },
+                  { value: 'name', label: 'Name A-Z' },
+                ]}
+                placeholder="Sort by"
+                className="w-full lg:w-48"
+              />
+
+              {/* Filters Toggle */}
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+                className={cn(
+                  'relative whitespace-nowrap',
+                  showFilters && 'bg-brand-50 border-brand-300 text-brand-600'
+                )}
+              >
+                <SlidersHorizontal className="h-4 w-4 mr-2" />
+                Filters
+                {activeFiltersCount > 0 && (
+                  <Badge
+                    variant="default"
+                    size="sm"
+                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-10 bg-brand-500 text-white border-0"
+                  >
+                    {activeFiltersCount}
+                  </Badge>
+                )}
+              </Button>
+            </div>
+
+            {/* Filters Panel */}
+            {showFilters && (
+              <CardWrapper padding="md" className="mt-4 animate-in slide-in-from-top-2 duration-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Category Filter */}
+                  {availableCategories.length > 0 && (
+                    <div>
+                      <Typography variant="bodySmall" className="font-semibold mb-2 text-gray-900">
+                        Category
+                      </Typography>
+                      <SelectPopover
+                        value={selectedCategory?.toString() || ''}
+                        onChange={(value) =>
+                          setSelectedCategory(value ? parseInt(value, 10) : null)
+                        }
+                        options={[
+                          { value: '', label: 'All Categories' },
+                          ...availableCategories.map((cat) => {
+                            // Handle both CategoryResponse and ProviderCategoryResponse
+                            const name = 'nameEn' in cat
+                              ? (cat as CategoryResponse).nameEn || (cat as CategoryResponse).nameAr
+                              : (cat as ProviderCategoryResponse).customName
+                            return {
+                              value: cat.id.toString(),
+                              label: name || 'Category',
+                            }
+                          }),
+                        ]}
+                        placeholder="Select category"
+                      />
+                    </div>
+                  )}
+
+                  {/* Brand Filter */}
+                  {availableBrands.length > 0 && (
+                    <div>
+                      <Typography variant="bodySmall" className="font-semibold mb-2 text-gray-900">
+                        Brand
+                      </Typography>
+                      <SelectPopover
+                        value={selectedBrand?.toString() || ''}
+                        onChange={(value) =>
+                          setSelectedBrand(value ? parseInt(value, 10) : null)
+                        }
+                        options={[
+                          { value: '', label: 'All Brands' },
+                          ...availableBrands.map((brand) => {
+                            // Handle both ProductBrandResponse and ProviderProductBrandResponse
+                            const name = 'nameEn' in brand
+                              ? (brand as ProductBrandResponse).nameEn || (brand as ProductBrandResponse).nameAr
+                              : (brand as ProviderProductBrandResponse).customName || (brand as ProviderProductBrandResponse).providerCreatedName
+                            return {
+                              value: brand.id.toString(),
+                              label: name || 'Brand',
+                            }
+                          }),
+                        ]}
+                        placeholder="Select brand"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Active Filters Display */}
+                {(selectedCategory || selectedBrand) && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-center gap-2 flex-wrap mb-3">
+                      <Typography variant="bodySmall" className="font-semibold text-gray-700">
+                        Active filters:
+                      </Typography>
+                      {selectedCategory && (
+                        <Badge variant="secondary" className="gap-1">
+                          {(() => {
+                            const cat = availableCategories.find(c => c.id === selectedCategory)
+                            if (!cat) return 'Category'
+                            // Handle both CategoryResponse and ProviderCategoryResponse
+                            if ('nameEn' in cat) {
+                              return (cat as CategoryResponse).nameEn || (cat as CategoryResponse).nameAr || 'Category'
+                            }
+                            return (cat as ProviderCategoryResponse).customName || 'Category'
+                          })()}
+                          <button
+                            onClick={() => setSelectedCategory(null)}
+                            className="ml-1 hover:text-red-500"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      )}
+                      {selectedBrand && (
+                        <Badge variant="secondary" className="gap-1">
+                          {(() => {
+                            const brand = availableBrands.find(b => b.id === selectedBrand)
+                            if (!brand) return 'Brand'
+                            // Handle both ProductBrandResponse and ProviderProductBrandResponse
+                            if ('nameEn' in brand) {
+                              return (brand as ProductBrandResponse).nameEn || (brand as ProductBrandResponse).nameAr || 'Brand'
+                            }
+                            return (brand as ProviderProductBrandResponse).customName || (brand as ProviderProductBrandResponse).providerCreatedName || 'Brand'
+                          })()}
+                          <button
+                            onClick={() => setSelectedBrand(null)}
+                            className="ml-1 hover:text-red-500"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedCategory(null)
+                        setSelectedBrand(null)
+                      }}
+                      className="text-brand-600 hover:text-brand-700"
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Clear all filters
+                    </Button>
+                  </div>
+                )}
+              </CardWrapper>
+            )}
+          </div>
+        </div>
+
+        {/* Products Section */}
+        <div className="container-custom py-8">
+          {/* Results Header */}
+          <div className="flex items-center justify-between mb-6">
+            <Typography variant="h4">
+              {filteredAndSortedProducts.length} {filteredAndSortedProducts.length === 1 ? 'Product' : 'Products'}
+            </Typography>
+          </div>
+
+          {/* Products Grid/List */}
+          {filteredAndSortedProducts.length > 0 ? (
+            viewMode === 'grid' ? (
+              <ProductGrid
+                products={paginatedProducts.map((p, index) => ({
+                  id: p.id > 0 ? `${p.providerId || storeData?.providerId || providerId}-${p.id}` : `product-${p.providerId || storeData?.providerId || providerId}-${index}`,
+                  title: p.nameEn || p.nameAr || 'Product',
+                  description: p.shortDescription || p.bio || '',
+                  provider: {
+                    id: (p.providerId ?? storeData?.providerId ?? 0).toString(),
+                    name: storeData?.providerNameEn || storeData?.providerNameAr || 'Provider',
+                    verified: storeData?.providerIsVerified || false,
+                  },
+                  price: {
+                    original: p.regularPrice ?? p.price ?? 0,
+                    discounted: p.salePrice ?? p.price ?? 0,
+                    currency: 'EGP',
+                  },
+                  rating: {
+                    value: parseFloat(p.rate || '0'),
+                    count: p.ratingCount || 0,
+                  },
+                  category: {
+                    id: p.categoryId.toString(),
+                    name: '',
+                    slug: '',
+                  },
+                  images: p.image ? [p.image] : [],
+                  tags: p.tags ? p.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+                  inStock: p.inStock ?? true,
+                  stockQuantity: p.stockQuantity || undefined,
+                  isWishlisted: false,
+                  showTopOfferBadge: p.hasDiscount || false,
+                }))}
+                columns={4}
+              />
+            ) : (
+              <ProductList
+                products={paginatedProducts.map((p, index) => ({
+                  id: p.id > 0 ? `${p.providerId || storeData?.providerId || providerId}-${p.id}` : `product-${p.providerId || storeData?.providerId || providerId}-${index}`,
+                  title: p.nameEn || p.nameAr || 'Product',
+                  description: p.shortDescription || p.bio || '',
+                  provider: {
+                    id: (p.providerId ?? storeData?.providerId ?? 0).toString(),
+                    name: storeData?.providerNameEn || storeData?.providerNameAr || 'Provider',
+                    verified: storeData?.providerIsVerified || false,
+                  },
+                  price: {
+                    original: p.regularPrice ?? p.price ?? 0,
+                    discounted: p.salePrice ?? p.price ?? 0,
+                    currency: 'EGP',
+                  },
+                  rating: {
+                    value: parseFloat(p.rate || '0'),
+                    count: p.ratingCount || 0,
+                  },
+                  category: {
+                    id: p.categoryId.toString(),
+                    name: '',
+                    slug: '',
+                  },
+                  images: p.image ? [p.image] : [],
+                  tags: p.tags ? p.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+                  inStock: p.inStock ?? true,
+                  stockQuantity: p.stockQuantity || undefined,
+                  isWishlisted: false,
+                  showTopOfferBadge: p.hasDiscount || false,
+                }))}
+              />
+            )
+          ) : (
+            <EmptyState
+              title="No products found"
+              description={
+                searchQuery || selectedCategory || selectedBrand
+                  ? 'Try adjusting your filters or search query.'
+                  : 'This store doesn\'t have any products yet.'
+              }
+            />
+          )}
+
+          {/* Pagination */}
+          {filteredAndSortedProducts.length > 0 && totalPages > 1 && (
+            <div className="mt-8 flex justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Gift Cards Section */}
+        {storeData?.giftCards && storeData.giftCards.length > 0 ? (
+          <div className="container-custom py-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-brand-100 rounded-lg p-2">
+                <Gift className="h-6 w-6 text-brand-600" />
+              </div>
+              <div>
+                <Typography variant="h4" className="font-bold">
+                  Gift Cards
+                </Typography>
+                <Typography variant="bodySmall" textColor="secondary">
+                  Perfect gifts for your loved ones
+                </Typography>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {storeData.giftCards.map((giftCard) => (
+                <CardWrapper
+                  key={giftCard.id}
+                  padding="lg"
+                  className="hover:shadow-xl transition-all border-2 hover:border-brand-300 group relative overflow-hidden"
+                >
+                  {giftCard.backgroundImageUrl && (
+                    <div className="absolute inset-0 opacity-10">
+                      <Image
+                        src={giftCard.backgroundImageUrl}
+                        alt={giftCard.name || 'Gift Card'}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
+                  )}
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-4">
+                      <Typography variant="h5" className="font-bold flex-1">
+                        {giftCard.name || 'Gift Card'}
+                      </Typography>
+                      {giftCard.isActive && (
+                        <Badge variant="success" size="sm">
+                          Active
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-brand-600">
+                      <Gift className="h-5 w-5" />
+                      <Typography variant="bodySmall" className="font-medium">
+                        Available Gift Card Template
+                      </Typography>
+                    </div>
+                  </div>
+                </CardWrapper>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="container-custom py-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-brand-100 rounded-lg p-2">
+                <Gift className="h-6 w-6 text-brand-600" />
+              </div>
+              <div>
+                <Typography variant="h4" className="font-bold">
+                  Gift Cards
+                </Typography>
+              </div>
+            </div>
+            <EmptyState
+              title="No gift cards available"
+              description="This store doesn't have any gift cards available at the moment."
+            />
+          </div>
+        )}
+
+        {/* Links Section */}
+        {storeData?.providerLinks && storeData.providerLinks.length > 0 ? (
+          <div className="container-custom py-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-brand-100 rounded-lg p-2">
+                <Globe className="h-6 w-6 text-brand-600" />
+              </div>
+              <div>
+                <Typography variant="h4" className="font-bold">
+                  Links
+                </Typography>
+                <Typography variant="bodySmall" textColor="secondary">
+                  Connect with us on social media and other platforms
+                </Typography>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {storeData.providerLinks
+                .filter(link => link.isPublic && link.url)
+                .map((link) => (
+                  <CardWrapper
+                    key={link.id}
+                    padding="md"
+                    className="hover:shadow-lg transition-all border-2 hover:border-brand-300 group"
+                  >
+                    <a
+                      href={link.url || '#'}
+                      target={link.openInNewTab ? '_blank' : '_self'}
+                      rel={link.isExternal ? 'noopener noreferrer' : undefined}
+                      className="flex items-center gap-4"
+                    >
+                      <div className="bg-brand-100 rounded-lg p-3 flex-shrink-0">
+                        <Globe className="h-5 w-5 text-brand-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <Typography variant="body" className="font-semibold mb-1 group-hover:text-brand-600 transition-colors">
+                          {link.displayName || link.nameEn || link.nameAr || 'Link'}
+                        </Typography>
+                        {link.displayDescription && (
+                          <Typography variant="bodySmall" textColor="secondary" className="line-clamp-1">
+                            {link.displayDescription}
+                          </Typography>
+                        )}
+                        {link.url && (
+                          <Typography variant="bodyTiny" textColor="secondary" className="mt-1 flex items-center gap-1">
+                            {link.url}
+                            {link.isExternal && <ExternalLink className="h-3 w-3" />}
+                          </Typography>
+                        )}
+                      </div>
+                    </a>
+                  </CardWrapper>
+                ))}
+            </div>
+          </div>
+        ) : (
+          <div className="container-custom py-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-brand-100 rounded-lg p-2">
+                <Globe className="h-6 w-6 text-brand-600" />
+              </div>
+              <div>
+                <Typography variant="h4" className="font-bold">
+                  Links
+                </Typography>
+              </div>
+            </div>
+            <EmptyState
+              title="No links available"
+              description="This store doesn't have any public links available."
+            />
+          </div>
+        )}
+
+        {/* Media Section */}
+        {storeData?.providerMedia && storeData.providerMedia.length > 0 ? (
+          <div className="container-custom py-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-brand-100 rounded-lg p-2">
+                <ImageIcon className="h-6 w-6 text-brand-600" />
+              </div>
+              <div>
+                <Typography variant="h4" className="font-bold">
+                  Media Gallery
+                </Typography>
+                <Typography variant="bodySmall" textColor="secondary">
+                  Photos and videos from our store
+                </Typography>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {storeData.providerMedia
+                .filter(media => media.isPublic)
+                .map((media) => {
+                  const imageUrl = media.url || media.thumbnailUrl || media.previewUrl
+                  const isVideo = media.mediaType === 2 // Assuming 2 is video type
+                  return (
+                    <CardWrapper
+                      key={media.id}
+                      className="relative aspect-square overflow-hidden group cursor-pointer hover:shadow-lg transition-all"
+                    >
+                      {imageUrl ? (
+                        <>
+                          <Image
+                            src={imageUrl}
+                            alt={media.alt || media.nameEn || media.nameAr || 'Media'}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                          />
+                          {isVideo && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                              <Video className="h-8 w-8 text-white" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                          {isVideo ? (
+                            <Video className="h-8 w-8 text-gray-400" />
+                          ) : (
+                            <ImageIcon className="h-8 w-8 text-gray-400" />
+                          )}
+                        </div>
+                      )}
+                    </CardWrapper>
+                  )
+                })}
+            </div>
+          </div>
+        ) : (
+          <div className="container-custom py-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-brand-100 rounded-lg p-2">
+                <ImageIcon className="h-6 w-6 text-brand-600" />
+              </div>
+              <div>
+                <Typography variant="h4" className="font-bold">
+                  Media Gallery
+                </Typography>
+              </div>
+            </div>
+            <EmptyState
+              title="No media available"
+              description="This store doesn't have any media available at the moment."
+            />
+          </div>
+        )}
+      </main>
+
+      <Footer />
+    </div>
+  )
+}

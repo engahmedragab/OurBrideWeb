@@ -2,6 +2,7 @@ import { Card, type ServiceCardData } from './Card'
 import { useServiceCardHandlers } from '@/hooks/services'
 import type { Service } from '@/types/service'
 import { LoadingSpinner } from './LoadingSpinner'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ServiceGridProps {
   services: Service[]
@@ -22,6 +23,8 @@ export const ServiceGrid = ({
   className,
   isLoading = false,
 }: ServiceGridProps) => {
+  const tS = useI18nTranslations('services.serviceCategories')
+  const tC = useI18nTranslations('common')
   const gridCols = {
     2: 'grid-cols-1 md:grid-cols-2',
     3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
@@ -31,7 +34,9 @@ export const ServiceGrid = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Loading services..." />
+
+        <LoadingSpinner size="lg" text={tS('loading')} />
+
       </div>
     )
   }
@@ -39,7 +44,7 @@ export const ServiceGrid = ({
   if (services.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-16 text-gray-500">No data available</p>
+        <p className="text-16 text-gray-500">{tC('noDataAvailable')}</p>
       </div>
     )
   }

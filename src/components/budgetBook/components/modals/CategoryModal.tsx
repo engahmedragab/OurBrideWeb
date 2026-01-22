@@ -97,11 +97,10 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
     formState: { errors, isValid, isSubmitting },
     reset,
     setValue,
-    watch,
     control,
   } = useForm<FormValues>({
     // schema dynamic حسب edit/create
-    resolver: zodResolver(schema as any) as any,
+    resolver: zodResolver(schema) as never,
     mode: 'onChange',
     defaultValues: {
       name: '',
@@ -140,11 +139,11 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
 
       reset({
         name: editingCategory.name || '',
-        nameAr: (editingCategory as any).nameAr || editingCategory.name || '',
-        nameEn: (editingCategory as any).nameEn || editingCategory.name || '',
+        nameAr: editingCategory.nameAr || editingCategory.name || '',
+        nameEn: editingCategory.nameEn || editingCategory.name || '',
         description: editingCategory.description || '',
-        descriptionAr: (editingCategory as any).descriptionAr || editingCategory.description || '',
-        descriptionEn: (editingCategory as any).descriptionEn || editingCategory.description || '',
+        descriptionAr: editingCategory.descriptionAr || editingCategory.description || '',
+        descriptionEn: editingCategory.descriptionEn || editingCategory.description || '',
         estimated: est,
         iconName: editingCategory.iconName || null,
         colorName: editingCategory.colorName || null,
@@ -228,7 +227,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
 
       const allowNull = field === 'final'
       const num = toNumberOrNull(cleaned, allowNull)
-      setValue(field, num as any, { shouldValidate: true })
+      setValue(field, num as number | null, { shouldValidate: true })
     },
     [setValue]
   )
@@ -238,7 +237,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
       const cleaned = sanitizeNumberInput(raw)
       setLineCountInput(cleaned)
       const num = toNumberOrNull(cleaned, true)
-      setValue('count', num as any, { shouldValidate: true })
+      setValue('count', num as number | null, { shouldValidate: true })
     },
     [setValue]
   )
@@ -253,8 +252,8 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
           nameAr: d.nameAr || d.name,
           nameEn: d.nameEn || d.name,
           description: d.description || '',
-          descriptionAr: (d as any).descriptionAr || d.description || '',
-          descriptionEn: (d as any).descriptionEn || d.description || '',
+          descriptionAr: d.descriptionAr || d.description || '',
+          descriptionEn: d.descriptionEn || d.description || '',
           estimated: d.estimated,
           iconName: d.iconName ?? null,
           colorName: d.colorName ?? null,
@@ -337,7 +336,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                 {...register('name')}
                 placeholder="e.g. Family"
                 size="lg"
-                errorMessage={errors.name?.message as any}
+                errorMessage={errors.name?.message}
               />
             </div>
 
@@ -349,7 +348,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                 placeholder="Optional…"
                 size="lg"
                 rows={3}
-                errorMessage={errors.description?.message as any}
+                errorMessage={errors.description?.message}
               />
             </div>
 
@@ -384,7 +383,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                   onChange={value => {
                     const newColor = value || null
                     setColorName(newColor)
-                    setValue('colorName', newColor as any, { shouldValidate: true })
+                    setValue('colorName', newColor as string | null, { shouldValidate: true })
                   }}
                   options={colorOptions}
                   placeholder="Select color"
@@ -404,7 +403,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                   onChange={e => onCategoryEstimatedChange(e.target.value)}
                   placeholder="0"
                   size="lg"
-                  errorMessage={errors.estimated?.message as any}
+                  errorMessage={errors.estimated?.message}
                 />
               </div>
             )}
@@ -425,10 +424,10 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                 </label>
                 <Input
                   type="text"
-                  {...register('expense' as any)}
+                  {...register('expense')}
                   placeholder="e.g. Family invitation"
                   size="lg"
-                  errorMessage={errors.expense?.message as any}
+                  errorMessage={errors.expense?.message}
                 />
               </div>
 
@@ -445,7 +444,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     onChange={e => onLineMoneyChange('estimated', e.target.value)}
                     placeholder="0"
                     size="lg"
-                    errorMessage={errors.estimated?.message as any}
+                    errorMessage={errors.estimated?.message}
                   />
                 </div>
 
@@ -458,7 +457,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     onChange={e => onLineMoneyChange('paid', e.target.value)}
                     placeholder="0"
                     size="lg"
-                    errorMessage={errors.paid?.message as any}
+                    errorMessage={errors.paid?.message}
                   />
                 </div>
               </div>
@@ -473,7 +472,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     onChange={e => onLineMoneyChange('final', e.target.value)}
                     placeholder="0"
                     size="lg"
-                    errorMessage={errors.final?.message as any}
+                    errorMessage={errors.final?.message}
                   />
                 </div>
 
@@ -486,7 +485,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     onChange={e => onLineCountChange(e.target.value)}
                     placeholder="0"
                     size="lg"
-                    errorMessage={errors.count?.message as any}
+                    errorMessage={errors.count?.message}
                   />
                 </div>
               </div>
@@ -500,7 +499,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     size="lg"
                     onChange={e => {
                       const iso = dateToIsoOrNull(e.target.value)
-                      setValue('dueDate', iso as any, { shouldValidate: true })
+                      setValue('dueDate', iso as string | null, { shouldValidate: true })
                     }}
                   />
                 </div>
@@ -509,10 +508,10 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                   <label className="block text-13 font-semibold text-gray-900">Payer</label>
                   <Input
                     type="text"
-                    {...register('payer' as any)}
+                    {...register('payer')}
                     placeholder="Bride / Groom / ..."
                     size="lg"
-                    errorMessage={errors.payer?.message as any}
+                    errorMessage={errors.payer?.message}
                   />
                 </div>
               </div>
@@ -521,11 +520,11 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
               <div className="space-y-2">
                 <label className="block text-13 font-semibold text-gray-900">Note</label>
                 <Textarea
-                  {...register('note' as any)}
+                  {...register('note')}
                   placeholder="Optional…"
                   size="lg"
                   rows={3}
-                  errorMessage={errors.note?.message as any}
+                  errorMessage={errors.note?.message}
                 />
               </div>
 
@@ -533,7 +532,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-center gap-3 p-3 rounded-xl border  ">
                   <Controller
-                    name={'isDone' as any}
+                    name="isDone"
                     control={control}
                     render={({ field }) => (
                       <Checkbox checked={!!field.value} onChange={field.onChange} size="md" variant="brand" />
@@ -547,7 +546,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
 
                 <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50">
                   <Controller
-                    name={'isFavorite' as any}
+                    name="isFavorite"
                     control={control}
                     render={({ field }) => (
                       <Checkbox checked={!!field.value} onChange={field.onChange} size="md" variant="brand" />
@@ -596,7 +595,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
         onClose={() => setIsIconPickerOpen(false)}
         onSelect={selectedIcon => {
           setIconName(selectedIcon)
-          setValue('iconName', selectedIcon as any, { shouldValidate: true })
+          setValue('iconName', selectedIcon as string | null, { shouldValidate: true })
         }}
         selectedIconKey={iconName}
       />

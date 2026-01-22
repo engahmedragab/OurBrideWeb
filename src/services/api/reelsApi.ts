@@ -13,17 +13,20 @@ export const getAllReels = async (params?: {
 }): Promise<ReelResponse[]> => {
   try {
     const response = await apiClient.api.getReelsGetAll(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as ReelResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as ReelResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as ReelResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as ReelResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
@@ -41,17 +44,20 @@ export const getAllReels = async (params?: {
 export const getReelById = async (id: number): Promise<ReelResponse | null> => {
   try {
     const response = await apiClient.api.getReelsGetById(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ReelResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ReelResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as ReelResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as ReelResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as ReelResponse
+      return responseAny as unknown as ReelResponse
     }
     
     return null
@@ -66,20 +72,23 @@ export const getReelById = async (id: number): Promise<ReelResponse | null> => {
 export const getReelBySlug = async (slug: string): Promise<ReelResponse | null> => {
   try {
     // Try to use slug endpoint if available
-    const api: any = apiClient.api
-    if (api.getReelsGetBySlug) {
-      const response = await api.getReelsGetBySlug(slug)
-      const responseAny: any = response
+    const api = apiClient.api as Record<string, unknown>
+    if (typeof api.getReelsGetBySlug === 'function') {
+      const response = await (api.getReelsGetBySlug as (slug: string) => Promise<unknown>)(slug)
+      const responseAny = response as unknown as Record<string, unknown>
       
       // Handle different response structures
-      if (responseAny?.data?.data) {
-        return responseAny.data.data as ReelResponse
-      }
-      if (responseAny?.data) {
-        return responseAny.data as ReelResponse
+      if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+        const data = responseAny.data
+        if (data && typeof data === 'object' && 'data' in data) {
+          return data.data as unknown as ReelResponse
+        }
+        if (data && typeof data === 'object' && 'id' in data) {
+          return data as unknown as ReelResponse
+        }
       }
       if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-        return responseAny as ReelResponse
+        return responseAny as unknown as ReelResponse
       }
     }
     
@@ -98,17 +107,20 @@ export const getPublishedReels = async (params?: {
 }): Promise<ReelResponse[]> => {
   try {
     const response = await apiClient.api.getReelsGetPublished(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as ReelResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as ReelResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as ReelResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as ReelResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
@@ -129,17 +141,20 @@ export const getFeaturedReels = async (params?: {
 }): Promise<ReelResponse[]> => {
   try {
     const response = await apiClient.api.getReelsGetFeatured(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as ReelResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as ReelResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as ReelResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as ReelResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
@@ -160,17 +175,20 @@ export const getTrendingReels = async (params?: {
 }): Promise<ReelResponse[]> => {
   try {
     const response = await apiClient.api.getReelsGetTrending(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as ReelResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as ReelResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as ReelResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as ReelResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
@@ -188,17 +206,20 @@ export const getTrendingReels = async (params?: {
 export const getReelsByUserId = async (userId: string): Promise<ReelResponse[]> => {
   try {
     const response = await apiClient.api.getReelsGetByUserId(userId)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as ReelResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as ReelResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as ReelResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as ReelResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
@@ -218,17 +239,20 @@ export const searchReels = async (params?: {
 }): Promise<ReelResponse[]> => {
   try {
     const response = await apiClient.api.getReelsSearch(params)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as ReelResponse[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as ReelResponse[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as ReelResponse[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as ReelResponse[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as ReelResponse[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as ReelResponse[]
@@ -246,17 +270,20 @@ export const searchReels = async (params?: {
 export const createReel = async (data: CreateReelRequest): Promise<ReelResponse | null> => {
   try {
     const response = await apiClient.api.postReelsCreate(data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ReelResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ReelResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as ReelResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as ReelResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as ReelResponse
+      return responseAny as unknown as ReelResponse
     }
     
     return null
@@ -271,17 +298,20 @@ export const createReel = async (data: CreateReelRequest): Promise<ReelResponse 
 export const updateReel = async (id: number, data: UpdateReelRequest): Promise<ReelResponse | null> => {
   try {
     const response = await apiClient.api.putReelsUpdate(id, data)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ReelResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ReelResponse
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return data.data as unknown as ReelResponse
+      }
+      if (data && typeof data === 'object' && 'id' in data) {
+        return data as unknown as ReelResponse
+      }
     }
     if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as ReelResponse
+      return responseAny as unknown as ReelResponse
     }
     
     return null
@@ -344,14 +374,17 @@ export const toggleLike = async (id: number): Promise<boolean> => {
 export const isLiked = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getReelsIsLiked(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (typeof responseAny?.data === 'boolean') {
-      return responseAny.data
-    }
-    if (typeof responseAny?.data?.data === 'boolean') {
-      return responseAny.data.data
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (typeof data === 'boolean') {
+        return data
+      }
+      if (data && typeof data === 'object' && 'data' in data && typeof data.data === 'boolean') {
+        return data.data
+      }
     }
     if (typeof responseAny === 'boolean') {
       return responseAny
@@ -382,14 +415,17 @@ export const toggleFavorite = async (id: number): Promise<boolean> => {
 export const isFavorite = async (id: number): Promise<boolean> => {
   try {
     const response = await apiClient.api.getReelsIsFavorite(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (typeof responseAny?.data === 'boolean') {
-      return responseAny.data
-    }
-    if (typeof responseAny?.data?.data === 'boolean') {
-      return responseAny.data.data
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (typeof data === 'boolean') {
+        return data
+      }
+      if (data && typeof data === 'object' && 'data' in data && typeof data.data === 'boolean') {
+        return data.data
+      }
     }
     if (typeof responseAny === 'boolean') {
       return responseAny
@@ -429,17 +465,20 @@ export const removeMedia = async (id: number, mediaId: number): Promise<void> =>
 export const getMediaIds = async (id: number): Promise<number[]> => {
   try {
     const response = await apiClient.api.getReelsGetMedia(id)
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
-    if (Array.isArray(responseAny?.data)) {
-      return responseAny.data as number[]
-    }
-    if (responseAny?.data?.data && Array.isArray(responseAny.data.data)) {
-      return responseAny.data.data as number[]
-    }
-    if (responseAny?.data?.items && Array.isArray(responseAny.data.items)) {
-      return responseAny.data.items as number[]
+    if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
+      const data = responseAny.data
+      if (Array.isArray(data)) {
+        return data as number[]
+      }
+      if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+        return data.data as number[]
+      }
+      if (data && typeof data === 'object' && 'items' in data && Array.isArray(data.items)) {
+        return data.items as number[]
+      }
     }
     if (Array.isArray(responseAny)) {
       return responseAny as number[]
@@ -472,20 +511,20 @@ export const shareReel = async (
 ): Promise<ShareReelResponse | null> => {
   try {
     const response = await apiClient.api.postReelsShare(id, { shareSource })
-    const responseAny: any = response
+    const responseAny = response as unknown as Record<string, unknown>
     
     // Handle different response structures
     if (responseAny && typeof responseAny === 'object' && 'data' in responseAny) {
       const data = (responseAny as { data?: unknown }).data
-      if (data && typeof data === 'object' && 'data' in data) {
+      if (data && typeof data === 'object' && data !== null && 'data' in data) {
         return (data as { data: ShareReelResponse }).data
       }
-      if (data && typeof data === 'object' && 'reelId' in data) {
-        return data as ShareReelResponse
+      if (data && typeof data === 'object' && data !== null && 'reelId' in data) {
+        return data as unknown as ShareReelResponse
       }
     }
     if (responseAny && typeof responseAny === 'object' && 'reelId' in responseAny) {
-      return responseAny as ShareReelResponse
+      return responseAny as unknown as ShareReelResponse
     }
     
     return null

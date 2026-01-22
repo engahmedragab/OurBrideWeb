@@ -28,8 +28,9 @@ import { buildBudgetBookRequestFromLocal, convertLineToRequest, convertCategoryT
 import { calculateBudgetStats } from '@/utils/budgetbook/budgetStats'
 import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
+import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
+import { BookClass, UserType as ResponseUserType } from '@/types/responses'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 function BudgetPageContent() {
   const router = useRouter()
   const { addToast } = useToast()
@@ -86,7 +87,7 @@ function BudgetPageContent() {
     isInitializing,
     isAddingModels,
   } = usePlanningBookController<BudgetBookDraft>({
-    book: (budgetBook as any as BudgetBookDraft) ?? null,
+    book: (budgetBook as unknown as BudgetBookDraft) ?? null,
     isLoading,
     eventId: eventId ?? undefined,
     syncFn: async (draft) => {
@@ -98,17 +99,21 @@ function BudgetPageContent() {
     },
     syncDeltaFn: async (delta) => {
       const response = await syncDeltaMutation.mutateAsync({
-        data: delta,
+        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').BudgetLineRequest, import('@/../client/common/api/gen/ourbride-api').BudgetLineCategoryRequest>,
         query: { eventId: eventId ?? undefined },
       })
-      return response as any
+      return response as unknown as SyncBookDeltaResponse<BudgetBookDraft>
     },
     refetch,
     refetchAfterSave: true,
     requireEventId: true,
-    convertLineToRequest,
-    convertCategoryToRequest,
-    getBookId: (book) => (book as any).id ?? null,
+    convertLineToRequest: (line: unknown, bookId: number) => {
+      return convertLineToRequest(line as Record<string, unknown>, bookId)
+    },
+    convertCategoryToRequest: (category: unknown) => {
+      return convertCategoryToRequest(category as Record<string, unknown>)
+    },
+    getBookId: (book) => book.id ?? null,
     shouldInit: (b) => !b?.id,
     initFn: async () => {
       await initMutation.mutateAsync({
@@ -117,7 +122,7 @@ function BudgetPageContent() {
         clientId: null as unknown as string | undefined,
       })
     },
-    shouldAddModels: (b) => (b as any)?.isModelsAdd === false,
+    shouldAddModels: (b) => b?.isModelsAdd === false,
     addModelsFn: async () => {
       await addModelsMutation.mutateAsync({
         eventId: eventId ?? undefined,
@@ -131,28 +136,38 @@ function BudgetPageContent() {
       (current.initialEstimated ?? null) === (last.initialEstimated ?? null),
     getLines: (book) => book.lines || [],
     getCategories: (book) => book.lineCategories || [],
-    getLineId: (line: any) => line.id,
-    getCategoryId: (cat: any) => cat.id,
-    isSameLine: (current: any, last: any) =>
-      (current.isDeleted ?? false) === (last.isDeleted ?? false) &&
-      (current.expense ?? '') === (last.expense ?? '') &&
-      (current.lineCategoryId ?? null) === (last.lineCategoryId ?? null) &&
-      (current.estimated ?? 0) === (last.estimated ?? 0) &&
-      (current.paid ?? 0) === (last.paid ?? 0) &&
-      (current.final ?? null) === (last.final ?? null) &&
-      (current.isDone ?? false) === (last.isDone ?? false) &&
-      (current.isFavorite ?? false) === (last.isFavorite ?? false),
-    isSameCategory: (current: any, last: any) =>
-      (current.isDeleted ?? false) === (last.isDeleted ?? false) &&
-      (current.name ?? '') === (last.name ?? '') &&
-      (current.description ?? null) === (last.description ?? null) &&
-      (current.estimated ?? 0) === (last.estimated ?? 0) &&
-      (current.iconName ?? null) === (last.iconName ?? null) &&
-      (current.colorName ?? null) === (last.colorName ?? null),
-    getLineCategoryId: (line: any) => line.lineCategoryId ?? null,
-    isLineDeleted: (line: any) => line.isDeleted ?? false,
-    isLineDone: (line: any) => line.isDone ?? false,
-    isCategoryDeleted: (cat: any) => cat.isDeleted ?? false,
+    getLineId: (line: unknown) => (line as BudgetLineResponse).id,
+    getCategoryId: (cat: unknown) => (cat as BudgetLineCategoryResponse).id,
+    isSameLine: (current: unknown, last: unknown) => {
+      const curr = current as BudgetLineResponse
+      const lst = last as BudgetLineResponse
+      return (
+        (curr.isDeleted ?? false) === (lst.isDeleted ?? false) &&
+        (curr.expense ?? '') === (lst.expense ?? '') &&
+        (curr.lineCategoryId ?? null) === (lst.lineCategoryId ?? null) &&
+        (curr.estimated ?? 0) === (lst.estimated ?? 0) &&
+        (curr.paid ?? 0) === (lst.paid ?? 0) &&
+        (curr.final ?? null) === (lst.final ?? null) &&
+        (curr.isDone ?? false) === (lst.isDone ?? false) &&
+        (curr.isFavorite ?? false) === (lst.isFavorite ?? false)
+      )
+    },
+    isSameCategory: (current: unknown, last: unknown) => {
+      const curr = current as BudgetLineCategoryResponse
+      const lst = last as BudgetLineCategoryResponse
+      return (
+        (curr.isDeleted ?? false) === (lst.isDeleted ?? false) &&
+        (curr.name ?? '') === (lst.name ?? '') &&
+        (curr.description ?? null) === (lst.description ?? null) &&
+        (curr.estimated ?? 0) === (lst.estimated ?? 0) &&
+        (curr.iconName ?? null) === (lst.iconName ?? null) &&
+        (curr.colorName ?? null) === (lst.colorName ?? null)
+      )
+    },
+    getLineCategoryId: (line: unknown) => (line as BudgetLineResponse).lineCategoryId ?? null,
+    isLineDeleted: (line: unknown) => (line as BudgetLineResponse).isDeleted ?? false,
+    isLineDone: (line: unknown) => (line as BudgetLineResponse).isDone ?? false,
+    isCategoryDeleted: (cat: unknown) => (cat as BudgetLineCategoryResponse).isDeleted ?? false,
   })
 
   const syncNow = useCallback(
@@ -173,7 +188,7 @@ function BudgetPageContent() {
   // Stats
   const stats = useMemo(() => {
     if (!localDraft) return null
-    return calculateBudgetStats(localDraft as any, activeCategoryId as any)
+    return calculateBudgetStats(localDraft, activeCategoryId)
   }, [localDraft, activeCategoryId])
 
   // Filter lines using controller helpers
@@ -181,23 +196,23 @@ function BudgetPageContent() {
     if (!localDraft) return []
 
     // Use controller helper to get lines by category, or all lines if no category selected
-    let lines: any[] = activeCategoryId !== null
-      ? getLinesByCategory(activeCategoryId)
-      : (localDraft.lines || []).filter((line: any) => !line.isDeleted)
+    let lines: BudgetLineResponse[] = activeCategoryId !== null
+      ? (getLinesByCategory(activeCategoryId) as BudgetLineResponse[])
+      : (localDraft.lines || []).filter((line: BudgetLineResponse) => !line.isDeleted)
 
     // Apply additional filters
     switch (filterType) {
       case 'done':
-        lines = lines.filter((l: any) => l.isDone)
+        lines = lines.filter((l: BudgetLineResponse) => l.isDone)
         break
       case 'not-done':
-        lines = lines.filter((l: any) => !l.isDone)
+        lines = lines.filter((l: BudgetLineResponse) => !l.isDone)
         break
       case 'favorite':
-        lines = lines.filter((l: any) => l.isFavorite)
+        lines = lines.filter((l: BudgetLineResponse) => l.isFavorite)
         break
       case 'not-favorite':
-        lines = lines.filter((l: any) => !l.isFavorite)
+        lines = lines.filter((l: BudgetLineResponse) => !l.isFavorite)
         break
       default:
         // Keep all lines
@@ -207,7 +222,7 @@ function BudgetPageContent() {
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.trim().toLowerCase()
-      lines = lines.filter((line: any) => {
+      lines = lines.filter((line: BudgetLineResponse) => {
         // Search in expense fields
         const expenseMatch =
           (line.expense || '').toLowerCase().includes(query) ||
@@ -221,11 +236,11 @@ function BudgetPageContent() {
         const payerMatch = (line.payer || '').toLowerCase().includes(query)
 
         // Search in category name
-        const category = line.lineCategoryId ? getCategoryById(line.lineCategoryId) : null
+        const category = line.lineCategoryId ? (getCategoryById(line.lineCategoryId) as BudgetLineCategoryResponse | null) : null
         const categoryMatch = category
-          ? (((category as any).name || '').toLowerCase().includes(query) ||
-            ((category as any).nameAr || '').toLowerCase().includes(query) ||
-            ((category as any).nameEn || '').toLowerCase().includes(query))
+          ? ((category.name || '').toLowerCase().includes(query) ||
+            (category.nameAr || '').toLowerCase().includes(query) ||
+            (category.nameEn || '').toLowerCase().includes(query))
           : false
 
         return expenseMatch || noteMatch || payerMatch || categoryMatch
@@ -241,7 +256,7 @@ function BudgetPageContent() {
       const result = applyLocalUpdate((current) => {
         const now = new Date().toISOString()
         return {
-          ...(current as any),
+          ...current,
           initialEstimated: newBudget,
           lastModifiedDate: now,
         } as BudgetBookDraft
@@ -288,21 +303,22 @@ function BudgetPageContent() {
       const finalCategoryId =
         data.lineCategoryId ?? (activeCategoryId !== null ? activeCategoryId : null)
 
-      const selectedCategory: any =
+      const selectedCategory: BudgetLineCategoryResponse | null =
         finalCategoryId != null
-          ? getCategoryById(finalCategoryId)
+          ? (getCategoryById(finalCategoryId) as BudgetLineCategoryResponse | null)
           : null
 
       const lineCategorySlug = selectedCategory?.slug ?? null
-      const lineCategoryCountId = selectedCategory?.count_id ?? null
+      const categoryWithCountId = selectedCategory as (BudgetLineCategoryResponse & { count_id?: number | null }) | null
+      const lineCategoryCountId = categoryWithCountId?.count_id ?? null
 
       const result = applyLocalUpdate((current) => {
-        const d: any = current as any
+        const d = current as BudgetBookDraft
         if (data.id && data.id > 0) {
           // Update existing
           return {
             ...d,
-            lines: (d.lines || []).map((line: any) =>
+            lines: (d.lines || []).map((line: BudgetLineResponse) =>
               line.id === data.id
                 ? {
                   ...line,
@@ -338,39 +354,44 @@ function BudgetPageContent() {
           // Create new (local temp id; payload keeps negative id)
           const tempLineId = generateTempId()
 
-          const newLine: any = {
+          const newLine: BudgetLineResponse = {
             id: tempLineId,
             bookId: d.id || 0,
+            slug: `budget-line-${tempLineId}`,
 
-            expense: data.expense,
-            expenseAr: data.expenseAr,
-            expenseEn: data.expenseEn,
+            expense: data.expense || '',
+            expenseAr: data.expenseAr || '',
+            expenseEn: data.expenseEn || '',
 
-            lineCategoryId: finalCategoryId,
-            lineCategorySlug,
-            lineCategoryCountId,
+            lineCategoryId: finalCategoryId ?? undefined,
 
-            estimated: data.estimated,
-            paid: data.paid,
-            final: data.final,
-            dueDate: data.dueDate,
-            count: data.count,
+            estimated: data.estimated ?? 0,
+            paid: data.paid ?? 0,
+            final: data.final ?? 0,
+            dueDate: data.dueDate ?? null,
+            count: data.count ?? 0,
 
-            payer: data.payer,
-            note: data.note,
-            iconName: data.iconName,
-            colorName: data.colorName,
+            payer: data.payer || '',
+            note: data.note || '',
+            iconName: data.iconName || '',
+            colorName: data.colorName || '',
 
-            isDone: data.isDone,
-            isFavorite: data.isFavorite,
+            isDone: data.isDone ?? false,
+            isFavorite: data.isFavorite ?? false,
             isDeleted: false,
             isModelLine: false,
 
-            brideId: d.brideId ?? null,
-            groomId: d.groomId ?? null,
+            brideId: d.brideId ?? undefined,
+            groomId: d.groomId ?? undefined,
 
             creationDate: now,
             lastModifiedDate: now,
+            
+            // Required LineResponse fields
+            lineType: (typeof d.bookType === 'number' ? d.bookType : ResponseUserType.Guest) as ResponseUserType,
+            bookClass: (typeof d.bookClass === 'number' ? d.bookClass : BookClass.Budget) as BookClass,
+            createdBy: d.createdBy || '',
+            lastModifiedBy: d.lastModifiedBy || '',
           }
 
           return {
@@ -395,10 +416,10 @@ function BudgetPageContent() {
     async (lineId: number) => {
       const result = applyLocalUpdate((current) => {
         const now = new Date().toISOString()
-        const d: any = current as any
+        const d = current as BudgetBookDraft
         return {
           ...d,
-          lines: (d.lines || []).map((line: any) =>
+          lines: (d.lines || []).map((line: BudgetLineResponse) =>
             line.id === lineId ? { ...line, isDone: !line.isDone, lastModifiedDate: now } : line
           ),
         } as BudgetBookDraft
@@ -413,10 +434,10 @@ function BudgetPageContent() {
     async (lineId: number) => {
       const result = applyLocalUpdate((current) => {
         const now = new Date().toISOString()
-        const d: any = current as any
+        const d = current as BudgetBookDraft
         return {
           ...d,
-          lines: (d.lines || []).map((line: any) =>
+          lines: (d.lines || []).map((line: BudgetLineResponse) =>
             line.id === lineId
               ? { ...line, isFavorite: !line.isFavorite, lastModifiedDate: now }
               : line
@@ -439,10 +460,10 @@ function BudgetPageContent() {
     const line = itemToDelete.item as BudgetLineResponse
     const result = applyLocalUpdate((current) => {
       const now = new Date().toISOString()
-      const d: any = current as any
+      const d = current as BudgetBookDraft
       return {
         ...d,
-        lines: (d.lines || []).map((l: any) =>
+        lines: (d.lines || []).map((l: BudgetLineResponse) =>
           l.id === line.id ? { ...l, isDeleted: true, lastModifiedDate: now } : l
         ),
       } as BudgetBookDraft
@@ -493,12 +514,12 @@ function BudgetPageContent() {
     }) => {
       const now = new Date().toISOString()
       const result = applyLocalUpdate((current) => {
-        const d: any = current as any
+        const d = current as BudgetBookDraft
         if (data.id && data.id > 0) {
           // Update existing category (no line data)
           return {
             ...d,
-            lineCategories: (d.lineCategories || []).map((cat: any) =>
+            lineCategories: (d.lineCategories || []).map((cat: BudgetLineCategoryResponse) =>
               cat.id === data.id
                 ? {
                   ...cat,
@@ -527,57 +548,63 @@ function BudgetPageContent() {
           const tempCountId = Date.now()
           const slug = slugify(data.name)
 
-          const newCategory: any = {
+          const newCategory: BudgetLineCategoryResponse = {
             id: tempId,
             name: data.name,
             nameAr: data.nameAr || data.name,
             nameEn: data.nameEn || data.name,
-            description: data.description || null,
-            descriptionAr: data.descriptionAr || data.description || null,
-            descriptionEn: data.descriptionEn || data.description || null,
+            description: data.description || '',
+            descriptionAr: data.descriptionAr || data.description || '',
+            descriptionEn: data.descriptionEn || data.description || '',
             estimated: 0, // Category estimated not used
-            pending: null,
-            paid: null,
-            final: null,
-            count: null,
-            iconName: data.iconName ?? null,
-            colorName: data.colorName ?? null,
-            slug,
+            pending: undefined,
+            paid: undefined,
+            final: undefined,
+            count: undefined,
+            iconName: data.iconName || '',
+            colorName: data.colorName || '',
+            slug: slug || '',
             count_id: tempCountId,
             isDeleted: false,
             isModelLine: false,
             creationDate: now,
             lastModifiedDate: now,
-          }
+            createdBy: d.createdBy || '',
+            lastModifiedBy: d.lastModifiedBy || '',
+          } as BudgetLineCategoryResponse & { count_id?: number }
 
           // Create line linked to the new category
           const tempLineId = generateTempId()
-          const newLine: any = {
+          const newLine: BudgetLineResponse = {
             id: tempLineId,
             bookId: d.id || 0,
-            expense: data.lineData.expense,
-            expenseAr: data.lineData.expenseAr,
-            expenseEn: data.lineData.expenseEn,
+            expense: data.lineData.expense || '',
+            expenseAr: data.lineData.expenseAr || '',
+            expenseEn: data.lineData.expenseEn || '',
             lineCategoryId: tempId, // Link to temp category
-            lineCategorySlug: slug,
-            lineCategoryCountId: tempCountId,
-            estimated: data.lineData.estimated,
-            paid: data.lineData.paid || 0,
-            final: data.lineData.final,
-            dueDate: data.lineData.dueDate || null,
-            count: data.lineData.count,
-            payer: data.lineData.payer || null,
-            note: data.lineData.note || null,
-            iconName: data.lineData.iconName ?? null,
-            colorName: data.lineData.colorName ?? null,
-            isDone: data.lineData.isDone || false,
-            isFavorite: data.lineData.isFavorite || false,
+            slug: `budget-line-${tempLineId}`,
+            estimated: data.lineData.estimated ?? 0,
+            paid: data.lineData.paid ?? 0,
+            final: data.lineData.final ?? 0,
+            dueDate: data.lineData.dueDate ?? null,
+            count: data.lineData.count ?? 0,
+            payer: data.lineData.payer || '',
+            note: data.lineData.note || '',
+            iconName: data.lineData.iconName || '',
+            colorName: data.lineData.colorName || '',
+            isDone: data.lineData.isDone ?? false,
+            isFavorite: data.lineData.isFavorite ?? false,
             isDeleted: false,
             isModelLine: false,
-            brideId: d.brideId ?? null,
-            groomId: d.groomId ?? null,
+            brideId: d.brideId ?? undefined,
+            groomId: d.groomId ?? undefined,
             creationDate: now,
             lastModifiedDate: now,
+            // Required LineResponse fields
+            lineType: (typeof d.bookType === 'number' ? d.bookType : ResponseUserType.Guest) as ResponseUserType,
+            bookClass: (typeof d.bookClass === 'number' ? d.bookClass : BookClass.Budget) as BookClass,
+            createdBy: d.createdBy || '',
+            lastModifiedBy: d.lastModifiedBy || '',
           }
 
           // Select new category immediately
@@ -619,13 +646,13 @@ function BudgetPageContent() {
     const categoryId = category.id
     const result = applyLocalUpdate((current) => {
       const now = new Date().toISOString()
-      const d: any = current as any
+      const d = current as BudgetBookDraft
       return {
         ...d,
-        lineCategories: (d.lineCategories || []).map((c: any) =>
+        lineCategories: (d.lineCategories || []).map((c: BudgetLineCategoryResponse) =>
           c.id === categoryId ? { ...c, isDeleted: true, lastModifiedDate: now } : c
         ),
-        lines: (d.lines || []).map((line: any) =>
+        lines: (d.lines || []).map((line: BudgetLineResponse) =>
           line.lineCategoryId === categoryId
             ? { ...line, isDeleted: true, lastModifiedDate: now }
             : line
@@ -818,8 +845,8 @@ function BudgetPageContent() {
 
           <div className="order-last sm:order-none">
             <BudgetLinesTable
-              lines={filteredLines as any}
-              categories={((localDraft as any)?.lineCategories || []) as any}
+              lines={filteredLines}
+              categories={(localDraft?.lineCategories || []) as BudgetLineCategoryResponse[]}
               totalBudget={stats.totalBudget}
               onToggleDone={handleToggleDone}
               onToggleFavorite={handleToggleFavorite}

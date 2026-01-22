@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { cn } from '@/lib/utils'
 import type { DecisionGroupResponse } from '@/types/responses/community'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 // Helper function to determine if a string is a number
 const isNumeric = (str: string): boolean => {
@@ -16,9 +17,11 @@ const isNumeric = (str: string): boolean => {
 }
 
 export function DecisionGroupDetailsClient({ id }: { id: string }) {
+  const t = useI18nTranslations("community")
   const activeTab: CommunityTab = 'decision-groups'
 
   // Fetch community home data for sidebars
+ 
   const { data: communityData } = useCommunityHome({
     postsCount: undefined,
     articlesCount: 3,
@@ -29,6 +32,7 @@ export function DecisionGroupDetailsClient({ id }: { id: string }) {
 
   // Fetch decision group data - support both ID and slug
   const { data: decisionGroup, isLoading, error } = useQuery({
+
     queryKey: ['decision-group', id],
     queryFn: async () => {
       if (isNumeric(id)) {
@@ -46,7 +50,7 @@ export function DecisionGroupDetailsClient({ id }: { id: string }) {
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
         <main className="flex-1 flex items-center justify-center min-h-[60vh] py-12">
-          <LoadingOverlay open={true} title="Loading decision group..." />
+          <LoadingOverlay open={true} title={t("decisionGroupDetails.loading")} />
         </main>
         <Footer />
       </div>
@@ -60,8 +64,8 @@ export function DecisionGroupDetailsClient({ id }: { id: string }) {
         <main className="flex-1 flex items-center justify-center min-h-[60vh] py-12">
           <div className="w-full max-w-md mx-auto px-4">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-10 text-center">
-              <p className="text-gray-600 text-base sm:text-lg font-medium">Decision group not found</p>
-              <p className="text-gray-500 text-sm mt-2">The decision group you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+              <p className="text-gray-600 text-base sm:text-lg font-medium">{t("decisionGroupDetails.decisionGroupNotFoundTitle")}</p>
+              <p className="text-gray-500 text-sm mt-2">{t("decisionGroupDetails.decisionGroupNotFoundMessage")}</p>
             </div>
           </div>
         </main>
@@ -99,7 +103,7 @@ export function DecisionGroupDetailsClient({ id }: { id: string }) {
                 <CommunityRightSidebar
                   activeTab={activeTab}
                   currentUser={communityData?.currentUser ? {
-                    name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || 'User',
+                    name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || t("user.fallbackName"),
                     email: communityData.currentUser.email || '',
                     avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
                   } : undefined}

@@ -27,8 +27,10 @@ import { useToggleProductWishlist } from '@/hooks/products/useProductInteraction
 import { useToggleProviderFollow } from '@/hooks/providers/useProviderInteractions'
 import { WishlistServiceCard, WishlistProductCard, WishlistProviderCard } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
+import { useLocale } from '@/i18n'
 
 export default function FollowsPage() {
+  const locale = useLocale()
   const [followType, setFollowType] = useState<'services' | 'products'>('services')
   const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
@@ -63,13 +65,13 @@ export default function FollowsPage() {
       return followsData
     }
     // If it's a paginated response, extract the items array
-    const followsDataAny = followsData as any
+    const followsDataAny = followsData as unknown as Record<string, unknown>
     if ('items' in followsDataAny && Array.isArray(followsDataAny.items)) {
-      return followsDataAny.items
+      return followsDataAny.items as FollowResponse[]
     }
     // Fallback: try to extract data array
     if ('data' in followsDataAny && Array.isArray(followsDataAny.data)) {
-      return followsDataAny.data
+      return followsDataAny.data as FollowResponse[]
     }
     return []
   }, [followsData])
@@ -134,13 +136,13 @@ export default function FollowsPage() {
       .map((follow) => {
         const serviceResponse = follow.sourceObject as ServiceResponse
         try {
-          return mapServiceResponseToService(serviceResponse)
+          return mapServiceResponseToService(serviceResponse, locale)
         } catch (error) {
           return null
         }
       })
       .filter((service): service is Service => service !== null)
-  }, [filteredFollows])
+  }, [filteredFollows, locale])
 
   const allFollowProducts: Product[] = useMemo(() => {
     return filteredFollows
@@ -175,26 +177,26 @@ export default function FollowsPage() {
       })
       .map((follow) => {
         // Map the sourceObject to FeaturedProviderResponse format
-        const sourceObj = follow.sourceObject as any
-        const profileImage = sourceObj.profileURL || sourceObj.image || ''
+        const sourceObj = follow.sourceObject as unknown as Record<string, unknown>
+        const profileImage = (sourceObj.profileURL as string | undefined) || (sourceObj.image as string | undefined) || ''
 
         return {
-          id: sourceObj.id,
-          nameEn: sourceObj.nameEn || sourceObj.name || '',
-          nameAr: sourceObj.nameAr || sourceObj.name || '',
-          descriptionEn: sourceObj.descriptionEn || sourceObj.description || '',
-          descriptionAr: sourceObj.descriptionAr || sourceObj.description || '',
+          id: sourceObj.id as number,
+          nameEn: (sourceObj.nameEn as string | undefined) || (sourceObj.name as string | undefined) || '',
+          nameAr: (sourceObj.nameAr as string | undefined) || (sourceObj.name as string | undefined) || '',
+          descriptionEn: (sourceObj.descriptionEn as string | undefined) || (sourceObj.description as string | undefined) || '',
+          descriptionAr: (sourceObj.descriptionAr as string | undefined) || (sourceObj.description as string | undefined) || '',
           publicLogoImageUrl: profileImage,
           publicBannerImageUrl: profileImage,
-          rate: sourceObj.rate ?? null,
-          totalReviews: sourceObj.reviews?.length || 0,
-          isVerified: sourceObj.isVerified || false,
-          totalServices: sourceObj.servicesCount || 0,
-          totalProducts: sourceObj.productsCount || 0,
-          shortAddress: sourceObj.shortAddress || sourceObj.address || '',
-          publicProfileSlug: sourceObj.publicProfileSlug || `/providers/${sourceObj.id}`,
-          uniqueCode: sourceObj.uniqueCode || `PROV-${sourceObj.id}`,
-          topRatedService: sourceObj.topRatedService || null,
+          rate: (sourceObj.rate as number | null | undefined) ?? null,
+          totalReviews: (Array.isArray(sourceObj.reviews) ? sourceObj.reviews.length : 0) || 0,
+          isVerified: (sourceObj.isVerified as boolean | undefined) || false,
+          totalServices: (sourceObj.servicesCount as number | undefined) || 0,
+          totalProducts: (sourceObj.productsCount as number | undefined) || 0,
+          shortAddress: (sourceObj.shortAddress as string | undefined) || (sourceObj.address as string | undefined) || '',
+          publicProfileSlug: (sourceObj.publicProfileSlug as string | undefined) || `/providers/${sourceObj.id}`,
+          uniqueCode: (sourceObj.uniqueCode as string | undefined) || `PROV-${sourceObj.id}`,
+          topRatedService: (sourceObj.topRatedService as unknown) || null,
         } as FeaturedProviderResponse
       })
       .filter((provider): provider is FeaturedProviderResponse =>

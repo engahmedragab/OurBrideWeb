@@ -46,7 +46,7 @@ export const LoadingSpinner = ({
 
   if (fullScreen) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="w-full min-h-[90vh] flex items-center justify-center">
         {isMounted ? spinner : null}
       </div>
     )

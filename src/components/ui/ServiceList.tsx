@@ -10,6 +10,7 @@ import { Badge } from './Badge'
 import { Heart, CheckCircle2 } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import type { Service } from '@/types/service'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ServiceListProps {
   services: Service[]
@@ -30,6 +31,8 @@ const ServiceListItem = ({
   onBookNow?: (serviceId: string) => void
   router: ReturnType<typeof useRouter>
 }) => {
+  const tS = useI18nTranslations('services.serviceCategories')
+  const tC = useI18nTranslations('common')
   const [imageError, setImageError] = React.useState(false)
   const hasDiscount = service.price.discounted < service.price.original
   const discountPercentage = hasDiscount
@@ -60,7 +63,7 @@ const ServiceListItem = ({
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
               <span className="text-gray-400 text-12 font-medium">
-                No image available
+                {tC('noImageAvailable')}
               </span>
             </div>
           )}
@@ -71,7 +74,7 @@ const ServiceListItem = ({
                 variant="default"
                 className="bg-red-500 !text-white border-0 px-3 py-1 text-12 font-normal rounded"
               >
-                Top Offers
+                {tS('topOffers')}
               </Badge>
             </div>
           )}
@@ -203,7 +206,7 @@ const ServiceListItem = ({
                   onBookNow?.(service.id)
                 }}
               >
-                Book Now
+                {tC('bookNow')}
               </Button>
             </div>
           </div>
@@ -220,11 +223,11 @@ export const ServiceList = ({
   className,
 }: ServiceListProps) => {
   const router = useRouter()
-
+  const tC = useI18nTranslations('common')
   if (services.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-16 text-gray-500">No data available</p>
+        <p className="text-16 text-gray-500">{tC('noDataAvailable')}</p>
       </div>
     )
   }

@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { ContestCard } from './ContestCard'
 import { CommunityEmptyState } from './CommunityEmptyState'
 import type { LeaderboardContestResponse } from '@/types/responses/community'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ContestsFeedProps {
   className?: string
@@ -12,6 +13,7 @@ export interface ContestsFeedProps {
 }
 
 export const ContestsFeed = ({ className, contests = [] }: ContestsFeedProps) => {
+  const t = useI18nTranslations("community")
   const router = useRouter()
 
   return (
@@ -26,8 +28,8 @@ export const ContestsFeed = ({ className, contests = [] }: ContestsFeedProps) =>
         ))
       ) : (
         <CommunityEmptyState
-          title="No Contests Available"
-          message="There are no contests to display at the moment."
+          title={t("states.noContestsTitle")}
+          message={t("states.noContestsMessage")}
           compact
         />
       )}

@@ -58,6 +58,18 @@ export const RatingDisplay = ({
   const formatText = () => {
     if (format === 'stars-only') return null
 
+    // Don't show rating value when rating is 0
+    if (rating === 0) {
+      if (showCount && count !== undefined && format === 'default') {
+        return (
+          <span className={cn('text-gray-500', textSizeClasses[size])}>
+            ({count} reviews)
+          </span>
+        )
+      }
+      return null
+    }
+
     if (format === 'value-only' || showValue) {
       return (
         <span
@@ -95,6 +107,9 @@ export const RatingDisplay = ({
   }
 
   const renderStars = () => {
+    // When rating is 0, always show empty stars
+    const displayRating = rating === 0 ? 0 : roundedRating
+    
     if (showHalfStars) {
       return [1, 2, 3, 4, 5].map((star, index) => {
         if (index < fullStars) {
@@ -132,7 +147,7 @@ export const RatingDisplay = ({
           key={star}
           className={cn(
             sizeClasses[size],
-            star <= roundedRating
+            star <= displayRating
               ? starColorClasses[starColor]
               : emptyStarColor
           )}
@@ -148,6 +163,15 @@ export const RatingDisplay = ({
     return (
       <div className={cn('flex items-center', gapClass, className)}>
         {formatText()}
+      </div>
+    )
+  }
+
+  // When rating is 0 and format is stars-only, just show empty stars with no container text
+  if (rating === 0 && format === 'stars-only') {
+    return (
+      <div className={cn('flex items-center gap-0.5', className)}>
+        {renderStars()}
       </div>
     )
   }

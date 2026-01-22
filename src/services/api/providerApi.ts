@@ -2,14 +2,28 @@
 
 import { apiClient } from '@/services/api/apiClient'
 import type { UpdateProviderPublicProfileSettingsRequest } from '@/../client/common/api/gen/ourbride-api'
-import type { ApiResult, MediaResponse, ProviderResponse, FeaturedProviderResponse, BranchPortfolioResponse, PlaceResponse } from '@/types/responses'
+import type { ApiResult, MediaResponse, ProviderResponse, FeaturedProviderResponse, BranchPortfolioResponse, PlaceResponse, AddressResponse } from '@/types/responses'
 import type { ReviewRequest } from '@/../client/common/api/gen/ourbride-api'
 import { ProviderStatus } from '@/types/responses/common'
 import type { ProviderLinkeeResponse } from '@/types/responses/provider-linkee-response'
 import type { ProviderPublicProfileResponse } from '@/types/responses/provider-public-profile-response'
 import type { ProviderPublicStoreResponse } from '@/types/responses/provider-public-store-response'
-import { getToken } from '@/auth/utils/token'
-import { getApiLanguage } from '@/utils/language'
+/**
+ * Helper function to safely extract data from API response
+ */
+const extractResponseData = (response: unknown): unknown => {
+  const responseAny = response as unknown as { data?: { data?: unknown } | unknown } | Record<string, unknown>
+  if (responseAny && typeof responseAny === 'object') {
+    if ('data' in responseAny) {
+      const data = responseAny.data
+      if (data && typeof data === 'object' && 'data' in data) {
+        return (data as { data?: unknown }).data ?? data
+      }
+      return data
+    }
+  }
+  return responseAny
+}
 
 /**
  * Map ProviderResponse to FeaturedProviderResponse
@@ -52,17 +66,11 @@ export const getProviderById = async (
 ): Promise<ProviderResponse> => {
   try {
     const response = await apiClient.api.getProviderGetById(providerId)
-    const responseAny: any = response
+    const responseData = extractResponseData(response)
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ProviderResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ProviderResponse
-    }
-    if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as ProviderResponse
+    if (responseData && typeof responseData === 'object' && 'id' in responseData) {
+      return responseData as ProviderResponse
     }
     
     throw new Error('Invalid response structure')
@@ -83,20 +91,14 @@ export const getProviderBySlug = async (
 ): Promise<ProviderResponse> => {
   try {
     // Try to use slug endpoint if available
-    const api: any = apiClient.api
-    if (api.getProviderGetBySlug) {
-      const response = await api.getProviderGetBySlug(slug)
-      const responseAny: any = response
+    const api = apiClient.api as Record<string, unknown>
+    if (typeof api.getProviderGetBySlug === 'function') {
+      const response = await (api.getProviderGetBySlug as (slug: string) => Promise<unknown>)(slug)
+      const responseData = extractResponseData(response)
       
       // Handle different response structures
-      if (responseAny?.data?.data) {
-        return responseAny.data.data as ProviderResponse
-      }
-      if (responseAny?.data) {
-        return responseAny.data as ProviderResponse
-      }
-      if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-        return responseAny as ProviderResponse
+      if (responseData && typeof responseData === 'object' && 'id' in responseData) {
+        return responseData as ProviderResponse
       }
     }
     
@@ -155,17 +157,11 @@ export const submitProviderReview = async (
 ): Promise<ApiResult<unknown>> => {
   try {
     const response = await apiClient.api.postProviderAddReviews(providerId, data)
-    const responseAny: any = response
+    const responseData = extractResponseData(response)
     
     // Handle different response structures
-    if (responseAny?.data?.data && typeof responseAny.data.data === 'object' && 'success' in responseAny.data.data) {
-      return responseAny.data.data as ApiResult<unknown>
-    }
-    if (responseAny?.data && typeof responseAny.data === 'object' && 'success' in responseAny.data) {
-      return responseAny.data as ApiResult<unknown>
-    }
-    if (responseAny && typeof responseAny === 'object' && 'success' in responseAny) {
-      return responseAny as ApiResult<unknown>
+    if (responseData && typeof responseData === 'object' && 'success' in responseData) {
+      return responseData as ApiResult<unknown>
     }
     
     const defaultResult: ApiResult<unknown> = { data: null, success: false, statusCode: 0, message: '' }
@@ -190,20 +186,14 @@ export const getProviderPublicProfileBySlug = async (
 ): Promise<ProviderPublicProfileResponse> => {
   try {
     // Try to use slug endpoint if available
-    const api: any = apiClient.api
-    if (api.getProviderGetPublicProfileBySlug) {
-      const response = await api.getProviderGetPublicProfileBySlug(slug)
-      const responseAny: any = response
+    const api = apiClient.api as Record<string, unknown>
+    if (typeof api.getProviderGetPublicProfileBySlug === 'function') {
+      const response = await (api.getProviderGetPublicProfileBySlug as (slug: string) => Promise<unknown>)(slug)
+      const responseData = extractResponseData(response)
       
       // Handle different response structures
-      if (responseAny?.data?.data) {
-        return responseAny.data.data as ProviderPublicProfileResponse
-      }
-      if (responseAny?.data) {
-        return responseAny.data as ProviderPublicProfileResponse
-      }
-      if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-        return responseAny as ProviderPublicProfileResponse
+      if (responseData && typeof responseData === 'object' && 'id' in responseData) {
+        return responseData as ProviderPublicProfileResponse
       }
     }
     
@@ -226,17 +216,11 @@ export const getProviderPublicProfileById = async (
     }
 
     const response = await apiClient.api.getProviderGetPublicProfileById(providerId)
-    const responseAny: any = response
+    const responseData = extractResponseData(response)
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ProviderPublicProfileResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ProviderPublicProfileResponse
-    }
-    if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as ProviderPublicProfileResponse
+    if (responseData && typeof responseData === 'object' && 'id' in responseData) {
+      return responseData as ProviderPublicProfileResponse
     }
     
     throw new Error('Invalid response structure')
@@ -284,17 +268,11 @@ export const getProviderPublicProfileSettings = async (
 ): Promise<UpdateProviderPublicProfileSettingsRequest | null> => {
   try {
     const response = await apiClient.api.getProviderGetPublicProfileSettings(providerId)
-    const responseAny: any = response
+    const responseData = extractResponseData(response)
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as UpdateProviderPublicProfileSettingsRequest
-    }
-    if (responseAny?.data) {
-      return responseAny.data as UpdateProviderPublicProfileSettingsRequest
-    }
-    if (responseAny && typeof responseAny === 'object' && 'id' in responseAny) {
-      return responseAny as UpdateProviderPublicProfileSettingsRequest
+    if (responseData && typeof responseData === 'object' && 'id' in responseData) {
+      return responseData as UpdateProviderPublicProfileSettingsRequest
     }
     
     return null
@@ -340,18 +318,14 @@ export const getProviderBranchPortfolio = async (
     }
 
     const response = await apiClient.api.getProviderBranchGetPortfolio(providerId, branchId)
-    const responseAny: any = response
-    
-    // Handle different response structures
-    // Expected: { data: { about, services, portfolio, reviews, statistics }, success, ... }
-    const portfolioData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const portfolioData = extractResponseData(response)
     
     // Ensure we have the expected structure
     if (!portfolioData || typeof portfolioData !== 'object') {
       throw new Error('Invalid response structure')
     }
     
-    return portfolioData as BranchPortfolioResponse
+    return portfolioData as unknown as BranchPortfolioResponse
   } catch (error: unknown) {
     console.error('Error fetching provider branch portfolio:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider branch portfolio')
@@ -376,11 +350,7 @@ export const getProviderTeamMemberPortfolio = async (
     }
 
     const response = await apiClient.api.getProviderTeamGetTeamMemberPortfolio(providerId, teamMemberId)
-    const responseAny: any = response
-    
-    // Handle different response structures
-    // Expected: { data: { about, services, portfolio, reviews, statistics }, success, ... }
-    const portfolioData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const portfolioData = extractResponseData(response)
     
     // Ensure we have the expected structure
     if (!portfolioData || typeof portfolioData !== 'object') {
@@ -388,18 +358,19 @@ export const getProviderTeamMemberPortfolio = async (
     }
     
     // Map the team member about structure to match BranchPortfolioAbout
-    if (portfolioData.about) {
-      const about = portfolioData.about
+    const portfolioObj = portfolioData as { about?: { userId?: string; firstName?: string; lastName?: string; fullName?: string; id?: number; name?: string; description?: string; phoneNumber?: string; phoneNumber2?: string; imageUrl?: string; address?: AddressResponse | null; isMain?: boolean; isActive?: boolean }; statistics?: { languages?: unknown[]; appointmentsCompleted?: number; clientsServed?: number } }
+    if ('about' in portfolioObj && portfolioObj.about) {
+      const about = portfolioObj.about
       // Handle both team member structure (with userId, firstName, lastName) and branch structure
       if (about.userId || about.firstName !== undefined) {
-        portfolioData.about = {
+        (portfolioObj as { about: BranchPortfolioResponse['about'] }).about = {
           id: about.userId ? parseInt(about.userId.split('-')[0], 16) || 0 : (about.id || 0),
           name: about.fullName || `${about.firstName || ''} ${about.lastName || ''}`.trim() || about.name || 'Team Member',
           description: about.description || '',
           phoneNumber: about.phoneNumber || '',
           phoneNumber2: about.phoneNumber2 || '',
           imageUrl: about.imageUrl || '',
-          address: about.address || null as any, // Team members might not have address
+          address: about.address || ({} as AddressResponse), // Team members might not have address
           isMain: about.isMain || false,
           isActive: about.isActive !== undefined ? about.isActive : true,
         }
@@ -407,16 +378,16 @@ export const getProviderTeamMemberPortfolio = async (
     }
     
     // Ensure statistics structure matches (team members might have languages array)
-    if (portfolioData.statistics && Array.isArray(portfolioData.statistics.languages)) {
+    if ('statistics' in portfolioObj && portfolioObj.statistics && Array.isArray(portfolioObj.statistics.languages)) {
       // Statistics already has the right structure, just ensure it exists
-      portfolioData.statistics = {
-        appointmentsCompleted: portfolioData.statistics.appointmentsCompleted || 0,
-        clientsServed: portfolioData.statistics.clientsServed || 0,
-        ...(portfolioData.statistics.languages && { languages: portfolioData.statistics.languages }),
-      } as any
+      (portfolioObj as { statistics: BranchPortfolioResponse['statistics'] & { languages?: unknown[] } }).statistics = {
+        appointmentsCompleted: portfolioObj.statistics.appointmentsCompleted || 0,
+        clientsServed: portfolioObj.statistics.clientsServed || 0,
+        ...(portfolioObj.statistics.languages && { languages: portfolioObj.statistics.languages }),
+      } as BranchPortfolioResponse['statistics'] & { languages?: unknown[] }
     }
     
-    return portfolioData as BranchPortfolioResponse
+    return portfolioData as unknown as BranchPortfolioResponse
   } catch (error: unknown) {
     console.error('Error fetching provider team member portfolio:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider team member portfolio')
@@ -441,12 +412,9 @@ export const getProviderTeamMemberPortfolioByAssignmentId = async (
     }
 
     const response = await apiClient.api.getProviderTeamGetTeamMemberPortfolio(providerId, assignmentId.toString())
-    const responseAny: any = response
+    const portfolio = extractResponseData(response)
     
-    // Handle different response structures
-    const portfolio = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    
-    return Array.isArray(portfolio) ? portfolio : []
+    return Array.isArray(portfolio) ? (portfolio as MediaResponse[]) : []
   } catch (error: unknown) {
     console.error('Error fetching provider team member portfolio by assignment ID:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider team member portfolio by assignment ID')
@@ -459,7 +427,7 @@ export const getProviderTeamMemberPortfolioByAssignmentId = async (
  */
 export const getProviderTeamUsers = async (
   providerId: number
-): Promise<any[]> => {
+): Promise<unknown[]> => {
   try {
     // Validate inputs
     if (!providerId || isNaN(providerId) || providerId <= 0) {
@@ -467,13 +435,9 @@ export const getProviderTeamUsers = async (
     }
 
     const response = await apiClient.api.getProviderTeamGetAllProviderUsers(providerId)
-    const responseAny: any = response
+    const users = extractResponseData(response)
     
-    // Handle different response structures
-    // Expected: ProviderUserAssignmentResponse[] or { data: ProviderUserAssignmentResponse[] }
-    const users = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    
-    return Array.isArray(users) ? users : []
+    return Array.isArray(users) ? (users as unknown[]) : []
   } catch (error: unknown) {
     console.error('Error fetching provider team users:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider team users')
@@ -494,13 +458,9 @@ export const getProviderBranches = async (
     }
 
     const response = await apiClient.api.getProviderBranchGetAll(providerId)
-    const responseAny: any = response
+    const branches = extractResponseData(response)
     
-    // Handle different response structures
-    // Expected: PlaceResponse[] or { data: PlaceResponse[] }
-    const branches = responseAny?.data?.data ?? responseAny?.data ?? responseAny
-    
-    return Array.isArray(branches) ? branches : []
+    return Array.isArray(branches) ? (branches as PlaceResponse[]) : []
   } catch (error: unknown) {
     console.error('Error fetching provider branches:', error)
     throw error instanceof Error ? error : new Error('Failed to fetch provider branches')
@@ -560,10 +520,7 @@ export const filterProviders = async (
       : undefined
 
     const response = await apiClient.api.getProviderFilter(cleanQuery)
-    const responseAny: any = response
-    
-    // Handle different response structures - API returns ProviderResponse[]
-    const providersData = responseAny?.data?.data ?? responseAny?.data ?? responseAny
+    const providersData = extractResponseData(response)
     
     if (!Array.isArray(providersData)) {
       console.warn('Providers data is not an array:', providersData)
@@ -614,17 +571,11 @@ export const getProviderPublicStore = async (
     
     console.log('[getProviderPublicStore] API response received:', response)
     
-    const responseAny: any = response
+    const responseData = extractResponseData(response)
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ProviderPublicStoreResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ProviderPublicStoreResponse
-    }
-    if (responseAny && typeof responseAny === 'object' && 'providerId' in responseAny) {
-      return responseAny as ProviderPublicStoreResponse
+    if (responseData && typeof responseData === 'object' && 'providerId' in responseData) {
+      return responseData as ProviderPublicStoreResponse
     }
     
     throw new Error('Invalid response structure')
@@ -652,8 +603,8 @@ export const getProviderPublicStoreBySlug = async (
 ): Promise<ProviderPublicStoreResponse> => {
   try {
     // Try to use slug endpoint if available
-    const api: any = apiClient.api
-    if (api.getProviderGetPublicStoreBySlug) {
+    const api = apiClient.api as Record<string, unknown>
+    if (typeof api.getProviderGetPublicStoreBySlug === 'function') {
       // Clean query parameters - remove undefined values
       const cleanQuery = query
         ? Object.fromEntries(
@@ -661,22 +612,16 @@ export const getProviderPublicStoreBySlug = async (
           )
         : {}
 
-      const response = await api.getProviderGetPublicStoreBySlug(
+      const response = await (api.getProviderGetPublicStoreBySlug as (slug: string, query?: { page?: number; pageSize?: number }) => Promise<unknown>)(
         slug,
         Object.keys(cleanQuery).length > 0 ? cleanQuery : undefined
       )
       
-      const responseAny: any = response
+      const responseData = extractResponseData(response)
       
       // Handle different response structures
-      if (responseAny?.data?.data) {
-        return responseAny.data.data as ProviderPublicStoreResponse
-      }
-      if (responseAny?.data) {
-        return responseAny.data as ProviderPublicStoreResponse
-      }
-      if (responseAny && typeof responseAny === 'object' && 'providerId' in responseAny) {
-        return responseAny as ProviderPublicStoreResponse
+      if (responseData && typeof responseData === 'object' && 'providerId' in responseData) {
+        return responseData as ProviderPublicStoreResponse
       }
     }
     
@@ -696,17 +641,11 @@ export const getProviderLinkee = async (
 ): Promise<ProviderLinkeeResponse> => {
   try {
     const response = await apiClient.api.getProviderGetPublicLinkee(providerId)
-    const responseAny: any = response
+    const responseData = extractResponseData(response)
     
     // Handle different response structures
-    if (responseAny?.data?.data) {
-      return responseAny.data.data as ProviderLinkeeResponse
-    }
-    if (responseAny?.data) {
-      return responseAny.data as ProviderLinkeeResponse
-    }
-    if (responseAny && typeof responseAny === 'object' && 'providerId' in responseAny) {
-      return responseAny as ProviderLinkeeResponse
+    if (responseData && typeof responseData === 'object' && 'providerId' in responseData) {
+      return responseData as ProviderLinkeeResponse
     }
     
     throw new Error('Invalid response structure')
@@ -727,20 +666,14 @@ export const getProviderLinkeeBySlug = async (
 ): Promise<ProviderLinkeeResponse> => {
   try {
     // Try to use slug endpoint if available
-    const api: any = apiClient.api
-    if (api.getProviderGetPublicLinkeeBySlug) {
-      const response = await api.getProviderGetPublicLinkeeBySlug(slug)
-      const responseAny: any = response
+    const api = apiClient.api as Record<string, unknown>
+    if (typeof api.getProviderGetPublicLinkeeBySlug === 'function') {
+      const response = await (api.getProviderGetPublicLinkeeBySlug as (slug: string) => Promise<unknown>)(slug)
+      const responseData = extractResponseData(response)
       
       // Handle different response structures
-      if (responseAny?.data?.data) {
-        return responseAny.data.data as ProviderLinkeeResponse
-      }
-      if (responseAny?.data) {
-        return responseAny.data as ProviderLinkeeResponse
-      }
-      if (responseAny && typeof responseAny === 'object' && 'providerId' in responseAny) {
-        return responseAny as ProviderLinkeeResponse
+      if (responseData && typeof responseData === 'object' && 'providerId' in responseData) {
+        return responseData as ProviderLinkeeResponse
       }
     }
     

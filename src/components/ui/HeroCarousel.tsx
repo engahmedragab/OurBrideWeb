@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Button } from './Button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface HeroSlide {
   id: string
@@ -35,7 +36,8 @@ export const HeroCarousel = ({
 }: HeroCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
-
+  const tC = useI18nTranslations('common')
+  const isRTL= useIsRTL()
   useEffect(() => {
     if (!autoPlay || slides.length <= 1) return
 
@@ -77,14 +79,14 @@ export const HeroCarousel = ({
             <>
               <button
                 onClick={goToPrevious}
-                className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
+                className="absolute left-4 md:left-6 top-3/4 -translate-y-1/2 md:top-1/2 md:-translate-y-1/2  z-20 w-10 h-10 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
                 aria-label="Previous slide"
               >
                 <ChevronLeft className="h-6 w-6 md:h-7 md:w-7" />
               </button>
               <button
                 onClick={goToNext}
-                className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
+                className="absolute right-4 md:right-6 top-3/4 -translate-y-1/2 md:top-1/2 md:-translate-y-1/2  z-20 w-10 h-10 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
                 aria-label="Next slide"
               >
                 <ChevronRight className="h-6 w-6 md:h-7 md:w-7" />
@@ -94,78 +96,100 @@ export const HeroCarousel = ({
 
           {/* Content Container */}
           <div className="w-full h-full">
-            <div className="grid grid-cols-1 lg:grid-cols-2 items-center min-h-[280px] md:min-h-[350px] lg:min-h-[420px] py-0 lg:py-0 w-full h-full">
-              {/* Left Column - Content (50%) */}
-              <div className="container-custom flex flex-col justify-center space-y-6 text-center lg:text-left h-full w-full py-6 md:py-8 pl-16 md:pl-20 lg:pl-24">
-                {/* New Arrival Label */}
-                <div>
-                  <span className="inline-block text-12 md:text-14 font-semibold uppercase tracking-wider text-brand-500">
-                    {currentSlide.label}
-                  </span>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 items-center min-h-[280px] md:min-h-[350px] lg:min-h-[420px] py-0 lg:py-0 w-full h-full pb-16 md:pb-0">
 
-                {/* Main Heading */}
-                <h1 className="text-32 md:text-40 lg:text-48 xl:text-56 font-semibold text-gray-900 leading-tight">
-                  {currentSlide.title}
-                </h1>
+    
+    {/* Right Column - Visual (50%) */}
+    <div className="relative flex items-center justify-center h-full w-full overflow-hidden order-1 md:order-2">
+      {/* Product Image - Full Width on mobile */}
+      <div className="relative z-10 left-1/2 -translate-x-1/2 w-screen md:left-0 md:translate-x-0 md:w-full
+                h-[220px] sm:h-[260px] md:h-full md:min-h-[350px]
+                rounded-md overflow-hidden border bg-white/10">
 
-                {/* Description */}
-                <p className="text-14 md:text-16 lg:text-18 text-gray-500 leading-relaxed max-w-xl">
-                  {currentSlide.description}
-                </p>
-
-                {/* CTA Button */}
-                <div className="pt-2">
-                  <Link href={currentSlide.ctaLink}>
-                    <Button
-                      variant="default"
-                      size="md"
-                      className="h-10 md:h-11 px-6 md:px-8 rounded-full !text-white text-14 md:text-16 font-semibold transition-all duration-200 hover:scale-105 shadow-md"
-                    >
-                      {currentSlide.ctaText}
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Right Column - Visual (50%) */}
-              <div className="relative flex items-center justify-center h-full w-full overflow-hidden">
-                {/* Discount Text Background */}
-                
-
-                {/* Product Image - Full Height, 50% Width */}
-                <div className="relative z-10 w-full h-full">
-                  {currentSlide.productImage && !imageErrors.has(currentIndex) ? (
-                    typeof currentSlide.productImage === 'string' && currentSlide.productImage.endsWith('.svg') ? (
-                      // Render SVG directly using img tag for better compatibility
-                      <img
-                        src={currentSlide.productImage}
-                        alt={currentSlide.title}
-                        className="w-full h-full object-contain"
-                        onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
-                      />
-                    ) : (
-                      <Image
-                        src={currentSlide.productImage}
-                        alt={currentSlide.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-contain w-full h-full"
-                        priority={currentIndex === 0}
-                        onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
-                      />
-                    )
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                      <span className="text-gray-400 text-14 font-medium">
-                        No image available
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+        {currentSlide.productImage && !imageErrors.has(currentIndex) ? (
+          typeof currentSlide.productImage === 'string' && currentSlide.productImage.endsWith('.svg') ? (
+            <img
+            src={currentSlide.productImage}
+            alt={currentSlide.title}
+            className="w-full h-full object-conttain  md:object-cover"
+            onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
+          />
+          
+          ) : (
+            <Image
+            src={currentSlide.productImage}
+            alt={currentSlide.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-conttain  md:object-cover"
+            priority={currentIndex === 0}
+            onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
+          />
+          
+          )
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <span className="text-gray-400 text-14 font-medium">
+              {tC('noImageAvailable')}
+            </span>
           </div>
+        )}
+      </div>
+    </div>
+
+    {/* Left Column - Content (50%) */}
+    <div
+      className={cn(
+        "container-custom flex flex-col justify-center space-y-6 h-full w-full py-6 md:py-8 order-2 md:order-1",
+        // Mobile: centered text + remove big left padding
+        "text-center lg:text-left px-6 md:px-0 md:pl-20 lg:pl-24",
+        // RTL paddings from md+
+        isRTL && "md:pl-0 md:pr-20 lg:pr-24"
+      )}
+    >
+      {/* New Arrival Label */}
+      <div className={cn(isRTL ? "md:text-right" : "md:text-left")}>
+        <span className="inline-block text-12 md:text-14 font-semibold uppercase tracking-wider text-brand-500">
+          {currentSlide.label}
+        </span>
+      </div>
+
+      {/* Main Heading */}
+      <h1 className={cn(
+        "text-32 md:text-40 lg:text-48 xl:text-56 font-semibold text-gray-900 leading-tight",
+        isRTL ? "md:text-right" : "md:text-left"
+      )}>
+        {currentSlide.title}
+      </h1>
+
+      {/* Description */}
+      <p className={cn(
+        "text-14 md:text-16 lg:text-18 text-gray-500 leading-relaxed max-w-xl mx-auto md:mx-0",
+        isRTL ? "md:text-right" : "md:text-left"
+      )}>
+        {currentSlide.description}
+      </p>
+
+      {/* CTA Button */}
+      <div className={cn(
+        "pt-2 flex justify-center md:justify-start",
+        isRTL ? "md:text-right " : "md:text-left "
+      )}>
+        <Link href={currentSlide.ctaLink}>
+          <Button
+            variant="default"
+            size="md"
+            className="h-10 md:h-11 px-6 md:px-8 rounded-full !text-white text-14 md:text-16 font-semibold transition-all duration-200 hover:scale-105 shadow-md"
+          >
+            {currentSlide.ctaText}
+          </Button>
+        </Link>
+      </div>
+    </div>
+
+  </div>
+</div>
+
         </div>
 
         {/* Slide Indicators */}

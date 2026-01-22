@@ -176,7 +176,7 @@ export default function BusinessProfilePage() {
   if (isLoading) {
     return (
       <UserPageLayout>
-        <LoadingSpinner text="Loading business profile settings..." />
+        <LoadingSpinner text="Loading business profile settings..." fullScreen={true} />
       </UserPageLayout>
     )
   }

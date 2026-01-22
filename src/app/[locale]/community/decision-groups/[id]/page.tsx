@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { DecisionGroupDetailsClient } from './DecisionGroupDetailsClient'
+import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 
 // Generate static params for static export
 export function generateStaticParams() {
@@ -22,7 +23,7 @@ export default function DecisionGroupDetailsPage({
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Header />
           <main className="flex-1 flex items-center justify-center">
-            <div className="text-gray-500">Loading...</div>
+            <LoadingOverlay open={true} />
           </main>
           <Footer />
         </div>

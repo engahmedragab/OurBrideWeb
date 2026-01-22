@@ -47,21 +47,23 @@ export const UserSidebar = ({
 
   // Extract user data from mineInfo (fallback to authUser)
   // Handle different response structures: mineInfo.data.userProfile.user or mineInfo.userProfile.user
-  const mineInfoAny = mineInfo as any
-  const data: any = mineInfoAny?.data || mineInfoAny || {}
-  const userProfile: any = data?.userProfile || {}
-  const userData = userProfile?.user || authUser
+  const mineInfoAny = mineInfo as unknown as Record<string, unknown>
+  const data: Record<string, unknown> = (mineInfoAny?.data as Record<string, unknown>) || mineInfoAny || {}
+  const userProfile: Record<string, unknown> = (data?.userProfile as Record<string, unknown>) || {}
+  const userData = (userProfile?.user || authUser) as Record<string, unknown> | null | undefined
 
   // Get user name - prioritize prop, then API data, then fallback
   const userName = useMemo(() => {
     if (propUserName) return propUserName
     if (userData) {
-      if (userData.firstName && userData.lastName) {
-        return `${userData.firstName} ${userData.lastName}`
+      const firstName = typeof userData.firstName === 'string' ? userData.firstName : undefined
+      const lastName = typeof userData.lastName === 'string' ? userData.lastName : undefined
+      if (firstName && lastName) {
+        return `${firstName} ${lastName}`
       }
-      if (userData.fullName) return userData.fullName
-      if (userData.userName) return userData.userName
-      if (userData.email) return userData.email
+      if (typeof userData.fullName === 'string') return userData.fullName
+      if (typeof userData.userName === 'string') return userData.userName
+      if (typeof userData.email === 'string') return userData.email
     }
     return 'User'
   }, [propUserName, userData])
@@ -69,7 +71,7 @@ export const UserSidebar = ({
   // Get user image - prioritize prop, then API data, then fallback
   const userImage = useMemo(() => {
     if (propUserImage) return propUserImage
-    if (userData?.profileUrl) return userData.profileUrl
+    if (userData && typeof userData.profileUrl === 'string') return userData.profileUrl
     return 'https://via.placeholder.com/100'
   }, [propUserImage, userData])
 

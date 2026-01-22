@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { DecisionGroupCard } from './DecisionGroupCard'
 import { CommunityEmptyState } from './CommunityEmptyState'
 import type { DecisionGroupResponse } from '@/types/responses/community'
+import { useI18nTranslations } from '@/i18n'
 
 export interface DecisionGroupsFeedProps {
   className?: string
@@ -12,6 +13,7 @@ export interface DecisionGroupsFeedProps {
 }
 
 export const DecisionGroupsFeed = ({ className, decisionGroups = [] }: DecisionGroupsFeedProps) => {
+  const t = useI18nTranslations("community")
   const router = useRouter()
 
   return (
@@ -26,8 +28,8 @@ export const DecisionGroupsFeed = ({ className, decisionGroups = [] }: DecisionG
         ))
       ) : (
         <CommunityEmptyState
-          title="No Decision Groups Available"
-          message="There are no decision groups to display at the moment."
+          title={t("decisionGroupDetails.noDecisionGroupsTitle")}
+          message={t("decisionGroupDetails.noDecisionGroupsMessage")}
           compact
         />
       )}

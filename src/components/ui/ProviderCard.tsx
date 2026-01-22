@@ -8,6 +8,7 @@ import { RatingDisplay } from './RatingDisplay'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
 import { useFavoriteItems, useFollowItems } from '@/hooks'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ProviderCardProps {
   provider: {
@@ -50,7 +51,7 @@ export const ProviderCard = ({
   const isInFavorite = isProviderInFavorite(providerId)
   const isFollowed = isProviderFollowed(providerId)
   const rating = provider.rating || 0
-
+  const t = useI18nTranslations('common')
   const handleFollowToggle = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -152,7 +153,7 @@ export const ProviderCard = ({
           ) : (
             <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
               <span className="text-gray-400 text-10 font-medium">
-                No image available
+                {t('noImageAvailable')}
               </span>
             </div>
           )}
@@ -212,11 +213,11 @@ export const ProviderCard = ({
         <Button
           variant="outlineBrand"
           size="lg"
-          className="flex-1 rounded-full font-normal text-brand-500"
+          className="flex-1 h-11 rounded-full font-normal text-brand-500"
           asChild
         >
           <Link href={`/provider/${provider.id}`} onClick={onViewProfile}>
-            View Profile
+            {t('viewProfile')}
           </Link>
         </Button>
       </div>
