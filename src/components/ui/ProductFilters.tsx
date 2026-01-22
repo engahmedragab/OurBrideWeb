@@ -8,6 +8,7 @@ import { Badge } from './Badge'
 import { Input } from './Input'
 import { X, SlidersHorizontal } from 'lucide-react'
 import type { ProductFilter, ProductCategory } from '@/types/product'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 interface PriceRangeSliderProps {
   min: number
@@ -16,15 +17,8 @@ interface PriceRangeSliderProps {
   maxValue: number
   onChange: (min: number, max: number) => void
   onDragEnd?: (min: number, max: number) => void
-}
+  currencyLabel: string
 
-interface PriceRangeSliderProps {
-  min: number
-  max: number
-  minValue: number
-  maxValue: number
-  onChange: (min: number, max: number) => void
-  onDragEnd?: (min: number, max: number) => void
 }
 
 const PriceRangeSlider = ({
@@ -34,12 +28,15 @@ const PriceRangeSlider = ({
   maxValue,
   onChange,
   onDragEnd,
+  currencyLabel,
+ 
 }: PriceRangeSliderProps) => {
   const sliderRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState<'min' | 'max' | null>(null)
   const [localMin, setLocalMin] = useState(minValue)
   const [localMax, setLocalMax] = useState(maxValue)
   const [hoveredHandle, setHoveredHandle] = useState<'min' | 'max' | null>(null)
+  const t = useI18nTranslations('services.serviceCategories.servicefilters')
 
   useEffect(() => {
     setLocalMin(minValue)
@@ -67,11 +64,9 @@ const PriceRangeSlider = ({
     if (type === 'min') {
       const newMin = Math.max(min, Math.min(value, localMax - 1))
       setLocalMin(newMin)
-      // Don't call onChange here - only update local state for visual feedback
     } else {
       const newMax = Math.min(max, Math.max(value, localMin + 1))
       setLocalMax(newMax)
-      // Don't call onChange here - only update local state for visual feedback
     }
   }
 
@@ -83,11 +78,9 @@ const PriceRangeSlider = ({
       if (isDragging === 'min') {
         const newMin = Math.max(min, Math.min(value, localMax - 1))
         setLocalMin(newMin)
-        // Don't call onChange during drag - only update local state
       } else {
         const newMax = Math.min(max, Math.max(value, localMin + 1))
         setLocalMax(newMax)
-        // Don't call onChange during drag - only update local state
       }
     },
     [isDragging, localMin, localMax, min, max, getValueFromPosition]
@@ -100,11 +93,8 @@ const PriceRangeSlider = ({
     }
     const handleMouseUp = () => {
       if (isDragging) {
-        // Call onChange only when drag ends
         onChange(localMin, localMax)
-        if (onDragEnd) {
-          onDragEnd(localMin, localMax)
-        }
+        onDragEnd?.(localMin, localMax)
       }
       setIsDragging(null)
     }
@@ -114,11 +104,8 @@ const PriceRangeSlider = ({
     }
     const handleTouchEnd = () => {
       if (isDragging) {
-        // Call onChange only when drag ends
         onChange(localMin, localMax)
-        if (onDragEnd) {
-          onDragEnd(localMin, localMax)
-        }
+        onDragEnd?.(localMin, localMax)
       }
       setIsDragging(null)
     }
@@ -126,9 +113,7 @@ const PriceRangeSlider = ({
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove, { passive: false })
       document.addEventListener('mouseup', handleMouseUp)
-      document.addEventListener('touchmove', handleTouchMove, {
-        passive: false,
-      })
+      document.addEventListener('touchmove', handleTouchMove, { passive: false })
       document.addEventListener('touchend', handleTouchEnd)
     }
 
@@ -143,9 +128,11 @@ const PriceRangeSlider = ({
   const minPercentage = getPercentage(localMin)
   const maxPercentage = getPercentage(localMax)
 
+  const priceFromText = t('priceFromValue', { value: localMin, currency: currencyLabel })
+  const priceToText = t('priceToValue', { value: localMax, currency: currencyLabel })
+
   return (
     <div className="space-y-4">
-      {/* Slider Track */}
       <div
         ref={sliderRef}
         className="relative h-2 bg-[#E5E5E5] rounded-full cursor-pointer group"
@@ -153,26 +140,16 @@ const PriceRangeSlider = ({
           const value = getValueFromPosition(e.clientX)
           const minDist = Math.abs(value - localMin)
           const maxDist = Math.abs(value - localMax)
-          if (minDist < maxDist) {
-            handleStart('min', e.clientX)
-          } else {
-            handleStart('max', e.clientX)
-          }
+          handleStart(minDist < maxDist ? 'min' : 'max', e.clientX)
         }}
         onTouchStart={e => {
-          if (e.touches[0]) {
-            const value = getValueFromPosition(e.touches[0].clientX)
-            const minDist = Math.abs(value - localMin)
-            const maxDist = Math.abs(value - localMax)
-            if (minDist < maxDist) {
-              handleStart('min', e.touches[0].clientX)
-            } else {
-              handleStart('max', e.touches[0].clientX)
-            }
-          }
+          if (!e.touches[0]) return
+          const value = getValueFromPosition(e.touches[0].clientX)
+          const minDist = Math.abs(value - localMin)
+          const maxDist = Math.abs(value - localMax)
+          handleStart(minDist < maxDist ? 'min' : 'max', e.touches[0].clientX)
         }}
       >
-        {/* Active Range */}
         <div
           className="absolute h-2 bg-[#FF8B7A] rounded-full transition-all duration-150"
           style={{
@@ -180,6 +157,7 @@ const PriceRangeSlider = ({
             width: `${maxPercentage - minPercentage}%`,
           }}
         />
+
         {/* Min Handle */}
         <div
           className={cn(
@@ -199,13 +177,13 @@ const PriceRangeSlider = ({
           onMouseEnter={() => setHoveredHandle('min')}
           onMouseLeave={() => setHoveredHandle(null)}
         >
-          {/* Tooltip */}
           {(isDragging === 'min' || hoveredHandle === 'min') && (
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-12 rounded whitespace-nowrap">
-              {localMin} egp
+              {priceFromText}{" "}
             </div>
           )}
         </div>
+
         {/* Max Handle */}
         <div
           className={cn(
@@ -225,22 +203,20 @@ const PriceRangeSlider = ({
           onMouseEnter={() => setHoveredHandle('max')}
           onMouseLeave={() => setHoveredHandle(null)}
         >
-          {/* Tooltip */}
           {(isDragging === 'max' || hoveredHandle === 'max') && (
-            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-12 rounded whitespace-nowrap">
-              {localMax} egp
+            <div className=" !me-1 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-12 rounded whitespace-nowrap">
+              {""}{priceToText}
             </div>
           )}
         </div>
       </div>
 
-      {/* Range Labels - Shows current selected range */}
       <div className="flex items-center justify-between text-12">
         <div className="flex flex-col items-start gap-1">
-          <span className="text-gray-500">From {localMin} egp</span>
+          <span className="text-gray-500">{priceFromText}</span>
         </div>
         <div className="flex flex-col items-end gap-1">
-          <span className="text-gray-500">To {localMax} egp</span>
+          <span className="text-gray-500">{priceToText}</span>
         </div>
       </div>
     </div>
@@ -267,14 +243,15 @@ export const ProductFilters = ({
     min: filters.priceRange?.min || 0,
     max: filters.priceRange?.max || 300,
   })
-  const priceInputTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Cleanup timeout on unmount
+  const priceInputTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const t = useI18nTranslations('services.serviceCategories.servicefilters')
+  const tCommon = useI18nTranslations('common')
+  const currencyLabel = tCommon('currency')
+
   useEffect(() => {
     return () => {
-      if (priceInputTimeoutRef.current) {
-        clearTimeout(priceInputTimeoutRef.current)
-      }
+      if (priceInputTimeoutRef.current) clearTimeout(priceInputTimeoutRef.current)
     }
   }, [])
 
@@ -317,7 +294,7 @@ export const ProductFilters = ({
       >
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4" />
-          <span>Filters</span>
+          <span>{tCommon('filter')}</span>
           {activeFiltersCount > 0 && (
             <Badge
               variant="default"
@@ -336,28 +313,25 @@ export const ProductFilters = ({
           isOpen ? 'block' : 'hidden md:block'
         )}
       >
-        {/* Header */}
-
         {/* Categories */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-14 font-semibold text-gray-900">Categories</h4>
+            <h4 className="text-14 font-semibold text-gray-900">
+              {t('categories')}
+            </h4>
+
             {filters.category && filters.category.length > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => {
-                  onFiltersChange({
-                    ...filters,
-                    category: undefined,
-                  })
-                }}
+                onClick={() => onFiltersChange({ ...filters, category: undefined })}
                 className="text-12 text-gray-500 hover:text-gray-700 h-auto p-2"
               >
-                Clear
+                {t('clear')}
               </Button>
             )}
           </div>
+
           <div className="space-y-2">
             {categories.map(category => (
               <div key={category.id} className="flex items-center gap-2">
@@ -366,29 +340,24 @@ export const ProductFilters = ({
                   onChange={checked => {
                     if (checked) {
                       const currentCategories = filters.category || []
-                      const newCategories = [...currentCategories, category.id]
                       onFiltersChange({
                         ...filters,
-                        category: newCategories,
+                        category: [...currentCategories, category.id],
                       })
                     } else {
                       const currentCategories = filters.category || []
-                      const newCategories = currentCategories.filter(
-                        id => id !== category.id
-                      )
+                      const newCategories = currentCategories.filter(id => id !== category.id)
                       onFiltersChange({
                         ...filters,
-                        category:
-                          newCategories.length > 0 ? newCategories : undefined,
+                        category: newCategories.length > 0 ? newCategories : undefined,
                       })
                     }
                   }}
                   variant={
-                    filters.category?.includes(category.id)
-                      ? 'brandFilled'
-                      : 'brand'
+                    filters.category?.includes(category.id) ? 'brandFilled' : 'brand'
                   }
                 />
+
                 <label
                   className="text-14 text-gray-700 cursor-pointer flex-1"
                   onClick={() => handleCategoryToggle(category.id)}
@@ -407,30 +376,29 @@ export const ProductFilters = ({
 
         {/* Price Range */}
         <div className="space-y-3">
-          <h4 className="text-14 font-semibold text-gray-900">Price</h4>
+          <h4 className="text-14 font-semibold text-gray-900">{t('price')}</h4>
+
           <PriceRangeSlider
             min={0}
             max={300}
             minValue={Math.min(priceRange.min, 300)}
             maxValue={Math.min(priceRange.max, 300)}
-            onChange={(min, max) => {
-              // Only update local state during drag for visual feedback
-              setPriceRange({ min, max })
-            }}
+            onChange={(min, max) => setPriceRange({ min, max })}
             onDragEnd={(min, max) => {
-              // Update filters only when drag ends
               const newRange = { min, max }
               setPriceRange(newRange)
-              onFiltersChange({
-                ...filters,
-                priceRange: newRange,
-              })
+              onFiltersChange({ ...filters, priceRange: newRange })
             }}
+            currencyLabel={currencyLabel}
+         
           />
-          {/* From and To Input Boxes */}
+
+          {/* From / To Inputs */}
           <div className="flex items-center gap-3">
             <div className="flex-1">
-              <label className="text-12 text-gray-600 mb-1 block">From</label>
+              <label className="text-12 text-gray-600 mb-1 block">
+                {t('from')}
+              </label>
               <Input
                 type="number"
                 value={priceRange.min || ''}
@@ -438,26 +406,22 @@ export const ProductFilters = ({
                   const minValue = parseInt(e.target.value, 10) || 0
                   const newRange = { min: Math.max(0, minValue), max: priceRange.max }
                   setPriceRange(newRange)
-                  
-                  // Clear existing timeout
-                  if (priceInputTimeoutRef.current) {
-                    clearTimeout(priceInputTimeoutRef.current)
-                  }
-                  
-                  // Debounce the filter update
+
+                  if (priceInputTimeoutRef.current) clearTimeout(priceInputTimeoutRef.current)
+
                   priceInputTimeoutRef.current = setTimeout(() => {
-                    onFiltersChange({
-                      ...filters,
-                      priceRange: newRange,
-                    })
+                    onFiltersChange({ ...filters, priceRange: newRange })
                   }, 500)
                 }}
                 placeholder="0"
                 className="h-10"
               />
             </div>
+
             <div className="flex-1">
-              <label className="text-12 text-gray-600 mb-1 block">To</label>
+              <label className="text-12 text-gray-600 mb-1 block">
+                {t('to')}
+              </label>
               <Input
                 type="number"
                 value={priceRange.max || ''}
@@ -465,18 +429,11 @@ export const ProductFilters = ({
                   const maxValue = parseInt(e.target.value, 10) || 300
                   const newRange = { min: priceRange.min, max: Math.min(300, maxValue) }
                   setPriceRange(newRange)
-                  
-                  // Clear existing timeout
-                  if (priceInputTimeoutRef.current) {
-                    clearTimeout(priceInputTimeoutRef.current)
-                  }
-                  
-                  // Debounce the filter update
+
+                  if (priceInputTimeoutRef.current) clearTimeout(priceInputTimeoutRef.current)
+
                   priceInputTimeoutRef.current = setTimeout(() => {
-                    onFiltersChange({
-                      ...filters,
-                      priceRange: newRange,
-                    })
+                    onFiltersChange({ ...filters, priceRange: newRange })
                   }, 500)
                 }}
                 placeholder="300"
@@ -488,15 +445,15 @@ export const ProductFilters = ({
 
         {/* Stock Status */}
         <div className="space-y-3">
-          <h4 className="text-14 font-semibold text-gray-900">Availability</h4>
+          <h4 className="text-14 font-semibold text-gray-900">
+            {t('availability')}
+          </h4>
+
           <div className="flex items-center gap-2">
             <Checkbox
               checked={filters.inStock === true}
               onChange={checked => {
-                onFiltersChange({
-                  ...filters,
-                  inStock: checked ? true : undefined,
-                })
+                onFiltersChange({ ...filters, inStock: checked ? true : undefined })
               }}
               variant={filters.inStock === true ? 'brandFilled' : 'brand'}
             />
@@ -509,7 +466,7 @@ export const ProductFilters = ({
                 })
               }}
             >
-              In Stock Only
+              {t('inStockOnly')}
             </label>
           </div>
         </div>
@@ -530,24 +487,31 @@ export const ProductFilters = ({
                     <button
                       onClick={() => handleCategoryToggle(categoryId)}
                       className="ml-1"
+                      aria-label="Remove category"
                     >
                       <X className="h-3 w-3" />
                     </button>
                   </Badge>
                 )
               })}
+
               {filters.inStock && (
                 <Badge
                   variant="outline"
                   className="text-12 px-2 py-1 flex items-center gap-1"
                 >
-                  In Stock
-                  <button onClick={handleStockToggle} className="ml-1">
+                    {t('inStock')}
+                  <button
+                    onClick={handleStockToggle}
+                    className="ml-1"
+                    aria-label="Remove stock filter"
+                  >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
               )}
             </div>
+
           </div>
         )}
       </div>

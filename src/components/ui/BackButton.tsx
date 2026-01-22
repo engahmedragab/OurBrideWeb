@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, ChevronLeft } from 'lucide-react'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
+import { useIsRTL } from '@/i18n/hooks'
 
 export interface BackButtonProps {
   href?: string
@@ -26,7 +27,7 @@ export const BackButton = ({
   className,
 }: BackButtonProps) => {
   const router = useRouter()
-
+  const isRTL = useIsRTL()
   const handleClick = () => {
     if (onClick) {
       onClick()
@@ -47,7 +48,7 @@ export const BackButton = ({
         )}
         aria-label="Go back"
       >
-        <ChevronLeft className="h-6 w-6 text-gray-600" />
+        <ChevronLeft className= {cn("h-6 w-6 text-gray-600", isRTL ? "rotate-180" : "rotate-0")} />
       </button>
     )
   }
@@ -61,7 +62,7 @@ export const BackButton = ({
           className
         )}
       >
-        <ArrowLeft className="h-5 w-5" />
+        <ArrowLeft className= "h-5 w-5" />
         {label && <span className="text-14 font-medium">{label}</span>}
       </button>
     )
@@ -77,7 +78,7 @@ export const BackButton = ({
           className
         )}
       >
-        <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className= {cn("h-5 w-5", isRTL ? "!rotate-180" : "!rotate-0")} />
         {label}
       </Link>
     )

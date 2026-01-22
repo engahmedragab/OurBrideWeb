@@ -6,6 +6,7 @@ import { ReelCard } from './ReelCard'
 import { ReelPlayer } from './ReelPlayer'
 import { CommunityEmptyState } from './CommunityEmptyState'
 import type { ReelResponse } from '@/types/responses/community'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ReelsFeedProps {
   className?: string
@@ -15,6 +16,7 @@ export interface ReelsFeedProps {
 }
 
 export const ReelsFeed = ({ className, reels = [], selectedReelId: externalSelectedReelId, onReelSelect }: ReelsFeedProps) => {
+  const t = useI18nTranslations("community")
   const [internalSelectedReelId, setInternalSelectedReelId] = useState<number | null>(null)
   const selectedReelId = externalSelectedReelId !== undefined ? externalSelectedReelId : internalSelectedReelId
   const setSelectedReelId = onReelSelect || setInternalSelectedReelId
@@ -34,8 +36,9 @@ export const ReelsFeed = ({ className, reels = [], selectedReelId: externalSelec
         className
       )}>
         <CommunityEmptyState
-          title="No Reels Available"
-          message="There are no reels to display at the moment."
+          title={t("states.noReelsTitle")}
+          message={t("states.noReelsMessage")}
+         
         />
       </div>
     )

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { ArticleCard } from './ArticleCard'
 import { CommunityEmptyState } from './CommunityEmptyState'
 import type { ArticleResponse } from '@/types/responses/community'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ArticlesFeedProps {
   className?: string
@@ -11,6 +12,7 @@ export interface ArticlesFeedProps {
 }
 
 export const ArticlesFeed = ({ className, articles = [] }: ArticlesFeedProps) => {
+  const t = useI18nTranslations("community")
   return (
     <div className={cn('flex-1 space-y-6', className)}>
       {articles.length > 0 ? (
@@ -19,8 +21,8 @@ export const ArticlesFeed = ({ className, articles = [] }: ArticlesFeedProps) =>
         ))
       ) : (
         <CommunityEmptyState
-          title="No Articles Available"
-          message="There are no articles to display at the moment."
+          title={t("states.noArticlesTitle")}
+          message={t("states.noArticlesMessage")}
           compact
         />
       )}

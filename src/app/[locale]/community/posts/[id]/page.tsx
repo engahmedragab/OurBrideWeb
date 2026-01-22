@@ -2,6 +2,8 @@ import { Suspense } from 'react'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { PostDetailsClient } from './PostDetailsClient'
+import { useI18nTranslations } from '@/i18n'
+import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 
 // Generate static params for static export
 export function generateStaticParams() {
@@ -16,13 +18,14 @@ export default function PostDetailsPage({
 }: {
   params: Promise<{ id: string }>
 }) {
+  
   return (
     <Suspense
       fallback={
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Header />
           <main className="flex-1 flex items-center justify-center">
-            <div className="text-gray-500">Loading...</div>
+            <LoadingOverlay open={true} />
           </main>
           <Footer />
         </div>

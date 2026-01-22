@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import { PriceDisplay } from './PriceDisplay'
+import { useI18nTranslations } from '@/i18n'
 
 // Base card variants
 const cardVariants = cva(
@@ -161,7 +162,7 @@ const ProductServiceCard = ({
   const { isProductInCart, isServiceInCart } = useCartItems()
   const { isProductInWishlist, isServiceInWishlist } = useWishlistItems()
   const { isProductFollowed, isServiceFollowed } = useFollowItems()
-
+  const t = useI18nTranslations('common')
   // Check if item is in cart
   const productId = parseInt(data.id, 10)
   const providerId = data.providerId ? parseInt(data.providerId, 10) : undefined
@@ -322,7 +323,7 @@ const ProductServiceCard = ({
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
             <span className="text-gray-400 text-12 font-medium text-center">
-              No image available
+              {t('noImageAvailable')}
             </span>
           </div>
         )}
@@ -390,7 +391,7 @@ const ProductServiceCard = ({
                 {data.discountedPrice.toLocaleString()}
               </span>
               <span className="text-14 font-normal text-gray-900">
-                egp
+                {t('currency')}
               </span>
             </div>
           </div>
@@ -445,7 +446,7 @@ const ProductServiceCard = ({
                 onClick={handleBuyNow}
                 disabled={data.inStock === false || data.isLoadingAddToCart || addToCartMutation.isPending}
               >
-                {addToCartMutation.isPending ? 'Adding...' : 'Buy Now'}
+                {addToCartMutation.isPending ? t('pending') : t('buyNow')}
               </Button>
             )}
           </div>
@@ -456,7 +457,7 @@ const ProductServiceCard = ({
             className="w-full rounded-full text-14 font-normal text-white h-12"
             asChild
           >
-            <Link href={`/booking/${data.id}`}>Book Now</Link>
+            <Link href={`/booking/${data.id}`}>{t('bookNow')}</Link>
           </Button>
         )}
 
@@ -530,6 +531,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
 // Provider Card Component
 const ProviderCard = ({ data }: { data: ProviderCardData }) => {
   const [imageError, setImageError] = React.useState(false)
+  const t = useI18nTranslations('common')
   const handleFollowToggle = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -631,7 +633,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
         ) : (
           <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center">
             <span className="text-gray-400 text-10 font-medium">
-              No image available
+              {t('noImageAvailable')}
             </span>
           </div>
         )}
@@ -706,7 +708,7 @@ const MemberTestimonialCard = ({
   const [imageErrors, setImageErrors] = React.useState<Set<number>>(new Set())
   const mainImage = data.productImages[0]
   const thumbnailImages = data.productImages.slice(1, 3)
-
+  const t = useI18nTranslations('common')
   return (
     <div className="h-full flex flex-col bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
       {/* Author Header */}
@@ -765,7 +767,7 @@ const MemberTestimonialCard = ({
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
                 <span className="text-gray-400 text-12 font-medium">
-                  No image available
+                    {t('noImageAvailable')}
                 </span>
               </div>
             )}
@@ -785,7 +787,7 @@ const MemberTestimonialCard = ({
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-100">
                   <span className="text-gray-400 text-12 font-medium">
-                    No image available
+                    {t('noImageAvailable')}
                   </span>
                 </div>
               )}
@@ -809,7 +811,7 @@ const MemberTestimonialCard = ({
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gray-100">
                         <span className="text-gray-400 text-10 font-medium">
-                          No image available
+                          {t('noImageAvailable')}
                         </span>
                       </div>
                     )}
@@ -906,6 +908,7 @@ const JourneyStep = ({
 // Main Card Component
 const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ cardData, className, ...props }, ref) => {
+    const t = useI18nTranslations('common')
     // Guard against undefined cardData
     if (!cardData) {
       console.warn('Card component requires cardData prop')

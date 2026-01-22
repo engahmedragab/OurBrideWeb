@@ -9,6 +9,7 @@ import { RatingDisplay } from '@/components/ui/RatingDisplay'
 import { PriceDisplay } from '@/components/ui/PriceDisplay'
 import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/SectionHeader'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ProviderProduct {
   id: string
@@ -51,7 +52,7 @@ export interface BestProvidersSectionProps {
 // Provider Card Component with error handling
 const ProviderCardItem = ({ provider }: { provider: Provider }) => {
   const [imageError, setImageError] = React.useState(false)
-  
+  const t = useI18nTranslations('common')
   return (
     <div
       className="bg-white border border-gray-100 rounded-[24px] p-6 md:p-8 flex flex-col items-center gap-4 shadow-sm"
@@ -75,7 +76,7 @@ const ProviderCardItem = ({ provider }: { provider: Provider }) => {
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
               <span className="text-gray-400 text-10 font-medium">
-                No image available
+                {t('noImageAvailable')}
               </span>
             </div>
           )}
@@ -117,7 +118,7 @@ const ProductCardItem = ({
   buttonText?: string
 }) => {
   const [productImageError, setProductImageError] = React.useState(false)
-  
+  const t = useI18nTranslations ('common')
   return (
     <Link
       href={provider.product.href}
@@ -138,7 +139,7 @@ const ProductCardItem = ({
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-200">
                 <span className="text-gray-400 text-10 font-medium">
-                  No image available
+                  {t('noImageAvailable')}
                 </span>
               </div>
             )}
@@ -146,7 +147,7 @@ const ProductCardItem = ({
         ) : (
           <div className="relative w-[100px] h-full overflow-hidden flex-shrink-0 bg-gray-200 flex items-center justify-center">
             <span className="text-gray-400 text-10 font-medium">
-              No image available
+              {t('noImageAvailable')}
             </span>
           </div>
         )}
@@ -194,13 +195,14 @@ const ProductCardItem = ({
 export const BestProvidersSection = ({
   providers,
   className,
-  topText = 'Best',
-  highlightText = 'Providers',
-  bottomText = 'With',
-  bottomHighlightText = 'Best Products',
+  topText = 'sections.best',
+  highlightText = 'sections.providers',
+  bottomText = 'sections.with',
+  bottomHighlightText = 'sections.bestProducts',
   headerAlignment = 'center',
-  buttonText = 'Explore Now',
+  buttonText = 'sections.exploreNow',
 }: BestProvidersSectionProps) => {
+ 
   return (
     <section
       className={cn('py-8 md:py-12', className)}

@@ -7,10 +7,14 @@ import { Trophy, Calendar, Users, Heart, MessageCircle, Share2, Star } from 'luc
 import { cn } from '@/lib/utils'
 import { EngagementButton } from './EngagementButton'
 import type { LeaderboardContestResponse } from '@/types/responses/community'
-import { toggleLike as toggleContestLike, toggleFavorite as toggleContestFavorite, shareContest } from '@/services/api/contestsApi'
+import {
+  toggleLike as toggleContestLike,
+  toggleFavorite as toggleContestFavorite,
+  shareContest,
+} from '@/services/api/contestsApi'
 import { useToast } from '@/components/ui/Toaster'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ContestCardProps {
   contest: LeaderboardContestResponse
@@ -29,22 +33,10 @@ const formatDate = (dateString: string | null): string => {
   })
 }
 
-// Helper function to get user display name
-const getUserDisplayName = (user: LeaderboardContestResponse['user']): string => {
-  if (!user) return 'OurBride'
-  const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
-  const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
-  const fullName = `${firstName} ${lastName}`.trim()
-  if (fullName) return fullName
-  // If userName is admin@our-bride.com, display as OurBride
-  if (user.userName && user.userName.toLowerCase() === 'admin@our-bride.com') {
-    return 'OurBride'
-  }
-  return user.userName || 'OurBride'
-}
-
 // Helper function to get contest status
-const getContestStatus = (contest: LeaderboardContestResponse): 'active' | 'ended' | 'upcoming' => {
+const getContestStatus = (
+  contest: LeaderboardContestResponse
+): 'active' | 'ended' | 'upcoming' => {
   if (!contest.isActive) return 'ended'
   const now = new Date()
   const endDate = contest.endDate ? new Date(contest.endDate) : null
@@ -56,9 +48,12 @@ const getContestStatus = (contest: LeaderboardContestResponse): 'active' | 'ende
 }
 
 export const ContestCard = ({ contest, className, onClick }: ContestCardProps) => {
-  const router = useRouter()
+  const t = useI18nTranslations('community')
   const { addToast } = useToast()
+
+  const router = useRouter()
   const queryClient = useQueryClient()
+
   const [isLiked, setIsLiked] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
   const [likes, setLikes] = useState(contest.likeCount || 0)
@@ -67,83 +62,91 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
   const [imageError, setImageError] = useState(false)
 
   const toggleLikeMutation = useMutation({
-    mutationFn: async () => {
-      return await toggleContestLike(contest.id)
-    },
+    mutationFn: async () => await toggleContestLike(contest.id),
     onSuccess: () => {
       setIsLiked(!isLiked)
       setLikes(prev => (isLiked ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('postCard.failedToToggleLike'),
+        'error'
+      )
     },
   })
 
   const shareMutation = useMutation({
-    mutationFn: async (shareSource?: string) => {
-      return await shareContest(contest.id, shareSource)
-    },
+    mutationFn: async (shareSource?: string) => await shareContest(contest.id, shareSource),
     onSuccess: (data) => {
       if (data) {
         setShares(data.shareCount)
-        const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/contests/${contest.id}`
-        navigator.clipboard.writeText(urlToShare).catch(() => { })
-        addToast('Shared successfully! Link copied to clipboard.', 'success')
+        const urlToShare =
+          data.shortUrl ||
+          data.fullUrl ||
+          `${window.location.origin}/community/contests/${contest.id}`
+        navigator.clipboard.writeText(urlToShare).catch(() => {})
+        addToast(t('postCard.sharedSuccessfully'), 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share contest', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('contestDetails.failedToShareContest'),
+        'error'
+      )
     },
   })
 
   const toggleFavoriteMutation = useMutation({
-    mutationFn: async () => {
-      return await toggleContestFavorite(contest.id)
-    },
+    mutationFn: async () => await toggleContestFavorite(contest.id),
     onSuccess: () => {
       setIsFavorited(!isFavorited)
       setFavorites(prev => (isFavorited ? prev - 1 : prev + 1))
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(
+        error instanceof Error ? error.message : t('postCard.failedToToggleFavorite'),
+        'error'
+      )
     },
   })
 
   const handleCardClick = () => {
-    if (onClick) {
-      onClick()
-    } else {
-      router.push(`/community/contests/${contest.id}`)
-    }
+    if (onClick) onClick()
+    else router.push(`/community/contests/${contest.id}`)
   }
 
-  const handleLikeClick = () => {
-    toggleLikeMutation.mutate()
-  }
-
-  const handleCommentClick = () => {
-    router.push(`/community/contests/${contest.id}`)
-  }
-
-  const handleShareClick = () => {
-    shareMutation.mutate('ShareButtonClick')
-  }
-
-  const handleFavoriteClick = () => {
-    toggleFavoriteMutation.mutate()
-  }
+  const handleLikeClick = () => toggleLikeMutation.mutate()
+  const handleCommentClick = () => router.push(`/community/contests/${contest.id}`)
+  const handleShareClick = () => shareMutation.mutate('ShareButtonClick')
+  const handleFavoriteClick = () => toggleFavoriteMutation.mutate()
 
   const status = getContestStatus(contest)
   const endDate = formatDate(contest.endDate)
+
   
   // Extract images from medias array
   type ContestWithMedias = LeaderboardContestResponse & { medias?: Array<{ url?: string }> }
   const contestWithMedias = contest as ContestWithMedias
   const medias = contestWithMedias.medias || []
   const imageUrl = medias.find((media: { url?: string }) => media?.url)?.url
+
+
+  const statusLabel =
+    status === 'active'
+      ? t('contestDetails.active')
+      : status === 'ended'
+        ? t('contestDetails.ended')
+        : t('contestDetails.upcoming')
+
+  const buttonLabel =
+    status === 'active'
+      ? t('contestDetails.joinContest')
+      : status === 'ended'
+        ? t('contestDetails.contestEnded')
+        : t('contestDetails.upcoming')
 
   return (
     <div
@@ -168,28 +171,24 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
               <span className="text-gray-400 text-12 font-medium">
-                No image available
+                {t('states.noContentMessage') /* fallback لطيف بدل "No image..." */}
               </span>
             </div>
           )}
+
           {!imageError && (
-            <>
-              {status === 'active' && (
-                <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-12 font-semibold">
-                  Active
-                </div>
+            <div
+              className={cn(
+                'absolute top-4 right-4 text-white px-3 py-1 rounded-full text-12 font-semibold',
+                status === 'active'
+                  ? 'bg-green-500'
+                  : status === 'ended'
+                    ? 'bg-gray-500'
+                    : 'bg-blue-500'
               )}
-              {status === 'ended' && (
-                <div className="absolute top-4 right-4 bg-gray-500 text-white px-3 py-1 rounded-full text-12 font-semibold">
-                  Ended
-                </div>
-              )}
-              {status === 'upcoming' && (
-                <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-12 font-semibold">
-                  Upcoming
-                </div>
-              )}
-            </>
+            >
+              {statusLabel}
+            </div>
           )}
         </div>
       ) : null}
@@ -202,27 +201,35 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
         <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2">
             <Trophy className="h-4 w-4 text-brand-500" />
-            <span className="text-14 font-semibold text-gray-900">Prize:</span>
+            <span className="text-14 font-semibold text-gray-900">
+              {t('contestDetails.prize')}:
+            </span>
             <span className="text-14 text-brand-500 font-semibold">
               {contest.prizes || 'TBA'}
             </span>
           </div>
+
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-gray-500" />
-            <span className="text-14 font-semibold text-gray-900">Participants:</span>
+            <span className="text-14 font-semibold text-gray-900">
+              {t('contestDetails.participants')}:
+            </span>
             <span className="text-14 text-gray-700">
               {contest.currentParticipants} / {contest.maxParticipants > 0 ? contest.maxParticipants : '∞'}
             </span>
           </div>
+
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-gray-500" />
-            <span className="text-14 font-semibold text-gray-900">Ends:</span>
+            <span className="text-14 font-semibold text-gray-900">
+              {t('contestDetails.ends')}:
+            </span>
             <span className="text-14 text-gray-700">{endDate || 'TBA'}</span>
           </div>
         </div>
 
         <button className="w-full bg-brand-500 text-white py-2 rounded-lg text-14 font-semibold hover:bg-brand-600 transition-colors">
-          {status === 'active' ? 'Join Contest' : status === 'ended' ? 'View Results' : 'Coming Soon'}
+          {buttonLabel}
         </button>
 
         {/* Engagement Metrics */}
@@ -231,34 +238,37 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
             <EngagementButton
               icon={<Heart className={cn('h-4 w-4', isLiked && 'fill-brand-500')} />}
               count={likes}
-              label="Likes"
+              label={t('postCard.likes')}
               onClick={handleLikeClick}
               isActive={isLiked}
               disabled={toggleLikeMutation.isPending}
             />
           </div>
+
           <div onClick={e => e.stopPropagation()}>
             <EngagementButton
               icon={<MessageCircle className="h-4 w-4" />}
               count={contest.reviewCount || contest.commentCount || 0}
-              label="Comments"
+              label={t('postCard.comments')}
               onClick={handleCommentClick}
             />
           </div>
+
           <div onClick={e => e.stopPropagation()}>
             <EngagementButton
               icon={<Share2 className="h-4 w-4" />}
               count={shares}
-              label="Shares"
+              label={t('postCard.shares')}
               onClick={handleShareClick}
               disabled={shareMutation.isPending}
             />
           </div>
+
           <div onClick={e => e.stopPropagation()}>
             <EngagementButton
               icon={<Star className={cn('h-4 w-4', isFavorited && 'fill-brand-500')} />}
               count={favorites}
-              label="Favorites"
+              label={t('postCard.favorites')}
               onClick={handleFavoriteClick}
               isActive={isFavorited}
               disabled={toggleFavoriteMutation.isPending}
@@ -269,8 +279,3 @@ export const ContestCard = ({ contest, className, onClick }: ContestCardProps) =
     </div>
   )
 }
-
-
-
-
-

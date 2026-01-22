@@ -8,6 +8,7 @@ import { getReelById, getReelBySlug } from '@/services/api/reelsApi'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 
 // Helper function to determine if a string is a number
 const isNumeric = (str: string): boolean => {
@@ -15,6 +16,8 @@ const isNumeric = (str: string): boolean => {
 }
 
 export function ReelDetailsClient({ id }: { id: string }) {
+  const t = useI18nTranslations("community")
+
   const activeTab: CommunityTab = 'reels'
 
   // Fetch community home data for sidebars
@@ -45,7 +48,7 @@ export function ReelDetailsClient({ id }: { id: string }) {
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
         <main className="flex-1 flex items-center justify-center min-h-[60vh] py-12">
-          <LoadingOverlay open={true} title="Loading reel..." />
+          <LoadingOverlay open={true} title={t("reelDetails.loading")} />
         </main>
         <Footer />
       </div>
@@ -59,8 +62,8 @@ export function ReelDetailsClient({ id }: { id: string }) {
         <main className="flex-1 flex items-center justify-center min-h-[60vh] py-12">
           <div className="w-full max-w-md mx-auto px-4">
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-10 text-center">
-              <p className="text-gray-600 text-base sm:text-lg font-medium">Reel not found</p>
-              <p className="text-gray-500 text-sm mt-2">The reel you're looking for doesn't exist or has been removed.</p>
+              <p className="text-gray-600 text-base sm:text-lg font-medium">{t("reelDetails.reelNotFoundTitle")}</p>
+              <p className="text-gray-500 text-sm mt-2">{t("reelDetails.reelNotFoundMessage")}</p>
             </div>
           </div>
         </main>
@@ -100,7 +103,7 @@ export function ReelDetailsClient({ id }: { id: string }) {
                 <CommunityRightSidebar
                   activeTab={activeTab}
                   currentUser={communityData?.currentUser ? {
-                    name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || 'User',
+                    name: `${communityData.currentUser.firstName || ''} ${communityData.currentUser.lastName || ''}`.trim() || communityData.currentUser.userName || t("user.fallbackName"),
                     email: communityData.currentUser.email || '',
                     avatar: communityData.currentUser.profileUrl || 'https://via.placeholder.com/100'
                   } : undefined}

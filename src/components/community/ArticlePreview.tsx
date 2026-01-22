@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ArticlePreviewProps {
   id: string
@@ -20,6 +21,7 @@ export const ArticlePreview = ({
   thumbnail,
   className,
 }: ArticlePreviewProps) => {
+  const t = useI18nTranslations("common")
   const router = useRouter()
   const [imageError, setImageError] = useState(false)
 
@@ -49,7 +51,7 @@ export const ArticlePreview = ({
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
               <span className="text-gray-400 text-10 font-medium">
-                No image
+                {t("noImageAvailable")}
               </span>
             </div>
           )}

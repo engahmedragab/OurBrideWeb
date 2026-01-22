@@ -7,6 +7,7 @@ import { CommunityProfile } from '@/components/community'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { useCommunityProfile } from '@/hooks/community'
 import { useSearchParams } from 'next/navigation'
+import { useI18nTranslations } from '@/i18n'
 
 // Helper function to determine if a string is a GUID (user ID)
 const isGuid = (str: string): boolean => {
@@ -20,6 +21,7 @@ const isNumeric = (str: string): boolean => {
 }
 
 function CommunityProfileContent() {
+    const t = useI18nTranslations("community")
     const searchParams = useSearchParams()
     const id = searchParams?.get('id')
     const typeParam = searchParams?.get('type') as 'User' | 'Provider' | 'BazaarEvent' | null
@@ -31,10 +33,10 @@ function CommunityProfileContent() {
                 <div className="w-full max-w-md mx-auto px-4">
                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-10 text-center">
                         <p className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
-                            Profile ID required
+                            {t("profile.profileIdRequired")}
                         </p>
                         <p className="text-sm sm:text-base text-gray-600">
-                            Please provide a profile ID in the URL.
+                            {t("profile.profileIdRequiredMessage")}
                         </p>
                     </div>
                 </div>
@@ -81,7 +83,7 @@ function CommunityProfileContent() {
     if (isLoading) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center py-12">
-                <LoadingOverlay open={true} title="Loading profile..." />
+                <LoadingOverlay open={true} title={t("profile.loading")} />
             </div>
         )
     }
@@ -92,12 +94,12 @@ function CommunityProfileContent() {
                 <div className="w-full max-w-md mx-auto px-4">
                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 sm:p-10 text-center">
                         <p className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
-                            Profile not found
+                            {t("profile.profileNotFoundTitle")}
                         </p>
                         <p className="text-sm sm:text-base text-gray-600">
                             {error instanceof Error
                                 ? error.message
-                                : 'The profile you are looking for does not exist or has been removed.'}
+                                    : t("profile.profileNotFoundMessage")}
                         </p>
                     </div>
                 </div>
@@ -118,7 +120,7 @@ export function CommunityProfileClient() {
                         <Suspense
                             fallback={
                                 <div className="min-h-[60vh] flex items-center justify-center py-12">
-                                    <LoadingOverlay open={true} title="Loading profile..." />
+                                    <LoadingOverlay open={true}  />
                                 </div>
                             }
                         >

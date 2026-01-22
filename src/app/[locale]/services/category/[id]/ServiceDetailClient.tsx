@@ -1,15 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, } from 'react'
 import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
 import { useRouter } from '@/i18n/navigation'
 import {
   Star,
-  ArrowRight,
+  
   ThumbsUp,
   MessageCircle,
   Send,
+  ArrowLeft,
 } from 'lucide-react'
 import { Header, Footer } from '@/components/layout'
 import {
@@ -41,6 +42,7 @@ import {
 import { useProviderCardHandlers } from '@/hooks/providers'
 import productImage from '@/assets/svg/product-1.svg'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 // Wrapper component for service card with handlers
 const ServiceCardWithHandlers = ({
@@ -95,33 +97,55 @@ interface ServiceDetailClientProps {
 /**
  * Format date to relative time (e.g., "2 months ago")
  */
-const formatRelativeTime = (dateString: string): string => {
-  try {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
 
-    if (diffInSeconds < 60) return 'Just now'
-    if (diffInSeconds < 3600) {
-      const minutes = Math.floor(diffInSeconds / 60)
-      return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`
+// ✅ Custom hook  formatter function
+const useFormatRelativeTime = () => {
+  const tSD = useI18nTranslations('services.serviceDetail')
+  
+
+  return (dateString: string): string => {
+    try {
+      const date = new Date(dateString)
+      const now = new Date()
+      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+      if (diffInSeconds < 60) return tSD('relativeTime.justNow')
+
+      if (diffInSeconds < 3600) {
+        const minutes = Math.floor(diffInSeconds / 60)
+        return `${minutes} ${
+          minutes === 1 ? tSD('relativeTime.minute') : tSD('relativeTime.minutes')
+        } ago`
+      }
+
+      if (diffInSeconds < 86400) {
+        const hours = Math.floor(diffInSeconds / 3600)
+        return `${hours} ${
+          hours === 1 ? tSD('relativeTime.hour') : tSD('relativeTime.hours')
+        } ago`
+      }
+
+      if (diffInSeconds < 2592000) {
+        const days = Math.floor(diffInSeconds / 86400)
+        return `${days} ${
+          days === 1 ? tSD('relativeTime.day') : tSD('relativeTime.days')
+        } ago`
+      }
+
+      if (diffInSeconds < 31536000) {
+        const months = Math.floor(diffInSeconds / 2592000)
+        return `${months} ${
+          months === 1 ? tSD('relativeTime.month') : tSD('relativeTime.months')
+        } ago`
+      }
+
+      const years = Math.floor(diffInSeconds / 31536000)
+      return `${years} ${
+        years === 1 ? tSD('relativeTime.year') : tSD('relativeTime.years')
+      } ago`
+    } catch {
+      return dateString
     }
-    if (diffInSeconds < 86400) {
-      const hours = Math.floor(diffInSeconds / 3600)
-      return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`
-    }
-    if (diffInSeconds < 2592000) {
-      const days = Math.floor(diffInSeconds / 86400)
-      return `${days} ${days === 1 ? 'day' : 'days'} ago`
-    }
-    if (diffInSeconds < 31536000) {
-      const months = Math.floor(diffInSeconds / 2592000)
-      return `${months} ${months === 1 ? 'month' : 'months'} ago`
-    }
-    const years = Math.floor(diffInSeconds / 31536000)
-    return `${years} ${years === 1 ? 'year' : 'years'} ago`
-  } catch {
-    return dateString
   }
 }
 
@@ -153,8 +177,13 @@ const calculateRatingDistribution = (reviews: ServiceReview[]) => {
 }
 
 export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
+  const isRTL = useIsRTL()
   const router = useRouter()
   const { addToast } = useToast()
+  const tSD = useI18nTranslations('services.serviceDetail')
+  const formatRelativeTime = useFormatRelativeTime()
+  
+  
   const [userRating, setUserRating] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
   const [branchesExpanded, setBranchesExpanded] = useState(false)
@@ -226,7 +255,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
       addToast(message, 'success')
     },
     onFavoriteError: (error) => {
-      addToast(error.message || 'Failed to update favorite. Please try again.', 'error')
+      addToast(error.message || tSD('favorite.failTryAgain'), 'error')
     },
     onWishlistSuccess: (response) => {
       const defaultMessage = response === true ? 'Added to wishlist' : 'Removed from wishlist'
@@ -234,7 +263,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
       addToast(message, 'success')
     },
     onWishlistError: (error) => {
-      addToast(error.message || 'Failed to update wishlist. Please try again.', 'error')
+      addToast(error.message || tSD('wishlist.failTryAgain'), 'error')
     },
   })
 
@@ -252,11 +281,11 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
   const getRatingLabel = (stars: number) => {
     const labels: Record<number, string> = {
-      5: 'Excellent',
-      4: 'Good',
-      3: 'Average',
-      2: 'Below Average',
-      1: 'Poor',
+      5: tSD('ratingLabels.excellent'),
+      4: tSD('ratingLabels.good'),
+      3: tSD('ratingLabels.average'),
+      2: tSD('ratingLabels.belowAverage'),
+      1: tSD('ratingLabels.poor'),
     }
     return labels[stars] || ''
   }
@@ -269,7 +298,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
         <main className="flex-1 flex items-center justify-center">
           <LoadingSpinner
             size="lg"
-            text="Loading service..."
+            text={tSD('loading.title')}
             fullScreen={true}
           />
         </main>
@@ -286,10 +315,10 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-16 text-red-600 mb-4">
-              Service not found. Please try again later.
+              {tSD('error.notFound')}
             </p>
             <Button onClick={() => router.push('/services/category')}>
-              Back to Services
+              {tSD('error.backToServices')}
             </Button>
           </div>
         </main>
@@ -308,8 +337,8 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
           {/* Back Button */}
           <BackButton
             href="/services/category"
-            label="Back to Services"
-            className="mb-6"
+            label={tSD('backButton.label')}
+            className={cn("mb-6 ")}
           />
 
           {/* Main Service Section - 3 Column Layout */}
@@ -317,7 +346,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
             {/* Left: Image Gallery (4 columns) */}
             <div className="lg:col-span-4">
               <div className="relative">
-                <ProductImageGallery
+                <ProductImageGallery 
                   images={service.images}
                   productName={service.title}
                 />
@@ -328,7 +357,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                       variant="default"
                       className="bg-green-500 !text-white border-0 px-3 py-1 text-12 font-normal rounded"
                     >
-                      Top Offer
+                      {tSD('badges.topOffer')}
                     </Badge>
                   </div>
                 )}
@@ -366,7 +395,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
               {/* Delivery Date */}
               <div className="text-13 sm:text-14 text-brand-500 font-normal">
-                Book now and get by <span className="text-gray-900">25 AUG 2025</span>
+                {tSD('delivery.bookNowAndGetBy')} <span className="text-gray-900">{tSD('delivery.dateFallback')}</span>
               </div>
             </div>
 
@@ -388,7 +417,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   {/* Pricing Section */}
                   <div className="mb-6 pb-6 border-b border-gray-200">
                     <div className="flex items-baseline gap-2 mb-4">
-                      <span className="text-13 sm:text-14 text-gray-600">Start From</span>
+                      <span className="text-13 sm:text-14 text-gray-600">{tSD('bookingCard.startFrom')}</span>
                       <span className="text-20 sm:text-22 md:text-24 font-normal text-gray-900">
                         {service.price.discounted.toLocaleString()}
                       </span>
@@ -400,7 +429,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                     {/* Available Branches */}
                     <div className="mb-4">
                       <h4 className="text-13 sm:text-14 font-semibold text-gray-900 mb-2">
-                        Available Branches
+                        {tSD('bookingCard.availableBranches')}
                       </h4>
                       <div
                         className={cn(
@@ -411,49 +440,49 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                         {branchesExpanded ? (
                           <>
                             <p className="text-14 text-gray-600">
-                              Giza, 6 Of October
+                              {tSD('branchExpanded.6OfOctober')}
                             </p>
                             <p className="text-14 text-gray-600">
-                              Cairo, Maadi
+                              {tSD('branchExpanded.maadi')}
                             </p>
                             <p className="text-14 text-gray-600">
-                              Giza, Elshikh Zayed
+                              {tSD('branchExpanded.elshikhZayed')}
                             </p>
                             <p className="text-14 text-gray-600">
-                              Mansoura, Glaa&apos; St.
+                              {tSD('branchExpanded.mansoura')}
                             </p>
-                            <p className="text-14 text-gray-600">Giza, Dokki</p>
+                            <p className="text-14 text-gray-600">{tSD('branchExpanded.dokki')}</p>
                             <p className="text-14 text-gray-600">
-                              Cairo, Nasr City
-                            </p>
-                            <p className="text-14 text-gray-600">
-                              Alexandria, Corniche
+                              {tSD('branchExpanded.nasrCity')}
                             </p>
                             <p className="text-14 text-gray-600">
-                              Cairo, Zamalek
+                              {tSD('branchExpanded.corniche')}
                             </p>
                             <p className="text-14 text-gray-600">
-                              Giza, Agouza
+                              {tSD('branchExpanded.zamalek')}
                             </p>
                             <p className="text-14 text-gray-600">
-                              Cairo, Heliopolis
+                              {tSD('branchExpanded.agouza')}
+                            </p>
+                            <p className="text-14 text-gray-600">
+                              {tSD('branchExpanded.heliopolis')}
                             </p>
                           </>
                         ) : (
                           <>
                             <p className="text-14 text-gray-600">
-                              Giza, 6 Of October
+                                  {tSD('branchExpanded.6OfOctober')}
                             </p>
                             <p className="text-14 text-gray-600">
-                              Cairo, Maadi
+                              {tSD('branchExpanded.maadi')}
                             </p>
                             <p className="text-14 text-gray-600">
-                              Giza, Elshikh Zayed
+                              {tSD('branchExpanded.elshikhZayed')}
                             </p>
                             <p className="text-14 text-gray-600">
-                              Mansoura, Glaa&apos; St.
+                              {tSD('branchExpanded.mansoura')}
                             </p>
-                            <p className="text-14 text-gray-600">Giz...</p>
+                            <p className="text-14 text-gray-600">{tSD('branchExpanded.dokki')}</p>
                           </>
                         )}
                       </div>
@@ -461,7 +490,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                         onClick={() => setBranchesExpanded(!branchesExpanded)}
                         className="text-13 sm:text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
                       >
-                        {branchesExpanded ? 'See Less' : 'See More'}
+                        {branchesExpanded ? tSD('bookingCard.seeLess') : tSD('bookingCard.seeMore')}
                       </button>
                     </div>
                   </div>
@@ -470,10 +499,13 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   {packagesData && packagesData.packages.length > 0 && (
                     <div className="mb-6 pb-6 border-b border-gray-200">
                       <h4 className="text-13 sm:text-14 font-semibold text-gray-900 mb-2">
-                        Packages Details
+                        {tSD('bookingCard.packagesDetails')}
                       </h4>
                       {packagesLoading ? (
-                        <LoadingSpinner size="sm" text="Loading packages..." fullScreen={true} />
+
+                        <LoadingSpinner size="sm" text={tSD('bookingCard.loadingPackages')} />
+
+
                       ) : (
                         <>
                           <div
@@ -514,7 +546,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                               onClick={() => setPackagesExpanded(!packagesExpanded)}
                               className="text-13 sm:text-14 text-brand-500 hover:text-brand-600 font-medium mt-1"
                             >
-                              {packagesExpanded ? 'See Less' : 'See More'}
+                              {packagesExpanded ? tSD('bookingCard.seeLess') : tSD('bookingCard.seeMore')}
                             </button>
                           )}
                         </>
@@ -540,7 +572,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                       className="flex-1 h-12 rounded-full bg-brand-500 hover:bg-brand-600 text-white"
                       onClick={handleBookNow}
                     >
-                      Book Now
+                      {tSD('bookingCard.bookNow')}
                     </Button>
                   </div>
                 </div>
@@ -554,10 +586,10 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
             <div className="lg:col-span-9">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-20 sm:text-24 md:text-30 font-semibold text-gray-900 leading-tight">
-                  Reviews
+                  {tSD('reviews.title')}
                 </h2>
                 <span className="text-13 sm:text-14 text-gray-600">
-                  {service.rating.count} reviews
+                  {service.rating.count}  {tSD('reviews.title')}
                 </span>
               </div>
 
@@ -640,7 +672,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                 ) : (
                   <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
                     <p className="text-14 text-gray-500">
-                      No reviews yet. Be the first to review this service!
+                      {tSD('reviews.noReviews')}
                     </p>
                   </div>
                 )}
@@ -648,14 +680,14 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
 
               <div className="mt-6 text-center">
                 <button className="text-14 sm:text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
-                  See more reviews
+                  {tSD('reviews.seeMoreReviews')}
                 </button>
               </div>
 
               {/* Write Your Review Section */}
               <div className="mt-8 p-4 sm:p-6">
                 <h3 className="text-16 sm:text-18 font-semibold text-gray-900 mb-4">
-                  Write Your Review
+                  {tSD('reviews.writeYourReview')}
                 </h3>
 
                 {/* Star Rating - Centered */}
@@ -674,7 +706,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   <div className="absolute top-4 left-4 w-8 h-8 rounded-full overflow-hidden">
                     <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                       <span className="text-12 font-semibold text-gray-600">
-                        U
+                        {tSD('reviews.userAvatar')}
                       </span>
                     </div>
                   </div>
@@ -683,7 +715,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                   <textarea
                     value={reviewComment}
                     onChange={e => setReviewComment(e.target.value)}
-                    placeholder="Share your Comments"
+                    placeholder={tSD('reviews.commentPlaceholder')}
                     className="w-full min-h-[100px] pl-12 pr-14 py-2 border-0 focus:outline-none text-14 text-gray-900 placeholder:text-gray-400 resize-none bg-transparent"
                     rows={4}
                   />
@@ -707,8 +739,8 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                           
                           const { message, type } = handleApiResponseForToast(
                             response,
-                            'Review submitted successfully!',
-                            'Failed to submit review'
+                            tSD('reviews.success'),
+                            tSD('reviews.fail')
                           )
                           
                           if (type === 'success') {
@@ -718,7 +750,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                           addToast(message, type)
                         } catch (error) {
                           console.error('Error submitting review:', error)
-                          const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+                          const errorMessage = error instanceof Error ? error.message : tSD('reviews.failTryAgain')
                           addToast(errorMessage, 'error')
                         }
                       }
@@ -759,7 +791,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                     />
                   </div>
                   <p className="text-13 sm:text-14 text-gray-600">
-                    {service.rating.count} Ratings
+                    {service.rating.count} {tSD('reviews.ratingCount')}
                   </p>
                 </div>
 
@@ -798,9 +830,9 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
             <OfferBanner
               offers={[
                 {
-                  heading: '25% Offer On our products',
+                  heading: tSD('newsletterOffer.heading'),
                   description:
-                    'OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.',
+                    tSD('newsletterOffer.description'),
                   variant: 'default',
                   productImage: productImage,
                 },
@@ -812,14 +844,15 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
           <section className="mb-12 max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-8">
               <h2 className="text-24 sm:text-28 md:text-30 lg:text-32 font-normal text-gray-900 leading-tight">
-                Suggested for You
+                {tSD('suggested.title')}
               </h2>
               <Link
                 href="/services/category"
                 className="flex items-center gap-2 text-14 sm:text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
               >
-                View All
-                <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                {tSD('suggested.viewAll')}
+                
+                 <ArrowLeft className= {cn("h-3.5 w-3.5 sm:h-4 sm:w-4", isRTL ? "rotate-0" : "rotate-180")} /> 
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -833,7 +866,7 @@ export function ServiceDetailClient({ serviceId }: ServiceDetailClientProps) {
                 ))
               ) : (
                 <p className="text-14 text-gray-500 col-span-full">
-                  No related services found.
+                  {tSD('suggested.noRelated')}
                 </p>
               )}
             </div>

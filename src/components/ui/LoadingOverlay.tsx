@@ -22,9 +22,9 @@ export const LoadingOverlay = ({
   className,
   containerClassName,
 }: LoadingOverlayProps) => {
-  if (!open) return null
+ 
   const t =useI18nTranslations('common')
-
+  if (!open) return null
   return (
     <div
       className={cn(

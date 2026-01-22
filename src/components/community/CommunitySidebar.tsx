@@ -13,6 +13,7 @@ import { CommunityEmptyState } from './CommunityEmptyState'
 import { useArticles } from '@/hooks/community/useCommunityContent'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n'
 
 export type CommunityTab = 'community' | 'posts' | 'blogs' | 'articles' | 'reels' | 'decision-groups' | 'contests' | 'profile'
 
@@ -27,6 +28,7 @@ export const CommunitySidebar = ({
   activeTab: externalActiveTab,
   onTabChange,
 }: CommunitySidebarProps) => {
+  const t = useI18nTranslations("community")
   const router = useRouter()
   const { user } = useAuth()
   const [internalActiveTab, setInternalActiveTab] = useState<CommunityTab>('posts')
@@ -87,12 +89,12 @@ export const CommunitySidebar = ({
       className={cn('w-80 flex-shrink-0 space-y-4 overflow-y-auto', className)}
     >
       {/* Community Title */}
-      <h2 className="text-20 font-semibold text-gray-900">Community</h2>
+      <h2 className="text-20 font-semibold text-gray-900">{t("tabs.community")}</h2>
 
       {/* Search Bar */}
       <form onSubmit={handleSearchSubmit}>
         <SearchInput
-          placeholder="Search Community"
+          placeholder={t("search.title.page")}
           variant="default"
           size="md"
           className="w-full rounded-lg"
@@ -120,7 +122,7 @@ export const CommunitySidebar = ({
                 activeTab === 'community' ? 'text-brand-500' : 'text-gray-900'
               )}
             />
-            <span>Community</span>
+            <span>{t("tabs.community")}</span>
             {activeTab === 'community' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
@@ -141,7 +143,7 @@ export const CommunitySidebar = ({
                 activeTab === 'posts' ? 'text-brand-500' : 'text-gray-900'
               )}
             />
-            <span>Posts</span>
+            <span>{t("tabs.posts")}</span>
             {activeTab === 'posts' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
@@ -162,7 +164,7 @@ export const CommunitySidebar = ({
                 activeTab === 'blogs' ? 'text-brand-500' : 'text-gray-900'
               )}
             />
-            <span>Blogs</span>
+            <span>{t("tabs.blogs")}</span>
             {activeTab === 'blogs' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
@@ -183,7 +185,7 @@ export const CommunitySidebar = ({
                 activeTab === 'articles' ? 'text-brand-500' : 'text-gray-900'
               )}
             />
-            <span>Articles</span>
+            <span>{t("tabs.articles")}</span>
             {activeTab === 'articles' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
@@ -204,7 +206,7 @@ export const CommunitySidebar = ({
                 activeTab === 'reels' ? 'text-brand-500' : 'text-gray-900'
               )}
             />
-            <span>Reels</span>
+            <span>{t("tabs.reels")}</span>
             {activeTab === 'reels' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
@@ -225,7 +227,7 @@ export const CommunitySidebar = ({
                 activeTab === 'decision-groups' ? 'text-brand-500' : 'text-gray-900'
               )}
             />
-            <span>Decision Groups</span>
+            <span>{t("tabs.decision-groups")}</span>
             {activeTab === 'decision-groups' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
@@ -246,7 +248,7 @@ export const CommunitySidebar = ({
                 activeTab === 'contests' ? 'text-brand-500' : 'text-gray-900'
               )}
             />
-            <span>Contests</span>
+            <span>{t("tabs.contests")}</span>
             {activeTab === 'contests' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
             )}
@@ -269,7 +271,7 @@ export const CommunitySidebar = ({
                     activeTab === 'profile' ? 'text-brand-500' : 'text-gray-900'
                   )}
                 />
-                <span>Profile</span>
+                <span>{t("tabs.profile")}</span>
                 {activeTab === 'profile' && (
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500" />
                 )}
@@ -284,7 +286,7 @@ export const CommunitySidebar = ({
                 <User
                   className="h-5 w-5 flex-shrink-0 text-gray-900"
                 />
-                <span>My Profile</span>
+                <span>{t("links.myProfile")}</span>
               </button>
             </>
           )}
@@ -298,12 +300,12 @@ export const CommunitySidebar = ({
         <>
           {/* Articles Title */}
           <div className="flex items-center justify-between">
-            <h3 className="text-16 font-normal text-gray-900">Articles</h3>
+            <h3 className="text-16 font-normal text-gray-900">{t("tabs.articles")}</h3>
             <button
               onClick={handleSeeAllArticles}
               className="text-14 font-normal text-brand-500 hover:text-brand-600 transition-colors"
             >
-              See All
+              {t("actions.seeAll")}
             </button>
           </div>
 
@@ -311,7 +313,7 @@ export const CommunitySidebar = ({
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
             {isLoadingArticles ? (
               <div className="flex justify-center items-center py-8 min-h-[200px]">
-                <LoadingOverlay open={true} title="Loading..." />
+                <LoadingOverlay open={true}  />
               </div>
             ) : articles && articles.length > 0 ? (
               <div className="space-y-2">
@@ -328,8 +330,8 @@ export const CommunitySidebar = ({
             ) : (
               <div className="py-4">
                 <CommunityEmptyState
-                  title="No Articles Available"
-                  message="There are no articles to display at the moment."
+                  title={t("states.noArticlesTitle")}
+                  message={t("states.noArticlesMessage")}
                   compact
                 />
               </div>

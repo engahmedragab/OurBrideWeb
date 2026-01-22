@@ -34,6 +34,7 @@ import {
 import { toggleFollow } from '@/services/api/communityProfilesApi'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { COMMUNITY_IMAGES } from '@/constants/community-images'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ContestDetailsProps {
   contest: LeaderboardContestResponse
@@ -56,6 +57,8 @@ export const ContestDetails = ({
   contest,
   className,
 }: ContestDetailsProps) => {
+  const t = useI18nTranslations("community")
+  const tC = useI18nTranslations("common")
   const router = useRouter()
   const { addToast } = useToast()
   const queryClient = useQueryClient()
@@ -81,7 +84,7 @@ export const ContestDetails = ({
   const comments = (contest.reviews || []).map((review: ReviewResponse) => ({
     id: String(review.id),
     author: {
-      name: review.isAnonymous ? 'Anonymous' : 'User', // TODO: Get actual user name from review.userId
+      name: review.isAnonymous ? t("blogDetails.Anonymous") : t("blogDetails.user"), // TODO: Get actual user name from review.userId
       avatar: 'https://via.placeholder.com/100',
     },
     content: review.comment || review.summary || '',
@@ -95,12 +98,12 @@ export const ContestDetails = ({
     },
     onSuccess: () => {
       setCommentText('')
-      addToast('Comment added successfully!', 'success')
+      addToast(t("articleDetails.commentAdded"), 'success')
       // Invalidate queries to refresh comments/reviews
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to add comment', 'error')
+      addToast(error instanceof Error ? error.message : t("articleDetails.failedToAddComment"), 'error')
     },
   })
 
@@ -119,7 +122,7 @@ export const ContestDetails = ({
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle like', 'error')
+      addToast(error instanceof Error ? error.message : t("articleDetails.failedToToggleLike"), 'error')
     },
   })
 
@@ -133,12 +136,12 @@ export const ContestDetails = ({
         // Copy share URL to clipboard
         const urlToShare = data.shortUrl || data.fullUrl || `${window.location.origin}/community/contests/${contest.id}`
         navigator.clipboard.writeText(urlToShare).catch(() => { })
-        addToast('Shared successfully! Link copied to clipboard.', 'success')
+        addToast(t("articleDetails.sharedSuccessfully"), 'success')
       }
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to share contest', 'error')
+      addToast(error instanceof Error ? error.message : t("contestDetails.failedToShareContest"), 'error')
     },
   })
 
@@ -152,13 +155,13 @@ export const ContestDetails = ({
       queryClient.invalidateQueries({ queryKey: ['contest', contest.id] })
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle favorite', 'error')
+      addToast(error instanceof Error ? error.message : t("articleDetails.failedToToggleFavorite"), 'error')
     },
   })
 
   const toggleFollowMutation = useMutation({
     mutationFn: async () => {
-      if (!contest.userId) throw new Error('User ID not available')
+      if (!contest.userId) throw new Error(t("articleDetails.userIDNotAvailable"))
       await toggleFollow({
         profileType: 'User',
         profileUserId: contest.userId,
@@ -166,10 +169,10 @@ export const ContestDetails = ({
     },
     onSuccess: () => {
       setIsFollowing(!isFollowing)
-      addToast(isFollowing ? 'Unfollowed successfully' : 'Followed successfully', 'success')
+      addToast(isFollowing ? t("articleDetails.unfollowedSuccessfully") : t("articleDetails.followedSuccessfully"), 'success')
     },
     onError: (error) => {
-      addToast(error instanceof Error ? error.message : 'Failed to toggle follow', 'error')
+      addToast(error instanceof Error ? error.message : t("articleDetails.failedToToggleFollow"), 'error')
     },
   })
 
@@ -191,11 +194,11 @@ export const ContestDetails = ({
 
   const handleJoinContest = () => {
     if (hasJoined) {
-      addToast('You have already joined this contest!', 'info')
+      addToast(t("contestDetails.alreadyJoined"), 'info')
       return
     }
     setHasJoined(true)
-    addToast('Successfully joined the contest!', 'success')
+    addToast(t("contestDetails.joinedSuccessfully"), 'success')
   }
 
   return (
@@ -216,10 +219,10 @@ export const ContestDetails = ({
             onClick={() => router.push('/community?tab=contests')}
             className="hover:text-brand-500 transition-colors"
           >
-            Community
+            {t("tabs.community")}
           </button>
           <span>/</span>
-          <span>Contests</span>
+          <span>{t("tabs.contests")}</span>
           <span>/</span>
           <span className="text-gray-900">{contest.title}</span>
         </div>
@@ -242,24 +245,24 @@ export const ContestDetails = ({
                 />
                 {status === 'active' && (
                   <div className="absolute top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-full text-14 font-semibold">
-                    Active
+                    {t("contestDetails.active")}
                   </div>
                 )}
                 {status === 'ended' && (
                   <div className="absolute top-4 right-4 bg-gray-500 text-white px-4 py-2 rounded-full text-14 font-semibold">
-                    Ended
+                    {t("contestDetails.ended")}
                   </div>
                 )}
                 {status === 'upcoming' && (
                   <div className="absolute top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-full text-14 font-semibold">
-                    Upcoming
+                    {t("contestDetails.upcoming")}
                   </div>
                 )}
               </>
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
                 <span className="text-gray-400 text-12 font-medium">
-                  No image available
+                  {tC("noImageAvailable")}
                 </span>
               </div>
             )}
@@ -285,7 +288,7 @@ export const ContestDetails = ({
             <div className="flex items-center gap-3">
               <Trophy className="h-5 w-5 text-brand-500" />
               <div>
-                <span className="text-14 font-semibold text-gray-900">Prize:</span>
+                <span className="text-14 font-semibold text-gray-900">{t("contestDetails.prize")}:</span>
                 <span className="text-14 text-brand-500 font-semibold ml-2">
                   {contest.prizes || 'TBA'}
                 </span>
@@ -295,7 +298,7 @@ export const ContestDetails = ({
               <Users className="h-5 w-5 text-gray-500" />
               <div>
                 <span className="text-14 font-semibold text-gray-900">
-                  Participants:
+                  {t("contestDetails.participants")}:
                 </span>
                 <span className="text-14 text-gray-700 ml-2">
                   {contest.currentParticipants} / {contest.maxParticipants > 0 ? contest.maxParticipants : '∞'}
@@ -305,7 +308,7 @@ export const ContestDetails = ({
             <div className="flex items-center gap-3">
               <Calendar className="h-5 w-5 text-gray-500" />
               <div>
-                <span className="text-14 font-semibold text-gray-900">Ends:</span>
+                <span className="text-14 font-semibold text-gray-900">{t("contestDetails.ends")}:</span>
                 <span className="text-14 text-gray-700 ml-2">{contest.endDate ? formatDateShort(contest.endDate) : 'TBA'}</span>
               </div>
             </div>
@@ -319,7 +322,7 @@ export const ContestDetails = ({
             disabled={hasJoined || status !== 'active'}
             className="w-full mb-4"
           >
-            {hasJoined ? 'Joined' : status === 'active' ? 'Join Contest' : 'Contest Ended'}
+            {hasJoined ? t("contestDetails.joined") : status === 'active' ? t("contestDetails.joinContest") : t("contestDetails.contestEnded")}
           </Button>
 
           {/* Engagement Metrics */}
@@ -328,25 +331,25 @@ export const ContestDetails = ({
               <EngagementButton
                 icon={<Heart className={cn('h-5 w-5', isLiked && 'fill-brand-500')} />}
                 count={likes}
-                label="Likes"
+                label={t("postCard.likes")}
                 onClick={toggleLikeMutation.isPending ? undefined : handleLikeClick}
                 isActive={isLiked}
               />
               <EngagementButton
                 icon={<MessageCircle className="h-5 w-5" />}
                 count={contest.reviewCount || contest.commentCount || 0}
-                label="Comments"
+                label={t("postCard.comments")}
               />
               <EngagementButton
                 icon={<Share2 className="h-5 w-5" />}
                 count={shares}
-                label="Shares"
+                label={t("postCard.shares")}
                 onClick={shareMutation.isPending ? undefined : handleShareClick}
               />
               <EngagementButton
                 icon={<Star className={cn('h-5 w-5', isFavorited && 'fill-brand-500')} />}
                 count={favorites}
-                label="Favorites"
+                label={t("postCard.favorites")}
                 onClick={toggleFavoriteMutation.isPending ? undefined : handleFavoriteClick}
                 isActive={isFavorited}
               />
@@ -368,10 +371,10 @@ export const ContestDetails = ({
               >
                 <UserPlus className={cn('h-4 w-4 mr-2', isFollowing && 'hidden')} />
                 {toggleFollowMutation.isPending
-                  ? 'Loading...'
+                  ? tC("loading")
                   : isFollowing
-                    ? 'Following'
-                    : 'Follow'}
+                    ? t("articleDetails.following")
+                    : t("articleDetails.follow")}
               </Button>
             </div>
           )}
@@ -379,7 +382,7 @@ export const ContestDetails = ({
       </div>
 
       {/* Comments Section */}
-      <h3 className="text-16 font-normal text-gray-900">Comments</h3>
+      <h3 className="text-16 font-normal text-gray-900">{t("postCard.comments")}</h3>
 
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
         {/* Comments List */}
@@ -390,7 +393,7 @@ export const ContestDetails = ({
             ))
           ) : (
             <p className="text-14 text-gray-500 text-center py-4">
-              No comments yet. Be the first to comment!
+              {t("articleDetails.noComments")}
             </p>
           )}
         </div>
@@ -409,7 +412,7 @@ export const ContestDetails = ({
               <textarea
                 value={commentText}
                 onChange={e => setCommentText(e.target.value)}
-                placeholder="Write a comment..."
+                placeholder={t("articleDetails.writeComment")}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-14 resize-none"
                 rows={3}
               />
@@ -421,7 +424,7 @@ export const ContestDetails = ({
                   disabled={!commentText.trim() || addCommentMutation.isPending}
                   className="text-10 text-white font-normal"
                 >
-                  {addCommentMutation.isPending ? 'Posting...' : 'Post Comment'}
+                  {addCommentMutation.isPending ? tC("articleDetails.posting") : t("articleDetails.postComment")}
                 </Button>
               </div>
             </div>

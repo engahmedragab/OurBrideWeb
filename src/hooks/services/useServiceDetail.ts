@@ -3,6 +3,7 @@ import { getServiceById, getServiceBySlug } from '@/services/api/serviceApi'
 import { mapServiceResponseToService } from '@/utils/services-category.utils'
 import type { Service } from '@/types/service'
 import type { ServiceResponse } from '@/types/responses/service-response'
+import { useLocale } from '@/i18n'
 
 export interface ServiceDetailData {
   service: Service | null
@@ -15,8 +16,9 @@ const isNumeric = (str: string): boolean => {
 }
 
 export const useServiceDetail = (serviceId: string, enabled = true) => {
+  const locale = useLocale()
   return useQuery({
-    queryKey: ['service-detail', serviceId],
+    queryKey: ['service-detail', serviceId, locale],
     queryFn: async (): Promise<ServiceDetailData> => {
       try {
         let serviceResponse: ServiceResponse | null = null
@@ -34,13 +36,13 @@ export const useServiceDetail = (serviceId: string, enabled = true) => {
         }
 
         // Map ServiceResponse to Service type for component usage
-        const service = mapServiceResponseToService(serviceResponse)
+        const service = mapServiceResponseToService(serviceResponse, locale)
         return { service, rawServiceResponse: serviceResponse }
       } catch (error) {
         throw error
       }
     },
-    enabled: enabled && !!serviceId,
+    enabled: enabled && !!serviceId && !!locale,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
   })
