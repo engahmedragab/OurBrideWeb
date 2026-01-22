@@ -23,15 +23,14 @@ export const ProductSort = ({
   className,
 }: ProductSortProps) => {
   const currentOption = sortOptions.find(opt => opt.value === currentSort)
-const tC = useI18nTranslations('common')
-const tS = useI18nTranslations('services.serviceCategories.sortServicesOptions')
+  const tC = useI18nTranslations('common')
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className={`gap-2 ${className || ''}`}>
           <ArrowUpDown className="h-4 w-4" />
           <span className="text-14">
-          {tC('sort')} {currentOption?.label || tS('default')}
+            {tC('sort')} {currentOption ? tC(`productSortOptions.${currentOption.value}`) : tC('productSortOptions.default')}
           </span>
         </Button>
       </DropdownMenuTrigger>
@@ -42,7 +41,7 @@ const tS = useI18nTranslations('services.serviceCategories.sortServicesOptions')
             onClick={() => onSortChange(option.value)}
             className={currentSort === option.value ? 'bg-brand-50' : ''}
           >
-            {option.label}
+            {tC(`productSortOptions.${option.value}`)}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

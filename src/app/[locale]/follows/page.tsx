@@ -27,8 +27,10 @@ import { useToggleProductWishlist } from '@/hooks/products/useProductInteraction
 import { useToggleProviderFollow } from '@/hooks/providers/useProviderInteractions'
 import { WishlistServiceCard, WishlistProductCard, WishlistProviderCard } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
+import { useLocale } from '@/i18n'
 
 export default function FollowsPage() {
+  const locale = useLocale()
   const [followType, setFollowType] = useState<'services' | 'products'>('services')
   const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
@@ -134,13 +136,13 @@ export default function FollowsPage() {
       .map((follow) => {
         const serviceResponse = follow.sourceObject as ServiceResponse
         try {
-          return mapServiceResponseToService(serviceResponse)
+          return mapServiceResponseToService(serviceResponse, locale)
         } catch (error) {
           return null
         }
       })
       .filter((service): service is Service => service !== null)
-  }, [filteredFollows])
+  }, [filteredFollows, locale])
 
   const allFollowProducts: Product[] = useMemo(() => {
     return filteredFollows

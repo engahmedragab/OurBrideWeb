@@ -1,7 +1,10 @@
-import Link from 'next/link'
+'use client'
+
 import Image from 'next/image'
 import type { ElementType, SVGProps } from 'react'
 import { cn } from '@/lib/utils'
+import { Link } from '@/i18n/navigation'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 import footerLogo from '@/assets/svg/Brand-logo.svg'
 import { Facebook, Instagram } from 'lucide-react'
 import { StoreBadges } from '@/components/ui/StoreBadges'
@@ -42,7 +45,7 @@ const TikTokIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 )
 
-function FooterColumn({ section }: { section: FooterSection }) {
+function FooterColumn({ section, isRTL }: { section: FooterSection; isRTL: boolean }) {
   return (
     <div className="flex flex-col gap-4">
       <h3 className="text-16 md:text-18 font-semibold text-gray-900">
@@ -52,24 +55,26 @@ function FooterColumn({ section }: { section: FooterSection }) {
       <ul className="flex flex-col gap-3">
         {section.links.map(item => (
           <li key={`${section.title}-${item.label}`}>
-           <Link
-  href={item.href}
-  className="
-    relative inline-block
-    text-14 font-normal text-gray-700
-    transition-colors duration-200
-    hover:text-brand-500
-    after:absolute after:left-0 after:-bottom-0.5
-    after:h-[2px] after:w-full
-    after:origin-left after:scale-x-0
-    after:bg-brand-500
-    after:transition-transform after:duration-300
-    hover:after:scale-x-100
-  "
->
-  {item.label}
-</Link>
-
+            <Link
+              href={item.href}
+              className={cn(
+                "relative inline-block",
+                "text-14 font-normal text-gray-700",
+                "transition-colors duration-200",
+                "hover:text-brand-500",
+                "after:absolute after:-bottom-0.5",
+                "after:h-[2px] after:w-full",
+                "after:bg-brand-500",
+                "after:transition-transform after:duration-300",
+                "after:scale-x-0",
+                "hover:after:scale-x-100",
+                isRTL 
+                  ? "after:right-0 after:origin-right" 
+                  : "after:left-0 after:origin-left"
+              )}
+            >
+              {item.label}
+            </Link>
           </li>
         ))}
       </ul>
@@ -79,59 +84,57 @@ function FooterColumn({ section }: { section: FooterSection }) {
 
 export const Footer = ({ className }: FooterProps) => {
   const currentYear = new Date().getFullYear()
+  const t = useI18nTranslations('footer')
+  const isRTL = useIsRTL()
 
   const footerSections: FooterSection[] = [
     {
-      title: 'Main Pages',
+      title: t('sections.mainPages.title'),
       links: [
-        { label: 'Home', href: '/' },
-        { label: 'Products', href: '/products' },
-        { label: 'Services', href: '/services' },
-        { label: 'Community', href: '/community' },
+        { label: t('sections.mainPages.home'), href: '/' },
+        { label: t('sections.mainPages.products'), href: '/products' },
+        { label: t('sections.mainPages.services'), href: '/services' },
+        { label: t('sections.mainPages.community'), href: '/community' },
       ],
     },
     {
-      title: 'Events Planning',
+      title: t('sections.eventsPlanning.title'),
       links: [
-        
-        { label: 'My Events', href: '/dashboard/my-events' },
-        { label: 'Events day', href: '/events/planning/events' },
-        { label: 'Budget Planning', href: '/events/planning/budget' },
-        { label: 'Guest List', href: '/events/planning/invitation' },
-        { label: 'To-Do List', href: '/events/planning/todo' },
+        { label: t('sections.eventsPlanning.myEvents'), href: '/dashboard/my-events' },
+        { label: t('sections.eventsPlanning.eventsDay'), href: '/events/planning/events' },
+        { label: t('sections.eventsPlanning.budgetPlanning'), href: '/events/planning/budget' },
+        { label: t('sections.eventsPlanning.guestList'), href: '/events/planning/invitation' },
+        { label: t('sections.eventsPlanning.todoList'), href: '/events/planning/todo' },
       ],
     },
     {
-      title: 'Legal',
+      title: t('sections.legal.title'),
       links: [
-        { label: 'Privacy Policy', href: '/privacy-policy' },
-        { label: 'Terms & Conditions', href: '/terms-conditions' },
-    
-        { label: 'Settings', href: '/dashboard/settings' },
+        { label: t('sections.legal.privacyPolicy'), href: '/privacy-policy' },
+        { label: t('sections.legal.termsConditions'), href: '/terms-conditions' },
+        { label: t('sections.legal.settings'), href: '/dashboard/settings' },
       ],
     },
-   
     {
-      title: 'Support',
+      title: t('sections.support.title'),
       links: [
-        { label: 'Help Center', href: '/dashboard/help-center' },
-        { label: 'About Us', href: '/about' },
-        { label: 'Shipping', href: '/shipping' },
-        { label: 'Returns', href: '/returns' },
-        { label: 'Download App', href: '/download-app' },
-        { label: 'Sitemap', href: '/sitemap' },
+        { label: t('sections.support.helpCenter'), href: '/dashboard/help-center' },
+        { label: t('sections.support.aboutUs'), href: '/about' },
+        { label: t('sections.support.shipping'), href: '/shipping' },
+        { label: t('sections.support.returns'), href: '/returns' },
+        { label: t('sections.support.downloadApp'), href: '/download-app' },
+        { label: t('sections.support.sitemap'), href: '/sitemap' },
       ],
     },
-   
     {
-      title: 'Community',
+      title: t('sections.community.title'),
       links: [
-        { label: 'Posts', href: '/community?tab=posts' },
-        { label: 'Blogs', href: '/community?tab=blogs' },
-        { label: 'Articles', href: '/community?tab=articles' },
-        { label: 'Reels', href: '/community?tab=reels' },
-        { label: 'Decision Groups', href: '/community?tab=decision-groups' },
-        { label: 'Contests', href: '/community?tab=contests' },
+        { label: t('sections.community.posts'), href: '/community?tab=posts' },
+        { label: t('sections.community.blogs'), href: '/community?tab=blogs' },
+        { label: t('sections.community.articles'), href: '/community?tab=articles' },
+        { label: t('sections.community.reels'), href: '/community?tab=reels' },
+        { label: t('sections.community.decisionGroups'), href: '/community?tab=decision-groups' },
+        { label: t('sections.community.contests'), href: '/community?tab=contests' },
       ],
     },
   ]
@@ -141,7 +144,7 @@ export const Footer = ({ className }: FooterProps) => {
       name: 'Instagram',
       icon: Instagram,
       href: 'https://instagram.com/ourbridestore',
-      ariaLabel: 'Visit our Instagram page',
+      ariaLabel: t('social.instagram'),
       hoverBgClass:
         'hover:bg-[radial-gradient(circle_at_30%_107%,#fdf497_0%,#fdf497_5%,#fd5949_45%,#d6249f_60%,#285AEB_90%)]',
       hoverBorderClass: 'hover:border-transparent',
@@ -150,7 +153,7 @@ export const Footer = ({ className }: FooterProps) => {
       name: 'Facebook',
       icon: Facebook,
       href: 'https://facebook.com/OurBrideStores',
-      ariaLabel: 'Visit our Facebook page',
+      ariaLabel: t('social.facebook'),
       hoverBgClass: 'hover:bg-[#1877F2]',
       hoverBorderClass: 'hover:border-[#1877F2]',
     },
@@ -158,22 +161,31 @@ export const Footer = ({ className }: FooterProps) => {
       name: 'TikTok',
       icon: TikTokIcon,
       href: 'https://tiktok.com/@our.bride.store',
-      ariaLabel: 'Visit our TikTok page',
+      ariaLabel: t('social.tiktok'),
       hoverBgClass: 'hover:bg-black',
       hoverBorderClass: 'hover:border-black',
     },
   ]
 
   return (
-    <footer className={cn('w-full bg-white', className)}>
+    <footer 
+      dir={isRTL ? 'rtl' : 'ltr'}
+      className={cn('w-full bg-white', className)}
+    >
       <div className="w-full h-[1px] bg-brand-500" />
 
-      <div className="bg-white px-5  ">
-        <div className="  py-10 mx-auto container">
+      <div className="bg-white px-5">
+        <div className="py-10 mx-auto container">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12">
             {/* Left */}
-            <div className="md:col-span-4 lg:col-span-3 flex flex-col items-start gap-6">
-              <Link href="/" className="flex-shrink-0">
+            <div className="md:col-span-4 lg:col-span-3 flex flex-col gap-6">
+              <Link 
+                href="/" 
+                className={cn(
+                  "flex-shrink-0",
+                  isRTL ? "self-start" : "self-start"
+                )}
+              >
                 <Image
                   src={typeof footerLogo === 'string' ? footerLogo : footerLogo.src}
                   alt="OurBride Logo"
@@ -183,27 +195,42 @@ export const Footer = ({ className }: FooterProps) => {
                 />
               </Link>
 
-              <p className="text-16 text-gray-600 max-w-sm">
-                Your all-in-one platform for wedding planning and shopping. Find
-                everything you need to create your perfect day.
+              <p className={cn(
+                "text-16 text-gray-600 max-w-sm",
+                isRTL ? "text-right self-end" : "text-left self-start"
+              )}>
+                {t('description')}
               </p>
 
-
-              <div className="flex flex-col items-start ">
-                <h3 className="text-18 md:text-20 font-semibold text-gray-900">
-                  Download Ourbride App
+              <div className={cn(
+                "flex flex-col gap-4 w-full",
+                isRTL ? "items-start" : "items-start"
+              )}>
+                <h3 className={cn(
+                  "text-18 md:text-20 font-semibold text-gray-900",
+                  isRTL ? "text-right" : "text-left"
+                )}>
+                  {t('downloadApp')}
                 </h3>
-                <div className="flex flex-wrap items-center ">
+                <div className={cn(
+                  "flex flex-wrap items-center",
+                  isRTL ? "justify-end" : "justify-start"
+                )}>
                   <StoreBadges size="3xl" />
-
                 </div>
               </div>
 
-              {/* Social تحت Download */}
-              <div className="flex flex-col items-start gap-6 pt-2">
-  <h3 className="text-16 md:text-20 font-semibold text-gray-900">
-    Social Links
-  </h3>
+              {/* Social Links */}
+              <div className={cn(
+                "flex flex-col gap-6 pt-2 w-full",
+                isRTL ? "items-start" : "items-start"
+              )}>
+                <h3 className={cn(
+                  "text-16 md:text-20 font-semibold text-gray-900",
+                  isRTL ? "text-right" : "text-left"
+                )}>
+                  {t('socialLinks')}
+                </h3>
 
   {/* ===== Style 1: Glass Circle ===== */}
   {/* <div className="flex flex-wrap items-center gap-3">
@@ -263,7 +290,10 @@ export const Footer = ({ className }: FooterProps) => {
   </div> */}
 
   {/* ===== Style 3: Soft Square (App Style) ===== */}
-  <div className="flex flex-wrap items-center gap-3">
+  <div className={cn(
+    "flex flex-wrap items-center gap-3",
+    isRTL ? "justify-end" : "justify-start"
+  )}>
     {socialLinks.map(social => {
       const Icon = social.icon
       return (
@@ -297,11 +327,13 @@ export const Footer = ({ className }: FooterProps) => {
             </div>
 
             {/* Right (Sections) */}
-            {/* ✅ هنا التعديل: على lg بس يبدأ موازي للبراجراف */}
-            <div className="ms-3 md:col-span-8 lg:col-span-9 lg:pt-24">
+            <div className={cn(
+              "md:col-span-8 lg:col-span-9 lg:pt-24",
+              isRTL ? "me-3" : "ms-3"
+            )}>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 gap-y-12">
                 {footerSections.map(section => (
-                  <FooterColumn key={section.title} section={section} />
+                  <FooterColumn key={section.title} section={section} isRTL={isRTL} />
                 ))}
               </div>
             </div>
@@ -311,7 +343,7 @@ export const Footer = ({ className }: FooterProps) => {
 
           <div className="text-center">
             <p className="text-14 font-normal text-gray-700">
-              © {currentYear} Crafted by OurBride All Rights Reserved
+              {t('copyright', { year: currentYear })}
             </p>
           </div>
         </div>

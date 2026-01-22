@@ -45,6 +45,7 @@ import { useProviderPublicStore } from '@/hooks/providers/useProviderPublicStore
 import { useProductsHome } from '@/hooks/products/useProductsHome'
 import { useStoreHomeByProvider } from '@/hooks/home/useHome'
 import { extractStoreHomeData } from '@/utils/home-data.utils'
+import { useLocale } from '@/i18n'
 import { OfferBanner } from '@/components/ui/OfferBanner'
 import type { ProductHeaderResponse } from '@/types/responses/product-header-response'
 import type { CategoryResponse } from '@/types/responses/category-response'
@@ -64,6 +65,7 @@ const PAGE_SIZE = 8
 
 export function ProviderStoreClient({ providerId }: ProviderStoreClientProps) {
   const router = useRouter()
+  const locale = useLocale()
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [sortOption, setSortOption] = useState<SortOption>('default')
   const [searchQuery, setSearchQuery] = useState('')
@@ -98,10 +100,10 @@ export function ProviderStoreClient({ providerId }: ProviderStoreClientProps) {
   // Extract store home data
   const storeHomeExtracted = useMemo(() => {
     if (storeHomeData) {
-      return extractStoreHomeData(storeHomeData)
+      return extractStoreHomeData(storeHomeData, locale)
     }
     return {}
-  }, [storeHomeData])
+  }, [storeHomeData, locale])
 
   const isLoading = storeLoading || homeLoading || storeHomeLoading
 

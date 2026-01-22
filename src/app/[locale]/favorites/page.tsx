@@ -27,8 +27,10 @@ import { useToggleProductFavorite } from '@/hooks/products/useProductInteraction
 import { useToggleProviderFavorite } from '@/hooks/providers/useProviderInteractions'
 import { WishlistServiceCard, WishlistProductCard, WishlistProviderCard } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
+import { useLocale } from '@/i18n'
 
 export default function FavoritesPage() {
+  const locale = useLocale()
   const [favoriteType, setFavoriteType] = useState<'services' | 'products'>('services')
   const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
@@ -131,13 +133,13 @@ export default function FavoritesPage() {
       .map((favorite) => {
         const serviceResponse = favorite.sourceObject as ServiceResponse
         try {
-          return mapServiceResponseToService(serviceResponse)
+          return mapServiceResponseToService(serviceResponse, locale)
         } catch (error) {
           return null
         }
       })
       .filter((service): service is Service => service !== null)
-  }, [filteredFavorites])
+  }, [filteredFavorites, locale])
 
   const allFavoriteProducts: Product[] = useMemo(() => {
     return filteredFavorites

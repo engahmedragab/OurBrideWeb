@@ -8,6 +8,7 @@ import { RatingDisplay } from './RatingDisplay'
 import { useCartItems } from '@/hooks/cart/useCart'
 import { Heart, ShoppingCart, CheckCircle2, Check } from 'lucide-react'
 import { PriceDisplay } from './PriceDisplay'
+import { useI18nTranslations } from '@/i18n'
 import type { Product } from '@/types/product'
 
 export interface ProductListProps {
@@ -29,6 +30,7 @@ const ProductListItem = ({
   onAddToCart?: (productId: string) => void
   isProductInCart: (productId: number, providerId?: number) => boolean
 }) => {
+  const tCommon = useI18nTranslations('common')
   const [imageError, setImageError] = React.useState(false)
   const hasDiscount = product.price.discounted < product.price.original
   const discountPercentage = hasDiscount
@@ -63,7 +65,7 @@ const ProductListItem = ({
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
               <span className="text-gray-400 text-12 font-medium">
-                No image available
+                {tCommon('noImageAvailable')}
               </span>
             </div>
           )}
@@ -103,8 +105,8 @@ const ProductListItem = ({
                 )}
                 aria-label={
                   product.isWishlisted
-                    ? 'Remove from wishlist'
-                    : 'Add to wishlist'
+                    ? tCommon('productCommon.removeFromWishlist')
+                    : tCommon('productCommon.addToWishlist')
                 }
               >
                 <Heart
@@ -181,7 +183,7 @@ const ProductListItem = ({
                 )}
                 onClick={() => onAddToCart?.(product.id)}
                 disabled={!product.inStock}
-                aria-label={isInCart ? "Item in cart" : "Add to cart"}
+                aria-label={isInCart ? tCommon('productCommon.itemInCart') : tCommon('productCommon.addToCart')}
               >
                 {isInCart ? (
                   <Check className="h-5 w-5 text-white" />
@@ -200,7 +202,7 @@ const ProductListItem = ({
                 asChild
               >
                 <Link href={isInCart ? "/cart" : `/products/${product.id}`}>
-                  {isInCart ? 'View in Cart' : 'Add to Cart'}
+                  {isInCart ? tCommon('productCommon.viewInCart') : tCommon('productCommon.addToCart')}
                 </Link>
               </Button>
             </div>
@@ -218,11 +220,12 @@ export const ProductList = ({
   className,
 }: ProductListProps) => {
   const { isProductInCart } = useCartItems()
+  const tCommon = useI18nTranslations('common')
 
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-16 text-gray-500">No data available</p>
+        <p className="text-16 text-gray-500">{tCommon('noDataAvailable')}</p>
       </div>
     )
   }

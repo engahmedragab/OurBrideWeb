@@ -35,6 +35,7 @@ import { ProductErrorState } from '../../components/ProductErrorState'
 import { parseProductId } from '../../utils'
 import { RELATED_PRODUCTS_LIMIT } from '../../constants'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 interface ProductDetailClientProps {
   productId: string
@@ -71,6 +72,8 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   const [quantity, setQuantity] = useState(1)
   const [userRating, setUserRating] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
+  const t = useI18nTranslations('products')
+  const tCommon = useI18nTranslations('common')
 
   // Fetch product using hook
   const {
@@ -120,7 +123,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   // Show loading state
   if (productLoading) {
     return (
-      <ProductPageLayout isLoading={true} loadingText="Loading product..." />
+      <ProductPageLayout isLoading={true} loadingText={t('productsLoading')} />
     )
   }
 
@@ -129,10 +132,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     return (
       <ProductPageLayout>
         <ProductErrorState
-          title="Product Not Found"
-          message="The product you're looking for doesn't exist or has been removed."
+          title={t('productCommon.productNotFound')}
+          message={t('productCommon.productNotFoundMessage')}
           backHref="/products"
-          backLabel="Back to Products"
+          backLabel={t('productCommon.backToProducts')}
         />
       </ProductPageLayout>
     )
@@ -144,13 +147,13 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
       const response = await addToCart(product, quantity)
       const { message, type } = handleApiResponseForToast(
         response,
-        'Product added to cart successfully!',
-        'Failed to add product to cart'
+         t('productCommon.addToCartSuccess'),
+        t('productCommon.addToCartError')
       )
       addToast(message, type)
     } catch (error) {
-      console.error('Failed to add product to cart:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add product to cart. Please try again.'
+      console.error(t('productCommon.addToCartError'), error)
+      const errorMessage = error instanceof Error ? error.message : t('productCommon.addToCartError')
       addToast(errorMessage, 'error')
     }
   }
@@ -169,11 +172,11 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
 
   const getRatingLabel = (stars: number) => {
     const labels: Record<number, string> = {
-      5: 'Excellent',
-      4: 'Good',
-      3: 'Average',
-      2: 'Below Average',
-      1: 'Poor',
+      5: t('ratingSummary.starsLabel.5'),
+      4: t('ratingSummary.starsLabel.4'),
+      3: t('ratingSummary.starsLabel.3'),
+      2: t('ratingSummary.starsLabel.2'),
+      1: t('ratingSummary.starsLabel.1'),
     }
     return labels[stars] || ''
   }
@@ -184,7 +187,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
         {/* Back Button */}
         <BackButton
           href="/products"
-          label="Back to Products"
+          label={t('productCommon.backToProducts')}
           className="mb-6"
         />
 
@@ -208,7 +211,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                     variant="default"
                     className="bg-green-500 !text-white border-0 px-3 py-1 text-12 font-normal rounded"
                   >
-                    Special Offer
+                    {t('offerCommon.specialOffer')}
               </Badge>
             )}
               </div>
@@ -239,7 +242,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
 
             {/* Delivery Date */}
             <div className="text-14 text-brand-500 font-normal">
-              Buy now and get by <span className="text-gray-900">25 AUG 2025</span>
+              {t('offerCommon.buyNowAndGetBy')} <span className="text-gray-900">{t('date.aug25_2025')}</span>
                 </div>
               </div>
 
@@ -250,7 +253,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                 provider={{
                   ...product.provider,
                   rating: product.rating?.value || 0,
-                  profession: 'Makeup Artist',
+                  profession: t('provider.makeupArtist'),
                 }}
               />
               <OrderSummaryCard
@@ -260,8 +263,8 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                 onQuantityChange={handleQuantityChange}
                 onAddToCart={handleAddToCart}
                 onBuyNow={handleBuyNow}
-                deliveryLocation="Giza, 6 Of O..."
-                fullAddress="Giza, 6 Of October City, Building 15, Apartment 42"
+                deliveryLocation={t('location.gizaShort')}
+                fullAddress={t('location.gizaFull')}
                 maxQuantity={product.stockQuantity || 99}
                 disabled={!product.inStock || isLoadingAddToCart}
               />
@@ -275,10 +278,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           <div className="lg:col-span-9">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-24 md:text-30 font-semibold text-gray-900">
-                Reviews
+                {t('offerCommon.reviews')}
             </h2>
               <span className="text-14 text-gray-600">
-                {product.rating?.count || 0} reviews
+                {product.rating?.count || 0}
               </span>
           </div>
 
@@ -318,12 +321,12 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                           <div>
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-16 font-semibold text-gray-900">
-                                {review.userName || 'Anonymous'}
+                                {review.userName || tCommon('anonymous')}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <span className="text-12 text-gray-500">
-                                {review.date ? new Date(review.date).toLocaleDateString() : 'Recently'}
+                                {review.date ? new Date(review.date).toLocaleDateString() : tCommon('recently')}
                               </span>
                               <div className="flex items-center gap-0.5">
                                 {[1, 2, 3, 4, 5].map(star => (
@@ -356,21 +359,21 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                 ))
               ) : (
                 <div className="text-center py-8 text-gray-500">
-                  No reviews yet. Be the first to review this product!
+                  {t('reviewsSection.noReviews')}
                 </div>
               )}
             </div>
 
             <div className="mt-6 text-center">
               <button className="text-16 font-semibold text-brand-400 hover:text-brand-500 transition-colors">
-                See more reviews
+                {t('reviewsSection.seeMore')}
               </button>
             </div>
 
             {/* Write Your Review Section */}
             <div className="mt-8 p-6">
               <h3 className="text-18 font-semibold text-gray-900 mb-4">
-              Write Your Review
+              {t('reviewsSection.writeReview')}
             </h3>
 
             {/* Star Rating - Centered */}
@@ -398,7 +401,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
             <textarea
               value={reviewComment}
               onChange={e => setReviewComment(e.target.value)}
-                  placeholder="Share your Comments"
+                  placeholder={t('reviewsSection.shareComments')}
                   className="w-full min-h-[100px] pl-12 pr-14 py-2 border-0 focus:outline-none text-14 text-gray-900 placeholder:text-gray-400 resize-none bg-transparent"
                   rows={4}
                 />
@@ -416,8 +419,8 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                         
                         const { message, type } = handleApiResponseForToast(
                           response,
-                          'Review submitted successfully!',
-                          'Failed to submit review'
+                          t('reviewsSection.submitSuccess'),
+                          t('reviewsSection.submitError')
                         )
                         
                         if (type === 'success') {
@@ -426,8 +429,8 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                         }
                         addToast(message, type)
                       } catch (error) {
-                        console.error('Error submitting review:', error)
-                        const errorMessage = error instanceof Error ? error.message : 'Failed to submit review. Please try again.'
+                        console.error(t('reviewsSection.submitErrorWithReason'), error)
+                        const errorMessage = error instanceof Error ? error.message : t('reviewsSection.submitRetry')
                         addToast(errorMessage, 'error')
                       }
                     }
@@ -462,7 +465,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                   />
                 </div>
                 <p className="text-14 text-gray-600">
-                  Based on {product.rating?.count || 0} reviews
+                  {t('ratingSummary.basedOnReviews')} {product.rating?.count || 0} {t('ratingSummary.reviews')}
                 </p>
               </div>
 
@@ -498,8 +501,8 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
         {/* Newsletter/Offer Banner Section */}
         <OfferBanner
           offers={[{
-            heading: "24% Offer On our product!",
-            description: "Subscribe to our newsletter and get exclusive offers on premium wedding products.",
+            heading: t('offerBanner.heading'),
+            description: t('offerBanner.description'),
             variant: "default",
             productImage: productImage,
           }]}
@@ -511,13 +514,13 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           <section className="mb-12 max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-30 md:text-32 font-normal text-gray-900">
-                Suggested for You
+                {tCommon('suggestedForYou')}
             </h2>
               <Link
                 href="/products"
                 className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
               >
-                View All
+                {tCommon('viewAll')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>

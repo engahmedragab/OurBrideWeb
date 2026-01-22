@@ -2,6 +2,7 @@ import { Card, type ProductCardData } from './Card'
 import { useProductCardHandlers, useAddProductToCart } from '@/hooks/products'
 import type { Product } from '@/types/product'
 import { LoadingSpinner } from './LoadingSpinner'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ProductGridProps {
   products: Product[]
@@ -20,6 +21,7 @@ export const ProductGrid = ({
   className,
   isLoading = false,
 }: ProductGridProps) => {
+  const tCommon = useI18nTranslations('common')
   const gridCols = {
     2: 'grid-cols-1 md:grid-cols-2',
     3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
@@ -29,7 +31,7 @@ export const ProductGrid = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner size="lg" text="Loading products..." />
+        <LoadingSpinner size="lg" text={tCommon('productsLoading')} />
       </div>
     )
   }
@@ -37,7 +39,7 @@ export const ProductGrid = ({
   if (products.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-16 text-gray-500">No products found</p>
+        <p className="text-16 text-gray-500">{tCommon('productCommon.noProductsFound')}</p>
       </div>
     )
   }

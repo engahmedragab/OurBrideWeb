@@ -18,7 +18,7 @@ interface PriceRangeSliderProps {
   onChange: (min: number, max: number) => void
   onDragEnd?: (min: number, max: number) => void
   currencyLabel: string
-
+  t: (key: string, params?: Record<string, string | number>) => string
 }
 
 const PriceRangeSlider = ({
@@ -29,14 +29,13 @@ const PriceRangeSlider = ({
   onChange,
   onDragEnd,
   currencyLabel,
- 
+  t,
 }: PriceRangeSliderProps) => {
   const sliderRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState<'min' | 'max' | null>(null)
   const [localMin, setLocalMin] = useState(minValue)
   const [localMax, setLocalMax] = useState(maxValue)
   const [hoveredHandle, setHoveredHandle] = useState<'min' | 'max' | null>(null)
-  const t = useI18nTranslations('services.serviceCategories.servicefilters')
 
   useEffect(() => {
     setLocalMin(minValue)
@@ -179,7 +178,7 @@ const PriceRangeSlider = ({
         >
           {(isDragging === 'min' || hoveredHandle === 'min') && (
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-12 rounded whitespace-nowrap">
-              {priceFromText}{" "}
+              {priceFromText}
             </div>
           )}
         </div>
@@ -204,8 +203,8 @@ const PriceRangeSlider = ({
           onMouseLeave={() => setHoveredHandle(null)}
         >
           {(isDragging === 'max' || hoveredHandle === 'max') && (
-            <div className=" !me-1 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-12 rounded whitespace-nowrap">
-              {""}{priceToText}
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-12 rounded whitespace-nowrap">
+              {priceToText}
             </div>
           )}
         </div>
@@ -235,7 +234,7 @@ export const ProductFilters = ({
   categories,
   filters,
   onFiltersChange,
-  onReset,
+  onReset: _onReset,
   className,
 }: ProductFiltersProps) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -245,9 +244,12 @@ export const ProductFilters = ({
   })
 
   const priceInputTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const t = useI18nTranslations('services.serviceCategories.servicefilters')
+  const t = useI18nTranslations('common.filtersPanel')
   const tCommon = useI18nTranslations('common')
   const currencyLabel = tCommon('currency')
+  
+  // For price range slider, we need keys from servicefilters namespace
+  const tPrice = useI18nTranslations('services.serviceCategories.servicefilters')
 
   useEffect(() => {
     return () => {
@@ -294,7 +296,7 @@ export const ProductFilters = ({
       >
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4" />
-          <span>{tCommon('filter')}</span>
+          <span>{t('filters')}</span>
           {activeFiltersCount > 0 && (
             <Badge
               variant="default"
@@ -316,9 +318,7 @@ export const ProductFilters = ({
         {/* Categories */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-14 font-semibold text-gray-900">
-              {t('categories')}
-            </h4>
+            <h4 className="text-14 font-semibold text-gray-900">{t('categories')}</h4>
 
             {filters.category && filters.category.length > 0 && (
               <Button
@@ -390,15 +390,13 @@ export const ProductFilters = ({
               onFiltersChange({ ...filters, priceRange: newRange })
             }}
             currencyLabel={currencyLabel}
-         
+            t={tPrice}
           />
 
           {/* From / To Inputs */}
           <div className="flex items-center gap-3">
             <div className="flex-1">
-              <label className="text-12 text-gray-600 mb-1 block">
-                {t('from')}
-              </label>
+              <label className="text-12 text-gray-600 mb-1 block">{t('from')}</label>
               <Input
                 type="number"
                 value={priceRange.min || ''}
@@ -419,9 +417,7 @@ export const ProductFilters = ({
             </div>
 
             <div className="flex-1">
-              <label className="text-12 text-gray-600 mb-1 block">
-                {t('to')}
-              </label>
+              <label className="text-12 text-gray-600 mb-1 block">{t('to')}</label>
               <Input
                 type="number"
                 value={priceRange.max || ''}
@@ -445,9 +441,7 @@ export const ProductFilters = ({
 
         {/* Stock Status */}
         <div className="space-y-3">
-          <h4 className="text-14 font-semibold text-gray-900">
-            {t('availability')}
-          </h4>
+          <h4 className="text-14 font-semibold text-gray-900">{t('availability')}</h4>
 
           <div className="flex items-center gap-2">
             <Checkbox
@@ -487,7 +481,7 @@ export const ProductFilters = ({
                     <button
                       onClick={() => handleCategoryToggle(categoryId)}
                       className="ml-1"
-                      aria-label="Remove category"
+                      aria-label={t('removeCategory')}
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -500,11 +494,11 @@ export const ProductFilters = ({
                   variant="outline"
                   className="text-12 px-2 py-1 flex items-center gap-1"
                 >
-                    {t('inStock')}
+                  {t('inStock')}
                   <button
                     onClick={handleStockToggle}
                     className="ml-1"
-                    aria-label="Remove stock filter"
+                    aria-label={t('removeStockFilter')}
                   >
                     <X className="h-3 w-3" />
                   </button>

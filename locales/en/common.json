@@ -23,9 +23,59 @@
     "pending": "Pending",
     "topOffers": "Top Offers",
     "notAvailable": "Not Available",
-  "noDataAvailable": "No data available",
-  "noImageAvailable": "No image available" 
-    
+    "noDataAvailable": "No data available",
+    "noImageAvailable": "No image available",
+    "enterYourEmail": "Enter Your E-mail",
+    "productsLoading": "Loading products...",
+    "anonymous": "Anonymous",
+    "recently": "Recently",
+    "viewAll": "View All",
+    "suggestedForYou": "Suggested For You",
+    "subscribe": "Subscribe",
+    "productCommon": {
+      "productNotFound": "Product Not Found",
+      "productNotFoundMessage": "The product you're looking for doesn't exist or has been removed.",
+      "backToProducts": "Back to Products",
+      "addToCartSuccess": "Product added to cart successfully!",
+      "addToCartError": "Failed to add product to cart",
+      "addToCartErrorRetry": "Failed to add product to cart. Please try again.",
+      "productsFound": "products found",
+      "noProductsFound": "No products found",
+      "featured": "Featured",
+      "percentOff": "% OFF",
+      "currencyUSD": "USD",
+      "anonymous": "Anonymous",
+      "recently": "Recently",
+      "gridView": "Grid view",
+      "listView": "List view",
+      "sendReview": "Send review",
+      "addToWishlist": "Add to wishlist",
+      "removeFromWishlist": "Remove from wishlist",
+      "addToCart": "Add to Cart",
+      "viewInCart": "View in Cart",
+      "itemInCart": "Item in cart"
+    },
+    "productSortOptions": {
+      "default": "Default",
+      "price-low": "Price: Low to High",
+      "price-high": "Price: High to Low",
+      "rating": "Highest Rated",
+      "newest": "Newest First",
+      "popular": "Most Popular"
+    },
+    "filtersPanel": {
+      "filters": "Filters",
+      "categories": "Categories",
+      "clear": "Clear",
+      "price": "Price",
+      "from": "From",
+      "to": "To",
+      "availability": "Availability",
+      "inStockOnly": "In Stock Only",
+      "inStock": "In Stock",
+      "removeCategory": "Remove category",
+      "removeStockFilter": "Remove stock filter"
+    }
   },
   
   "auth": {
@@ -294,6 +344,45 @@
         "notMatch": "Password doesn't match, please try again"
       }
     },
+  "navbar": {
+    "search": {
+      "placeholder": "Search..."
+    },
+    "links": {
+      "home": "Home",
+      "products": "Products",
+      "services": "Services",
+      "providers": "Providers",
+      "community": "Community",
+      "allProducts": "All Products",
+      "category": "Category",
+      "allServices": "All Services"
+    },
+    "icons": {
+      "account": "Account",
+      "language": "Language",
+      "cart": "Cart",
+      "notifications": "Notifications",
+      "favorites": "Favorites"
+    },
+    "notifications": {
+      "loading": "Loading notifications...",
+      "markAllAsRead": "Mark all as read",
+      "notifications": "Notifications",
+      "noNotificationsYet": "No notifications yet",
+      "viewAll": "View all notifications"
+    },
+    "menu": {
+      "wishlist": "Wishlist",
+      "favorites": "Favorites",
+      "follows": "Follows",
+      "myCart": "My Cart",
+      "myProfile": "My Profile",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "closeSearch": "Close search"
+    }
+  },
   "home": {
       "hero": {
         "activeUsers": "Active Users",
@@ -414,7 +503,6 @@
     },
     "services": {
       "intro": {
-        
         "error": {
           "loadFailed": "Error loading services. Please try again later."
         },
@@ -714,10 +802,119 @@
       "successMessage": "Your Request Has Been Sent!",
       "successDescription": "Your service request has been successfully submitted. The provider has been notified and you will receive an update once they respond.",
       "trackRequest": "Track Request"
-      
+    },
+    "products": {
+      "whyBridesChooseProducts": {
+        "why": "Why",
+        "brides": "Brides",
+        "choose": "Choose",
+        "ourBrideProducts": "OurBride Products"
+      } ,
+      "productFeatures": {
+        "premiumBrands": {
+          "title": "Premium Brands",
+          "description": "Handpicked items from trusted, high-quality wedding suppliers"
+        },
+        "bridalFriendlyFormulas": {
+          "title": "Bridal-Friendly Formulas",
+          "description": "Products selected to suit sensitive skin and long event days"
+        },
+        "exclusiveDiscounts": {
+          "title": "Exclusive Discounts",
+          "description": "Special offers crafted to fit every bride's budget"
+        },
+        "verifiedSellers": {
+          "title": "Verified Sellers",
+          "description": "We work only with reliable, vetted beauty providers"
+        }
+      },
+      "newsletterBanner": {
+        "heading": "Get Products Updates & Offers",
+        "description": "Stay informed about new providers, offers, and wedding planning tips",
+        "ctaText": "Subscribe"
+      },
+      "bestProvidersSection": {
+        "topText": "Best",
+        "highlightText": "Providers",
+        "bottomText": "With",
+        "bottomHighlightText": "Best Products",
+        "buttonText": "Explore Now"
+      },
+      "categoryBanner": {
+        "heading": "Ready To Get Our News?",
+        "description": "OurBride is your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
+        "ctaText": "Submit"
+      },
+      "productOffersSection": {
+    "title": "Today's Best Product Offers",
+    "timerText": "23 H 45 Min"
+  },
+  "productHeroSlides": {
+    "slide1": {
+      "label": "New Arrival",
+      "title": "Avca Sun Cream",
+      "description": "A lightweight, moisture-rich sun cream designed to protect your skin while keeping it soft, fresh, and radiating a dewy, ready glow for brides who want flawless, healthy skin under makeup.",
+      "ctaText": "Buy Now"
+    },
+    "slide2": {
+      "label": "Top Seller",
+      "title": "Essential Wedding Cream",
+      "description": "Premium quality products for your special day. Discover our curated collection of wedding essentials designed to make you look and feel your best.",
+      "ctaText": "Shop Now"
     }
-},
-"community": {
+  },
+  "productCategoriesSection": {
+    "choose": "Choose",
+    "from": "From",
+    "ourProduct": "Our Product",
+    "categories": "Categories"
+  },
+   "exclusiveCoupons": {
+    "text": "Exclusive coupons and discounts designed for your budget."
+  },
+  "offerCommon": {
+    "specialOffer": "Special Offer",
+    "buyNowAndGetBy": "Buy now and get by",
+    "reviews": "Reviews"
+  },
+  "date": {
+    "aug25_2025": "25 AUG 2025"
+  },
+  "provider": {
+    "makeupArtist": "Makeup Artist"
+  },
+  "location": {
+    "gizaShort": "Giza, 6 Of O...",
+    "gizaFull": "Giza, 6 Of October City, Building 15, Apartment 42"
+  },
+  "reviewsSection": {
+    "noReviews": "No reviews yet. Be the first to review this product!",
+    "seeMore": "See more reviews",
+    "writeReview": "Write Your Review",
+    "submitSuccess": "Review submitted successfully!",
+    "submitError": "Failed to submit review",
+    "submitErrorWithReason": "Error submitting review:",
+    "submitRetry": "Failed to submit review. Please try again.",
+     "shareComments": "Share your comments"
+  },
+  "ratingSummary": {
+    "basedOnReviews": "Based on",
+    "reviews": "reviews",
+    "starsLabel": {
+      "5": "Excellent",
+      "4": "Very Good",
+      "3": "Good",
+      "2": "Fair",
+      "1": "Poor"
+    }
+  },
+  "offerBanner": {
+    "heading": "24% Offer On our product!",
+    "description": "Subscribe to our newsletter and get exclusive offers on premium wedding products."
+  }
+    }
+  },
+  "community": {
   "communityFeed": {
     "createPostPlaceholder": "Share What's in your mind ,{name} ....",
     "emptyMessage": "There are no posts to display at the moment. Be the first to share something!",
@@ -835,9 +1032,8 @@
     "search": "Search",
     "close": "Close",
     "clearSearch": "Clear search"
-  }
-},
-"postCard": {
+  },
+  "postCard": {
     "failedToToggleLike": "Failed to toggle like",
     "sharedSuccessfully": "Shared successfully! Link copied to clipboard.",
     "failedToSharePost": "Failed to share post",
@@ -925,7 +1121,7 @@
     "noDecisionGroupsTitle": "No Decision Groups Available",
     "noDecisionGroupsMessage": "There are no decision groups to display at the moment.",
     "moreOptions": "more options"
-    },
+  },
     "profile": {
       "profileIdRequired": "Profile ID required",
       "profileIdRequiredMessage": "Please provide a profile ID in the URL.",
@@ -1013,16 +1209,69 @@
     "fallback": {
       "newPostTitle": "New Post"
     }
-  },
-  "reelDetails": {
-    "loading": "Loading reel...",
-    "reelNotFoundTitle": "Reel Not Found",
-    "reelNotFoundMessage": "The reel you're looking for doesn't exist or has been removed."
-  },
-  "postDetails": {
-    "loading": "Loading post...",
-    "postNotFoundTitle": "Post Not Found",
-    "postNotFoundMessage": "The post you're looking for doesn't exist or has been removed."
   }
-
-}}
+  }
+},
+"reelDetails": {
+  "loading": "Loading reel...",
+  "reelNotFoundTitle": "Reel Not Found",
+  "reelNotFoundMessage": "The reel you're looking for doesn't exist or has been removed."
+},
+"postDetails": {
+  "loading": "Loading post...",
+  "postNotFoundTitle": "Post Not Found",
+  "postNotFoundMessage": "The post you're looking for doesn't exist or has been removed."
+},
+"footer": {
+  "description": "Your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
+  "downloadApp": "Download Ourbride App",
+  "socialLinks": "Social Links",
+  "sections": {
+    "mainPages": {
+      "title": "Main Pages",
+      "home": "Home",
+      "products": "Products",
+      "services": "Services",
+      "community": "Community"
+    },
+    "eventsPlanning": {
+      "title": "Events Planning",
+      "myEvents": "My Events",
+      "eventsDay": "Events day",
+      "budgetPlanning": "Budget Planning",
+      "guestList": "Guest List",
+      "todoList": "To-Do List"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacyPolicy": "Privacy Policy",
+      "termsConditions": "Terms & Conditions",
+      "settings": "Settings"
+    },
+    "support": {
+      "title": "Support",
+      "helpCenter": "Help Center",
+      "aboutUs": "About Us",
+      "shipping": "Shipping",
+      "returns": "Returns",
+      "downloadApp": "Download App",
+      "sitemap": "Sitemap"
+    },
+    "community": {
+      "title": "Community",
+      "posts": "Posts",
+      "blogs": "Blogs",
+      "articles": "Articles",
+      "reels": "Reels",
+      "decisionGroups": "Decision Groups",
+      "contests": "Contests"
+    }
+  },
+  "social": {
+    "instagram": "Visit our Instagram page",
+    "facebook": "Visit our Facebook page",
+    "tiktok": "Visit our TikTok page"
+  },
+  "copyright": "© {year} Crafted by OurBride All Rights Reserved"
+}
+}
