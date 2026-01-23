@@ -29,6 +29,9 @@ import { ServicePlaceAssignmentResponse } from './service-place-assignment-respo
 import { ServiceStaffAssignmentResponse } from './service-staff-assignment-response'
 
 export interface ServiceResponse extends BaseLookupResponse {
+  nameAr: string
+  nameEn: string
+  name?: string
   // Service Status
   serviceStatus: ServiceStatus
 

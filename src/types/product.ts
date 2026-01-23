@@ -1,12 +1,15 @@
 export interface Product {
   id: string
-  title: string
+  nameAr: string
+  nameEn: string
+  name?: string
   description: string
   longDescription?: string
   images: string[]
   provider: {
     id: string
-    name: string
+    nameAr: string
+    nameEn: string
     verified: boolean
     image?: string
   }

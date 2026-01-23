@@ -147,6 +147,7 @@ export default function Home() {
     }
     return {}
   }, [homeData, locale])
+  console.log({apiData})
 
   // Use API data, return empty arrays if not available
   const products = useMemo(() => apiData.products || [], [apiData.products])

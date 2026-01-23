@@ -66,7 +66,8 @@ export const mapProductResponseToProduct = (
   // Extract provider
   const provider: Product['provider'] = {
     id: String(apiProduct.providerId || ''),
-    name: apiProduct.provider?.nameEn || apiProduct.provider?.nameAr || '',
+    nameAr: apiProduct.provider?.nameAr || apiProduct.provider?.nameEn || '',
+    nameEn: apiProduct.provider?.nameEn || apiProduct.provider?.nameAr || '',
     verified: false,
     image: apiProduct.provider?.profileURL || undefined,
   }
@@ -104,7 +105,8 @@ export const mapProductResponseToProduct = (
 
   return {
     id: String(apiProduct.id || apiProduct.productId || ''),
-    title: apiProduct.name || apiProduct.nameEn || apiProduct.nameAr || '',
+    nameAr: apiProduct.nameAr || apiProduct.nameEn || apiProduct.name || '',
+    nameEn: apiProduct.nameEn || apiProduct.nameAr || apiProduct.name || '',
     description: apiProduct.shortDescription || apiProduct.description || '',
     longDescription: apiProduct.description || apiProduct.bio || '',
     images: finalImages,

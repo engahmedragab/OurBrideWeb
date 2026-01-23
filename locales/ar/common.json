@@ -32,6 +32,7 @@
     "viewAll":"عرض الكل",
     "suggestedForYou":"مقترح لك",
     "subscribe":"اشتركي",
+    "contact": "تواصل مع المزود",
     "productCommon": {
       "productNotFound": "المنتج غير موجود",
       "productNotFoundMessage": "المنتج الذي تبحثين عنه غير موجود أو تم حذفه",
@@ -54,6 +55,7 @@
       "addToCart": "أضيفي إلى السلة",
       "viewInCart": "عرض في السلة",
       "itemInCart": "المنتج في السلة"
+ 
     },
     "productSortOptions": {
       "default": "الافتراضي",

@@ -13,6 +13,8 @@ export interface ProviderInfoResponse extends BaseLookupResponse {
   likes: number | null
   shortAddress: string
   providerStatus: ProviderStatus
+  nameAr: string
+  nameEn: string
   providerRate: ProviderRate
   placeName: string
   providersAreaName: string

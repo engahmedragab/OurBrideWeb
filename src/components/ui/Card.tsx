@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import { PriceDisplay } from './PriceDisplay'
-import { useI18nTranslations } from '@/i18n'
+import { isRTL, useI18nTranslations, useIsRTL } from '@/i18n'
 
 // Base card variants
 const cardVariants = cva(
@@ -60,8 +60,10 @@ export interface BaseCardProps
 export interface ProductCardData {
   id: string
   image: string
-  title: string
-  providerName: string
+ nameAr: string
+ nameEn: string
+  providerNameAr: string
+  providerNameEn: string
   providerId?: string
   verified?: boolean
   rating: number
@@ -85,9 +87,11 @@ export type ServiceCardData = ProductCardData
 
 // Testimonial Card Props
 export interface TestimonialCardData {
-  quote: string
+  quoteAr: string,
+  quoteEn: string,
   rating: number
-  authorName: string
+  authorNameAr: string
+  authorNameEn: string
   authorImage: string
   timeAgo: string
 }
@@ -110,7 +114,8 @@ export interface ProviderCardData {
 
 // Member Testimonial Card Props
 export interface MemberTestimonialCardData {
-  authorName: string
+  authorNameAr: string
+  authorNameEn: string
   authorImage: string
   reviewText: string
   productImages: string[]
@@ -163,6 +168,7 @@ const ProductServiceCard = ({
   const { isProductInWishlist, isServiceInWishlist } = useWishlistItems()
   const { isProductFollowed, isServiceFollowed } = useFollowItems()
   const t = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   // Check if item is in cart
   const productId = parseInt(data.id, 10)
   const providerId = data.providerId ? parseInt(data.providerId, 10) : undefined
@@ -314,7 +320,7 @@ const ProductServiceCard = ({
          !imageError ? (
           <Image
             src={data.image}
-            alt={data.title}
+            alt={isRTL ? data.nameAr : data.nameEn}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -336,7 +342,7 @@ const ProductServiceCard = ({
               className="!text-brand-500 border-0 px-2 py-1.5 text-16 font-normal rounded-full"
               style={{ backgroundColor: '#FCDBD7' }}
             >
-              Top Offers
+              {t('topOffers')}
             </Badge>
           </div>
         )}
@@ -347,7 +353,7 @@ const ProductServiceCard = ({
         <div className="flex flex-col gap-2">
           {/* Title */}
           <h3 className="text-18 font-medium text-gray-900 line-clamp-2 leading-[24px]">
-            {data.title}
+            {isRTL ? data.nameAr : data.nameEn}
           </h3>
 
           {/* Provider Name - Always clickable if providerId exists */}
@@ -358,10 +364,10 @@ const ProductServiceCard = ({
                 onClick={(e) => handleProviderClick(e, data.providerId!)}
                 className="text-16 text-gray-500 hover:text-brand-500 transition-colors text-left pointer-events-auto cursor-pointer bg-transparent border-0 p-0"
               >
-                {data.providerName}
+                {isRTL ? data.providerNameAr : data.providerNameEn}
               </button>
             ) : (
-              <span className="text-16 text-gray-500">{data.providerName}</span>
+              <span className="text-16 text-gray-500">{isRTL ? data.providerNameAr : data.providerNameEn}</span>
             )}
             {data.verified && (
               <CheckCircle2 className="h-6 w-6 text-blue-500 flex-shrink-0" />
@@ -482,19 +488,20 @@ const ProductServiceCard = ({
 // Testimonial Card Component
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   const [imageError, setImageError] = React.useState(false)
+  const isRTL = useIsRTL()
   return (
     <div className="flex flex-col h-full">
       {/* Card */}
       <div className="bg-white rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow flex-1">
         {/* Quote */}
         <p className="text-16 text-gray-900 mb-6 flex-1 leading-relaxed">
-          &quot;{data.quote}&quot;
+          &quot;{isRTL ? data.quoteAr : data.quoteEn}&quot;
         </p>
 
         {/* Stars - All red for 5-star rating */}
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, index) => (
-            <Star key={`star-${data.authorName}-${index}`} className="h-5 w-5 fill-red-500 text-red-500" />
+            <Star key={`star-${isRTL ? data.authorNameAr : data.authorNameEn}-${index}`} className="h-5 w-5 fill-red-500 text-red-500" />
           ))}
         </div>
       </div>
@@ -505,7 +512,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
           {data.authorImage && data.authorImage.trim() !== '' && !imageError ? (
             <Image
               src={data.authorImage}
-              alt={data.authorName}
+              alt={isRTL ? data.authorNameAr : data.authorNameEn}
               fill
               sizes="48px"
               className="object-cover grayscale"
@@ -519,7 +526,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
         </div>
         <div>
           <p className="text-16 font-semibold text-gray-900">
-            {data.authorName}
+            {isRTL ? data.authorNameAr : data.authorNameEn}
           </p>
           <p className="text-14 text-gray-500">{data.timeAgo || 'Recently'}</p>
         </div>
@@ -684,7 +691,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
         size="default"
         className="w-full mb-3 rounded-full text-16 font-semibold text-white"
       >
-        Contact
+        {t('contact')}
       </Button>
 
       {/* View Profile Link */}
@@ -692,7 +699,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
         href={`/providers/${data.id}`}
         className="text-14 text-brand hover:text-brand-500 transition-colors flex items-center gap-1"
       >
-        View Profile
+        {t('viewProfile')}
         <ArrowRight className="h-4 w-4" />
       </Link>
     </div>
@@ -709,6 +716,7 @@ const MemberTestimonialCard = ({
   const mainImage = data.productImages[0]
   const thumbnailImages = data.productImages.slice(1, 3)
   const t = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   return (
     <div className="h-full flex flex-col bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
       {/* Author Header */}
@@ -718,7 +726,7 @@ const MemberTestimonialCard = ({
             {data.authorImage && data.authorImage.trim() !== '' && !imageErrors.has(-1) ? (
               <Image
                 src={data.authorImage}
-                alt={data.authorName}
+                alt={isRTL ? data.authorNameAr : data.authorNameEn}
                 fill
                 sizes="48px"
                 className="object-cover grayscale"
@@ -732,7 +740,7 @@ const MemberTestimonialCard = ({
           </div>
           <div>
             <h4 className="text-16 font-semibold text-gray-900">
-              {data.authorName}
+              {isRTL ? data.authorNameAr : data.authorNameEn}
             </h4>
             <p className="text-14 text-gray-500">{data.date}</p>
           </div>

@@ -35,8 +35,10 @@ export const mapProductToCardData = (
   return {
     id: mappedProduct.id,
     image: mappedProduct.images?.[0] || '',
-    title: mappedProduct.title,
-    providerName: mappedProduct.provider?.name || '',
+    nameAr: mappedProduct.nameAr || '',
+    nameEn: mappedProduct.nameEn || '',
+    providerNameAr: mappedProduct.provider?.nameAr || '',
+    providerNameEn: mappedProduct.provider?.nameEn || '',
     verified: mappedProduct.provider?.verified || false,
     rating: mappedProduct.rating?.value || 0,
     originalPrice: mappedProduct.price?.original || 0,
@@ -125,8 +127,10 @@ export const mapServiceToCardData = (
   return {
     id: String(serviceObj.id ?? ''),
     image,
-    title: title.trim(),
-    providerName: providerName.trim(),
+    nameAr: serviceObj.nameAr || '',
+    nameEn: serviceObj.nameEn || '',
+    providerNameAr: provider?.nameAr || '',
+    providerNameEn: provider?.nameEn || '',
     verified,
     rating,
     originalPrice,
@@ -226,17 +230,30 @@ const extractTestimonials = (
     return data.testimonials.filter((t): t is Record<string, unknown> =>
       isObject(t)
     ).map((t) => ({
-      quote: (t.commentEn ||
+      quoteAr: (t.commentAr ||
+        t.commentEn ||
+        t.quoteAr ||
+        t.reviewAr ||
+        '') as string,
+      quoteEn: (t.commentEn ||
         t.comment ||
-        t.quote ||
+        t.quoteEn ||
         t.review ||
         '') as string,
       rating: (typeof t.rating === 'number' ? t.rating : 5) as number,
-      authorName: (t.customerNameEn ||
+      authorNameAr: (t.customerNameAr ||
+        t.customerNameEn ||
+        t.customerNameAr ||
+        t.authorNameAr ||
+        t.userNameAr ||
+        t.nameAr ||
+        'Anonymous') as string,
+      authorNameEn: (t.customerNameEn ||
+        t.customerNameAr ||
         t.customerName ||
-        t.authorName ||
-        t.userName ||
-        t.name ||
+        t.authorNameEn ||
+        t.userNameEn ||
+        t.nameEn ||
         'Anonymous') as string,
       authorImage: (t.imageUrl ||
         t.authorImage ||

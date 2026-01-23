@@ -38,7 +38,10 @@ export interface ProductResponse extends BaseLookupResponse {
   // Note: id, isDeleted, creationDate, lastModifiedDate, slug, nameAr, nameEn, descriptionAr, descriptionEn come from BaseLookupResponse
 
   // Basic Information
-  name: string // Computed property from nameAr/nameEn
+   // Computed property from nameAr/nameEn
+  nameAr: string
+  nameEn: string
+  name?: string
   bio: string
   shortDescriptionAr: string | null
   shortDescriptionEn: string | null
