@@ -66,8 +66,10 @@ export const ProductOffersSection = ({
             const cardData: ProductCardData = {
               id: product.id,
               image: product.images?.[0]?.trim() || '',
-              title: product.title,
-              providerName: product.provider.name,
+              nameAr: product.nameAr,
+              nameEn: product.nameEn,
+              providerNameAr: product.provider.nameAr,
+              providerNameEn: product.provider.nameEn,
               providerId: product.provider.id,
               verified: product.provider.verified,
               rating: product.rating.value,

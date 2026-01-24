@@ -9,11 +9,12 @@ import { RatingDisplay } from '@/components/ui/RatingDisplay'
 import { PriceDisplay } from '@/components/ui/PriceDisplay'
 import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/SectionHeader'
-import { useI18nTranslations } from '@/i18n'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface ProviderProduct {
   id: string
-  title: string
+  nameAr: string
+  nameEn: string
   image?: string
   rating: number
   price: number
@@ -119,6 +120,7 @@ const ProductCardItem = ({
 }) => {
   const [productImageError, setProductImageError] = React.useState(false)
   const t = useI18nTranslations ('common')
+  const isRTL = useIsRTL()
   return (
     <Link
       href={provider.product.href}
@@ -131,7 +133,7 @@ const ProductCardItem = ({
             {!productImageError ? (
               <Image
                 src={provider.product.image}
-                alt={provider.product.title}
+                alt={provider.product.nameEn}
                 fill
                 className="object-cover"
                 onError={() => setProductImageError(true)}
@@ -156,7 +158,7 @@ const ProductCardItem = ({
         <div className="flex-1 p-4 flex flex-col justify-between">
           <div className="flex flex-col gap-1.5">
             <h4 className="text-16 md:text-18 font-normal text-gray-900">
-              {provider.product.title}
+              {isRTL ? provider.product.nameAr : provider.product.nameEn}
             </h4>
             {/* Rating and Price on same row */}
             <div className="flex items-center justify-between w-full">

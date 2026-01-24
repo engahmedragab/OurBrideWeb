@@ -852,8 +852,7 @@
   },
   "exclusiveCoupons": {
     "text": "كوبونات وخصومات حصرية مصممة لتناسب ميزانيتك."
-  }
-},
+  },
   "offerCommon": {
     "specialOffer": "عرض خاص",
     "buyNowAndGetBy": "اشترِ الآن واحصل عليه قبل",
@@ -898,7 +897,9 @@
   "offerBanner": {
     "heading": "خصم 24٪ على منتجاتنا!",
     "description": "اشتركي في النشرة البريدية واحصلي على عروض حصرية على منتجات الزفاف الفاخرة."
-  },
+  }
+},
+ 
   "community": {
   "communityFeed": {
     "createPostPlaceholder": "شاركي ما يدور في ذهنك، {name} ....",

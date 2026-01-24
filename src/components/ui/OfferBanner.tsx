@@ -9,8 +9,12 @@ import { cn } from '@/lib/utils'
 import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface OfferItem {
-  heading: string
+  headingAr?: string
+  headingEn?: string
+  descriptionAr?: string
+  descriptionEn?: string
   description?: string
+  heading?: string
   offerPercentage?: number
   ctaText?: string
   ctaLink?: string
@@ -38,7 +42,7 @@ export const OfferBanner = ({
   const tC = useI18nTranslations('common')
   const tS = useI18nTranslations('services.intro')
   const isRTL = useIsRTL()
-
+ console.log({offers})
   useEffect(() => {
     if (offers.length <= 1) return
     const interval = setInterval(() => {
@@ -135,12 +139,12 @@ export const OfferBanner = ({
               )}
             >
               <h2 className="font-semibold text-gray-900 text-[16px] sm:text-[18px] md:text-[20px]">
-                {currentOffer.heading}
+                { currentOffer.heading ? currentOffer.heading : (isRTL ? currentOffer.headingAr : currentOffer.headingEn)}
               </h2>
 
-              {currentOffer.description && (
+              {currentOffer.description || currentOffer.descriptionAr || currentOffer.descriptionEn && (
                 <p className="mt-2 text-gray-500 text-[12px] sm:text-[13px] md:text-[14px] leading-relaxed max-w-[52ch] mx-auto md:mx-0">
-                  {currentOffer.description}
+                  { currentOffer.description ? currentOffer.description : (isRTL ? currentOffer.descriptionAr : currentOffer.descriptionEn)}
                 </p>
               )}
 

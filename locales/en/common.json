@@ -803,8 +803,9 @@
       "successMessage": "Your Request Has Been Sent!",
       "successDescription": "Your service request has been successfully submitted. The provider has been notified and you will receive an update once they respond.",
       "trackRequest": "Track Request"
-    },
-    "products": {
+    }
+  },
+"products": {
       "whyBridesChooseProducts": {
         "why": "Why",
         "brides": "Brides",
@@ -913,8 +914,7 @@
     "heading": "24% Offer On our product!",
     "description": "Subscribe to our newsletter and get exclusive offers on premium wedding products."
   }
-    }
-  },
+    },
   "community": {
   "communityFeed": {
     "createPostPlaceholder": "Share What's in your mind ,{name} ....",

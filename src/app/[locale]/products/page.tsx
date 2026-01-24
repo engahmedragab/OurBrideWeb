@@ -103,9 +103,11 @@ export default function ProductIntroPage() {
         const defaultSlide = translatedHeroSlides[index % translatedHeroSlides.length]
         return {
           id: String(index + 1),
-          label: banner.heading ? tCommon('productCommon.featured') : defaultSlide.label,
+          labelAr: banner.headingAr ? tCommon('productCommon.featured') : defaultSlide.label,
+          labelEn: banner.headingEn ? tCommon('productCommon.featured') : defaultSlide.label,
           title: banner.heading || defaultSlide.title,
-          description: banner.description || defaultSlide.description,
+          descriptionAr: banner.descriptionAr || defaultSlide.description,
+          descriptionEn: banner.descriptionEn || defaultSlide.description,
           ctaText: banner.ctaText || defaultSlide.ctaText,
           ctaLink: banner.ctaLink || defaultSlide.ctaLink,
           productImage: defaultSlide.productImage, // Use same images as category page
@@ -123,12 +125,14 @@ export default function ProductIntroPage() {
     
     return productsHomeData.headers.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map((header): Product => ({
       id: String(header.id),
-      title:isRTL ? header.nameAr || header.nameEn || header.name : header.name || header.nameEn || header.nameAr || '',
+      nameAr: header.nameAr || header.nameEn || '',
+      nameEn: header.nameEn || header.nameAr || '',
       description: isRTL ? header.shortDescriptionAr || header.shortDescriptionEn || header.shortDescription : header.shortDescription || header.shortDescriptionAr || header.shortDescriptionEn || '',
       images: header.image ? [header.image] : [],
       provider: {
         id: header.providerId ? String(header.providerId) : '',
-        name: isRTL ? header.provider?.nameAr || header.provider?.nameEn || '' : header.provider?.nameEn || header.provider?.nameAr || '',
+        nameAr:header.provider?.nameAr || header.provider?.nameEn || '',
+        nameEn: header.provider?.nameEn || header.provider?.nameAr || '',
         verified: false,
         image: header.provider?.profileURL || undefined,
       },
@@ -165,7 +169,8 @@ export default function ProductIntroPage() {
 
       const providerProduct: BestProviderProductType = {
         id: featuredProduct.id,
-        title: featuredProduct.title,
+        nameAr: featuredProduct.nameAr,
+        nameEn: featuredProduct.nameEn,
         image: featuredProduct.images?.[0] || '',
         rating: featuredProduct.rating?.value || 0,
         price: featuredProduct.price?.discounted || featuredProduct.price?.original || 0,

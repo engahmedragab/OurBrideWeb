@@ -35,7 +35,7 @@ import { ProductErrorState } from '../../components/ProductErrorState'
 import { parseProductId } from '../../utils'
 import { RELATED_PRODUCTS_LIMIT } from '../../constants'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
-import { useI18nTranslations } from '@/i18n/hooks'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 interface ProductDetailClientProps {
   productId: string
@@ -74,6 +74,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   const [reviewComment, setReviewComment] = useState('')
   const t = useI18nTranslations('products')
   const tCommon = useI18nTranslations('common')
+  const isRTL = useIsRTL()
 
   // Fetch product using hook
   const {
@@ -181,13 +182,15 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     return labels[stars] || ''
   }
 
+  console.log({product})
+
   return (
     <ProductPageLayout>
       <div className="container-custom max-w-[1600px] py-6 md:py-8">
         {/* Back Button */}
         <BackButton
           href="/products"
-          label={t('productCommon.backToProducts')}
+          label={tCommon('productCommon.backToProducts')}
           className="mb-6"
         />
 
@@ -197,7 +200,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
           <div className="lg:col-span-4">
             <ProductImageGallery
               images={product.images}
-              productName={product.title}
+              productName={product.nameAr}
             />
           </div>
 
@@ -216,7 +219,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
             )}
               </div>
               <h1 className="text-32 md:text-40 font-normal text-gray-900 mb-3">
-              {product.title}
+              {isRTL ? product.nameAr : product.nameEn}
             </h1>
               <RatingDisplay
                 rating={product.rating?.value || 0}
@@ -254,6 +257,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                   ...product.provider,
                   rating: product.rating?.value || 0,
                   profession: t('provider.makeupArtist'),
+                  name: isRTL ? product.provider.nameAr : product.provider.nameEn,
                 }}
               />
               <OrderSummaryCard
@@ -543,8 +547,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
                         type: 'product',
                         id: product.id,
                         image: product.images?.[0]?.trim() || '',
-                        title: product.title,
-                        providerName: product.provider.name,
+                        nameAr: product.nameAr,
+                        nameEn: product.nameEn,
+                        providerNameAr: product.provider.nameAr,
+                        providerNameEn: product.provider.nameEn,
                         providerId: product.provider.id,
                         verified: product.provider.verified,
                         rating: product.rating?.value || 0,

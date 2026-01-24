@@ -10,9 +10,13 @@ import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface HeroSlide {
   id: string
-  label: string
+  labelAr?: string
+  labelEn?: string
+  label?: string
   title: string
-  description: string
+  descriptionAr?: string
+  descriptionEn?: string
+  description?: string
   ctaText: string
   ctaLink: string
   productImage: string
@@ -104,7 +108,7 @@ export const HeroCarousel = ({
       {/* Product Image - Full Width on mobile */}
       <div className="relative z-10 left-1/2 -translate-x-1/2 w-screen md:left-0 md:translate-x-0 md:w-full
                 h-[220px] sm:h-[260px] md:h-full md:min-h-[350px]
-                rounded-md overflow-hidden border bg-white/10">
+                rounded-md overflow-hidden  bg-white/10">
 
         {currentSlide.productImage && !imageErrors.has(currentIndex) ? (
           typeof currentSlide.productImage === 'string' && currentSlide.productImage.endsWith('.svg') ? (
@@ -150,7 +154,7 @@ export const HeroCarousel = ({
       {/* New Arrival Label */}
       <div className={cn(isRTL ? "md:text-right" : "md:text-left")}>
         <span className="inline-block text-12 md:text-14 font-semibold uppercase tracking-wider text-brand-500">
-          {currentSlide.label}
+          {isRTL ? currentSlide.labelAr : currentSlide.labelEn}
         </span>
       </div>
 
@@ -167,7 +171,7 @@ export const HeroCarousel = ({
         "text-14 md:text-16 lg:text-18 text-gray-500 leading-relaxed max-w-xl mx-auto md:mx-0",
         isRTL ? "md:text-right" : "md:text-left"
       )}>
-        {currentSlide.description}
+        {isRTL ? currentSlide.descriptionAr : currentSlide.descriptionEn}
       </p>
 
       {/* CTA Button */}

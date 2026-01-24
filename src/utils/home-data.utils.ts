@@ -15,6 +15,7 @@ import type {
 } from '@/components/ui/Card'
 import type { OfferItem } from '@/components/ui/OfferBanner'
 import { pickLocalizedText } from './translation/i18nText'
+import { isRTL, useIsRTL } from '@/i18n'
 
 /**
  * Type guard to check if value is an object
@@ -344,10 +345,16 @@ const extractBanners = (data: Record<string, unknown>): OfferItem[] => {
           imageUrl && imageUrl.trim() !== '' ? imageUrl : undefined
 
         return {
-          heading: (b.title || b.nameEn || b.nameAr || '') as string,
-          description: (b.description ||
+          headingAr: (b.titleAr || b.nameAr || '') as string,
+          headingEn: (b.titleEn || b.nameEn || b.nameAr || '') as string,
+          descriptionAr: (b.descriptionAr ||
             b.subtitle ||
             b.descriptionEn ||
+            b.description||
+            '') as string,
+          descriptionEn: (b.descriptionEn ||
+            b.subtitle ||
+            b.description||
             b.descriptionAr ||
             '') as string,
           ctaText: (b.buttonText || 'Start Shopping') as string,
@@ -355,14 +362,14 @@ const extractBanners = (data: Record<string, unknown>): OfferItem[] => {
           productImage,
         } as OfferItem
       })
-      .filter((banner) => banner.heading) // Only include banners with a heading
+      .filter((banner) => banner.headingAr || banner.headingEn) // Only include banners with a heading
       .sort(
         (a, b) =>
           ((data.banners as Record<string, unknown>[]).find(
-            (banner) => banner.title === a.heading
+            (banner) => banner.title === (a.headingAr || a.headingEn)
           )?.order as number) -
           ((data.banners as Record<string, unknown>[]).find(
-            (banner) => banner.title === b.heading
+            (banner) => banner.title === (b.headingAr || b.headingEn)
           )?.order as number)
       )
   }
