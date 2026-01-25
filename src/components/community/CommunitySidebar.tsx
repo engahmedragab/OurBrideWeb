@@ -21,26 +21,45 @@ export interface CommunitySidebarProps {
   className?: string
   activeTab?: CommunityTab
   onTabChange?: (tab: CommunityTab) => void
+  searchQuery?: string
+  onSearchChange?: (query: string) => void
+  onClearSearch?: () => void
 }
 
 export const CommunitySidebar = ({
   className,
   activeTab: externalActiveTab,
   onTabChange,
+  searchQuery: externalSearchQuery,
+  onSearchChange,
+  onClearSearch,
 }: CommunitySidebarProps) => {
   const t = useI18nTranslations("community")
   const router = useRouter()
   const { user } = useAuth()
   const [internalActiveTab, setInternalActiveTab] = useState<CommunityTab>('posts')
-  const [searchQuery, setSearchQuery] = useState('')
+  const [internalSearchQuery, setInternalSearchQuery] = useState('')
   const activeTab = externalActiveTab ?? internalActiveTab
+  
+  // Use external search query if provided, otherwise use internal state
+  const searchQuery = externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
+    const value = e.target.value
+    if (onSearchChange) {
+      onSearchChange(value)
+    } else {
+      setInternalSearchQuery(value)
+    }
   }
 
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault()
+    // If search is controlled by parent, don't redirect
+    if (onSearchChange) {
+      return
+    }
+    // Otherwise, redirect to search page (fallback behavior)
     if (searchQuery.trim()) {
       router.push(`/community/search?q=${encodeURIComponent(searchQuery.trim())}`)
     }
@@ -49,6 +68,14 @@ export const CommunitySidebar = ({
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearchSubmit(e)
+    }
+  }
+  
+  const handleClear = () => {
+    if (onClearSearch) {
+      onClearSearch()
+    } else {
+      setInternalSearchQuery('')
     }
   }
 
@@ -91,18 +118,20 @@ export const CommunitySidebar = ({
       {/* Community Title */}
       <h2 className="text-20 font-semibold text-gray-900">{t("tabs.community")}</h2>
 
-      {/* Search Bar */}
-      <form onSubmit={handleSearchSubmit}>
-        <SearchInput
-          placeholder={t("search.title.page")}
-          variant="default"
-          size="md"
-          className="w-full rounded-lg"
-          value={searchQuery}
-          onChange={handleSearch}
-          onKeyDown={handleSearchKeyDown}
-        />
-      </form>
+      {/* Search Bar - Only show for content tabs (not community tab) */}
+      {activeTab !== 'community' && (
+        <form onSubmit={handleSearchSubmit}>
+          <SearchInput
+            placeholder={t("placeholders.searchInTab", { tab: t(`tabs.${activeTab}`) })}
+            variant="default"
+            size="md"
+            className="w-full rounded-lg"
+            value={searchQuery}
+            onChange={handleSearch}
+            onKeyDown={handleSearchKeyDown}
+          />
+        </form>
+      )}
 
       {/* Navigation Card */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">

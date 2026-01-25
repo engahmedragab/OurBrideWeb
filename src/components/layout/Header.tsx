@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import { usePathname } from '@/i18n/navigation'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { SearchInput, LanguageSwitcher } from '@/components/ui'
+import { SearchInput, LanguageSwitcher, Skeleton } from '@/components/ui'
 import { useCart } from '@/hooks/cart'
 import brandLogo from '@/assets/svg/Brand-logo.svg'
 import {
@@ -47,11 +47,17 @@ export const Header = ({ className }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
   const t = useI18nTranslations('navbar')
   const isRTL = useIsRTL()
 
+  // Track initial load completion
+  useEffect(() => {
+    setIsInitialLoad(false)
+  }, [])
+
   // Fetch cart data
-  const { data: cartData } = useCart()
+  const { data: cartData, isLoading: isLoadingCart } = useCart()
 
   // Fetch notifications
   const {
@@ -110,45 +116,46 @@ export const Header = ({ className }: HeaderProps) => {
 
   const navigationItems = useMemo(() => {
     const items = [
-      {
+    {
         label: t('links.home'),
-        path: '/',
-        icon: Home,
-      },
-      {
+      path: '/',
+      icon: Home,
+    },
+    {
         label: t('links.products'),
-        path: '/products/intro',
-        icon: Store,
-        hasDropdown: true,
-        dropdownItems: [
+      path: '/products/intro',
+      icon: Store,
+      hasDropdown: true,
+      dropdownItems: [
           { label: t('links.allProducts'), path: '/products' },
           { label: t('links.category'), path: '/products/category' },
-        ],
-      },
-      {
+      ],
+    },
+    {
         label: t('links.services'),
-        path: '/services',
-        icon: FileHeart,
-        hasDropdown: true,
-        dropdownItems: [
+      path: '/services',
+      icon: FileHeart,
+      hasDropdown: true,
+      dropdownItems: [
           { label: t('links.allServices'), path: '/services' },
           { label: t('links.category'), path: '/services/category' },
-        ],
-      },
-      {
+      ],
+    },
+    {
         label: t('links.providers'),
-        path: '/providers',
-        icon: Building2,
-      },
-      {
+      path: '/providers',
+      icon: Building2,
+    },
+    {
         label: t('links.community'),
-        path: '/community',
-        icon: Globe,
-      },
-    ]
+      path: '/community',
+      icon: Globe,
+    },
+  ]
 
-    return items
-  }, [t])
+    // Reverse the array in RTL mode to maintain the same visual order
+    return isRTL ? [...items].reverse() : items
+  }, [t, isRTL])
 
   const toggleExpanded = (path: string) => {
     setExpandedItems(prev => {
@@ -196,7 +203,16 @@ export const Header = ({ className }: HeaderProps) => {
           <ClientOnly>
             <NavigationMenu className="hidden md:flex">
               <NavigationMenuList className="gap-0.5 rounded-full border border-gray-100 bg-white px-2 py-1.5 shadow-sm h-12">
-              {navigationItems.map(item => {
+              {isInitialLoad ? (
+                // Skeleton for navigation items during initial load
+                Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index} className="flex items-center gap-2 rounded-full px-3 py-2">
+                    <Skeleton className="h-5 w-5 rounded" />
+                    <Skeleton className="h-4 w-16 rounded" />
+                  </div>
+                ))
+              ) : (
+                navigationItems.map(item => {
                 const Icon = item.icon
                 // For dropdown items, check if any dropdown item is active instead of the parent path
                 const active = item.hasDropdown 
@@ -280,7 +296,8 @@ export const Header = ({ className }: HeaderProps) => {
                         'transition-all duration-200 ease-in-out',
                         'hover:bg-brand-50/50 hover:text-brand-600',
                         'focus:outline-none',
-                        active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600'
+                        active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600',
+                        isRTL && 'flex-row-reverse'
                       )}
                     >
                       <Icon
@@ -302,23 +319,27 @@ export const Header = ({ className }: HeaderProps) => {
                     </Link>
                   </NavigationMenuItem>
                 )
-              })}
+              }))}
               </NavigationMenuList>
             </NavigationMenu>
           </ClientOnly>
 
           {/* Search Bar */}
           <div className="hidden flex-1 max-w-md lg:block" dir={isRTL ? 'rtl' : 'ltr'}>
-            <SearchInput
-              placeholder={t('search.placeholder')}
-              variant="default"
-              size="md"
-              className={cn(
-                'w-full h-12 rounded-full transition-all duration-200',
-                'focus:border-brand-500',
-                'hover:border-gray-200'
-              )}
-            />
+            {isInitialLoad ? (
+              <Skeleton className="w-full h-12 rounded-full" />
+            ) : (
+              <SearchInput
+                placeholder={t('search.placeholder')}
+                variant="default"
+                size="md"
+                className={cn(
+                  'w-full h-12 rounded-full transition-all duration-200',
+                  'focus:border-brand-500',
+                  'hover:border-gray-200'
+                )}
+              />
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -372,30 +393,36 @@ export const Header = ({ className }: HeaderProps) => {
               </ClientOnly>
 
               {/* Cart */}
-              <Button
-                asChild
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  'relative rounded-full border-0 bg-transparent',
-                  'transition-all duration-200 ease-in-out',
-                  'hover:bg-brand-50/50',
-                  'focus:outline-none'
-                )}
-                aria-label={t('icons.cart')}
-              >
-                <Link href="/cart" className="relative">
-                  <ShoppingCart className="h-5 w-5 text-brand-500 transition-all duration-200 ease-in-out antialiased" />
-                  {cartCount > 0 && (
-                    <span className={cn(
-                      "absolute -top-1 flex min-w-[16px] h-4 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white shadow-sm px-1",
-                      isRTL ? "-left-1" : "-right-1"
-                    )}>
-                      {cartCount > 99 ? '99+' : cartCount}
-                    </span>
+              {isLoadingCart ? (
+                <div className="relative rounded-full border-0 bg-transparent h-10 w-10 flex items-center justify-center">
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                </div>
+              ) : (
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="icon"
+                  className={cn(
+                    'relative rounded-full border-0 bg-transparent',
+                    'transition-all duration-200 ease-in-out',
+                    'hover:bg-brand-50/50',
+                    'focus:outline-none'
                   )}
-                </Link>
-              </Button>
+                  aria-label={t('icons.cart')}
+                >
+                  <Link href="/cart" className="relative">
+                    <ShoppingCart className="h-5 w-5 text-brand-500 transition-all duration-200 ease-in-out antialiased" />
+                    {cartCount > 0 && (
+                      <span className={cn(
+                        "absolute -top-1 flex min-w-[16px] h-4 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white shadow-sm px-1",
+                        isRTL ? "-left-1" : "-right-1"
+                      )}>
+                        {cartCount > 99 ? '99+' : cartCount}
+                      </span>
+                    )}
+                  </Link>
+                </Button>
+              )}
             </div>
 
             {/* Language Switcher */}
@@ -445,13 +472,13 @@ export const Header = ({ className }: HeaderProps) => {
               <X className="h-5 w-5 text-brand-500" />
             </Button>
             <div className="flex-1" dir={isRTL ? 'rtl' : 'ltr'}>
-              <SearchInput
+            <SearchInput
                 placeholder={t('search.placeholder')}
-                variant="default"
-                size="md"
+              variant="default"
+              size="md"
                 className="w-full h-12 rounded-full"
-                autoFocus
-              />
+              autoFocus
+            />
             </div>
           </div>
         </div>
@@ -535,7 +562,8 @@ export const Header = ({ className }: HeaderProps) => {
                 'gap-3',
                 isActive('/')
                   ? 'bg-brand-50 text-brand-600'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  : 'text-gray-600 hover:bg-gray-50',
+                isRTL && 'flex-row-reverse'
               )}
             >
               <Home className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
@@ -544,32 +572,33 @@ export const Header = ({ className }: HeaderProps) => {
 
             {/* Main Navigation Items - Products, Services, Providers, Community */}
             {navigationItems.filter(item => item.path !== '/').map(item => {
-              const Icon = item.icon
-              // For dropdown items, check if any dropdown item is active instead of the parent path
-              const active = item.hasDropdown 
-                ? isParentActive(item.path, item.dropdownItems || [])
-                : isActive(item.path)
+            const Icon = item.icon
+            // For dropdown items, check if any dropdown item is active instead of the parent path
+            const active = item.hasDropdown 
+              ? isParentActive(item.path, item.dropdownItems || [])
+              : isActive(item.path)
               const isExpanded = expandedItems.has(item.path)
 
-              if (item.hasDropdown) {
-                return (
-                  <div key={item.path} className="space-y-1">
+            if (item.hasDropdown) {
+              return (
+                <div key={item.path} className="space-y-1">
                     <div className="flex items-center">
-                      <Link
-                        href={item.path}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={cn(
+                  <Link
+                    href={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn(
                           'flex items-center flex-1 rounded-lg px-4 py-3 text-16 font-medium antialiased',
-                          'transition-all duration-200 ease-in-out',
+                      'transition-all duration-200 ease-in-out',
                           'gap-3',
-                          active
-                            ? 'bg-brand-50 text-brand-600'
-                            : 'text-gray-600 hover:bg-gray-50'
-                        )}
-                      >
+                      active
+                        ? 'bg-brand-50 text-brand-600'
+                        : 'text-gray-600 hover:bg-gray-50',
+                      isRTL && 'flex-row-reverse'
+                    )}
+                  >
                         <Icon className="h-5 w-5 flex-shrink-0" />
                         <span className="flex-1">{item.label}</span>
-                      </Link>
+                  </Link>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -595,51 +624,52 @@ export const Header = ({ className }: HeaderProps) => {
                     </div>
                     {isExpanded && (
                       <div className={cn('space-y-1', isRTL ? 'mr-7' : 'ml-7')}>
-                        {item.dropdownItems?.map(dropdownItem => {
-                          const isDropdownActive = isDropdownItemActive(dropdownItem.path, item.dropdownItems || [])
-                          return (
-                            <Link
-                              key={dropdownItem.path}
-                              href={dropdownItem.path}
-                              onClick={() => setIsMobileMenuOpen(false)}
-                              className={cn(
+                    {item.dropdownItems?.map(dropdownItem => {
+                      const isDropdownActive = isDropdownItemActive(dropdownItem.path, item.dropdownItems || [])
+                      return (
+                        <Link
+                          key={dropdownItem.path}
+                          href={dropdownItem.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                            className={cn(
                                 'flex items-center rounded-lg px-4 py-2 text-14 font-normal antialiased',
-                                'transition-all duration-200 ease-in-out',
+                            'transition-all duration-200 ease-in-out',
                                 'gap-2',
-                                isDropdownActive
-                                  ? 'bg-brand-50 text-brand-600'
-                                  : 'text-gray-600 hover:bg-gray-50'
-                              )}
-                            >
+                            isDropdownActive
+                              ? 'bg-brand-50 text-brand-600'
+                              : 'text-gray-600 hover:bg-gray-50'
+                          )}
+                        >
                               <span className="flex-1">{dropdownItem.label}</span>
-                            </Link>
-                          )
-                        })}
-                      </div>
-                    )}
+                        </Link>
+                      )
+                    })}
                   </div>
-                )
-              }
+                    )}
+                </div>
+              )
+            }
 
-              return (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
+            return (
+              <Link
+                key={item.path}
+                href={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn(
                     'flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-                    'transition-all duration-200 ease-in-out',
+                      'transition-all duration-200 ease-in-out',
                     'gap-3',
-                    active
-                      ? 'bg-brand-50 text-brand-600'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  )}
-                >
+                      active
+                        ? 'bg-brand-50 text-brand-600'
+                        : 'text-gray-600 hover:bg-gray-50',
+                    isRTL && 'flex-row-reverse'
+                    )}
+                  >
                   <Icon className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
                   <span className="flex-1">{item.label}</span>
-                </Link>
-              )
-            })}
+              </Link>
+            )
+          })}
 
           </div>
 
@@ -649,15 +679,15 @@ export const Header = ({ className }: HeaderProps) => {
             <Link
               href="/wishlist"
               onClick={() => setIsMobileMenuOpen(false)}
-              className={cn(
+                className={cn(
                 'flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-                'transition-all duration-200 ease-in-out',
+                  'transition-all duration-200 ease-in-out',
                 'gap-3',
                 isActive('/wishlist')
                   ? 'bg-brand-50 text-brand-600'
                   : 'text-gray-600 hover:bg-gray-50'
-              )}
-            >
+                )}
+              >
               <Heart className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
               <span className="flex-1">{t('menu.wishlist')}</span>
             </Link>

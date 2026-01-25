@@ -13,7 +13,7 @@
     "sort": "ترتيب",
     "pleaseWait": "لحظه واحده، نحن هنا بالفعل ...",
     "skipButton": "تخطي الآن",
-    "currency": "EGP",
+    "currency": "جنيه",
     "ctaText": "إرسال",
     "viewProfile": "عرض الملف الشخصي",
     "subscribeButton": "اشتركي",
@@ -494,7 +494,7 @@
           "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
         }
       }
-    },
+    }, 
     "services": {
       "intro": {
         "error": {
@@ -850,13 +850,11 @@
   },
   "exclusiveCoupons": {
     "text": "كوبونات وخصومات حصرية مصممة لتناسب ميزانيتك."
-  }
-},
+  },
   "offerCommon": {
     "specialOffer": "عرض خاص",
     "buyNowAndGetBy": "اشترِ الآن واحصل عليه قبل",
     "reviews": "التقييمات"
-    
   },
   "date": {
     "aug25_2025": "25 أغسطس 2025"
@@ -868,7 +866,6 @@
     "gizaShort": "الجيزة، 6 أكتو...",
     "gizaFull": "الجيزة، مدينة السادس من أكتوبر، مبنى 15، شقة 42"
   },
-  
   "reviewsSection": {
     "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذا المنتج!",
     "seeMore": "عرض المزيد من التقييمات",
@@ -879,11 +876,9 @@
     "submitRetry": "فشل في إرسال التقييم. من فضلكِ حاولي مرة أخرى.",
     "shareComments": "شاركي تعليقك"
   },
-  
-    "ratingSummary": {
-      "basedOnReviews": "بناءً على",
-      "reviews": "تقييمات",
-      
+  "ratingSummary": {
+    "basedOnReviews": "بناءً على",
+    "reviews": "تقييمات",
     "starsLabel": {
       "5": "ممتاز",
       "4": "جيد جدًا",
@@ -891,11 +886,11 @@
       "2": "مقبول",
       "1": "ضعيف"
     }
-    },
-    
+  },
   "offerBanner": {
     "heading": "خصم 24٪ على منتجاتنا!",
     "description": "اشتركي في النشرة البريدية واحصلي على عروض حصرية على منتجات الزفاف الفاخرة."
+  }
   },
   "community": {
   "communityFeed": {
@@ -1008,7 +1003,7 @@
       "noPostsMessage": "لا توجد منشورات للعرض في الوقت الحالي.",
       "noReelsTitle": "لا توجد ريلز متاحة",
       "noReelsMessage": "لا توجد ريلز للعرض في الوقت الحالي."
-    },
+  },
     "actions": {
       "search": "بحث",
       "close": "إغلاق",

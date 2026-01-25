@@ -23,10 +23,10 @@
     "pending": "Pending",
     "topOffers": "Top Offers",
     "notAvailable": "Not Available",
-    "noDataAvailable": "No data available",
+  "noDataAvailable": "No data available",
     "noImageAvailable": "No image available",
     "enterYourEmail": "Enter Your E-mail",
-    "productsLoading": "Loading products...",
+     "productsLoading": "Loading products...",
     "anonymous": "Anonymous",
     "recently": "Recently",
     "viewAll": "View All",
@@ -367,10 +367,10 @@
     },
     "notifications": {
       "loading": "Loading notifications...",
-      "markAllAsRead": "Mark all as read",
-      "notifications": "Notifications",
-      "noNotificationsYet": "No notifications yet",
-      "viewAll": "View all notifications"
+       "markAllAsRead": "Mark all as read",
+       "notifications": "Notifications",
+       "noNotificationsYet": "No notifications yet",
+        "viewAll": "View all notifications"
     },
     "menu": {
       "wishlist": "Wishlist",
@@ -383,7 +383,7 @@
       "closeSearch": "Close search"
     }
   },
-  "home": {
+    "home": {
       "hero": {
         "activeUsers": "Active Users",
         "badge": "All-in-one platform for wedding.",
@@ -802,8 +802,9 @@
       "successMessage": "Your Request Has Been Sent!",
       "successDescription": "Your service request has been successfully submitted. The provider has been notified and you will receive an update once they respond.",
       "trackRequest": "Track Request"
-    },
-    "products": {
+    }
+  },
+  "products": {
       "whyBridesChooseProducts": {
         "why": "Why",
         "brides": "Brides",
@@ -846,75 +847,74 @@
         "ctaText": "Submit"
       },
       "productOffersSection": {
-    "title": "Today's Best Product Offers",
-    "timerText": "23 H 45 Min"
-  },
-  "productHeroSlides": {
-    "slide1": {
-      "label": "New Arrival",
-      "title": "Avca Sun Cream",
-      "description": "A lightweight, moisture-rich sun cream designed to protect your skin while keeping it soft, fresh, and radiating a dewy, ready glow for brides who want flawless, healthy skin under makeup.",
-      "ctaText": "Buy Now"
+        "title": "Today's Best Product Offers",
+        "timerText": "23 H 45 Min"
+      },
+      "productHeroSlides": {
+        "slide1": {
+          "label": "New Arrival",
+          "title": "Avca Sun Cream",
+          "description": "A lightweight, moisture-rich sun cream designed to protect your skin while keeping it soft, fresh, and radiating a dewy, ready glow for brides who want flawless, healthy skin under makeup.",
+          "ctaText": "Buy Now"
+        },
+        "slide2": {
+          "label": "Top Seller",
+          "title": "Essential Wedding Cream",
+          "description": "Premium quality products for your special day. Discover our curated collection of wedding essentials designed to make you look and feel your best.",
+          "ctaText": "Shop Now"
+        }
+      },
+      "productCategoriesSection": {
+        "choose": "Choose",
+        "from": "From",
+        "ourProduct": "Our Product",
+        "categories": "Categories"
+      },
+      "exclusiveCoupons": {
+        "text": "Exclusive coupons and discounts designed for your budget."
+      },
+      "offerCommon": {
+        "specialOffer": "Special Offer",
+        "buyNowAndGetBy": "Buy now and get by",
+        "reviews": "Reviews"
+      },
+      "date": {
+        "aug25_2025": "25 AUG 2025"
+      },
+      "provider": {
+        "makeupArtist": "Makeup Artist"
+      },
+      "location": {
+        "gizaShort": "Giza, 6 Of O...",
+        "gizaFull": "Giza, 6 Of October City, Building 15, Apartment 42"
+      },
+      "reviewsSection": {
+        "noReviews": "No reviews yet. Be the first to review this product!",
+        "seeMore": "See more reviews",
+        "writeReview": "Write Your Review",
+        "submitSuccess": "Review submitted successfully!",
+        "submitError": "Failed to submit review",
+        "submitErrorWithReason": "Error submitting review:",
+        "submitRetry": "Failed to submit review. Please try again.",
+        "shareComments": "Share your comments"
+      },
+      "ratingSummary": {
+        "basedOnReviews": "Based on",
+        "reviews": "reviews",
+        "starsLabel": {
+          "5": "Excellent",
+          "4": "Very Good",
+          "3": "Good",
+          "2": "Fair",
+          "1": "Poor"
+        }
+      },
+      "offerBanner": {
+        "heading": "24% Offer On our product!",
+        "description": "Subscribe to our newsletter and get exclusive offers on premium wedding products."
+      }
     },
-    "slide2": {
-      "label": "Top Seller",
-      "title": "Essential Wedding Cream",
-      "description": "Premium quality products for your special day. Discover our curated collection of wedding essentials designed to make you look and feel your best.",
-      "ctaText": "Shop Now"
-    }
-  },
-  "productCategoriesSection": {
-    "choose": "Choose",
-    "from": "From",
-    "ourProduct": "Our Product",
-    "categories": "Categories"
-  },
-   "exclusiveCoupons": {
-    "text": "Exclusive coupons and discounts designed for your budget."
-  },
-  "offerCommon": {
-    "specialOffer": "Special Offer",
-    "buyNowAndGetBy": "Buy now and get by",
-    "reviews": "Reviews"
-  },
-  "date": {
-    "aug25_2025": "25 AUG 2025"
-  },
-  "provider": {
-    "makeupArtist": "Makeup Artist"
-  },
-  "location": {
-    "gizaShort": "Giza, 6 Of O...",
-    "gizaFull": "Giza, 6 Of October City, Building 15, Apartment 42"
-  },
-  "reviewsSection": {
-    "noReviews": "No reviews yet. Be the first to review this product!",
-    "seeMore": "See more reviews",
-    "writeReview": "Write Your Review",
-    "submitSuccess": "Review submitted successfully!",
-    "submitError": "Failed to submit review",
-    "submitErrorWithReason": "Error submitting review:",
-    "submitRetry": "Failed to submit review. Please try again.",
-     "shareComments": "Share your comments"
-  },
-  "ratingSummary": {
-    "basedOnReviews": "Based on",
-    "reviews": "reviews",
-    "starsLabel": {
-      "5": "Excellent",
-      "4": "Very Good",
-      "3": "Good",
-      "2": "Fair",
-      "1": "Poor"
-    }
-  },
-  "offerBanner": {
-    "heading": "24% Offer On our product!",
-    "description": "Subscribe to our newsletter and get exclusive offers on premium wedding products."
-  }
-    }
-  },
-  "community": {
+"community": {
   "communityFeed": {
     "createPostPlaceholder": "Share What's in your mind ,{name} ....",
     "emptyMessage": "There are no posts to display at the moment. Be the first to share something!",
@@ -1032,8 +1032,8 @@
     "search": "Search",
     "close": "Close",
     "clearSearch": "Clear search"
-  },
-  "postCard": {
+},
+"postCard": {
     "failedToToggleLike": "Failed to toggle like",
     "sharedSuccessfully": "Shared successfully! Link copied to clipboard.",
     "failedToSharePost": "Failed to share post",
@@ -1121,7 +1121,7 @@
     "noDecisionGroupsTitle": "No Decision Groups Available",
     "noDecisionGroupsMessage": "There are no decision groups to display at the moment.",
     "moreOptions": "more options"
-  },
+    },
     "profile": {
       "profileIdRequired": "Profile ID required",
       "profileIdRequiredMessage": "Please provide a profile ID in the URL.",
@@ -1210,17 +1210,17 @@
       "newPostTitle": "New Post"
     }
   }
-  }
-},
-"reelDetails": {
-  "loading": "Loading reel...",
-  "reelNotFoundTitle": "Reel Not Found",
-  "reelNotFoundMessage": "The reel you're looking for doesn't exist or has been removed."
-},
-"postDetails": {
-  "loading": "Loading post...",
-  "postNotFoundTitle": "Post Not Found",
-  "postNotFoundMessage": "The post you're looking for doesn't exist or has been removed."
+    }
+  },
+  "reelDetails": {
+    "loading": "Loading reel...",
+    "reelNotFoundTitle": "Reel Not Found",
+    "reelNotFoundMessage": "The reel you're looking for doesn't exist or has been removed."
+  },
+  "postDetails": {
+    "loading": "Loading post...",
+    "postNotFoundTitle": "Post Not Found",
+    "postNotFoundMessage": "The post you're looking for doesn't exist or has been removed."
 },
 "footer": {
   "description": "Your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",

@@ -11,6 +11,7 @@ import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { RatingDisplay } from '@/components/ui/RatingDisplay'
 import { PriceDisplay } from '@/components/ui/PriceDisplay'
+import { useIsRTL } from '@/i18n'
 
 // Import Swiper styles
 import 'swiper/css'
@@ -145,6 +146,7 @@ export const ServicesProductsSlider = ({
   className,
 }: ServicesProductsSliderProps) => {
   const swiperRef = useRef<SwiperRef | null>(null)
+  const isRTL = useIsRTL()
 
   if (products.length === 0) {
     return null
@@ -158,6 +160,7 @@ export const ServicesProductsSlider = ({
         spaceBetween={20}
         slidesPerView={1}
         loop={products.length > 3}
+        dir={isRTL ? 'rtl' : 'ltr'}
         breakpoints={{
           640: {
             slidesPerView: 2,
@@ -185,18 +188,24 @@ export const ServicesProductsSlider = ({
       {products.length > 3 && (
         <>
           <button
-            className="swiper-button-prev-products absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 hover:bg-brand-50 hover:border-brand-500 shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110"
-            aria-label="Previous products"
-            onClick={() => swiperRef.current?.swiper?.slidePrev()}
+            className={cn(
+              "swiper-button-prev-products absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 hover:bg-brand-50 hover:border-brand-500 shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110",
+              isRTL ? "right-0" : "left-0"
+            )}
+            aria-label={isRTL ? "Next products" : "Previous products"}
+            onClick={() => swiperRef.current?.swiper?.[isRTL ? 'slideNext' : 'slidePrev']()}
           >
-            <ChevronRight className="h-5 w-5 text-gray-700 rotate-180" />
+            <ChevronRight className={cn("h-5 w-5 text-gray-700", isRTL ? "rotate-0" : "rotate-180")} />
           </button>
           <button
-            className="swiper-button-next-products absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 hover:bg-brand-50 hover:border-brand-500 shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110"
-            aria-label="Next products"
-            onClick={() => swiperRef.current?.swiper?.slideNext()}
+            className={cn(
+              "swiper-button-next-products absolute top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 hover:bg-brand-50 hover:border-brand-500 shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110",
+              isRTL ? "left-0" : "right-0"
+            )}
+            aria-label={isRTL ? "Previous products" : "Next products"}
+            onClick={() => swiperRef.current?.swiper?.[isRTL ? 'slidePrev' : 'slideNext']()}
           >
-            <ChevronRight className="h-5 w-5 text-gray-700" />
+            <ChevronRight className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
           </button>
         </>
       )}

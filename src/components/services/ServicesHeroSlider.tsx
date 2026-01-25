@@ -8,6 +8,7 @@ import { Navigation } from 'swiper/modules'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { useIsRTL } from '@/i18n'
 
 // Import Swiper styles
 import 'swiper/css'
@@ -72,6 +73,7 @@ export const ServicesHeroSlider = ({
   className,
 }: ServicesHeroSliderProps) => {
   const swiperRef = useRef<{ swiper: SwiperType } | null>(null)
+  const isRTL = useIsRTL()
 
   // Use provided images or fallback to single image repeated
   // Handle both string URLs and imported image objects (StaticImageData)
@@ -109,6 +111,7 @@ export const ServicesHeroSlider = ({
           spaceBetween={16}
           slidesPerView={1}
           loop={finalImages.length > 1}
+          dir={isRTL ? 'rtl' : 'ltr'}
           className="h-full w-full"
           style={{ width: '100%' }}
         >
@@ -134,24 +137,24 @@ export const ServicesHeroSlider = ({
         {finalImages.length > 1 && (
           <>
             <button
-              onClick={() => swiperRef.current?.swiper?.slidePrev()}
+              onClick={() => swiperRef.current?.swiper?.[isRTL ? 'slideNext' : 'slidePrev']()}
               className={cn(
                 navigationButtonVariants({ intent: 'primary', size: 'md' }),
-                'left-2 sm:left-4'
+                isRTL ? 'right-2 sm:right-4' : 'left-2 sm:left-4'
               )}
-              aria-label="Previous slide"
+              aria-label={isRTL ? "Next slide" : "Previous slide"}
             >
-              <ChevronLeft className="h-5 w-5 text-white" />
+              <ChevronLeft className={cn("h-5 w-5 text-white", isRTL && "rotate-180")} />
             </button>
             <button
-              onClick={() => swiperRef.current?.swiper?.slideNext()}
+              onClick={() => swiperRef.current?.swiper?.[isRTL ? 'slidePrev' : 'slideNext']()}
               className={cn(
                 navigationButtonVariants({ intent: 'primary', size: 'md' }),
-                'right-2 sm:right-4'
+                isRTL ? 'left-2 sm:left-4' : 'right-2 sm:right-4'
               )}
-              aria-label="Next slide"
+              aria-label={isRTL ? "Previous slide" : "Next slide"}
             >
-              <ChevronRight className="h-5 w-5 text-white" />
+              <ChevronRight className={cn("h-5 w-5 text-white", isRTL && "rotate-180")} />
             </button>
           </>
         )}

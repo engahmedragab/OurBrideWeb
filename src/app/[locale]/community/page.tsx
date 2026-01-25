@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useMemo } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -103,46 +103,55 @@ function CommunityContent() {
 
   // Search state for each tab
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>('')
 
-  // Search hooks - only enabled when there's a search query
+  // Debounce search query to prevent loader on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 500) // 500ms delay
+
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  // Search hooks - only enabled when there's a debounced search query
   const { data: searchPostsData, isLoading: isLoadingPostsSearch } = usePostsSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'posts' && !!searchQuery,
+    searchTerm: debouncedSearchQuery,
+    enabled: activeTab === 'posts' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
   const { data: searchArticlesData, isLoading: isLoadingArticlesSearch } = useArticlesSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'articles' && !!searchQuery,
+    searchTerm: debouncedSearchQuery,
+    enabled: activeTab === 'articles' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
   const { data: searchBlogsData, isLoading: isLoadingBlogsSearch } = useBlogsSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'blogs' && !!searchQuery,
+    searchTerm: debouncedSearchQuery,
+    enabled: activeTab === 'blogs' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
   const { data: searchReelsData, isLoading: isLoadingReelsSearch } = useReelsSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'reels' && !!searchQuery,
+    searchTerm: debouncedSearchQuery,
+    enabled: activeTab === 'reels' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
   const { data: searchDecisionGroupsData, isLoading: isLoadingDecisionGroupsSearch } = useDecisionGroupsSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'decision-groups' && !!searchQuery,
+    searchTerm: debouncedSearchQuery,
+    enabled: activeTab === 'decision-groups' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
   const { data: searchContestsData, isLoading: isLoadingContestsSearch } = useContestsSearch({
-    searchTerm: searchQuery,
-    enabled: activeTab === 'contests' && !!searchQuery,
+    searchTerm: debouncedSearchQuery,
+    enabled: activeTab === 'contests' && !!debouncedSearchQuery && debouncedSearchQuery.trim().length > 0,
   })
 
   // Determine which data to show (search results or regular feed)
-  const displayPosts = searchQuery ? searchPostsData : posts
-  const displayArticles = searchQuery ? searchArticlesData : articles
-  const displayBlogs = searchQuery ? searchBlogsData : blogs
-  const displayReels = searchQuery ? searchReelsData : reels
-  const displayDecisionGroups = searchQuery ? searchDecisionGroupsData : decisionGroups
-  const displayContests = searchQuery ? searchContestsData : contests
+  const displayPosts = debouncedSearchQuery ? searchPostsData : posts
+  const displayArticles = debouncedSearchQuery ? searchArticlesData : articles
+  const displayBlogs = debouncedSearchQuery ? searchBlogsData : blogs
+  const displayReels = debouncedSearchQuery ? searchReelsData : reels
+  const displayDecisionGroups = debouncedSearchQuery ? searchDecisionGroupsData : decisionGroups
+  const displayContests = debouncedSearchQuery ? searchContestsData : contests
 
   // Determine loading state including search
   const isLoadingSearch = (activeTab === 'posts' && isLoadingPostsSearch) ||
@@ -157,7 +166,7 @@ function CommunityContent() {
       setActiveTab(tabParam as CommunityTab)
       // Clear search when switching tabs
       setSearchQuery('')
-      setIsSearchOpen(false)
+      setDebouncedSearchQuery('')
     }
   }, [tabParam])
 
@@ -181,15 +190,14 @@ function CommunityContent() {
     (activeTab === 'contests' && (isLoadingContests || isLoadingSearch)) ||
     (activeTab === 'profile' && false) // Profile tab redirects, so no loading needed
 
-  // Handle search
+  // Handle search from sidebar
   const handleSearch = (query: string) => {
     setSearchQuery(query)
-    setIsSearchOpen(false)
   }
 
   const handleClearSearch = () => {
     setSearchQuery('')
-    setIsSearchOpen(false)
+    setDebouncedSearchQuery('')
   }
 
   // Show loading state
@@ -340,6 +348,9 @@ function CommunityContent() {
                 <CommunitySidebar
                   activeTab={activeTab}
                   onTabChange={setActiveTab}
+                  searchQuery={searchQuery}
+                  onSearchChange={handleSearch}
+                  onClearSearch={handleClearSearch}
                 />
               </div>
             </aside>
@@ -349,132 +360,12 @@ function CommunityContent() {
               'flex-1 min-w-0',
               activeTab !== 'reels' && 'w-full lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto lg:mx-0'
             )}>
-              {/* Search Bar - Only show for content tabs (not community tab) */}
-              {activeTab !== 'community' && (
+              {/* Search Results Label - Only show for content tabs (not community tab) */}
+              {activeTab !== 'community' && debouncedSearchQuery && (
                 <div className="mb-6">
-                  {!isSearchOpen ? (
-                    <button
-                      onClick={() => setIsSearchOpen(true)}
-                      className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                      title={t("actions.search")}
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        />
-                      </svg>
-                    </button>
-                  ) : (
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 relative">
-                          <input
-                            type="text"
-                            placeholder={t("placeholders.searchInTab", { tab: t(`tabs.${activeTab}`) })}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handleSearch(searchQuery)
-                              }
-                            }}
-                            className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-                            autoFocus
-                          />
-                          <svg
-                            className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                            />
-                          </svg>
-                        </div>
-                        <button
-                          onClick={() => handleSearch(searchQuery)}
-                          className="flex items-center justify-center w-8 h-8 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
-                          title={t("actions.search")}
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                            />
-                          </svg>
-                        </button>
-                        {searchQuery && (
-                          <button
-                            onClick={handleClearSearch}
-                            className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                            title={t("actions.clearSearch")}
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        )}
-                        <button
-                          onClick={() => {
-                            setIsSearchOpen(false)
-                            if (!searchQuery) {
-                              handleClearSearch()
-                            }
-                          }}
-                          className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                          title={t("actions.close")}
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                  {searchQuery && (
-                    <div className="mt-2 text-sm text-gray-600">
-                      {t("labels.showingResultsFor", { query: searchQuery })} <span className="font-semibold">&quot;{searchQuery}&quot;</span>
-                    </div>
-                  )}
+                  <div className="text-sm text-gray-600">
+                    {t("labels.showingResultsFor", { query: debouncedSearchQuery })} <span className="font-semibold">&quot;{debouncedSearchQuery}&quot;</span>
+                  </div>
                 </div>
               )}
               {activeTab === 'community' ? (

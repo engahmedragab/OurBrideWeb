@@ -78,18 +78,24 @@ export const HeroCarousel = ({
           {slides.length > 1 && (
             <>
               <button
-                onClick={goToPrevious}
-                className="absolute left-4 md:left-6 top-3/4 -translate-y-1/2 md:top-1/2 md:-translate-y-1/2  z-20 w-10 h-10 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
-                aria-label="Previous slide"
+                onClick={isRTL ? goToNext : goToPrevious}
+                className={cn(
+                  "absolute top-3/4 -translate-y-1/2 md:top-1/2 md:-translate-y-1/2 z-20 w-10 h-10 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg",
+                  isRTL ? "right-4 md:right-6" : "left-4 md:left-6"
+                )}
+                aria-label={isRTL ? "Next slide" : "Previous slide"}
               >
-                <ChevronLeft className="h-6 w-6 md:h-7 md:w-7" />
+                <ChevronLeft className={cn("h-6 w-6 md:h-7 md:w-7", isRTL && "rotate-180")} />
               </button>
               <button
-                onClick={goToNext}
-                className="absolute right-4 md:right-6 top-3/4 -translate-y-1/2 md:top-1/2 md:-translate-y-1/2  z-20 w-10 h-10 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg"
-                aria-label="Next slide"
+                onClick={isRTL ? goToPrevious : goToNext}
+                className={cn(
+                  "absolute top-3/4 -translate-y-1/2 md:top-1/2 md:-translate-y-1/2 z-20 w-10 h-10 md:w-14 md:h-14 rounded-full bg-brand-500 hover:bg-brand-600 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg",
+                  isRTL ? "left-4 md:left-6" : "right-4 md:right-6"
+                )}
+                aria-label={isRTL ? "Previous slide" : "Next slide"}
               >
-                <ChevronRight className="h-6 w-6 md:h-7 md:w-7" />
+                <ChevronRight className={cn("h-6 w-6 md:h-7 md:w-7", isRTL && "rotate-180")} />
               </button>
             </>
           )}
@@ -104,7 +110,7 @@ export const HeroCarousel = ({
       {/* Product Image - Full Width on mobile */}
       <div className="relative z-10 left-1/2 -translate-x-1/2 w-screen md:left-0 md:translate-x-0 md:w-full
                 h-[220px] sm:h-[260px] md:h-full md:min-h-[350px]
-                rounded-md overflow-hidden border bg-white/10">
+                rounded-md overflow-hidden bg-white/10">
 
         {currentSlide.productImage && !imageErrors.has(currentIndex) ? (
           typeof currentSlide.productImage === 'string' && currentSlide.productImage.endsWith('.svg') ? (
