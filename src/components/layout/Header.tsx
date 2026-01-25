@@ -196,7 +196,9 @@ export const Header = ({ className }: HeaderProps) => {
           className
         )}
       >
-        <div className="w-full px-4 md:px-4 lg:px-4 flex h-16 items-center justify-between gap-2 sm:gap-1 ">
+        <div className={cn("w-full px-4  lg:px-4 flex h-16 items-center justify-between gap-2 sm:gap-1 " ,
+          isRTL ? 'md:px-4' : 'md:px-6'
+        )}>
           {/* Logo */}
           <div className="flex items-center gap-2 shrink-0  md:w-[80px] lg:w-[100px] ">
           <Link
@@ -224,7 +226,7 @@ export const Header = ({ className }: HeaderProps) => {
     className={cn(
       'gap-0.5 rounded-full border border-gray-100 bg-white shadow-sm',
       'lg:h-12 lg:px-2 lg:py-1.5',
-      isRTL ? 'md:h-9 md:px-2 md:py-1.5' : 'md:h-10 md:px-3 md:py-2'
+      isRTL ? 'md:h-9 md:px-2 md:py-1.5' : 'md:h-14 md:px-3 md:py-2'
     )}
   >
     {navigationItems.map(item => {
@@ -337,7 +339,7 @@ export const Header = ({ className }: HeaderProps) => {
               'lg:gap-2 lg:px-3 lg:py-2 lg:text-16',
               isRTL
                 ? 'md:gap-1.5 md:px-1.5 md:py-1.5 md:text-12'
-                : 'md:gap-2 md:px-2 md:py-2 md:text-13'
+                : 'md:gap-2 md:px-2 md:py-2 md:text-14'
             )}
           >
             <Icon
@@ -347,7 +349,7 @@ export const Header = ({ className }: HeaderProps) => {
                   ? 'text-brand-600'
                   : 'text-gray-400 group-hover:text-brand-600',
                 'lg:h-5 lg:w-5',
-                isRTL ? 'md:h-3.5 md:w-3.5' : 'md:h-4 md:w-4'
+                isRTL ? 'md:h-3.5 md:w-3.5' : 'md:h-5 md:w-5'
               )}
             />
             {item.label}
