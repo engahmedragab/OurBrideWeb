@@ -218,3 +218,182 @@ export const OfferBannerSkeleton = () => {
   )
 }
 
+/**
+ * Header Skeleton (matches header layout in screenshot)
+ */
+export const HeaderSkeleton = ({
+  className,
+  isRTL = true,
+}: {
+  className?: string
+  isRTL?: boolean
+}) => {
+  return (
+    <header
+      dir={isRTL ? 'rtl' : 'ltr'}
+      className={cn(
+        'sticky top-0 z-50 w-full bg-transparent  backdrop-blur-sm',
+        className
+      )}
+      role="status"
+      aria-label="Loading header"
+      aria-busy="true"
+    >
+      <div className="w-full px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between gap-2 sm:gap-4">
+        {/* Logo */}
+        <div className="flex items-center gap-2 shrink-0">
+          <Skeleton className="h-10 w-[120px] rounded-md" />
+        </div>
+
+        {/* Nav (md+) */}
+        <div className="hidden md:flex items-center">
+          <div className="gap-0.5 rounded-full border border-gray-100 bg-white px-2 py-1.5 shadow-sm h-12 flex items-center">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 rounded-full px-3 py-2"
+              >
+                <Skeleton className="h-5 w-5 rounded-md" />
+                <Skeleton className="h-4 w-14 rounded-md" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Search (lg+) */}
+        <div className="hidden flex-1 max-w-md lg:block" dir={isRTL ? 'rtl' : 'ltr'}>
+          <Skeleton className="w-full h-12 rounded-full" />
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {/* Mobile menu (mobile only) */}
+          <div className="md:hidden">
+            <Skeleton className="h-10 w-10 rounded-md" />
+          </div>
+
+          {/* Group (md+) */}
+          <div className="hidden md:flex items-center rounded-full border border-gray-200 bg-transparent px-1 gap-1">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </div>
+
+          {/* Language (md+) */}
+          <div className="hidden md:flex items-center">
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </div>
+
+          {/* Profile (md+) */}
+          <div className="hidden md:flex">
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </div>
+        </div>
+      </div>
+    </header>
+  )
+}
+
+/**
+ * Footer Skeleton (matches your Footer layout)
+ */
+export const FooterSkeleton = ({
+  className,
+  isRTL = true,
+  sectionsCount = 5,
+  linksPerSection = 5,
+}: {
+  className?: string
+  isRTL?: boolean
+  sectionsCount?: number
+  linksPerSection?: number
+}) => {
+  return (
+    <footer
+      dir={isRTL ? 'rtl' : 'ltr'}
+      className={cn('w-full bg-white', className)}
+      role="status"
+      aria-label="Loading footer"
+      aria-busy="true"
+    >
+      {/* top brand line */}
+      <div className="w-full h-[1px] bg-brand-500" />
+
+      <div className="bg-white px-5">
+        <div className="py-10 mx-auto container">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12">
+            {/* Left */}
+            <div className="md:col-span-4 lg:col-span-3 flex flex-col gap-6">
+              {/* Logo */}
+           {/* ✅ Logo centered on small screens */}
+<div className={cn('self-center md:self-start', 'mx-auto md:mx-0')}>
+  <Skeleton className="h-12 md:h-18 w-40 rounded-lg" />
+</div>
+
+              {/* Description */}
+              <div className={cn('max-w-sm space-y-1', isRTL ? 'text-right self-end' : 'text-left self-start')}>
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-11/12" />
+                <Skeleton className="h-4 w-10/12" />
+              </div>
+
+              {/* Download */}
+              <div className="flex flex-col gap-4 w-full">
+                <Skeleton className="h-6 w-44" />
+                <div className={cn('flex flex-wrap items-center gap-3', isRTL ? 'justify-end' : 'justify-start')}>
+                  <Skeleton className="h-12 w-40 rounded-lg" />
+                  <Skeleton className="h-12 w-40 rounded-lg" />
+                </div>
+              </div>
+
+              {/* Social */}
+              <div className="flex flex-col gap-6 pt-2 w-full">
+                <Skeleton className="h-6 w-40" />
+                <div className={cn('flex flex-wrap items-center gap-3', isRTL ? 'justify-end' : 'justify-start')}>
+                  <Skeleton className="h-10 w-10 md:h-12 md:w-12 rounded-xl" />
+                  <Skeleton className="h-10 w-10 md:h-12 md:w-12 rounded-xl" />
+                  <Skeleton className="h-10 w-10 md:h-12 md:w-12 rounded-xl" />
+                </div>
+              </div>
+            </div>
+
+            {/* Right (Sections) */}
+            <div className={cn('md:col-span-8 lg:col-span-9 lg:pt-24', isRTL ? 'me-3' : 'ms-3')}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 gap-y-12">
+                {Array.from({ length: sectionsCount }).map((_, colIdx) => (
+                  <div key={`footer-skel-col-${colIdx}`} className="flex flex-col gap-4">
+                    {/* Section Title */}
+                    <Skeleton className="h-5 w-24" />
+                    {/* Links */}
+                    <div className="flex flex-col gap-3">
+                      {Array.from({ length: linksPerSection }).map((__, linkIdx) => (
+                        <Skeleton
+                          key={`footer-skel-link-${colIdx}-${linkIdx}`}
+                          className={cn(
+                            'h-4',
+                            linkIdx % 3 === 0 ? 'w-28' : linkIdx % 3 === 1 ? 'w-24' : 'w-32'
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="w-full h-[1px] bg-gray-200 my-10" />
+
+          {/* Copyright */}
+          <div className="text-center">
+            <Skeleton className="h-4 w-72 mx-auto" />
+          </div>
+        </div>
+      </div>
+
+      {/* bottom bar */}
+      <div className="w-full bg-gray-800 h-2" />
+    </footer>
+  )
+}

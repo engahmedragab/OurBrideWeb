@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { usePathname } from '@/i18n/navigation'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { SearchInput, LanguageSwitcher, Skeleton } from '@/components/ui'
+import { SearchInput, LanguageSwitcher } from '@/components/ui'
 import { useCart } from '@/hooks/cart'
 import brandLogo from '@/assets/svg/Brand-logo.svg'
 import {
@@ -37,6 +37,7 @@ import { NotificationDropdown } from '@/components/notifications'
 import { useNotifications } from '@/hooks/notifications/useNotifications'
 import { ClientOnly } from '@/components/ui/ClientOnly'
 import { useI18nTranslations, useIsRTL } from '@/i18n'
+import { HeaderSkeleton } from '../ui/Skeleton'
 
 export interface HeaderProps {
   className?: string
@@ -47,14 +48,8 @@ export const Header = ({ className }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
-  const [isInitialLoad, setIsInitialLoad] = useState(true)
   const t = useI18nTranslations('navbar')
   const isRTL = useIsRTL()
-
-  // Track initial load completion
-  useEffect(() => {
-    setIsInitialLoad(false)
-  }, [])
 
   // Fetch cart data
   const { data: cartData, isLoading: isLoadingCart } = useCart()
@@ -68,10 +63,26 @@ export const Header = ({ className }: HeaderProps) => {
     isLoading: isLoadingNotifications,
   } = useNotifications()
 
+  /**
+   * ✅ Show full header skeleton until the "first real data load" finishes.
+   * - Prevents broken/mixed skeleton layout (like your screenshot).
+   * - Also prevents quick flash: initial state depends on current loading flags.
+   */
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(() => {
+    return !isLoadingCart && !isLoadingNotifications
+  })
+
+  useEffect(() => {
+    if (!hasLoadedOnce && !isLoadingCart && !isLoadingNotifications) {
+      setHasLoadedOnce(true)
+    }
+  }, [hasLoadedOnce, isLoadingCart, isLoadingNotifications])
+
+  const showHeaderSkeleton = !hasLoadedOnce
+
   // Calculate cart count (number of unique items)
   const cartCount = useMemo(() => {
     if (!cartData) return 0
-    // Count unique items (purchases array length)
     return cartData.purchases?.length || 0
   }, [cartData])
 
@@ -169,19 +180,25 @@ export const Header = ({ className }: HeaderProps) => {
     })
   }
 
+  // ✅ Render full header skeleton (NOT partial) to avoid broken look
+  if (showHeaderSkeleton) {
+    return <HeaderSkeleton className={className} isRTL={isRTL} />
+  }
+
   return (
     <>
       <header
         dir={isRTL ? 'rtl' : 'ltr'}
         className={cn(
-          'sticky top-0 z-50 w-full bg-transparent backdrop-blur backdrop-blur-sm',
+          'sticky top-0 z-50 w-full bg-transparent  backdrop-blur-sm',
           // 'transition-shadow duration-200',
           // 'shadow-sm hover:shadow-md',
           className
         )}
       >
-        <div className="w-full px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between gap-2 sm:gap-4">
+        <div className="w-full px-4 md:px-1.5 lg:px-4 flex h-16 items-center justify-between gap-2 sm:gap-1 ">
           {/* Logo */}
+          <div className="flex items-center gap-2 shrink-0  md:w-[80px] lg:w-[100px] ">
           <Link
             href="/"
             className={cn(
@@ -195,151 +212,172 @@ export const Header = ({ className }: HeaderProps) => {
               alt="OurBride Logo"
               width={120}
               height={48}
-              className="h-14 sm:h-12 w-auto"
+              className="h-14 sm:h-14 w-auto"
             />
           </Link>
+          </div>
 
           {/* Navigation Menu */}
           <ClientOnly>
-            <NavigationMenu className="hidden md:flex">
-              <NavigationMenuList className="gap-0.5 rounded-full border border-gray-100 bg-white px-2 py-1.5 shadow-sm h-12">
-              {isInitialLoad ? (
-                // Skeleton for navigation items during initial load
-                Array.from({ length: 5 }).map((_, index) => (
-                  <div key={index} className="flex items-center gap-2 rounded-full px-3 py-2">
-                    <Skeleton className="h-5 w-5 rounded" />
-                    <Skeleton className="h-4 w-16 rounded" />
-                  </div>
-                ))
-              ) : (
-                navigationItems.map(item => {
-                const Icon = item.icon
-                // For dropdown items, check if any dropdown item is active instead of the parent path
-                const active = item.hasDropdown 
-                  ? isParentActive(item.path, item.dropdownItems || [])
-                  : isActive(item.path)
+  <NavigationMenu className="hidden md:flex">
+    <NavigationMenuList
+      className={cn(
+        
+        'gap-0.5 rounded-full border border-gray-100 bg-white shadow-sm',
+        'md:h-10 lg:h-12',
+        'md:px-2 md:py-1 lg:px-2 lg:py-1.5'
+      )}
+    >
+      {navigationItems.map(item => {
+        const Icon = item.icon
+        const active = item.hasDropdown
+          ? isParentActive(item.path, item.dropdownItems || [])
+          : isActive(item.path)
 
-                if (item.hasDropdown) {
-                  return (
-                    <NavigationMenuItem key={item.path}>
-                      <NavigationMenuTrigger
+        if (item.hasDropdown) {
+          return (
+            <NavigationMenuItem key={item.path}>
+              <NavigationMenuTrigger
+                className={cn(
+                  // ✅ Item size: أصغر في md / طبيعي في lg
+                  'rounded-md font-medium antialiased whitespace-nowrap',
+                  'transition-all duration-200 ease-in-out',
+                  'hover:bg-brand-50/50 hover:text-brand-600',
+                  'focus:outline-none',
+                  'md:gap-1 md:px-1 md:py-1.5 md:text-13',
+                  'lg:gap-2 lg:px-3 lg:py-2 lg:text-16',
+                  active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600',
+                  isRTL && 'flex-row-reverse'
+                )}
+              >
+                <Icon
+                  className={cn(
+                   
+                    'transition-all duration-200 ease-in-out antialiased',
+                    'md:h-4 md:w-4 lg:h-5 lg:w-5',
+                    active
+                      ? 'text-brand-600'
+                      : 'text-gray-400 group-hover:text-brand-600'
+                  )}
+                />
+                {item.label}
+              </NavigationMenuTrigger>
+
+              <NavigationMenuContent>
+                <div
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                  className="md:w-48 p-1.5 bg-white rounded-lg shadow-lg border border-gray-50"
+                >
+                  {item.dropdownItems?.map(dropdownItem => {
+                    const isDropdownActive = isDropdownItemActive(
+                      dropdownItem.path,
+                      item.dropdownItems || []
+                    )
+
+                    return (
+                      <Link
+                        key={dropdownItem.path}
+                        href={dropdownItem.path}
                         className={cn(
-                          'gap-2 rounded-md px-3 py-2 text-16 font-medium antialiased',
+                          'group relative flex items-center gap-3 rounded-md px-3 py-2 text-14 font-normal antialiased',
                           'transition-all duration-200 ease-in-out',
-                          'hover:bg-brand-50/50 hover:text-brand-600',
+                          'hover:text-brand-600',
                           'focus:outline-none',
-                          active
-                            ? 'bg-brand-50/70 text-brand-600'
-                            : 'text-gray-600',
-                          isRTL && 'flex-row-reverse'
+                          isDropdownActive
+                            ? 'text-brand-600 font-medium'
+                            : 'text-gray-600 hover:text-brand-600'
                         )}
                       >
-                        <Icon
-                          className={cn(
-                            'h-5 w-5 transition-all duration-200 ease-in-out',
-                            'antialiased',
-                            active
-                              ? 'text-brand-600'
-                              : 'text-gray-400 group-hover:text-brand-600'
-                          )}
-                        />
-                        {item.label}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <div 
-                          dir={isRTL ? 'rtl' : 'ltr'}
-                          className="w-56 p-1.5 bg-white rounded-lg shadow-lg border border-gray-50"
-                        >
-                          {item.dropdownItems?.map(dropdownItem => {
-                            const isDropdownActive = isDropdownItemActive(dropdownItem.path, item.dropdownItems || [])
-                            return (
-                              <Link
-                                key={dropdownItem.path}
-                                href={dropdownItem.path}
-                                className={cn(
-                                  'group relative flex items-center gap-3 rounded-md px-3 py-2 text-14 font-normal antialiased',
-                                  'transition-all duration-200 ease-in-out',
-                                  'hover:text-brand-600',
-                                  'focus:outline-none',
-                                  isDropdownActive
-                                    ? 'text-brand-600 font-medium'
-                                    : 'text-gray-600 hover:text-brand-600'
-                                )}
-                              >
-                                {isDropdownActive && (
-                                  <div className={cn(
-                                    "absolute top-1/2 -translate-y-1/2 w-0.5 h-5 bg-brand-600",
-                                    isRTL ? "right-0 rounded-l-full" : "left-0 rounded-r-full"
-                                  )} />
-                                )}
-                                <span className="flex-1">
-                                  {dropdownItem.label}
-                                </span>
-                                {isDropdownActive && (
-                                  <div className="w-1.5 h-1.5 rounded-full bg-brand-600" />
-                                )}
-                              </Link>
-                            )
-                          })}
-                        </div>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  )
-                }
-
-                return (
-                  <NavigationMenuItem key={item.path}>
-                    <Link
-                      href={item.path}
-                      className={cn(
-                        'group relative flex items-center gap-2 rounded-full px-3 py-2 text-16 font-medium antialiased',
-                        'transition-all duration-200 ease-in-out',
-                        'hover:bg-brand-50/50 hover:text-brand-600',
-                        'focus:outline-none',
-                        active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600',
-                        isRTL && 'flex-row-reverse'
-                      )}
-                    >
-                      <Icon
-                        className={cn(
-                          'h-5 w-5 transition-all duration-200 ease-in-out',
-                          'antialiased',
-                          active
-                            ? 'text-brand-600'
-                            : 'text-gray-400 group-hover:text-brand-600'
+                        {isDropdownActive && (
+                          <div
+                            className={cn(
+                              'absolute top-1/2 -translate-y-1/2 w-0.5 h-5 bg-brand-600',
+                              isRTL
+                                ? 'right-0 rounded-l-full'
+                                : 'left-0 rounded-r-full'
+                            )}
+                          />
                         )}
-                      />
-                      {item.label}
-                      {active && (
-                        <div className={cn(
-                          "absolute bottom-0 w-6 h-0.5 bg-brand-600 rounded-full transition-all duration-200",
-                          isRTL ? "right-1/2 translate-x-1/2" : "left-1/2 -translate-x-1/2"
-                        )} />
-                      )}
-                    </Link>
-                  </NavigationMenuItem>
-                )
-              }))}
-              </NavigationMenuList>
-            </NavigationMenu>
-          </ClientOnly>
 
-          {/* Search Bar */}
-          <div className="hidden flex-1 max-w-md lg:block" dir={isRTL ? 'rtl' : 'ltr'}>
-            {isInitialLoad ? (
-              <Skeleton className="w-full h-12 rounded-full" />
-            ) : (
-              <SearchInput
-                placeholder={t('search.placeholder')}
-                variant="default"
-                size="md"
+                        <span className="flex-1">{dropdownItem.label}</span>
+
+                        {isDropdownActive && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-brand-600" />
+                        )}
+                      </Link>
+                    )
+                  })}
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          )
+        }
+
+        return (
+          <NavigationMenuItem key={item.path}>
+            <Link
+              href={item.path}
+              className={cn(  
+                'group relative flex items-center rounded-full font-medium antialiased whitespace-nowrap',
+                'transition-all duration-200 ease-in-out',
+                'hover:bg-brand-50/50 hover:text-brand-600',
+                'focus:outline-none',
+                'md:gap-1 md:px-1 md:py-1.5 md:text-13',
+                'lg:gap-2 lg:px-3 lg:py-2 lg:text-16',
+                active ? 'bg-brand-50/70 text-brand-600' : 'text-gray-600',
+                isRTL && 'flex-row-reverse'
+              )}
+            >
+              <Icon
                 className={cn(
-                  'w-full h-12 rounded-full transition-all duration-200',
-                  'focus:border-brand-500',
-                  'hover:border-gray-200'
+                  
+                  'transition-all duration-200 ease-in-out antialiased',
+                  'md:h-4 md:w-4 lg:h-5 lg:w-5',
+                  active
+                    ? 'text-brand-600'
+                    : 'text-gray-400 group-hover:text-brand-600'
                 )}
               />
-            )}
+              {item.label}
+
+              {active && (
+                <div
+                  className={cn(
+                    
+                    'absolute bg-brand-600 rounded-full transition-all duration-200',
+                    'md:bottom-0 md:w-5 md:h-0.5',
+                    'lg:bottom-0 lg:w-6 lg:h-0.5',
+                    isRTL
+                      ? 'right-1/2 translate-x-1/2'
+                      : 'left-1/2 -translate-x-1/2'
+                  )}
+                />
+              )}
+            </Link>
+          </NavigationMenuItem>
+        )
+      })}
+    </NavigationMenuList>
+  </NavigationMenu>
+</ClientOnly>
+
+
+
+          {/* Search Bar */}
+          <div
+            className="hidden flex-1 max-w-md lg:block"
+            dir={isRTL ? 'rtl' : 'ltr'}
+          >
+            <SearchInput
+              placeholder={t('search.placeholder')}
+              variant="default"
+              size="md"
+              className={cn(
+                'w-full h-12 rounded-full transition-all duration-200',
+                'focus:border-brand-500',
+                'hover:border-gray-200'
+              )}
+            />
           </div>
 
           {/* Action Buttons */}
@@ -359,7 +397,6 @@ export const Header = ({ className }: HeaderProps) => {
             >
               <Menu className="h-7 w-7 text-brand-500 transition-all duration-200 ease-in-out antialiased" />
             </Button>
-
 
             {/* Wishlist, Notifications, and Cart Group */}
             <div className="hidden md:flex items-center rounded-full border border-brand-500 bg-transparent px-1">
@@ -393,36 +430,32 @@ export const Header = ({ className }: HeaderProps) => {
               </ClientOnly>
 
               {/* Cart */}
-              {isLoadingCart ? (
-                <div className="relative rounded-full border-0 bg-transparent h-10 w-10 flex items-center justify-center">
-                  <Skeleton className="h-5 w-5 rounded-full" />
-                </div>
-              ) : (
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    'relative rounded-full border-0 bg-transparent',
-                    'transition-all duration-200 ease-in-out',
-                    'hover:bg-brand-50/50',
-                    'focus:outline-none'
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  'relative rounded-full border-0 bg-transparent',
+                  'transition-all duration-200 ease-in-out',
+                  'hover:bg-brand-50/50',
+                  'focus:outline-none'
+                )}
+                aria-label={t('icons.cart')}
+              >
+                <Link href="/cart" className="relative">
+                  <ShoppingCart className="h-5 w-5 text-brand-500 transition-all duration-200 ease-in-out antialiased" />
+                  {cartCount > 0 && (
+                    <span
+                      className={cn(
+                        'absolute -top-1 flex min-w-[16px] h-4 items-center justify-center rounded-full bg-brand-500 text-[10px] font-semibold text-white shadow-sm px-1',
+                        isRTL ? '-left-1' : '-right-1'
+                      )}
+                    >
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
                   )}
-                  aria-label={t('icons.cart')}
-                >
-                  <Link href="/cart" className="relative">
-                    <ShoppingCart className="h-5 w-5 text-brand-500 transition-all duration-200 ease-in-out antialiased" />
-                    {cartCount > 0 && (
-                      <span className={cn(
-                        "absolute -top-1 flex min-w-[16px] h-4 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white shadow-sm px-1",
-                        isRTL ? "-left-1" : "-right-1"
-                      )}>
-                        {cartCount > 99 ? '99+' : cartCount}
-                      </span>
-                    )}
-                  </Link>
-                </Button>
-              )}
+                </Link>
+              </Button>
             </div>
 
             {/* Language Switcher */}
@@ -438,7 +471,7 @@ export const Header = ({ className }: HeaderProps) => {
               variant="brand"
               size="icon"
               className={cn(
-                'hidden md:flex h-10 w-10 rounded-full',
+                'hidden md:flex md:h-8 md:w-8 h-10 w-10 rounded-full',
                 'transition-opacity duration-150',
                 'hover:opacity-90',
                 'focus:outline-none'
@@ -446,7 +479,7 @@ export const Header = ({ className }: HeaderProps) => {
               aria-label={t('menu.myProfile')}
             >
               <Link href="/profile">
-                <User className="h-5 w-5 text-white" />
+                <User className="md:h-4 md:w-4 lg:h-5 lg:w-5 text-white" />
               </Link>
             </Button>
           </div>
@@ -455,14 +488,16 @@ export const Header = ({ className }: HeaderProps) => {
 
       {/* Mobile Search Overlay */}
       {isSearchOpen && (
-        <div 
+        <div
           dir={isRTL ? 'rtl' : 'ltr'}
           className="fixed inset-0 z-[60] bg-white md:hidden"
         >
-          <div className={cn(
-            "flex h-16 items-center gap-4 px-4 border-b border-gray-100",
-            isRTL ? "flex-row-reverse" : ""
-          )}>
+          <div
+            className={cn(
+              'flex h-16 items-center gap-4 px-4 border-b border-gray-100',
+              isRTL ? 'flex-row-reverse' : ''
+            )}
+          >
             <Button
               variant="ghost"
               size="icon"
@@ -471,14 +506,15 @@ export const Header = ({ className }: HeaderProps) => {
             >
               <X className="h-5 w-5 text-brand-500" />
             </Button>
+
             <div className="flex-1" dir={isRTL ? 'rtl' : 'ltr'}>
-            <SearchInput
+              <SearchInput
                 placeholder={t('search.placeholder')}
-              variant="default"
-              size="md"
+                variant="default"
+                size="md"
                 className="w-full h-12 rounded-full"
-              autoFocus
-            />
+                autoFocus
+              />
             </div>
           </div>
         </div>
@@ -509,16 +545,18 @@ export const Header = ({ className }: HeaderProps) => {
         )}
       >
         {/* Drawer Header */}
-        <div className={cn(
-          "flex h-16 items-center justify-between px-4 border-b border-gray-100 flex-shrink-0",
-          isRTL ? "flex-row-reverse" : ""
-        )}>
+        <div
+          className={cn(
+            'flex h-16 items-center justify-between px-4 border-b border-gray-100 flex-shrink-0',
+            isRTL ? 'flex-row-reverse' : ''
+          )}
+        >
           <Image
             src={typeof brandLogo === 'string' ? brandLogo : brandLogo.src}
             alt="OurBride Logo"
             width={120}
             height={48}
-            className="h-10 w-auto"
+            className="h-14 sm:h-14 w-auto"
           />
           <Button
             variant="ghost"
@@ -549,7 +587,14 @@ export const Header = ({ className }: HeaderProps) => {
               )}
             >
               <Search className="h-5 w-5 flex-shrink-0" />
-              <span className={cn('flex-1', isRTL ? 'text-right' : 'text-left')}>{t('search.placeholder')}</span>
+              <span
+                className={cn(
+                  'flex-1',
+                  isRTL ? 'text-right' : 'text-left'
+                )}
+              >
+                {t('search.placeholder')}
+              </span>
             </Button>
 
             {/* Home - Second Item */}
@@ -570,124 +615,135 @@ export const Header = ({ className }: HeaderProps) => {
               <span className="flex-1">{t('links.home')}</span>
             </Link>
 
-            {/* Main Navigation Items - Products, Services, Providers, Community */}
-            {navigationItems.filter(item => item.path !== '/').map(item => {
-            const Icon = item.icon
-            // For dropdown items, check if any dropdown item is active instead of the parent path
-            const active = item.hasDropdown 
-              ? isParentActive(item.path, item.dropdownItems || [])
-              : isActive(item.path)
-              const isExpanded = expandedItems.has(item.path)
+            {/* Main Navigation Items */}
+            {navigationItems
+              .filter(item => item.path !== '/')
+              .map(item => {
+                const Icon = item.icon
+                const active = item.hasDropdown
+                  ? isParentActive(item.path, item.dropdownItems || [])
+                  : isActive(item.path)
+                const isExpanded = expandedItems.has(item.path)
 
-            if (item.hasDropdown) {
-              return (
-                <div key={item.path} className="space-y-1">
-                    <div className="flex items-center">
+                if (item.hasDropdown) {
+                  return (
+                    <div key={item.path} className="space-y-1">
+                      <div className="flex items-center">
+                        <Link
+                          href={item.path}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={cn(
+                            'flex items-center flex-1 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                            'transition-all duration-200 ease-in-out',
+                            'gap-3',
+                            active
+                              ? 'bg-brand-50 text-brand-600'
+                              : 'text-gray-600 hover:bg-gray-50',
+                            isRTL && 'flex-row-reverse'
+                          )}
+                        >
+                          <Icon className="h-5 w-5 flex-shrink-0" />
+                          <span className="flex-1">{item.label}</span>
+                        </Link>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={e => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            toggleExpanded(item.path)
+                          }}
+                          className={cn(
+                            'h-10 w-10 rounded-lg',
+                            'transition-all duration-200 ease-in-out',
+                            'hover:bg-gray-100'
+                          )}
+                          aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                        >
+                          <ChevronRight
+                            className={cn(
+                              'h-4 w-4 flex-shrink-0 transition-transform duration-200',
+                              isExpanded
+                                ? isRTL
+                                  ? '-rotate-90'
+                                  : 'rotate-90'
+                                : isRTL
+                                  ? 'rotate-180'
+                                  : 'rotate-0'
+                            )}
+                          />
+                        </Button>
+                      </div>
+
+                      {isExpanded && (
+                        <div className={cn('space-y-1', isRTL ? 'mr-7' : 'ml-7')}>
+                          {item.dropdownItems?.map(dropdownItem => {
+                            const isDropdownActive = isDropdownItemActive(
+                              dropdownItem.path,
+                              item.dropdownItems || []
+                            )
+
+                            return (
+                              <Link
+                                key={dropdownItem.path}
+                                href={dropdownItem.path}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={cn(
+                                  'flex items-center rounded-lg px-4 py-2 text-14 font-normal antialiased',
+                                  'transition-all duration-200 ease-in-out',
+                                  'gap-2',
+                                  isDropdownActive
+                                    ? 'bg-brand-50 text-brand-600'
+                                    : 'text-gray-600 hover:bg-gray-50'
+                                )}
+                              >
+                                <span className="flex-1">{dropdownItem.label}</span>
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )
+                }
+
+                return (
                   <Link
+                    key={item.path}
                     href={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
-                          'flex items-center flex-1 rounded-lg px-4 py-3 text-16 font-medium antialiased',
+                      'flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
                       'transition-all duration-200 ease-in-out',
-                          'gap-3',
+                      'gap-3',
                       active
                         ? 'bg-brand-50 text-brand-600'
                         : 'text-gray-600 hover:bg-gray-50',
                       isRTL && 'flex-row-reverse'
                     )}
                   >
-                        <Icon className="h-5 w-5 flex-shrink-0" />
-                        <span className="flex-1">{item.label}</span>
+                    <Icon className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
+                    <span className="flex-1">{item.label}</span>
                   </Link>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          toggleExpanded(item.path)
-                        }}
-                        className={cn(
-                          'h-10 w-10 rounded-lg',
-                          'transition-all duration-200 ease-in-out',
-                          'hover:bg-gray-100'
-                        )}
-                        aria-label={isExpanded ? 'Collapse' : 'Expand'}
-                      >
-                        <ChevronRight className={cn(
-                          'h-4 w-4 flex-shrink-0 transition-transform duration-200',
-                          isExpanded 
-                            ? (isRTL ? '-rotate-90' : 'rotate-90')
-                            : (isRTL ? 'rotate-180' : 'rotate-0')
-                        )} />
-                      </Button>
-                    </div>
-                    {isExpanded && (
-                      <div className={cn('space-y-1', isRTL ? 'mr-7' : 'ml-7')}>
-                    {item.dropdownItems?.map(dropdownItem => {
-                      const isDropdownActive = isDropdownItemActive(dropdownItem.path, item.dropdownItems || [])
-                      return (
-                        <Link
-                          key={dropdownItem.path}
-                          href={dropdownItem.path}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                            className={cn(
-                                'flex items-center rounded-lg px-4 py-2 text-14 font-normal antialiased',
-                            'transition-all duration-200 ease-in-out',
-                                'gap-2',
-                            isDropdownActive
-                              ? 'bg-brand-50 text-brand-600'
-                              : 'text-gray-600 hover:bg-gray-50'
-                          )}
-                        >
-                              <span className="flex-1">{dropdownItem.label}</span>
-                        </Link>
-                      )
-                    })}
-                  </div>
-                    )}
-                </div>
-              )
-            }
-
-            return (
-              <Link
-                key={item.path}
-                href={item.path}
-                onClick={() => setIsMobileMenuOpen(false)}
-                    className={cn(
-                    'flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-                      'transition-all duration-200 ease-in-out',
-                    'gap-3',
-                      active
-                        ? 'bg-brand-50 text-brand-600'
-                        : 'text-gray-600 hover:bg-gray-50',
-                    isRTL && 'flex-row-reverse'
-                    )}
-                  >
-                  <Icon className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
-                  <span className="flex-1">{item.label}</span>
-              </Link>
-            )
-          })}
-
+                )
+              })}
           </div>
 
           {/* User Menu Section */}
           <div className="mt-auto pt-4 border-t border-gray-100 space-y-1 px-4 pb-4">
-
             <Link
               href="/wishlist"
               onClick={() => setIsMobileMenuOpen(false)}
-                className={cn(
+              className={cn(
                 'flex items-center rounded-lg px-4 py-3 text-16 font-medium antialiased',
-                  'transition-all duration-200 ease-in-out',
+                'transition-all duration-200 ease-in-out',
                 'gap-3',
                 isActive('/wishlist')
                   ? 'bg-brand-50 text-brand-600'
                   : 'text-gray-600 hover:bg-gray-50'
-                )}
-              >
+              )}
+            >
               <Heart className="h-5 w-5 flex-shrink-0 transition-all duration-200 ease-in-out antialiased" />
               <span className="flex-1">{t('menu.wishlist')}</span>
             </Link>
@@ -745,7 +801,6 @@ export const Header = ({ className }: HeaderProps) => {
               )}
             </Link>
 
-            {/* Notifications in Mobile Menu */}
             <Link
               href="/notifications"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -778,14 +833,15 @@ export const Header = ({ className }: HeaderProps) => {
               <span className="flex-1">{t('menu.myProfile')}</span>
             </Link>
 
-            {/* Language Switcher in Mobile Menu */}
             <ClientOnly>
               <div className="pt-4 border-t border-gray-100" dir={isRTL ? 'rtl' : 'ltr'}>
                 <div className="px-0 py-2">
-                  <label className={cn(
-                    "block text-14 font-normal text-gray-600 mb-2",
-                    isRTL ? "text-right" : "text-left"
-                  )}>
+                  <label
+                    className={cn(
+                      'block text-14 font-normal text-gray-600 mb-2',
+                      isRTL ? 'text-right' : 'text-left'
+                    )}
+                  >
                     {t('icons.language')}
                   </label>
                   <LanguageSwitcher variant="dropdown" />

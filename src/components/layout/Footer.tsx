@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import type { ElementType, SVGProps } from 'react'
 import { cn } from '@/lib/utils'
@@ -8,6 +9,7 @@ import { useI18nTranslations, useIsRTL } from '@/i18n'
 import footerLogo from '@/assets/svg/Brand-logo.svg'
 import { Facebook, Instagram } from 'lucide-react'
 import { StoreBadges } from '@/components/ui/StoreBadges'
+import { FooterSkeleton } from '../ui/Skeleton' 
 
 export interface FooterProps {
   className?: string
@@ -45,7 +47,13 @@ const TikTokIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 )
 
-function FooterColumn({ section, isRTL }: { section: FooterSection; isRTL: boolean }) {
+function FooterColumn({
+  section,
+  isRTL,
+}: {
+  section: FooterSection
+  isRTL: boolean
+}) {
   return (
     <div className="flex flex-col gap-4">
       <h3 className="text-16 md:text-18 font-semibold text-gray-900">
@@ -58,19 +66,17 @@ function FooterColumn({ section, isRTL }: { section: FooterSection; isRTL: boole
             <Link
               href={item.href}
               className={cn(
-                "relative inline-block",
-                "text-14 font-normal text-gray-700",
-                "transition-colors duration-200",
-                "hover:text-brand-500",
-                "after:absolute after:-bottom-0.5",
-                "after:h-[2px] after:w-full",
-                "after:bg-brand-500",
-                "after:transition-transform after:duration-300",
-                "after:scale-x-0",
-                "hover:after:scale-x-100",
-                isRTL 
-                  ? "after:right-0 after:origin-right" 
-                  : "after:left-0 after:origin-left"
+                'relative inline-block',
+                'text-14 font-normal text-gray-700',
+                'transition-colors duration-200',
+                'hover:text-brand-500',
+                'after:absolute after:-bottom-0.5',
+                'after:h-[2px] after:w-full',
+                'after:bg-brand-500',
+                'after:transition-transform after:duration-300',
+                'after:scale-x-0',
+                'hover:after:scale-x-100',
+                isRTL ? 'after:right-0 after:origin-right' : 'after:left-0 after:origin-left'
               )}
             >
               {item.label}
@@ -86,6 +92,19 @@ export const Footer = ({ className }: FooterProps) => {
   const currentYear = new Date().getFullYear()
   const t = useI18nTranslations('footer')
   const isRTL = useIsRTL()
+
+  // ✅ Loading ثابت 3 ثواني
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setIsLoading(false), 1000)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  if (isLoading) {
+  
+    return <FooterSkeleton className={className} isRTL={isRTL} />
+  }
 
   const footerSections: FooterSection[] = [
     {
@@ -168,10 +187,7 @@ export const Footer = ({ className }: FooterProps) => {
   ]
 
   return (
-    <footer 
-      dir={isRTL ? 'rtl' : 'ltr'}
-      className={cn('w-full bg-white', className)}
-    >
+    <footer dir={isRTL ? 'rtl' : 'ltr'} className={cn('w-full bg-white', className)}>
       <div className="w-full h-[1px] bg-brand-500" />
 
       <div className="bg-white px-5">
@@ -179,11 +195,13 @@ export const Footer = ({ className }: FooterProps) => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12">
             {/* Left */}
             <div className="md:col-span-4 lg:col-span-3 flex flex-col gap-6">
-              <Link 
-                href="/" 
+              {/* ✅ Logo centered on small screens */}
+              <Link
+                href="/"
                 className={cn(
-                  "flex-shrink-0",
-                  isRTL ? "self-start" : "self-start"
+                  'flex-shrink-0',
+                  'self-center md:self-start',
+                  'mx-auto md:mx-0'
                 )}
               >
                 <Image
@@ -194,143 +212,76 @@ export const Footer = ({ className }: FooterProps) => {
                   className="h-14 md:h-18 w-auto"
                 />
               </Link>
+              <p
+  className={cn(
+    'text-16 text-gray-600 max-w-sm',
+    
+    'text-center self-center mx-auto',
+    isRTL ? 'md:text-right md:self-start md:mx-0' : 'md:text-left md:self-start md:mx-0'
+  )}
+>
+  {t('description')}
+</p>
 
-              <p className={cn(
-                "text-16 text-gray-600 max-w-sm",
-                isRTL ? "text-right self-end" : "text-left self-start"
-              )}>
-                {t('description')}
-              </p>
-
-              <div className={cn(
-                "flex flex-col gap-4 w-full",
-                isRTL ? "items-start" : "items-start"
-              )}>
-                <h3 className={cn(
-                  "text-18 md:text-20 font-semibold text-gray-900",
-                  isRTL ? "text-right" : "text-left"
-                )}>
+              <div className={cn('flex flex-col gap-x-4 w-full ', isRTL ? 'items-start' : 'items-start')}>
+                <h3
+                  className={cn(
+                    'text-18 md:text-20 text-center md:text-left font-semibold text-gray-900 mx-auto md:mx-0',
+                    isRTL ? 'text-right' : 'text-left'
+                  )}
+                >
                   {t('downloadApp')}
                 </h3>
-                <div className={cn(
-                  "flex flex-wrap items-center",
-                  isRTL ? "justify-end" : "justify-start"
-                )}>
+
+                <div className={cn('flex flex-wrap items-center self-center md:self-start' , isRTL ? 'justify-end' : 'justify-start')}>
                   <StoreBadges size="3xl" />
                 </div>
               </div>
 
               {/* Social Links */}
-              <div className={cn(
-                "flex flex-col gap-6 pt-2 w-full",
-                isRTL ? "items-start" : "items-start"
-              )}>
-                <h3 className={cn(
-                  "text-16 md:text-20 font-semibold text-gray-900",
-                  isRTL ? "text-right" : "text-left"
-                )}>
+              <div className={cn('flex flex-col gap-6 pt-2 w-full', isRTL ? 'items-start' : 'items-start')}>
+                <h3
+                  className={cn(
+                    'text-16 md:text-20 font-semibold text-gray-900',
+                    isRTL ? 'text-right' : 'text-left'
+                  )}
+                >
                   {t('socialLinks')}
                 </h3>
 
-  {/* ===== Style 1: Glass Circle ===== */}
-  {/* <div className="flex flex-wrap items-center gap-3">
-    {socialLinks.map(social => {
-      const Icon = social.icon
-      return (
-        <a
-          key={`glass-${social.name}`}
-          href={social.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={social.ariaLabel}
-          className={cn(
-            'group inline-flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full',
-            'bg-white/80 backdrop-blur-md',
-            'border border-gray-300/40',
-            'shadow-[0_8px_20px_rgba(0,0,0,0.05)]',
-            'transition-all duration-200',
-            'hover:-translate-y-0.5 hover:shadow-[0_16px_35px_rgba(0,0,0,0.18)]',
-            social.hoverBgClass,
-            social.hoverBorderClass,
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2'
-          )}
-        >
-          <Icon className="h-5 w-5 md:h-6 md:w-6 text-gray-700 transition-colors duration-200 group-hover:text-white" />
-        </a>
-      )
-    })}
-  </div> */}
-
-  {/* ===== Style 2: Minimal Outline ===== */}
-  {/* <div className="flex flex-wrap items-center gap-3">
-    {socialLinks.map(social => {
-      const Icon = social.icon
-      return (
-        <a
-          key={`outline-${social.name}`}
-          href={social.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={social.ariaLabel}
-          className={cn(
-            'group inline-flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full',
-            'bg-transparent',
-            'border border-gray-400',
-            'transition-all duration-200',
-            'hover:-translate-y-0.5 hover:shadow-[0_16px_35px_rgba(0,0,0,0.18)]',
-            social.hoverBgClass,
-            social.hoverBorderClass,
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2'
-          )}
-        >
-          <Icon className="h-5 w-5 md:h-6 md:w-6 text-gray-700 transition-colors duration-200 group-hover:text-white" />
-        </a>
-      )
-    })}
-  </div> */}
-
-  {/* ===== Style 3: Soft Square (App Style) ===== */}
-  <div className={cn(
-    "flex flex-wrap items-center gap-3",
-    isRTL ? "justify-end" : "justify-start"
-  )}>
-    {socialLinks.map(social => {
-      const Icon = social.icon
-      return (
-        <a
-          key={`square-${social.name}`}
-          href={social.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={social.ariaLabel}
-          className={cn(
-            'group inline-flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl',
-            'bg-white',
-            'border border-gray-200',
-            'shadow-[0_6px_16px_rgba(0,0,0,0.06)]',
-            'transition-all duration-200',
-            'hover:-translate-y-0.5 hover:shadow-[0_16px_35px_rgba(0,0,0,0.18)]',
-            social.hoverBgClass,
-            social.hoverBorderClass,
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2'
-          )}
-        >
-          <Icon className="h-5 w-5 md:h-6 md:w-6 text-gray-700 transition-colors duration-200 group-hover:text-white" />
-        </a>
-      )
-    })}
-  </div>
-
-  
-</div>
-
+                {/* Style 3: Soft Square */}
+                <div className={cn('flex flex-wrap items-center gap-3', isRTL ? 'justify-end' : 'justify-start')}>
+                  {socialLinks.map(social => {
+                    const Icon = social.icon
+                    return (
+                      <a
+                        key={`square-${social.name}`}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={social.ariaLabel}
+                        className={cn(
+                          'group inline-flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl',
+                          'bg-white',
+                          'border border-gray-200',
+                          'shadow-[0_6px_16px_rgba(0,0,0,0.06)]',
+                          'transition-all duration-200',
+                          'hover:-translate-y-0.5 hover:shadow-[0_16px_35px_rgba(0,0,0,0.18)]',
+                          social.hoverBgClass,
+                          social.hoverBorderClass,
+                          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2'
+                        )}
+                      >
+                        <Icon className="h-5 w-5 md:h-6 md:w-6 text-gray-700 transition-colors duration-200 group-hover:text-white" />
+                      </a>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
 
             {/* Right (Sections) */}
-            <div className={cn(
-              "md:col-span-8 lg:col-span-9 lg:pt-24",
-              isRTL ? "me-3" : "ms-3"
-            )}>
+            <div className={cn('md:col-span-8 lg:col-span-9 lg:pt-24', isRTL ? 'me-3' : 'ms-3')}>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 gap-y-12">
                 {footerSections.map(section => (
                   <FooterColumn key={section.title} section={section} isRTL={isRTL} />
@@ -339,7 +290,7 @@ export const Footer = ({ className }: FooterProps) => {
             </div>
           </div>
 
-          <div className="w-full h-[1px] bg-gray-200 my-10" />
+          <div className="w-full h-[1px] bg-gray-200 my-3" />
 
           <div className="text-center">
             <p className="text-14 font-normal text-gray-700">
@@ -349,7 +300,7 @@ export const Footer = ({ className }: FooterProps) => {
         </div>
       </div>
 
-      <div className="w-full bg-gray-800 h-2" />
+      <div className="w-full bg-gray-800 h-1" />
     </footer>
   )
 }
