@@ -254,10 +254,10 @@ const TRUST_FEATURES = [
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className=" flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <LoadingOverlay  title={tC('loading')} open={true} />
+          <LoadingSpinner size="lg" text={tC('loading')} fullScreen={true} />
         </main>
         <Footer />
       </div>
@@ -389,7 +389,7 @@ export default function ServicesIntroPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <LoadingOverlay  open={true} />
+          <LoadingSpinner size="lg" fullScreen={true} />
         </div>
       }
     >

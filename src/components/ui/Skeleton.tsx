@@ -221,6 +221,8 @@ export const OfferBannerSkeleton = () => {
 /**
  * Header Skeleton (matches header layout in screenshot)
  */
+
+
 export const HeaderSkeleton = ({
   className,
   isRTL = true,
@@ -232,61 +234,87 @@ export const HeaderSkeleton = ({
     <header
       dir={isRTL ? 'rtl' : 'ltr'}
       className={cn(
-        'sticky top-0 z-50 w-full bg-transparent  backdrop-blur-sm',
+        'sticky top-0 z-50 w-full bg-transparent backdrop-blur-sm',
         className
       )}
       role="status"
       aria-label="Loading header"
       aria-busy="true"
     >
-      <div className="w-full px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between gap-2 sm:gap-4">
-        {/* Logo */}
-        <div className="flex items-center gap-2 shrink-0">
-          <Skeleton className="h-10 w-[120px] rounded-md" />
-        </div>
+      <div className="w-full px-4 sm:px-4 lg:px-8 h-16">
+        {/* ✅ Mobile layout (like screenshot): burger left + logo right */}
+        <div  className={cn('flex h-16 items-center justify-between md:hidden flex-row-reverse',
+        
+        )}>
+          {/* Burger (left) */}
+          <div className="flex items-center justify-center h-10 w-10 rounded-md">
+            {/* 3 lines */}
+            <div className="flex flex-col gap-1">
+              <Skeleton className="h-1 w-7 rounded-full" />
+              <Skeleton className="h-1 w-6 rounded-full" />
+              <Skeleton className="h-1 w-7 rounded-full" />
+            </div>
+          </div>
 
-        {/* Nav (md+) */}
-        <div className="hidden md:flex items-center">
-          <div className="gap-0.5 rounded-full border border-gray-100 bg-white px-2 py-1.5 shadow-sm h-12 flex items-center">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 rounded-full px-3 py-2"
-              >
-                <Skeleton className="h-5 w-5 rounded-md" />
-                <Skeleton className="h-4 w-14 rounded-md" />
-              </div>
-            ))}
+          {/* Logo (right) */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* small icon part (optional) */}
+            <Skeleton className="h-10 w-10 rounded-full" />
+            {/* brand text like "OurBride" */}
+            <Skeleton className="h-6 w-28 rounded-md" />
           </div>
         </div>
 
-        {/* Search (lg+) */}
-        <div className="hidden flex-1 max-w-md lg:block" dir={isRTL ? 'rtl' : 'ltr'}>
-          <Skeleton className="w-full h-12 rounded-full" />
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          {/* Mobile menu (mobile only) */}
-          <div className="md:hidden">
-            <Skeleton className="h-10 w-10 rounded-md" />
+        {/* ✅ Desktop/Tablet layout (md+) */}
+        <div className="hidden md:flex h-16 items-center justify-between gap-2 sm:gap-4">
+          {/* Logo */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* small icon part (optional) */}
+            <Skeleton className="h-10 w-10 rounded-full" />
+            {/* brand text like "OurBride" */}
+            <Skeleton className="h-6 w-28 rounded-md" />
           </div>
 
-          {/* Group (md+) */}
-          <div className="hidden md:flex items-center rounded-full border border-gray-200 bg-transparent px-1 gap-1">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <Skeleton className="h-10 w-10 rounded-full" />
-          </div>
-
-          {/* Language (md+) */}
+          {/* Nav (md+) */}
           <div className="hidden md:flex items-center">
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="gap-0.5 rounded-full border border-gray-100 bg-white px-2 py-1.5 shadow-sm h-12 flex items-center">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 rounded-full px-3 py-2"
+                >
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                  <Skeleton className="h-4 w-14 rounded-md" />
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Profile (md+) */}
-          <div className="hidden md:flex">
-            <Skeleton className="h-10 w-10 rounded-full" />
+          {/* Search (lg+) */}
+          <div className="hidden flex-1 max-w-md lg:block" dir={isRTL ? 'rtl' : 'ltr'}>
+            <div className="flex items-center gap-2 rounded-full border border-gray-100 bg-white/60 px-4 h-12 shadow-sm">
+              <Skeleton className="h-5 w-5 rounded-full" />
+              <Skeleton className="h-4 w-40 rounded-md" />
+              <div className="flex-1" />
+              <Skeleton className="h-7 w-12 rounded-full" />
+            </div>
+          </div>
+
+          {/* Actions (md+) */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <div className="hidden md:flex items-center rounded-full border border-gray-200 bg-transparent px-1 gap-1">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-10 w-10 rounded-full" />
+            </div>
+
+            <div className="hidden md:flex items-center">
+              <Skeleton className="h-10 w-10 rounded-full" />
+            </div>
+
+            <div className="hidden md:flex">
+              <Skeleton className="h-10 w-10 rounded-full" />
+            </div>
           </div>
         </div>
       </div>

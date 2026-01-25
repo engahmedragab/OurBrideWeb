@@ -226,8 +226,8 @@ export const Footer = ({ className }: FooterProps) => {
               <div className={cn('flex flex-col gap-x-4 w-full ', isRTL ? 'items-start' : 'items-start')}>
                 <h3
                   className={cn(
-                    'text-18 md:text-20 text-center md:text-left font-semibold text-gray-900 mx-auto md:mx-0',
-                    isRTL ? 'text-right' : 'text-left'
+                    'text-18 md:text-20 text-center md:text-start font-semibold text-gray-900 mx-auto md:mx-0',
+                    isRTL ? 'text-start' : 'text-left'
                   )}
                 >
                   {t('downloadApp')}
