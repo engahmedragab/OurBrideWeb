@@ -3,8 +3,8 @@ export interface Product {
   nameAr: string
   nameEn: string
   name?: string
-  description: string
-  longDescription?: string
+  descriptionAr: string
+  descriptionEn: string
   images: string[]
   provider: {
     id: string

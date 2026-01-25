@@ -107,8 +107,8 @@ export const mapProductResponseToProduct = (
     id: String(apiProduct.id || apiProduct.productId || ''),
     nameAr: apiProduct.nameAr || apiProduct.nameEn || apiProduct.name || '',
     nameEn: apiProduct.nameEn || apiProduct.nameAr || apiProduct.name || '',
-    description: apiProduct.shortDescription || apiProduct.description || '',
-    longDescription: apiProduct.description || apiProduct.bio || '',
+    descriptionAr: apiProduct.shortDescriptionAr || apiProduct.shortDescriptionEn || apiProduct.shortDescription || '',
+    descriptionEn: apiProduct.shortDescriptionEn || apiProduct.shortDescriptionAr || apiProduct.shortDescription || '',
     images: finalImages,
     provider,
     price: {

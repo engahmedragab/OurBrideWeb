@@ -913,8 +913,14 @@
   "offerBanner": {
     "heading": "24% Offer On our product!",
     "description": "Subscribe to our newsletter and get exclusive offers on premium wedding products."
+  } ,
+  "orderSummaryCard": {
+    "buyNow": "Buy Now",
+    "quantity": "Quantity",
+    "deliverTo":"Deliver to",
+    "totalPrice": "Total Price"
   }
-    },
+},
   "community": {
   "communityFeed": {
     "createPostPlaceholder": "Share What's in your mind ,{name} ....",

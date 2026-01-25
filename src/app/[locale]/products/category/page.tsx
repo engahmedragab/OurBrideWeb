@@ -406,7 +406,7 @@ function ProductsContent() {
                 t('categoryBanner.description'),
               variant: 'newsletter',
               ctaText: t('categoryBanner.ctaText'),
-              productImage: isRTL ? flowersImageRight : flowersImage,
+              productImage: flowersImage,
             },
           ]}
           onSubscribe={_email => {

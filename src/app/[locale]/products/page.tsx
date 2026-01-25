@@ -22,7 +22,7 @@ import { extractStoreHomeData } from '@/utils/home-data.utils'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
 import type { Product } from '@/types/product'
 import flowersImage from '@/assets/images/flowers.png'
-import flowersImageRight from '@/assets/images/flowersRight.png'
+import flowersRight from '@/assets/images/flowersRight.png'
 import whyBridesChooseProductsImage from '@/assets/images/bridProductSection.png'
 import { ProductPageLayout } from './components/ProductPageLayout'
 import {
@@ -127,7 +127,8 @@ export default function ProductIntroPage() {
       id: String(header.id),
       nameAr: header.nameAr || header.nameEn || '',
       nameEn: header.nameEn || header.nameAr || '',
-      description: isRTL ? header.shortDescriptionAr || header.shortDescriptionEn || header.shortDescription : header.shortDescription || header.shortDescriptionAr || header.shortDescriptionEn || '',
+      descriptionAr:  header.shortDescriptionAr || header.shortDescriptionEn || header.shortDescription,
+      descriptionEn: header.shortDescriptionEn ||  header.shortDescriptionAr,
       images: header.image ? [header.image] : [],
       provider: {
         id: header.providerId ? String(header.providerId) : '',
@@ -308,7 +309,7 @@ export default function ProductIntroPage() {
                   t('newsletterBanner.description'),
                 variant: 'newsletter',
                 ctaText: t('newsletterBanner.ctaText'),
-                productImage: isRTL ? flowersImageRight : flowersImage,
+                productImage:flowersImage,
               },
             ]}
             onSubscribe={handleSubscribe}

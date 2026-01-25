@@ -2,7 +2,7 @@ import { Card, type ProductCardData } from './Card'
 import { useProductCardHandlers, useAddProductToCart } from '@/hooks/products'
 import type { Product } from '@/types/product'
 import { LoadingSpinner } from './LoadingSpinner'
-import { useI18nTranslations } from '@/i18n'
+import { isRTL, useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface ProductGridProps {
   products: Product[]
@@ -22,6 +22,7 @@ export const ProductGrid = ({
   isLoading = false,
 }: ProductGridProps) => {
   const tCommon = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   const gridCols = {
     2: 'grid-cols-1 md:grid-cols-2',
     3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
@@ -61,8 +62,10 @@ export const ProductGrid = ({
           const cardData: ProductCardData = {
             id: product.id,
             image: product.images?.[0]?.trim() || '',
-            title: product.title,
-            providerName: product.provider.name,
+            nameAr: product.nameAr,
+            nameEn: product.nameEn,
+            providerNameAr: product.provider.nameAr,
+            providerNameEn: product.provider.nameEn,
             providerId: product.provider.id,
             verified: product.provider.verified,
             rating: product.rating.value,

@@ -42,7 +42,7 @@ export const OfferBanner = ({
   const tC = useI18nTranslations('common')
   const tS = useI18nTranslations('services.intro')
   const isRTL = useIsRTL()
- console.log({offers})
+
   useEffect(() => {
     if (offers.length <= 1) return
     const interval = setInterval(() => {

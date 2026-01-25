@@ -8,7 +8,7 @@ import { RatingDisplay } from './RatingDisplay'
 import { useCartItems } from '@/hooks/cart/useCart'
 import { Heart, ShoppingCart, CheckCircle2, Check } from 'lucide-react'
 import { PriceDisplay } from './PriceDisplay'
-import { useI18nTranslations } from '@/i18n'
+import { isRTL, useI18nTranslations, useIsRTL } from '@/i18n'
 import type { Product } from '@/types/product'
 
 export interface ProductListProps {
@@ -31,6 +31,7 @@ const ProductListItem = ({
   isProductInCart: (productId: number, providerId?: number) => boolean
 }) => {
   const tCommon = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   const [imageError, setImageError] = React.useState(false)
   const hasDiscount = product.price.discounted < product.price.original
   const discountPercentage = hasDiscount
@@ -56,7 +57,7 @@ const ProductListItem = ({
           {product.images && product.images.length > 0 && product.images[0] && product.images[0].trim() !== '' && !imageError ? (
             <Image
               src={product.images[0]}
-              alt={product.title}
+              alt={isRTL ? product.nameAr : product.nameEn}
               fill
               sizes="(max-width: 768px) 100vw, 192px"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -79,7 +80,7 @@ const ProductListItem = ({
               <div className="flex-1">
                 <Link href={`/products/${product.id}`}>
                   <h3 className="text-18 font-semibold text-gray-900 line-clamp-2 hover:text-brand-500 transition-colors">
-                    {product.title}
+                    {isRTL ? product.nameAr : product.nameEn}
                   </h3>
                 </Link>
                 <div className="flex items-center gap-1.5 mt-1">
@@ -88,7 +89,7 @@ const ProductListItem = ({
                     className="text-14 text-gray-600 hover:text-brand-500 transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {product.provider.name}
+                    {isRTL ? product.provider.nameAr : product.provider.nameEn}
                   </Link>
                   {product.provider.verified && (
                     <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
@@ -122,7 +123,7 @@ const ProductListItem = ({
 
             {/* Description */}
             <p className="text-14 text-gray-600 line-clamp-2">
-              {product.description}
+              {isRTL ? product.descriptionAr : product.descriptionEn}
             </p>
 
             {/* Rating and Tags */}

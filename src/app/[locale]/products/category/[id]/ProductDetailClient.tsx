@@ -124,7 +124,7 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
   // Show loading state
   if (productLoading) {
     return (
-      <ProductPageLayout isLoading={true} loadingText={t('productsLoading')} />
+      <ProductPageLayout isLoading={true} loadingText={tCommon('productsLoading')} />
     )
   }
 
@@ -133,10 +133,10 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
     return (
       <ProductPageLayout>
         <ProductErrorState
-          title={t('productCommon.productNotFound')}
-          message={t('productCommon.productNotFoundMessage')}
+          title={tCommon('productCommon.productNotFound')}
+          message={tCommon('productCommon.productNotFoundMessage')}
           backHref="/products"
-          backLabel={t('productCommon.backToProducts')}
+          backLabel={tCommon('productCommon.backToProducts')}
         />
       </ProductPageLayout>
     )
@@ -148,13 +148,13 @@ export function ProductDetailClient({ productId }: ProductDetailClientProps) {
       const response = await addToCart(product, quantity)
       const { message, type } = handleApiResponseForToast(
         response,
-         t('productCommon.addToCartSuccess'),
-        t('productCommon.addToCartError')
+        tCommon('productCommon.addToCartSuccess'),
+        tCommon('productCommon.addToCartError')
       )
       addToast(message, type)
     } catch (error) {
-      console.error(t('productCommon.addToCartError'), error)
-      const errorMessage = error instanceof Error ? error.message : t('productCommon.addToCartError')
+      console.error(tCommon('productCommon.addToCartError'), error)
+      const errorMessage = error instanceof Error ? error.message : tCommon('productCommon.addToCartError')
       addToast(errorMessage, 'error')
     }
   }

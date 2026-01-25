@@ -7,6 +7,7 @@ import { QuantitySelector } from './QuantitySelector'
 import { Button } from './Button'
 import { ShoppingCart } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface OrderSummaryCardProps {
   totalPrice: number
@@ -38,6 +39,7 @@ export const OrderSummaryCard = ({
   className,
 }: OrderSummaryCardProps) => {
   const [isAddressExpanded, setIsAddressExpanded] = useState(false)
+  const t  = useI18nTranslations('products.orderSummaryCard')
 
   const handleAddressToggle = () => {
     setIsAddressExpanded(!isAddressExpanded)
@@ -58,7 +60,7 @@ export const OrderSummaryCard = ({
     >
       {/* Total price */}
       <div className="flex items-center justify-between">
-        <span className="text-14 text-gray-900">Total price</span>
+        <span className="text-14 text-gray-900">{t('totalPrice')}</span>
         <PriceDisplay
           discounted={totalPrice}
           currency={currency}
@@ -71,7 +73,7 @@ export const OrderSummaryCard = ({
 
       {/* Deliver to */}
       <div className="flex items-center justify-between">
-        <span className="text-14 text-gray-900">Deliver to</span>
+        <span className="text-14 text-gray-900">{t('deliverTo')}</span>
         <button
           onClick={handleAddressToggle}
           className="flex items-center gap-1 text-14 text-brand-500 hover:text-brand-600"
@@ -88,7 +90,7 @@ export const OrderSummaryCard = ({
 
       {/* Quantity */}
       <div className="flex items-center justify-between">
-        <span className="text-14 text-gray-900">Quantity</span>
+        <span className="text-14 text-gray-900">{t('quantity')}</span>
         <QuantitySelector
           quantity={quantity}
           onQuantityChange={onQuantityChange}
@@ -120,7 +122,7 @@ export const OrderSummaryCard = ({
             onClick={onBuyNow}
             disabled={disabled}
           >
-            Buy Now
+            {t('buyNow')}
           </Button>
         )}
       </div>
