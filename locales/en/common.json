@@ -6,7 +6,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "save": "Save", 
-    "delete": "Delete",
+    "delete": "Delete", 
     "edit": "Edit",
     "search": "Search",
     "filter": "Filter",
@@ -1273,5 +1273,616 @@
     "tiktok": "Visit our TikTok page"
   },
   "copyright": "© {year} Crafted by OurBride All Rights Reserved"
+},
+"eventsPlanning": {
+  "addEvent": {
+    "modal": {
+      "title": "New Event",
+      "fields": {
+        "titleLabel": "Event Title",
+        "descriptionLabel": "Description",
+        "startDateTimeLabel": "Start Date & Time",
+        "endDateTimeLabel": "End Date & Time",
+        "defaultLabel": "Set as default event"
+      },
+      "placeholders": {
+        "title": "Enter Event Title",
+        "description": "Enter event description (optional)",
+        "startDate": "Select start date",
+        "endDate": "Select end date",
+        "time": "HH:MM"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "create": "Create Event",
+        "addNewEvent": "Add New Event"
+      }
+    },
+    "validation": {
+      "titleRequired": "Event title is required",
+      "startTimeRequired": "Start time is required",
+      "durationRequired": "Duration is required",
+      "invalidTimeFormat": "Invalid time format (use HH:MM)",
+      "durationPositive": "Duration must be a positive number"
+    }
+  },
+
+
+  "common": {
+    "createdBy": "Created By",
+    "viewAll": "View All",
+    "viewDetails": "View Details",
+    "outOf": "{completed} Out of {total}",
+    "untitledTask": "Untitled Task",
+    "untitledService": "Untitled Service",
+    "untitledNote": "Untitled Note",
+    "untitledOccasion": "Untitled Occasion",
+    "guestSingular": "Guest",
+    "guestPlural": "Guests",
+    "ofGuests": "of guests",
+    "provider": "Provider",
+    "noBookings": "No bookings yet",
+    "noNotes": "No notes yet"
+  },
+    "sideMenu": {
+      "title": "Planning",
+      "tabs": {
+        "overview": "Overview",
+        "budget": "Budget",
+        "items": "Items",
+        "events": "Events",
+        "invitation": "Guests",
+        "occasions": "Occasions",
+        "preparations": "Preparations",
+        "ToDo": "To Do",
+        "notes": "Notes"
+      },
+      "status": {
+        "initializing": "Initializing...",
+        "needsInit": "Needs init",
+        "ready": "Ready"
+      }
+    },
+    "overview": {
+    "actions": {
+      "backToEvents": "Back to Events",
+      "addNewEvent": "Add New Event"
+    },
+    "tabsHeader": {
+      "myEvents": "My Events",
+      "sharedEvents": "Shared Events"
+    },
+    "loading": {
+      "events": "Loading events...",
+      "eventDetails": "Loading event details...",
+      "initializing": "Initializing...",
+      "settingUpBook": "Setting up {book}...",
+      "pleaseWait": "Please wait"
+    },
+    "errors": {
+      "loadEventsTitle": "Failed to Load Events",
+      "loadEventsMessage": "Failed to load events. Please try again.",
+      "loadEventDetailsTitle": "Failed to Load Event Details",
+      "loadEventDetailsMessage": "Failed to load event details. Please try again."
+    },
+    "empty": {
+      "noMyEvents": "No events found. Create your first event!",
+      "noSharedEvents": "No shared events found."
+    },
+    "toasts": {
+      "enterTitle": "Please enter an event title",
+      "createdSuccess": "Event created successfully",
+      "createFailed": "Failed to create event",
+      "initFailed": "Failed to initialize {book}"
+    },
+    "stats": {
+      "completedServices": "Completed services",
+      "completeLists": "Complete Lists",
+      "planningBooks": "Planning Books"
+    }
+
+  },
+  "cards": {
+    "eventSummary": {
+      "imageAlt": "Event Hero",
+      "countdown": {
+        "days": "Days",
+        "hours": "Hours",
+        "minutesShort": "Min"
+      }
+    },
+    "quickStats": {
+      "guestsCountText": "{count} of guests",
+      "zero": "0"
+    },
+    "items": {
+      "title": "Items",
+      "estimatedBudget": "Estimated Budget",
+      "totalPrice": "Total Price"
+    },
+    "tasks": {
+      "title": "Tasks Reminder",
+      "empty": "No tasks yet"
+    },
+    "upcomingBookings": {
+      "title": "Services Bookings",
+      "badges": {
+        "pending": "Pending",
+        "completed": "Completed"
+      },
+      "empty": "No bookings yet"
+    },
+    "budget": {
+      "fallbackTitle": "Budget Book",
+      "allBudget": "All Budget",
+      "paid": "Paid",
+      "remaining": "Remaining",
+      "empty": "No budget set yet"
+    },
+"guests": {
+          "title": "Guests & Invitation",
+          "subtitle": "Track invited guests and details",
+          "ariaViewDetails": "View guest invitation details",
+          "imageAlt": "Event Image",
+          "descriptionFallback": "Manage your guest list and invitations in one place.",
+          "invitedGuests": "Invited Guests",
+          "guestSingular": "Guest",
+          "guestPlural": "Guests"
+        }
+},
+"budget": {
+  "pageTitle": "Budget",
+  "noBudgetTitle": "No budget data available",
+  "loading": {
+    "loadingBudgetTitle": "Loading budget...",
+    "loadingBudgetSubtitle": "Please wait a moment",
+    "initializingTitle": "Initializing budget book...",
+    "initializingSubtitle": "Setting up your budget book",
+    "addingModelsTitle": "Adding default models...",
+    "addingModelsSubtitle": "Please wait while we add default categories"
+  },
+  "error": {
+    "failedToLoad": "Failed to load budget. Please try again.",
+    "retry": "Retry"
+  },
+  "event": {
+    "eventIdRequired": "Event ID is required"
+  },
+  "header": {
+    "goBack": "Go back",
+    "searchPlaceholder": "Search expenses",
+    "clearSearch": "Clear search",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "unsavedChanges": "Unsaved changes",
+    "noChangesToSave": "No changes to save",
+    "changesSaved": "Changes saved successfully",
+    "failedToSave": "Failed to save changes"
+  },
+  "filters": {
+    "placeholder": "Select filter...",
+    "all": "All",
+    "done": "Done",
+    "notDone": "Not Done",
+    "favorite": "Favorite",
+    "notFavorite": "Not Favorite"
+  },
+  "overview": {
+    "title": "Budget Overview",
+    "savedPercent": "{percent}% Saved",
+    "budget": "Budget",
+    "estimatedCost": "Estimated Cost",
+    "paid": "Paid",
+    "finalCost": "Final Cost",
+    "enterBudget": "Enter Budget",
+    "save": "Save",
+    "egp": "EGP",
+    "unnamedCategory": "Unnamed Category"
+  },
+  "categories": {
+    "title": "Categories",
+    "new": "New",
+    "noCategoriesTitle": "No categories yet",
+    "noCategoriesDesc": "Create a category to start organizing items.",
+    "editCategory": "Edit category",
+    "deleteCategory": "Delete category",
+    "unnamedCategory": "Unnamed Category"
+  },
+  "lines": {
+    "empty": "No budget lines found",
+    "addNew": "Add New",
+    "estimatedLabel": "Estimated:",
+    "selectCategoryHint": "Select a category to see its estimated",
+    "headers": {
+      "service": "Service",
+      "totalPrice": "Total Price",
+      "paid": "Paid",
+      "remaining": "Remaining",
+      "percentOfBudget": "% Of Budget",
+      "actions": "Actions"
+    },
+    "unnamedService": "Unnamed Service"
+  },
+  "toasts": {
+    "lineSaved": "Budget line saved",
+    "categorySaved": "Category saved",
+    "categoryAndLineAdded": "Category and line added",
+    "deletedSuccessfully": "\"{name}\" deleted successfully",
+    "categoryDeletedSuccessfully": "Category \"{name}\" deleted successfully",
+    "lineDataRequired": "Line data is required when creating a new category",
+    "noChangesToSave": "No changes to save",
+    "failedToSaveChanges": "Failed to save changes",
+    "changesSavedSuccessfully": "Changes saved successfully"
+  },
+  "modals": {
+    "confirmDelete": {
+      "title": "Confirm Delete",
+      
+      "lineMessage": "Are you sure you want to delete this budget line? This action cannot be undone.",
+      "categoryMessage": "Are you sure you want to delete this category? All lines in this category will also be deleted. This action cannot be undone.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "budgetLine": {
+      "addTitle": "Add Budget Line",
+      "editTitle": "Edit Budget Line",
+      "serviceName": "Service Name",
+      "serviceNamePlaceholder": "Enter service name",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "totalPrice": "Total Price",
+      "paid": "Paid",
+      "final": "Final",
+      "count": "Count",
+      "payer": "Payer",
+      "payerPlaceholder": "Enter payer name",
+      "isDone": "Is Done",
+      "isDoneDesc": "Mark this line as completed",
+      "isFavorite": "Is Favorite",
+      "isFavoriteDesc": "Mark this line as favorite",
+      "notesOptional": "Notes (Optional)",
+      "notesPlaceholder": "Add any additional notes...",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "category": {
+      "editTitle": "Edit Category",
+      "addTitle": "Add Category (with first line)",
+      "categorySectionTitle": "Category",
+      "editHint": "Update category details",
+      "createHint": "Create a new category",
+      "name": "Name",
+      "namePlaceholder": "e.g. Category",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional…",
+      "icon": "Icon",
+      "selectIcon": "Select an icon",
+      "changeIcon": "Change icon",
+      "color": "Color",
+      "selectColor": "Select color",
+      "estimated": "Estimated",
+      "firstLineTitle": "First budget line",
+      "firstLineHint": "Required to sync category properly",
+      "serviceName": "Service Name",
+      "serviceNamePlaceholder": "e.g. Family invitation",
+      "totalPrice": "Total Price",
+      "paid": "Paid",
+      "final": "Final",
+      "count": "Count",
+      "dueDate": "Due Date",
+      "payer": "Payer",
+      "payerPlaceholder": "Bride / Groom / ...",
+      "note": "Note",
+      "notePlaceholder": "Optional…",
+      "done": "Done",
+      "doneDesc": "Mark as completed",
+      "favorite": "Favorite",
+      "favoriteDesc": "Pin it on top",
+      "cancel": "Cancel",
+      "save": "Save",
+      "addCategoryAndLine": "Add Category & Line"
+    },
+    "colorPicker": {
+      "Green": "Green",
+      "Yellow": "Yellow",
+      "Blue": "Blue",
+      "Red": "Red",
+      "Purple": "Purple",
+      "Orange": "Orange",
+      "Pink": "Pink",
+      "Cyan": "Cyan"
+    },
+    "validation": {
+      "serviceNameRequired": "Service name is required",
+      "totalPriceRequired": "Total price must be 0 or greater",
+      "paidRequired": "Paid must be 0 or greater",
+      "nameRequired": "Name is required",
+      "estimatedRequired": "Estimated must be 0 or greater",
+      "categoryNameRequired": "Category name is required"
+    }
+  }
+},
+"guestList": {
+  "common": {
+
+    "pageTitle": "Guests List",
+    
+    "loading": "Loading guests list...",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "unsavedChanges": "Unsaved changes",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "cancel": "Cancel",
+    "addGuest": "Add Guest",
+    "addNewGuest": "Add New Guest",
+    "addTable": "Add Table",
+    "addNewTable": "Add New Table",
+    "selectedTable": "Selected Table",
+    "untitledTable": "Untitled Table",
+    "uncategorized": "Uncategorized",
+    "unnamed": "Unnamed",
+    "categoryName": "Category Name",
+    "categoryNamePlaceholder": "Enter category name",
+    "slug": "Slug",
+    "slugPlaceholder": "Slug (optional)",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter category description",
+    "addNewCategory": "Add New Category"
+  },
+  "toasts": {
+    "refreshed": "Guest list refreshed",
+    "guestDeleted": "Guest deleted",
+    "guestAdded": "Guest added",
+    "saveSuccess": "Changes saved successfully",
+    "saveFailed": "Failed to save changes"
+  },
+  "loadingStates": {
+    "initializingTitle": "Initializing guest book...",
+    "initializingSubtitle": "Setting up your guest book",
+    "addingModelsTitle": "Adding default models...",
+    "addingModelsSubtitle": "Please wait while we add default categories",
+    "loadingGuestsTitle": "Loading guests...",
+    "loadingGuestsSubtitle": "Please wait a moment"
+  },
+  "error": {
+    "title": "Failed to load guests. Please try again.",
+    "unknown": "Unknown error"
+  },
+  "empty": {
+    "noGuestBook": "No guest book found",
+    "noTablesTitle": "No tables yet",
+    "noTablesSubtitle": "Create a table to start adding guests.",
+    "noGuestsInTable": "No guests in this table"
+  },
+  "tabs": {
+    "bride": "Bride",
+    "groom": "Groom",
+    "ariaLabel": "Guest side tabs"
+  },
+  "summary": {
+    "guestsCount": " Guests",
+    "totalPeople": " Total People"
+  },
+  "table": {
+    "columns": {
+      "select": "Select",
+      "tableGuestName": "Table / Guest Name",
+      "people": "People",
+      "registered": "Registered",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "statsInline": "({{total}} guests, {{confirmed}} confirmed)",
+    "dash": "—"
+  },
+  "status": {
+    "confirmed": "Confirmed",
+    "none": "None"
+  },
+  "dialog": {
+    "title": "Add New Guest",
+    "mode": {
+      "selectTable": "Select Table",
+      "newTable": "New Table",
+      "needToAddTable": "You need to add a table first.",
+      "noTablesTitle": "No tables available",
+      "noTablesSubtitle": "You'll create a new table when adding this guest."
+    },
+    "fields": {
+      "tableLabel": "Table",
+      "nameLabel": "Name",
+      "peopleCountLabel": "Total People Number",
+      "statusLabel": "Status"
+    },
+    "placeholders": {
+      "tableName": "Table name",
+      "slugOptional": "Slug (optional)",
+      "descriptionOptional": "Description (optional)",
+      "selectTable": "Select table",
+      "guestName": "Enter guest name",
+      "peopleCount": "Enter number of people",
+      "selectStatus": "Select status"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Add Guest",
+      "saving": "Saving...",
+      "addCategory": "Add Category"
+
+    },
+    "validation": {
+      "categoryRequired": "Category is required",
+      "guestNameMin": "Guest name must be at least 2 characters",
+      "categoryNameMin": "Category name must be at least 2 characters",
+      "peopleMin": "Minimum is 1",
+      "peopleMax": "Maximum is 20"
+    }
+  }
+},
+"occasions": {
+  "page": {
+    "actions": {
+      "addNewOccasion": "Add New Occasion",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "createOccasion": "Create Occasion",
+      "updateOccasion": "Update Occasion",
+      "edit": "Edit",
+      "delete": "Delete",
+      "close": "Close"
+    },
+    "status": {
+      "unsavedChanges": "Unsaved changes",
+      "noOccasionsTitle": "No occasions found",
+      "noOccasionsSubtitle": "Create your first occasion to get started"
+    },
+    "loading": {
+      "loadingOccasionsTitle": "Loading occasions...",
+      "initializingTitle": "Initializing occasion book...",
+      "initializingSubtitle": "Setting up your occasion book",
+      "addingModelsTitle": "Adding default models...",
+      "addingModelsSubtitle": "Please wait while we add default models",
+      "pleaseWait": "Please wait a moment"
+    },
+    "error": {
+      "failedToLoadTitle": "Failed to Load Occasions",
+      "failedToLoadMessage": "Failed to load occasions. Please try again."
+    }
+  },
+
+  "common": {
+    "fallbacks": {
+      "noDate": "No date",
+      "invalidDate": "Invalid date",
+      "groomName": "Groom Name",
+      "brideName": "Bride Name",
+      "occasionName": "Occasion Name"
+    },
+    "countdown": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes"
+    }
+  },
+
+  "form": {
+    "title": {
+      "create": "Add Occasion",
+      "edit": "Edit Occasion"
+    },
+    "labels": {
+      "titleEn": "Title (English)",
+      "titleAr": "Title (Arabic)",
+      "subTitleEn": "Sub Title (English)",
+      "subTitleAr": "Sub Title (Arabic)",
+      "date": "Date",
+      "subDate": "Sub Date (Optional)",
+      "brideFirstName": "Bride First Name",
+      "brideLastName": "Bride Last Name",
+      "groomFirstName": "Groom First Name",
+      "groomLastName": "Groom Last Name",
+      "caption": "Caption"
+    },
+    "placeholders": {
+      "titleEn": "Enter title in English",
+      "titleAr": "Enter title in Arabic",
+      "subTitleEn": "Enter sub title in English",
+      "subTitleAr": "Enter sub title in Arabic",
+      "brideFirstName": "Enter bride first name",
+      "brideLastName": "Enter bride last name",
+      "groomFirstName": "Enter groom first name",
+      "groomLastName": "Enter groom last name",
+      "caption": "Enter caption"
+    },
+    "helperText": {
+      "titleRequiredNote": "Please enter a title in English or Arabic"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "create": "Create Occasion",
+      "update": "Update Occasion"
+    },
+    "validation":{
+      "brideFirstNameMin":"Bride first name must be at least 2 characters ",
+      "brideFirstNameMax":"Bride first name must not exceed 15 characters",
+      "groomFirstNameMin":"groom first name must be at least 2 characters ",
+      "groomFirstNameMax":"groom first name must not exceed 15 characters",
+      "titleRequired": "Please enter a title in English or Arabic"
+    }
+  },
+
+  "detail": {
+    "locationFallback": "Giza, 6 of October",
+    "labels": {
+      "dateTime": "Date & Time"
+    }
+  }
+},
+  "notes": {
+    "page": {
+      "title": "Notes",
+      "back": "Back"
+    },
+    "header": {
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "unsavedChanges": "Unsaved changes"
+    },
+    "loading": {
+      "loadingNotes": "Loading notes...",
+      "loadingSubtitle": "Please wait a moment",
+      "initializingTitle": "Initializing notes book...",
+      "initializingSubtitle": "Setting up your notes book",
+      "addingModelsTitle": "Adding default models...",
+      "addingModelsSubtitle": "Please wait while we add default categories"
+    },
+    "sidebar": {
+      "title": "Your notes",
+      "addNew": "Add New",
+      "empty": "No lists yet",
+      "untitled": "Untitled List",
+      "actions": {
+        "editAria": "Edit note",
+        "deleteAria": "Delete note"
+      }
+    },
+    "main": {
+      "empty": {
+        "title": "Select a list to view its note",
+        "cta": "Add new Notes"
+      },
+      "edit": "Edit",
+      "dash": "—"
+    },
+    "modal": {
+      "addTitle": "Add New Note",
+      "editTitle": "Edit Note",
+      "fields": {
+        "titleLabel": "Notes Name",
+        "noteLabel": "Note"
+      },
+      "placeholders": {
+        "title": "Enter list name",
+        "note": "Write your note..."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "add": "Add Note",
+        "saveChanges": "Save Changes",
+        "saving": "Saving..."
+      },
+      "validation":{
+        "Listnameisrequired":"List name is required",
+        "Noteisrequired":"Note is required"
+      }
+    }
+  }
+
+
+
+
 }
 }

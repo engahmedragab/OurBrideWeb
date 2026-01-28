@@ -3,12 +3,17 @@
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { useI18nTranslations } from '@/i18n/hooks'
+import { useIsRTL } from '@/i18n/hooks'
+import { cn } from '@/lib'
 
 interface GuestsHeaderProps {
   onRefresh: () => void
 }
 
 export const GuestsHeader = ({ onRefresh }: GuestsHeaderProps) => {
+  const t = useI18nTranslations('eventsPlanning.guestList.common')
+  const isRTL = useIsRTL()
   const router = useRouter()
 
   return (
@@ -20,9 +25,9 @@ export const GuestsHeader = ({ onRefresh }: GuestsHeaderProps) => {
           aria-label="Go back"
           type="button"
         >
-          <ArrowLeft className="h-5 w-5 text-gray-700" />
+          <ArrowLeft className={cn("h-5 w-5 text-gray-700", isRTL ? "rotate-180" : "rotate-0")} />
         </button>
-        <h1 className="text-24 font-semibold text-gray-900">Guests List</h1>
+        <h1 className="text-24 font-semibold text-gray-900">{t('pageTitle')}</h1>
       </div>
 
       <div className="flex items-center gap-2">

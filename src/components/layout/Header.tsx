@@ -182,7 +182,7 @@ export const Header = ({ className }: HeaderProps) => {
 
   // ✅ Render full header skeleton (NOT partial) to avoid broken look
   if (showHeaderSkeleton) {
-    return <HeaderSkeleton className={className} isRTL={isRTL} />
+    return <HeaderSkeleton  className={className} isRTL={isRTL} />
   }
 
   return (
@@ -197,7 +197,7 @@ export const Header = ({ className }: HeaderProps) => {
         )}
       >
         <div className={cn("w-full px-4  lg:px-4 flex h-16 items-center justify-between gap-2 sm:gap-1 " ,
-          isRTL ? 'md:px-4' : 'md:px-6'
+          isRTL ? 'md:px-3' : 'md:px-4'
         )}>
           {/* Logo */}
           <div className="flex items-center gap-2 shrink-0  md:w-[80px] lg:w-[100px] ">
@@ -225,8 +225,8 @@ export const Header = ({ className }: HeaderProps) => {
   <NavigationMenuList
     className={cn(
       'gap-0.5 rounded-full border border-gray-100 bg-white shadow-sm',
-      'lg:h-12 lg:px-2 lg:py-1.5',
-      isRTL ? 'md:h-9 md:px-2 md:py-1.5' : 'md:h-14 md:px-3 md:py-2'
+      'lg:h-12 lg:px-1 lg:py-1.5',
+      isRTL ? 'md:h-9 md:px-1 md:py-1.5' : 'md:h-14 md:px-2 md:py-2'
     )}
   >
     {navigationItems.map(item => {

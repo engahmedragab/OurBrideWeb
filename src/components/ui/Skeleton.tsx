@@ -241,7 +241,7 @@ export const HeaderSkeleton = ({
       aria-label="Loading header"
       aria-busy="true"
     >
-      <div className="w-full px-4 sm:px-4 lg:px-8 h-16">
+      <div className="w-full px-4 sm:px-2 lg:px-8 h-16">
         {/* ✅ Mobile layout (like screenshot): burger left + logo right */}
         <div  className={cn('flex h-16 items-center justify-between md:hidden flex-row-reverse',
         
@@ -257,7 +257,7 @@ export const HeaderSkeleton = ({
           </div>
 
           {/* Logo (right) */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1 shrink-0">
             {/* small icon part (optional) */}
             <Skeleton className="h-10 w-10 rounded-full" />
             {/* brand text like "OurBride" */}
@@ -266,7 +266,7 @@ export const HeaderSkeleton = ({
         </div>
 
         {/* ✅ Desktop/Tablet layout (md+) */}
-        <div className="hidden md:flex h-16 items-center justify-between gap-2 sm:gap-4">
+        <div className="hidden md:flex h-16 items-center justify-between gap-2 sm:gap-2">
           {/* Logo */}
           <div className="flex items-center gap-2 shrink-0">
             {/* small icon part (optional) */}
@@ -277,11 +277,11 @@ export const HeaderSkeleton = ({
 
           {/* Nav (md+) */}
           <div className="hidden md:flex items-center">
-            <div className="gap-0.5 rounded-full border border-gray-100 bg-white px-2 py-1.5 shadow-sm h-12 flex items-center">
+            <div className="gap-0.5 rounded-full border border-gray-100 bg-white px-1.5 py-1.5 shadow-sm h-12 flex items-center">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 rounded-full px-3 py-2"
+                  className="flex items-center gap-1 rounded-full px-3 py-2"
                 >
                   <Skeleton className="h-5 w-5 rounded-full" />
                   <Skeleton className="h-4 w-14 rounded-md" />
@@ -292,7 +292,7 @@ export const HeaderSkeleton = ({
 
           {/* Search (lg+) */}
           <div className="hidden flex-1 max-w-md lg:block" dir={isRTL ? 'rtl' : 'ltr'}>
-            <div className="flex items-center gap-2 rounded-full border border-gray-100 bg-white/60 px-4 h-12 shadow-sm">
+            <div className="flex items-center gap-1 rounded-full border border-gray-100 bg-white/60 px-1 h-12 shadow-sm">
               <Skeleton className="h-5 w-5 rounded-full" />
               <Skeleton className="h-4 w-40 rounded-md" />
               <div className="flex-1" />

@@ -1,9 +1,10 @@
 'use client'
 
-import { Edit2, Trash2, Plus, ChevronRight } from 'lucide-react'
+import { Edit2, Trash2, Plus, ChevronRight, ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import type { NoteLineResponse } from '@/types/responses'
+import { useI18nTranslations, useIsRTL } from '@/i18n' // ✅ add
 
 interface NoteCategoriesSidebarProps {
   notes: NoteLineResponse[]
@@ -22,12 +23,15 @@ export const NoteCategoriesSidebar = ({
   onDeleteNote,
   onAddNew,
 }: NoteCategoriesSidebarProps) => {
+  const t = useI18nTranslations('eventsPlanning.notes')
+  const isRTL= useIsRTL()
+
   const activeNotes = notes.filter(n => !n.isDeleted)
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4 h-full flex flex-col">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
-        <h2 className="text-16 font-semibold text-gray-900">Your notes</h2>
+        <h2 className="text-16 font-semibold text-gray-900">{t('sidebar.title')}</h2>
 
         <Button
           variant="outline"
@@ -36,13 +40,13 @@ export const NoteCategoriesSidebar = ({
           className="text-brand-500 border-brand-500 hover:bg-brand-50"
         >
           <Plus className="h-4 w-4 mr-1" />
-          Add New
+          {t('sidebar.addNew')}
         </Button>
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-2">
         {activeNotes.length === 0 ? (
-          <p className="text-13 text-gray-500 text-center py-8">No lists yet</p>
+          <p className="text-13 text-gray-500 text-center py-8">{t('sidebar.empty')}</p>
         ) : (
           activeNotes.map(note => {
             const isSelected = selectedNoteId === note.id
@@ -66,7 +70,7 @@ export const NoteCategoriesSidebar = ({
                         isSelected ? 'text-gray-900 font-semibold' : 'text-gray-700'
                       )}
                     >
-                      {note.title || 'Untitled List'}
+                      {note.title || t('sidebar.untitled')}
                     </span>
                   </div>
 
@@ -77,7 +81,8 @@ export const NoteCategoriesSidebar = ({
                         onEditNote(note)
                       }}
                       className="p-1.5 rounded-md text-gray-400 hover:bg-gray-100 hover:text-brand-500 transition-colors"
-                      aria-label="Edit note"
+                      aria-label={t('sidebar.actions.editAria')}
+                      title={t('sidebar.actions.editAria')}
                     >
                       <Edit2 className="h-4 w-4" />
                     </button>
@@ -88,12 +93,13 @@ export const NoteCategoriesSidebar = ({
                         onDeleteNote(note)
                       }}
                       className="p-1.5 rounded-md text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
-                      aria-label="Delete note"
+                      aria-label={t('sidebar.actions.deleteAria')}
+                      title={t('sidebar.actions.deleteAria')}
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
-
-                    <ChevronRight className="h-4 w-4 text-gray-400 ml-1" />
+                {isRTL? <ChevronLeft className="h-4 w-4 text-gray-400 ml-1" />:<ChevronRight className="h-4 w-4 text-gray-400 ml-1" />}
+                    
                   </div>
                 </div>
               </div>

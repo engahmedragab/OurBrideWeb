@@ -9,6 +9,8 @@ import { formatEGP } from '@/utils/formatCurrency'
 import { cn } from '@/lib/utils'
 import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
 import { getCategoryColor } from '@/utils/budgetbook/budgetColors'
+import { useI18nLocale, useI18nTranslations } from '@/i18n/hooks'
+import { pickLocalizedText } from '@/utils/translation/i18nText'
 
 interface BudgetLinesTableProps {
   lines: BudgetLineResponse[]
@@ -25,7 +27,7 @@ interface BudgetLinesTableProps {
 
 export const BudgetLinesTable = ({
   lines,
-  categories,
+  categories, 
   totalBudget,
   onToggleDone,
   onToggleFavorite,
@@ -35,11 +37,18 @@ export const BudgetLinesTable = ({
   isLoading = false,
   activeCategoryId
 }: BudgetLinesTableProps) => {
+  const t = useI18nTranslations('eventsPlanning.budget')
+  const locale = useI18nLocale()
   const getCategory = (categoryId: number | null) => {
     return categories.find(cat => cat.id === categoryId)
   }
 
-
+  const getLineLabel = (line: BudgetLineResponse) =>
+    pickLocalizedText(locale, {
+      ar: line.expenseAr || line.expense,
+      en: line.expenseEn || line.expense,
+      fallback: line.expense,
+    }) || t('lines.unnamedService')
   const calculatePercentage = (amount: number) => {
     if (totalBudget === 0) return 0
     return (amount / totalBudget) * 100
@@ -69,10 +78,10 @@ export const BudgetLinesTable = ({
             className="text-white whitespace-nowrap !rounded-lg h-9 px-3 "
           >
             <Plus className="h-3.5 w-3.5 mr-1.5 text-white" />
-            Add New
+            {t('lines.addNew')}
           </Button>
         </div>
-          <p className="text-14">No budget lines found</p>
+          <p className="text-14">{t('lines.empty')}</p>
         </div>
       </div>
     )
@@ -94,7 +103,7 @@ const selectedEstimated = selectedCategory?.estimated ?? null
       {selectedCategory ? (
         <>
           <span className="text-12 font-medium text-gray-500 uppercase tracking-wider">
-            Estimated:
+            {t('lines.estimatedLabel')}
           </span>
           <span className="text-14 font-semibold text-gray-900">
             {selectedEstimated !== null ? formatEGP(selectedEstimated) : '--'}
@@ -102,7 +111,7 @@ const selectedEstimated = selectedCategory?.estimated ?? null
         </>
       ) : (
         <span className="text-12 text-gray-400">
-          Select a category to see its estimated
+          {t('lines.selectCategoryHint')}
         </span>
       )}
     </div>
@@ -116,7 +125,7 @@ const selectedEstimated = selectedCategory?.estimated ?? null
       className="text-white whitespace-nowrap !rounded-lg h-9 px-3"
     >
       <Plus className="h-3.5 w-3.5 mr-1.5 text-white" />
-      Add New
+      {t('lines.addNew')}
     </Button>
   </div>
 )}
@@ -126,22 +135,22 @@ const selectedEstimated = selectedCategory?.estimated ?? null
           <thead className="bg-white">
             <tr>
               <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                Service
+                {t('lines.headers.service')}
               </th>
               <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                Total Price
+                {t('lines.headers.totalPrice')}
               </th>
               <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                Paid
+                {t('lines.headers.paid')}
               </th>
               <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                Remaining
+                {t('lines.headers.remaining')}
               </th>
               <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                % Of Budget
+                {t('lines.headers.percentOfBudget')}
               </th>
               <th className="px-4 py-3 text-left text-12 font-normal text-gray-500 uppercase tracking-wider border-b border-gray-200">
-                Actions
+                {t('lines.headers.actions')}
               </th>
             </tr>
           </thead>
@@ -171,7 +180,7 @@ const selectedEstimated = selectedCategory?.estimated ?? null
                         style={{ backgroundColor: color }}
                       />
                       <span className="text-14 font-medium text-gray-900">
-                        {line.expense || 'Unnamed Service'}
+                        {getLineLabel(line)}
                       </span>
                     </div>
                   </td>
@@ -227,7 +236,7 @@ const selectedEstimated = selectedCategory?.estimated ?? null
           </tbody>
         </table>
       </div>
-    </div>
+    </div> 
   )
 }
 

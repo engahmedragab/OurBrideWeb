@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui'
 import { DatePicker } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { WeddingEventCreateRequest } from '@/../client/common/api/gen/ourbride-api'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface AddEventModalProps {
   isOpen: boolean
@@ -24,6 +25,7 @@ export const AddEventModal = ({
   onClose,
   onSubmit,
 }: AddEventModalProps) => {
+  const t = useI18nTranslations('eventsPlanning.addEvent')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [startDate, setStartDate] = useState<Date | undefined>(undefined)
@@ -83,7 +85,7 @@ export const AddEventModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="New Event"
+      title={t('modal.title')}
       maxWidth="md"
       containerClassName="p-5"
       headerClassName="px-0 pb-0 flex items-center justify-between gap-2.5"
@@ -93,10 +95,10 @@ export const AddEventModal = ({
         {/* Title Input - Required */}
         <div className="flex flex-col gap-2">
           <label className="text-14 font-normal text-gray-900">
-            Event Title <span className="text-red-500">*</span>
+            {t('modal.fields.titleLabel')} <span className="text-red-500">*</span>
           </label>
           <Input
-            placeholder="Enter Event Title"
+            placeholder={t('modal.placeholders.title')}
             value={title}
             onChange={e => setTitle(e.target.value)}
             className="h-auto px-4 py-3 text-14"
@@ -107,10 +109,10 @@ export const AddEventModal = ({
         {/* Description Textarea - Optional */}
         <div className="flex flex-col gap-2">
           <label className="text-14 font-normal text-gray-900">
-            Description
+            {t('modal.fields.descriptionLabel')}
           </label>
           <Textarea
-            placeholder="Enter event description (optional)"
+            placeholder={t('modal.placeholders.description')}
             value={description}
             onChange={e => setDescription(e.target.value)}
             className="min-h-[100px] px-4 py-3 text-14 resize-none"
@@ -121,14 +123,14 @@ export const AddEventModal = ({
         {/* Start Date and Time */}
         <div className="flex flex-col gap-2">
           <label className="text-14 font-normal text-gray-900">
-            Start Date & Time
+            {t('modal.fields.startDateTimeLabel')}
           </label>
           <div className="flex gap-3">
             <div className="flex-1">
               <DatePicker
                 value={startDate}
                 onChange={date => setStartDate(date instanceof Date ? date : undefined)}
-                placeholder="Select start date"
+                placeholder={t('modal.placeholders.startDate')}
                 className="w-full"
               />
             </div>
@@ -137,7 +139,7 @@ export const AddEventModal = ({
                 type="time"
                 value={startTime}
                 onChange={e => setStartTime(e.target.value)}
-                placeholder="HH:MM"
+                placeholder={t('modal.placeholders.time')}
                 className="h-auto px-4 py-3 text-14"
               />
             </div>
@@ -147,14 +149,14 @@ export const AddEventModal = ({
         {/* End Date and Time */}
         <div className="flex flex-col gap-2">
           <label className="text-14 font-normal text-gray-900">
-            End Date & Time
+            {t('modal.fields.endDateTimeLabel')}
           </label>
           <div className="flex gap-3">
             <div className="flex-1">
               <DatePicker
                 value={endDate}
                 onChange={date => setEndDate(date instanceof Date ? date : undefined)}
-                placeholder="Select end date"
+                placeholder={t('modal.placeholders.endDate')}
                 className="w-full"
               />
             </div>
@@ -163,7 +165,7 @@ export const AddEventModal = ({
                 type="time"
                 value={endTime}
                 onChange={e => setEndTime(e.target.value)}
-                placeholder="HH:MM"
+                placeholder={t('modal.placeholders.time')}
                 className="h-auto px-4 py-3 text-14"
               />
             </div>
@@ -180,7 +182,7 @@ export const AddEventModal = ({
             className="w-4 h-4 text-brand-500 border-gray-300 rounded focus:ring-brand-500"
           />
           <label htmlFor="isDefault" className="text-14 font-normal text-gray-900 cursor-pointer">
-            Set as default event
+              {t('modal.fields.defaultLabel')}
           </label>
         </div>
 
@@ -191,7 +193,7 @@ export const AddEventModal = ({
             onClick={handleClose}
             className="px-6"
           >
-            Cancel
+            {t('modal.actions.cancel')}
           </Button>
           <Button
             variant="brand"
@@ -199,7 +201,7 @@ export const AddEventModal = ({
             disabled={!title.trim()}
             className="px-6 text-white"
           >
-            Create Event
+            {t('modal.actions.create')}
           </Button>
         </div>
       </div>

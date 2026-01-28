@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/Checkbox'
 import { Badge } from '@/components/ui/Badge'
 import type { Guest, GuestGroup, GuestGroupId } from './mockGuests'
 import { formatDate } from './mockGuests'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 interface GuestsTableProps {
     categories: GuestGroup[]
@@ -16,7 +17,7 @@ interface GuestsTableProps {
     onDelete: (id: string) => void
     onAddGuest: (groupId: GuestGroupId) => void
     onAddCategory: () => void
-}
+} 
 
 export const GuestsTable = ({
     categories,
@@ -27,6 +28,7 @@ export const GuestsTable = ({
     onAddGuest,
     onAddCategory,
 }: GuestsTableProps) => {
+    const t = useI18nTranslations('eventsPlanning.guestList')
     const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
 
     const toggleCategory = (categoryId: string) => {
@@ -73,8 +75,8 @@ export const GuestsTable = ({
         return (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="p-6 text-center">
-                    <p className="text-16 text-gray-600 mb-2">No tables yet</p>
-                    <p className="text-14 text-gray-500 mb-4">Create a table to start adding guests.</p>
+                    <p className="text-16 text-gray-600 mb-2">{t('empty.noTablesTitle')}</p>
+                    <p className="text-14 text-gray-500 mb-4">{t('empty.noTablesSubtitle')}</p>
                     <Button
                         variant="brand"
                         size="sm"
@@ -83,7 +85,7 @@ export const GuestsTable = ({
                         type="button"
                     >
                         <Plus className="h-4 w-4 mr-2" />
-                        Add Table
+                        {t('common.addTable')}
                     </Button>
                 </div>
             </div>
@@ -96,22 +98,22 @@ export const GuestsTable = ({
             <div className="border-b border-gray-200 bg-gray-50 hidden md:block">
                 <div className="grid grid-cols-12 gap-4 px-4 py-3">
                     <div className="col-span-1">
-                        <span className="text-12 font-semibold text-gray-700 uppercase">Select</span>
+                        <span className="text-12 font-semibold text-gray-700 uppercase">{t('table.columns.select')}</span>
                     </div>
                     <div className="col-span-4">
-                        <span className="text-12 font-semibold text-gray-700 uppercase">Table / Guest Name</span>
+                        <span className="text-12 font-semibold text-gray-700 uppercase">{t('table.columns.tableGuestName')}</span>
                     </div>
                     <div className="col-span-2">
-                        <span className="text-12 font-semibold text-gray-700 uppercase">People</span>
+                        <span className="text-12 font-semibold text-gray-700 uppercase">{t('table.columns.people')}</span>
                     </div>
                     <div className="col-span-2">
-                        <span className="text-12 font-semibold text-gray-700 uppercase">Registered</span>
+                        <span className="text-12 font-semibold text-gray-700 uppercase">{t('table.columns.registered')}</span>
                     </div>
                     <div className="col-span-2">
-                        <span className="text-12 font-semibold text-gray-700 uppercase">Status</span>
+                        <span className="text-12 font-semibold text-gray-700 uppercase">{t('table.columns.status')}</span>
                     </div>
                     <div className="col-span-1">
-                        <span className="text-12 font-semibold text-gray-700 uppercase">Actions</span>
+                        <span className="text-12 font-semibold text-gray-700 uppercase">{t('table.columns.actions')}</span>
                     </div>
                 </div>
             </div>
@@ -150,7 +152,7 @@ export const GuestsTable = ({
                                 <div className="col-span-8 md:col-span-4 flex items-center min-w-0">
                                     <span className="text-14 font-semibold text-gray-900 truncate">{category.title}</span>
                                     <span className="ml-2 text-12 text-gray-500 hidden md:inline">
-                                        ({stats.total} guests, {stats.confirmed} confirmed)
+                                        ({stats.total} {t('summary.guestsCount', { count: stats.total })}, {stats.confirmed} {t('status.confirmed')})
                                     </span>
                                 </div>
                                 <div className="col-span-2 hidden md:flex items-center">
@@ -183,7 +185,7 @@ export const GuestsTable = ({
                                 <div className="bg-gray-50 border-t border-gray-200">
                                     {!hasGuests ? (
                                         <div className="px-4 py-6 text-center">
-                                            <p className="text-14 text-gray-500 mb-3">No guests in this table</p>
+                                            <p className="text-14 text-gray-500 mb-3">{t('empty.noGuestsInTable')}</p>
                                             <Button
                                                 variant="outlineBrand"
                                                 size="sm"
@@ -192,7 +194,7 @@ export const GuestsTable = ({
                                                 type="button"
                                             >
                                                 <Plus className="h-4 w-4 mr-2" />
-                                                Add Guest
+                                                {t('common.addGuest')}
                                             </Button>
                                         </div>
                                     ) : (
@@ -213,7 +215,7 @@ export const GuestsTable = ({
                                                     <div className="col-span-6 md:col-span-4 flex flex-col md:flex-row md:items-center min-w-0">
                                                         <span className="text-14 font-medium text-gray-900 truncate">{guest.name || 'Unnamed'}</span>
                                                         <span className="text-12 text-gray-500 md:hidden mt-1">
-                                                            {guest.peopleCount} people • {formatDate(guest.registeredAt)}
+                                                            {t('summary.people', { count: guest.peopleCount })} • {formatDate(guest.registeredAt)}
                                                         </span>
                                                     </div>
                                                     <div className="col-span-2 hidden md:flex items-center">
@@ -232,7 +234,7 @@ export const GuestsTable = ({
                                                             {guest.status === 'confirmed' ? (
                                                                 <Badge variant="confirmed" size="sm" className="flex items-center gap-1.5 px-2.5 py-1">
                                                                     <CheckCircle2 className="h-3.5 w-3.5" />
-                                                                    <span className="text-12">Confirmed</span>
+                                                                    <span className="text-12">{t('status.confirmed')}</span>
                                                                 </Badge>
                                                             ) : (
                                                                 <Badge
@@ -241,7 +243,7 @@ export const GuestsTable = ({
                                                                     className="flex items-center gap-1.5 px-2.5 py-1 text-gray-500 border-gray-300"
                                                                 >
                                                                     <XCircle className="h-3.5 w-3.5" />
-                                                                    <span className="text-12">None</span>
+                                                                    <span className="text-12">{t('status.none')}</span>
                                                                 </Badge>
                                                             )}
                                                         </button>
@@ -275,11 +277,11 @@ export const GuestsTable = ({
                     variant="outlineBrand"
                     size="sm"
                     onClick={onAddCategory}
-                    className="text-brand-500 hover:bg-brand-500 hover:text-white"
+                    className="text-brand-500 hover:bg-brand-500 hover:!text-white"
                     type="button"
                 >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add New Table
+                    {t('common.addNewTable')}
                 </Button>
             </div>
         </div>

@@ -1249,5 +1249,614 @@
     "tiktok": "زيارة صفحة التيك توك"
   },
   "copyright": "© {year} جميع الحقوق محفوظة لـ OurBride"
+},
+  "eventsPlanning": {
+   "addEvent": {
+  "modal": {
+    "title": "حدث جديد",
+    "fields": {
+      "titleLabel": "عنوان الحدث",
+      "descriptionLabel": "الوصف",
+      "startDateTimeLabel": "تاريخ ووقت البداية",
+      "endDateTimeLabel": "تاريخ ووقت النهاية",
+      "defaultLabel": "تعيينه كحدث افتراضي"
+    },
+    "placeholders": {
+      "title": "اكتب/اكتبي عنوان الحدث",
+      "description": "اكتب/اكتبي وصف الحدث (اختياري)",
+      "startDate": "اختيار تاريخ البداية",
+      "endDate": "اختيار تاريخ النهاية",
+      "time": "ساعة:دقيقة"
+    },
+    "actions": {
+      "cancel": "إلغاء",
+      "create": "إنشاء الحدث",
+      "addNewEvent": "إضافة حدث جديد"
+    }
+  },
+  "validation": {
+    "titleRequired": "عنوان الحدث مطلوب",
+    "startTimeRequired": "وقت البداية مطلوب",
+    "durationRequired": "المدة مطلوبة",
+    "invalidTimeFormat": "صيغة الوقت غير صحيحة (مثال 12:30)",
+    "durationPositive": "لازم المدة تكون رقم موجب"
+  }
+},
+
+    "common": {
+      "createdBy": "أنشئ بواسطة",
+      "viewAll": "عرض الكل",
+      "viewDetails": "عرض التفاصيل",
+      "outOf": "{completed} من {total}",
+      "untitledTask": "مهمة بدون عنوان",
+      "untitledService": "خدمة بدون عنوان",
+      "untitledNote": "ملاحظة بدون عنوان",
+      "untitledOccasion": "مناسبة بدون عنوان",
+      "guestSingular": "ضيف",
+      "guestPlural": "ضيوف",
+      "ofGuests": "من الضيوف",
+      "provider": "المزود",
+      "noBookings": "لا توجد حجوزات بعد",
+      "noNotes": "لا توجد ملاحظات بعد"
+    },
+    "sideMenu": {
+      "title": "التخطيط",
+      "tabs": {
+        "overview": "نظرة عامة",
+        "budget": "الميزانية",
+        "items": "العناصر",
+        "events": "الفعاليات",
+        "invitation": "الضيوف",
+        "occasions": "المناسبات",
+        "preparations": "التحضيرات",
+        "ToDo": "المهام",
+        "notes": "الملاحظات"
+      },
+      "status": {
+        "initializing": "جاري التهيئة...",
+        "needsInit": "يحتاج تهيئة",
+        "ready": "جاهز"
+      }
+    },
+    "overview": {
+      "actions": {
+        "backToEvents": "الرجوع إلى المناسبات",
+        "addNewEvent": "إضافة مناسبة جديدة"
+      },
+      "tabsHeader": {
+        "myEvents": "مناسباتي",
+        "sharedEvents": "مناسبات مشتركة"
+      },
+      "loading": {
+        "events": "جاري تحميل المناسبات...",
+        "eventDetails": "جاري تحميل تفاصيل المناسبة...",
+        "initializing": "جاري التهيئة...",
+        "settingUpBook": "جاري إعداد {book}...",
+        "pleaseWait": "من فضلك انتظر"
+      },
+      "errors": {
+        "loadEventsTitle": "تعذر تحميل المناسبات",
+        "loadEventsMessage": "تعذر تحميل المناسبات. حاول مرة أخرى.",
+        "loadEventDetailsTitle": "تعذر تحميل تفاصيل المناسبة",
+        "loadEventDetailsMessage": "تعذر تحميل تفاصيل المناسبة. حاول مرة أخرى."
+      },
+      "empty": {
+        "noMyEvents": "لا توجد مناسبات. أنشئ مناسبتك الأولى!",
+        "noSharedEvents": "لا توجد مناسبات مشتركة."
+      },
+      "toasts": {
+        "enterTitle": "من فضلك أدخل عنوان المناسبة",
+        "createdSuccess": "تم إنشاء المناسبة بنجاح",
+        "createFailed": "تعذر إنشاء المناسبة",
+        "initFailed": "تعذر تهيئة {book}"
+      },
+      "stats": {
+        "completedServices": "الخدمات المكتملة",
+        "completeLists": "القوائم المكتملة",
+        "planningBooks": "دفاتر التخطيط"
+      }
+    },
+    "cards": {
+      "eventSummary": {
+        "imageAlt": "صورة المناسبة",
+        "countdown": {
+          "days": "أيام",
+          "hours": "ساعات",
+          "minutesShort": "د"
+        }
+      },
+      "quickStats": {
+        "guestsCountText": "{count} من الضيوف",
+        "zero": "0"
+      },
+      "items": {
+        "title": "العناصر",
+        "estimatedBudget": "الميزانية المتوقعة",
+        "totalPrice": "السعر الإجمالي"
+      },
+      "tasks": {
+        "title": "تذكير بالمهام",
+        "empty": "لا توجد مهام بعد"
+      },
+      "upcomingBookings": {
+        "title": "حجوزات الخدمات",
+        "badges": {
+          "pending": "قيد الانتظار",
+          "completed": "مكتمل"
+        },
+        "empty": "لا توجد حجوزات بعد"
+      },
+      "budget": {
+        "fallbackTitle": "دفتر الميزانية",
+        "allBudget": "إجمالي الميزانية",
+        "paid": "المدفوع",
+        "remaining": "المتبقي",
+        "empty": "لم يتم تحديد ميزانية بعد"
+      },
+      "guests": {
+        "title": "الضيوف والدعوات",
+        "subtitle": "تتبّع الضيوف المدعوين والتفاصيل",
+        "ariaViewDetails": "عرض تفاصيل دعوات الضيوف",
+        "imageAlt": "صورة المناسبة",
+        "descriptionFallback": "إدارة قائمة الضيوف والدعوات في مكان واحد.",
+        "invitedGuests": "الضيوف المدعوون",
+        "guestSingular": "ضيف",
+        "guestPlural": "ضيوف"
+      }
+   
+    
+  },
+  "budget": {
+    "pageTitle": "الميزانية",
+    "noBudgetTitle": "لا توجد بيانات للميزانية",
+    "loading": {
+      "loadingBudgetTitle": "جاري تحميل الميزانية...",
+      "loadingBudgetSubtitle": "يرجى الانتظار قليلًا",
+      "initializingTitle": "جاري تهيئة دفتر الميزانية...",
+      "initializingSubtitle": "يتم إعداد دفتر الميزانية الخاص بك",
+      "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
+      "addingModelsSubtitle": "يرجى الانتظار أثناء إضافة التصنيفات الافتراضية"
+    },
+    "error": {
+      "failedToLoad": "فشل تحميل الميزانية. حاول مرة أخرى.",
+      "retry": "إعادة المحاولة"
+    },
+    "event": {
+      "eventIdRequired": "رقم الحدث مطلوب"
+    },
+    "header": {
+      "goBack": "رجوع",
+      "searchPlaceholder": "ابحث",
+      "clearSearch": "مسح البحث",
+      "saving": "جاري الحفظ...",
+      "saveChanges": "حفظ التغييرات",
+      "unsavedChanges": "تغييرات غير محفوظة",
+      "noChangesToSave": "لا توجد تغييرات للحفظ",
+      "changesSaved": "تم حفظ التغييرات بنجاح",
+      "failedToSave": "فشل حفظ التغييرات"
+    },
+    "filters": {
+      "placeholder": "اختر الفلتر...",
+      "all": "الكل",
+      "done": "تم",
+      "notDone": "غير مكتمل",
+      "favorite": "مفضل",
+      "notFavorite": "غير مفضل"
+    },
+    "overview": {
+      "title": "نظرة عامة على الميزانية",
+      "savedPercent": "تم توفير {percent}٪",
+      "budget": "الميزانية",
+      "estimatedCost": "التكلفة التقديرية",
+      "paid": "المدفوع",
+      "finalCost": "التكلفة النهائية",
+      "enterBudget": "أدخل الميزانية",
+      "save": "حفظ",
+      "egp": "ج.م",
+      "unnamedCategory": "تصنيف بدون اسم"
+
+    },
+    "categories": {
+      "title": "التصنيفات",
+      "new": "جديد",
+      "noCategoriesTitle": "لا توجد تصنيفات بعد",
+      "noCategoriesDesc": "قم بإنشاء تصنيف لبدء تنظيم العناصر.",
+      "editCategory": "تعديل التصنيف",
+      "deleteCategory": "حذف التصنيف",
+      "unnamedCategory": "تصنيف بدون اسم"
+    },
+    "lines": {
+      "empty": "لا توجد بنود ميزانية",
+      "addNew": "إضافة جديد",
+      "estimatedLabel": "التقديري:",
+      "selectCategoryHint": "اختر تصنيفًا لعرض القيمة التقديرية",
+      "headers": {
+        "service": "الخدمة",
+        "totalPrice": "السعر الإجمالي",
+        "paid": "المدفوع",
+        "remaining": "المتبقي",
+        "percentOfBudget": "٪ من الميزانية",
+        "actions": "الإجراءات"
+      },
+      "unnamedService": "خدمة بدون اسم"
+    },
+    "toasts": {
+      "lineSaved": "تم حفظ بند الميزانية",
+      "categorySaved": "تم حفظ التصنيف",
+      "categoryAndLineAdded": "تمت إضافة التصنيف والبند",
+      "deletedSuccessfully": "تم حذف \"{name}\" بنجاح",
+      "categoryDeletedSuccessfully": "تم حذف التصنيف \"{name}\" بنجاح",
+      "lineDataRequired": "بيانات البند مطلوبة عند إنشاء تصنيف جديد",
+      "noChangesToSave": "لا توجد تغييرات للحفظ",
+      "failedToSaveChanges": "فشل حفظ التغييرات",
+      "changesSavedSuccessfully": "تم حفظ التغييرات بنجاح"
+    },
+    "modals": {
+      "confirmDelete": {
+        "title": "تأكيد الحذف",
+        "lineMessage": "هل أنت متأكد من حذف بند الميزانية هذا؟ لا يمكن التراجع عن هذا الإجراء.",
+        "categoryMessage": "هل أنت متأكد من حذف هذا التصنيف؟ سيتم حذف جميع البنود التابعة له ولا يمكن التراجع عن هذا الإجراء.",
+        "cancel": "إلغاء",
+        "delete": "حذف"
+      },
+      "budgetLine": {
+        "addTitle": "إضافة بند ميزانية",
+        "editTitle": "تعديل بند الميزانية",
+        "serviceName": "اسم الخدمة",
+        "serviceNamePlaceholder": "أدخل اسم الخدمة",
+        "category": "التصنيف",
+        "selectCategory": "اختر تصنيفًا",
+        "totalPrice": "السعر الإجمالي",
+        "paid": "المدفوع",
+        "final": "النهائي",
+        "count": "العدد",
+        "payer": "الدافع",
+        "payerPlaceholder": "أدخل اسم الدافع",
+        "isDone": "مكتمل",
+        "isDoneDesc": "اعتبر هذا البند مكتملًا",
+        "isFavorite": "مفضل",
+        "isFavoriteDesc": "تمييز هذا البند كمفضل",
+        "notesOptional": "ملاحظات (اختياري)",
+        "notesPlaceholder": "أضف أي ملاحظات إضافية...",
+        "cancel": "إلغاء",
+        "save": "حفظ"
+      },
+      "category": {
+        "editTitle": "تعديل التصنيف",
+        "addTitle": "إضافة تصنيف (مع أول بند)",
+        "categorySectionTitle": "التصنيف",
+        "editHint": "تحديث بيانات التصنيف",
+        "createHint": "إنشاء تصنيف جديد",
+        "name": "الاسم",
+        "namePlaceholder": "مثال: التصنيف",
+        "description": "الوصف",
+        "descriptionPlaceholder": "اختياري…",
+        "icon": "الأيقونة",
+        "selectIcon": "اختر أيقونة",
+        "changeIcon": "تغيير الأيقونة",
+        "color": "اللون",
+        "selectColor": "اختر لونًا",
+        "estimated": "التكلفة التقديرية",
+        "firstLineTitle": "أول بند ميزانية",
+        "firstLineHint": "مطلوب لضمان مزامنة التصنيف بشكل صحيح",
+        "serviceName": "اسم الخدمة",
+        "serviceNamePlaceholder": "مثال: دعوات العائلة",
+        "totalPrice": "السعر الإجمالي",
+        "paid": "المدفوع",
+        "final": "النهائي",
+        "count": "العدد",
+        "dueDate": "تاريخ الاستحقاق",
+        "payer": "الدافع",
+        "payerPlaceholder": "العروس / العريس / ...",
+        "note": "ملاحظة",
+        "notePlaceholder": "اختياري…",
+        "done": "مكتمل",
+        "doneDesc": "اعتباره مكتملًا",
+        "favorite": "مفضل",
+        "favoriteDesc": "تثبيته في الأعلى",
+        "cancel": "إلغاء",
+        "save": "حفظ",
+        "addCategoryAndLine": "إضافة تصنيف وبند"
+      },
+      "colorPicker": {
+        "Green": "أخضر",
+        "Yellow": "أصفر",
+        "Blue": "أزرق",
+        "Red": "أحمر",
+        "Purple": "بنفسجي",
+        "Orange": "برتقالي",
+        "Pink": "وردي",
+        "Cyan": "سماوي"
+      },
+      "validation": {
+      "serviceNameRequired": "اسم الخدمة مطلوب",
+      "totalPriceRequired": "السعر الإجمالي يجب أن يكون 0 أو أكثر",
+      "paidRequired": "المدفوع يجب أن يكون 0 أو أكثر",
+      "nameRequired": "الاسم مطلوب",
+      "estimatedRequired": "التقديري يجب أن يكون 0 أو أكثر",
+      "categoryNameRequired": "اسم التصنيف مطلوب"
+    }
+    }
+  },
+  "guestList": {
+    "common": {
+      "pageTitle": "قائمة الضيوف",
+      "needToAddTable": "يجب عليك إضافة طاولة أولاً.",
+      "loading": "جاري تحميل قائمة الضيوف...",
+      "saveChanges": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "unsavedChanges": "يوجد تغييرات غير محفوظة",
+      "retry": "إعادة المحاولة",
+      "refresh": "تحديث",
+      "cancel": "إلغاء",
+      "addGuest": "إضافة ضيف",
+      "addNewGuest": "إضافة ضيف جديد",
+      "addTable": "إضافة طاولة",
+      "addNewTable": "إضافة طاولة جديدة",
+      "selectedTable": "الطاولة المحددة",
+      "untitledTable": "طاولة بدون اسم",
+      "uncategorized": "بدون تصنيف",
+      "unnamed": "بدون اسم",
+      "categoryName": "اسم التصنيف",
+      "categoryNamePlaceholder": "اكتب اسم التصنيف",
+      "slug": "الرابط",
+      "slugPlaceholder": "الرابط (اختياري)",
+      "description": "الوصف",
+      "descriptionPlaceholder": "اكتب الوصف (اختياري)",
+      "addNewCategory": "إضافة تصنيف جديد"
+    
+    },
+    "toasts": {
+      "refreshed": "تم تحديث قائمة الضيوف",
+      "guestDeleted": "تم حذف الضيف",
+      "guestAdded": "تم إضافة الضيف",
+      "saveSuccess": "تم حفظ التغييرات بنجاح",
+      "saveFailed": "فشل حفظ التغييرات"
+    },
+    "loadingStates": {
+      "initializingTitle": "جاري تهيئة دفتر الضيوف...",
+      "initializingSubtitle": "نقوم بإعداد دفتر الضيوف الخاص بك",
+      "addingModelsTitle": "جاري إضافة القوالب الافتراضية...",
+      "addingModelsSubtitle": "يرجى الانتظار أثناء إضافة التصنيفات الافتراضية",
+      "loadingGuestsTitle": "جاري تحميل الضيوف...",
+      "loadingGuestsSubtitle": "يرجى الانتظار لحظة"
+    },
+    "error": {
+      "title": "فشل تحميل الضيوف. حاول مرة أخرى.",
+      "unknown": "خطأ غير معروف"
+    },
+    "empty": {
+      "noGuestBook": "لا يوجد دفتر ضيوف",
+      "noTablesTitle": "لا توجد طاولات بعد",
+      "noTablesSubtitle": "أنشئ طاولة لتبدأ بإضافة الضيوف.",
+      "noGuestsInTable": "لا يوجد ضيوف في هذه الطاولة"
+    },
+    "tabs": {
+      "bride": "العروسة",
+      "groom": "العريس",
+      "ariaLabel": "تبويبات جهة الضيوف"
+    },
+    "summary": {
+      "guestsCount": " ضيف",
+      "totalPeople": " إجمالي الأشخاص"
+    },
+    "table": {
+      "columns": {
+        "select": "تحديد",
+        "tableGuestName": "الطاولة / اسم الضيف",
+        "people": "الأشخاص",
+        "registered": "تاريخ الإضافة",
+        "status": "الحالة",
+        "actions": "إجراءات"
+      },
+      "statsInline": "({{total}} ضيف، {{confirmed}} مؤكد)",
+      "dash": "—"
+    },
+    "status": {
+      "confirmed": "مؤكد",
+      "none": "بدون"
+    },
+    "dialog": {
+      "title": "إضافة ضيف جديد",
+      "mode": {
+        "selectTable": "اختيار طاولة",
+        "newTable": "طاولة جديدة",
+        "needToAddTable": "يجب عليك إضافة طاولة أولاً.",
+          "noTablesTitle": "لا توجد طاولات متاحة",
+        "noTablesSubtitle": "سيتم إنشاء طاولة جديدة أثناء إضافة هذا الضيف."
+      },
+      "fields": {
+        "tableLabel": "الطاولة",
+        "nameLabel": "الاسم",
+        "peopleCountLabel": "عدد الأشخاص الإجمالي",
+        "statusLabel": "الحالة"
+      },
+      "placeholders": {
+        "tableName": "اسم الطاولة",
+        "slugOptional": "الرابط (اختياري)",
+        "descriptionOptional": "الوصف (اختياري)",
+        "selectTable": "اختر طاولة",
+        "guestName": "اكتب اسم الضيف",
+        "peopleCount": "اكتب عدد الأشخاص",
+        "selectStatus": "اختر الحالة"
+      },
+      "actions": {
+        "cancel": "إلغاء",
+        "submit": "إضافة الضيف",
+        "saving": "جاري الحفظ...",
+        "addCategory": "إضافة التصنيف"
+      },
+      "validation": {
+        "categoryRequired": "التصنيف مطلوب",
+        "guestNameMin": "اسم الضيف لازم يكون حرفين على الأقل",
+        "categoryNameMin": "اسم التصنيف لازم يكون حرفين على الأقل",
+        "peopleMin": "الحد الأدنى 1",
+        "peopleMax": "الحد الأقصى 20"
+      }
+    }
+  },
+  "occasions": {
+    "page": {
+      "actions": {
+        "addNewOccasion": "إضافة مناسبة جديدة",
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جارٍ الحفظ...",
+        "cancel": "إلغاء",
+        "createOccasion": "إنشاء المناسبة",
+        "updateOccasion": "تحديث المناسبة",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "close": "إغلاق"
+      },
+      "status": {
+        "unsavedChanges": "تغييرات غير محفوظة",
+        "noOccasionsTitle": "لا توجد مناسبات",
+        "noOccasionsSubtitle": "ابدأ بإنشاء أول مناسبة لك"
+      },
+      "loading": {
+        "loadingOccasionsTitle": "جارٍ تحميل المناسبات...",
+        "initializingTitle": "جارٍ تهيئة دفتر المناسبات...",
+        "initializingSubtitle": "بنجهّز دفتر المناسبات بتاعك",
+        "addingModelsTitle": "جارٍ إضافة النماذج الافتراضية...",
+        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف النماذج الافتراضية",
+        "pleaseWait": "من فضلك انتظر لحظة"
+      },
+      "error": {
+        "failedToLoadTitle": "فشل تحميل المناسبات",
+        "failedToLoadMessage": "تعذر تحميل المناسبات. حاول مرة أخرى."
+      }
+    },
+
+    "common": {
+      "fallbacks": {
+        "noDate": "لا يوجد تاريخ",
+        "invalidDate": "تاريخ غير صالح",
+        "groomName": "اسم العريس",
+        "brideName": "اسم العروسة",
+        "occasionName": "اسم المناسبة"
+      },
+      "countdown": {
+        "days": "يوم",
+        "hours": "ساعة",
+        "minutes": "دقيقة"
+      }
+    },
+
+    "form": {
+      "title": {
+        "create": "إضافة مناسبة",
+        "edit": "تعديل المناسبة"
+      },
+      "labels": {
+        "titleEn": "العنوان (بالإنجليزية)",
+        "titleAr": "العنوان (بالعربية)",
+        "subTitleEn": "العنوان الفرعي (بالإنجليزية)",
+        "subTitleAr": "العنوان الفرعي (بالعربية)",
+        "date": "التاريخ",
+        "subDate": "تاريخ إضافي (اختياري)",
+        "brideFirstName": "الاسم الأول للعروسة",
+        "brideLastName": "اسم عائلة العروسة",
+        "groomFirstName": "الاسم الأول للعريس",
+        "groomLastName": "اسم عائلة العريس",
+        "caption": "وصف / ملاحظة"
+      },
+      "placeholders": {
+        "titleEn": "اكتب العنوان بالإنجليزية",
+        "titleAr": "اكتب العنوان بالعربية",
+        "subTitleEn": "اكتب العنوان الفرعي بالإنجليزية",
+        "subTitleAr": "اكتب العنوان الفرعي بالعربية",
+        "brideFirstName": "اكتب الاسم الأول للعروسة",
+        "brideLastName": "اكتب اسم عائلة العروسة",
+        "groomFirstName": "اكتب الاسم الأول للعريس",
+        "groomLastName": "اكتب اسم عائلة العريس",
+        "caption": "اكتب وصفًا أو ملاحظة"
+      },
+      "helperText": {
+        "titleRequiredNote": "من فضلك اكتب عنوان بالإنجليزية أو بالعربية"
+      },
+      "buttons": {
+        "cancel": "إلغاء",
+        "saving": "جارٍ الحفظ...",
+        "create": "إنشاء المناسبة",
+        "update": "تحديث المناسبة"
+      },
+   "validation": {
+  "brideFirstNameMin": "يجب ألا يقل اسم العروس عن حرفين",
+  "brideFirstNameMax": "يجب ألا يزيد اسم العروس عن 15 حرفًا",
+  "groomFirstNameMin": "يجب ألا يقل اسم العريس عن حرفين",
+  "groomFirstNameMax": "يجب ألا يزيد اسم العريس عن 15 حرفًا",
+  "titleRequired": "يرجى إدخال عنوان باللغة الإنجليزية أو العربية"
 }
-}
+    },
+
+    "detail": {
+      "locationFallback": "الجيزة، 6 أكتوبر",
+      "labels": {
+        "dateTime": "التاريخ والوقت"
+      }
+    }
+  },
+  
+    "notes": {
+      "page": {
+        "title": "الملاحظات",
+        "back": "رجوع"
+      },
+      "header": {
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "unsavedChanges": "تغييرات غير محفوظة"
+      },
+      "loading": {
+        "loadingNotes": "جاري تحميل الملاحظات...",
+        "loadingSubtitle": "من فضلك انتظر لحظة",
+        "initializingTitle": "جاري تهيئة دفتر الملاحظات...",
+        "initializingSubtitle": "بنجهز دفتر الملاحظات بتاعك",
+        "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
+        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف القوالب الافتراضية"
+      },
+      "sidebar": {
+        "title": "ملاحظاتك",
+        "addNew": "إضافة جديد",
+        "empty": "لا توجد قوائم بعد",
+        "untitled": "قائمة بدون اسم",
+        "actions": {
+          "editAria": "تعديل الملاحظة",
+          "deleteAria": "حذف الملاحظة"
+        }
+      },
+      "main": {
+        "empty": {
+          "title": "اختاري قائمة لعرض الملاحظة الخاصة بها",
+          "cta": "إضافة ملاحظات جديدة"
+        },
+        "edit": "تعديل",
+        "dash": "—"
+      },
+      "modal": {
+        "addTitle": "إضافة ملاحظة جديدة",
+        "editTitle": "تعديل الملاحظة",
+        "fields": {
+          "titleLabel": "اسم القائمة",
+          "noteLabel": "الملاحظة"
+        },
+        "placeholders": {
+          "title": "اكتبي اسم القائمة",
+          "note": "اكتبي ملاحظتك..."
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "add": "إضافة ملاحظة",
+          "saveChanges": "حفظ التغييرات",
+          "saving": "جاري الحفظ..."
+        },
+        "validation": {
+          "Listnameisrequired": "اسم القائمة مطلوب",
+          "Noteisrequired": "الملاحظة مطلوبة"
+        }
+      }
+    }
+    
+
+
+}}

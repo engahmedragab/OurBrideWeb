@@ -14,21 +14,21 @@ export const occasionFormSchema = z.object({
   subDate: z.string().optional().nullable(),
   brideFirstName: z
     .string()
-    .min(2, 'Bride first name must be at least 2 characters')
-    .max(15, 'Bride first name must not exceed 15 characters')
+    .min(2, 'brideFirstNameMin')
+    .max(15, 'brideFirstNameMax')
     .trim(),
   brideLastName: z.string().optional(),
   groomFirstName: z
     .string()
-    .min(2, 'Groom first name must be at least 2 characters')
-    .max(15, 'Groom first name must not exceed 15 characters')
+    .min(2, 'groomFirstNameMin')
+    .max(15, 'groomFirstNameMax')
     .trim(),
   groomLastName: z.string().optional(),
   type: z.nativeEnum(OccasionType),
 }).refine(
   (data) => data.titleEn || data.titleAr,
   {
-    message: 'Please enter a title in English or Arabic',
+    message: 'titleRequired',
     path: ['titleEn'],
   }
 )

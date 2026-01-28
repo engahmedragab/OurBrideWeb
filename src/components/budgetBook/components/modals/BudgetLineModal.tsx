@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { budgetLineFormSchema, type BudgetLineFormData } from '@/schema/budgetSchema/budget-line.schema'
 import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/responses'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 interface BudgetLineModalProps {
   isOpen: boolean
@@ -47,13 +48,16 @@ export const BudgetLineModal = ({
   categories,
   defaultCategoryId,
 }: BudgetLineModalProps) => {
+  
+  const t = useI18nTranslations('eventsPlanning.budget')
+  const tValidation = useI18nTranslations('eventsPlanning.budget.modals.validation')
   const [estimatedInput, setEstimatedInput] = useState<string>('')
   const [paidInput, setPaidInput] = useState<string>('')
   const [finalInput, setFinalInput] = useState<string>('')
   const [countInput, setCountInput] = useState<string>('')
 
   const {
-    register,
+    register, 
     handleSubmit,
     control,
     formState: { errors, isValid },
@@ -211,7 +215,7 @@ export const BudgetLineModal = ({
 
   const categoryOptions = useMemo(() => {
     return [
-      { label: 'Select category', value: '' },
+      { label: t('modals.budgetLine.selectCategory'), value: '' },
       ...categories.map(category => ({
         label: category.name || 'Unnamed Category',
         value: category.id.toString(),
@@ -223,7 +227,7 @@ export const BudgetLineModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={editingLine ? 'Edit Budget Line' : 'Add Budget Line'}
+      title={editingLine ? t('modals.budgetLine.editTitle') : t('modals.budgetLine.addTitle')}
       maxWidth="lg"
     >
       <div className="flex flex-col max-h-[80vh]">
@@ -231,21 +235,21 @@ export const BudgetLineModal = ({
         {/* Service Name */}
         <div className="space-y-2">
           <label className="block text-14 font-semibold text-gray-900">
-            Service Name <span className="text-red-500">*</span>
+            {t('modals.budgetLine.serviceName')} <span className="text-red-500">*</span>
           </label>
           <Input
             type="text"
             {...register('expense')}
-            placeholder="Enter service name"
+            placeholder={t('modals.budgetLine.serviceNamePlaceholder')}
             size="lg"
-            errorMessage={errors.expense?.message}
+            errorMessage={errors.expense?.message&&tValidation(errors.expense?.message)}
           />
         </div>
 
         {/* Category */}
         <div className="space-y-2">
           <label className="block text-14 font-semibold text-gray-900">
-            Category
+            {t('modals.budgetLine.category')}
           </label>
           <Controller
             name="lineCategoryId"
@@ -255,7 +259,7 @@ export const BudgetLineModal = ({
                 value={field.value?.toString() || ''}
                 onChange={(value) => field.onChange(value ? Number(value) : null)}
                 options={categoryOptions}
-                placeholder="Select category"
+                placeholder={t('modals.budgetLine.selectCategory')}
                 size="lg"
               />
             )}
@@ -267,7 +271,7 @@ export const BudgetLineModal = ({
           {/* Total Price */}
           <div className="space-y-2">
             <label className="block text-14 font-semibold text-gray-900">
-              Total Price <span className="text-red-500">*</span>
+              {t('modals.budgetLine.totalPrice')} <span className="text-red-500">*</span>
             </label>
             <Input
               type="text"
@@ -276,13 +280,13 @@ export const BudgetLineModal = ({
               onChange={e => handleAmountChange(e.target.value, 'estimated')}
               placeholder="0"
               size="lg"
-              errorMessage={errors.estimated?.message}
+              errorMessage={errors.estimated?.message && tValidation(errors.estimated?.message)}
             />
           </div>
 
           {/* Paid */}
           <div className="space-y-2">
-            <label className="block text-14 font-semibold text-gray-900">Paid</label>
+            <label className="block text-14 font-semibold text-gray-900">{t('modals.budgetLine.paid')}</label>
             <Input
               type="text"
               inputMode="numeric"
@@ -299,7 +303,7 @@ export const BudgetLineModal = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Final */}
           <div className="space-y-2">
-            <label className="block text-14 font-semibold text-gray-900">Final</label>
+            <label className="block text-14 font-semibold text-gray-900">{t('modals.budgetLine.final')}</label>
             <Input
               type="text"
               inputMode="numeric"
@@ -313,7 +317,7 @@ export const BudgetLineModal = ({
 
           {/* Count */}
           <div className="space-y-2">
-            <label className="block text-14 font-semibold text-gray-900">Count</label>
+            <label className="block text-14 font-semibold text-gray-900">{t('modals.budgetLine.count')}</label>
             <Input
               type="text"
               inputMode="numeric"
@@ -328,11 +332,11 @@ export const BudgetLineModal = ({
 
         {/* Payer */}
         <div className="space-y-2">
-          <label className="block text-14 font-semibold text-gray-900">Payer</label>
+          <label className="block text-14 font-semibold text-gray-900">{t('modals.budgetLine.payer')}</label>
           <Input
             type="text"
             {...register('payer')}
-            placeholder="Enter payer name"
+            placeholder={t('modals.budgetLine.payerPlaceholder')}
             size="lg"
             errorMessage={errors.payer?.message}
           />
@@ -359,9 +363,9 @@ export const BudgetLineModal = ({
                 className="block text-14 font-semibold text-gray-900 mb-1 cursor-pointer"
                 onClick={() => setValue('isDone', !watch('isDone'), { shouldValidate: true })}
               >
-                Is Done
+                {t('modals.budgetLine.isDone')}
               </label>
-              <p className="text-12 text-gray-500">Mark this line as completed</p>
+              <p className="text-12 text-gray-500">{t('modals.budgetLine.isDoneDesc')}</p>
             </div>
           </div>
 
@@ -384,19 +388,19 @@ export const BudgetLineModal = ({
                 className="block text-14 font-semibold text-gray-900 mb-1 cursor-pointer"
                 onClick={() => setValue('isFavorite', !watch('isFavorite'), { shouldValidate: true })}
               >
-                Is Favorite
+                {t('modals.budgetLine.isFavorite')}
               </label>
-              <p className="text-12 text-gray-500">Mark this line as favorite</p>
+              <p className="text-12 text-gray-500">{t('modals.budgetLine.isFavoriteDesc')}</p>
             </div>
           </div>
         </div>
 
         {/* Notes */}
         <div className="space-y-2">
-          <label className="block text-14 font-semibold text-gray-900">Notes (Optional)</label>
+          <label className="block text-14 font-semibold text-gray-900">{t('modals.budgetLine.notesOptional')}</label>
           <Textarea
             {...register('note')}
-            placeholder="Add any additional notes..."
+            placeholder={t('modals.budgetLine.notesPlaceholder')}
             size="lg"
             rows={4}
             errorMessage={errors.note?.message}
@@ -413,7 +417,7 @@ export const BudgetLineModal = ({
               onClick={onClose}
               className="flex-1 h-[44px] !rounded-full"
             >
-              Cancel
+                {t('modals.budgetLine.cancel')}
             </Button>
             <Button
               variant="brand"
@@ -422,7 +426,7 @@ export const BudgetLineModal = ({
               disabled={!isValid}
               className="flex-1 h-[44px] !rounded-full text-white"
             >
-              Save
+              {t('modals.budgetLine.save')}
             </Button>
           </div>
         </div>

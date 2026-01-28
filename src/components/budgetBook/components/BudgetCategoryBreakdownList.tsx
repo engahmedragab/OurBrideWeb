@@ -4,10 +4,12 @@ import { Edit2, Trash2, Plus } from 'lucide-react'
 import { cardVariants } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
-// @ts-ignore - budgetColors might be missing or in a different location during lint/test time
+
 import { getCategoryColor } from '@/utils/budgetbook/budgetColors'
 import { CategoryIcon } from './CategoryIcon'
 import type { BudgetLineCategoryResponse } from '@/types/responses'
+import { useI18nLocale, useI18nTranslations } from '@/i18n/hooks'
+import { pickLocalizedText } from '@/utils/translation/i18nText'
 
 interface BudgetCategoryBreakdownListProps {
   categoryStats: Array<{
@@ -17,7 +19,7 @@ interface BudgetCategoryBreakdownListProps {
   }>
   activeCategoryId: number | null // null means "All"
   onCategoryClick: (categoryId: number | null) => void
-  onEditCategory?: (categoryId: number) => void
+  onEditCategory?: (categoryId: number) => void 
   onDeleteCategory?: (categoryId: number) => void
   onCreateCategory?: () => void
   totalBudget: number
@@ -36,6 +38,15 @@ export const BudgetCategoryBreakdownList = ({
   totalEstimated,
   isLoading = false,
 }: BudgetCategoryBreakdownListProps) => {
+  const t = useI18nTranslations('eventsPlanning.budget')
+  const locale = useI18nLocale()
+  const getCategoryLabel = (cat: BudgetLineCategoryResponse) =>
+    pickLocalizedText(locale, {
+      ar: cat.nameAr || cat.name,
+      en: cat.nameEn || cat.name,
+      fallback: cat.name,
+    }) || t('categories.unnamedCategory')
+
   if (isLoading) {
     return (
       <div
@@ -62,7 +73,7 @@ export const BudgetCategoryBreakdownList = ({
     >
       {/* Header with Title and Add Category Button - Fixed, not scrollable */}
       <div className="flex items-center justify-between px-3 pt-3 pb-2 flex-shrink-0 border-b border-gray-100">
-        <h3 className="text-14 font-semibold text-gray-900">Categories</h3>
+        <h3 className="text-14 font-semibold text-gray-900">{t('categories.title')}</h3>
         {onCreateCategory && (
           <Button
             variant="ghost"
@@ -71,7 +82,7 @@ export const BudgetCategoryBreakdownList = ({
             className="text-brand-500 whitespace-nowrap !rounded-lg h-9 px-3  border-0"
           >
             <Plus className="h-3.5 w-3.5 mr-1.5" />
-            New
+            {t('categories.new')}
           </Button>
         )}
       </div>
@@ -82,8 +93,8 @@ export const BudgetCategoryBreakdownList = ({
           {/* Category items */}
           {categoryStats.length === 0 ? (
             <div className="w-full rounded-lg border border-dashed border-gray-200  px-3 py-4 text-center">
-              <p className="text-13 font-medium text-gray-700">No categories yet</p>
-              <p className="mt-1 text-12 text-gray-500">Create a category to start organizing items.</p>
+              <p className="text-13 font-medium text-gray-700">{t('categories.noCategoriesTitle')}</p>
+              <p className="mt-1 text-12 text-gray-500">{t('categories.noCategoriesDesc')}</p>
             </div>
           ) : (
             categoryStats.map(stat => {
@@ -127,7 +138,7 @@ export const BudgetCategoryBreakdownList = ({
                         isActive ? 'text-gray-900 font-semibold' : 'text-gray-600'
                       )}
                     >
-                      {stat.category.name || 'Unnamed Category'}
+                      {getCategoryLabel(stat.category)}
                     </span>
 
                     {/* Action buttons */}

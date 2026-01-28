@@ -34,6 +34,7 @@ import { generateTempId } from '@/utils/sync/tempIds'
 import { buildBookRequestFromLocal, convertLineToRequest, convertCategoryToRequest } from '@/utils/planning/mappers/invitationMappers'
 import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { BookClass, UserType as LocalUserType } from '@/types/responses/book-enums'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 type GuestBookDraft = GuestBookResponse & {
   lineCategories?: Array<GuestLineCategoryResponse & { clientId?: string }>
@@ -103,11 +104,12 @@ const mapLineToGuest = (line: GuestLineResponse & { clientId?: string }, selecte
 }
 
 export default function InvitationPage() {
+  const t = useI18nTranslations('eventsPlanning.guestList')
   return (
     <Suspense
       fallback={
         <div className="flex items-center justify-center py-12">
-          <LoadingOverlay open={true} title="Loading..." />
+          <LoadingSpinner text={t('common.loading')} />
         </div>
       }
     >
@@ -117,6 +119,7 @@ export default function InvitationPage() {
 }
 
 function InvitationPageContent() {
+  const t = useI18nTranslations('eventsPlanning.guestList')
   const { addToast } = useToast()
   const eventId = useEventId()
 
@@ -279,7 +282,7 @@ function InvitationPageContent() {
       return lineCatId == null && matchesSide
     })
     if (hasUncategorized) {
-      mapped.unshift({ id: 'uncategorized', title: 'Uncategorized' })
+      mapped.unshift({ id: 'uncategorized', title: t('common.uncategorized') })
     }
 
     return mapped
@@ -313,7 +316,7 @@ function InvitationPageContent() {
 
   const handleRefresh = () => {
     refetch()
-    addToast('Guest list refreshed', 'success')
+    addToast(t('toasts.refreshed'), 'success')
   }
 
   const handleToggleSelect = (id: string) => {
@@ -353,7 +356,7 @@ function InvitationPageContent() {
       )
       return { ...prev, lines: nextLines }
     })
-    addToast('Guest deleted', 'info')
+    addToast(t('toasts.guestDeleted'), 'info')
   }
 
 
@@ -364,15 +367,15 @@ function InvitationPageContent() {
         if (result.reason === 'no-changes') setHasUnsavedChanges(false)
         return
       }
-      addToast(result.message || 'Failed to save changes', 'error')
+      addToast(result.message || t('toasts.saveFailed'), 'error')
       return
     }
-    addToast(result.message || 'Changes saved successfully', 'success')
+    addToast(result.message || t('toasts.saveSuccess'), 'success')
   }
 
   /** open guest modal */
   const handleOpenAddGuest = (groupId?: GuestGroupId, fromCategorySection?: boolean) => {
-    // لو فتحنا من جروب مؤقت (tmp-..) أو Uncategorized — مش هنقفل الاختيار على حاجة غير صالحة
+   
     if (fromCategorySection) {
       setForceNewCategory(true)
       setForcedGroupId(undefined)
@@ -419,7 +422,7 @@ function InvitationPageContent() {
   //   setLocalDraft(nextDraft)
   //   setHasUnsavedChanges(true)
 
-  //   // ✅ أهم نقطة: Sync فوري للـ category عشان تبقى “موجودة” وبعدين تضيف lines عليها
+
   //   await handleSync(nextDraft)
   //   // setIsAddCategoryOpen(false)
   // }
@@ -437,7 +440,7 @@ function InvitationPageContent() {
     const now = new Date().toISOString()
 
     applyLocalUpdate((currentDraft) => {
-      // 1) لو new: ضيف category في lineCategories
+     
       let categoryIdForLine: number | null = payload.mode === 'existing' ? payload.lineCategoryId : null
       let categoryCountIdForLine: number | null = null
       let categorySlugForLine: string | null = null
@@ -535,25 +538,25 @@ function InvitationPageContent() {
       }
     })
 
-    addToast('Guest added', 'info')
+    addToast(t('toasts.guestAdded'), 'info')
   }
 
   // Show loading state if not mounted yet (to prevent hydration mismatch) or if actually loading
   if (!isMounted || isLoading || isInitializing || isAddingModels) {
     const loadingTitle = isInitializing
-      ? 'Initializing guest book...'
+      ? t('loadingStates.initializingTitle')
       : isAddingModels
-        ? 'Adding default models...'
-        : 'Loading guests...'
+        ? t('loadingStates.addingModelsTitle')
+        : t('loadingStates.loadingGuestsTitle')
     const loadingSubtitle = isInitializing
-      ? 'Setting up your guest book'
+      ? t('loadingStates.initializingSubtitle')
       : isAddingModels
-        ? 'Please wait while we add default categories'
-        : 'Please wait a moment'
+        ? t('loadingStates.addingModelsSubtitle')
+        : t('loadingStates.loadingGuestsSubtitle')
 
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+        <LoadingSpinner text={loadingTitle + ' ' + loadingSubtitle} fullScreen={true} />
       </div>
     )
   }
@@ -561,10 +564,10 @@ function InvitationPageContent() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-16 text-red-600 mb-4">Failed to load guests. Please try again.</p>
+        <p className="text-16 text-red-600 mb-4">{t('error.title')}</p>
         <p className="text-14 text-gray-500 mb-4">{error instanceof Error ? error.message : 'Unknown error'}</p>
         <Button variant="outline" onClick={() => refetch()} type="button">
-          Retry
+          {t('common.retry')}
         </Button>
       </div>
     )
@@ -575,9 +578,9 @@ function InvitationPageContent() {
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <GuestsHeader onRefresh={handleRefresh} />
         <div className="py-12 text-center">
-          <p className="text-16 text-gray-500 mb-4">No guest book found</p>
+          <p className="text-16 text-gray-500 mb-4">{t('empty.noGuestBook')}</p>
           <Button variant="brand" onClick={() => refetch()} className="text-white" type="button">
-            Refresh
+            {t('common.refresh')}
           </Button>
         </div>
       </div>
@@ -600,11 +603,11 @@ function InvitationPageContent() {
               type="button"
             >
               <Save className="h-4 w-4" />
-              {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+              {syncMutation.isPending ? t('common.saving') : t('common.saveChanges')}
             </Button>
 
             {hasUnsavedChanges && (
-              <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+              <span className="text-16 text-brand-500 font-medium">{t('common.unsavedChanges')}</span>
             )}
           </div>
         )}

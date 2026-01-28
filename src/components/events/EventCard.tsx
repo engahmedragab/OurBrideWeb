@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Users } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface EventCardProps {
   eventName: string
@@ -31,6 +32,7 @@ export const EventCard = ({
   className,
   topColor,
 }: EventCardProps) => {
+  const t = useI18nTranslations('eventsPlanning')
   // Show first 2 avatars, then a "+X" indicator
   const visibleAvatars = attendeeAvatars.slice(0, 2)
   const remainingCount = Math.max(0, attendeeCount - visibleAvatars.length)
@@ -62,7 +64,7 @@ export const EventCard = ({
         <div className="flex gap-2 items-center w-full">
           {/* Creator Name */}
           <p className="flex-1 text-12 font-normal text-gray-300">
-            Created By {creatorName}
+            {t('common.createdBy')} {creatorName}
           </p>
 
           {/* Attendee Avatars */}
