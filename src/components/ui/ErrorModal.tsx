@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/Button'
 import somethingWrongSvg from '@/assets/svg/something-wrong.svg'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ErrorModalProps {
   open: boolean
@@ -35,6 +36,7 @@ export const ErrorModal = ({
   containerClassName,
   showRetry = true,
 }: ErrorModalProps) => {
+ 
   if (!open) return null
 
   const handleRetry = () => {

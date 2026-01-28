@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { X } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
 // Helper to convert string/number/empty to number | undefined
 const numberOrUndefined = z
@@ -24,23 +25,23 @@ const numberOrUndefined = z
   })
   .pipe(z.number().optional())
 
-const itemSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+const itemSchema = (t: (key: string) => string) => z.object({
+  name: z.string().min(1, t('itemForm.validation.nameRequired')),
   description: z.string().optional(),
   quantity: numberOrUndefined.refine(
     (v) => v === undefined || (!Number.isNaN(v) && v >= 0),
-    'Quantity must be a valid number'
+    t('itemForm.validation.quantityInvalid')
   ),
   totalPrice: numberOrUndefined.refine(
     (v) => v === undefined || (!Number.isNaN(v) && v >= 0),
-    'Total price must be a valid number'
+    t('itemForm.validation.totalPriceInvalid')
   ),
   providerName: z.string().optional(),
   buyDate: z.string().optional(),
   isDone: z.boolean().default(false),
 })
 
-export type EditItemFormValues = z.infer<typeof itemSchema>
+export type EditItemFormValues = z.infer<ReturnType<typeof itemSchema>>
 
 export interface EditItemModalProps {
   open: boolean
@@ -73,6 +74,8 @@ export const EditItemModal = ({
   initialValues,
   isLoading = false,
 }: EditItemModalProps) => {
+  const t = useI18nTranslations('items')
+  const schema = itemSchema(t)
   const {
     register,
     handleSubmit,
@@ -81,7 +84,7 @@ export const EditItemModal = ({
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<EditItemFormValues>({
-    resolver: zodResolver(itemSchema) as never,
+    resolver: zodResolver(schema) as never,
     defaultValues: {
       name: '',
       description: '',
@@ -158,7 +161,7 @@ export const EditItemModal = ({
     >
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-6">
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-20 font-semibold text-gray-900">Edit Item</h2>
+          <h2 className="text-20 font-semibold text-gray-900">{t('itemForm.titles.edit')}</h2>
           <button
             type="button"
             onClick={handleClose}
@@ -172,12 +175,12 @@ export const EditItemModal = ({
         <div className="space-y-4">
           <div className="space-y-1.5">
             <label htmlFor="item-name" className="block text-14 font-medium text-gray-700">
-              Name <span className="text-red-500">*</span>
+              {t('itemForm.fields.name')} <span className="text-red-500">*</span>
             </label>
             <Input
               id="item-name"
               type="text"
-              placeholder="Enter item name"
+              placeholder={t('itemForm.placeholders.name')}
               {...register('name')}
               variant={errors.name ? 'error' : nameValue ? 'fill' : 'default'}
               errorMessage={errors.name?.message}
@@ -188,12 +191,12 @@ export const EditItemModal = ({
 
           <div className="space-y-1.5">
             <label htmlFor="item-description" className="block text-14 font-medium text-gray-700">
-              Description
+              {t('itemForm.fields.description')}
             </label>
             <Input
               id="item-description"
               type="text"
-              placeholder="Enter description"
+              placeholder={t('itemForm.placeholders.description')}
               {...register('description')}
               variant="default"
               size="lg"
@@ -204,12 +207,12 @@ export const EditItemModal = ({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label htmlFor="item-quantity" className="block text-14 font-medium text-gray-700">
-                Quantity
+                {t('itemForm.fields.quantity')}
               </label>
               <Input
                 id="item-quantity"
                 type="number"
-                placeholder="0"
+                placeholder={t('itemForm.placeholders.quantity')}
                 {...register('quantity')}
                 variant={errors.quantity ? 'error' : 'default'}
                 errorMessage={errors.quantity?.message}
@@ -220,12 +223,12 @@ export const EditItemModal = ({
 
             <div className="space-y-1.5">
               <label htmlFor="item-totalPrice" className="block text-14 font-medium text-gray-700">
-                Total price
+                {t('itemForm.fields.totalPrice')}
               </label>
               <Input
                 id="item-totalPrice"
                 type="number"
-                placeholder="0"
+                placeholder={t('itemForm.placeholders.totalPrice')}
                 {...register('totalPrice')}
                 variant={errors.totalPrice ? 'error' : 'default'}
                 errorMessage={errors.totalPrice?.message}
@@ -237,12 +240,12 @@ export const EditItemModal = ({
 
           <div className="space-y-1.5">
             <label htmlFor="item-providerName" className="block text-14 font-medium text-gray-700">
-              Provider name
+              {t('itemForm.fields.providerName')}
             </label>
             <Input
               id="item-providerName"
               type="text"
-              placeholder="Enter provider name"
+              placeholder={t('itemForm.placeholders.providerName')}
               {...register('providerName')}
               variant="default"
               size="lg"
@@ -252,7 +255,7 @@ export const EditItemModal = ({
 
           <div className="space-y-1.5">
             <label htmlFor="item-buyDate" className="block text-14 font-medium text-gray-700">
-              Buy date
+              {t('itemForm.fields.buyDate')}
             </label>
             <Input
               id="item-buyDate"
@@ -264,7 +267,7 @@ export const EditItemModal = ({
             />
           </div>
 
-          {/* ✅ Checkbox شغال وممكن التعديل */}
+          {/*  Checkbox  */}
           <Controller
             control={control}
             name="isDone"
@@ -275,7 +278,7 @@ export const EditItemModal = ({
                   onChange={(val) => field.onChange(val === true)}
                   disabled={isSubmitting || isLoading}
                 />
-                <span className="text-sm text-gray-700">Mark as completed</span>
+                <span className="text-sm text-gray-700">{t('itemForm.checkbox.completed')}</span>
               </div>
             )}
           />
@@ -283,10 +286,10 @@ export const EditItemModal = ({
 
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
           <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting || isLoading}>
-            Cancel
+            {t('itemForm.actions.cancel')}
           </Button>
           <Button type="submit" variant="brand" className="text-white" disabled={isSubmitting || isLoading || !isValid}>
-            {isSubmitting || isLoading ? 'Saving...' : 'Save Changes'}
+            {isSubmitting || isLoading ? t('itemForm.titles.saving') : t('itemForm.actions.save')}
           </Button>
         </div>
       </form>

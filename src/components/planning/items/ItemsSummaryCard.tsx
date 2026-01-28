@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ItemsSummaryCardProps {
   title: string
@@ -20,7 +21,7 @@ export const ItemsSummaryCard = ({
 }: ItemsSummaryCardProps) => {
   const pending = Math.max(0, total - completed)
   const progressPercentage = total > 0 ? (completed / total) * 100 : 0
-
+  const t = useI18nTranslations('items')
   return (
     <div className={cn('rounded-xl border border-gray-200 bg-white p-4', className)}>
       {/* Header */}
@@ -31,7 +32,7 @@ export const ItemsSummaryCard = ({
 
       {/* Subtitle */}
       <p className="mb-3 text-xs text-gray-500">
-        {completed} of {total} Items Completed
+      {t('progress.itemsCompleted', {completed,total,})}
       </p>
 
       {/* Progress Bar */}
@@ -46,17 +47,17 @@ export const ItemsSummaryCard = ({
       <div className="grid grid-cols-3 gap-3">
         <div className="text-center">
           <p className="text-lg font-semibold text-gray-900">{total}</p>
-          <p className="mt-0.5 text-xs text-gray-500">Total</p>
+          <p className="mt-0.5 text-xs text-gray-500">{t('itemForm.checkbox.total')}</p>
         </div>
 
         <div className="text-center">
           <p className="text-lg font-semibold text-green-500">{completed}</p>
-          <p className="mt-0.5 text-xs text-gray-500">Completed</p>
+          <p className="mt-0.5 text-xs text-gray-500">{t('itemForm.checkbox.completed')}</p>
         </div>
 
         <div className="text-center">
           <p className="text-lg font-semibold text-yellow-600">{pending}</p>
-          <p className="mt-0.5 text-xs text-gray-500">Still on the way</p>
+          <p className="mt-0.5 text-xs text-gray-500">{t('itemForm.checkbox.stillOnTheWay')}</p>
         </div>
       </div>
     </div>

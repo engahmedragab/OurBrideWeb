@@ -1188,6 +1188,90 @@
   }
   }
 },
+"items": {
+  "title": "العناصر",
+  "backToEvents": "العودة إلى مناسباتي",
+  "uncategorized": "غير مصنف",
+  "loading": {
+    "items": "جاري تحميل العناصر...",
+    "initializingBook": "جاري تهيئة دفتر العناصر...",
+    "addingModels": "جاري إضافة العناصر الافتراضية..."
+  },
+
+  "errors": {
+    "loadTitle": "فشل تحميل العناصر",
+    "loadMessage": "فشل تحميل العناصر. حاول مرة أخرى.",
+    "noBook": "لم يتم العثور على دفتر عناصر. يرجى تهيئته أولاً.",
+    "ItemBookNotFound": "دفتر العناصر غير موجود"
+  },
+
+  "actions": {
+    "save": "حفظ التغييرات",
+    "saving": "جاري الحفظ...",
+    "unsavedChanges": "تغييرات غير محفوظة",
+    "addNew": "إضافة جديد"
+  },
+
+  "lists": {
+    "yourLists": "قوائمك",
+    "untitled": "قائمة بدون اسم",
+    "noItems": "لا توجد عناصر في هذه القائمة بعد."
+  },
+  "itemForm": {
+    "titles": {
+      "add": "إضافة عنصر جديد",
+      "edit": "تعديل العنصر",
+      "saving": "جاري الحفظ...",
+      "addItem": "إضافة العنصر"
+    },
+
+    "fields": {
+      "name": "الاسم",
+      "description": "الوصف",
+      "quantity": "الكمية",
+      "totalPrice": "السعر الإجمالي",
+      "providerName": "اسم المورّد",
+      "buyDate": "تاريخ الشراء"
+    },
+
+    "placeholders": {
+      "name": "أدخل اسم العنصر",
+      "description": "أدخل الوصف",
+      "quantity": "0",
+      "totalPrice": "0",
+      "providerName": "أدخل اسم المورّد"
+    },
+
+    "checkbox": {
+      "completed": "مكتمل",
+      "stillOnTheWay": "قيد التنفيذ",
+      "total": "إجمالي"
+    },
+
+
+
+    "actions": {
+      "cancel": "إلغاء",
+      "add": "إضافة العنصر",
+      "save": "حفظ التغييرات",
+      "saving": "جاري الحفظ..."
+    },
+
+    "validation": {
+      "nameRequired": "الاسم مطلوب",
+      "quantityInvalid": "الكمية يجب أن تكون رقمًا صحيحًا",
+      "totalPriceInvalid": "السعر الإجمالي يجب أن يكون رقمًا صحيحًا"
+    },
+
+    "errors": {
+      "createFailed": "فشل إنشاء العنصر:",
+      "updateFailed": "فشل تحديث العنصر:"
+    }
+  },
+  "progress": {
+  "itemsCompleted": "{{completed}} من {{total}} عناصر مكتملة"
+}
+},
 "reelDetails": {
   "loading": "جاري تحميل الريل...",
   "reelNotFoundTitle": "الريل غير موجود",

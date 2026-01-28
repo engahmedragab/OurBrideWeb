@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useCallback, Suspense } from 'react'
 import { ErrorModal } from '@/components/ui/ErrorModal'
-import { Button, LoadingOverlay } from '@/components/ui'
+import { Button, LoadingOverlay, LoadingSpinner } from '@/components/ui'
 import { Save } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ChevronLeft } from 'lucide-react'
@@ -30,11 +30,13 @@ import {
   convertLineToRequest,
   convertCategoryToRequest,
 } from '@/utils/planning/mappers/itemsMappers'
+import { useI18nTranslations } from '@/i18n'
 
 function ItemsPageContent() {
   const eventId = useEventId()
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [createListOpen, setCreateListOpen] = useState(false)
+  const t = useI18nTranslations('items')
 
   // Fetch item book (includes lines and categories) - GET endpoint only
   const { data: itemBook, isLoading, error, refetch } = useItemBook({
@@ -65,7 +67,7 @@ function ItemsPageContent() {
     eventId: eventId ?? undefined,
     requireEventId: true,
     syncFn: async () => {
-      if (!localItemBook) throw new Error('Item book not found')
+      if (!localItemBook) throw new Error(t('errors.ItemBookNotFound'))
       const bookRequest = buildItemBookRequest(localItemBook)
       await syncMutation.mutateAsync({
         data: bookRequest,
@@ -190,7 +192,7 @@ function ItemsPageContent() {
     }
 
     return lines.map((line: ItemLineResponse) => {
-      const categoryName = categoryNameMap.get(line.lineCategoryId || 0) || 'Uncategorized'
+      const categoryName = categoryNameMap.get(line.lineCategoryId || 0) || t('uncategorized')
       return convertLineToUiItem(line, categoryName)
     })
   }, [localItemBook, selectedCategoryId, getLinesByCategory, categoryNameMap])
@@ -207,7 +209,7 @@ function ItemsPageContent() {
     if (!selectedCategoryId) return []
     const categoryLines = getLinesByCategory(selectedCategoryId)
     return categoryLines.map((line: ItemLineResponse) => {
-      const categoryName = categoryNameMap.get(line.lineCategoryId || 0) || 'Uncategorized'
+      const categoryName = categoryNameMap.get(line.lineCategoryId || 0) || t('uncategorized')
       return convertLineToUiItem(line, categoryName)
     })
   }, [selectedCategoryId, getLinesByCategory, categoryNameMap])
@@ -409,19 +411,15 @@ function ItemsPageContent() {
 
   if (isLoading || isInitializing || isAddingModels) {
     const loadingTitle = isInitializing
-      ? 'Initializing items book...'
+      ? t('loading.initializingBook')
       : isAddingModels
-        ? 'Adding default models...'
-        : 'Loading items...'
-    const loadingSubtitle = isInitializing
-      ? 'Setting up your items book'
-      : isAddingModels
-        ? 'Please wait while we add default categories'
-        : 'Please wait a moment'
+        ? t('loading.addingModels')
+        : t('loading.items')
+
 
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+        <LoadingSpinner size="lg" text={loadingTitle} fullScreen={true} />
       </div>
     )
   }
@@ -431,8 +429,8 @@ function ItemsPageContent() {
       <div className="flex flex-col items-center justify-center py-12">
         <ErrorModal
           open={true}
-          title="Failed to Load Items"
-          message="Failed to load items. Please try again."
+          title={t('errors.loadTitle')}
+          message={t('errors.loadMessage')}
           onRetry={() => window.location.reload()}
           onClose={() => { }}
         />
@@ -443,7 +441,7 @@ function ItemsPageContent() {
   if (!localItemBook) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-16 text-gray-500">No item book found. Please initialize it first.</p>
+        <p className="text-16 text-gray-500">{t('errors.noBook')}</p>
       </div>
     )
   }
@@ -459,7 +457,7 @@ function ItemsPageContent() {
           >
             <ChevronLeft className="w-5 h-5 text-gray-700" />
           </Link>
-          <h1 className="text-xl font-semibold text-gray-900">Items</h1>
+          <h1 className="text-xl font-semibold text-gray-900">{t('title')}</h1>
         </div>
 
         {(hasUnsavedChanges || syncMutation.isPending) && (
@@ -473,11 +471,11 @@ function ItemsPageContent() {
               type="button"
             >
               <Save className="h-4 w-4" />
-              {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+              {syncMutation.isPending ? t('actions.saving') : t('actions.save')}
             </Button>
 
             {hasUnsavedChanges && (
-              <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+              <span className="text-16 text-brand-500 font-medium">{t('actions.unsavedChanges')}</span>
             )}
           </div>
         )}
@@ -485,7 +483,7 @@ function ItemsPageContent() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <ItemLinesPanel
-          categoryName={selectedCategory?.name ?? 'Untitled List'}
+          categoryName={selectedCategory?.name ?? t('lists.untitled')}
           stats={stats}
           items={visibleItems}
           onToggleDone={handleToggleDone}
@@ -495,8 +493,8 @@ function ItemsPageContent() {
         />
 
         <ItemListsSidebar
-          title="Your Lists"
-          actionLabel="Add New"
+          title={t('lists.yourLists')}
+          actionLabel={t('actions.addNew')}
           onAction={handleAddNewList}
           categories={categories}
           selectedCategoryId={selectedCategoryId || 0}
@@ -515,12 +513,13 @@ function ItemsPageContent() {
 }
 
 export default function ItemsPage() {
+  const t = useI18nTranslations('items')
   return (
     <Suspense
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingOverlay open={true} title="Loading items..." />
+            <LoadingSpinner size="lg" text={t('loading.items')} fullScreen={true} />
           </div>
         </div>
       }

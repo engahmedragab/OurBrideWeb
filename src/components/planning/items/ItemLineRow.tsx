@@ -4,6 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import type { UiItem } from '@/utils/planning/mappers/itemsMappers'
 import { CheckCircle2, Circle, Trash2 } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export function ItemLineRow({
   item,
@@ -16,6 +17,7 @@ export function ItemLineRow({
   onDelete: () => void
   onEdit: () => void
 }) {
+  const t = useI18nTranslations('items')
   return (
     <div
       role="button"
@@ -58,28 +60,28 @@ export function ItemLineRow({
         <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs">
           {item.quantity !== undefined ? (
             <span className="inline-flex items-center gap-1">
-              <span className=" text-gray-900">Quantity :</span>
+              <span className=" text-gray-900">{t('itemForm.fields.quantity')} :</span>
               <span className="text-gray-500">{item.quantity}</span>
             </span>
           ) : null}
 
           {item.totalPrice !== undefined ? (
             <span className="inline-flex items-center gap-1">
-              <span className=" text-gray-900">Price :</span>
+              <span className=" text-gray-900">{t('itemForm.fields.totalPrice')} :</span>
               <span className="text-gray-500">{item.totalPrice}</span>
             </span>
           ) : null}
 
           {item.providerName ? (
             <span className="inline-flex items-center gap-1">
-              <span className=" text-gray-900">Provider :</span>
+              <span className=" text-gray-900">{t('itemForm.fields.providerName')} :</span>
               <span className="text-gray-500">{item.providerName}</span>
             </span>
           ) : null}
 
           {item.buyDate ? (
             <span className="inline-flex items-center gap-1">
-              <span className=" text-gray-900">Buy date :</span>
+              <span className=" text-gray-900">{t('itemForm.fields.buyDate')} :</span>
               <span className="text-gray-500">{item.buyDate}</span>
             </span>
           ) : null}
@@ -94,7 +96,7 @@ export function ItemLineRow({
             item.isDone ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-700',
           )}
         >
-          {item.isDone ? 'Completed' : 'Pending'}
+          {item.isDone ? t('itemForm.checkbox.completed') : t('itemForm.checkbox.stillOnTheWay')}
         </span>
 
         <button
