@@ -4,7 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import type { UiItem } from '@/utils/planning/mappers/itemsMappers'
 import { CheckCircle2, Circle, Trash2 } from 'lucide-react'
-import { useI18nTranslations } from '@/i18n/hooks'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 export function ItemLineRow({
   item,
@@ -18,6 +18,8 @@ export function ItemLineRow({
   onEdit: () => void
 }) {
   const t = useI18nTranslations('items')
+  const isRtl =  useIsRTL()
+
   return (
     <div
       role="button"
@@ -49,11 +51,11 @@ export function ItemLineRow({
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className={cn('text-sm font-medium text-gray-900', item.isDone && 'line-through text-gray-400')}>
-          {item.title}
+          {isRtl ? item.nameAr : item.nameEn}
         </div>
 
-        {item.description ? (
-          <div className="mt-1 line-clamp-2 text-xs text-gray-500">{item.description}</div>
+        {(item.descriptionAr || item.descriptionEn) ? (
+          <div className="mt-1 line-clamp-2 text-xs text-gray-500">{isRtl ? item.descriptionAr : item.descriptionEn}</div>
         ) : null}
 
         {/* Meta: label dark, value gray */}

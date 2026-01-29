@@ -30,13 +30,15 @@ import {
   convertLineToRequest,
   convertCategoryToRequest,
 } from '@/utils/planning/mappers/itemsMappers'
-import { useI18nTranslations } from '@/i18n'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 function ItemsPageContent() {
   const eventId = useEventId()
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [createListOpen, setCreateListOpen] = useState(false)
   const t = useI18nTranslations('items')
+  const isRtl =  useIsRTL()
+
 
   // Fetch item book (includes lines and categories) - GET endpoint only
   const { data: itemBook, isLoading, error, refetch } = useItemBook({
@@ -45,7 +47,7 @@ function ItemsPageContent() {
     clientId: null as unknown as string | undefined,
     enabled: typeof window !== 'undefined',
   })
-
+   console.log({itemBook})
   const syncMutation = useSyncItemBook()
   const syncDeltaMutation = useSyncItemBookDelta()
   const initMutation = useInitItemBooks()
@@ -483,7 +485,7 @@ function ItemsPageContent() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <ItemLinesPanel
-          categoryName={selectedCategory?.name ?? t('lists.untitled')}
+          categoryName={ isRtl ? (selectedCategory?.nameAr || t('lists.untitled')) : (selectedCategory?.nameEn || t('lists.untitled'))}
           stats={stats}
           items={visibleItems}
           onToggleDone={handleToggleDone}

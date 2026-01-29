@@ -1204,12 +1204,14 @@
       "save": "Save Changes",
       "saving": "Saving...",
       "unsavedChanges": "Unsaved changes",
-      "addNew": "Add New"
+      "addNew": "Add New",
+      "cancel": "Cancel"
     },
     "lists": {
       "yourLists": "Your Lists",
       "untitled": "Untitled List",
-      "noItems": "No items in this list yet."
+      "noItems": "No items in this list yet.",
+      "createNewList": "Create New List"
     },
     "itemForm": {
       "titles": {
@@ -1254,9 +1256,26 @@
         "updateFailed": "Failed to update item:"
       }
     },
+    "listColors": {
+      "gray": "Gray",
+      "red": "Red",
+      "orange": "Orange",
+      "yellow": "Yellow",
+      "green": "Green",
+      "blue": "Blue",
+      "purple": "Purple"
+    },
+    "createList": {
+      "title": "List name",
+      "namePlaceholder": "Enter list name",
+      "color": "List color",
+      "selectColor": "Select color...",
+      "creating": "Creating...",
+      "create": "Create List"
+    },
     "progress": {
-  "itemsCompleted": "{{completed}} of {{total}} Items Completed"
-}
+      "itemsCompleted": "{completed} of {total} Items Completed"
+    }
   },
   "reelDetails": {
     "loading": "Loading reel...",

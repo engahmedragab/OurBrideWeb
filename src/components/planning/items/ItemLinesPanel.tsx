@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { CreateItemModal } from '@/components/planning/items/CreateItemModal'
 import { EditItemModal } from '@/components/planning/items/EditItemModal'
 import { ItemsSummaryCard } from '@/components/planning/items/ItemsSummaryCard'
-import { useI18nTranslations } from '@/i18n'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export type ItemFormData = {
   name: string
@@ -41,6 +41,7 @@ export function ItemLinesPanel({
   onEditItem: (itemId: number, data: ItemFormData) => Promise<void> | void
 }) {
   const t = useI18nTranslations('items')
+  const isRtl =  useIsRTL()
   const [createOpen, setCreateOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editingItemId, setEditingItemId] = useState<number | null>(null)
@@ -111,8 +112,8 @@ export function ItemLinesPanel({
         initialValues={
           editingItem
             ? {
-                name: editingItem.title,
-                description: editingItem.description ?? undefined,
+                name: isRtl ?  editingItem.nameAr : editingItem.nameEn,
+                description: isRtl ? (editingItem.descriptionAr || undefined) :  (editingItem.descriptionEn || undefined),
                 quantity: editingItem.quantity,
                 totalPrice: editingItem.totalPrice,
                 providerName: editingItem.providerName,
