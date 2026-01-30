@@ -19,7 +19,7 @@ export function ItemLineRow({
 }) {
   const t = useI18nTranslations('items')
   const isRtl =  useIsRTL()
-
+ console.log({item})
   return (
     <div
       role="button"

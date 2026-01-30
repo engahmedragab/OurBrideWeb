@@ -100,7 +100,7 @@ export const convertCategoryToRequest = (category: ItemLineCategoryResponse): It
 export const convertLineToUiItem = (line: ItemLineResponse, categoryName: string): UiItem => {
   return {
     id: line.id,
-    nameAr: line.nameEn || line.name || '',
+    nameAr: line.nameAr || line.name || '',
     nameEn: line.nameEn || line.name || '',
     descriptionEn: line.descriptionEn || line.description || null,
     descriptionAr: line.descriptionAr || line.description || null,
@@ -132,8 +132,10 @@ export const convertUiItemToLineRequest = (item: UiItem, localItemBook: ItemBook
   return {
     id: item.id,
     bookId: localItemBook.id,
-    name: item.title,
-    description: item.description || null,
+    nameAr: item.nameAr,
+    nameEn:item.nameEn,
+    descriptionAr: item.descriptionAr || null,
+    descriptionEn: item.descriptionEn || null,
     quantity: item.quantity || null,
     totalPrice: item.totalPrice || null,
     providerName: item.providerName || null,

@@ -215,7 +215,7 @@ function ItemsPageContent() {
       return convertLineToUiItem(line, categoryName)
     })
   }, [selectedCategoryId, getLinesByCategory, categoryNameMap])
-
+ console.log({visibleItems})
   const stats = useMemo(() => {
     const total = visibleItems.length
     const completed = visibleItems.filter((i) => i.isDone).length
