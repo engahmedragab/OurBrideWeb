@@ -10,6 +10,7 @@ import { StatusBadge } from './StatusBadge'
 import { cn } from '@/lib/utils'
 import type { ReservationResponse } from '@/types/responses'
 import { ReservationStatus } from '@/types/responses/common'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ReservationCardProps {
   reservation: ReservationResponse
@@ -39,6 +40,7 @@ export const ReservationCard = ({
   onViewDetails,
   className,
 }: ReservationCardProps) => {
+  const t = useI18nTranslations('reservations')
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [imageError, setImageError] = useState(false)
 
@@ -74,11 +76,12 @@ export const ReservationCard = ({
     : null
 
   // Get service details
-  const serviceName = service?.nameEn ?? service?.nameAr ?? 'Service'
+  const serviceName = service?.nameEn ?? service?.nameAr ?? t('card.fallback.service')
   const serviceImage = service?.imageUrl ?? '/placeholder-service.png'
   const serviceRating = service?.rate ?? 0
-  const providerName = provider?.nameEn ?? provider?.nameAr ?? 'Provider'
-  const placeName = reservation.reservationPlace?.nameEn ?? reservation.reservationPlace?.nameAr ?? null
+  const providerName = provider?.nameEn ?? provider?.nameAr ?? t('card.fallback.provider')
+  const placeName =
+    reservation.reservationPlace?.nameEn ?? reservation.reservationPlace?.nameAr ?? null
   const placeAddress = reservation.reservationPlace?.address?.fullAddress ?? null
   const user = reservation.reservationStaff?.user
   const staffName = user ? `${user.firstName} ${user.lastName}`.trim() || null : null
@@ -99,9 +102,14 @@ export const ReservationCard = ({
       <div className="absolute top-6 right-6 flex items-center gap-2">
         <StatusBadge status={mapReservationStatusToBadgeType(status)} />
         <button
+          type="button"
           onClick={() => setIsDetailsOpen(!isDetailsOpen)}
           className="text-gray-400 hover:text-gray-600 transition-colors"
-          aria-label={isDetailsOpen ? 'Collapse details' : 'Expand details'}
+          aria-label={
+            isDetailsOpen
+              ? t('card.actions.collapseDetailsAria')
+              : t('card.actions.expandDetailsAria')
+          }
         >
           {isDetailsOpen ? (
             <ChevronDown className="h-4 w-4" />
@@ -117,10 +125,12 @@ export const ReservationCard = ({
           {/* Reservation ID and Date */}
           <div className="mb-4">
             <h3 className="text-18 font-semibold text-gray-900 mb-1">
-              Reservation #{reservation.reservationId}
+              {t('card.header.title', { reservationId: reservation.reservationId })}
             </h3>
             {createdDate && (
-              <p className="text-14 text-gray-600">Created: {createdDate}</p>
+              <p className="text-14 text-gray-600">
+                {t('card.header.created')}: {createdDate}
+              </p>
             )}
           </div>
 
@@ -140,7 +150,7 @@ export const ReservationCard = ({
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <span className="text-gray-400 text-10 font-medium text-center px-1">
-                      No image available
+                      {t('card.service.noImage')}
                     </span>
                   </div>
                 )}
@@ -164,9 +174,9 @@ export const ReservationCard = ({
                   </div>
                 )}
                 <p className="text-14 text-gray-600">
-                  Provider:{' '}
+                  {t('card.service.providerLabel')}{' '}
                   {reservation.providerId ? (
-                    <Link 
+                    <Link
                       href={`/provider/${reservation.providerId}`}
                       className="hover:text-brand-500 transition-colors"
                       onClick={(e) => e.stopPropagation()}
@@ -186,13 +196,17 @@ export const ReservationCard = ({
             {reservationDate && (
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-gray-500" />
-                <span>Date: {reservationDate}</span>
+                <span>
+                  {t('card.fields.date')}: {reservationDate}
+                </span>
               </div>
             )}
             {reservationTime && (
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-gray-500" />
-                <span>Time: {reservationTime}</span>
+                <span>
+                  {t('card.fields.time')}: {reservationTime}
+                </span>
               </div>
             )}
             {placeName && (
@@ -204,12 +218,17 @@ export const ReservationCard = ({
             {staffName && (
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-gray-500" />
-                <span>Staff: {staffName}</span>
+                <span>
+                  {t('card.fields.staff')}: {staffName}
+                </span>
               </div>
             )}
+
             {reservation.quantity && reservation.quantity > 1 && (
               <div className="flex items-center gap-2">
-                <span>Quantity: {reservation.quantity}</span>
+                <span>
+                  {t('card.fields.quantity')}: {reservation.quantity}
+                </span>
               </div>
             )}
           </div>
@@ -223,7 +242,7 @@ export const ReservationCard = ({
                 onClick={() => onViewDetails(reservation.reservationId)}
                 className="flex-1"
               >
-                View Details
+                {t('card.actions.viewDetails')}
               </Button>
             )}
             {isInProgress && onCancel && (
@@ -234,7 +253,7 @@ export const ReservationCard = ({
                 className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
               >
                 <X className="h-4 w-4" />
-                Cancel
+                {t('card.actions.cancel')}
               </Button>
             )}
           </div>
@@ -244,14 +263,17 @@ export const ReservationCard = ({
         {isDetailsOpen && (
           <div className="flex-1 lg:max-w-md">
             <h4 className="text-16 font-semibold text-gray-900 mb-4">
-              Reservation Details
+              {t('card.details.title')}
             </h4>
 
             {/* Package Info */}
             {reservation.servicePackage && (
               <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <p className="text-14 font-semibold text-gray-900 mb-1">
-                  Package: {reservation.servicePackage.nameEn ?? reservation.servicePackage.nameAr ?? 'Package'}
+                  {t('card.details.packageLabel')}{' '}
+                  {reservation.servicePackage.nameEn ??
+                    reservation.servicePackage.nameAr ??
+                    t('card.fallback.package')}
                 </p>
                 {reservation.servicePackage.descriptionEn && (
                   <p className="text-12 text-gray-600">
@@ -266,7 +288,7 @@ export const ReservationCard = ({
               <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <p className="text-14 font-semibold text-gray-900 mb-1 flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  Location
+                  {t('card.details.locationTitle')}
                 </p>
                 <p className="text-12 text-gray-600">{placeAddress}</p>
               </div>
@@ -276,22 +298,26 @@ export const ReservationCard = ({
             <div className="space-y-2 pt-4 border-t border-gray-200">
               {depositAmount && depositAmount > 0 && (
                 <div className="flex justify-between text-14 text-gray-700">
-                  <span>Deposit:</span>
+                  <span>{t('card.details.deposit')}:</span>
                   <span className="font-semibold text-gray-900">
-                    {depositAmount.toLocaleString()} EGP
+                    {depositAmount.toLocaleString()} {t('card.details.currency')}
                   </span>
                 </div>
               )}
               <div className="flex justify-between text-16 font-semibold text-gray-900 pt-2 border-t border-gray-200">
-                <span>Total Price:</span>
-                <span>{totalPrice.toLocaleString()} EGP</span>
+                <span>{t('card.details.totalPrice')}:</span>
+                <span>
+                  {totalPrice.toLocaleString()} {t('card.details.currency')}
+                </span>
               </div>
             </div>
 
             {/* Notes */}
             {reservation.notes && (
               <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-12 font-semibold text-blue-900 mb-1">Notes:</p>
+                <p className="text-12 font-semibold text-blue-900 mb-1">
+                  {t('card.details.notes')}:
+                </p>
                 <p className="text-12 text-blue-700">{reservation.notes}</p>
               </div>
             )}
@@ -299,8 +325,12 @@ export const ReservationCard = ({
             {/* Client Feedback */}
             {reservation.clientFeedback && (
               <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                <p className="text-12 font-semibold text-green-900 mb-1">Your Feedback:</p>
-                <p className="text-12 text-green-700">{reservation.clientFeedback}</p>
+                <p className="text-12 font-semibold text-green-900 mb-1">
+                  {t('card.details.feedback')}:
+                </p>
+                <p className="text-12 text-green-700">
+                  {reservation.clientFeedback}
+                </p>
               </div>
             )}
           </div>

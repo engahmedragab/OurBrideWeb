@@ -1823,7 +1823,7 @@
 },
   "notes": {
     "page": {
-      "title": "Notes",
+      "title": "Notes", 
       "back": "Back"
     },
     "header": {
@@ -1880,9 +1880,193 @@
       }
     }
   }
+},
+  "reservations": {
+    "page": {
+      "title": "My Reservations",
+      "subtitle": {
+        "one": "{count} Reservation",
+        "other": "{count} Reservations"
+      },
+      "actions": {
+        "newReservation": "New Reservation",
+        "refreshAria": "Refresh reservations"
+      }
+    },
+    "list": {
+      "empty": {
+        "title": "You don't have any reservations",
+        "description": "Book a service to create your first reservation",
+        "actionLabel": "Browse Services"
+      }
+    },
+    "loading": {
+      "title": "Loading reservations...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Error loading reservations",
+      "message": "Please try again later",
+      "actionLabel": "Back to Home"
+    },
+    "toast": {
+      "cancelSuccess": "Reservation cancelled successfully",
+      "cancelFail": "Failed to cancel reservation"
+    },
+    "confirm": {
+      "cancelTitle": "Are you sure you want to cancel this reservation?"
+    },
+    "navigation": {
+      "browseServicesHref": "/services",
+      "backHomeHref": "/",
+      "detailsHrefPattern": "/reservations/{reservationId}"
+    },
+    "pagination": {
+      "srLabel": "Reservations pagination"
+    },
+    "details": {
+      "pageTitle": "Reservation Details",
+      "back": "Back",
+      "header": {
+        "title": "Reservation #{reservationId}"
+      },
+      "loading": {
+        "title": "Loading reservation...",
+        "subtitle": "Please wait a moment"
+      },
+      "notFound": {
+        "title": "Reservation not found",
+        "message": "The reservation you're looking for doesn't exist or has been removed",
+        "actionLabel": "Back to Reservations",
+        "actionHref": "/reservations"
+      },
+      "statusCard": {
+        "title": "Reservation Status",
+        "label": "Status:",
+        "messages": {
+          "completed": "This reservation has been completed.",
+          "cancelled": "This reservation has been cancelled.",
+          "confirmed": "This reservation has been confirmed.",
+          "pending": "This reservation is pending confirmation.",
+          "inProgress": "This reservation is in progress."
+        }
+      },
+      "serviceCard": {
+        "title": "Service Information",
+        "viewDetails": "View Service Details"
+      },
+      "reservationCard": {
+        "title": "Reservation Details",
+        "fields": {
+          "dateTime": "Reservation Date & Time",
+          "date": "Reservation Date",
+          "time": "Reservation Time",
+          "quantity": "Quantity",
+          "createdOn": "Created On",
+          "lastModified": "Last Modified"
+        }
+      },
+      "locationCard": {
+        "title": "Location"
+      },
+      "staffCard": {
+        "title": "Assigned Staff"
+      },
+      "packageCard": {
+        "title": "Package Details"
+      },
+      "resourcesCard": {
+        "title": "Resources",
+        "fallbackName": "Resource {id}"
+      },
+      "notesCard": {
+        "title": "Notes"
+      },
+      "feedbackCard": {
+        "title": "Your Feedback"
+      },
+      "testRequestCard": {
+        "title": "Test Request",
+        "message": "You have requested a test for this service.",
+        "statusLabel": "Status:",
+        "status": {
+          "accepted": "Accepted",
+          "rejected": "Rejected"
+        },
+        "continueLabel": "Continue with service:",
+        "continue": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      },
+      "providerCard": {
+        "title": "Provider",
+        "viewProfile": "View Provider Profile"
+      },
+      "pricingCard": {
+        "title": "Pricing",
+        "fields": {
+          "servicePrice": "Service Price:",
+          "deposit": "Deposit:",
+          "total": "Total:"
+        },
+        "currency": "EGP"
+      },
+      "actionsCard": {
+        "title": "Actions",
+        "cancel": "Cancel Reservation"
+      },
+      "mutation": {
+        "cancelling": {
+          "title": "Cancelling reservation...",
+          "subtitle": "Please wait a moment"
+        }
+      },
+      "confirm": {
+        "cancelLong": "Are you sure you want to cancel this reservation? This action cannot be undone."
+      },
+      "toast": {
+        "cancelSuccess": "Reservation cancelled successfully",
+        "cancelFail": "Failed to cancel reservation"
+      }
+    },
+     "card": {
+    "header": {
+      "title": "Reservation #{reservationId}",
+      "created": "Created"
+    },
+    "service": {
+      "noImage": "No image available",
+      "providerLabel": "Provider:"
+    },
+    "fields": {
+      "date": "Date",
+      "time": "Time",
+      "staff": "Staff",
+      "quantity": "Quantity"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "cancel": "Cancel",
+      "expandDetailsAria": "Expand details",
+      "collapseDetailsAria": "Collapse details"
+    },
+    "details": {
+      "title": "Reservation Details",
+      "packageLabel": "Package:",
+      "locationTitle": "Location",
+      "deposit": "Deposit",
+      "totalPrice": "Total Price",
+      "notes": "Notes",
+      "feedback": "Your Feedback",
+      "currency": "EGP"
+    },
+    "fallback": {
+      "service": "Service",
+      "provider": "Provider",
+      "package": "Package"
+    }
+  }
+  }
 
-
-
-
-}
 }

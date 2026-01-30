@@ -1856,7 +1856,194 @@
         }
       }
     }
-    
+},
+"reservations": {
+    "page": {
+      "title": "حجوزاتي",
+      "subtitle": {
+        "one": "{count} حجز",
+        "other": "{count} حجوزات"
+      },
+      "actions": {
+        "newReservation": "حجز جديد",
+        "refreshAria": "تحديث الحجوزات"
+      }
+    },
+    "list": {
+      "empty": {
+        "title": "لا يوجد لديك أي حجوزات",
+        "description": "احجز خدمة لإنشاء أول حجز لك",
+        "actionLabel": "تصفح الخدمات"
+      }
+    },
+    "loading": {
+      "title": "جاري تحميل الحجوزات...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    },
+    "error": {
+      "title": "حدث خطأ أثناء تحميل الحجوزات",
+      "message": "يرجى المحاولة مرة أخرى لاحقًا",
+      "actionLabel": "العودة للرئيسية"
+    },
+    "toast": {
+      "cancelSuccess": "تم إلغاء الحجز بنجاح",
+      "cancelFail": "فشل إلغاء الحجز"
+    },
+    "confirm": {
+      "cancelTitle": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟"
+    },
+    "navigation": {
+      "browseServicesHref": "/services",
+      "backHomeHref": "/",
+      "detailsHrefPattern": "/reservations/{reservationId}"
+    },
+    "pagination": {
+      "srLabel": "التنقل بين صفحات الحجوزات"
+    },
+    "details": {
+      "pageTitle": "تفاصيل الحجز",
+      "back": "رجوع",
+      "header": {
+        "title": "الحجز رقم #{reservationId}"
+      },
+      "loading": {
+        "title": "جاري تحميل الحجز...",
+        "subtitle": "يرجى الانتظار قليلًا"
+      },
+      "notFound": {
+        "title": "الحجز غير موجود",
+        "message": "الحجز الذي تبحث عنه غير موجود أو تم حذفه",
+        "actionLabel": "العودة للحجوزات",
+        "actionHref": "/reservations"
+      },
+      "statusCard": {
+        "title": "حالة الحجز",
+        "label": "الحالة:",
+        "messages": {
+          "completed": "تم إكمال هذا الحجز.",
+          "cancelled": "تم إلغاء هذا الحجز.",
+          "confirmed": "تم تأكيد هذا الحجز.",
+          "pending": "هذا الحجز قيد انتظار التأكيد.",
+          "inProgress": "هذا الحجز قيد التنفيذ."
+        }
+      },
+      "serviceCard": {
+        "title": "معلومات الخدمة",
+        "viewDetails": "عرض تفاصيل الخدمة"
+      },
+      "reservationCard": {
+        "title": "تفاصيل الحجز",
+        "fields": {
+          "dateTime": "تاريخ ووقت الحجز",
+          "date": "تاريخ الحجز",
+          "time": "وقت الحجز",
+          "quantity": "الكمية",
+          "createdOn": "تاريخ الإنشاء",
+          "lastModified": "آخر تعديل"
+        }
+      },
+      "locationCard": {
+        "title": "الموقع"
+      },
+      "staffCard": {
+        "title": "الموظف المسؤول"
+      },
+      "packageCard": {
+        "title": "تفاصيل الباقة"
+      },
+      "resourcesCard": {
+        "title": "الموارد",
+        "fallbackName": "مورد {id}"
+      },
+      "notesCard": {
+        "title": "ملاحظات"
+      },
+      "feedbackCard": {
+        "title": "ملاحظاتك"
+      },
+      "testRequestCard": {
+        "title": "طلب تجربة",
+        "message": "لقد قمت بطلب تجربة لهذه الخدمة.",
+        "statusLabel": "الحالة:",
+        "status": {
+          "accepted": "مقبول",
+          "rejected": "مرفوض"
+        },
+        "continueLabel": "الاستمرار مع الخدمة:",
+        "continue": {
+          "yes": "نعم",
+          "no": "لا"
+        }
+      },
+      "providerCard": {
+        "title": "مقدم الخدمة",
+        "viewProfile": "عرض ملف مقدم الخدمة"
+      },
+      "pricingCard": {
+        "title": "التسعير",
+        "fields": {
+          "servicePrice": "سعر الخدمة:",
+          "deposit": "العربون:",
+          "total": "الإجمالي:"
+        },
+        "currency": "جنيه"
+      },
+      "actionsCard": {
+        "title": "الإجراءات",
+        "cancel": "إلغاء الحجز"
+      },
+      "mutation": {
+        "cancelling": {
+          "title": "جاري إلغاء الحجز...",
+          "subtitle": "يرجى الانتظار قليلًا"
+        }
+      },
+      "confirm": {
+        "cancelLong": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟ لا يمكن التراجع عن هذا الإجراء."
+      },
+      "toast": {
+        "cancelSuccess": "تم إلغاء الحجز بنجاح",
+        "cancelFail": "فشل إلغاء الحجز"
+      }
+    },
+    "card": {
+    "header": {
+      "title": "الحجز رقم #{reservationId}",
+      "created": "تاريخ الإنشاء"
+    },
+    "service": {
+      "noImage": "لا توجد صورة",
+      "providerLabel": "المزوّد:"
+    },
+    "fields": {
+      "date": "التاريخ",
+      "time": "الوقت",
+      "staff": "الموظف",
+      "quantity": "العدد"
+    },
+    "actions": {
+      "viewDetails": "عرض التفاصيل",
+      "cancel": "إلغاء",
+      "expandDetailsAria": "فتح التفاصيل",
+      "collapseDetailsAria": "إغلاق التفاصيل"
+    },
+    "details": {
+      "title": "تفاصيل الحجز",
+      "packageLabel": "الباقة:",
+      "locationTitle": "الموقع",
+      "deposit": "العربون",
+      "totalPrice": "الإجمالي",
+      "notes": "ملاحظات",
+      "feedback": "تقييمك",
+      "currency": "ج.م"
+    },
+    "fallback": {
+      "service": "الخدمة",
+      "provider": "المزوّد",
+      "package": "الباقة"
+    }
+  }
+  }
 
 
-}}
+}
