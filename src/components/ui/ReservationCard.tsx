@@ -10,7 +10,7 @@ import { StatusBadge } from './StatusBadge'
 import { cn } from '@/lib/utils'
 import type { ReservationResponse } from '@/types/responses'
 import { ReservationStatus } from '@/types/responses/common'
-import { useI18nTranslations } from '@/i18n/hooks'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 export interface ReservationCardProps {
   reservation: ReservationResponse
@@ -29,9 +29,9 @@ const mapReservationStatusToBadgeType = (
 }
 
 const getStatusLineColor = (status: ReservationStatus) => {
-  if (status === ReservationStatus.Completed) return 'border-l-4 border-green-500'
-  if (status === ReservationStatus.Cancelled) return 'border-l-4 border-red-500'
-  return 'border-l-4 border-yellow-500'
+  if (status === ReservationStatus.Completed) return ' border-green-500'
+  if (status === ReservationStatus.Cancelled) return ' border-red-500'
+  return ' border-yellow-500'
 }
 
 export const ReservationCard = ({
@@ -41,6 +41,7 @@ export const ReservationCard = ({
   className,
 }: ReservationCardProps) => {
   const t = useI18nTranslations('reservations')
+  const isRTL=useIsRTL()
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [imageError, setImageError] = useState(false)
 
@@ -49,6 +50,24 @@ export const ReservationCard = ({
   const status = reservation.status
   const isCompleted = status === ReservationStatus.Completed || status === ReservationStatus.Cancelled
   const isInProgress = !isCompleted
+
+
+  // translate the status
+  const getTranslatedStatus = (status: ReservationStatus) => {
+   
+    switch (status) {
+      case ReservationStatus.Completed:
+        return t('card.status.completed')
+      case ReservationStatus.Cancelled:
+        return t('card.status.cancelled')
+      case ReservationStatus.Confirmed:
+        return t('card.status.confirmed')
+      case ReservationStatus.Pending:
+        return t('card.status.pending')
+      default:
+        return t('card.status.inProgress')
+    }
+  }
 
   // Format dates
   const reservationDate = reservation.reservationDate
@@ -93,14 +112,21 @@ export const ReservationCard = ({
   return (
     <div
       className={cn(
-        'bg-white rounded-xl border border-gray-200 p-6 shadow-sm relative',
+        'bg-white rounded-xl border  border-gray-200 p-6 shadow-sm relative',
         getStatusLineColor(status),
+        isRTL? 'border-r-4':'border-l-4',
         className
       )}
     >
       {/* Status Badge and Toggle */}
-      <div className="absolute top-6 right-6 flex items-center gap-2">
-        <StatusBadge status={mapReservationStatusToBadgeType(status)} />
+      <div  className={cn(" absolute top-6  flex items-center gap-2 ",
+        isRTL?'left-6':'right-6'
+      )}>
+        <StatusBadge
+  status={mapReservationStatusToBadgeType(status)}
+  label={getTranslatedStatus(status)}
+/>
+        
         <button
           type="button"
           onClick={() => setIsDetailsOpen(!isDetailsOpen)}
@@ -119,7 +145,7 @@ export const ReservationCard = ({
         </button>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 pr-32">
+      <div className={cn("flex flex-col lg:flex-row gap-6 ",isRTL?'pl-28':'pr-28')}>
         {/* Left Section - Reservation Info */}
         <div className="flex-1">
           {/* Reservation ID and Date */}

@@ -2031,6 +2031,13 @@
       }
     },
      "card": {
+      "status": {
+  "pending": "Pending",
+  "confirmed": "Confirmed",
+  "completed": "Completed",
+  "cancelled": "Cancelled",
+  "inProgress": "In Progress"
+},
     "header": {
       "title": "Reservation #{reservationId}",
       "created": "Created"

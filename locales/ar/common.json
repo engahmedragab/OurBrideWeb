@@ -2007,6 +2007,13 @@
       }
     },
     "card": {
+      "status": {
+  "pending": "قيد الانتظار",
+  "confirmed": "مؤكد",
+  "completed": "مكتمل",
+  "cancelled": "ملغي",
+  "inProgress": "قيد التنفيذ"
+},
     "header": {
       "title": "الحجز رقم #{reservationId}",
       "created": "تاريخ الإنشاء"
