@@ -5,11 +5,13 @@ import {
 } from '@/services/api/serviceApi'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 /**
  * Hook to toggle service favorite
  */
 export const useToggleServiceFavorite = () => {
+   const t = useI18nTranslations('services')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -25,13 +27,13 @@ export const useToggleServiceFavorite = () => {
       
       const { message, type } = handleApiResponseForToast(
         response,
-        'Service favorite toggled successfully',
-        'Failed to toggle service favorite'
+          t('toast.favoriteToggleSuccess'),
+        t('toast.favoriteToggleFail')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle service favorite'
+      const errorMessage = error instanceof Error ? error.message :  t('toast.favoriteToggleFail')
       addToast(errorMessage, 'error')
     },
   })
@@ -41,6 +43,8 @@ export const useToggleServiceFavorite = () => {
  * Hook to toggle service wishlist
  */
 export const useToggleServiceWishlist = () => {
+     const t = useI18nTranslations('services')
+
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -59,13 +63,13 @@ export const useToggleServiceWishlist = () => {
       
       const { message, type } = handleApiResponseForToast(
         response,
-        'Service wishlist toggled successfully',
-        'Failed to toggle service wishlist'
+         t('toast.wishlistToggleSuccess'),
+        t('toast.wishlistToggleFail')
       )
       addToast(message, type)
     },
     onError: (error) => {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle service wishlist'
+      const errorMessage = error instanceof Error ? error.message : t('toast.wishlistToggleFail')
       addToast(errorMessage, 'error')
     },
   })

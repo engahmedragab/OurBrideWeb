@@ -780,7 +780,23 @@
         "successMessage": "تم إرسال طلبك!",
         "successDescription": "تم إرسال طلب الخدمة بنجاح. تم إشعار المزود وستتلقين تحديثًا بمجرد الرد.",
         "trackRequest": "تتبع الطلب"
-      }
+      },
+      "toast": {
+    "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
+    "favoriteToggleFail": "فشل تحديث المفضلة",
+    "wishlistToggleSuccess": "تم تحديث قائمة الرغبات بنجاح",
+    "wishlistToggleFail": "فشل تحديث قائمة الرغبات"
+  },
+ "providers": {
+  "toast": {
+    "followToggleSuccess": "تم تحديث المتابعة بنجاح",
+    "followToggleFail": "فشل تحديث المتابعة",
+    "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
+    "favoriteToggleFail": "فشل تحديث المفضلة"
+  }
+}
+
+}
     },
     "products": {
   "whyBridesChooseProducts": {

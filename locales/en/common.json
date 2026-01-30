@@ -802,7 +802,22 @@
       "successMessage": "Your Request Has Been Sent!",
       "successDescription": "Your service request has been successfully submitted. The provider has been notified and you will receive an update once they respond.",
       "trackRequest": "Track Request"
-    }
+    },
+      "toast": {
+    "favoriteToggleSuccess": "Service favorite updated successfully",
+    "favoriteToggleFail": "Failed to update service favorite",
+    "wishlistToggleSuccess": "Service wishlist updated successfully",
+    "wishlistToggleFail": "Failed to update service wishlist"
+  },
+  "providers":{
+      "toast": {
+    "followToggleSuccess": "Follow status updated successfully",
+    "followToggleFail": "Failed to update follow status",
+    "favoriteToggleSuccess": "Favorite status updated successfully",
+    "favoriteToggleFail": "Failed to update favorite status"
+  }
+  }
+
   },
   "products": {
       "whyBridesChooseProducts": {
@@ -2031,7 +2046,7 @@
       }
     },
      "card": {
-      "status": {
+  "status": {
   "pending": "Pending",
   "confirmed": "Confirmed",
   "completed": "Completed",
