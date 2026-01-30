@@ -1323,7 +1323,7 @@ const staff = useMemo(
                                             ) : (
                                                 <div className="flex justify-center items-center py-8">
 
-                                                    <LoadingSpinner size="xl" text={tSD('states.loadingDates')} />
+                                                    <LoadingSpinner size="md" text={tSD('states.loadingDates')} />
 
                                                 </div>
                                             )}
