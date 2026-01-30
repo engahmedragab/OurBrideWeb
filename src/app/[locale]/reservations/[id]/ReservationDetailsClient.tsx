@@ -498,7 +498,7 @@ export function ReservationDetailsClient({
 
           {/* Client Feedback Card */}
           {reservation.clientFeedback && (
-            <div className="bg-white rounded-xl border border-blue-200 p-6 shadow-sm bg-blue-50">
+            <div className=" rounded-xl border border-blue-200 p-6 shadow-sm bg-blue-50">
               <h2 className="text-20 font-semibold text-blue-900 mb-4 flex items-center gap-2">
                 <FileText className="h-5 w-5" />
                 {t('details.feedbackCard.title')}
@@ -509,7 +509,7 @@ export function ReservationDetailsClient({
 
           {/* Test Request Information */}
           {reservation.isTestRequested && (
-            <div className="bg-white rounded-xl border border-yellow-200 p-6 shadow-sm bg-yellow-50">
+            <div className=" rounded-xl border border-yellow-200 p-6 shadow-sm bg-yellow-50">
               <h2 className="text-20 font-semibold text-yellow-900 mb-4 flex items-center gap-2">
                 <AlertCircle className="h-5 w-5" />
                 {t('details.testRequestCard.title')}
