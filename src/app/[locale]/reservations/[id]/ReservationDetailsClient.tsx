@@ -27,6 +27,7 @@ import {
   StatusBadge,
   LoadingSpinner,
 } from '@/components/ui'
+import { CancelOrderModal } from '@/components/ui/CancelOrderModal'
 import { getReservationById, cancelReservation } from '@/services/api/reservationApi'
 import type { ReservationResponse } from '@/types/responses'
 import { ReservationStatus } from '@/types/responses/common'
@@ -34,7 +35,7 @@ import { useToast } from '@/components/ui/Toaster'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
 import { useI18nLocale, useI18nTranslations, useIsRTL } from '@/i18n/hooks'
-import { pickLocalizedText } from './../../../../utils/translation/i18nText';
+import { pickLocalizedText } from './../../../../utils/translation/i18nText'
 
 interface ReservationDetailsClientProps {
   reservationId: string
@@ -54,16 +55,32 @@ const getStatusColor = (status: ReservationStatus) => {
   return 'text-yellow-600 bg-yellow-50 border-yellow-200'
 }
 
-export function ReservationDetailsClient({
-  reservationId,
-}: ReservationDetailsClientProps) {
+export function ReservationDetailsClient({ reservationId }: ReservationDetailsClientProps) {
   const t = useI18nTranslations('reservations')
-  const locale=useI18nLocale()
-  const isRTL =useIsRTL()
+  const locale = useI18nLocale()
+  const isRTL = useIsRTL()
   const router = useRouter()
   const queryClient = useQueryClient()
   const { addToast } = useToast()
   const [isMounted, setIsMounted] = useState(false)
+
+  // ✅ Cancel modal state
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
+
+  const getTranslatedStatus = (status: ReservationStatus) => {
+    switch (status) {
+      case ReservationStatus.Completed:
+        return t('card.status.completed')
+      case ReservationStatus.Cancelled:
+        return t('card.status.cancelled')
+      case ReservationStatus.Confirmed:
+        return t('card.status.confirmed')
+      case ReservationStatus.Pending:
+        return t('card.status.pending')
+      default:
+        return t('card.status.inProgress')
+    }
+  }
 
   useEffect(() => {
     setIsMounted(true)
@@ -96,13 +113,19 @@ export function ReservationDetailsClient({
     },
   })
 
-  const handleCancelReservation = async () => {
-    if (!confirm(t('details.confirm.cancelLong'))) {
-      return
-    }
+  const handleCancelReservation = () => {
+    setIsCancelModalOpen(true)
+  }
 
+  const handleCloseCancelModal = () => {
+    setIsCancelModalOpen(false)
+  }
+
+  const handleConfirmCancelModal = async (reason?: string) => {
     try {
+     
       await cancelReservationMutation.mutateAsync(reservationId)
+      handleCloseCancelModal()
     } catch (error) {
       // Error is handled by mutation onError
       console.error('Failed to cancel reservation:', error)
@@ -114,11 +137,7 @@ export function ReservationDetailsClient({
     return (
       <UserPageLayout>
         <PageHeader title={t('details.pageTitle')} />
-        <LoadingSpinner
-        size='xl'
-        text={`${t('details.loading.title')} ${t('details.loading.subtitle')}`}
-      
-        />
+        <LoadingSpinner size="xl" text={`${t('details.loading.title')} ${t('details.loading.subtitle')}`} />
       </UserPageLayout>
     )
   }
@@ -230,6 +249,18 @@ const serviceName =
   const depositAmount = reservation.depositAmount ?? null
   const servicePrice = reservation.servicePrice ?? null
 
+  const packageName =
+    pickLocalizedText(locale, {
+      en: reservation.servicePackage?.nameEn,
+      ar: reservation.servicePackage?.nameAr,
+    }) ?? 'Package'
+
+  const packageDescription =
+    pickLocalizedText(locale, {
+      en: reservation.servicePackage?.descriptionEn,
+      ar: reservation.servicePackage?.descriptionAr,
+    }) ?? null
+
   return (
     <UserPageLayout>
       {/* Header with Back Button */}
@@ -247,10 +278,7 @@ const serviceName =
           title={t('details.header.title', { reservationId: reservation.reservationId })}
           subtitle={
             <div className="flex items-center gap-2 mt-1">
-              <StatusBadge status={mapReservationStatusToBadgeType(status)} />
-              <span className="text-14 text-gray-600">
-                {status}
-              </span>
+              <StatusBadge status={mapReservationStatusToBadgeType(status)} label={getTranslatedStatus(status)} />
             </div>
           }
         />
@@ -261,9 +289,7 @@ const serviceName =
         <div className="lg:col-span-2 space-y-6">
           {/* Service Information Card */}
           <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h2 className="text-20 font-semibold text-gray-900 mb-4">
-              {t('details.serviceCard.title')}
-            </h2>
+            <h2 className="text-20 font-semibold text-gray-900 mb-4">{t('details.serviceCard.title')}</h2>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative w-full sm:w-32 h-32 rounded-lg overflow-hidden flex-shrink-0">
@@ -458,13 +484,13 @@ const serviceName =
               </h2>
 
               <div className="space-y-2">
-                <p className="text-16 font-medium text-gray-900">
-                  
-                  {isRTL? reservation.servicePackage.nameAr:reservation.servicePackage.nameEn || 'Package'}
+                <p dir={isRTL ? 'rtl' : 'ltr'} className={cn('text-16 font-medium text-gray-900', isRTL ? 'text-right' : 'text-left')}>
+                  {packageName}
                 </p>
-                {(reservation.servicePackage.descriptionEn || reservation.servicePackage.descriptionAr) && (
-                  <p className="text-14 text-gray-600">
-                    {isRTL?reservation.servicePackage.descriptionAr : reservation.servicePackage.descriptionEn}
+
+                {!!packageDescription && (
+                  <p dir={isRTL ? 'rtl' : 'ltr'} className={cn('text-14 text-gray-600', isRTL ? 'text-right' : 'text-left')}>
+                    {packageDescription}
                   </p>
                 )}
                 {reservation.servicePackage.price && (
@@ -569,10 +595,8 @@ const serviceName =
 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-14 text-gray-700">
-                  {t('details.statusCard.label')}
-                </span>
-                <StatusBadge status={mapReservationStatusToBadgeType(status)} />
+                <span className="text-14 text-gray-700">{t('details.statusCard.label')}</span>
+                <StatusBadge status={mapReservationStatusToBadgeType(status)} label={getTranslatedStatus(status)} />
               </div>
 
               <div className="pt-3 border-t border-gray-200">
@@ -705,11 +729,23 @@ const serviceName =
         </div>
       </div>
 
+      {/* ✅ Cancel Modal */}
+      <CancelOrderModal
+        isOpen={isCancelModalOpen}
+        onClose={handleCloseCancelModal}
+        onConfirm={handleConfirmCancelModal}
+     titleText={t('confirm.title')}
+        text={t('confirm.cancelTitle')}
+        keepText={t('confirm.keepButton')}
+        cancelText={t('confirm.cancelButton')}
+        note={false} 
+      />
+
       {/* Loading Overlay for Mutations */}
-      <LoadingOverlay
+      <LoadingSpinner
         open={cancelReservationMutation.isPending}
-        title={t('details.mutation.cancelling.title')}
-        subtitle={t('details.mutation.cancelling.subtitle')}
+        text={t('details.mutation.cancelling.title')}
+        
       />
     </UserPageLayout>
   )

@@ -10,7 +10,8 @@ import { StatusBadge } from './StatusBadge'
 import { cn } from '@/lib/utils'
 import type { ReservationResponse } from '@/types/responses'
 import { ReservationStatus } from '@/types/responses/common'
-import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
+import { useI18nLocale, useI18nTranslations, useIsRTL } from '@/i18n/hooks'
+import { pickLocalizedText } from '@/utils/translation/i18nText'
 
 export interface ReservationCardProps {
   reservation: ReservationResponse
@@ -41,7 +42,8 @@ export const ReservationCard = ({
   className,
 }: ReservationCardProps) => {
   const t = useI18nTranslations('reservations')
-  const isRTL=useIsRTL()
+  const isRTL = useIsRTL()
+  const locale = useI18nLocale()
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [imageError, setImageError] = useState(false)
 
@@ -94,16 +96,45 @@ export const ReservationCard = ({
       })
     : null
 
-  // Get service details
-  const serviceName = service?.nameEn ?? service?.nameAr ?? t('card.fallback.service')
-  const serviceImage = service?.imageUrl ?? '/placeholder-service.png'
-  const serviceRating = service?.rate ?? 0
-  const providerName = provider?.nameEn ?? provider?.nameAr ?? t('card.fallback.provider')
+  // ✅ Localized texts (instead of nameEn ?? nameAr)
+  const serviceName =
+    pickLocalizedText(locale, {
+      en: service?.nameEn,
+      ar: service?.nameAr,
+    }) ?? t('card.fallback.service')
+
+  const providerName =
+    pickLocalizedText(locale, {
+      en: provider?.nameEn,
+      ar: provider?.nameAr,
+    }) ?? t('card.fallback.provider')
+
   const placeName =
-    reservation.reservationPlace?.nameEn ?? reservation.reservationPlace?.nameAr ?? null
+    pickLocalizedText(locale, {
+      en: reservation.reservationPlace?.nameEn,
+      ar: reservation.reservationPlace?.nameAr,
+    }) ?? null
+
   const placeAddress = reservation.reservationPlace?.address?.fullAddress ?? null
   const user = reservation.reservationStaff?.user
   const staffName = user ? `${user.firstName} ${user.lastName}`.trim() || null : null
+
+  // Package localized
+  const packageName =
+    pickLocalizedText(locale, {
+      en: reservation.servicePackage?.nameEn,
+      ar: reservation.servicePackage?.nameAr,
+    }) ?? t('card.fallback.package')
+
+  const packageDescription =
+    pickLocalizedText(locale, {
+      en: reservation.servicePackage?.descriptionEn,
+      ar: reservation.servicePackage?.descriptionAr,
+    }) ?? null
+
+  // Get service details
+  const serviceImage = service?.imageUrl ?? '/placeholder-service.png'
+  const serviceRating = service?.rate ?? 0
 
   // Get price
   const totalPrice = reservation.totalPrice ?? reservation.servicePrice ?? 0
@@ -114,19 +145,19 @@ export const ReservationCard = ({
       className={cn(
         'bg-white rounded-xl border  border-gray-200 p-6 shadow-sm relative',
         getStatusLineColor(status),
-        isRTL? 'border-r-4':'border-l-4',
+        isRTL ? 'border-r-4' : 'border-l-4',
         className
       )}
     >
       {/* Status Badge and Toggle */}
-      <div  className={cn(" absolute top-6  flex items-center gap-2 ",
-        isRTL?'left-6':'right-6'
-      )}>
-        <StatusBadge
-  status={mapReservationStatusToBadgeType(status)}
-  label={getTranslatedStatus(status)}
-/>
-        
+      <div
+        className={cn(
+          ' absolute top-6  flex items-center gap-2 ',
+          isRTL ? 'left-6' : 'right-6'
+        )}
+      >
+        <StatusBadge status={mapReservationStatusToBadgeType(status)} label={getTranslatedStatus(status)} />
+
         <button
           type="button"
           onClick={() => setIsDetailsOpen(!isDetailsOpen)}
@@ -295,15 +326,20 @@ export const ReservationCard = ({
             {/* Package Info */}
             {reservation.servicePackage && (
               <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="text-14 font-semibold text-gray-900 mb-1">
+                <p
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                  className={cn('text-14 font-semibold text-gray-900 mb-1', isRTL ? 'text-right' : 'text-left')}
+                >
                   {t('card.details.packageLabel')}{' '}
-                  {reservation.servicePackage.nameEn ??
-                    reservation.servicePackage.nameAr ??
-                    t('card.fallback.package')}
+                  <span className="font-semibold">{packageName}</span>
                 </p>
-                {reservation.servicePackage.descriptionEn && (
-                  <p className="text-12 text-gray-600">
-                    {reservation.servicePackage.descriptionEn}
+
+                {!!packageDescription && (
+                  <p
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                    className={cn('text-12 text-gray-600', isRTL ? 'text-right' : 'text-left')}
+                  >
+                    {packageDescription}
                   </p>
                 )}
               </div>
@@ -316,7 +352,9 @@ export const ReservationCard = ({
                   <MapPin className="h-4 w-4" />
                   {t('card.details.locationTitle')}
                 </p>
-                <p className="text-12 text-gray-600">{placeAddress}</p>
+                <p dir={isRTL ? 'rtl' : 'ltr'} className={cn('text-12 text-gray-600', isRTL ? 'text-right' : 'text-left')}>
+                  {placeAddress}
+                </p>
               </div>
             )}
 
@@ -340,21 +378,19 @@ export const ReservationCard = ({
 
             {/* Notes */}
             {reservation.notes && (
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-12 font-semibold text-blue-900 mb-1">
-                  {t('card.details.notes')}:
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200 w-fit">
+                <p className="text-12 font-semibold text-blue-900 mb-1">{t('card.details.notes')}:</p>
+                <p dir={isRTL ? 'rtl' : 'ltr'} className={cn('text-12 ', isRTL ? 'text-right' : 'text-left')}>
+                  {reservation.notes}
                 </p>
-                <p className="text-12 text-blue-700">{reservation.notes}</p>
               </div>
             )}
 
             {/* Client Feedback */}
             {reservation.clientFeedback && (
               <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                <p className="text-12 font-semibold text-green-900 mb-1">
-                  {t('card.details.feedback')}:
-                </p>
-                <p className="text-12 text-green-700">
+                <p className="text-12 font-semibold text-green-900 mb-1">{t('card.details.feedback')}:</p>
+                <p dir={isRTL ? 'rtl' : 'ltr'} className={cn('text-12 text-green-700', isRTL ? 'text-right' : 'text-left')}>
                   {reservation.clientFeedback}
                 </p>
               </div>

@@ -15,6 +15,7 @@ import {
     Pagination,
     LoadingSpinner,
 } from '@/components/ui'
+import { CancelOrderModal } from '@/components/ui/CancelOrderModal'
 import { getClientReservationsPaginated, cancelReservation } from '@/services/api/reservationApi'
 import type { ReservationResponse } from '@/types/responses'
 import { useToast } from '@/components/ui/Toaster'
@@ -59,10 +60,14 @@ export default function ReservationsPage() {
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
 
-    // Track mount state to prevent hydration mismatch
-    useEffect(() => {
-        setIsMounted(true)
-    }, [])
+  // ✅ Cancel Modal state
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
+  const [selectedReservationId, setSelectedReservationId] = useState<string | null>(null)
+
+  // Track mount state to prevent hydration mismatch
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
     // Fetch reservations - disable during SSR to prevent hydration mismatch
     const { data: reservationsData, isLoading, error, refetch } = useReservations(
@@ -105,18 +110,29 @@ export default function ReservationsPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const handleCancelReservation = async (reservationId: string) => {
-    if (!confirm(t('confirm.cancelTitle'))) {
-      return
-    }
+  // ✅ Open modal instead of confirm()
+  const handleCancelReservation = (reservationId: string) => {
+    setSelectedReservationId(reservationId)
+    setIsCancelModalOpen(true)
+  }
 
-        try {
-            await cancelReservationMutation.mutateAsync(reservationId)
-        } catch (error) {
-            // Error is handled by mutation onError
-            console.error('Failed to cancel reservation:', error)
-        }
+  const handleCloseCancelModal = () => {
+    setIsCancelModalOpen(false)
+    setSelectedReservationId(null)
+  }
+
+  const handleConfirmCancelModal = async (reason?: string) => {
+    if (!selectedReservationId) return
+
+    try {
+     
+      await cancelReservationMutation.mutateAsync(selectedReservationId)
+      handleCloseCancelModal()
+    } catch (error) {
+      // Error is handled by mutation onError
+      console.error('Failed to cancel reservation:', error)
     }
+  }
 
     const handleViewDetails = (reservationId: string) => {
         // Navigate to reservation details page if it exists
@@ -133,11 +149,7 @@ export default function ReservationsPage() {
     return (
       <UserPageLayout>
         <PageHeader title={t('page.title')} />
-        <LoadingSpinner
-size='lg'
-          text={`${t('loading.title')} ${t('loading.subtitle')}`}
-         
-        />
+        <LoadingSpinner size="lg" text={`${t('loading.title')} ${t('loading.subtitle')}`} />
       </UserPageLayout>
     )
   }
@@ -165,8 +177,8 @@ size='lg'
           title={t('page.title')}
           subtitle={
             totalCount > 0
-              ? t('page.subtitle', { count: totalCount })
-              : undefined
+              ? t('page.subtitle.other', { count: totalCount })
+              : t('page.subtitle.one', { count: totalCount })
           }
         />
 
@@ -233,11 +245,23 @@ size='lg'
         </>
       )}
 
+      {/* ✅ Cancel Modal (re-using CancelOrderModal) */}
+      <CancelOrderModal
+        isOpen={isCancelModalOpen}
+        onClose={handleCloseCancelModal}
+        onConfirm={handleConfirmCancelModal}
+        titleText={t('confirm.title')}
+        text={t('confirm.cancelTitle')}
+        keepText={t('confirm.keepButton')}
+        cancelText={t('confirm.cancelButton')}
+        note={false}
+      />
+
       {/* Loading Overlay for Mutations */}
-      <LoadingOverlay
+      <LoadingSpinner
         open={cancelReservationMutation.isPending}
-        title={t('details.mutation.cancelling.title')}
-        subtitle={t('details.mutation.cancelling.subtitle')}
+        text={t('details.mutation.cancelling.title')}
+       
       />
     </UserPageLayout>
   )

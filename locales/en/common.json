@@ -1929,7 +1929,10 @@
       "cancelFail": "Failed to cancel reservation"
     },
     "confirm": {
-      "cancelTitle": "Are you sure you want to cancel this reservation?"
+      "title": "Confirm Cancellation",
+      "cancelTitle": "Are you sure you want to cancel this reservation?",
+      "keepButton":"keep Reservation",
+      "cancelButton":"Cancel Reservation"
     },
     "navigation": {
       "browseServicesHref": "/services",

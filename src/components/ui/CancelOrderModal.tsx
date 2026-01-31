@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Modal } from './Modal'
-import { Input } from './Input'
+
 import { Button } from './Button'
 import { AlertTriangle } from 'lucide-react'
 
@@ -11,6 +11,12 @@ export interface CancelOrderModalProps {
   onClose: () => void
   onConfirm: (reason?: string) => void
   orderId?: string
+  titleText?: string
+  text?: string
+  cancelText?: string
+  keepText?: string
+  note?:boolean
+
 }
 
 export const CancelOrderModal = ({
@@ -18,6 +24,11 @@ export const CancelOrderModal = ({
   onClose,
   onConfirm,
   orderId,
+  titleText,
+  text,
+  cancelText,
+  keepText,
+  note=true,
 }: CancelOrderModalProps) => {
   const [cancelReason, setCancelReason] = useState('')
 
@@ -35,7 +46,7 @@ export const CancelOrderModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Cancel Order"
+      title={titleText ?? 'Cancel Order'}
       maxWidth="md"
       containerClassName="p-0"
       headerClassName="px-6 py-4"
@@ -56,11 +67,11 @@ export const CancelOrderModal = ({
 
         {/* Question */}
         <p className="mb-6 text-center text-16 font-medium text-gray-900">
-          Are you sure you want to cancel this order?
+          {text ?? 'Are you sure you want to cancel this order?'}
         </p>
 
         {/* Input Field */}
-        <div className="mb-6 w-full">
+        {note && <div className="mb-6 w-full">
           <textarea
             placeholder="Please tell us why you're canceling (optional)."
             value={cancelReason}
@@ -68,7 +79,8 @@ export const CancelOrderModal = ({
             className="flex w-full min-h-[100px] resize-none items-center gap-2 rounded-md border border-gray-300 bg-background px-3 py-2 text-16 text-gray-900 ring-offset-background transition-colors placeholder:text-gray-400 focus-visible:border-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
             rows={4}
           />
-        </div>
+        </div>}
+        
 
         {/* Action Buttons */}
         <div className="flex w-full flex-col gap-3">
@@ -78,7 +90,9 @@ export const CancelOrderModal = ({
             className="w-full text-white"
             onClick={handleClose}
           >
-            Keep Order
+            {keepText ?? 'Keep Order'}
+
+
           </Button>
           <Button
             variant="outlineBrand"
@@ -86,7 +100,7 @@ export const CancelOrderModal = ({
             className="w-full border-brand-500 bg-white !text-brand-500 hover:bg-brand-50"
             onClick={handleConfirm}
           >
-            Cancel Order
+            {cancelText ?? 'Cancel Order'}
           </Button>
         </div>
       </div>

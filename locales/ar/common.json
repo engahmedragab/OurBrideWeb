@@ -1906,7 +1906,10 @@
       "cancelFail": "فشل إلغاء الحجز"
     },
     "confirm": {
-      "cancelTitle": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟"
+      "title": "إلغاء الحجز",
+      "cancelTitle": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟",
+      "keepButton": "الاحتفاظ بالحجز",
+      "cancelButton": "إلغاء الحجز"
     },
     "navigation": {
       "browseServicesHref": "/services",
