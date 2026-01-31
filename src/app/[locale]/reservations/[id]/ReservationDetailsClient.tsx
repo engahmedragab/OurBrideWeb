@@ -33,7 +33,8 @@ import { ReservationStatus } from '@/types/responses/common'
 import { useToast } from '@/components/ui/Toaster'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
-import { useI18nTranslations } from '@/i18n/hooks'
+import { useI18nLocale, useI18nTranslations, useIsRTL } from '@/i18n/hooks'
+import { pickLocalizedText } from './../../../../utils/translation/i18nText';
 
 interface ReservationDetailsClientProps {
   reservationId: string
@@ -57,6 +58,8 @@ export function ReservationDetailsClient({
   reservationId,
 }: ReservationDetailsClientProps) {
   const t = useI18nTranslations('reservations')
+  const locale=useI18nLocale()
+  const isRTL =useIsRTL()
   const router = useRouter()
   const queryClient = useQueryClient()
   const { addToast } = useToast()
@@ -190,19 +193,31 @@ export function ReservationDetailsClient({
     : null
 
   // Get service details
-  const serviceName = service?.nameEn ?? service?.nameAr ?? 'Service'
+const serviceName =
+  pickLocalizedText(locale, {
+    en: service?.nameEn,
+    ar: service?.nameAr,
+  }) ?? (locale === 'ar' ? 'الخدمة' : 'Service')
   const serviceImage = service?.imageUrl ?? '/placeholder-service.png'
   const serviceRating = service?.rate ?? 0
   const serviceDescription = service?.descriptionEn ?? service?.descriptionAr ?? null
 
   // Get provider details
-  const providerName = provider?.nameEn ?? provider?.nameAr ?? 'Provider'
+  const providerName =
+  pickLocalizedText(locale, {
+    en: provider?.nameEn,
+    ar: provider?.nameAr,
+  }) ?? (locale === 'ar' ? 'المزوّد' : 'Provider')
   const providerImage = provider?.profileURL ?? null
   const providerPhone = provider?.phoneNumber ?? null
   const providerAddress = provider?.shortAddress ?? null
 
   // Get place details
-  const placeName = reservation.reservationPlace?.nameEn ?? reservation.reservationPlace?.nameAr ?? null
+ const placeName =
+  pickLocalizedText(locale, {
+    en: reservation.reservationPlace?.nameEn,
+    ar: reservation.reservationPlace?.nameAr,
+  }) ?? null
   const placeAddress = reservation.reservationPlace?.address?.fullAddress ?? null
 
   // Get staff details
@@ -444,11 +459,12 @@ export function ReservationDetailsClient({
 
               <div className="space-y-2">
                 <p className="text-16 font-medium text-gray-900">
-                  {reservation.servicePackage.nameEn ?? reservation.servicePackage.nameAr ?? 'Package'}
+                  
+                  {isRTL? reservation.servicePackage.nameAr:reservation.servicePackage.nameEn || 'Package'}
                 </p>
                 {(reservation.servicePackage.descriptionEn || reservation.servicePackage.descriptionAr) && (
                   <p className="text-14 text-gray-600">
-                    {reservation.servicePackage.descriptionEn ?? reservation.servicePackage.descriptionAr}
+                    {isRTL?reservation.servicePackage.descriptionAr : reservation.servicePackage.descriptionEn}
                   </p>
                 )}
                 {reservation.servicePackage.price && (
@@ -472,8 +488,8 @@ export function ReservationDetailsClient({
                   <div key={resource.id} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                     <FileText className="h-4 w-4 text-gray-500" />
                     <span className="text-14 text-gray-900">
-                      {resource.nameEn ??
-                        resource.nameAr ??
+                      {isRTL ? resource.nameAr:
+                        resource.nameEn ??
                         t('details.resourcesCard.fallbackName', {
                           id: resource.id,
                         })}
