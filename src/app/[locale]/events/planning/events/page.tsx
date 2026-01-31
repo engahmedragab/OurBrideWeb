@@ -10,7 +10,7 @@ import { formatDateSafe, getToday } from '@/lib/date-utils'
 import { ChevronLeft, Save } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { Button, LoadingOverlay, ErrorModal } from '@/components/ui'
+import { Button, LoadingOverlay, ErrorModal, LoadingSpinner } from '@/components/ui'
 import { useEventBooks, useSyncEventBooks, useSyncEventBooksDelta } from '@/hooks/eventBooks'
 import { useInitEventBooks } from '@/hooks/eventBooks/useInitEventBooks'
 import { useEventId } from '@/hooks/planning'
@@ -25,6 +25,7 @@ import {
   convertLineToRequest,
   convertCategoryToRequest,
 } from '@/utils/planning/mappers/eventsMappers'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 /**
  * Convert date-time to day key (YYYY-MM-DD)
@@ -50,6 +51,8 @@ function EventsPageContent() {
   const today = getToday()
   const [selectedDayId, setSelectedDayId] = useState(formatDateSafe(today))
   const [isMounted, setIsMounted] = useState(false)
+  const t = useI18nTranslations('userEvents')
+  const isRtl =  useIsRTL()
 
   // Ensure we're mounted before enabling queries to avoid hydration mismatch
   useEffect(() => {
@@ -256,23 +259,16 @@ function EventsPageContent() {
   // Loading State - Show loading only after mount to avoid hydration mismatch
   if (!isMounted || isLoading || isInitializing || isAddingModels) {
     const loadingTitle = !isMounted
-      ? 'Loading events...'
+      ? t('loadingEvents')
       : isInitializing
-        ? 'Initializing event book...'
+        ? t('initializingEventBook')
         : isAddingModels
-          ? 'Adding default models...'
-          : 'Loading events...'
-    const loadingSubtitle = !isMounted
-      ? 'Please wait a moment'
-      : isInitializing
-        ? 'Setting up your event book'
-        : isAddingModels
-          ? 'Please wait while we add default categories'
-          : 'Please wait a moment'
+          ? t('addingDefaultModels')
+          : t('loadingEvents')
 
     return (
       <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
-        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+         <LoadingSpinner size="lg" text={loadingTitle} fullScreen={true} />
       </div>
     )
   }
@@ -283,8 +279,8 @@ function EventsPageContent() {
       <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
         <ErrorModal
           open={true}
-          title="Failed to Load Events"
-          message="Failed to load events. Please try again."
+          title={t('failedToLoadEventsTitle')}
+          message={t('failedToLoadEventsMessage')}
           onRetry={() => window.location.reload()}
           onClose={() => { }}
         />
@@ -301,7 +297,7 @@ function EventsPageContent() {
           className="flex items-center gap-3 text-gray-900 hover:opacity-80 transition-opacity"
         >
           <ChevronLeft className="h-5 w-5" />
-          <h1 className="text-24 font-semibold text-gray-900">Event</h1>
+          <h1 className="text-24 font-semibold text-gray-900">{t('eventPageTitle')}</h1>
         </Link>
       </div>
 
@@ -317,11 +313,11 @@ function EventsPageContent() {
             type="button"
           >
             <Save className="h-4 w-4" />
-            {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+            {syncMutation.isPending ? t('saving') : t('saveChanges')}
           </Button>
 
           {hasUnsavedChanges && (
-            <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+            <span className="text-16 text-brand-500 font-medium">{t('unsavedChanges')}</span>
           )}
         </div>
       )}
@@ -334,8 +330,8 @@ function EventsPageContent() {
               {eventDaysWithData.map((dayData) => {
                 const isSelected = selectedDayId === dayData.dayId
                 const categoryName = dayData.category
-                  ? (dayData.category.nameEn || dayData.category.nameAr || dayData.category.name || 'Event Day')
-                  : 'Event Day'
+                  ? (dayData.category.nameEn || dayData.category.nameAr || dayData.category.name || t('eventDay'))
+                  : t('eventDay')
 
                 return (
                   <button
@@ -400,10 +396,12 @@ function EventsPageContent() {
  * Wrapped in Suspense for useSearchParams compatibility
  */
 export default function EventsPage() {
+  const t = useI18nTranslations('userEvents')
+  
   return (
     <Suspense fallback={
       <div className="w-full min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+        <div className="text-gray-600">{t('loadingEvents')}</div>
       </div>
     }>
       <EventsPageContent />

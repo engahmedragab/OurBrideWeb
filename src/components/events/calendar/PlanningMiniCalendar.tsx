@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatDateSafe, isSameDay, getToday } from '@/lib/date-utils'
+import { useI18nTranslations } from '@/i18n'
 
 export type PlanningMiniCalendarValue = Date | string
 
@@ -126,6 +127,8 @@ export const PlanningMiniCalendar = ({
 }: PlanningMiniCalendarProps) => {
   const selectedDate = valueToDate(value)
   const today = getToday()
+  const t = useI18nTranslations('userEvents')
+
   
   // Internal state for the visible month (viewMonth)
   const [viewMonth, setViewMonth] = useState(() => {
@@ -206,21 +209,11 @@ export const PlanningMiniCalendar = ({
     }
   }, [isMonthOpen, isYearOpen])
 
-  const weekDays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+  const weekDays = ["Su", "Mo", "Tu", "We" , "Th", "Fr", "Sa"]
 
   const monthNames = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
+    'January','February','March','April','May','June',
+    'July','August','September','October','November','December'
   ]
 
   // Generate calendar grid
@@ -330,8 +323,8 @@ export const PlanningMiniCalendar = ({
             className="flex h-5 items-center justify-center px-2 py-0.5 rounded hover:bg-gray-100 transition-colors"
             aria-label="Select month"
           >
-            <p className="text-10 font-normal text-gray-500 text-center whitespace-nowrap">
-              {monthNames[viewMonth.getMonth()]}
+            <p className="text-10 font-normal text-red-500 text-center whitespace-nowrap">
+            {t(`monthNames.${monthNames[viewMonth.getMonth()]}`)}
             </p>
           </button>
           {isMonthOpen && (
@@ -345,7 +338,7 @@ export const PlanningMiniCalendar = ({
                     index === viewMonth.getMonth() && 'bg-brand-50 text-brand-500'
                   )}
                 >
-                  {month}
+                 {t(`monthNames.${month}`)}
                 </button>
               ))}
             </div>
@@ -405,7 +398,7 @@ export const PlanningMiniCalendar = ({
                   index === 0 || index === 6 ? 'text-brand-500' : 'text-gray-500'
                 )}
               >
-                {day}
+                {t(`weekDays.${day}`)}
               </p>
             </div>
           ))}
