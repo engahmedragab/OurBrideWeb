@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Trash2, Minus, Plus, Package, Calendar, Crown, Gift, Scissors } from 'lucide-react'
 import { Button } from './Button'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 export type CartItemType = 'Product' | 'Service' | 'Reservation' | 'Membership' | 'GiftCard'
 
@@ -44,23 +45,6 @@ const getTypeIcon = (type?: CartItemType) => {
   }
 }
 
-const getTypeLabel = (type?: CartItemType): string => {
-  switch (type) {
-    case 'Product':
-      return 'Product'
-    case 'Service':
-      return 'Service'
-    case 'Reservation':
-      return 'Reservation'
-    case 'Membership':
-      return 'Membership'
-    case 'GiftCard':
-      return 'Gift Card'
-    default:
-      return 'Item'
-  }
-}
-
 export const CartItem = ({
   id,
   title,
@@ -79,10 +63,30 @@ export const CartItem = ({
   className,
   type,
 }: CartItemProps) => {
+  const t = useI18nTranslations('cart.cartItem')
+  const tTypes = useI18nTranslations('cart.itemTypes')
+  const isRTL=useIsRTL()
+
   const [imageError, setImageError] = useState(false)
   const totalPrice = discountedPrice * quantity
   const TypeIcon = getTypeIcon(type)
-  const typeLabel = getTypeLabel(type)
+
+  const typeLabel = (() => {
+    switch (type) {
+      case 'Product':
+        return tTypes('product')
+      case 'Service':
+        return tTypes('service')
+      case 'Reservation':
+        return tTypes('reservation')
+      case 'Membership':
+        return tTypes('membership')
+      case 'GiftCard':
+        return tTypes('giftCard')
+      default:
+        return tTypes('item')
+    }
+  })()
 
   const hasValidImage =
     image &&
@@ -111,7 +115,7 @@ export const CartItem = ({
             <div className="w-full h-full rounded-lg bg-gray-100 overflow-hidden">
               <Image
                 src={image}
-                alt={title}
+                alt={title || typeLabel}
                 fill
                 sizes="80px"
                 className="object-cover"
@@ -121,11 +125,12 @@ export const CartItem = ({
           ) : (
             <div className="w-full h-full rounded-lg bg-gray-100 flex items-center justify-center">
               <span className="text-gray-400 text-10 font-medium text-center px-1">
-                No image available
+                {t('noImage')}
               </span>
             </div>
           )}
         </div>
+
         {/* Delete Button - Under Image */}
         <Button
           type="button"
@@ -136,7 +141,7 @@ export const CartItem = ({
             onRemove(id)
           }}
           className="p-2 rounded-full border-2 border-red-300 hover:bg-red-50 hover:border-red-400"
-          aria-label="Remove item"
+          aria-label={t('removeItemAria')}
         >
           <Trash2 className="h-4 w-4 text-red-500" />
         </Button>
@@ -147,12 +152,12 @@ export const CartItem = ({
         {/* Discount Badge - Top Right */}
         {discountPercentage && (
           <span className="absolute top-0 right-0 text-12 font-medium text-green-500">
-            {discountPercentage}% OFF
+            {t('discountOff', { percent: discountPercentage })}
           </span>
         )}
 
         {/* Title */}
-        <h3 className="text-14 font-semibold text-gray-900 line-clamp-2 mb-2 pr-16">
+        <h3 className={cn("text-14 font-semibold text-gray-900 line-clamp-2 mb-2 ", isRTL ? 'text-right' : 'text-left')}>
           {title || typeLabel}
         </h3>
 
@@ -171,7 +176,7 @@ export const CartItem = ({
         {/* Delivery Date */}
         {deliveryDate && (
           <p className="text-12 text-gray-600 mb-2">
-            Get In By {deliveryDate}
+            {t('getInBy', { date: deliveryDate })}
           </p>
         )}
 
@@ -179,18 +184,26 @@ export const CartItem = ({
         <div className="flex flex-col gap-1 mb-2">
           {purchasePrice !== undefined && purchasePrice !== null && (
             <p className="text-12 text-gray-600">
-              <span className="font-medium">Purchase Price: </span>
-              <span>{purchasePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</span>
+              <span className="font-medium">{t('purchasePrice')} </span>
+              <span>
+                {purchasePrice.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}{' '}
+                {currency}
+              </span>
             </p>
           )}
           {purchaseDate && (
             <p className="text-12 text-gray-600">
-              <span className="font-medium">Added on: </span>
-              <span>{new Date(purchaseDate).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-              })}</span>
+              <span className="font-medium">{t('addedOn')} </span>
+              <span>
+                {new Date(purchaseDate).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </span>
             </p>
           )}
         </div>
@@ -200,8 +213,14 @@ export const CartItem = ({
           <div className="flex items-center justify-between">
             {/* Total Price */}
             <div className="text-14 font-semibold text-gray-900">
-              <span className="font-normal">Total Price : </span>
-              <span>{totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</span>
+              <span className="font-normal">{t('totalPrice')} </span>
+              <span>
+                {totalPrice.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}{' '}
+                {currency}
+              </span>
             </div>
 
             {/* Quantity Selector */}
@@ -219,7 +238,7 @@ export const CartItem = ({
                   }}
                   disabled={quantity <= 1}
                   className="h-8 w-8 rounded-full border-2 border-gray-300 hover:bg-gray-50 text-gray-600"
-                  aria-label="Decrease quantity"
+                  aria-label={t('decreaseQtyAria')}
                 >
                   <Minus className="h-3.5 w-3.5" />
                 </Button>
@@ -235,7 +254,7 @@ export const CartItem = ({
                     onQuantityChange(id, 1)
                   }}
                   className="h-8 w-8 rounded-full border-2 border-red-300 hover:bg-red-50 hover:border-red-400 text-red-500"
-                  aria-label="Increase quantity"
+                  aria-label={t('increaseQtyAria')}
                 >
                   <Plus className="h-3.5 w-3.5" />
                 </Button>
@@ -256,7 +275,7 @@ export const CartItem = ({
                 }}
                 className="!text-red-500 border-red-500 hover:bg-red-50 hover:text-red-500"
               >
-                Checkout
+                {t('checkout')}
               </Button>
             </div>
           )}

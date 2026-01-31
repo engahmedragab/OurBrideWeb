@@ -796,8 +796,8 @@
   }
 }
 
-}
-    },
+},
+   
     "products": {
   "whyBridesChooseProducts": {
     "why": "لماذا",
@@ -2066,7 +2066,124 @@
       "package": "الباقة"
     }
   }
-  }
+  },
+ 
+  "cart": {
+    "filters": {
+      "services": "الخدمات",
+      "products": "المنتجات"
+    },
+    "page": {
+      "title": "سلة مشترياتي",
+      "subtitle": {
+        "one": "{count} عنصر",
+        "other": "{count} عناصر"
+      }
+    },
+    "states": {
+      "loading": {
+        "title": "جاري تحميل السلة...",
+        "subtitle": "يرجى الانتظار لحظة"
+      },
+      "error": {
+        "title": "حدث خطأ أثناء تحميل السلة",
+        "message": "يرجى المحاولة مرة أخرى لاحقًا",
+        "backHome": "العودة إلى الصفحة الرئيسية"
+      },
+      "empty": {
+        "title": "لا يوجد أي عناصر في سلتك",
+        "description": "ابدأ بتصفح {type} لتبدأ رحلتك",
+        "viewProducts": "عرض المنتجات",
+        "viewServices": "عرض الخدمات"
+      }
+    },
+    "actions": {
+      "refreshAria": "تحديث السلة",
+      "clearAllAria": "مسح كل العناصر",
+      "checkoutAll": "إتمام الدفع للكل",
+      "checkout": "إتمام الدفع",
+      "redeem": "تطبيق",
+      "remove": "حذف",
+      "keep": "إبقاء"
+    },
+    "cartItem": {
+      "noImage": "لا توجد صورة",
+      "discountOff": "خصم {percent}%",
+      "getInBy": "يصلك قبل {date}",
+      "purchasePrice": "سعر الشراء:",
+      "addedOn": "تمت الإضافة في:",
+      "totalPrice": "السعر الإجمالي :",
+      "decreaseQtyAria": "تقليل الكمية",
+      "increaseQtyAria": "زيادة الكمية",
+      "removeItemAria": "حذف العنصر",
+      "checkout":" إتمام الدفع"
+    },
+    "itemTypes": {
+      "product": "منتج",
+      "service": "خدمة",
+      "reservation": "حجز",
+      "membership": "عضوية",
+      "giftCard": "بطاقة هدية",
+      "item": "عنصر"
+    },
+    "orderSummary": {
+      "promo": {
+        "placeholder": "أدخل كود الخصم",
+        "removeCouponAria": "إزالة كود الخصم",
+        "redeemed": "تم التطبيق"
+      },
+      "rewards": {
+        "diamonds": "الماس: {points} نقطة",
+        "giftsCash": "رصيد الهدايا: {amount} {currency}",
+        "appliedGiftCards": "بطاقات الهدايا المطبّقة:"
+      },
+      "breakdown": {
+        "subtotal": "الإجمالي الفرعي",
+        "discount": "الخصم",
+        "couponDiscount": "خصم الكوبون",
+        "membershipDiscount": "خصم العضوية",
+        "walletCredit": "رصيد المحفظة",
+        "giftCard": "بطاقة هدية",
+        "cashCard": "بطاقة نقدية",
+        "taxesFees": "الضرائب والرسوم",
+        "deliveryFee": "رسوم التوصيل",
+        "total": "الإجمالي"
+      },
+      "deposit": {
+        "depositAmount": "مبلغ العربون",
+        "depositPaid": "العربون المدفوع",
+        "depositRemaining": "المتبقي من العربون"
+      },
+      "terms": {
+        "accept": "أوافق على الشروط والأحكام",
+        "note": "إذا لم تكن متواجدًا عند وصول مندوب التوصيل، سيتم ترك طلبك عند الباب. بإتمام الطلب، أنت توافق على تحمل المسؤولية الكاملة عنه بعد تسليمه."
+      }
+    },
+    "modals": {
+      "deleteItem": {
+        "title": "حذف عنصر",
+        "question": "هل أنت متأكد أنك تريد حذف {item} من سلتك؟",
+        "confirm": "حذف العنصر",
+        "cancel": "إبقاء العنصر",
+        "defaultItem": "هذا العنصر"
+      },
+      "cancelRequest": {
+        "title": "إلغاء الطلب",
+        "question": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
+        "placeholder": "من فضلك أخبرنا سبب الإلغاء (اختياري).",
+        "keep": "إبقاء الطلب",
+        "confirm": "إلغاء الطلب"
+      }
+    },
+    "mutationOverlay": {
+      "clearing": "جاري مسح السلة...",
+      "processingCheckout": "جاري إتمام الدفع...",
+      "updating": "جاري تحديث السلة...",
+      "subtitle": "يرجى الانتظار لحظة"
+    }
+  
+}
+
 
 
 }

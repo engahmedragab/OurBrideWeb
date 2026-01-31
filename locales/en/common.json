@@ -2089,6 +2089,120 @@
       "package": "Package"
     }
   }
+  },
+   "cart": {
+    "filters": {
+      "services": "Services",
+      "products": "Products"
+    },
+    "page": {
+      "title": "My Cart",
+      "subtitle": {
+        "one": "{count} Item",
+        "other": "{count} Items"
+      }
+    },
+    "states": {
+      "loading": {
+        "title": "Loading cart...",
+        "subtitle": "Please wait a moment"
+      },
+      "error": {
+        "title": "Error loading cart",
+        "message": "Please try again later",
+        "backHome": "Back to Home"
+      },
+      "empty": {
+        "title": "You don't have any items in your cart",
+        "description": "Start exploring {type} to begin your journey",
+        "viewProducts": "View Products",
+        "viewServices": "View Services"
+      }
+    },
+    "actions": {
+      "refreshAria": "Refresh cart",
+      "clearAllAria": "Clear all items",
+      "checkoutAll": "Checkout All",
+      "checkout": "Checkout",
+      "redeem": "Redeem",
+      "remove": "Remove",
+      "keep": "Keep"
+    },
+    "cartItem": {
+      "noImage": "No image available",
+      "discountOff": "{percent}% OFF",
+      "getInBy": "Get In By {date}",
+      "purchasePrice": "Purchase Price:",
+      "addedOn": "Added on:",
+      "totalPrice": "Total Price :",
+      "decreaseQtyAria": "Decrease quantity",
+      "increaseQtyAria": "Increase quantity",
+      "removeItemAria": "Remove item",
+      "checkout": "Checkout "
+    },
+    "itemTypes": {
+      "product": "Product",
+      "service": "Service",
+      "reservation": "Reservation",
+      "membership": "Membership",
+      "giftCard": "Gift Card",
+      "item": "Item"
+    },
+    "orderSummary": {
+      "promo": {
+        "placeholder": "Enter Promo Code",
+        "removeCouponAria": "Remove coupon",
+        "redeemed": "Redeemed"
+      },
+      "rewards": {
+        "diamonds": "Diamonds : {points} Points",
+        "giftsCash": "Gifts Cash : {amount} {currency}",
+        "appliedGiftCards": "Applied Gift Cards:"
+      },
+      "breakdown": {
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "couponDiscount": "Coupon Discount",
+        "membershipDiscount": "Membership Discount",
+        "walletCredit": "Wallet Credit",
+        "giftCard": "Gift Card",
+        "cashCard": "Cash Card",
+        "taxesFees": "Taxes & Fees",
+        "deliveryFee": "Delivery Fee",
+        "total": "Total"
+      },
+      "deposit": {
+        "depositAmount": "Deposit Amount",
+        "depositPaid": "Deposit Paid",
+        "depositRemaining": "Deposit Remaining"
+      },
+      "terms": {
+        "accept": "I Accept Terms & Conditions",
+        "note": "If you are not around when the delivery person arrives, they will leave your order at the door. By placing your order, you agree to take full responsibility for it once it's delivered."
+      }
+    },
+    "modals": {
+      "deleteItem": {
+        "title": "Remove Item",
+        "question": "Are you sure you want to remove {item} from your cart?",
+        "confirm": "Remove Item",
+        "cancel": "Keep Item",
+        "defaultItem": "this item"
+      },
+      "cancelRequest": {
+        "title": "Cancel Request",
+        "question": "Are you sure you want to cancel this request?",
+        "placeholder": "Please tell us why you're canceling (optional).",
+        "keep": "Keep Request",
+        "confirm": "Cancel Request"
+      }
+    },
+    "mutationOverlay": {
+      "clearing": "Clearing cart...",
+      "processingCheckout": "Processing checkout...",
+      "updating": "Updating cart...",
+      "subtitle": "Please wait a moment"
+    }
   }
 
 }
