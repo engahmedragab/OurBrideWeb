@@ -2542,8 +2542,414 @@
       "subtitle": "Please wait a moment"
     }
    }
-},
-"deliveryAddresses": {
+  },
+  "orders": {
+    "page": {
+      "title": "Order List"
+    },
+    "loading": {
+      "title": "Loading orders...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Error loading orders",
+      "message": "Please try again later",
+      "actionLabel": "Back to Home"
+    },
+    "empty": {
+      "title": "You don't have any orders",
+      "description": "Start exploring services and products to begin your journey",
+      "actionLabel": "Start Shopping"
+    },
+    "sections": {
+      "requestsInProgressTitle": "Request in Progress",
+      "requestsInProgressSuffix": "Requests in Progress",
+      "ordersInProgressTitle": "Order In Progress",
+      "ordersInProgressSuffix": "Orders In Progress",
+      "requestsHistoryTitle": "Requests History",
+      "requestsHistorySuffix": "Requests",
+      "ordersHistoryTitle": "Orders History",
+      "ordersHistorySuffix": "Orders"
+    },
+    "table": {
+      "orderNumber": "Order Number",
+      "arriveIn": "Arrive in",
+      "paid": "Paid",
+      "status": "Status"
+    },
+    "aria": {
+      "gridView": "Grid view",
+      "listView": "List view"
+    },
+    "actions": {
+      "cancelLoadingTitle": "Cancelling order...",
+      "cancelLoadingSubtitle": "Please wait a moment"
+    },
+    "card": {
+      "itemFallback": "Item",
+      "serviceFallback": "Service",
+      "providerFallback": "Provider",
+      "servicePackage": "Service Package"
+    }
+  },
+  "orderDetails": {
+    "pageTitle": "Order Details",
+    "loading": {
+      "title": "Loading order...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Order not found",
+      "message": "The order you're looking for doesn't exist or has been removed",
+      "actionLabel": "Back to Orders"
+    },
+    "header": {
+      "collapseSummary": "Collapse order summary",
+      "expandSummary": "Expand order summary",
+      "orderLabel": "Order",
+      "placedLabel": "Placed",
+      "orderIdLabel": "Order ID",
+      "item": "item",
+      "items": "items",
+      "countLabel": "Count",
+      "providerLabel": "Provider",
+      "urgentOrder": "Urgent Order",
+      "clientConfirmation": "Client Confirmation",
+      "confirmed": "Confirmed",
+      "pending": "Pending"
+    },
+    "delivery": {
+      "expected": "Expected Delivery",
+      "preferred": "Preferred Delivery",
+      "status": "Delivery Status",
+      "trackTitle": "Track Your Order",
+      "trackingNumber": "Tracking Number",
+      "copy": "Copy",
+      "trackOnline": "Track Online",
+      "trackDesc": "Track your order status and delivery updates",
+      "track": "Track",
+      "detailsTitle": "Delivery Details",
+      "start": "Start",
+      "delivery": "Delivery"
+    },
+    "summary": {
+      "title": "Order Summary",
+      "noImage": "No img",
+      "subtotal": "Subtotal",
+      "taxesFees": "Taxes & Fees",
+      "shipping": "Shipping",
+      "discount": "Discount",
+      "deposit": "Deposit",
+      "total": "Total"
+    },
+    "payment": {
+      "infoTitle": "Payment Information",
+      "method": "Payment Method",
+      "status": "Payment Status",
+      "coupon": "Coupon Code",
+      "summaryTitle": "Payment Summary",
+      "paidAmount": "Paid Amount",
+      "paidAlt": "Paid (Alt)",
+      "remainingAmount": "Remaining Amount",
+      "progress": "Payment Progress",
+      "planTitle": "Payment Plan",
+      "planName": "Plan Name",
+      "numPayments": "Number of Payments",
+      "firstPayment": "First Payment",
+      "lastPayment": "Last Payment",
+      "planStatus": "Plan Status"
+    },
+    "paymentStatus": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "failed": "Failed",
+      "processing": "Processing"
+    },
+    "paymentMethod": {
+      "cashOnDelivery": "Cash on Delivery",
+      "card": "Card",
+      "wallet": "Wallet"
+    },
+    "client": {
+      "title": "Client Information",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "createdBy": {
+      "title": "Created By",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "notes": {
+      "title": "Notes & Comments",
+      "orderComment": "Order Comment",
+      "orderNotes": "Order Notes",
+      "providerNotes": "Provider Notes"
+    },
+    "additional": {
+      "title": "Additional Information",
+      "cartId": "Cart ID",
+      "checkoutOrderId": "Checkout Order ID",
+      "paymentPlanId": "Payment Plan ID",
+      "created": "Created",
+      "lastModified": "Last Modified",
+      "overdue": "Overdue",
+      "day": "day",
+      "days": "days",
+      "inactiveStatus": "Status: Inactive"
+    },
+    "actions": {
+      "viewInvoice": "View Invoice",
+      "downloadInvoice": "Download Invoice",
+      "downloading": "Downloading...",
+      "backToOrders": "Back to Orders"
+    },
+    "reviews": {
+      "title": "Order Reviews & Comments",
+      "addReview": "Add Review",
+      "writeReview": "Write Your Review",
+      "ratingLabel": "Rating *",
+      "reviewTitle": "Review Title",
+      "reviewBodyLabel": "Your Review *",
+      "reviewPlaceholder": "Share your experience with this order...",
+      "cancel": "Cancel",
+      "submit": "Submit Review",
+      "submitting": "Submitting...",
+      "submitSuccess": "Review submitted successfully!",
+      "submitError": "Failed to submit review",
+      "loading": "Loading reviews...",
+      "empty": "No reviews yet. Be the first to review this order!"
+    },
+    "itemReviews": {
+      "title": "Review Items in This Order",
+      "addReview": "Add Review",
+      "productTitle": "Review This Product",
+      "serviceTitle": "Review This Service",
+      "titlePlaceholder": "Enter a title (optional)",
+      "productPlaceholder": "Share your experience with this product...",
+      "servicePlaceholder": "Share your experience with this service...",
+      "quantityLabel": "Quantity",
+      "productSubmitSuccess": "Product review submitted successfully!",
+      "serviceSubmitSuccess": "Service review submitted successfully!",
+      "submitError": "Failed to submit review",
+      "productFallback": "Product",
+      "serviceFallback": "Service"
+    },
+    "toast": {
+      "trackingCopied": "Tracking number copied to clipboard",
+      "invoiceDownloaded": "Invoice downloaded successfully",
+      "invoiceDownloadFailed": "Failed to download invoice"
+    }
+  },
+  "invoice": {
+    "pageTitle": "Invoice",
+    "loading": {
+      "title": "Loading invoice...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Invoice not found",
+      "message": "The invoice for this order could not be loaded",
+      "actionLabel": "Back to Order"
+    },
+    "header": {
+      "back": "Back",
+      "invoiceNumber": "Invoice",
+      "downloadPdf": "Download PDF",
+      "downloading": "Downloading...",
+      "print": "Print"
+    },
+    "invoice": {
+      "title": "INVOICE",
+      "orderLabel": "Order",
+      "dateLabel": "Date",
+      "fileLabel": "File",
+      "from": "From",
+      "to": "To",
+      "noBilling": "No billing information available"
+    },
+    "items": {
+      "title": "Items",
+      "item": "Item",
+      "quantity": "Quantity",
+      "price": "Price",
+      "total": "Total",
+      "empty": "No items found"
+    },
+    "summary": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "deposit": "Deposit",
+      "discountCodes": "Discount Codes",
+      "total": "Total"
+    },
+    "payment": {
+      "title": "Payment Information",
+      "method": "Payment Method",
+      "status": "Payment Status",
+      "coupon": "Coupon Code",
+      "amount": "Payment Amount"
+    },
+    "plan": {
+      "title": "Payment Plan",
+      "plan": "Plan",
+      "numPayments": "Number of Payments",
+      "amount": "Payment Amount",
+      "firstPayment": "First Payment",
+      "lastPayment": "Last Payment",
+      "status": "Status"
+    },
+    "delivery": {
+      "title": "Delivery Information",
+      "preferredDate": "Preferred Delivery Date",
+      "urgent": "Urgent Order",
+      "requireConfirmation": "Requires Client Confirmation",
+      "confirmed": "Confirmed",
+      "pending": "Pending"
+    },
+    "notes": {
+      "title": "Notes"
+    },
+    "footer": {
+      "thanks": "Thank you for your business!",
+      "tagline": "Your trusted wedding partner"
+    },
+    "toast": {
+      "downloaded": "Invoice downloaded successfully",
+      "downloadFailed": "Failed to download invoice"
+    }
+  },
+  "orderCard": {
+    "aria": {
+      "collapseSummary": "Collapse order summary",
+      "expandSummary": "Expand order summary"
+    },
+    "header": {
+      "orderLabel": "Order",
+      "placedLabel": "Placed",
+      "item": "item",
+      "items": "items"
+    },
+    "payment": {
+      "status": "Payment Status",
+      "method": "Payment Method",
+      "progress": "Payment Progress",
+      "paid": "Paid",
+      "remaining": "Remaining"
+    },
+    "paymentStatus": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "failed": "Failed",
+      "processing": "Processing"
+    },
+    "paymentMethod": {
+      "cashOnDelivery": "Cash on Delivery",
+      "card": "Card",
+      "wallet": "Wallet"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "reorder": "Re-Order",
+      "cancelOrder": "Cancel Order"
+    },
+    "arrival": {
+      "label": "Arrive In"
+    },
+    "summary": {
+      "title": "Order Summary",
+      "quantity": "Qty",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "taxesFees": "Taxes & Fees",
+      "deliveryFee": "Delivery Fee",
+      "deposit": "Deposit",
+      "total": "Total"
+    }
+  },
+  "orderListItem": {
+    "orderLabel": "Order",
+    "placedLabel": "Placed",
+    "status": {
+      "inProgress": "In Progress",
+      "outForDelivery": "Out For Delivery",
+      "completed": "Completed",
+      "cancelled": "Canceled"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "cancelAria": "Cancel order"
+    }
+  },
+  "historySection": {
+    "clear": "Clear History"
+  },
+  "cancelOrderModal": {
+    "title": "Cancel Order",
+    "question": "Are you sure you want to cancel this order?",
+    "placeholder": "Please tell us why you're canceling (optional).",
+    "keep": "Keep Order",
+    "cancel": "Cancel Order"
+  },
+  "orderProgress": {
+    "status": {
+      "preparing": {
+        "title": "We've Got Your Order!",
+        "description": "Your order is confirmed and we're preparing it with care."
+      },
+      "onTheWay": {
+        "title": "Your order is on the way!",
+        "description": "Your order has been shipped and is on its way to you."
+      },
+      "received": {
+        "title": "Order received",
+        "description": "Your order has been received and is ready for pickup."
+      },
+      "delivered": {
+        "title": "Order Completed",
+        "description": "Your order is done and delivered successfully. Thank you for choosing OurBride!"
+      },
+      "cancelled": {
+        "title": "Order Canceled",
+        "description": "This order was canceled. We hope to serve you next time."
+      }
+    },
+    "steps": {
+      "preparing": "Preparing Order",
+      "onTheWay": "On The Way",
+      "received": "Received"
+    },
+    "alt": {
+      "preparing": "Order Preparing",
+      "onTheWay": "Order On The Way",
+      "received": "Order Received",
+      "delivered": "Order Complete",
+      "cancelled": "Order Cancelled"
+    }
+  },
+  "deliveryStatus": {
+    "notSet": "Not Set",
+    "created": "Created",
+    "readyForDelivery": "Ready for Delivery",
+    "inTransit": "In Transit",
+    "outForDelivery": "Out for Delivery",
+    "delivered": "Delivered",
+    "failed": "Failed",
+    "returned": "Returned"
+  },
+  "statusBadge": {
+    "default": {
+      "completed": "Done",
+      "delivered": "Done",
+      "cancelled": "Canceled",
+      "inProgress": "In Progress"
+    }
+  },
+  "deliveryAddresses": {
   "title": "Delivery Addresses",
   "count": "{count} {count, plural, one {Address} other {Addresses}}",
   "addAddress": "Add Address",

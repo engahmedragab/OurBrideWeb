@@ -2186,7 +2186,7 @@
     }
   
 },
-"checkoutPage": {
+  "checkoutPage": {
     "checkout": {
       "page": {
         "title": "إتمام الطلب"
@@ -2517,9 +2517,415 @@
       "title": "جاري إنشاء الطلب...",
       "subtitle": "يرجى الانتظار قليلًا"
     }
-  }
-},
-"deliveryAddresses": {
+   }
+  },
+  "orders": {
+    "page": {
+      "title": "قائمة الطلبات"
+    },
+    "loading": {
+      "title": "جارٍ تحميل الطلبات...",
+      "subtitle": "يرجى الانتظار لحظة"
+    },
+    "error": {
+      "title": "خطأ أثناء تحميل الطلبات",
+      "message": "يرجى المحاولة مرة أخرى لاحقًا",
+      "actionLabel": "العودة إلى الرئيسية"
+    },
+    "empty": {
+      "title": "ليس لديك أي طلبات",
+      "description": "ابدأ باستكشاف الخدمات والمنتجات لتبدأ رحلتك",
+      "actionLabel": "ابدأ التسوق"
+    },
+    "sections": {
+      "requestsInProgressTitle": "طلبات قيد التنفيذ",
+      "requestsInProgressSuffix": "طلبات قيد التنفيذ",
+      "ordersInProgressTitle": "طلبات قيد التنفيذ",
+      "ordersInProgressSuffix": "طلبات قيد التنفيذ",
+      "requestsHistoryTitle": "سجل الطلبات",
+      "requestsHistorySuffix": "طلبات",
+      "ordersHistoryTitle": "سجل الطلبات",
+      "ordersHistorySuffix": "طلبات"
+    },
+    "table": {
+      "orderNumber": "رقم الطلب",
+      "arriveIn": "ميعاد الوصول",
+      "paid": "مدفوع",
+      "status": "الحالة"
+    },
+    "aria": {
+      "gridView": "عرض الشبكة",
+      "listView": "عرض القائمة"
+    },
+    "actions": {
+      "cancelLoadingTitle": "جارٍ إلغاء الطلب...",
+      "cancelLoadingSubtitle": "يرجى الانتظار لحظة"
+    },
+    "card": {
+      "itemFallback": "عنصر",
+      "serviceFallback": "خدمة",
+      "providerFallback": "مزود",
+      "servicePackage": "باقة الخدمة"
+    }
+  },
+  "orderDetails": {
+    "pageTitle": "تفاصيل الطلب",
+    "loading": {
+      "title": "جارٍ تحميل الطلب...",
+      "subtitle": "يرجى الانتظار لحظة"
+    },
+    "error": {
+      "title": "الطلب غير موجود",
+      "message": "الطلب الذي تبحث عنه غير موجود أو تمت إزالته",
+      "actionLabel": "العودة إلى الطلبات"
+    },
+    "header": {
+      "collapseSummary": "طي ملخص الطلب",
+      "expandSummary": "توسيع ملخص الطلب",
+      "orderLabel": "طلب",
+      "placedLabel": "تاريخ الطلب",
+      "orderIdLabel": "معرّف الطلب",
+      "item": "عنصر",
+      "items": "عناصر",
+      "countLabel": "العدد",
+      "providerLabel": "المزوّد",
+      "urgentOrder": "طلب عاجل",
+      "clientConfirmation": "تأكيد العميل",
+      "confirmed": "مؤكد",
+      "pending": "قيد الانتظار"
+    },
+    "delivery": {
+      "expected": "التسليم المتوقع",
+      "preferred": "التسليم المفضل",
+      "status": "حالة التوصيل",
+      "trackTitle": "تتبع طلبك",
+      "trackingNumber": "رقم التتبع",
+      "copy": "نسخ",
+      "trackOnline": "تتبع عبر الإنترنت",
+      "trackDesc": "تتبّع حالة الطلب وتحديثات التوصيل",
+      "track": "تتبع",
+      "detailsTitle": "تفاصيل التوصيل",
+      "start": "البداية",
+      "delivery": "التسليم"
+    },
+    "summary": {
+      "title": "ملخص الطلب",
+      "noImage": "لا توجد صورة",
+      "subtotal": "المجموع الفرعي",
+      "taxesFees": "الضرائب والرسوم",
+      "shipping": "الشحن",
+      "discount": "الخصم",
+      "deposit": "العربون",
+      "total": "الإجمالي"
+    },
+    "payment": {
+      "infoTitle": "معلومات الدفع",
+      "method": "طريقة الدفع",
+      "status": "حالة الدفع",
+      "coupon": "كود الخصم",
+      "summaryTitle": "ملخص الدفع",
+      "paidAmount": "المبلغ المدفوع",
+      "paidAlt": "مدفوع (بديل)",
+      "remainingAmount": "المبلغ المتبقي",
+      "progress": "تقدم الدفع",
+      "planTitle": "خطة الدفع",
+      "planName": "اسم الخطة",
+      "numPayments": "عدد الدفعات",
+      "firstPayment": "أول دفعة",
+      "lastPayment": "آخر دفعة",
+      "planStatus": "حالة الخطة"
+    },
+    "paymentStatus": {
+      "pending": "قيد الانتظار",
+      "paid": "مدفوع",
+      "unpaid": "غير مدفوع",
+      "failed": "فشل",
+      "processing": "قيد المعالجة"
+    },
+    "paymentMethod": {
+      "cashOnDelivery": "الدفع عند الاستلام",
+      "card": "بطاقة",
+      "wallet": "محفظة"
+    },
+    "client": {
+      "title": "معلومات العميل",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف"
+    },
+    "createdBy": {
+      "title": "أنشأ بواسطة",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف"
+    },
+    "notes": {
+      "title": "الملاحظات والتعليقات",
+      "orderComment": "تعليق الطلب",
+      "orderNotes": "ملاحظات الطلب",
+      "providerNotes": "ملاحظات المزوّد"
+    },
+    "additional": {
+      "title": "معلومات إضافية",
+      "cartId": "معرّف السلة",
+      "checkoutOrderId": "معرّف طلب الدفع",
+      "paymentPlanId": "معرّف خطة الدفع",
+      "created": "تاريخ الإنشاء",
+      "lastModified": "آخر تعديل",
+      "overdue": "متأخر",
+      "day": "يوم",
+      "days": "أيام",
+      "inactiveStatus": "الحالة: غير نشط"
+    },
+    "actions": {
+      "viewInvoice": "عرض الفاتورة",
+      "downloadInvoice": "تحميل الفاتورة",
+      "downloading": "جارٍ التحميل...",
+      "backToOrders": "العودة إلى الطلبات"
+    },
+    "reviews": {
+      "title": "مراجعات وتعليقات الطلب",
+      "addReview": "إضافة مراجعة",
+      "writeReview": "اكتب مراجعتك",
+      "ratingLabel": "التقييم *",
+      "reviewTitle": "عنوان المراجعة",
+      "reviewBodyLabel": "مراجعتك *",
+      "reviewPlaceholder": "شارك تجربتك مع هذا الطلب...",
+      "cancel": "إلغاء",
+      "submit": "إرسال المراجعة",
+      "submitting": "جارٍ الإرسال...",
+      "submitSuccess": "تم إرسال المراجعة بنجاح!",
+      "submitError": "فشل إرسال المراجعة",
+      "loading": "جارٍ تحميل المراجعات...",
+      "empty": "لا توجد مراجعات بعد. كن أول من يراجع هذا الطلب!"
+    },
+    "itemReviews": {
+      "title": "مراجعة عناصر هذا الطلب",
+      "addReview": "إضافة مراجعة",
+      "productTitle": "مراجعة هذا المنتج",
+      "serviceTitle": "مراجعة هذه الخدمة",
+      "titlePlaceholder": "أدخل عنوانًا (اختياري)",
+      "productPlaceholder": "شارك تجربتك مع هذا المنتج...",
+      "servicePlaceholder": "شارك تجربتك مع هذه الخدمة...",
+      "quantityLabel": "الكمية",
+      "productSubmitSuccess": "تم إرسال مراجعة المنتج بنجاح!",
+      "serviceSubmitSuccess": "تم إرسال مراجعة الخدمة بنجاح!",
+      "submitError": "فشل إرسال المراجعة",
+      "productFallback": "منتج",
+      "serviceFallback": "خدمة"
+    },
+    "toast": {
+      "trackingCopied": "تم نسخ رقم التتبع إلى الحافظة",
+      "invoiceDownloaded": "تم تحميل الفاتورة بنجاح",
+      "invoiceDownloadFailed": "فشل تحميل الفاتورة"
+    }
+  },
+  "invoice": {
+    "pageTitle": "فاتورة",
+    "loading": {
+      "title": "جارٍ تحميل الفاتورة...",
+      "subtitle": "يرجى الانتظار لحظة"
+    },
+    "error": {
+      "title": "الفاتورة غير موجودة",
+      "message": "تعذر تحميل فاتورة هذا الطلب",
+      "actionLabel": "العودة إلى الطلب"
+    },
+    "header": {
+      "back": "رجوع",
+      "invoiceNumber": "فاتورة",
+      "downloadPdf": "تحميل PDF",
+      "downloading": "جارٍ التحميل...",
+      "print": "طباعة"
+    },
+    "invoice": {
+      "title": "فاتورة",
+      "orderLabel": "طلب",
+      "dateLabel": "التاريخ",
+      "fileLabel": "الملف",
+      "from": "من",
+      "to": "إلى",
+      "noBilling": "لا توجد معلومات فوترة متاحة"
+    },
+    "items": {
+      "title": "العناصر",
+      "item": "العنصر",
+      "quantity": "الكمية",
+      "price": "السعر",
+      "total": "الإجمالي",
+      "empty": "لا توجد عناصر"
+    },
+    "summary": {
+      "subtotal": "المجموع الفرعي",
+      "discount": "الخصم",
+      "deposit": "العربون",
+      "discountCodes": "أكواد الخصم",
+      "total": "الإجمالي"
+    },
+    "payment": {
+      "title": "معلومات الدفع",
+      "method": "طريقة الدفع",
+      "status": "حالة الدفع",
+      "coupon": "كود الخصم",
+      "amount": "مبلغ الدفع"
+    },
+    "plan": {
+      "title": "خطة الدفع",
+      "plan": "الخطة",
+      "numPayments": "عدد الدفعات",
+      "amount": "مبلغ الدفعة",
+      "firstPayment": "أول دفعة",
+      "lastPayment": "آخر دفعة",
+      "status": "الحالة"
+    },
+    "delivery": {
+      "title": "معلومات التوصيل",
+      "preferredDate": "تاريخ التوصيل المفضل",
+      "urgent": "طلب عاجل",
+      "requireConfirmation": "يتطلب تأكيد العميل",
+      "confirmed": "مؤكد",
+      "pending": "قيد الانتظار"
+    },
+    "notes": {
+      "title": "ملاحظات"
+    },
+    "footer": {
+      "thanks": "شكرًا لتعاملك معنا!",
+      "tagline": "شريكك الموثوق لحفل الزفاف"
+    },
+    "toast": {
+      "downloaded": "تم تحميل الفاتورة بنجاح",
+      "downloadFailed": "فشل تحميل الفاتورة"
+    }
+  },
+  "orderCard": {
+    "aria": {
+      "collapseSummary": "طي ملخص الطلب",
+      "expandSummary": "توسيع ملخص الطلب"
+    },
+    "header": {
+      "orderLabel": "طلب",
+      "placedLabel": "تاريخ الطلب",
+      "item": "عنصر",
+      "items": "عناصر"
+    },
+    "payment": {
+      "status": "حالة الدفع",
+      "method": "طريقة الدفع",
+      "progress": "تقدم الدفع",
+      "paid": "المدفوع",
+      "remaining": "المتبقي"
+    },
+    "paymentStatus": {
+      "pending": "قيد الانتظار",
+      "paid": "مدفوع",
+      "unpaid": "غير مدفوع",
+      "failed": "فشل",
+      "processing": "قيد المعالجة"
+    },
+    "paymentMethod": {
+      "cashOnDelivery": "الدفع عند الاستلام",
+      "card": "بطاقة",
+      "wallet": "محفظة"
+    },
+    "actions": {
+      "viewDetails": "عرض التفاصيل",
+      "reorder": "إعادة الطلب",
+      "cancelOrder": "إلغاء الطلب"
+    },
+    "arrival": {
+      "label": "ميعاد الوصول"
+    },
+    "summary": {
+      "title": "ملخص الطلب",
+      "quantity": "الكمية",
+      "subtotal": "المجموع الفرعي",
+      "discount": "الخصم",
+      "taxesFees": "الضرائب والرسوم",
+      "deliveryFee": "رسوم التوصيل",
+      "deposit": "العربون",
+      "total": "الإجمالي"
+    }
+  },
+  "orderListItem": {
+    "orderLabel": "طلب",
+    "placedLabel": "تاريخ الطلب",
+    "status": {
+      "inProgress": "قيد التنفيذ",
+      "outForDelivery": "في الطريق",
+      "completed": "مكتمل",
+      "cancelled": "ملغي"
+    },
+    "actions": {
+      "cancel": "إلغاء",
+      "cancelAria": "إلغاء الطلب"
+    }
+  },
+  "historySection": {
+    "clear": "مسح السجل"
+  },
+  "cancelOrderModal": {
+    "title": "إلغاء الطلب",
+    "question": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
+    "placeholder": "من فضلك أخبرنا بسبب الإلغاء (اختياري).",
+    "keep": "الاحتفاظ بالطلب",
+    "cancel": "إلغاء الطلب"
+  },
+  "orderProgress": {
+    "status": {
+      "preparing": {
+        "title": "تم استلام طلبك!",
+        "description": "تم تأكيد طلبك ونقوم بتجهيزه بعناية."
+      },
+      "onTheWay": {
+        "title": "طلبك في الطريق!",
+        "description": "تم شحن طلبك وهو في طريقه إليك."
+      },
+      "received": {
+        "title": "تم استلام الطلب",
+        "description": "تم استلام طلبك وهو جاهز للاستلام."
+      },
+      "delivered": {
+        "title": "اكتمل الطلب",
+        "description": "تم تسليم طلبك بنجاح. شكرًا لاختيارك OurBride!"
+      },
+      "cancelled": {
+        "title": "تم إلغاء الطلب",
+        "description": "تم إلغاء هذا الطلب. نأمل خدمتك في المرة القادمة."
+      }
+    },
+    "steps": {
+      "preparing": "جارٍ التجهيز",
+      "onTheWay": "في الطريق",
+      "received": "تم الاستلام"
+    },
+    "alt": {
+      "preparing": "جارٍ تجهيز الطلب",
+      "onTheWay": "الطلب في الطريق",
+      "received": "تم استلام الطلب",
+      "delivered": "اكتمل الطلب",
+      "cancelled": "تم إلغاء الطلب"
+    }
+  },
+  "deliveryStatus": {
+    "notSet": "غير محدد",
+    "created": "تم الإنشاء",
+    "readyForDelivery": "جاهز للتوصيل",
+    "inTransit": "قيد النقل",
+    "outForDelivery": "خارج للتوصيل",
+    "delivered": "تم التسليم",
+    "failed": "فشل",
+    "returned": "تم الإرجاع"
+  },
+  "statusBadge": {
+    "default": {
+      "completed": "تم",
+      "delivered": "تم",
+      "cancelled": "ملغي",
+      "inProgress": "قيد التنفيذ"
+    }
+  },
+  "deliveryAddresses": {
   "title": "عناوين التوصيل",
   "count": "{count} {count, plural, one {عنوان} other {عناوين}}",
   "addAddress": "إضافة عنوان",

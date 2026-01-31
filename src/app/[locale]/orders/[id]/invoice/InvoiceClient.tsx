@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from '@/i18n/navigation'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 import Image from 'next/image'
 import { ArrowLeft, Download, FileText, Printer } from 'lucide-react'
 import brandLogo from '@/assets/svg/Brand-logo.svg'
@@ -11,17 +12,21 @@ import {
     ErrorDisplay,
     LoadingOverlay,
     Button,
+    LoadingSpinner,
 } from '@/components/ui'
 import { useOrderInvoice, useDownloadOrderInvoice } from '@/hooks/orders'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
 
-interface InvoiceClientProps {
+interface InvoiceClientProps { 
     orderId: string
 }
 
 export function InvoiceClient({ orderId }: InvoiceClientProps) {
     const router = useRouter()
+    const t = useI18nTranslations('invoice')
+    const tCommon = useI18nTranslations('common')
+    const isRTL = useIsRTL()
     const { addToast } = useToast()
     const [isMounted, setIsMounted] = useState(false)
 
@@ -45,10 +50,10 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                 { orderId: orderIdNum },
                 {
                     onSuccess: () => {
-                        addToast('Invoice downloaded successfully', 'success')
+                        addToast(t('toast.downloaded'), 'success')
                     },
                     onError: (error: Error) => {
-                        addToast(error.message || 'Failed to download invoice', 'error')
+                        addToast(error.message || t('toast.downloadFailed'), 'error')
                     },
                 }
             )
@@ -63,11 +68,11 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
     if (!isMounted || isLoading) {
         return (
             <UserPageLayout>
-                <PageHeader title="Invoice" />
-                <LoadingOverlay
+                <PageHeader title={t('pageTitle')} />
+                <LoadingSpinner
                     open={true}
-                    title="Loading invoice..."
-                    subtitle="Please wait a moment"
+                    text={t('loading.title')}
+                   
                 />
             </UserPageLayout>
         )
@@ -77,11 +82,11 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
     if (error || !invoice) {
         return (
             <UserPageLayout>
-                <PageHeader title="Invoice" />
+                <PageHeader title={t('pageTitle')} />
                 <ErrorDisplay
-                    title="Invoice not found"
-                    message={error instanceof Error ? error.message : "The invoice for this order could not be loaded"}
-                    actionLabel="Back to Order"
+                    title={t('error.title')}
+                    message={error instanceof Error ? error.message : t('error.message')}
+                    actionLabel={t('error.actionLabel')}
                     actionHref={`/orders/${orderId}`}
                 />
             </UserPageLayout>
@@ -107,6 +112,7 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
 
     return (
         <UserPageLayout>
+            <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'text-right' : 'text-left'}>
             {/* Header with Actions */}
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
@@ -116,10 +122,10 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                         onClick={() => router.back()}
                         className="flex items-center gap-2"
                     >
-                        <ArrowLeft className="h-4 w-4" />
-                        Back
+                        <ArrowLeft className={cn("h-4 w-4", isRTL ? "rotate-180" : "rotate-0")} />
+                        {t('header.back')}
                     </Button>
-                    <PageHeader title={`Invoice #${invoice.orderNumber || invoice.orderId}`} />
+                    <PageHeader title={`${t('header.invoiceNumber')} #${invoice.orderNumber || invoice.orderId}`} />
                 </div>
                 <div className="flex items-center gap-2">
                     <Button
@@ -130,7 +136,7 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                         className="flex items-center gap-2"
                     >
                         <Download className="h-4 w-4" />
-                        {downloadInvoiceMutation.isPending ? 'Downloading...' : 'Download PDF'}
+                        {downloadInvoiceMutation.isPending ? t('header.downloading') : t('header.downloadPdf')}
                     </Button>
                     <Button
                         variant="outline"
@@ -139,7 +145,7 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                         className="flex items-center gap-2 print:hidden"
                     >
                         <Printer className="h-4 w-4" />
-                        Print
+                        {t('header.print')}
                     </Button>
                 </div>
             </div>
@@ -149,19 +155,21 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                 {/* Invoice Header */}
                 <div className="flex justify-between items-start mb-8 pb-6 border-b border-gray-200">
                     <div>
-                        <h1 className="text-24 font-bold text-gray-900 mb-2">INVOICE</h1>
-                        <p className="text-14 text-gray-600">Order #{invoice.orderNumber || invoice.orderId || 'N/A'}</p>
+                        <h1 className="text-24 font-bold text-gray-900 mb-2">{t('invoice.title')}</h1>
+                        <p className="text-14 text-gray-600">
+                            {t('invoice.orderLabel')} #{invoice.orderNumber || invoice.orderId || tCommon('notAvailable')}
+                        </p>
                         {orderDate && (
-                            <p className="text-14 text-gray-600">Date: {orderDate}</p>
+                            <p className="text-14 text-gray-600">{t('invoice.dateLabel')}: {orderDate}</p>
                         )}
                         {invoice.fileName && (
-                            <p className="text-12 text-gray-500 mt-1">File: {invoice.fileName}</p>
+                            <p className="text-12 text-gray-500 mt-1">{t('invoice.fileLabel')}: {invoice.fileName}</p>
                         )}
                     </div>
                     <div className="text-right">
                         {invoice.providerName && (
                             <div className="mb-4">
-                                <p className="text-14 font-semibold text-gray-900 mb-1">From:</p>
+                                <p className="text-14 font-semibold text-gray-900 mb-1">{t('invoice.from')}:</p>
                                 <p className="text-14 text-gray-700">{invoice.providerName}</p>
                                 {invoice.providerEmail && (
                                     <p className="text-14 text-gray-600">{invoice.providerEmail}</p>
@@ -172,7 +180,7 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                             </div>
                         )}
                         <div>
-                            <p className="text-14 font-semibold text-gray-900 mb-1">To:</p>
+                            <p className="text-14 font-semibold text-gray-900 mb-1">{t('invoice.to')}:</p>
                             {invoice.billingName && (
                                 <p className="text-14 text-gray-700">{invoice.billingName}</p>
                             )}
@@ -189,7 +197,7 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                                 <p className="text-14 text-gray-600 mt-1">{invoice.billingAddress}</p>
                             )}
                             {(!invoice.billingName && !invoice.clientName && !invoice.clientEmail && !invoice.clientPhone && (!invoice.billingAddress || invoice.billingAddress === ', , ')) && (
-                                <p className="text-14 text-gray-500 italic">No billing information available</p>
+                                <p className="text-14 text-gray-500 italic">{t('invoice.noBilling')}</p>
                             )}
                         </div>
                     </div>
@@ -197,21 +205,21 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
 
                 {/* Invoice Items */}
                 <div className="mb-6">
-                    <h2 className="text-18 font-semibold text-gray-900 mb-4">Items</h2>
+                    <h2 className="text-18 font-semibold text-gray-900 mb-4">{t('items.title')}</h2>
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-gray-200">
-                                    <th className="text-left py-3 px-4 text-14 font-semibold text-gray-900">Item</th>
-                                    <th className="text-right py-3 px-4 text-14 font-semibold text-gray-900">Quantity</th>
-                                    <th className="text-right py-3 px-4 text-14 font-semibold text-gray-900">Price</th>
-                                    <th className="text-right py-3 px-4 text-14 font-semibold text-gray-900">Total</th>
+                                    <th className="text-left py-3 px-4 text-14 font-semibold text-gray-900">{t('items.item')}</th>
+                                    <th className="text-right py-3 px-4 text-14 font-semibold text-gray-900">{t('items.quantity')}</th>
+                                    <th className="text-right py-3 px-4 text-14 font-semibold text-gray-900">{t('items.price')}</th>
+                                    <th className="text-right py-3 px-4 text-14 font-semibold text-gray-900">{t('items.total')}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {invoice.items && Array.isArray(invoice.items) && invoice.items.length > 0 ? (
                                     invoice.items.map((item, index) => {
-                                        const itemName = item.productName || item.serviceName || `Item ${index + 1}`
+                                        const itemName = item.productName || item.serviceName || `${t('items.item')} ${index + 1}`
                                         return (
                                             <tr key={item.id || index} className="border-b border-gray-100">
                                                 <td className="py-3 px-4 text-14 text-gray-900">
@@ -233,7 +241,7 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                                 ) : (
                                     <tr>
                                         <td colSpan={4} className="py-4 text-center text-14 text-gray-500">
-                                            No items found
+                                            {t('items.empty')}
                                         </td>
                                     </tr>
                                 )}
@@ -246,30 +254,30 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                 <div className="flex justify-end mb-6">
                     <div className="w-full max-w-md space-y-2">
                         <div className="flex justify-between text-14 text-gray-700">
-                            <span>Subtotal:</span>
+                            <span>{t('summary.subtotal')}:</span>
                             <span className="font-medium">{invoice.totalAmount?.toLocaleString() || '0'} EGP</span>
                         </div>
                         {invoice.discountAmount !== null && invoice.discountAmount !== undefined && invoice.discountAmount > 0 && (
                             <div className="flex justify-between text-14 text-green-600">
-                                <span>Discount:</span>
+                                <span>{t('summary.discount')}:</span>
                                 <span className="font-medium">-{invoice.discountAmount.toLocaleString()} EGP</span>
                             </div>
                         )}
                         {invoice.depositAmount !== null && invoice.depositAmount !== undefined && invoice.depositAmount > 0 && (
                             <div className="flex justify-between text-14 text-gray-700">
-                                <span>Deposit:</span>
+                                <span>{t('summary.deposit')}:</span>
                                 <span className="font-medium">{invoice.depositAmount.toLocaleString()} EGP</span>
                             </div>
                         )}
                         {invoice.discountCodes && invoice.discountCodes.length > 0 && (
                             <div className="flex justify-between text-14 text-gray-600">
-                                <span>Discount Codes:</span>
+                                <span>{t('summary.discountCodes')}:</span>
                                 <span className="font-medium">{invoice.discountCodes.join(', ')}</span>
                             </div>
                         )}
                         <div className="pt-2 border-t border-gray-200">
                             <div className="flex justify-between text-18 font-bold text-gray-900">
-                                <span>Total:</span>
+                                <span>{t('summary.total')}:</span>
                                 <span>{invoice.finalAmount?.toLocaleString() || invoice.totalAmount?.toLocaleString() || '0'} EGP</span>
                             </div>
                         </div>
@@ -279,26 +287,26 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                 {/* Payment Information */}
                 {(invoice.paymentMethod || invoice.paymentStatus || invoice.couponCode || invoice.paymentAmount) && (
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h3 className="text-16 font-semibold text-gray-900 mb-3">Payment Information</h3>
+                        <h3 className="text-16 font-semibold text-gray-900 mb-3">{t('payment.title')}</h3>
                         <div className="grid grid-cols-2 gap-4 text-14 text-gray-700">
                             {invoice.paymentMethod && (
                                 <div>
-                                    <span className="font-medium">Payment Method:</span> {invoice.paymentMethod}
+                                    <span className="font-medium">{t('payment.method')}:</span> {invoice.paymentMethod}
                                 </div>
                             )}
                             {invoice.paymentStatus && (
                                 <div>
-                                    <span className="font-medium">Payment Status:</span> {invoice.paymentStatus}
+                                    <span className="font-medium">{t('payment.status')}:</span> {invoice.paymentStatus}
                                 </div>
                             )}
                             {invoice.couponCode && (
                                 <div>
-                                    <span className="font-medium">Coupon Code:</span> {invoice.couponCode}
+                                    <span className="font-medium">{t('payment.coupon')}:</span> {invoice.couponCode}
                                 </div>
                             )}
                             {invoice.paymentAmount !== null && invoice.paymentAmount !== undefined && (
                                 <div>
-                                    <span className="font-medium">Payment Amount:</span> {invoice.paymentAmount.toLocaleString()} EGP
+                                    <span className="font-medium">{t('payment.amount')}:</span> {invoice.paymentAmount.toLocaleString()} EGP
                                 </div>
                             )}
                         </div>
@@ -308,38 +316,38 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                 {/* Payment Plan Information */}
                 {invoice.hasPaymentPlan && (
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h3 className="text-16 font-semibold text-gray-900 mb-3">Payment Plan</h3>
+                        <h3 className="text-16 font-semibold text-gray-900 mb-3">{t('plan.title')}</h3>
                         <div className="grid grid-cols-2 gap-4 text-14 text-gray-700">
                             {invoice.paymentPlanName && (
                                 <div>
-                                    <span className="font-medium">Plan:</span> {invoice.paymentPlanName}
+                                    <span className="font-medium">{t('plan.plan')}:</span> {invoice.paymentPlanName}
                                 </div>
                             )}
                             {invoice.numberOfPayments !== null && invoice.numberOfPayments !== undefined && (
                                 <div>
-                                    <span className="font-medium">Number of Payments:</span> {invoice.numberOfPayments}
+                                    <span className="font-medium">{t('plan.numPayments')}:</span> {invoice.numberOfPayments}
                                 </div>
                             )}
                             {invoice.paymentAmount !== null && invoice.paymentAmount !== undefined && (
                                 <div>
-                                    <span className="font-medium">Payment Amount:</span> {invoice.paymentAmount.toLocaleString()} EGP
+                                    <span className="font-medium">{t('plan.amount')}:</span> {invoice.paymentAmount.toLocaleString()} EGP
                                 </div>
                             )}
                             {invoice.firstPaymentDate && (
                                 <div>
-                                    <span className="font-medium">First Payment:</span>{' '}
+                                    <span className="font-medium">{t('plan.firstPayment')}:</span>{' '}
                                     {new Date(invoice.firstPaymentDate).toLocaleDateString('en-GB')}
                                 </div>
                             )}
                             {invoice.lastPaymentDate && (
                                 <div>
-                                    <span className="font-medium">Last Payment:</span>{' '}
+                                    <span className="font-medium">{t('plan.lastPayment')}:</span>{' '}
                                     {new Date(invoice.lastPaymentDate).toLocaleDateString('en-GB')}
                                 </div>
                             )}
                             {invoice.paymentPlanStatus && (
                                 <div>
-                                    <span className="font-medium">Status:</span> {invoice.paymentPlanStatus}
+                                    <span className="font-medium">{t('plan.status')}:</span> {invoice.paymentPlanStatus}
                                 </div>
                             )}
                         </div>
@@ -349,19 +357,19 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                 {/* Delivery Information */}
                 {(preferredDeliveryDate || invoice.isUrgent || invoice.requireClientConfirmation) && (
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h3 className="text-16 font-semibold text-gray-900 mb-2">Delivery Information</h3>
+                        <h3 className="text-16 font-semibold text-gray-900 mb-2">{t('delivery.title')}</h3>
                         <div className="space-y-2 text-14 text-gray-700">
                             {preferredDeliveryDate && (
-                                <p>Preferred Delivery Date: {preferredDeliveryDate}</p>
+                                <p>{t('delivery.preferredDate')}: {preferredDeliveryDate}</p>
                             )}
                             {invoice.isUrgent && (
-                                <p className="text-orange-600 font-medium">⚠️ Urgent Order</p>
+                                <p className="text-orange-600 font-medium">⚠️ {t('delivery.urgent')}</p>
                             )}
                             {invoice.requireClientConfirmation && (
                                 <p>
-                                    Requires Client Confirmation:{' '}
+                                    {t('delivery.requireConfirmation')}: {' '}
                                     <span className={invoice.clientConfirmed ? 'text-green-600' : 'text-yellow-600'}>
-                                        {invoice.clientConfirmed ? 'Confirmed' : 'Pending'}
+                                        {invoice.clientConfirmed ? t('delivery.confirmed') : t('delivery.pending')}
                                     </span>
                                 </p>
                             )}
@@ -372,7 +380,7 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                 {/* Notes */}
                 {(invoice.orderNotes || invoice.providerNotes) && (
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                        <h3 className="text-16 font-semibold text-gray-900 mb-2">Notes</h3>
+                        <h3 className="text-16 font-semibold text-gray-900 mb-2">{t('notes.title')}</h3>
                         {invoice.orderNotes && (
                             <p className="text-14 text-gray-700 mb-2">{invoice.orderNotes}</p>
                         )}
@@ -384,7 +392,7 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
 
                 {/* Footer */}
                 <div className="pt-6 border-t border-gray-200 text-center">
-                    <p className="text-12 text-gray-500 mb-4">Thank you for your business!</p>
+                    <p className="text-12 text-gray-500 mb-4">{t('footer.thanks')}</p>
                     {invoice.providerName && (
                         <p className="text-12 text-gray-500 mb-4">{invoice.providerName}</p>
                     )}
@@ -402,10 +410,11 @@ export function InvoiceClient({ orderId }: InvoiceClientProps) {
                                 />
                             </div>
                             <p className="text-14 font-semibold text-gray-700">OurBride</p>
-                            <p className="text-12 text-gray-500">Your trusted wedding partner</p>
+                            <p className="text-12 text-gray-500">{t('footer.tagline')}</p>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </UserPageLayout>
     )

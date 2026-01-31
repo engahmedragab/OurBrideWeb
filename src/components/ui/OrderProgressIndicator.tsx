@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 import orderPreparingSvg from '@/assets/svg/order-preparing.svg'
 import orderOnTheWaySvg from '@/assets/svg/order-ontheway.svg'
 import orderReceivedSvg from '@/assets/svg/order-received.svg'
@@ -20,52 +21,51 @@ export interface OrderProgressIndicatorProps {
   className?: string
 }
 
-const statusConfig = {
-  preparing: {
-    title: "We've Got Your Order!",
-    description: "Your order is confirmed and we're preparing it with care.",
-    progressStep: 0,
-  },
-  onTheWay: {
-    title: 'Your order is on the way!',
-    description: 'Your order has been shipped and is on its way to you.',
-    progressStep: 1,
-  },
-  received: {
-    title: 'Order received',
-    description: 'Your order has been received and is ready for pickup.',
-    progressStep: 2,
-  },
-  delivered: {
-    title: 'Order Completed',
-    description:
-      'Your order is done and delivered successfully. Thank you for choosing OurBride!',
-    progressStep: 2,
-  },
-  cancelled: {
-    title: 'Order Canceled',
-    description: 'This order was canceled We hope to serve you next time',
-    progressStep: -1,
-  },
-}
-
-const steps = [
-  { label: 'Preparing Order', key: 'preparing' },
-  { label: 'On The Way', key: 'onTheWay' },
-  { label: 'Received', key: 'received' },
-]
-
 export const OrderProgressIndicator = ({
   status,
   className,
 }: OrderProgressIndicatorProps) => {
+  const t = useI18nTranslations('orderProgress')
+  const isRTL = useIsRTL()
+  const statusConfig = {
+    preparing: {
+      title: t('status.preparing.title'),
+      description: t('status.preparing.description'),
+      progressStep: 0,
+    },
+    onTheWay: {
+      title: t('status.onTheWay.title'),
+      description: t('status.onTheWay.description'),
+      progressStep: 1,
+    },
+    received: {
+      title: t('status.received.title'),
+      description: t('status.received.description'),
+      progressStep: 2,
+    },
+    delivered: {
+      title: t('status.delivered.title'),
+      description: t('status.delivered.description'),
+      progressStep: 2,
+    },
+    cancelled: {
+      title: t('status.cancelled.title'),
+      description: t('status.cancelled.description'),
+      progressStep: -1,
+    },
+  }
+  const steps = [
+    { label: t('steps.preparing'), key: 'preparing' },
+    { label: t('steps.onTheWay'), key: 'onTheWay' },
+    { label: t('steps.received'), key: 'received' },
+  ]
   const config = statusConfig[status]
 
   // Don't show progress bar for cancelled or delivered (completed) orders
   const showProgressBar = status !== 'cancelled' && status !== 'delivered'
 
   return (
-    <div className={cn('flex flex-col items-center gap-4', className)}>
+    <div dir={isRTL ? 'rtl' : 'ltr'} className={cn('flex flex-col items-center gap-4', className)}>
       {/* Illustration */}
       <div className="relative w-48 h-48 flex items-center justify-center">
         {status === 'preparing' && (
@@ -75,7 +75,7 @@ export const OrderProgressIndicator = ({
                 ? orderPreparingSvg
                 : orderPreparingSvg.src
             }
-            alt="Order Preparing"
+            alt={t('alt.preparing')}
             width={192}
             height={192}
             className="w-full h-full object-contain"
@@ -89,7 +89,7 @@ export const OrderProgressIndicator = ({
                 ? orderOnTheWaySvg
                 : orderOnTheWaySvg.src
             }
-            alt="Order On The Way"
+            alt={t('alt.onTheWay')}
             width={192}
             height={192}
             className="w-full h-full object-contain"
@@ -103,7 +103,7 @@ export const OrderProgressIndicator = ({
                 ? orderReceivedSvg
                 : orderReceivedSvg.src
             }
-            alt="Order Received"
+            alt={t('alt.received')}
             width={192}
             height={192}
             className="w-full h-full object-contain"
@@ -117,7 +117,7 @@ export const OrderProgressIndicator = ({
                 ? orderCompleteSvg
                 : orderCompleteSvg.src
             }
-            alt="Order Complete"
+            alt={t('alt.delivered')}
             width={192}
             height={192}
             className="w-full h-full object-contain"
@@ -131,7 +131,7 @@ export const OrderProgressIndicator = ({
                 ? orderCancelledSvg
                 : orderCancelledSvg.src
             }
-            alt="Order Cancelled"
+            alt={t('alt.cancelled')}
             width={192}
             height={192}
             className="w-full h-full object-contain"
@@ -198,7 +198,7 @@ export const OrderProgressIndicator = ({
           </div>
           <div className="relative h-1 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="absolute top-0 left-0 h-full bg-brand-500 transition-all duration-500"
+              className={cn('absolute top-0 h-full bg-brand-500 transition-all duration-500', isRTL ? 'right-0' : 'left-0')}
               style={{
                 width: `${((config.progressStep + 1) / steps.length) * 100}%`,
               }}
