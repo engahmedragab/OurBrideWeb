@@ -12,7 +12,7 @@ import type { DeliveryAddressRequest } from '@/../client/common/api/gen/ourbride
 import { getUser } from '@/auth/utils/token'
 import { cn } from '@/lib/utils'
 import { LocationPickerModal, type LocationData } from './LocationPickerModal'
-import { useI18nTranslations } from '@/i18n/hooks'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 export interface AddressModalProps {
   isOpen: boolean
@@ -23,6 +23,7 @@ export interface AddressModalProps {
 
 export const AddressModal = ({ isOpen, onClose, address, onSuccess }: AddressModalProps) => {
   const t = useI18nTranslations('checkoutPage.addressModal')
+  const isRTL = useIsRTL()
 
   const { addToast } = useToast()
   const createAddressMutation = useCreateAddress()
@@ -283,8 +284,9 @@ export const AddressModal = ({ isOpen, onClose, address, onSuccess }: AddressMod
         />
 
         {/* Contact Numbers */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div  className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
+          dir={isRTL ? 'rtl':'ltr'}
             type="tel"
             placeholder={t('fields.contactNumber1')}
             value={formData.contactNumber1}
@@ -294,6 +296,7 @@ export const AddressModal = ({ isOpen, onClose, address, onSuccess }: AddressMod
             className="w-full"
           />
           <Input
+          dir={isRTL ? 'rtl':'ltr'}
             type="tel"
             placeholder={t('fields.contactNumber2')}
             value={formData.contactNumber2}

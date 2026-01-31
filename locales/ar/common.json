@@ -1906,7 +1906,7 @@
       "cancelFail": "فشل إلغاء الحجز"
     },
     "confirm": {
-      "title": "إلغاء الحجز",
+      "title": "إلغاء الحجز", 
       "cancelTitle": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟",
       "keepButton": "الاحتفاظ بالحجز",
       "cancelButton": "إلغاء الحجز"
@@ -2518,4 +2518,37 @@
       "subtitle": "يرجى الانتظار قليلًا"
     }
   }
-}}
+},
+"deliveryAddresses": {
+  "title": "عناوين التوصيل",
+  "count": "{count} {count, plural, one {عنوان} other {عناوين}}",
+  "addAddress": "إضافة عنوان",
+  "loadingTitle": "جارٍ تحميل العناوين...",
+  "loadingSubtitle": "يرجى الانتظار لحظة",
+  "errorTitle": "حدث خطأ أثناء تحميل العناوين",
+  "errorMessage": "يرجى المحاولة مرة أخرى لاحقًا",
+  "errorAction": "العودة إلى الرئيسية",
+  "emptyTitle": "ليس لديك أي عناوين توصيل",
+  "emptyDescription": "أضف أول عنوان توصيل لتسريع عملية الدفع",
+  "contactFallback": "عنوان التوصيل",
+  "defaultLabel": "العنوان الافتراضي",
+  "phone": "الهاتف:",
+  "altPhone": "بديل:",
+  "email": "البريد الإلكتروني:",
+  "setDefault": "تعيين كافتراضي",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا العنوان؟",
+  "deleteSuccess": "تم حذف العنوان بنجاح",
+  "deleteError": "فشل حذف العنوان",
+  "defaultSuccess": "تم تحديث العنوان الافتراضي بنجاح",
+  "defaultError": "فشل تعيين العنوان الافتراضي",
+  "deleteLoading": "جارٍ حذف العنوان...",
+  "defaultLoading": "جارٍ تعيين العنوان الافتراضي...",
+  "saveLoading": "جارٍ حفظ العنوان...",
+  "processing": "جارٍ المعالجة...",
+  "countryFallback": "مصر"
+}
+
+
+}
