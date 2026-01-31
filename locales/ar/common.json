@@ -2182,8 +2182,337 @@
       "subtitle": "يرجى الانتظار لحظة"
     }
   
-}
-
-
-
-}
+},
+"checkoutPage": {
+    "checkout": {
+      "page": {
+        "title": "إتمام الطلب"
+      },
+      "loading": {
+        "loadingCheckoutTitle": "جاري تحميل صفحة الدفع...",
+        "subtitle": "من فضلك انتظر لحظة",
+        "processingCheckoutTitle": "جاري معالجة الدفع...",
+        "updatingCartTitle": "جاري تحديث السلة...",
+        "validatingTitle": "جاري التحقق..."
+      },
+      "error": {
+        "title": "خطأ في تحميل السلة",
+        "message": "من فضلك حاول مرة أخرى لاحقًا",
+        "actionLabel": "العودة للرئيسية"
+      },
+      "empty": {
+        "title": "إتمام الطلب",
+        "message": "سلتك فارغة",
+        "goToCart": "اذهب إلى السلة"
+      },
+      "form": {
+        "fullName": {
+          "placeholder": "الاسم بالكامل",
+          "errors": {
+            "minLength": "يجب ألا يقل الاسم بالكامل عن حرفين"
+          }
+        },
+        "mobileNumber": {
+          "placeholder": "رقم الموبايل",
+          "errors": {
+            "required": "رقم الموبايل مطلوب",
+            "invalid": "من فضلك أدخل رقم موبايل صحيح (10-11 رقم)"
+          }
+        },
+        "location": {
+          "placeholder": "المنطقة",
+          "errors": {
+            "minLength": "يجب ألا تقل المنطقة عن 3 أحرف"
+          }
+        },
+        "street": {
+          "placeholder": "الشارع / الشقة",
+          "errors": {
+            "minLength": "يجب ألا يقل الشارع/الشقة عن 3 أحرف"
+          }
+        },
+        "notes": {
+          "placeholder": "ملاحظات لمندوب التوصيل..."
+        },
+        "acceptTerms": {
+          "labelPrefix": "أوافق على",
+          "termsButton": "الشروط والأحكام",
+          "helperText": "إذا لم تكن متواجدًا عند وصول مندوب التوصيل، فسيترك طلبك عند الباب. بوضع طلبك، فإنك توافق على تحمّل كامل المسؤولية عنه بعد التسليم.",
+          "errors": {
+            "required": "يجب الموافقة على الشروط والأحكام"
+          }
+        }
+      },
+      "delivery": {
+        "title": "تفاصيل التوصيل",
+        "loadingAddresses": "جاري تحميل العناوين...",
+        "addressFallbackName": "العنوان",
+        "addAddress": "إضافة عنوان",
+        "slider": {
+          "prev": "العنوان السابق",
+          "next": "العنوان التالي",
+          "goToSlide": "اذهب إلى العنوان رقم {{index}}"
+        }
+      },
+      "payment": {
+        "title": "طريقة الدفع",
+        "loadingMethods": "جاري تحميل طرق الدفع...",
+        "noMethods": "لا توجد طرق دفع متاحة",
+        "installments": "حتى {{count}} أقساط",
+        "wallet": {
+          "title": "تفاصيل المحفظة",
+          "mobilePlaceholder": "رقم الموبايل",
+          "errors": {
+            "required": "رقم موبايل المحفظة مطلوب",
+            "invalid": "المحفظة غير صالحة، من فضلك أدخل رقمًا صحيحًا"
+          }
+        }
+      },
+      "summary": {
+        "title": "ملخص الطلب",
+        "itemsError": "من فضلك اختر عنصرًا واحدًا على الأقل",
+        "promo": {
+          "placeholder": "أدخل كود الخصم",
+          "redeem": "تطبيق",
+          "pending": "..."
+        },
+        "rewards": {
+          "diamondsLabel": "الماسات",
+          "diamondsValue": " نقطة",
+          "giftsCashLabel": "رصيد الهدايا",
+          "applied": "مُطبّق",
+          "redeem": "تطبيق"
+        },
+        "prices": {
+          "subtotal": "المجموع الفرعي",
+          "couponDiscount": "خصم الكوبون",
+          "taxesFees": "الضرائب والرسوم",
+          "deliveryFee": "رسوم التوصيل",
+          "total": "الإجمالي"
+        },
+        "coupon": {
+          "redeemed": "تم الاستخدام"
+        }
+      },
+      "actions": {
+        "pay": "ادفع  {amount} {currency} ",
+        "processing": "جاري المعالجة..."
+      },
+      "toasts": {
+        "promoRequired": "من فضلك أدخل كود الخصم",
+        "diamondsApplied": "تم تطبيق الماسات",
+        "diamondsRemoved": "تم إزالة الماسات",
+        "giftsCashApplied": "تم تطبيق رصيد الهدايا",
+        "giftsCashRemoved": "تم إزالة رصيد الهدايا",
+        "quantityUpdateFailed": "فشل تحديث الكمية. من فضلك حاول مرة أخرى.",
+        "removeItemFailed": "فشل حذف العنصر. من فضلك حاول مرة أخرى.",
+        "checkoutGenericError": "حدث خطأ أثناء إتمام الطلب. من فضلك حاول مرة أخرى.",
+        "cartDataNotAvailable": "بيانات السلة غير متاحة",
+        "cartNotActive": "السلة غير مفعّلة. من فضلك حدّث السلة ثم حاول مرة أخرى."
+      }
+    },
+    "addressModal": {
+      "title": {
+        "add": "إضافة عنوان توصيل",
+        "edit": "تعديل العنوان"
+      },
+      "pickFromMap": "اختيار الموقع من الخريطة",
+      "fields": {
+        "contactName": "اسم جهة الاتصال *",
+        "contactNumber1": "رقم التواصل *",
+        "contactNumber2": "رقم بديل (اختياري)",
+        "email": "البريد الإلكتروني (اختياري)",
+        "address1": "العنوان (سطر 1) *",
+        "address2": "العنوان (سطر 2) (اختياري)",
+        "city": "المدينة *",
+        "state": "المحافظة (اختياري)",
+        "postcode": "الرمز البريدي (اختياري)",
+        "country": "الدولة *",
+        "comment": "ملاحظات إضافية (اختياري)",
+        "defaultLabel": "تعيينه كعنوان توصيل افتراضي"
+      },
+      "errors": {
+        "address1Required": "العنوان مطلوب",
+        "cityRequired": "المدينة مطلوبة",
+        "countryRequired": "الدولة مطلوبة",
+        "contactNameRequired": "اسم جهة الاتصال مطلوب",
+        "contactNumberRequired": "رقم التواصل مطلوب"
+      },
+      "actions": {
+        "cancel": "إلغاء",
+        "saving": "جاري الحفظ...",
+        "add": "إضافة عنوان",
+        "update": "تحديث"
+      },
+      "toasts": {
+        "locationSelectedSuccess": "تم اختيار الموقع بنجاح",
+        "locationSelectedVerify": "تم اختيار الموقع. من فضلك راجع وأكمل تفاصيل العنوان.",
+        "addressUpdated": "تم تحديث العنوان بنجاح",
+        "addressAdded": "تمت إضافة العنوان بنجاح",
+        "loginRequired": "من فضلك قم بتسجيل الدخول لإضافة عنوان",
+        "saveFailed": "فشل حفظ العنوان. من فضلك حاول مرة أخرى."
+      }
+    },
+    "paymentConfirmationModal": {
+      "title": "تأكيد الدفع",
+      "text": {
+        "aboutToPay": "أنت على وشك الدفع {amount} {currency} ",
+        "areYouSure": "هل أنت متأكد؟"
+      },
+      "actions": {
+        "confirm": "نعم، متأكد",
+        "cancel": "إلغاء",
+        "processing": "جاري المعالجة..."
+      }
+    },
+    "orderConfirmationModal": {
+      "title": "تأكيد الطلب",
+      "text": {
+        "successTitle": "تم تأكيد طلبك بنجاح",
+        "successDesc": "استمتع بكوبونات حصرية وخصومات موسمية وعروض حقيقية من مزوّدين موثوقين في مدينتك"
+      },
+      "actions": {
+        "track": "تتبع طلبي"
+      }
+    },
+    "checkoutCartItem": {
+      "typeLabel": {
+        "product": "منتج",
+        "service": "خدمة",
+        "reservation": "حجز",
+        "membership": "عضوية",
+        "giftCard": "بطاقة هدية",
+        "item": "عنصر"
+      },
+      "noImage": "لا توجد صورة متاحة",
+      "discountOff": "خصم {{percent}}%",
+      "deliveryBy": "يصل قبل {{date}}",
+      "purchasePrice": "سعر الشراء:",
+      "addedOn": "تمت الإضافة في:",
+      "aria": {
+        "removeItem": "حذف العنصر",
+        "decreaseQty": "تقليل الكمية",
+        "increaseQty": "زيادة الكمية"
+      }
+    },
+    "notes": {
+      "page": {
+        "title": "الملاحظات",
+        "back": "رجوع"
+      },
+      "header": {
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "unsavedChanges": "تغييرات غير محفوظة"
+      },
+      "loading": {
+        "loadingNotes": "جاري تحميل الملاحظات...",
+        "loadingSubtitle": "من فضلك انتظر لحظة",
+        "initializingTitle": "جاري تهيئة دفتر الملاحظات...",
+        "initializingSubtitle": "جاري إعداد دفتر الملاحظات",
+        "addingModelsTitle": "جاري إضافة نماذج افتراضية...",
+        "addingModelsSubtitle": "من فضلك انتظر أثناء إضافة التصنيفات الافتراضية"
+      },
+      "sidebar": {
+        "title": "ملاحظاتك",
+        "addNew": "إضافة جديد",
+        "empty": "لا توجد قوائم بعد",
+        "untitled": "قائمة بدون عنوان",
+        "actions": {
+          "editAria": "تعديل الملاحظة",
+          "deleteAria": "حذف الملاحظة"
+        }
+      },
+      "main": {
+        "empty": {
+          "title": "اختر قائمة لعرض ملاحظتها",
+          "cta": "إضافة ملاحظات جديدة"
+        },
+        "edit": "تعديل"
+      }
+    },
+    "addEvent": {
+      "modal": {
+        "title": "حدث جديد",
+        "fields": {
+          "titleLabel": "عنوان الحدث",
+          "descriptionLabel": "الوصف",
+          "startDateTimeLabel": "تاريخ ووقت البدء",
+          "endDateTimeLabel": "تاريخ ووقت الانتهاء",
+          "defaultLabel": "تعيينه كحدث افتراضي"
+        },
+        "placeholders": {
+          "title": "أدخل عنوان الحدث",
+          "description": "أدخل وصف الحدث (اختياري)",
+          "startDate": "اختر تاريخ البدء",
+          "endDate": "اختر تاريخ الانتهاء",
+          "time": "HH:MM"
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "create": "إنشاء الحدث",
+          "addNewEvent": "إضافة حدث جديد"
+        }
+      },
+      "validation": {
+        "titleRequired": "عنوان الحدث مطلوب",
+        "startTimeRequired": "وقت البدء مطلوب",
+        "durationRequired": "المدة مطلوبة",
+        "invalidTimeFormat": "صيغة الوقت غير صحيحة (استخدم HH:MM)",
+        "durationPositive": "يجب أن تكون المدة رقمًا موجبًا"
+      }
+    },
+     "orderProcessing": {
+    "pageTitle": "جاري معالجة طلبك",
+    "processingTitle": "جاري معالجة طلبك",
+    "orderProcessingTitle": "معالجة الطلب",
+    "suspense": {
+      "title": "جاري التحميل...",
+      "subtitle": "يرجى الانتظار بينما نقوم بتحميل معلومات طلبك."
+    },
+    "errors": {
+      "missingCheckoutInfo": "معلومات الدفع غير متوفرة",
+      "checkoutFailed": "فشلت عملية الدفع. يرجى المحاولة مرة أخرى.",
+      "processingTimeout": "انتهت مهلة معالجة الطلب. يرجى المحاولة مرة أخرى.",
+      "statusCheckFailed": "تعذر التحقق من حالة الطلب. يرجى المحاولة مرة أخرى.",
+      "processingFailed": "فشلت معالجة الطلب. يرجى المحاولة مرة أخرى.",
+      "orderDataNotAvailable": "بيانات الطلب غير متوفرة",
+      "createOrderFailed": "تعذر إنشاء الطلب"
+    },
+    "toast": {
+      "checkoutFailed": "فشلت عملية الدفع. يرجى المحاولة مرة أخرى.",
+      "processingTimeout": "انتهت مهلة معالجة الطلب. يرجى المحاولة مرة أخرى.",
+      "statusCheckFailed": "تعذر التحقق من حالة الطلب. يرجى المحاولة مرة أخرى.",
+      "processingFailed": "فشلت معالجة الطلب. يرجى المحاولة مرة أخرى.",
+      "orderCreated": "تم إنشاء الطلب بنجاح!"
+    },
+    "status": {
+      "creatingTitle": "جاري إنشاء طلبك...",
+      "creatingSubtitle": "يرجى الانتظار بينما نقوم بإتمام طلبك.",
+      "completeTitle": "اكتملت معالجة الطلب",
+      "completeSubtitle": "تمت معالجة طلبك بنجاح.",
+      "failedTitle": "فشلت معالجة الطلب",
+      "failedSubtitle": "حدث خطأ أثناء معالجة طلبك.",
+      "processingTitle": "جاري معالجة طلبك...",
+      "processingSubtitle": "يتم الآن معالجة طلبك. قد يستغرق ذلك بعض الوقت.",
+      "queuedTitle": "طلبك في قائمة الانتظار",
+      "queuedSubtitle": "طلبك ينتظر المعالجة. قد يستغرق ذلك بعض الوقت."
+    },
+    "polling": {
+      "checking": "جاري التحقق من حالة الطلب...",
+      "attempt": "محاولة {current} من {max}"
+    },
+    "actions": {
+      "backToCart": "العودة إلى السلة",
+      "retry": "إعادة المحاولة"
+    },
+    "errorScreen": {
+      "title": "فشلت معالجة الطلب",
+      "actionLabel": "العودة إلى السلة"
+    },
+    "overlay": {
+      "title": "جاري إنشاء الطلب...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    }
+  }
+}}

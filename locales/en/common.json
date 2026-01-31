@@ -2203,6 +2203,343 @@
       "updating": "Updating cart...",
       "subtitle": "Please wait a moment"
     }
-  }
+  },
+  
+
+
+  "checkoutPage": {
+    "checkout": {
+      "page": {
+        "title": "Order Checkout"
+      },
+      "loading": {
+        "loadingCheckoutTitle": "Loading checkout...",
+        "subtitle": "Please wait a moment",
+        "processingCheckoutTitle": "Processing checkout...",
+        "updatingCartTitle": "Updating cart...",
+        "validatingTitle": "Validating..."
+      },
+      "error": {
+        "title": "Error loading cart",
+        "message": "Please try again later",
+        "actionLabel": "Back to Home"
+      },
+      "empty": {
+        "title": "Order Checkout",
+        "message": "Your cart is empty",
+        "goToCart": "Go to Cart"
+      },
+      "form": {
+        "fullName": {
+          "placeholder": "Full Name",
+          "errors": {
+            "minLength": "Full name must be at least 2 characters"
+          }
+        },
+        "mobileNumber": {
+          "placeholder": "Mobile Number",
+          "errors": {
+            "required": "Mobile number is required",
+            "invalid": "Please enter a valid mobile number (10-11 digits)"
+          }
+        },
+        "location": {
+          "placeholder": "Location",
+          "errors": {
+            "minLength": "Location must be at least 3 characters"
+          }
+        },
+        "street": {
+          "placeholder": "Street / Apartment",
+          "errors": {
+            "minLength": "Street/Apartment must be at least 3 characters"
+          }
+        },
+        "notes": {
+          "placeholder": "Notes to the delivery person..."
+        },
+        "acceptTerms": {
+          "labelPrefix": "I Accept",
+          "termsButton": "Terms & Conditions",
+          "helperText": "If you are not around when the delivery person comes, then will leave your order at the door. By placing your order, you agree to take full responsibility for it once it's delivered.",
+          "errors": {
+            "required": "You must accept the terms and conditions"
+          }
+        }
+      },
+      "delivery": {
+        "title": "Delivery Details",
+        "loadingAddresses": "Loading addresses...",
+        "addressFallbackName": "Address",
+        "addAddress": "Add Address",
+        "slider": {
+          "prev": "Previous address",
+          "next": "Next address",
+          "goToSlide": "Go to slide {{index}}"
+        }
+      },
+      "payment": {
+        "title": "Payment Method",
+        "loadingMethods": "Loading payment methods...",
+        "noMethods": "No payment methods available",
+        "installments": "Up to {{count}} installments",
+        "wallet": {
+          "title": "Wallet Details",
+          "mobilePlaceholder": "Mobile Number",
+          "errors": {
+            "required": "Wallet mobile number is required",
+            "invalid": "Wallet isn't valid, please enter valid number"
+          }
+        }
+      },
+      "summary": {
+        "title": "Order Summary",
+        "itemsError": "Please select at least one item",
+        "promo": {
+          "placeholder": "Enter Promo Code",
+          "redeem": "Redeem",
+          "pending": "..."
+        },
+        "rewards": {
+          "diamondsLabel": "Diamonds",
+          "diamondsValue": " Points",
+          "giftsCashLabel": "Gifts Cash",
+          "applied": "Applied",
+          "redeem": "Redeem"
+        },
+        "prices": {
+          "subtotal": "Subtotal",
+          "couponDiscount": "Coupon Discount",
+          "taxesFees": "Taxes & Fees",
+          "deliveryFee": "Delivery Fee",
+          "total": "Total"
+        },
+        "coupon": {
+          "redeemed": "Redeemed"
+        }
+      },
+      "actions": {
+        "pay": "Pay  {amount} {currency} ",
+        "processing": "Processing..."
+      },
+      "toasts": {
+        "promoRequired": "Please enter a promo code",
+        "diamondsApplied": "Diamonds applied",
+        "diamondsRemoved": "Diamonds removed",
+        "giftsCashApplied": "Gifts Cash applied",
+        "giftsCashRemoved": "Gifts Cash removed",
+        "quantityUpdateFailed": "Failed to update quantity. Please try again.",
+        "removeItemFailed": "Failed to remove item. Please try again.",
+        "checkoutGenericError": "An error occurred during checkout. Please try again.",
+        "cartDataNotAvailable": "Cart data not available",
+        "cartNotActive": "Cart is not active. Please refresh your cart and try again."
+      }
+    },
+    "addressModal": {
+      "title": {
+        "add": "Add Delivery Address",
+        "edit": "Edit Address"
+      },
+      "pickFromMap": "Pick Location from Map",
+      "fields": {
+        "contactName": "Contact Name *",
+        "contactNumber1": "Contact Number *",
+        "contactNumber2": "Alternative Number (Optional)",
+        "email": "Email (Optional)",
+        "address1": "Address Line 1 *",
+        "address2": "Address Line 2 (Optional)",
+        "city": "City *",
+        "state": "State (Optional)",
+        "postcode": "Postcode (Optional)",
+        "country": "Country *",
+        "comment": "Additional Notes (Optional)",
+        "defaultLabel": "Set as default delivery address"
+      },
+      "errors": {
+        "address1Required": "Address is required",
+        "cityRequired": "City is required",
+        "countryRequired": "Country is required",
+        "contactNameRequired": "Contact name is required",
+        "contactNumberRequired": "Contact number is required"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "add": "Add Address",
+        "update": "Update Address"
+      },
+      "toasts": {
+        "locationSelectedSuccess": "Location selected successfully",
+        "locationSelectedVerify": "Location selected. Please verify and complete the address details.",
+        "addressUpdated": "Address updated successfully",
+        "addressAdded": "Address added successfully",
+        "loginRequired": "Please login to add an address",
+        "saveFailed": "Failed to save address. Please try again."
+      }
+    },
+    "paymentConfirmationModal": {
+      "title": "Payment Confirmation",
+      "text": {
+        "aboutToPay": "You Are About To Pay {amount} {currency}",
+        "areYouSure": "Are You Sure?"
+      },
+      "actions": {
+        "confirm": "Yes I'm Sure",
+        "cancel": "Cancel",
+        "processing": "Processing..."
+      }
+    },
+    "orderConfirmationModal": {
+      "title": "Order Confirmation",
+      "text": {
+        "successTitle": "Your Order Is Placed successfully",
+        "successDesc": "Enjoy exclusive coupons, seasonal discounts, and real offers from trusted vendors in your city"
+      },
+      "actions": {
+        "track": "Track My Order"
+      }
+    },
+    "checkoutCartItem": {
+      "typeLabel": {
+        "product": "Product",
+        "service": "Service",
+        "reservation": "Reservation",
+        "membership": "Membership",
+        "giftCard": "Gift Card",
+        "item": "Item"
+      },
+      "noImage": "No image available",
+      "discountOff": "{{percent}}% OFF",
+      "deliveryBy": "Get In By {{date}}",
+      "purchasePrice": "Purchase Price:",
+      "addedOn": "Added on:",
+      "aria": {
+        "removeItem": "Remove item",
+        "decreaseQty": "Decrease quantity",
+        "increaseQty": "Increase quantity"
+      }
+    },
+    "notes": {
+      "page": {
+      "title": "Notes",
+      "back": "Back"
+     },
+     "header": {
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "unsavedChanges": "Unsaved changes"
+     },
+     "loading": {
+      "loadingNotes": "Loading notes...",
+      "loadingSubtitle": "Please wait a moment",
+      "initializingTitle": "Initializing notes book...",
+      "initializingSubtitle": "Setting up your notes book",
+      "addingModelsTitle": "Adding default models...",
+      "addingModelsSubtitle": "Please wait while we add default categories"
+     },
+     "sidebar": {
+      "title": "Your notes",
+      "addNew": "Add New",
+      "empty": "No lists yet",
+      "untitled": "Untitled List",
+      "actions": {
+        "editAria": "Edit note",
+        "deleteAria": "Delete note"
+      }
+    },
+     "main": {
+      "empty": {
+        "title": "Select a list to view its note",
+        "cta": "Add new Notes"
+      },
+      "edit": "Edit"
+    }
+  },
+   "addEvent": {
+    "modal": {
+      "title": "New Event",
+      "fields": {
+        "titleLabel": "Event Title",
+        "descriptionLabel": "Description",
+        "startDateTimeLabel": "Start Date & Time",
+        "endDateTimeLabel": "End Date & Time",
+        "defaultLabel": "Set as default event"
+      },
+      "placeholders": {
+        "title": "Enter Event Title",
+        "description": "Enter event description (optional)",
+        "startDate": "Select start date",
+        "endDate": "Select end date",
+        "time": "HH:MM"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "create": "Create Event",
+        "addNewEvent": "Add New Event"
+      }
+    },
+    "validation": {
+      "titleRequired": "Event title is required",
+      "startTimeRequired": "Start time is required",
+      "durationRequired": "Duration is required",
+      "invalidTimeFormat": "Invalid time format (use HH:MM)",
+      "durationPositive": "Duration must be a positive number"
+    }
+  },
+   "orderProcessing": {
+    "pageTitle": "Processing Your Order",
+    "processingTitle": "Processing Your Order",
+    "orderProcessingTitle": "Order Processing",
+    "suspense": {
+      "title": "Loading...",
+      "subtitle": "Please wait while we load your order information."
+    },
+    "errors": {
+      "missingCheckoutInfo": "Missing checkout information",
+      "checkoutFailed": "Checkout failed. Please try again.",
+      "processingTimeout": "Order processing timeout. Please try again.",
+      "statusCheckFailed": "Failed to check order status. Please try again.",
+      "processingFailed": "Order processing failed. Please try again.",
+      "orderDataNotAvailable": "Order data not available",
+      "createOrderFailed": "Failed to create order"
+    },
+    "toast": {
+      "checkoutFailed": "Checkout failed. Please try again.",
+      "processingTimeout": "Order processing timeout. Please try again.",
+      "statusCheckFailed": "Failed to check order status. Please try again.",
+      "processingFailed": "Order processing failed. Please try again.",
+      "orderCreated": "Order created successfully!"
+    },
+    "status": {
+      "creatingTitle": "Creating Your Order...",
+      "creatingSubtitle": "Please wait while we finalize your order.",
+      "completeTitle": "Order Processing Complete",
+      "completeSubtitle": "Your order has been processed successfully.",
+      "failedTitle": "Order Processing Failed",
+      "failedSubtitle": "There was an error processing your order.",
+      "processingTitle": "Processing Your Order...",
+      "processingSubtitle": "Your order is being processed. This may take a moment.",
+      "queuedTitle": "Your Order is in Queue",
+      "queuedSubtitle": "Your order is waiting to be processed. This may take a moment."
+    },
+    "polling": {
+      "checking": "Checking order status...",
+      "attempt": "Attempt {current} of {max}"
+    },
+    "actions": {
+      "backToCart": "Back to Cart",
+      "retry": "Retry"
+    },
+    "errorScreen": {
+      "title": "Order Processing Failed",
+      "actionLabel": "Back to Cart"
+    },
+    "overlay": {
+      "title": "Creating Order...",
+      "subtitle": "Please wait a moment"
+    }
+   }
+
+}
 
 }

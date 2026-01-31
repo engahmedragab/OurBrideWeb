@@ -5,6 +5,7 @@ import { Button } from './Button'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'
 import modalSuccessSvg from '@/assets/svg/Modal-success.svg'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface OrderConfirmationModalProps {
   isOpen: boolean
@@ -19,11 +20,13 @@ export const OrderConfirmationModal = ({
   onTrackOrder,
   className,
 }: OrderConfirmationModalProps) => {
+  const t = useI18nTranslations('checkoutPage.orderConfirmationModal')
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Order Confirmation"
+      title={t('title')}
       maxWidth="md"
       zIndex={7}
       className={className}
@@ -61,11 +64,10 @@ export const OrderConfirmationModal = ({
         {/* Success Message */}
         <div className="text-center mb-4">
           <p className="text-20 md:text-24 font-normal text-gray-900 mb-3">
-            Your Order Is Placed successfully
+            {t('text.successTitle')}
           </p>
           <p className="text-14 text-gray-600 leading-relaxed">
-            Enjoy exclusive coupons, seasonal discounts, and real offers from
-            trusted vendors in your city
+            {t('text.successDesc')}
           </p>
         </div>
 
@@ -86,7 +88,7 @@ export const OrderConfirmationModal = ({
               'transition-colors'
             )}
           >
-            Track My Order
+            {t('actions.track')}
           </Button>
         </div>
       </div>

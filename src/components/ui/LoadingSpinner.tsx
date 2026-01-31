@@ -10,6 +10,7 @@ export interface LoadingSpinnerProps {
   className?: string
   text?: string
   fullScreen?: boolean
+  open?: boolean
 }
 
 const sizeClasses = {
@@ -28,6 +29,7 @@ export const LoadingSpinner = ({
   className,
   text ,
   fullScreen = false,
+  open,
 }: LoadingSpinnerProps) => {
   const t =useI18nTranslations('common')
   const [isMounted, setIsMounted] = useState(false)
@@ -36,6 +38,7 @@ export const LoadingSpinner = ({
   useEffect(() => {
     setIsMounted(true)
   }, [])
+    if (!open) return null
 
   const spinner = (
     <div className={cn('flex flex-col items-center justify-center gap-3', className)}>

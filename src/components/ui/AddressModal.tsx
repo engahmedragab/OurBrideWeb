@@ -12,6 +12,7 @@ import type { DeliveryAddressRequest } from '@/../client/common/api/gen/ourbride
 import { getUser } from '@/auth/utils/token'
 import { cn } from '@/lib/utils'
 import { LocationPickerModal, type LocationData } from './LocationPickerModal'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface AddressModalProps {
   isOpen: boolean
@@ -20,12 +21,9 @@ export interface AddressModalProps {
   onSuccess?: () => void
 }
 
-export const AddressModal = ({
-  isOpen,
-  onClose,
-  address,
-  onSuccess,
-}: AddressModalProps) => {
+export const AddressModal = ({ isOpen, onClose, address, onSuccess }: AddressModalProps) => {
+  const t = useI18nTranslations('checkoutPage.addressModal')
+
   const { addToast } = useToast()
   const createAddressMutation = useCreateAddress()
   const updateAddressMutation = useUpdateAddress()
@@ -147,7 +145,7 @@ export const AddressModal = ({
         address2: building || prev.address2,
       }))
 
-      addToast('Location selected successfully', 'success')
+      addToast(t('toasts.locationSelectedSuccess'), 'success')
     } catch {
       // Fallback: just set the address
       const displayName = typeof locationData === 'string' ? locationData : locationData.displayName || ''
@@ -155,7 +153,7 @@ export const AddressModal = ({
         ...prev,
         address1: displayName.split(',')[0] || displayName,
       }))
-      addToast('Location selected. Please verify and complete the address details.', 'info')
+      addToast(t('toasts.locationSelectedVerify'), 'info')
     }
   }
 
@@ -176,21 +174,11 @@ export const AddressModal = ({
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
 
-    if (!formData.address1.trim()) {
-      newErrors.address1 = 'Address is required'
-    }
-    if (!formData.city.trim()) {
-      newErrors.city = 'City is required'
-    }
-    if (!formData.country.trim()) {
-      newErrors.country = 'Country is required'
-    }
-    if (!formData.contactName.trim()) {
-      newErrors.contactName = 'Contact name is required'
-    }
-    if (!formData.contactNumber1.trim()) {
-      newErrors.contactNumber1 = 'Contact number is required'
-    }
+    if (!formData.address1.trim()) newErrors.address1 = t('errors.address1Required')
+    if (!formData.city.trim()) newErrors.city = t('errors.cityRequired')
+    if (!formData.country.trim()) newErrors.country = t('errors.countryRequired')
+    if (!formData.contactName.trim()) newErrors.contactName = t('errors.contactNameRequired')
+    if (!formData.contactNumber1.trim()) newErrors.contactNumber1 = t('errors.contactNumberRequired')
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -204,7 +192,7 @@ export const AddressModal = ({
     try {
       const user = getUser()
       if (!user?.id) {
-        addToast('Please login to add an address', 'error')
+        addToast(t('toasts.loginRequired'), 'error')
         return
       }
 
@@ -226,7 +214,7 @@ export const AddressModal = ({
           isDefault: formData.isDefault,
         }
         await updateAddressMutation.mutateAsync({ id: address.id, data: updateData })
-        addToast('Address updated successfully', 'success')
+        addToast(t('toasts.addressUpdated'), 'success')
       } else {
         // Create new deliveryaddress
         const createData: DeliveryAddressRequest = {
@@ -244,18 +232,13 @@ export const AddressModal = ({
           isDefault: formData.isDefault,
         }
         await createAddressMutation.mutateAsync(createData)
-        addToast('Address added successfully', 'success')
+        addToast(t('toasts.addressAdded'), 'success')
       }
 
       onSuccess?.()
       onClose()
     } catch (error) {
-      addToast(
-        error instanceof Error
-          ? error.message
-          : 'Failed to save address. Please try again.',
-        'error'
-      )
+      addToast(error instanceof Error ? error.message : t('toasts.saveFailed'), 'error')
     }
   }
 
@@ -265,7 +248,7 @@ export const AddressModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={address ? 'Edit Address' : 'Add Delivery Address'}
+      title={address ? t('title.edit') : t('title.add')}
       maxWidth="lg"
       disabled={isLoading}
       containerClassName="max-h-[90vh] flex flex-col overflow-hidden"
@@ -285,13 +268,13 @@ export const AddressModal = ({
           )}
         >
           <Navigation className="h-5 w-5" />
-          <span>Pick Location from Map</span>
+          <span>{t('pickFromMap')}</span>
         </button>
 
         {/* Contact Name */}
         <Input
           type="text"
-          placeholder="Contact Name *"
+          placeholder={t('fields.contactName')}
           value={formData.contactName}
           onChange={e => updateField('contactName', e.target.value)}
           variant={errors.contactName ? 'error' : 'default'}
@@ -303,7 +286,7 @@ export const AddressModal = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
             type="tel"
-            placeholder="Contact Number *"
+            placeholder={t('fields.contactNumber1')}
             value={formData.contactNumber1}
             onChange={e => updateField('contactNumber1', e.target.value)}
             variant={errors.contactNumber1 ? 'error' : 'default'}
@@ -312,7 +295,7 @@ export const AddressModal = ({
           />
           <Input
             type="tel"
-            placeholder="Alternative Number (Optional)"
+            placeholder={t('fields.contactNumber2')}
             value={formData.contactNumber2}
             onChange={e => updateField('contactNumber2', e.target.value)}
             className="w-full"
@@ -322,7 +305,7 @@ export const AddressModal = ({
         {/* Email */}
         <Input
           type="email"
-          placeholder="Email (Optional)"
+          placeholder={t('fields.email')}
           value={formData.email}
           onChange={e => updateField('email', e.target.value)}
           className="w-full"
@@ -331,7 +314,7 @@ export const AddressModal = ({
         {/* Address Line 1 */}
         <Input
           type="text"
-          placeholder="Address Line 1 *"
+          placeholder={t('fields.address1')}
           prefixIcon={MapPin}
           value={formData.address1}
           onChange={e => updateField('address1', e.target.value)}
@@ -343,7 +326,7 @@ export const AddressModal = ({
         {/* Address Line 2 */}
         <Input
           type="text"
-          placeholder="Address Line 2 (Optional)"
+          placeholder={t('fields.address2')}
           prefixIcon={Building2}
           value={formData.address2}
           onChange={e => updateField('address2', e.target.value)}
@@ -354,7 +337,7 @@ export const AddressModal = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Input
             type="text"
-            placeholder="City *"
+            placeholder={t('fields.city')}
             value={formData.city}
             onChange={e => updateField('city', e.target.value)}
             variant={errors.city ? 'error' : 'default'}
@@ -363,14 +346,14 @@ export const AddressModal = ({
           />
           <Input
             type="text"
-            placeholder="State (Optional)"
+            placeholder={t('fields.state')}
             value={formData.state}
             onChange={e => updateField('state', e.target.value)}
             className="w-full"
           />
           <Input
             type="text"
-            placeholder="Postcode (Optional)"
+            placeholder={t('fields.postcode')}
             value={formData.postcode}
             onChange={e => updateField('postcode', e.target.value)}
             className="w-full"
@@ -380,7 +363,7 @@ export const AddressModal = ({
         {/* Country */}
         <Input
           type="text"
-          placeholder="Country *"
+          placeholder={t('fields.country')}
           value={formData.country}
           onChange={e => updateField('country', e.target.value)}
           variant={errors.country ? 'error' : 'default'}
@@ -391,7 +374,7 @@ export const AddressModal = ({
         {/* Address Comment */}
         <div className="relative">
           <textarea
-            placeholder="Additional Notes (Optional)"
+            placeholder={t('fields.comment')}
             value={formData.addressComment}
             onChange={e => updateField('addressComment', e.target.value)}
             rows={3}
@@ -418,7 +401,7 @@ export const AddressModal = ({
             className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <label htmlFor="isDefault" className="text-14 text-gray-700 cursor-pointer select-none">
-            Set as default delivery address
+            {t('fields.defaultLabel')}
           </label>
         </div>
 
@@ -430,7 +413,7 @@ export const AddressModal = ({
             disabled={isLoading}
             className="flex-1 order-2 sm:order-1"
           >
-            Cancel
+            {t('actions.cancel')}
           </Button>
           <Button
             variant="default"
@@ -438,7 +421,7 @@ export const AddressModal = ({
             disabled={isLoading}
             className="flex-1 order-1 sm:order-2 !text-white"
           >
-            {isLoading ? 'Saving...' : address ? 'Update Address' : 'Add Address'}
+            {isLoading ? t('actions.saving') : address ? t('actions.update') : t('actions.add')}
           </Button>
         </div>
       </div>
