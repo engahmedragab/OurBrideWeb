@@ -3,6 +3,7 @@
 import { Modal } from './Modal'
 import { Button } from './Button'
 import { Trash2 } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface DeleteCartItemModalProps {
   isOpen: boolean
@@ -18,8 +19,10 @@ export const DeleteCartItemModal = ({
   isOpen,
   onClose,
   onConfirm,
-  productTitle = 'this item',
+  productTitle,
 }: DeleteCartItemModalProps) => {
+  const t = useI18nTranslations('cart.modals.deleteItem')
+
   const handleConfirm = () => {
     onConfirm()
     onClose()
@@ -29,7 +32,7 @@ export const DeleteCartItemModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Remove Item"
+      title={t('title')}
       maxWidth="sm"
       containerClassName="p-0"
       headerClassName="px-6 py-4"
@@ -50,7 +53,7 @@ export const DeleteCartItemModal = ({
 
         {/* Question */}
         <p className="mb-6 text-center text-16 font-medium text-gray-900">
-          Are you sure you want to remove {productTitle} from your cart?
+          {t('question', { item: productTitle || t('defaultItem') })}
         </p>
 
         {/* Action Buttons */}
@@ -61,7 +64,7 @@ export const DeleteCartItemModal = ({
             className="w-full text-white"
             onClick={handleConfirm}
           >
-            Remove Item
+            {t('confirm')}
           </Button>
           <Button
             variant="outline"
@@ -69,7 +72,7 @@ export const DeleteCartItemModal = ({
             className="w-full border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
             onClick={onClose}
           >
-            Keep Item
+            {t('cancel')}
           </Button>
         </div>
       </div>

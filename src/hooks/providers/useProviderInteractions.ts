@@ -5,11 +5,13 @@ import {
 } from '@/services/api/providerApi'
 import { useToast } from '@/components/ui/Toaster'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 /**
  * Hook to toggle provider follow
  */
 export const useToggleProviderFollow = () => {
+  const t = useI18nTranslations('services.providers')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -25,8 +27,8 @@ export const useToggleProviderFollow = () => {
       
       const { message, type } = handleApiResponseForToast(
         response,
-        'Provider follow toggled successfully',
-        'Failed to toggle provider follow'
+    t('toast.followToggleSuccess'),
+        t('toast.followToggleFail')
       )
       addToast(message, type)
     },
@@ -41,6 +43,7 @@ export const useToggleProviderFollow = () => {
  * Hook to toggle provider favorite
  */
 export const useToggleProviderFavorite = () => {
+  const t = useI18nTranslations('services.providers')
   const queryClient = useQueryClient()
   const { addToast } = useToast()
 
@@ -56,8 +59,8 @@ export const useToggleProviderFavorite = () => {
       
       const { message, type } = handleApiResponseForToast(
         response,
-        'Provider favorite toggled successfully',
-        'Failed to toggle provider favorite'
+           t('toast.favoriteToggleSuccess'),
+        t('toast.favoriteToggleFail')
       )
       addToast(message, type)
     },

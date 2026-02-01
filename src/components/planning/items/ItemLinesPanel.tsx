@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { CreateItemModal } from '@/components/planning/items/CreateItemModal'
 import { EditItemModal } from '@/components/planning/items/EditItemModal'
 import { ItemsSummaryCard } from '@/components/planning/items/ItemsSummaryCard'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export type ItemFormData = {
   name: string
@@ -39,6 +40,8 @@ export function ItemLinesPanel({
   onAddNewLine: (data: ItemFormData) => Promise<void> | void
   onEditItem: (itemId: number, data: ItemFormData) => Promise<void> | void
 }) {
+  const t = useI18nTranslations('items')
+  const isRtl =  useIsRTL()
   const [createOpen, setCreateOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editingItemId, setEditingItemId] = useState<number | null>(null)
@@ -50,7 +53,7 @@ export function ItemLinesPanel({
 
   return (
     <section className={cn('rounded-xl border bg-white p-4', className)}>
-      {/* Summary Card (مثل التصميم اللي بعتيه) */}
+      {/* Summary Card */}
       <ItemsSummaryCard
         title={categoryName}
         total={stats.total}
@@ -62,7 +65,7 @@ export function ItemLinesPanel({
             className="h-9 rounded-xl px-3 text-xs text-primary hover:bg-gray-100"
           >
             <Plus className="mr-1 h-4 w-4" />
-            Add new item
+            {t('actions.addNew')}
           </Button>
         }
       />
@@ -84,7 +87,7 @@ export function ItemLinesPanel({
 
         {items.length === 0 ? (
           <div className="rounded-lg border border-dashed p-6 text-center text-sm text-gray-500">
-            No items in this list yet.
+            {t('lists.noItems')}
           </div>
         ) : null}
       </div>
@@ -109,8 +112,8 @@ export function ItemLinesPanel({
         initialValues={
           editingItem
             ? {
-                name: editingItem.title,
-                description: editingItem.description ?? undefined,
+                name: isRtl ?  editingItem.nameAr : editingItem.nameEn,
+                description: isRtl ? (editingItem.descriptionAr || undefined) :  (editingItem.descriptionEn || undefined),
                 quantity: editingItem.quantity,
                 totalPrice: editingItem.totalPrice,
                 providerName: editingItem.providerName,

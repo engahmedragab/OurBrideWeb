@@ -3,20 +3,28 @@ import { z } from 'zod'
 export const addGuestFormSchema = z.discriminatedUnion('categoryMode', [
   z.object({
     categoryMode: z.literal('existing'),
-    lineCategoryId: z.string().min(1, 'Category is required'),
-    nickName: z.string().min(2, 'Guest name must be at least 2 characters').trim(),
+    lineCategoryId: z.string().min(1, 'categoryRequired'),
+    nickName: z.string().min(2, 'guestNameMin').trim(),
     status: z.enum(['none', 'confirmed']).default('none'),
-    peopleCount: z.coerce.number().min(1).max(20).default(1),
+    peopleCount: z.coerce
+      .number()
+      .min(1, 'peopleMin')
+      .max(20, 'peopleMax')
+      .default(1),
   }),
 
   z.object({
     categoryMode: z.literal('new'),
-    categoryName: z.string().min(2, 'Category name must be at least 2 characters').trim(),
+    categoryName: z.string().min(2, 'categoryNameMin').trim(),
     categorySlug: z.string().optional(),
     categoryDescription: z.string().optional(),
-    nickName: z.string().min(2, 'Guest name must be at least 2 characters').trim(),
+    nickName: z.string().min(2, 'guestNameMin').trim(),
     status: z.enum(['none', 'confirmed']).default('none'),
-    peopleCount: z.coerce.number().min(1).max(20).default(1),
+    peopleCount: z.coerce
+      .number()
+      .min(1, 'peopleMin')
+      .max(20, 'peopleMax')
+      .default(1),
   }),
 ])
 

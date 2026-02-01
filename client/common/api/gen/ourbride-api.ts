@@ -13073,7 +13073,11 @@ export interface ItemLineRequest {
   /** @format date-time */
   lastModifiedDate?: string | null;
   name?: string | null;
+  nameAr?: string | null;
+  nameEn?: string | null;
   description?: string | null;
+  descriptionAr?: string | null;
+  descriptionEn?: string | null;
   /** @format int32 */
   quantity?: number | null;
   /** @format int32 */

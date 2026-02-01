@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { AlertTriangle } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
 interface ConfirmDeleteModalProps {
   isOpen: boolean
@@ -22,6 +23,7 @@ export const ConfirmDeleteModal = ({
   message = 'Are you sure you want to delete this item? This action cannot be undone.',
   itemName,
 }: ConfirmDeleteModalProps) => {
+  const t = useI18nTranslations('eventsPlanning.budget')
   const handleConfirm = useCallback(() => {
     onConfirm()
     onClose()
@@ -63,7 +65,7 @@ export const ConfirmDeleteModal = ({
               onClick={onClose}
               className="flex-1 h-[44px] !rounded-full"
             >
-              Cancel
+              {t('modals.confirmDelete.cancel')}
             </Button>
             <Button
               variant="destructive"
@@ -71,7 +73,7 @@ export const ConfirmDeleteModal = ({
               onClick={handleConfirm}
               className="flex-1 h-[44px] !rounded-full text-white"
             >
-              Delete
+              {t('modals.confirmDelete.delete')}
             </Button>
           </div>
         </div>

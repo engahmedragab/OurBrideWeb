@@ -5,7 +5,7 @@ import { useRouter } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
 import { Loader2, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { UserPageLayout } from '@/components/layout'
-import { PageHeader, LoadingOverlay, ErrorDisplay } from '@/components/ui'
+import { PageHeader,  ErrorDisplay, LoadingSpinner } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
 import { useCart } from '@/hooks'
@@ -13,6 +13,7 @@ import { createOrder } from '@/services/api/purchaseApi'
 import { getOrderById } from '@/services/api/orderApi'
 import type { CheckoutRequest } from '@/../client/common/api/gen/ourbride-api'
 import type { CheckoutResponse, OrderResponse } from '@/types/responses'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 /**
  * Queue status types
@@ -30,16 +31,19 @@ const MAX_POLL_ATTEMPTS = 30 // 45 seconds total (30 * 1.5 seconds)
  * This component uses useSearchParams and must be wrapped in Suspense
  */
 function CreateOrderContent() {
-    const router = useRouter()
-    const searchParams = useSearchParams()
-    const { addToast } = useToast()
-    const { data: cartData } = useCart()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { addToast } = useToast()
+  const { data: cartData } = useCart()
 
-    // Get checkout data from URL params
-    const checkoutOrderNumber = searchParams.get('checkoutOrderNumber')
-    const orderIdParam = searchParams.get('orderId')
-    const cartIdParam = searchParams.get('cartId')
-    const statusParam = searchParams.get('status')
+  // ✅ i18n
+  const t = useI18nTranslations('checkoutPage.orderProcessing')
+
+  // Get checkout data from URL params
+  const checkoutOrderNumber = searchParams?.get('checkoutOrderNumber')
+  const orderIdParam = searchParams?.get('orderId')
+  const cartIdParam = searchParams?.get('cartId')
+  const statusParam = searchParams?.get('status')
 
     // State
     const [queueStatus, setQueueStatus] = useState<QueueStatus>('idle')
@@ -94,7 +98,7 @@ function CreateOrderContent() {
             // Give it a moment to load from sessionStorage
             const timer = setTimeout(() => {
                 if (!checkoutResponse && !checkoutOrderNumber) {
-                    setError('Missing checkout information')
+                     setError(t('errors.missingCheckoutInfo'))
                 }
             }, 1000)
             return () => clearTimeout(timer)
@@ -103,24 +107,24 @@ function CreateOrderContent() {
         // If we have checkout response, use its status
         const initialStatus = (statusParam?.toLowerCase() || checkoutResponse?.status?.toLowerCase() || '') as QueueStatus
 
-        // If checkout status is completed, create order immediately
-        if (initialStatus === 'completed') {
-            setQueueStatus('completed')
-            handleCreateOrder()
-        } else if (initialStatus === 'queued' || initialStatus === 'processing') {
-            // Start polling for order status
-            setQueueStatus(initialStatus as QueueStatus)
-            startPolling()
-        } else if (initialStatus === 'failed') {
-            // Checkout failed
-            setQueueStatus('failed')
-            setError('Checkout failed. Please try again.')
-            addToast('Checkout failed. Please try again.', 'error')
-        } else {
-            // Default: try to create order immediately (skip polling for unknown/ready statuses)
-            setQueueStatus('completed')
-            handleCreateOrder()
-        }
+    // If checkout status is completed, create order immediately
+    if (initialStatus === 'completed') {
+      setQueueStatus('completed')
+      handleCreateOrder()
+    } else if (initialStatus === 'queued' || initialStatus === 'processing') {
+      // Start polling for order status
+      setQueueStatus(initialStatus as QueueStatus)
+      startPolling()
+    } else if (initialStatus === 'failed') {
+      // Checkout failed
+      setQueueStatus('failed')
+      setError(t('errors.checkoutFailed'))
+      addToast(t('toast.checkoutFailed'), 'error')
+    } else {
+      // Default: try to create order immediately (skip polling for unknown/ready statuses)
+      setQueueStatus('completed')
+      handleCreateOrder()
+    }
 
         // Cleanup on unmount
         return () => {
@@ -155,18 +159,18 @@ function CreateOrderContent() {
         }
     }
 
-    /**
-     * Poll for order status
-     */
-    const poll = async () => {
-        // Check max attempts
-        if (pollAttemptRef.current >= MAX_POLL_ATTEMPTS) {
-            stopPolling()
-            setQueueStatus('failed')
-            setError('Order processing timeout. Please try again.')
-            addToast('Order processing timeout. Please try again.', 'error')
-            return
-        }
+  /**
+   * Poll for order status
+   */
+  const poll = async () => {
+    // Check max attempts
+    if (pollAttemptRef.current >= MAX_POLL_ATTEMPTS) {
+      stopPolling()
+      setQueueStatus('failed')
+      setError(t('errors.processingTimeout'))
+      addToast(t('toast.processingTimeout'), 'error')
+      return
+    }
 
         pollAttemptRef.current++
         setPollAttempt(pollAttemptRef.current)
@@ -192,19 +196,17 @@ function CreateOrderContent() {
                 return
             }
 
-            // If still queued/processing and no orderId, continue polling
-            // The orderId might become available in a future poll
-        } catch (error) {
-            // Continue polling on error (might be temporary network issue)
-            // Only stop if we've exceeded max attempts
-            if (pollAttemptRef.current >= MAX_POLL_ATTEMPTS) {
-                stopPolling()
-                setQueueStatus('failed')
-                setError('Failed to check order status. Please try again.')
-                addToast('Failed to check order status. Please try again.', 'error')
-            }
-        }
+      // If still queued/processing and no orderId, continue polling
+    } catch (error) {
+      // Continue polling on error (might be temporary network issue)
+      if (pollAttemptRef.current >= MAX_POLL_ATTEMPTS) {
+        stopPolling()
+        setQueueStatus('failed')
+        setError(t('errors.statusCheckFailed'))
+        addToast(t('toast.statusCheckFailed'), 'error')
+      }
     }
+  }
 
     /**
      * Handle order status from polling
@@ -220,22 +222,22 @@ function CreateOrderContent() {
         // Check both status and queueStatus
         const currentStatus = queueStatusValue || orderStatus
 
-        if (currentStatus === 'completed') {
-            stopPolling()
-            setQueueStatus('completed')
-            // Proceed to create order
-            handleCreateOrder()
-        } else if (currentStatus === 'failed') {
-            stopPolling()
-            setQueueStatus('failed')
-            setError('Order processing failed. Please try again.')
-            addToast('Order processing failed. Please try again.', 'error')
-        } else if (currentStatus === 'processing') {
-            setQueueStatus('processing')
-        } else if (currentStatus === 'queued') {
-            setQueueStatus('queued')
-        }
+    if (currentStatus === 'completed') {
+      stopPolling()
+      setQueueStatus('completed')
+      // Proceed to create order
+      handleCreateOrder()
+    } else if (currentStatus === 'failed') {
+      stopPolling()
+      setQueueStatus('failed')
+      setError(t('errors.processingFailed'))
+      addToast(t('toast.processingFailed'), 'error')
+    } else if (currentStatus === 'processing') {
+      setQueueStatus('processing')
+    } else if (currentStatus === 'queued') {
+      setQueueStatus('queued')
     }
+  }
 
     /**
      * Create order API call
@@ -265,9 +267,9 @@ function CreateOrderContent() {
                 preferredDeliveryDate: null,
             } as CheckoutRequest : null)
 
-            if (!orderData) {
-                throw new Error('Order data not available')
-            }
+      if (!orderData) {
+        throw new Error(t('errors.orderDataNotAvailable'))
+      }
 
             const orderResponse = await createOrder(orderData)
 
@@ -278,44 +280,66 @@ function CreateOrderContent() {
                 sessionStorage.removeItem('cartData')
             }
 
-            // Success - navigate to order details immediately
-            addToast('Order created successfully!', 'success')
+      // Success - navigate to order details immediately
+      addToast(t('toast.orderCreated'), 'success')
 
-            // Navigate immediately without delay for better UX
-            if (orderResponse.orderId) {
-                router.push(`/orders/${orderResponse.orderId}`)
-            } else if (checkoutResponse?.orderId) {
-                router.push(`/orders/${checkoutResponse.orderId}`)
-            } else {
-                router.push('/orders')
-            }
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Failed to create order'
-            setError(errorMessage)
-            addToast(errorMessage, 'error')
-            setIsCreatingOrder(false)
-        }
+      // Navigate immediately without delay for better UX
+      if (orderResponse.orderId) {
+        router.push(`/orders/${orderResponse.orderId}`)
+      } else if (checkoutResponse?.orderId) {
+        router.push(`/orders/${checkoutResponse.orderId}`)
+      } else {
+        router.push('/orders')
+      }
+    } catch (error) {
+      const fallbackMsg = t('errors.createOrderFailed')
+      const errorMessage = error instanceof Error ? error.message : fallbackMsg
+      setError(errorMessage)
+      addToast(errorMessage, 'error')
+      setIsCreatingOrder(false)
     }
+  }
 
-    // Show error state
-    if (error && queueStatus === 'failed') {
-        return (
-            <UserPageLayout>
-                <PageHeader title="Order Processing" />
-                <ErrorDisplay
-                    title="Order Processing Failed"
-                    message={error}
-                    actionLabel="Back to Cart"
-                    actionHref="/cart"
-                />
-            </UserPageLayout>
-        )
-    }
-
-    // Show loading/processing state
+  // Show error state
+  if (error && queueStatus === 'failed') {
     return (
-        <UserPageLayout>
-            <PageHeader title="Processing Your Order" />
+      <UserPageLayout>
+        <PageHeader title={t('orderProcessingTitle')} />
+        <ErrorDisplay
+          title={t('errorScreen.title')}
+          message={error}
+          actionLabel={t('errorScreen.actionLabel')}
+          actionHref="/cart"
+        />
+      </UserPageLayout>
+    )
+  }
+
+  // Titles/Subtitles based on status
+  const statusTitle = isCreatingOrder
+    ? t('status.creatingTitle')
+    : queueStatus === 'completed'
+    ? t('status.completeTitle')
+    : queueStatus === 'failed'
+    ? t('status.failedTitle')
+    : queueStatus === 'processing'
+    ? t('status.processingTitle')
+    : t('status.queuedTitle')
+
+  const statusSubtitle = isCreatingOrder
+    ? t('status.creatingSubtitle')
+    : queueStatus === 'completed'
+    ? t('status.completeSubtitle')
+    : queueStatus === 'failed'
+    ? t('status.failedSubtitle')
+    : queueStatus === 'processing'
+    ? t('status.processingSubtitle')
+    : t('status.queuedSubtitle')
+
+  // Show loading/processing state
+  return (
+    <UserPageLayout>
+      <PageHeader title={t('processingTitle')} />
 
             <div className="container-custom py-8">
                 <div className="max-w-2xl mx-auto">
@@ -331,47 +355,27 @@ function CreateOrderContent() {
                             )}
                         </div>
 
-                        {/* Status Message */}
-                        <div className="text-center mb-6">
-                            <h2 className="text-24 font-semibold text-gray-900 mb-2">
-                                {isCreatingOrder
-                                    ? 'Creating Your Order...'
-                                    : queueStatus === 'completed'
-                                        ? 'Order Processing Complete'
-                                        : queueStatus === 'failed'
-                                            ? 'Order Processing Failed'
-                                            : queueStatus === 'processing'
-                                                ? 'Processing Your Order...'
-                                                : 'Your Order is in Queue'}
-                            </h2>
-                            <p className="text-16 text-gray-600">
-                                {isCreatingOrder
-                                    ? 'Please wait while we finalize your order.'
-                                    : queueStatus === 'completed'
-                                        ? 'Your order has been processed successfully.'
-                                        : queueStatus === 'failed'
-                                            ? 'There was an error processing your order.'
-                                            : queueStatus === 'processing'
-                                                ? 'Your order is being processed. This may take a moment.'
-                                                : 'Your order is waiting to be processed. This may take a moment.'}
-                            </p>
-                        </div>
+            {/* Status Message */}
+            <div className="text-center mb-6">
+              <h2 className="text-24 font-semibold text-gray-900 mb-2">{statusTitle}</h2>
+              <p className="text-16 text-gray-600">{statusSubtitle}</p>
+            </div>
 
-                        {/* Polling Progress */}
-                        {queueStatus !== 'idle' && queueStatus !== 'completed' && !isCreatingOrder && (
-                            <div className="mt-6">
-                                <div className="flex items-center justify-between text-14 text-gray-600 mb-2">
-                                    <span>Checking order status...</span>
-                                    <span>Attempt {pollAttempt} of {MAX_POLL_ATTEMPTS}</span>
-                                </div>
-                                <div className="w-full bg-gray-200 rounded-full h-2">
-                                    <div
-                                        className="bg-brand-500 h-2 rounded-full transition-all duration-300"
-                                        style={{ width: `${(pollAttempt / MAX_POLL_ATTEMPTS) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-                        )}
+            {/* Polling Progress */}
+            {queueStatus !== 'idle' && queueStatus !== 'completed' && !isCreatingOrder && (
+              <div className="mt-6">
+                <div className="flex items-center justify-between text-14 text-gray-600 mb-2">
+                  <span>{t('polling.checking')}</span>
+                  <span>{t('polling.attempt', { current: pollAttempt, max: MAX_POLL_ATTEMPTS })}</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className="bg-brand-500 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${(pollAttempt / MAX_POLL_ATTEMPTS) * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
                         {/* Queue Status Badge */}
                         {queueStatus !== 'idle' && (
@@ -394,69 +398,61 @@ function CreateOrderContent() {
                             </div>
                         )}
 
-                        {/* Action Buttons */}
-                        {queueStatus === 'failed' && (
-                            <div className="mt-8 flex gap-4 justify-center">
-                                <button
-                                    onClick={() => router.push('/cart')}
-                                    className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-                                >
-                                    Back to Cart
-                                </button>
-                                <button
-                                    onClick={handleCreateOrder}
-                                    className="px-6 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
-                                >
-                                    Retry
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
+            {/* Action Buttons */}
+            {queueStatus === 'failed' && (
+              <div className="mt-8 flex gap-4 justify-center">
+                <button
+                  onClick={() => router.push('/cart')}
+                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  {t('actions.backToCart')}
+                </button>
+                <button
+                  onClick={handleCreateOrder}
+                  className="px-6 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 transition-colors"
+                >
+                  {t('actions.retry')}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
-            {/* Loading Overlay */}
-            <LoadingOverlay
-                open={isCreatingOrder}
-                title="Creating Order..."
-                subtitle="Please wait a moment"
-            />
-        </UserPageLayout>
-    )
+      {/* Loading Overlay */}
+      <LoadingSpinner open={isCreatingOrder} text={`${t('overlay.title')} ${t('overlay.subtitle')}`} />
+    </UserPageLayout>
+  )
 }
 
 /**
  * Main page component with Suspense boundary
  */
 export default function CreateOrderPage() {
-    return (
-        <Suspense
-            fallback={
-                <UserPageLayout>
-                    <PageHeader title="Processing Your Order" />
-                    <div className="container-custom py-8">
-                        <div className="max-w-2xl mx-auto">
-                            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-                                <div className="flex justify-center mb-6">
-                                    <Loader2 className="h-16 w-16 text-brand-500 animate-spin" />
-                                </div>
-                                <div className="text-center">
-                                    <h2 className="text-24 font-semibold text-gray-900 mb-2">
-                                        Loading...
-                                    </h2>
-                                    <p className="text-16 text-gray-600">
-                                        Please wait while we load your order information.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </UserPageLayout>
-            }
-        >
-            <CreateOrderContent />
-        </Suspense>
-    )
+  const t = useI18nTranslations('checkoutPage.orderProcessing')
+
+  return (
+    <Suspense
+      fallback={
+        <UserPageLayout>
+          <PageHeader title={t('processingTitle')} />
+          <div className="container-custom py-8">
+            <div className="max-w-2xl mx-auto">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+                <div className="flex justify-center mb-6">
+                  <Loader2 className="h-16 w-16 text-brand-500 animate-spin" />
+                </div>
+                <div className="text-center">
+                  <h2 className="text-24 font-semibold text-gray-900 mb-2">{t('suspense.title')}</h2>
+                  <p className="text-16 text-gray-600">{t('suspense.subtitle')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </UserPageLayout>
+      }
+    >
+      <CreateOrderContent />
+    </Suspense>
+  )
 }
-
-

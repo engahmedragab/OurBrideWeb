@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { formatEGP } from '@/utils/formatCurrency'
 import type { BudgetLineCategoryResponse } from '@/types/responses'
 import { getCategoryColor } from '@/utils/budgetbook/budgetColors'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 interface CategoryStat {
   category: BudgetLineCategoryResponse
@@ -48,6 +49,8 @@ export const BudgetOverviewCard = ({
   onBudgetChange,
   isLoading = false,
 }: BudgetOverviewCardProps) => {
+  
+  const t = useI18nTranslations('eventsPlanning.budget')
   const [editingBudget, setEditingBudget] = useState<string>(
     Number(totalBudget || 0).toLocaleString('en-US')
   )
@@ -57,7 +60,7 @@ export const BudgetOverviewCard = ({
     const segmentsWithValue = categoryStats
       .filter(stat => stat.value > 0)
       .map(stat => ({
-        label: stat.category.name || 'Unnamed Category',
+        label: stat.category.name || t('overview.unnamedCategory'),
         value: stat.value,
         color: getCategoryColor(stat.category),
         percentage: 0,
@@ -108,9 +111,9 @@ export const BudgetOverviewCard = ({
       <div className="p-0 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-14 font-semibold text-gray-900">Budget Overview</h2>
+          <h2 className="text-14 font-semibold text-gray-900">{t('overview.title')}</h2>
           <span className="text-12 font-medium text-green-500">
-            {savedPercentage.toFixed(0)}% Saved
+            {t('overview.savedPercent', { percent: savedPercentage.toFixed(0) })}
           </span>
         </div>
 
@@ -128,11 +131,11 @@ export const BudgetOverviewCard = ({
 
         {/* Info */}
         <div className="space-y-2.5 px-4">
-          <InfoRow label="Budget" value={formatEGP(totalBudget)} />
+          <InfoRow label={t('overview.budget')} value={formatEGP(totalBudget)} />
           {/* <InfoRow label="Remaining Budget" value={formatEGP(remaining)} /> */}
-          <InfoRow label="Estimated Cost" value={formatEGP(totalEstimated)} />
-          <InfoRow label="Paid" value={formatEGP(totalPaid)} />
-          <InfoRow label="Final Cost" value={formatEGP(totalFinal)} />
+          <InfoRow label={t('overview.estimatedCost')} value={formatEGP(totalEstimated)} />
+          <InfoRow label={t('overview.paid')} value={formatEGP(totalPaid)} />
+          <InfoRow label={t('overview.finalCost')} value={formatEGP(totalFinal)} />
         </div>
 
         {/* Input */}
@@ -156,7 +159,7 @@ export const BudgetOverviewCard = ({
               }}
               suffix="EGP"
               size="lg"
-              placeholder="Enter Budget"
+              placeholder={t('overview.enterBudget')}
               className="w-full pr-20"
             />
 
@@ -166,7 +169,7 @@ export const BudgetOverviewCard = ({
               onClick={handleSave}
               className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-3 text-brand-500 bg-white rounded-lg hover:bg-brand-500 hover:text-white hover:border-brand-500"
             >
-              Save
+              {t('overview.save')}
             </Button>
           </div>
         </div>

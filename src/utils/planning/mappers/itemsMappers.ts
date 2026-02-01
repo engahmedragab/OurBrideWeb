@@ -6,8 +6,10 @@ import type { ItemBookRequest, ItemLineRequest, ItemLineCategoryRequest, BookCla
 
 export type UiItem = {
   id: number
-  title: string
-  description: string | null
+  nameAr: string
+  nameEn: string
+  descriptionAr: string | null
+  descriptionEn: string | null
   quantity: number
   totalPrice: number
   providerName: string
@@ -20,7 +22,8 @@ export type UiItem = {
 
 export type UiCategory = {
   id: number
-  name: string
+  nameEn: string,
+  nameAr:string
   color?: string
 }
 
@@ -97,8 +100,10 @@ export const convertCategoryToRequest = (category: ItemLineCategoryResponse): It
 export const convertLineToUiItem = (line: ItemLineResponse, categoryName: string): UiItem => {
   return {
     id: line.id,
-    title: line.name || line.nameEn || line.nameAr || '',
-    description: line.description || line.descriptionEn || line.descriptionAr || null,
+    nameAr: line.nameAr || line.name || '',
+    nameEn: line.nameEn || line.name || '',
+    descriptionEn: line.descriptionEn || line.description || null,
+    descriptionAr: line.descriptionAr || line.description || null,
     quantity: line.quantity ?? 0,
     totalPrice: line.totalPrice ?? line.price ?? 0,
     providerName: line.providerName || '',
@@ -127,8 +132,10 @@ export const convertUiItemToLineRequest = (item: UiItem, localItemBook: ItemBook
   return {
     id: item.id,
     bookId: localItemBook.id,
-    name: item.title,
-    description: item.description || null,
+    nameAr: item.nameAr,
+    nameEn:item.nameEn,
+    descriptionAr: item.descriptionAr || null,
+    descriptionEn: item.descriptionEn || null,
     quantity: item.quantity || null,
     totalPrice: item.totalPrice || null,
     providerName: item.providerName || null,
@@ -165,7 +172,8 @@ export const convertUiItemToLineRequest = (item: UiItem, localItemBook: ItemBook
 export const convertCategoryToUi = (category: ItemLineCategoryResponse): UiCategory => {
   return {
     id: category.id,
-    name: category.name || category.nameEn || category.nameAr || '',
+    nameEn:category.nameEn || category.nameAr || '',
+    nameAr:category.nameAr || category.name,
     color: category.colorName || undefined,
   }
 }

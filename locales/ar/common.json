@@ -26,12 +26,12 @@
     "noDataAvailable": "لا توجد بيانات متاحة",
     "noImageAvailable": "لا توجد صورة متاحة",
     "enterYourEmail": "أدخل بريدك الإلكتروني",
-    "productsLoading":"جاري تحميل المنتجات...",
-    "Anonymous":"مجهول",
-    "recently":"مؤخرا",
-    "viewAll":"عرض الكل",
-    "suggestedForYou":"مقترح لك",
-    "subscribe":"اشتركي",
+    "productsLoading": "جاري تحميل المنتجات...",
+    "Anonymous": "مجهول",
+    "recently": "مؤخرا",
+    "viewAll": "عرض الكل",
+    "suggestedForYou": "مقترح لك",
+    "subscribe": "اشتركي",
     "productCommon": {
       "productNotFound": "المنتج غير موجود",
       "productNotFoundMessage": "المنتج الذي تبحثين عنه غير موجود أو تم حذفه",
@@ -77,7 +77,7 @@
       "removeStockFilter": "إزالة فلتر التوفر"
     }
   },
-    "auth": {
+  "auth": {
     "hero": {
       "backToHome": "  الصفحة الرئيسية",
       "title": "نظّم زفافك",
@@ -131,7 +131,6 @@
       "female": "أنثى",
       "male": "ذكر",
       "gender": {
-
         "errorRequired": "يرجى اختيار النوع"
       },
       "terms": {
@@ -224,7 +223,6 @@
         "title": "تم بنجاح!",
         "description": "تم حفظ تفضيلات التخطيط الخاصة بك",
         "confirmLabel": "تأكيد",
-       
         "skipButton": "تخطي الآن"
       },
       "errors": {
@@ -256,7 +254,6 @@
         "invalidOtpCode": "رمز التحقق غير صحيح",
         "invalidConfirmationCode": "رمز التأكيد غير صحيح",
         "refreshUserFailed": "فشل تحديث بيانات المستخدم"
-       
       }
     },
     "api": {
@@ -312,30 +309,28 @@
     "downloadApp": {
       "title": "تحميل التطبيق"
     }
-     },
-   
-    "changePassword": {
-      "title": "تغيير    الكلمة المرور",
-      "saveChanges": "حفظ التغييرات",
-      "currentPassword": "كلمة المرور الحالية",
-      "newPassword": "كلمة المرور الجديدة",
-      "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
-      "enterPassword": "أدخل كلمة المرور",
-      "enterNewPassword": "أدخل كلمة المرور الجديدة",
-      "confirmNewPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
-      "success": {
-        "title": "تم تغيير كلمة المرور بنجاح",
-        "description": "تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة"
-      },
-      "errors": {
-        "currentInvalid": "كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى",
-        "newRequired": "كلمة المرور مطلوبة",
-        "newMin": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
-        "confirmRequired": "يرجى تأكيد كلمة المرور",
-        "notMatch": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى"
-      }
+  },
+  "changePassword": {
+    "title": "تغيير    الكلمة المرور",
+    "saveChanges": "حفظ التغييرات",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "enterPassword": "أدخل كلمة المرور",
+    "enterNewPassword": "أدخل كلمة المرور الجديدة",
+    "confirmNewPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
+    "success": {
+      "title": "تم تغيير كلمة المرور بنجاح",
+      "description": "تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة"
     },
-
+    "errors": {
+      "currentInvalid": "كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى",
+      "newRequired": "كلمة المرور مطلوبة",
+      "newMin": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
+      "confirmRequired": "يرجى تأكيد كلمة المرور",
+      "notMatch": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى"
+    }
+  },
   "navbar": {
     "search": {
       "placeholder": "بحث..."
@@ -364,7 +359,6 @@
       "notifications": "الإشعارات",
       "noNotificationsYet": "لا توجد إشعارات حتى الآن",
       "viewAll": "عرض كل الإشعارات"
-
     },
     "menu": {
       "wishlist": "قائمة الأمنيات",
@@ -377,210 +371,131 @@
       "closeSearch": "إغلاق البحث"
     }
   },
-    "home": {
-      "hero": {
-        "activeUsers": "المستخدمون النشطون",
-        "badge": "منصة شاملة لحفلات الزفاف.",
-        "headline": {
-          "line1": "عروستك",
-          "line2": "دائمًا هي",
-          "line3": "مسؤوليتنا."
-        },
-        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
-        "circularText": "ابدأي التسوق الآن",
-        "exploreProducts": "استكشفي المنتجات",
-        "exploreServices": "استكشفي الخدمات"
+  "home": {
+    "hero": {
+      "activeUsers": "المستخدمون النشطون",
+      "badge": "منصة شاملة لحفلات الزفاف.",
+      "headline": {
+        "line1": "عروستك",
+        "line2": "دائمًا هي",
+        "line3": "مسؤوليتنا."
       },
-      "statistics": {
-        "clients": "العملاء",
-        "serviceProviders": "مقدمو الخدمات",
-        "availableServices": "الخدمات المتاحة",
-        "products": "المنتجات"
+      "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
+      "circularText": "ابدأي التسوق الآن",
+      "exploreProducts": "استكشفي المنتجات",
+      "exploreServices": "استكشفي الخدمات"
+    },
+    "statistics": {
+      "clients": "العملاء",
+      "serviceProviders": "مقدمو الخدمات",
+      "availableServices": "الخدمات المتاحة",
+      "products": "المنتجات"
+    },
+    "benefits": {
+      "verifiedTrustedProviders": {
+        "title": "مقدمو خدمات موثوقون ومتحققون",
+        "description": "يتم التحقق من هوية كل خدمة لضمان تجربة آمنة وموثوقة."
       },
-      "benefits": {
-        "verifiedTrustedProviders": {
-          "title": "مقدمو خدمات موثوقون ومتحققون",
-          "description": "يتم التحقق من هوية كل خدمة لضمان تجربة آمنة وموثوقة."
-        },
-        "allInOneWeddingHub": {
-          "title": "مركز شامل لحفلات الزفاف",
-          "description": "خططي، تسوقي، احجزي، وأديري كل شيء من منصة واحدة."
-        },
-        "securePayments": {
-          "title": "مدفوعات آمنة",
-          "description": "معاملات آمنة، أسعار شفافة، وضمان تقديم الخدمة."
-        },
-        "exclusiveOffers": {
-          "title": "عروض ومكافآت حصرية",
-          "description": "استمتعي بخصومات وخيارات هدايا مصممة ليومك الكبير."
-        }
+      "allInOneWeddingHub": {
+        "title": "مركز شامل لحفلات الزفاف",
+        "description": "خططي، تسوقي، احجزي، وأديري كل شيء من منصة واحدة."
       },
-      "sections": {
-        "productsSuggested": "المنتجات المقترحة لك",
-        "servicesSuggested": "الخدمات المقترحة لك",
-        "viewAll": "عرض الكل",
-        "whyTrust": {
-          "title": "لماذا",
-          "brides": "العرائس",
-          "trust": "تثق",
-          "ourServices": "بخدماتنا"
-        },
-        "testimonials": {
-          "title": "اقرأي",
-          "reviews": "التقييمات",
-          "rideWith": "وتنقلي",
-          "confidence": "بثقة",
-          "whatOurCustomers": "ماذا يقول",
-          "customers": "عملاؤنا",
-          "areSaying": "",
-          "previous": "التقييمات السابقة",
-          "next": "التقييمات التالية",
-          "goToPage": "الانتقال إلى الصفحة"
-        },
-        "providers": {
-          "title": "اكتشفي",
-          "trusted": "مقدمي",
-          "wedding": "خدمات الزفاف",
-          "providers": "الموثوقين"
-        },
-        "journey": {
-          "title": "رحلة",
-          "journey": "زفافك",
-          "starts": "تبدأ",
-          "here": "من هنا"
-        },
-        "appDownload": {
-          "title": "اجعلي تخطيط حفل الزفاف أسهل",
-          "subtitle": "مع OurBride"
-        }
+      "securePayments": {
+        "title": "مدفوعات آمنة",
+        "description": "معاملات آمنة، أسعار شفافة، وضمان تقديم الخدمة."
       },
-      "trustCards": {
-        "madeForLocalBrides": {
-          "heading": "مصمم للعروسات المحليات",
-          "description": "مصمم خصيصًا للعروسات في جميع أنحاء مصر — خاصة خارج العاصمة."
-        },
-        "simpleBeautifulExperience": {
-          "heading": "تجربة بسيطة وجميلة",
-          "description": "تصميم أنثوي وسهل الاستخدام يجعل التخطيط ممتعًا."
-        },
-        "realOffersSavings": {
-          "heading": "عروض ومدخرات حقيقية",
-          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
-        },
-        "allInOnePlatform": {
-          "heading": "منصة شاملة",
-          "description": "خططي، احجزي، تسوقي، واحتفلي بكل شيء في مكان واحد."
-        },
-        "verifiedTrustedProviders": {
-          "heading": "مقدمو خدمات موثوقون ومتحققون",
-          "description": "جميع مقدمي الخدمات لدينا تم التحقق منهم بعناية وهم موثوقون."
-        },
-        "securePayments": {
-          "heading": "مدفوعات آمنة",
-          "description": "مدفوعاتك آمنة ومضمونة مع نظام الدفع الموثوق لدينا."
-        }
-      },
-      "journeySteps": {
-        "step1": {
-          "title": "الخطوة #1",
-          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
-        },
-        "step2": {
-          "title": "الخطوة #2",
-          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
-        },
-        "step3": {
-          "title": "الخطوة #3",
-          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
-        }
+      "exclusiveOffers": {
+        "title": "عروض ومكافآت حصرية",
+        "description": "استمتعي بخصومات وخيارات هدايا مصممة ليومك الكبير."
       }
-    }, 
-    "services": {
-      "intro": {
-        "error": {
-          "loadFailed": "فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا."
-        },
-        "hero": {
-          "defaultSlides": {
-            "slide1": {
-              "label": "خدمة مميزة",
-              "title": "مكياج وتسريحة العروس",
-              "description": "خدمات تجميل احترافية للعروس لتجعلك تبدين رائعة في يومك الخاص. خبراء مكياج ومصففي شعر جاهزون لإنشاء إطلالتك المثالية كعروس.",
-              "ctaText": "احجزي الآن",
-              "discountText": "خصم 30%"
-            },
-            "slide2": {
-              "label": "الأعلى تقييمًا",
-              "title": "تصوير حفلات الزفاف",
-              "description": "التقطي لحظاتك الثمينة مع خدمات تصوير حفلات الزفاف الاحترافية. مصورون ذوو خبرة مكرسون لإنشاء ذكريات جميلة.",
-              "ctaText": "استكشفي الخدمات",
-              "discountText": "خصم 50%"
-            }
-          }
-        },
-        "sections": {
-          "why": "لماذا",
-          "brides": "العرائس",
-          "trust": "تثق",
-          "ourBride": "OurBride",
-          "todayOffersTitle": "عروض اليوم",
-          "best": "أفضل",
-          "providers": "المزودين",
-          "with": "مع",
-          "bestProducts": "أفضل المنتجات",
-          "exploreNow": "اكتشفي الآن"
-        },
-        "categories": {
-          "fallbackDescription": "كوبونات وخصومات حصرية مصممة لميزانيتك.",
-          "Choose": "اختاري",
-          "From": "من",
-          "OurProduct": "منتجاتنا",
-          "Categories": "الفئات"
-        },
-        "providers": {
-          "defaultProfession": "مزود خدمة",
-          "fallbackProductTitle": "عرض الخدمات"
-        },
-        "trustFeatures": {
-          "title": "عنوان الميزة التنافسية",
-          "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف."
-        },
-        "newsletter": {
-          "emailPlaceholder": "أدخل بريدك الإلكتروني",
-          "heading": "جاهزة توصلك أخبارنا؟",
-          "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
-        }
+    },
+    "sections": {
+      "productsSuggested": "المنتجات المقترحة لك",
+      "servicesSuggested": "الخدمات المقترحة لك",
+      "viewAll": "عرض الكل",
+      "whyTrust": {
+        "title": "لماذا",
+        "brides": "العرائس",
+        "trust": "تثق",
+        "ourServices": "بخدماتنا"
       },
-      "serviceCategories": {
-        "loading": "جاري تحميل الخدمات...",
-        "FailedtoLoadServices": "فشل تحميل الخدمات",
-        "failedPleaseTryAgain ": "فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا.",
-        "searchPlaceholder": "ابحثي عن خدمة...",
-        "servicesFound": "خدمة متاحة",
-        "page": "الصفحة",
-        "of": "من",
-        "topOffers": "أفضل العروض",
-        "servicefilters": {
-          "categories": "الفئات",
-          "clear": "مسح",
-          "price": "السعر",
-          "from": "من",
-          "to": "إلى",
-          "inStock": "متوفر",
-          "priceFromValue": "من {value} {currency}",
-          "priceToValue": "إلى {value} {currency}",
-          "availability": "التوفر",
-          "inStockOnly": "المتوفر فقط"
-        },
-        "sortServicesOptions": {
-          "default": "الافتراضي",
-          "priceLowToHigh": "من الأقل إلى الأعلى",
-          "priceHighToLow": "من الأعلى إلى الأقل",
-          "highestRated": "الأعلى تقييمًا",
-          "newestFirst": "الأحدث أولاً",
-          "mostPopular": "الأكثر شيوعًا"
-        },
-        "heroSlides": {
+      "testimonials": {
+        "title": "اقرأي",
+        "reviews": "التقييمات",
+        "rideWith": "وتنقلي",
+        "confidence": "بثقة",
+        "whatOurCustomers": "ماذا يقول",
+        "customers": "عملاؤنا",
+        "areSaying": "",
+        "previous": "التقييمات السابقة",
+        "next": "التقييمات التالية",
+        "goToPage": "الانتقال إلى الصفحة"
+      },
+      "providers": {
+        "title": "اكتشفي",
+        "trusted": "مقدمي",
+        "wedding": "خدمات الزفاف",
+        "providers": "الموثوقين"
+      },
+      "journey": {
+        "title": "رحلة",
+        "journey": "زفافك",
+        "starts": "تبدأ",
+        "here": "من هنا"
+      },
+      "appDownload": {
+        "title": "اجعلي تخطيط حفل الزفاف أسهل",
+        "subtitle": "مع OurBride"
+      }
+    },
+    "trustCards": {
+      "madeForLocalBrides": {
+        "heading": "مصمم للعروسات المحليات",
+        "description": "مصمم خصيصًا للعروسات في جميع أنحاء مصر — خاصة خارج العاصمة."
+      },
+      "simpleBeautifulExperience": {
+        "heading": "تجربة بسيطة وجميلة",
+        "description": "تصميم أنثوي وسهل الاستخدام يجعل التخطيط ممتعًا."
+      },
+      "realOffersSavings": {
+        "heading": "عروض ومدخرات حقيقية",
+        "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+      },
+      "allInOnePlatform": {
+        "heading": "منصة شاملة",
+        "description": "خططي، احجزي، تسوقي، واحتفلي بكل شيء في مكان واحد."
+      },
+      "verifiedTrustedProviders": {
+        "heading": "مقدمو خدمات موثوقون ومتحققون",
+        "description": "جميع مقدمي الخدمات لدينا تم التحقق منهم بعناية وهم موثوقون."
+      },
+      "securePayments": {
+        "heading": "مدفوعات آمنة",
+        "description": "مدفوعاتك آمنة ومضمونة مع نظام الدفع الموثوق لدينا."
+      }
+    },
+    "journeySteps": {
+      "step1": {
+        "title": "الخطوة #1",
+        "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+      },
+      "step2": {
+        "title": "الخطوة #2",
+        "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+      },
+      "step3": {
+        "title": "الخطوة #3",
+        "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+      }
+    }
+  },
+  "services": {
+    "intro": {
+      "error": {
+        "loadFailed": "فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا."
+      },
+      "hero": {
+        "defaultSlides": {
           "slide1": {
             "label": "خدمة مميزة",
             "title": "مكياج وتسريحة العروس",
@@ -597,182 +512,24 @@
           }
         }
       },
-      "serviceDetail": {
-        "loading": {
-          "title": "جاري تحميل الخدمة..."
-        },
-        "error": {
-          "notFound": "الخدمة غير موجودة. يرجى المحاولة مرة أخرى لاحقًا.",
-          "backToServices": "العودة إلى الخدمات"
-        },
-        "backButton": {
-          "label": "العودة إلى الخدمات"
-        },
-        "badges": {
-          "topOffer": "أفضل عرض",
-          "verified": "موثوق"
-        },
-        "delivery": {
-          "bookNowAndGetBy": "احجزي الآن واحصلي عليه قبل",
-          "dateFallback": "25 أغسطس 2025"
-        },
-        "branchExpanded": {
-          "6OfOctober": "الجيزة، السادس من أكتوبر",
-          "maadi": "القاهرة، المعادي",
-          "elshikhZayed": "الجيزة، الشيخ زايد",
-          "mansoura": "المنصورة، شارع الجلاء",
-          "dokki": "الجيزة، الدقي",
-          "nasrCity": "القاهرة، مدينة نصر",
-          "corniche": "الإسكندرية، الكورنيش",
-          "zamalek": "القاهرة، الزمالك",
-          "agouza": "الجيزة، العجوزة",
-          "heliopolis": "القاهرة، مصر الجديدة"
-        },
-        "bookingCard": {
-          "startFrom": "يبدأ من",
-          "availableBranches": "الفروع المتاحة",
-          "seeMore": "عرض المزيد",
-          "seeLess": "عرض أقل",
-          "packagesDetails": "تفاصيل الباقات",
-          "loadingPackages": "جاري تحميل الباقات...",
-          "bookNow": "احجزي الآن",
-          "chatAriaLabel": "الدردشة مع المزود"
-        },
-        "reviews": {
-          "title": "التقييمات",
-          "reviewsCount": "{count} تقييم",
-          "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذه الخدمة!",
-          "seeMoreReviews": "عرض المزيد من التقييمات",
-          "writeYourReview": "اكتبي تقييمك",
-          "commentPlaceholder": "شاركي تعليقك",
-          "sendReviewAriaLabel": "إرسال التقييم",
-          "ratingCount": " تقييم",
-          "userAvatar": "مستخدم "
-        },
-        "reviewSubmit": {
-          "success": "تم إرسال التقييم بنجاح!",
-          "fail": "فشل إرسال التقييم",
-          "failTryAgain": "فشل إرسال التقييم. يرجى المحاولة مرة أخرى."
-        },
-        "favorite": {
-          "added": "تمت الإضافة إلى المفضلة",
-          "removed": "تمت الإزالة من المفضلة",
-          "fail": "فشل تحديث المفضلة",
-          "failTryAgain": "فشل تحديث المفضلة. يرجى المحاولة مرة أخرى."
-        },
-        "wishlist": {
-          "added": "تمت الإضافة إلى قائمة الأمنيات",
-          "removed": "تمت الإزالة من قائمة الأمنيات",
-          "fail": "فشل تحديث قائمة الأمنيات",
-          "failTryAgain": "فشل تحديث قائمة الأمنيات. يرجى المحاولة مرة أخرى."
-        },
-        "ratingLabels": {
-          "excellent": "ممتاز",
-          "good": "جيد",
-          "average": "متوسط",
-          "belowAverage": "أقل من المتوسط",
-          "poor": "ضعيف"
-        },
-        "newsletterOffer": {
-          "heading": "عرض 25% على منتجاتنا",
-          "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
-        },
-        "suggested": {
-          "title": "مقترح لك",
-          "viewAll": "عرض الكل",
-          "noRelated": "لا توجد خدمات ذات صلة."
-        },
-        "relativeTime": {
-          "justNow": "الآن",
-          "minute": "منذ {count} دقيقة",
-          "minutes": "منذ {count} دقيقة",
-          "hour": "منذ {count} ساعة",
-          "hours": "منذ {count} ساعة",
-          "day": "منذ {count} يوم",
-          "days": "منذ {count} يوم",
-          "month": "منذ {count} شهر",
-          "months": "منذ {count} شهر",
-          "year": "منذ {count} سنة",
-          "years": "منذ {count} سنة"
-        }
+      "sections": {
+        "why": "لماذا",
+        "brides": "العرائس",
+        "trust": "تثق",
+        "ourBride": "OurBride",
+        "todayOffersTitle": "عروض اليوم",
+        "best": "أفضل",
+        "providers": "المزودين",
+        "with": "مع",
+        "bestProducts": "أفضل المنتجات",
+        "exploreNow": "اكتشفي الآن"
       },
-      "bookingPage": {
-        "min": "دقيقة",
-        "pageTitle": "حجز موعد",
-        "loadingBookingDetails": "جاري تحميل تفاصيل الحجز...",
-        "steps": {
-          "details": "تفاصيل الحجز",
-          "datetime": "اختيار التاريخ والوقت",
-          "confirm": "تأكيد الحجز"
-        },
-        "sections": {
-          "bookingDetails": "تفاصيل الحجز",
-          "availableBranches": "الفروع المتاحة",
-          "selectStaff": "اختيار الموظف",
-          "selectYourPackage": "اختيار الباقة",
-          "packageDetails": "تفاصيل الباقة",
-          "selectDate": "اختيار التاريخ",
-          "selectTime": "اختيار الوقت",
-          "reviewTitle": "مراجعة الحجز",
-          "reviewDesc": "يرجى مراجعة تفاصيل الحجز على اليمين. بمجرد أن تكوني جاهزة، انقري على \"تأكيد الحجز\" أدناه لإكمال موعدك.",
-          "almostDoneTitle": "أوشكنا على الانتهاء!",
-          "almostDoneDesc": "سيتم تأكيد موعدك وستتلقين رسالة تأكيد.",
-          "totalPrice": "السعر الإجمالي",
-          "duration": "المدة",
-          "total": "الإجمالي",
-          "bookingSummaryTitle": "ملخص الحجز",
-          "serviceLabel": "الخدمة",
-          "servicesLabel": "الخدمات",
-          "serviceSelectedCount": "تم اختيار {count} خدمة",
-          "bookingDetailsSummary": "تفاصيل الحجز",
-          "branch": "الفرع",
-          "staff": "الموظف",
-          "package": "الباقة",
-          "dateTime": "التاريخ والوقت",
-          "termsBodyDesc": "سيترك طلبك عند الباب. بإنشاء طلبك، فإنك توافقين على تحمل المسؤولية الكاملة عنه بمجرد تسليمه.",
-          "termsTitle": "أوافق على الشروط والأحكام",
-          "termsBody": "إذا لم تكوني موجودة عند وصول الشخص المسؤول عن التسليم، فسيترك طلبك عند الباب. بإنشاء طلبك، فإنك توافقين على تحمل المسؤولية الكاملة عنه بمجرد تسليمه."
-        },
-        "actions": {
-          "continue": "متابعة",
-          "confirmBooking": "تأكيد الحجز",
-          "processing": "جاري المعالجة..."
-        },
-        "states": {
-          "failedToCreateReservation": "فشل إنشاء الحجز. يرجى المحاولة مرة أخرى.",
-          "invalidRequest": "طلب غير صالح. يرجى التحقق من المدخلات.",
-          "pollingTimeout": "الحجوزات تستغرق وقتًا أطول من المتوقع. يرجى التحقق من صفحة الحجوزات.",
-          "reservationRejected": "تم رفض الحجز. يرجى التحقق من صفحة الحجوزات للتفاصيل.",
-          "missingReservationId": "معرف الحجز مفقود. يرجى التحقق من صفحة الحجوزات.",
-          "processingReservationTitle": "معالجة الحجز",
-          "processingReservationMessage": "تمت إضافة إنشاء الحجز إلى قائمة الانتظار. جاري المعالجة...",
-          "loadingBookingDetails": "جاري تحميل تفاصيل الحجز...",
-          "loadingDates": "جاري تحميل التواريخ...",
-          "loadingTimeSlots": "جاري تحميل الأوقات المتاحة...",
-          "noTimeSlots": "لا توجد أوقات متاحة لهذا التاريخ",
-          "failedLoadTimeSlots": "فشل تحميل الأوقات المتاحة",
-          "serviceNotFoundTitle": "الخدمة غير موجودة",
-          "serviceNotFoundMsg": "الخدمة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-          "backToServices": "العودة إلى الخدمات",
-          "serviceNotFound": "الخدمة غير موجودة",
-          "failedLoadServiceTitle": "فشل تحميل تفاصيل الخدمة",
-          "missingServiceIdMsg": "يرجى توفير معرف الخدمة في الرابط",
-          "failedLoadServiceMsg": "فشل تحميل تفاصيل الخدمة. يرجى المحاولة مرة أخرى."
-        },
-        "validation": {
-          "selectBranch": "يرجى اختيار فرع",
-          "selectDate": "يرجى اختيار تاريخ",
-          "selectTime": "يرجى اختيار وقت",
-          "selectDateAndTime": "يرجى اختيار التاريخ والوقت",
-          "acceptTerms": "يجب الموافقة على الشروط والأحكام"
-        },
-        "processingModal": {
-          "title": "معالجة الحجز",
-          "message": "تمت إضافة إنشاء الحجز إلى قائمة الانتظار. جاري المعالجة..."
-        },
-        "labels": {
-          "pricePrefix": "السعر |"
-        }
+      "categories": {
+        "fallbackDescription": "كوبونات وخصومات حصرية مصممة لميزانيتك.",
+        "Choose": "اختاري",
+        "From": "من",
+        "OurProduct": "منتجاتنا",
+        "Categories": "الفئات"
       },
       "bookingConfirmationModal": {
         "title": "تأكيد الحجز",
@@ -780,8 +537,24 @@
         "successMessage": "تم إرسال طلبك!",
         "successDescription": "تم إرسال طلب الخدمة بنجاح. تم إشعار المزود وستتلقين تحديثًا بمجرد الرد.",
         "trackRequest": "تتبع الطلب"
-      }
-    },
+      },
+      "toast": {
+    "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
+    "favoriteToggleFail": "فشل تحديث المفضلة",
+    "wishlistToggleSuccess": "تم تحديث قائمة الرغبات بنجاح",
+    "wishlistToggleFail": "فشل تحديث قائمة الرغبات"
+  },
+ "providers": {
+  "toast": {
+    "followToggleSuccess": "تم تحديث المتابعة بنجاح",
+    "followToggleFail": "فشل تحديث المتابعة",
+    "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
+    "favoriteToggleFail": "فشل تحديث المفضلة"
+  }
+}
+
+},
+   
     "products": {
   "whyBridesChooseProducts": {
     "why": "لماذا",
@@ -792,462 +565,2502 @@
   "productFeatures": {
     "premiumBrands": {
       "title": "علامات تجارية فاخرة",
-      "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف"
-    },
-    "bridalFriendlyFormulas": {
-      "title": "تركيبات مناسبة للعرائس",
-      "description": "منتجات مناسبة للبشرة الحساسة وتتحمل أيام المناسبات الطويلة"
-    },
-    "exclusiveDiscounts": {
-      "title": "خصومات حصرية",
-      "description": "عروض خاصة مصممة لتناسب ميزانية كل عروس"
-    },
-    "verifiedSellers": {
-      "title": "بائعون موثوقون",
-      "description": "نتعامل فقط مع مزودي خدمات تجميل موثوقين ومعتمدين"
-    }
-  },
-  "newsletterBanner": {
-    "heading": "احصلي على آخر التحديثات والعروض",
-    "description": "كوني على اطلاع دائم بأحدث مقدمي الخدمات والعروض ونصائح التخطيط للزفاف",
-    "ctaText": "اشتركي الآن"
-  },
-  "bestProvidersSection": {
-    "topText": "أفضل",
-    "highlightText": "المزودين",
-    "bottomText": "مع",
-    "bottomHighlightText": "أفضل المنتجات",
-    "buttonText": "اكتشفي الآن"
-  },
-  "productOffersSection": {
-    "title": "أفضل عروض المنتجات اليوم",
-    "timerText": "23 ساعة 45 دقيقة"
-  },
-  "categoryBanner": {
-    "heading": "جاهزة توصلك أخبارنا؟",
-    "description": "OurBride هي منصتك الشاملة لتخطيط الزفاف والتسوق. هتلاقي كل اللي محتاجاه علشان تعملي يومك المثالي.",
-    "ctaText": "إرسال"
-  },
-  "productHeroSlides": {
-    "slide1": {
-      "label": "وصل حديثًا",
-      "title": "كريم أفكا للشمس",
-      "description": "كريم شمس خفيف وغني بالرطوبة مصمم لحماية بشرتك مع الحفاظ على نعومتها ونضارتها وإشراقها الجاهز للعرائس اللواتي يرغبن في بشرة مثالية وصحية تحت المكياج.",
-      "ctaText": "اشتري الآن"
-    },
-    "slide2": {
-      "label": "الأكثر مبيعًا",
-      "title": "كريم الزفاف الأساسي",
-      "description": "منتجات عالية الجودة ليومك الخاص. اكتشفي مجموعتنا المختارة من أساسيات الزفاف المصممة لتجعلك تبدين وتشعرين بأفضل ما لديك.",
-      "ctaText": "تسوقي الآن"
-    }
-  },
-  "productCategoriesSection": {
-    "choose": "اختاري",
-    "from": "من",
-    "ourProduct": "منتجاتنا",
-    "categories": " حسب الفئات"
-  },
-  "exclusiveCoupons": {
-    "text": "كوبونات وخصومات حصرية مصممة لتناسب ميزانيتك."
-  },
-  "offerCommon": {
-    "specialOffer": "عرض خاص",
-    "buyNowAndGetBy": "اشترِ الآن واحصل عليه قبل",
-    "reviews": "التقييمات"
-  },
-  "date": {
-    "aug25_2025": "25 أغسطس 2025"
-  },
-  "provider": {
-    "makeupArtist": "خبيرة مكياج"
-  },
-  "location": {
-    "gizaShort": "الجيزة، 6 أكتو...",
-    "gizaFull": "الجيزة، مدينة السادس من أكتوبر، مبنى 15، شقة 42"
-  },
-  "reviewsSection": {
-    "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذا المنتج!",
-    "seeMore": "عرض المزيد من التقييمات",
-    "writeReview": "اكتبي تقييمك",
-    "submitSuccess": "تم إرسال التقييم بنجاح!",
-    "submitError": "فشل في إرسال التقييم",
-    "submitErrorWithReason": "حدث خطأ أثناء إرسال التقييم:",
-    "submitRetry": "فشل في إرسال التقييم. من فضلكِ حاولي مرة أخرى.",
-    "shareComments": "شاركي تعليقك"
-  },
-  "ratingSummary": {
-    "basedOnReviews": "بناءً على",
-    "reviews": "تقييمات",
-    "starsLabel": {
-      "5": "ممتاز",
-      "4": "جيد جدًا",
-      "3": "جيد",
-      "2": "مقبول",
-      "1": "ضعيف"
-    }
-  },
-  "offerBanner": {
-    "heading": "خصم 24٪ على منتجاتنا!",
-    "description": "اشتركي في النشرة البريدية واحصلي على عروض حصرية على منتجات الزفاف الفاخرة."
-  }
-  },
-  "community": {
-  "communityFeed": {
-    "createPostPlaceholder": "شاركي ما يدور في ذهنك، {name} ....",
-    "emptyMessage": "لا توجد منشورات للعرض في الوقت الحالي. كوني أول من يشارك شيئًا!",
-    "aria": {
-      "uploadImage": "رفع صورة",
-      "addReels": "إضافة ريلز",
-      "textFormat": "تنسيق النص"
-    }
-  },
-  "recentPosts": "المنشورات الأخيرة",
-  "recentArticles": "المقالات الأخيرة",
-  "topProviders": "أفضل المزودين",
-  "tabs": {
-    "community": "المجتمع",
-    "posts": "المنشورات",
-    "blogs": "المدونات",
-    "articles": "المقالات",
-    "reels": "الريلز",
-    "decision-groups": "القرارات",
-    "contests": "المسابقات",
-    "profile": "الملف الشخصي"
-  },
-  "links": {
-    "myProfile": "ملفي الشخصي"
-  },
-  "actions": {
-    "search": "بحث",
-    "clearSearch": "مسح البحث",
-    "close": "إغلاق",
-    "seeAll": "عرض الكل",
-    "follow": "متابعة",
-    "following": "متابع"
-  },
-  "placeholders": {
-    "searchInTab": "البحث في {tab}..."
-  },
-  "labels": {
-    "showingResultsFor": "عرض النتائج لـ: \"{query}\""
-  },
-  "errors": {
-    "failedToLoadCommunityData": "فشل تحميل بيانات المجتمع",
-    "unknownError": "خطأ غير معروف"
-  },
-  "user": {
-    "fallbackName": "مستخدم"
-  },
-  "states": {
-    "loading": "جاري التحميل...",
-    "noBlogsTitle": "لا توجد مدونات متاحة",
-    "noBlogsMessage": "لا توجد مدونات للعرض في الوقت الحالي.",
-    "noArticlesTitle": "لا توجد مقالات متاحة",
-    "noArticlesMessage": "لا توجد مقالات للعرض في الوقت الحالي.",
-    "noContentTitle": "لا يوجد محتوى متاح",
-    "noContentMessage": "لا يوجد محتوى للعرض في الوقت الحالي. تحققي لاحقًا أو كوني أول من يشارك شيئًا!"
-  },
-  "search": {
-    "title": {
-      "page": "البحث في المجتمع"
-    },
-    "searchBar": {
-      "placeholder": "البحث في المنشورات والمقالات والمدونات والريلز والمسابقات...",
-      "button": "بحث",
-      "filtersButton": "الفلاتر",
-      "applyFilters": "تطبيق الفلاتر",
-      "searching": "جاري البحث...",
-      "all": "الكل"
-    },
-    "filters": {
-      "title": "الفلاتر",
-      "clearAll": "مسح الكل",
-      "categoryIdLabel": "معرف الفئة",
-      "categoryIdPlaceholder": "معرف الفئة",
-      "itemIdLabel": "معرف العنصر",
-      "itemIdPlaceholder": "معرف العنصر",
-      "providerIdLabel": "معرف المزود",
-      "providerIdPlaceholder": "معرف المزود",
-      "tagIdsLabel": "معرفات العلامات (مفصولة بفواصل)",
-      "tagIdsPlaceholder": "1,2,3"
-    },
-    "contentTypes": {
-      "all": "الكل",
-      "post": "منشور",
-      "blog": "مدونة",
-      "article": "مقال",
-      "reel": "ريل",
-      "decisionGroup": "مجموعة قرارات",
-      "contest": "مسابقة"
-    },
-    "notices": {
-      "textSearchNotSupported": {
-        "title": "ملاحظة:",
-        "body": "البحث النصي غير مدعوم حاليًا من قبل واجهة برمجة التطبيقات. لا يمكن استخدام استعلام البحث \"{query}\". يرجى استخدام الفلاتر أعلاه للعثور على المحتوى حسب معرف الفئة أو معرف العنصر أو معرف المزود أو معرفات العلامات."
+      "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف",
+      "providers": {
+        "defaultProfession": "مزود خدمة",
+        "fallbackProductTitle": "عرض الخدمات"
+      },
+      "trustFeatures": {
+        "title": "عنوان الميزة التنافسية",
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف."
+      },
+      "newsletter": {
+        "emailPlaceholder": "أدخل بريدك الإلكتروني",
+        "heading": "جاهزة توصلك أخبارنا؟",
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
       }
     },
-    "empty": {
-      "startTitle": "ابدئي البحث",
-      "startSubtitle": "استخدمي الفلاتر للعثور على محتوى المجتمع حسب الفئة أو العنصر أو المزود أو العلامات"
+    "serviceCategories": {
+      "loading": "جاري تحميل الخدمات...",
+      "FailedtoLoadServices": "فشل تحميل الخدمات",
+      "failedPleaseTryAgain ": "فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا.",
+      "searchPlaceholder": "ابحثي عن خدمة...",
+      "servicesFound": "خدمة متاحة",
+      "page": "الصفحة",
+      "of": "من",
+      "topOffers": "أفضل العروض",
+      "servicefilters": {
+        "categories": "الفئات",
+        "clear": "مسح",
+        "price": "السعر",
+        "from": "من",
+        "to": "إلى",
+        "inStock": "متوفر",
+        "priceFromValue": "من {value} {currency}",
+        "priceToValue": "إلى {value} {currency}",
+        "availability": "التوفر",
+        "inStockOnly": "المتوفر فقط"
+      },
+      "sortServicesOptions": {
+        "default": "الافتراضي",
+        "priceLowToHigh": "من الأقل إلى الأعلى",
+        "priceHighToLow": "من الأعلى إلى الأقل",
+        "highestRated": "الأعلى تقييمًا",
+        "newestFirst": "الأحدث أولاً",
+        "mostPopular": "الأكثر شيوعًا"
+      },
+      "heroSlides": {
+        "slide1": {
+          "label": "خدمة مميزة",
+          "title": "مكياج وتسريحة العروس",
+          "description": "خدمات تجميل احترافية للعروس لتجعلك تبدين رائعة في يومك الخاص. خبراء مكياج ومصففي شعر جاهزون لإنشاء إطلالتك المثالية كعروس.",
+          "ctaText": "احجزي الآن",
+          "discountText": "خصم 30%"
+        },
+        "slide2": {
+          "label": "الأعلى تقييمًا",
+          "title": "تصوير حفلات الزفاف",
+          "description": "التقطي لحظاتك الثمينة مع خدمات تصوير حفلات الزفاف الاحترافية. مصورون ذوو خبرة مكرسون لإنشاء ذكريات جميلة.",
+          "ctaText": "استكشفي الخدمات",
+          "discountText": "خصم 50%"
+        }
+      }
     },
-    "results": {
-      "found": "تم العثور على {count} نتيجة"
+    "serviceDetail": {
+      "loading": {
+        "title": "جاري تحميل الخدمة..."
+      },
+      "error": {
+        "notFound": "الخدمة غير موجودة. يرجى المحاولة مرة أخرى لاحقًا.",
+        "backToServices": "العودة إلى الخدمات"
+      },
+      "backButton": {
+        "label": "العودة إلى الخدمات"
+      },
+      "badges": {
+        "topOffer": "أفضل عرض",
+        "verified": "موثوق"
+      },
+      "delivery": {
+        "bookNowAndGetBy": "احجزي الآن واحصلي عليه قبل",
+        "dateFallback": "25 أغسطس 2025"
+      },
+      "branchExpanded": {
+        "6OfOctober": "الجيزة، السادس من أكتوبر",
+        "maadi": "القاهرة، المعادي",
+        "elshikhZayed": "الجيزة، الشيخ زايد",
+        "mansoura": "المنصورة، شارع الجلاء",
+        "dokki": "الجيزة، الدقي",
+        "nasrCity": "القاهرة، مدينة نصر",
+        "corniche": "الإسكندرية، الكورنيش",
+        "zamalek": "القاهرة، الزمالك",
+        "agouza": "الجيزة، العجوزة",
+        "heliopolis": "القاهرة، مصر الجديدة"
+      },
+      "bookingCard": {
+        "startFrom": "يبدأ من",
+        "availableBranches": "الفروع المتاحة",
+        "seeMore": "عرض المزيد",
+        "seeLess": "عرض أقل",
+        "packagesDetails": "تفاصيل الباقات",
+        "loadingPackages": "جاري تحميل الباقات...",
+        "bookNow": "احجزي الآن",
+        "chatAriaLabel": "الدردشة مع المزود"
+      },
+      "reviews": {
+        "title": "التقييمات",
+        "reviewsCount": "{count} تقييم",
+        "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذه الخدمة!",
+        "seeMoreReviews": "عرض المزيد من التقييمات",
+        "writeYourReview": "اكتبي تقييمك",
+        "commentPlaceholder": "شاركي تعليقك",
+        "sendReviewAriaLabel": "إرسال التقييم",
+        "ratingCount": " تقييم",
+        "userAvatar": "مستخدم "
+      },
+      "reviewSubmit": {
+        "success": "تم إرسال التقييم بنجاح!",
+        "fail": "فشل إرسال التقييم",
+        "failTryAgain": "فشل إرسال التقييم. يرجى المحاولة مرة أخرى."
+      },
+      "favorite": {
+        "added": "تمت الإضافة إلى المفضلة",
+        "removed": "تمت الإزالة من المفضلة",
+        "fail": "فشل تحديث المفضلة",
+        "failTryAgain": "فشل تحديث المفضلة. يرجى المحاولة مرة أخرى."
+      },
+      "wishlist": {
+        "added": "تمت الإضافة إلى قائمة الأمنيات",
+        "removed": "تمت الإزالة من قائمة الأمنيات",
+        "fail": "فشل تحديث قائمة الأمنيات",
+        "failTryAgain": "فشل تحديث قائمة الأمنيات. يرجى المحاولة مرة أخرى."
+      },
+      "ratingLabels": {
+        "excellent": "ممتاز",
+        "good": "جيد",
+        "average": "متوسط",
+        "belowAverage": "أقل من المتوسط",
+        "poor": "ضعيف"
+      },
+      "newsletterOffer": {
+        "heading": "عرض 25% على منتجاتنا",
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
+      },
+      "suggested": {
+        "title": "مقترح لك",
+        "viewAll": "عرض الكل",
+        "noRelated": "لا توجد خدمات ذات صلة."
+      },
+      "relativeTime": {
+        "justNow": "الآن",
+        "minute": "منذ {count} دقيقة",
+        "minutes": "منذ {count} دقيقة",
+        "hour": "منذ {count} ساعة",
+        "hours": "منذ {count} ساعة",
+        "day": "منذ {count} يوم",
+        "days": "منذ {count} يوم",
+        "month": "منذ {count} شهر",
+        "months": "منذ {count} شهر",
+        "year": "منذ {count} سنة",
+        "years": "منذ {count} سنة"
+      }
     },
-    "states": {
-      "errorTitle": "خطأ في البحث",
-      "errorFallback": "حدث خطأ أثناء البحث",
-      "noResultsTitle": "لم يتم العثور على نتائج",
-      "noResultsSubtitle": "حاولي تعديل البحث أو الفلاتر",
-      "noPostsTitle": "لا توجد منشورات متاحة",
-      "noPostsMessage": "لا توجد منشورات للعرض في الوقت الحالي.",
-      "noReelsTitle": "لا توجد ريلز متاحة",
-      "noReelsMessage": "لا توجد ريلز للعرض في الوقت الحالي."
-  },
-    "actions": {
-      "search": "بحث",
-      "close": "إغلاق",
-      "clearSearch": "مسح البحث"
+    "bookingPage": {
+      "min": "دقيقة",
+      "pageTitle": "حجز موعد",
+      "loadingBookingDetails": "جاري تحميل تفاصيل الحجز...",
+      "steps": {
+        "details": "تفاصيل الحجز",
+        "datetime": "اختيار التاريخ والوقت",
+        "confirm": "تأكيد الحجز"
+      },
+      "sections": {
+        "bookingDetails": "تفاصيل الحجز",
+        "availableBranches": "الفروع المتاحة",
+        "selectStaff": "اختيار الموظف",
+        "selectYourPackage": "اختيار الباقة",
+        "packageDetails": "تفاصيل الباقة",
+        "selectDate": "اختيار التاريخ",
+        "selectTime": "اختيار الوقت",
+        "reviewTitle": "مراجعة الحجز",
+        "reviewDesc": "يرجى مراجعة تفاصيل الحجز على اليمين. بمجرد أن تكوني جاهزة، انقري على \"تأكيد الحجز\" أدناه لإكمال موعدك.",
+        "almostDoneTitle": "أوشكنا على الانتهاء!",
+        "almostDoneDesc": "سيتم تأكيد موعدك وستتلقين رسالة تأكيد.",
+        "totalPrice": "السعر الإجمالي",
+        "duration": "المدة",
+        "total": "الإجمالي",
+        "bookingSummaryTitle": "ملخص الحجز",
+        "serviceLabel": "الخدمة",
+        "servicesLabel": "الخدمات",
+        "serviceSelectedCount": "تم اختيار {count} خدمة",
+        "bookingDetailsSummary": "تفاصيل الحجز",
+        "branch": "الفرع",
+        "staff": "الموظف",
+        "package": "الباقة",
+        "dateTime": "التاريخ والوقت",
+        "termsBodyDesc": "سيترك طلبك عند الباب. بإنشاء طلبك، فإنك توافقين على تحمل المسؤولية الكاملة عنه بمجرد تسليمه.",
+        "termsTitle": "أوافق على الشروط والأحكام",
+        "termsBody": "إذا لم تكوني موجودة عند وصول الشخص المسؤول عن التسليم، فسيترك طلبك عند الباب. بإنشاء طلبك، فإنك توافقين على تحمل المسؤولية الكاملة عنه بمجرد تسليمه."
+      },
+      "actions": {
+        "continue": "متابعة",
+        "confirmBooking": "تأكيد الحجز",
+        "processing": "جاري المعالجة..."
+      },
+      "states": {
+        "failedToCreateReservation": "فشل إنشاء الحجز. يرجى المحاولة مرة أخرى.",
+        "invalidRequest": "طلب غير صالح. يرجى التحقق من المدخلات.",
+        "pollingTimeout": "الحجوزات تستغرق وقتًا أطول من المتوقع. يرجى التحقق من صفحة الحجوزات.",
+        "reservationRejected": "تم رفض الحجز. يرجى التحقق من صفحة الحجوزات للتفاصيل.",
+        "missingReservationId": "معرف الحجز مفقود. يرجى التحقق من صفحة الحجوزات.",
+        "processingReservationTitle": "معالجة الحجز",
+        "processingReservationMessage": "تمت إضافة إنشاء الحجز إلى قائمة الانتظار. جاري المعالجة...",
+        "loadingBookingDetails": "جاري تحميل تفاصيل الحجز...",
+        "loadingDates": "جاري تحميل التواريخ...",
+        "loadingTimeSlots": "جاري تحميل الأوقات المتاحة...",
+        "noTimeSlots": "لا توجد أوقات متاحة لهذا التاريخ",
+        "failedLoadTimeSlots": "فشل تحميل الأوقات المتاحة",
+        "serviceNotFoundTitle": "الخدمة غير موجودة",
+        "serviceNotFoundMsg": "الخدمة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+        "backToServices": "العودة إلى الخدمات",
+        "serviceNotFound": "الخدمة غير موجودة",
+        "failedLoadServiceTitle": "فشل تحميل تفاصيل الخدمة",
+        "missingServiceIdMsg": "يرجى توفير معرف الخدمة في الرابط",
+        "failedLoadServiceMsg": "فشل تحميل تفاصيل الخدمة. يرجى المحاولة مرة أخرى."
+      },
+      "validation": {
+        "selectBranch": "يرجى اختيار فرع",
+        "selectDate": "يرجى اختيار تاريخ",
+        "selectTime": "يرجى اختيار وقت",
+        "selectDateAndTime": "يرجى اختيار التاريخ والوقت",
+        "acceptTerms": "يجب الموافقة على الشروط والأحكام"
+      },
+      "processingModal": {
+        "title": "معالجة الحجز",
+        "message": "تمت إضافة إنشاء الحجز إلى قائمة الانتظار. جاري المعالجة..."
+      },
+      "labels": {
+        "pricePrefix": "السعر |"
+      }
+    },
+    "bookingConfirmationModal": {
+      "title": "تأكيد الحجز",
+      "message": "تم تأكيد حجزك. يرجى التحقق من بريدك الإلكتروني للتفاصيل.",
+      "successMessage": "تم إرسال طلبك!",
+      "successDescription": "تم إرسال طلب الخدمة بنجاح. تم إشعار المزود وستتلقين تحديثًا بمجرد الرد.",
+      "trackRequest": "تتبع الطلب"
     }
   },
-  "postCard": {
-  "failedToToggleLike": "فشل تبديل الإعجاب",
-  "sharedSuccessfully": "تم المشاركة بنجاح! تم نسخ الرابط إلى الحافظة.",
-  "failedToSharePost": "فشل مشاركة المنشور",
-  "failedToToggleFavorite": "فشل تبديل المفضلة",
-  "fallbackName": "مستخدم",
-  "likes": "إعجابات",
-  "comments": "تعليقات",
-  "shares": "مشاركات",
-  "favorites": "مفضلة"
-  },
-  "communityRightSidebar": {
-  "commentAdded": "تمت إضافة التعليق!",
-  "linkCopied": "تم نسخ الرابط إلى الحافظة!",
-  "noComments": "لا توجد تعليقات بعد. كوني أول من يعلق!",
-  "shareYourComments": "شاركي تعليقك",
-  "suggestsToFollow": "اقتراحات للمتابعة",
-  "provider": "مزود",
-  "popularTags": "العلامات الشائعة",
-  "topArticles": "أفضل المقالات",
-  "communityPosts": "منشورات المجتمع"
-  },
-  "articleDetails": {
-  "loading": "جاري تحميل المقال...",
-  "notFoundTitle": "المقال غير موجود",
-  "notFoundMessage": "المقال الذي تبحثين عنه غير موجود أو تمت إزالتها.",
-  "commentAdded": "تمت إضافة التعليق بنجاح!",
-  "failedToAddComment": "فشل إضافة التعليق",
-  "failedToToggleLike": "فشل تبديل الإعجاب",
-  "sharedSuccessfully": "تم المشاركة بنجاح! تم نسخ الرابط إلى الحافظة.",
-  "failedToShareArticle": "فشل مشاركة المقال",
-  "failedToToggleFavorite": "فشل تبديل المفضلة",
-  "userIDNotAvailable": "معرف المستخدم غير متاح",
-  "unfollowedSuccessfully": "تم إلغاء المتابعة بنجاح",
-  "followedSuccessfully": "تمت المتابعة بنجاح",
-  "failedToToggleFollow": "فشل تبديل المتابعة",
-  "load": "جاري التحميل...",
-  "following": "متابع",
-  "follow": "متابعة",
-  "noComments": "لا توجد تعليقات بعد. كوني أول من يعلق!",
-  "writeComment": "اكتبي تعليقًا...",
-  "postComment": "نشر التعليق",
-  "posting": "جاري النشر...",
-  "articleCard": {
-    "readMore": "اقرأي المزيد",
-    "minRead": "دقيقة قراءة"
-  }
-  },
-  "blogDetails": {
-  "loading": "جاري تحميل المدونة...",
-  "blogNotFoundTitle": "المدونة غير موجودة",
-  "blogNotFoundMessage": "المدونة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-  "Anonymous": "مجهول",
-  "user": "مستخدم",
-  "failedToShareBlog": "فشل مشاركة المدونة"
-  },
-  "contestDetails": {
-  "loading": "جاري تحميل المسابقة...",
-  "contestNotFoundTitle": "المسابقة غير موجودة",
-  "contestNotFoundMessage": "المسابقة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-  "failedToShareContest": "فشل مشاركة المسابقة",
-  "alreadyJoined": "لقد انضممتِ بالفعل إلى هذه المسابقة!",
-  "joinedSuccessfully": "تم الانضمام إلى المسابقة بنجاح!",
-  "active": "نشطة",
-  "ended": "انتهت",
-  "upcoming": "قادمة",
-  "prize": "الجائزة",
-  "participants": "المشاركون",
-  "ends": "تنتهي",
-  "joinContest": "الانضمام إلى المسابقة",
-  "contestEnded": "انتهت المسابقة",
-  "joined": "منضم",
-  "noContestsTitle": "لا توجد مسابقات متاحة",
-  "noContestsMessage": "لا توجد مسابقات للعرض في الوقت الحالي."
-  },
-  "decisionGroupDetails": {
-  "loading": "جاري تحميل مجموعة القرارات...",
-  "decisionGroupNotFoundTitle": "مجموعة القرارات غير موجودة",
-  "decisionGroupNotFoundMessage": "مجموعة القرارات التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-  "haveAlreadyVoted": "لقد صوّتِ بالفعل!",
-  "voteCastSuccessfully": "تم إرسال صوتك بنجاح!",
-  "failedToVote": "فشل التصويت",
-  "votes": "أصوات",
-  "participants": "مشاركون",
-  "totalVotes": "إجمالي الأصوات",
-  "noDecisionGroupsTitle": "لا توجد مجموعات قرارات متاحة",
-  "noDecisionGroupsMessage": "لا توجد مجموعات قرارات للعرض في الوقت الحالي.",
-  "moreOptions": "خيارات أخرى"
-  },
-  "profile": {
-  "profileIdRequired": "معرف الملف الشخصي مطلوب",
-  "profileIdRequiredMessage": "يرجى توفير معرف الملف الشخصي في الرابط.",
-  "loading": "جاري تحميل الملف الشخصي...",
-  "profileNotFoundTitle": "الملف الشخصي غير موجود",
-  "profileNotFoundMessage": "الملف الشخصي الذي تبحثين عنه غير موجود أو تمت إزالتها.",
-  "tabs": {
-    "all": "الكل",
-    "withCount": "{label} ({count})"
-  },
-  "headings": {
-    "featuredContent": "المحتوى المميز",
-    "allContent": "كل المحتوى"
-  },
-  "stats": {
-    "totalContent": "إجمالي المحتوى",
-    "followers": "متابعون",
-    "following": "متابع",
-    "likes": "إعجابات",
-    "views": "مشاهدات"
-  },
-  "states": {
-    "noContentFound": "لم يتم العثور على محتوى"
-  },
-  "aria": {
-    "goBack": "العودة",
-    "like": "إعجاب",
-    "unlike": "إلغاء الإعجاب",
-    "addToFavorites": "إضافة إلى المفضلة",
-    "removeFromFavorites": "إزالة من المفضلة",
-    "moreOptions": "خيارات أخرى",
-    "coverAlt": "غلاف {name}",
-    "avatarAlt": "صورة {name} الشخصية"
-  },
-  "toasts": {
-    "liked": "تم الإعجاب",
-    "unliked": "تم إلغاء الإعجاب",
-    "addedToFavorites": "تمت الإضافة إلى المفضلة",
-    "removedFromFavorites": "تمت الإزالة من المفضلة"
-  }
-  },
-  "createPostModal": {
-  "title": "إنشاء منشور",
-  "privacy": {
-    "public": "عام",
-    "friends": "أصدقاء",
-    "private": "خاص"
-  },
-  "fields": {
-    "titlePlaceholder": "عنوان المنشور (اختياري)",
-    "contentPlaceholder": "شاركي ما يدور في ذهنك، {name}..."
-  },
-  "buttons": {
-    "post": "نشر",
-    "posting": "جاري النشر..."
-  },
-  "aria": {
-    "close": "إغلاق النافذة",
-    "removeImage": "إزالة الصورة",
-    "uploadImage": "رفع صورة",
-    "generateAi": "إنشاء محتوى بالذكاء الاصطناعي",
-    "addReels": "إضافة ريلز",
-    "textFormat": "تنسيق النص"
-  },
-  "tooltips": {
-    "maxImages": "الحد الأقصى {max} صورة",
-    "uploadImage": "رفع صورة",
-    "generateAi": "إنشاء محتوى بالذكاء الاصطناعي",
-    "addVideoComingSoon": "إضافة فيديو (قريبًا)",
-    "textFormatComingSoon": "تنسيق النص (قريبًا)"
-  },
-  "toasts": {
-    "uploadLimit": "يمكنك رفع ما يصل إلى {max} صورة فقط. سيتم رفع أول {count} صورة فقط.",
-    "uploadFileFail": "فشل رفع {fileName}",
-    "uploadSuccess": "تم رفع {count} صورة بنجاح",
-    "uploadFail": "فشل رفع الصور",
-    "generateNeedInput": "يرجى إدخال عنوان أو بعض المحتوى للإنشاء منه",
-    "generateSuccess": "تم إنشاء المحتوى بنجاح!",
-    "generateFail": "فشل إنشاء المحتوى. يرجى المحاولة مرة أخرى.",
-    "postNeedInput": "يرجى إدخال عنوان أو محتوى لمنشورك",
-    "postSuccess": "تم إنشاء المنشور بنجاح!",
-    "postFail": "فشل إنشاء المنشور. يرجى المحاولة مرة أخرى.",
-    "postNoResponse": "فشل إنشاء المنشور: لا توجد استجابة من الخادم"
-  },
-  "fallback": {
-    "newPostTitle": "منشور جديد"
-  }
-  }
-},
-"reelDetails": {
-  "loading": "جاري تحميل الريل...",
-  "reelNotFoundTitle": "الريل غير موجود",
-  "reelNotFoundMessage": "الريل الذي تبحثين عنه غير موجود أو تمت إزالتها."
-},
-"postDetails": {
-  "loading": "جاري تحميل المنشور...",
-  "postNotFoundTitle": "المنشور غير موجود",
-  "postNotFoundMessage": "المنشور الذي تبحثين عنه غير موجود أو تمت إزالتها."
-},
-"footer": {
-  "description": "منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
-  "downloadApp": "تحميل تطبيق Ourbride",
-  "socialLinks": "روابط التواصل الاجتماعي",
-  "sections": {
-    "mainPages": {
-      "title": "الصفحات الرئيسية",
-      "home": "الرئيسية",
-      "products": "المنتجات",
-      "services": "الخدمات",
-      "community": "المجتمع"
+  "products": {
+    "whyBridesChooseProducts": {
+      "why": "لماذا",
+      "brides": "العرائس",
+      "choose": "يخترن",
+      "ourBrideProducts": "منتجات OurBride"
     },
-    "eventsPlanning": {
-      "title": "تخطيط الفعاليات",
-      "myEvents": "فعالياتي",
-      "eventsDay": "يوم الفعاليات",
-      "budgetPlanning": "تخطيط الميزانية",
-      "guestList": "قائمة الضيوف",
-      "todoList": "قائمة المهام"
+    "productFeatures": {
+      "premiumBrands": {
+        "title": "علامات تجارية فاخرة",
+        "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف"
+      },
+      "bridalFriendlyFormulas": {
+        "title": "تركيبات مناسبة للعرائس",
+        "description": "منتجات مناسبة للبشرة الحساسة وتتحمل أيام المناسبات الطويلة"
+      },
+      "exclusiveDiscounts": {
+        "title": "خصومات حصرية",
+        "description": "عروض خاصة مصممة لتناسب ميزانية كل عروس"
+      },
+      "verifiedSellers": {
+        "title": "بائعون موثوقون",
+        "description": "نتعامل فقط مع مزودي خدمات تجميل موثوقين ومعتمدين"
+      }
     },
-    "legal": {
-      "title": "قانوني",
-      "privacyPolicy": "سياسة الخصوصية",
-      "termsConditions": "الشروط والأحكام",
-      "settings": "الإعدادات"
+    "newsletterBanner": {
+      "heading": "احصلي على آخر التحديثات والعروض",
+      "description": "كوني على اطلاع دائم بأحدث مقدمي الخدمات والعروض ونصائح التخطيط للزفاف",
+      "ctaText": "اشتركي الآن"
     },
-    "support": {
-      "title": "الدعم",
-      "helpCenter": "مركز المساعدة",
-      "aboutUs": "من نحن",
-      "shipping": "الشحن",
-      "returns": "الإرجاع",
-      "downloadApp": "تحميل التطبيق",
-      "sitemap": "خريطة الموقع"
+    "bestProvidersSection": {
+      "topText": "أفضل",
+      "highlightText": "المزودين",
+      "bottomText": "مع",
+      "bottomHighlightText": "أفضل المنتجات",
+      "buttonText": "اكتشفي الآن"
     },
-    "community": {
-      "title": "المجتمع",
+    "productOffersSection": {
+      "title": "أفضل عروض المنتجات اليوم",
+      "timerText": "23 ساعة 45 دقيقة"
+    },
+    "categoryBanner": {
+      "heading": "جاهزة توصلك أخبارنا؟",
+      "description": "OurBride هي منصتك الشاملة لتخطيط الزفاف والتسوق. هتلاقي كل اللي محتاجاه علشان تعملي يومك المثالي.",
+      "ctaText": "إرسال"
+    },
+    "productHeroSlides": {
+      "slide1": {
+        "label": "وصل حديثًا",
+        "title": "كريم أفكا للشمس",
+        "description": "كريم شمس خفيف وغني بالرطوبة مصمم لحماية بشرتك مع الحفاظ على نعومتها ونضارتها وإشراقها الجاهز للعرائس اللواتي يرغبن في بشرة مثالية وصحية تحت المكياج.",
+        "ctaText": "اشتري الآن"
+      },
+      "slide2": {
+        "label": "الأكثر مبيعًا",
+        "title": "كريم الزفاف الأساسي",
+        "description": "منتجات عالية الجودة ليومك الخاص. اكتشفي مجموعتنا المختارة من أساسيات الزفاف المصممة لتجعلك تبدين وتشعرين بأفضل ما لديك.",
+        "ctaText": "تسوقي الآن"
+      }
+    },
+    "productCategoriesSection": {
+      "choose": "اختاري",
+      "from": "من",
+      "ourProduct": "منتجاتنا",
+      "categories": " حسب الفئات"
+    },
+    "exclusiveCoupons": {
+      "text": "كوبونات وخصومات حصرية مصممة لتناسب ميزانيتك."
+    },
+    "offerCommon": {
+      "specialOffer": "عرض خاص",
+      "buyNowAndGetBy": "اشترِ الآن واحصل عليه قبل",
+      "reviews": "التقييمات"
+    },
+    "date": {
+      "aug25_2025": "25 أغسطس 2025"
+    },
+    "provider": {
+      "makeupArtist": "خبيرة مكياج"
+    },
+    "location": {
+      "gizaShort": "الجيزة، 6 أكتو...",
+      "gizaFull": "الجيزة، مدينة السادس من أكتوبر، مبنى 15، شقة 42"
+    },
+    "reviewsSection": {
+      "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذا المنتج!",
+      "seeMore": "عرض المزيد من التقييمات",
+      "writeReview": "اكتبي تقييمك",
+      "submitSuccess": "تم إرسال التقييم بنجاح!",
+      "submitError": "فشل في إرسال التقييم",
+      "submitErrorWithReason": "حدث خطأ أثناء إرسال التقييم:",
+      "submitRetry": "فشل في إرسال التقييم. من فضلكِ حاولي مرة أخرى.",
+      "shareComments": "شاركي تعليقك"
+    },
+    "ratingSummary": {
+      "basedOnReviews": "بناءً على",
+      "reviews": "تقييمات",
+      "starsLabel": {
+        "5": "ممتاز",
+        "4": "جيد جدًا",
+        "3": "جيد",
+        "2": "مقبول",
+        "1": "ضعيف"
+      }
+    },
+    "offerBanner": {
+      "heading": "خصم 24٪ على منتجاتنا!",
+      "description": "اشتركي في النشرة البريدية واحصلي على عروض حصرية على منتجات الزفاف الفاخرة."
+    }
+  },
+  "community": {
+    "communityFeed": {
+      "createPostPlaceholder": "شاركي ما يدور في ذهنك، {name} ....",
+      "emptyMessage": "لا توجد منشورات للعرض في الوقت الحالي. كوني أول من يشارك شيئًا!",
+      "aria": {
+        "uploadImage": "رفع صورة",
+        "addReels": "إضافة ريلز",
+        "textFormat": "تنسيق النص"
+      }
+    },
+    "recentPosts": "المنشورات الأخيرة",
+    "recentArticles": "المقالات الأخيرة",
+    "topProviders": "أفضل المزودين",
+    "tabs": {
+      "community": "المجتمع",
       "posts": "المنشورات",
       "blogs": "المدونات",
       "articles": "المقالات",
       "reels": "الريلز",
-      "decisionGroups": "مجموعات القرارات",
-      "contests": "المسابقات"
+      "decision-groups": "القرارات",
+      "contests": "المسابقات",
+      "profile": "الملف الشخصي"
+    },
+    "links": {
+      "myProfile": "ملفي الشخصي"
+    },
+    "actions": {
+      "search": "بحث",
+      "clearSearch": "مسح البحث",
+      "close": "إغلاق",
+      "seeAll": "عرض الكل",
+      "follow": "متابعة",
+      "following": "متابع"
+    },
+    "placeholders": {
+      "searchInTab": "البحث في {tab}..."
+    },
+    "labels": {
+      "showingResultsFor": "عرض النتائج لـ: \"{query}\""
+    },
+    "errors": {
+      "failedToLoadCommunityData": "فشل تحميل بيانات المجتمع",
+      "unknownError": "خطأ غير معروف"
+    },
+    "user": {
+      "fallbackName": "مستخدم"
+    },
+    "states": {
+      "loading": "جاري التحميل...",
+      "noBlogsTitle": "لا توجد مدونات متاحة",
+      "noBlogsMessage": "لا توجد مدونات للعرض في الوقت الحالي.",
+      "noArticlesTitle": "لا توجد مقالات متاحة",
+      "noArticlesMessage": "لا توجد مقالات للعرض في الوقت الحالي.",
+      "noContentTitle": "لا يوجد محتوى متاح",
+      "noContentMessage": "لا يوجد محتوى للعرض في الوقت الحالي. تحققي لاحقًا أو كوني أول من يشارك شيئًا!"
+    },
+    "search": {
+      "title": {
+        "page": "البحث في المجتمع"
+      },
+      "searchBar": {
+        "placeholder": "البحث في المنشورات والمقالات والمدونات والريلز والمسابقات...",
+        "button": "بحث",
+        "filtersButton": "الفلاتر",
+        "applyFilters": "تطبيق الفلاتر",
+        "searching": "جاري البحث...",
+        "all": "الكل"
+      },
+      "filters": {
+        "title": "الفلاتر",
+        "clearAll": "مسح الكل",
+        "categoryIdLabel": "معرف الفئة",
+        "categoryIdPlaceholder": "معرف الفئة",
+        "itemIdLabel": "معرف العنصر",
+        "itemIdPlaceholder": "معرف العنصر",
+        "providerIdLabel": "معرف المزود",
+        "providerIdPlaceholder": "معرف المزود",
+        "tagIdsLabel": "معرفات العلامات (مفصولة بفواصل)",
+        "tagIdsPlaceholder": "1,2,3"
+      },
+      "contentTypes": {
+        "all": "الكل",
+        "post": "منشور",
+        "blog": "مدونة",
+        "article": "مقال",
+        "reel": "ريل",
+        "decisionGroup": "مجموعة قرارات",
+        "contest": "مسابقة"
+      },
+      "notices": {
+        "textSearchNotSupported": {
+          "title": "ملاحظة:",
+          "body": "البحث النصي غير مدعوم حاليًا من قبل واجهة برمجة التطبيقات. لا يمكن استخدام استعلام البحث \"{query}\". يرجى استخدام الفلاتر أعلاه للعثور على المحتوى حسب معرف الفئة أو معرف العنصر أو معرف المزود أو معرفات العلامات."
+        }
+      },
+      "empty": {
+        "startTitle": "ابدئي البحث",
+        "startSubtitle": "استخدمي الفلاتر للعثور على محتوى المجتمع حسب الفئة أو العنصر أو المزود أو العلامات"
+      },
+      "results": {
+        "found": "تم العثور على {count} نتيجة"
+      },
+      "states": {
+        "errorTitle": "خطأ في البحث",
+        "errorFallback": "حدث خطأ أثناء البحث",
+        "noResultsTitle": "لم يتم العثور على نتائج",
+        "noResultsSubtitle": "حاولي تعديل البحث أو الفلاتر",
+        "noPostsTitle": "لا توجد منشورات متاحة",
+        "noPostsMessage": "لا توجد منشورات للعرض في الوقت الحالي.",
+        "noReelsTitle": "لا توجد ريلز متاحة",
+        "noReelsMessage": "لا توجد ريلز للعرض في الوقت الحالي."
+      },
+      "actions": {
+        "search": "بحث",
+        "close": "إغلاق",
+        "clearSearch": "مسح البحث"
+      }
+    },
+    "postCard": {
+      "failedToToggleLike": "فشل تبديل الإعجاب",
+      "sharedSuccessfully": "تم المشاركة بنجاح! تم نسخ الرابط إلى الحافظة.",
+      "failedToSharePost": "فشل مشاركة المنشور",
+      "failedToToggleFavorite": "فشل تبديل المفضلة",
+      "fallbackName": "مستخدم",
+      "likes": "إعجابات",
+      "comments": "تعليقات",
+      "shares": "مشاركات",
+      "favorites": "مفضلة"
+    },
+    "communityRightSidebar": {
+      "commentAdded": "تمت إضافة التعليق!",
+      "linkCopied": "تم نسخ الرابط إلى الحافظة!",
+      "noComments": "لا توجد تعليقات بعد. كوني أول من يعلق!",
+      "shareYourComments": "شاركي تعليقك",
+      "suggestsToFollow": "اقتراحات للمتابعة",
+      "provider": "مزود",
+      "popularTags": "العلامات الشائعة",
+      "topArticles": "أفضل المقالات",
+      "communityPosts": "منشورات المجتمع"
+    },
+    "articleDetails": {
+      "loading": "جاري تحميل المقال...",
+      "notFoundTitle": "المقال غير موجود",
+      "notFoundMessage": "المقال الذي تبحثين عنه غير موجود أو تمت إزالتها.",
+      "commentAdded": "تمت إضافة التعليق بنجاح!",
+      "failedToAddComment": "فشل إضافة التعليق",
+      "failedToToggleLike": "فشل تبديل الإعجاب",
+      "sharedSuccessfully": "تم المشاركة بنجاح! تم نسخ الرابط إلى الحافظة.",
+      "failedToShareArticle": "فشل مشاركة المقال",
+      "failedToToggleFavorite": "فشل تبديل المفضلة",
+      "userIDNotAvailable": "معرف المستخدم غير متاح",
+      "unfollowedSuccessfully": "تم إلغاء المتابعة بنجاح",
+      "followedSuccessfully": "تمت المتابعة بنجاح",
+      "failedToToggleFollow": "فشل تبديل المتابعة",
+      "load": "جاري التحميل...",
+      "following": "متابع",
+      "follow": "متابعة",
+      "noComments": "لا توجد تعليقات بعد. كوني أول من يعلق!",
+      "writeComment": "اكتبي تعليقًا...",
+      "postComment": "نشر التعليق",
+      "posting": "جاري النشر...",
+      "articleCard": {
+        "readMore": "اقرأي المزيد",
+        "minRead": "دقيقة قراءة"
+      }
+    },
+    "blogDetails": {
+      "loading": "جاري تحميل المدونة...",
+      "blogNotFoundTitle": "المدونة غير موجودة",
+      "blogNotFoundMessage": "المدونة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+      "Anonymous": "مجهول",
+      "user": "مستخدم",
+      "failedToShareBlog": "فشل مشاركة المدونة"
+    },
+    "contestDetails": {
+      "loading": "جاري تحميل المسابقة...",
+      "contestNotFoundTitle": "المسابقة غير موجودة",
+      "contestNotFoundMessage": "المسابقة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+      "failedToShareContest": "فشل مشاركة المسابقة",
+      "alreadyJoined": "لقد انضممتِ بالفعل إلى هذه المسابقة!",
+      "joinedSuccessfully": "تم الانضمام إلى المسابقة بنجاح!",
+      "active": "نشطة",
+      "ended": "انتهت",
+      "upcoming": "قادمة",
+      "prize": "الجائزة",
+      "participants": "المشاركون",
+      "ends": "تنتهي",
+      "joinContest": "الانضمام إلى المسابقة",
+      "contestEnded": "انتهت المسابقة",
+      "joined": "منضم",
+      "noContestsTitle": "لا توجد مسابقات متاحة",
+      "noContestsMessage": "لا توجد مسابقات للعرض في الوقت الحالي."
+    },
+    "decisionGroupDetails": {
+      "loading": "جاري تحميل مجموعة القرارات...",
+      "decisionGroupNotFoundTitle": "مجموعة القرارات غير موجودة",
+      "decisionGroupNotFoundMessage": "مجموعة القرارات التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+      "haveAlreadyVoted": "لقد صوّتِ بالفعل!",
+      "voteCastSuccessfully": "تم إرسال صوتك بنجاح!",
+      "failedToVote": "فشل التصويت",
+      "votes": "أصوات",
+      "participants": "مشاركون",
+      "totalVotes": "إجمالي الأصوات",
+      "noDecisionGroupsTitle": "لا توجد مجموعات قرارات متاحة",
+      "noDecisionGroupsMessage": "لا توجد مجموعات قرارات للعرض في الوقت الحالي.",
+      "moreOptions": "خيارات أخرى"
+    },
+    "profile": {
+      "profileIdRequired": "معرف الملف الشخصي مطلوب",
+      "profileIdRequiredMessage": "يرجى توفير معرف الملف الشخصي في الرابط.",
+      "loading": "جاري تحميل الملف الشخصي...",
+      "profileNotFoundTitle": "الملف الشخصي غير موجود",
+      "profileNotFoundMessage": "الملف الشخصي الذي تبحثين عنه غير موجود أو تمت إزالتها.",
+      "tabs": {
+        "all": "الكل",
+        "withCount": "{label} ({count})"
+      },
+      "headings": {
+        "featuredContent": "المحتوى المميز",
+        "allContent": "كل المحتوى"
+      },
+      "stats": {
+        "totalContent": "إجمالي المحتوى",
+        "followers": "متابعون",
+        "following": "متابع",
+        "likes": "إعجابات",
+        "views": "مشاهدات"
+      },
+      "states": {
+        "noContentFound": "لم يتم العثور على محتوى"
+      },
+      "aria": {
+        "goBack": "العودة",
+        "like": "إعجاب",
+        "unlike": "إلغاء الإعجاب",
+        "addToFavorites": "إضافة إلى المفضلة",
+        "removeFromFavorites": "إزالة من المفضلة",
+        "moreOptions": "خيارات أخرى",
+        "coverAlt": "غلاف {name}",
+        "avatarAlt": "صورة {name} الشخصية"
+      },
+      "toasts": {
+        "liked": "تم الإعجاب",
+        "unliked": "تم إلغاء الإعجاب",
+        "addedToFavorites": "تمت الإضافة إلى المفضلة",
+        "removedFromFavorites": "تمت الإزالة من المفضلة"
+      }
+    },
+    "createPostModal": {
+      "title": "إنشاء منشور",
+      "privacy": {
+        "public": "عام",
+        "friends": "أصدقاء",
+        "private": "خاص"
+      },
+      "fields": {
+        "titlePlaceholder": "عنوان المنشور (اختياري)",
+        "contentPlaceholder": "شاركي ما يدور في ذهنك، {name}..."
+      },
+      "buttons": {
+        "post": "نشر",
+        "posting": "جاري النشر..."
+      },
+      "aria": {
+        "close": "إغلاق النافذة",
+        "removeImage": "إزالة الصورة",
+        "uploadImage": "رفع صورة",
+        "generateAi": "إنشاء محتوى بالذكاء الاصطناعي",
+        "addReels": "إضافة ريلز",
+        "textFormat": "تنسيق النص"
+      },
+      "tooltips": {
+        "maxImages": "الحد الأقصى {max} صورة",
+        "uploadImage": "رفع صورة",
+        "generateAi": "إنشاء محتوى بالذكاء الاصطناعي",
+        "addVideoComingSoon": "إضافة فيديو (قريبًا)",
+        "textFormatComingSoon": "تنسيق النص (قريبًا)"
+      },
+      "toasts": {
+        "uploadLimit": "يمكنك رفع ما يصل إلى {max} صورة فقط. سيتم رفع أول {count} صورة فقط.",
+        "uploadFileFail": "فشل رفع {fileName}",
+        "uploadSuccess": "تم رفع {count} صورة بنجاح",
+        "uploadFail": "فشل رفع الصور",
+        "generateNeedInput": "يرجى إدخال عنوان أو بعض المحتوى للإنشاء منه",
+        "generateSuccess": "تم إنشاء المحتوى بنجاح!",
+        "generateFail": "فشل إنشاء المحتوى. يرجى المحاولة مرة أخرى.",
+        "postNeedInput": "يرجى إدخال عنوان أو محتوى لمنشورك",
+        "postSuccess": "تم إنشاء المنشور بنجاح!",
+        "postFail": "فشل إنشاء المنشور. يرجى المحاولة مرة أخرى.",
+        "postNoResponse": "فشل إنشاء المنشور: لا توجد استجابة من الخادم"
+      },
+      "fallback": {
+        "newPostTitle": "منشور جديد"
+      }
     }
   },
-  "social": {
-    "instagram": "زيارة صفحة الإنستجرام",
-    "facebook": "زيارة صفحة الفيسبوك",
-    "tiktok": "زيارة صفحة التيك توك"
+  "items": {
+    "title": "العناصر",
+    "backToEvents": "العودة إلى مناسباتي",
+    "uncategorized": "غير مصنف",
+    "loading": {
+      "items": "جاري تحميل العناصر...",
+      "initializingBook": "جاري تهيئة دفتر العناصر...",
+      "addingModels": "جاري إضافة العناصر الافتراضية..."
+    },
+    "errors": {
+      "loadTitle": "فشل تحميل العناصر",
+      "loadMessage": "فشل تحميل العناصر. حاول مرة أخرى.",
+      "noBook": "لم يتم العثور على دفتر عناصر. يرجى تهيئته أولاً.",
+      "ItemBookNotFound": "دفتر العناصر غير موجود"
+    },
+    "actions": {
+      "save": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "unsavedChanges": "تغييرات غير محفوظة",
+      "addNew": "إضافة جديد",
+      "cancel": "إلغاء"
+    },
+    "lists": {
+      "yourLists": "قوائمك",
+      "untitled": "قائمة بدون اسم",
+      "noItems": "لا توجد عناصر في هذه القائمة بعد.",
+      "createNewList": "إنشاء قائمة جديدة"
+    },
+    "itemForm": {
+      "titles": {
+        "add": "إضافة عنصر جديد",
+        "edit": "تعديل العنصر",
+        "saving": "جاري الحفظ...",
+        "addItem": "إضافة العنصر"
+      },
+      "fields": {
+        "name": "الاسم",
+        "description": "الوصف",
+        "quantity": "الكمية",
+        "totalPrice": "السعر الإجمالي",
+        "providerName": "اسم المورّد",
+        "buyDate": "تاريخ الشراء"
+      },
+      "placeholders": {
+        "name": "أدخل اسم العنصر",
+        "description": "أدخل الوصف",
+        "quantity": "0",
+        "totalPrice": "0",
+        "providerName": "أدخل اسم المورّد"
+      },
+      "checkbox": {
+        "completed": "مكتمل",
+        "stillOnTheWay": "قيد التنفيذ",
+        "total": "إجمالي"
+      },
+      "actions": {
+        "cancel": "إلغاء",
+        "add": "إضافة العنصر",
+        "save": "حفظ التغييرات",
+        "saving": "جاري الحفظ..."
+      },
+      "validation": {
+        "nameRequired": "الاسم مطلوب",
+        "quantityInvalid": "الكمية يجب أن تكون رقمًا صحيحًا",
+        "totalPriceInvalid": "السعر الإجمالي يجب أن يكون رقمًا صحيحًا"
+      },
+      "errors": {
+        "createFailed": "فشل إنشاء العنصر:",
+        "updateFailed": "فشل تحديث العنصر:"
+      }
+    },
+    "listColors": {
+      "gray": "رمادي",
+      "red": "أحمر",
+      "orange": "برتقالي",
+      "yellow": "أصفر",
+      "green": "أخضر",
+      "blue": "أزرق",
+      "purple": "بنفسجي"
+    },
+    "createList": {
+      "title": "اسم القائمة",
+      "namePlaceholder": "ادخلي اسم القائمة",
+      "color": "لون القائمة",
+      "selectColor": "اختاري اللون...",
+      "creating": "جاري الإنشاء...",
+      "create": "إنشاء قائمة"
+    },
+    "progress": {
+      "itemsCompleted": "{completed} من {total} عناصر مكتملة"
+    }
   },
   "copyright": "© {year} جميع الحقوق محفوظة لـ OurBride"
+},
+  "eventsPlanning": {
+   "addEvent": {
+  "modal": {
+    "title": "حدث جديد",
+    "fields": {
+      "titleLabel": "عنوان الحدث",
+      "descriptionLabel": "الوصف",
+      "startDateTimeLabel": "تاريخ ووقت البداية",
+      "endDateTimeLabel": "تاريخ ووقت النهاية",
+      "defaultLabel": "تعيينه كحدث افتراضي"
+    },
+    "placeholders": {
+      "title": "اكتب/اكتبي عنوان الحدث",
+      "description": "اكتب/اكتبي وصف الحدث (اختياري)",
+      "startDate": "اختيار تاريخ البداية",
+      "endDate": "اختيار تاريخ النهاية",
+      "time": "ساعة:دقيقة"
+    },
+    "actions": {
+      "cancel": "إلغاء",
+      "create": "إنشاء الحدث",
+      "addNewEvent": "إضافة حدث جديد"
+    }
+  },
+  "validation": {
+    "titleRequired": "عنوان الحدث مطلوب",
+    "startTimeRequired": "وقت البداية مطلوب",
+    "durationRequired": "المدة مطلوبة",
+    "invalidTimeFormat": "صيغة الوقت غير صحيحة (مثال 12:30)",
+    "durationPositive": "لازم المدة تكون رقم موجب"
+  }
+},
+
+    "common": {
+      "createdBy": "أنشئ بواسطة",
+      "viewAll": "عرض الكل",
+      "viewDetails": "عرض التفاصيل",
+      "outOf": "{completed} من {total}",
+      "untitledTask": "مهمة بدون عنوان",
+      "untitledService": "خدمة بدون عنوان",
+      "untitledNote": "ملاحظة بدون عنوان",
+      "untitledOccasion": "مناسبة بدون عنوان",
+      "guestSingular": "ضيف",
+      "guestPlural": "ضيوف",
+      "ofGuests": "من الضيوف",
+      "provider": "المزود",
+      "noBookings": "لا توجد حجوزات بعد",
+      "noNotes": "لا توجد ملاحظات بعد"
+    },
+    "sideMenu": {
+      "title": "التخطيط",
+      "tabs": {
+        "overview": "نظرة عامة",
+        "budget": "الميزانية",
+        "items": "العناصر",
+        "events": "الفعاليات",
+        "invitation": "الضيوف",
+        "occasions": "المناسبات",
+        "preparations": "التحضيرات",
+        "ToDo": "المهام",
+        "notes": "الملاحظات"
+      },
+      "status": {
+        "initializing": "جاري التهيئة...",
+        "needsInit": "يحتاج تهيئة",
+        "ready": "جاهز"
+      }
+    },
+    "overview": {
+      "actions": {
+        "backToEvents": "الرجوع إلى المناسبات",
+        "addNewEvent": "إضافة مناسبة جديدة"
+      },
+      "tabsHeader": {
+        "myEvents": "مناسباتي",
+        "sharedEvents": "مناسبات مشتركة"
+      },
+      "loading": {
+        "events": "جاري تحميل المناسبات...",
+        "eventDetails": "جاري تحميل تفاصيل المناسبة...",
+        "initializing": "جاري التهيئة...",
+        "settingUpBook": "جاري إعداد {book}...",
+        "pleaseWait": "من فضلك انتظر"
+      },
+      "errors": {
+        "loadEventsTitle": "تعذر تحميل المناسبات",
+        "loadEventsMessage": "تعذر تحميل المناسبات. حاول مرة أخرى.",
+        "loadEventDetailsTitle": "تعذر تحميل تفاصيل المناسبة",
+        "loadEventDetailsMessage": "تعذر تحميل تفاصيل المناسبة. حاول مرة أخرى."
+      },
+      "empty": {
+        "noMyEvents": "لا توجد مناسبات. أنشئ مناسبتك الأولى!",
+        "noSharedEvents": "لا توجد مناسبات مشتركة."
+      },
+      "toasts": {
+        "enterTitle": "من فضلك أدخل عنوان المناسبة",
+        "createdSuccess": "تم إنشاء المناسبة بنجاح",
+        "createFailed": "تعذر إنشاء المناسبة",
+        "initFailed": "تعذر تهيئة {book}"
+      },
+      "stats": {
+        "completedServices": "الخدمات المكتملة",
+        "completeLists": "القوائم المكتملة",
+        "planningBooks": "دفاتر التخطيط"
+      }
+    },
+    "cards": {
+      "eventSummary": {
+        "imageAlt": "صورة المناسبة",
+        "countdown": {
+          "days": "أيام",
+          "hours": "ساعات",
+          "minutesShort": "د"
+        }
+      },
+      "quickStats": {
+        "guestsCountText": "{count} من الضيوف",
+        "zero": "0"
+      },
+      "items": {
+        "title": "العناصر",
+        "estimatedBudget": "الميزانية المتوقعة",
+        "totalPrice": "السعر الإجمالي"
+      },
+      "tasks": {
+        "title": "تذكير بالمهام",
+        "empty": "لا توجد مهام بعد"
+      },
+      "upcomingBookings": {
+        "title": "حجوزات الخدمات",
+        "badges": {
+          "pending": "قيد الانتظار",
+          "completed": "مكتمل"
+        },
+        "empty": "لا توجد حجوزات بعد"
+      },
+      "budget": {
+        "fallbackTitle": "دفتر الميزانية",
+        "allBudget": "إجمالي الميزانية",
+        "paid": "المدفوع",
+        "remaining": "المتبقي",
+        "empty": "لم يتم تحديد ميزانية بعد"
+      },
+      "guests": {
+        "title": "الضيوف والدعوات",
+        "subtitle": "تتبّع الضيوف المدعوين والتفاصيل",
+        "ariaViewDetails": "عرض تفاصيل دعوات الضيوف",
+        "imageAlt": "صورة المناسبة",
+        "descriptionFallback": "إدارة قائمة الضيوف والدعوات في مكان واحد.",
+        "invitedGuests": "الضيوف المدعوون",
+        "guestSingular": "ضيف",
+        "guestPlural": "ضيوف"
+      }
+   
+    
+  },
+  "budget": {
+    "pageTitle": "الميزانية",
+    "noBudgetTitle": "لا توجد بيانات للميزانية",
+    "loading": {
+      "loadingBudgetTitle": "جاري تحميل الميزانية...",
+      "loadingBudgetSubtitle": "يرجى الانتظار قليلًا",
+      "initializingTitle": "جاري تهيئة دفتر الميزانية...",
+      "initializingSubtitle": "يتم إعداد دفتر الميزانية الخاص بك",
+      "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
+      "addingModelsSubtitle": "يرجى الانتظار أثناء إضافة التصنيفات الافتراضية"
+    },
+    "error": {
+      "failedToLoad": "فشل تحميل الميزانية. حاول مرة أخرى.",
+      "retry": "إعادة المحاولة"
+    },
+    "event": {
+      "eventIdRequired": "رقم الحدث مطلوب"
+    },
+    "header": {
+      "goBack": "رجوع",
+      "searchPlaceholder": "ابحث",
+      "clearSearch": "مسح البحث",
+      "saving": "جاري الحفظ...",
+      "saveChanges": "حفظ التغييرات",
+      "unsavedChanges": "تغييرات غير محفوظة",
+      "noChangesToSave": "لا توجد تغييرات للحفظ",
+      "changesSaved": "تم حفظ التغييرات بنجاح",
+      "failedToSave": "فشل حفظ التغييرات"
+    },
+    "filters": {
+      "placeholder": "اختر الفلتر...",
+      "all": "الكل",
+      "done": "تم",
+      "notDone": "غير مكتمل",
+      "favorite": "مفضل",
+      "notFavorite": "غير مفضل"
+    },
+    "overview": {
+      "title": "نظرة عامة على الميزانية",
+      "savedPercent": "تم توفير {percent}٪",
+      "budget": "الميزانية",
+      "estimatedCost": "التكلفة التقديرية",
+      "paid": "المدفوع",
+      "finalCost": "التكلفة النهائية",
+      "enterBudget": "أدخل الميزانية",
+      "save": "حفظ",
+      "egp": "ج.م",
+      "unnamedCategory": "تصنيف بدون اسم"
+
+    },
+    "categories": {
+      "title": "التصنيفات",
+      "new": "جديد",
+      "noCategoriesTitle": "لا توجد تصنيفات بعد",
+      "noCategoriesDesc": "قم بإنشاء تصنيف لبدء تنظيم العناصر.",
+      "editCategory": "تعديل التصنيف",
+      "deleteCategory": "حذف التصنيف",
+      "unnamedCategory": "تصنيف بدون اسم"
+    },
+    "lines": {
+      "empty": "لا توجد بنود ميزانية",
+      "addNew": "إضافة جديد",
+      "estimatedLabel": "التقديري:",
+      "selectCategoryHint": "اختر تصنيفًا لعرض القيمة التقديرية",
+      "headers": {
+        "service": "الخدمة",
+        "totalPrice": "السعر الإجمالي",
+        "paid": "المدفوع",
+        "remaining": "المتبقي",
+        "percentOfBudget": "٪ من الميزانية",
+        "actions": "الإجراءات"
+      },
+      "unnamedService": "خدمة بدون اسم"
+    },
+    "toasts": {
+      "lineSaved": "تم حفظ بند الميزانية",
+      "categorySaved": "تم حفظ التصنيف",
+      "categoryAndLineAdded": "تمت إضافة التصنيف والبند",
+      "deletedSuccessfully": "تم حذف \"{name}\" بنجاح",
+      "categoryDeletedSuccessfully": "تم حذف التصنيف \"{name}\" بنجاح",
+      "lineDataRequired": "بيانات البند مطلوبة عند إنشاء تصنيف جديد",
+      "noChangesToSave": "لا توجد تغييرات للحفظ",
+      "failedToSaveChanges": "فشل حفظ التغييرات",
+      "changesSavedSuccessfully": "تم حفظ التغييرات بنجاح"
+    },
+    "modals": {
+      "confirmDelete": {
+        "title": "تأكيد الحذف",
+        "lineMessage": "هل أنت متأكد من حذف بند الميزانية هذا؟ لا يمكن التراجع عن هذا الإجراء.",
+        "categoryMessage": "هل أنت متأكد من حذف هذا التصنيف؟ سيتم حذف جميع البنود التابعة له ولا يمكن التراجع عن هذا الإجراء.",
+        "cancel": "إلغاء",
+        "delete": "حذف"
+      },
+      "budgetLine": {
+        "addTitle": "إضافة بند ميزانية",
+        "editTitle": "تعديل بند الميزانية",
+        "serviceName": "اسم الخدمة",
+        "serviceNamePlaceholder": "أدخل اسم الخدمة",
+        "category": "التصنيف",
+        "selectCategory": "اختر تصنيفًا",
+        "totalPrice": "السعر الإجمالي",
+        "paid": "المدفوع",
+        "final": "النهائي",
+        "count": "العدد",
+        "payer": "الدافع",
+        "payerPlaceholder": "أدخل اسم الدافع",
+        "isDone": "مكتمل",
+        "isDoneDesc": "اعتبر هذا البند مكتملًا",
+        "isFavorite": "مفضل",
+        "isFavoriteDesc": "تمييز هذا البند كمفضل",
+        "notesOptional": "ملاحظات (اختياري)",
+        "notesPlaceholder": "أضف أي ملاحظات إضافية...",
+        "cancel": "إلغاء",
+        "save": "حفظ"
+      },
+      "category": {
+        "editTitle": "تعديل التصنيف",
+        "addTitle": "إضافة تصنيف (مع أول بند)",
+        "categorySectionTitle": "التصنيف",
+        "editHint": "تحديث بيانات التصنيف",
+        "createHint": "إنشاء تصنيف جديد",
+        "name": "الاسم",
+        "namePlaceholder": "مثال: التصنيف",
+        "description": "الوصف",
+        "descriptionPlaceholder": "اختياري…",
+        "icon": "الأيقونة",
+        "selectIcon": "اختر أيقونة",
+        "changeIcon": "تغيير الأيقونة",
+        "color": "اللون",
+        "selectColor": "اختر لونًا",
+        "estimated": "التكلفة التقديرية",
+        "firstLineTitle": "أول بند ميزانية",
+        "firstLineHint": "مطلوب لضمان مزامنة التصنيف بشكل صحيح",
+        "serviceName": "اسم الخدمة",
+        "serviceNamePlaceholder": "مثال: دعوات العائلة",
+        "totalPrice": "السعر الإجمالي",
+        "paid": "المدفوع",
+        "final": "النهائي",
+        "count": "العدد",
+        "dueDate": "تاريخ الاستحقاق",
+        "payer": "الدافع",
+        "payerPlaceholder": "العروس / العريس / ...",
+        "note": "ملاحظة",
+        "notePlaceholder": "اختياري…",
+        "done": "مكتمل",
+        "doneDesc": "اعتباره مكتملًا",
+        "favorite": "مفضل",
+        "favoriteDesc": "تثبيته في الأعلى",
+        "cancel": "إلغاء",
+        "save": "حفظ",
+        "addCategoryAndLine": "إضافة تصنيف وبند"
+      },
+      "colorPicker": {
+        "Green": "أخضر",
+        "Yellow": "أصفر",
+        "Blue": "أزرق",
+        "Red": "أحمر",
+        "Purple": "بنفسجي",
+        "Orange": "برتقالي",
+        "Pink": "وردي",
+        "Cyan": "سماوي"
+      },
+      "validation": {
+      "serviceNameRequired": "اسم الخدمة مطلوب",
+      "totalPriceRequired": "السعر الإجمالي يجب أن يكون 0 أو أكثر",
+      "paidRequired": "المدفوع يجب أن يكون 0 أو أكثر",
+      "nameRequired": "الاسم مطلوب",
+      "estimatedRequired": "التقديري يجب أن يكون 0 أو أكثر",
+      "categoryNameRequired": "اسم التصنيف مطلوب"
+    }
+    }
+  },
+  "guestList": {
+    "common": {
+      "pageTitle": "قائمة الضيوف",
+      "needToAddTable": "يجب عليك إضافة طاولة أولاً.",
+      "loading": "جاري تحميل قائمة الضيوف...",
+      "saveChanges": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "unsavedChanges": "يوجد تغييرات غير محفوظة",
+      "retry": "إعادة المحاولة",
+      "refresh": "تحديث",
+      "cancel": "إلغاء",
+      "addGuest": "إضافة ضيف",
+      "addNewGuest": "إضافة ضيف جديد",
+      "addTable": "إضافة طاولة",
+      "addNewTable": "إضافة طاولة جديدة",
+      "selectedTable": "الطاولة المحددة",
+      "untitledTable": "طاولة بدون اسم",
+      "uncategorized": "بدون تصنيف",
+      "unnamed": "بدون اسم",
+      "categoryName": "اسم التصنيف",
+      "categoryNamePlaceholder": "اكتب اسم التصنيف",
+      "slug": "الرابط",
+      "slugPlaceholder": "الرابط (اختياري)",
+      "description": "الوصف",
+      "descriptionPlaceholder": "اكتب الوصف (اختياري)",
+      "addNewCategory": "إضافة تصنيف جديد"
+    
+    },
+    "toasts": {
+      "refreshed": "تم تحديث قائمة الضيوف",
+      "guestDeleted": "تم حذف الضيف",
+      "guestAdded": "تم إضافة الضيف",
+      "saveSuccess": "تم حفظ التغييرات بنجاح",
+      "saveFailed": "فشل حفظ التغييرات"
+    },
+    "loadingStates": {
+      "initializingTitle": "جاري تهيئة دفتر الضيوف...",
+      "initializingSubtitle": "نقوم بإعداد دفتر الضيوف الخاص بك",
+      "addingModelsTitle": "جاري إضافة القوالب الافتراضية...",
+      "addingModelsSubtitle": "يرجى الانتظار أثناء إضافة التصنيفات الافتراضية",
+      "loadingGuestsTitle": "جاري تحميل الضيوف...",
+      "loadingGuestsSubtitle": "يرجى الانتظار لحظة"
+    },
+    "error": {
+      "title": "فشل تحميل الضيوف. حاول مرة أخرى.",
+      "unknown": "خطأ غير معروف"
+    },
+    "empty": {
+      "noGuestBook": "لا يوجد دفتر ضيوف",
+      "noTablesTitle": "لا توجد طاولات بعد",
+      "noTablesSubtitle": "أنشئ طاولة لتبدأ بإضافة الضيوف.",
+      "noGuestsInTable": "لا يوجد ضيوف في هذه الطاولة"
+    },
+    "tabs": {
+      "bride": "العروسة",
+      "groom": "العريس",
+      "ariaLabel": "تبويبات جهة الضيوف"
+    },
+    "summary": {
+      "guestsCount": " ضيف",
+      "totalPeople": " إجمالي الأشخاص"
+    },
+    "table": {
+      "columns": {
+        "select": "تحديد",
+        "tableGuestName": "الطاولة / اسم الضيف",
+        "people": "الأشخاص",
+        "registered": "تاريخ الإضافة",
+        "status": "الحالة",
+        "actions": "إجراءات"
+      },
+      "statsInline": "({{total}} ضيف، {{confirmed}} مؤكد)",
+      "dash": "—"
+    },
+    "status": {
+      "confirmed": "مؤكد",
+      "none": "بدون"
+    },
+    "dialog": {
+      "title": "إضافة ضيف جديد",
+      "mode": {
+        "selectTable": "اختيار طاولة",
+        "newTable": "طاولة جديدة",
+        "needToAddTable": "يجب عليك إضافة طاولة أولاً.",
+          "noTablesTitle": "لا توجد طاولات متاحة",
+        "noTablesSubtitle": "سيتم إنشاء طاولة جديدة أثناء إضافة هذا الضيف."
+      },
+      "fields": {
+        "tableLabel": "الطاولة",
+        "nameLabel": "الاسم",
+        "peopleCountLabel": "عدد الأشخاص الإجمالي",
+        "statusLabel": "الحالة"
+      },
+      "placeholders": {
+        "tableName": "اسم الطاولة",
+        "slugOptional": "الرابط (اختياري)",
+        "descriptionOptional": "الوصف (اختياري)",
+        "selectTable": "اختر طاولة",
+        "guestName": "اكتب اسم الضيف",
+        "peopleCount": "اكتب عدد الأشخاص",
+        "selectStatus": "اختر الحالة"
+      },
+      "actions": {
+        "cancel": "إلغاء",
+        "submit": "إضافة الضيف",
+        "saving": "جاري الحفظ...",
+        "addCategory": "إضافة التصنيف"
+      },
+      "validation": {
+        "categoryRequired": "التصنيف مطلوب",
+        "guestNameMin": "اسم الضيف لازم يكون حرفين على الأقل",
+        "categoryNameMin": "اسم التصنيف لازم يكون حرفين على الأقل",
+        "peopleMin": "الحد الأدنى 1",
+        "peopleMax": "الحد الأقصى 20"
+      }
+    }
+  },
+  "occasions": {
+    "page": {
+      "actions": {
+        "addNewOccasion": "إضافة مناسبة جديدة",
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جارٍ الحفظ...",
+        "cancel": "إلغاء",
+        "createOccasion": "إنشاء المناسبة",
+        "updateOccasion": "تحديث المناسبة",
+        "edit": "تعديل",
+        "delete": "حذف",
+        "close": "إغلاق"
+      },
+      "status": {
+        "unsavedChanges": "تغييرات غير محفوظة",
+        "noOccasionsTitle": "لا توجد مناسبات",
+        "noOccasionsSubtitle": "ابدأ بإنشاء أول مناسبة لك"
+      },
+      "loading": {
+        "loadingOccasionsTitle": "جارٍ تحميل المناسبات...",
+        "initializingTitle": "جارٍ تهيئة دفتر المناسبات...",
+        "initializingSubtitle": "بنجهّز دفتر المناسبات بتاعك",
+        "addingModelsTitle": "جارٍ إضافة النماذج الافتراضية...",
+        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف النماذج الافتراضية",
+        "pleaseWait": "من فضلك انتظر لحظة"
+      },
+      "error": {
+        "failedToLoadTitle": "فشل تحميل المناسبات",
+        "failedToLoadMessage": "تعذر تحميل المناسبات. حاول مرة أخرى."
+      }
+    },
+
+    "common": {
+      "fallbacks": {
+        "noDate": "لا يوجد تاريخ",
+        "invalidDate": "تاريخ غير صالح",
+        "groomName": "اسم العريس",
+        "brideName": "اسم العروسة",
+        "occasionName": "اسم المناسبة"
+      },
+      "countdown": {
+        "days": "يوم",
+        "hours": "ساعة",
+        "minutes": "دقيقة"
+      }
+    },
+
+    "form": {
+      "title": {
+        "create": "إضافة مناسبة",
+        "edit": "تعديل المناسبة"
+      },
+      "labels": {
+        "titleEn": "العنوان (بالإنجليزية)",
+        "titleAr": "العنوان (بالعربية)",
+        "subTitleEn": "العنوان الفرعي (بالإنجليزية)",
+        "subTitleAr": "العنوان الفرعي (بالعربية)",
+        "date": "التاريخ",
+        "subDate": "تاريخ إضافي (اختياري)",
+        "brideFirstName": "الاسم الأول للعروسة",
+        "brideLastName": "اسم عائلة العروسة",
+        "groomFirstName": "الاسم الأول للعريس",
+        "groomLastName": "اسم عائلة العريس",
+        "caption": "وصف / ملاحظة"
+      },
+      "placeholders": {
+        "titleEn": "اكتب العنوان بالإنجليزية",
+        "titleAr": "اكتب العنوان بالعربية",
+        "subTitleEn": "اكتب العنوان الفرعي بالإنجليزية",
+        "subTitleAr": "اكتب العنوان الفرعي بالعربية",
+        "brideFirstName": "اكتب الاسم الأول للعروسة",
+        "brideLastName": "اكتب اسم عائلة العروسة",
+        "groomFirstName": "اكتب الاسم الأول للعريس",
+        "groomLastName": "اكتب اسم عائلة العريس",
+        "caption": "اكتب وصفًا أو ملاحظة"
+      },
+      "helperText": {
+        "titleRequiredNote": "من فضلك اكتب عنوان بالإنجليزية أو بالعربية"
+      },
+      "buttons": {
+        "cancel": "إلغاء",
+        "saving": "جارٍ الحفظ...",
+        "create": "إنشاء المناسبة",
+        "update": "تحديث المناسبة"
+      },
+   "validation": {
+  "brideFirstNameMin": "يجب ألا يقل اسم العروس عن حرفين",
+  "brideFirstNameMax": "يجب ألا يزيد اسم العروس عن 15 حرفًا",
+  "groomFirstNameMin": "يجب ألا يقل اسم العريس عن حرفين",
+  "groomFirstNameMax": "يجب ألا يزيد اسم العريس عن 15 حرفًا",
+  "titleRequired": "يرجى إدخال عنوان باللغة الإنجليزية أو العربية"
 }
+    },
+
+    "detail": {
+      "locationFallback": "الجيزة، 6 أكتوبر",
+      "labels": {
+        "dateTime": "التاريخ والوقت"
+      }
+    }
+  },
+  
+    "notes": {
+      "page": {
+        "title": "الملاحظات",
+        "back": "رجوع"
+      },
+      "header": {
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "unsavedChanges": "تغييرات غير محفوظة"
+      },
+      "loading": {
+        "loadingNotes": "جاري تحميل الملاحظات...",
+        "loadingSubtitle": "من فضلك انتظر لحظة",
+        "initializingTitle": "جاري تهيئة دفتر الملاحظات...",
+        "initializingSubtitle": "بنجهز دفتر الملاحظات بتاعك",
+        "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
+        "addingModelsSubtitle": "من فضلك انتظر بينما نضيف القوالب الافتراضية"
+      },
+      "sidebar": {
+        "title": "ملاحظاتك",
+        "addNew": "إضافة جديد",
+        "empty": "لا توجد قوائم بعد",
+        "untitled": "قائمة بدون اسم",
+        "actions": {
+          "editAria": "تعديل الملاحظة",
+          "deleteAria": "حذف الملاحظة"
+        }
+      },
+      "main": {
+        "empty": {
+          "title": "اختاري قائمة لعرض الملاحظة الخاصة بها",
+          "cta": "إضافة ملاحظات جديدة"
+        },
+        "edit": "تعديل",
+        "dash": "—"
+      },
+      "modal": {
+        "addTitle": "إضافة ملاحظة جديدة",
+        "editTitle": "تعديل الملاحظة",
+        "fields": {
+          "titleLabel": "اسم القائمة",
+          "noteLabel": "الملاحظة"
+        },
+        "placeholders": {
+          "title": "اكتبي اسم القائمة",
+          "note": "اكتبي ملاحظتك..."
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "add": "إضافة ملاحظة",
+          "saveChanges": "حفظ التغييرات",
+          "saving": "جاري الحفظ..."
+        },
+        "validation": {
+          "Listnameisrequired": "اسم القائمة مطلوب",
+          "Noteisrequired": "الملاحظة مطلوبة"
+        }
+      }
+    }
+},
+"reservations": {
+    "page": {
+      "title": "حجوزاتي",
+      "subtitle": {
+        "one": "{count} حجز",
+        "other": "{count} حجوزات"
+      },
+      "actions": {
+        "newReservation": "حجز جديد",
+        "refreshAria": "تحديث الحجوزات"
+      }
+    },
+    "list": {
+      "empty": {
+        "title": "لا يوجد لديك أي حجوزات",
+        "description": "احجز خدمة لإنشاء أول حجز لك",
+        "actionLabel": "تصفح الخدمات"
+      }
+    },
+    "loading": {
+      "title": "جاري تحميل الحجوزات...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    },
+    "error": {
+      "title": "حدث خطأ أثناء تحميل الحجوزات",
+      "message": "يرجى المحاولة مرة أخرى لاحقًا",
+      "actionLabel": "العودة للرئيسية"
+    },
+    "toast": {
+      "cancelSuccess": "تم إلغاء الحجز بنجاح",
+      "cancelFail": "فشل إلغاء الحجز"
+    },
+    "confirm": {
+      "title": "إلغاء الحجز", 
+      "cancelTitle": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟",
+      "keepButton": "الاحتفاظ بالحجز",
+      "cancelButton": "إلغاء الحجز"
+    },
+    "navigation": {
+      "browseServicesHref": "/services",
+      "backHomeHref": "/",
+      "detailsHrefPattern": "/reservations/{reservationId}"
+    },
+    "pagination": {
+      "srLabel": "التنقل بين صفحات الحجوزات"
+    },
+    "details": {
+      "pageTitle": "تفاصيل الحجز",
+      "back": "رجوع",
+      "header": {
+        "title": "الحجز رقم #{reservationId}"
+      },
+      "loading": {
+        "title": "جاري تحميل الحجز...",
+        "subtitle": "يرجى الانتظار قليلًا"
+      },
+      "notFound": {
+        "title": "الحجز غير موجود",
+        "message": "الحجز الذي تبحث عنه غير موجود أو تم حذفه",
+        "actionLabel": "العودة للحجوزات",
+        "actionHref": "/reservations"
+      },
+      "statusCard": {
+        "title": "حالة الحجز",
+        "label": "الحالة:",
+        "messages": {
+          "completed": "تم إكمال هذا الحجز.",
+          "cancelled": "تم إلغاء هذا الحجز.",
+          "confirmed": "تم تأكيد هذا الحجز.",
+          "pending": "هذا الحجز قيد انتظار التأكيد.",
+          "inProgress": "هذا الحجز قيد التنفيذ."
+        }
+      },
+      "serviceCard": {
+        "title": "معلومات الخدمة",
+        "viewDetails": "عرض تفاصيل الخدمة"
+      },
+      "reservationCard": {
+        "title": "تفاصيل الحجز",
+        "fields": {
+          "dateTime": "تاريخ ووقت الحجز",
+          "date": "تاريخ الحجز",
+          "time": "وقت الحجز",
+          "quantity": "الكمية",
+          "createdOn": "تاريخ الإنشاء",
+          "lastModified": "آخر تعديل"
+        }
+      },
+      "locationCard": {
+        "title": "الموقع"
+      },
+      "staffCard": {
+        "title": "الموظف المسؤول"
+      },
+      "packageCard": {
+        "title": "تفاصيل الباقة"
+      },
+      "resourcesCard": {
+        "title": "الموارد",
+        "fallbackName": "مورد {id}"
+      },
+      "notesCard": {
+        "title": "ملاحظات"
+      },
+      "feedbackCard": {
+        "title": "ملاحظاتك"
+      },
+      "testRequestCard": {
+        "title": "طلب تجربة",
+        "message": "لقد قمت بطلب تجربة لهذه الخدمة.",
+        "statusLabel": "الحالة:",
+        "status": {
+          "accepted": "مقبول",
+          "rejected": "مرفوض"
+        },
+        "continueLabel": "الاستمرار مع الخدمة:",
+        "continue": {
+          "yes": "نعم",
+          "no": "لا"
+        }
+      },
+      "providerCard": {
+        "title": "مقدم الخدمة",
+        "viewProfile": "عرض ملف مقدم الخدمة"
+      },
+      "pricingCard": {
+        "title": "التسعير",
+        "fields": {
+          "servicePrice": "سعر الخدمة:",
+          "deposit": "العربون:",
+          "total": "الإجمالي:"
+        },
+        "currency": "جنيه"
+      },
+      "actionsCard": {
+        "title": "الإجراءات",
+        "cancel": "إلغاء الحجز"
+      },
+      "mutation": {
+        "cancelling": {
+          "title": "جاري إلغاء الحجز...",
+          "subtitle": "يرجى الانتظار قليلًا"
+        }
+      },
+      "confirm": {
+        "cancelLong": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟ لا يمكن التراجع عن هذا الإجراء."
+      },
+      "toast": {
+        "cancelSuccess": "تم إلغاء الحجز بنجاح",
+        "cancelFail": "فشل إلغاء الحجز"
+      }
+    },
+    "card": {
+      "status": {
+  "pending": "قيد الانتظار",
+  "confirmed": "مؤكد",
+  "completed": "مكتمل",
+  "cancelled": "ملغي",
+  "inProgress": "قيد التنفيذ"
+},
+    "header": {
+      "title": "الحجز رقم #{reservationId}",
+      "created": "تاريخ الإنشاء"
+    },
+    "service": {
+      "noImage": "لا توجد صورة",
+      "providerLabel": "المزوّد:"
+    },
+    "fields": {
+      "date": "التاريخ",
+      "time": "الوقت",
+      "staff": "الموظف",
+      "quantity": "العدد"
+    },
+    "actions": {
+      "viewDetails": "عرض التفاصيل",
+      "cancel": "إلغاء",
+      "expandDetailsAria": "فتح التفاصيل",
+      "collapseDetailsAria": "إغلاق التفاصيل"
+    },
+    "details": {
+      "title": "تفاصيل الحجز",
+      "packageLabel": "الباقة:",
+      "locationTitle": "الموقع",
+      "deposit": "العربون",
+      "totalPrice": "الإجمالي",
+      "notes": "ملاحظات",
+      "feedback": "تقييمك",
+      "currency": "ج.م"
+    },
+    "fallback": {
+      "service": "الخدمة",
+      "provider": "المزوّد",
+      "package": "الباقة"
+    }
+  }
+  },
+ 
+  "cart": {
+    "filters": {
+      "services": "الخدمات",
+      "products": "المنتجات"
+    },
+    "page": {
+      "title": "سلة مشترياتي",
+      "subtitle": {
+        "one": "{count} عنصر",
+        "other": "{count} عناصر"
+      }
+    },
+    "states": {
+      "loading": {
+        "title": "جاري تحميل السلة...",
+        "subtitle": "يرجى الانتظار لحظة"
+      },
+      "error": {
+        "title": "حدث خطأ أثناء تحميل السلة",
+        "message": "يرجى المحاولة مرة أخرى لاحقًا",
+        "backHome": "العودة إلى الصفحة الرئيسية"
+      },
+      "empty": {
+        "title": "لا يوجد أي عناصر في سلتك",
+        "description": "ابدأ بتصفح {type} لتبدأ رحلتك",
+        "viewProducts": "عرض المنتجات",
+        "viewServices": "عرض الخدمات"
+      }
+    },
+    "actions": {
+      "refreshAria": "تحديث السلة",
+      "clearAllAria": "مسح كل العناصر",
+      "checkoutAll": "إتمام الدفع للكل",
+      "checkout": "إتمام الدفع",
+      "redeem": "تطبيق",
+      "remove": "حذف",
+      "keep": "إبقاء"
+    },
+    "cartItem": {
+      "noImage": "لا توجد صورة",
+      "discountOff": "خصم {percent}%",
+      "getInBy": "يصلك قبل {date}",
+      "purchasePrice": "سعر الشراء:",
+      "addedOn": "تمت الإضافة في:",
+      "totalPrice": "السعر الإجمالي :",
+      "decreaseQtyAria": "تقليل الكمية",
+      "increaseQtyAria": "زيادة الكمية",
+      "removeItemAria": "حذف العنصر",
+      "checkout":" إتمام الدفع"
+    },
+    "itemTypes": {
+      "product": "منتج",
+      "service": "خدمة",
+      "reservation": "حجز",
+      "membership": "عضوية",
+      "giftCard": "بطاقة هدية",
+      "item": "عنصر"
+    },
+    "orderSummary": {
+      "promo": {
+        "placeholder": "أدخل كود الخصم",
+        "removeCouponAria": "إزالة كود الخصم",
+        "redeemed": "تم التطبيق"
+      },
+      "rewards": {
+        "diamonds": "الماس: {points} نقطة",
+        "giftsCash": "رصيد الهدايا: {amount} {currency}",
+        "appliedGiftCards": "بطاقات الهدايا المطبّقة:"
+      },
+      "breakdown": {
+        "subtotal": "الإجمالي الفرعي",
+        "discount": "الخصم",
+        "couponDiscount": "خصم الكوبون",
+        "membershipDiscount": "خصم العضوية",
+        "walletCredit": "رصيد المحفظة",
+        "giftCard": "بطاقة هدية",
+        "cashCard": "بطاقة نقدية",
+        "taxesFees": "الضرائب والرسوم",
+        "deliveryFee": "رسوم التوصيل",
+        "total": "الإجمالي"
+      },
+      "deposit": {
+        "depositAmount": "مبلغ العربون",
+        "depositPaid": "العربون المدفوع",
+        "depositRemaining": "المتبقي من العربون"
+      },
+      "terms": {
+        "accept": "أوافق على الشروط والأحكام",
+        "note": "إذا لم تكن متواجدًا عند وصول مندوب التوصيل، سيتم ترك طلبك عند الباب. بإتمام الطلب، أنت توافق على تحمل المسؤولية الكاملة عنه بعد تسليمه."
+      }
+    },
+    "modals": {
+      "deleteItem": {
+        "title": "حذف عنصر",
+        "question": "هل أنت متأكد أنك تريد حذف {item} من سلتك؟",
+        "confirm": "حذف العنصر",
+        "cancel": "إبقاء العنصر",
+        "defaultItem": "هذا العنصر"
+      },
+      "cancelRequest": {
+        "title": "إلغاء الطلب",
+        "question": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
+        "placeholder": "من فضلك أخبرنا سبب الإلغاء (اختياري).",
+        "keep": "إبقاء الطلب",
+        "confirm": "إلغاء الطلب"
+      }
+    },
+    "mutationOverlay": {
+      "clearing": "جاري مسح السلة...",
+      "processingCheckout": "جاري إتمام الدفع...",
+      "updating": "جاري تحديث السلة...",
+      "subtitle": "يرجى الانتظار لحظة"
+    }
+  
+},
+  "checkoutPage": {
+    "checkout": {
+      "page": {
+        "title": "إتمام الطلب"
+      },
+      "loading": {
+        "loadingCheckoutTitle": "جاري تحميل صفحة الدفع...",
+        "subtitle": "من فضلك انتظر لحظة",
+        "processingCheckoutTitle": "جاري معالجة الدفع...",
+        "updatingCartTitle": "جاري تحديث السلة...",
+        "validatingTitle": "جاري التحقق..."
+      },
+      "error": {
+        "title": "خطأ في تحميل السلة",
+        "message": "من فضلك حاول مرة أخرى لاحقًا",
+        "actionLabel": "العودة للرئيسية"
+      },
+      "empty": {
+        "title": "إتمام الطلب",
+        "message": "سلتك فارغة",
+        "goToCart": "اذهب إلى السلة"
+      },
+      "form": {
+        "fullName": {
+          "placeholder": "الاسم بالكامل",
+          "errors": {
+            "minLength": "يجب ألا يقل الاسم بالكامل عن حرفين"
+          }
+        },
+        "mobileNumber": {
+          "placeholder": "رقم الموبايل",
+          "errors": {
+            "required": "رقم الموبايل مطلوب",
+            "invalid": "من فضلك أدخل رقم موبايل صحيح (10-11 رقم)"
+          }
+        },
+        "location": {
+          "placeholder": "المنطقة",
+          "errors": {
+            "minLength": "يجب ألا تقل المنطقة عن 3 أحرف"
+          }
+        },
+        "street": {
+          "placeholder": "الشارع / الشقة",
+          "errors": {
+            "minLength": "يجب ألا يقل الشارع/الشقة عن 3 أحرف"
+          }
+        },
+        "notes": {
+          "placeholder": "ملاحظات لمندوب التوصيل..."
+        },
+        "acceptTerms": {
+          "labelPrefix": "أوافق على",
+          "termsButton": "الشروط والأحكام",
+          "helperText": "إذا لم تكن متواجدًا عند وصول مندوب التوصيل، فسيترك طلبك عند الباب. بوضع طلبك، فإنك توافق على تحمّل كامل المسؤولية عنه بعد التسليم.",
+          "errors": {
+            "required": "يجب الموافقة على الشروط والأحكام"
+          }
+        }
+      },
+      "delivery": {
+        "title": "تفاصيل التوصيل",
+        "loadingAddresses": "جاري تحميل العناوين...",
+        "addressFallbackName": "العنوان",
+        "addAddress": "إضافة عنوان",
+        "slider": {
+          "prev": "العنوان السابق",
+          "next": "العنوان التالي",
+          "goToSlide": "اذهب إلى العنوان رقم {{index}}"
+        }
+      },
+      "payment": {
+        "title": "طريقة الدفع",
+        "loadingMethods": "جاري تحميل طرق الدفع...",
+        "noMethods": "لا توجد طرق دفع متاحة",
+        "installments": "حتى {{count}} أقساط",
+        "wallet": {
+          "title": "تفاصيل المحفظة",
+          "mobilePlaceholder": "رقم الموبايل",
+          "errors": {
+            "required": "رقم موبايل المحفظة مطلوب",
+            "invalid": "المحفظة غير صالحة، من فضلك أدخل رقمًا صحيحًا"
+          }
+        }
+      },
+      "summary": {
+        "title": "ملخص الطلب",
+        "itemsError": "من فضلك اختر عنصرًا واحدًا على الأقل",
+        "promo": {
+          "placeholder": "أدخل كود الخصم",
+          "redeem": "تطبيق",
+          "pending": "..."
+        },
+        "rewards": {
+          "diamondsLabel": "الماسات",
+          "diamondsValue": " نقطة",
+          "giftsCashLabel": "رصيد الهدايا",
+          "applied": "مُطبّق",
+          "redeem": "تطبيق"
+        },
+        "prices": {
+          "subtotal": "المجموع الفرعي",
+          "couponDiscount": "خصم الكوبون",
+          "taxesFees": "الضرائب والرسوم",
+          "deliveryFee": "رسوم التوصيل",
+          "total": "الإجمالي"
+        },
+        "coupon": {
+          "redeemed": "تم الاستخدام"
+        }
+      },
+      "actions": {
+        "pay": "ادفع  {amount} {currency} ",
+        "processing": "جاري المعالجة..."
+      },
+      "toasts": {
+        "promoRequired": "من فضلك أدخل كود الخصم",
+        "diamondsApplied": "تم تطبيق الماسات",
+        "diamondsRemoved": "تم إزالة الماسات",
+        "giftsCashApplied": "تم تطبيق رصيد الهدايا",
+        "giftsCashRemoved": "تم إزالة رصيد الهدايا",
+        "quantityUpdateFailed": "فشل تحديث الكمية. من فضلك حاول مرة أخرى.",
+        "removeItemFailed": "فشل حذف العنصر. من فضلك حاول مرة أخرى.",
+        "checkoutGenericError": "حدث خطأ أثناء إتمام الطلب. من فضلك حاول مرة أخرى.",
+        "cartDataNotAvailable": "بيانات السلة غير متاحة",
+        "cartNotActive": "السلة غير مفعّلة. من فضلك حدّث السلة ثم حاول مرة أخرى."
+      }
+    },
+    "addressModal": {
+      "title": {
+        "add": "إضافة عنوان توصيل",
+        "edit": "تعديل العنوان"
+      },
+      "pickFromMap": "اختيار الموقع من الخريطة",
+      "fields": {
+        "contactName": "اسم جهة الاتصال *",
+        "contactNumber1": "رقم التواصل *",
+        "contactNumber2": "رقم بديل (اختياري)",
+        "email": "البريد الإلكتروني (اختياري)",
+        "address1": "العنوان (سطر 1) *",
+        "address2": "العنوان (سطر 2) (اختياري)",
+        "city": "المدينة *",
+        "state": "المحافظة (اختياري)",
+        "postcode": "الرمز البريدي (اختياري)",
+        "country": "الدولة *",
+        "comment": "ملاحظات إضافية (اختياري)",
+        "defaultLabel": "تعيينه كعنوان توصيل افتراضي"
+      },
+      "errors": {
+        "address1Required": "العنوان مطلوب",
+        "cityRequired": "المدينة مطلوبة",
+        "countryRequired": "الدولة مطلوبة",
+        "contactNameRequired": "اسم جهة الاتصال مطلوب",
+        "contactNumberRequired": "رقم التواصل مطلوب"
+      },
+      "actions": {
+        "cancel": "إلغاء",
+        "saving": "جاري الحفظ...",
+        "add": "إضافة عنوان",
+        "update": "تحديث"
+      },
+      "toasts": {
+        "locationSelectedSuccess": "تم اختيار الموقع بنجاح",
+        "locationSelectedVerify": "تم اختيار الموقع. من فضلك راجع وأكمل تفاصيل العنوان.",
+        "addressUpdated": "تم تحديث العنوان بنجاح",
+        "addressAdded": "تمت إضافة العنوان بنجاح",
+        "loginRequired": "من فضلك قم بتسجيل الدخول لإضافة عنوان",
+        "saveFailed": "فشل حفظ العنوان. من فضلك حاول مرة أخرى."
+      }
+    },
+    "paymentConfirmationModal": {
+      "title": "تأكيد الدفع",
+      "text": {
+        "aboutToPay": "أنت على وشك الدفع {amount} {currency} ",
+        "areYouSure": "هل أنت متأكد؟"
+      },
+      "actions": {
+        "confirm": "نعم، متأكد",
+        "cancel": "إلغاء",
+        "processing": "جاري المعالجة..."
+      }
+    },
+    "orderConfirmationModal": {
+      "title": "تأكيد الطلب",
+      "text": {
+        "successTitle": "تم تأكيد طلبك بنجاح",
+        "successDesc": "استمتع بكوبونات حصرية وخصومات موسمية وعروض حقيقية من مزوّدين موثوقين في مدينتك"
+      },
+      "actions": {
+        "track": "تتبع طلبي"
+      }
+    },
+    "checkoutCartItem": {
+      "typeLabel": {
+        "product": "منتج",
+        "service": "خدمة",
+        "reservation": "حجز",
+        "membership": "عضوية",
+        "giftCard": "بطاقة هدية",
+        "item": "عنصر"
+      },
+      "noImage": "لا توجد صورة متاحة",
+      "discountOff": "خصم {{percent}}%",
+      "deliveryBy": "يصل قبل {{date}}",
+      "purchasePrice": "سعر الشراء:",
+      "addedOn": "تمت الإضافة في:",
+      "aria": {
+        "removeItem": "حذف العنصر",
+        "decreaseQty": "تقليل الكمية",
+        "increaseQty": "زيادة الكمية"
+      }
+    },
+    "notes": {
+      "page": {
+        "title": "الملاحظات",
+        "back": "رجوع"
+      },
+      "header": {
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "unsavedChanges": "تغييرات غير محفوظة"
+      },
+      "loading": {
+        "loadingNotes": "جاري تحميل الملاحظات...",
+        "loadingSubtitle": "من فضلك انتظر لحظة",
+        "initializingTitle": "جاري تهيئة دفتر الملاحظات...",
+        "initializingSubtitle": "جاري إعداد دفتر الملاحظات",
+        "addingModelsTitle": "جاري إضافة نماذج افتراضية...",
+        "addingModelsSubtitle": "من فضلك انتظر أثناء إضافة التصنيفات الافتراضية"
+      },
+      "sidebar": {
+        "title": "ملاحظاتك",
+        "addNew": "إضافة جديد",
+        "empty": "لا توجد قوائم بعد",
+        "untitled": "قائمة بدون عنوان",
+        "actions": {
+          "editAria": "تعديل الملاحظة",
+          "deleteAria": "حذف الملاحظة"
+        }
+      },
+      "main": {
+        "empty": {
+          "title": "اختر قائمة لعرض ملاحظتها",
+          "cta": "إضافة ملاحظات جديدة"
+        },
+        "edit": "تعديل"
+      }
+    },
+    "addEvent": {
+      "modal": {
+        "title": "حدث جديد",
+        "fields": {
+          "titleLabel": "عنوان الحدث",
+          "descriptionLabel": "الوصف",
+          "startDateTimeLabel": "تاريخ ووقت البدء",
+          "endDateTimeLabel": "تاريخ ووقت الانتهاء",
+          "defaultLabel": "تعيينه كحدث افتراضي"
+        },
+        "placeholders": {
+          "title": "أدخل عنوان الحدث",
+          "description": "أدخل وصف الحدث (اختياري)",
+          "startDate": "اختر تاريخ البدء",
+          "endDate": "اختر تاريخ الانتهاء",
+          "time": "HH:MM"
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "create": "إنشاء الحدث",
+          "addNewEvent": "إضافة حدث جديد"
+        }
+      },
+      "validation": {
+        "titleRequired": "عنوان الحدث مطلوب",
+        "startTimeRequired": "وقت البدء مطلوب",
+        "durationRequired": "المدة مطلوبة",
+        "invalidTimeFormat": "صيغة الوقت غير صحيحة (استخدم HH:MM)",
+        "durationPositive": "يجب أن تكون المدة رقمًا موجبًا"
+      }
+    },
+     "orderProcessing": {
+    "pageTitle": "جاري معالجة طلبك",
+    "processingTitle": "جاري معالجة طلبك",
+    "orderProcessingTitle": "معالجة الطلب",
+    "suspense": {
+      "title": "جاري التحميل...",
+      "subtitle": "يرجى الانتظار بينما نقوم بتحميل معلومات طلبك."
+    },
+    "errors": {
+      "missingCheckoutInfo": "معلومات الدفع غير متوفرة",
+      "checkoutFailed": "فشلت عملية الدفع. يرجى المحاولة مرة أخرى.",
+      "processingTimeout": "انتهت مهلة معالجة الطلب. يرجى المحاولة مرة أخرى.",
+      "statusCheckFailed": "تعذر التحقق من حالة الطلب. يرجى المحاولة مرة أخرى.",
+      "processingFailed": "فشلت معالجة الطلب. يرجى المحاولة مرة أخرى.",
+      "orderDataNotAvailable": "بيانات الطلب غير متوفرة",
+      "createOrderFailed": "تعذر إنشاء الطلب"
+    },
+    "toast": {
+      "checkoutFailed": "فشلت عملية الدفع. يرجى المحاولة مرة أخرى.",
+      "processingTimeout": "انتهت مهلة معالجة الطلب. يرجى المحاولة مرة أخرى.",
+      "statusCheckFailed": "تعذر التحقق من حالة الطلب. يرجى المحاولة مرة أخرى.",
+      "processingFailed": "فشلت معالجة الطلب. يرجى المحاولة مرة أخرى.",
+      "orderCreated": "تم إنشاء الطلب بنجاح!"
+    },
+    "status": {
+      "creatingTitle": "جاري إنشاء طلبك...",
+      "creatingSubtitle": "يرجى الانتظار بينما نقوم بإتمام طلبك.",
+      "completeTitle": "اكتملت معالجة الطلب",
+      "completeSubtitle": "تمت معالجة طلبك بنجاح.",
+      "failedTitle": "فشلت معالجة الطلب",
+      "failedSubtitle": "حدث خطأ أثناء معالجة طلبك.",
+      "processingTitle": "جاري معالجة طلبك...",
+      "processingSubtitle": "يتم الآن معالجة طلبك. قد يستغرق ذلك بعض الوقت.",
+      "queuedTitle": "طلبك في قائمة الانتظار",
+      "queuedSubtitle": "طلبك ينتظر المعالجة. قد يستغرق ذلك بعض الوقت."
+    },
+    "polling": {
+      "checking": "جاري التحقق من حالة الطلب...",
+      "attempt": "محاولة {current} من {max}"
+    },
+    "actions": {
+      "backToCart": "العودة إلى السلة",
+      "retry": "إعادة المحاولة"
+    },
+    "errorScreen": {
+      "title": "فشلت معالجة الطلب",
+      "actionLabel": "العودة إلى السلة"
+    },
+    "overlay": {
+      "title": "جاري إنشاء الطلب...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    }
+   }
+  },
+  "orders": {
+    "page": {
+      "title": "قائمة الطلبات"
+    },
+    "loading": {
+      "title": "جارٍ تحميل الطلبات...",
+      "subtitle": "يرجى الانتظار لحظة"
+    },
+    "error": {
+      "title": "خطأ أثناء تحميل الطلبات",
+      "message": "يرجى المحاولة مرة أخرى لاحقًا",
+      "actionLabel": "العودة إلى الرئيسية"
+    },
+    "empty": {
+      "title": "ليس لديك أي طلبات",
+      "description": "ابدأ باستكشاف الخدمات والمنتجات لتبدأ رحلتك",
+      "actionLabel": "ابدأ التسوق"
+    },
+    "sections": {
+      "requestsInProgressTitle": "طلبات قيد التنفيذ",
+      "requestsInProgressSuffix": "طلبات قيد التنفيذ",
+      "ordersInProgressTitle": "طلبات قيد التنفيذ",
+      "ordersInProgressSuffix": "طلبات قيد التنفيذ",
+      "requestsHistoryTitle": "سجل الطلبات",
+      "requestsHistorySuffix": "طلبات",
+      "ordersHistoryTitle": "سجل الطلبات",
+      "ordersHistorySuffix": "طلبات"
+    },
+    "table": {
+      "orderNumber": "رقم الطلب",
+      "arriveIn": "ميعاد الوصول",
+      "paid": "مدفوع",
+      "status": "الحالة"
+    },
+    "aria": {
+      "gridView": "عرض الشبكة",
+      "listView": "عرض القائمة"
+    },
+    "actions": {
+      "cancelLoadingTitle": "جارٍ إلغاء الطلب...",
+      "cancelLoadingSubtitle": "يرجى الانتظار لحظة"
+    },
+    "card": {
+      "itemFallback": "عنصر",
+      "serviceFallback": "خدمة",
+      "providerFallback": "مزود",
+      "servicePackage": "باقة الخدمة"
+    }
+  },
+  "orderDetails": {
+    "pageTitle": "تفاصيل الطلب",
+    "loading": {
+      "title": "جارٍ تحميل الطلب...",
+      "subtitle": "يرجى الانتظار لحظة"
+    },
+    "error": {
+      "title": "الطلب غير موجود",
+      "message": "الطلب الذي تبحث عنه غير موجود أو تمت إزالته",
+      "actionLabel": "العودة إلى الطلبات"
+    },
+    "header": {
+      "collapseSummary": "طي ملخص الطلب",
+      "expandSummary": "توسيع ملخص الطلب",
+      "orderLabel": "طلب",
+      "placedLabel": "تاريخ الطلب",
+      "orderIdLabel": "معرّف الطلب",
+      "item": "عنصر",
+      "items": "عناصر",
+      "countLabel": "العدد",
+      "providerLabel": "المزوّد",
+      "urgentOrder": "طلب عاجل",
+      "clientConfirmation": "تأكيد العميل",
+      "confirmed": "مؤكد",
+      "pending": "قيد الانتظار"
+    },
+    "delivery": {
+      "expected": "التسليم المتوقع",
+      "preferred": "التسليم المفضل",
+      "status": "حالة التوصيل",
+      "trackTitle": "تتبع طلبك",
+      "trackingNumber": "رقم التتبع",
+      "copy": "نسخ",
+      "trackOnline": "تتبع عبر الإنترنت",
+      "trackDesc": "تتبّع حالة الطلب وتحديثات التوصيل",
+      "track": "تتبع",
+      "detailsTitle": "تفاصيل التوصيل",
+      "start": "البداية",
+      "delivery": "التسليم"
+    },
+    "summary": {
+      "title": "ملخص الطلب",
+      "noImage": "لا توجد صورة",
+      "subtotal": "المجموع الفرعي",
+      "taxesFees": "الضرائب والرسوم",
+      "shipping": "الشحن",
+      "discount": "الخصم",
+      "deposit": "العربون",
+      "total": "الإجمالي"
+    },
+    "payment": {
+      "infoTitle": "معلومات الدفع",
+      "method": "طريقة الدفع",
+      "status": "حالة الدفع",
+      "coupon": "كود الخصم",
+      "summaryTitle": "ملخص الدفع",
+      "paidAmount": "المبلغ المدفوع",
+      "paidAlt": "مدفوع (بديل)",
+      "remainingAmount": "المبلغ المتبقي",
+      "progress": "تقدم الدفع",
+      "planTitle": "خطة الدفع",
+      "planName": "اسم الخطة",
+      "numPayments": "عدد الدفعات",
+      "firstPayment": "أول دفعة",
+      "lastPayment": "آخر دفعة",
+      "planStatus": "حالة الخطة"
+    },
+    "paymentStatus": {
+      "pending": "قيد الانتظار",
+      "paid": "مدفوع",
+      "unpaid": "غير مدفوع",
+      "failed": "فشل",
+      "processing": "قيد المعالجة"
+    },
+    "paymentMethod": {
+      "cashOnDelivery": "الدفع عند الاستلام",
+      "card": "بطاقة",
+      "wallet": "محفظة"
+    },
+    "client": {
+      "title": "معلومات العميل",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف"
+    },
+    "createdBy": {
+      "title": "أنشأ بواسطة",
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف"
+    },
+    "notes": {
+      "title": "الملاحظات والتعليقات",
+      "orderComment": "تعليق الطلب",
+      "orderNotes": "ملاحظات الطلب",
+      "providerNotes": "ملاحظات المزوّد"
+    },
+    "additional": {
+      "title": "معلومات إضافية",
+      "cartId": "معرّف السلة",
+      "checkoutOrderId": "معرّف طلب الدفع",
+      "paymentPlanId": "معرّف خطة الدفع",
+      "created": "تاريخ الإنشاء",
+      "lastModified": "آخر تعديل",
+      "overdue": "متأخر",
+      "day": "يوم",
+      "days": "أيام",
+      "inactiveStatus": "الحالة: غير نشط"
+    },
+    "actions": {
+      "viewInvoice": "عرض الفاتورة",
+      "downloadInvoice": "تحميل الفاتورة",
+      "downloading": "جارٍ التحميل...",
+      "backToOrders": "العودة إلى الطلبات"
+    },
+    "reviews": {
+      "title": "مراجعات وتعليقات الطلب",
+      "addReview": "إضافة مراجعة",
+      "writeReview": "اكتب مراجعتك",
+      "ratingLabel": "التقييم *",
+      "reviewTitle": "عنوان المراجعة",
+      "reviewBodyLabel": "مراجعتك *",
+      "reviewPlaceholder": "شارك تجربتك مع هذا الطلب...",
+      "cancel": "إلغاء",
+      "submit": "إرسال المراجعة",
+      "submitting": "جارٍ الإرسال...",
+      "submitSuccess": "تم إرسال المراجعة بنجاح!",
+      "submitError": "فشل إرسال المراجعة",
+      "loading": "جارٍ تحميل المراجعات...",
+      "empty": "لا توجد مراجعات بعد. كن أول من يراجع هذا الطلب!"
+    },
+    "itemReviews": {
+      "title": "مراجعة عناصر هذا الطلب",
+      "addReview": "إضافة مراجعة",
+      "productTitle": "مراجعة هذا المنتج",
+      "serviceTitle": "مراجعة هذه الخدمة",
+      "titlePlaceholder": "أدخل عنوانًا (اختياري)",
+      "productPlaceholder": "شارك تجربتك مع هذا المنتج...",
+      "servicePlaceholder": "شارك تجربتك مع هذه الخدمة...",
+      "quantityLabel": "الكمية",
+      "productSubmitSuccess": "تم إرسال مراجعة المنتج بنجاح!",
+      "serviceSubmitSuccess": "تم إرسال مراجعة الخدمة بنجاح!",
+      "submitError": "فشل إرسال المراجعة",
+      "productFallback": "منتج",
+      "serviceFallback": "خدمة"
+    },
+    "toast": {
+      "trackingCopied": "تم نسخ رقم التتبع إلى الحافظة",
+      "invoiceDownloaded": "تم تحميل الفاتورة بنجاح",
+      "invoiceDownloadFailed": "فشل تحميل الفاتورة"
+    }
+  },
+  "invoice": {
+    "pageTitle": "فاتورة",
+    "loading": {
+      "title": "جارٍ تحميل الفاتورة...",
+      "subtitle": "يرجى الانتظار لحظة"
+    },
+    "error": {
+      "title": "الفاتورة غير موجودة",
+      "message": "تعذر تحميل فاتورة هذا الطلب",
+      "actionLabel": "العودة إلى الطلب"
+    },
+    "header": {
+      "back": "رجوع",
+      "invoiceNumber": "فاتورة",
+      "downloadPdf": "تحميل PDF",
+      "downloading": "جارٍ التحميل...",
+      "print": "طباعة"
+    },
+    "invoice": {
+      "title": "فاتورة",
+      "orderLabel": "طلب",
+      "dateLabel": "التاريخ",
+      "fileLabel": "الملف",
+      "from": "من",
+      "to": "إلى",
+      "noBilling": "لا توجد معلومات فوترة متاحة"
+    },
+    "items": {
+      "title": "العناصر",
+      "item": "العنصر",
+      "quantity": "الكمية",
+      "price": "السعر",
+      "total": "الإجمالي",
+      "empty": "لا توجد عناصر"
+    },
+    "summary": {
+      "subtotal": "المجموع الفرعي",
+      "discount": "الخصم",
+      "deposit": "العربون",
+      "discountCodes": "أكواد الخصم",
+      "total": "الإجمالي"
+    },
+    "payment": {
+      "title": "معلومات الدفع",
+      "method": "طريقة الدفع",
+      "status": "حالة الدفع",
+      "coupon": "كود الخصم",
+      "amount": "مبلغ الدفع"
+    },
+    "plan": {
+      "title": "خطة الدفع",
+      "plan": "الخطة",
+      "numPayments": "عدد الدفعات",
+      "amount": "مبلغ الدفعة",
+      "firstPayment": "أول دفعة",
+      "lastPayment": "آخر دفعة",
+      "status": "الحالة"
+    },
+    "delivery": {
+      "title": "معلومات التوصيل",
+      "preferredDate": "تاريخ التوصيل المفضل",
+      "urgent": "طلب عاجل",
+      "requireConfirmation": "يتطلب تأكيد العميل",
+      "confirmed": "مؤكد",
+      "pending": "قيد الانتظار"
+    },
+    "notes": {
+      "title": "ملاحظات"
+    },
+    "footer": {
+      "thanks": "شكرًا لتعاملك معنا!",
+      "tagline": "شريكك الموثوق لحفل الزفاف"
+    },
+    "toast": {
+      "downloaded": "تم تحميل الفاتورة بنجاح",
+      "downloadFailed": "فشل تحميل الفاتورة"
+    }
+  },
+  "orderCard": {
+    "aria": {
+      "collapseSummary": "طي ملخص الطلب",
+      "expandSummary": "توسيع ملخص الطلب"
+    },
+    "header": {
+      "orderLabel": "طلب",
+      "placedLabel": "تاريخ الطلب",
+      "item": "عنصر",
+      "items": "عناصر"
+    },
+    "payment": {
+      "status": "حالة الدفع",
+      "method": "طريقة الدفع",
+      "progress": "تقدم الدفع",
+      "paid": "المدفوع",
+      "remaining": "المتبقي"
+    },
+    "paymentStatus": {
+      "pending": "قيد الانتظار",
+      "paid": "مدفوع",
+      "unpaid": "غير مدفوع",
+      "failed": "فشل",
+      "processing": "قيد المعالجة"
+    },
+    "paymentMethod": {
+      "cashOnDelivery": "الدفع عند الاستلام",
+      "card": "بطاقة",
+      "wallet": "محفظة"
+    },
+    "actions": {
+      "viewDetails": "عرض التفاصيل",
+      "reorder": "إعادة الطلب",
+      "cancelOrder": "إلغاء الطلب"
+    },
+    "arrival": {
+      "label": "ميعاد الوصول"
+    },
+    "summary": {
+      "title": "ملخص الطلب",
+      "quantity": "الكمية",
+      "subtotal": "المجموع الفرعي",
+      "discount": "الخصم",
+      "taxesFees": "الضرائب والرسوم",
+      "deliveryFee": "رسوم التوصيل",
+      "deposit": "العربون",
+      "total": "الإجمالي"
+    }
+  },
+  "orderListItem": {
+    "orderLabel": "طلب",
+    "placedLabel": "تاريخ الطلب",
+    "status": {
+      "inProgress": "قيد التنفيذ",
+      "outForDelivery": "في الطريق",
+      "completed": "مكتمل",
+      "cancelled": "ملغي"
+    },
+    "actions": {
+      "cancel": "إلغاء",
+      "cancelAria": "إلغاء الطلب"
+    }
+  },
+  "historySection": {
+    "clear": "مسح السجل"
+  },
+  "cancelOrderModal": {
+    "title": "إلغاء الطلب",
+    "question": "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
+    "placeholder": "من فضلك أخبرنا بسبب الإلغاء (اختياري).",
+    "keep": "الاحتفاظ بالطلب",
+    "cancel": "إلغاء الطلب"
+  },
+  "orderProgress": {
+    "status": {
+      "preparing": {
+        "title": "تم استلام طلبك!",
+        "description": "تم تأكيد طلبك ونقوم بتجهيزه بعناية."
+      },
+      "onTheWay": {
+        "title": "طلبك في الطريق!",
+        "description": "تم شحن طلبك وهو في طريقه إليك."
+      },
+      "received": {
+        "title": "تم استلام الطلب",
+        "description": "تم استلام طلبك وهو جاهز للاستلام."
+      },
+      "delivered": {
+        "title": "اكتمل الطلب",
+        "description": "تم تسليم طلبك بنجاح. شكرًا لاختيارك OurBride!"
+      },
+      "cancelled": {
+        "title": "تم إلغاء الطلب",
+        "description": "تم إلغاء هذا الطلب. نأمل خدمتك في المرة القادمة."
+      }
+    },
+    "steps": {
+      "preparing": "جارٍ التجهيز",
+      "onTheWay": "في الطريق",
+      "received": "تم الاستلام"
+    },
+    "alt": {
+      "preparing": "جارٍ تجهيز الطلب",
+      "onTheWay": "الطلب في الطريق",
+      "received": "تم استلام الطلب",
+      "delivered": "اكتمل الطلب",
+      "cancelled": "تم إلغاء الطلب"
+    }
+  },
+  "deliveryStatus": {
+    "notSet": "غير محدد",
+    "created": "تم الإنشاء",
+    "readyForDelivery": "جاهز للتوصيل",
+    "inTransit": "قيد النقل",
+    "outForDelivery": "خارج للتوصيل",
+    "delivered": "تم التسليم",
+    "failed": "فشل",
+    "returned": "تم الإرجاع"
+  },
+  "statusBadge": {
+    "default": {
+      "completed": "تم",
+      "delivered": "تم",
+      "cancelled": "ملغي",
+      "inProgress": "قيد التنفيذ"
+    }
+  },
+  "deliveryAddresses": {
+  "title": "عناوين التوصيل",
+  "count": "{count} {count, plural, one {عنوان} other {عناوين}}",
+  "addAddress": "إضافة عنوان",
+  "loadingTitle": "جارٍ تحميل العناوين...",
+  "loadingSubtitle": "يرجى الانتظار لحظة",
+  "errorTitle": "حدث خطأ أثناء تحميل العناوين",
+  "errorMessage": "يرجى المحاولة مرة أخرى لاحقًا",
+  "errorAction": "العودة إلى الرئيسية",
+  "emptyTitle": "ليس لديك أي عناوين توصيل",
+  "emptyDescription": "أضف أول عنوان توصيل لتسريع عملية الدفع",
+  "contactFallback": "عنوان التوصيل",
+  "defaultLabel": "العنوان الافتراضي",
+  "phone": "الهاتف:",
+  "altPhone": "بديل:",
+  "email": "البريد الإلكتروني:",
+  "setDefault": "تعيين كافتراضي",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا العنوان؟",
+  "deleteSuccess": "تم حذف العنوان بنجاح",
+  "deleteError": "فشل حذف العنوان",
+  "defaultSuccess": "تم تحديث العنوان الافتراضي بنجاح",
+  "defaultError": "فشل تعيين العنوان الافتراضي",
+  "deleteLoading": "جارٍ حذف العنوان...",
+  "defaultLoading": "جارٍ تعيين العنوان الافتراضي...",
+  "saveLoading": "جارٍ حفظ العنوان...",
+  "processing": "جارٍ المعالجة...",
+  "countryFallback": "مصر"
+  },
+  "reelDetails": {
+    "loading": "جاري تحميل الريل...",
+    "reelNotFoundTitle": "الريل غير موجود",
+    "reelNotFoundMessage": "الريل الذي تبحثين عنه غير موجود أو تمت إزالتها."
+  },
+  "postDetails": {
+    "loading": "جاري تحميل المنشور...",
+    "postNotFoundTitle": "المنشور غير موجود",
+    "postNotFoundMessage": "المنشور الذي تبحثين عنه غير موجود أو تمت إزالتها."
+  },
+  "footer": {
+    "description": "منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
+    "downloadApp": "تحميل تطبيق Ourbride",
+    "socialLinks": "روابط التواصل الاجتماعي",
+    "sections": {
+      "mainPages": {
+        "title": "الصفحات الرئيسية",
+        "home": "الرئيسية",
+        "products": "المنتجات",
+        "services": "الخدمات",
+        "community": "المجتمع"
+      },
+      "eventsPlanning": {
+        "title": "تخطيط الفعاليات",
+        "myEvents": "فعالياتي",
+        "eventsDay": "يوم الفعاليات",
+        "budgetPlanning": "تخطيط الميزانية",
+        "guestList": "قائمة الضيوف",
+        "todoList": "قائمة المهام"
+      },
+      "legal": {
+        "title": "قانوني",
+        "privacyPolicy": "سياسة الخصوصية",
+        "termsConditions": "الشروط والأحكام",
+        "settings": "الإعدادات"
+      },
+      "support": {
+        "title": "الدعم",
+        "helpCenter": "مركز المساعدة",
+        "aboutUs": "من نحن",
+        "shipping": "الشحن",
+        "returns": "الإرجاع",
+        "downloadApp": "تحميل التطبيق",
+        "sitemap": "خريطة الموقع"
+      },
+      "community": {
+        "title": "المجتمع",
+        "posts": "المنشورات",
+        "blogs": "المدونات",
+        "articles": "المقالات",
+        "reels": "الريلز",
+        "decisionGroups": "مجموعات القرارات",
+        "contests": "المسابقات"
+      }
+    },
+    "social": {
+      "instagram": "زيارة صفحة الإنستجرام",
+      "facebook": "زيارة صفحة الفيسبوك",
+      "tiktok": "زيارة صفحة التيك توك"
+    },
+    "copyright": "© {year} جميع الحقوق محفوظة لـ OurBride"
+  }
+  }
 }

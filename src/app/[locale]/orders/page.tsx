@@ -2,6 +2,9 @@
 
 import { useState, useMemo } from 'react'
 import { useRouter } from '@/i18n/navigation'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
+import { useI18nLocale } from '@/i18n/hooks'
+import { pickLocalizedText } from '@/utils/translation/i18nText'
 import { UserPageLayout } from '@/components/layout'
 import {
   CancelOrderModal,
@@ -14,8 +17,9 @@ import {
   OrderCard,
   OrderListItem,
   RequestCard,
-  ErrorDisplay,
+  ErrorDisplay, 
   LoadingOverlay,
+  LoadingSpinner,
 } from '@/components/ui'
 import { Grid3x3, List } from 'lucide-react'
 import { Button } from '@/components/ui'
@@ -33,6 +37,8 @@ import {
   PurchaseType,
   PurchaseStatus,
 } from '@/../client/common/api/gen/ourbride-api'
+
+type TranslateFn = (key: string, values?: Record<string, string | number | Date>) => string
 
 /**
  * Map API OrderStatus to component OrderStatus
@@ -54,7 +60,7 @@ const mapOrderStatus = (status: ApiOrderStatus | string): OrderStatus => {
 /**
  * Map OrderResponse to OrderCard format
  */
-const mapOrderToOrderCard = (order: OrderResponse) => {
+const mapOrderToOrderCard = (order: OrderResponse, t: TranslateFn, locale: string) => {
 
   // Format order date - use a static fallback to avoid hydration mismatch
   const orderDate = order.orderDate
@@ -97,7 +103,11 @@ const mapOrderToOrderCard = (order: OrderResponse) => {
     })
     .map((purchase: PurchaseResponse) => {
       // Use product data if available, otherwise use purchase name/image
-      const productName = purchase.product?.nameEn ?? purchase.product?.nameAr ?? purchase.nameEn ?? purchase.nameAr ?? purchase.name ?? 'Item'
+      const productName = pickLocalizedText(locale, {
+        en: purchase.product?.nameEn ?? purchase.nameEn,
+        ar: purchase.product?.nameAr ?? purchase.nameAr,
+        fallback: purchase.name ?? t('card.itemFallback'),
+      })
       const productImage = purchase.product?.image ?? purchase.imageUrl ?? '/images/placeholder-product.png'
 
       return {
@@ -147,7 +157,7 @@ const mapOrderToOrderCard = (order: OrderResponse) => {
 /**
  * Map PurchaseResponse (service) to RequestCard format
  */
-const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
+const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse, t: TranslateFn, locale: string) => {
   if (!purchase.service) return null
 
   const service = purchase.service
@@ -194,7 +204,11 @@ const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
     status,
     service: {
       id: purchase.serviceId?.toString() ?? purchase.id.toString(),
-      title: service.nameEn ?? service.nameAr ?? 'Service',
+      title: pickLocalizedText(locale, {
+        en: service.nameEn,
+        ar: service.nameAr,
+        fallback: t('card.serviceFallback'),
+      }),
       image: service.imageUrl ?? '/placeholder-service.png',
       rating: {
         value: service.rate ?? 0,
@@ -202,7 +216,11 @@ const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
       },
       provider: {
         id: purchase.providerId?.toString() ?? service.providerId?.toString() ?? service.provider?.id?.toString(),
-        name: purchase.providerName ?? service.provider?.nameEn ?? service.provider?.nameAr ?? 'Provider',
+        name: pickLocalizedText(locale, {
+          en: service.provider?.nameEn,
+          ar: service.provider?.nameAr,
+          fallback: purchase.providerName ?? t('card.providerFallback'),
+        }),
       },
     },
     assignedTo: purchase.providerName,
@@ -210,7 +228,7 @@ const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
     dueTime,
     packages: [
       {
-        title: 'Service Package',
+        title: t('card.servicePackage'),
         price: price,
       },
     ],
@@ -223,6 +241,9 @@ const mapServicePurchaseToRequestCard = (purchase: PurchaseResponse) => {
 
 export default function OrdersPage() {
   const router = useRouter()
+  const t = useI18nTranslations('orders')
+  const isRTL = useIsRTL()
+  const locale = useI18nLocale()
   const [cancelModalOpen, setCancelModalOpen] = useState(false)
   const [successModalOpen, setSuccessModalOpen] = useState(false)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
@@ -262,8 +283,8 @@ export default function OrdersPage() {
       (order: OrderResponse) => !order.isCompleted && !order.isCancelled
     )
 
-    return inProgress.map(mapOrderToOrderCard)
-  }, [clientOrdersData])
+    return inProgress.map((order) => mapOrderToOrderCard(order, t, locale))
+  }, [clientOrdersData, t, locale])
 
   const ordersHistory = useMemo(() => {
     const allOrders: OrderResponse[] = clientOrdersData?.items ?? []
@@ -273,8 +294,8 @@ export default function OrdersPage() {
       (order: OrderResponse) => order.isCompleted || order.isCancelled
     )
 
-    return history.map(mapOrderToOrderCard)
-  }, [clientOrdersData])
+    return history.map((order) => mapOrderToOrderCard(order, t, locale))
+  }, [clientOrdersData, t, locale])
 
   // Map service orders to request cards
   const requestsInProgress = useMemo(() => {
@@ -305,9 +326,9 @@ export default function OrdersPage() {
     )
 
     return inProgress
-      .map(mapServicePurchaseToRequestCard)
+      .map((purchase) => mapServicePurchaseToRequestCard(purchase, t, locale))
       .filter((request): request is NonNullable<typeof request> => request !== null)
-  }, [cartsWithProviders])
+  }, [cartsWithProviders, t, locale])
 
   const requestsHistory = useMemo(() => {
     if (!cartsWithProviders) return []
@@ -336,9 +357,9 @@ export default function OrdersPage() {
     )
 
     return history
-      .map(mapServicePurchaseToRequestCard)
+      .map((purchase) => mapServicePurchaseToRequestCard(purchase, t, locale))
       .filter((request): request is NonNullable<typeof request> => request !== null)
-  }, [cartsWithProviders])
+  }, [cartsWithProviders, t, locale])
 
   const isLoading = filterType === 'products'
     ? isLoadingOrders
@@ -418,7 +439,7 @@ export default function OrdersPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Order List"
+          title={t('page.title')}
           rightContent={
             hasRequests ? (
               <ServicesProductsFilter
@@ -429,10 +450,10 @@ export default function OrdersPage() {
             ) : undefined
           }
         />
-        <LoadingOverlay
+        <LoadingSpinner
+          size='xl'
           open={true}
-          title="Loading orders..."
-          subtitle="Please wait a moment"
+          text={t('loading.title')}
         />
       </UserPageLayout>
     )
@@ -443,7 +464,7 @@ export default function OrdersPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Order List"
+          title={t('page.title')}
           rightContent={
             hasRequests ? (
               <ServicesProductsFilter
@@ -455,9 +476,9 @@ export default function OrdersPage() {
           }
         />
         <ErrorDisplay
-          title="Error loading orders"
-          message="Please try again later"
-          actionLabel="Back to Home"
+          title={t('error.title')}
+          message={t('error.message')}
+          actionLabel={t('error.actionLabel')}
           actionHref="/"
         />
       </UserPageLayout>
@@ -467,19 +488,20 @@ export default function OrdersPage() {
   return (
     <>
       <UserPageLayout>
-        {!hasAnyContent ? (
-          <EmptyState
-            illustration={orderEmptySvg}
-            title="You don't have any orders"
-            description="Start exploring services and products to begin your journey"
-            actionLabel="Start Shopping"
-            actionHref="/"
-          />
-        ) : (
-          <>
+        <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'text-right' : 'text-left'}>
+          {!hasAnyContent ? (
+            <EmptyState
+              illustration={orderEmptySvg}
+              title={t('empty.title')}
+              description={t('empty.description')}
+              actionLabel={t('empty.actionLabel')}
+              actionHref="/"
+            />
+          ) : (
+            <>
             {/* Page Header */}
             <PageHeader
-              title="Order List"
+              title={t('page.title')}
               rightContent={
                 <div className="flex items-center gap-3">
                   {hasRequests && (
@@ -496,7 +518,7 @@ export default function OrdersPage() {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setViewMode('grid')}
-                        aria-label="Grid view"
+                        aria-label={t('aria.gridView')}
                       >
                         <Grid3x3 className="h-4 w-4" />
                       </Button>
@@ -505,7 +527,7 @@ export default function OrdersPage() {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() => setViewMode('list')}
-                        aria-label="List view"
+                        aria-label={t('aria.listView')}
                       >
                         <List className="h-4 w-4" />
                       </Button>
@@ -519,9 +541,9 @@ export default function OrdersPage() {
             {hasRequests && (
               <>
                 <SectionHeader
-                  title="Request in Progress"
+                  title={t('sections.requestsInProgressTitle')}
                   count={requestsInProgress.length}
-                  suffix="Requests in Progress"
+                  suffix={t('sections.requestsInProgressSuffix')}
                 />
                 <div className="space-y-6 mb-12">
                   {requestsInProgress.map(request => (
@@ -556,9 +578,9 @@ export default function OrdersPage() {
             {ordersInProgress.length > 0 && (
               <>
                 <SectionHeader
-                  title="Order In Progress"
+                  title={t('sections.ordersInProgressTitle')}
                   count={ordersInProgress.length}
-                  suffix="Orders In Progress"
+                  suffix={t('sections.ordersInProgressSuffix')}
                 />
 
                 {/* Order Cards or List */}
@@ -606,22 +628,22 @@ export default function OrdersPage() {
                     <div className="flex items-center bg-white border-b border-gray-100">
                       <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-5 py-0">
                         <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
-                          Order Number
+                          {t('table.orderNumber')}
                         </span>
                       </div>
-                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                      <div className={`flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 ${isRTL ? 'border-r' : 'border-l'} border-gray-100`}>
                         <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
-                          Arrive in
+                          {t('table.arriveIn')}
                         </span>
                       </div>
-                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                      <div className={`flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 ${isRTL ? 'border-r' : 'border-l'} border-gray-100`}>
                         <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
-                          Paid
+                          {t('table.paid')}
                         </span>
                       </div>
-                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                      <div className={`flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 ${isRTL ? 'border-r' : 'border-l'} border-gray-100`}>
                         <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
-                          Status
+                          {t('table.status')}
                         </span>
                       </div>
                     </div>
@@ -652,9 +674,9 @@ export default function OrdersPage() {
             {/* Requests History Section */}
             {hasRequestsHistory && (
               <HistorySection
-                title="Requests History"
+                title={t('sections.requestsHistoryTitle')}
                 itemCount={requestsHistory.length}
-                suffix="Requests"
+                suffix={t('sections.requestsHistorySuffix')}
                 onClearHistory={handleClearHistory}
               >
                 {requestsHistory.map(request => (
@@ -682,9 +704,9 @@ export default function OrdersPage() {
             {/* Orders History Section */}
             {ordersHistory.length > 0 && (
               <HistorySection
-                title="Orders History"
+                title={t('sections.ordersHistoryTitle')}
                 itemCount={ordersHistory.length}
-                suffix="Orders"
+                suffix={t('sections.ordersHistorySuffix')}
                 onClearHistory={handleClearHistory}
               >
                 {viewMode === 'grid' ? (
@@ -727,22 +749,22 @@ export default function OrdersPage() {
                     <div className="flex items-center bg-white border-b border-gray-100">
                       <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-5 py-0">
                         <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
-                          Order Number
+                          {t('table.orderNumber')}
                         </span>
                       </div>
-                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                      <div className={`flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 ${isRTL ? 'border-r' : 'border-l'} border-gray-100`}>
                         <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
-                          Arrive in
+                          {t('table.arriveIn')}
                         </span>
                       </div>
-                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                      <div className={`flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 ${isRTL ? 'border-r' : 'border-l'} border-gray-100`}>
                         <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
-                          Paid
+                          {t('table.paid')}
                         </span>
                       </div>
-                      <div className="flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 border-l border-gray-100">
+                      <div className={`flex flex-[1_0_0] h-[91px] items-center justify-center px-2.5 py-2.5 ${isRTL ? 'border-r' : 'border-l'} border-gray-100`}>
                         <span className="text-16 font-normal text-gray-500 whitespace-nowrap">
-                          Status
+                          {t('table.status')}
                         </span>
                       </div>
                     </div>
@@ -768,8 +790,9 @@ export default function OrdersPage() {
                 )}
               </HistorySection>
             )}
-          </>
-        )}
+            </>
+          )}
+        </div>
       </UserPageLayout>
 
       {/* Cancel Order Modals */}
@@ -786,10 +809,11 @@ export default function OrdersPage() {
       />
 
       {/* Loading Overlay for Mutations */}
-      <LoadingOverlay
+      <LoadingSpinner
+       
         open={cancelOrderMutation.isPending}
-        title="Cancelling order..."
-        subtitle="Please wait a moment"
+        text={`${t('actions.cancelLoadingTitle')} ${t('actions.cancelLoadingSubtitle')}`}
+        
       />
     </>
   )

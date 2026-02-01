@@ -27,7 +27,7 @@ import { PaymentConfirmationModal } from '@/components/ui/PaymentConfirmationMod
 import { OrderConfirmationModal } from '@/components/ui/OrderConfirmationModal'
 import { ErrorDisplay } from '@/components/ui/ErrorDisplay'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
-import { CheckoutCartItem, Checkbox, AddressModal } from '@/components/ui'
+import { CheckoutCartItem, Checkbox, AddressModal, LoadingSpinner } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { cn } from '@/lib/utils'
 import { useCart, useUpdatePurchase, useRemovePurchase, useCheckout, useValidateCoupon, usePaymentMethods, useAddresses } from '@/hooks'
@@ -40,14 +40,18 @@ import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
 import type { PurchaseStatus } from '@/../client/common/api/gen/ourbride-api'
 import type { CheckoutRequest, CustomerRequest } from '@/../client/common/api/gen/ourbride-api'
 import type { CartItemType } from '@/components/ui/CartItem'
+import { useI18nLocale, useI18nTranslations, useIsRTL } from '@/i18n'
+import { pickLocalizedText } from '@/utils/translation/i18nText'
 
 /**
  * Map PurchaseResponse to CartProduct using display properties from PurchaseResponse
  * Priority: purchase.name > purchase.product > fetchedProduct > fallback
  */
 const mapPurchaseToCartProduct = (
+  locale: string,
   purchase: PurchaseResponse,
-  fetchedProduct?: ProductResponse
+  fetchedProduct?: ProductResponse,
+  
 ): CartProduct | null => {
   if (purchase.type !== PurchaseType.Product) {
     return null
@@ -58,7 +62,7 @@ const mapPurchaseToCartProduct = (
   const productId = purchase.productId ?? purchase.id
 
   // Priority 1: Use display properties from PurchaseResponse (stored directly for performance)
-  const displayName = purchase.name ?? purchase.nameEn ?? purchase.nameAr
+  const displayName = pickLocalizedText(locale, {fallback:purchase.name , en:purchase.nameEn , ar:purchase.nameAr})
   const displayImage = purchase.imageUrl
 
   // Priority 2: Use ProductHeaderResponse from purchase.product if available
@@ -84,7 +88,7 @@ const mapPurchaseToCartProduct = (
 
     // Use product header name/image if purchase display properties are not available
     if (!title) {
-      title = productHeader.nameEn ?? productHeader.nameAr ?? null
+      title = pickLocalizedText(locale, { fallback: productHeader.name, en: productHeader.nameEn, ar: productHeader.nameAr })
     }
     if (!displayImage) {
       image = productHeader.image ?? '/placeholder-product.png'
@@ -93,7 +97,7 @@ const mapPurchaseToCartProduct = (
 
   // Fallback: Use fetched ProductResponse if available
   if (!title && fetchedProduct) {
-    title = fetchedProduct.nameEn ?? fetchedProduct.nameAr ?? null
+    title = pickLocalizedText(locale, { fallback: fetchedProduct.name, en: fetchedProduct.nameEn, ar: fetchedProduct.nameAr })
     if (!displayImage) {
       image = fetchedProduct.image ?? '/placeholder-product.png'
     }
@@ -142,7 +146,8 @@ const mapPurchaseToCartProduct = (
  * Priority: purchase.name > reservation.service > fallback to type name
  */
 const mapPurchaseToCartReservation = (
-  purchase: PurchaseResponse
+  purchase: PurchaseResponse,
+  locale: string
 ): CartReservation | null => {
   if (purchase.type !== PurchaseType.Reservation) {
     return null
@@ -151,7 +156,7 @@ const mapPurchaseToCartReservation = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority 1: Use display properties from PurchaseResponse
-  let title = purchase.name ?? purchase.nameEn ?? purchase.nameAr
+  let title = pickLocalizedText(locale, { fallback: purchase.name, en: purchase.nameEn, ar: purchase.nameAr })
   let image = purchase.imageUrl ?? '/placeholder-service.png'
 
   // Priority 2: Use ReservationResponse if available
@@ -161,7 +166,7 @@ const mapPurchaseToCartReservation = (
 
     // Use service name/image if purchase display properties are not available
     if (!title) {
-      title = service?.nameEn ?? service?.nameAr ?? null
+      title = pickLocalizedText(locale, { fallback: service?.nameEn, en: service?.nameEn, ar: service?.nameAr })
     }
     if (!purchase.imageUrl) {
       image = service?.imageUrl ?? '/placeholder-service.png'
@@ -221,9 +226,7 @@ const mapPurchaseToCartReservation = (
  * Map PurchaseResponse to CartMembership using display properties from PurchaseResponse
  * Priority: purchase.name > fallback to type name
  */
-const mapPurchaseToCartMembership = (
-  purchase: PurchaseResponse
-): CartMembership | null => {
+const mapPurchaseToCartMembership = (purchase: PurchaseResponse, locale: string): CartMembership | null => {
   if (purchase.type !== PurchaseType.Membership) {
     return null
   }
@@ -231,7 +234,7 @@ const mapPurchaseToCartMembership = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority: Use display properties from PurchaseResponse, fallback to type name
-  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Membership'
+  const title = pickLocalizedText(locale, { fallback: purchase.name, en: purchase.nameEn, ar: purchase.nameAr }) ?? 'Membership'
   const image = purchase.imageUrl ?? '/placeholder-membership.png'
 
   return {
@@ -252,9 +255,7 @@ const mapPurchaseToCartMembership = (
  * Map PurchaseResponse to CartGiftCard using display properties from PurchaseResponse
  * Priority: purchase.name > fallback to type name
  */
-const mapPurchaseToCartGiftCard = (
-  purchase: PurchaseResponse
-): CartGiftCard | null => {
+const mapPurchaseToCartGiftCard = (purchase: PurchaseResponse, locale: string): CartGiftCard | null => {
   if (purchase.type !== PurchaseType.GiftCard) {
     return null
   }
@@ -262,7 +263,7 @@ const mapPurchaseToCartGiftCard = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority: Use display properties from PurchaseResponse, fallback to type name
-  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Gift Card'
+  const title = pickLocalizedText(locale, { fallback: purchase.name, en: purchase.nameEn, ar: purchase.nameAr }) ?? 'Gift Card'
   const image = purchase.imageUrl ?? '/placeholder-giftcard.png'
 
   return {
@@ -298,8 +299,12 @@ export interface OrderFormData {
   acceptTerms: boolean
 }
 
-
 export default function CheckoutPage() {
+  const t = useI18nTranslations('checkoutPage.checkout')
+  const tCommon = useI18nTranslations('common')
+  const isRTL = useIsRTL()
+  const locale=useI18nLocale()
+
   const router = useRouter()
   const { addToast } = useToast()
 
@@ -387,38 +392,38 @@ export default function CheckoutPage() {
         if (purchase.productId && !purchase.product) {
           const fetchedProduct = productMap.get(purchase.productId)
           if (fetchedProduct) {
-            return mapPurchaseToCartProduct(purchase, fetchedProduct)
+            return mapPurchaseToCartProduct(locale,purchase, fetchedProduct )
           }
         }
         // Use ProductHeaderResponse from purchase.product, or fallback to purchase data
-        return mapPurchaseToCartProduct(purchase)
+        return mapPurchaseToCartProduct(locale,purchase, undefined )
       })
       .filter((product): product is CartProduct => product !== null)
-  }, [allPurchases, productMap])
+  }, [allPurchases, productMap,locale])
 
   // Filter reservation purchases using ReservationResponse
   const reservationPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartReservation(purchase))
+      .map((purchase) => mapPurchaseToCartReservation(purchase,locale))
       .filter((reservation): reservation is CartReservation => reservation !== null)
-  }, [allPurchases])
+  }, [allPurchases, locale])
 
   // Filter membership purchases
   const membershipPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartMembership(purchase))
+      .map((purchase) => mapPurchaseToCartMembership(purchase, locale))
       .filter((membership): membership is CartMembership => membership !== null)
-  }, [allPurchases])
+  }, [allPurchases, locale])
 
   // Filter gift card purchases
   const giftCardPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartGiftCard(purchase))
+      .map((purchase) => mapPurchaseToCartGiftCard(purchase, locale))
       .filter((giftCard): giftCard is CartGiftCard => giftCard !== null)
-  }, [allPurchases])
+  }, [allPurchases, locale])
 
   // Local state for selected purchases (can be modified by user)
   const [localItems, setLocalItems] = useState<CartProduct[]>([])
@@ -458,7 +463,8 @@ export default function CheckoutPage() {
     }
     // Type guard to check if user is AuthUser
     const isAuthUser = (u: typeof user): u is import('@/auth/types').AuthUser => {
-      return u !== null && 'fullName' in u && !('firstName' in u)
+      return u !== null && 'fullName' in u && 
+!('firstName' in u)
     }
 
     let fullName = ''
@@ -525,101 +531,77 @@ export default function CheckoutPage() {
     switch (field) {
       case 'fullName':
         if (!value || (typeof value === 'string' && value.trim().length < 2)) {
-          return 'Full name must be at least 2 characters'
+          return t('form.fullName.errors.minLength')
         }
         break
       case 'mobileNumber': {
-        if (!value) {
-          return 'Mobile number is required'
-        }
+        if (!value) return t('form.mobileNumber.errors.required')
         const phoneRegex = /^[0-9]{10,11}$/
-        if (
-          typeof value === 'string' &&
-          !phoneRegex.test(value.replace(/\s/g, ''))
-        ) {
-          return 'Please enter a valid mobile number (10-11 digits)'
+        if (typeof value === 'string' && !phoneRegex.test(value.replace(/\s/g, ''))) {
+          return t('form.mobileNumber.errors.invalid')
         }
         break
       }
       case 'location':
         if (!value || (typeof value === 'string' && value.trim().length < 3)) {
-          return 'Location must be at least 3 characters'
+          return t('form.location.errors.minLength')
         }
         break
       case 'street':
         if (!value || (typeof value === 'string' && value.trim().length < 3)) {
-          return 'Street/Apartment must be at least 3 characters'
+          return t('form.street.errors.minLength')
         }
         break
       case 'walletMobileNumber': {
         if (formData.paymentMethod === 'mobile-wallet') {
-          if (!value) {
-            return 'Wallet mobile number is required'
-          }
+          if (!value) return t('payment.wallet.errors.required')
           const phoneRegex = /^[0-9]{10,11}$/
-          if (
-            typeof value === 'string' &&
-            !phoneRegex.test(value.replace(/\s/g, ''))
-          ) {
-            return "Wallet isn't valid, please enter valid number"
+          if (typeof value === 'string' && !phoneRegex.test(value.replace(/\s/g, ''))) {
+            return t('payment.wallet.errors.invalid')
           }
         }
         break
       }
       case 'cardNumber': {
         if (formData.paymentMethod === 'debit-credit') {
-          if (!value) {
-            return 'Card number is required'
-          }
+          if (!value) return tCommon('error')
           const cardRegex = /^[0-9]{13,19}$/
-          if (
-            typeof value === 'string' &&
-            !cardRegex.test(value.replace(/\s/g, ''))
-          ) {
-            return 'Please enter a valid card number'
+          if (typeof value === 'string' && !cardRegex.test(value.replace(/\s/g, ''))) {
+            return tCommon('error')
           }
         }
         break
       }
       case 'cardExpiry': {
         if (formData.paymentMethod === 'debit-credit') {
-          if (!value) {
-            return 'Expiry date is required'
-          }
+          if (!value) return tCommon('error')
           const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/
           if (typeof value === 'string' && !expiryRegex.test(value)) {
-            return 'Please enter a valid expiry date (MM/YY)'
+            return tCommon('error')
           }
         }
         break
       }
       case 'cardCVV': {
         if (formData.paymentMethod === 'debit-credit') {
-          if (!value) {
-            return 'CVV is required'
-          }
+          if (!value) return tCommon('error')
           const cvvRegex = /^[0-9]{3,4}$/
           if (typeof value === 'string' && !cvvRegex.test(value)) {
-            return 'Please enter a valid CVV'
+            return tCommon('error')
           }
         }
         break
       }
       case 'cardholderName': {
         if (formData.paymentMethod === 'debit-credit') {
-          if (
-            !value ||
-            (typeof value === 'string' && value.trim().length < 2)
-          ) {
-            return 'Cardholder name is required'
+          if (!value || (typeof value === 'string' && value.trim().length < 2)) {
+            return tCommon('error')
           }
         }
         break
       }
       case 'acceptTerms':
-        if (!value) {
-          return 'You must accept the terms and conditions'
-        }
+        if (!value) return t('form.acceptTerms.errors.required')
         break
     }
     return ''
@@ -684,8 +666,13 @@ export default function CheckoutPage() {
       })
     }
 
-    if (localItems.length === 0 && reservationPurchases.length === 0 && membershipPurchases.length === 0 && giftCardPurchases.length === 0) {
-      newErrors.items = 'Please select at least one item'
+    if (
+      localItems.length === 0 &&
+      reservationPurchases.length === 0 &&
+      membershipPurchases.length === 0 &&
+      giftCardPurchases.length === 0
+    ) {
+      newErrors.items = t('summary.itemsError')
     }
 
     setErrors(newErrors)
@@ -710,12 +697,10 @@ export default function CheckoutPage() {
   const handleConfirmPayment = async () => {
     setIsSubmitting(true)
     try {
-      if (!cartData) {
-        throw new Error('Cart data not available')
-      }
+      if (!cartData) throw new Error(t('toasts.cartDataNotAvailable'))
 
       // Get the selected payment method from the fetched payment methods
-      const selectedPaymentMethod = paymentMethods.find(pm => {
+      const selectedPaymentMethod = paymentMethods.find((pm) => {
         const methodValue = getPaymentMethodValue(pm.code)
         return methodValue === formData.paymentMethod
       })
@@ -788,7 +773,7 @@ export default function CheckoutPage() {
 
       // Validate cart is active before proceeding
       if (!cartData.active) {
-        throw new Error('Cart is not active. Please refresh your cart and try again.')
+        throw new Error(t('toasts.cartNotActive'))
       }
 
       // Step 1: Call checkout API first
@@ -819,12 +804,7 @@ export default function CheckoutPage() {
       })
       router.push(`/create-order?${params.toString()}`)
     } catch (error) {
-      addToast(
-        error instanceof Error
-          ? error.message
-          : 'An error occurred during checkout. Please try again.',
-        'error'
-      )
+      addToast(error instanceof Error ? error.message : t('toasts.checkoutGenericError'), 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -846,11 +826,9 @@ export default function CheckoutPage() {
         },
       })
       // Update local state optimistically
-      setLocalItems(prev =>
-        prev.map(p => (p.id === id ? { ...p, quantity: newQuantity } : p))
-      )
-    } catch (error) {
-      addToast('Failed to update quantity. Please try again.', 'error')
+      setLocalItems((prev) => prev.map((p) => (p.id === id ? { ...p, quantity: newQuantity } : p)))
+    } catch {
+      addToast(t('toasts.quantityUpdateFailed'), 'error')
     }
   }
 
@@ -870,8 +848,8 @@ export default function CheckoutPage() {
         newSet.delete(parseInt(id, 10))
         return newSet
       })
-    } catch (error) {
-      addToast('Failed to remove item. Please try again.', 'error')
+    } catch {
+      addToast(t('toasts.removeItemFailed'), 'error')
     }
   }
 
@@ -953,11 +931,11 @@ export default function CheckoutPage() {
       <div className="min-h-screen flex flex-col bg-white">
         <Header />
         <main className="flex-1">
-          <div className="container-custom py-6 md:py-8">
-            <LoadingOverlay
-              open={true}
-              title="Loading checkout..."
-              subtitle="Please wait a moment"
+          <div className="container-custom py-6 md:py-8 h-screen flex items-center justify-center">
+            <LoadingSpinner
+              size='xl'
+              text={`${t('loading.loadingCheckoutTitle')} ${t('loading.subtitle')}`}
+              
             />
           </div>
         </main>
@@ -974,9 +952,9 @@ export default function CheckoutPage() {
         <main className="flex-1">
           <div className="container-custom py-6 md:py-8">
             <ErrorDisplay
-              title="Error loading cart"
-              message="Please try again later"
-              actionLabel="Back to Home"
+              title={t('error.title')}
+              message={t('error.message')}
+              actionLabel={t('error.actionLabel')}
               actionHref="/"
             />
           </div>
@@ -996,16 +974,13 @@ export default function CheckoutPage() {
         <main className="flex-1">
           <div className="container-custom py-6 md:py-8">
             <h1 className="text-18 md:text-24 font-normal text-gray-900 mb-6 md:mb-8">
-              Order Checkout
+              {t('empty.title')}
             </h1>
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
-                <p className="text-16 text-gray-600 mb-4">Your cart is empty</p>
-                <Button
-                  variant="brand"
-                  onClick={() => router.push('/cart')}
-                >
-                  Go to Cart
+                <p className="text-16 text-gray-600 mb-4">{t('empty.message')}</p>
+                <Button variant="brand" onClick={() => router.push('/cart')}>
+                  {t('empty.goToCart')}
                 </Button>
               </div>
             </div>
@@ -1018,13 +993,13 @@ export default function CheckoutPage() {
 
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div  className="min-h-screen flex flex-col bg-white">
       <Header />
 
       <main className="flex-1">
         <div className="container-custom py-6 md:py-8">
           <h1 className="text-18 md:text-24 font-normal text-gray-900 mb-6 md:mb-8">
-            Order Checkout
+            {t('page.title')}
           </h1>
 
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
@@ -1032,10 +1007,11 @@ export default function CheckoutPage() {
               {/* LEFT COLUMN - Form Section */}
               <div className="w-full lg:w-[40%] lg:flex-shrink-0 space-y-6">
                 {/* Personal Information Section */}
-                <div className="space-y-4">
+                <div  className="space-y-4 ">
                   <Input
+                 
                     type="text"
-                    placeholder="Full Name"
+                    placeholder={t('form.fullName.placeholder')}
                     prefixIcon={User}
                     value={formData.fullName}
                     onChange={e => updateFormData('fullName', e.target.value)}
@@ -1050,8 +1026,9 @@ export default function CheckoutPage() {
                   />
 
                   <Input
+                   dir={isRTL?'rtl':'ltr'}
                     type="tel"
-                    placeholder="Mobile Number"
+                    placeholder={t('form.mobileNumber.placeholder')}
                     prefixIcon={Phone}
                     value={formData.mobileNumber}
                     onChange={e =>
@@ -1073,123 +1050,137 @@ export default function CheckoutPage() {
 
                 {/* Delivery Details Section */}
                 <div className="space-y-4 pt-4">
-                  <h3 className="text-18 font-normal text-gray-900">
-                    Delivery Details
-                  </h3>
+                  <h3 className="text-18 font-normal text-gray-900">{t('delivery.title')}</h3>
 
                   {/* Address Selector Slider */}
                   {isLoadingAddresses ? (
                     <div className="flex items-center justify-center py-8">
-                      <p className="text-14 text-gray-500">Loading addresses...</p>
+                      <p className="text-14 text-gray-500">{t('delivery.loadingAddresses')}</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
-                      {/* Address Slider Container */}
-                      <div className="flex items-center gap-2">
-                        {/* Slider Navigation - Previous */}
-                        {(addresses.length + 1) > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => setAddressSliderIndex(prev => Math.max(0, prev - 1))}
-                            disabled={addressSliderIndex === 0}
-                            className={cn(
-                              'flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-300 shadow-sm',
-                              'flex items-center justify-center',
-                              'hover:bg-gray-50 hover:border-brand-400 transition-colors',
-                              'disabled:opacity-50 disabled:cursor-not-allowed',
-                              addressSliderIndex === 0 && 'hidden'
-                            )}
-                            aria-label="Previous address"
-                          >
-                            <ChevronLeft className="h-4 w-4 text-gray-600" />
-                          </button>
-                        )}
+                    {/* Address Slider Container */}
+<div className={cn("flex items-center gap-2", isRTL && "flex-row-reverse")}>
+  {/* Prev */}
+  {(addresses.length + 1) > 1 && (
+    <button
+      type="button"
+      onClick={() => setAddressSliderIndex(prev => Math.max(0, prev - 1))}
+      disabled={addressSliderIndex === 0}
+      className={cn(
+        'flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-300 shadow-sm',
+        'flex items-center justify-center',
+        'hover:bg-gray-50 hover:border-brand-400 transition-colors',
+        'disabled:opacity-50 disabled:cursor-not-allowed',
+        addressSliderIndex === 0 && 'hidden'
+      )}
+      aria-label={t('delivery.slider.prev')}
+    >
+      {isRTL ? (
+        <ChevronRight className="h-4 w-4 text-gray-600" />
+      ) : (
+        <ChevronLeft className="h-4 w-4 text-gray-600" />
+      )}
+    </button>
+  )}
 
-                        {/* Address Cards Container */}
-                        <div className="flex-1 overflow-hidden">
-                          <div
-                            className="flex transition-transform duration-300 ease-in-out"
-                            style={{
-                              transform: `translateX(-${addressSliderIndex * 100}%)`,
-                            }}
-                          >
-                            {addresses.map((address) => (
-                              <div key={address.id} className="min-w-full flex-shrink-0 px-1">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setSelectedAddressId(address.id)
-                                    // Update form data with selected address
-                                    updateFormData('location', address.city || address.address1 || '')
-                                    updateFormData('street', address.address1 || address.address2 || '')
-                                  }}
-                                  className={cn(
-                                    'w-full px-4 py-3 rounded-lg border-2 transition-all text-left',
-                                    'hover:bg-gray-50',
-                                    selectedAddressId === address.id
-                                      ? 'border-brand-400 bg-white'
-                                      : 'border-gray-300 bg-white'
-                                  )}
-                                >
-                                  <div className="flex items-start gap-2">
-                                    <MapPin className={cn(
-                                      'h-5 w-5 flex-shrink-0 mt-0.5',
-                                      selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-400'
-                                    )} />
-                                    <div className="flex-1 min-w-0">
-                                      <p className={cn(
-                                        'text-14 font-medium',
-                                        selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-900'
-                                      )}>
-                                        {address.contactName || 'Address'}
-                                      </p>
-                                      <p className="text-12 text-gray-600 line-clamp-2 mt-1">
-                                        {address.address1 || ''} {address.address2 || ''}
-                                        {address.city && `, ${address.city}`}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </button>
-                              </div>
-                            ))}
+  {/* Track */}
+  <div className="flex-1 overflow-hidden" dir="ltr">
+    <div
+      className="flex transition-transform duration-300 ease-in-out items-center"
+      style={{
+        transform: `translateX(-${addressSliderIndex * 100}%)`,
+      }}
+    >
+      {addresses.map((address) => (
+        <div key={address.id} className="min-w-full flex-shrink-0 px-1">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedAddressId(address.id)
+              updateFormData('location', address.city || address.address1 || '')
+              updateFormData('street', address.address1 || address.address2 || '')
+            }}
+            className={cn(
+              'w-full px-4 py-3 rounded-lg border-2 transition-all',
+              'hover:bg-gray-50',
+              isRTL ? 'text-right' : 'text-left',
+              selectedAddressId === address.id
+                ? 'border-brand-400 bg-white'
+                : 'border-gray-300 bg-white'
+            )}
+            dir={isRTL ? 'rtl' : 'ltr'}
+          >
+            <div className="flex items-start gap-2">
+              <MapPin
+                className={cn(
+                  'h-5 w-5 flex-shrink-0 mt-0.5',
+                  selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-400'
+                )}
+              />
+              <div className="flex-1 min-w-0">
+                <p
+                  className={cn(
+                    'text-14 font-medium',
+                    selectedAddressId === address.id ? 'text-brand-400' : 'text-gray-900'
+                  )}
+                >
+                  {address.contactName || t('delivery.addressFallbackName')}
+                </p>
+                <p className="text-12 text-gray-600 line-clamp-2 mt-1">
+                  {address.address1 || ''} {address.address2 || ''}
+                  {address.city && `, ${address.city}`}
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+      ))}
 
-                            {/* Add Address Button as last slide */}
-                            <div className="min-w-full flex-shrink-0 px-1">
-                              <button
-                                type="button"
-                                onClick={() => setShowAddressModal(true)}
-                                className={cn(
-                                  'w-full px-4 py-3 rounded-lg border-2 border-dashed transition-all',
-                                  'border-gray-300 bg-white hover:bg-gray-50 hover:border-brand-400',
-                                  'flex items-center justify-center gap-2'
-                                )}
-                              >
-                                <MapPin className="h-5 w-5 text-gray-400" />
-                                <span className="text-14 font-medium text-gray-600">Add Address</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+      {/* Add Address slide */}
+      <div className="min-w-full flex-shrink-0 px-1">
+        <button
+          type="button"
+          onClick={() => setShowAddressModal(true)}
+          className={cn(
+            'w-full px-4 py-3 rounded-lg border-2 border-dashed transition-all',
+            'border-gray-300 bg-white hover:bg-gray-50 hover:border-brand-400',
+            'flex items-center justify-center gap-2'
+          )}
+          dir={isRTL ? 'rtl' : 'ltr'}
+        >
+          <MapPin className="h-5 w-5 text-gray-400" />
+          <span className="text-14 font-medium text-gray-600">
+            {t('delivery.addAddress')}
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
 
-                        {/* Slider Navigation - Next */}
-                        {(addresses.length + 1) > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => setAddressSliderIndex(prev => Math.min(addresses.length, prev + 1))}
-                            disabled={addressSliderIndex >= addresses.length}
-                            className={cn(
-                              'flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-300 shadow-sm',
-                              'flex items-center justify-center',
-                              'hover:bg-gray-50 hover:border-brand-400 transition-colors',
-                              'disabled:opacity-50 disabled:cursor-not-allowed',
-                              addressSliderIndex >= addresses.length && 'hidden'
-                            )}
-                            aria-label="Next address"
-                          >
-                            <ChevronRight className="h-4 w-4 text-gray-600" />
-                          </button>
-                        )}
-                      </div>
+  {/* Next */}
+  {(addresses.length + 1) > 1 && (
+    <button
+      type="button"
+      onClick={() => setAddressSliderIndex(prev => Math.min(addresses.length, prev + 1))}
+      disabled={addressSliderIndex >= addresses.length}
+      className={cn(
+        'flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-300 shadow-sm',
+        'flex items-center justify-center',
+        'hover:bg-gray-50 hover:border-brand-400 transition-colors',
+        'disabled:opacity-50 disabled:cursor-not-allowed',
+        addressSliderIndex >= addresses.length && 'hidden'
+      )}
+      aria-label={t('delivery.slider.next')}
+    >
+      {isRTL ? (
+        <ChevronLeft className="h-4 w-4 text-gray-600" />
+      ) : (
+        <ChevronRight className="h-4 w-4 text-gray-600" />
+      )}
+    </button>
+  )}
+</div>
 
                       {/* Slider Indicators - Only show when there are multiple slides */}
                       {(addresses.length + 1) > 1 && (
@@ -1216,7 +1207,7 @@ export default function CheckoutPage() {
                         <div className="space-y-4 pt-2">
                           <Input
                             type="text"
-                            placeholder="Location"
+                            placeholder={t('form.location.placeholder')}
                             prefixIcon={MapPin}
                             value={formData.location}
                             onChange={e => updateFormData('location', e.target.value)}
@@ -1231,7 +1222,7 @@ export default function CheckoutPage() {
                           />
                           <Input
                             type="text"
-                            placeholder="Street / Apartment"
+                            placeholder={t('form.street.placeholder')}
                             prefixIcon={Building2}
                             value={formData.street}
                             onChange={e => updateFormData('street', e.target.value)}
@@ -1251,9 +1242,9 @@ export default function CheckoutPage() {
                   {/* Notes */}
                   <div className="relative">
                     <textarea
-                      placeholder="Notes to the delivery person..."
+                      placeholder={t('form.notes.placeholder')}
                       value={formData.notes}
-                      onChange={e => updateFormData('notes', e.target.value)}
+                      onChange={(e) => updateFormData('notes', e.target.value)}
                       rows={3}
                       className={cn(
                         'w-full px-4 py-3 pl-12 rounded-md border bg-background text-16',
@@ -1270,16 +1261,15 @@ export default function CheckoutPage() {
 
                 {/* Payment Method Selection */}
                 <div className="space-y-4 pt-4">
-                  <h3 className="text-18 font-normal text-gray-900">
-                    Payment Method
-                  </h3>
+                  <h3 className="text-18 font-normal text-gray-900">{t('payment.title')}</h3>
+
                   {isLoadingPaymentMethods ? (
                     <div className="flex items-center justify-center py-8">
-                      <p className="text-14 text-gray-500">Loading payment methods...</p>
+                      <p className="text-14 text-gray-500">{t('payment.loadingMethods')}</p>
                     </div>
                   ) : paymentMethods.length === 0 ? (
                     <div className="flex items-center justify-center py-8">
-                      <p className="text-14 text-gray-500">No payment methods available</p>
+                      <p className="text-14 text-gray-500">{t('payment.noMethods')}</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1302,7 +1292,7 @@ export default function CheckoutPage() {
                         const Icon = getPaymentMethodIcon(method.code)
                         const methodValue = getPaymentMethodValue(method.code)
                         const isSelected = formData.paymentMethod === methodValue
-                        const displayName = method.nameEn || method.nameAr || method.code
+                        const displayName = pickLocalizedText(locale, { fallback: method.nameEn, en: method.nameEn, ar: method.nameAr }) || method.code
 
                         return (
                           <button
@@ -1374,7 +1364,7 @@ export default function CheckoutPage() {
                             </span>
                             {method.supportsInstallments && method.maxInstallments && (
                               <span className="text-10 text-gray-500">
-                                Up to {method.maxInstallments} installments
+                                {t('payment.installments', { count: method.maxInstallments })}
                               </span>
                             )}
                           </button>
@@ -1386,9 +1376,7 @@ export default function CheckoutPage() {
                   {/* Wallet Details Section (Conditional) */}
                   {formData.paymentMethod === 'mobile-wallet' && (
                     <div className="space-y-4 pt-4 pb-6">
-                      <h3 className="text-18 font-normal text-gray-900">
-                        Wallet Details
-                      </h3>
+                      <h3 className="text-18 font-normal text-gray-900">{t('payment.wallet.title')}</h3>
                       <Input
                         type="tel"
                         placeholder="Mobile Number"
@@ -1532,10 +1520,7 @@ export default function CheckoutPage() {
 
               {/* RIGHT COLUMN - Order Summary */}
               <div className="w-full lg:w-[60%] lg:flex-shrink-0 space-y-6">
-                {/* Order Summary Header */}
-                <h3 className="text-24 font-normal text-gray-900">
-                  Order Summary
-                </h3>
+                <h3 className="text-24 font-normal text-gray-900">{t('summary.title')}</h3>
 
                 {/* Cart Items List */}
                 <div className="space-y-3 max-h-[400px] overflow-y-auto">
@@ -1645,10 +1630,10 @@ export default function CheckoutPage() {
                     <div className="flex-1 relative">
                       <Input
                         type="text"
-                        placeholder="Enter Promo Code"
+                        placeholder={t('summary.promo.placeholder')}
                         prefixIcon={Tag}
                         value={formData.promoCode || ''}
-                        onChange={e => updateFormData('promoCode', e.target.value)}
+                        onChange={(e) => updateFormData('promoCode', e.target.value)}
                         className="w-full pr-20"
                         disabled={!!appliedCouponCode}
                       />
@@ -1659,7 +1644,7 @@ export default function CheckoutPage() {
                       size="sm"
                       onClick={async () => {
                         if (!formData.promoCode) {
-                          addToast('Please enter a promo code', 'error')
+                          addToast(t('toasts.promoRequired'), 'error')
                           return
                         }
                         try {
@@ -1672,7 +1657,9 @@ export default function CheckoutPage() {
                       disabled={validateCouponMutation.isPending || !formData.promoCode || !!appliedCouponCode}
                       className="flex-shrink-0 !text-white"
                     >
-                      {validateCouponMutation.isPending ? '...' : 'Redeem'}
+                      {validateCouponMutation.isPending
+                        ? t('summary.promo.pending')
+                        : t('summary.promo.redeem')}
                     </Button>
                   </div>
 
@@ -1681,7 +1668,10 @@ export default function CheckoutPage() {
                     <div className="flex items-center gap-2">
                       <Sparkles className="h-5 w-5 text-brand-500" />
                       <span className="text-14 text-gray-700">
-                        Diamonds: <span className="font-medium">250 Points</span>
+                        {t('summary.rewards.diamondsLabel')}{' '}
+                        <span className="font-medium">
+                         250  {t('summary.rewards.diamondsValue')} 
+                        </span>
                       </span>
                     </div>
                     <Button
@@ -1691,23 +1681,29 @@ export default function CheckoutPage() {
                       onClick={() => {
                         updateFormData('useDiamonds', !formData.useDiamonds)
                         addToast(
-                          formData.useDiamonds ? 'Diamonds removed' : 'Diamonds applied',
+                          formData.useDiamonds
+                            ? t('toasts.diamondsRemoved')
+                            : t('toasts.diamondsApplied'),
                           'success'
                         )
                       }}
                       disabled={validateCouponMutation.isPending}
                       className="flex-shrink-0 !text-white"
                     >
-                      {formData.useDiamonds ? 'Applied' : 'Redeem'}
+                      {formData.useDiamonds
+                        ? t('summary.rewards.applied')
+                        : t('summary.rewards.redeem')}
                     </Button>
                   </div>
 
-                  {/* Gifts Cash */}
                   <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2">
                       <Gift className="h-5 w-5 text-brand-500" />
                       <span className="text-14 text-gray-700">
-                        Gifts Cash: <span className="font-medium">500 {currency}</span>
+                        {t('summary.rewards.giftsCashLabel')}{' '}
+                        <span className="font-medium">
+                         250  {currency}
+                        </span>
                       </span>
                     </div>
                     <Button
@@ -1717,22 +1713,25 @@ export default function CheckoutPage() {
                       onClick={() => {
                         updateFormData('useGiftsCash', !formData.useGiftsCash)
                         addToast(
-                          formData.useGiftsCash ? 'Gifts Cash removed' : 'Gifts Cash applied',
+                          formData.useGiftsCash
+                            ? t('toasts.giftsCashRemoved')
+                            : t('toasts.giftsCashApplied'),
                           'success'
                         )
                       }}
                       disabled={validateCouponMutation.isPending}
                       className="flex-shrink-0 !text-white"
                     >
-                      {formData.useGiftsCash ? 'Applied' : 'Redeem'}
+                      {formData.useGiftsCash
+                        ? t('summary.rewards.applied')
+                        : t('summary.rewards.redeem')}
                     </Button>
                   </div>
                 </div>
 
-                {/* Price Breakdown */}
                 <div className="space-y-3 pt-4 border-t border-gray-200">
                   <div className="flex justify-between text-14 text-gray-700">
-                    <span>Subtotal</span>
+                    <span>{t('summary.prices.subtotal')}</span>
                     <span className="font-semibold text-gray-900">
                       {subtotal.toLocaleString()} {currency}
                     </span>
@@ -1740,7 +1739,7 @@ export default function CheckoutPage() {
 
                   {couponDiscount > 0 && (
                     <div className="flex justify-between text-14 text-green-600">
-                      <span>Coupon Discount</span>
+                      <span>{t('summary.prices.couponDiscount')}</span>
                       <span className="font-semibold">
                         -{couponDiscount.toLocaleString()} {currency}
                       </span>
@@ -1749,7 +1748,7 @@ export default function CheckoutPage() {
 
                   {taxesAndFees > 0 && (
                     <div className="flex justify-between text-14 text-gray-700">
-                      <span>Taxes & Fees</span>
+                      <span>{t('summary.prices.taxesFees')}</span>
                       <span className="font-semibold text-gray-900">
                         {taxesAndFees.toLocaleString()} {currency}
                       </span>
@@ -1758,7 +1757,7 @@ export default function CheckoutPage() {
 
                   {deliveryFee > 0 && (
                     <div className="flex justify-between text-14 text-gray-700">
-                      <span>Delivery Fee</span>
+                      <span>{t('summary.prices.deliveryFee')}</span>
                       <span className="font-semibold text-gray-900">
                         {deliveryFee.toLocaleString()} {currency}
                       </span>
@@ -1766,7 +1765,9 @@ export default function CheckoutPage() {
                   )}
 
                   <div className="flex justify-between items-center pt-3 border-t border-gray-200">
-                    <span className="text-18 font-semibold text-gray-900">Total</span>
+                    <span className="text-18 font-semibold text-gray-900">
+                      {t('summary.prices.total')}
+                    </span>
                     <div className="text-right">
                       <div className="text-18 font-semibold text-gray-900">
                         {total.toLocaleString()} {currency}
@@ -1775,56 +1776,45 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Applied Coupon Code - Display under summary section */}
                 {appliedCouponCode && (
                   <div className="pt-4 pb-4 border-t border-gray-200">
                     <div className="flex items-center justify-center gap-2 px-2 py-2 bg-green-50 border border-green-200 rounded-lg">
                       <Percent className="h-5 w-5 text-green-600 flex-shrink-0" />
-                      <span className="text-14 font-medium text-green-800">
-                        #{appliedCouponCode}
-                      </span>
+                      <span className="text-14 font-medium text-green-800">#{appliedCouponCode}</span>
                       <div className="flex items-center gap-1 ml-2">
                         <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
-                        <span className="text-14 font-medium text-green-600">Redeemed</span>
+                        <span className="text-14 font-medium text-green-600">
+                          {t('summary.coupon.redeemed')}
+                        </span>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Terms & Conditions */}
                 <div className="space-y-2 pt-4">
                   <div className="flex items-start gap-3">
                     <Checkbox
                       checked={formData.acceptTerms}
-                      onChange={(checked: boolean) =>
-                        updateFormData('acceptTerms', checked)
-                      }
+                      onChange={(checked: boolean) => updateFormData('acceptTerms', checked)}
                       variant="brand"
                       size="md"
                     />
                     <label className="text-14 text-gray-700 cursor-pointer flex-1">
-                      I Accept{' '}
+                      {t('form.acceptTerms.labelPrefix')}{' '}
                       <button
                         type="button"
                         className="text-brand-400 hover:text-brand-500 hover:underline transition-colors"
-                        onClick={e => {
-                          e.preventDefault()
-                        }}
+                        onClick={(e) => e.preventDefault()}
                       >
-                        Terms & Conditions
+                        {t('form.acceptTerms.termsButton')}
                       </button>
                     </label>
                   </div>
-                  <p className="text-12 text-gray-500 pl-8">
-                    If you are not around when the delivery person comes, then
-                    will leave your order at the door. By placing your order,
-                    you agree to take full responsibility for it once it&apos;s
-                    delivered.
-                  </p>
+
+                  <p className="text-12 text-gray-500 pl-8">{t('form.acceptTerms.helperText')}</p>
+
                   {errors.acceptTerms && (
-                    <p className="text-12 text-red-500 pl-8">
-                      {errors.acceptTerms}
-                    </p>
+                    <p className="text-12 text-red-500 pl-8">{errors.acceptTerms}</p>
                   )}
                 </div>
 
@@ -1837,7 +1827,12 @@ export default function CheckoutPage() {
                     disabled={isCheckoutDisabled || checkoutMutation.isPending || isSubmitting || !formData.acceptTerms}
                     className="w-full rounded-lg text-white"
                   >
-                    {isSubmitting || checkoutMutation.isPending ? 'Processing...' : `Pay ( ${total.toLocaleString()} ${currency} )`}
+                    {isSubmitting || checkoutMutation.isPending
+                      ? t('actions.processing')
+                      : t('actions.pay', {
+                          amount: total.toLocaleString(),
+                          currency,
+                        })}
                   </Button>
                 </div>
 
@@ -1869,7 +1864,7 @@ export default function CheckoutPage() {
       />
 
       {/* Loading Overlay for Mutations */}
-      <LoadingOverlay
+      <LoadingSpinner
         open={
           updatePurchaseMutation.isPending ||
           removePurchaseMutation.isPending ||
@@ -1877,14 +1872,14 @@ export default function CheckoutPage() {
           isSubmitting ||
           validateCouponMutation.isPending
         }
-        title={
+        text={
           checkoutMutation.isPending || isSubmitting
-            ? 'Processing checkout...'
+            ? t('loading.processingCheckoutTitle')
             : updatePurchaseMutation.isPending || removePurchaseMutation.isPending
-              ? 'Updating cart...'
-              : 'Validating...'
+            ? t('loading.updatingCartTitle')
+            : t('loading.validatingTitle')
         }
-        subtitle="Please wait a moment"
+        
       />
 
       {/* Address Modal */}

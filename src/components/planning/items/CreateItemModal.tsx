@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { X } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
 // Helper to convert string/number/empty to number | undefined
 // Using z.union with transform and pipe to ensure proper type inference
@@ -25,23 +26,23 @@ const numberOrUndefined = z
   })
   .pipe(z.number().optional())
 
-const createItemSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+const createItemSchema = (t: (key: string) => string) => z.object({
+  name: z.string().min(1, t('itemForm.validation.nameRequired')),
   description: z.string().optional(),
   quantity: numberOrUndefined.refine(
     (v) => v === undefined || (!Number.isNaN(v) && v >= 0),
-    'Quantity must be a valid number'
+    t('itemForm.validation.quantityInvalid')
   ),
   totalPrice: numberOrUndefined.refine(
     (v) => v === undefined || (!Number.isNaN(v) && v >= 0),
-    'Total price must be a valid number'
+    t('itemForm.validation.totalPriceInvalid')
   ),
   providerName: z.string().optional(),
   buyDate: z.string().optional(), // input type="date" بيطلع string YYYY-MM-DD
   isDone: z.boolean().optional(),
 })
 
-export type CreateItemFormValues = z.infer<typeof createItemSchema>
+export type CreateItemFormValues = z.infer<ReturnType<typeof createItemSchema>>
 
 export interface CreateItemModalProps {
   open: boolean
@@ -64,6 +65,8 @@ export const CreateItemModal = ({
   onSubmit,
   isLoading = false,
 }: CreateItemModalProps) => {
+  const t = useI18nTranslations('items')
+  const schema = createItemSchema(t)
   const {
     register,
     handleSubmit,
@@ -72,7 +75,7 @@ export const CreateItemModal = ({
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<CreateItemFormValues>({
-    resolver: zodResolver(createItemSchema) as never,
+    resolver: zodResolver(schema) as never,
     defaultValues: {
       name: '',
       description: '',
@@ -87,6 +90,7 @@ export const CreateItemModal = ({
 
   const nameValue = watch('name')
   const isDoneValue = watch('isDone')
+
 
   // Reset when modal closes
   useEffect(() => {
@@ -140,7 +144,7 @@ export const CreateItemModal = ({
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-6">
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-20 font-semibold text-gray-900">Add New Item</h2>
+          <h2 className="text-20 font-semibold text-gray-900">{t('itemForm.titles.add')}</h2>
 
           <button
             type="button"
@@ -157,12 +161,12 @@ export const CreateItemModal = ({
           {/* Name (required) */}
           <div className="space-y-1.5">
             <label htmlFor="item-name" className="block text-14 font-medium text-gray-700">
-              Name <span className="text-red-500">*</span>
+              {t('itemForm.fields.name')} <span className="text-red-500">*</span>
             </label>
             <Input
               id="item-name"
               type="text"
-              placeholder="Enter item name"
+              placeholder={t('itemForm.placeholders.name')}
               {...register('name')}
               variant={errors.name ? 'error' : nameValue ? 'fill' : 'default'}
               errorMessage={errors.name?.message}
@@ -174,12 +178,12 @@ export const CreateItemModal = ({
           {/* Description */}
           <div className="space-y-1.5">
             <label htmlFor="item-description" className="block text-14 font-medium text-gray-700">
-              Description
+              {t('itemForm.fields.description')}
             </label>
             <Input
               id="item-description"
               type="text"
-              placeholder="Enter description"
+              placeholder={t('itemForm.placeholders.description')}
               {...register('description')}
               variant="default"
               size="lg"
@@ -191,12 +195,12 @@ export const CreateItemModal = ({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <label htmlFor="item-quantity" className="block text-14 font-medium text-gray-700">
-                Quantity
+                {t('itemForm.fields.quantity')}
               </label>
               <Input
                 id="item-quantity"
                 type="number"
-                placeholder="0"
+                placeholder={t('itemForm.placeholders.quantity')}
                 {...register('quantity')}
                 variant={errors.quantity ? 'error' : 'default'}
                 errorMessage={errors.quantity?.message}
@@ -207,12 +211,12 @@ export const CreateItemModal = ({
 
             <div className="space-y-1.5">
               <label htmlFor="item-totalPrice" className="block text-14 font-medium text-gray-700">
-                Total price
+                {t('itemForm.fields.totalPrice')}
               </label>
               <Input
                 id="item-totalPrice"
                 type="number"
-                placeholder="0"
+                placeholder={t('itemForm.placeholders.totalPrice')}
                 {...register('totalPrice')}
                 variant={errors.totalPrice ? 'error' : 'default'}
                 errorMessage={errors.totalPrice?.message}
@@ -225,12 +229,12 @@ export const CreateItemModal = ({
           {/* Provider Name */}
           <div className="space-y-1.5">
             <label htmlFor="item-providerName" className="block text-14 font-medium text-gray-700">
-              Provider name
+              {t('itemForm.fields.providerName')}
             </label>
             <Input
               id="item-providerName"
               type="text"
-              placeholder="Enter provider name"
+              placeholder={t('itemForm.placeholders.providerName')}
               {...register('providerName')}
               variant="default"
               size="lg"
@@ -241,7 +245,7 @@ export const CreateItemModal = ({
           {/* Buy Date */}
           <div className="space-y-1.5">
             <label htmlFor="item-buyDate" className="block text-14 font-medium text-gray-700">
-              Buy date
+              {t('itemForm.fields.buyDate')}
             </label>
             <Input
               id="item-buyDate"
@@ -260,14 +264,14 @@ export const CreateItemModal = ({
               onChange={(val) => setValue('isDone', Boolean(val), { shouldDirty: true })}
               disabled={isSubmitting || isLoading}
             />
-            <span className="text-sm text-gray-700">Mark as completed</span>
+            <span className="text-sm text-gray-700">{t('itemForm.checkbox.completed')}</span>
           </div>
         </div>
 
         {/* Footer */}
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
           <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting || isLoading}>
-            Cancel
+            {t('itemForm.actions.cancel')}
           </Button>
           <Button
             type="submit"
@@ -275,7 +279,7 @@ export const CreateItemModal = ({
             className="text-white"
             disabled={isSubmitting || isLoading || !isValid}
           >
-            {isSubmitting || isLoading ? 'Saving...' : 'Add Item'}
+            {isSubmitting || isLoading ? t('itemForm.titles.saving') : t('itemForm.titles.addItem')}
           </Button>
         </div>
       </form>

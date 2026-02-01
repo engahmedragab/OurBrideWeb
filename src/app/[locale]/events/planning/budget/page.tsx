@@ -5,7 +5,7 @@ import { useRouter } from '@/i18n/navigation'
 import { ChevronLeft, Save, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { LoadingOverlay } from '@/components/ui'
+import { LoadingSpinner } from '@/components/ui'
 import { useToast } from '@/components/ui/Toaster'
 import { useEventId } from '@/hooks/planning'
 import { useBudgetBook, useBudgetSyncMutation, useBudgetSyncDeltaMutation } from '@/hooks/budget/budgetBooks.hooks'
@@ -30,8 +30,12 @@ import type { BudgetLineResponse, BudgetLineCategoryResponse } from '@/types/res
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { BookClass, UserType as ResponseUserType } from '@/types/responses'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
+import { cn } from '@/lib'
 
 function BudgetPageContent() {
+  const isRTL = useIsRTL()
+  const t = useI18nTranslations('eventsPlanning.budget')
   const router = useRouter()
   const { addToast } = useToast()
   const eventId = useEventId()
@@ -238,6 +242,7 @@ function BudgetPageContent() {
         // Search in category name
         const category = line.lineCategoryId ? (getCategoryById(line.lineCategoryId) as BudgetLineCategoryResponse | null) : null
         const categoryMatch = category
+        
           ? ((category.name || '').toLowerCase().includes(query) ||
             (category.nameAr || '').toLowerCase().includes(query) ||
             (category.nameEn || '').toLowerCase().includes(query))
@@ -474,7 +479,7 @@ function BudgetPageContent() {
     setItemToDelete(null)
 
     await syncNow(result.book)
-    addToast(`"${line.expense}" deleted successfully`, 'success')
+    addToast(`${line.expense}, ${t('toasts.deletedSuccessfully')}` ,'success')
   }, [itemToDelete, applyLocalUpdate, syncNow, addToast])
 
   const handleCreateCategory = useCallback(() => {
@@ -540,7 +545,7 @@ function BudgetPageContent() {
         } else {
           // Create new category + line together
           if (!data.lineData) {
-            addToast('Line data is required when creating a new category', 'error')
+            addToast(t('toasts.lineDataRequired'), 'error')
             return current
           }
 
@@ -624,7 +629,7 @@ function BudgetPageContent() {
       setEditingCategory(null)
 
       await syncNow(result.book)
-      addToast(data.id ? 'Category saved' : 'Category and line added', 'success')
+      addToast(data.id ? t('toasts.categorySaved') : t('toasts.categoryAndLineAdded'), 'success')
     },
     [applyLocalUpdate, syncNow, addToast]
   )
@@ -667,7 +672,7 @@ function BudgetPageContent() {
     setItemToDelete(null)
 
     await syncNow(result.book)
-    addToast(`Category "${category.name}" deleted successfully`, 'success')
+    addToast(t('toasts.categoryDeletedSuccessfully', { name: category.name }), 'success')
   }, [itemToDelete, activeCategoryId, applyLocalUpdate, syncNow, addToast])
 
   // Manual Save (optional, you already sync on each action)
@@ -675,28 +680,28 @@ function BudgetPageContent() {
     const result = await save()
     if (!result.ok) {
       if (result.reason === 'loading' || result.reason === 'no-changes') {
-        addToast(result.message || 'No changes to save', 'info')
+        addToast(result.message || t('toasts.noChangesToSave'), 'info')
         if (result.reason === 'no-changes') setHasUnsavedChanges(false)
       } else {
-        addToast(result.message || 'Failed to save changes', 'error')
+        addToast(result.message || t('toasts.failedToSaveChanges'), 'error')
       }
       return
     }
-    addToast(result.message || 'Changes saved successfully', 'success')
+    addToast(result.message || t('toasts.changesSavedSuccessfully'), 'success')
   }, [save, addToast, setHasUnsavedChanges])
 
   // Loading
   if (isLoading || isInitializing || isAddingModels) {
     const loadingTitle = isInitializing
-      ? 'Initializing budget book...'
+      ? t('loading.initializingTitle')
       : isAddingModels
-        ? 'Adding default models...'
-        : 'Loading budget...'
+        ? t('loading.addingModelsTitle')
+        : t('loading.loadingBudgetTitle')
     const loadingSubtitle = isInitializing
-      ? 'Setting up your budget book'
+      ? t('loading.initializingSubtitle')
       : isAddingModels
-        ? 'Please wait while we add default categories'
-        : 'Please wait a moment'
+        ? t('loading.addingModelsSubtitle')
+        : t('loading.loadingBudgetSubtitle')
 
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
@@ -706,14 +711,14 @@ function BudgetPageContent() {
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             aria-label="Go back"
           >
-            <ChevronLeft className="h-5 w-5 text-gray-700" />
+            <ChevronLeft className={cn("h-5 w-5 text-gray-700", isRTL ? 'rotate-180' : 'rotate-0')} />
           </button>
           <h1 className="text-24 sm:text-28 font-semibold text-gray-900">
-            Budget
+            {t('pageTitle')}
           </h1>
         </div>
         <div className="flex items-center justify-center py-12">
-          <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+          <LoadingSpinner text={loadingTitle} fullScreen={true} />
         </div>
       </div>
     )
@@ -724,9 +729,9 @@ function BudgetPageContent() {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
         <div className="flex flex-col items-center justify-center py-12">
-          <p className="text-16 text-red-600 mb-4">Failed to load budget. Please try again.</p>
+          <p className="text-16 text-red-600 mb-4">{t('error.failedToLoad')}</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
-            Retry
+            {t('error.retry')}
           </Button>
         </div>
       </div>
@@ -738,7 +743,7 @@ function BudgetPageContent() {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-20 sm:pb-24">
         <div className="text-center py-12 text-gray-500">
-          <p className="text-16">Event ID is required</p>
+          <p className="text-16">{t('event.eventIdRequired')}</p>
         </div>
       </div>
     )
@@ -755,9 +760,9 @@ function BudgetPageContent() {
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Go back"
             >
-              <ChevronLeft className="h-4 w-4 text-gray-700" />
+              <ChevronLeft className={cn("h-4 w-4 text-gray-700", isRTL ? 'rotate-180' : 'rotate-0')} />
             </button>
-            <h1 className="text-20 font-semibold text-gray-900">Budget</h1>
+            <h1 className="text-20 font-semibold text-gray-900">{t('pageTitle')}</h1>
           </div>
 
           {localDraft && (
@@ -767,7 +772,7 @@ function BudgetPageContent() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="Search expenses, notes, payer..."
+                  placeholder={t('header.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 pr-10"
@@ -800,11 +805,11 @@ function BudgetPageContent() {
               type="button"
             >
               <Save className="h-4 w-4" />
-              {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+              {syncMutation.isPending ? t('header.saving') : t('header.saveChanges')}
             </Button>
 
             {hasUnsavedChanges && (
-              <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+              <span className="text-16 text-brand-500 font-medium">{t('header.unsavedChanges')}</span>
             )}
           </div>
         )}
@@ -859,7 +864,7 @@ function BudgetPageContent() {
         </div>
       ) : (
         <div className="text-center py-12 text-gray-500">
-          <p className="text-16">No budget data available</p>
+          <p className="text-16">{t('noBudgetTitle')}</p>
         </div>
       )}
 
@@ -898,11 +903,11 @@ function BudgetPageContent() {
               if (itemToDelete?.type === 'line') confirmDeleteLine()
               else if (itemToDelete?.type === 'category') confirmDeleteCategory()
             }}
-            title="Confirm Delete"
+            title={t('modals.confirmDelete.title')}
             message={
               itemToDelete?.type === 'line'
-                ? 'Are you sure you want to delete this budget line? This action cannot be undone.'
-                : 'Are you sure you want to delete this category? All lines in this category will also be deleted. This action cannot be undone.'
+                ? t('modals.confirmDelete.lineMessage')
+                : t('modals.confirmDelete.categoryMessage')
             }
             itemName={
               itemToDelete?.type === 'line'
@@ -922,7 +927,7 @@ export default function BudgetPage() {
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingOverlay open={true} title="Loading budget..." subtitle="Please wait a moment" />
+            <LoadingSpinner  fullScreen={true} />
           </div>
         </div>
       }

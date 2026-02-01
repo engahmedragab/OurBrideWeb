@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './DropdownMenu'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ServicesProductsFilterProps {
   value: 'services' | 'products'
@@ -26,6 +27,8 @@ export const ServicesProductsFilter = ({
   variant = 'brand',
   className,
 }: ServicesProductsFilterProps) => {
+  const t = useI18nTranslations('cart.filters')
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -37,7 +40,7 @@ export const ServicesProductsFilter = ({
               : 'text-white'
           } ${className || ''}`}
         >
-          {value === 'services' ? 'Services' : 'Products'}
+          {value === 'services' ? t('services') : t('products')}
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -46,13 +49,13 @@ export const ServicesProductsFilter = ({
           onClick={() => onChange('services')}
           className={value === 'services' ? 'bg-brand-50' : ''}
         >
-          Services
+          {t('services')}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => onChange('products')}
           className={value === 'products' ? 'bg-brand-50' : ''}
         >
-          Products
+          {t('products')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

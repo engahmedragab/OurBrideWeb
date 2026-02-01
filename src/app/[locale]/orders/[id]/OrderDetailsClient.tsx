@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation'
 import { useRouter } from '@/i18n/navigation'
 import { ChevronDown, ChevronUp, ExternalLink, FileText, Download, Star, MessageSquare, Package, Truck } from 'lucide-react'
 import { UserPageLayout } from '@/components/layout'
+import { useI18nLocale, useI18nTranslations, useIsRTL } from '@/i18n'
 import {
     PageHeader,
     ErrorDisplay,
@@ -14,8 +15,9 @@ import {
     OrderProgressIndicator,
     Button,
     RatingInput,
-    RatingDisplay,
+    RatingDisplay, 
     Input,
+    LoadingSpinner,
 } from '@/components/ui'
 import { DeliveryStatusBadge } from '@/components/ui/DeliveryStatusBadge'
 import { useToast } from '@/components/ui/Toaster'
@@ -27,6 +29,7 @@ import type { OrderResponse, PurchaseResponse, ReviewResponse } from '@/types/re
 import { OrderStatus, PurchaseType } from '@/../client/common/api/gen/ourbride-api'
 import { useQuery } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
+import { pickLocalizedText } from '@/utils/translation/i18nText'
 
 interface OrderDetailsClientProps {
     orderId: string
@@ -53,15 +56,20 @@ const mapApiOrderStatusToComponentStatus = (
     return 'preparing'
 }
 
-const getStatusLineColor = (status: OrderStatus | string) => {
+const getStatusLineColor = (status: OrderStatus | string, isRTL: boolean) => {
     const statusStr = String(status).toLowerCase()
-    if (statusStr === 'completed' || statusStr === 'delivered') return 'border-l-4 border-green-500'
-    if (statusStr === 'cancelled' || statusStr === 'canceled') return 'border-l-4 border-red-500'
-    return 'border-l-4 border-yellow-500'
+    const base = isRTL ? 'border-r-4' : 'border-l-4'
+    if (statusStr === 'completed' || statusStr === 'delivered') return `${base} border-green-500`
+    if (statusStr === 'cancelled' || statusStr === 'canceled') return `${base} border-red-500`
+    return `${base} border-yellow-500`
 }
 
 export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
     const router = useRouter()
+    const t = useI18nTranslations('orderDetails')
+    const tCommon = useI18nTranslations('common')
+    const isRTL = useIsRTL()
+    const locale = useI18nLocale()
     const { addToast } = useToast()
     const [isMounted, setIsMounted] = useState(false)
     const [isSummaryOpen, setIsSummaryOpen] = useState(true)
@@ -108,10 +116,10 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                 { orderId: orderIdNum },
                 {
                     onSuccess: () => {
-                        addToast('Invoice downloaded successfully', 'success')
+                        addToast(t('toast.invoiceDownloaded'), 'success')
                     },
                     onError: (error: Error) => {
-                        addToast(error.message || 'Failed to download invoice', 'error')
+                        addToast(error.message || t('toast.invoiceDownloadFailed'), 'error')
                     },
                 }
             )
@@ -137,11 +145,12 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
     if (!isMounted || isLoading) {
         return (
             <UserPageLayout>
-                <PageHeader title="Order Details" />
-                <LoadingOverlay
+                <PageHeader title={t('pageTitle')} />
+                <LoadingSpinner
+                   size='xl'
                     open={true}
-                    title="Loading order..."
-                    subtitle="Please wait a moment"
+                    text={t('loading.title')}
+                  
                 />
             </UserPageLayout>
         )
@@ -151,11 +160,11 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
     if (error || !order) {
         return (
             <UserPageLayout>
-                <PageHeader title="Order Details" />
+                <PageHeader title={t('pageTitle')} />
                 <ErrorDisplay
-                    title="Order not found"
-                    message="The order you're looking for doesn't exist or has been removed"
-                    actionLabel="Back to Orders"
+                    title={t('error.title')}
+                    message={t('error.message')}
+                    actionLabel={t('error.actionLabel')}
                     actionHref="/orders"
                 />
             </UserPageLayout>
@@ -326,6 +335,28 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
     // Paid amount - amount paid (alternative field)
     const paidAmount = order.paidAmount || null
 
+    const normalizePaymentStatus = (value?: string | null) => {
+        if (!value) return ''
+        const key = value.toLowerCase()
+        if (key === 'pending') return t('paymentStatus.pending')
+        if (key === 'paid') return t('paymentStatus.paid')
+        if (key === 'unpaid') return t('paymentStatus.unpaid')
+        if (key === 'failed') return t('paymentStatus.failed')
+        if (key === 'processing') return t('paymentStatus.processing')
+        return value
+    }
+
+    const normalizePaymentMethod = (value?: string | null) => {
+        if (!value) return ''
+        const key = value.toLowerCase()
+        if (key === 'cash_on_delivery' || key === 'cashondelivery') {
+            return t('paymentMethod.cashOnDelivery')
+        }
+        if (key === 'card') return t('paymentMethod.card')
+        if (key === 'wallet') return t('paymentMethod.wallet')
+        return value
+    }
+
     // ============================================
     // PAYMENT PLAN INFORMATION
     // ============================================
@@ -413,28 +444,29 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
 
     return (
         <UserPageLayout>
-            <PageHeader title="Order Details" />
+            <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'text-right' : 'text-left'}>
+            <PageHeader title={t('pageTitle')} />
 
             {/* Main Order Card - Similar to RequestCard */}
             <div
                 className={cn(
                     'bg-white rounded-xl border border-gray-200 p-6 shadow-sm relative',
-                    getStatusLineColor(status)
+                    getStatusLineColor(status, isRTL)
                 )}
             >
                 <div className="flex flex-col lg:flex-row gap-6">
                     {/* Left Section - Order Info and Progress */}
                     <div className="flex-1">
                         {/* Status Badge - Top Right */}
-                        <div className="absolute top-6 right-6 flex items-center gap-2">
+                        <div className={cn('absolute top-6 flex items-center gap-2', isRTL ? 'left-6' : 'right-6')}>
                             <StatusBadge status={mapOrderStatusToBadgeType(status)} />
                             <button
                                 onClick={() => setIsSummaryOpen(!isSummaryOpen)}
                                 className="text-gray-400 hover:text-gray-600 transition-colors"
                                 aria-label={
                                     isSummaryOpen
-                                        ? 'Collapse order summary'
-                                        : 'Expand order summary'
+                                        ? t('header.collapseSummary')
+                                        : t('header.expandSummary')
                                 }
                             >
                                 {isSummaryOpen ? (
@@ -448,27 +480,28 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* ============================================
                             ORDER BASIC INFORMATION
                             ============================================ */}
-                        <div className="mb-6 pr-32">
+                        <div className={cn('mb-6', isRTL ? 'pl-32' : 'pr-32')}>
                             {/* Order Number/ID */}
                             <h3 className="text-18 font-semibold text-gray-900 mb-1">
-                                Order #{orderNumber || orderIdString || order.id}
+                                {t('header.orderLabel')} #{orderNumber || orderIdString || order.id}
                             </h3>
 
                             {/* Order Date - When the order was placed */}
                             <p className="text-14 text-gray-600 mb-2">
-                                Placed: {orderDate || 'N/A'}
+                                {t('header.placedLabel')}: {orderDate || tCommon('notAvailable')}
                             </p>
 
                             {/* Order ID String - System order identifier */}
                             {orderIdString && (
                                 <p className="text-12 text-gray-500 mb-2">
-                                    Order ID: {orderIdString}
+                                    {t('header.orderIdLabel')}: {orderIdString}
                                 </p>
                             )}
 
                             {/* Item Count - Total number of items */}
                             <p className="text-12 text-gray-500 mb-2">
-                                {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'} • Count: {count}
+                                {totalItemCount}{' '}
+                                {totalItemCount === 1 ? t('header.item') : t('header.items')} • {t('header.countLabel')}: {count}
                             </p>
 
                             {/* Provider Link - Link to provider page */}
@@ -478,7 +511,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                         <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
                                             <Image
                                                 src={providerLogo}
-                                                alt={providerName || 'Provider'}
+                                                alt={providerName || t('header.providerLabel')}
                                                 fill
                                                 sizes="32px"
                                                 className="object-cover"
@@ -489,7 +522,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                         href={`/provider/${providerId}`}
                                         className="text-14 text-brand-500 hover:text-brand-600 transition-colors inline-flex items-center gap-1"
                                     >
-                                        {providerName || 'Provider'}
+                                        {providerName || t('header.providerLabel')}
                                         <ExternalLink className="h-3 w-3" />
                                     </Link>
                                 </div>
@@ -498,17 +531,17 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                             {/* Urgent Order Badge */}
                             {isUrgent && (
                                 <div className="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-700 rounded text-12 font-medium mb-2">
-                                    ⚠️ Urgent Order
+                                    ⚠️ {t('header.urgentOrder')}
                                 </div>
                             )}
 
                             {/* Client Confirmation Status */}
                             {requireClientConfirmation && (
                                 <div className="text-12 text-gray-600 mb-2">
-                                    Client Confirmation: {clientConfirmed ? (
-                                        <span className="text-green-600 font-medium">Confirmed</span>
+                                    {t('header.clientConfirmation')}: {clientConfirmed ? (
+                                        <span className="text-green-600 font-medium">{t('header.confirmed')}</span>
                                     ) : (
-                                        <span className="text-yellow-600 font-medium">Pending</span>
+                                        <span className="text-yellow-600 font-medium">{t('header.pending')}</span>
                                     )}
                                 </div>
                             )}
@@ -528,7 +561,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* Expected Delivery Date/Time */}
                         {deliveryDate && (
                             <div className="text-14 text-gray-600 mb-4 p-3 bg-gray-50 rounded-lg">
-                                <p className="font-medium text-gray-900 mb-1">Expected Delivery:</p>
+                                <p className="font-medium text-gray-900 mb-1">{t('delivery.expected')}:</p>
                                 <p>
                                     {deliveryDate}
                                     {deliveryTime && ` ${deliveryTime}`}
@@ -539,7 +572,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* Preferred Delivery Date - Customer's preferred date */}
                         {preferredDeliveryDate && (
                             <div className="text-14 text-gray-600 mb-4 p-3 bg-blue-50 rounded-lg">
-                                <p className="font-medium text-gray-900 mb-1">Preferred Delivery:</p>
+                                <p className="font-medium text-gray-900 mb-1">{t('delivery.preferred')}:</p>
                                 <p>{preferredDeliveryDate}</p>
                             </div>
                         )}
@@ -547,7 +580,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* Delivery Status - Current delivery status */}
                         {deliveryStatus && (
                             <div className="text-14 text-gray-600 mb-4">
-                                <p className="font-medium text-gray-900 mb-2">Delivery Status:</p>
+                                <p className="font-medium text-gray-900 mb-2">{t('delivery.status')}:</p>
                                 <DeliveryStatusBadge status={deliveryStatus} />
                             </div>
                         )}
@@ -555,13 +588,13 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* Tracking Options */}
                         {(orderNumber || orderIdString) && (
                             <div className="text-14 text-gray-600 mb-4 space-y-3">
-                                <p className="font-medium text-gray-900">Track Your Order</p>
+                                <p className="font-medium text-gray-900">{t('delivery.trackTitle')}</p>
                                 
                                 {/* Tracking Number Option */}
                                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
                                     <Package className="h-5 w-5 text-brand-500 flex-shrink-0" />
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-12 text-gray-500 mb-1">Tracking Number</p>
+                                        <p className="text-12 text-gray-500 mb-1">{t('delivery.trackingNumber')}</p>
                                         <p className="text-14 font-medium text-gray-900 break-all">
                                             {orderNumber || orderIdString || `#${order.id}`}
                                         </p>
@@ -570,11 +603,11 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                         onClick={() => {
                                             const trackingNumber = orderNumber || orderIdString || `#${order.id}`
                                             navigator.clipboard.writeText(trackingNumber)
-                                            addToast('Tracking number copied to clipboard', 'success')
+                                            addToast(t('toast.trackingCopied'), 'success')
                                         }}
                                         className="px-3 py-1.5 text-12 font-medium text-brand-500 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-colors flex-shrink-0"
                                     >
-                                        Copy
+                                        {t('delivery.copy')}
                                     </button>
                                 </div>
 
@@ -582,16 +615,16 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
                                     <Truck className="h-5 w-5 text-brand-500 flex-shrink-0" />
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-12 text-gray-500 mb-1">Track Online</p>
+                                        <p className="text-12 text-gray-500 mb-1">{t('delivery.trackOnline')}</p>
                                         <p className="text-14 text-gray-900">
-                                            Track your order status and delivery updates
+                                            {t('delivery.trackDesc')}
                                         </p>
                                     </div>
                                     <Link
                                         href={`/orders/${order.id}`}
                                         className="px-3 py-1.5 text-12 font-medium text-brand-500 hover:text-brand-600 hover:bg-brand-50 rounded-md transition-colors flex items-center gap-1.5 flex-shrink-0"
                                     >
-                                        Track
+                                        {t('delivery.track')}
                                         <ExternalLink className="h-3 w-3" />
                                     </Link>
                                 </div>
@@ -601,16 +634,16 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* Delivery Object Information */}
                         {delivery && (
                             <div className="text-14 text-gray-600 mb-4 p-3 bg-gray-50 rounded-lg">
-                                <p className="font-medium text-gray-900 mb-2">Delivery Details:</p>
+                                <p className="font-medium text-gray-900 mb-2">{t('delivery.detailsTitle')}:</p>
                                 {startDeliveryDate && (
-                                    <p className="text-12 mb-1">Start: {startDeliveryDate}</p>
+                                    <p className="text-12 mb-1">{t('delivery.start')}: {startDeliveryDate}</p>
                                 )}
                                 {deliveryDeliveryDate && (
-                                    <p className="text-12 mb-1">Delivery: {deliveryDeliveryDate}</p>
+                                    <p className="text-12 mb-1">{t('delivery.delivery')}: {deliveryDeliveryDate}</p>
                                 )}
                                 {deliveryObjectStatus && (
                                     <div className="mt-2">
-                                        <p className="text-12 font-medium text-gray-900 mb-1">Status:</p>
+                                        <p className="text-12 font-medium text-gray-900 mb-1">{t('delivery.status')}:</p>
                                         <DeliveryStatusBadge status={deliveryObjectStatus} className="text-12" />
                                     </div>
                                 )}
@@ -621,14 +654,18 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {isSummaryOpen && (
                             <>
                                 <h4 className="text-16 font-semibold text-gray-900 mb-4">
-                                    Order Summary
+                                    {t('summary.title')}
                                 </h4>
 
                                 {/* Products/Services List */}
                                 <div className="space-y-3 mb-4">
                                     {productPurchases.map((purchase: PurchaseResponse) => {
                                         const product = purchase.product
-                                        const displayName = product?.nameEn || product?.nameAr || purchase.nameEn || purchase.nameAr || purchase.name || 'Product'
+                                        const displayName = pickLocalizedText(locale, {
+                                            en: product?.nameEn ?? purchase.nameEn,
+                                            ar: product?.nameAr ?? purchase.nameAr,
+                                            fallback: purchase.name ?? t('itemReviews.productFallback'),
+                                        })
                                         const displayImage = product?.image || purchase.imageUrl || ''
 
                                         return (
@@ -650,7 +687,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                         />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center text-gray-400 text-10">
-                                                            No img
+                                                            {t('summary.noImage')}
                                                         </div>
                                                     )}
                                                 </div>
@@ -668,7 +705,11 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
 
                                     {servicePurchases.map((purchase: PurchaseResponse) => {
                                         const service = purchase.service
-                                        const displayName = service?.nameEn || service?.nameAr || purchase.nameEn || purchase.nameAr || purchase.name || 'Service'
+                                        const displayName = pickLocalizedText(locale, {
+                                            en: service?.nameEn ?? purchase.nameEn,
+                                            ar: service?.nameAr ?? purchase.nameAr,
+                                            fallback: purchase.name ?? t('itemReviews.serviceFallback'),
+                                        })
                                         const displayImage = service?.imageUrl || purchase.imageUrl || ''
 
                                         return (
@@ -690,7 +731,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                         />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center text-gray-400 text-10">
-                                                            No img
+                                                            {t('summary.noImage')}
                                                         </div>
                                                     )}
                                                 </div>
@@ -711,14 +752,14 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                 {/* Price Breakdown */}
                                 <div className="space-y-2 pt-4 border-t border-gray-200">
                                     <div className="flex justify-between text-14 text-gray-700">
-                                        <span>Subtotal:</span>
+                                        <span>{t('summary.subtotal')}:</span>
                                         <span className="font-semibold text-gray-900">
                                             {subtotal.toLocaleString()} EGP
                                         </span>
                                     </div>
                                     {taxAmount > 0 && (
                                         <div className="flex justify-between text-14 text-gray-700">
-                                            <span>Taxes & Fees:</span>
+                                            <span>{t('summary.taxesFees')}:</span>
                                             <span className="font-semibold text-gray-900">
                                                 {taxAmount.toLocaleString()} EGP
                                             </span>
@@ -726,7 +767,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     )}
                                     {shippingAmount > 0 && (
                                         <div className="flex justify-between text-14 text-gray-700">
-                                            <span>Shipping:</span>
+                                            <span>{t('summary.shipping')}:</span>
                                             <span className="font-semibold text-gray-900">
                                                 {shippingAmount.toLocaleString()} EGP
                                             </span>
@@ -734,7 +775,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     )}
                                     {discountAmount > 0 && (
                                         <div className="flex justify-between text-14 text-green-600">
-                                            <span>Discount:</span>
+                                            <span>{t('summary.discount')}:</span>
                                             <span className="font-semibold">
                                                 -{discountAmount.toLocaleString()} EGP
                                             </span>
@@ -742,14 +783,14 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     )}
                                     {depositAmount > 0 && (
                                         <div className="flex justify-between text-14 text-gray-700">
-                                            <span>Deposit:</span>
+                                            <span>{t('summary.deposit')}:</span>
                                             <span className="font-semibold text-gray-900">
                                                 {depositAmount.toLocaleString()} EGP
                                             </span>
                                         </div>
                                     )}
                                     <div className="flex justify-between text-16 font-semibold text-gray-900 pt-2 border-t border-gray-200">
-                                        <span>Total:</span>
+                                        <span>{t('summary.total')}:</span>
                                         <span>{finalAmount.toLocaleString()} EGP</span>
                                     </div>
                                 </div>
@@ -760,28 +801,28 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                 {/* Payment Method and Status */}
                                 {(paymentMethod || paymentStatus || paymentStatusText) && (
                                     <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">Payment Information</h5>
+                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">{t('payment.infoTitle')}</h5>
                                         {paymentMethod && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-1">
-                                                <span>Payment Method:</span>
-                                                <span className="font-medium">{paymentMethod}</span>
+                                                <span>{t('payment.method')}:</span>
+                                                <span className="font-medium">{normalizePaymentMethod(paymentMethod)}</span>
                                             </div>
                                         )}
                                         {paymentStatusText && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-1">
-                                                <span>Payment Status:</span>
-                                                <span className="font-medium">{paymentStatusText}</span>
+                                                <span>{t('payment.status')}:</span>
+                                                <span className="font-medium">{normalizePaymentStatus(paymentStatusText)}</span>
                                             </div>
                                         )}
                                         {paymentStatus && !paymentStatusText && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-1">
-                                                <span>Payment Status:</span>
-                                                <span className="font-medium">{paymentStatus}</span>
+                                                <span>{t('payment.status')}:</span>
+                                                <span className="font-medium">{normalizePaymentStatus(paymentStatus)}</span>
                                             </div>
                                         )}
                                         {couponCode && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-1">
-                                                <span>Coupon Code:</span>
+                                                <span>{t('payment.coupon')}:</span>
                                                 <span className="font-medium text-green-600">{couponCode}</span>
                                             </div>
                                         )}
@@ -791,10 +832,10 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                 {/* Payment Amounts */}
                                 {totalPaidAmount > 0 || totalRemainingAmount > 0 || paidAmount ? (
                                     <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">Payment Summary</h5>
+                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">{t('payment.summaryTitle')}</h5>
                                         {totalPaidAmount > 0 && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-2">
-                                                <span>Paid Amount:</span>
+                                                <span>{t('payment.paidAmount')}:</span>
                                                 <span className="font-semibold text-gray-900">
                                                     {totalPaidAmount.toLocaleString()} EGP
                                                 </span>
@@ -802,7 +843,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                         )}
                                         {paidAmount && paidAmount !== totalPaidAmount && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-2">
-                                                <span>Paid (Alt):</span>
+                                                <span>{t('payment.paidAlt')}:</span>
                                                 <span className="font-semibold text-gray-900">
                                                     {paidAmount.toLocaleString()} EGP
                                                 </span>
@@ -810,7 +851,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                         )}
                                         {totalRemainingAmount > 0 && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-2">
-                                                <span>Remaining Amount:</span>
+                                                <span>{t('payment.remainingAmount')}:</span>
                                                 <span className="font-semibold text-gray-900">
                                                     {totalRemainingAmount.toLocaleString()} EGP
                                                 </span>
@@ -819,7 +860,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                         {paymentProgressPercentage > 0 && (
                                             <div className="mt-3">
                                                 <div className="flex justify-between text-12 text-gray-600 mb-1">
-                                                    <span>Payment Progress</span>
+                                                    <span>{t('payment.progress')}</span>
                                                     <span>{paymentProgressPercentage}%</span>
                                                 </div>
                                                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -838,34 +879,34 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     ============================================ */}
                                 {hasPaymentPlan && (
                                     <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">Payment Plan</h5>
+                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">{t('payment.planTitle')}</h5>
                                         {paymentPlanName && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-1">
-                                                <span>Plan Name:</span>
+                                                <span>{t('payment.planName')}:</span>
                                                 <span className="font-medium">{paymentPlanName}</span>
                                             </div>
                                         )}
                                         {numberOfPayments && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-1">
-                                                <span>Number of Payments:</span>
+                                                <span>{t('payment.numPayments')}:</span>
                                                 <span className="font-medium">{numberOfPayments}</span>
                                             </div>
                                         )}
                                         {firstPaymentDate && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-1">
-                                                <span>First Payment:</span>
+                                                <span>{t('payment.firstPayment')}:</span>
                                                 <span className="font-medium">{firstPaymentDate}</span>
                                             </div>
                                         )}
                                         {lastPaymentDate && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-1">
-                                                <span>Last Payment:</span>
+                                                <span>{t('payment.lastPayment')}:</span>
                                                 <span className="font-medium">{lastPaymentDate}</span>
                                             </div>
                                         )}
                                         {paymentPlanStatus && (
                                             <div className="flex justify-between text-14 text-gray-700 mb-1">
-                                                <span>Plan Status:</span>
+                                                <span>{t('payment.planStatus')}:</span>
                                                 <span className="font-medium">{paymentPlanStatus}</span>
                                             </div>
                                         )}
@@ -877,15 +918,15 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     ============================================ */}
                                 {(clientName || clientEmail || clientPhone) && (
                                     <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">Client Information</h5>
+                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">{t('client.title')}</h5>
                                         {clientName && (
-                                            <p className="text-14 text-gray-700 mb-1">Name: {clientName}</p>
+                                            <p className="text-14 text-gray-700 mb-1">{t('client.name')}: {clientName}</p>
                                         )}
                                         {clientEmail && (
-                                            <p className="text-14 text-gray-700 mb-1">Email: {clientEmail}</p>
+                                            <p className="text-14 text-gray-700 mb-1">{t('client.email')}: {clientEmail}</p>
                                         )}
                                         {clientPhone && (
-                                            <p className="text-14 text-gray-700 mb-1">Phone: {clientPhone}</p>
+                                            <p className="text-14 text-gray-700 mb-1">{t('client.phone')}: {clientPhone}</p>
                                         )}
                                     </div>
                                 )}
@@ -895,15 +936,15 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     ============================================ */}
                                 {(createdByUserName || createdByUserEmail || createdByUserPhone) && (
                                     <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">Created By</h5>
+                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">{t('createdBy.title')}</h5>
                                         {createdByUserName && (
-                                            <p className="text-14 text-gray-700 mb-1">Name: {createdByUserName}</p>
+                                            <p className="text-14 text-gray-700 mb-1">{t('createdBy.name')}: {createdByUserName}</p>
                                         )}
                                         {createdByUserEmail && (
-                                            <p className="text-14 text-gray-700 mb-1">Email: {createdByUserEmail}</p>
+                                            <p className="text-14 text-gray-700 mb-1">{t('createdBy.email')}: {createdByUserEmail}</p>
                                         )}
                                         {createdByUserPhone && (
-                                            <p className="text-14 text-gray-700 mb-1">Phone: {createdByUserPhone}</p>
+                                            <p className="text-14 text-gray-700 mb-1">{t('createdBy.phone')}: {createdByUserPhone}</p>
                                         )}
                                     </div>
                                 )}
@@ -913,22 +954,22 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     ============================================ */}
                                 {(orderComment || orderNotes || providerNotes) && (
                                     <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">Notes & Comments</h5>
+                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">{t('notes.title')}</h5>
                                         {orderComment && (
                                             <div className="mb-2">
-                                                <p className="text-12 text-gray-600 mb-1">Order Comment:</p>
+                                                <p className="text-12 text-gray-600 mb-1">{t('notes.orderComment')}:</p>
                                                 <p className="text-14 text-gray-700">{orderComment}</p>
                                             </div>
                                         )}
                                         {orderNotes && (
                                             <div className="mb-2">
-                                                <p className="text-12 text-gray-600 mb-1">Order Notes:</p>
+                                                <p className="text-12 text-gray-600 mb-1">{t('notes.orderNotes')}:</p>
                                                 <p className="text-14 text-gray-700">{orderNotes}</p>
                                             </div>
                                         )}
                                         {providerNotes && (
                                             <div>
-                                                <p className="text-12 text-gray-600 mb-1">Provider Notes:</p>
+                                                <p className="text-12 text-gray-600 mb-1">{t('notes.providerNotes')}:</p>
                                                 <p className="text-14 text-gray-700">{providerNotes}</p>
                                             </div>
                                         )}
@@ -940,29 +981,30 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     ============================================ */}
                                 {(cartId || checkoutOrderId || paymentPlanId || creationDate || lastModifiedDate || isOverdue) && (
                                     <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">Additional Information</h5>
+                                        <h5 className="text-14 font-semibold text-gray-900 mb-2">{t('additional.title')}</h5>
                                         {cartId && (
-                                            <p className="text-12 text-gray-600 mb-1">Cart ID: {cartId}</p>
+                                            <p className="text-12 text-gray-600 mb-1">{t('additional.cartId')}: {cartId}</p>
                                         )}
                                         {checkoutOrderId && (
-                                            <p className="text-12 text-gray-600 mb-1">Checkout Order ID: {checkoutOrderId}</p>
+                                            <p className="text-12 text-gray-600 mb-1">{t('additional.checkoutOrderId')}: {checkoutOrderId}</p>
                                         )}
                                         {paymentPlanId && (
-                                            <p className="text-12 text-gray-600 mb-1">Payment Plan ID: {paymentPlanId}</p>
+                                            <p className="text-12 text-gray-600 mb-1">{t('additional.paymentPlanId')}: {paymentPlanId}</p>
                                         )}
                                         {creationDate && (
-                                            <p className="text-12 text-gray-600 mb-1">Created: {creationDate}</p>
+                                            <p className="text-12 text-gray-600 mb-1">{t('additional.created')}: {creationDate}</p>
                                         )}
                                         {lastModifiedDate && (
-                                            <p className="text-12 text-gray-600 mb-1">Last Modified: {lastModifiedDate}</p>
+                                            <p className="text-12 text-gray-600 mb-1">{t('additional.lastModified')}: {lastModifiedDate}</p>
                                         )}
                                         {isOverdue && (
                                             <p className="text-12 text-orange-600 font-medium mb-1">
-                                                ⚠️ Overdue: {daysOverdue} {daysOverdue === 1 ? 'day' : 'days'}
+                                                ⚠️ {t('additional.overdue')}: {daysOverdue}{' '}
+                                                {daysOverdue === 1 ? t('additional.day') : t('additional.days')}
                                             </p>
                                         )}
                                         {!isActive && (
-                                            <p className="text-12 text-gray-500 mb-1">Status: Inactive</p>
+                                            <p className="text-12 text-gray-500 mb-1">{t('additional.inactiveStatus')}</p>
                                         )}
                                     </div>
                                 )}
@@ -984,7 +1026,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                     onClick={() => router.push(`/orders/${orderId}/invoice`)}
                 >
                     <FileText className="h-5 w-5" />
-                    View Invoice
+                    {t('actions.viewInvoice')}
                 </Button>
 
                 {/* Download Invoice Button - Download invoice as PDF */}
@@ -996,7 +1038,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                     disabled={downloadInvoiceMutation.isPending || isNaN(orderIdNum)}
                 >
                     <Download className="h-5 w-5" />
-                    {downloadInvoiceMutation.isPending ? 'Downloading...' : 'Download Invoice'}
+                    {downloadInvoiceMutation.isPending ? t('actions.downloading') : t('actions.downloadInvoice')}
                 </Button>
 
                 {/* Back to Orders Button - Return to orders list */}
@@ -1006,7 +1048,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                     className="flex items-center gap-2 px-6 py-3 text-16 font-semibold"
                     onClick={() => router.push('/orders')}
                 >
-                    Back to Orders
+                    {t('actions.backToOrders')}
                 </Button>
             </div>
 
@@ -1017,7 +1059,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                 <div className="flex items-center justify-between mb-6">
                     <h3 className="text-20 font-semibold text-gray-900 flex items-center gap-2">
                         <MessageSquare className="h-5 w-5" />
-                        Order Reviews & Comments
+                        {t('reviews.title')}
                         {orderReviews.length > 0 && (
                             <span className="text-14 font-normal text-gray-500">
                                 ({orderReviews.length})
@@ -1030,7 +1072,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                             size="sm"
                             onClick={() => setShowOrderReviewForm(true)}
                         >
-                            Add Review
+                            {t('reviews.addReview')}
                         </Button>
                     )}
                 </div>
@@ -1040,12 +1082,12 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                     ============================================ */}
                 {showOrderReviewForm && (
                     <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <h4 className="text-16 font-semibold text-gray-900 mb-4">Write Your Review</h4>
+                        <h4 className="text-16 font-semibold text-gray-900 mb-4">{t('reviews.writeReview')}</h4>
 
                         {/* Rating Input */}
                         <div className="mb-4">
                             <label className="text-14 font-medium text-gray-700 mb-2 block">
-                                Rating *
+                                {t('reviews.ratingLabel')}
                             </label>
                             <div className="flex justify-center">
                                 <RatingInput
@@ -1060,12 +1102,12 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* Review Title */}
                         <div className="mb-4">
                             <label className="text-14 font-medium text-gray-700 mb-2 block">
-                                Review Title
+                                {t('reviews.reviewTitle')}
                             </label>
                             <Input
                                 value={orderReviewTitle}
                                 onChange={(e) => setOrderReviewTitle(e.target.value)}
-                                placeholder="Enter a title for your review (optional)"
+                                placeholder={t('itemReviews.titlePlaceholder')}
                                 className="w-full"
                             />
                         </div>
@@ -1073,12 +1115,12 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* Review Comment */}
                         <div className="mb-4">
                             <label className="text-14 font-medium text-gray-700 mb-2 block">
-                                Your Review *
+                                {t('reviews.reviewBodyLabel')}
                             </label>
                             <textarea
                                 value={orderReviewComment}
                                 onChange={(e) => setOrderReviewComment(e.target.value)}
-                                placeholder="Share your experience with this order..."
+                                placeholder={t('reviews.reviewPlaceholder')}
                                 className="w-full min-h-[120px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand-500"
                                 rows={4}
                             />
@@ -1096,7 +1138,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     setOrderReviewTitle('')
                                 }}
                             >
-                                Cancel
+                                {t('reviews.cancel')}
                             </Button>
                             <Button
                                 variant="brand"
@@ -1113,14 +1155,14 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                     title: orderReviewTitle.trim() || null,
                                                 },
                                             })
-                                            addToast('Review submitted successfully!', 'success')
+                                            addToast(t('reviews.submitSuccess'), 'success')
                                             setShowOrderReviewForm(false)
                                             setOrderReviewRating(0)
                                             setOrderReviewComment('')
                                             setOrderReviewTitle('')
                                         } catch (error) {
                                             addToast(
-                                                error instanceof Error ? error.message : 'Failed to submit review',
+                                                error instanceof Error ? error.message : t('reviews.submitError'),
                                                 'error'
                                             )
                                         }
@@ -1133,7 +1175,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     isNaN(orderIdNum)
                                 }
                             >
-                                {submitOrderReviewMutation.isPending ? 'Submitting...' : 'Submit Review'}
+                                {submitOrderReviewMutation.isPending ? t('reviews.submitting') : t('reviews.submit')}
                             </Button>
                         </div>
                     </div>
@@ -1143,7 +1185,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                     DISPLAY EXISTING ORDER REVIEWS
                     ============================================ */}
                 {isLoadingReviews ? (
-                    <div className="text-center py-8 text-gray-500">Loading reviews...</div>
+                    <div className="text-center py-8 text-gray-500">{t('reviews.loading')}</div>
                 ) : orderReviews.length > 0 ? (
                     <div className="space-y-4">
                         {orderReviews.map((review: ReviewResponse) => (
@@ -1184,7 +1226,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                     </div>
                 ) : (
                     <div className="text-center py-8 text-gray-500">
-                        No reviews yet. Be the first to review this order!
+                        {t('reviews.empty')}
                     </div>
                 )}
             </div>
@@ -1196,14 +1238,18 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                 <div className="mt-8 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
                     <h3 className="text-20 font-semibold text-gray-900 mb-6 flex items-center gap-2">
                         <Star className="h-5 w-5" />
-                        Review Items in This Order
+                        {t('itemReviews.title')}
                     </h3>
 
                     <div className="space-y-6">
                         {/* Product Reviews */}
                         {productPurchases.map((purchase: PurchaseResponse) => {
                             const product = purchase.product
-                            const displayName = product?.nameEn || product?.nameAr || purchase.nameEn || purchase.nameAr || purchase.name || 'Product'
+                            const displayName = pickLocalizedText(locale, {
+                                en: product?.nameEn ?? purchase.nameEn,
+                                ar: product?.nameAr ?? purchase.nameAr,
+                                fallback: purchase.name ?? t('itemReviews.productFallback'),
+                            })
                             const displayImage = product?.image || purchase.imageUrl || ''
                             const productId = purchase.productId
                             const itemReview = itemReviews[purchase.id] || {
@@ -1233,14 +1279,14 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-10">
-                                                    No img
+                                                    {t('summary.noImage')}
                                                 </div>
                                             )}
                                         </div>
                                         <div className="flex-1">
                                             <h4 className="text-16 font-semibold text-gray-900">{displayName}</h4>
                                             <p className="text-14 text-gray-600">
-                                                Quantity: {purchase.quantity} × {purchase.totalPrice?.toLocaleString() || purchase.price?.toLocaleString() || '0'} EGP
+                                                {t('itemReviews.quantityLabel')}: {purchase.quantity} × {purchase.totalPrice?.toLocaleString() || purchase.price?.toLocaleString() || '0'} EGP
                                             </p>
                                         </div>
                                         {!itemReview.showForm && productId && (
@@ -1259,7 +1305,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                     }))
                                                 }}
                                             >
-                                                Add Review
+                                                {t('itemReviews.addReview')}
                                             </Button>
                                         )}
                                     </div>
@@ -1267,12 +1313,12 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     {/* Product Review Form */}
                                     {itemReview.showForm && productId && (
                                         <div className="mt-4 p-4 bg-white rounded-lg border border-gray-300">
-                                            <h5 className="text-14 font-semibold text-gray-900 mb-4">Review This Product</h5>
+                                            <h5 className="text-14 font-semibold text-gray-900 mb-4">{t('itemReviews.productTitle')}</h5>
 
                                             {/* Rating */}
                                             <div className="mb-4">
                                                 <label className="text-14 font-medium text-gray-700 mb-2 block">
-                                                    Rating *
+                                                    {t('reviews.ratingLabel')}
                                                 </label>
                                                 <div className="flex justify-center">
                                                     <RatingInput
@@ -1292,7 +1338,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                             {/* Review Title */}
                                             <div className="mb-4">
                                                 <label className="text-14 font-medium text-gray-700 mb-2 block">
-                                                    Review Title
+                                                    {t('reviews.reviewTitle')}
                                                 </label>
                                                 <Input
                                                     value={itemReview.title}
@@ -1302,7 +1348,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                             [purchase.id]: { ...prev[purchase.id], title: e.target.value },
                                                         }))
                                                     }}
-                                                    placeholder="Enter a title (optional)"
+                                                    placeholder={t('itemReviews.titlePlaceholder')}
                                                     className="w-full"
                                                 />
                                             </div>
@@ -1310,7 +1356,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                             {/* Review Comment */}
                                             <div className="mb-4">
                                                 <label className="text-14 font-medium text-gray-700 mb-2 block">
-                                                    Your Review *
+                                                    {t('reviews.reviewBodyLabel')}
                                                 </label>
                                                 <textarea
                                                     value={itemReview.comment}
@@ -1320,7 +1366,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                             [purchase.id]: { ...prev[purchase.id], comment: e.target.value },
                                                         }))
                                                     }}
-                                                    placeholder="Share your experience with this product..."
+                                                    placeholder={t('itemReviews.productPlaceholder')}
                                                     className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand-500"
                                                     rows={3}
                                                 />
@@ -1339,7 +1385,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                         })
                                                     }}
                                                 >
-                                                    Cancel
+                                                    {t('reviews.cancel')}
                                                 </Button>
                                                 <Button
                                                     variant="brand"
@@ -1353,7 +1399,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                                     review: itemReview.comment.trim(),
                                                                     title: itemReview.title.trim() || undefined,
                                                                 })
-                                                                addToast('Product review submitted successfully!', 'success')
+                                                                addToast(t('itemReviews.productSubmitSuccess'), 'success')
                                                                 setItemReviews((prev) => {
                                                                     const newState = { ...prev }
                                                                     delete newState[purchase.id]
@@ -1361,7 +1407,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                                 })
                                                             } catch (error) {
                                                                 addToast(
-                                                                    error instanceof Error ? error.message : 'Failed to submit review',
+                                                                    error instanceof Error ? error.message : t('itemReviews.submitError'),
                                                                     'error'
                                                                 )
                                                             }
@@ -1373,7 +1419,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                         submitProductReviewMutation.isPending
                                                     }
                                                 >
-                                                    {submitProductReviewMutation.isPending ? 'Submitting...' : 'Submit Review'}
+                                                    {submitProductReviewMutation.isPending ? t('reviews.submitting') : t('reviews.submit')}
                                                 </Button>
                                             </div>
                                         </div>
@@ -1385,7 +1431,11 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                         {/* Service Reviews */}
                         {servicePurchases.map((purchase: PurchaseResponse) => {
                             const service = purchase.service
-                            const displayName = service?.nameEn || service?.nameAr || purchase.nameEn || purchase.nameAr || purchase.name || 'Service'
+                            const displayName = pickLocalizedText(locale, {
+                                en: service?.nameEn ?? purchase.nameEn,
+                                ar: service?.nameAr ?? purchase.nameAr,
+                                fallback: purchase.name ?? t('itemReviews.serviceFallback'),
+                            })
                             const displayImage = service?.imageUrl || purchase.imageUrl || ''
                             const serviceId = purchase.serviceId
                             const itemReview = itemReviews[purchase.id] || {
@@ -1415,7 +1465,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-gray-400 text-10">
-                                                    No img
+                                                    {t('summary.noImage')}
                                                 </div>
                                             )}
                                         </div>
@@ -1442,7 +1492,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                     }))
                                                 }}
                                             >
-                                                Add Review
+                                                {t('itemReviews.addReview')}
                                             </Button>
                                         )}
                                     </div>
@@ -1450,12 +1500,12 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                     {/* Service Review Form */}
                                     {itemReview.showForm && serviceId && (
                                         <div className="mt-4 p-4 bg-white rounded-lg border border-gray-300">
-                                            <h5 className="text-14 font-semibold text-gray-900 mb-4">Review This Service</h5>
+                                            <h5 className="text-14 font-semibold text-gray-900 mb-4">{t('itemReviews.serviceTitle')}</h5>
 
                                             {/* Rating */}
                                             <div className="mb-4">
                                                 <label className="text-14 font-medium text-gray-700 mb-2 block">
-                                                    Rating *
+                                                    {t('reviews.ratingLabel')}
                                                 </label>
                                                 <div className="flex justify-center">
                                                     <RatingInput
@@ -1475,7 +1525,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                             {/* Review Title */}
                                             <div className="mb-4">
                                                 <label className="text-14 font-medium text-gray-700 mb-2 block">
-                                                    Review Title
+                                                    {t('reviews.reviewTitle')}
                                                 </label>
                                                 <Input
                                                     value={itemReview.title}
@@ -1485,7 +1535,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                             [purchase.id]: { ...prev[purchase.id], title: e.target.value },
                                                         }))
                                                     }}
-                                                    placeholder="Enter a title (optional)"
+                                                    placeholder={t('itemReviews.titlePlaceholder')}
                                                     className="w-full"
                                                 />
                                             </div>
@@ -1493,7 +1543,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                             {/* Review Comment */}
                                             <div className="mb-4">
                                                 <label className="text-14 font-medium text-gray-700 mb-2 block">
-                                                    Your Review *
+                                                    {t('reviews.reviewBodyLabel')}
                                                 </label>
                                                 <textarea
                                                     value={itemReview.comment}
@@ -1503,7 +1553,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                             [purchase.id]: { ...prev[purchase.id], comment: e.target.value },
                                                         }))
                                                     }}
-                                                    placeholder="Share your experience with this service..."
+                                                    placeholder={t('itemReviews.servicePlaceholder')}
                                                     className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-brand-500"
                                                     rows={3}
                                                 />
@@ -1522,7 +1572,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                         })
                                                     }}
                                                 >
-                                                    Cancel
+                                                    {t('reviews.cancel')}
                                                 </Button>
                                                 <Button
                                                     variant="brand"
@@ -1537,7 +1587,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                                     title: itemReview.title.trim() || undefined,
                                                                     providerId: order.providerId || null,
                                                                 })
-                                                                addToast('Service review submitted successfully!', 'success')
+                                                                addToast(t('itemReviews.serviceSubmitSuccess'), 'success')
                                                                 setItemReviews((prev) => {
                                                                     const newState = { ...prev }
                                                                     delete newState[purchase.id]
@@ -1545,7 +1595,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                                 })
                                                             } catch (error) {
                                                                 addToast(
-                                                                    error instanceof Error ? error.message : 'Failed to submit review',
+                                                                    error instanceof Error ? error.message : t('itemReviews.submitError'),
                                                                     'error'
                                                                 )
                                                             }
@@ -1557,7 +1607,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                                                         submitServiceReviewMutation.isPending
                                                     }
                                                 >
-                                                    {submitServiceReviewMutation.isPending ? 'Submitting...' : 'Submit Review'}
+                                                    {submitServiceReviewMutation.isPending ? t('reviews.submitting') : t('reviews.submit')}
                                                 </Button>
                                             </div>
                                         </div>
@@ -1568,6 +1618,7 @@ export function OrderDetailsClient({ orderId }: OrderDetailsClientProps) {
                     </div>
                 </div>
             )}
+            </div>
         </UserPageLayout>
     )
 }

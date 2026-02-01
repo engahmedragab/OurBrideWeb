@@ -2,6 +2,7 @@
 
 import { Package, Truck, CheckCircle2, XCircle, RotateCcw, Loader2, MapPin } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 import type { DeliveryStatus } from '@/../client/common/api/gen/ourbride-api'
 
 export interface DeliveryStatusBadgeProps {
@@ -13,21 +14,24 @@ export interface DeliveryStatusBadgeProps {
 /**
  * Map DeliveryStatus enum to user-friendly display text
  */
-export const getDeliveryStatusLabel = (status: DeliveryStatus | string | null | undefined): string => {
-  if (!status) return 'Not Set'
-  
+export const getDeliveryStatusLabel = (
+  status: DeliveryStatus | string | null | undefined,
+  t?: (key: string) => string
+): string => {
+  if (!status) return t ? t('notSet') : 'Not Set'
+
   const statusStr = String(status)
-  
+
   const statusMap: Record<string, string> = {
-    Created: 'Created',
-    ReadyForDelivery: 'Ready for Delivery',
-    InTransit: 'In Transit',
-    OutForDelivery: 'Out for Delivery',
-    Delivered: 'Delivered',
-    Failed: 'Failed',
-    Returned: 'Returned',
+    Created: t ? t('created') : 'Created',
+    ReadyForDelivery: t ? t('readyForDelivery') : 'Ready for Delivery',
+    InTransit: t ? t('inTransit') : 'In Transit',
+    OutForDelivery: t ? t('outForDelivery') : 'Out for Delivery',
+    Delivered: t ? t('delivered') : 'Delivered',
+    Failed: t ? t('failed') : 'Failed',
+    Returned: t ? t('returned') : 'Returned',
   }
-  
+
   return statusMap[statusStr] || statusStr
 }
 
@@ -102,9 +106,10 @@ export const DeliveryStatusBadge = ({
   className,
   showIcon = true 
 }: DeliveryStatusBadgeProps) => {
+  const t = useI18nTranslations('deliveryStatus')
   const config = getDeliveryStatusConfig(status)
   const Icon = config.icon
-  const label = getDeliveryStatusLabel(status)
+  const label = getDeliveryStatusLabel(status, t)
 
   return (
     <div

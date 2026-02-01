@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl'
   className?: string
   text?: string
   fullScreen?: boolean
+  open?: boolean
 }
 
 const sizeClasses = {
@@ -25,21 +27,24 @@ const sizeClasses = {
 export const LoadingSpinner = ({
   size = 'md',
   className,
-  text,
+  text ,
   fullScreen = false,
+  open,
 }: LoadingSpinnerProps) => {
+  const t =useI18nTranslations('common')
   const [isMounted, setIsMounted] = useState(false)
 
   // Prevent hydration mismatch by only rendering after mount
   useEffect(() => {
     setIsMounted(true)
   }, [])
+    if (!open) return null
 
   const spinner = (
     <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
       <Loader2 className={cn('animate-spin text-brand-500', sizeClasses[size])} />
       {text && (
-        <p className="text-14 sm:text-16 text-gray-600 font-medium">{text}</p>
+        <p className="text-14 sm:text-16 text-gray-600 font-medium">{text || t('loading')}</p>
       )}
     </div>
   )
