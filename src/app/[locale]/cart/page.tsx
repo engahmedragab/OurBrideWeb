@@ -17,6 +17,7 @@ import {
   LoadingOverlay,
   ServicesProductsFilter,
   Button,
+  LoadingSpinner,
 } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import { useCart, useCartProviders, useUpdatePurchase, useRemovePurchase, useClearCart, useCheckout } from '@/hooks'
@@ -36,12 +37,15 @@ import type {
 } from '@/types/responses'
 import { PurchaseType } from '@/../client/common/api/gen/ourbride-api'
 import type { CartItemType } from '@/components/ui/CartItem'
+import { useI18nLocale, useI18nTranslations } from '@/i18n/hooks'
+import { pickLocalizedText } from '@/utils/translation/i18nText';
 
 /**
  * Map PurchaseResponse to CartProduct using display properties from PurchaseResponse
  * Priority: purchase.name > purchase.product > fetchedProduct > fallback
  */
 const mapPurchaseToCartProduct = (
+  locale: string,
   purchase: PurchaseResponse,
   fetchedProduct?: ProductResponse
 ): CartProduct | null => {
@@ -54,7 +58,7 @@ const mapPurchaseToCartProduct = (
   const productId = purchase.productId ?? purchase.id
 
   // Priority 1: Use display properties from PurchaseResponse (stored directly for performance)
-  const displayName = purchase.name ?? purchase.nameEn ?? purchase.nameAr
+  const displayName = pickLocalizedText(locale, {en: purchase.nameEn, ar: purchase.nameAr, fallback: purchase.name})
   const displayImage = purchase.imageUrl
 
   // Priority 2: Use ProductHeaderResponse from purchase.product if available
@@ -80,7 +84,7 @@ const mapPurchaseToCartProduct = (
 
     // Use product header name/image if purchase display properties are not available
     if (!title) {
-      title = productHeader.nameEn ?? productHeader.nameAr ?? null
+      title = pickLocalizedText(locale, {en: productHeader.nameEn, ar: productHeader.nameAr, fallback: null})
     }
     if (!displayImage) {
       image = productHeader.image ?? '/placeholder-product.png'
@@ -89,7 +93,7 @@ const mapPurchaseToCartProduct = (
 
   // Fallback: Use fetched ProductResponse if available
   if (!title && fetchedProduct) {
-    title = fetchedProduct.nameEn ?? fetchedProduct.nameAr ?? null
+    title = pickLocalizedText(locale, {en: fetchedProduct.nameEn, ar: fetchedProduct.nameAr, fallback: null})
     if (!displayImage) {
       image = fetchedProduct.image ?? '/placeholder-product.png'
     }
@@ -138,6 +142,7 @@ const mapPurchaseToCartProduct = (
  * Priority: purchase.name > reservation.service > fallback to type name
  */
 const mapPurchaseToCartReservation = (
+  locale:string,
   purchase: PurchaseResponse
 ): CartReservation | null => {
   if (purchase.type !== PurchaseType.Reservation) {
@@ -147,7 +152,7 @@ const mapPurchaseToCartReservation = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority 1: Use display properties from PurchaseResponse
-  let title = purchase.name ?? purchase.nameEn ?? purchase.nameAr
+  let title = pickLocalizedText(locale, {en: purchase.nameEn, ar: purchase.nameAr, fallback: purchase.name})
   let image = purchase.imageUrl ?? '/placeholder-service.png'
 
   // Priority 2: Use ReservationResponse if available
@@ -157,7 +162,7 @@ const mapPurchaseToCartReservation = (
 
     // Use service name/image if purchase display properties are not available
     if (!title) {
-      title = service?.nameEn ?? service?.nameAr ?? null
+      title = pickLocalizedText(locale, {en: service?.nameEn, ar: service?.nameAr, fallback: null})
     }
     if (!purchase.imageUrl) {
       image = service?.imageUrl ?? '/placeholder-service.png'
@@ -218,6 +223,7 @@ const mapPurchaseToCartReservation = (
  * Priority: purchase.name > fallback to type name
  */
 const mapPurchaseToCartMembership = (
+  locale:string,
   purchase: PurchaseResponse
 ): CartMembership | null => {
   if (purchase.type !== PurchaseType.Membership) {
@@ -227,7 +233,7 @@ const mapPurchaseToCartMembership = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority: Use display properties from PurchaseResponse, fallback to type name
-  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Membership'
+  const title = pickLocalizedText(locale, {en: purchase.nameEn, ar: purchase.nameAr, fallback: purchase.name}) ?? 'Membership'
   const image = purchase.imageUrl ?? '/placeholder-membership.png'
 
   return {
@@ -249,6 +255,7 @@ const mapPurchaseToCartMembership = (
  * Priority: purchase.name > fallback to type name
  */
 const mapPurchaseToCartGiftCard = (
+  locale:string,
   purchase: PurchaseResponse
 ): CartGiftCard | null => {
   if (purchase.type !== PurchaseType.GiftCard) {
@@ -258,7 +265,7 @@ const mapPurchaseToCartGiftCard = (
   const price = purchase.totalPrice ?? purchase.price ?? 0
 
   // Priority: Use display properties from PurchaseResponse, fallback to type name
-  const title = purchase.name ?? purchase.nameEn ?? purchase.nameAr ?? 'Gift Card'
+  const title = pickLocalizedText(locale, {en: purchase.nameEn, ar: purchase.nameAr, fallback: purchase.name}) ?? 'Gift Card'
   const image = purchase.imageUrl ?? '/placeholder-giftcard.png'
 
   return {
@@ -276,7 +283,14 @@ const mapPurchaseToCartGiftCard = (
 }
 
 export default function CartPage() {
+
+  const t = useI18nTranslations('cart.page')
+const tStates = useI18nTranslations('cart.states')
+const tActions = useI18nTranslations('cart.actions')
+const tOverlay = useI18nTranslations('cart.mutationOverlay')
   const router = useRouter()
+ 
+  const locale = useI18nLocale()
   const queryClient = useQueryClient()
 
   // Modal states
@@ -437,11 +451,11 @@ export default function CartPage() {
         if (purchase.productId && !purchase.product) {
           const fetchedProduct = productMap.get(purchase.productId)
           if (fetchedProduct) {
-            return mapPurchaseToCartProduct(purchase, fetchedProduct)
+            return mapPurchaseToCartProduct(locale, purchase, fetchedProduct)
           }
         }
         // Use ProductHeaderResponse from purchase.product, or fallback to purchase data
-        return mapPurchaseToCartProduct(purchase)
+        return mapPurchaseToCartProduct(locale, purchase, undefined )
       })
       .filter((product): product is CartProduct => product !== null)
   }, [allPurchases, productMap])
@@ -459,15 +473,15 @@ export default function CartPage() {
   const reservationPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartReservation(purchase))
+      .map((purchase) => mapPurchaseToCartReservation( locale, purchase))
       .filter((reservation): reservation is CartReservation => reservation !== null)
-  }, [allPurchases])
+  }, [allPurchases, locale])
 
   // Filter membership purchases
   const membershipPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartMembership(purchase))
+      .map((purchase) => mapPurchaseToCartMembership(locale, purchase))
       .filter((membership): membership is CartMembership => membership !== null)
   }, [allPurchases])
 
@@ -475,7 +489,7 @@ export default function CartPage() {
   const giftCardPurchases = useMemo(() => {
     if (!allPurchases.length) return []
     return allPurchases
-      .map((purchase) => mapPurchaseToCartGiftCard(purchase))
+      .map((purchase) => mapPurchaseToCartGiftCard(locale, purchase))
       .filter((giftCard): giftCard is CartGiftCard => giftCard !== null)
   }, [allPurchases])
 
@@ -488,6 +502,7 @@ export default function CartPage() {
 
   // Calculate total number of items in cart
   const totalItems = useMemo(() => {
+   
     return (
       cartProducts.reduce((sum, product) => sum + product.quantity, 0) +
       servicePurchases.reduce((sum, service) => sum + (service.quantity || 1), 0) +
@@ -497,7 +512,11 @@ export default function CartPage() {
     )
   }, [cartProducts, servicePurchases, reservationPurchases, membershipPurchases, giftCardPurchases])
 
-
+ const pageSubtitle = hasItems
+  ? totalItems === 1
+    ? t('subtitle.one', { count: totalItems })
+    : t('subtitle.other', { count: totalItems })
+  : undefined
   // Get the active cart data (use general cart data)
   const activeCartData = useMemo(() => {
     return cartData
@@ -821,7 +840,7 @@ export default function CartPage() {
           onClick={handleClearAllClick}
           disabled={clearCartMutation.isPending}
           className="hover:bg-red-50 hover:border-red-400"
-          aria-label="Clear all items"
+          aria-label={tActions('clearAllAria')}
         >
           <Trash2 className="h-4 w-4 text-gray-600" />
         </Button>
@@ -833,7 +852,7 @@ export default function CartPage() {
         onClick={handleRefresh}
         disabled={isRefreshing}
         className="hover:border-brand-400"
-        aria-label="Refresh cart"
+        aria-label={tActions('refreshAria')}
       >
         <RefreshCw
           className={cn(
@@ -850,16 +869,16 @@ export default function CartPage() {
   if (isLoadingData) {
     return (
       <UserPageLayout>
-        <PageHeader
-          title="My Cart"
-          subtitle={hasItems ? `${totalItems} ${totalItems === 1 ? 'Item' : 'Items'}` : undefined}
-          rightContent={headerRightContent}
-        />
-        <LoadingOverlay
-          open={true}
-          title="Loading cart..."
-          subtitle="Please wait a moment"
-        />
+       <PageHeader
+  title={t('title')}
+  subtitle={pageSubtitle}
+  rightContent={headerRightContent}
+/>
+   <LoadingSpinner
+  fullScreen
+  size="lg"
+  text={`${tStates('loading.title')}\n${tStates('loading.subtitle')}`}
+/>
       </UserPageLayout>
     )
   }
@@ -869,14 +888,14 @@ export default function CartPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="My Cart"
-          subtitle={hasItems ? `${totalItems} ${totalItems === 1 ? 'Item' : 'Items'}` : undefined}
+          title={t('title')}
+          subtitle={pageSubtitle}
           rightContent={headerRightContent}
         />
         <ErrorDisplay
-          title="Error loading cart"
-          message="Please try again later"
-          actionLabel="Back to Home"
+          title={tStates('error.title')}
+          message={tStates('error.message')}
+          actionLabel={tStates('error.backHome')}
           actionHref="/"
         />
       </UserPageLayout>
@@ -887,10 +906,10 @@ export default function CartPage() {
     <UserPageLayout>
       {/* Page Header */}
       <PageHeader
-        title="My Cart"
-        subtitle={hasItems ? `${totalItems} ${totalItems === 1 ? 'Item' : 'Items'}` : undefined}
-        rightContent={headerRightContent}
-      />
+  title={t('title')}
+  subtitle={pageSubtitle}
+  rightContent={headerRightContent}
+/>
 
       {/* Content Area */}
       {hasItems ? (
@@ -1056,9 +1075,15 @@ export default function CartPage() {
       ) : (
         <EmptyState
           illustration={orderEmptySvg}
-          title="You don't have any items in your cart"
-          description={`Start exploring ${itemTypeFilter === 'products' ? 'products' : 'services'} to begin your journey`}
-          actionLabel={itemTypeFilter === 'products' ? 'View Products' : 'View Services'}
+          title={tStates('empty.title')}
+          description={tStates('empty.description', {
+            type: itemTypeFilter === 'products' ? 'المنتجات' : 'الخدمات',
+          })}
+          actionLabel={
+            itemTypeFilter === 'products'
+              ? tStates('empty.viewProducts')
+              : tStates('empty.viewServices')
+          }
           actionHref={itemTypeFilter === 'products' ? '/products' : '/services'}
         />
       )}
@@ -1119,21 +1144,21 @@ export default function CartPage() {
           setClearAllModalOpen(false)
         }}
         onConfirm={handleConfirmClearAll}
-        productTitle="all items from your cart"
+        productTitle={tActions('clearAllAria')}
       />
 
       {/* Loading Overlay for Mutations */}
-      <LoadingOverlay
-        open={updatePurchaseMutation.isPending || removePurchaseMutation.isPending || clearCartMutation.isPending || checkoutMutation.isPending}
-        title={
-          clearCartMutation.isPending
-            ? "Clearing cart..."
-            : checkoutMutation.isPending
-              ? "Processing checkout..."
-              : "Updating cart..."
-        }
-        subtitle="Please wait a moment"
-      />
+      <LoadingSpinner
+    fullScreen
+    size="lg"
+    text={`${
+      clearCartMutation.isPending
+        ? tOverlay('clearing')
+        : checkoutMutation.isPending
+          ? tOverlay('processingCheckout')
+          : tOverlay('updating')
+    }\n${tOverlay('subtitle')}`}
+  />
     </UserPageLayout>
   )
 }

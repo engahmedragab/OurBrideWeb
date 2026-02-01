@@ -7,6 +7,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { addCategoryFormSchema, type AddCategoryFormData } from '@/schema/category.schema'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 const slugify = (text: string): string => {
   return text
@@ -31,6 +32,8 @@ export const AddCategoryModal = ({
   onSubmit,
   isSubmitting = false,
 }: AddCategoryModalProps) => {
+  const t = useI18nTranslations('eventsPlanning.guestList')
+  const tValidation = useI18nTranslations('eventsPlanning.guestList.dialog.validation')
   const {
     register,
     handleSubmit,
@@ -65,7 +68,7 @@ export const AddCategoryModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add New Category"
+      title={t('common.addNewCategory')}
       maxWidth="md"
       containerClassName="w-[calc(100vw-32px)] sm:w-full max-w-[560px]"
       contentClassName="p-4 sm:p-6 max-h-[75vh] overflow-y-auto md:max-h-none md:overflow-visible"
@@ -74,22 +77,22 @@ export const AddCategoryModal = ({
         <div className="space-y-4">
           <div>
             <label className="block text-14 font-medium text-gray-700 mb-2">
-              Category Name <span className="text-red-500">*</span>
+              {t('common.categoryName')} <span className="text-red-500">*</span>
             </label>
             <Input
               {...register('name')}
-              placeholder="Enter category name"
+              placeholder={t('common.categoryNamePlaceholder')}
               variant={errors.name ? 'error' : 'default'}
-              errorMessage={errors.name?.message}
+              errorMessage={errors.name?.message && tValidation('categoryNameMin')}
               size="md"
             />
           </div>
 
           <div>
-            <label className="block text-14 font-medium text-gray-700 mb-2">Slug (Optional)</label>
+            <label className="block text-14 font-medium text-gray-700 mb-2">{t('common.slug')} (Optional)</label>
             <Input
               {...register('slug')}
-              placeholder="Auto-generated if empty"
+              placeholder={t('common.slugPlaceholder')}
               variant={errors.slug ? 'error' : 'default'}
               errorMessage={errors.slug?.message}
               size="md"
@@ -97,10 +100,10 @@ export const AddCategoryModal = ({
           </div>
 
           <div>
-            <label className="block text-14 font-medium text-gray-700 mb-2">Description (Optional)</label>
+            <label className="block text-14 font-medium text-gray-700 mb-2">{t('common.description')} (Optional)</label>
             <Input
               {...register('description')}
-              placeholder="Enter category description"
+              placeholder={t('common.descriptionPlaceholder')}
               variant={errors.description ? 'error' : 'default'}
               errorMessage={errors.description?.message}
               size="md"
@@ -109,7 +112,7 @@ export const AddCategoryModal = ({
 
           <div className="flex flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-gray-200">
             <Button type="button" variant="outline" onClick={onClose} size="md" className="w-full sm:w-auto">
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -118,7 +121,7 @@ export const AddCategoryModal = ({
               className="w-full sm:w-auto text-white"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Saving...' : 'Add Category'}
+              {isSubmitting ? t('actions.saving') : t('actions.addCategory')}
             </Button>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { ChevronDown, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Popover, PopoverContent, PopoverTrigger } from './Popover'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { useIsRTL } from '@/i18n/hooks'
 
 const selectMenuTriggerVariants = cva(
   'flex w-full items-center gap-2 rounded-xl border bg-white px-3 py-1.5 text-16 font-normal leading-6 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
@@ -32,8 +33,7 @@ export interface SelectMenuOption {
   value: string
 }
 
-export interface SelectMenuProps
-  extends VariantProps<typeof selectMenuTriggerVariants> {
+export interface SelectMenuProps extends VariantProps<typeof selectMenuTriggerVariants> {
   value: string
   onChange: (value: string) => void
   options: SelectMenuOption[]
@@ -56,9 +56,9 @@ export const SelectMenu = ({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const [triggerWidth, setTriggerWidth] = useState<number | undefined>(undefined)
 
+  const isRTL = useIsRTL()
   const selectedOption = options.find(opt => opt.value === value)
 
-  // Update trigger width when open state changes
   useEffect(() => {
     if (open && triggerRef.current) {
       setTriggerWidth(triggerRef.current.offsetWidth)
@@ -75,9 +75,7 @@ export const SelectMenu = ({
 
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault()
-      if (!open) {
-        setOpen(true)
-      }
+      if (!open) setOpen(true)
     } else if (e.key === 'Escape' && open) {
       e.preventDefault()
       setOpen(false)
@@ -98,7 +96,7 @@ export const SelectMenu = ({
   }
 
   return (
-    <div className={cn('w-full', className)}>
+    <div className={cn('w-full', className)} dir={isRTL ? 'rtl' : 'ltr'}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button
@@ -108,19 +106,23 @@ export const SelectMenu = ({
             onKeyDown={handleKeyDown}
             className={cn(
               selectMenuTriggerVariants({ variant, size }),
-              'justify-between text-left cursor-pointer',
+             
+              isRTL ? 'justify-between text-right' : 'justify-between text-left',
               disabled && 'cursor-not-allowed opacity-50'
             )}
           >
             <span
               className={cn(
                 'flex-1 truncate',
+               
+                isRTL ? 'text-right' : 'text-left',
                 selectedOption ? 'text-gray-900' : 'text-gray-400'
               )}
               dir="auto"
             >
               {selectedOption ? selectedOption.label : placeholder}
             </span>
+
             <ChevronDown
               className={cn(
                 'h-5 w-5 text-gray-400 transition-transform flex-shrink-0',
@@ -129,31 +131,49 @@ export const SelectMenu = ({
             />
           </button>
         </PopoverTrigger>
+
         <PopoverContent
-          className="p-1.5 bg-white border border-gray-200 rounded-xl shadow-lg"
-          align="start"
+          className={cn(
+            'p-1.5 bg-white border border-gray-200 rounded-xl shadow-lg'
+          )}
+         
+          align={isRTL ? 'end' : 'start'}
           sideOffset={4}
-          style={triggerWidth ? { width: triggerWidth } : { minWidth: 'var(--radix-popover-trigger-width)' }}
+          style={
+            triggerWidth
+              ? { width: triggerWidth }
+              : { minWidth: 'var(--radix-popover-trigger-width)' }
+          }
         >
           <div className="max-h-[300px] overflow-y-auto">
             {options.map(option => {
               const isSelected = value === option.value
+
               return (
                 <button
                   key={option.value}
                   type="button"
                   onClick={() => handleSelect(option.value)}
                   className={cn(
-                    'w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-16 font-normal transition-colors',
+                    // ✅ بدل justify-between الثابت، نخليها direction-aware
+                    'w-full flex items-center px-3 py-2.5 rounded-xl text-16 font-normal transition-colors',
+                    isRTL ? 'flex-row-reverse justify-between' : 'justify-between',
                     'hover:bg-brand-50 hover:text-brand-500',
                     isSelected && 'bg-brand-500 text-white hover:bg-brand-500 hover:text-white'
                   )}
                 >
-                  <span className="flex-1 text-left" dir="auto">
+                  <span className={cn('flex-1', isRTL ? 'text-right' : 'text-left')} dir="auto">
                     {option.label}
                   </span>
+
                   {isSelected && (
-                    <Check className="h-4 w-4 text-white flex-shrink-0 ml-2" />
+                    <Check
+                      className={cn(
+                        'h-4 w-4 text-white flex-shrink-0',
+                        
+                        isRTL ? 'mr-2' : 'ml-2'
+                      )}
+                    />
                   )}
                 </button>
               )
@@ -164,4 +184,3 @@ export const SelectMenu = ({
     </div>
   )
 }
-

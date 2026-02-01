@@ -3,6 +3,7 @@
 import { Button } from './Button'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface PaymentConfirmationModalProps {
   isOpen: boolean
@@ -23,11 +24,13 @@ export const PaymentConfirmationModal = ({
   isLoading = false,
   className,
 }: PaymentConfirmationModalProps) => {
+  const t = useI18nTranslations('checkoutPage.paymentConfirmationModal')
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Payment Confirmation"
+      title={t('title')}
       maxWidth="sm"
       zIndex={6}
       disabled={isLoading}
@@ -57,9 +60,12 @@ export const PaymentConfirmationModal = ({
         {/* Confirmation Text */}
         <div className="text-center mb-6 space-y-2">
           <p className="text-18 font-normal text-gray-900">
-            You Are About To Pay ({amount.toLocaleString()} {currency})
+            {t('text.aboutToPay', {
+              amount: amount.toLocaleString(),
+              currency,
+            })}
           </p>
-          <p className="text-16 font-medium text-gray-600">Are You Sure?</p>
+          <p className="text-16 font-medium text-gray-600">{t('text.areYouSure')}</p>
         </div>
 
         {/* Action Buttons */}
@@ -76,14 +82,14 @@ export const PaymentConfirmationModal = ({
               'transition-colors'
             )}
           >
-            {isLoading ? 'Processing...' : "Yes I'm Sure"}
+            {isLoading ? t('actions.processing') : t('actions.confirm')}
           </Button>
           <button
             onClick={onClose}
             disabled={isLoading}
             className="w-full text-16 font-medium text-gray-600 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed py-2"
           >
-            Cancel
+            {t('actions.cancel')}
           </button>
         </div>
       </div>

@@ -22,6 +22,8 @@ import {
   type CategoryWithLineFormData,
 } from '@/schema/budgetSchema/category.schema'
 import type { BudgetLineCategoryResponse } from '@/types/responses'
+import { useI18nTranslations } from '@/i18n'
+import { useIsRTL } from '@/i18n/hooks'
 
 interface CategoryModalProps {
   isOpen: boolean
@@ -77,13 +79,18 @@ const dateToIsoOrNull = (raw: string) => {
 }
 
 export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: CategoryModalProps) => {
+  
+  const t = useI18nTranslations('eventsPlanning.budget')
+  const tValidation = useI18nTranslations('eventsPlanning.budget.modals.validation')
+  const isRTL = useIsRTL()
+
   const isEditing = !!editingCategory
   const schema = isEditing ? categoryFormSchema : categoryWithLineFormSchema
 
   // UI states
   const [categoryEstimatedInput, setCategoryEstimatedInput] = useState('')
   const [lineEstimatedInput, setLineEstimatedInput] = useState('')
-  const [linePaidInput, setLinePaidInput] = useState('')
+  const [linePaidInput, setLinePaidInput] = useState('') 
   const [lineFinalInput, setLineFinalInput] = useState('')
   const [lineCountInput, setLineCountInput] = useState('')
 
@@ -199,8 +206,8 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
 
   const colorOptions = useMemo(
     () => [
-      { label: 'Select color', value: '' },
-      ...COLOR_OPTIONS.map(c => ({ label: c.label, value: c.argb })),
+      { label: t('modals.category.selectColor'), value: '' },
+      ...COLOR_OPTIONS.map(c => ({ label: t(`modals.colorPicker.${c.label}`), value: c.argb })),
     ],
     []
   )
@@ -312,7 +319,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? 'Edit Category' : 'Add Category (with first line)'}
+      title={isEditing ? t('modals.category.editTitle') : t('modals.category.addTitle')}
       maxWidth="md"
     >
       <div className="flex flex-col max-h-[80vh]">
@@ -320,32 +327,32 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
           {/* ===== Category Section ===== */}
           <div className="rounded-2xl border   p-4 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-14 font-semibold text-gray-900">Category</h3>
+              <h3 className="text-14 font-semibold text-gray-900">{t('modals.category.categorySectionTitle')}</h3>
               <span className="text-12 text-gray-500">
-                {isEditing ? 'Update category details' : 'Create a new category'}
+                {isEditing ? t('modals.category.editHint') : t('modals.category.createHint')}
               </span>
             </div>
 
             {/* Name */}
             <div className="space-y-2">
               <label className="block text-13 font-semibold text-gray-900">
-                Name <span className="text-red-500">*</span>
+                {t('modals.category.name')} <span className="text-red-500">*</span>
               </label>
               <Input
                 type="text"
                 {...register('name')}
-                placeholder="e.g. Family"
+                placeholder={t('modals.category.namePlaceholder')}
                 size="lg"
-                errorMessage={errors.name?.message}
+                errorMessage={errors.name?.message && tValidation(errors.name?.message)}
               />
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <label className="block text-13 font-semibold text-gray-900">Description</label>
+              <label className="block text-13 font-semibold text-gray-900">{t('modals.category.description')}</label>
               <Textarea
                 {...register('description')}
-                placeholder="Optional…"
+                placeholder={t('modals.category.descriptionPlaceholder')}
                 size="lg"
                 rows={3}
                 errorMessage={errors.description?.message}
@@ -355,7 +362,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
             {/* Icon + Color */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="block text-13 font-semibold text-gray-900">Icon</label>
+                <label className="block text-13 font-semibold text-gray-900">{t('modals.category.icon')}</label>
                 <button
                   type="button"
                   onClick={() => setIsIconPickerOpen(true)}
@@ -368,34 +375,39 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                         colorName={colorName || '0xff8e8e8e'}
                         size="sm"
                       />
-                      <span className="text-14 text-gray-800 font-medium">Change icon</span>
+                      <span className="text-14 text-gray-800 font-medium">{t('modals.category.changeIcon')}</span>
                     </>
                   ) : (
-                    <span className="text-14 text-gray-500">Select an icon</span>
+                    <span className="text-14 text-gray-500">{t('modals.category.selectIcon')}</span>
                   )}
                 </button>
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-13 font-semibold text-gray-900">Color</label>
-                <SelectMenu
-                  value={colorName || ''}
-                  onChange={value => {
-                    const newColor = value || null
-                    setColorName(newColor)
-                    setValue('colorName', newColor as string | null, { shouldValidate: true })
-                  }}
-                  options={colorOptions}
-                  placeholder="Select color"
-                  size="lg"
-                />
+              <div  
+              className="space-y-2">
+
+                <label className="block text-13 font-semibold text-gray-900">{t('modals.category.color')}</label>
+                <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'text-right' : 'text-left'}>
+  <SelectMenu
+    value={colorName || ''}
+    onChange={value => {
+      const newColor = value || null
+      setColorName(newColor)
+      setValue('colorName', newColor as string | null, { shouldValidate: true })
+    }}
+    options={colorOptions}
+    placeholder={t('modals.category.selectColor')}
+    size="lg"
+    className={isRTL ? 'text-right' : 'text-left'}
+  />
+</div>
               </div>
             </div>
 
             {/* Estimated (edit only) */}
             {isEditing && (
               <div className="space-y-2">
-                <label className="block text-13 font-semibold text-gray-900">Estimated</label>
+                <label className="block text-13 font-semibold text-gray-900">{t('modals.category.estimated')}</label>
                 <Input
                   type="text"
                   inputMode="numeric"
@@ -403,7 +415,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                   onChange={e => onCategoryEstimatedChange(e.target.value)}
                   placeholder="0"
                   size="lg"
-                  errorMessage={errors.estimated?.message}
+                  errorMessage={errors.estimated?.message && tValidation(errors.estimated?.message)}
                 />
               </div>
             )}
@@ -413,21 +425,21 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
           {!isEditing && (
             <div className="rounded-2xl border border-gray-200 bg-white p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-14 font-semibold text-gray-900">First budget line</h3>
-                <span className="text-12 text-gray-500">Required to sync category properly</span>
+                <h3 className="text-14 font-semibold text-gray-900">{t('modals.category.firstLineTitle')}</h3>
+                <span className="text-12 text-gray-500">{t('modals.category.firstLineHint')}</span>
               </div>
 
               {/* Service */}
               <div className="space-y-2">
                 <label className="block text-13 font-semibold text-gray-900">
-                  Service Name <span className="text-red-500">*</span>
+                  {t('modals.category.serviceName')} <span className="text-red-500">*</span>
                 </label>
                 <Input
                   type="text"
                   {...register('expense')}
-                  placeholder="e.g. Family invitation"
+                  placeholder={t('modals.category.serviceNamePlaceholder')}
                   size="lg"
-                  errorMessage={errors.expense?.message}
+                  errorMessage={errors.expense?.message && tValidation(errors.expense?.message)}
                 />
               </div>
 
@@ -435,7 +447,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="block text-13 font-semibold text-gray-900">
-                    Total Price <span className="text-red-500">*</span>
+                    {t('modals.category.totalPrice')} <span className="text-red-500">*</span>
                   </label>
                   <Input
                     type="text"
@@ -444,12 +456,12 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     onChange={e => onLineMoneyChange('estimated', e.target.value)}
                     placeholder="0"
                     size="lg"
-                    errorMessage={errors.estimated?.message}
+                    errorMessage={errors.estimated?.message && tValidation(errors.estimated?.message)}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Paid</label>
+                  <label className="block text-13 font-semibold text-gray-900">{t('modals.category.paid')}</label>
                   <Input
                     type="text"
                     inputMode="numeric"
@@ -457,14 +469,14 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     onChange={e => onLineMoneyChange('paid', e.target.value)}
                     placeholder="0"
                     size="lg"
-                    errorMessage={errors.paid?.message}
+                    errorMessage={errors.paid?.message && tValidation(errors.paid?.message)}
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Final</label>
+                  <label className="block text-13 font-semibold text-gray-900">{t('modals.category.final')}</label>
                   <Input
                     type="text"
                     inputMode="numeric"
@@ -477,7 +489,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Count</label>
+                  <label className="block text-13 font-semibold text-gray-900">{t('modals.category.count')}</label>
                   <Input
                     type="text"
                     inputMode="numeric"
@@ -493,7 +505,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
               {/* Due date + payer */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Due Date</label>
+                  <label className="block text-13 font-semibold text-gray-900">{t('modals.category.dueDate')}</label>
                   <Input
                     type="date"
                     size="lg"
@@ -505,11 +517,11 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-13 font-semibold text-gray-900">Payer</label>
+                  <label className="block text-13 font-semibold text-gray-900">{t('modals.category.payer')}</label>
                   <Input
                     type="text"
                     {...register('payer')}
-                    placeholder="Bride / Groom / ..."
+                    placeholder={t('modals.category.payerPlaceholder')}
                     size="lg"
                     errorMessage={errors.payer?.message}
                   />
@@ -518,10 +530,10 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
 
               {/* Notes */}
               <div className="space-y-2">
-                <label className="block text-13 font-semibold text-gray-900">Note</label>
+                <label className="block text-13 font-semibold text-gray-900">{t('modals.category.note')} </label>
                 <Textarea
                   {...register('note')}
-                  placeholder="Optional…"
+                  placeholder={t('modals.category.notePlaceholder')}
                   size="lg"
                   rows={3}
                   errorMessage={errors.note?.message}
@@ -539,8 +551,8 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     )}
                   />
                   <div>
-                    <div className="text-13 font-semibold text-gray-900">Done</div>
-                    <div className="text-12 text-gray-500">Mark as completed</div>
+                      <div className="text-13 font-semibold text-gray-900">{t('modals.category.done')}</div>
+                    <div className="text-12 text-gray-500">{t('modals.category.doneDesc')}</div>
                   </div>
                 </div>
 
@@ -553,8 +565,8 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
                     )}
                   />
                   <div>
-                    <div className="text-13 font-semibold text-gray-900">Favorite</div>
-                    <div className="text-12 text-gray-500">Pin it on top</div>
+                    <div className="text-13 font-semibold text-gray-900">{t('modals.category.favorite')}</div>
+                    <div className="text-12 text-gray-500">{t('modals.category.favoriteDesc')}</div>
                   </div>
                 </div>
               </div>
@@ -572,7 +584,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
               type="button"
               className="flex-1 h-[44px] !rounded-full"
             >
-              Cancel
+              {t('modals.category.cancel')}
             </Button>
 
             <Button
@@ -583,7 +595,7 @@ export const CategoryModal = ({ isOpen, onClose, onSave, editingCategory }: Cate
               disabled={!isValid || isSubmitting}
               className="flex-1 h-[44px] !rounded-full text-white"
             >
-              {isEditing ? 'Save' : 'Add Category & Line'}
+              {isEditing ? t('modals.category.save') : t('modals.category.addCategoryAndLine')}
             </Button>
           </div>
         </div>

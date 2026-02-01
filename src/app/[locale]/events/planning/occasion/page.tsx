@@ -26,7 +26,8 @@ import { OccasionDetailView } from '@/components/occasion/components/OccasionDet
 import { OccasionForm } from '@/components/occasion/components/OccasionForm'
 import type { OccasionFormData } from '@/schema/occasion.schema'
 import { generateTempId } from '@/utils/sync/tempIds'
-
+import { useI18nTranslations } from '@/i18n'
+ 
 /**
  * Format date from ISO string to readable format
  */
@@ -94,6 +95,7 @@ const getOccasionTypeLabel = (type?: OccasionType): string => {
 }
 
 function OccasionsPageContent() {
+  const t = useI18nTranslations('eventsPlanning.occasions')
   const eventId = useEventId()
   const [editingLineId, setEditingLineId] = useState<number | null>(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
@@ -387,19 +389,19 @@ function OccasionsPageContent() {
 
   if (isLoading || isInitializing || isAddingModels) {
     const loadingTitle = isInitializing
-      ? 'Initializing occasion book...'
+      ? t('page.loading.initializingTitle')
       : isAddingModels
-        ? 'Adding default models...'
-        : 'Loading occasions...'
+        ? t('page.loading.addingModelsTitle')
+        : t('page.loading.loadingOccasionsTitle')
     const loadingSubtitle = isInitializing
-      ? 'Setting up your occasion book'
+      ? t('page.loading.initializingSubtitle')
       : isAddingModels
-        ? 'Please wait while we add default models'
-        : 'Please wait a moment'
+        ? t('page.loading.addingModelsSubtitle')
+        : t('page.loading.pleaseWait')
 
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+        <LoadingSpinner text={`${loadingTitle} ${loadingSubtitle}`} fullScreen={true} />
       </div>
     )
   }
@@ -409,8 +411,8 @@ function OccasionsPageContent() {
       <div className="flex flex-col items-center justify-center py-12">
         <ErrorModal
           open={true}
-          title="Failed to Load Occasions"
-          message="Failed to load occasions. Please try again."
+          title={t('page.error.failedToLoadTitle')}
+          message={t('page.error.failedToLoadMessage')}
           onRetry={() => window.location.reload()}
           onClose={() => { }}
         />
@@ -419,25 +421,25 @@ function OccasionsPageContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Header with Save and Add Buttons */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex items-center justify-between flex-wrap gap-4 my-3">
         {(hasUnsavedChanges || syncMutation.isPending) && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ">
             <Button
               variant="brand"
               size="md"
               onClick={handleSync}
               disabled={syncMutation.isPending || !localOccasionBook || isLoading}
-              className="flex items-center gap-2 rounded-xl !text-white"
+              className="flex items-center gap-2 rounded-xl !text-white "
               type="button"
             >
               <Save className="h-4 w-4" />
-              {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+              {syncMutation.isPending ? t('page.actions.saving') : t('page.actions.saveChanges')}
             </Button>
 
             {hasUnsavedChanges && (
-              <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+              <span className="text-16 text-brand-500 font-medium">{t('page.status.unsavedChanges')}</span>
             )}
           </div>
         )}
@@ -451,7 +453,7 @@ function OccasionsPageContent() {
             type="button"
           >
             <Plus className="h-4 w-4" />
-            Add New Occasion
+            {t('page.actions.addNewOccasion')}
           </Button>
         </div>
       </div>
@@ -477,8 +479,8 @@ function OccasionsPageContent() {
           {occasionLines.length === 0 ? (
             <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center shadow-sm">
               <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-18 font-semibold text-gray-900 mb-2">No occasions found</p>
-              <p className="text-14 text-gray-600">Create your first occasion to get started</p>
+              <p className="text-18 font-semibold text-gray-900 mb-2">{t('page.status.noOccasionsTitle')}</p>
+              <p className="text-14 text-gray-600">{t('page.status.noOccasionsSubtitle')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -507,7 +509,7 @@ function OccasionsPageContent() {
                           onClick={() => handleEdit(line)}
                           className="p-2 bg-white/95 backdrop-blur-sm rounded-lg text-gray-700 hover:text-brand-500 hover:bg-white transition-all shadow-md hover:shadow-lg"
                           disabled={isFormOpen}
-                          title="Edit"
+                          title={t('page.actions.edit')}
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
@@ -515,7 +517,7 @@ function OccasionsPageContent() {
                           onClick={() => handleDelete(line.id)}
                           className="p-2 bg-white/95 backdrop-blur-sm rounded-lg text-red-500 hover:text-red-700 hover:bg-white transition-all shadow-md hover:shadow-lg"
                           disabled={syncMutation.isPending}
-                          title="Delete"
+                          title={t('page.actions.delete')}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -535,7 +537,7 @@ function OccasionsPageContent() {
                             className="h-6 w-auto"
                           />
                           <p className="text-12 italic text-gray-900 font-semibold">
-                            {[line.groomFirstName, line.groomLastName].filter(Boolean).join(' ') || 'Groom Name'}
+                            {[line.groomFirstName, line.groomLastName].filter(Boolean).join(' ') || t('common.fallbacks.groomName')}
                           </p>
                         </div>
                         <Image
@@ -554,7 +556,7 @@ function OccasionsPageContent() {
                             className="h-6 w-auto"
                           />
                           <p className="text-12 italic text-gray-900 font-semibold">
-                            {[line.brideFirstName, line.brideLastName].filter(Boolean).join(' ') || 'Bride Name'}
+                            {[line.brideFirstName, line.brideLastName].filter(Boolean).join(' ') || t('common.fallbacks.brideName')}
                           </p>
                         </div>
                       </div>
@@ -562,7 +564,7 @@ function OccasionsPageContent() {
                       {/* Occasion Title */}
                       <div className="text-center">
                         <p className="text-16 italic font-semibold text-gray-900 line-clamp-2">
-                          {line.title || line.titleEn || line.titleAr || 'Occasion Name'}
+                          {line.title || line.titleEn || line.titleAr || t('common.fallbacks.occasionName')}
                         </p>
                       </div>
 
@@ -573,19 +575,19 @@ function OccasionsPageContent() {
                             <div className="text-18 font-bold text-gray-900 italic">
                               {timeRemaining.days}
                             </div>
-                            <div className="text-12 text-gray-600 font-medium italic">Days</div>
+                            <div className="text-12 text-gray-600 font-medium italic">{t('common.countdown.days')}</div>
                           </div>
                           <div className="text-center">
                             <div className="text-18 font-bold text-gray-900 italic">
                               {timeRemaining.hours}
                             </div>
-                            <div className="text-12 text-gray-600 font-medium italic">Hours</div>
+                            <div className="text-12 text-gray-600 font-medium italic">{t('common.countdown.hours')}</div>
                           </div>
                           <div className="text-center">
                             <div className="text-18 font-bold text-gray-900 italic">
                               {timeRemaining.minutes}
                             </div>
-                            <div className="text-12 text-gray-600 font-medium italic">Minutes</div>
+                            <div className="text-12 text-gray-600 font-medium italic">{t('common.countdown.minutes')}</div>
                           </div>
                         </div>
                       )}
@@ -631,12 +633,13 @@ function OccasionsPageContent() {
 }
 
 export default function OccasionsPage() {
+  const t = useI18nTranslations('eventsPlanning.occasions')
   return (
     <Suspense
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingOverlay open={true} title="Loading occasions..." />
+            <LoadingSpinner text={t('page.loading.loadingOccasionsTitle')} />
           </div>
         </div>
       }

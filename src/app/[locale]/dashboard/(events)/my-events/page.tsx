@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, Suspense, type MouseEvent } from 'react'
 import { useRouter, usePathname } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
 import { Link } from '@/i18n/navigation'
-import { Plus } from 'lucide-react'
+import { ArrowLeftIcon, Plus } from 'lucide-react'
 import {
   LayoutDashboard,
   Wallet,
@@ -60,6 +60,7 @@ import {
   OccasionsOverview,
 } from '@/components/overviews'
 import authHeroImage from '@/assets/images/authHero.jpg'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 /**
  * Format date from ISO string to DD/MM/YYYY
@@ -135,6 +136,9 @@ const mapWeddingEventToEventCard = (event: WeddingEventResponse) => {
  * Displays user's events and shared events with tabs
  */
 function MyEventsPageContent() {
+  const t = useI18nTranslations('eventsPlanning.overview')
+  const isRTL = useIsRTL()
+ 
   const router = useRouter()
   const searchParams = useSearchParams()
   const { addToast } = useToast()
@@ -287,8 +291,8 @@ function MyEventsPageContent() {
   }
 
   const tabs = [
-    { value: 'my-events', label: 'My Events' },
-    { value: 'shared-events', label: 'Shared Events' },
+    { value: 'my-events', label: t('tabsHeader.myEvents') },
+    { value: 'shared-events', label: t('tabsHeader.sharedEvents') },
   ]
 
   // Map wedding events to EventCard format
@@ -314,7 +318,7 @@ function MyEventsPageContent() {
     isDefault?: boolean
   }) => {
     if (!data.title.trim()) {
-      addToast('Please enter an event title', 'error')
+      addToast(t('toasts.enterTitle'), 'error')
       return
     }
 
@@ -326,10 +330,10 @@ function MyEventsPageContent() {
         endDate: data.endDate || null,
         isDefault: data.isDefault || false,
       })
-      addToast('Event created successfully', 'success')
+      addToast(t('toasts.createdSuccess'), 'success')
       setIsModalOpen(false)
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create event'
+      const errorMessage = error instanceof Error ? error.message : t('toasts.createFailed')
       addToast(errorMessage, 'error')
     }
   }
@@ -561,7 +565,8 @@ function MyEventsPageContent() {
             onClick={handleBackToEvents}
             className="flex items-center gap-2"
           >
-            ← Back to Events
+            <ArrowLeftIcon className={cn("w-4 h-4", isRTL ? 'rotate-180' : '')} />
+            {t('actions.backToEvents')}
           </Button>
         </div>
 
@@ -570,18 +575,18 @@ function MyEventsPageContent() {
             {/* Loading State for Event Info - Only show on overview tab */}
             {isMounted && isLoadingEventInfo && activePlanningTab === 'overview' && (
               <div className="flex items-center justify-center py-12">
-                <LoadingOverlay open={true} title="Loading event details..." />
+                <LoadingSpinner size="lg" text={t('loading.eventDetails')} />
               </div>
             )}
 
             {/* Loading State for Book Initialization - Only show on overview tab */}
             {isMounted && isAnyInitPending && !isLoadingEventInfo && activePlanningTab === 'overview' && (
               <div className="flex items-center justify-center py-12">
-                <LoadingOverlay
-                  open={true}
-                  title="Initializing..."
-                  subtitle={isInitializingTab ? `Setting up ${planningTabs.find(t => t.value === isInitializingTab)?.label || 'book'}...` : 'Please wait'}
-                />
+                <LoadingSpinner size="lg" text={isInitializingTab ? `${t('loading.settingUpBook', { book: planningTabs.find(t => t.value === isInitializingTab)?.label || 'book' })}...` : t('loading.pleaseWait')} />
+                 
+                 
+               
+                
               </div>
             )}
 
@@ -601,12 +606,12 @@ function MyEventsPageContent() {
                 <div className="mb-6 sm:mb-8">
                   <div className={cn('grid gap-3 sm:gap-4', 'grid-cols-1', 'sm:grid-cols-3')}>
                     <QuickStatsCard
-                      title="Completed services"
+                      title={t('stats.completedServices')}
                       book={eventInfo.serviceBook}
                       eventId={selectedEventId || undefined}
                     />
                     <QuickStatsCard
-                      title="Complete Lists"
+                      title={t('stats.completeLists')}
                       book={eventInfo.todoBook}
                       eventId={selectedEventId || undefined}
 
@@ -619,7 +624,7 @@ function MyEventsPageContent() {
                     />
                     {/* <QuickStatsCard
                   title="Invite Your Guests"
-                  book={eventInfo.guestBook}
+                  book={eventInfo.guestBook} 
                   eventId={selectedEventId || undefined}
                 /> */}
                   </div>
@@ -628,11 +633,12 @@ function MyEventsPageContent() {
                 {/* SECTION 3: Tasks Reminder - Full Width */}
                 <div className="mb-6 sm:mb-8">
                   <TasksReminder
+                    
                     book={eventInfo.todoBook}
                     onInit={() => handleBookInit('todo')}
                     onNavigate={() => handleBookNavigate('todo')}
                     eventId={selectedEventId || undefined} />
-                </div>
+                </div> 
 
                 {/* SECTION 4: Upcoming Bookings - Full Width */}
                 <div className="mb-6 sm:mb-8">
@@ -770,8 +776,8 @@ function MyEventsPageContent() {
               <div className="flex flex-col items-center justify-center py-12">
                 <ErrorModal
                   open={true}
-                  title="Failed to Load Event Details"
-                  message="Failed to load event details. Please try again."
+                  title={t('errors.loadEventDetailsTitle')}
+                  message={t('errors.loadEventDetailsMessage')}
                   onRetry={() => window.location.reload()}
                   onClose={handleBackToEvents}
                 />
@@ -809,7 +815,7 @@ function MyEventsPageContent() {
                   isActive
                     ? 'border-b-2 border-brand-500 text-gray-900'
                     : 'border-b-2 border-transparent text-gray-500 hover:text-gray-900'
-                )}
+                )} 
               >
                 {tab.label}
               </button>
@@ -823,7 +829,7 @@ function MyEventsPageContent() {
             className="flex items-center justify-end gap-2 !text-14 font-normal text-brand-500 hover:text-brand-600 flex-shrink-0 lg:w-1/2"
           >
             <Plus className="size-4 sm:size-5" />
-            Add New Event
+            {t('actions.addNewEvent')}
           </Button>
         </div>
       </div>
@@ -831,7 +837,7 @@ function MyEventsPageContent() {
       {/* Loading State */}
       {isMounted && isLoading && (
         <div className="flex items-center justify-center py-12">
-          <LoadingOverlay open={true} title="Loading events..." />
+          <LoadingOverlay open={true} title={t('loading.events')} />
         </div>
       )}
 
@@ -840,8 +846,8 @@ function MyEventsPageContent() {
         <div className="flex flex-col items-center justify-center py-12">
           <ErrorModal
             open={true}
-            title="Failed to Load Events"
-            message="Failed to load events. Please try again."
+            title={t('errors.loadEventsTitle')}
+            message={t('errors.loadEventsMessage')}
             onRetry={() => window.location.reload()}
             onClose={() => { }}
           />
@@ -874,7 +880,7 @@ function MyEventsPageContent() {
           ) : (
             <div className="flex flex-col items-center justify-center py-12">
               <p className="text-16 text-gray-500 mb-4">
-                {activeTab === 'my-events' ? 'No events found. Create your first event!' : 'No shared events found.'}
+                {activeTab === 'my-events' ? t('empty.noMyEvents') : t('empty.noSharedEvents')}
               </p>
               {activeTab === 'my-events' && (
                 <Button
@@ -883,7 +889,7 @@ function MyEventsPageContent() {
                   className="flex items-center gap-2"
                 >
                   <Plus className="size-4" />
-                  Add New Event
+                  {t('actions.addNewEvent')}
                 </Button>
               )}
             </div>
@@ -906,7 +912,7 @@ export default function MyEventsPage() {
     <Suspense
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
-          <LoadingOverlay open={true} title="Loading events..." />
+          <LoadingSpinner  size="lg" />
         </div>
       }
     >

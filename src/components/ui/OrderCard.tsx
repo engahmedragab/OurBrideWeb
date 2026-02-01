@@ -12,6 +12,7 @@ import {
   type OrderStatus,
 } from './OrderProgressIndicator'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 import type { DeliveryStatus } from '@/../client/common/api/gen/ourbride-api'
 
 export interface OrderProduct {
@@ -52,7 +53,7 @@ export interface OrderCardProps {
   onViewDetails?: () => void
   className?: string
 }
-
+ 
 export const OrderCard = ({
   orderId,
   orderDate,
@@ -81,11 +82,36 @@ export const OrderCard = ({
   onViewDetails,
   className,
 }: OrderCardProps) => {
+  const t = useI18nTranslations('orderCard')
+  const tCommon = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   const [isSummaryOpen, setIsSummaryOpen] = useState(true)
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
   const [providerLogoError, setProviderLogoError] = useState(false)
   const isCompleted = status === 'delivered' || status === 'cancelled'
   const isInProgress = !isCompleted
+
+  const normalizePaymentStatus = (value?: string) => {
+    if (!value) return ''
+    const key = value.toLowerCase()
+    if (key === 'pending') return t('paymentStatus.pending')
+    if (key === 'paid') return t('paymentStatus.paid')
+    if (key === 'unpaid') return t('paymentStatus.unpaid')
+    if (key === 'failed') return t('paymentStatus.failed')
+    if (key === 'processing') return t('paymentStatus.processing')
+    return value
+  }
+
+  const normalizePaymentMethod = (value?: string) => {
+    if (!value) return ''
+    const key = value.toLowerCase()
+    if (key === 'cash_on_delivery' || key === 'cashondelivery') {
+      return t('paymentMethod.cashOnDelivery')
+    }
+    if (key === 'card') return t('paymentMethod.card')
+    if (key === 'wallet') return t('paymentMethod.wallet')
+    return value
+  }
 
   const getStatusBadgeType = ():
     | 'completed'
@@ -98,9 +124,10 @@ export const OrderCard = ({
   }
 
   const getStatusLineColor = () => {
-    if (status === 'delivered') return 'border-l-4 border-green-500'
-    if (status === 'cancelled') return 'border-l-4 border-red-500'
-    return 'border-l-4 border-yellow-500'
+    const base = isRTL ? 'border-r-4' : 'border-l-4'
+    if (status === 'delivered') return `${base} border-green-500`
+    if (status === 'cancelled') return `${base} border-red-500`
+    return `${base} border-yellow-500`
   }
 
   return (
@@ -111,19 +138,19 @@ export const OrderCard = ({
         className
       )}
     >
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div dir={isRTL ? 'rtl' : 'ltr'} className={cn('flex flex-col lg:flex-row gap-6', isRTL ? 'text-right' : 'text-left')}>
         {/* Left Section - Order Info and Progress */}
         <div className="flex-1">
           {/* Status Badge - Top Right */}
-          <div className="absolute top-6 right-6 flex items-center gap-2">
+          <div className={cn('absolute top-6 flex items-center gap-2', isRTL ? 'left-6' : 'right-6')}>
             <StatusBadge status={getStatusBadgeType()} />
             <button
               onClick={() => setIsSummaryOpen(!isSummaryOpen)}
               className="text-gray-400 hover:text-gray-600 transition-colors"
               aria-label={
                 isSummaryOpen
-                  ? 'Collapse order summary'
-                  : 'Expand order summary'
+                  ? t('aria.collapseSummary')
+                  : t('aria.expandSummary')
               }
             >
               {isSummaryOpen ? (
@@ -135,11 +162,11 @@ export const OrderCard = ({
           </div>
 
           {/* Order Info */}
-          <div className="mb-6 pr-32">
+          <div className={cn('mb-6', isRTL ? 'pl-32' : 'pr-32')}>
             <h3 className="text-18 font-semibold text-gray-900 mb-1">
-              Order #{orderId}
+              {t('header.orderLabel')} #{orderId}
             </h3>
-            <p className="text-14 text-gray-600 mb-2">Placed: {orderDate}</p>
+            <p className="text-14 text-gray-600 mb-2">{t('header.placedLabel')}: {orderDate}</p>
             
             {/* Delivery Status */}
             {deliveryStatus && (
@@ -160,17 +187,17 @@ export const OrderCard = ({
                         fill
                         sizes="24px"
                         className="object-cover"
-                        onError={() => setProviderLogoError(true)}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-gray-400 text-8 font-medium">
-                          No image available
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      onError={() => setProviderLogoError(true)}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-gray-400 text-8 font-medium">
+                        {tCommon('noImageAvailable')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
                 {providerId ? (
                   <Link
                     href={`/provider/${providerId}`}
@@ -188,7 +215,7 @@ export const OrderCard = ({
             {/* Item Count */}
             {itemCount !== undefined && (
               <p className="text-12 text-gray-500">
-                {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                {itemCount} {itemCount === 1 ? t('header.item') : t('header.items')}
               </p>
             )}
           </div>
@@ -202,15 +229,15 @@ export const OrderCard = ({
           {paymentStatus && (
             <div className="mb-4 p-3 bg-gray-50 rounded-lg">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-12 text-gray-600">Payment Status:</span>
+                <span className="text-12 text-gray-600">{t('payment.status')}:</span>
                 <span className="text-12 font-medium text-gray-900">
-                  {paymentStatus}
+                  {normalizePaymentStatus(paymentStatus)}
                 </span>
               </div>
               {paymentMethod && (
                 <div className="flex justify-between items-center">
-                  <span className="text-12 text-gray-600">Payment Method:</span>
-                  <span className="text-12 text-gray-700">{paymentMethod}</span>
+                  <span className="text-12 text-gray-600">{t('payment.method')}:</span>
+                  <span className="text-12 text-gray-700">{normalizePaymentMethod(paymentMethod)}</span>
                 </div>
               )}
             </div>
@@ -220,7 +247,7 @@ export const OrderCard = ({
           {paymentProgressPercentage > 0 && (
             <div className="mb-4">
               <div className="flex justify-between text-12 text-gray-600 mb-1">
-                <span>Payment Progress</span>
+                <span>{t('payment.progress')}</span>
                 <span>{paymentProgressPercentage}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
@@ -231,9 +258,9 @@ export const OrderCard = ({
               </div>
               {totalPaidAmount > 0 && (
                 <div className="flex justify-between text-12 text-gray-600 mt-1">
-                  <span>Paid: {totalPaidAmount.toLocaleString()} EGP</span>
+                  <span>{t('payment.paid')}: {totalPaidAmount.toLocaleString()} EGP</span>
                   {totalRemainingAmount > 0 && (
-                    <span>Remaining: {totalRemainingAmount.toLocaleString()} EGP</span>
+                    <span>{t('payment.remaining')}: {totalRemainingAmount.toLocaleString()} EGP</span>
                   )}
                 </div>
               )}
@@ -250,7 +277,7 @@ export const OrderCard = ({
                 onClick={onViewDetails}
               >
                 <FileText className="h-4 w-4" />
-                View Details
+                {t('actions.viewDetails')}
               </Button>
             )}
             {isCompleted && onReorder && (
@@ -260,7 +287,7 @@ export const OrderCard = ({
                 className="w-full text-white"
                 onClick={onReorder}
               >
-                Re-Order
+                {t('actions.reorder')}
               </Button>
             )}
           </div>
@@ -272,7 +299,7 @@ export const OrderCard = ({
           {arrivalDate && (
             <div className="text-14 text-gray-600 mb-4">
               <p>
-                Arrive In : {arrivalDate}
+                {t('arrival.label')}: {arrivalDate}
                 {arrivalTime && ` ${arrivalTime}`}
               </p>
             </div>
@@ -282,7 +309,7 @@ export const OrderCard = ({
           {isSummaryOpen && (
             <>
               <h4 className="text-16 font-semibold text-gray-900 mb-4">
-                Order Summary
+                {t('summary.title')}
               </h4>
 
               {/* Products List */}
@@ -305,7 +332,7 @@ export const OrderCard = ({
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gray-100">
                           <span className="text-gray-400 text-10 font-medium text-center px-1">
-                            No image available
+                            {tCommon('noImageAvailable')}
                           </span>
                         </div>
                       )}
@@ -315,8 +342,7 @@ export const OrderCard = ({
                         {product.title}
                       </p>
                       <p className="text-14 text-gray-600">
-                        {product.price.toLocaleString()} EGP Qua{' '}
-                        {product.quantity}
+                        {product.price.toLocaleString()} EGP {t('summary.quantity')} {product.quantity}
                       </p>
                     </div>
                   </div>
@@ -326,14 +352,14 @@ export const OrderCard = ({
               {/* Price Breakdown */}
               <div className="space-y-2 pt-4 border-t border-gray-200">
                 <div className="flex justify-between text-14 text-gray-700">
-                  <span>Subtotal:</span>
+                  <span>{t('summary.subtotal')}:</span>
                   <span className="font-semibold text-gray-900">
                     {subtotal.toLocaleString()} EGP
                   </span>
                 </div>
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-14 text-green-600">
-                    <span>Discount:</span>
+                    <span>{t('summary.discount')}:</span>
                     <span className="font-semibold">
                       -{discountAmount.toLocaleString()} EGP
                     </span>
@@ -341,28 +367,28 @@ export const OrderCard = ({
                 )}
                 {taxesAndFees > 0 && (
                   <div className="flex justify-between text-14 text-gray-700">
-                    <span>Taxes & Fees:</span>
+                    <span>{t('summary.taxesFees')}:</span>
                     <span className="font-semibold text-gray-900">
                       {taxesAndFees.toLocaleString()} EGP
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between text-14 text-gray-700">
-                  <span>Delivery Fee:</span>
+                  <span>{t('summary.deliveryFee')}:</span>
                   <span className="font-semibold text-gray-900">
                     {deliveryFee.toLocaleString()} EGP
                   </span>
                 </div>
                 {depositAmount > 0 && (
                   <div className="flex justify-between text-14 text-gray-700">
-                    <span>Deposit:</span>
+                    <span>{t('summary.deposit')}:</span>
                     <span className="font-semibold text-gray-900">
                       {depositAmount.toLocaleString()} EGP
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between text-16 font-semibold text-gray-900 pt-2 border-t border-gray-200">
-                  <span>Total:</span>
+                  <span>{t('summary.total')}:</span>
                   <span>{total.toLocaleString()} EGP</span>
                 </div>
               </div>
@@ -373,7 +399,7 @@ export const OrderCard = ({
                   onClick={onCancelOrder}
                   className="w-full mt-4 text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors text-center"
                 >
-                  Cancel Order
+                  {t('actions.cancelOrder')}
                 </button>
               )}
             </>

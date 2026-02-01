@@ -9,6 +9,7 @@ import { SelectPopover } from '@/components/ui/SelectPopover'
 import { Button } from '@/components/ui/Button'
 import type { GuestGroup, GuestGroupId, GuestStatus } from './mockGuests'
 import { addGuestFormSchema, type AddGuestFormData } from '@/schema/guest.schema'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 const slugify = (text: string): string =>
   text
@@ -36,11 +37,13 @@ interface AddGuestDialogProps {
 export const AddGuestDialog = ({
   isOpen,
   onClose,
-  onSubmit,
+  onSubmit, 
   availableGroups,
   forcedGroupId,
   forceNewCategory = false,
 }: AddGuestDialogProps) => {
+  const t = useI18nTranslations('eventsPlanning.guestList')
+  const tValidation = useI18nTranslations('eventsPlanning.guestList.dialog.validation')
   const selectableGroups = useMemo(() => {
     // Show all available groups/tables, including temporary ones (negative IDs for new items)
     // The parent already filters out 'uncategorized', so we return all available groups
@@ -192,7 +195,7 @@ export const AddGuestDialog = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add New Guest"
+      title={t('dialog.title')}
       maxWidth="md"
       containerClassName="w-[calc(100vw-32px)] sm:w-full max-w-[560px]"
       contentClassName="p-4 sm:p-6 max-h-[75vh] overflow-y-auto md:max-h-none md:overflow-visible"
@@ -208,7 +211,7 @@ export const AddGuestDialog = ({
                 className={categoryMode === 'existing' ? 'text-white' : ''}
                 onClick={() => setValue('categoryMode', 'existing' as const)}
               >
-                Select Table
+                {t('dialog.mode.selectTable')}
               </Button>
               <Button
                 type="button"
@@ -216,7 +219,7 @@ export const AddGuestDialog = ({
                 className={categoryMode === 'new' ? 'text-white' : ''}
                 onClick={() => setValue('categoryMode', 'new' as const)}
               >
-                New Table
+                {t('dialog.mode.newTable')}
               </Button>
             </div>
           )}
@@ -224,38 +227,38 @@ export const AddGuestDialog = ({
           {/* Message when no tables available */}
           {!forcedGroupId && !forceNewCategory && selectableGroups.length === 0 && (
             <div className="mb-2 p-3 bg-blue-50 border border-blue-200 rounded-xl">
-              <p className="text-14 text-blue-700 font-medium">No tables available</p>
-              <p className="text-12 text-blue-600 mt-1">You&apos;ll create a new table when adding this guest.</p>
+              <p className="text-14 text-blue-700 font-medium">{t('dialog.mode.noTablesTitle')}</p>
+              <p className="text-12 text-blue-600 mt-1">{t('dialog.mode.noTablesSubtitle')}</p>
             </div>
           )}
 
           {/* Table Section */}
           <div>
             <label className="block text-14 font-medium text-gray-700 mb-2">
-              Table <span className="text-red-500">*</span>
+              {t('dialog.fields.tableLabel')} <span className="text-red-500">*</span>
             </label>
 
             {forcedGroupId ? (
               <div className="px-3 py-2 bg-gray-50 rounded-xl border border-gray-200 text-16 text-gray-700">
-                {lockedTitle || 'Selected Table'}
+                {lockedTitle || t('dialog.placeholders.selectTable')}
               </div>
             ) : forceNewCategory || categoryMode === 'new' ? (
               <div className="space-y-3">
                 <Input
                   {...register('categoryName')}
-                  placeholder="Table name"
+                  placeholder={t('dialog.placeholders.tableName')}
                   variant={categoryMode === 'new' && 'categoryName' in errors && errors.categoryName ? 'error' : 'default'}
-                  errorMessage={categoryMode === 'new' && 'categoryName' in errors && errors.categoryName ? errors.categoryName.message : undefined}
+                  errorMessage={categoryMode === 'new' && 'categoryName' in errors && errors.categoryName ? errors.categoryName.message && tValidation('categoryNameMin') : undefined}
                   size="md"
                 />
                 <Input
                   {...register('categorySlug')}
-                  placeholder="Slug (optional)"
+                  placeholder={t('dialog.placeholders.slugOptional')}
                   size="md"
                 />
                 <Input
                   {...register('categoryDescription')}
-                  placeholder="Description (optional)"
+                  placeholder={t('dialog.placeholders.descriptionOptional')}
                   size="md"
                 />
               </div>
@@ -266,16 +269,16 @@ export const AddGuestDialog = ({
                   onChange={value => setValue('lineCategoryId', String(value), { shouldValidate: true })}
                   options={selectableGroups.map(g => ({
                     value: String(g.id),
-                    label: (g.title && g.title.trim()) || 'Untitled Table'
+                    label: (g.title && g.title.trim()) || t('dialog.placeholders.untitledTable')
                   }))}
-                  placeholder="Select table"
+                  placeholder={t('dialog.placeholders.selectTable')}
                 />
                 {categoryMode === 'existing' && 'lineCategoryId' in errors && errors.lineCategoryId && (
-                  <p className="mt-1 text-12 text-red-600">{errors.lineCategoryId.message}</p>
+                  <p className="mt-1 text-12 text-red-600">{errors.lineCategoryId.message && tValidation('categoryRequired')}</p>
                 )}
 
                 {selectableGroups.length === 0 && (
-                  <p className="mt-2 text-12 text-gray-500">You need to add a table first.</p>
+                  <p className="mt-2 text-12 text-gray-500">{t('dialog.mode.needToAddTable')}</p>
                 )}
               </>
             ) : null}
@@ -284,13 +287,13 @@ export const AddGuestDialog = ({
           {/* Guest Name */}
           <div>
             <label className="block text-14 font-medium text-gray-700 mb-2">
-              Name <span className="text-red-500">*</span>
+              {t('dialog.fields.nameLabel')} <span className="text-red-500">*</span>
             </label>
             <Input
               {...register('nickName')}
-              placeholder="Enter guest name"
+              placeholder={t('dialog.placeholders.guestName')}
               variant={errors.nickName ? 'error' : 'default'}
-              errorMessage={errors.nickName?.message}
+              errorMessage={errors.nickName?.message && tValidation('guestNameMin')}
               size="md"
             />
           </div>
@@ -298,44 +301,44 @@ export const AddGuestDialog = ({
           {/* People Count */}
           <div>
             <label className="block text-14 font-medium text-gray-700 mb-2">
-              Total People Number <span className="text-red-500">*</span>
+              {t('dialog.fields.peopleCountLabel')} <span className="text-red-500">*</span>
             </label>
             <Input
               type="number"
               {...register('peopleCount')}
               min={1}
               max={20}
-              placeholder="Enter number of people"
+              placeholder={t('dialog.placeholders.peopleCount')}
               variant={errors.peopleCount ? 'error' : 'default'}
-              errorMessage={errors.peopleCount?.message}
+              errorMessage={errors.peopleCount?.message && tValidation('peopleMin')}
               size="md"
             />
           </div>
 
           {/* Status */}
           <div>
-            <label className="block text-14 font-medium text-gray-700 mb-2">Status</label>
+            <label className="block text-14 font-medium text-gray-700 mb-2">{t('dialog.fields.statusLabel')}</label>
             <SelectPopover
               value={status}
               onChange={value => setValue('status', value as 'none' | 'confirmed')}
               options={[
-                { value: 'none', label: 'None' },
-                { value: 'confirmed', label: 'Confirmed' },
+                { value: 'none', label: t('status.none') },
+                { value: 'confirmed', label: t('status.confirmed') },
               ]}
-              placeholder="Select status"
+              placeholder={t('dialog.placeholders.selectStatus')}
             />
           </div>
 
           {/* Actions */}
           <div className="flex flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-gray-200">
             <Button type="button" variant="outline" onClick={onClose} size="md" className="w-full sm:w-auto">
-              Cancel
+              {t('dialog.actions.cancel')}
             </Button>
             <Button type="submit" variant="brand" size="md" className="w-full sm:w-auto text-white">
-              Add Guest
+              {t('dialog.actions.submit')}
             </Button>
           </div>
-        </div>
+        </div>  
       </form>
     </Modal>
   )

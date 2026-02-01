@@ -3,7 +3,7 @@
 import { useEffect, Suspense } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
-import { LoadingOverlay, LoadingSpinner } from '@/components/ui'
+import {  LoadingSpinner } from '@/components/ui'
 
 function OverviewPageContent() {
   const router = useRouter()
@@ -35,7 +35,7 @@ export default function OverviewPage() {
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
+            <LoadingSpinner size="lg"  fullScreen={true} />
           </div>
         </div>
       }

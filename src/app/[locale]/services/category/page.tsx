@@ -789,9 +789,10 @@ function ServicesCategoryPageContent() {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <LoadingOverlay
-            open={true}
-            
+          <LoadingSpinner
+            size="lg"
+            text={tC('loading')}
+            fullScreen={true}
           />
         </main>
         <Footer />

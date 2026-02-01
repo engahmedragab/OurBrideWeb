@@ -1,20 +1,10 @@
 'use client'
 
-import { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { Badge } from '@/components/ui/Badge'
-import { 
-  Clock, 
-  CheckCircle2,
-  Music,
-  Car,
-  Palette,
-  Scissors,
-  Gift,
-  UtensilsCrossed,
-} from 'lucide-react'
+import { Clock, CheckCircle2 } from 'lucide-react'
 import { format } from 'date-fns'
-import { MainServiceBookResponse } from '@/types/responses'
-import type { ServiceLineResponse } from '@/types/responses'
+import type { MainServiceBookResponse, ServiceLineResponse } from '@/types/responses'
 import { WeddingHallIcon } from '@/assets/icons/WeddingHallIcon'
 import { BridalBeautyIcon } from '@/assets/icons/BridalBeautyIcon'
 import { PhotographyIcon } from '@/assets/icons/PhotographyIcon'
@@ -24,6 +14,10 @@ import { WeddingDressIcon } from '@/assets/icons/WeddingDressIcon'
 import { WeddingSuitIcon } from '@/assets/icons/WeddingSuitIcon'
 import { AccessoriesIcon } from '@/assets/icons/AccessoriesIcon'
 import type { SVGProps } from 'react'
+import { useI18nTranslations } from '@/i18n/hooks'
+import { StaticImageData } from 'next/image'
+import { useIsRTL } from '@/i18n/hooks'
+import { cn } from '@/lib'
 
 type IconComponent = React.ComponentType<SVGProps<SVGSVGElement>>
 
@@ -81,10 +75,18 @@ export interface UpcomingBookingsProps {
   onInit?: () => Promise<void>
   onNavigate?: () => void
   eventId?: number
-  imageSrc: string | any
+  imageSrc?: string | StaticImageData
 }
 
-export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }: UpcomingBookingsProps) => {
+export const UpcomingBookings = ({
+  book,
+  onInit,
+  onNavigate,
+}: UpcomingBookingsProps) => {
+  const t = useI18nTranslations('eventsPlanning')
+  const tCards = useI18nTranslations('eventsPlanning.cards')
+  const isRtl = useIsRTL()
+
   // Get active lines (not deleted) - use services if available, otherwise use lines
   const activeLines = useMemo(() => {
     const lines = (book.services || book.lines || []) as ServiceLineResponse[]
@@ -93,7 +95,7 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
 
   // Sort by lastModifiedDate (newest first), fallback to creationDate
   const sortedLines = useMemo(() => {
-    return [...activeLines].sort((a: ServiceLineResponse, b: ServiceLineResponse) => {
+    return [...activeLines].sort((a, b) => {
       const dateA = new Date(a.lastModifiedDate || a.creationDate || 0).getTime()
       const dateB = new Date(b.lastModifiedDate || b.creationDate || 0).getTime()
       return dateB - dateA
@@ -120,23 +122,25 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-18 font-semibold text-gray-900">Services Bookings</h2>
+        <h2 className="text-18 font-semibold text-gray-900">
+          {tCards('upcomingBookings.title')}
+        </h2>
+
         <button
           className="text-12 text-brand-500 hover:text-brand-600 font-medium"
           onClick={handleClick}
           type="button"
         >
-          View All
+          {t('common.viewAll')}
         </button>
       </div>
+
       <div className="space-y-3">
         {displayBookings.length > 0 ? (
-          displayBookings.map((line: ServiceLineResponse) => {
-            // Use lastModifiedDate, fallback to creationDate
+          displayBookings.map((line) => {
             const date = line.lastModifiedDate || line.creationDate
 
-            // Check if iconName exists
-            const hasIconName = line.iconName && line.iconName.trim() !== ''
+            const hasIconName = !!line.iconName && line.iconName.trim() !== ''
             const iconFromName = hasIconName ? getIconFromName(line.iconName) : null
             const IconComponent = iconFromName || WeddingHallIcon
 
@@ -148,20 +152,17 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
                 className="w-full text-left bg-white rounded-lg border border-gray-200 p-3 hover:bg-gray-50 hover:border-gray-300 transition-colors"
               >
                 <div className="flex items-center justify-between gap-4">
-                  {/* Left section: Icon + Title */}
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    {/* Icon */}
-                    {IconComponent && (
-                      <div className="w-10 h-10 rounded-lg  flex items-center justify-center flex-shrink-0">
-                        <IconComponent className="w-full h-full text-brand-500" />
-                      </div>
-                    )}
-                    
-                    {/* Title */}
-                    <div className="flex flex-col min-w-0 flex-1">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <IconComponent className="w-full h-full text-brand-500" />
+                    </div>
+
+                    <div className={cn("flex flex-col min-w-0 flex-1 items-start")}>
                       <p className="text-16 font-semibold text-gray-900 truncate">
-                        {line.title || 'Untitled Service'}
+                       {isRtl ? line.titleAr : line.titleEn} || {line.title || t('common.untitledService')}
+                        {line.title || t('common.untitledService')}
                       </p>
+
                       {date && date !== '0001-01-01T00:00:00' && (
                         <p className="text-14 font-medium text-gray-500 mt-0.5">
                           {format(new Date(date), 'dd MMM, yyyy')}
@@ -170,18 +171,24 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
                     </div>
                   </div>
 
-                  {/* Right section: Status badges */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {book.pending && book.pending > 0 && (
-                      <Badge variant="pending" className="text-11 flex items-center gap-1 whitespace-nowrap">
+                      <Badge
+                        variant="pending"
+                        className="text-11 flex items-center gap-1 whitespace-nowrap"
+                      >
                         <Clock className="w-3 h-3" />
-                        <span>Pending</span>
+                        <span>{tCards('upcomingBookings.badges.pending')}</span>
                       </Badge>
                     )}
+
                     {((book.completed && book.completed > 0) || book.isSubDone) && (
-                      <Badge variant="confirmed" className="text-11 flex items-center gap-1 whitespace-nowrap">
+                      <Badge
+                        variant="confirmed"
+                        className="text-11 flex items-center gap-1 whitespace-nowrap"
+                      >
                         <CheckCircle2 className="w-3 h-3" />
-                        <span>Completed</span>
+                        <span>{tCards('upcomingBookings.badges.completed')}</span>
                       </Badge>
                     )}
                   </div>
@@ -190,10 +197,11 @@ export const UpcomingBookings = ({ book, onInit, onNavigate, eventId, imageSrc }
             )
           })
         ) : (
-          <p className="text-13 text-gray-500 text-center py-6">No bookings yet</p>
+          <p className="text-13 text-gray-500 text-center py-6">
+            {t('common.noBookings')}
+          </p>
         )}
       </div>
     </div>
   )
 }
-

@@ -5,7 +5,7 @@ import { useRouter } from '@/i18n/navigation'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Save } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { LoadingOverlay } from '@/components/ui'
+import { LoadingOverlay, LoadingSpinner } from '@/components/ui'
 import { useEventId } from '@/hooks/planning'
 import { useNoteBook, useNoteSyncMutation, useNoteSyncDeltaMutation } from '@/hooks/notes'
 import { useInitNoteBooks, useAddNoteBookModels } from '@/hooks/bookInit'
@@ -13,7 +13,7 @@ import { usePlanningBookController } from '@/hooks/planning/usePlanningBookContr
 
 import { NoteCategoriesSidebar } from '@/components/notesBook/NoteCategoriesSidebar'
 import NoteMainPanel from '@/components/notesBook/NoteMainPanel'
-import { AddEditNoteModal } from '@/components/notesBook/AddEditNoteModal'
+import  {AddEditNoteModal} from '@/components/notesBook/AddEditNoteModal'
 
 import type { NoteBookDraft } from '@/hooks/planning/bookDrafts'
 import { generateTempId } from '@/utils/sync/tempIds'
@@ -23,11 +23,15 @@ import type { NoteLineResponse } from '@/types/responses'
 import type { UserType } from '@/../client/common/api/gen/ourbride-api'
 import type { SyncBookDeltaResponse } from '@/hooks/planning/usePlanningBookController'
 import { BookClass, UserType as LocalUserType } from '@/types/responses/book-enums'
+import { useI18nTranslations } from '@/i18n' // ✅ add
 
 function NotesPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const eventId = useEventId()
+
+  // ✅ translations
+  const t = useI18nTranslations('eventsPlanning.notes')
 
   // ✅ query params (never null)
   const userType = useMemo(() => {
@@ -49,7 +53,6 @@ function NotesPageContent() {
     return Object.keys(q).length ? q : undefined
   }, [eventId, userType, clientId])
 
-  // ✅ يمنع double save من المودال (سبب التكرار غالبًا)
   const modalSaveLock = useRef(false)
 
   // ✅ Selected NOTE (list) state
@@ -109,7 +112,10 @@ function NotesPageContent() {
         bookId: delta?.bookId,
       })
       const response = await syncDeltaMutation.mutateAsync({
-        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').NoteLineRequest, import('@/../client/common/api/gen/ourbride-api').NoteLineCategoryRequest>,
+        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<
+          import('@/../client/common/api/gen/ourbride-api').NoteLineRequest,
+          import('@/../client/common/api/gen/ourbride-api').NoteLineCategoryRequest
+        >,
         query: normalizedQuery,
       })
       console.log('[NotesPage] syncDeltaFn response:', response)
@@ -118,7 +124,8 @@ function NotesPageContent() {
     refetch,
     refetchAfterSave: true,
     getBookId: (book) => ((book as Record<string, unknown>).id as number | undefined) ?? null,
-    convertLineToRequest: (line: NoteLineResponse, bookId: number) => convertLineToRequest(line as unknown as Record<string, unknown>, bookId),
+    convertLineToRequest: (line: NoteLineResponse, bookId: number) =>
+      convertLineToRequest(line as unknown as Record<string, unknown>, bookId),
     convertCategoryToRequest: undefined, // Notes don't have categories
     shouldInit: (b) => !b?.id,
     initFn: async () => {
@@ -193,7 +200,6 @@ function NotesPageContent() {
     }
   }, [localDraft, getActiveLines, selectedNoteId])
 
-
   // Get active notes using controller helper
   const activeNotes = useMemo(() => {
     return getActiveLines() as NoteLineResponse[]
@@ -262,7 +268,7 @@ function NotesPageContent() {
               : l
           )
         } else {
-          // ✅ يمنع تكرار نفس الإدخال لو اتنفذ مرتين بالغلط
+      
           const alreadyExists = next.lines.some((l: NoteLineResponse) =>
             !(l.isDeleted ?? false) &&
             (l.title ?? '').trim() === title &&
@@ -333,34 +339,35 @@ function NotesPageContent() {
 
   if ((isLoading || isInitializing || isAddingModels) && !localDraft) {
     const loadingTitle = isInitializing
-      ? 'Initializing notes book...'
+      ? t('loading.initializingTitle')
       : isAddingModels
-        ? 'Adding default models...'
-        : 'Loading notes...'
+        ? t('loading.addingModelsTitle')
+        : t('loading.loadingNotes')
+
     const loadingSubtitle = isInitializing
-      ? 'Setting up your notes book'
+      ? t('loading.initializingSubtitle')
       : isAddingModels
-        ? 'Please wait while we add default categories'
-        : 'Please wait a moment'
+        ? t('loading.addingModelsSubtitle')
+        : t('loading.loadingSubtitle')
 
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+        <LoadingSpinner text={`${loadingTitle} ${loadingSubtitle}`}/>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 sm:px-8 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={() => router.back()} className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-
             </Button>
-            <h1 className="text-24 font-semibold text-gray-900">Notes</h1>
+
+            <h1 className="text-24 font-semibold text-gray-900">{t('page.title')}</h1>
           </div>
 
           {(hasUnsavedChanges || syncMutation.isPending || syncDeltaMutation.isPending) && (
@@ -374,11 +381,11 @@ function NotesPageContent() {
                 type="button"
               >
                 <Save className="h-4 w-4" />
-                {syncDeltaMutation.isPending ? 'Saving...' : 'Save Changes'}
+                {syncDeltaMutation.isPending ? t('header.saving') : t('header.saveChanges')}
               </Button>
 
               {hasUnsavedChanges && (
-                <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+                <span className="text-16 text-brand-500 font-medium">{t('header.unsavedChanges')}</span>
               )}
             </div>
           )}
@@ -402,11 +409,7 @@ function NotesPageContent() {
 
           {/* Main panel */}
           <div className="order-2 sm:order-2 sm:h-[calc(100vh-8rem)] min-h-[400px]">
-            <NoteMainPanel
-              note={selectedNote}
-              onAddNew={handleAddNew}
-              onEdit={handleEdit}
-            />
+            <NoteMainPanel note={selectedNote} onAddNew={handleAddNew} onEdit={handleEdit} />
           </div>
         </div>
 
@@ -425,11 +428,13 @@ function NotesPageContent() {
 }
 
 export default function NotesPage() {
+  const t = useI18nTranslations('eventsPlanning.notes')
+
   return (
     <Suspense
       fallback={
         <div className="flex items-center justify-center min-h-screen">
-          <LoadingOverlay open={true} title="Loading notes..." />
+          <LoadingSpinner  text={t('loading.loadingNotes')} />
         </div>
       }
     >

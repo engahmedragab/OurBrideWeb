@@ -6,6 +6,9 @@ import { Calendar, Star, ChevronRight } from 'lucide-react'
 import { MainOccasionBookResponse } from '@/types/responses'
 import type { OccasionLineResponse } from '@/types/responses'
 import flowerImg from '@/assets/images/flowers.png'
+import { useI18nTranslations, useIsRTL, useI18nLocale } from '@/i18n/hooks'
+import { cn } from '@/lib'
+import { pickLocalizedText } from '@/utils/translation/i18nText'
 
 export interface OccasionsOverviewProps {
   book?: MainOccasionBookResponse
@@ -29,6 +32,10 @@ const OccasionAvatar = ({ title }: { title: string }) => {
 }
 
 export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOverviewProps) => {
+  const t = useI18nTranslations('eventsPlanning')
+  const tCards = useI18nTranslations('eventsPlanning.cards')
+  const isRtl = useIsRTL()
+  const locale = useI18nLocale()
   const needsInit = !!book && !book.isBookInit
 
   const activeOccasions = useMemo(() => {
@@ -40,7 +47,7 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
     return [...activeOccasions].sort((a, b) => {
       const dateA = new Date(a?.date).getTime()
       const dateB = new Date(b?.date).getTime()
-      return dateA - dateB
+      return dateA - dateB 
     })
   }, [activeOccasions])
 
@@ -58,14 +65,14 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <h2 className="text-14 font-semibold text-gray-900">Occasions</h2>
+        <h2 className="text-14 font-semibold text-gray-900">{t('sideMenu.tabs.occasions')}</h2>
 
         <button
           className="text-12 text-brand-500 hover:text-brand-600 font-medium"
           onClick={handleClickAll}
           type="button"
         >
-          View All 
+          {t('common.viewAll')}
         </button>
       </div>
 
@@ -74,8 +81,16 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
         {displayOccasions.length > 0 ? (
           <div className="divide-y divide-gray-100 rounded-lg">
             {displayOccasions.map((occasion: OccasionLineResponse) => {
-              const title = occasion?.titleEn || occasion?.titleAr || 'Untitled Occasion'
-              const provider = occasion?.subTitleEn || occasion?.subTitleAr || ''
+              const title = pickLocalizedText(locale, {
+                en: occasion?.titleEn,
+                ar: occasion?.titleAr,
+                fallback: t('common.untitledOccasion')
+              })
+              const provider = pickLocalizedText(locale, {
+                en: occasion?.subTitleEn,
+                ar: occasion?.subTitleAr,
+                fallback: ''
+              })
               const date = occasion?.date
 
               return (
@@ -99,8 +114,8 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
 
                     {/* Provider line */}
                     {provider ? (
-                      <p className="text-12 text-gray-600 truncate mt-0.5">
-                        <span className="text-gray-500">Provider: </span>
+                      <p className={cn("!text-12 text-gray-600 truncate mt-0.5", isRtl ? 'text-right' : 'text-left')}>
+                        <span className="text-gray-500">{t('common.provider')}: </span>
                         <span className="text-gray-700">{provider}</span>
                       </p>
                     ) : null}
@@ -122,7 +137,7 @@ export const OccasionsOverview = ({ book, onInit, onNavigate }: OccasionsOvervie
             })}
           </div>
         ) : (
-          <p className="text-13 text-gray-500 text-center py-6">No bookings yet</p>
+          <p className="text-13 text-gray-500 text-center py-6">{t('common.noBookings')}</p>
         )}
       </div>
     </div>

@@ -1031,16 +1031,13 @@ const staff = useMemo(
     // Show loading state
     if (serviceLoading) {
         return (
-            <div className="min-h-screen flex flex-col bg-white">
-                <Header />
-                <main className="flex-1 flex items-center justify-center">
-
-                    <LoadingSpinner size="lg" text={tSD('loadingBookingDetails')} />
-
-
-                </main>
-                <Footer />
-            </div>
+           <div className="h-screen flex flex-col bg-white">
+  <Header />
+  <main className="flex-1 min-h-[calc(100vh)] flex items-center justify-center">
+    <LoadingSpinner size="xl" text={tSD('loadingBookingDetails')} />
+  </main>
+  <Footer />
+</div>
         )
     }
 
@@ -1049,7 +1046,7 @@ const staff = useMemo(
         return (
             <div className="min-h-screen flex flex-col bg-white">
                 <Header />
-                <main className="flex-1">
+                <main className="flex-1"> 
                     <ErrorModal
                         open={true}
                         title={tSD('states.failedToLoadServiceTitle')}
@@ -1115,6 +1112,7 @@ const staff = useMemo(
                             </div>
                         </div>
                         <button
+                        title='btn'
                             type="button"
                             onClick={() => router.back()}
                             

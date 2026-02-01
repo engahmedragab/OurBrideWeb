@@ -1,6 +1,7 @@
 'use client'
 
 import { SelectMenu } from '@/components/ui/SelectMenu'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export type FilterType =
   | 'all'
@@ -19,19 +20,21 @@ export const BudgetFiltersBar = ({
   filterType,
   onFilterChange,
 }: BudgetFiltersBarProps) => {
+  
+  const t = useI18nTranslations('eventsPlanning.budget')
   return (
     <SelectMenu
       value={filterType}
       onChange={value => onFilterChange(value as FilterType)}
       options={[
-        { label: 'All', value: 'all' },
-        { label: 'Done', value: 'done' },
-        { label: 'Not Done', value: 'not-done' },
-        { label: 'Favorite', value: 'favorite' },
-        { label: 'Not Favorite', value: 'not-favorite' },
+        { label: t('filters.all'), value: 'all' },
+        { label: t('filters.done'), value: 'done' },
+        { label: t('filters.notDone'), value: 'not-done' }, 
+        { label: t('filters.favorite'), value: 'favorite' },
+        { label: t('filters.notFavorite'), value: 'not-favorite' },
       
       ]}
-      placeholder="Select filter..."
+      placeholder={t('filters.placeholder')}
       size="lg"
       className="w-full sm:w-auto sm:min-w-[180px]"
     />
