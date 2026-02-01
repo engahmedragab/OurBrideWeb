@@ -4,6 +4,8 @@ import { useEffect, useRef } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { useParams } from 'next/navigation'
 import axios from 'axios'
+import { getApiBaseURL } from '@/services/api/apiClient'
+import { getPlatformHeaders } from '@/utils/platformHeaders'
 import { DeepLinkLoading } from '@/components/deeplink/DeepLinkLoading'
 
 // App IDs
@@ -83,9 +85,12 @@ export default function DeepLinkHandlerPage() {
       ; (async () => {
         try {
           // During build, use placeholder - actual URL will be used at runtime
-          const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com/api/v1'
+          const baseURL = getApiBaseURL()
           const res = await axios.get(`${baseURL}/api/v1/deep-links/${shortCode}`, {
             withCredentials: true,
+            headers: {
+              ...getPlatformHeaders(),
+            },
           })
           const { fullUrl } = res.data
 

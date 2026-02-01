@@ -1,8 +1,9 @@
 // Order API service functions
 
-import { apiClient } from '@/services/api/apiClient'
+import { apiClient, getApiBaseURL } from '@/services/api/apiClient'
 import { getToken } from '@/auth/utils/token'
 import { getApiLanguage } from '@/utils/language'
+import { getPlatformHeaders } from '@/utils/platformHeaders'
 import axios from 'axios'
 import type {
   ServiceOrderUpdateRequest,
@@ -592,8 +593,7 @@ export const downloadOrderInvoice = async (
   try {
     // Get base URL
     // During build, use placeholder - actual URL will be used at runtime
-    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com/api/v1'
-    const baseUrl = baseURL.replace(/\/$/, '').replace(/\/api\/v1$/, '')
+    const baseUrl = getApiBaseURL()
     
     // Build query string
     const queryParams = new URLSearchParams()
@@ -617,6 +617,7 @@ export const downloadOrderInvoice = async (
         'Accept': 'application/pdf',
         ...(token && { Authorization: `Bearer ${token}` }),
         'Accept-Language': language,
+        ...getPlatformHeaders(),
       },
     })
     
@@ -650,8 +651,7 @@ export const downloadPaymentReceipt = async (
   try {
     // Get base URL
     // During build, use placeholder - actual URL will be used at runtime
-    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com/api/v1'
-    const baseUrl = baseURL.replace(/\/$/, '').replace(/\/api\/v1$/, '')
+    const baseUrl = getApiBaseURL()
     
     // Build query string
     const queryParams = new URLSearchParams()
@@ -675,6 +675,7 @@ export const downloadPaymentReceipt = async (
         'Accept': 'application/pdf',
         ...(token && { Authorization: `Bearer ${token}` }),
         'Accept-Language': language,
+        ...getPlatformHeaders(),
       },
     })
     

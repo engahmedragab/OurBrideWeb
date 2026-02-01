@@ -7,18 +7,20 @@ import {
   isGuestOrAuthenticatedRequired,
   isEnsureAuthenticatedRequired,
 } from '@/utils/api-response.utils'
+import { getPlatformHeaders } from '@/utils/platformHeaders'
 
 // Get base URL and ensure it doesn't duplicate /api/v1
 // Note: The generated API endpoints already include /api/v1 in their paths
 // So baseURL should be just the domain (e.g., https://preprod.our-bride.com)
 // NOT https://preprod.our-bride.com/api/v1
-const getBaseURL = (): string => {
+export const getApiBaseURL = (): string => {
   const url = process.env.NEXT_PUBLIC_API_BASE_URL
   // During build time (SSR), env vars might not be available
   // Provide a placeholder that will be replaced at runtime
   if (!url) {
     // Use placeholder during build - actual URL will be used at runtime
-    return 'https://preprod.our-bride.com'
+    //return 'https://preprod.our-bride.com'
+    return 'http://localhost:5001'
   }
   // Remove trailing slash if present
   let baseURL = url.replace(/\/$/, '')
@@ -29,7 +31,7 @@ const getBaseURL = (): string => {
 
 // Create HTTP client with token interceptor
 const httpClient = new HttpClient({
-  baseURL: getBaseURL(),
+  baseURL: getApiBaseURL(),
   timeout: 30000, // Increased from 10000ms (10s) to 30000ms (30s)
   // CORS: withCredentials requires server to send specific origin (not wildcard *)
   // Default to false to avoid CORS errors with wildcard CORS servers
@@ -60,6 +62,16 @@ httpClient.instance.interceptors.request.use(
     const language = getApiLanguage()
     if (config.headers) {
       config.headers['Accept-Language'] = language
+    }
+
+    // Add platform headers
+    if (config.headers) {
+      const platformHeaders = getPlatformHeaders()
+      Object.entries(platformHeaders).forEach(([key, value]) => {
+        if (value) {
+          config.headers[key] = value
+        }
+      })
     }
     
     // Add lang as query parameter
