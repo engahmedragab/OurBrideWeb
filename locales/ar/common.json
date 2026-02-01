@@ -1333,6 +1333,76 @@
       "durationPositive": "يجب أن تكون المدة عددًا موجبًا"
     }
   },  
+  "todo": {
+    "page": {
+      "title": "المهام",
+      "backToEvents": "العودة إلى مناسباتي"
+    },
+    "loading": {
+      "initializingTitle": "جاري تهيئة دفتر المهام...",
+      "initializingSubtitle": "جاري إعداد دفتر المهام الخاص بك",
+      "addingModelsTitle": "جاري إضافة النماذج الافتراضية...",
+      "addingModelsSubtitle": "يرجى الانتظار أثناء إضافة التصنيفات الافتراضية",
+      "loadingTitle": "جاري تحميل المهام...",
+      "loadingSubtitle": "يرجى الانتظار لحظة"
+    },
+    "errors": {
+      "failedToLoadTitle": "فشل تحميل المهام",
+      "failedToLoadMessage": "تعذر تحميل المهام. يرجى المحاولة مرة أخرى.",
+      "noBook": "لا يوجد دفتر مهام. يرجى تهيئته أولاً."
+    },
+    "saveBar": {
+      "saving": "جاري الحفظ...",
+      "saveChanges": "حفظ التغييرات",
+      "unsavedChanges": "تغييرات غير محفوظة"
+    },
+    "lists": {
+      "yourLists": "قوائمك",
+      "addNew": "إضافة جديد",
+      "untitledList": "قائمة بدون عنوان",
+      "uncategorized": "غير مصنف",
+      "noTodos": "لا توجد مهام في هذه القائمة بعد."
+    },
+    "actions": {
+      "addTodo": "إضافة مهمة"
+    },
+    "listRow": {
+      "item_one": "عنصر",
+      "item_other": "عناصر",
+      "completedCount": "تم إنجاز {count}",
+      "deleteListAria": "حذف القائمة"
+    },
+    "row": {
+      "completed": "مكتمل",
+      "pending": "قيد الانتظار",
+      "toggleDoneAria": "تبديل حالة الإنجاز",
+      "deleteTodoAria": "حذف المهمة"
+    },
+    "modal": {
+      "create": {
+        "title": "إضافة مهمة",
+        "fieldLabel": "المهمة",
+        "placeholder": "اكتب المهمة...",
+        "markCompleted": "وضع علامة كمكتمل",
+        "cancel": "إلغاء",
+        "submit": "إنشاء مهمة",
+        "submitting": "جاري الإنشاء..."
+      },
+      "edit": {
+        "title": "تعديل مهمة",
+        "fieldLabel": "المهمة",
+        "placeholder": "اكتب المهمة...",
+        "markCompleted": "وضع علامة كمكتمل",
+        "cancel": "إلغاء",
+        "submit": "حفظ التغييرات",
+        "submitting": "جاري الحفظ..."
+      }
+    },
+    "validation": {
+      "todoRequired": "المهمة مطلوبة",
+      "taskLength": "يجب أن تكون المهمة بين 2 و 40 حرفًا"
+    }
+  },
  "preparations": {
   "title": "التجهيزات",
   "saveChanges": "حفظ التغييرات",
@@ -1412,7 +1482,6 @@
   "advancePaymentNonNegative": "المقدم لا يمكن أن يكون سالبًا"
 }
 },
-
   "reelDetails": {
     "loading": "جاري تحميل الريل...",
     "reelNotFoundTitle": "الريل غير موجود",

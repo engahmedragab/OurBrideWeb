@@ -4,7 +4,7 @@ import React, { useMemo, useState, useCallback, Suspense } from 'react'
 import { Link } from '@/i18n/navigation'
 import { ChevronLeft, Save } from 'lucide-react'
 import { ErrorModal } from '@/components/ui/ErrorModal'
-import { Button, LoadingOverlay } from '@/components/ui'
+import { Button, LoadingOverlay, LoadingSpinner } from '@/components/ui'
 import { TodoLinesPanel } from '@/components/planning/todo/TodoLinesPanel'
 import { TodoListsSidebar } from '@/components/planning/todo/TodoListsSidebar'
 import { CreateItemListModal } from '@/components/planning/items/CreateItemListModal'
@@ -25,8 +25,11 @@ import {
   convertLineToRequest,
   convertCategoryToRequest,
 } from '@/utils/planning/mappers/todoMappers'
+import { useI18nTranslations } from '@/i18n'
 
 function TodoPageContent() {
+  const t = useI18nTranslations('todo')
+
   const eventId = useEventId()
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [createListOpen, setCreateListOpen] = useState(false)
@@ -72,7 +75,10 @@ function TodoPageContent() {
     },
     syncDeltaFn: async (delta) => {
       const response = await syncDeltaMutation.mutateAsync({
-        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<import('@/../client/common/api/gen/ourbride-api').TodoLineRequest, import('@/../client/common/api/gen/ourbride-api').TodoLineCategoryRequest>,
+        data: delta as unknown as import('@/types/syncDelta').SyncBookDeltaRequest<
+          import('@/../client/common/api/gen/ourbride-api').TodoLineRequest,
+          import('@/../client/common/api/gen/ourbride-api').TodoLineCategoryRequest
+        >,
         query: {
           eventId: eventId || undefined,
           userType: null as unknown as UserType | undefined,
@@ -107,7 +113,7 @@ function TodoPageContent() {
     },
     onHydrate: (book) => {
       if (selectedCategoryId && book.lineCategories) {
-        const categoryExists = book.lineCategories.some(cat => cat.id === selectedCategoryId)
+        const categoryExists = book.lineCategories.some((cat) => cat.id === selectedCategoryId)
         if (!categoryExists && book.lineCategories.length > 0) {
           setSelectedCategoryId(book.lineCategories[0].id)
         }
@@ -151,11 +157,10 @@ function TodoPageContent() {
     [applyLocalUpdate]
   )
 
-
   // Get categories with counts from controller
   const categories: UiTodoCategory[] = useMemo(() => {
     const categoriesWithCounts = getCategoriesWithCounts()
-    return categoriesWithCounts.map(cat => ({
+    return categoriesWithCounts.map((cat) => ({
       ...convertCategoryToUi(cat),
       lineCount: cat.lineCount,
       completedCount: cat.completedCount,
@@ -179,25 +184,23 @@ function TodoPageContent() {
         .map((cat: TodoLineCategoryResponse) => [cat.id, cat.name || cat.nameEn || cat.nameAr || ''])
     )
     return categoryLines.map((line: TodoLineResponse) => {
-      const categoryName = categoryMap.get(line.lineCategoryId || 0) || 'Uncategorized'
+      const categoryName = categoryMap.get(line.lineCategoryId || 0) || t('lists.uncategorized')
       return convertLineToUiTodo(line, categoryName)
     })
-  }, [selectedCategoryId, getLinesByCategory, localTodoBook])
+  }, [selectedCategoryId, getLinesByCategory, localTodoBook, t])
 
   const stats = useMemo(() => {
     const total = visibleTodos.length
-    const completed = visibleTodos.filter((t) => t.isDone).length
+    const completed = visibleTodos.filter((tt) => tt.isDone).length
     const pending = total - completed
     return { total, completed, pending }
   }, [visibleTodos])
 
-
-
   const handleToggleDone = (todoId: number) => {
-    updateTodoBook(prev => ({
+    updateTodoBook((prev) => ({
       ...prev,
       lines:
-        prev.lines?.map(line =>
+        prev.lines?.map((line) =>
           line.id === todoId
             ? { ...line, isDone: !line.isDone, lastModifiedDate: new Date().toISOString() }
             : line
@@ -206,10 +209,10 @@ function TodoPageContent() {
   }
 
   const handleDeleteTodo = (todoId: number) => {
-    updateTodoBook(prev => ({
+    updateTodoBook((prev) => ({
       ...prev,
       lines:
-        prev.lines?.map(line =>
+        prev.lines?.map((line) =>
           line.id === todoId
             ? { ...line, isDeleted: true, lastModifiedDate: new Date().toISOString() }
             : line
@@ -223,7 +226,7 @@ function TodoPageContent() {
     // Validate task: must be 2-40 characters
     const taskValue = (data.title || '').trim()
     if (taskValue.length < 2 || taskValue.length > 40) {
-      console.error('Task must be between 2 and 40 characters')
+      console.error(t('validation.taskLength'))
       return
     }
 
@@ -254,7 +257,7 @@ function TodoPageContent() {
       slug: '',
     } as unknown as TodoLineResponse
 
-    updateTodoBook(prev => ({
+    updateTodoBook((prev) => ({
       ...prev,
       lines: [...(prev.lines || []), newLine],
     }))
@@ -264,14 +267,14 @@ function TodoPageContent() {
     // Validate task: must be 2-40 characters
     const taskValue = (data.title || '').trim()
     if (taskValue.length < 2 || taskValue.length > 40) {
-      console.error('Task must be between 2 and 40 characters')
+      console.error(t('validation.taskLength'))
       return
     }
 
-    updateTodoBook(prev => ({
+    updateTodoBook((prev) => ({
       ...prev,
       lines:
-        prev.lines?.map(line => {
+        prev.lines?.map((line) => {
           if (line.id !== todoId) return line
           return {
             ...line,
@@ -314,7 +317,7 @@ function TodoPageContent() {
       slug: '',
     } as unknown as TodoLineCategoryResponse
 
-    updateTodoBook(prev => {
+    updateTodoBook((prev) => {
       const newCategories = [...(prev.lineCategories || []), newCategory]
       return {
         ...prev,
@@ -328,10 +331,10 @@ function TodoPageContent() {
   }
 
   const handleDeleteList = (categoryId: number) => {
-    updateTodoBook(prev => ({
+    updateTodoBook((prev) => ({
       ...prev,
       lineCategories:
-        prev.lineCategories?.map(cat =>
+        prev.lineCategories?.map((cat) =>
           cat.id === categoryId
             ? { ...cat, isDeleted: true, lastModifiedDate: new Date().toISOString() }
             : cat
@@ -340,15 +343,15 @@ function TodoPageContent() {
 
     // If deleted category was selected, select first available
     if (selectedCategoryId === categoryId) {
-      const remainingCategories = (localTodoBook?.lineCategories || [])
-        .filter(cat => !cat.isDeleted && cat.id !== categoryId)
+      const remainingCategories = (localTodoBook?.lineCategories || []).filter(
+        (cat) => !cat.isDeleted && cat.id !== categoryId
+      )
       if (remainingCategories.length > 0) {
         setSelectedCategoryId(remainingCategories[0].id)
       } else {
         setSelectedCategoryId(null)
       }
     }
-
   }
 
   const handleSync = async () => {
@@ -356,7 +359,7 @@ function TodoPageContent() {
     if (!result.ok) {
       if (result.reason === 'loading' || result.reason === 'no-changes') {
         if (result.reason === 'no-changes') {
-          applyLocalUpdate(prev => prev, { setUnsavedTo: false })
+          applyLocalUpdate((prev) => prev, { setUnsavedTo: false })
         }
         return
       }
@@ -367,19 +370,15 @@ function TodoPageContent() {
 
   if (isLoading || isInitializing || isAddingModels) {
     const loadingTitle = isInitializing
-      ? 'Initializing todo book...'
+      ? t('loading.initializingTitle')
       : isAddingModels
-        ? 'Adding default models...'
-        : 'Loading todos...'
-    const loadingSubtitle = isInitializing
-      ? 'Setting up your todo book'
-      : isAddingModels
-        ? 'Please wait while we add default categories'
-        : 'Please wait a moment'
+        ? t('loading.addingModelsTitle')
+        : t('loading.loadingTitle')
+
 
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingOverlay open={true} title={loadingTitle} subtitle={loadingSubtitle} />
+        <LoadingSpinner fullScreen={true}  text={loadingTitle}  />
       </div>
     )
   }
@@ -389,10 +388,10 @@ function TodoPageContent() {
       <div className="flex flex-col items-center justify-center py-12">
         <ErrorModal
           open={true}
-          title="Failed to Load Todos"
-          message="Failed to load todos. Please try again."
+          title={t('errors.failedToLoadTitle')}
+          message={t('errors.failedToLoadMessage')}
           onRetry={() => window.location.reload()}
-          onClose={() => { }}
+          onClose={() => {}}
         />
       </div>
     )
@@ -401,7 +400,7 @@ function TodoPageContent() {
   if (!localTodoBook) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-16 text-gray-500">No todo book found. Please initialize it first.</p>
+        <p className="text-16 text-gray-500">{t('errors.noBook')}</p>
       </div>
     )
   }
@@ -413,11 +412,11 @@ function TodoPageContent() {
           <Link
             href="/dashboard/my-events"
             className="inline-flex h-9 w-9 items-center justify-center"
-            aria-label="Back to My Events"
+            aria-label={t('page.backToEvents')}
           >
             <ChevronLeft className="w-5 h-5 text-gray-700" />
           </Link>
-          <h1 className="text-xl font-semibold text-gray-900">Todo</h1>
+          <h1 className="text-xl font-semibold text-gray-900">{t('page.title')}</h1>
         </div>
 
         {(hasUnsavedChanges || syncMutation.isPending || syncDeltaMutation.isPending) && (
@@ -426,16 +425,25 @@ function TodoPageContent() {
               variant="brand"
               size="md"
               onClick={handleSync}
-              disabled={syncMutation.isPending || syncDeltaMutation.isPending || !localTodoBook || isLoading}
+              disabled={
+                syncMutation.isPending ||
+                syncDeltaMutation.isPending ||
+                !localTodoBook ||
+                isLoading
+              }
               className="flex items-center gap-2 rounded-xl !text-white"
               type="button"
             >
               <Save className="h-4 w-4" />
-              {(syncMutation.isPending || syncDeltaMutation.isPending) ? 'Saving...' : 'Save Changes'}
+              {syncMutation.isPending || syncDeltaMutation.isPending
+                ? t('saveBar.saving')
+                : t('saveBar.saveChanges')}
             </Button>
 
             {hasUnsavedChanges && (
-              <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+              <span className="text-16 text-brand-500 font-medium">
+                {t('saveBar.unsavedChanges')}
+              </span>
             )}
           </div>
         )}
@@ -443,7 +451,7 @@ function TodoPageContent() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <TodoLinesPanel
-          categoryName={selectedCategory?.name ?? 'Untitled List'}
+          categoryName={selectedCategory?.name ?? t('lists.untitledList')}
           stats={stats}
           todos={visibleTodos}
           onToggleDone={handleToggleDone}
@@ -453,8 +461,8 @@ function TodoPageContent() {
         />
 
         <TodoListsSidebar
-          title="Your Lists"
-          actionLabel="Add New"
+          title={t('lists.yourLists')}
+          actionLabel={t('lists.addNew')}
           onAction={handleAddNewList}
           categories={categories}
           selectedCategoryId={selectedCategoryId || 0}
@@ -473,12 +481,14 @@ function TodoPageContent() {
 }
 
 export default function TodoPage() {
+  const t = useI18nTranslations('todo')
+
   return (
     <Suspense
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingOverlay open={true} title="Loading todos..." />
+            <LoadingOverlay open={true} title={t('loading.loadingTitle')} />
           </div>
         </div>
       }

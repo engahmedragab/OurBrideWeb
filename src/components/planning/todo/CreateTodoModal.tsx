@@ -10,13 +10,15 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { X } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
-const createTodoSchema = z.object({
-  title: z.string().min(1, 'Todo is required'),
-  isDone: z.boolean().optional(),
-})
+const createTodoSchema = (t: ReturnType<typeof useI18nTranslations>) =>
+  z.object({
+    title: z.string().min(1, t('validation.todoRequired')),
+    isDone: z.boolean().optional(),
+  })
 
-type CreateTodoFormValues = z.infer<typeof createTodoSchema>
+type CreateTodoFormValues = z.infer<ReturnType<typeof createTodoSchema>>
 
 export interface CreateTodoModalProps {
   open: boolean
@@ -31,6 +33,9 @@ export const CreateTodoModal = ({
   onSubmit,
   isLoading = false,
 }: CreateTodoModalProps) => {
+  const t = useI18nTranslations('todo')
+  const schema = createTodoSchema(t)
+
   const {
     register,
     handleSubmit,
@@ -39,7 +44,7 @@ export const CreateTodoModal = ({
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<CreateTodoFormValues>({
-    resolver: zodResolver(createTodoSchema),
+    resolver: zodResolver(schema) as never,
     defaultValues: { title: '', isDone: false },
     mode: 'onChange',
   })
@@ -87,7 +92,7 @@ export const CreateTodoModal = ({
     >
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-6">
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-20 font-semibold text-gray-900">Add Todo</h2>
+          <h2 className="text-20 font-semibold text-gray-900">{t('modal.create.title')}</h2>
           <button
             type="button"
             onClick={handleClose}
@@ -101,12 +106,12 @@ export const CreateTodoModal = ({
         <div className="space-y-4">
           <div className="space-y-1.5">
             <label htmlFor="todo-title" className="block text-14 font-medium text-gray-700">
-              Todo <span className="text-red-500">*</span>
+              {t('modal.create.fieldLabel')} <span className="text-red-500">*</span>
             </label>
             <Input
               id="todo-title"
               type="text"
-              placeholder="Enter todo..."
+              placeholder={t('modal.create.placeholder')}
               {...register('title')}
               variant={errors.title ? 'error' : titleValue ? 'fill' : 'default'}
               errorMessage={errors.title?.message}
@@ -125,15 +130,20 @@ export const CreateTodoModal = ({
                   onChange={(val) => field.onChange(val === true)}
                   disabled={isSubmitting || isLoading}
                 />
-                <span className="text-sm text-gray-700">Mark as completed</span>
+                <span className="text-sm text-gray-700">{t('modal.create.markCompleted')}</span>
               </div>
             )}
           />
         </div>
 
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
-          <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting || isLoading}>
-            Cancel
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+            disabled={isSubmitting || isLoading}
+          >
+            {t('modal.create.cancel')}
           </Button>
           <Button
             type="submit"
@@ -141,7 +151,7 @@ export const CreateTodoModal = ({
             className="text-white"
             disabled={isSubmitting || isLoading || !isValid}
           >
-            {isSubmitting || isLoading ? 'Creating...' : 'Create Todo'}
+            {isSubmitting || isLoading ? t('modal.create.submitting') : t('modal.create.submit')}
           </Button>
         </div>
       </form>

@@ -4,6 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import type { UiTodo } from '@/utils/planning/mappers/todoMappers'
 import { CheckCircle2, Circle, Trash2 } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
 export function TodoLineRow({
   todo,
@@ -16,6 +17,8 @@ export function TodoLineRow({
   onDelete: () => void
   onEdit: () => void
 }) {
+  const t = useI18nTranslations('todo')
+
   return (
     <div
       role="button"
@@ -36,7 +39,7 @@ export function TodoLineRow({
           onToggleDone()
         }}
         className=" rounded-full p-1 hover:bg-gray-100"
-        aria-label="Toggle done"
+        aria-label={t('row.toggleDoneAria')}
       >
         {todo.isDone ? (
           <CheckCircle2 className="h-5 w-5 text-green-600" />
@@ -57,10 +60,10 @@ export function TodoLineRow({
         <span
           className={cn(
             'rounded-full px-3 py-1 text-xs font-medium',
-            todo.isDone ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-700',
+            todo.isDone ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-700'
           )}
         >
-          {todo.isDone ? 'Completed' : 'Pending'}
+          {todo.isDone ? t('row.completed') : t('row.pending')}
         </span>
 
         <button
@@ -71,7 +74,7 @@ export function TodoLineRow({
             onDelete()
           }}
           className="rounded-lg p-2 hover:bg-gray-100"
-          aria-label="Delete todo"
+          aria-label={t('row.deleteTodoAria')}
         >
           <Trash2 className="h-4 w-4 text-gray-500" />
         </button>

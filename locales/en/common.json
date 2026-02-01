@@ -1336,7 +1336,76 @@
       "durationPositive": "Duration must be a positive number"
     }
   },
-  
+  "todo": {
+    "page": {
+      "title": "Todo",
+      "backToEvents": "Back to My Events"
+    },
+    "loading": {
+      "initializingTitle": "Initializing todo book...",
+      "initializingSubtitle": "Setting up your todo book",
+      "addingModelsTitle": "Adding default models...",
+      "addingModelsSubtitle": "Please wait while we add default categories",
+      "loadingTitle": "Loading todos...",
+      "loadingSubtitle": "Please wait a moment"
+    },
+    "errors": {
+      "failedToLoadTitle": "Failed to Load Todos",
+      "failedToLoadMessage": "Failed to load todos. Please try again.",
+      "noBook": "No todo book found. Please initialize it first."
+    },
+    "saveBar": {
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "unsavedChanges": "Unsaved changes"
+    },
+    "lists": {
+      "yourLists": "Your Lists",
+      "addNew": "Add New",
+      "untitledList": "Untitled List",
+      "uncategorized": "Uncategorized",
+      "noTodos": "No todos in this list yet."
+    },
+    "actions": {
+      "addTodo": "Add todo"
+    },
+    "listRow": {
+      "item_one": "item",
+      "item_other": "items",
+      "completedCount": "{count} completed",
+      "deleteListAria": "Delete list"
+    },
+    "row": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "toggleDoneAria": "Toggle done",
+      "deleteTodoAria": "Delete todo"
+    },
+    "modal": {
+      "create": {
+        "title": "Add Todo",
+        "fieldLabel": "Todo",
+        "placeholder": "Enter todo...",
+        "markCompleted": "Mark as completed",
+        "cancel": "Cancel",
+        "submit": "Create Todo",
+        "submitting": "Creating..."
+      },
+      "edit": {
+        "title": "Edit Todo",
+        "fieldLabel": "Todo",
+        "placeholder": "Enter todo...",
+        "markCompleted": "Mark as completed",
+        "cancel": "Cancel",
+        "submit": "Save Changes",
+        "submitting": "Saving..."
+      }
+    },
+    "validation": {
+      "todoRequired": "Todo is required",
+      "taskLength": "Task must be between 2 and 40 characters"
+    }
+  },
   "preparations": {
     
       "title": "Preparations",

@@ -9,6 +9,7 @@ import { Plus } from 'lucide-react'
 import { TodoLineRow } from '@/components/planning/todo/TodoLineRow'
 import { CreateTodoModal } from '@/components/planning/todo/CreateTodoModal'
 import { EditTodoModal } from '@/components/planning/todo/EditTodoModal'
+import { useI18nTranslations } from '@/i18n'
 
 export function TodoLinesPanel({
   className,
@@ -29,13 +30,15 @@ export function TodoLinesPanel({
   onCreateTodo: (data: { title: string; isDone?: boolean }) => Promise<void> | void
   onEditTodo: (todoId: number, data: { title: string; isDone?: boolean }) => Promise<void> | void
 }) {
+  const t = useI18nTranslations('todo')
+
   const [createOpen, setCreateOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null)
 
   const editingTodo = useMemo(() => {
     if (editingTodoId == null) return null
-    return todos.find((t) => t.id === editingTodoId) ?? null
+    return todos.find((tt) => tt.id === editingTodoId) ?? null
   }, [todos, editingTodoId])
 
   return (
@@ -44,7 +47,6 @@ export function TodoLinesPanel({
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">{categoryName}</h2>
-         
         </div>
 
         <Button
@@ -54,20 +56,20 @@ export function TodoLinesPanel({
             hover:text-white hover:bg-brand-500"
         >
           <Plus className="mr-1 h-4 w-4" />
-          Add todo
+          {t('actions.addTodo')}
         </Button>
       </div>
 
       {/* List */}
       <div className="space-y-3">
-        {todos.map((t) => (
+        {todos.map((tt) => (
           <TodoLineRow
-            key={t.id}
-            todo={t}
-            onToggleDone={() => onToggleDone(t.id)}
-            onDelete={() => onDeleteTodo(t.id)}
+            key={tt.id}
+            todo={tt}
+            onToggleDone={() => onToggleDone(tt.id)}
+            onDelete={() => onDeleteTodo(tt.id)}
             onEdit={() => {
-              setEditingTodoId(t.id)
+              setEditingTodoId(tt.id)
               setEditOpen(true)
             }}
           />
@@ -75,7 +77,7 @@ export function TodoLinesPanel({
 
         {todos.length === 0 ? (
           <div className="rounded-lg border border-dashed p-6 text-center text-sm text-gray-500">
-            No todos in this list yet.
+            {t('lists.noTodos')}
           </div>
         ) : null}
       </div>

@@ -10,13 +10,15 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { X } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
-const editTodoSchema = z.object({
-  title: z.string().min(1, 'Todo is required'),
-  isDone: z.boolean().optional(),
-})
+const editTodoSchema = (t: ReturnType<typeof useI18nTranslations>) =>
+  z.object({
+    title: z.string().min(1, t('validation.todoRequired')),
+    isDone: z.boolean().optional(),
+  })
 
-type EditTodoFormValues = z.infer<typeof editTodoSchema>
+type EditTodoFormValues = z.infer<ReturnType<typeof editTodoSchema>>
 
 export interface EditTodoModalProps {
   open: boolean
@@ -33,6 +35,9 @@ export const EditTodoModal = ({
   onSubmit,
   isLoading = false,
 }: EditTodoModalProps) => {
+  const t = useI18nTranslations('todo')
+  const schema = editTodoSchema(t)
+
   const {
     register,
     handleSubmit,
@@ -41,7 +46,7 @@ export const EditTodoModal = ({
     watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<EditTodoFormValues>({
-    resolver: zodResolver(editTodoSchema),
+    resolver: zodResolver(schema) as never,
     defaultValues: { title: '', isDone: false },
     mode: 'onChange',
   })
@@ -96,7 +101,7 @@ export const EditTodoModal = ({
     >
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-6">
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-20 font-semibold text-gray-900">Edit Todo</h2>
+          <h2 className="text-20 font-semibold text-gray-900">{t('modal.edit.title')}</h2>
           <button
             type="button"
             onClick={handleClose}
@@ -110,12 +115,12 @@ export const EditTodoModal = ({
         <div className="space-y-4">
           <div className="space-y-1.5">
             <label htmlFor="todo-title-edit" className="block text-14 font-medium text-gray-700">
-              Todo <span className="text-red-500">*</span>
+              {t('modal.edit.fieldLabel')} <span className="text-red-500">*</span>
             </label>
             <Input
               id="todo-title-edit"
               type="text"
-              placeholder="Enter todo..."
+              placeholder={t('modal.edit.placeholder')}
               {...register('title')}
               variant={errors.title ? 'error' : titleValue ? 'fill' : 'default'}
               errorMessage={errors.title?.message}
@@ -134,15 +139,20 @@ export const EditTodoModal = ({
                   onChange={(val) => field.onChange(val === true)}
                   disabled={isSubmitting || isLoading}
                 />
-                <span className="text-sm text-gray-700">Mark as completed</span>
+                <span className="text-sm text-gray-700">{t('modal.edit.markCompleted')}</span>
               </div>
             )}
           />
         </div>
 
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
-          <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting || isLoading}>
-            Cancel
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+            disabled={isSubmitting || isLoading}
+          >
+            {t('modal.edit.cancel')}
           </Button>
           <Button
             type="submit"
@@ -150,7 +160,7 @@ export const EditTodoModal = ({
             className="text-white"
             disabled={isSubmitting || isLoading || !isValid}
           >
-            {isSubmitting || isLoading ? 'Saving...' : 'Save Changes'}
+            {isSubmitting || isLoading ? t('modal.edit.submitting') : t('modal.edit.submit')}
           </Button>
         </div>
       </form>

@@ -4,6 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { ChevronRight, Trash2 } from 'lucide-react'
 import type { UiTodoCategory } from '@/utils/planning/mappers/todoMappers'
+import { useI18nTranslations } from '@/i18n'
 
 const STYLE_BY_COLOR: Record<string, { bg: string; border: string }> = {
   gray: { bg: 'bg-gray-50', border: 'border-gray-200' },
@@ -26,8 +27,13 @@ export function TodoListRow({
   onClick?: () => void
   onDelete?: () => void
 }) {
+  const t = useI18nTranslations('todo')
+
   const key = category.color ?? 'gray'
   const style = STYLE_BY_COLOR[key] ?? STYLE_BY_COLOR.gray
+
+  const itemLabel =
+    category.lineCount === 1 ? t('listRow.item_one') : t('listRow.item_other')
 
   return (
     <button
@@ -37,7 +43,7 @@ export function TodoListRow({
         'w-full rounded-lg border px-3 py-3 text-left transition hover:brightness-[0.98]',
         style.bg,
         style.border,
-        active ? 'ring-1 ring-gray-900/20' : '',
+        active ? 'ring-1 ring-gray-900/20' : ''
       )}
     >
       <div className="flex items-center justify-between gap-3">
@@ -46,11 +52,13 @@ export function TodoListRow({
           {(category.lineCount !== undefined || category.completedCount !== undefined) && (
             <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
               {category.lineCount !== undefined && (
-                <span>{category.lineCount} {category.lineCount === 1 ? 'item' : 'items'}</span>
+                <span>
+                  {category.lineCount} {itemLabel}
+                </span>
               )}
               {category.completedCount !== undefined && category.completedCount > 0 && (
                 <span className="text-green-600">
-                  {category.completedCount} completed
+                  {t('listRow.completedCount', { count: category.completedCount })}
                 </span>
               )}
             </div>
@@ -67,7 +75,7 @@ export function TodoListRow({
               }}
               className="rounded-md p-2 hover:bg-white/60"
               role="button"
-              aria-label="Delete list"
+              aria-label={t('listRow.deleteListAria')}
             >
               <Trash2 className="h-4 w-4 text-primary" />
             </span>
