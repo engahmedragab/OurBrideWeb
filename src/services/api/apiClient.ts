@@ -19,8 +19,8 @@ export const getApiBaseURL = (): string => {
   // Provide a placeholder that will be replaced at runtime
   if (!url) {
     // Use placeholder during build - actual URL will be used at runtime
-    //return 'https://preprod.our-bride.com'
-    return 'http://localhost:5001'
+    return 'https://preprod.our-bride.com'
+    //return 'http://localhost:5001'
   }
   // Remove trailing slash if present
   let baseURL = url.replace(/\/$/, '')
