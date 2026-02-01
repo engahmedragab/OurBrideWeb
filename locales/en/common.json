@@ -1336,6 +1336,88 @@
       "durationPositive": "Duration must be a positive number"
     }
   },
+  
+  "preparations": {
+    
+      "title": "Preparations",
+      "saveChanges": "Save Changes",
+      "unsavedChanges": "Unsaved changes",
+      "addNew": "Add new Preparation",
+      "loadingInitializing": "Initializing preparations book...",
+      "loadingModels": "Adding default models...",
+      "loading": "Loading preparations...",
+      "savedInfo": "Preparation saved. Click \"Save Changes\" to persist.",
+      "deletedInfo": "Preparation deleted. Click \"Save Changes\" to persist.",
+      "changesSaved": "Changes saved successfully",
+      "noChanges": "No changes to save",
+      "saveFailed": "Failed to save changes",
+      "serviceBookNotFound": "Service book not found",
+      "selectServices":"Select a service",
+      "backToEvents": "Back to My Events",
+      "confirmTitle": "Are you sure?",
+      "confirmDescription": "This action cannot be undone.",
+      "confirmDelete": "Delete",
+      "confirmCancel": "Cancel",
+      "saving": "Saving...",
+    
+    "summaryCard": {
+      "title": "Wedding Preparations List",
+      "completedOfTotal": "{completed} of {total} Preparations Completed",
+      "total": "Total",
+      "completed": "Completed",
+      "inProgress": "Still on the way"
+    },
+    "status": {
+      "completed": "Completed",
+      "inProgress": "Still on the way"
+    },
+    "table": {
+      "noServices": "No services found",
+      "columns": {
+        "service": "Service",
+        "status": "Status",
+        "paid": "Paid",
+        "due": "Due"
+      }
+    },
+    "priceSummary": {
+      "totalCost": "Total Cost",
+      "remaining": "Remaining"
+    },
+    "modal": {
+      "addNewPreparation": "Add New Preparation",
+      "completed": "Completed",
+      "serviceType": "Service Type",
+      "rent": "Rent",
+      "buy": "Buy",
+      "title": "Title",
+      "quantity": "Quantity",
+      "costUnit": "Cost (Unit)",
+      "advancePayment": "Advance Payment",
+      "providerUserName": "Provider User Name",
+      "enterProviderName": "Enter provider name",
+      "purchaseDate": "Purchase Date",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "loadingServices": "Loading services...",
+      "enterServiceTitle":"Enter service title"
+    },
+    "confirmDialog": {
+      "description": "This action cannot be undone.",
+      "confirmText": "Delete",
+      "cancelText": "Cancel"
+    },
+    "validation": {
+  "serviceRequired": "Service selection is required",
+  "titleRequired": "Title is required",
+  "serviceTypeRequired": "Service type is required",
+  "quantityInteger": "Quantity must be a whole number",
+  "quantityMin": "Quantity must be at least 1",
+  "costNonNegative": "Cost cannot be negative",
+  "advancePaymentNonNegative": "Advance payment cannot be negative"
+}
+  },
   "reelDetails": {
     "loading": "Loading reel...",
     "reelNotFoundTitle": "Reel Not Found",

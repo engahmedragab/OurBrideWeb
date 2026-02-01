@@ -12,7 +12,7 @@ import type { ReservationResponse } from './reservation-response'
 export interface ServiceLineResponse extends LineResponse {
   titleAr: string
   titleEn: string
-  title: string
+  title?: string
   quantity?: number
   advanceAmount?: number
   price?: number

@@ -1,5 +1,6 @@
 'use client'
 
+import { useI18nTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 export type ServiceStatus = 'completed' | 'in-progress'
@@ -10,6 +11,8 @@ export interface StatusBadgeProps {
 }
 
 export const StatusBadge = ({ status, className }: StatusBadgeProps) => {
+  const t = useI18nTranslations('preparations')
+  
   const isCompleted = status === 'completed'
 
   return (
@@ -21,7 +24,7 @@ export const StatusBadge = ({ status, className }: StatusBadgeProps) => {
           : 'bg-yellow-100 text-yellow-600 border-yellow-600'
       )}
     >
-      {isCompleted ? 'Completed' : 'Still on the way'}
+      {isCompleted ? t('status.completed') : t('status.inProgress')}
     </span>
   )
 }

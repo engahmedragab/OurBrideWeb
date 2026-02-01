@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { planningTypography } from './typography'
+import { useI18nTranslations } from '@/i18n'
 
 export interface SelectFieldOption {
   value: string
@@ -27,6 +28,8 @@ export const SelectField = ({
   className,
   showLabel = true,
 }: SelectFieldProps) => {
+  const t = useI18nTranslations('preparations')
+
   return (
     <div className={className}>
       {showLabel && label && (
@@ -48,7 +51,7 @@ export const SelectField = ({
       >
         {options.map(option => (
           <option key={option.value} value={option.value}>
-            {option.label}
+            {t(option.label)}
           </option>
         ))}
       </select>

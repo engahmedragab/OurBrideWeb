@@ -18,11 +18,13 @@ import { getServiceIcon, getServiceIconByClass, getServiceClassName } from '@/ut
 import { preparationLineSchema, type PreparationLineFormValues } from '@/schema/preparations.schema'
 import { Sparkles } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface ServiceModalFormData {
   completed: boolean
   serviceKey: string
-  title: string
+  titleAr: string
+  titleEn: string
   serviceType: 'rent' | 'buy'
   quantity: number
   cost: number
@@ -38,7 +40,8 @@ export interface ServiceModalProps {
     id: string
     serviceKey?: string
     serviceClass?: number
-    title: string
+    titleAr: string
+    titleEn: string
     serviceType: string
     quantity: number
     cost: number
@@ -52,8 +55,8 @@ export interface ServiceModalProps {
 }
 
 const SERVICE_TYPE_OPTIONS = [
-  { value: 'rent', label: 'Rent' },
-  { value: 'buy', label: 'Buy' },
+  { value: 'rent', label: 'modal.rent' },
+  { value: 'buy', label: 'modal.buy' },
 ]
 
 export const ServiceModal = ({
@@ -63,11 +66,15 @@ export const ServiceModal = ({
   onClose,
   onSave,
 }: ServiceModalProps) => {
+  const t = useI18nTranslations('preparations')
+  const isRtl =  useIsRTL()
+
+
   // Fetch services from API
   const { data: services = [], isLoading: isLoadingServices } = usePreparations({
     enabled: open, // Only fetch when modal is open
   })
-
+  const schema = preparationLineSchema(t)
   const {
     register,
     handleSubmit,
@@ -76,7 +83,7 @@ export const ServiceModal = ({
     reset,
     setValue,
   } = useForm<PreparationLineFormValues>({
-    resolver: zodResolver(preparationLineSchema) as never,
+    resolver: zodResolver(schema) as never,
     defaultValues: {
       completed: false,
       serviceKey: '',
@@ -90,7 +97,7 @@ export const ServiceModal = ({
     },
     mode: 'onChange',
   })
-
+  
   const watchedValues = watch()
   const serviceKey = watch('serviceKey')
   const title = watch('title')
@@ -115,25 +122,26 @@ export const ServiceModal = ({
 
   // Get selected service for icon display
   const selectedService = useMemo(() => {
+    // Default when no service selected
     if (!serviceKey || !services.length) {
-      // Default to Sparkles icon when no service selected
       return {
-        label: 'Add New Preparation',
+        labelAr: t('modal.addNewPreparation'),
+        labelEn: t('modal.addNewPreparation'),
         Icon: Sparkles,
         imageUrl: undefined,
       }
     }
 
-    const service = services.find(s => String(s.id) === serviceKey)
+    const service = services.find((s) => String(s.id) === String(serviceKey))
     if (!service) {
       return {
-        label: 'Add New Preparation',
+        labelAr: t('modal.addNewPreparation'),
+        labelEn: t('modal.addNewPreparation'),
         Icon: Sparkles,
         imageUrl: undefined,
       }
     }
 
-    // Priority: use serviceClass if available, otherwise use iconName, then fallback to service name
     let Icon: LucideIcon
     if (service.class !== undefined && service.class !== null) {
       Icon = getServiceIconByClass(service.class) as LucideIcon
@@ -143,11 +151,12 @@ export const ServiceModal = ({
     }
 
     return {
-      label: service.nameEn || service.nameAr || service.name || 'Unknown',
+      labelAr: service.nameAr || service.name || 'Unknown',
+      labelEn: service.nameEn || service.nameAr || service.name || 'Unknown',
       Icon,
       imageUrl: service.imageUrl,
     }
-  }, [serviceKey, services])
+  }, [serviceKey, services, t])
 
   // Initialize form data - only when modal opens or initialValue/mode changes
   useEffect(() => {
@@ -180,10 +189,22 @@ export const ServiceModal = ({
       const service = serviceKey && services.length
         ? services.find(s => String(s.id) === serviceKey)
         : null
-      const title = service
-        ? (service.nameEn || service.nameAr || service.name || '')
-        : initialValue.title || ''
+        const getTitle = () => {
+          if (service) {
+            return isRtl
+              ? service.nameAr || service.name || ''
+              : service.nameEn || service.name || ''
+          }
+        
+          return isRtl
+            ? initialValue.titleAr || ''
+            : initialValue.titleEn || ''
+        }
+        
+        const title = getTitle()
 
+
+      
       reset({
         completed: initialValue.completed,
         serviceKey,
@@ -225,7 +246,7 @@ export const ServiceModal = ({
       const service = services.find(s => String(s.id) === serviceKey)
       if (service) {
         // Always update title to match selected service name
-        const serviceName = service.nameEn || service.nameAr || service.name || ''
+        const serviceName = isRtl ?  (service.nameAr || service.name || '') : (service.nameEn || service.name || '')
         setValue('title', serviceName, { shouldValidate: true })
       }
     }
@@ -254,7 +275,8 @@ export const ServiceModal = ({
     const formData: ServiceModalFormData = {
       completed: data.completed,
       serviceKey: data.serviceKey,
-      title: data.title,
+      titleAr: data.title,
+      titleEn: data.title,
       serviceType: data.serviceType,
       quantity: data.quantity,
       cost: data.cost,
@@ -281,10 +303,9 @@ export const ServiceModal = ({
       }
     }
 
-    // Otherwise, show selected service name or placeholder
-    return selectedService
-      ? selectedService.label
-      : 'Add New Preparation'
+    // Otherwise, show selected service name or placeholde
+
+    return isRtl ? (selectedService.labelAr || t('modal.addNewPreparation')) : (selectedService.labelEn || t('modal.addNewPreparation'))
   }, [mode, serviceKey, services, selectedService, initialValue?.serviceClass])
 
   return (
@@ -306,7 +327,7 @@ export const ServiceModal = ({
             {selectedService.imageUrl ? (
               <img
                 src={selectedService.imageUrl}
-                alt={selectedService.label}
+                alt={selectedService.labelAr}
                 className="w-8 h-8 object-contain"
               />
             ) : (
@@ -325,7 +346,7 @@ export const ServiceModal = ({
           <div>
             {isLoadingServices ? (
               <div className="py-4 text-center text-gray-500">
-                Loading services...
+                {t('modal.loadingServices')}
               </div>
             ) : (
               <ServiceSelect
@@ -357,7 +378,7 @@ export const ServiceModal = ({
                   )}
                 </div>
                 <label className={cn(planningTypography.body, 'text-gray-900')}>
-                  Completed
+                  {t('summaryCard.completed')}
                 </label>
               </div>
             ) : (
@@ -373,7 +394,7 @@ export const ServiceModal = ({
                     'text-gray-900 cursor-pointer'
                   )}
                 >
-                  Completed
+                  {t('summaryCard.completed')}
                 </label>
               </>
             )}
@@ -383,10 +404,11 @@ export const ServiceModal = ({
             {mode === 'view' ? (
               <div>
                 <label className={cn(planningTypography.secondary, 'text-gray-500 text-12 mb-1 block')}>
-                  Service Type
+                  {t('modal.serviceType')}
                 </label>
                 <div className={cn(planningTypography.body, 'text-gray-900')}>
-                  {watchedValues.serviceType === 'rent' ? 'Rent' : 'Buy'}
+                  {watchedValues.serviceType === 'rent' ? t('modal.rent') :
+                    t('modal.buy')}
                 </div>
               </div>
             ) : (
@@ -418,7 +440,7 @@ export const ServiceModal = ({
                 'font-medium text-gray-700 mb-2'
               )}
             >
-              Title <span className="text-red-500">*</span>
+              {t('modal.title')} <span className="text-red-500">*</span>
             </label>
             {mode === 'view' ? (
               <div className={cn(planningTypography.body, 'text-gray-900 py-2')}>
@@ -427,7 +449,7 @@ export const ServiceModal = ({
             ) : (
               <Input
                 {...register('title')}
-                placeholder="Enter service title"
+                placeholder={t('modal.enterServiceTitle')}
                 required
                 errorMessage={errors.title?.message}
               />
@@ -443,7 +465,7 @@ export const ServiceModal = ({
                 'font-medium text-gray-700 mb-2'
               )}
             >
-              Quantity
+              {t('modal.quantity')}
             </label>
             {mode === 'view' ? (
               <div className={cn(planningTypography.body, 'text-gray-900 py-2')}>
@@ -473,7 +495,8 @@ export const ServiceModal = ({
                     'font-medium text-gray-700 mb-2'
                   )}
                 >
-                  Cost (Unit)
+                  {t('modal.costUnit')}
+
                 </label>
                 {mode === 'view' ? (
                   <div className={cn(planningTypography.body, 'text-gray-900 py-2')}>
@@ -500,7 +523,8 @@ export const ServiceModal = ({
                     'font-medium text-gray-700 mb-2'
                   )}
                 >
-                  Advance Payment
+                  {t('modal.advancePayment')}
+
                 </label>
                 {mode === 'view' ? (
                   <div className={cn(planningTypography.body, 'text-gray-900 py-2')}>
@@ -535,7 +559,7 @@ export const ServiceModal = ({
                 'font-medium text-gray-700 mb-2'
               )}
             >
-              Provider User Name
+              {t('modal.providerUserName')}
             </label>
             {mode === 'view' ? (
               <div className={cn(planningTypography.body, 'text-gray-900 py-2')}>
@@ -544,7 +568,7 @@ export const ServiceModal = ({
             ) : (
               <Input
                 {...register('providerUserName')}
-                placeholder="Enter provider name"
+                placeholder={t('modal.enterProviderName')}
               />
             )}
           </div>
@@ -558,7 +582,7 @@ export const ServiceModal = ({
                 'font-medium text-gray-700 mb-2'
               )}
             >
-              Purchase Date
+              {t('modal.purchaseDate')}
             </label>
             {mode === 'view' ? (
               <div className={cn(planningTypography.body, 'text-gray-900 py-2')}>
@@ -587,10 +611,10 @@ export const ServiceModal = ({
         {/* Footer Buttons */}
         <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
           <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
-            Cancel
+            {t('modal.cancel')}
           </Button>
           <Button type="submit" variant="brand" className="text-white" disabled={isSubmitting}>
-            {isSubmitting ? 'Saving...' : 'Save'}
+            {isSubmitting ? t('modal.saving') : t('modal.save')}
           </Button>
         </div>
       </form>

@@ -1,6 +1,7 @@
 export type PreparationService = {
   id: string
-  title: string
+  titleAr: string
+  titleEn: string
   icon: { kind: 'asset' | 'uploaded'; value: string }
   serviceType: string
   quantity: number

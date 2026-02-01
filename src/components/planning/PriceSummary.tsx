@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { planningTypography } from './typography'
+import { useI18nTranslations } from '@/i18n'
 
 export interface PriceSummaryProps {
   totalCost: number
@@ -9,11 +10,13 @@ export interface PriceSummaryProps {
 }
 
 export const PriceSummary = ({ totalCost, remaining }: PriceSummaryProps) => {
+  const t = useI18nTranslations('preparations')
+
   return (
     <div className="bg-gray-50 rounded-xl p-4 space-y-3">
       <div className="flex justify-between items-center">
         <span className={cn(planningTypography.secondary, 'text-gray-600')}>
-          Total Cost
+         {t('priceSummary.totalCost')}
         </span>
         <span
           className={cn(
@@ -26,7 +29,8 @@ export const PriceSummary = ({ totalCost, remaining }: PriceSummaryProps) => {
       </div>
       <div className="flex justify-between items-center">
         <span className={cn(planningTypography.secondary, 'text-gray-600')}>
-          Remaining
+        {t('priceSummary.remaining')}
+
         </span>
         <span
           className={cn(

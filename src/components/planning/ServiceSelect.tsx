@@ -7,11 +7,13 @@ import { planningTypography } from './typography'
 import { getServiceIcon, getServiceIconByClass } from '@/utils/serviceIconMapper'
 import type { PlanningPreference } from '@/services/profile/profileApi'
 import type { LucideIcon } from 'lucide-react'
+import { isRTL, useI18nTranslations, useIsRTL } from '@/i18n'
 
 // Service option type for dropdown
 export interface ServiceOption {
   serviceKey: string // Using preparation ID as key
-  label: string
+  labelAr: string
+  labelEn: string
   Icon: LucideIcon | React.ComponentType<{ className?: string }>
   imageUrl?: string
 }
@@ -32,6 +34,12 @@ export const ServiceSelect = ({
   required = false,
   services = [],
 }: ServiceSelectProps) => {
+  const t = useI18nTranslations('preparations')
+  const isRtl = useIsRTL()
+  console.log({ value })
+
+  const normalizedValue = value == null ? '' : String(value)
+
   const [isOpen, setIsOpen] = useState(false)
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -52,14 +60,15 @@ export const ServiceSelect = ({
 
       return {
         serviceKey: String(service.id), // Use preparation ID as serviceKey
-        label: service.nameEn || service.nameAr || service.name || 'Unknown',
+        labelEn: service.nameEn || service.nameAr || service.name || 'Unknown',
+        labelAr: service.nameAr || service.nameEn || service.name || 'Unknown',
         Icon,
         imageUrl: service.imageUrl,
       }
     })
   }, [services])
 
-  const selectedService = serviceOptions.find(s => s.serviceKey === value)
+  const selectedService = serviceOptions.find((s) => s.serviceKey === normalizedValue)
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -90,7 +99,7 @@ export const ServiceSelect = ({
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault()
-          setFocusedIndex(prev => {
+          setFocusedIndex((prev) => {
             const next = prev < serviceOptions.length - 1 ? prev + 1 : 0
             // Scroll into view
             if (listRef.current) {
@@ -104,7 +113,7 @@ export const ServiceSelect = ({
           break
         case 'ArrowUp':
           e.preventDefault()
-          setFocusedIndex(prev => {
+          setFocusedIndex((prev) => {
             const next = prev > 0 ? prev - 1 : serviceOptions.length - 1
             // Scroll into view
             if (listRef.current) {
@@ -145,7 +154,7 @@ export const ServiceSelect = ({
   }, [isOpen, focusedIndex, onChange, serviceOptions])
 
   const handleSelect = (serviceKey: string) => {
-    onChange(serviceKey)
+    onChange(String(serviceKey))
     setIsOpen(false)
     setFocusedIndex(-1)
     buttonRef.current?.focus()
@@ -157,6 +166,7 @@ export const ServiceSelect = ({
       setFocusedIndex(-1)
     }
   }
+  console.log({ serviceOptions, selectedService })
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -167,7 +177,8 @@ export const ServiceSelect = ({
           'font-medium text-gray-700 mb-2'
         )}
       >
-        Service {required && <span className="text-red-500">*</span>}
+        {t('table.columns.service')}{' '}
+        {required && <span className="text-red-500">*</span>}
       </label>
       <button
         type="button"
@@ -191,17 +202,19 @@ export const ServiceSelect = ({
                 {selectedService.imageUrl ? (
                   <img
                     src={selectedService.imageUrl}
-                    alt={selectedService.label}
+                    alt={isRtl ? selectedService.labelAr : selectedService.labelEn}
                     className="h-5 w-5 object-contain"
                   />
                 ) : (
                   <selectedService.Icon className="h-5 w-5 text-primary" />
                 )}
               </div>
-              <span className="text-gray-900 truncate">{selectedService.label}</span>
+              <span className="text-gray-900 truncate">
+                {isRtl ? selectedService.labelAr : selectedService.labelEn}
+              </span>
             </>
           ) : (
-            <span className="text-gray-400">Select a service</span>
+            <span className="text-gray-400">{t('selectServices')}</span>
           )}
         </div>
         <ChevronDown
@@ -220,9 +233,9 @@ export const ServiceSelect = ({
           className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-64 overflow-auto focus:outline-none"
         >
           {serviceOptions.map((service, index) => {
-            const isSelected = service.serviceKey === value
+            const isSelected = service.serviceKey === normalizedValue
             const isFocused = index === focusedIndex
-
+            console.log({ isSelected })
             return (
               <li
                 key={service.serviceKey}
@@ -241,7 +254,7 @@ export const ServiceSelect = ({
                   {service.imageUrl ? (
                     <img
                       src={service.imageUrl}
-                      alt={service.label}
+                      alt={isRtl ? service.labelAr : service.labelEn}
                       className="h-5 w-5 object-contain"
                     />
                   ) : (
@@ -249,7 +262,7 @@ export const ServiceSelect = ({
                   )}
                 </div>
                 <span className="text-gray-900 text-16 font-normal leading-6 flex-1">
-                  {service.label}
+                  {isRtl ? service.labelAr : service.labelEn}
                 </span>
                 {isSelected && (
                   <div className="flex-shrink-0">

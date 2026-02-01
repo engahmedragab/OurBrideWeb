@@ -22,11 +22,13 @@ import {
 import type { PreparationService } from '@/types/planning'
 import { usePreparations } from '@/hooks/planning/usePreparations'
 import { normalizeIconName, getServiceClassNumber } from '@/utils/serviceIconMapper'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 /**
  * Convert ServiceLineResponse to PreparationService format
  */
 const convertServiceLineToPreparationService = (line: ServiceLineResponse): PreparationService => {
+
   const serviceTypeStr = line.serviceType === 0 ? 'rent' : line.serviceType === 1 ? 'buy' : 'rent'
 
   // Priority: serviceClass > line iconName
@@ -37,7 +39,8 @@ const convertServiceLineToPreparationService = (line: ServiceLineResponse): Prep
 
   return {
     id: String(line.id),
-    title: line.title || line.titleEn || line.titleAr || '',
+    titleAr: line.titleAr || line.title || line.titleAr || '',
+    titleEn: line.titleEn || line.title || line.titleAr || '',
     icon: { kind: 'asset', value: iconValue },
     serviceType: serviceTypeStr,
     quantity: line.quantity || 1,
@@ -50,6 +53,8 @@ const convertServiceLineToPreparationService = (line: ServiceLineResponse): Prep
 }
 
 function PreparationsPageContent() {
+  const t = useI18nTranslations('preparations')
+  const isRtl =  useIsRTL()
   const router = useRouter()
   const eventId = useEventId()
   const { addToast } = useToast()
@@ -185,7 +190,8 @@ function PreparationsPageContent() {
         // Debug icon resolution for preparations
         console.log('[Preparations] icon resolution', {
           lineId: line.id,
-          title: line.title || line.titleEn || line.titleAr,
+          titleAr:  line.titleAr || line.title,
+          titleEn:  line.titleEn || line.title,
           lineServiceClass: line.serviceClass,
           preparationId: line.preparationId,
           preparationClass: prepClass,
@@ -229,7 +235,8 @@ function PreparationsPageContent() {
   const handleSave = async (serviceData: {
     completed: boolean
     serviceKey: string
-    title: string
+    titleAr: string
+    titleEn: string
     serviceType: 'rent' | 'buy'
     quantity: number
     cost: number
@@ -274,9 +281,8 @@ function PreparationsPageContent() {
             if (String(line.id) === currentService.id) {
               return {
                 ...line,
-                title: serviceData.title,
-                titleEn: serviceData.title,
-                titleAr: serviceData.title,
+                titleEn: serviceData.titleEn,
+                titleAr: serviceData.titleAr,
                 quantity: serviceData.quantity,
                 price: serviceData.cost,
                 advanceAmount: serviceData.advancePayment,
@@ -300,9 +306,8 @@ function PreparationsPageContent() {
         const newLine: ServiceLineResponse = {
           id: -Date.now(), // Temporary ID
           bookId: localServiceBook.id,
-          title: serviceData.title,
-          titleEn: serviceData.title,
-          titleAr: serviceData.title,
+          titleEn: serviceData.titleEn,
+          titleAr: serviceData.titleAr,
           quantity: serviceData.quantity,
           price: serviceData.cost,
           advanceAmount: serviceData.advancePayment,
@@ -345,14 +350,14 @@ function PreparationsPageContent() {
         if (!result.ok) return
         setIsModalOpen(false)
         setCurrentService(undefined)
-        addToast('Preparation saved. Click "Save Changes" to persist.', 'info')
+        addToast(t('savedInfo'), 'info')
       } else {
         // View mode - just close the modal
         setIsModalOpen(false)
         setCurrentService(undefined)
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save preparation'
+      const errorMessage = error instanceof Error ? error.message : t('saveFailed')
       addToast(errorMessage, 'error')
     }
   }
@@ -371,7 +376,7 @@ function PreparationsPageContent() {
     if (result.ok) {
       setIsConfirmDialogOpen(false)
       setServiceToDelete(undefined)
-      addToast('Preparation deleted. Click "Save Changes" to persist.', 'info')
+      addToast(t('deletedInfo'), 'info')
     }
   }
 
@@ -379,14 +384,14 @@ function PreparationsPageContent() {
     const result = await save()
     if (!result.ok) {
       if (result.reason === 'loading' || result.reason === 'no-changes') {
-        addToast(result.message || 'No changes to save', 'info')
+        addToast(result.message || t('noChanges'), 'info')
         if (result.reason === 'no-changes') setHasUnsavedChanges(false)
         return
       }
-      addToast(result.message || 'Failed to save changes', 'error')
+      addToast(result.message || t('saveFailed'), 'error')
       return
     }
-    addToast(result.message || 'Changes saved successfully', 'success')
+    addToast(result.message || t('changesSaved'), 'success')
   }
 
   const handleBack = () => {
@@ -403,10 +408,10 @@ function PreparationsPageContent() {
 
   if (showLoading) {
     const loadingText = isInitializing
-      ? 'Initializing preparations book...'
+      ? t('loadingInitializing')
       : isAddingModels
-        ? 'Adding default models...'
-        : 'Loading preparations...'
+        ? t('loadingModels')
+        : t('loading')
 
     return (
       <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -430,7 +435,7 @@ function PreparationsPageContent() {
             >
               <ChevronLeft className="w-5 h-5 text-gray-700" />
             </button>
-            <h1 className="text-24 font-semibold text-gray-900">Preparations</h1>
+            <h1 className="text-24 font-semibold text-gray-900">{t('title')}</h1>
           </div>
           <div className="flex items-center gap-3">
             {(hasUnsavedChanges || syncMutation.isPending) && (
@@ -444,11 +449,11 @@ function PreparationsPageContent() {
                   type="button"
                 >
                   <Save className="h-4 w-4" />
-                  {syncMutation.isPending ? 'Saving...' : 'Save Changes'}
+                  {syncMutation.isPending ? t('saving') : t('saveChanges')}
                 </Button>
 
                 {hasUnsavedChanges && (
-                  <span className="text-16 text-brand-500 font-medium">Unsaved changes</span>
+                  <span className="text-16 text-brand-500 font-medium">{t('unsavedChanges')}</span>
                 )}
               </>
             )}
@@ -459,7 +464,7 @@ function PreparationsPageContent() {
               className="text-white"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Add new Preparation
+              {t('addNew')}
             </Button>
           </div>
         </div>
@@ -502,7 +507,8 @@ function PreparationsPageContent() {
                   id: currentService.id,
                   serviceKey: serviceKey, // Use preparationId as serviceKey
                   serviceClass,
-                  title: currentService.title,
+                  titleAr: currentService.titleAr,
+                  titleEn: currentService.titleEn,
                   serviceType: currentService.serviceType as 'rent' | 'buy',
                   quantity: currentService.quantity,
                   cost: currentService.cost,
@@ -524,10 +530,10 @@ function PreparationsPageContent() {
 
         <ConfirmDialog
           open={isConfirmDialogOpen}
-          title="Are you sure?"
-          description="This action cannot be undone."
-          confirmText="Delete"
-          cancelText="Cancel"
+          title={t('confirmTitle')}
+          description={t('confirmDescription')}
+          confirmText={t('confirmDelete')}
+          cancelText={t('confirmCancel')}
           onConfirm={handleConfirmDelete}
           onCancel={() => {
             setIsConfirmDialogOpen(false)
@@ -544,10 +550,12 @@ function PreparationsPageContent() {
  * Shows all preparation lines in a table
  */
 export default function PreparationsPage() {
+  const t = useI18nTranslations('preparations')
+
   return (
     <Suspense fallback={
       <div className="w-full min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
+        <LoadingSpinner size="lg" text={t('loading')} fullScreen={true} />
       </div>
     }>
       <PreparationsPageContent />

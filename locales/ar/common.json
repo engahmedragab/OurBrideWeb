@@ -1333,6 +1333,86 @@
       "durationPositive": "يجب أن تكون المدة عددًا موجبًا"
     }
   },  
+ "preparations": {
+  "title": "التجهيزات",
+  "saveChanges": "حفظ التغييرات",
+  "unsavedChanges": "تغييرات غير محفوظة",
+  "addNew": "إضافة تجهيز جديد",
+  "loadingInitializing": "جاري تهيئة كتاب التجهيزات...",
+  "loadingModels": "جاري إضافة النماذج الافتراضية...",
+  "loading": "جاري تحميل التجهيزات...",
+  "savedInfo": "تم حفظ التجهيز. اضغط \"حفظ التغييرات\" لتأكيد الحفظ.",
+  "deletedInfo": "تم حذف التجهيز. اضغط \"حفظ التغييرات\" لتأكيد الحذف.",
+  "changesSaved": "تم حفظ التغييرات بنجاح",
+  "noChanges": "لا توجد تغييرات للحفظ",
+  "saveFailed": "فشل في حفظ التغييرات",
+  "serviceBookNotFound": "كتاب الخدمات غير موجود",
+  "selectServices":"اختر خدمة",
+  "backToEvents": "العودة إلى فعالياتي",
+  "confirmTitle": "هل أنت متأكد؟",
+  "confirmDescription": "لا يمكن التراجع عن هذا الإجراء.",
+  "confirmDelete": "حذف",
+  "confirmCancel": "إلغاء",
+  "saving": "جارٍ الحفظ...",
+  "summaryCard": {
+    "title": "قائمة تجهيزات الزفاف",
+    "completedOfTotal": "{completed} من {total} التجهيزات مكتملة",
+    "total": "الإجمالي",
+    "completed": "مكتمل",
+    "inProgress": "قيد التنفيذ"
+  },
+  "status": {
+    "completed": "مكتمل",
+    "inProgress": "قيد التنفيذ"
+  },
+  "table": {
+    "noServices": "لا توجد خدمات",
+    "columns": {
+      "service": "الخدمة",
+      "status": "الحالة",
+      "paid": "مدفوع",
+      "due": "المستحق"
+    }
+  },
+  "priceSummary": {
+    "totalCost": "إجمالي التكلفة",
+    "remaining": "المتبقي"
+  },
+  "modal": {
+    "addNewPreparation": "إضافة تجهيز جديد",
+    "completed": "مكتمل",
+    "serviceType": "نوع الخدمة",
+    "rent": "إيجار",
+    "buy": "شراء",
+    "title": "العنوان",
+    "quantity": "الكمية",
+    "costUnit": "تكلفة الوحدة",
+    "advancePayment": "الدفع المسبق",
+    "providerUserName": "اسم المزود",
+    "enterProviderName":"أدخل اسم المزوّد",
+    "purchaseDate": "تاريخ الشراء",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "saving": "جارٍ الحفظ...",
+    "loadingServices": "جاري تحميل الخدمات...",
+    "enterServiceTitle":"أدخل اسم الخدمة"
+  },
+  "confirmDialog": {
+    "description": "لا يمكن التراجع عن هذا الإجراء.",
+    "confirmText": "حذف",
+    "cancelText": "إلغاء"
+  },
+  "validation": {
+  "serviceRequired": "اختيار الخدمة مطلوب",
+  "titleRequired": "العنوان مطلوب",
+  "serviceTypeRequired": "نوع الخدمة مطلوب",
+  "quantityInteger": "الكمية يجب أن تكون رقمًا صحيحًا",
+  "quantityMin": "الكمية يجب ألا تقل عن 1",
+  "costNonNegative": "التكلفة لا يمكن أن تكون سالبة",
+  "advancePaymentNonNegative": "المقدم لا يمكن أن يكون سالبًا"
+}
+},
+
   "reelDetails": {
     "loading": "جاري تحميل الريل...",
     "reelNotFoundTitle": "الريل غير موجود",
