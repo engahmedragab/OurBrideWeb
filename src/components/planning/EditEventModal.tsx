@@ -5,6 +5,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import type { ItineraryEvent } from './ItineraryEventCard'
+import { useI18nTranslations } from '@/i18n'
 
 export interface EditEventModalProps {
   open: boolean
@@ -21,6 +22,7 @@ export const EditEventModal = ({
   event,
   onUpdate,
 }: EditEventModalProps) => {
+  const t = useI18nTranslations('userEvents')
   const [title, setTitle] = useState('')
   const [time, setTime] = useState('')
   const [duration, setDuration] = useState('')
@@ -53,24 +55,24 @@ export const EditEventModal = ({
     const newErrors: typeof errors = {}
 
     if (!title.trim()) {
-      newErrors.title = 'Title is required'
+      newErrors.title = t('validation.titleRequired')
     }
 
     if (!time.trim()) {
-      newErrors.time = 'Start time is required'
+      newErrors.time = t('validation.timeRequired')
     } else {
       const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
       if (!timeRegex.test(time)) {
-        newErrors.time = 'Invalid time format (use HH:MM)'
+        newErrors.time =t('validation.timeInvalid')
       }
     }
 
     if (!duration.trim()) {
-      newErrors.duration = 'Duration is required'
+      newErrors.duration =t('validation.durationRequired')
     } else {
       const durationNum = parseInt(duration, 10)
       if (isNaN(durationNum) || durationNum <= 0) {
-        newErrors.duration = 'Duration must be a positive number'
+        newErrors.duration =t('validation.durationPositive')
       }
     }
 
@@ -110,19 +112,19 @@ export const EditEventModal = ({
     <Modal
       isOpen={open}
       onClose={handleClose}
-      title="Edit Event"
+      title={t('editEvent')}
       maxWidth="md"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Title Field */}
         <div className="space-y-1.5">
           <label htmlFor="edit-event-title" className="text-14 font-medium text-gray-700">
-            Title <span className="text-red-500">*</span>
+            {t('title')} <span className="text-red-500">*</span>
           </label>
           <Input
             id="edit-event-title"
             type="text"
-            placeholder="Enter event title"
+            placeholder={t('enterEventTitle')}
             value={title}
             onChange={e => {
               setTitle(e.target.value)
@@ -139,7 +141,7 @@ export const EditEventModal = ({
         {/* Start Time Field */}
         <div className="space-y-1.5">
           <label htmlFor="edit-event-time" className="text-14 font-medium text-gray-700">
-            Start Time <span className="text-red-500">*</span>
+            {t('startTime')} <span className="text-red-500">*</span>
           </label>
           <Input
             id="edit-event-time"
@@ -160,12 +162,12 @@ export const EditEventModal = ({
         {/* Duration Field */}
         <div className="space-y-1.5">
           <label htmlFor="edit-event-duration" className="text-14 font-medium text-gray-700">
-            Duration (minutes) <span className="text-red-500">*</span>
+            {t('durationMinutes')} <span className="text-red-500">*</span>
           </label>
           <Input
             id="edit-event-duration"
             type="number"
-            placeholder="Enter duration in minutes"
+            placeholder={t('enterDurationMinutes')}
             value={duration}
             onChange={e => {
               setDuration(e.target.value)
@@ -188,7 +190,7 @@ export const EditEventModal = ({
             size="md"
             onClick={handleClose}
           >
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             type="submit"
@@ -196,7 +198,7 @@ export const EditEventModal = ({
             size="md"
             className="text-white"
           >
-            Save Changes
+           {t('saveChanges')}
           </Button>
         </div>
       </form>

@@ -16,6 +16,7 @@ import { useToast } from '@/components/ui/Toaster'
 import { generateTempId } from '@/utils/sync/tempIds'
 import type { EventBook, EventLine, EventLineCategory } from '@/../client/common/api/gen/ourbride-api'
 import { cn } from '@/lib/utils'
+import { useI18nLocale, useI18nTranslations } from '@/i18n'
 
 /**
  * Extended EventBook type with categories for local state management
@@ -85,6 +86,16 @@ const HourlyTimelineView = ({
   // Generate hours from 7 AM (7) to 12 AM (midnight, which is 0)
   // Hours: 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0
   const hours = [...Array.from({ length: 17 }, (_, i) => i + 7), 0] // 7-23, then 0
+  const local = useI18nLocale()
+  const t = useI18nTranslations('userEvents')
+
+  
+  const periodMap = {
+    ar: { am: 'ص', pm: 'م' },
+    en: { am: 'AM', pm: 'PM' },
+  }
+
+  const getPeriod = (hour: number) => (hour >= 12 ? periodMap[local].pm : periodMap[local].am)
 
   // Map events to hour slots
   const getEventForHour = (hour: number): ItineraryEvent | null => {
@@ -96,8 +107,8 @@ const HourlyTimelineView = ({
 
   const formatHourLabel = (hour: number): string => {
     const nextHour = hour === 23 ? 0 : hour + 1
-    const period1 = hour >= 12 ? 'PM' : 'AM'
-    const period2 = nextHour >= 12 ? 'PM' : 'AM'
+    const period1 = getPeriod(hour)
+    const period2 = getPeriod(nextHour)
     const displayHour1 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
     const displayHour2 = nextHour > 12 ? nextHour - 12 : nextHour === 0 ? 12 : nextHour
     return `${displayHour1} ${period1} - ${displayHour2} ${period2}`
@@ -139,7 +150,7 @@ const HourlyTimelineView = ({
             >
               {isEmpty ? (
                 <div className="p-4 min-h-[60px] flex items-center">
-                  <p className="text-14 text-gray-400">Click to add event</p>
+                  <p className="text-14 text-gray-400">{t('clickToAddEvent')}</p>
                 </div>
               ) : (
                 <div className="p-4 relative">
@@ -192,6 +203,7 @@ export const DayDetailsView = ({
   localEventBook,
   applyLocalUpdate,
 }: DayDetailsViewProps) => {
+  const t = useI18nTranslations('userEvents')
   const { addToast } = useToast()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -267,7 +279,7 @@ export const DayDetailsView = ({
   }, [visibleLines])
 
   const eventDate = dayId ? parseDateSafe(dayId) : new Date()
-  const eventTitle = isEventDay ? (customTitle || 'Event Day') : undefined
+  const eventTitle = isEventDay ? (customTitle || t('eventDay')) : undefined
 
   const handleTitleEdit = (newTitle: string) => {
     if (!localEventBook || !selectedCategory) return
@@ -463,7 +475,7 @@ export const DayDetailsView = ({
       {!isEventDay && (
         <div className="mt-8 p-6 bg-gray-50 rounded-lg border border-gray-200 text-center">
           <p className="text-16 text-gray-700 mb-4">
-            This day is not marked as Event Day yet.
+            {t('dayNotMarked')}
           </p>
           <Button
             onClick={handleToggleEventDay}
@@ -472,7 +484,7 @@ export const DayDetailsView = ({
             className='text-white'
             disabled={!localEventBook}
           >
-            Mark as Event Day
+            {t('markAsEventDay')}
           </Button>
         </div>
       )}

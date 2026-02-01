@@ -1291,6 +1291,7 @@
     "saving": "Saving...",
     "unsavedChanges": "Unsaved changes",
     "eventDay": "Event Day",
+    "eventDate": "Event Date",
     "weekDays": {"Su":"Su", "Mo":"Mo", "Tu":"Tu", "We":"We", "Th":"Th", "Fr":"Fr", "Sa":"Sa"},
     "monthNames": {
       "January": "January",
@@ -1326,6 +1327,7 @@
     "enterDurationMinutes": "Enter duration in minutes",
     "createEvent": "Create Event",
     "editEvent": "Edit Event",
+    "edit": "Edit",
     "validation": {
       "titleRequired": "Title is required",
       "timeRequired": "Start time is required",

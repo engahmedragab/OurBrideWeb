@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Check, X, MoreVertical, Edit, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
+import { ar, enUS } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import {
   DropdownMenu,
@@ -10,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
+import { useI18nLocale, useI18nTranslations } from '@/i18n'
 
 export interface ItineraryHeaderProps {
   date: Date
@@ -28,10 +30,18 @@ export const ItineraryHeader = ({
   onEditTitle,
   onDelete,
 }: ItineraryHeaderProps) => {
+  const t = useI18nTranslations('userEvents')
+  const locale = useI18nLocale()
   const [isEditing, setIsEditing] = useState(false)
   const [editedTitle, setEditedTitle] = useState(eventTitle || '')
 
-  const formattedDate = format(date, 'EEEE, dd MMM, yyyy')
+  
+const localeMap = {
+  ar,
+  en: enUS,
+}
+
+  const formattedDate = format(date, 'EEEE, dd MMM, yyyy' , {locale: localeMap[locale]})
 
   const handleEditClick = () => {
     if (onEditTitle) {
@@ -61,7 +71,7 @@ export const ItineraryHeader = ({
 
       <div className="mb-4 flex flex-col items-center justify-center ">
         <p className="text-14 text-gray-500 mb-1">
-          Event Date : {formattedDate}
+          {t('eventDate')} : {formattedDate}
         </p>
         {eventTitle && (
           <div className="flex flex-col items-center gap-2">
@@ -116,7 +126,7 @@ export const ItineraryHeader = ({
                           className="cursor-pointer flex items-center gap-2"
                         >
                           <Edit className="h-4 w-4" />
-                          <span>Edit</span>
+                          <span>{t('edit')}</span>
                         </DropdownMenuItem>
                       )}
                       {onDelete && (
@@ -125,7 +135,7 @@ export const ItineraryHeader = ({
                           className="cursor-pointer flex items-center gap-2 text-red-600 focus:text-red-600 focus:bg-red-50"
                         >
                           <Trash2 className="h-4 w-4" />
-                          <span>Delete</span>
+                          <span>{t('delete')}</span>
                         </DropdownMenuItem>
                       )}
                     </DropdownMenuContent>

@@ -1288,6 +1288,7 @@
     "saving": "جاري الحفظ...",
     "unsavedChanges": "تغييرات غير محفوظة",
     "eventDay": "يوم الحدث",
+    "eventDate": "تاريخ الحدث",
     "weekDays": {"Su":"أح","Mo":"إث","Tu":"ثل","We":"أر","Th":"خم","Fr":"جم","Sa":"سب"},
     "monthNames": {
     "January": "يناير",
@@ -1323,6 +1324,7 @@
     "enterDurationMinutes": "أدخل المدة بالدقائق",
     "createEvent": "إنشاء حدث",
     "editEvent": "تعديل الحدث",
+    "edit": "تعديل",
     "validation": {
       "titleRequired": "العنوان مطلوب",
       "timeRequired": "وقت البداية مطلوب",

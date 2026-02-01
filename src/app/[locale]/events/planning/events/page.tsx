@@ -330,9 +330,9 @@ function EventsPageContent() {
               {eventDaysWithData.map((dayData) => {
                 const isSelected = selectedDayId === dayData.dayId
                 const categoryName = dayData.category
-                  ? (dayData.category.nameEn || dayData.category.nameAr || dayData.category.name || t('eventDay'))
+                  ? (isRtl ?  dayData.category.nameAr : dayData.category.nameEn || t('eventDay'))
                   : t('eventDay')
-
+                
                 return (
                   <button
                     key={dayData.dayId}
