@@ -1,8 +1,10 @@
 import axios from 'axios'
+import { getPlatformHeaders } from '@/utils/platformHeaders'
+import { getApiBaseURL } from '@/services/api/apiClient'
 
 const apiClient = axios.create({
   // During build, use placeholder - actual URL will be used at runtime
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com',
+  baseURL: getApiBaseURL(),
   timeout: 30000, // Increased from 10000ms (10s) to 30000ms (30s)
   headers: {
     'Content-Type': 'application/json',
@@ -16,6 +18,12 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    const platformHeaders = getPlatformHeaders()
+    Object.entries(platformHeaders).forEach(([key, value]) => {
+      if (value) {
+        config.headers[key] = value
+      }
+    })
     return config
   },
   error => Promise.reject(error)

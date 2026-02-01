@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import axios from 'axios'
+import { getApiBaseURL } from '@/services/api/apiClient'
+import { getPlatformHeaders } from '@/utils/platformHeaders'
 import { Button } from '@/components/ui/Button'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
@@ -19,7 +21,7 @@ export default function DeleteAccountPage() {
     setError(null)
 
     try {
-      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com'
+      const baseURL = getApiBaseURL()
       const response = await axios.post(
         `${baseURL}/api/v1/identity/delete`,
         {
@@ -28,6 +30,9 @@ export default function DeleteAccountPage() {
         },
         {
           withCredentials: true,
+          headers: {
+            ...getPlatformHeaders(),
+          },
         }
       )
 

@@ -1,6 +1,6 @@
 // Auth API service functions
 
-import { apiClient } from '@/services/api/apiClient'
+import { apiClient, getApiBaseURL } from '@/services/api/apiClient'
 import { UserType } from '@/../client/common/api/gen/ourbride-api'
 import type {
   UserLoginRequest,
@@ -499,17 +499,9 @@ export const refreshToken = async (): Promise<AuthResponse> => {
     // Import dynamically to avoid circular dependency
     const { HttpClient, Api } = await import('@/../client/common/api/gen/ourbride-api')
     
-    const getBaseURL = (): string => {
-      // During build, use placeholder - actual URL will be used at runtime
-      const url = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://preprod.our-bride.com/api/v1'
-      let baseURL = url.replace(/\/$/, '')
-      baseURL = baseURL.replace(/\/api\/v1$/, '')
-      return baseURL
-    }
-
     // Create a fresh HTTP client without interceptors for refresh token call
     const refreshHttpClient = new HttpClient({
-      baseURL: getBaseURL(),
+      baseURL: getApiBaseURL(),
       timeout: 30000,
       withCredentials: process.env.NEXT_PUBLIC_API_WITH_CREDENTIALS === 'true',
     })
