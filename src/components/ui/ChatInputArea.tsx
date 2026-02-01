@@ -8,6 +8,7 @@ import { Button } from './Button'
 import { VoiceRecorderInput } from './VoiceRecorderInput'
 import { Popover, PopoverTrigger, PopoverContent } from './Popover'
 import { ImagePreviewList } from './ImagePreview'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface QuickReplyChip {
   text: string
@@ -41,11 +42,13 @@ export const ChatInputArea = ({
   onAttachDocument,
   onAttachLocation,
   onImagesChange,
-  placeholder = 'Enter Your Message..',
+  placeholder,
   quickReplies = [],
   disabled = false,
   className,
 }: ChatInputAreaProps) => {
+  const t = useI18nTranslations('messages')
+  const defaultPlaceholder = placeholder || t('input.placeholder')
   const [isTyping, setIsTyping] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null)
@@ -154,9 +157,7 @@ export const ChatInputArea = ({
         onRecord()
       }
     } catch (error) {
-      alert(
-        'Microphone access denied. Please allow microphone access to record voice messages.'
-      )
+      alert(t('input.microphoneDenied'))
     }
   }
 
@@ -336,7 +337,7 @@ export const ChatInputArea = ({
               value={value}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
-              placeholder={placeholder}
+              placeholder={defaultPlaceholder}
               variant="fill"
               size="lg"
               disabled={disabled}
@@ -367,7 +368,7 @@ export const ChatInputArea = ({
                       className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-gray-200 text-14 font-medium text-brand-500 hover:bg-gray-50 transition-colors text-left shadow-sm"
                     >
                       <MapPin className="h-5 w-5 text-brand-500" />
-                      <span>Location</span>
+                      <span>{t('input.location')}</span>
                     </button>
                     <button
                       type="button"
@@ -375,7 +376,7 @@ export const ChatInputArea = ({
                       className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-gray-200 text-14 font-medium text-brand-500 hover:bg-gray-50 transition-colors text-left shadow-sm"
                     >
                       <ImageIcon className="h-5 w-5 text-brand-500" />
-                      <span>Upload Image</span>
+                      <span>{t('input.uploadImage')}</span>
                     </button>
                     <button
                       type="button"
@@ -383,7 +384,7 @@ export const ChatInputArea = ({
                       className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-gray-200 text-14 font-medium text-brand-500 hover:bg-gray-50 transition-colors text-left shadow-sm"
                     >
                       <Paperclip className="h-5 w-5 text-brand-500" />
-                      <span>Upload Document</span>
+                      <span>{t('input.uploadDocument')}</span>
                     </button>
                   </div>
                 </PopoverContent>

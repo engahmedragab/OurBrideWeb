@@ -6,6 +6,8 @@ import { X, ChevronRight } from 'lucide-react'
 import referralWelcomeSvg from '@/assets/svg/refferal-welcome.svg'
 import referralInviteSvg from '@/assets/svg/refferal-invite.svg'
 import referralCollectSvg from '@/assets/svg/refferal-collect.svg'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
+import { cn } from '@/lib/utils'
 
 export interface ReferralOnboardingModalProps {
   isOpen: boolean
@@ -26,22 +28,24 @@ export const ReferralOnboardingModal = ({
   isOpen,
   onClose,
 }: ReferralOnboardingModalProps) => {
+  const t = useI18nTranslations('referrals')
+  const isRTL = useIsRTL()
   const [currentStep, setCurrentStep] = useState(0)
 
   const steps: Step[] = [
     {
-      title: 'Welcome To Referral System',
-      description: "Invite people using your custom link\nThey'll get special offers, and earn\nrewards!",
+      title: t('onboarding.steps.welcome.title'),
+      description: t('onboarding.steps.welcome.description'),
       svg: typeof referralWelcomeSvg === 'string' ? referralWelcomeSvg : referralWelcomeSvg.src,
     },
     {
-      title: 'Invite People To Earn More Coupons',
-      description: 'Invite friends\nand get coupons you can use to buy\nproducts or services',
+      title: t('onboarding.steps.invite.title'),
+      description: t('onboarding.steps.invite.description'),
       svg: typeof referralInviteSvg === 'string' ? referralInviteSvg : referralInviteSvg.src,
     },
     {
-      title: 'Collect Diamond Points',
-      description: 'Earn extra Diamond Points\nwith every referral and unlock Special\nrewards!',
+      title: t('onboarding.steps.collect.title'),
+      description: t('onboarding.steps.collect.description'),
       svg: typeof referralCollectSvg === 'string' ? referralCollectSvg : referralCollectSvg.src,
     },
   ]
@@ -73,7 +77,10 @@ export const ReferralOnboardingModal = ({
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-[9999]"
+            className={cn(
+              "absolute top-4 text-gray-400 hover:text-gray-600 transition-colors z-[9999]",
+              isRTL ? "left-4" : "right-4"
+            )}
             aria-label="Close"
           >
             <X className="h-5 w-5" />
@@ -83,7 +90,7 @@ export const ReferralOnboardingModal = ({
           <div className="p-6 text-center">
             {/* Title */}
             <h2 className="text-18 font-semibold text-gray-900 mb-6">
-              Referral
+              {t('onboarding.title')}
             </h2>
 
             {/* SVG Illustration */}
@@ -125,10 +132,13 @@ export const ReferralOnboardingModal = ({
 
               {/* Navigation Button */}
               <button
-                onClick={handleNext} className=" text-brand-500 text-20 font-semibold flex items-center justify-center hover:scale-110 transition-colors flex-shrink-0"
-                aria-label={isLastStep ? 'Finish' : 'Next'}
+                onClick={handleNext} className={cn(
+                  "text-brand-500 text-20 font-semibold flex items-center justify-center hover:scale-110 transition-colors flex-shrink-0",
+                  isRTL && "rotate-180"
+                )}
+                aria-label={isLastStep ? t('onboarding.finish') : t('onboarding.next')}
               >
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className={cn("h-5 w-5", isRTL && "rotate-180")} />
               </button>
             </div>
           </div>

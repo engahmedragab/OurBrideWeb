@@ -5,13 +5,10 @@ import { useRouter } from '@/i18n/navigation'
 import { UserPageLayout } from '@/components/layout'
 import {
   EmptyState,
-  ServiceGrid,
-  ProductGrid,
   ServicesProductsFilter,
   PageHeader,
   ErrorDisplay,
   LoadingOverlay,
-  SelectPopover,
   Button,
 } from '@/components/ui'
 import { RefreshCw } from 'lucide-react'
@@ -28,11 +25,12 @@ import { useToggleProviderFollow } from '@/hooks/providers/useProviderInteractio
 import { WishlistServiceCard, WishlistProductCard, WishlistProviderCard } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
 import { useLocale } from '@/i18n'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export default function FollowsPage() {
   const locale = useLocale()
+  const t = useI18nTranslations('follows')
   const [followType, setFollowType] = useState<'services' | 'products'>('services')
-  const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
   // Fetch follows using FollowResponse from API
   const {
@@ -76,31 +74,19 @@ export default function FollowsPage() {
     return []
   }, [followsData])
 
-  // Filter follows by type (services or products) and source
+  // Filter follows by type (services or products)
   const filteredFollows = useMemo(() => {
     if (!follows.length) {
       return []
     }
 
     return follows.filter((follow: FollowResponse) => {
-      // First filter by source if selected
-      if (selectedSource !== 'all' && follow.source !== selectedSource) {
+      // Show all follows that have sourceObject
+      if (!follow.sourceObject) {
         return false
       }
 
-      // If source filter is 'all', show all follows that have sourceObject
-      if (selectedSource === 'all') {
-        // Show all follows that have sourceObject (services, products, providers)
-        return !!follow.sourceObject
-      }
-
-      // When a specific source is selected, show that source
-      // Providers are always shown when source is Provider
-      if (follow.source === Source.Provider) {
-        return true
-      }
-
-      // Then filter by type (services or products) for backward compatibility
+      // Filter by type (services or products) for backward compatibility
       const type = follow.followType || follow.category || ''
 
       if (followType === 'services') {
@@ -121,7 +107,7 @@ export default function FollowsPage() {
         )
       }
     })
-  }, [follows, followType, selectedSource])
+  }, [follows, followType])
 
   // Extract all services, products, and providers from sourceObject
   const allFollowServices: Service[] = useMemo(() => {
@@ -291,32 +277,8 @@ export default function FollowsPage() {
     return filteredFollows.reduce((sum, follow) => sum + (follow.interactionCount || 0), 0)
   }, [filteredFollows])
 
-  // Source filter options - common sources for follows
-  const sourceOptions = useMemo(() => [
-    { value: 'all', label: 'All Sources' },
-    { value: Source.Product, label: 'Products' },
-    { value: Source.Service, label: 'Services' },
-    { value: Source.Membership, label: 'Memberships' },
-    { value: Source.GiftCard, label: 'Gift Cards' },
-    { value: Source.ServiceReservation, label: 'Service Reservations' },
-    { value: Source.Provider, label: 'Providers' },
-    { value: Source.Offer, label: 'Offers' },
-    { value: Source.Preparation, label: 'Preparations' },
-    { value: Source.Post, label: 'Posts' },
-    { value: Source.Blog, label: 'Blogs' },
-    { value: Source.Article, label: 'Articles' },
-    { value: Source.Reel, label: 'Reels' },
-  ], [])
-
   const headerRightContent = (
     <div className="flex items-center gap-2">
-      <SelectPopover
-        value={selectedSource}
-        onChange={(value) => setSelectedSource(value as Source | 'all')}
-        options={sourceOptions}
-        placeholder="Filter by source"
-        className="w-40"
-      />
       <ServicesProductsFilter value={followType} onChange={setFollowType} />
       <Button
         variant="outline"
@@ -335,13 +297,13 @@ export default function FollowsPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Follows"
+          title={t('title')}
           rightContent={headerRightContent}
         />
         <LoadingOverlay
           open={true}
-          title="Loading follows..."
-          subtitle="Please wait a moment"
+          title={t('loading.title')}
+          subtitle={t('loading.subtitle')}
         />
       </UserPageLayout>
     )
@@ -352,13 +314,13 @@ export default function FollowsPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Follows"
+          title={t('title')}
           rightContent={headerRightContent}
         />
         <ErrorDisplay
-          title="Error loading follows"
-          message="Please try again later"
-          actionLabel="Back to Home"
+          title={t('error.title')}
+          message={t('error.message')}
+          actionLabel={t('error.actionLabel')}
           actionHref="/"
         />
       </UserPageLayout>
@@ -369,10 +331,10 @@ export default function FollowsPage() {
     <UserPageLayout>
       {/* Page Header */}
       <PageHeader
-        title="Follows"
+        title={t('title')}
         subtitle={
           hasFollowItems || hasFollows
-            ? `${totalItems > 0 ? totalItems : filteredFollows.length} ${totalItems === 1 ? 'Item' : 'Items'}`
+            ? `${totalItems > 0 ? totalItems : filteredFollows.length} ${totalItems === 1 ? t('subtitle.item') : t('subtitle.items')}`
             : undefined
         }
         rightContent={headerRightContent}
@@ -415,7 +377,7 @@ export default function FollowsPage() {
         <div className="space-y-4">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Your Follows ({filteredFollows.length})
+              {t('list.title', { count: filteredFollows.length })}
             </h3>
             <div className="space-y-3">
               {filteredFollows.map((follow: FollowResponse) => (
@@ -426,7 +388,7 @@ export default function FollowsPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-16 font-medium text-gray-900">
-                        {follow.displayName || follow.nameEn || follow.nameAr || `Follow #${follow.id}`}
+                        {follow.displayName || follow.nameEn || follow.nameAr || t('list.fallbackName', { id: follow.id })}
                       </h4>
                       {follow.source && (
                         <span className="text-12 px-2 py-1 bg-gray-100 text-gray-600 rounded">
@@ -435,7 +397,7 @@ export default function FollowsPage() {
                       )}
                       {follow.sourceId && (
                         <span className="text-12 px-2 py-1 bg-blue-100 text-blue-600 rounded">
-                          ID: {follow.sourceId}
+                          {t('list.sourceId', { id: follow.sourceId })}
                         </span>
                       )}
                     </div>
@@ -445,10 +407,10 @@ export default function FollowsPage() {
                       </p>
                     )}
                     <div className="flex items-center gap-4 text-12 text-gray-500">
-                      <span>{follow.interactionCount || 0} interactions</span>
+                      <span>{t('list.interactions', { count: follow.interactionCount || 0 })}</span>
                       {follow.lastModifiedDate && (
                         <span>
-                          Updated {new Date(follow.lastModifiedDate).toLocaleDateString()}
+                          {t('list.updated', { date: new Date(follow.lastModifiedDate).toLocaleDateString() })}
                         </span>
                       )}
                     </div>
@@ -460,7 +422,7 @@ export default function FollowsPage() {
                       // TODO: Navigate to follow detail or delete
                     }}
                   >
-                    View
+                    {t('list.view')}
                   </Button>
                 </div>
               ))}
@@ -470,9 +432,9 @@ export default function FollowsPage() {
       ) : (
         <EmptyState
           illustration={orderEmptySvg}
-          title="You don't have any items in your follows"
-          description="Start exploring services and products to begin your journey"
-          actionLabel="Start Shopping"
+          title={t('empty.title')}
+          description={t('empty.description')}
+          actionLabel={t('empty.actionLabel')}
           actionHref="/products"
         />
       )}
@@ -480,8 +442,8 @@ export default function FollowsPage() {
       {/* Loading Overlay for Mutations */}
       <LoadingOverlay
         open={deleteFollowMutation.isPending || toggleServiceWishlistMutation.isPending || toggleProductWishlistMutation.isPending || toggleProviderFollowMutation.isPending}
-        title="Updating follows..."
-        subtitle="Please wait a moment"
+        title={t('updating.title')}
+        subtitle={t('updating.subtitle')}
       />
     </UserPageLayout>
   )

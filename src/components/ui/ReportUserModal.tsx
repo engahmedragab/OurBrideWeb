@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Circle } from 'lucide-react'
 import Image from 'next/image'
 import successCheck from '@/assets/svg/successCheck.svg'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ReportUserModalProps {
   isOpen: boolean
@@ -24,16 +25,17 @@ export const ReportUserModal = ({
   onSubmit,
   userName = 'this user',
 }: ReportUserModalProps) => {
+  const t = useI18nTranslations('messages')
   const [step, setStep] = useState<'form' | 'success'>('form')
   const [selectedReason, setSelectedReason] = useState<string>('')
   const [details, setDetails] = useState<string>('')
 
   const reportReasons = [
-    'Spam / Fake Activity',
-    'Fake Profile',
-    'Scam / Fraud',
-    'Harassment / Abuse',
-    'Other',
+    t('reportUser.reasons.spam'),
+    t('reportUser.reasons.fakeProfile'),
+    t('reportUser.reasons.scam'),
+    t('reportUser.reasons.harassment'),
+    t('reportUser.reasons.other'),
   ]
 
   const handleClose = () => {
@@ -53,7 +55,7 @@ export const ReportUserModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Report User"
+      title={t('reportUser.title')}
       maxWidth="sm"
       showCloseButton={true}
       containerClassName="w-full max-w-[380px]"
@@ -89,7 +91,7 @@ export const ReportUserModal = ({
             <textarea
               value={details}
               onChange={(e) => setDetails(e.target.value)}
-              placeholder="Tell Us What Happened ?"
+              placeholder={t('reportUser.detailsPlaceholder')}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 text-14 font-normal text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-brand-500 resize-none min-h-[80px]"
             />
           </div>
@@ -102,7 +104,7 @@ export const ReportUserModal = ({
             disabled={!selectedReason}
             className="w-full text-white rounded-full mt-2"
           >
-            Submit
+            {t('reportUser.submit')}
           </Button>
         </div>
       ) : (
@@ -121,11 +123,10 @@ export const ReportUserModal = ({
           {/* Content */}
           <div className="flex flex-col items-center gap-3 text-center w-full">
             <h3 className="text-16 font-semibold text-gray-900 leading-tight">
-              Report Submitted
+              {t('reportUser.successTitle')}
             </h3>
             <p className="text-14 font-normal text-gray-400 leading-relaxed">
-              Thank you for your report. Our team will review your report and
-              update you soon.
+              {t('reportUser.successDescription')}
             </p>
           </div>
 
@@ -137,7 +138,7 @@ export const ReportUserModal = ({
               onClick={handleClose}
               className="w-full text-white rounded-full"
             >
-              Done
+              {t('reportUser.done')}
             </Button>
           </div>
         </div>

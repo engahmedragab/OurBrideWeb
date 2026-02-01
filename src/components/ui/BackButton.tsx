@@ -62,7 +62,7 @@ export const BackButton = ({
           className
         )}
       >
-        <ArrowLeft className= "h-5 w-5" />
+        <ArrowLeft className={cn("h-5 w-5", isRTL && "scale-x-[-1]")} />
         {label && <span className="text-14 font-medium">{label}</span>}
       </button>
     )
@@ -92,7 +92,7 @@ export const BackButton = ({
         className
       )}
     >
-      <ArrowLeft className="h-4 w-4" />
+      <ArrowLeft className={cn("h-4 w-4", isRTL && "scale-x-[-1]")} />
       {label}
     </button>
   )

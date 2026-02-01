@@ -107,34 +107,30 @@ export const HeroCarousel = ({
     
     {/* Right Column - Visual (50%) */}
     <div className="relative flex items-center justify-center h-full w-full overflow-hidden order-1 md:order-2">
-      {/* Product Image - Full Width on mobile */}
-      <div className="relative z-10 left-1/2 -translate-x-1/2 w-screen md:left-0 md:translate-x-0 md:w-full
-                h-[220px] sm:h-[260px] md:h-full md:min-h-[350px]
-                rounded-md overflow-hidden bg-white/10">
+      {/* Product Image - Full Width and Height for 50% column */}
+      <div className="relative w-full h-full min-h-[220px] sm:min-h-[260px] md:min-h-[350px] lg:min-h-[420px] overflow-hidden">
 
         {currentSlide.productImage && !imageErrors.has(currentIndex) ? (
           typeof currentSlide.productImage === 'string' && currentSlide.productImage.endsWith('.svg') ? (
             <img
-            src={currentSlide.productImage}
-            alt={currentSlide.title}
-            className="w-full h-full object-conttain  md:object-cover"
-            onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
-          />
-          
+              src={currentSlide.productImage}
+              alt={currentSlide.title}
+              className="w-full h-full object-contain"
+              onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
+            />
           ) : (
             <Image
-            src={currentSlide.productImage}
-            alt={currentSlide.title}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-conttain  md:object-cover"
-            priority={currentIndex === 0}
-            onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
-          />
-          
+              src={currentSlide.productImage}
+              alt={currentSlide.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-contain"
+              priority={currentIndex === 0}
+              onError={() => setImageErrors(prev => new Set(prev).add(currentIndex))}
+            />
           )
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+          <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-100">
             <span className="text-gray-400 text-14 font-medium">
               {tC('noImageAvailable')}
             </span>

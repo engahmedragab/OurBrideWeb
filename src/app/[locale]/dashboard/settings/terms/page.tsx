@@ -2,12 +2,16 @@
 
 import { useRouter } from '@/i18n/navigation'
 import { ChevronLeft } from 'lucide-react'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
+import { cn } from '@/lib/utils'
 
 /**
  * Terms & Conditions page component
  * Matches Figma design exactly
  */
 export default function TermsPage() {
+  const t = useI18nTranslations('settings.terms')
+  const isRTL = useIsRTL()
   const router = useRouter()
 
   const handleBack = () => {
@@ -16,74 +20,52 @@ export default function TermsPage() {
 
   const sections = [
     {
-      title: 'Introduction',
-      content:
-        'By using OurBride, you agree to the following terms and conditions.',
+      title: t('sections.introduction.title'),
+      content: t('sections.introduction.content'),
     },
     {
-      title: 'Account Usage',
-      content: [
-        'Users must provide accurate personal information.',
-        'You are responsible for keeping your account secure.',
-      ],
+      title: t('sections.accountUsage.title'),
+      content: t('sections.accountUsage.content'),
     },
     {
-      title: 'Bookings & Services',
-      content: [
-        'Bookings depend on provider availability.',
-        "Cancellations and refunds follow each provider's policy.",
-      ],
+      title: t('sections.bookingsServices.title'),
+      content: t('sections.bookingsServices.content'),
     },
     {
-      title: 'Payments & Fees',
-      content: [
-        'All payments must be made through the app.',
-        'OurBride deducts a 2% commission from provider earnings monthly.',
-      ],
+      title: t('sections.paymentsFees.title'),
+      content: t('sections.paymentsFees.content'),
     },
     {
-      title: 'Content & Community',
-      content: [
-        'Users must not post offensive or harmful content.',
-        'OurBride reserves the right to remove any inappropriate material.',
-      ],
+      title: t('sections.contentCommunity.title'),
+      content: t('sections.contentCommunity.content'),
     },
     {
-      title: 'Privacy & Security',
-      content: [
-        'We protect your data under our Privacy Policy.',
-        'Identity verification is required for providers.',
-      ],
+      title: t('sections.privacySecurity.title'),
+      content: t('sections.privacySecurity.content'),
     },
     {
-      title: 'Liability',
-      content: [
-        'OurBride is not responsible for direct agreements made outside the platform.',
-        'Any disputes must follow our dispute resolution process.',
-      ],
+      title: t('sections.liability.title'),
+      content: t('sections.liability.content'),
     },
     {
-      title: 'Changes to Terms',
-      content: [
-        'OurBride may update these terms at any time.',
-        'Continued use of the app means you accept the updated terms.',
-      ],
+      title: t('sections.changesToTerms.title'),
+      content: t('sections.changesToTerms.content'),
     },
   ]
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Page Header with Back Button */}
-      <div className="mb-6 flex items-center gap-2">
+      <div className={cn("mb-6 flex items-center gap-2", isRTL && "flex-row-reverse")}>
         <button
           onClick={handleBack}
           className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
           aria-label="Go back"
         >
-          <ChevronLeft className="h-6 w-6 text-gray-600" />
+          <ChevronLeft className={cn("h-6 w-6 text-gray-600", isRTL && "rotate-180")} />
         </button>
         <h1 className="text-20 font-normal text-gray-900">
-          Terms & Conditions
+          {t('title')}
         </h1>
       </div>
 
@@ -100,7 +82,7 @@ export default function TermsPage() {
               {/* Section Content */}
               {Array.isArray(section.content) ? (
                 <div className="text-14 font-normal text-gray-600">
-                  {section.content.map((paragraph, pIndex) => (
+                  {section.content.map((paragraph: string, pIndex: number) => (
                     <p key={pIndex} className={pIndex === 0 ? 'mb-0' : ''}>
                       {paragraph}
                     </p>

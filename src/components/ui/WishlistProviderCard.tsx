@@ -9,6 +9,7 @@ import { Button } from './Button'
 import { CheckCircle2, X } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import type { FeaturedProviderResponse } from '@/types/responses/featured-provider-response'
+import { useI18nTranslations } from '@/i18n'
 
 export interface WishlistProviderCardProps {
   provider: FeaturedProviderResponse
@@ -25,8 +26,9 @@ export const WishlistProviderCard = React.memo(({
 }: WishlistProviderCardProps) => {
   const [imageError, setImageError] = React.useState(false)
   const router = useRouter()
+  const t = useI18nTranslations('wishlist.cards')
   const rating = provider.rate || 0
-  const providerName = provider.nameEn || provider.nameAr || `Provider #${provider.id}`
+  const providerName = provider.nameEn || provider.nameAr || t('providerFallback', { id: provider.id })
   const providerImage = provider.publicLogoImageUrl || provider.publicBannerImageUrl || ''
 
   const handleViewProfile = () => {
@@ -65,7 +67,7 @@ export const WishlistProviderCard = React.memo(({
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
                 <span className="text-gray-400 text-12 font-medium">
-                  No image available
+                  {t('noImageAvailable')}
                 </span>
               </div>
             )}
@@ -74,7 +76,7 @@ export const WishlistProviderCard = React.memo(({
             {provider.isVerified && (
               <div className="absolute top-3 left-3 bg-blue-500 text-white px-3 py-1 rounded-full flex items-center gap-1.5 shadow-lg">
                 <CheckCircle2 className="h-4 w-4" />
-                <span className="text-12 font-semibold">Verified</span>
+                <span className="text-12 font-semibold">{t('verified')}</span>
               </div>
             )}
 
@@ -129,7 +131,7 @@ export const WishlistProviderCard = React.memo(({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <span className="font-medium">{provider.totalServices}</span>
-                  <span>Services</span>
+                  <span>{t('services')}</span>
                 </div>
               )}
               {provider.totalReviews !== undefined && provider.totalReviews > 0 && (
@@ -138,7 +140,7 @@ export const WishlistProviderCard = React.memo(({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
                   </svg>
                   <span className="font-medium">{provider.totalReviews}</span>
-                  <span>Reviews</span>
+                  <span>{t('reviews')}</span>
                 </div>
               )}
             </div>
@@ -151,7 +153,7 @@ export const WishlistProviderCard = React.memo(({
               className="w-full bg-brand-600 hover:bg-brand-700 !text-white font-medium text-14 h-10 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
               onClick={handleViewProfile}
             >
-              View Profile
+              {t('viewProfile')}
             </Button>
           </div>
         </div>
@@ -161,7 +163,7 @@ export const WishlistProviderCard = React.memo(({
           <button
             onClick={handleRemove}
             className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/95 hover:bg-white border border-gray-200 flex items-center justify-center transition-all duration-200 z-10 shadow-lg hover:shadow-xl hover:scale-110"
-            aria-label="Remove from wishlist"
+            aria-label={t('removeFromWishlist')}
           >
             <X className="h-4 w-4 text-gray-600" />
           </button>

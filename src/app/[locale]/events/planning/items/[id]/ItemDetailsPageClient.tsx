@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { Link } from '@/i18n/navigation'
+import { useIsRTL } from '@/i18n'
 import EditItemModal from '@/components/ui/EditItemModal'
 
 interface ItemData {
@@ -50,6 +51,7 @@ interface ItemDetailsPageClientProps {
 export function ItemDetailsPageClient({
   itemId,
 }: ItemDetailsPageClientProps) {
+  const isRTL = useIsRTL()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   const [itemData, setItemData] = useState<ItemData>({
@@ -279,17 +281,20 @@ export function ItemDetailsPageClient({
       {/* Back Link */}
       <Link
         href="/events/planning/items"
-        className="inline-flex items-center gap-2 text-14 text-gray-500 hover:text-brand-500 transition-colors"
+        className={cn(
+          "inline-flex items-center gap-2 text-14 text-gray-500 hover:text-brand-500 transition-colors",
+          isRTL && "flex-row-reverse"
+        )}
       >
-        <ChevronLeft className="w-4 h-4" />
+        <ChevronLeft className={cn("w-4 h-4", isRTL && "scale-x-[-1]")} />
         Back to items
       </Link>
 
       <EditItemModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        itemData={itemData}
-        onSave={handleSave}
+        itemData={itemData as unknown as Record<string, unknown>}
+        onSave={(updatedData) => handleSave(updatedData as unknown as ItemData)}
       />
     </div>
   )

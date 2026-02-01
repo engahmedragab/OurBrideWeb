@@ -32,6 +32,7 @@ import {
   Building2,
   Bell,
   Search,
+  Calendar,
 } from 'lucide-react'
 import { NotificationDropdown } from '@/components/notifications'
 import { useNotifications } from '@/hooks/notifications/useNotifications'
@@ -143,20 +144,25 @@ export const Header = ({ className }: HeaderProps) => {
       ],
     },
     {
-        label: t('links.services'),
-      path: '/services',
-      icon: FileHeart,
-      hasDropdown: true,
-      dropdownItems: [
-          { label: t('links.allServices'), path: '/services' },
-          { label: t('links.category'), path: '/services/category' },
-      ],
+        label: t('links.events'),
+      path: '/events',
+      icon: Calendar,
     },
-    {
-        label: t('links.providers'),
-      path: '/providers',
-      icon: Building2,
-    },
+    // {
+    //     label: t('links.services'),
+    //   path: '/services',
+    //   icon: FileHeart,
+    //   hasDropdown: true,
+    //   dropdownItems: [
+    //       { label: t('links.allServices'), path: '/services' },
+    //       { label: t('links.category'), path: '/services/category' },
+    //   ],
+    // },
+    // {
+    //     label: t('links.providers'),
+    //   path: '/providers',
+    //   icon: Building2,
+    // },
     {
         label: t('links.community'),
       path: '/community',

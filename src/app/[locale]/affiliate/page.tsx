@@ -13,6 +13,7 @@ import {
   WithdrawFundsModal,
   LoadingOverlay,
 } from '@/components/ui'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 const AffiliateOnboardingModals = lazy(
   () => import('@/components/ui/AffiliateOnboardingModals').then(module => ({ default: module.AffiliateOnboardingModals }))
@@ -45,6 +46,7 @@ interface ActivityItem {
  * Affiliate program with tabs for Overview, Campaigns, Tools, and Wallet
  */
 export default function AffiliatePage() {
+  const t = useI18nTranslations('affiliate')
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [activeTab, setActiveTab] = useState<TabType>('overview')
   const [affiliateLink] = useState('http://www.generatecode.ourbride.com')
@@ -287,7 +289,7 @@ export default function AffiliatePage() {
               <div className="mb-6 sm:mb-8 flex justify-center items-center relative w-48 h-48 sm:w-64 sm:h-64 mx-auto">
                 <Image
                   src={typeof affiliateStartingSvg === 'string' ? affiliateStartingSvg : affiliateStartingSvg.src}
-                  alt="Join Affiliate Program"
+                  alt={t('join.alt')}
                   fill
                   sizes="(max-width: 640px) 192px, 256px"
                   className="object-contain"
@@ -296,12 +298,12 @@ export default function AffiliatePage() {
 
               {/* Title */}
               <h1 className="text-20 sm:text-24 font-normal text-gray-900 mb-3 sm:mb-4">
-                Join Affiliate Program
+                {t('join.title')}
               </h1>
 
               {/* Description */}
               <p className="text-14 sm:text-16 text-gray-500 mb-6 sm:mb-8 leading-relaxed px-4">
-                Share your unique link, promote OurBride, and earn commission for every successful booking made through you
+                {t('join.description')}
               </p>
 
               {/* Join Now Button */}
@@ -311,7 +313,7 @@ export default function AffiliatePage() {
                 className="text-white px-8 sm:px-12 w-full sm:w-auto"
                 onClick={handleJoinNow}
               >
-                Join Now
+                {t('join.joinNow')}
               </Button>
             </div>
           </div>
@@ -335,7 +337,7 @@ export default function AffiliatePage() {
                   : 'text-gray-500'
               }`}
             >
-              Overview
+              {t('tabs.overview')}
               {activeTab === 'overview' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300" />
               )}
@@ -348,7 +350,7 @@ export default function AffiliatePage() {
                   : 'text-gray-500'
               }`}
             >
-              Campaigns
+              {t('tabs.campaigns')}
               {activeTab === 'campaigns' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300" />
               )}
@@ -361,7 +363,7 @@ export default function AffiliatePage() {
                   : 'text-gray-500'
               }`}
             >
-              Tools
+              {t('tabs.tools')}
               {activeTab === 'tools' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300" />
               )}
@@ -374,7 +376,7 @@ export default function AffiliatePage() {
                   : 'text-gray-500'
               }`}
             >
-              Wallet
+              {t('tabs.wallet')}
               {activeTab === 'wallet' && (
                 <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300" />
               )}
@@ -391,22 +393,22 @@ export default function AffiliatePage() {
             {/* Earning Insights */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
-                Earning Insights
+                {t('overview.earningInsights')}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <InsightCard
                   icon={DollarSign}
-                  label="Total Earning"
+                  label={t('overview.totalEarning')}
                   value={earningInsights.totalEarning}
                 />
                 <InsightCard
                   icon={Clock}
-                  label="Pending Payout"
+                  label={t('overview.pendingPayout')}
                   value={earningInsights.pendingPayout}
                 />
                 <InsightCard
                   icon={CheckCircle}
-                  label="Approved Payout"
+                  label={t('overview.approvedPayout')}
                   value={earningInsights.approvedPayout}
                 />
               </div>
@@ -415,9 +417,9 @@ export default function AffiliatePage() {
             {/* Promoted Campaigns */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Promoted Campaigns</h2>
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">{t('overview.promotedCampaigns')}</h2>
                 <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
-                  View All
+                  {t('overview.viewAll')}
                 </button>
               </div>
 
@@ -442,9 +444,9 @@ export default function AffiliatePage() {
           <aside className="w-full lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Recent Activity</h2>
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">{t('overview.recentActivity')}</h2>
                 <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
-                  View all
+                  {t('overview.viewAllActivity')}
                 </button>
               </div>
               <div className="space-y-3">
@@ -477,7 +479,7 @@ export default function AffiliatePage() {
                         </div>
                         <p className="text-11 sm:text-12 text-gray-500 mb-2">{item.date}</p>
                         <p className="text-11 sm:text-12 text-gray-600 mb-2">
-                          {item.sales} Booking
+                          {item.sales} {item.sales === 1 ? t('overview.booking') : t('overview.bookings')}
                         </p>
                         <Badge
                           variant={item.status === 'Confirmed' ? 'confirmed' : 'pending'}
@@ -488,7 +490,7 @@ export default function AffiliatePage() {
                           ) : (
                             <Clock className="w-3 h-3" />
                           )}
-                          <span>{item.status}</span>
+                          <span>{item.status === 'Confirmed' ? t('overview.confirmed') : t('overview.pendingPayout')}</span>
                         </Badge>
                       </div>
                     </div>
@@ -509,7 +511,7 @@ export default function AffiliatePage() {
             <div className="bg-white rounded-xl border border-gray-200 px-3 sm:px-4 py-2 sm:py-3">
               <input
                 type="search"
-                placeholder="Search For Campaigns..."
+                placeholder={t('campaigns.searchPlaceholder')}
                 className="w-full bg-transparent outline-none text-14 sm:text-16 text-gray-900 placeholder:text-gray-400"
               />
             </div>
@@ -539,7 +541,7 @@ export default function AffiliatePage() {
 
             {/* Top Campaigns Section */}
             <div>
-              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">Top Campaigns</h2>
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">{t('campaigns.topCampaigns')}</h2>
               <div className="space-y-3 sm:space-y-4">
                 {/* Campaign Card 1 */}
                 <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -551,14 +553,14 @@ export default function AffiliatePage() {
                       <h3 className="text-20 sm:text-24 font-semibold text-gray-900">Get 15 % OFF</h3>
                     </div>
                     <div className="space-y-2 sm:space-y-3">
-                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">Bridal Makeup Essentials</h4>
+                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">{t('campaigns.bridalMakeupEssentials')}</h4>
                       <p className="text-13 sm:text-14 text-gray-500">
-                        Promote our best selling bridal makeup sets for the big day.
+                        {t('campaigns.promoteDescription')}
                       </p>
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <p className="text-13 sm:text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
+                        <p className="text-13 sm:text-14 font-normal text-gray-900">200 {t('campaigns.forEachBooking')}</p>
                         <Button variant="outline" size="md" className="text-red-500 border-red-500 hover:bg-red-50 hover:text-red-500 w-full sm:w-auto">
-                          Generate Link
+                          {t('campaigns.generateLink')}
                         </Button>
                       </div>
                     </div>
@@ -575,14 +577,14 @@ export default function AffiliatePage() {
                       <h3 className="text-20 sm:text-24 font-semibold text-gray-900">Get 15 % OFF</h3>
                     </div>
                     <div className="space-y-2 sm:space-y-3">
-                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">Bridal Makeup Essentials</h4>
+                      <h4 className="text-14 sm:text-16 font-normal text-gray-900">{t('campaigns.bridalMakeupEssentials')}</h4>
                       <p className="text-13 sm:text-14 text-gray-500">
-                        Promote our best selling bridal makeup sets for the big day.
+                        {t('campaigns.promoteDescription')}
                       </p>
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <p className="text-13 sm:text-14 font-normal text-gray-900">200 EGP For Each Booking</p>
+                        <p className="text-13 sm:text-14 font-normal text-gray-900">200 {t('campaigns.forEachBooking')}</p>
                         <Button variant="outline" size="md" className="text-red-500 border-red-500 hover:bg-red-50 hover:text-red-500 w-full sm:w-auto">
-                          Generate Link
+                          {t('campaigns.generateLink')}
                         </Button>
                       </div>
                     </div>
@@ -596,9 +598,9 @@ export default function AffiliatePage() {
           <aside className="w-full lg:w-80 flex-shrink-0">
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <h2 className="text-16 sm:text-18 font-normal text-gray-900">Recent Activity</h2>
+                <h2 className="text-16 sm:text-18 font-normal text-gray-900">{t('overview.recentActivity')}</h2>
                 <button className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors">
-                  View all
+                  {t('overview.viewAllActivity')}
                 </button>
               </div>
               <div className="space-y-3">
@@ -631,7 +633,7 @@ export default function AffiliatePage() {
                         </div>
                         <p className="text-11 sm:text-12 text-gray-500 mb-2">{item.date}</p>
                         <p className="text-11 sm:text-12 text-gray-600 mb-2">
-                          {item.sales} Booking
+                          {item.sales} {item.sales === 1 ? t('overview.booking') : t('overview.bookings')}
                         </p>
                         <Badge
                           variant={item.status === 'Confirmed' ? 'confirmed' : 'pending'}
@@ -642,7 +644,7 @@ export default function AffiliatePage() {
                           ) : (
                             <Clock className="w-3 h-3" />
                           )}
-                          <span>{item.status}</span>
+                          <span>{item.status === 'Confirmed' ? t('overview.confirmed') : t('overview.pendingPayout')}</span>
                         </Badge>
                       </div>
                     </div>
@@ -661,7 +663,7 @@ export default function AffiliatePage() {
           <div className="flex-1 space-y-4 sm:space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-18 sm:text-20 font-normal text-gray-900">Your Campaigns</h2>
+              <h2 className="text-18 sm:text-20 font-normal text-gray-900">{t('tools.yourCampaigns')}</h2>
             </div>
 
             {/* Campaign Cards */}
@@ -679,13 +681,13 @@ export default function AffiliatePage() {
                           value={displayData.name}
                           onChange={(e) => updateEditFormData('name', e.target.value)}
                           className="text-14 sm:text-16 font-normal text-gray-900 border-b border-transparent hover:border-gray-300 focus:border-brand-500 focus:outline-none transition-colors bg-transparent px-1"
-                          placeholder="Campaign Name"
+                          placeholder={t('tools.campaignName')}
                         />
                       ) : (
                         <h3 className="text-14 sm:text-16 font-normal text-gray-900">{displayData.name}</h3>
                       )}
                       <Badge variant="success" className="bg-green-50 text-green-600 border-green-200 text-11 sm:text-12 font-normal px-2 sm:px-3 py-1">
-                        Active
+                        {t('tools.active')}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3">
@@ -695,7 +697,7 @@ export default function AffiliatePage() {
                             onClick={() => handleSaveCampaign(campaign.id)}
                             className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
                           >
-                            Save
+                            {t('tools.save')}
                           </button>
                           <button
                             onClick={handleCancelEdit}
@@ -709,7 +711,7 @@ export default function AffiliatePage() {
                           onClick={() => handleEditCampaign(campaign)}
                           className="text-13 sm:text-14 font-medium text-brand-500 hover:text-brand-600 transition-colors"
                         >
-                          Edit
+                          {t('tools.edit')}
                         </button>
                       )}
                     </div>
@@ -727,7 +729,7 @@ export default function AffiliatePage() {
                           value={displayData.badgeText}
                           onChange={(e) => updateEditFormData('badgeText', e.target.value)}
                           className="text-11 sm:text-12 font-normal text-gray-900 bg-transparent focus:outline-none text-center min-w-[100px]"
-                          placeholder="Badge Text"
+                          placeholder={t('tools.badgeText')}
                         />
                       ) : (
                         <p className="text-11 sm:text-12 font-normal text-gray-900">{displayData.badgeText}</p>
@@ -739,7 +741,7 @@ export default function AffiliatePage() {
                         value={displayData.offerText}
                         onChange={(e) => updateEditFormData('offerText', e.target.value)}
                         className="text-20 sm:text-24 font-semibold text-gray-900 bg-transparent focus:outline-none text-center w-full"
-                        placeholder="Offer Text"
+                        placeholder={t('tools.offerText')}
                       />
                     ) : (
                       <h3 className="text-20 sm:text-24 font-semibold text-gray-900">{displayData.offerText}</h3>
@@ -755,12 +757,12 @@ export default function AffiliatePage() {
                         onChange={(e) => updateEditFormData('description', e.target.value)}
                         className="w-full text-13 sm:text-14 text-gray-500 mb-3 sm:mb-4 border border-gray-200 rounded-xl p-3 focus:border-brand-500 focus:outline-none resize-none"
                         rows={3}
-                        placeholder="Campaign description..."
+                        placeholder={t('tools.campaignDescription')}
                       />
 
                       {/* Commission */}
                       <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
-                        <span className="text-13 sm:text-14 font-normal text-gray-900">Commission :</span>
+                        <span className="text-13 sm:text-14 font-normal text-gray-900">{t('tools.commission')} :</span>
                         <input
                           type="text"
                           value={displayData.commission}
@@ -768,7 +770,7 @@ export default function AffiliatePage() {
                           className="text-13 sm:text-14 font-normal text-gray-900 border-b border-gray-300 hover:border-gray-400 focus:border-brand-500 focus:outline-none transition-colors bg-transparent px-1 w-20"
                           placeholder="200"
                         />
-                        <span className="text-13 sm:text-14 font-normal text-gray-900">EGP For Each Booking</span>
+                        <span className="text-13 sm:text-14 font-normal text-gray-900">{t('campaigns.forEachBooking')}</span>
                       </div>
 
                       {/* Link Input */}
@@ -779,13 +781,13 @@ export default function AffiliatePage() {
                           className="flex-1"
                         />
                         <Button  size="md" className="text-red-500 border-red-500 hover:bg-red-50 hover:text-red-500 px-4 whitespace-nowrap w-full sm:w-auto">
-                          Regenerate Link
+                          {t('tools.regenerateLink')}
                         </Button>
                       </div>
 
                       {/* Banner Color Selector */}
                       <div className="mb-3 sm:mb-4">
-                        <p className="text-13 sm:text-14 font-normal text-gray-900 mb-3">Banner Color</p>
+                        <p className="text-13 sm:text-14 font-normal text-gray-900 mb-3">{t('tools.bannerColor')}</p>
                         <div className="flex gap-2 sm:gap-3 flex-wrap">
                           {bannerColors.map((bannerColor) => (
                             <button
@@ -810,7 +812,7 @@ export default function AffiliatePage() {
                           size="md"
                           className="text-brand-500 border-brand-500 hover:bg-brand-50 w-full sm:w-auto"
                         >
-                          Deactivate Campaign
+                          {t('tools.deactivateCampaign')}
                         </Button>
                       </div>
                     </>
@@ -859,7 +861,7 @@ export default function AffiliatePage() {
                         </div>
                         <p className="text-11 sm:text-12 text-gray-500 mb-2">{item.date}</p>
                         <p className="text-11 sm:text-12 text-gray-600 mb-2">
-                          {item.sales} Booking
+                          {item.sales} {item.sales === 1 ? t('overview.booking') : t('overview.bookings')}
                         </p>
                         <Badge
                           variant={item.status === 'Confirmed' ? 'confirmed' : 'pending'}
@@ -870,7 +872,7 @@ export default function AffiliatePage() {
                           ) : (
                             <Clock className="w-3 h-3" />
                           )}
-                          <span>{item.status}</span>
+                          <span>{item.status === 'Confirmed' ? t('overview.confirmed') : t('overview.pendingPayout')}</span>
                         </Badge>
                       </div>
                     </div>
@@ -888,7 +890,7 @@ export default function AffiliatePage() {
           {/* Transactions History */}
           <div className="flex-1">
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
-              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-4 sm:mb-6">Transactions History</h2>
+              <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-4 sm:mb-6">{t('wallet.transactionsHistory')}</h2>
               <div className="space-y-3 sm:space-y-4">
                 {transactions.map((transaction) => (
                   <div
@@ -966,7 +968,7 @@ export default function AffiliatePage() {
             {/* Balance Card */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
               <div className="flex items-start justify-between mb-2">
-                <p className="text-13 sm:text-14 text-gray-500">Balance</p>
+                <p className="text-13 sm:text-14 text-gray-500">{t('wallet.balance')}</p>
                 <div className="flex items-center gap-1 text-green-600">
                   <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span className="text-11 sm:text-12 font-medium">25 %</span>
@@ -974,12 +976,12 @@ export default function AffiliatePage() {
               </div>
               <p className="text-24 sm:text-28 font-semibold text-gray-900 mb-3 sm:mb-4">3500.00 EGP</p>
               <div className="flex items-center justify-between text-11 sm:text-12 text-gray-500 mb-4 sm:mb-6">
-                <span>Last Update</span>
+                <span>{t('wallet.lastUpdate')}</span>
                 <span className="text-right">Sep 15, 2025 11:30 am</span>
               </div>
               <div className="flex items-center justify-between text-11 sm:text-12 mb-4 sm:mb-6">
-                <span className="text-gray-500">Status</span>
-                <span className="text-green-600 font-medium">Active</span>
+                <span className="text-gray-500">{t('wallet.status')}</span>
+                <span className="text-green-600 font-medium">{t('wallet.active')}</span>
               </div>
 
               {/* Action Buttons */}
@@ -990,7 +992,7 @@ export default function AffiliatePage() {
                   onClick={() => setShowWithdrawModal(true)}
                   className="w-full text-white"
                 >
-                  Withdraw Funds
+                  {t('wallet.withdrawFunds')}
                 </Button>
                 <Button
                   variant="outline"
@@ -998,7 +1000,7 @@ export default function AffiliatePage() {
                   onClick={() => setShowAddCardModal(true)}
                   className="w-full text-brand-500 border-brand-500 hover:bg-brand-50"
                 >
-                  + Add New Card
+                  {t('wallet.addNewCard')}
                 </Button>
               </div>
             </div>

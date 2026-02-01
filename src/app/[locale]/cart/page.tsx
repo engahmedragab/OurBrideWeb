@@ -1148,17 +1148,22 @@ const tOverlay = useI18nTranslations('cart.mutationOverlay')
       />
 
       {/* Loading Overlay for Mutations */}
-      <LoadingSpinner
-    fullScreen
-    size="lg"
-    text={`${
-      clearCartMutation.isPending
-        ? tOverlay('clearing')
-        : checkoutMutation.isPending
-          ? tOverlay('processingCheckout')
-          : tOverlay('updating')
-    }\n${tOverlay('subtitle')}`}
-  />
+      {(updatePurchaseMutation.isPending ||
+        removePurchaseMutation.isPending ||
+        clearCartMutation.isPending ||
+        checkoutMutation.isPending) && (
+        <LoadingSpinner
+          fullScreen
+          size="lg"
+          text={`${
+            clearCartMutation.isPending
+              ? tOverlay('clearing')
+              : checkoutMutation.isPending
+                ? tOverlay('processingCheckout')
+                : tOverlay('updating')
+          }\n${tOverlay('subtitle')}`}
+        />
+      )}
     </UserPageLayout>
   )
 }

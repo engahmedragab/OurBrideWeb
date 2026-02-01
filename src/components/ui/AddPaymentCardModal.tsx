@@ -5,6 +5,7 @@ import { Modal } from './Modal'
 import { Input } from './Input'
 import { Button } from './Button'
 import { CreditCard } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface AddPaymentCardModalProps {
   isOpen: boolean
@@ -19,6 +20,7 @@ export const AddPaymentCardModal = ({
   isOpen,
   onClose,
 }: AddPaymentCardModalProps) => {
+  const t = useI18nTranslations('affiliate')
   const [paymentMethod, setPaymentMethod] = useState<'debit' | 'mobile'>('debit')
 
   const savedCards = [
@@ -49,7 +51,7 @@ export const AddPaymentCardModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Payout Cards Management"
+      title={t('addCard.title')}
       maxWidth="xl"
       contentClassName="max-h-[70vh] sm:max-h-[80vh] overflow-y-auto p-4 sm:p-6"
     >
@@ -58,13 +60,13 @@ export const AddPaymentCardModal = ({
         <div className="flex-1 space-y-3 sm:space-y-4">
           {/* Subtitle */}
           <p className="text-13 sm:text-14 text-gray-500 -mt-2">
-            Add Your Payment Method With Paymob
+            {t('addCard.subtitle')}
           </p>
 
           {/* Payment Method Dropdown */}
           <div>
             <Input
-              placeholder="Ahmed Ramadan -Master Card ( Defualt )"
+              placeholder={t('addCard.defaultCard')}
               className="cursor-pointer"
               readOnly
             />
@@ -72,12 +74,12 @@ export const AddPaymentCardModal = ({
 
           {/* Full Name Input */}
           <div>
-            <Input placeholder="Full Name" />
+            <Input placeholder={t('addCard.fullName')} />
           </div>
 
           {/* Mobile Number Input */}
           <div>
-            <Input placeholder="Mobile Number" />
+            <Input placeholder={t('addCard.mobileNumber')} />
           </div>
 
           {/* Payment Method Tabs */}
@@ -90,7 +92,7 @@ export const AddPaymentCardModal = ({
                   : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
               }`}
             >
-              Debit / Credit
+              {t('addCard.debitCredit')}
             </button>
             <button
               onClick={() => setPaymentMethod('mobile')}
@@ -100,29 +102,29 @@ export const AddPaymentCardModal = ({
                   : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
               }`}
             >
-              Mobile Wallet
+              {t('addCard.mobileWallet')}
             </button>
           </div>
 
           {/* Card Details Section */}
           {paymentMethod === 'debit' && (
             <div className="space-y-3 sm:space-y-4">
-              <h3 className="text-13 sm:text-14 font-normal text-gray-900">Card Details</h3>
+              <h3 className="text-13 sm:text-14 font-normal text-gray-900">{t('addCard.cardDetails')}</h3>
 
               {/* Name On Card */}
               <div>
-                <Input placeholder="Name On Card" />
+                <Input placeholder={t('addCard.nameOnCard')} />
               </div>
 
               {/* Card Number */}
               <div>
-                <Input placeholder="Card Number" />
+                <Input placeholder={t('addCard.cardNumber')} />
               </div>
 
               {/* MM/YY and CVV */}
               <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                <Input placeholder="MM/YY" />
-                <Input placeholder="CVV" />
+                <Input placeholder={t('addCard.mmYy')} />
+                <Input placeholder={t('addCard.cvv')} />
               </div>
             </div>
           )}
@@ -134,13 +136,13 @@ export const AddPaymentCardModal = ({
             className="w-full text-white mt-4 sm:mt-6"
             onClick={onClose}
           >
-            Add New Card
+            {t('addCard.addNewCard')}
           </Button>
         </div>
 
         {/* Right Side - Saved Cards */}
         <div className="w-full lg:w-80 flex-shrink-0">
-          <h3 className="text-14 font-normal text-gray-900 mb-3 lg:hidden">Saved Cards</h3>
+          <h3 className="text-14 font-normal text-gray-900 mb-3 lg:hidden">{t('addCard.savedCards')}</h3>
           <div className="space-y-3 sm:space-y-4 max-h-[400px] lg:max-h-[600px] overflow-y-auto pr-2">
             {savedCards.map((card) => (
               <div key={card.id} className="relative">

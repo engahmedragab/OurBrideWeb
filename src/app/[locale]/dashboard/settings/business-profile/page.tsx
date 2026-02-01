@@ -12,6 +12,7 @@ import {
   useUpdateProviderPublicProfileSettings,
 } from '@/hooks/providers'
 import { LoadingSpinner } from '@/components/ui'
+import { useI18nTranslations } from '@/i18n'
 import type { UpdateProviderPublicProfileSettingsRequest } from '@/../client/common/api/gen/ourbride-api'
 
 /**
@@ -19,6 +20,7 @@ import type { UpdateProviderPublicProfileSettingsRequest } from '@/../client/com
  * Allows providers to manage their public profile settings including logo and banner images
  */
 export default function BusinessProfilePage() {
+  const t = useI18nTranslations('settings.businessProfile')
   const router = useRouter()
   const { addToast } = useToast()
   const logoInputRef = useRef<HTMLInputElement>(null)
@@ -153,10 +155,10 @@ export default function BusinessProfilePage() {
         },
       })
 
-      addToast('Business profile settings updated successfully', 'success')
+      addToast(t('toast.success'), 'success')
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Failed to update business profile settings'
+        error instanceof Error ? error.message : t('toast.error')
       addToast(errorMessage, 'error')
     }
   }
@@ -176,7 +178,7 @@ export default function BusinessProfilePage() {
   if (isLoading) {
     return (
       <UserPageLayout>
-        <LoadingSpinner text="Loading business profile settings..." fullScreen={true} />
+        <LoadingSpinner text={t('loading')} fullScreen={true} />
       </UserPageLayout>
     )
   }
@@ -187,8 +189,8 @@ export default function BusinessProfilePage() {
         <div className="text-center py-12">
           <ErrorModal
             open={true}
-            title="Failed to Load Business Profile Settings"
-            message="Failed to load business profile settings. Please try again."
+            title={t('error.title')}
+            message={t('error.message')}
             onRetry={() => window.location.reload()}
             onClose={() => {}}
           />
@@ -202,14 +204,14 @@ export default function BusinessProfilePage() {
       <div className="flex flex-col space-y-6">
         {/* Header with Save Button */}
         <div className="flex items-center justify-between">
-          <h2 className="text-18 font-normal text-gray-900">Business Profile Settings</h2>
+          <h2 className="text-18 font-normal text-gray-900">{t('title')}</h2>
           <Button
             variant="ghost"
             className="text-14 font-normal text-brand-500 hover:text-brand-600 hover:bg-transparent p-0 h-auto"
             onClick={handleSave}
             disabled={updateMutation.isPending}
           >
-            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+            {updateMutation.isPending ? t('saving') : t('saveChanges')}
           </Button>
         </div>
 
@@ -219,7 +221,7 @@ export default function BusinessProfilePage() {
           <div className="space-y-6">
             {/* Profile Image */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
-              <h3 className="text-16 font-normal text-gray-900 mb-4">Profile Image</h3>
+              <h3 className="text-16 font-normal text-gray-900 mb-4">{t('profileImage.title')}</h3>
               <div className="flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-gray-300 rounded-lg p-6">
                 {profileImagePreview || formData.profileImageUrl ? (
                   <div className="relative w-32 h-32 mb-4">
@@ -233,7 +235,7 @@ export default function BusinessProfilePage() {
                   </div>
                 ) : (
                   <div className="text-center mb-4">
-                    <p className="text-14 text-gray-500 mb-2">No profile image uploaded</p>
+                    <p className="text-14 text-gray-500 mb-2">{t('profileImage.noImage')}</p>
                   </div>
                 )}
 
@@ -243,8 +245,8 @@ export default function BusinessProfilePage() {
                   disabled={updateMutation.isPending}
                 >
                   {profileImagePreview || formData.profileImageUrl
-                    ? 'Change Profile Image'
-                    : 'Upload Profile Image'}
+                    ? t('profileImage.change')
+                    : t('profileImage.upload')}
                 </button>
 
                 <input
@@ -257,7 +259,7 @@ export default function BusinessProfilePage() {
 
                 {formData.profileImageUrl && (
                   <div className="mt-4 text-center">
-                    <p className="text-12 text-gray-500">Current URL:</p>
+                    <p className="text-12 text-gray-500">{t('profileImage.currentUrl')}</p>
                     <p className="text-12 text-gray-700 break-all">{formData.profileImageUrl}</p>
                   </div>
                 )}
@@ -266,7 +268,7 @@ export default function BusinessProfilePage() {
 
             {/* Logo Image */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
-              <h3 className="text-16 font-normal text-gray-900 mb-4">Logo Image</h3>
+              <h3 className="text-16 font-normal text-gray-900 mb-4">{t('logoImage.title')}</h3>
               <div className="flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-gray-300 rounded-lg p-6">
                 {logoPreview || formData.publicLogoImageUrl ? (
                   <div className="relative w-32 h-32 mb-4">
@@ -280,7 +282,7 @@ export default function BusinessProfilePage() {
                   </div>
                 ) : (
                   <div className="text-center mb-4">
-                    <p className="text-14 text-gray-500 mb-2">No logo uploaded</p>
+                    <p className="text-14 text-gray-500 mb-2">{t('logoImage.noImage')}</p>
                   </div>
                 )}
 
@@ -290,8 +292,8 @@ export default function BusinessProfilePage() {
                   disabled={updateMutation.isPending}
                 >
                   {logoPreview || formData.publicLogoImageUrl
-                    ? 'Change Logo'
-                    : 'Upload Logo'}
+                    ? t('logoImage.change')
+                    : t('logoImage.upload')}
                 </button>
 
                 <input
@@ -304,7 +306,7 @@ export default function BusinessProfilePage() {
 
                 {formData.publicLogoImageUrl && (
                   <div className="mt-4 text-center">
-                    <p className="text-12 text-gray-500">Current URL:</p>
+                    <p className="text-12 text-gray-500">{t('logoImage.currentUrl')}</p>
                     <p className="text-12 text-gray-700 break-all">{formData.publicLogoImageUrl}</p>
                   </div>
                 )}
@@ -313,7 +315,7 @@ export default function BusinessProfilePage() {
 
             {/* Banner Image */}
             <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
-              <h3 className="text-16 font-normal text-gray-900 mb-4">Banner Image</h3>
+              <h3 className="text-16 font-normal text-gray-900 mb-4">{t('bannerImage.title')}</h3>
               <div className="flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-gray-300 rounded-lg p-6">
                 {bannerPreview || formData.publicBannerImageUrl ? (
                   <div className="relative w-full h-32 mb-4">
@@ -327,7 +329,7 @@ export default function BusinessProfilePage() {
                   </div>
                 ) : (
                   <div className="text-center mb-4">
-                    <p className="text-14 text-gray-500 mb-2">No banner uploaded</p>
+                    <p className="text-14 text-gray-500 mb-2">{t('bannerImage.noImage')}</p>
                   </div>
                 )}
 
@@ -337,8 +339,8 @@ export default function BusinessProfilePage() {
                   disabled={updateMutation.isPending}
                 >
                   {bannerPreview || formData.publicBannerImageUrl
-                    ? 'Change Banner'
-                    : 'Upload Banner'}
+                    ? t('bannerImage.change')
+                    : t('bannerImage.upload')}
                 </button>
 
                 <input
@@ -351,7 +353,7 @@ export default function BusinessProfilePage() {
 
                 {formData.publicBannerImageUrl && (
                   <div className="mt-4 text-center">
-                    <p className="text-12 text-gray-500">Current URL:</p>
+                    <p className="text-12 text-gray-500">{t('bannerImage.currentUrl')}</p>
                     <p className="text-12 text-gray-700 break-all">
                       {formData.publicBannerImageUrl}
                     </p>
@@ -363,16 +365,16 @@ export default function BusinessProfilePage() {
 
           {/* Right Section: Settings */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
-            <h3 className="text-16 font-normal text-gray-900 mb-6">Profile Settings</h3>
+            <h3 className="text-16 font-normal text-gray-900 mb-6">{t('profileSettings.title')}</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Public Profile Slug
+                  {t('profileSettings.publicProfileSlug')}
                 </label>
                 <Input
                   value={formData.publicProfileSlug || ''}
                   onChange={e => handleInputChange('publicProfileSlug', e.target.value || null)}
-                  placeholder="public-profile-slug"
+                  placeholder={t('profileSettings.publicProfileSlugPlaceholder')}
                   variant="default"
                   size="lg"
                 />
@@ -380,14 +382,14 @@ export default function BusinessProfilePage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Description (English)
+                  {t('profileSettings.descriptionEn')}
                 </label>
                 <textarea
                   value={formData.publicDescriptionEn || ''}
                   onChange={e =>
                     handleInputChange('publicDescriptionEn', e.target.value || null)
                   }
-                  placeholder="Enter description in English"
+                  placeholder={t('profileSettings.descriptionEnPlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg text-14 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   rows={4}
                 />
@@ -395,14 +397,14 @@ export default function BusinessProfilePage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Description (Arabic)
+                  {t('profileSettings.descriptionAr')}
                 </label>
                 <textarea
                   value={formData.publicDescriptionAr || ''}
                   onChange={e =>
                     handleInputChange('publicDescriptionAr', e.target.value || null)
                   }
-                  placeholder="Enter description in Arabic"
+                  placeholder={t('profileSettings.descriptionArPlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg text-14 focus:outline-none focus:ring-2 focus:ring-brand-500"
                   rows={4}
                 />
@@ -410,12 +412,12 @@ export default function BusinessProfilePage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  SEO Meta Title
+                  {t('profileSettings.seoMetaTitle')}
                 </label>
                 <Input
                   value={formData.seoMetaTitle || ''}
                   onChange={e => handleInputChange('seoMetaTitle', e.target.value || null)}
-                  placeholder="SEO Meta Title"
+                  placeholder={t('profileSettings.seoMetaTitlePlaceholder')}
                   variant="default"
                   size="lg"
                 />

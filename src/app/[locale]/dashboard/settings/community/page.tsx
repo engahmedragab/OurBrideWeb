@@ -2,12 +2,16 @@
 
 import { useRouter } from '@/i18n/navigation'
 import { ChevronLeft } from 'lucide-react'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
+import { cn } from '@/lib/utils'
 
 /**
  * Community Guidelines page component
  * Matches Figma design exactly
  */
 export default function CommunityPage() {
+  const t = useI18nTranslations('settings.community')
+  const isRTL = useIsRTL()
   const router = useRouter()
 
   const handleBack = () => {
@@ -16,52 +20,40 @@ export default function CommunityPage() {
 
   const sections = [
     {
-      title: 'Respect Others',
-      content: 'No harassment, hate speech, or offensive content.',
+      title: t('sections.respectOthers.title'),
+      content: t('sections.respectOthers.content'),
     },
     {
-      title: 'Authenticity',
-      content: [
-        'Provide real and accurate information.',
-        'Do not impersonate others.',
-      ],
+      title: t('sections.authenticity.title'),
+      content: t('sections.authenticity.content'),
     },
     {
-      title: 'Safe Communication',
-      content: [
-        'Keep conversations respectful.',
-        'Calls/messages may be recorded for safety.',
-      ],
+      title: t('sections.safeCommunication.title'),
+      content: t('sections.safeCommunication.content'),
     },
     {
-      title: 'Service Integrity',
-      content: [
-        'Providers must deliver services as promised.',
-        'No direct transactions outside the app.',
-      ],
+      title: t('sections.serviceIntegrity.title'),
+      content: t('sections.serviceIntegrity.content'),
     },
     {
-      title: 'Reporting & Consequences',
-      content: [
-        'Use Report a Problem for issues.',
-        'Violations may result in account suspension or removal.',
-      ],
+      title: t('sections.reportingConsequences.title'),
+      content: t('sections.reportingConsequences.content'),
     },
   ]
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Page Header with Back Button */}
-      <div className="mb-6 flex items-center gap-2">
+      <div className={cn("mb-6 flex items-center gap-2", isRTL && "flex-row-reverse")}>
         <button
           onClick={handleBack}
           className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
           aria-label="Go back"
         >
-          <ChevronLeft className="h-6 w-6 text-gray-600" />
+          <ChevronLeft className={cn("h-6 w-6 text-gray-600", isRTL && "rotate-180")} />
         </button>
         <h1 className="text-20 font-normal text-gray-900">
-          Community Guidelines
+          {t('title')}
         </h1>
       </div>
 
@@ -78,7 +70,7 @@ export default function CommunityPage() {
               {/* Section Content */}
               {Array.isArray(section.content) ? (
                 <div className="text-14 font-normal text-gray-500">
-                  {section.content.map((paragraph, pIndex) => (
+                  {section.content.map((paragraph: string, pIndex: number) => (
                     <p key={pIndex} className={pIndex === 0 ? 'mb-0' : ''}>
                       {paragraph}
                     </p>

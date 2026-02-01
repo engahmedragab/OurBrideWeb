@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useI18nTranslations } from '@/i18n/hooks'
@@ -27,18 +26,16 @@ const sizeClasses = {
 export const LoadingSpinner = ({
   size = 'md',
   className,
-  text ,
+  text,
   fullScreen = false,
   open,
 }: LoadingSpinnerProps) => {
-  const t =useI18nTranslations('common')
-  const [isMounted, setIsMounted] = useState(false)
-
-  // Prevent hydration mismatch by only rendering after mount
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-    if (!open) return null
+  const t = useI18nTranslations('common')
+  
+  // If open prop is provided and false, don't render
+  if (open !== undefined && !open) {
+    return null
+  }
 
   const spinner = (
     <div className={cn('flex flex-col items-center justify-center gap-3', className)}>
@@ -52,14 +49,9 @@ export const LoadingSpinner = ({
   if (fullScreen) {
     return (
       <div className="w-full min-h-[90vh] flex items-center justify-center">
-        {isMounted ? spinner : null}
+        {spinner}
       </div>
     )
-  }
-
-  // Return null during SSR to prevent hydration mismatch
-  if (!isMounted) {
-    return null
   }
 
   return spinner

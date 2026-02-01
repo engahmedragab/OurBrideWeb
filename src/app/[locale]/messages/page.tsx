@@ -11,6 +11,7 @@ import {
 } from '@/components/ui'
 import messagesEmptySvg from '@/assets/svg/messages-empty.svg'
 import type { Conversation, Message } from '@/types/message'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 // Mock data for conversations
 const mockConversations: Conversation[] = [
@@ -174,6 +175,7 @@ const mockMessages: Record<string, Message[]> = {
  * Displays the messages center with conversations list and chat view
  */
 export default function MessagesPage() {
+  const t = useI18nTranslations('messages')
   const [conversations] = useState<Conversation[]>(mockConversations)
   const [selectedConversationId, setSelectedConversationId] = useState<
     string | null
@@ -205,7 +207,7 @@ export default function MessagesPage() {
           id: `m${Date.now()}-${Math.random()}`,
           conversationId: selectedConversationId,
           senderId: 'current-user',
-          senderName: 'You',
+          senderName: t('chat.you'),
           content: imageUrl, // In production: use the server-returned URL
           timestamp: new Date().toLocaleTimeString('en-US', {
             hour: 'numeric',
@@ -231,7 +233,7 @@ export default function MessagesPage() {
         id: `m${Date.now()}`,
         conversationId: selectedConversationId,
         senderId: 'current-user',
-        senderName: 'You',
+        senderName: t('chat.you'),
         content: message,
         timestamp: new Date().toLocaleTimeString('en-US', {
           hour: 'numeric',
@@ -262,16 +264,16 @@ export default function MessagesPage() {
         {/* Page Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-32 font-semibold text-gray-900">Messages</h1>
+            <h1 className="text-32 font-semibold text-gray-900">{t('title')}</h1>
           </div>
         </div>
 
         {/* Empty State */}
         <EmptyState
           illustration={messagesEmptySvg}
-          title="You don't have any Messages"
-          description="Start exploring services and products to begin your journey"
-          actionLabel="Start Shopping"
+          title={t('empty.title')}
+          description={t('empty.description')}
+          actionLabel={t('empty.actionLabel')}
           actionHref="/products"
         />
       </UserPageLayout>

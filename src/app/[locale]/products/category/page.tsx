@@ -67,10 +67,51 @@ function ProductsContent() {
       }
     })
   }, [t])
-  // Read search query from URL params
+  // Read all filters from URL params on mount
   useEffect(() => {
-    const query = searchParams.get('search') || ''
-    setSearchQuery(query)
+    const category = searchParams.get('category')
+    const subCategory = searchParams.get('subCategory')
+    const priceMin = searchParams.get('priceMin')
+    const priceMax = searchParams.get('priceMax')
+    const rating = searchParams.get('rating')
+    const inStock = searchParams.get('inStock')
+    const sort = searchParams.get('sort')
+    const search = searchParams.get('search')
+
+    const newFilters: ProductFilter = {}
+
+    if (category) {
+      newFilters.category = category.split(',').filter(Boolean)
+    }
+
+    if (subCategory) {
+      newFilters.subCategory = subCategory.split(',').filter(Boolean)
+    }
+
+    if (priceMin && priceMax) {
+      newFilters.priceRange = {
+        min: Number(priceMin),
+        max: Number(priceMax),
+      }
+    }
+
+    if (rating) {
+      newFilters.rating = Number(rating)
+    }
+
+    if (inStock) {
+      newFilters.inStock = inStock === 'true'
+    }
+
+    setFilters(newFilters)
+
+    if (sort) {
+      setSortBy(sort)
+    }
+
+    if (search) {
+      setSearchQuery(search)
+    }
   }, [searchParams])
 
   // Fetch categories from backend API

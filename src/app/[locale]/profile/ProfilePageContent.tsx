@@ -4,6 +4,7 @@ import React from 'react'
 import Image from 'next/image'
 import { useRouter } from '@/i18n/navigation'
 import { Button } from '@/components/ui'
+import { useI18nTranslations } from '@/i18n'
 import {
   User,
   Mail,
@@ -31,6 +32,7 @@ interface ProfilePageContentProps {
  * Displays user profile information from mine-info endpoint
  */
 export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
+  const t = useI18nTranslations('profile')
   const router = useRouter()
 
   // Extract data from the API response structure
@@ -92,7 +94,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
                 onClick={() => router.push('/profile/edit')}
               >
                 <Edit className="h-4 w-4 mr-1" />
-                Edit
+                {t('header.edit')}
               </Button>
             </div>
 
@@ -107,13 +109,13 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
               {notificationsUnReadCount > 0 && (
                 <div className="flex items-center gap-2 text-14 font-normal text-gray-700">
                   <Bell className="h-4 w-4 text-gray-400" />
-                  <span>{notificationsUnReadCount} Unread</span>
+                  <span>{t('stats.unread', { count: notificationsUnReadCount })}</span>
                 </div>
               )}
               {pointsCount > 0 && (
                 <div className="flex items-center gap-2 text-14 font-normal text-gray-700">
                   <Gift className="h-4 w-4 text-gray-400" />
-                  <span>{pointsCount} Points</span>
+                  <span>{t('stats.points', { count: pointsCount })}</span>
                 </div>
               )}
             </div>
@@ -124,14 +126,14 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
       {/* Personal Information Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
         <h2 className="text-18 sm:text-20 font-normal text-gray-900 mb-4">
-          Personal Information
+          {t('personalInfo.title')}
         </h2>
         <div className="space-y-4">
           {email && (
             <div className="flex items-start gap-3">
               <Mail className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-12 text-gray-500 mb-1">Email</p>
+                <p className="text-12 text-gray-500 mb-1">{t('personalInfo.email')}</p>
                 <p className="text-14 sm:text-16 font-normal text-gray-900 break-all">
                   {email}
                 </p>
@@ -143,7 +145,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="flex items-start gap-3">
               <Phone className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-12 text-gray-500 mb-1">Phone</p>
+                <p className="text-12 text-gray-500 mb-1">{t('personalInfo.phone')}</p>
                 <p className="text-14 sm:text-16 font-normal text-gray-900">
                   {phone}
                 </p>
@@ -155,7 +157,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="flex items-start gap-3">
               <User className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-12 text-gray-500 mb-1">Profile Type</p>
+                <p className="text-12 text-gray-500 mb-1">{t('personalInfo.profileType')}</p>
                 <p className="text-14 sm:text-16 font-normal text-gray-900">
                   {profileType}
                 </p>
@@ -167,7 +169,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="flex items-start gap-3">
               <User className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-12 text-gray-500 mb-1">Account Type</p>
+                <p className="text-12 text-gray-500 mb-1">{t('personalInfo.accountType')}</p>
                 <p className="text-14 sm:text-16 font-normal text-gray-900">
                   {type}
                 </p>
@@ -179,7 +181,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="flex items-start gap-3">
               <User className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-12 text-gray-500 mb-1">Gender</p>
+                <p className="text-12 text-gray-500 mb-1">{t('personalInfo.gender')}</p>
                 <p className="text-14 sm:text-16 font-normal text-gray-900">
                   {gender}
                 </p>
@@ -191,7 +193,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="flex items-start gap-3">
               <Calendar className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-12 text-gray-500 mb-1">Date of Birth</p>
+                <p className="text-12 text-gray-500 mb-1">{t('personalInfo.dateOfBirth')}</p>
                 <p className="text-14 sm:text-16 font-normal text-gray-900">
                   {new Date(birthDate).toLocaleDateString()}
                 </p>
@@ -203,7 +205,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="flex items-start gap-3">
               <User className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-12 text-gray-500 mb-1">Username</p>
+                <p className="text-12 text-gray-500 mb-1">{t('personalInfo.username')}</p>
                 <p className="text-14 sm:text-16 font-normal text-gray-900">
                   {user.userName}
                 </p>
@@ -216,18 +218,18 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
       {/* Statistics Section */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
         <h2 className="text-18 sm:text-20 font-normal text-gray-900 mb-4">
-          Statistics
+          {t('statistics.title')}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {/* Item Book */}
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center gap-2 mb-2">
               <Package className="h-5 w-5 text-brand-500" />
-              <p className="text-12 text-gray-500">Items</p>
+              <p className="text-12 text-gray-500">{t('statistics.items')}</p>
             </div>
             <p className="text-18 font-normal text-gray-900">{itemBook.count || 0}</p>
             <p className="text-12 text-gray-500 mt-1">
-              {itemBook.completed || 0} completed
+              {t('statistics.completed', { count: itemBook.completed || 0 })}
             </p>
           </div>
 
@@ -235,11 +237,11 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center gap-2 mb-2">
               <ShoppingBag className="h-5 w-5 text-brand-500" />
-              <p className="text-12 text-gray-500">Services</p>
+              <p className="text-12 text-gray-500">{t('statistics.services')}</p>
             </div>
             <p className="text-18 font-normal text-gray-900">{serviceBook.count || 0}</p>
             <p className="text-12 text-gray-500 mt-1">
-              {serviceBook.completed || 0} completed
+              {t('statistics.completed', { count: serviceBook.completed || 0 })}
             </p>
           </div>
 
@@ -247,11 +249,11 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle2 className="h-5 w-5 text-brand-500" />
-              <p className="text-12 text-gray-500">Todos</p>
+              <p className="text-12 text-gray-500">{t('statistics.todos')}</p>
             </div>
             <p className="text-18 font-normal text-gray-900">{todoBook.count || 0}</p>
             <p className="text-12 text-gray-500 mt-1">
-              {todoBook.completed || 0} completed
+              {t('statistics.completed', { count: todoBook.completed || 0 })}
             </p>
           </div>
 
@@ -260,7 +262,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center gap-2 mb-2">
                 <Gift className="h-5 w-5 text-brand-500" />
-                <p className="text-12 text-gray-500">Coupons</p>
+                <p className="text-12 text-gray-500">{t('statistics.coupons')}</p>
               </div>
               <p className="text-18 font-normal text-gray-900">{couponsCount}</p>
             </div>
@@ -271,7 +273,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center gap-2 mb-2">
                 <Gift className="h-5 w-5 text-brand-500" />
-                <p className="text-12 text-gray-500">Points</p>
+                <p className="text-12 text-gray-500">{t('statistics.points')}</p>
               </div>
               <p className="text-18 font-normal text-gray-900">{pointsCount}</p>
             </div>
@@ -282,7 +284,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center gap-2 mb-2">
                 <Wallet className="h-5 w-5 text-brand-500" />
-                <p className="text-12 text-gray-500">Wallet</p>
+                <p className="text-12 text-gray-500">{t('statistics.wallet')}</p>
               </div>
               <p className="text-18 font-normal text-gray-900">
                 {walletAmount.toLocaleString()}
@@ -295,7 +297,7 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center gap-2 mb-2">
                 <Gift className="h-5 w-5 text-brand-500" />
-                <p className="text-12 text-gray-500">Gift Cards</p>
+                <p className="text-12 text-gray-500">{t('statistics.giftCards')}</p>
               </div>
               <p className="text-18 font-normal text-gray-900">{giftsCardsCount}</p>
             </div>
@@ -306,12 +308,12 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center gap-2 mb-2">
                 <Bell className="h-5 w-5 text-brand-500" />
-                <p className="text-12 text-gray-500">Notifications</p>
+                <p className="text-12 text-gray-500">{t('statistics.notifications')}</p>
               </div>
               <p className="text-18 font-normal text-gray-900">{notificationsCount}</p>
               {notificationsUnReadCount > 0 && (
                 <p className="text-12 text-brand-500 mt-1">
-                  {notificationsUnReadCount} unread
+                  {t('statistics.unread', { count: notificationsUnReadCount })}
                 </p>
               )}
             </div>
@@ -323,14 +325,14 @@ export function ProfilePageContent({ mineInfo }: ProfilePageContentProps) {
       {userProfile.partner && (
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
           <h2 className="text-18 sm:text-20 font-normal text-gray-900 mb-4">
-            Partner Information
+            {t('partner.title')}
           </h2>
           <div className="space-y-4">
             {userProfile.partner.name && (
               <div className="flex items-start gap-3">
                 <User className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-12 text-gray-500 mb-1">Partner Name</p>
+                  <p className="text-12 text-gray-500 mb-1">{t('partner.name')}</p>
                   <p className="text-14 sm:text-16 font-normal text-gray-900">
                     {userProfile.partner.name}
                   </p>

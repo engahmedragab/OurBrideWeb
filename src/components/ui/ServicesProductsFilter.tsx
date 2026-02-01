@@ -8,7 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './DropdownMenu'
-import { useI18nTranslations } from '@/i18n/hooks'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
+import { cn } from '@/lib/utils'
 
 export interface ServicesProductsFilterProps {
   value: 'services' | 'products'
@@ -28,37 +29,54 @@ export const ServicesProductsFilter = ({
   className,
 }: ServicesProductsFilterProps) => {
   const t = useI18nTranslations('cart.filters')
+  const isRTL = useIsRTL()
 
   return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant={variant === 'brand' ? 'brand' : 'outline'}
-          className={`gap-2 px-4 py-2 text-14 font-medium w-full sm:w-auto ${
-            variant === 'outline'
-              ? 'text-gray-900 bg-white border border-gray-300 hover:bg-gray-50'
-              : 'text-white'
-          } ${className || ''}`}
+    <div dir={isRTL ? 'rtl' : 'ltr'}>
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant={variant === 'brand' ? 'brand' : 'outline'}
+            className={cn(
+              'gap-2 px-4 py-2 text-14 font-medium w-full sm:w-auto',
+              variant === 'outline'
+                ? 'text-gray-900 bg-white border border-gray-300 hover:bg-gray-50'
+                : 'text-white',
+              isRTL && 'flex-row-reverse',
+              className
+            )}
+          >
+            {value === 'services' ? t('services') : t('products')}
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent 
+          align={isRTL ? 'start' : 'end'} 
+          className="w-40"
         >
-          {value === 'services' ? t('services') : t('products')}
-          <ChevronDown className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuItem
-          onClick={() => onChange('services')}
-          className={value === 'services' ? 'bg-brand-50' : ''}
-        >
-          {t('services')}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => onChange('products')}
-          className={value === 'products' ? 'bg-brand-50' : ''}
-        >
-          {t('products')}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <div dir={isRTL ? 'rtl' : 'ltr'}>
+            <DropdownMenuItem
+              onClick={() => onChange('services')}
+              className={cn(
+                value === 'services' ? 'bg-brand-50' : '',
+                isRTL && 'text-right'
+              )}
+            >
+              {t('services')}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onChange('products')}
+              className={cn(
+                value === 'products' ? 'bg-brand-50' : '',
+                isRTL && 'text-right'
+              )}
+            >
+              {t('products')}
+            </DropdownMenuItem>
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   )
 }
 

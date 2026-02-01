@@ -18,7 +18,7 @@ interface EditModalProps<T> {
   onSave: (updatedData: T) => void
 }
 
-export default function EditItemModal<T extends Record<string, any>>({
+export default function EditItemModal<T extends Record<string, unknown>>({
   isOpen,
   onClose,
   itemData,
@@ -112,7 +112,7 @@ export default function EditItemModal<T extends Record<string, any>>({
                           ? 'date'
                           : 'text'
                       }
-                      value={formData[key] || ''}
+                      value={String(formData[key] || '')}
                       onChange={handleChange}
                       className="h-9 text-13"
                     />
@@ -124,7 +124,7 @@ export default function EditItemModal<T extends Record<string, any>>({
             {/* Completion Status */}
             <div className="flex items-center gap-3 pt-2">
               <Checkbox
-                checked={formData.iscompleted}
+                checked={Boolean(formData.iscompleted)}
                 onChange={(val) =>
                   setFormData({ ...formData, iscompleted: val })
                 }
@@ -152,13 +152,13 @@ export default function EditItemModal<T extends Record<string, any>>({
                 Provider Information
               </h3>
               <Toggle
-                checked={formData.hasProvider}
+                checked={Boolean(formData.hasProvider)}
                 onChange={(v) => handleToggle('hasProvider', v)}
                 className="scale-90"
               />
             </div>
 
-            {formData.hasProvider && (
+            {Boolean(formData.hasProvider) && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
                 {Object.keys(formData)
                   .filter(
@@ -176,7 +176,7 @@ export default function EditItemModal<T extends Record<string, any>>({
                       </Label>
                       <Input
                         name={key}
-                        value={formData[key] || ''}
+                        value={String(formData[key] || '')}
                         onChange={handleChange}
                         className="h-9 text-13"
                       />
@@ -194,14 +194,13 @@ export default function EditItemModal<T extends Record<string, any>>({
                 Reminder
               </h3>
               <Toggle
-                variant="brand"
-                checked={formData.hasReminder}
+                checked={Boolean(formData.hasReminder)}
                 onChange={(v) => handleToggle('hasReminder', v)}
                 className="scale-90"
               />
             </div>
 
-            {formData.hasReminder && (
+            {Boolean(formData.hasReminder) && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-orange-200">
                 {Object.keys(formData)
                   .filter((k) => k.toLowerCase().startsWith('reminder'))
@@ -215,7 +214,7 @@ export default function EditItemModal<T extends Record<string, any>>({
                       </Label>
                       <Input
                         name={key}
-                        value={formData[key] || ''}
+                        value={String(formData[key] || '')}
                         onChange={handleChange}
                         className="h-9 text-13"
                       />

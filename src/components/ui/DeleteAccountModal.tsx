@@ -3,6 +3,7 @@
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { X } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n'
 
 export interface DeleteAccountModalProps {
   isOpen: boolean
@@ -19,6 +20,8 @@ export const DeleteAccountModal = ({
   onClose,
   onConfirm,
 }: DeleteAccountModalProps) => {
+  const t = useI18nTranslations('settings.deleteAccountModal')
+  
   const handleKeepAccount = () => {
     onClose()
   }
@@ -32,7 +35,7 @@ export const DeleteAccountModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Delete Account"
+      title={t('title')}
       maxWidth="sm"
       showCloseButton={true}
       containerClassName="w-full max-w-[380px]"
@@ -66,11 +69,10 @@ export const DeleteAccountModal = ({
         {/* Content */}
         <div className="flex flex-col items-center gap-3 text-center w-full">
           <h3 className="text-16 font-semibold text-gray-900 leading-tight">
-            Are you sure you want to delete your account?
+            {t('question')}
           </h3>
           <p className="text-14 font-normal text-gray-600 leading-relaxed max-w-sm">
-            This action will permanently delete your account and all associated
-            data. Are you sure you want to continue?
+            {t('description')}
           </p>
         </div>
 
@@ -82,7 +84,7 @@ export const DeleteAccountModal = ({
             onClick={handleKeepAccount}
             className="w-full text-white rounded-full"
           >
-            Keep Account
+            {t('keepAccount')}
           </Button>
           <Button
             variant="outline"
@@ -90,7 +92,7 @@ export const DeleteAccountModal = ({
             onClick={handleDeleteAccount}
             className="w-full bg-brand-50 text-brand-500 border border-brand-500 hover:bg-brand-100 hover:text-brand-600 rounded-full"
           >
-            Delete Account
+            {t('deleteAccount')}
           </Button>
         </div>
       </div>

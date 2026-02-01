@@ -2,12 +2,16 @@
 
 import { useRouter } from '@/i18n/navigation'
 import { ChevronLeft } from 'lucide-react'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
+import { cn } from '@/lib/utils'
 
 /**
  * Privacy Policy page component
  * Matches Figma design exactly
  */
 export default function PrivacyPage() {
+  const t = useI18nTranslations('settings.privacy')
+  const isRTL = useIsRTL()
   const router = useRouter()
 
   const handleBack = () => {
@@ -16,58 +20,43 @@ export default function PrivacyPage() {
 
   const sections = [
     {
-      title: 'Information We Collect',
-      content: [
-        'Name, email, phone, ID (for providers).',
-        'Payment details (encrypted).',
-      ],
+      title: t('sections.informationWeCollect.title'),
+      content: t('sections.informationWeCollect.content'),
     },
     {
-      title: 'How We Use Your Information',
-      content: [
-        'To manage bookings and payments.',
-        'To improve services and personalize offers.',
-      ],
+      title: t('sections.howWeUse.title'),
+      content: t('sections.howWeUse.content'),
     },
     {
-      title: 'Data Protection',
-      content: [
-        'All data is encrypted and stored securely.',
-        'We never sell your data to third parties.',
-      ],
+      title: t('sections.dataProtection.title'),
+      content: t('sections.dataProtection.content'),
     },
     {
-      title: 'Sharing Data',
-      content: [
-        'Shared only with providers/clients for booking purposes.',
-        'Required by law when necessary.',
-      ],
+      title: t('sections.sharingData.title'),
+      content: t('sections.sharingData.content'),
     },
     {
-      title: 'User Rights',
-      content: [
-        'Edit or delete your data at any time.',
-        'Request account deletion permanently.',
-      ],
+      title: t('sections.userRights.title'),
+      content: t('sections.userRights.content'),
     },
     {
-      title: 'Changes to Policy',
-      content: 'Updates will be notified in-app.',
+      title: t('sections.changesToPolicy.title'),
+      content: t('sections.changesToPolicy.content'),
     },
   ]
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl" dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Page Header with Back Button */}
-      <div className="mb-6 flex items-center gap-2">
+      <div className={cn("mb-6 flex items-center gap-2", isRTL && "flex-row-reverse")}>
         <button
           onClick={handleBack}
           className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
           aria-label="Go back"
         >
-          <ChevronLeft className="h-6 w-6 text-gray-600" />
+          <ChevronLeft className={cn("h-6 w-6 text-gray-600", isRTL && "rotate-180")} />
         </button>
-        <h1 className="text-20 font-normal text-gray-900">Privacy Policy</h1>
+        <h1 className="text-20 font-normal text-gray-900">{t('title')}</h1>
       </div>
 
       {/* Content Card */}
@@ -83,7 +72,7 @@ export default function PrivacyPage() {
               {/* Section Content */}
               {Array.isArray(section.content) ? (
                 <div className="text-14 font-normal text-gray-600">
-                  {section.content.map((paragraph, pIndex) => (
+                  {section.content.map((paragraph: string, pIndex: number) => (
                     <p key={pIndex} className={pIndex === 0 ? 'mb-0' : ''}>
                       {paragraph}
                     </p>

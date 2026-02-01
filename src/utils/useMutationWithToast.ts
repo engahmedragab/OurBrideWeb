@@ -1,6 +1,7 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { useToast } from '@/components/ui/Toaster'
 import { extractApiMessage, extractApiErrorMessage, extractApiSuccess } from '@/utils/api-response.utils'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 interface UseMutationWithToastOptions<TData, TError, TVariables, TContext> 
   extends Omit<UseMutationOptions<TData, TError, TVariables, TContext>, 'onSuccess' | 'onError'> {
@@ -20,6 +21,7 @@ export function useMutationWithToast<TData = unknown, TError = Error, TVariables
   options: UseMutationWithToastOptions<TData, TError, TVariables, TContext>
 ) {
   const { addToast } = useToast()
+  const t = useI18nTranslations('common.toast')
   const {
     onSuccess,
     onError,
@@ -35,7 +37,8 @@ export function useMutationWithToast<TData = unknown, TError = Error, TVariables
     onSuccess: (data, variables, context) => {
       // Show success toast if enabled
       if (showSuccessToast) {
-        let message = 'Operation completed successfully'
+        const defaultSuccessMessage = t('defaultSuccess')
+        let message = defaultSuccessMessage
         
         if (successMessage) {
           if (typeof successMessage === 'function') {
@@ -45,9 +48,9 @@ export function useMutationWithToast<TData = unknown, TError = Error, TVariables
           }
         } else {
           // Try to extract message from API response
-          const apiMessage = extractApiMessage(data as unknown, message)
+          const apiMessage = extractApiMessage(data as unknown, defaultSuccessMessage)
           const isSuccess = extractApiSuccess(data as unknown)
-          if (isSuccess && apiMessage && apiMessage !== 'Operation completed successfully') {
+          if (isSuccess && apiMessage && apiMessage !== defaultSuccessMessage) {
             message = apiMessage
           }
         }
@@ -63,7 +66,8 @@ export function useMutationWithToast<TData = unknown, TError = Error, TVariables
     onError: (error, variables, context) => {
       // Show error toast if enabled
       if (showErrorToast) {
-        let message = 'An error occurred'
+        const defaultErrorMessage = t('defaultError')
+        let message = defaultErrorMessage
         
         if (errorMessage) {
           if (typeof errorMessage === 'function') {
@@ -76,7 +80,7 @@ export function useMutationWithToast<TData = unknown, TError = Error, TVariables
           if ('response' in error && error.response && typeof error.response === 'object') {
             const axiosError = error as { response?: { data?: unknown } }
             if (axiosError.response?.data) {
-              message = extractApiErrorMessage(axiosError.response.data, message)
+              message = extractApiErrorMessage(axiosError.response.data, defaultErrorMessage)
             }
           } else if (error instanceof Error) {
             message = error.message

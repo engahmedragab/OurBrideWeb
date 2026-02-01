@@ -4,6 +4,7 @@ import { ReactNode, useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { SearchInput } from './SearchInput'
 import { ArrowLeft } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface MessagesCenterLayoutProps {
   conversationsList: ReactNode
@@ -26,6 +27,7 @@ export const MessagesCenterLayout = ({
   className,
   selectedConversationId,
 }: MessagesCenterLayoutProps) => {
+  const t = useI18nTranslations('messages')
   // Initialize state: if conversation is selected and we're on mobile, start with conversations hidden
   const getInitialState = () => {
     if (typeof window !== 'undefined' && selectedConversationId) {
@@ -70,10 +72,10 @@ export const MessagesCenterLayout = ({
         {/* Search Header */}
         <div className="p-3 sm:p-4 border-b border-gray-200">
           <h2 className="text-18 sm:text-20 font-semibold text-gray-900 mb-3 sm:mb-4">
-            Messages Center
+            {t('center.title')}
           </h2>
           <SearchInput
-            placeholder="Search Chat"
+            placeholder={t('center.searchPlaceholder')}
             value={searchValue}
             onChange={e => onSearchChange?.(e.target.value)}
             size="md"
@@ -99,7 +101,7 @@ export const MessagesCenterLayout = ({
           className="md:hidden flex items-center gap-2 text-brand-500 hover:text-brand-600 transition-colors py-2 px-4 bg-white rounded-2xl border border-gray-200 shadow-sm"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span className="text-14 font-medium">Back to Conversations</span>
+          <span className="text-14 font-medium">{t('center.backToConversations')}</span>
         </button>
         {chatView}
       </div>

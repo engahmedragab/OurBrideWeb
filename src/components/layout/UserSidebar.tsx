@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { useCart } from '@/hooks/cart'
 import { useAuth } from '@/auth'
 import { useMineInfo } from '@/hooks/home'
+import { useI18nTranslations } from '@/i18n'
 import {
   Grid3x3,
   ShoppingCart,
@@ -44,6 +45,7 @@ export const UserSidebar = ({
   const pathname = usePathname()
   const { user: authUser } = useAuth()
   const { data: mineInfo } = useMineInfo()
+  const t = useI18nTranslations('userSidebar')
 
   // Extract user data from mineInfo (fallback to authUser)
   // Handle different response structures: mineInfo.data.userProfile.user or mineInfo.userProfile.user
@@ -96,42 +98,42 @@ export const UserSidebar = ({
     {
       items: [
         {
-          label: 'Events',
+          label: t('menuItems.events'),
           path: '/dashboard/my-events',
           icon: Grid3x3,
         },
         {
-          label: 'My Cart',
+          label: t('menuItems.myCart'),
           path: '/cart',
           icon: ShoppingCart,
         },
         {
-          label: 'Reservations',
+          label: t('menuItems.reservations'),
           path: '/reservations',
           icon: Calendar,
         },
         {
-          label: 'Wishlist',
+          label: t('menuItems.wishlist'),
           path: '/wishlist',
           icon: Heart,
         },
         {
-          label: 'Favorites',
+          label: t('menuItems.favorites'),
           path: '/favorites',
           icon: Star,
         },
         {
-          label: 'Follows',
+          label: t('menuItems.follows'),
           path: '/follows',
           icon: Users,
         },
         {
-          label: 'Orders List',
+          label: t('menuItems.ordersList'),
           path: '/orders',
           icon: FileCheck,
         },
         {
-          label: 'Delivery Address',
+          label: t('menuItems.deliveryAddress'),
           path: '/addresses',
           icon: MapPin,
         },
@@ -140,36 +142,36 @@ export const UserSidebar = ({
     {
       items: [
         {
-          label: 'Messages',
+          label: t('menuItems.messages'),
           path: '/messages',
           icon: Mail,
           comingSoon: true,
         },
         {
-          label: 'Notifications',
+          label: t('menuItems.notifications'),
           path: '/notifications',
           icon: Bell,
         },
         {
-          label: 'Gift Center',
+          label: t('menuItems.giftCenter'),
           path: '/dashboard/gift-center',
           icon: Gift,
           comingSoon: true,
         },
         {
-          label: 'Affiliate Program',
+          label: t('menuItems.affiliateProgram'),
           path: '/affiliate',
           icon: Volume2,
           comingSoon: true,
         },
         {
-          label: 'Referrals',
+          label: t('menuItems.referrals'),
           path: '/referrals',
           icon: UserPlus,
           comingSoon: true,
         },
         {
-          label: 'Coupons',
+          label: t('menuItems.coupons'),
           path: '/coupons',
           icon: Ticket,
           comingSoon: true,
@@ -179,17 +181,17 @@ export const UserSidebar = ({
     {
       items: [
         {
-          label: 'Profile',
+          label: t('menuItems.profile'),
           path: '/profile',
           icon: User,
         },
         {
-          label: 'Settings',
+          label: t('menuItems.settings'),
           path: '/dashboard/settings',
           icon: Settings,
         },
         {
-          label: 'Help Center',
+          label: t('menuItems.helpCenter'),
           path: '/dashboard/help-center',
           icon: ThumbsUp,
         },
@@ -258,7 +260,7 @@ export const UserSidebar = ({
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-12 text-gray-500 font-medium">Welcome Back</p>
+            <p className="text-12 text-gray-500 font-medium">{t('welcomeBack')}</p>
             <p className="text-16 font-semibold text-gray-900 truncate">
               {userName}
             </p>
@@ -281,45 +283,55 @@ export const UserSidebar = ({
 
                 return (
                   <li key={item.path} className="relative">
-                    <Link
-                      href={item.path}
-                      onClick={onLinkClick}
-                      aria-current={active ? 'page' : undefined}
-                      data-active={active ? 'true' : undefined}
-                      className={cn(
-                        'relative flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-lg text-14 font-normal transition-all duration-150',
-                        active
-                          ? 'text-brand-500'
-                          : 'text-gray-900 hover:bg-gray-50'
-                      )}
-                    >
-                      {/* Red vertical indicator for active item - positioned on left edge */}
-                      {active && (
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500 rounded-full" />
-                      )}
-                      <Icon
+                    {item.comingSoon ? (
+                      <div
                         className={cn(
-                          'h-5 w-5 flex-shrink-0',
-                          active ? 'text-brand-500' : 'text-gray-900'
+                          'relative flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-lg text-14 font-normal cursor-not-allowed opacity-60',
+                          'text-gray-500'
                         )}
-                      />
-                      <span className="flex-1">{item.label}</span>
-                      {item.comingSoon && (
+                      >
+                        <Icon className="h-5 w-5 flex-shrink-0 text-gray-400" />
+                        <span className="flex-1">{item.label}</span>
                         <span className="flex items-center justify-center rounded-full bg-gray-200 text-8 font-medium text-brand-500 px-1 h-3.5 min-w-[28px] flex-shrink-0">
-                          Coming Soon
+                          {t('comingSoon')}
                         </span>
-                      )}
-                      {item.path === '/cart' && cartCount > 0 && (
-                        <span
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.path}
+                        onClick={onLinkClick}
+                        aria-current={active ? 'page' : undefined}
+                        data-active={active ? 'true' : undefined}
+                        className={cn(
+                          'relative flex items-center gap-3 pl-4 pr-3 py-2.5 rounded-lg text-14 font-normal transition-all duration-150',
+                          active
+                            ? 'text-brand-500'
+                            : 'text-gray-900 hover:bg-gray-50'
+                        )}
+                      >
+                        {/* Red vertical indicator for active item - positioned on left edge */}
+                        {active && (
+                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500 rounded-full" />
+                        )}
+                        <Icon
                           className={cn(
-                            'flex min-w-[20px] h-5 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white px-1',
-                            active && 'bg-white text-brand-500'
+                            'h-5 w-5 flex-shrink-0',
+                            active ? 'text-brand-500' : 'text-gray-900'
                           )}
-                        >
-                          {cartCount > 99 ? '99+' : cartCount}
-                        </span>
-                      )}
-                    </Link>
+                        />
+                        <span className="flex-1">{item.label}</span>
+                        {item.path === '/cart' && cartCount > 0 && (
+                          <span
+                            className={cn(
+                              'flex min-w-[20px] h-5 items-center justify-center rounded-full bg-brand-500 text-10 font-semibold text-white px-1',
+                              active && 'bg-white text-brand-500'
+                            )}
+                          >
+                            {cartCount > 99 ? '99+' : cartCount}
+                          </span>
+                        )}
+                      </Link>
+                    )}
                   </li>
                 )
               })}

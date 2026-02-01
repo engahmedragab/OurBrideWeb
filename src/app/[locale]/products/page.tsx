@@ -4,6 +4,10 @@ import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { HeroCarousel, OfferBanner, LoadingSpinner, useToast } from '@/components/ui'
 import { useMemo, useCallback } from 'react'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Autoplay } from 'swiper/modules'
+import Image from 'next/image'
+import 'swiper/css'
 import {
   ProductCategoriesSection,
   ProductOffersSection,
@@ -21,6 +25,8 @@ import { useProductsHome } from '@/hooks/products'
 import { extractStoreHomeData } from '@/utils/home-data.utils'
 import { handleApiResponseForToast } from '@/utils/api-response.utils'
 import type { Product } from '@/types/product'
+import type { ProductHeaderResponse } from '@/types/responses/product-header-response'
+import type { ProductBrandResponse } from '@/types/responses/product-brand-response'
 import flowersImage from '@/assets/images/flowers.png'
 import flowersImageRight from '@/assets/images/flowersRight.png'
 import whyBridesChooseProductsImage from '@/assets/images/bridProductSection.png'
@@ -31,7 +37,7 @@ import {
   MAX_HERO_SLIDES,
   DEFAULT_HOME_PRODUCTS_COUNT,
 } from './constants'
-import { getCategoryIconMap } from './utils/category-icons'
+import { getCategoryIcons, getDefaultCategoryIcon } from './utils/category-icons'
 import { useI18nTranslations, useIsRTL, useLocale } from '@/i18n'
 
 export default function ProductIntroPage() {
@@ -69,17 +75,18 @@ export default function ProductIntroPage() {
 
   const isLoading = storeHomeLoading || productsHomeLoading
 
-  // Map API categories to component format - memoize icon map
-  const categoryIconMap = useMemo(() => getCategoryIconMap(), [])
+  // Map API categories to component format - use static icons (no slug matching)
+  const categoryIcons = useMemo(() => getCategoryIcons(), [])
+  const defaultIcon = useMemo(() => getDefaultCategoryIcon(), [])
   const mappedCategories: CategoryType[] = useMemo(() => {
-    return categories.map(category => ({
+    return categories.map((category, index) => ({
       id: String(category.id),
       title: category.nameEn || category.nameAr || '',
       description: t('exclusiveCoupons.text'),
       href: `/products/category/${category.slug || category.id}`,
-      icon: categoryIconMap[category.slug || ''] || categoryIconMap.default,
+      icon: categoryIcons[index % categoryIcons.length] || defaultIcon,
     }))
-  }, [categories, categoryIconMap, t])
+  }, [categories, categoryIcons, defaultIcon, t])
 
   // Get translated hero slides
   const translatedHeroSlides = useMemo(() => {
@@ -116,42 +123,79 @@ export default function ProductIntroPage() {
     return translatedHeroSlides
   }, [apiBanners, tCommon, translatedHeroSlides])
 
+  // Helper function to map ProductHeaderResponse to Product type
+  const mapProductHeaderToProduct = useCallback((header: ProductHeaderResponse): Product => ({
+    id: String(header.id),
+    title: isRTL ? header.nameAr || header.nameEn || header.name : header.name || header.nameEn || header.nameAr || '',
+    description: isRTL ? header.shortDescriptionAr || header.shortDescriptionEn || header.shortDescription : header.shortDescription || header.shortDescriptionAr || header.shortDescriptionEn || '',
+    images: header.image ? [header.image] : [],
+    provider: {
+      id: header.providerId ? String(header.providerId) : '',
+      name: isRTL ? header.provider?.nameAr || header.provider?.nameEn || '' : header.provider?.nameEn || header.provider?.nameAr || '',
+      verified: false,
+      image: header.provider?.profileURL || undefined,
+    },
+    price: {
+      original: header.regularPrice || header.price || 0,
+      discounted: header.salePrice || header.price || 0,
+      currency: tCommon('productCommon.currencyUSD'),
+    },
+    rating: {
+      value: parseFloat(header.rate) || 0,
+      count: header.ratingCount || 0,
+    },
+    category: {
+      id: String(header.categoryId),
+      name: '',
+      slug: '',
+    },
+    tags: [],
+    inStock: header.inStock,
+    stockQuantity: header.stockQuantity || undefined,
+    sku: header.sku,
+  }), [isRTL, tCommon])
+
   // Use products from products home endpoint (headers contains ProductHeaderResponse[])
   // Map ProductHeaderResponse to Product type
   const displayProducts = useMemo(() => {
     if (!productsHomeData?.headers) return []
-    
-    return productsHomeData.headers.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map((header): Product => ({
-      id: String(header.id),
-      title:isRTL ? header.nameAr || header.nameEn || header.name : header.name || header.nameEn || header.nameAr || '',
-      description: isRTL ? header.shortDescriptionAr || header.shortDescriptionEn || header.shortDescription : header.shortDescription || header.shortDescriptionAr || header.shortDescriptionEn || '',
-      images: header.image ? [header.image] : [],
-      provider: {
-        id: header.providerId ? String(header.providerId) : '',
-        name: isRTL ? header.provider?.nameAr || header.provider?.nameEn || '' : header.provider?.nameEn || header.provider?.nameAr || '',
-        verified: false,
-        image: header.provider?.profileURL || undefined,
-      },
-      price: {
-        original: header.regularPrice || header.price || 0,
-        discounted: header.salePrice || header.price || 0,
-        currency: tCommon('productCommon.currencyUSD'),
-      },
-      rating: {
-        value: parseFloat(header.rate) || 0,
-        count: header.ratingCount || 0,
-      },
-      category: {
-        id: String(header.categoryId),
-        name: '',
-        slug: '',
-      },
-      tags: [],
-      inStock: header.inStock,
-      stockQuantity: header.stockQuantity || undefined,
-      sku: header.sku,
-    }))
-  }, [productsHomeData?.headers, isRTL])
+    return productsHomeData.headers.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map(mapProductHeaderToProduct)
+  }, [productsHomeData?.headers, mapProductHeaderToProduct])
+
+  // Extract and map tags products
+  const tagsProducts = useMemo(() => {
+    if (!productsHomeData?.tags) return []
+    return productsHomeData.tags.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map(mapProductHeaderToProduct)
+  }, [productsHomeData?.tags, mapProductHeaderToProduct])
+
+  // Extract and map attributes products
+  const attributesProducts = useMemo(() => {
+    if (!productsHomeData?.attributes) return []
+    return productsHomeData.attributes.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map(mapProductHeaderToProduct)
+  }, [productsHomeData?.attributes, mapProductHeaderToProduct])
+
+  // Extract brands
+  const brands = useMemo(() => {
+    return productsHomeData?.brands || []
+  }, [productsHomeData?.brands])
+
+  // Extract and map flash sale products (grouped by date)
+  const flashSaleProducts = useMemo(() => {
+    if (!productsHomeData?.flashSaleGrouped) return []
+    // Get all products from all dates, flatten the grouped structure
+    const allFlashSaleProducts: ProductHeaderResponse[] = []
+    Object.values(productsHomeData.flashSaleGrouped).forEach((products) => {
+      if (Array.isArray(products)) {
+        allFlashSaleProducts.push(...products)
+      }
+    })
+    return allFlashSaleProducts.slice(0, DEFAULT_HOME_PRODUCTS_COUNT).map(mapProductHeaderToProduct)
+  }, [productsHomeData?.flashSaleGrouped, mapProductHeaderToProduct])
+
+  // Extract statistics
+  const statistics = useMemo(() => {
+    return productsHomeData?.statistics || null
+  }, [productsHomeData?.statistics])
   // Map providers to BestProvidersSection format
   const mappedProviders: BestProviderType[] = useMemo(() => {
     if (apiProvidersData.length === 0 || displayProducts.length === 0) {
@@ -183,7 +227,7 @@ export default function ProductIntroPage() {
         product: providerProduct,
       }
     })
-  }, [apiProvidersData, displayProducts])
+  }, [apiProvidersData, displayProducts, tCommon])
 
   const handleWishlistToggle = (_productId: string) => {
     // TODO: Implement wishlist toggle
@@ -214,7 +258,7 @@ export default function ProductIntroPage() {
         addToast(errorMessage, 'error')
       }
     },
-    [displayProducts, addToCart, addToast]
+    [displayProducts, addToCart, addToast, tCommon]
   )
 
   const handleSubscribe = (_email: string) => {
@@ -258,7 +302,7 @@ export default function ProductIntroPage() {
           />
         )}
 
-        {/* 3) ProductOffersSection */}
+        {/* 3) ProductOffersSection - Headers Products */}
         {displayProducts.length > 0 && (
           <ProductOffersSection
             products={displayProducts}
@@ -267,6 +311,179 @@ export default function ProductIntroPage() {
             onWishlistToggle={handleWishlistToggle}
             onAddToCart={handleAddToCart}
           />
+        )}
+
+        {/* Tags Products Section */}
+        {tagsProducts.length > 0 && (
+          <ProductOffersSection
+            products={tagsProducts}
+            title={t('productTagsSection.title')}
+            onWishlistToggle={handleWishlistToggle}
+            onAddToCart={handleAddToCart}
+          />
+        )}
+
+        {/* Attributes Products Section */}
+        {attributesProducts.length > 0 && (
+          <ProductOffersSection
+            products={attributesProducts}
+            title={t('productAttributesSection.title')}
+            onWishlistToggle={handleWishlistToggle}
+            onAddToCart={handleAddToCart}
+          />
+        )}
+
+        {/* Flash Sale Products Section */}
+        {flashSaleProducts.length > 0 && (
+          <ProductOffersSection
+            products={flashSaleProducts}
+            timerText={t('productFlashSaleSection.timerText')}
+            title={t('productFlashSaleSection.title')}
+            onWishlistToggle={handleWishlistToggle}
+            onAddToCart={handleAddToCart}
+          />
+        )}
+
+        {/* Brands Section - Infinite Carousel */}
+        {brands.length > 0 && (
+          <section className="py-8 md:py-12">
+            <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px] mb-6 md:mb-8 text-center">
+              {t('productBrandsSection.title')}
+            </h2>
+            <div className="relative overflow-hidden">
+              <Swiper
+                modules={[Autoplay]}
+                spaceBetween={20}
+                slidesPerView={2}
+                loop={true}
+                autoplay={{
+                  delay: 2000,
+                  disableOnInteraction: false,
+                }}
+                speed={3000}
+                breakpoints={{
+                  640: {
+                    slidesPerView: 3,
+                    spaceBetween: 24,
+                  },
+                  768: {
+                    slidesPerView: 4,
+                    spaceBetween: 24,
+                  },
+                  1024: {
+                    slidesPerView: 5,
+                    spaceBetween: 30,
+                  },
+                  1280: {
+                    slidesPerView: 6,
+                    spaceBetween: 30,
+                  },
+                }}
+                className="!pb-4"
+              >
+                {brands.map((brand) => {
+                  // Get brand image from medias array if available
+                  // Note: medias property may exist in API response but not in type definition
+                  const brandWithMedias = brand as ProductBrandResponse & {
+                    medias?: Array<{ url?: string; originalUrl?: string; thumbnailUrl?: string }>
+                    image?: string
+                  }
+                  const brandImage = brandWithMedias.medias?.[0]?.url || 
+                                   brandWithMedias.medias?.[0]?.originalUrl || 
+                                   brandWithMedias.medias?.[0]?.thumbnailUrl ||
+                                   brandWithMedias.image || null
+                  const brandName = isRTL ? brand.nameAr || brand.nameEn || brand.name : brand.name || brand.nameEn || brand.nameAr
+                  
+                  return (
+                    <SwiperSlide key={brand.id}>
+                      <div className="flex flex-col items-center p-4 rounded-lg border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all cursor-pointer h-full">
+                        <div className="relative w-full aspect-square mb-3 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                          {brandImage ? (
+                            <Image
+                              src={brandImage}
+                              alt={brandName || 'Brand'}
+                              fill
+                              className="object-contain p-2"
+                              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
+                              onError={(e) => {
+                                // Fallback to placeholder on error
+                                const target = e.target as HTMLImageElement
+                                target.style.display = 'none'
+                                const parent = target.parentElement
+                                if (parent) {
+                                  const placeholder = parent.querySelector('.brand-placeholder') as HTMLElement
+                                  if (placeholder) placeholder.style.display = 'flex'
+                                }
+                              }}
+                            />
+                          ) : null}
+                          <div 
+                            className={`brand-placeholder absolute inset-0 w-full h-full flex items-center justify-center ${brandImage ? 'hidden' : 'flex'}`}
+                          >
+                            <span className="text-gray-400 text-12 font-medium text-center px-2">
+                              {tCommon('noImageAvailable')}
+                            </span>
+                          </div>
+                        </div>
+                        <h3 className="text-14 font-medium text-gray-900 text-center line-clamp-2">
+                          {brandName}
+                        </h3>
+                        {brand.count !== null && brand.count > 0 && (
+                          <p className="text-12 text-gray-500 mt-1 text-center">
+                            {brand.count} {t('productBrandsSection.products')}
+                          </p>
+                        )}
+                      </div>
+                    </SwiperSlide>
+                  )
+                })}
+              </Swiper>
+            </div>
+          </section>
+        )}
+
+        {/* Statistics Section - Matching Home Page Design */}
+        {statistics && (
+          <section className="container-custom py-8 md:py-12">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+              <div className="text-center">
+                <div className="text-28 md:text-36 lg:text-40 xl:text-48 font-medium text-brand-500 mb-2">
+                  {statistics.customers}
+                </div>
+                <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
+                  {t('productStatisticsSection.customers')}
+                </div>
+                <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
+              </div>
+              <div className="text-center">
+                <div className="text-28 md:text-36 lg:text-40 xl:text-48 font-medium text-brand-500 mb-2">
+                  {statistics.orders}
+                </div>
+                <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
+                  {t('productStatisticsSection.orders')}
+                </div>
+                <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
+              </div>
+              <div className="text-center">
+                <div className="text-28 md:text-36 lg:text-40 xl:text-48 font-medium text-brand-500 mb-2">
+                  {statistics.reviews}
+                </div>
+                <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
+                  {t('productStatisticsSection.reviews')}
+                </div>
+                <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
+              </div>
+              <div className="text-center">
+                <div className="text-28 md:text-36 lg:text-40 xl:text-48 font-medium text-brand-500 mb-2">
+                  {statistics.rating > 0 ? statistics.rating.toFixed(1) : '0.0'}
+                </div>
+                <div className="text-16 md:text-18 lg:text-20 font-medium text-gray-600 mb-2">
+                  {t('productStatisticsSection.rating')}
+                </div>
+                <div className="w-28 h-0.5 bg-gray-300 mx-auto"></div>
+              </div>
+            </div>
+          </section>
         )}
 
         {/* 4) WhyBridesChooseProductsSection */}

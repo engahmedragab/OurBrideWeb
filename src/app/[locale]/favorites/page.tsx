@@ -5,13 +5,10 @@ import { useRouter } from '@/i18n/navigation'
 import { UserPageLayout } from '@/components/layout'
 import {
   EmptyState,
-  ServiceGrid,
-  ProductGrid,
   ServicesProductsFilter,
   PageHeader,
   ErrorDisplay,
   LoadingOverlay,
-  SelectPopover,
   Button,
 } from '@/components/ui'
 import { RefreshCw } from 'lucide-react'
@@ -27,12 +24,12 @@ import { useToggleProductFavorite } from '@/hooks/products/useProductInteraction
 import { useToggleProviderFavorite } from '@/hooks/providers/useProviderInteractions'
 import { WishlistServiceCard, WishlistProductCard, WishlistProviderCard } from '@/components/ui'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
-import { useLocale } from '@/i18n'
+import { useLocale, useI18nTranslations } from '@/i18n'
 
 export default function FavoritesPage() {
   const locale = useLocale()
+  const t = useI18nTranslations('favorites')
   const [favoriteType, setFavoriteType] = useState<'services' | 'products'>('services')
-  const [selectedSource, setSelectedSource] = useState<Source | 'all'>('all')
 
   // Fetch favorites using FavoriteResponse from API
   const {
@@ -73,36 +70,23 @@ export default function FavoritesPage() {
     return []
   }, [favoritesData])
 
-  // Filter favorites by type (services or products) and source
+  // Filter favorites by type (services or products)
   const filteredFavorites = useMemo(() => {
     if (!favorites.length) {
       return []
     }
 
     return favorites.filter((favorite: FavoriteResponse) => {
-      // First filter by source if selected
-      if (selectedSource !== 'all' && favorite.source !== selectedSource) {
+      // Show all favorites that have sourceObject
+      if (!favorite.sourceObject) {
         return false
       }
 
-      // If source filter is 'all', show all favorites that have sourceObject
-      if (selectedSource === 'all') {
-        // Show all favorites that have sourceObject (services, products, providers)
-        return !!favorite.sourceObject
-      }
-
-      // When a specific source is selected, show that source
-      // Providers are always shown when source is Provider
-      if (favorite.source === Source.Provider) {
-        return true
-      }
-
-      // Then filter by type (services or products) for backward compatibility
+      // Filter by type (services or products)
       const type = favorite.favoriteType || favorite.category || ''
 
       if (favoriteType === 'services') {
         // Filter for service-related favorites
-        // Check source first, then fallback to type/category
         return (
           favorite.source === Source.Service ||
           type.toLowerCase().includes('service') ||
@@ -110,7 +94,6 @@ export default function FavoritesPage() {
         )
       } else {
         // Filter for product-related favorites
-        // Check source first, then fallback to type/category
         return (
           favorite.source === Source.Product ||
           type.toLowerCase().includes('product') ||
@@ -118,7 +101,7 @@ export default function FavoritesPage() {
         )
       }
     })
-  }, [favorites, favoriteType, selectedSource])
+  }, [favorites, favoriteType])
 
   // Extract all services, products, and providers from sourceObject
   const allFavoriteServices: Service[] = useMemo(() => {
@@ -288,32 +271,8 @@ export default function FavoritesPage() {
     return filteredFavorites.reduce((sum, favorite) => sum + (favorite.viewCount || 0), 0)
   }, [filteredFavorites])
 
-  // Source filter options - common sources for favorites
-  const sourceOptions = useMemo(() => [
-    { value: 'all', label: 'All Sources' },
-    { value: Source.Product, label: 'Products' },
-    { value: Source.Service, label: 'Services' },
-    { value: Source.Membership, label: 'Memberships' },
-    { value: Source.GiftCard, label: 'Gift Cards' },
-    { value: Source.ServiceReservation, label: 'Service Reservations' },
-    { value: Source.Provider, label: 'Providers' },
-    { value: Source.Offer, label: 'Offers' },
-    { value: Source.Preparation, label: 'Preparations' },
-    { value: Source.Post, label: 'Posts' },
-    { value: Source.Blog, label: 'Blogs' },
-    { value: Source.Article, label: 'Articles' },
-    { value: Source.Reel, label: 'Reels' },
-  ], [])
-
   const headerRightContent = (
     <div className="flex items-center gap-2">
-      <SelectPopover
-        value={selectedSource}
-        onChange={(value) => setSelectedSource(value as Source | 'all')}
-        options={sourceOptions}
-        placeholder="Filter by source"
-        className="w-40"
-      />
       <ServicesProductsFilter value={favoriteType} onChange={setFavoriteType} />
       <Button
         variant="outline"
@@ -332,13 +291,13 @@ export default function FavoritesPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Favorites"
+          title={t('title')}
           rightContent={headerRightContent}
         />
         <LoadingOverlay
           open={true}
-          title="Loading favorites..."
-          subtitle="Please wait a moment"
+          title={t('loading.title')}
+          subtitle={t('loading.subtitle')}
         />
       </UserPageLayout>
     )
@@ -349,13 +308,13 @@ export default function FavoritesPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Favorites"
+          title={t('title')}
           rightContent={headerRightContent}
         />
         <ErrorDisplay
-          title="Error loading favorites"
-          message="Please try again later"
-          actionLabel="Back to Home"
+          title={t('error.title')}
+          message={t('error.message')}
+          actionLabel={t('error.actionLabel')}
           actionHref="/"
         />
       </UserPageLayout>
@@ -366,10 +325,10 @@ export default function FavoritesPage() {
     <UserPageLayout>
       {/* Page Header */}
       <PageHeader
-        title="Favorites"
+        title={t('title')}
         subtitle={
           hasFavoriteItems || hasFavorites
-            ? `${totalItems > 0 ? totalItems : filteredFavorites.length} ${totalItems === 1 ? 'Item' : 'Items'}`
+            ? `${totalItems > 0 ? totalItems : filteredFavorites.length} ${totalItems === 1 ? t('subtitle.item') : t('subtitle.items')}`
             : undefined
         }
         rightContent={headerRightContent}
@@ -412,7 +371,7 @@ export default function FavoritesPage() {
         <div className="space-y-4">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Your Favorites ({filteredFavorites.length})
+              {t('list.title', { count: filteredFavorites.length })}
             </h3>
             <div className="space-y-3">
               {filteredFavorites.map((favorite: FavoriteResponse) => (
@@ -423,7 +382,7 @@ export default function FavoritesPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-16 font-medium text-gray-900">
-                        {favorite.displayName || favorite.nameEn || favorite.nameAr || `Favorite #${favorite.id}`}
+                        {favorite.displayName || favorite.nameEn || favorite.nameAr || t('list.fallbackName', { id: favorite.id })}
                       </h4>
                       {favorite.source && (
                         <span className="text-12 px-2 py-1 bg-gray-100 text-gray-600 rounded">
@@ -432,7 +391,7 @@ export default function FavoritesPage() {
                       )}
                       {favorite.sourceId && (
                         <span className="text-12 px-2 py-1 bg-blue-100 text-blue-600 rounded">
-                          ID: {favorite.sourceId}
+                          {t('list.sourceId', { id: favorite.sourceId })}
                         </span>
                       )}
                     </div>
@@ -442,10 +401,10 @@ export default function FavoritesPage() {
                       </p>
                     )}
                     <div className="flex items-center gap-4 text-12 text-gray-500">
-                      <span>{favorite.viewCount || 0} views</span>
+                      <span>{t('list.viewCount', { count: favorite.viewCount || 0 })}</span>
                       {favorite.lastModifiedDate && (
                         <span>
-                          Updated {new Date(favorite.lastModifiedDate).toLocaleDateString()}
+                          {t('list.updated', { date: new Date(favorite.lastModifiedDate).toLocaleDateString() })}
                         </span>
                       )}
                     </div>
@@ -457,7 +416,7 @@ export default function FavoritesPage() {
                       // TODO: Navigate to favorite detail or delete
                     }}
                   >
-                    View
+                    {t('list.view')}
                   </Button>
                 </div>
               ))}
@@ -467,9 +426,9 @@ export default function FavoritesPage() {
       ) : (
         <EmptyState
           illustration={orderEmptySvg}
-          title="You don't have any items in your favorites"
-          description="Start exploring services and products to begin your journey"
-          actionLabel="Start Shopping"
+          title={t('empty.title')}
+          description={t('empty.description')}
+          actionLabel={t('empty.actionLabel')}
           actionHref="/products"
         />
       )}
@@ -477,8 +436,8 @@ export default function FavoritesPage() {
       {/* Loading Overlay for Mutations */}
       <LoadingOverlay
         open={deleteFavoriteMutation.isPending || toggleServiceFavoriteMutation.isPending || toggleProductFavoriteMutation.isPending || toggleProviderFavoriteMutation.isPending}
-        title="Updating favorites..."
-        subtitle="Please wait a moment"
+        title={t('updating.title')}
+        subtitle={t('updating.subtitle')}
       />
     </UserPageLayout>
   )

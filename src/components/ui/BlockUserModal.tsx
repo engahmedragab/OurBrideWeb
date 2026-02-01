@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import Image from 'next/image'
 import deleteXIcon from '@/assets/svg/deleteXIcon.svg'
 import successCheck from '@/assets/svg/successCheck.svg'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface BlockUserModalProps {
   isOpen: boolean
@@ -26,6 +27,7 @@ export const BlockUserModal = ({
   onReport,
   userName = 'this user',
 }: BlockUserModalProps) => {
+  const t = useI18nTranslations('messages')
   const [step, setStep] = useState<'confirm' | 'success'>('confirm')
 
   const handleClose = () => {
@@ -50,7 +52,7 @@ export const BlockUserModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Block User"
+      title={t('blockUser.title')}
       maxWidth="sm"
       showCloseButton={true}
       containerClassName="w-full max-w-[380px]"
@@ -72,10 +74,10 @@ export const BlockUserModal = ({
           {/* Content */}
           <div className="flex flex-col items-center gap-3 text-center w-full">
             <h3 className="text-16 font-semibold text-gray-900 leading-tight">
-              Are you sure you want to block {userName}?
+              {t('blockUser.confirmTitle', { userName })}
             </h3>
             <p className="text-14 font-normal text-gray-400 leading-relaxed">
-              They will no longer be able to contact you once blocked.
+              {t('blockUser.confirmDescription')}
             </p>
           </div>
 
@@ -87,7 +89,7 @@ export const BlockUserModal = ({
               onClick={handleClose}
               className="w-full text-white rounded-full"
             >
-              Cancel
+              {t('blockUser.cancel')}
             </Button>
             <Button
               variant="outline"
@@ -95,7 +97,7 @@ export const BlockUserModal = ({
               onClick={handleBlock}
               className="w-full bg-brand-50 text-brand-500 border border-brand-500 hover:bg-brand-100 hover:text-brand-600 rounded-full"
             >
-              Block User
+              {t('blockUser.block')}
             </Button>
           </div>
         </div>
@@ -115,11 +117,10 @@ export const BlockUserModal = ({
           {/* Content */}
           <div className="flex flex-col items-center gap-3 text-center w-full">
             <h3 className="text-16 font-semibold text-gray-900 leading-tight">
-              This account has been blocked
+              {t('blockUser.successTitle')}
             </h3>
             <p className="text-14 font-normal text-gray-400 leading-relaxed">
-              You will no longer be able to communicate with this user to ensure
-              safety and compliance with OurBride policies.
+              {t('blockUser.successDescription')}
             </p>
           </div>
 
@@ -131,7 +132,7 @@ export const BlockUserModal = ({
               onClick={handleClose}
               className="w-full text-white rounded-full"
             >
-              Done
+              {t('blockUser.done')}
             </Button>
             <Button
               variant="outline"
@@ -139,7 +140,7 @@ export const BlockUserModal = ({
               onClick={handleReport}
               className="w-full bg-white text-brand-500 border border-brand-500 hover:bg-brand-50 rounded-full"
             >
-              Report
+              {t('blockUser.report')}
             </Button>
           </div>
         </div>

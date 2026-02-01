@@ -46,12 +46,37 @@ export const buildProductQueryParams = (
 /**
  * Apply client-side filtering and sorting
  */
-export const applyClientSideFilters = <T extends { inStock: boolean; price: { discounted: number }; rating: { value: number; count: number } }>(
+export const applyClientSideFilters = <T extends { 
+  inStock: boolean; 
+  price: { discounted: number }; 
+  rating: { value: number; count: number };
+  category?: { id: string };
+}>(
   products: T[],
   filters: ProductFilter,
   sortBy: string
 ): T[] => {
   let result = [...products]
+
+  // Apply category filter
+  if (filters.category && filters.category.length > 0) {
+    result = result.filter(p => 
+      p.category && filters.category?.includes(p.category.id)
+    )
+  }
+
+  // Apply price range filter
+  if (filters.priceRange) {
+    result = result.filter(p => 
+      p.price.discounted >= filters.priceRange!.min && 
+      p.price.discounted <= filters.priceRange!.max
+    )
+  }
+
+  // Apply rating filter
+  if (filters.rating !== undefined) {
+    result = result.filter(p => p.rating.value >= filters.rating!)
+  }
 
   // Apply inStock filter
   if (filters.inStock !== undefined) {

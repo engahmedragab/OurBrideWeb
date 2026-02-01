@@ -28,10 +28,11 @@ import { Source } from '@/../client/common/api/gen/ourbride-api'
 import { mapProductResponseToProduct } from '@/types/api/product.api.types'
 import { mapServiceResponseToService } from '@/utils/services-category.utils'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
-import { useLocale } from '@/i18n'
+import { useLocale, useI18nTranslations } from '@/i18n'
 
 export default function WishlistPage() {
   const locale = useLocale()
+  const t = useI18nTranslations('wishlist')
   const [wishlistType, setWishlistType] = useState<'services' | 'products'>('services')
 
   // Fetch wishlists using WishlistResponse from API
@@ -255,13 +256,13 @@ export default function WishlistPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Wishlist"
+          title={t('title')}
           rightContent={headerRightContent}
         />
         <LoadingOverlay
           open={true}
-          title="Loading wishlists..."
-          subtitle="Please wait a moment"
+          title={t('loading.title')}
+          subtitle={t('loading.subtitle')}
         />
       </UserPageLayout>
     )
@@ -272,13 +273,13 @@ export default function WishlistPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Wishlist"
+          title={t('title')}
           rightContent={headerRightContent}
         />
         <ErrorDisplay
-          title="Error loading wishlists"
-          message="Please try again later"
-          actionLabel="Back to Home"
+          title={t('error.title')}
+          message={t('error.message')}
+          actionLabel={t('error.actionLabel')}
           actionHref="/"
         />
       </UserPageLayout>
@@ -289,10 +290,10 @@ export default function WishlistPage() {
     <UserPageLayout>
       {/* Page Header */}
       <PageHeader
-        title="Wishlist"
+        title={t('title')}
         subtitle={
           hasWishlistItems || hasWishlists
-            ? `${totalItems > 0 ? totalItems : filteredWishlists.length} ${totalItems === 1 ? 'Item' : 'Items'}`
+            ? `${totalItems > 0 ? totalItems : filteredWishlists.length} ${totalItems === 1 ? t('subtitle.item') : t('subtitle.items')}`
             : undefined
         }
         rightContent={headerRightContent}
@@ -335,7 +336,7 @@ export default function WishlistPage() {
         <div className="space-y-4">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Your Wishlists ({filteredWishlists.length})
+              {t('list.title', { count: filteredWishlists.length })}
             </h3>
             <div className="space-y-3">
               {filteredWishlists.map((wishlist: WishlistResponse) => (
@@ -346,7 +347,7 @@ export default function WishlistPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="text-16 font-medium text-gray-900">
-                        {wishlist.displayName || wishlist.name || `Wishlist #${wishlist.id}`}
+                        {wishlist.displayName || wishlist.name || t('list.fallbackName', { id: wishlist.id })}
                       </h4>
                       {wishlist.source && (
                         <span className="text-12 px-2 py-1 bg-gray-100 text-gray-600 rounded">
@@ -355,7 +356,7 @@ export default function WishlistPage() {
                       )}
                       {wishlist.sourceId && (
                         <span className="text-12 px-2 py-1 bg-blue-100 text-blue-600 rounded">
-                          ID: {wishlist.sourceId}
+                          {t('list.sourceId', { id: wishlist.sourceId })}
                         </span>
                       )}
                     </div>
@@ -365,10 +366,10 @@ export default function WishlistPage() {
                       </p>
                     )}
                     <div className="flex items-center gap-4 text-12 text-gray-500">
-                      <span>{wishlist.itemCount || 0} items</span>
+                      <span>{wishlist.itemCount || 0} {wishlist.itemCount === 1 ? t('subtitle.item') : t('subtitle.items')}</span>
                       {wishlist.lastModified && (
                         <span>
-                          Updated {new Date(wishlist.lastModified).toLocaleDateString()}
+                          {t('list.updated', { date: new Date(wishlist.lastModified).toLocaleDateString() })}
                         </span>
                       )}
                     </div>
@@ -380,7 +381,7 @@ export default function WishlistPage() {
                       // TODO: Navigate to wishlist detail or delete
                     }}
                   >
-                    View
+                    {t('list.view')}
                   </Button>
                 </div>
               ))}
@@ -390,9 +391,9 @@ export default function WishlistPage() {
       ) : (
         <EmptyState
           illustration={orderEmptySvg}
-          title="You don't have any items in your wishlist"
-          description="Start exploring services and products to begin your journey"
-          actionLabel="Start Shopping"
+          title={t('empty.title')}
+          description={t('empty.description')}
+          actionLabel={t('empty.actionLabel')}
           actionHref="/products"
         />
       )}
@@ -400,8 +401,8 @@ export default function WishlistPage() {
       {/* Loading Overlay for Mutations */}
       <LoadingOverlay
         open={deleteWishlistMutation.isPending || toggleServiceWishlistMutation.isPending || toggleProductWishlistMutation.isPending || toggleProviderFavoriteMutation.isPending}
-        title="Updating wishlist..."
-        subtitle="Please wait a moment"
+        title={t('updating.title')}
+        subtitle={t('updating.subtitle')}
       />
     </UserPageLayout>
   )

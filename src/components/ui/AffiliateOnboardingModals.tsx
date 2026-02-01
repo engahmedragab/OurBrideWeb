@@ -8,6 +8,7 @@ import { OTPInput } from './OTPInput'
 import affiliatePinSvg from '@/assets/svg/Affiliate-pin.svg'
 import modalSuccessSvg from '@/assets/svg/Modal-success.svg'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 export interface AffiliateOnboardingModalsProps {
   isOpen: boolean
@@ -26,6 +27,8 @@ export const AffiliateOnboardingModals = ({
   onClose,
   onComplete,
 }: AffiliateOnboardingModalsProps) => {
+  const t = useI18nTranslations('affiliate')
+  const isRTL = useIsRTL()
   const [currentStep, setCurrentStep] = useState<Step>('payment')
   const [paymentMethod, setPaymentMethod] = useState<'debit' | 'wallet'>('debit')
   const [fullName, setFullName] = useState('')
@@ -45,66 +48,66 @@ export const AffiliateOnboardingModals = ({
 
     {/* Full Name validation */}
     if (!fullName.trim()) {
-      newErrors.fullName = 'Full name is required'
+      newErrors.fullName = t('onboarding.paymentMethod.errors.fullNameRequired')
     } else if (fullName.trim().length < 2) {
-      newErrors.fullName = 'Full name must be at least 2 characters'
+      newErrors.fullName = t('onboarding.paymentMethod.errors.fullNameMinLength')
     }
 
     if (paymentMethod === 'wallet') {
       {/* Wallet mobile number validation */}
       if (!walletMobileNumber.trim()) {
-        newErrors.walletMobileNumber = 'Mobile number is required'
+        newErrors.walletMobileNumber = t('onboarding.paymentMethod.errors.mobileNumberRequired')
       } else {
         const phoneRegex = /^[0-9]{10,11}$/
         if (!phoneRegex.test(walletMobileNumber.replace(/\s/g, ''))) {
-          newErrors.walletMobileNumber = 'Please enter a valid mobile number (10-11 digits)'
+          newErrors.walletMobileNumber = t('onboarding.paymentMethod.errors.mobileNumberInvalid')
         }
       }
     } else {
       {/* Mobile number validation for debit/credit */}
       if (!mobileNumber.trim()) {
-        newErrors.mobileNumber = 'Mobile number is required'
+        newErrors.mobileNumber = t('onboarding.paymentMethod.errors.mobileNumberRequired')
       } else {
         const phoneRegex = /^[0-9]{10,11}$/
         if (!phoneRegex.test(mobileNumber.replace(/\s/g, ''))) {
-          newErrors.mobileNumber = 'Please enter a valid mobile number (10-11 digits)'
+          newErrors.mobileNumber = t('onboarding.paymentMethod.errors.mobileNumberInvalid')
         }
       }
 
       {/* Card name validation */}
       if (!cardName.trim()) {
-        newErrors.cardName = 'Cardholder name is required'
+        newErrors.cardName = t('onboarding.paymentMethod.errors.cardNameRequired')
       } else if (cardName.trim().length < 2) {
-        newErrors.cardName = 'Cardholder name must be at least 2 characters'
+        newErrors.cardName = t('onboarding.paymentMethod.errors.cardNameMinLength')
       }
 
       {/* Card number validation */}
       if (!cardNumber.trim()) {
-        newErrors.cardNumber = 'Card number is required'
+        newErrors.cardNumber = t('onboarding.paymentMethod.errors.cardNumberRequired')
       } else {
         const cardRegex = /^[0-9]{13,19}$/
         if (!cardRegex.test(cardNumber.replace(/\s/g, ''))) {
-          newErrors.cardNumber = 'Please enter a valid card number'
+          newErrors.cardNumber = t('onboarding.paymentMethod.errors.cardNumberInvalid')
         }
       }
 
       {/* Expiry date validation */}
       if (!mmyy.trim()) {
-        newErrors.mmyy = 'Expiry date is required'
+        newErrors.mmyy = t('onboarding.paymentMethod.errors.expiryRequired')
       } else {
         const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/
         if (!expiryRegex.test(mmyy)) {
-          newErrors.mmyy = 'Please enter a valid expiry date (MM/YY)'
+          newErrors.mmyy = t('onboarding.paymentMethod.errors.expiryInvalid')
         }
       }
 
       {/* CVV validation */}
       if (!cvv.trim()) {
-        newErrors.cvv = 'CVV is required'
+        newErrors.cvv = t('onboarding.paymentMethod.errors.cvvRequired')
       } else {
         const cvvRegex = /^[0-9]{3,4}$/
         if (!cvvRegex.test(cvv)) {
-          newErrors.cvv = 'Please enter a valid CVV'
+          newErrors.cvv = t('onboarding.paymentMethod.errors.cvvInvalid')
         }
       }
     }
@@ -127,7 +130,7 @@ export const AffiliateOnboardingModals = ({
     {/* Validate PIN */}
     const pinValue = createPin.join('')
     if (pinValue.length !== 4) {
-      setPinError('Please enter a 4-digit PIN')
+      setPinError(t('onboarding.createPin.error'))
       return
     }
     setPinError('')
@@ -140,12 +143,12 @@ export const AffiliateOnboardingModals = ({
     const confirmPinValue = confirmPin.join('')
     
     if (confirmPinValue.length !== 4) {
-      setPinError('Please enter a 4-digit PIN')
+      setPinError(t('onboarding.confirmPin.error'))
       return
     }
     
     if (confirmPinValue !== pinValue) {
-      setPinError('PINs do not match')
+      setPinError(t('onboarding.confirmPin.mismatch'))
       return
     }
     
@@ -192,7 +195,10 @@ export const AffiliateOnboardingModals = ({
           <div className="bg-white rounded-2xl w-full max-w-sm relative shadow-xl max-h-[90vh] overflow-y-auto">
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10"
+              className={cn(
+                "absolute top-4 text-gray-400 hover:text-gray-600 transition-colors z-10",
+                isRTL ? "left-4" : "right-4"
+              )}
               aria-label="Close"
             >
               <X className="h-5 w-5" />
@@ -200,17 +206,17 @@ export const AffiliateOnboardingModals = ({
 
             <div className="p-6">
               <h2 className="text-16 font-normal text-gray-900 mb-1">
-                Payment Method
+                {t('onboarding.paymentMethod.title')}
               </h2>
               <p className="text-12 text-gray-500 mb-5">
-                Add Your Payment Method With Paymob
+                {t('onboarding.paymentMethod.subtitle')}
               </p>
 
               {/* Full Name */}
               <div className="mb-4">
                 <input
                   type="text"
-                  placeholder="Full Name"
+                  placeholder={t('onboarding.paymentMethod.fullName')}
                   value={fullName}
                   onChange={(e) => {
                     setFullName(e.target.value)
@@ -235,7 +241,7 @@ export const AffiliateOnboardingModals = ({
                 <div className="mb-4">
                   <input
                     type="tel"
-                    placeholder="Mobile Number"
+                    placeholder={t('onboarding.paymentMethod.mobileNumber')}
                     value={mobileNumber}
                     onChange={(e) => {
                       setMobileNumber(e.target.value)
@@ -270,7 +276,7 @@ export const AffiliateOnboardingModals = ({
                       : 'border-gray-200 text-gray-500 bg-white'
                   }`}
                 >
-                  Debit / Credit
+                  {t('onboarding.paymentMethod.debitCredit')}
                 </button>
                 <button
                   type="button"
@@ -284,7 +290,7 @@ export const AffiliateOnboardingModals = ({
                       : 'border-gray-200 text-gray-500 bg-white'
                   }`}
                 >
-                  Mobile Wallet
+                  {t('onboarding.paymentMethod.mobileWallet')}
                 </button>
               </div>
 
@@ -292,12 +298,12 @@ export const AffiliateOnboardingModals = ({
               {paymentMethod === 'wallet' ? (
                 <div className="space-y-4 mb-6">
                   <h3 className="text-16 font-medium text-gray-900">
-                    Wallet Details
+                    {t('onboarding.paymentMethod.walletDetails')}
                   </h3>
                   <div>
                     <input
                       type="tel"
-                      placeholder="Mobile Number"
+                      placeholder={t('onboarding.paymentMethod.mobileNumber')}
                       value={walletMobileNumber}
                       onChange={(e) => {
                         setWalletMobileNumber(e.target.value)
@@ -321,13 +327,13 @@ export const AffiliateOnboardingModals = ({
                 <>
                   {/* Card Details */}
                   <p className="text-13 font-medium text-gray-900 mb-3">
-                    Card Details
+                    {t('onboarding.paymentMethod.cardDetails')}
                   </p>
 
                   <div className="mb-4">
                     <input
                       type="text"
-                      placeholder="Name On Card"
+                      placeholder={t('onboarding.paymentMethod.nameOnCard')}
                       value={cardName}
                       onChange={(e) => {
                         setCardName(e.target.value)
@@ -350,7 +356,7 @@ export const AffiliateOnboardingModals = ({
                   <div className="mb-4">
                     <input
                       type="text"
-                      placeholder="Card Number"
+                      placeholder={t('onboarding.paymentMethod.cardNumber')}
                       value={cardNumber}
                       onChange={(e) => {
                         let value = e.target.value.replace(/\s/g, '').replace(/\D/g, '')
@@ -378,7 +384,7 @@ export const AffiliateOnboardingModals = ({
                     <div className="flex-1">
                       <input
                         type="text"
-                        placeholder="MM/YY"
+                        placeholder={t('onboarding.paymentMethod.mmYy')}
                         value={mmyy}
                         onChange={(e) => {
                           let value = e.target.value.replace(/\D/g, '')
@@ -405,7 +411,7 @@ export const AffiliateOnboardingModals = ({
                     <div className="flex-1">
                       <input
                         type="text"
-                        placeholder="CVV"
+                        placeholder={t('onboarding.paymentMethod.cvv')}
                         value={cvv}
                         onChange={(e) => {
                           const value = e.target.value.replace(/\D/g, '').slice(0, 4)
@@ -435,7 +441,7 @@ export const AffiliateOnboardingModals = ({
                 className="w-full h-11 rounded-full text-14 font-medium text-white"
                 onClick={handlePaymentSubmit}
               >
-                Add Payment Method
+                {t('onboarding.paymentMethod.addPaymentMethod')}
               </Button>
             </div>
           </div>
@@ -465,10 +471,10 @@ export const AffiliateOnboardingModals = ({
               </div>
 
               <h2 className="text-18 font-normal text-gray-900 mb-3">
-                Your Payout is Added Successfully!
+                {t('onboarding.paymentSuccess.title')}
               </h2>
               <p className="text-14 text-gray-500 mb-6">
-                Your payment method has been added and verified successfully
+                {t('onboarding.paymentSuccess.description')}
               </p>
 
               <Button
@@ -476,7 +482,7 @@ export const AffiliateOnboardingModals = ({
                 className="w-full text-white h-11 rounded-full"
                 onClick={handlePaymentSuccess}
               >
-                Next Step
+                {t('onboarding.paymentSuccess.nextStep')}
               </Button>
             </div>
           </div>
@@ -495,13 +501,13 @@ export const AffiliateOnboardingModals = ({
 
             <div className="p-6 text-center">
               <p className="text-14 font-medium text-gray-900 mb-6 text-left">
-                Wallet PIN
+                {t('onboarding.createPin.title')}
               </p>
 
               <div className="mb-6 flex justify-center">
                 <Image
                   src={typeof affiliatePinSvg === 'string' ? affiliatePinSvg : affiliatePinSvg.src}
-                  alt="Create PIN"
+                  alt={t('onboarding.createPin.alt')}
                   width={128}
                   height={128}
                   className="w-32 h-32 object-contain"
@@ -509,10 +515,10 @@ export const AffiliateOnboardingModals = ({
               </div>
 
               <h2 className="text-18 font-normal text-gray-900 mb-3">
-                Create Your Wallet PIN
+                {t('onboarding.createPin.heading')}
               </h2>
               <p className="text-14 text-gray-500 mb-6">
-                Add an extra layer of security to protect your earnings
+                {t('onboarding.createPin.description')}
               </p>
 
               {/* PIN Input */}
@@ -531,7 +537,7 @@ export const AffiliateOnboardingModals = ({
                 className="w-full text-white h-11 rounded-full"
                 onClick={handleCreatePin}
               >
-                Next
+                {t('onboarding.createPin.next')}
               </Button>
             </div>
           </div>
@@ -550,13 +556,13 @@ export const AffiliateOnboardingModals = ({
 
             <div className="p-6 text-center">
               <p className="text-14 font-medium text-gray-900 mb-6 text-left">
-                Wallet PIN
+                {t('onboarding.confirmPin.title')}
               </p>
 
               <div className="mb-6 flex justify-center">
                 <Image
                   src={typeof affiliatePinSvg === 'string' ? affiliatePinSvg : affiliatePinSvg.src}
-                  alt="Confirm PIN"
+                  alt={t('onboarding.confirmPin.alt')}
                   width={128}
                   height={128}
                   className="w-32 h-32 object-contain"
@@ -564,10 +570,10 @@ export const AffiliateOnboardingModals = ({
               </div>
 
               <h2 className="text-18 font-normal text-gray-900 mb-3">
-                Confirm Your PIN
+                {t('onboarding.confirmPin.heading')}
               </h2>
               <p className="text-14 text-gray-500 mb-6">
-                Add an extra layer of security to protect your earnings
+                {t('onboarding.confirmPin.description')}
               </p>
 
               {/* PIN Input */}
@@ -586,7 +592,7 @@ export const AffiliateOnboardingModals = ({
                 className="w-full text-white h-11 rounded-full"
                 onClick={handleConfirmPin}
               >
-                Confirm
+                {t('onboarding.confirmPin.confirm')}
               </Button>
             </div>
           </div>
@@ -616,10 +622,10 @@ export const AffiliateOnboardingModals = ({
               </div>
 
               <h2 className="text-18 font-normal text-gray-900 mb-3">
-                PIN Created Successfully
+                {t('onboarding.pinSuccess.title')}
               </h2>
               <p className="text-14 text-gray-500 mb-6">
-                Your wallet PIN has been created successfully. You can now start earning with the affiliate program
+                {t('onboarding.pinSuccess.description')}
               </p>
 
               <Button
@@ -627,7 +633,7 @@ export const AffiliateOnboardingModals = ({
                 className="w-full text-white h-11 rounded-full"
                 onClick={handlePinSuccess}
               >
-                Let&apos;s Start
+                {t('onboarding.pinSuccess.letsStart')}
               </Button>
             </div>
           </div>

@@ -1,9 +1,10 @@
 'use client'
 
-import { ArrowRight, Star } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Button } from './Button'
 import { RatingDisplay } from './RatingDisplay'
 import { cn } from '@/lib/utils'
+import { useIsRTL } from '@/i18n'
 import Image from 'next/image'
 
 export interface ForBusinessSectionProps {
@@ -37,6 +38,7 @@ export const ForBusinessSection = ({
   reviewSourceLogo,
   className,
 }: ForBusinessSectionProps) => {
+  const isRTL = useIsRTL()
   const handleButtonClick = () => {
     if (onButtonClick) {
       onButtonClick()
@@ -73,7 +75,7 @@ export const ForBusinessSection = ({
                 className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 text-16 font-medium flex items-center gap-2 group"
               >
                 {buttonText}
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className={cn("h-5 w-5 transition-transform", isRTL ? "group-hover:-translate-x-1 scale-x-[-1]" : "group-hover:translate-x-1")} />
               </Button>
             </div>
 

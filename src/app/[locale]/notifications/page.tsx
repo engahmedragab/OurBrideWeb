@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { UserPageLayout } from '@/components/layout'
 import { EmptyState, Button, Badge } from '@/components/ui'
 import { NotificationCard } from '@/components/notifications/NotificationCard'
@@ -19,23 +19,33 @@ import {
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 import messagesEmptySvg from '@/assets/svg/messages-empty.svg'
 import type { Notification } from '@/types/notification'
-
-const notificationTabs = [
-  { id: 'all', label: 'All', icon: Bell },
-  { id: 'order', label: 'Orders', icon: ShoppingBag },
-  { id: 'message', label: 'Messages', icon: MessageSquare },
-  { id: 'community', label: 'Community', icon: Users },
-  { id: 'product', label: 'Products', icon: Package },
-  { id: 'gift', label: 'Gifts', icon: Gift },
-  { id: 'event', label: 'Events', icon: Calendar },
-  { id: 'system', label: 'System', icon: CheckCircle2 },
-] as const
+import { useI18nTranslations } from '@/i18n/hooks'
 
 const PAGE_SIZE = 10
 
 export default function NotificationsPage() {
+  const t = useI18nTranslations('notifications')
   const [activeTab, setActiveTab] = useState<string>('all')
   const [currentPage, setCurrentPage] = useState(1)
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Prevent hydration mismatch by only rendering content after mount
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Notification tabs with translations
+  // Always use translations - they should be available on both server and client
+  const notificationTabs = useMemo(() => [
+    { id: 'all', label: t('tabs.all'), icon: Bell },
+    { id: 'order', label: t('tabs.order'), icon: ShoppingBag },
+    { id: 'message', label: t('tabs.message'), icon: MessageSquare },
+    { id: 'community', label: t('tabs.community'), icon: Users },
+    { id: 'product', label: t('tabs.product'), icon: Package },
+    { id: 'gift', label: t('tabs.gift'), icon: Gift },
+    { id: 'event', label: t('tabs.event'), icon: Calendar },
+    { id: 'system', label: t('tabs.system'), icon: CheckCircle2 },
+  ] as const, [t])
 
   // Fetch notifications from API
   const {
@@ -90,12 +100,23 @@ export default function NotificationsPage() {
     }
   }
 
+  // Don't render content until mounted to prevent hydration mismatch
+  if (!isMounted) {
+    return (
+      <UserPageLayout>
+        <div className="flex items-center justify-center py-12">
+          <LoadingSpinner size="lg" text="Loading..." fullScreen={true} />
+        </div>
+      </UserPageLayout>
+    )
+  }
+
   // Loading state
   if (isLoading && currentPage === 1) {
     return (
       <UserPageLayout>
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Loading notifications..." fullScreen={true} />
+          <LoadingSpinner size="lg" text={t('loading.title')} fullScreen={true} />
         </div>
       </UserPageLayout>
     )
@@ -107,9 +128,9 @@ export default function NotificationsPage() {
       <UserPageLayout>
         <div className="text-center py-12">
           <p className="text-16 text-gray-600 mb-4">
-            Unable to load notifications. Please try again.
+            {t('error.title')} {t('error.message')}
           </p>
-          <Button onClick={() => window.location.reload()}>Retry</Button>
+          <Button onClick={() => window.location.reload()}>{t('error.retry')}</Button>
         </div>
       </UserPageLayout>
     )
@@ -120,10 +141,12 @@ export default function NotificationsPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <h1 className="text-24 sm:text-32 font-normal text-gray-900">Notifications</h1>
+          <h1 className="text-24 sm:text-32 font-normal text-gray-900">{t('title')}</h1>
           {unreadCount > 0 && (
             <p className="text-14 text-gray-600 mt-1">
-              {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
+              {unreadCount === 1 
+                ? t('header.unread', { count: unreadCount })
+                : t('header.unreadPlural', { count: unreadCount })}
             </p>
           )}
         </div>
@@ -134,7 +157,7 @@ export default function NotificationsPage() {
             onClick={handleMarkAllAsRead}
             className="text-14"
           >
-            Mark all as read
+            {t('header.markAllAsRead')}
           </Button>
         )}
       </div>
@@ -184,16 +207,16 @@ export default function NotificationsPage() {
       {/* Notifications List */}
       {isLoading && currentPage > 1 ? (
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="md" text="Loading more notifications..." fullScreen={true} />
+          <LoadingSpinner size="md" text={t('loading.more')} fullScreen={true} />
         </div>
       ) : filteredNotifications.length === 0 ? (
         <EmptyState
           illustration={messagesEmptySvg}
-          title="No notifications"
+          title={t('empty.title')}
           description={
             activeTab === 'all'
-              ? "You're all caught up! No notifications at the moment."
-              : `You don't have any ${notificationTabs.find(t => t.id === activeTab)?.label.toLowerCase()} notifications.`
+              ? t('empty.description.all')
+              : t('empty.description.other', { type: notificationTabs.find(tab => tab.id === activeTab)?.label.toLowerCase() || '' })
           }
         />
       ) : (
@@ -219,11 +242,11 @@ export default function NotificationsPage() {
                 disabled={currentPage === 1 || isLoading}
                 className="text-14"
               >
-                Previous
+                {t('pagination.previous')}
               </Button>
               <span className="text-14 text-gray-600">
-                Page {currentPage} of {totalPages}
-                {isLoading && <span className="ml-2 text-gray-400">Loading...</span>}
+                {t('pagination.page', { current: currentPage, total: totalPages })}
+                {isLoading && <span className="ml-2 text-gray-400">{t('pagination.loading')}</span>}
               </span>
               <Button
                 variant="outline"
@@ -232,7 +255,7 @@ export default function NotificationsPage() {
                 disabled={currentPage === totalPages || isLoading}
                 className="text-14"
               >
-                Next
+                {t('pagination.next')}
               </Button>
             </div>
           )}

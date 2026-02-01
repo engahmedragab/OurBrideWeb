@@ -6,6 +6,7 @@ import { Input } from './Input'
 import { Button } from './Button'
 import { PINModal } from './PINModal'
 import { StatusModal } from './StatusModal'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface WithdrawFundsModalProps {
   isOpen: boolean
@@ -22,6 +23,7 @@ export const WithdrawFundsModal = ({
   onClose,
   balance = 3500.0,
 }: WithdrawFundsModalProps) => {
+  const t = useI18nTranslations('affiliate')
   const [selectedCardId, setSelectedCardId] = useState<string>('1')
   const [withdrawAmount, setWithdrawAmount] = useState<string>('')
   const [showPINModal, setShowPINModal] = useState(false)
@@ -63,29 +65,29 @@ export const WithdrawFundsModal = ({
       <Modal
         isOpen={isOpen && !showPINModal && !showSuccessModal}
         onClose={onClose}
-        title="Payout Cards Management"
+        title={t('withdraw.title')}
         maxWidth="sm"
       >
         <div className="space-y-6">
           {/* Balance Section */}
           <div>
-            <p className="text-12 text-gray-500 mb-1">Balance</p>
+            <p className="text-12 text-gray-500 mb-1">{t('withdraw.balance')}</p>
             <p className="text-20 font-semibold text-gray-900">
               {balance.toFixed(2)} EGP
             </p>
             <p className="text-12 text-gray-400 mt-1">
-              Last Update: Sep 15, 2025 11:30 am
+              {t('withdraw.lastUpdate')}: Sep 15, 2025 11:30 am
             </p>
           </div>
 
           {/* Withdraw Details */}
           <div>
             <h3 className="text-14 font-normal text-gray-900 mb-3">
-              Withdraw Details
+              {t('withdraw.withdrawDetails')}
             </h3>
             <Input
               type="number"
-              placeholder="Amount"
+              placeholder={t('withdraw.amount')}
               suffix="EGP"
               value={withdrawAmount}
               onChange={(e) => setWithdrawAmount(e.target.value)}
@@ -95,7 +97,7 @@ export const WithdrawFundsModal = ({
           {/* Available Cards */}
           <div>
             <h3 className="text-14 font-normal text-gray-900 mb-3">
-              Available Cards
+              {t('withdraw.availableCards')}
             </h3>
             <div className="space-y-3">
               {availableCards.map((card) => (
@@ -134,7 +136,7 @@ export const WithdrawFundsModal = ({
             onClick={handleWithdraw}
             disabled={!withdrawAmount || parseFloat(withdrawAmount) <= 0}
           >
-            Withdraw EGP {withdrawAmount || '0'}
+            {t('withdraw.withdrawButton', { amount: withdrawAmount || '0' })}
           </Button>
         </div>
       </Modal>
@@ -149,9 +151,9 @@ export const WithdrawFundsModal = ({
       {/* Success Modal */}
       <StatusModal
         open={showSuccessModal}
-        title="Withdrawal successful"
-        description="Your funds have been transferred to your bank account."
-        confirmLabel="Let's Start"
+        title={t('withdraw.success.title')}
+        description={t('withdraw.success.description')}
+        confirmLabel={t('withdraw.success.letsStart')}
         onConfirm={handleSuccessClose}
         onClose={handleSuccessClose}
       />

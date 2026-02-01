@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter, usePathname } from '@/i18n/navigation'
-import { useI18nLocale } from '@/i18n'
+import { useI18nLocale, useI18nTranslations, useIsRTL } from '@/i18n'
 import {
   Toggle,
   DeleteAccountModal,
@@ -11,25 +11,28 @@ import {
 } from '@/components/ui'
 import { ChevronRight } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
+import { cn } from '@/lib/utils'
 
 /**
  * Settings page component
  */
 export default function SettingsPage() {
+  const t = useI18nTranslations('settings')
+  const isRTL = useIsRTL()
   const router = useRouter()
   const pathname = usePathname()
   const currentLocale = useI18nLocale()
   
   // Map locale to language display name
-  const localeToLanguage: Record<string, string> = {
+  const localeToLanguage = useMemo<Record<string, string>>(() => ({
     'en': 'English',
     'ar': 'العربية',
-  }
+  }), [])
   
-  const languageToLocale: Record<string, string> = {
+  const languageToLocale = useMemo<Record<string, string>>(() => ({
     'English': 'en',
     'العربية': 'ar',
-  }
+  }), [])
 
   const [appLanguage, setAppLanguage] = useState(localeToLanguage[currentLocale] || 'English')
   const [darkMode, setDarkMode] = useState(false)
@@ -44,7 +47,7 @@ export default function SettingsPage() {
   // Update language when locale changes
   useEffect(() => {
     setAppLanguage(localeToLanguage[currentLocale] || 'English')
-  }, [currentLocale])
+  }, [currentLocale, localeToLanguage])
 
   const languages = [
     { value: 'English', label: 'English' },
@@ -129,55 +132,54 @@ export default function SettingsPage() {
 
   return (
     <>
-      <div className="max-w-4xl">
+      <div className="max-w-4xl" dir={isRTL ? 'rtl' : 'ltr'}>
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-normal text-gray-900">Settings</h1>
+          <h1 className="text-2xl font-normal text-gray-900">{t('title')}</h1>
         </div>
 
         {/* App Preferences Section */}
-        <SettingsSection title="App Preferences">
+        <SettingsSection title={t('appPreferences.title')}>
           <SettingRow
-            label="App Language"
+            label={t('appPreferences.appLanguage')}
             action={
               <div className="w-[140px]">
                 <SelectPopover
                   value={appLanguage}
                   onChange={handleLanguageChange}
                   options={languages}
-                  placeholder="Select Language"
+                  placeholder={t('appPreferences.selectLanguage')}
                 />
               </div>
             }
           />
           <SettingRow
-            label="Dark Mode"
+            label={t('appPreferences.darkMode')}
             action={
               <Toggle
                 checked={darkMode}
                 onChange={setDarkMode}
-                variant="brand"
               />
             }
           />
         </SettingsSection>
 
         {/* Security & Privacy Section */}
-        <SettingsSection title="Security & Privacy">
+        <SettingsSection title={t('securityPrivacy.title')}>
           <SettingRow
-            label="Password"
+            label={t('securityPrivacy.password')}
             action={
               <Link
                 href="/dashboard/settings/change-password"
                 className="flex items-center gap-1 text-14 font-medium text-brand-500 hover:text-brand-600"
               >
-                Change Password
-                <ChevronRight className="h-4 w-4 text-brand-500" />
+                {t('securityPrivacy.changePassword')}
+                <ChevronRight className={cn("h-4 w-4 text-brand-500", isRTL && "rotate-180")} />
               </Link>
             }
           />
           <SettingRow
-            label="Blocked Users"
+            label={t('securityPrivacy.blockedUsers')}
             action={
               <button
                 onClick={() => {
@@ -185,127 +187,137 @@ export default function SettingsPage() {
                 }}
                 className="flex items-center gap-1 text-14 font-medium text-brand-500 hover:text-brand-600"
               >
-                View All
-                <ChevronRight className="h-4 w-4 text-brand-500" />
+                {t('securityPrivacy.viewAll')}
+                <ChevronRight className={cn("h-4 w-4 text-brand-500", isRTL && "rotate-180")} />
               </button>
             }
           />
         </SettingsSection>
 
         {/* Notifications Management Section */}
-        <SettingsSection title="Notifications Management">
+        <SettingsSection title={t('notifications.title')}>
           <SettingRow
-            label="Booking Confirmations & Updates"
+            label={t('notifications.bookingConfirmations')}
             action={
               <Toggle
                 checked={bookingConfirmations}
                 onChange={setBookingConfirmations}
-                variant="brand"
               />
             }
           />
           <SettingRow
-            label="Offer Alerts"
+            label={t('notifications.offerAlerts')}
             action={
               <Toggle
                 checked={offerAlerts}
                 onChange={setOfferAlerts}
-                variant="brand"
               />
             }
           />
           <SettingRow
-            label="Community Updates"
+            label={t('notifications.communityUpdates')}
             action={
               <Toggle
                 checked={communityUpdates}
                 onChange={setCommunityUpdates}
-                variant="brand"
               />
             }
           />
           <SettingRow
-            label="Messages"
+            label={t('notifications.messages')}
             action={
               <Toggle
                 checked={messages}
                 onChange={setMessages}
-                variant="brand"
               />
             }
           />
           <SettingRow
-            label="E-mail Notifications"
+            label={t('notifications.emailNotifications')}
             action={
               <Toggle
                 checked={emailNotifications}
                 onChange={setEmailNotifications}
-                variant="brand"
               />
             }
           />
         </SettingsSection>
 
         {/* Orders & Payments Section */}
-        <SettingsSection title="Orders & Payments">
+        <SettingsSection title={t('ordersPayments.title')}>
           <SettingRow
-            label="Orders List"
+            label={t('ordersPayments.ordersList')}
             action={
               <Link
                 href="/orders"
-                className="flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700"
+                className={cn(
+                  "flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700",
+                  isRTL && "flex-row-reverse"
+                )}
               >
-                <ChevronRight className="h-4 w-4 text-gray-900" />
+                <ChevronRight className={cn("h-4 w-4 text-gray-900", isRTL && "rotate-180")} />
               </Link>
             }
           />
           <SettingRow
-            label="Payment History"
+            label={t('ordersPayments.paymentHistory')}
             action={
               <button
                 onClick={() => {
                   // TODO: Implement payment history
                 }}
-                className="flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700"
+                className={cn(
+                  "flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700",
+                  isRTL && "flex-row-reverse"
+                )}
               >
-                <ChevronRight className="h-4 w-4 text-gray-900" />
+                <ChevronRight className={cn("h-4 w-4 text-gray-900", isRTL && "rotate-180")} />
               </button>
             }
           />
         </SettingsSection>
 
         {/* Legal Section */}
-        <SettingsSection title="Legal">
+        <SettingsSection title={t('legal.title')}>
           <SettingRow
-            label="Terms & Conditions"
+            label={t('legal.termsConditions')}
             action={
               <Link
                 href="/dashboard/settings/terms"
-                className="flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700"
+                className={cn(
+                  "flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700",
+                  isRTL && "flex-row-reverse"
+                )}
               >
-                <ChevronRight className="h-4 w-4 text-gray-900" />
+                <ChevronRight className={cn("h-4 w-4 text-gray-900", isRTL && "rotate-180")} />
               </Link>
             }
           />
           <SettingRow
-            label="Privacy Policy"
+            label={t('legal.privacyPolicy')}
             action={
               <Link
                 href="/dashboard/settings/privacy"
-                className="flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700"
+                className={cn(
+                  "flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700",
+                  isRTL && "flex-row-reverse"
+                )}
               >
-                <ChevronRight className="h-4 w-4 text-gray-900" />
+                <ChevronRight className={cn("h-4 w-4 text-gray-900", isRTL && "rotate-180")} />
               </Link>
             }
           />
           <SettingRow
-            label="Community Guidelines"
+            label={t('legal.communityGuidelines')}
             action={
               <Link
                 href="/dashboard/settings/community"
-                className="flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700"
+                className={cn(
+                  "flex items-center gap-1 text-14 font-medium text-gray-900 hover:text-gray-700",
+                  isRTL && "flex-row-reverse"
+                )}
               >
-                <ChevronRight className="h-4 w-4 text-gray-900" />
+                <ChevronRight className={cn("h-4 w-4 text-gray-900", isRTL && "rotate-180")} />
               </Link>
             }
           />
@@ -315,24 +327,30 @@ export default function SettingsPage() {
         <div className="bg-white rounded-xl  shadow-sm border border-gray-100 mb-6">
           <div className="px-6">
             <SettingRow
-              label={<span className="text-brand-500">Logout</span>}
+              label={<span className="text-brand-500">{t('accountActions.logout')}</span>}
               action={
                 <button
                   onClick={() => setLogoutModalOpen(true)}
-                  className="flex items-center gap-1 text-14 font-medium text-brand-500 hover:text-brand-600"
+                  className={cn(
+                    "flex items-center gap-1 text-14 font-medium text-brand-500 hover:text-brand-600",
+                    isRTL && "flex-row-reverse"
+                  )}
                 >
-                  <ChevronRight className="h-4 w-4 text-gray-900" />
+                  <ChevronRight className={cn("h-4 w-4 text-gray-900", isRTL && "rotate-180")} />
                 </button>
               }
             />
             <SettingRow
-              label="Delete Account"
+              label={t('accountActions.deleteAccount')}
               action={
                 <button
                   onClick={() => setDeleteModalOpen(true)}
-                  className="flex items-center gap-1 text-14 font-medium text-gray-600 hover:text-gray-700"
+                  className={cn(
+                    "flex items-center gap-1 text-14 font-medium text-gray-600 hover:text-gray-700",
+                    isRTL && "flex-row-reverse"
+                  )}
                 >
-                  <ChevronRight className="h-4 w-4 text-gray-900" />
+                  <ChevronRight className={cn("h-4 w-4 text-gray-900", isRTL && "rotate-180")} />
                 </button>
               }
             />

@@ -2,6 +2,7 @@
 
 import { Gift } from 'lucide-react'
 import { cn } from '@/lib'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 /**
  * Received Gift Item Component Props
@@ -53,6 +54,7 @@ export const ReceivedGiftItem = ({
   date,
   time,
 }: ReceivedGiftItemProps) => {
+  const t = useI18nTranslations('coupons')
   const iconColor = getGiftIconColor(amount)
 
   return (
@@ -67,7 +69,7 @@ export const ReceivedGiftItem = ({
         {/* Content */}
         <div className="flex flex-col gap-0.5 sm:gap-1 flex-1 min-w-0">
           <p className="text-12 sm:text-14 font-normal text-gray-900 leading-4 sm:leading-5">
-            {senderName} Sent You A Gift
+            {t('receivedGifts.sentYouGift', { senderName })}
           </p>
           <div className="flex items-center gap-2 text-10 sm:text-12 text-gray-500">
             <p>{date}</p>

@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { X, CheckCircle, AlertCircle, Info, XCircle } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ToastProps {
   id: string
@@ -33,6 +34,8 @@ export const Toast = ({
   duration = 3000,
   onClose,
 }: ToastProps) => {
+  const t = useI18nTranslations('common.toast')
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose(id)
@@ -55,7 +58,7 @@ export const Toast = ({
       <button
         onClick={() => onClose(id)}
         className="flex-shrink-0 hover:opacity-70 transition-opacity"
-        aria-label="Close"
+        aria-label={t('close')}
       >
         <X className="h-4 w-4" />
       </button>

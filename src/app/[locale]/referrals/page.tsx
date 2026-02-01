@@ -11,6 +11,7 @@ import {
   SocialShareButtons,
   InsightCard,
 } from '@/components/ui'
+import { useI18nTranslations } from '@/i18n/hooks'
 import {
   CheckCircle,
   CheckCircle2Icon,
@@ -54,6 +55,7 @@ interface ReferralInsights {
  * User referral program page with invite links, insights, and activity tracking
  */
 export default function ReferralsPage() {
+  const t = useI18nTranslations('referrals')
   const [inviteLink] = useState<string>('http://www.generatecode.ourbride.com')
   const [showOnboarding, setShowOnboarding] = useState<boolean>(true)
 
@@ -156,22 +158,22 @@ export default function ReferralsPage() {
             {/* Referral Insights */}
             <div className="  sm:p-3">
               <h2 className="text-16 sm:text-20 font-normal text-gray-900 mb-3 sm:mb-4">
-                Referral Insights
+                {t('insights.title')}
               </h2>
               <div className="grid grid-cols-3 gap-2 sm:gap-4">
                 <InsightCard
                   icon={UserPlus}
-                  label="Total Invites Sent"
+                  label={t('insights.totalInvitesSent')}
                   value={referralInsights.totalInvites}
                 />
                 <InsightCard
                   icon={UserCheck}
-                  label="Friends Joined"
+                  label={t('insights.friendsJoined')}
                   value={referralInsights.friendsJoined}
                 />
                 <InsightCard
                   icon={Gem}
-                  label="Pending Payout"
+                  label={t('insights.pendingPayout')}
                   value={referralInsights.rewardsEarned}
                   currency="points"
                 />
@@ -182,7 +184,7 @@ export default function ReferralsPage() {
             <div className=" rounded-xl border border-gray-400/70 p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <h2 className="text-16 sm:text-18 font-normal text-gray-900">
-                  Invite Link
+                  {t('inviteLink.title')}
                 </h2>
                 <button
                   onClick={handleCopyLink}
@@ -190,7 +192,7 @@ export default function ReferralsPage() {
                 >
                   <Link2  className="h-3.5 w-3.5 sm:h-4 sm:w-4 hidden md:block" />
                  
-                  <span className="hidden sm:inline">Copy Link</span>
+                  <span className="hidden sm:inline">{t('inviteLink.copyLink')}</span>
                  
                 </button>
               </div>
@@ -214,7 +216,7 @@ export default function ReferralsPage() {
             {/* Bonus Progress */}
             <div className="rounded-xl border border-gray-400/70 p-4 sm:p-6">
               <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
-                Bonus Progress
+                {t('bonusProgress.title')}
               </h2>
               <div className="relative">
                 <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -224,10 +226,10 @@ export default function ReferralsPage() {
                   />
                 </div>
                 <p className="text-13 sm:text-14 text-gray-500/70 mt-3">
-                  Invite 10 Friends To Get Bonus Coupon
+                  {t('bonusProgress.description')}
                 </p>
                 <p className="text-14 sm:text-16 font-normal text-gray-500/70 absolute right-0 -top-6 sm:-top-8">
-                  1/10 Invited
+                  {t('bonusProgress.invited', { current: 1, total: 10 })}
                 </p>
               </div>
             </div>
@@ -235,7 +237,7 @@ export default function ReferralsPage() {
             {/* Your Coupons */}
             <div className="  p-4 sm:p-6">
               <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
-                Your Coupons
+                {t('coupons.title')}
               </h2>
               <div className="space-y-3 sm:space-y-4">
                 {coupons.map(coupon => (
@@ -250,13 +252,13 @@ export default function ReferralsPage() {
                         <Percent size={24} className="text-gray-900" />
                       </div>
                         <p className="text-12 sm:text-16 font-normal text-gray-900 mb-0.5">
-                          Coupon
+                          {t('coupons.coupon')}
                         </p></div> 
                         <p className="text-14 sm:text-16 font-normal text-gray-900 mb-0.5 sm:mb-1">
                           {coupon.discount}
                         </p>
                         <p className="text-11 sm:text-14 text-gray-400/90">
-                          {coupon.dueDate}
+                          {coupon.dueDate.replace('Due: ', t('coupons.due') + ': ')}
                         </p>
                       </div>
                     </div>
@@ -264,13 +266,13 @@ export default function ReferralsPage() {
                       {coupon.status === 'Valid' && (
                         <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-10 sm:text-12 font-medium bg-green-50 text-green-600 border border-green-200">
                           <CheckCircle2Icon className="w-3 h-3" />
-                          <span>Valid</span>
+                          <span>{t('coupons.valid')}</span>
                         </div>
                       )}
                       {coupon.status === 'Expired' && (
                         <div className="inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 text-10 sm:text-12 font-medium bg-red-50 text-red-600 border border-red-200">
                           <XCircle className="w-3 h-3" />
-                          <span>Expired</span>
+                          <span>{t('coupons.expired')}</span>
                         </div>
                       )}
                       <Button
@@ -279,7 +281,7 @@ export default function ReferralsPage() {
                         className={`${coupon.status === 'Valid' ? 'text-white' : 'text-gray-900'} text-10 sm:text-12 px-2 sm:px-2 `}
                         disabled={coupon.status === 'Expired'}
                       >
-                        Redeem Now
+                        {t('coupons.redeemNow')}
                       </Button>
                     </div>
                   </div>
@@ -292,7 +294,7 @@ export default function ReferralsPage() {
           <aside className="w-full lg:w-full flex-shrink-0">
             <div className="  p-4 sm:p-6">
               <h2 className="text-16 sm:text-18 font-normal text-gray-900 mb-3 sm:mb-4">
-                Recent Activity
+                {t('activity.title')}
               </h2>
               <div className="space-y-3">
                 {activityItems.map(item => (
@@ -318,7 +320,7 @@ export default function ReferralsPage() {
                           {item.date}
                         </p>
                         <p className="text-11 sm:text-12 text-gray-600 mb-2">
-                          {item.bookings} Booking
+                          {item.bookings} {item.bookings === 1 ? t('activity.booking') : t('activity.bookings')}
                         </p>
                         <div className='flex items-center justify-between gap-2'><p className="text-11 sm:text-12 font-normal text-green-600 whitespace-nowrap">
                             {item.earnings}
@@ -339,10 +341,10 @@ export default function ReferralsPage() {
                            
                           <span>
                             {item.status === 'Processing'
-                              ? 'Invite Sent'
+                              ? t('activity.inviteSent')
                               : item.status === 'Delivered'
-                                ? 'Confirmed'
-                                : item.status}
+                                ? t('activity.confirmed')
+                                : t(`activity.${item.status.toLowerCase()}`)}
                           </span>
                         </Badge></div>
                         

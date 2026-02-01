@@ -32,12 +32,14 @@ import {
 } from '@/components/ui'
 
 import { StoreBadges } from '@/components/ui/StoreBadges'
-import { Users, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
+import { Users, ChevronLeft, ChevronRight, Quote, Calendar, DollarSign, UserPlus, Clock } from 'lucide-react'
 import heroBrideImage from '@/assets/images/Hero-Bride.png'
 import heroCardBrideImage from '@/assets/images/HeroCard-Bride.png'
 import heroCircularSvg from '@/assets/svg/Hero-circular.svg'
 import lineS2Svg from '@/assets/svg/Line-s2.svg'
 import lineS4Svg from '@/assets/svg/Line-s4.svg'
+import communityBannerSvg from '@/assets/svg/community-banner.svg'
+import eventsHomeSvg from '@/assets/svg/events-home.svg'
 import phoneImage from '@/assets/images/phone.png'
 import verifiedIcon from '@/assets/svg/verified.svg'
 import allInIcon from '@/assets/svg/all-in.svg'
@@ -45,6 +47,8 @@ import securePaymentsIcon from '@/assets/svg/secure-payments.svg'
 import exclusiveIcon from '@/assets/svg/exclusive.svg'
 import { useHome } from '@/hooks/home'
 import { extractHomeData } from '@/utils'
+import { usePosts } from '@/hooks/community/useCommunityContent'
+import type { PostResponse } from '@/types/responses/community'
 import {
   TRUST_CARDS,
   JOURNEY_STEPS,
@@ -135,6 +139,7 @@ export default function Home() {
   const locale = useI18nLocale()
   // Translations
   const t = useTranslations('home')
+  const tMember = useTranslations('home.sections.memberTestimonials')
   const isRTL = useIsRTL()
 
   // Fetch home data from API
@@ -169,11 +174,101 @@ export default function Home() {
     testimonials.length / PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
   )
 
-  // Member testimonials carousel state - kept for potential future use
-  // const [memberTestimonialsIndex, setMemberTestimonialsIndex] = useState(0)
-  // const memberTestimonialsTotalPages = Math.ceil(
-  //   memberTestimonials.length / PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
-  // )
+  // Fetch community posts for member testimonials section
+  const { data: communityPosts, isLoading: isLoadingPosts } = usePosts({
+    page: 1,
+    pageSize: 9, // Fetch 9 posts to show 3 per page
+    enabled: true,
+  })
+
+  // Map community posts to member testimonial format
+  const communityPostsAsTestimonials = useMemo(() => {
+    if (!communityPosts || communityPosts.length === 0) return []
+    
+    return communityPosts
+      .filter((post: PostResponse) => post.isPublished !== false)
+      .slice(0, 9)
+      .map((post: PostResponse): MemberTestimonialCardData => {
+        // Extract images from medias array
+        type PostWithMedias = PostResponse & { medias?: Array<{ url?: string }> }
+        const postWithMedias = post as PostWithMedias
+        const images: string[] = postWithMedias.medias
+          ?.filter((media: { url?: string }) => media?.url)
+          .map((media: { url?: string }) => media.url)
+          .filter((url): url is string => typeof url === 'string') || []
+
+        // Get user display name
+        const getUserDisplayName = (user: PostResponse['user']): string => {
+          if (!user) return 'OurBride'
+          const firstName = (user.firstName && user.firstName !== 'null') ? user.firstName : ''
+          const lastName = (user.lastName && user.lastName !== 'null') ? user.lastName : ''
+          const fullName = `${firstName} ${lastName}`.trim()
+          if (fullName) return fullName
+          if (user.userName && user.userName.toLowerCase() === 'admin@our-bride.com') {
+            return 'OurBride'
+          }
+          return user.userName || 'OurBride'
+        }
+
+        // Get user avatar
+        const getUserAvatar = (user: PostResponse['user']): string => {
+          if (!user || !user.profileUrl) return ''
+          return user.profileUrl
+        }
+
+        // Format date
+        const formatDate = (dateString: string | null): string => {
+          if (!dateString) return ''
+          const date = new Date(dateString)
+          return date.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+          })
+        }
+
+        return {
+          authorName: getUserDisplayName(post.user),
+          authorImage: getUserAvatar(post.user),
+          reviewText: post.content || post.summary || post.title || '',
+          productImages: images,
+          date: formatDate(post.publishedAt || post.creationDate),
+          likes: post.likeCount || 0,
+          comments: post.commentCount || 0,
+          shares: post.shareCount || 0,
+        }
+      })
+  }, [communityPosts])
+
+  // Member testimonials carousel state
+  const [memberTestimonialsIndex, setMemberTestimonialsIndex] = useState(0)
+  const memberTestimonialsTotalPages = Math.ceil(
+    communityPostsAsTestimonials.length / PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
+  )
+
+  const currentMemberTestimonials = useMemo(
+    () =>
+      communityPostsAsTestimonials.slice(
+        memberTestimonialsIndex * PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE,
+        memberTestimonialsIndex * PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE +
+          PAGINATION_CONFIG.MEMBER_TESTIMONIALS_PER_PAGE
+      ),
+    [communityPostsAsTestimonials, memberTestimonialsIndex]
+  )
+
+  const goToMemberTestimonialsPrevious = useCallback(() => {
+    setMemberTestimonialsIndex(prev =>
+      prev === 0 ? memberTestimonialsTotalPages - 1 : prev - 1
+    )
+  }, [memberTestimonialsTotalPages])
+
+  const goToMemberTestimonialsNext = useCallback(() => {
+    setMemberTestimonialsIndex(prev => (prev + 1) % memberTestimonialsTotalPages)
+  }, [memberTestimonialsTotalPages])
+
+  const goToMemberTestimonialsPage = useCallback((index: number) => {
+    setMemberTestimonialsIndex(index)
+  }, [])
 
   const currentTestimonials = useMemo(
     () =>
@@ -508,7 +603,7 @@ export default function Home() {
         )}
 
         {/* Section 3: Statistics */}
-        <section className="container-custom pt-6 md:pt-8 pb-4 md:pb-6">
+        <section className="container-custom py-8 md:py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="text-center">
               <div className="text-28 md:text-36 lg:text-40 xl:text-48 font-medium text-brand-500 mb-2">
@@ -550,7 +645,7 @@ export default function Home() {
         </section>
 
         {/* Section 4: Benefits */}
-        <section className="container-custom pt-4 md:pt-6 pb-8 md:pb-12">
+        <section className="container-custom py-8 md:py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             <div className="flex flex-col items-center text-center">
               <div className="mb-4">
@@ -638,59 +733,63 @@ export default function Home() {
         </section>
 
         {/* Section 5: Suggested Products */}
-        <section className="container-custom py-8 md:py-12">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-22 sm:text-26 md:text-30 lg:text-32 font-normal text-gray-900">
-              {t('sections.productsSuggested')}
-            </h2>
-            <Link
-              href="/products"
-              className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
-            >
-              {t('sections.viewAll')}
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {isLoading ? (
-              <CardSkeleton count={4} />
-            ) : (
-              products
-                .slice(0, 4)
-                .map(product => (
-                  <ProductCardItem key={product.id} product={product} />
-                ))
-            )}
-          </div>
-        </section>
+        {products.length > 0 && (
+          <section className="container-custom py-8 md:py-12">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-22 sm:text-26 md:text-30 lg:text-32 font-normal text-gray-900">
+                {t('sections.productsSuggested')}
+              </h2>
+              <Link
+                href="/products"
+                className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
+              >
+                {t('sections.viewAll')}
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {isLoading ? (
+                <CardSkeleton count={4} />
+              ) : (
+                products
+                  .slice(0, 4)
+                  .map(product => (
+                    <ProductCardItem key={product.id} product={product} />
+                  ))
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Section 6: Suggested Services */}
-        <section className="container-custom py-8 md:py-12">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
-              {t('sections.servicesSuggested')}
-            </h2>
-            <Link
-              href="/services"
-              className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
-            >
-              {t('sections.viewAll')}
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {isLoading ? (
-              <CardSkeleton count={4} />
-            ) : (
-              services
-                .slice(0, 4)
-                .map(service => (
-                  <ServiceCardItem key={service.id} service={service} />
-                ))
-            )}
-          </div>
-        </section>
+        {services.length > 0 && (
+          <section className="container-custom py-8 md:py-12">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-22 sm:text-26 md:text-28 lg:text-32 font-normal text-gray-900">
+                {t('sections.servicesSuggested')}
+              </h2>
+              <Link
+                href="/services"
+                className="flex items-center gap-2 text-16 font-semibold text-brand-500 hover:text-brand-600 transition-colors"
+              >
+                {t('sections.viewAll')}
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {isLoading ? (
+                <CardSkeleton count={4} />
+              ) : (
+                services
+                  .slice(0, 4)
+                  .map(service => (
+                    <ServiceCardItem key={service.id} service={service} />
+                  ))
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Section 7: Why Trust Section */}
-        <section className="relative py-12 md:py-16 overflow-hidden bg-white">
+        <section className="relative py-8 md:py-12 overflow-hidden bg-white">
           <div className="absolute inset-0 bottom-1/4 pointer-events-none">
             <Image
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
@@ -749,135 +848,139 @@ export default function Home() {
         </section>
 
         {/* Section 8: Testimonials */}
-        <section className="container-custom py-8 md:py-12">
-          {/* Centered Heading Above Section */}
-            <div className="text-center mb-8 md:mb-12">
-            <h2 className={cn(
-              "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black",
-              isRTL && "leading-relaxed"
-            )}>
-              <span className="font-normal text-gray-900 block">
-                {t('sections.testimonials.title')}{' '}
-                <span className="font-semibold text-gray-900">
-                  {t('sections.testimonials.reviews')}
-                </span>
-              </span>
-              <span className={cn(
-                "font-semibold text-gray-900 block",
-                isRTL ? "mt-3 md:mt-4" : "mt-0"
+        {testimonials.length > 0 && (
+          <section className="container-custom py-8 md:py-12">
+            {/* Centered Heading Above Section */}
+              <div className="text-center mb-8 md:mb-12">
+              <h2 className={cn(
+                "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black",
+                isRTL && "leading-relaxed"
               )}>
-                {t('sections.testimonials.rideWith')}{' '}
-                <span className="font-normal text-gray-900">
-                  {t('sections.testimonials.confidence')}
+                <span className="font-normal text-gray-900 block">
+                  {t('sections.testimonials.title')}{' '}
+                  <span className="font-semibold text-gray-900">
+                    {t('sections.testimonials.reviews')}
+                  </span>
                 </span>
-              </span>
-            </h2>
-          </div>
-
-          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
-            {/* Left Side - Quote Icon and Heading */}
-            <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
-              <div className="flex-1 lg:max-w-md">
-                <div className="mb-4 md:mb-6">
-                  <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
-                  <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
-                    <span className="block">{t('sections.testimonials.whatOurCustomers')}</span>
-                    <span className="block font-semibold text-gray-900">
-                      {t('sections.testimonials.customers')}
-                    </span>
-                    {t('sections.testimonials.areSaying') && (
-                      <span className="block">{t('sections.testimonials.areSaying')}</span>
-                    )}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 md:gap-4">
-                  <button
-                    onClick={goToTestimonialsPrevious}
-                    aria-label={t('sections.testimonials.previous')}
-                  >
-                    <ChevronLeft className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
-                  </button>
-                  <div className="flex-1 flex items-center gap-2">
-                    {Array.from({ length: testimonialsTotalPages }).map(
-                      (_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => goToTestimonialsPage(index)}
-                          className={cn(
-                            'flex-1 h-2 rounded-full transition-all',
-                            index === testimonialsIndex
-                              ? 'bg-red-500'
-                              : 'bg-gray-200 hover:bg-gray-300'
-                          )}
-                          aria-label={`${t('sections.testimonials.goToPage')} ${index + 1}`}
-                        />
-                      )
-                    )}
-                  </div>
-                  <button
-                    onClick={goToTestimonialsNext}
-                    aria-label={t('sections.testimonials.next')}
-                  >
-                    <ChevronRight className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
-                  </button>
-                </div>
-              </div>
+                <span className={cn(
+                  "font-semibold text-gray-900 block",
+                  isRTL ? "mt-3 md:mt-4" : "mt-0"
+                )}>
+                  {t('sections.testimonials.rideWith')}{' '}
+                  <span className="font-normal text-gray-900">
+                    {t('sections.testimonials.confidence')}
+                  </span>
+                </span>
+              </h2>
             </div>
 
-            {/* Right Side - Testimonial Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto items-stretch">
+            <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
+              {/* Left Side - Quote Icon and Heading */}
+              <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
+                <div className="flex-1 lg:max-w-md">
+                  <div className="mb-4 md:mb-6">
+                    <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
+                    <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
+                      <span className="block">{t('sections.testimonials.whatOurCustomers')}</span>
+                      <span className="block font-semibold text-gray-900">
+                        {t('sections.testimonials.customers')}
+                      </span>
+                      {t('sections.testimonials.areSaying') && (
+                        <span className="block">{t('sections.testimonials.areSaying')}</span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <button
+                      onClick={goToTestimonialsPrevious}
+                      aria-label={t('sections.testimonials.previous')}
+                    >
+                      <ChevronLeft className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
+                    </button>
+                    <div className="flex-1 flex items-center gap-2">
+                      {Array.from({ length: testimonialsTotalPages }).map(
+                        (_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => goToTestimonialsPage(index)}
+                            className={cn(
+                              'flex-1 h-2 rounded-full transition-all',
+                              index === testimonialsIndex
+                                ? 'bg-red-500'
+                                : 'bg-gray-200 hover:bg-gray-300'
+                            )}
+                            aria-label={`${t('sections.testimonials.goToPage')} ${index + 1}`}
+                          />
+                        )
+                      )}
+                    </div>
+                    <button
+                      onClick={goToTestimonialsNext}
+                      aria-label={t('sections.testimonials.next')}
+                    >
+                      <ChevronRight className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Side - Testimonial Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto items-stretch">
+                {isLoading ? (
+                  <TestimonialCardSkeleton count={3} />
+                ) : (
+                  currentTestimonials.map((testimonial, index) => (
+                    <Card
+                      key={`${testimonialsIndex}-${index}`}
+                      cardData={{ type: 'testimonial', ...testimonial }}
+                      className="h-full"
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Section 9: Providers */}
+        {providers.length > 0 && (
+          <section className="container-custom py-8 md:py-12">
+            <div className="text-center mb-8 md:mb-12">
+              <h2 className={cn(
+                "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6",
+                isRTL && "leading-relaxed"
+              )}>
+                <span className="font-normal text-gray-900 block">
+                  {t('sections.providers.title')}{' '}
+                  <span className="font-semibold text-gray-900">
+                    {t('sections.providers.trusted')}
+                  </span>
+                </span>
+                <span className={cn(
+                  "font-semibold text-gray-900 block",
+                  isRTL ? "mt-3 md:mt-4" : "mt-0"
+                )}>
+                  {t('sections.providers.wedding')}{' '}
+                  <span className="font-normal text-gray-900">
+                    {t('sections.providers.providers')}
+                  </span>
+                </span>
+              </h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {isLoading ? (
-                <TestimonialCardSkeleton count={3} />
+                <ProviderCardSkeleton count={4} />
               ) : (
-                currentTestimonials.map((testimonial, index) => (
-                  <Card
-                    key={`${testimonialsIndex}-${index}`}
-                    cardData={{ type: 'testimonial', ...testimonial }}
-                    className="h-full"
-                  />
+                providers.map(provider => (
+                  <ProviderCardItem key={provider.id} provider={provider} />
                 ))
               )}
             </div>
-          </div>
-        </section>
-
-        {/* Section 9: Providers */}
-        <section className="container-custom py-8 md:py-12">
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className={cn(
-              "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black mb-4 md:mb-6",
-              isRTL && "leading-relaxed"
-            )}>
-              <span className="font-normal text-gray-900 block">
-                {t('sections.providers.title')}{' '}
-                <span className="font-semibold text-gray-900">
-                  {t('sections.providers.trusted')}
-                </span>
-              </span>
-              <span className={cn(
-                "font-semibold text-gray-900 block",
-                isRTL ? "mt-3 md:mt-4" : "mt-0"
-              )}>
-                {t('sections.providers.wedding')}{' '}
-                <span className="font-normal text-gray-900">
-                  {t('sections.providers.providers')}
-                </span>
-              </span>
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {isLoading ? (
-              <ProviderCardSkeleton count={4} />
-            ) : (
-              providers.map(provider => (
-                <ProviderCardItem key={provider.id} provider={provider} />
-              ))
-            )}
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Section 10: Wedding Journey */}
-        <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden min-h-[700px] md:min-h-[800px] lg:min-h-[900px]">
+        <section className="relative py-8 md:py-12 overflow-hidden min-h-[700px] md:min-h-[800px] lg:min-h-[900px]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-full pointer-events-none">
             <Image
               src={typeof lineS4Svg === 'string' ? lineS4Svg : lineS4Svg.src}
@@ -934,90 +1037,287 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 11: Member Testimonials - Commented Out */}
-        {/*
-        <section className="container-custom py-12 md:py-16">
-          <div className="text-center mb-8 md:mb-12">
-            <h2 className="text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black">
-              <span className="font-normal text-gray-900">
-                Our Bride{' '}
-                <span className="font-semibold text-gray-900">Members</span>
-              </span>
-              <br />
-              <span className="font-semibold text-gray-900">
-                Are <span className="font-normal text-gray-900">Loving</span>
-              </span>
-            </h2>
-          </div>
+        {/* Section 11: Community Posts (Member Testimonials Design) */}
+        {communityPostsAsTestimonials.length > 0 && (
+          <section className="container-custom py-8 md:py-12">
+            {/* Centered Heading Above Section */}
+            <div className="text-center mb-8 md:mb-12">
+              <h2 className={cn(
+                "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black",
+                isRTL && "leading-relaxed"
+              )}>
+                {tMember('titleFull') ? (
+                  <span className="font-normal text-gray-900 block">
+                    {tMember('titleFull')}
+                  </span>
+                ) : (
+                  <>
+                    <span className="font-normal text-gray-900 block">
+                      {tMember('title')}{' '}
+                      <span className="font-semibold text-gray-900">
+                        {tMember('members')}
+                      </span>
+                    </span>
+                    <span className={cn(
+                      "font-semibold text-gray-900 block",
+                      isRTL ? "mt-3 md:mt-4" : "mt-0"
+                    )}>
+                      {tMember('are')}{' '}
+                      <span className="font-normal text-gray-900">
+                        {tMember('loving')}
+                      </span>
+                    </span>
+                  </>
+                )}
+              </h2>
+            </div>
 
-          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
-            <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
-              <div className="flex-1 lg:max-w-md">
-                <div className="mb-4 md:mb-6">
-                  <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
-                  <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
-                    <span className="block">Discover</span>
-                    <span className="block font-semibold text-gray-900">
-                      What
-                    </span>
-                    <span className="block font-semibold text-gray-900">
-                      Members
-                    </span>
-                    <span className="block">Are Saying</span>
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 md:gap-4">
-                  <button
-                    onClick={goToMemberTestimonialsPrevious}
-                    aria-label="Previous testimonials"
-                  >
-                    <ChevronLeft className="h-5 w-5 text-gray-700" />
-                  </button>
-                  <div className="flex-1 flex items-center gap-2">
-                    {Array.from({ length: memberTestimonialsTotalPages }).map(
-                      (_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => goToMemberTestimonialsPage(index)}
-                          className={cn(
-                            'flex-1 h-2 rounded-full transition-all',
-                            index === memberTestimonialsIndex
-                              ? 'bg-red-500'
-                              : 'bg-gray-200 hover:bg-gray-300'
+            <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
+              {/* Left Side - Quote Icon and Heading */}
+              <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
+                <div className="flex-1 lg:max-w-md">
+                  <div className="mb-4 md:mb-6">
+                    <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
+                    <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
+                      {tMember('fullPhrase') ? (
+                        <span className="block">{tMember('fullPhrase')}</span>
+                      ) : (
+                        <>
+                          <span className="block">{tMember('discover')}</span>
+                          <span className="block font-semibold text-gray-900">
+                            {tMember('what')}
+                          </span>
+                          <span className="block font-semibold text-gray-900">
+                            {tMember('membersLabel')}
+                          </span>
+                          {tMember('areSaying') && (
+                            <span className="block">{tMember('areSaying')}</span>
                           )}
-                          aria-label={`Go to page ${index + 1}`}
-                        />
-                      )
-                    )}
+                        </>
+                      )}
+                    </p>
                   </div>
-                  <button
-                    onClick={goToMemberTestimonialsNext}
-                    aria-label="Next testimonials"
-                  >
-                    <ChevronRight className="h-5 w-5 text-gray-700" />
-                  </button>
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <button
+                      onClick={goToMemberTestimonialsPrevious}
+                      aria-label={tMember('previous')}
+                    >
+                      <ChevronLeft className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
+                    </button>
+                    <div className="flex-1 flex items-center gap-2">
+                      {Array.from({ length: memberTestimonialsTotalPages }).map(
+                        (_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => goToMemberTestimonialsPage(index)}
+                            className={cn(
+                              'flex-1 h-2 rounded-full transition-all',
+                              index === memberTestimonialsIndex
+                                ? 'bg-red-500'
+                                : 'bg-gray-200 hover:bg-gray-300'
+                            )}
+                            aria-label={`${tMember('goToPage')} ${index + 1}`}
+                          />
+                        )
+                      )}
+                    </div>
+                    <button
+                      onClick={goToMemberTestimonialsNext}
+                      aria-label={tMember('next')}
+                    >
+                      <ChevronRight className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
+                    </button>
+                  </div>
                 </div>
+              </div>
+
+              {/* Right Side - Testimonial Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto items-stretch">
+                {isLoadingPosts ? (
+                  <MemberTestimonialCardSkeleton count={3} />
+                ) : (
+                  currentMemberTestimonials.map((testimonial, index) => (
+                    <Card
+                      key={`${memberTestimonialsIndex}-${index}`}
+                      cardData={{ type: 'member-testimonial', ...testimonial }}
+                      className="h-full"
+                    />
+                  ))
+                )}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto items-stretch">
-              {isLoading ? (
-                <MemberTestimonialCardSkeleton count={3} />
-              ) : (
-                currentMemberTestimonials.map((testimonial, index) => (
-                  <Card
-                    key={`${memberTestimonialsIndex}-${index}`}
-                    cardData={{ type: 'member-testimonial', ...testimonial }}
+            {/* Community Join Banner */}
+            <div className={cn(
+              "mt-8 md:mt-12 bg-gray-50 rounded-2xl p-6 md:p-8 lg:p-10 flex flex-col md:flex-row items-center gap-6 md:gap-8 lg:gap-12",
+              isRTL && "md:flex-row-reverse"
+            )}>
+              {/* Left: Illustration */}
+              <div className={cn(
+                "flex-shrink-0 w-full md:w-auto flex justify-center",
+                isRTL ? "md:justify-end" : "md:justify-start"
+              )}>
+                <div className="relative w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64">
+                  <Image
+                    src={typeof communityBannerSvg === 'string' ? communityBannerSvg : communityBannerSvg.src}
+                    alt="Community illustration"
+                    fill
+                    sizes="(max-width: 768px) 192px, (max-width: 1024px) 224px, 256px"
+                    className="object-contain"
                   />
-                ))
-              )}
+                </div>
+              </div>
+
+              {/* Right: Text Content */}
+              <div className={cn("flex-1 flex flex-col gap-4 md:gap-6", isRTL ? "text-center md:text-right" : "text-center md:text-left")}>
+                <h3 className="text-24 md:text-28 lg:text-32 font-bold text-gray-900">
+                  {tMember('joinCommunity.title')}
+                </h3>
+                <p className="text-16 md:text-18 text-gray-600 leading-relaxed max-w-2xl">
+                  {tMember('joinCommunity.description')}
+                </p>
+                <div className={cn("flex mt-2", isRTL ? "justify-center md:justify-end" : "justify-center md:justify-start")}>
+                  <Button
+                    asChild
+                    variant="brand"
+                    size="lg"
+                    className={cn(
+                      "rounded-full px-6 md:px-8 py-3 md:py-4 text-16 md:text-18 font-semibold",
+                      isRTL && "flex-row-reverse"
+                    )}
+                  >
+                    <Link href="/community" dir={isRTL ? 'rtl' : 'ltr'}>
+                      {tMember('joinCommunity.button')}
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Section 12: Events Flow */}
+        <section className="container-custom py-8 md:py-12">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 mb-8 md:mb-12">
+            {/* Left: SVG Illustration */}
+            <div className={cn(
+              "flex-shrink-0 w-full lg:w-auto flex justify-center",
+              isRTL ? "lg:order-2" : "lg:order-1"
+            )}>
+              <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
+                <Image
+                  src={typeof eventsHomeSvg === 'string' ? eventsHomeSvg : eventsHomeSvg.src}
+                  alt="Events planning illustration"
+                  fill
+                  sizes="(max-width: 768px) 256px, (max-width: 1024px) 320px, 384px"
+                  className="object-contain"
+                />
+              </div>
+            </div>
+
+            {/* Right: Text Content */}
+            <div className={cn(
+              "flex-1 flex flex-col gap-4 md:gap-6 text-center lg:text-left",
+              isRTL && "lg:text-right lg:order-1"
+            )}>
+              <h2 className={cn(
+                "text-24 sm:text-28 md:text-36 lg:text-40 xl:text-48 font-black",
+                isRTL && "leading-relaxed"
+              )}>
+                <span className="font-normal text-gray-900 block">
+                  {t('sections.events.title')}{' '}
+                  <span className="font-semibold text-gray-900">
+                    {t('sections.events.wedding')}
+                  </span>
+                </span>
+                <span className={cn(
+                  "font-semibold text-gray-900 block",
+                  isRTL ? "mt-3 md:mt-4" : "mt-0"
+                )}>
+                  {t('sections.events.events')}{' '}
+                  <span className="font-normal text-gray-900">
+                    {t('sections.events.withEase')}
+                  </span>
+                </span>
+              </h2>
+              <p className="text-16 md:text-18 lg:text-20 text-gray-600 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                {t('sections.events.description')}
+              </p>
             </div>
           </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-12">
+            {/* Feature 1: Event Management */}
+            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+              <div className="mb-4 p-4 rounded-full bg-brand-100">
+                <Calendar className="h-8 w-8 text-brand-500" />
+              </div>
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+                {t('sections.events.features.eventManagement.title')}
+              </h3>
+              <p className="text-14 text-gray-600 leading-relaxed">
+                {t('sections.events.features.eventManagement.description')}
+              </p>
+            </div>
+
+            {/* Feature 2: Budget Planning */}
+            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+              <div className="mb-4 p-4 rounded-full bg-brand-100">
+                <DollarSign className="h-8 w-8 text-brand-500" />
+              </div>
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+                {t('sections.events.features.budgetPlanning.title')}
+              </h3>
+              <p className="text-14 text-gray-600 leading-relaxed">
+                {t('sections.events.features.budgetPlanning.description')}
+              </p>
+            </div>
+
+            {/* Feature 3: Guest Lists */}
+            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+              <div className="mb-4 p-4 rounded-full bg-brand-100">
+                <UserPlus className="h-8 w-8 text-brand-500" />
+              </div>
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+                {t('sections.events.features.guestLists.title')}
+              </h3>
+              <p className="text-14 text-gray-600 leading-relaxed">
+                {t('sections.events.features.guestLists.description')}
+              </p>
+            </div>
+
+            {/* Feature 4: Timeline */}
+            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+              <div className="mb-4 p-4 rounded-full bg-brand-100">
+                <Clock className="h-8 w-8 text-brand-500" />
+              </div>
+              <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
+                {t('sections.events.features.timeline.title')}
+              </h3>
+              <p className="text-14 text-gray-600 leading-relaxed">
+                {t('sections.events.features.timeline.description')}
+              </p>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="flex justify-center">
+            <Button
+              asChild
+              variant="brand"
+              size="lg"
+              className="rounded-full px-8 md:px-10 py-3 md:py-4 text-16 md:text-18 font-semibold"
+            >
+              <Link href="/dashboard/my-events">
+                {t('sections.events.cta')}
+              </Link>
+            </Button>
+          </div>
         </section>
-        */}
 
         {/* Section: App Download */}
-        <section className="relative overflow-hidden bg-white py-0">
+        <section className="relative overflow-hidden bg-white py-8 md:py-12">
           <div className="container-custom">
             <div className="text-center mb-0">
               <h2 className="text-32 md:text-40 lg:text-48 font-black text-gray-900 leading-tight">

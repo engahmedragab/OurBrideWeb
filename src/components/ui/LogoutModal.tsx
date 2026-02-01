@@ -3,6 +3,7 @@
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { LogoutIcon } from './ModalIcons'
+import { useI18nTranslations } from '@/i18n'
 
 export interface LogoutModalProps {
   isOpen: boolean
@@ -19,6 +20,8 @@ export const LogoutModal = ({
   onClose,
   onConfirm,
 }: LogoutModalProps) => {
+  const t = useI18nTranslations('settings.logoutModal')
+  
   const handleCancel = () => {
     onClose()
   }
@@ -32,7 +35,7 @@ export const LogoutModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Logout"
+      title={t('title')}
       maxWidth="sm"
       showCloseButton={true}
     >
@@ -43,10 +46,10 @@ export const LogoutModal = ({
         {/* Content */}
         <div className="flex flex-col items-center gap-2 text-center">
           <h3 className="text-16 font-semibold text-gray-900">
-            Are you sure you want to log out of your account?
+            {t('question')}
           </h3>
           <p className="text-14 text-gray-600 max-w-md">
-            You'll need to enter your credentials again to sign back in
+            {t('description')}
           </p>
         </div>
 
@@ -58,7 +61,7 @@ export const LogoutModal = ({
             onClick={handleCancel}
             className="w-full text-white"
           >
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             variant="outline"
@@ -66,7 +69,7 @@ export const LogoutModal = ({
             onClick={handleLogout}
             className="w-full bg-brand-100 text-brand-500 border-brand-200 hover:bg-brand-100 hover:text-brand-600"
           >
-            Logout
+            {t('logout')}
           </Button>
         </div>
       </div>

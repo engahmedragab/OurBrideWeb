@@ -6,12 +6,17 @@ import { ToastProvider } from '@/components/ui/Toaster'
 import { AuthProvider } from '@/auth'
 import { GlobalLoadingProvider } from '@/contexts/GlobalLoadingContext'
 
+import { LocaleSync } from '@/components/locale/LocaleSync'
+
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <GlobalLoadingProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <LocaleSync />
+            {children}
+          </ToastProvider>
         </GlobalLoadingProvider>
       </AuthProvider>
     </QueryClientProvider>

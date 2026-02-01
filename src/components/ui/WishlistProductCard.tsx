@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Trash2 } from 'lucide-react'
 import type { Product } from '@/types/product'
+import { useI18nTranslations } from '@/i18n'
 
 export interface WishlistProductCardProps {
   product: Product
@@ -20,6 +21,7 @@ export const WishlistProductCard = React.memo(
   ({ product, onRemove, onBuyNow, className }: WishlistProductCardProps) => {
     const [imageError, setImageError] = React.useState(false)
     const router = useRouter()
+    const t = useI18nTranslations('wishlist.cards')
     const hasDiscount = product.price.discounted < product.price.original
 
     const handleBuyNow = () => {
@@ -60,7 +62,7 @@ export const WishlistProductCard = React.memo(
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
                 <span className="text-gray-400 text-10 font-medium text-center px-1">
-                  No image available
+                  {t('noImageAvailable')}
                 </span>
               </div>
             )}
@@ -72,7 +74,7 @@ export const WishlistProductCard = React.memo(
             type="button"
             onClick={handleRemove}
             className="p-2 rounded-full border-2 border-red-300 hover:bg-red-50 hover:border-red-400 transition-colors"
-            aria-label="Remove from wishlist"
+            aria-label={t('removeFromWishlist')}
           >
             <Trash2 className="h-4 w-4 text-red-500" />
           </button>
@@ -84,7 +86,7 @@ export const WishlistProductCard = React.memo(
         {/* Discount Badge - Top Right */}
         {discountPercentage && (
           <span className="absolute top-0 right-0 text-12 font-medium text-green-500">
-            {discountPercentage}% OFF
+            {t('discountOff', { percent: discountPercentage })}
           </span>
         )}
 
@@ -127,7 +129,7 @@ export const WishlistProductCard = React.memo(
             disabled={!product.inStock}
             className='!text-white'
           >
-            Buy Now
+            {t('buyNow')}
           </Button>
         </div>
       </div>

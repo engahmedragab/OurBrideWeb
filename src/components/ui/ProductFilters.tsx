@@ -6,7 +6,7 @@ import { Button } from './Button'
 import { Checkbox } from './Checkbox'
 import { Badge } from './Badge'
 import { Input } from './Input'
-import { X, SlidersHorizontal } from 'lucide-react'
+import { X, SlidersHorizontal, Star } from 'lucide-react'
 import type { ProductFilter, ProductCategory } from '@/types/product'
 import { useI18nTranslations } from '@/i18n/hooks'
 
@@ -260,6 +260,7 @@ export const ProductFilters = ({
   const activeFiltersCount =
     (filters.category?.length || 0) +
     (filters.inStock !== undefined ? 1 : 0) +
+    (filters.rating !== undefined ? 1 : 0) +
     (filters.tags?.length || 0)
 
   const handleCategoryToggle = (categoryId: string) => {
@@ -465,6 +466,65 @@ export const ProductFilters = ({
           </div>
         </div>
 
+        {/* Rating Filter */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="text-14 font-semibold text-gray-900">{t('rating')}</h4>
+
+            {filters.rating !== undefined && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onFiltersChange({ ...filters, rating: undefined })}
+                className="text-12 text-gray-500 hover:text-gray-700 h-auto p-2"
+              >
+                {t('clear')}
+              </Button>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            {[4, 3, 2, 1].map(rating => (
+              <div key={rating} className="flex items-center gap-2">
+                <Checkbox
+                  checked={filters.rating === rating}
+                  onChange={checked => {
+                    onFiltersChange({
+                      ...filters,
+                      rating: checked ? rating : undefined,
+                    })
+                  }}
+                  variant={filters.rating === rating ? 'brandFilled' : 'brand'}
+                />
+                <label
+                  className="text-14 text-gray-700 cursor-pointer flex items-center gap-1.5"
+                  onClick={() => {
+                    onFiltersChange({
+                      ...filters,
+                      rating: filters.rating === rating ? undefined : rating,
+                    })
+                  }}
+                >
+                  <span>{rating}+</span>
+                  <div className="flex items-center gap-0.5">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <Star
+                        key={star}
+                        className={cn(
+                          'h-4 w-4',
+                          star <= rating
+                            ? 'fill-brand-500 text-brand-500'
+                            : 'fill-gray-200 text-gray-200'
+                        )}
+                      />
+                    ))}
+                  </div>
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Active Filters */}
         {activeFiltersCount > 0 && (
           <div className="pt-4 border-t border-gray-200">
@@ -488,6 +548,35 @@ export const ProductFilters = ({
                   </Badge>
                 )
               })}
+
+              {filters.rating !== undefined && (
+                <Badge
+                  variant="outline"
+                  className="text-12 px-2 py-1 flex items-center gap-1.5"
+                >
+                  <span>{filters.rating}+</span>
+                  <div className="flex items-center gap-0.5">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <Star
+                        key={star}
+                        className={cn(
+                          'h-3 w-3',
+                          star <= filters.rating!
+                            ? 'fill-brand-500 text-brand-500'
+                            : 'fill-gray-200 text-gray-200'
+                        )}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => onFiltersChange({ ...filters, rating: undefined })}
+                    className="ml-1"
+                    aria-label={t('removeRating')}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
 
               {filters.inStock && (
                 <Badge

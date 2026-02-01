@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useI18nTranslations } from '@/i18n/hooks'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 export interface ProductImageGalleryProps {
   images: string[]
@@ -22,6 +22,7 @@ export const ProductImageGallery = ({
     img => img && typeof img === 'string' && img.trim() !== ''
   )
   const t = useI18nTranslations('common')
+  const isRTL = useIsRTL()
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
 
@@ -74,14 +75,14 @@ export const ProductImageGallery = ({
               className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white border border-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               aria-label="Previous image"
             >
-              <ChevronLeft className="h-5 w-5 text-gray-700" />
+              <ChevronLeft className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
             </button>
             <button
               onClick={goToNext}
               className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white border border-gray-200 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
               aria-label="Next image"
             >
-              <ChevronRight className="h-5 w-5 text-gray-700" />
+              <ChevronRight className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
             </button>
           </>
         )}

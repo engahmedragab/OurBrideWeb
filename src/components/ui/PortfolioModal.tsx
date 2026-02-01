@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight, Clock, Phone, MapPin, ImageIcon, Mail, Store } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useIsRTL } from '@/i18n/hooks'
 import type { MediaResponse } from '@/types/responses'
 import type { BranchPortfolioResponse } from '@/types/responses/branch-portfolio-response'
 import { Button } from './Button'
@@ -34,6 +35,7 @@ export function PortfolioModal({
   title,
   subtitle,
 }: PortfolioModalProps) {
+  const isRTL = useIsRTL()
   const [activeTab, setActiveTab] = useState<TabType>('about')
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
 
@@ -527,7 +529,7 @@ export function PortfolioModal({
               className="absolute left-4 bg-white/10 hover:bg-white/20 text-white border-0 z-10"
               aria-label="Previous image"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className={cn("h-6 w-6", isRTL && "rotate-180")} />
             </Button>
           )}
 
@@ -539,7 +541,7 @@ export function PortfolioModal({
               className="absolute right-4 bg-white/10 hover:bg-white/20 text-white border-0 z-10"
               aria-label="Next image"
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className={cn("h-6 w-6", isRTL && "rotate-180")} />
             </Button>
           )}
 

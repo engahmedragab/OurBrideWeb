@@ -1,6 +1,5 @@
 'use client'
 
-import { ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { StaticImageData } from 'next/image'
@@ -8,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Badge } from './Badge'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useIsRTL } from '@/i18n'
 
 export interface PromoHeroProps {
   badge: string
@@ -39,6 +39,8 @@ export const PromoHero = ({
   className,
   onCtaClick,
 }: PromoHeroProps) => {
+  const isRTL = useIsRTL()
+  
   const handleCtaClick = () => {
     if (onCtaClick) {
       onCtaClick()
@@ -152,7 +154,7 @@ export const PromoHero = ({
               className="absolute left-4 top-1/2 -translate-y-1/2 z-30 h-[60px] w-[60px] rounded-[60px] bg-brand-500 hover:bg-brand-600 hidden lg:flex"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="h-6 w-6 text-white" />
+              <ChevronLeft className={cn("h-6 w-6 text-white", isRTL && "scale-x-[-1]")} />
             </Button>
             <Button
               variant="default"
@@ -160,7 +162,7 @@ export const PromoHero = ({
               className="absolute right-4 top-1/2 -translate-y-1/2 z-30 h-[60px] w-[60px] rounded-[60px] bg-brand-500 hover:bg-brand-600 hidden lg:flex"
               aria-label="Next slide"
             >
-              <ChevronRight className="h-6 w-6 text-white" />
+              <ChevronRight className={cn("h-6 w-6 text-white", isRTL && "scale-x-[-1]")} />
             </Button>
           </div>
         </div>

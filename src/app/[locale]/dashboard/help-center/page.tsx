@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useI18nTranslations } from '@/i18n'
 import {
   Accordion,
   ReportProblemForm,
@@ -14,9 +15,13 @@ import type { ChatMessage } from '@/components/ui'
  * FAQ Page - Help Center with FAQ, Report Problem, and Live Chat
  */
 export default function HelpCenterPage() {
+  const t = useI18nTranslations('helpCenter')
+  const tChat = useI18nTranslations('chat.support')
+  const tCommon = useI18nTranslations('common')
+  
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState(
-    'Report Submitted Successfully'
+    t('reportSubmitted')
   )
   const [isChatModalOpen, setIsChatModalOpen] = useState(false)
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
@@ -34,12 +39,12 @@ export default function HelpCenterPage() {
     if (isOther) {
       if (hasDescription) {
         // Handle form submission - API call would go here
-        setSuccessMessage('Report Submitted Successfully')
+        setSuccessMessage(t('reportSubmitted'))
         setIsSuccessModalOpen(true)
       }
     } else if (hasProblemType || hasDescription) {
       // Handle form submission - API call would go here
-      setSuccessMessage('Report Submitted Successfully')
+      setSuccessMessage(t('reportSubmitted'))
       setIsSuccessModalOpen(true)
     }
   }
@@ -54,7 +59,7 @@ export default function HelpCenterPage() {
       setChatMessages([
         {
           id: '1',
-          message: 'Hello,\nhow can We help you today ?',
+          message: tChat('greeting'),
           sender: 'support',
           timestamp: new Date().toLocaleString('en-US', {
             day: '2-digit',
@@ -66,11 +71,11 @@ export default function HelpCenterPage() {
           }),
           seen: true,
           quickReplies: [
-            'Booking issue',
-            'Service provider issue',
-            'Payment issue',
-            'Technical problem',
-            'Other',
+            tChat('quickReplies.bookingIssue'),
+            tChat('quickReplies.serviceProviderIssue'),
+            tChat('quickReplies.paymentIssue'),
+            tChat('quickReplies.technicalProblem'),
+            tChat('quickReplies.other'),
           ],
         },
       ])
@@ -140,8 +145,7 @@ export default function HelpCenterPage() {
     setTimeout(() => {
       const supportResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        message:
-          'Your request has been submitted. A customer support representative will contact you within a few minutes.\nPlease do not close this window.\n\nClient Number: 50\nPeople Ahead of You: 2',
+        message: tChat('response'),
         sender: 'support',
         timestamp: new Date().toLocaleString('en-US', {
           day: '2-digit',
@@ -168,82 +172,71 @@ export default function HelpCenterPage() {
 
   const faqCategories = [
     {
-      title: 'Account & Profile',
+      title: t('categories.accountProfile.title'),
       items: [
         {
-          question: 'How do I create an account?',
-          answer:
-            'Download the OurBride app, click Sign Up, and fill in your details. You can also register using Google, Facebook, or Apple.',
+          question: t('categories.accountProfile.items.createAccount.question'),
+          answer: t('categories.accountProfile.items.createAccount.answer'),
         },
         {
-          question: 'How do I reset my password?',
-          answer:
-            'Go to Settings → Security → Change Password. Enter your old password, then create and confirm your new one.',
+          question: t('categories.accountProfile.items.resetPassword.question'),
+          answer: t('categories.accountProfile.items.resetPassword.answer'),
         },
       ],
     },
     {
-      title: 'Bookings & Services',
+      title: t('categories.bookingsServices.title'),
       items: [
         {
-          question: 'How do I book a service?',
-          answer:
-            "Browse services, choose a provider, select a date, and click Book Now. You'll receive confirmation once the provider accepts.",
+          question: t('categories.bookingsServices.items.bookService.question'),
+          answer: t('categories.bookingsServices.items.bookService.answer'),
         },
         {
-          question: 'Can I cancel or reschedule a booking?',
-          answer:
-            "Yes, go to My Bookings, select the booking, and choose Cancel or Reschedule. Please check the provider's cancellation policy first.",
+          question: t('categories.bookingsServices.items.cancelReschedule.question'),
+          answer: t('categories.bookingsServices.items.cancelReschedule.answer'),
         },
         {
-          question: 'How do I track my booking request?',
-          answer:
-            "Open My Bookings → select your request. You'll see the status: Submitted → Under Review → Confirmed → Payment Due.",
+          question: t('categories.bookingsServices.items.trackBooking.question'),
+          answer: t('categories.bookingsServices.items.trackBooking.answer'),
         },
       ],
     },
     {
-      title: 'Payments',
+      title: t('categories.payments.title'),
       items: [
         {
-          question: 'What payment methods are accepted?',
-          answer:
-            'We support credit/debit cards, mobile wallets, and bank transfers depending on your region.',
+          question: t('categories.payments.items.paymentMethods.question'),
+          answer: t('categories.payments.items.paymentMethods.answer'),
         },
       ],
     },
     {
-      title: 'Offers & Coupons',
+      title: t('categories.offersCoupons.title'),
       items: [
         {
-          question: 'How do I apply a coupon?',
-          answer:
-            'At checkout, enter your coupon code in the Apply Coupon field. The discount will be applied automatically.',
+          question: t('categories.offersCoupons.items.applyCoupon.question'),
+          answer: t('categories.offersCoupons.items.applyCoupon.answer'),
         },
         {
-          question: 'Why is my coupon not working?',
-          answer:
-            "Make sure the coupon hasn't expired, applies to the selected service, and meets the minimum order amount.",
+          question: t('categories.offersCoupons.items.couponNotWorking.question'),
+          answer: t('categories.offersCoupons.items.couponNotWorking.answer'),
         },
       ],
     },
     {
-      title: 'Trust & Safety',
+      title: t('categories.trustSafety.title'),
       items: [
         {
-          question: 'How are service providers verified?',
-          answer:
-            'Every provider must upload valid ID and service documents. Verified providers have a ✅ badge next to their name.',
+          question: t('categories.trustSafety.items.providerVerification.question'),
+          answer: t('categories.trustSafety.items.providerVerification.answer'),
         },
         {
-          question: 'Are my payments secure?',
-          answer:
-            'Yes, all transactions are processed through encrypted payment gateways to protect your data.',
+          question: t('categories.trustSafety.items.paymentSecurity.question'),
+          answer: t('categories.trustSafety.items.paymentSecurity.answer'),
         },
         {
-          question: 'Can I report a problem with a provider?',
-          answer:
-            "Yes, go to the provider's profile or your booking details, click Report a Problem, and describe the issue.",
+          question: t('categories.trustSafety.items.reportProblem.question'),
+          answer: t('categories.trustSafety.items.reportProblem.answer'),
         },
       ],
     },
@@ -255,7 +248,7 @@ export default function HelpCenterPage() {
         {/* Page Title */}
         <div className="mb-6 lg:mb-8">
           <h1 className="text-20 lg:text-24 font-normal leading-8 lg:leading-10 text-black">
-            Frequently Asked Questions ( FAQ )
+            {t('title')}
           </h1>
         </div>
 
@@ -292,8 +285,8 @@ export default function HelpCenterPage() {
       <StatusModal
         open={isSuccessModalOpen}
         title={successMessage}
-        description="Thank you! Your report has been submitted and our team will review it shortly"
-        confirmLabel="Confirm"
+        description={t('reportSubmittedDescription')}
+        confirmLabel={t('confirm')}
         onConfirm={handleCloseSuccessModal}
         onClose={handleCloseSuccessModal}
         containerClassName="max-w-[560px]"
@@ -306,18 +299,21 @@ export default function HelpCenterPage() {
         messageHistory={chatMessages}
         onSend={handleSendMessage}
         onSelectQuickReply={handleSelectQuickReply}
-        supportName="Our Bride Help Center"
-        supportSubtitle="We usually respond within a few minutes."
+        supportName={tChat('name')}
+        supportSubtitle={tChat('subtitle')}
         quickReplyChips={[
           {
-            text: 'Good Morning',
-            onClick: () => handleSendMessage('Good Morning'),
+            text: tChat('quickReplyChips.goodMorning'),
+            onClick: () => handleSendMessage(tChat('quickReplyChips.goodMorning')),
           },
           {
-            text: 'Can we discuss the price?',
-            onClick: () => handleSendMessage('Can we discuss the price?'),
+            text: tChat('quickReplyChips.discussPrice'),
+            onClick: () => handleSendMessage(tChat('quickReplyChips.discussPrice')),
           },
-          { text: 'Thank you', onClick: () => handleSendMessage('Thank you') },
+          {
+            text: tChat('quickReplyChips.thankYou'),
+            onClick: () => handleSendMessage(tChat('quickReplyChips.thankYou')),
+          },
         ]}
       />
     </>

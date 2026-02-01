@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 import { RatingDisplay } from './RatingDisplay'
 import { PriceDisplay } from './PriceDisplay'
-import { useI18nTranslations } from '@/i18n'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 // Base card variants
 const cardVariants = cva(
@@ -530,6 +530,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
 
 // Provider Card Component
 const ProviderCard = ({ data }: { data: ProviderCardData }) => {
+  const isRTL = useIsRTL()
   const [imageError, setImageError] = React.useState(false)
   const t = useI18nTranslations('common')
   const handleFollowToggle = (e: React.MouseEvent) => {
@@ -693,7 +694,7 @@ const ProviderCard = ({ data }: { data: ProviderCardData }) => {
         className="text-14 text-brand hover:text-brand-500 transition-colors flex items-center gap-1"
       >
         View Profile
-        <ArrowRight className="h-4 w-4" />
+        <ArrowRight className={cn("h-4 w-4", isRTL && "scale-x-[-1]")} />
       </Link>
     </div>
   )
@@ -754,7 +755,7 @@ const MemberTestimonialCard = ({
       {/* Product Images */}
       <div className="mb-4 flex-shrink-0">
         {data.productImages.length === 1 ? (
-          <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+          <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
             {mainImage && mainImage.trim() !== '' && !imageErrors.has(0) ? (
               <Image
                 src={mainImage}
@@ -765,14 +766,14 @@ const MemberTestimonialCard = ({
                 onError={() => setImageErrors(prev => new Set(prev).add(0))}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                <span className="text-gray-400 text-12 font-medium">
-                    {t('noImageAvailable')}
+              <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-100">
+                <span className="text-gray-400 text-12 font-medium text-center px-2">
+                  {t('noImageAvailable')}
                 </span>
               </div>
             )}
           </div>
-        ) : (
+        ) : data.productImages.length > 1 ? (
           <div className="grid grid-cols-3 gap-2">
             <div className="col-span-2 relative aspect-video rounded-lg overflow-hidden bg-gray-100">
               {mainImage && mainImage.trim() !== '' && !imageErrors.has(0) ? (
@@ -785,8 +786,8 @@ const MemberTestimonialCard = ({
                   onError={() => setImageErrors(prev => new Set(prev).add(0))}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                  <span className="text-gray-400 text-12 font-medium">
+                <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-100">
+                  <span className="text-gray-400 text-12 font-medium text-center px-2">
                     {t('noImageAvailable')}
                   </span>
                 </div>
@@ -797,7 +798,7 @@ const MemberTestimonialCard = ({
                 {thumbnailImages.map((image, index) => (
                   <div
                     key={index}
-                    className="relative flex-1 rounded-lg overflow-hidden bg-gray-100"
+                    className="relative flex-1 aspect-square rounded-lg overflow-hidden bg-gray-100"
                   >
                     {image && image.trim() !== '' && !imageErrors.has(index + 1) ? (
                       <Image
@@ -809,8 +810,8 @@ const MemberTestimonialCard = ({
                         onError={() => setImageErrors(prev => new Set(prev).add(index + 1))}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                        <span className="text-gray-400 text-10 font-medium">
+                      <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-100">
+                        <span className="text-gray-400 text-10 font-medium text-center px-1">
                           {t('noImageAvailable')}
                         </span>
                       </div>
@@ -820,11 +821,19 @@ const MemberTestimonialCard = ({
               </div>
             )}
           </div>
+        ) : (
+          <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-100">
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-100">
+              <span className="text-gray-400 text-12 font-medium text-center px-2">
+                {t('noImageAvailable')}
+              </span>
+            </div>
+          </div>
         )}
       </div>
 
       {/* Engagement Metrics - Pill-shaped buttons */}
-      <div className="flex items-center gap-4 mt-auto flex-shrink-0">
+      <div className="flex items-center justify-center gap-4 mt-auto flex-shrink-0">
         <button
           type="button"
           className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-colors"

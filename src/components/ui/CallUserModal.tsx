@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { Modal } from '@/components/ui/Modal'
 import { Button } from '@/components/ui/Button'
 import { X, PhoneCall, Volume2, VolumeX, Mic, MicOff } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface CallUserModalProps {
   isOpen: boolean
@@ -62,6 +63,7 @@ export const CallUserModal = ({
   onEndCall,
   active = false,
 }: CallUserModalProps) => {
+  const t = useI18nTranslations('messages')
   // State for outgoing call
   const [mode, setMode] = useState<'idle' | 'calling'>('idle')
   // Live call state
@@ -89,7 +91,7 @@ export const CallUserModal = ({
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        title="Calling"
+        title={t('call.title')}
         maxWidth="sm"
         showCloseButton
         containerClassName="w-full max-w-[380px]"
@@ -116,7 +118,7 @@ export const CallUserModal = ({
                   : <VolumeX className="w-6 h-6 text-gray-400" />}
               </div>
               <span className={`text-11 font-normal ${speakerOn ? 'text-brand-500' : 'text-gray-400'}`}>
-                {speakerOn ? 'Speakers On' : 'Speakers Off'}
+                {speakerOn ? t('call.speakersOn') : t('call.speakersOff')}
               </span>
             </button>
             <button
@@ -132,7 +134,7 @@ export const CallUserModal = ({
                   : <MicOff className="w-6 h-6 text-gray-400" />}
               </div>
               <span className={`text-11 font-normal ${micOn ? 'text-brand-500' : 'text-gray-400'}`}>
-                {micOn ? 'Mic On' : 'Mic Off'}
+                {micOn ? t('call.micOn') : t('call.micOff')}
               </span>
             </button>
           </div>
@@ -144,7 +146,7 @@ export const CallUserModal = ({
             className="w-1/2 rounded-full flex items-center gap-2 justify-center py-3 text-white"
           >
             <X className="w-6 h-6 mr-1" />
-            End Call
+            {t('call.endCall')}
           </Button>
         </div>
         <style>{`
@@ -177,7 +179,7 @@ export const CallUserModal = ({
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        title="Calling"
+        title={t('call.title')}
         maxWidth="sm"
         showCloseButton
         containerClassName="w-full max-w-[380px]"
@@ -187,7 +189,7 @@ export const CallUserModal = ({
           <AnimatedAvatar userAvatar={userAvatar} userName={userName} />
           {/* User Name */}
           <h3 className="text-18 font-normal text-gray-900 mt-2">{userName}</h3>
-          <div className="text-16 font-normal mb-2">Is Calling</div>
+          <div className="text-16 font-normal mb-2">{t('call.isCalling')}</div>
           <div className="flex w-full gap-4 mt-1">
             <Button
               variant="success"
@@ -196,7 +198,7 @@ export const CallUserModal = ({
               className="w-1/2 rounded-full flex items-center gap-2 justify-center py-3 text-white"
             >
               <PhoneCall className="w-6 h-6 mr-1" />
-              Answer
+              {t('call.answer')}
             </Button>
             <Button
               variant="destructive"
@@ -248,10 +250,9 @@ export const CallUserModal = ({
           {/* Avatar */}
           <AnimatedAvatar userAvatar={userAvatar} userName={userName} />
           {/* Title and note */}
-          <h3 className="text-16 font-normal text-gray-900 mt-4">Call {userName} ?</h3>
+          <h3 className="text-16 font-normal text-gray-900 mt-4">{t('call.callUser', { userName })}</h3>
           <p className="text-14 text-center text-gray-400 leading-relaxed max-w-xs">
-            Please note that all calls made through OurBride are recorded to
-            ensure your safety, security, and protection of your rights.
+            {t('call.callNote')}
           </p>
           {/* Start Call Button */}
           <Button
@@ -260,7 +261,7 @@ export const CallUserModal = ({
             onClick={() => setMode('calling')}
             className="w-full text-white rounded-full py-3 text-white"
           >
-            Start Call
+            {t('call.startCall')}
           </Button>
         </div>
       ) : (
@@ -269,7 +270,7 @@ export const CallUserModal = ({
           <AnimatedAvatar userAvatar={userAvatar} userName={userName} />
           {/* User Name */}
           <h3 className="text-18 font-normal text-gray-900 mt-2">{userName}</h3>
-          <div className="text-16 font-normal mb-2">Calling...</div>
+          <div className="text-16 font-normal mb-2">{t('call.calling')}</div>
           <Button
             variant="destructive"
             size="lg"

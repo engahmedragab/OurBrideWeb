@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { ArrowLeft, User, MessageSquare, BellOff, Ban, Phone } from 'lucide-react'
 import { BlockUserModal } from './BlockUserModal'
 import { ReportUserModal } from './ReportUserModal'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface UserProfileViewProps {
   user: {
@@ -42,6 +43,7 @@ export const UserProfileView = ({
   onCall,
   className,
 }: UserProfileViewProps) => {
+  const t = useI18nTranslations('messages')
   const [isBlockModalOpen, setIsBlockModalOpen] = useState(false)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
 
@@ -71,7 +73,7 @@ export const UserProfileView = ({
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span className="text-14 font-medium">Back</span>
+          <span className="text-14 font-medium">{t('profile.back')}</span>
         </button>
       </div>
 
@@ -116,7 +118,7 @@ export const UserProfileView = ({
               <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-brand-50 transition-colors">
                 <User className="h-6 w-6 text-brand-500" />
               </div>
-              <span className="text-12 text-brand-500 font-medium">Profile</span>
+              <span className="text-12 text-brand-500 font-medium">{t('profile.profile')}</span>
             </button>
 
             <button
@@ -126,7 +128,7 @@ export const UserProfileView = ({
               <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-brand-50 transition-colors">
                 <BellOff className="h-6 w-6 text-brand-500" />
               </div>
-              <span className="text-12 text-brand-500 font-medium">Mute</span>
+              <span className="text-12 text-brand-500 font-medium">{t('profile.mute')}</span>
             </button>
 
             <button
@@ -136,7 +138,7 @@ export const UserProfileView = ({
               <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-brand-50 transition-colors">
                 <Ban className="h-6 w-6 text-brand-500" />
               </div>
-              <span className="text-12 text-brand-500 font-medium">Block</span>
+              <span className="text-12 text-brand-500 font-medium">{t('profile.block')}</span>
             </button>
 
             <button
@@ -146,7 +148,7 @@ export const UserProfileView = ({
               <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-brand-50 transition-colors">
                 <Phone className="h-6 w-6 text-brand-500" />
               </div>
-              <span className="text-12 text-brand-500 font-medium">Call</span>
+              <span className="text-12 text-brand-500 font-medium">{t('profile.call')}</span>
             </button>
           </div>
         </div>
@@ -156,7 +158,7 @@ export const UserProfileView = ({
           <div className="px-4 pb-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-16 font-semibold text-gray-900">
-                Media And Files
+                {t('profile.mediaAndFiles')}
               </h3>
               <span className="text-14 text-gray-500">
                 ({mediaItems.length})

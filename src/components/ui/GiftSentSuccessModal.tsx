@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Button } from './Button'
 import { Modal } from './Modal'
 import giftSuccessImage from '@/assets/images/Giftsuccess.png'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface GiftSentSuccessModalProps {
   isOpen: boolean
@@ -20,11 +21,13 @@ export const GiftSentSuccessModal = ({
   onClose,
   className,
 }: GiftSentSuccessModalProps) => {
+  const t = useI18nTranslations('coupons')
+  
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Booking Confirmation"
+      title={t('successModal.title')}
       maxWidth="sm"
       zIndex={60}
       className={className}
@@ -39,7 +42,7 @@ export const GiftSentSuccessModal = ({
                 ? giftSuccessImage
                 : giftSuccessImage.src
             }
-            alt="Gift Sent Successfully"
+            alt={t('successModal.alt')}
             width={150}
             height={150}
             className="w-full max-w-[120px] h-[120px] sm:max-w-[150px] sm:h-[150px] object-contain"
@@ -49,10 +52,10 @@ export const GiftSentSuccessModal = ({
         {/* Success Message */}
         <div className="text-center mb-6">
           <p className="text-20 font-semibold text-gray-900 mb-2">
-            Success! 🎉
+            {t('successModal.success')}
           </p>
           <p className="text-16 text-gray-600">
-            Your Gift Sent Successfully! 
+            {t('successModal.message')}
           </p>
         </div>
 
@@ -63,7 +66,7 @@ export const GiftSentSuccessModal = ({
           size="lg"
           className="w-full rounded-full text-white"
         >
-          Got It
+          {t('successModal.gotIt')}
         </Button>
       </div>
     </Modal>

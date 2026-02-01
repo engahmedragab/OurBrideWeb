@@ -164,6 +164,7 @@ export interface ProductResponse extends BaseLookupResponse {
   productTags: ProductTagResponse[] | null
   productAttributes: ProductAttributeResponse[] | null
   providerProductTags: ProviderProductTagResponse[] | null
+  providerProductAttributes: ProviderProductAttributeResponse[] | null
 
   // Brands
   brands: ProductBrandResponse[] | null
@@ -173,8 +174,11 @@ export interface ProductResponse extends BaseLookupResponse {
   // Categories
   categoryId: number
   category: CategoryResponse | null
+  categories: string | null // String representation from backend
   subCategoryId: number
   subCategory: SubCategoryResponse | null
+  providerCategories: ProviderCategoryResponse[] | null
+  providerSubCategories: ProviderSubCategoryResponse[] | null
 
   // Provider Information
   providerId: number | null

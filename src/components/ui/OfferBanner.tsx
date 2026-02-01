@@ -175,7 +175,7 @@ export const OfferBanner = ({
                   >
                     <Link href={currentOffer.ctaLink || '/products'}>
                       {currentOffer.ctaText || tC('startShopping')}
-                      <ArrowRight className={cn('h-4 w-4', isRTL ? 'mr-2 rotate-180' : "ml-1")} />
+                      <ArrowRight className={cn('h-4 w-4', isRTL ? 'mr-2 scale-x-[-1]' : "ml-1")} />
                     </Link>
                   </Button>
                 </div>

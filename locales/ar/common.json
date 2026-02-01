@@ -26,6 +26,11 @@
     "noDataAvailable": "لا توجد بيانات متاحة",
     "noImageAvailable": "لا توجد صورة متاحة",
     "enterYourEmail": "أدخل بريدك الإلكتروني",
+    "toast": {
+      "close": "إغلاق",
+      "defaultSuccess": "تمت العملية بنجاح",
+      "defaultError": "حدث خطأ"
+    },
     "productsLoading": "جاري تحميل المنتجات...",
     "Anonymous": "مجهول",
     "recently": "مؤخرا",
@@ -73,8 +78,10 @@
       "availability": "التوفر",
       "inStockOnly": "المتوفر فقط",
       "inStock": "متوفر",
+      "rating": "التقييم",
       "removeCategory": "إزالة الفئة",
-      "removeStockFilter": "إزالة فلتر التوفر"
+      "removeStockFilter": "إزالة فلتر التوفر",
+      "removeRating": "إزالة فلتر التقييم"
     }
   },
   "auth": {
@@ -340,6 +347,7 @@
       "products": "المنتجات",
       "services": "الخدمات",
       "providers": "المزودون",
+      "events": "المناسبات",
       "community": "المجتمع",
       "allProducts": "جميع المنتجات",
       "category": "الفئة",
@@ -353,13 +361,6 @@
       "favorites": "المفضلة",
       "markAllAsRead": "تحديد الكل كمقروء"
     },
-    "notifications": {
-      "loading": "جاري تحميل الإشعارات...",
-      "markAllAsRead": "تحديد الكل كمقروء",
-      "notifications": "الإشعارات",
-      "noNotificationsYet": "لا توجد إشعارات حتى الآن",
-      "viewAll": "عرض كل الإشعارات"
-    },
     "menu": {
       "wishlist": "قائمة الأمنيات",
       "favorites": "المفضلة",
@@ -369,6 +370,63 @@
       "openMenu": "فتح القائمة",
       "closeMenu": "إغلاق القائمة",
       "closeSearch": "إغلاق البحث"
+    }
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "loading": {
+      "title": "جاري تحميل الإشعارات...",
+      "more": "جاري تحميل المزيد من الإشعارات..."
+    },
+    "error": {
+      "title": "تعذر تحميل الإشعارات",
+      "message": "يرجى المحاولة مرة أخرى.",
+      "retry": "إعادة المحاولة"
+    },
+    "header": {
+      "unread": "إشعار غير مقروء واحد",
+      "unreadPlural": "{count} إشعار غير مقروء",
+      "markAllAsRead": "تحديد الكل كمقروء"
+    },
+    "tabs": {
+      "all": "الكل",
+      "order": "الطلبات",
+      "message": "الرسائل",
+      "community": "المجتمع",
+      "product": "المنتجات",
+      "gift": "الهدايا",
+      "event": "المناسبات",
+      "system": "النظام"
+    },
+    "empty": {
+      "title": "لا توجد إشعارات",
+      "description": {
+        "all": "أنت على اطلاع! لا توجد إشعارات في الوقت الحالي.",
+        "other": "لا توجد لديك أي إشعارات {type}."
+      }
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "page": "الصفحة {current} من {total}",
+      "loading": "جاري التحميل..."
+    },
+    "card": {
+      "view": "عرض",
+      "markAsRead": "تحديد كمقروء",
+      "delete": "حذف"
+    },
+    "markAllAsRead": "تحديد الكل كمقروء",
+    "noNotificationsYet": "لا توجد إشعارات حتى الآن",
+    "viewAll": "عرض كل الإشعارات",
+    "dropdown": {
+      "title": "الإشعارات",
+      "ariaLabel": "الإشعارات",
+      "new": "جديد",
+      "markAllRead": "تحديد الكل كمقروء",
+      "loading": "جاري تحميل الإشعارات...",
+      "noNotificationsYet": "لا توجد إشعارات حتى الآن",
+      "viewAll": "عرض كل الإشعارات"
     }
   },
   "home": {
@@ -431,6 +489,26 @@
         "next": "التقييمات التالية",
         "goToPage": "الانتقال إلى الصفحة"
       },
+      "memberTestimonials": {
+        "title": "OurBride",
+        "members": "الأعضاء",
+        "are": "يحبون",
+        "loving": "تجربتهم",
+        "titleFull": "أعضاء OurBride يحبون تجربتهم",
+        "discover": "اكتشفي",
+        "what": "ماذا",
+        "membersLabel": "الأعضاء",
+        "areSaying": "يقولون",
+        "fullPhrase": "اكتشفي ماذا يقول الأعضاء",
+        "previous": "التقييمات السابقة",
+        "next": "التقييمات التالية",
+        "goToPage": "الانتقال إلى الصفحة",
+        "joinCommunity": {
+          "title": "انضمي إلى مجتمع OurBride",
+          "description": "ابقِ على اطلاع بآخر الأخبار، تواصلي مع العرائس، وعرضي خدماتك.",
+          "button": "انضمي إلى مجتمعنا"
+        }
+      },
       "providers": {
         "title": "اكتشفي",
         "trusted": "مقدمي",
@@ -446,6 +524,113 @@
       "appDownload": {
         "title": "اجعلي تخطيط حفل الزفاف أسهل",
         "subtitle": "مع OurBride"
+      },
+      "events": {
+        "title": "خططي",
+        "wedding": "زفافك",
+        "events": "الأحداث",
+        "withEase": "بسهولة",
+        "badge": "تخطيط شامل للأحداث",
+        "description": "نظمي وأديري جميع أحداث زفافك في مكان واحد. من حفلات الخطوبة إلى اليوم الكبير، تتبعي كل التفاصيل واجعلي احتفالك لا يُنسى.",
+        "features": {
+          "title": "ميزات قوية",
+          "subtitle": "كل ما تحتاجينه لتخطيط زفافك المثالي",
+          "eventManagement": {
+            "title": "إدارة الأحداث",
+            "description": "أنشئي ونظمي أحداثاً متعددة لرحلة زفافك بسهولة"
+          },
+          "guestManagement": {
+            "title": "إدارة الضيوف",
+            "description": "أديري الدعوات والردود وتتبعي قوائم ضيوفك بكل سهولة"
+          },
+          "budgetTracking": {
+            "title": "تتبع الميزانية",
+            "description": "تتبعي المصروفات وأديري ميزانية زفافك بكفاءة في مكان واحد"
+          },
+          "taskManagement": {
+            "title": "إدارة المهام",
+            "description": "ابقِ منظمة مع قوائم المهام ولا تفوتي أي تفصيل مهم"
+          },
+          "budgetPlanning": {
+            "title": "تخطيط الميزانية",
+            "description": "خططي وتتبعي مصروفات زفافك مع أدوات الميزانية الذكية"
+          },
+          "guestLists": {
+            "title": "قوائم الضيوف",
+            "description": "أنشئي وأديري قوائم ضيوفك لجميع أحداث زفافك"
+          },
+          "timeline": {
+            "title": "الجدول الزمني",
+            "description": "ابقِ على المسار الصحيح مع الجداول الزمنية الآلية لجميع أحداث زفافك"
+          }
+        },
+        "eventTypes": {
+          "title": "خططي كل حدث",
+          "subtitle": "من الخطوبة إلى يوم الزفاف، نحن معك",
+          "engagement": {
+            "title": "الخطوبة",
+            "description": "خططي لحفل خطوبتك بأناقة وذوق"
+          },
+          "bridalShower": {
+            "title": "حفل العروس",
+            "description": "نظمي احتفالاً لا يُنسى لحفل العروس"
+          },
+          "wedding": {
+            "title": "يوم الزفاف",
+            "description": "اجعلي يومك الكبير مثالياً مع أدوات التخطيط الشاملة"
+          },
+          "photoshoot": {
+            "title": "جلسة التصوير",
+            "description": "خططي ونظمي جلسات التصوير قبل الزفاف"
+          }
+        },
+        "benefits": {
+          "title": "لماذا تختاريننا",
+          "subtitle": "اختبري أفضل منصة لتخطيط الأحداث",
+          "verified": {
+            "title": "موثق وموثوق",
+            "description": "جميع مقدمي الخدمات لدينا موثقون بعناية وموثوقون"
+          },
+          "allInOne": {
+            "title": "منصة شاملة",
+            "description": "خططي واحجزي وتسوقي واحتفلي بكل شيء في مكان واحد"
+          },
+          "secure": {
+            "title": "آمن ومضمون",
+            "description": "بياناتك ومدفوعاتك آمنة مع نظامنا الموثوق"
+          },
+          "exclusive": {
+            "title": "عروض حصرية",
+            "description": "احصلي على خصومات حصرية وعروض خاصة"
+          }
+        },
+        "statistics": {
+          "eventsPlanned": "حدث مخطط",
+          "happyCouples": "زوج سعيد",
+          "satisfaction": "معدل الرضا",
+          "support": "دعم متاح"
+        },
+        "cta": "ابدئي التخطيط",
+        "ctaDetails": {
+          "title": "هل أنتِ مستعدة لتخطيط زفافك المثالي؟",
+          "description": "انضمي إلى آلاف الأزواج السعداء الذين يثقون بـ OurBride ليومهم الخاص",
+          "getStarted": "ابدئي الآن",
+          "exploreFeatures": "استكشفي الميزات",
+          "learnMore": "اعرفي المزيد"
+        },
+        "viewAllEvents": "عرض جميع الأحداث",
+        "planningTools": {
+          "toDoLists": "قوائم المهام",
+          "guestManagement": "إدارة الضيوف",
+          "budgetTracking": "تتبع الميزانية",
+          "eventCalendar": "تقويم الأحداث",
+          "timeline": "الجدول الزمني",
+          "venueFinder": "البحث عن المكان",
+          "unlimited": "غير محدود",
+          "realTime": "في الوقت الفعلي",
+          "sync": "مزامنة",
+          "automated": "آلي"
+        }
       }
     },
     "trustCards": {
@@ -539,30 +724,21 @@
         "trackRequest": "تتبع الطلب"
       },
       "toast": {
-    "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
-    "favoriteToggleFail": "فشل تحديث المفضلة",
-    "wishlistToggleSuccess": "تم تحديث قائمة الرغبات بنجاح",
-    "wishlistToggleFail": "فشل تحديث قائمة الرغبات"
-  },
- "providers": {
-  "toast": {
-    "followToggleSuccess": "تم تحديث المتابعة بنجاح",
-    "followToggleFail": "فشل تحديث المتابعة",
-    "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
-    "favoriteToggleFail": "فشل تحديث المفضلة"
-  }
-}
-
-},
-   
-    "products": {
-  "whyBridesChooseProducts": {
-    "why": "لماذا",
-    "brides": "العرائس",
-    "choose": "يخترن",
-    "ourBrideProducts": "منتجات OurBride"
-  },
-  "productFeatures": {
+        "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
+        "favoriteToggleFail": "فشل تحديث المفضلة",
+        "wishlistToggleSuccess": "تم تحديث قائمة الرغبات بنجاح",
+        "wishlistToggleFail": "فشل تحديث قائمة الرغبات"
+      }
+    },
+    "providers": {
+      "toast": {
+        "followToggleSuccess": "تم تحديث المتابعة بنجاح",
+        "followToggleFail": "فشل تحديث المتابعة",
+        "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
+        "favoriteToggleFail": "فشل تحديث المفضلة"
+      }
+    },
+    "productFeatures": {
     "premiumBrands": {
       "title": "علامات تجارية فاخرة",
       "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف",
@@ -810,6 +986,7 @@
       "successDescription": "تم إرسال طلب الخدمة بنجاح. تم إشعار المزود وستتلقين تحديثًا بمجرد الرد.",
       "trackRequest": "تتبع الطلب"
     }
+    }
   },
   "products": {
     "whyBridesChooseProducts": {
@@ -851,6 +1028,27 @@
     "productOffersSection": {
       "title": "أفضل عروض المنتجات اليوم",
       "timerText": "23 ساعة 45 دقيقة"
+    },
+    "productTagsSection": {
+      "title": "المنتجات المميزة بالعلامات"
+    },
+    "productAttributesSection": {
+      "title": "المنتجات المميزة"
+    },
+    "productFlashSaleSection": {
+      "title": "عروض فلاش",
+      "timerText": "عرض لفترة محدودة"
+    },
+    "productBrandsSection": {
+      "title": "علاماتنا التجارية",
+      "products": "منتج"
+    },
+    "productStatisticsSection": {
+      "title": "إحصائياتنا",
+      "customers": "عملاء",
+      "orders": "طلبات",
+      "reviews": "تقييمات",
+      "rating": "التقييم"
     },
     "categoryBanner": {
       "heading": "جاهزة توصلك أخبارنا؟",
@@ -1309,8 +1507,7 @@
       "itemsCompleted": "{completed} من {total} عناصر مكتملة"
     }
   },
-  "copyright": "© {year} جميع الحقوق محفوظة لـ OurBride"
-},
+  "copyright": "© {year} جميع الحقوق محفوظة لـ OurBride",
   "eventsPlanning": {
    "addEvent": {
   "modal": {
@@ -1342,7 +1539,7 @@
     "invalidTimeFormat": "صيغة الوقت غير صحيحة (مثال 12:30)",
     "durationPositive": "لازم المدة تكون رقم موجب"
   }
-},
+  },
 
     "common": {
       "createdBy": "أنشئ بواسطة",
@@ -1366,7 +1563,7 @@
         "overview": "نظرة عامة",
         "budget": "الميزانية",
         "items": "العناصر",
-        "events": "الفعاليات",
+        "events": "المناسبات",
         "invitation": "الضيوف",
         "occasions": "المناسبات",
         "preparations": "التحضيرات",
@@ -1917,8 +2114,8 @@
         }
       }
     }
-},
-"reservations": {
+  },
+  "reservations": {
     "page": {
       "title": "حجوزاتي",
       "subtitle": {
@@ -3000,6 +3197,141 @@
   "processing": "جارٍ المعالجة...",
   "countryFallback": "مصر"
   },
+  "userSidebar": {
+    "welcomeBack": "مرحباً بعودتك",
+    "comingSoon": "قريباً",
+    "menuItems": {
+      "events": "المناسبات",
+      "myCart": "سلة التسوق",
+      "reservations": "الحجوزات",
+      "wishlist": "قائمة الرغبات",
+      "favorites": "المفضلة",
+      "follows": "المتابعون",
+      "ordersList": "قائمة الطلبات",
+      "deliveryAddress": "عنوان التوصيل",
+      "messages": "الرسائل",
+      "notifications": "الإشعارات",
+      "giftCenter": "مركز الهدايا",
+      "affiliateProgram": "برنامج الشراكة",
+      "referrals": "الإحالات",
+      "coupons": "الكوبونات",
+      "profile": "الملف الشخصي",
+      "settings": "الإعدادات",
+      "helpCenter": "مركز المساعدة"
+    }
+  },
+  "wishlist": {
+    "title": "قائمة الرغبات",
+    "loading": {
+      "title": "جاري تحميل قوائم الرغبات...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    },
+    "error": {
+      "title": "تعذر تحميل قوائم الرغبات",
+      "message": "يرجى المحاولة مرة أخرى لاحقًا",
+      "actionLabel": "العودة إلى الصفحة الرئيسية"
+    },
+    "subtitle": {
+      "item": "عنصر",
+      "items": "عناصر"
+    },
+    "list": {
+      "title": "قوائم الرغبات الخاصة بك ({count})",
+      "fallbackName": "قائمة الرغبات #{id}",
+      "sourceId": "المعرف: {id}",
+      "itemCount": "{count} عنصر",
+      "updated": "تم التحديث {date}",
+      "view": "عرض"
+    },
+    "empty": {
+      "title": "لا توجد عناصر في قائمة الرغبات الخاصة بك",
+      "description": "ابدئي استكشاف الخدمات والمنتجات لبدء رحلتك",
+      "actionLabel": "ابدئي التسوق"
+    },
+    "updating": {
+      "title": "جاري تحديث قائمة الرغبات...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    },
+    "cards": {
+      "noImageAvailable": "لا توجد صورة متاحة",
+      "removeFromWishlist": "إزالة من قائمة الرغبات",
+      "discountOff": "خصم {percent}%",
+      "buyNow": "اشتري الآن",
+      "bookNow": "احجزي الآن",
+      "startFrom": "يبدأ من",
+      "verified": "موثوق",
+      "services": "خدمات",
+      "reviews": "تقييمات",
+      "viewProfile": "عرض الملف الشخصي",
+      "providerFallback": "مزود #{id}"
+    }
+  },
+  "favorites": {
+    "title": "المفضلة",
+    "loading": {
+      "title": "جاري تحميل المفضلة...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    },
+    "error": {
+      "title": "تعذر تحميل المفضلة",
+      "message": "يرجى المحاولة مرة أخرى لاحقًا",
+      "actionLabel": "العودة إلى الصفحة الرئيسية"
+    },
+    "subtitle": {
+      "item": "عنصر",
+      "items": "عناصر"
+    },
+    "list": {
+      "title": "مفضلاتك ({count})",
+      "fallbackName": "مفضل #{id}",
+      "sourceId": "المعرف: {id}",
+      "viewCount": "{count} مشاهدة",
+      "updated": "تم التحديث {date}",
+      "view": "عرض"
+    },
+    "empty": {
+      "title": "لا توجد عناصر في المفضلة الخاصة بك",
+      "description": "ابدئي استكشاف الخدمات والمنتجات لبدء رحلتك",
+      "actionLabel": "ابدئي التسوق"
+    },
+    "updating": {
+      "title": "جاري تحديث المفضلة...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    }
+  },
+  "follows": {
+    "title": "المتابعات",
+    "loading": {
+      "title": "جاري تحميل المتابعات...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    },
+    "error": {
+      "title": "تعذر تحميل المتابعات",
+      "message": "يرجى المحاولة مرة أخرى لاحقًا",
+      "actionLabel": "العودة إلى الصفحة الرئيسية"
+    },
+    "subtitle": {
+      "item": "عنصر",
+      "items": "عناصر"
+    },
+    "list": {
+      "title": "متابعاتك ({count})",
+      "fallbackName": "متابعة #{id}",
+      "sourceId": "المعرف: {id}",
+      "interactions": "{count} تفاعل",
+      "updated": "تم التحديث {date}",
+      "view": "عرض"
+    },
+    "empty": {
+      "title": "لا توجد عناصر في المتابعات الخاصة بك",
+      "description": "ابدئي استكشاف الخدمات والمنتجات لبدء رحلتك",
+      "actionLabel": "ابدئي التسوق"
+    },
+    "updating": {
+      "title": "جاري تحديث المتابعات...",
+      "subtitle": "يرجى الانتظار قليلًا"
+    }
+  },
   "reelDetails": {
     "loading": "جاري تحميل الريل...",
     "reelNotFoundTitle": "الريل غير موجود",
@@ -3023,9 +3355,9 @@
         "community": "المجتمع"
       },
       "eventsPlanning": {
-        "title": "تخطيط الفعاليات",
+        "title": "تخطيط المناسبات",
         "myEvents": "فعالياتي",
-        "eventsDay": "يوم الفعاليات",
+        "eventsDay": "يوم المناسبات",
         "budgetPlanning": "تخطيط الميزانية",
         "guestList": "قائمة الضيوف",
         "todoList": "قائمة المهام"
@@ -3061,6 +3393,819 @@
       "tiktok": "زيارة صفحة التيك توك"
     },
     "copyright": "© {year} جميع الحقوق محفوظة لـ OurBride"
-  }
+  },
+  "messages": {
+    "title": "الرسائل",
+    "empty": {
+      "title": "ليس لديك أي رسائل",
+      "description": "ابدأ استكشاف الخدمات والمنتجات لبدء رحلتك",
+      "actionLabel": "ابدأ التسوق"
+    },
+    "center": {
+      "title": "مركز الرسائل",
+      "searchPlaceholder": "البحث في المحادثة",
+      "backToConversations": "العودة إلى المحادثات"
+    },
+    "chat": {
+      "placeholder": "اختر محادثة للبدء",
+      "lastSeen": "آخر ظهور",
+      "sharedImage": "صورة مشتركة",
+      "you": "أنت",
+      "demoStartCall": "تجربة بدء المكالمة",
+      "demoReceiveCall": "تجربة استقبال المكالمة"
+    },
+    "input": {
+      "placeholder": "أدخل رسالتك..",
+      "location": "الموقع",
+      "uploadImage": "رفع صورة",
+      "uploadDocument": "رفع مستند",
+      "microphoneDenied": "تم رفض الوصول إلى الميكروفون. يرجى السماح بالوصول إلى الميكروفون لتسجيل الرسائل الصوتية."
+    },
+    "quickReplies": {
+      "goodMorning": "صباح الخير",
+      "discussPrice": "هل يمكننا مناقشة السعر؟",
+      "thankYou": "شكراً لك",
+      "lookingForward": "أتطلع إلى ذلك"
+    },
+    "profile": {
+      "back": "رجوع",
+      "profile": "الملف الشخصي",
+      "mute": "كتم الصوت",
+      "block": "حظر",
+      "call": "اتصال",
+      "mediaAndFiles": "الوسائط والملفات"
+    },
+    "call": {
+      "title": "الاتصال",
+      "speakersOn": "مكبرات الصوت مفعلة",
+      "speakersOff": "مكبرات الصوت معطلة",
+      "micOn": "الميكروفون مفعل",
+      "micOff": "الميكروفون معطل",
+      "endCall": "إنهاء المكالمة",
+      "isCalling": "يتصل",
+      "answer": "إجابة",
+      "callUser": "الاتصال بـ {userName}؟",
+      "callNote": "يرجى ملاحظة أن جميع المكالمات التي تتم من خلال OurBride يتم تسجيلها لضمان سلامتك وأمنك وحماية حقوقك.",
+      "startCall": "بدء المكالمة",
+      "calling": "جاري الاتصال..."
+    },
+    "callRating": {
+      "title": "تقييم المكالمة",
+      "question": "كيف كانت مكالمتك؟",
+      "submit": "إرسال",
+      "thankYou": "شكراً لك على تقييمك!",
+      "done": "تم"
+    },
+    "blockUser": {
+      "title": "حظر المستخدم",
+      "confirmTitle": "هل أنت متأكد أنك تريد حظر {userName}؟",
+      "confirmDescription": "لن يتمكن من الاتصال بك بعد الحظر.",
+      "cancel": "إلغاء",
+      "block": "حظر المستخدم",
+      "successTitle": "تم حظر هذا الحساب",
+      "successDescription": "لن تتمكن من التواصل مع هذا المستخدم لضمان السلامة والامتثال لسياسات OurBride.",
+      "done": "تم",
+      "report": "الإبلاغ"
+    },
+    "reportUser": {
+      "title": "الإبلاغ عن المستخدم",
+      "reasons": {
+        "spam": "بريد مزعج / نشاط مزيف",
+        "fakeProfile": "ملف شخصي مزيف",
+        "scam": "احتيال / احتيال",
+        "harassment": "مضايقة / إساءة",
+        "other": "أخرى"
+      },
+      "detailsPlaceholder": "أخبرنا ماذا حدث؟",
+      "submit": "إرسال",
+      "successTitle": "تم إرسال التقرير",
+      "successDescription": "شكراً لك على تقريرك. سيقوم فريقنا بمراجعة تقريرك وتحديثك قريباً.",
+      "done": "تم"
+    }
+  },
+  "coupons": {
+    "title": "الكوبونات",
+    "receivedGifts": {
+      "title": "الهدايا المستلمة",
+      "sentYouGift": "أرسل لك {senderName} هدية"
+    },
+    "expressYourLove": {
+      "title": "عبّر عن حبك",
+      "description": "أرسل هدية بسيطة الآن لإظهار مدى اهتمامك.",
+      "couponDescription": "طريقة بسيطة لإظهار تقديرك"
+    },
+    "couponCard": {
+      "coupon": "كوبون",
+      "sendNow": "إرسال الآن"
+    },
+    "wallet": {
+      "lastUpdate": "آخر تحديث",
+      "yourBalance": "رصيدك",
+      "notice": "ملاحظة: يمكن استخدام الرصيد في تطبيق Our Bride فقط"
+    },
+    "referral": {
+      "title": "برنامج الإحالة",
+      "viewDetails": "عرض التفاصيل",
+      "youHaveEarned": "لقد ربحت",
+      "invited": "دعوت",
+      "friends": "أصدقاء"
+    },
+    "sentGifts": {
+      "title": "الهدايا المرسلة",
+      "youSentGiftTo": "أرسلت هدية إلى {recipientName}",
+      "empty": {
+        "title": "ليس لديك أي هدايا مرسلة، عبّر عن حبك وأرسل هدية الآن.",
+        "alt": "لا توجد هدايا مرسلة"
+      }
+    },
+    "sendGiftModal": {
+      "title": "إرسال هدية",
+      "yourInformations": "معلوماتك",
+      "fullName": "الاسم الكامل",
+      "mobileNumber": "رقم الهاتف المحمول",
+      "recipientTitle": "من سيستلم هديتك؟",
+      "email": "البريد الإلكتروني",
+      "paymentMethod": "طريقة الدفع",
+      "debitCredit": "بطاقة الخصم / الائتمان",
+      "mobileWallet": "المحفظة النقالة",
+      "cardDetails": "تفاصيل البطاقة",
+      "nameOnCard": "الاسم على البطاقة",
+      "cardNumber": "رقم البطاقة",
+      "mmYy": "ش/س",
+      "cvv": "CVV",
+      "orderSummary": "ملخص الطلب",
+      "subtotal": "المجموع الفرعي",
+      "taxesFees": "الضرائب والرسوم",
+      "total": "الإجمالي",
+      "acceptTerms": "أوافق على",
+      "termsConditions": "الشروط والأحكام",
+      "deliveryNotice": "إذا لم تكن موجوداً عند وصول عامل التوصيل، سيترك طلبك عند الباب. من خلال تقديم طلبك، أنت توافق على تحمل المسؤولية الكاملة عنه بمجرد تسليمه.",
+      "checkout": "الدفع"
+    },
+    "successModal": {
+      "title": "تأكيد الحجز",
+      "success": "نجح! 🎉",
+      "message": "تم إرسال هديتك بنجاح!",
+      "gotIt": "فهمت",
+      "alt": "تم إرسال الهدية بنجاح"
+    }
+  },
+  "affiliate": {
+    "title": "برنامج الإحالة",
+    "join": {
+      "title": "انضم إلى برنامج الإحالة",
+      "description": "شارك رابطك الفريد، اروج لـ OurBride، واكسب عمولة عن كل حجز ناجح يتم من خلالك",
+      "joinNow": "انضم الآن",
+      "alt": "انضم إلى برنامج الإحالة"
+    },
+    "tabs": {
+      "overview": "نظرة عامة",
+      "campaigns": "الحملات",
+      "tools": "الأدوات",
+      "wallet": "المحفظة"
+    },
+    "overview": {
+      "earningInsights": "رؤى الأرباح",
+      "totalEarning": "إجمالي الأرباح",
+      "pendingPayout": "الدفع المعلق",
+      "approvedPayout": "الدفع المعتمد",
+      "promotedCampaigns": "الحملات المروجة",
+      "viewAll": "عرض الكل",
+      "recentActivity": "النشاط الأخير",
+      "viewAllActivity": "عرض الكل",
+      "joined": "انضم",
+      "booking": "حجز",
+      "bookings": "حجوزات",
+      "confirmed": "مؤكد",
+      "pendingPayout": "الدفع المعلق"
+    },
+    "campaigns": {
+      "searchPlaceholder": "البحث عن الحملات...",
+      "topCampaigns": "أفضل الحملات",
+      "bridalMakeupEssentials": "أساسيات مكياج العروس",
+      "promoteDescription": "روج لأفضل مجموعات مكياج العروس لدينا لليوم الكبير.",
+      "forEachBooking": "جنيه لكل حجز",
+      "generateLink": "إنشاء رابط"
+    },
+    "tools": {
+      "yourCampaigns": "حملاتك",
+      "active": "نشط",
+      "edit": "تعديل",
+      "save": "حفظ",
+      "campaignName": "اسم الحملة",
+      "badgeText": "نص الشارة",
+      "offerText": "نص العرض",
+      "campaignDescription": "وصف الحملة...",
+      "commission": "العمولة",
+      "regenerateLink": "إعادة إنشاء الرابط",
+      "bannerColor": "لون الشعار",
+      "deactivateCampaign": "إلغاء تفعيل الحملة"
+    },
+    "wallet": {
+      "transactionsHistory": "سجل المعاملات",
+      "balance": "الرصيد",
+      "lastUpdate": "آخر تحديث",
+      "status": "الحالة",
+      "active": "نشط",
+      "withdrawFunds": "سحب الأموال",
+      "addNewCard": "+ إضافة بطاقة جديدة"
+    },
+    "onboarding": {
+      "paymentMethod": {
+        "title": "طريقة الدفع",
+        "subtitle": "أضف طريقة الدفع الخاصة بك مع Paymob",
+        "fullName": "الاسم الكامل",
+        "mobileNumber": "رقم الهاتف المحمول",
+        "debitCredit": "بطاقة الخصم / الائتمان",
+        "mobileWallet": "المحفظة النقالة",
+        "walletDetails": "تفاصيل المحفظة",
+        "cardDetails": "تفاصيل البطاقة",
+        "nameOnCard": "الاسم على البطاقة",
+        "cardNumber": "رقم البطاقة",
+        "mmYy": "ش/س",
+        "cvv": "CVV",
+        "addPaymentMethod": "إضافة طريقة الدفع",
+        "errors": {
+          "fullNameRequired": "الاسم الكامل مطلوب",
+          "fullNameMinLength": "يجب أن يكون الاسم الكامل على الأقل حرفين",
+          "mobileNumberRequired": "رقم الهاتف المحمول مطلوب",
+          "mobileNumberInvalid": "يرجى إدخال رقم هاتف محمول صحيح (10-11 رقم)",
+          "cardNameRequired": "اسم حامل البطاقة مطلوب",
+          "cardNameMinLength": "يجب أن يكون اسم حامل البطاقة على الأقل حرفين",
+          "cardNumberRequired": "رقم البطاقة مطلوب",
+          "cardNumberInvalid": "يرجى إدخال رقم بطاقة صحيح",
+          "expiryRequired": "تاريخ انتهاء الصلاحية مطلوب",
+          "expiryInvalid": "يرجى إدخال تاريخ انتهاء صحيح (ش/س)",
+          "cvvRequired": "CVV مطلوب",
+          "cvvInvalid": "يرجى إدخال CVV صحيح"
+        }
+      },
+      "paymentSuccess": {
+        "title": "تمت إضافة الدفع بنجاح!",
+        "description": "تمت إضافة طريقة الدفع الخاصة بك والتحقق منها بنجاح",
+        "nextStep": "الخطوة التالية"
+      },
+      "createPin": {
+        "title": "رمز PIN للمحفظة",
+        "heading": "إنشاء رمز PIN للمحفظة",
+        "description": "أضف طبقة إضافية من الأمان لحماية أرباحك",
+        "next": "التالي",
+        "alt": "إنشاء PIN",
+        "error": "يرجى إدخال PIN مكون من 4 أرقام"
+      },
+      "confirmPin": {
+        "title": "رمز PIN للمحفظة",
+        "heading": "تأكيد رمز PIN الخاص بك",
+        "description": "أضف طبقة إضافية من الأمان لحماية أرباحك",
+        "confirm": "تأكيد",
+        "alt": "تأكيد PIN",
+        "error": "يرجى إدخال PIN مكون من 4 أرقام",
+        "mismatch": "رموز PIN غير متطابقة"
+      },
+      "pinSuccess": {
+        "title": "تم إنشاء PIN بنجاح",
+        "description": "تم إنشاء رمز PIN للمحفظة بنجاح. يمكنك الآن البدء في كسب الأرباح مع برنامج الإحالة",
+        "letsStart": "لنبدأ"
+      }
+    },
+    "addCard": {
+      "title": "إدارة بطاقات الدفع",
+      "subtitle": "أضف طريقة الدفع الخاصة بك مع Paymob",
+      "defaultCard": "أحمد رمضان -Master Card ( افتراضي )",
+      "fullName": "الاسم الكامل",
+      "mobileNumber": "رقم الهاتف المحمول",
+      "debitCredit": "بطاقة الخصم / الائتمان",
+      "mobileWallet": "المحفظة النقالة",
+      "cardDetails": "تفاصيل البطاقة",
+      "nameOnCard": "الاسم على البطاقة",
+      "cardNumber": "رقم البطاقة",
+      "mmYy": "ش/س",
+      "cvv": "CVV",
+      "addNewCard": "إضافة بطاقة جديدة",
+      "savedCards": "البطاقات المحفوظة"
+    },
+    "withdraw": {
+      "title": "إدارة بطاقات الدفع",
+      "balance": "الرصيد",
+      "lastUpdate": "آخر تحديث",
+      "withdrawDetails": "تفاصيل السحب",
+      "amount": "المبلغ",
+      "availableCards": "البطاقات المتاحة",
+      "withdrawButton": "سحب {amount} جنيه",
+      "success": {
+        "title": "تم السحب بنجاح",
+        "description": "تم تحويل أموالك إلى حسابك البنكي.",
+        "letsStart": "لنبدأ"
+      }
+    }
+  },
+  "referrals": {
+    "title": "الإحالات",
+    "insights": {
+      "title": "رؤى الإحالة",
+      "totalInvitesSent": "إجمالي الدعوات المرسلة",
+      "friendsJoined": "الأصدقاء المنضمون",
+      "pendingPayout": "الدفع المعلق"
+    },
+    "inviteLink": {
+      "title": "رابط الدعوة",
+      "copyLink": "نسخ الرابط"
+    },
+    "bonusProgress": {
+      "title": "تقدم المكافأة",
+      "description": "ادعُ 10 أصدقاء للحصول على كوبون مكافأة",
+      "invited": "{current}/{total} مدعو"
+    },
+    "coupons": {
+      "title": "كوبوناتك",
+      "coupon": "كوبون",
+      "valid": "صالح",
+      "expired": "منتهي الصلاحية",
+      "redeemNow": "استبدال الآن",
+      "due": "مستحق"
+    },
+    "activity": {
+      "title": "النشاط الأخير",
+      "joined": "انضم",
+      "booking": "حجز",
+      "bookings": "حجوزات",
+      "inviteSent": "تم إرسال الدعوة",
+      "confirmed": "مؤكد",
+      "delivered": "تم التسليم",
+      "processing": "قيد المعالجة",
+      "pending": "معلق"
+    },
+    "onboarding": {
+      "title": "الإحالة",
+      "steps": {
+        "welcome": {
+          "title": "مرحباً بك في نظام الإحالة",
+          "description": "ادعُ الأشخاص باستخدام رابطك المخصص\nسيحصلون على عروض خاصة، وستكسب\nمكافآت!"
+        },
+        "invite": {
+          "title": "ادعُ الأشخاص لكسب المزيد من الكوبونات",
+          "description": "ادعُ الأصدقاء\nواحصل على كوبونات يمكنك استخدامها لشراء\nالمنتجات أو الخدمات"
+        },
+        "collect": {
+          "title": "اجمع نقاط الماس",
+          "description": "اكسب نقاط ماس إضافية\nمع كل إحالة وافتح\nمكافآت خاصة!"
+        }
+      },
+      "next": "التالي",
+      "finish": "إنهاء"
+    }
+  },
+  "profile": {
+    "loading": {
+      "title": "جاري تحميل الملف الشخصي..."
+    },
+    "error": {
+      "title": "فشل تحميل الملف الشخصي",
+      "message": "تعذر تحميل معلومات ملفك الشخصي. يرجى المحاولة مرة أخرى لاحقًا.",
+      "retry": "إعادة المحاولة"
+    },
+    "empty": {
+      "title": "لا توجد بيانات للملف الشخصي",
+      "reload": "إعادة التحميل"
+    },
+    "header": {
+      "edit": "تعديل"
+    },
+    "stats": {
+      "unread": "{count} غير مقروء",
+      "points": "{count} نقطة"
+    },
+    "personalInfo": {
+      "title": "المعلومات الشخصية",
+      "email": "البريد الإلكتروني",
+      "phone": "الهاتف",
+      "profileType": "نوع الملف الشخصي",
+      "accountType": "نوع الحساب",
+      "gender": "الجنس",
+      "dateOfBirth": "تاريخ الميلاد",
+      "username": "اسم المستخدم"
+    },
+    "statistics": {
+      "title": "الإحصائيات",
+      "items": "العناصر",
+      "services": "الخدمات",
+      "todos": "المهام",
+      "coupons": "الكوبونات",
+      "points": "النقاط",
+      "wallet": "المحفظة",
+      "giftCards": "بطاقات الهدايا",
+      "notifications": "الإشعارات",
+      "completed": "{count} مكتمل",
+      "unread": "{count} غير مقروء"
+    },
+    "partner": {
+      "title": "معلومات الشريك",
+      "name": "اسم الشريك"
+    },
+    "edit": {
+      "title": "المعلومات الشخصية",
+      "saveChanges": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "loading": "جاري تحميل الملف الشخصي...",
+      "fields": {
+        "firstName": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "gender": "الجنس",
+        "mobileNumber": "رقم الهاتف المحمول",
+        "email": "البريد الإلكتروني",
+        "personalId": "رقم الهوية الشخصية / جواز السفر",
+        "personalIdType": "نوع الهوية الشخصية",
+        "birthDate": "تاريخ الميلاد",
+        "customTag": "علامة مخصصة",
+        "language": "اللغة",
+        "country": "الدولة"
+      },
+      "placeholders": {
+        "firstName": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "selectGender": "اختر الجنس",
+        "mobileNumber": "رقم الهاتف المحمول",
+        "email": "البريد الإلكتروني",
+        "personalId": "رقم الهوية الشخصية أو جواز السفر",
+        "selectType": "اختر النوع",
+        "selectBirthDate": "اختر تاريخ الميلاد",
+        "customTag": "علامة مخصصة",
+        "selectLanguage": "اختر اللغة",
+        "selectCountry": "اختر الدولة"
+      },
+      "genderOptions": {
+        "unknown": "غير محدد",
+        "male": "ذكر",
+        "female": "أنثى"
+      },
+      "personalIdTypes": {
+        "national": "الهوية الوطنية",
+        "passport": "جواز السفر"
+      },
+      "languages": {
+        "arabic": "العربية",
+        "english": "English"
+      },
+      "profilePicture": {
+        "title": "صورة الملف الشخصي",
+        "upload": "رفع صورة جديدة"
+      }
+    }
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "appPreferences": {
+      "title": "تفضيلات التطبيق",
+      "appLanguage": "لغة التطبيق",
+      "darkMode": "الوضع الداكن",
+      "selectLanguage": "اختر اللغة"
+    },
+    "securityPrivacy": {
+      "title": "الأمان والخصوصية",
+      "password": "كلمة المرور",
+      "changePassword": "تغيير كلمة المرور",
+      "blockedUsers": "المستخدمون المحظورون",
+      "viewAll": "عرض الكل"
+    },
+    "notifications": {
+      "title": "إدارة الإشعارات",
+      "bookingConfirmations": "تأكيدات الحجز والتحديثات",
+      "offerAlerts": "تنبيهات العروض",
+      "communityUpdates": "تحديثات المجتمع",
+      "messages": "الرسائل",
+      "emailNotifications": "إشعارات البريد الإلكتروني"
+    },
+    "ordersPayments": {
+      "title": "الطلبات والمدفوعات",
+      "ordersList": "قائمة الطلبات",
+      "paymentHistory": "سجل المدفوعات"
+    },
+    "legal": {
+      "title": "قانوني",
+      "termsConditions": "الشروط والأحكام",
+      "privacyPolicy": "سياسة الخصوصية",
+      "communityGuidelines": "إرشادات المجتمع"
+    },
+    "accountActions": {
+      "logout": "تسجيل الخروج",
+      "deleteAccount": "حذف الحساب"
+    },
+    "deleteAccountModal": {
+      "title": "حذف الحساب",
+      "question": "هل أنت متأكد أنك تريد حذف حسابك؟",
+      "description": "سيؤدي هذا الإجراء إلى حذف حسابك وجميع البيانات المرتبطة به بشكل دائم. هل أنت متأكد أنك تريد المتابعة؟",
+      "keepAccount": "الاحتفاظ بالحساب",
+      "deleteAccount": "حذف الحساب"
+    },
+    "logoutModal": {
+      "title": "تسجيل الخروج",
+      "question": "هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟",
+      "description": "ستحتاج إلى إدخال بيانات اعتمادك مرة أخرى لتسجيل الدخول",
+      "cancel": "إلغاء",
+      "logout": "تسجيل الخروج"
+    },
+    "privacy": {
+      "title": "سياسة الخصوصية",
+      "sections": {
+        "informationWeCollect": {
+          "title": "المعلومات التي نجمعها",
+          "content": [
+            "الاسم، البريد الإلكتروني، الهاتف، رقم الهوية (للمزودين).",
+            "تفاصيل الدفع (مشفرة)."
+          ]
+        },
+        "howWeUse": {
+          "title": "كيف نستخدم معلوماتك",
+          "content": [
+            "لإدارة الحجوزات والمدفوعات.",
+            "لتحسين الخدمات وتخصيص العروض."
+          ]
+        },
+        "dataProtection": {
+          "title": "حماية البيانات",
+          "content": [
+            "جميع البيانات مشفرة ومخزنة بشكل آمن.",
+            "لا نبيع بياناتك أبدًا لأطراف ثالثة."
+          ]
+        },
+        "sharingData": {
+          "title": "مشاركة البيانات",
+          "content": [
+            "يتم مشاركتها فقط مع المزودين/العملاء لأغراض الحجز.",
+            "مطلوبة بموجب القانون عند الضرورة."
+          ]
+        },
+        "userRights": {
+          "title": "حقوق المستخدم",
+          "content": [
+            "تعديل أو حذف بياناتك في أي وقت.",
+            "طلب حذف الحساب بشكل دائم."
+          ]
+        },
+        "changesToPolicy": {
+          "title": "التغييرات على السياسة",
+          "content": "سيتم إشعار التحديثات داخل التطبيق."
+        }
+      }
+    },
+    "terms": {
+      "title": "الشروط والأحكام",
+      "sections": {
+        "introduction": {
+          "title": "مقدمة",
+          "content": "باستخدام OurBride، فإنك توافق على الشروط والأحكام التالية."
+        },
+        "accountUsage": {
+          "title": "استخدام الحساب",
+          "content": [
+            "يجب على المستخدمين تقديم معلومات شخصية دقيقة.",
+            "أنت مسؤول عن الحفاظ على أمان حسابك."
+          ]
+        },
+        "bookingsServices": {
+          "title": "الحجوزات والخدمات",
+          "content": [
+            "تعتمد الحجوزات على توفر مقدم الخدمة.",
+            "الإلغاءات والاستردادات تخضع لسياسة كل مقدم خدمة."
+          ]
+        },
+        "paymentsFees": {
+          "title": "المدفوعات والرسوم",
+          "content": [
+            "يجب إجراء جميع المدفوعات من خلال التطبيق.",
+            "تخصم OurBride عمولة 2% من أرباح مقدمي الخدمات شهريًا."
+          ]
+        },
+        "contentCommunity": {
+          "title": "المحتوى والمجتمع",
+          "content": [
+            "يجب على المستخدمين عدم نشر محتوى مسيء أو ضار.",
+            "تحتفظ OurBride بحق إزالة أي محتوى غير مناسب."
+          ]
+        },
+        "privacySecurity": {
+          "title": "الخصوصية والأمان",
+          "content": [
+            "نحمي بياناتك وفقًا لسياسة الخصوصية الخاصة بنا.",
+            "قد يُطلب التحقق من الهوية لمقدمي الخدمات."
+          ]
+        },
+        "liability": {
+          "title": "المسؤولية",
+          "content": [
+            "OurBride غير مسؤولة عن الاتفاقيات المباشرة التي تتم خارج المنصة.",
+            "يجب أن تتبع أي نزاعات عملية حل النزاعات الخاصة بنا."
+          ]
+        },
+        "changesToTerms": {
+          "title": "التغييرات على الشروط",
+          "content": [
+            "قد تقوم OurBride بتحديث هذه الشروط في أي وقت.",
+            "الاستمرار في استخدام التطبيق يعني أنك تقبل الشروط المحدثة."
+          ]
+        }
+      }
+    },
+    "community": {
+      "title": "إرشادات المجتمع",
+      "sections": {
+        "respectOthers": {
+          "title": "احترم الآخرين",
+          "content": "لا مضايقة أو خطاب كراهية أو محتوى مسيء."
+        },
+        "authenticity": {
+          "title": "الأصالة",
+          "content": [
+            "قدم معلومات حقيقية ودقيقة.",
+            "لا تنتحل شخصية الآخرين."
+          ]
+        },
+        "safeCommunication": {
+          "title": "التواصل الآمن",
+          "content": [
+            "حافظ على المحادثات محترمة.",
+            "قد يتم تسجيل المكالمات/الرسائل للسلامة."
+          ]
+        },
+        "serviceIntegrity": {
+          "title": "نزاهة الخدمة",
+          "content": [
+            "يجب على مقدمي الخدمات تقديم الخدمات كما وعدوا.",
+            "لا معاملات مباشرة خارج التطبيق."
+          ]
+        },
+        "reportingConsequences": {
+          "title": "الإبلاغ والعواقب",
+          "content": [
+            "استخدم \"الإبلاغ عن مشكلة\" للمشاكل.",
+            "قد تؤدي الانتهاكات إلى تعليق الحساب أو إزالته."
+          ]
+        }
+      }
+    },
+    "businessProfile": {
+      "title": "إعدادات الملف الشخصي للعمل",
+      "saveChanges": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "loading": "جاري تحميل إعدادات الملف الشخصي للعمل...",
+      "error": {
+        "title": "فشل تحميل إعدادات الملف الشخصي للعمل",
+        "message": "فشل تحميل إعدادات الملف الشخصي للعمل. يرجى المحاولة مرة أخرى."
+      },
+      "profileImage": {
+        "title": "صورة الملف الشخصي",
+        "noImage": "لم يتم رفع صورة للملف الشخصي",
+        "change": "تغيير صورة الملف الشخصي",
+        "upload": "رفع صورة الملف الشخصي",
+        "currentUrl": "الرابط الحالي:"
+      },
+      "logoImage": {
+        "title": "صورة الشعار",
+        "noImage": "لم يتم رفع شعار",
+        "change": "تغيير الشعار",
+        "upload": "رفع الشعار",
+        "currentUrl": "الرابط الحالي:"
+      },
+      "bannerImage": {
+        "title": "صورة الشعار العلوي",
+        "noImage": "لم يتم رفع شعار علوي",
+        "change": "تغيير الشعار العلوي",
+        "upload": "رفع الشعار العلوي",
+        "currentUrl": "الرابط الحالي:"
+      },
+      "profileSettings": {
+        "title": "إعدادات الملف الشخصي",
+        "publicProfileSlug": "رابط الملف الشخصي العام",
+        "publicProfileSlugPlaceholder": "رابط-الملف-الشخصي-العام",
+        "descriptionEn": "الوصف (بالإنجليزية)",
+        "descriptionEnPlaceholder": "أدخل الوصف بالإنجليزية",
+        "descriptionAr": "الوصف (بالعربية)",
+        "descriptionArPlaceholder": "أدخل الوصف بالعربية",
+        "seoMetaTitle": "عنوان SEO",
+        "seoMetaTitlePlaceholder": "عنوان SEO"
+      },
+      "toast": {
+        "success": "تم تحديث إعدادات الملف الشخصي للعمل بنجاح",
+        "error": "فشل تحديث إعدادات الملف الشخصي للعمل"
+      }
+    }
+  },
+  "helpCenter": {
+    "title": "الأسئلة الشائعة ( FAQ )",
+    "reportSubmitted": "تم إرسال التقرير بنجاح",
+    "reportSubmittedDescription": "شكراً لك! تم إرسال تقريرك وسيقوم فريقنا بمراجعته قريباً",
+    "confirm": "تأكيد",
+    "liveChat": {
+      "title": "الدردشة المباشرة",
+      "heading": "ابدأ الدردشة المباشرة الآن",
+      "description": "تواصل فوراً مع فريق الدعم للحصول على مساعدة سريعة وإرشادات أو إجابات على أي أسئلة أثناء تخطيط يومك الكبير.",
+      "startChat": "ابدأ الدردشة"
+    },
+    "reportProblem": {
+      "title": "الإبلاغ عن مشكلة",
+      "heading": "أخبرنا بما حدث خطأ",
+      "description": "شارك المشكلة التي واجهتها حتى نتمكن من إصلاحها بسرعة والحفاظ على تجربتك سلسة",
+      "describeLabel": "وصف المشكلة",
+      "describePlaceholder": "يرجى وصف المشكلة بالتفصيل...",
+      "submit": "إرسال",
+      "problemTypes": {
+        "bookingIssue": "مشكلة في الحجز",
+        "serviceProviderIssue": "مشكلة مع مزود الخدمة",
+        "paymentIssue": "مشكلة في الدفع",
+        "technicalProblem": "مشكلة تقنية",
+        "other": "أخرى"
+      }
+    },
+    "categories": {
+      "accountProfile": {
+        "title": "الحساب والملف الشخصي",
+        "items": {
+          "createAccount": {
+            "question": "كيف يمكنني إنشاء حساب؟",
+            "answer": "قم بتنزيل تطبيق OurBride، اضغط على التسجيل، واملأ بياناتك. يمكنك أيضاً التسجيل باستخدام Google أو Facebook أو Apple."
+          },
+          "resetPassword": {
+            "question": "كيف يمكنني إعادة تعيين كلمة المرور؟",
+            "answer": "انتقل إلى الإعدادات → الأمان → تغيير كلمة المرور. أدخل كلمة المرور القديمة، ثم أنشئ وأكد كلمة المرور الجديدة."
+          }
+        }
+      },
+      "bookingsServices": {
+        "title": "الحجوزات والخدمات",
+        "items": {
+          "bookService": {
+            "question": "كيف يمكنني حجز خدمة؟",
+            "answer": "تصفح الخدمات، اختر مزود خدمة، حدد تاريخاً، واضغط على احجز الآن. ستحصل على تأكيد بمجرد قبول المزود."
+          },
+          "cancelReschedule": {
+            "question": "هل يمكنني إلغاء أو إعادة جدولة الحجز؟",
+            "answer": "نعم، انتقل إلى حجوزاتي، اختر الحجز، واختر إلغاء أو إعادة الجدولة. يرجى التحقق من سياسة الإلغاء الخاصة بالمزود أولاً."
+          },
+          "trackBooking": {
+            "question": "كيف يمكنني تتبع طلب الحجز الخاص بي؟",
+            "answer": "افتح حجوزاتي → اختر طلبك. سترى الحالة: تم الإرسال → قيد المراجعة → مؤكد → مستحق الدفع."
+          }
+        }
+      },
+      "payments": {
+        "title": "المدفوعات",
+        "items": {
+          "paymentMethods": {
+            "question": "ما هي طرق الدفع المقبولة؟",
+            "answer": "ندعم بطاقات الائتمان/الخصم، المحافظ الإلكترونية، والتحويلات البنكية حسب منطقتك."
+          }
+        }
+      },
+      "offersCoupons": {
+        "title": "العروض والكوبونات",
+        "items": {
+          "applyCoupon": {
+            "question": "كيف يمكنني تطبيق كوبون؟",
+            "answer": "عند الدفع، أدخل رمز الكوبون الخاص بك في حقل تطبيق الكوبون. سيتم تطبيق الخصم تلقائياً."
+          },
+          "couponNotWorking": {
+            "question": "لماذا لا يعمل الكوبون الخاص بي؟",
+            "answer": "تأكد من أن الكوبون لم ينتهِ صلاحيته، وينطبق على الخدمة المحددة، ويستوفي الحد الأدنى لمبلغ الطلب."
+          }
+        }
+      },
+      "trustSafety": {
+        "title": "الثقة والأمان",
+        "items": {
+          "providerVerification": {
+            "question": "كيف يتم التحقق من مزودي الخدمة؟",
+            "answer": "يجب على كل مزود رفع هوية صالحة ومستندات الخدمة. مزودو الخدمة المتحققون لديهم شارة ✅ بجانب اسمهم."
+          },
+          "paymentSecurity": {
+            "question": "هل مدفوعاتي آمنة؟",
+            "answer": "نعم، تتم معالجة جميع المعاملات من خلال بوابات دفع مشفرة لحماية بياناتك."
+          },
+          "reportProblem": {
+            "question": "هل يمكنني الإبلاغ عن مشكلة مع مزود؟",
+            "answer": "نعم، انتقل إلى ملف المزود الشخصي أو تفاصيل الحجز الخاص بك، اضغط على الإبلاغ عن مشكلة، ووصف المشكلة."
+          }
+        }
+      }
+    }
+  },
+  "chat": {
+    "support": {
+      "name": "مركز مساعدة Our Bride",
+      "subtitle": "عادة ما نرد خلال بضع دقائق.",
+      "greeting": "مرحباً،\nكيف يمكننا مساعدتك اليوم؟",
+      "quickReplies": {
+        "bookingIssue": "مشكلة في الحجز",
+        "serviceProviderIssue": "مشكلة مع مزود الخدمة",
+        "paymentIssue": "مشكلة في الدفع",
+        "technicalProblem": "مشكلة تقنية",
+        "other": "أخرى"
+      },
+      "response": "تم إرسال طلبك. سيتصل بك ممثل خدمة العملاء خلال بضع دقائق.\nيرجى عدم إغلاق هذه النافذة.\n\nرقم العميل: 50\nالأشخاص أمامك: 2",
+      "quickReplyChips": {
+        "goodMorning": "صباح الخير",
+        "discussPrice": "هل يمكننا مناقشة السعر؟",
+        "thankYou": "شكراً لك"
+      }
+    }
   }
 }

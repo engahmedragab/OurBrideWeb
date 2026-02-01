@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { RatingInput } from '@/components/ui/RatingInput'
 import Image from 'next/image'
 import successCheck from '@/assets/svg/successCheck.svg'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface CallRatingModalProps {
   isOpen: boolean
@@ -22,6 +23,7 @@ export const CallRatingModal = ({
   onClose,
   onSubmit,
 }: CallRatingModalProps) => {
+  const t = useI18nTranslations('messages')
   const [rating, setRating] = useState(0)
   const [step, setStep] = useState<'rating' | 'success'>('rating')
 
@@ -46,7 +48,7 @@ export const CallRatingModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Call Rating"
+      title={t('callRating.title')}
       maxWidth="sm"
       showCloseButton
       containerClassName="w-full max-w-[380px]"
@@ -65,7 +67,7 @@ export const CallRatingModal = ({
 
           {/* Question Text */}
           <h3 className="text-16 font-normal text-gray-900 text-center">
-            How Was Your Call ?
+            {t('callRating.question')}
           </h3>
 
           {/* Submit Button */}
@@ -76,7 +78,7 @@ export const CallRatingModal = ({
             disabled={rating === 0}
             className="w-full rounded-full text-white"
           >
-            Submit
+            {t('callRating.submit')}
           </Button>
         </div>
       ) : (
@@ -94,7 +96,7 @@ export const CallRatingModal = ({
 
           {/* Thank You Message */}
           <h3 className="text-16 font-normal text-gray-900 text-center">
-            Thank you For Your Rating !
+            {t('callRating.thankYou')}
           </h3>
 
           {/* Done Button */}
@@ -104,7 +106,7 @@ export const CallRatingModal = ({
             onClick={handleDone}
             className="w-full rounded-full text-white"
           >
-            Done
+            {t('callRating.done')}
           </Button>
         </div>
       )}

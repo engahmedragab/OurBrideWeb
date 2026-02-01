@@ -26,6 +26,11 @@
     "noDataAvailable": "No data available",
     "noImageAvailable": "No image available",
     "enterYourEmail": "Enter Your E-mail",
+    "toast": {
+      "close": "Close",
+      "defaultSuccess": "Operation completed successfully",
+      "defaultError": "An error occurred"
+    },
     "productsLoading": "Loading products...",
     "anonymous": "Anonymous",
     "recently": "Recently",
@@ -73,8 +78,10 @@
       "availability": "Availability",
       "inStockOnly": "In Stock Only",
       "inStock": "In Stock",
+      "rating": "Rating",
       "removeCategory": "Remove category",
-      "removeStockFilter": "Remove stock filter"
+      "removeStockFilter": "Remove stock filter",
+      "removeRating": "Remove rating filter"
     }
   },
   "auth": {
@@ -344,6 +351,7 @@
       "products": "Products",
       "services": "Services",
       "providers": "Providers",
+      "events": "Events",
       "community": "Community",
       "allProducts": "All Products",
       "category": "Category",
@@ -356,13 +364,6 @@
       "notifications": "Notifications",
       "favorites": "Favorites"
     },
-    "notifications": {
-      "loading": "Loading notifications...",
-      "markAllAsRead": "Mark all as read",
-      "notifications": "Notifications",
-      "noNotificationsYet": "No notifications yet",
-      "viewAll": "View all notifications"
-    },
     "menu": {
       "wishlist": "Wishlist",
       "favorites": "Favorites",
@@ -373,6 +374,63 @@
       "closeMenu": "Close menu",
       "closeSearch": "Close search"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "loading": {
+      "title": "Loading notifications...",
+      "more": "Loading more notifications..."
+    },
+    "error": {
+      "title": "Unable to load notifications",
+      "message": "Please try again.",
+      "retry": "Retry"
+    },
+    "header": {
+      "unread": "{count} unread notification",
+      "unreadPlural": "{count} unread notifications",
+      "markAllAsRead": "Mark all as read"
+    },
+    "tabs": {
+      "all": "All",
+      "order": "Orders",
+      "message": "Messages",
+      "community": "Community",
+      "product": "Products",
+      "gift": "Gifts",
+      "event": "Events",
+      "system": "System"
+    },
+    "empty": {
+      "title": "No notifications",
+      "description": {
+        "all": "You're all caught up! No notifications at the moment.",
+        "other": "You don't have any {type} notifications."
+      }
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {current} of {total}",
+      "loading": "Loading..."
+    },
+    "card": {
+      "view": "View",
+      "markAsRead": "Mark as read",
+      "delete": "Delete"
+    },
+    "markAllAsRead": "Mark all as read",
+    "dropdown": {
+      "title": "Notifications",
+      "ariaLabel": "Notifications",
+      "new": "new",
+      "markAllRead": "Mark all read",
+      "loading": "Loading notifications...",
+      "noNotificationsYet": "No notifications yet",
+      "viewAll": "View all notifications"
+    },
+    "noNotificationsYet": "No notifications yet",
+    "viewAll": "View all notifications"
   },
   "home": {
     "hero": {
@@ -434,6 +492,26 @@
         "next": "Next testimonials",
         "goToPage": "Go to page"
       },
+      "memberTestimonials": {
+        "title": "OurBride",
+        "members": "Members",
+        "are": "Are",
+        "loving": "Loving",
+        "titleFull": "",
+        "discover": "Discover",
+        "what": "What",
+        "membersLabel": "Members",
+        "areSaying": "Are Saying",
+        "fullPhrase": "",
+        "previous": "Previous testimonials",
+        "next": "Next testimonials",
+        "goToPage": "Go to page",
+        "joinCommunity": {
+          "title": "Join the OurBride Community",
+          "description": "Stay updated with the latest news, connect with brides, and showcase your services.",
+          "button": "Join our community"
+        }
+      },
       "providers": {
         "title": "Discover",
         "trusted": "Trusted",
@@ -449,6 +527,113 @@
       "appDownload": {
         "title": "Make Wedding Planning Easier",
         "subtitle": "With OurBride"
+      },
+      "events": {
+        "title": "Plan Your",
+        "wedding": "Wedding",
+        "events": "Events",
+        "withEase": "With Ease",
+        "badge": "All-in-One Event Planning",
+        "description": "Organize and manage all your wedding events in one place. From engagement parties to the big day, keep track of every detail and make your celebration unforgettable.",
+        "features": {
+          "title": "Powerful Features",
+          "subtitle": "Everything you need to plan your perfect wedding",
+          "eventManagement": {
+            "title": "Event Management",
+            "description": "Create and organize multiple events for your wedding journey with ease"
+          },
+          "guestManagement": {
+            "title": "Guest Management",
+            "description": "Manage invitations, RSVPs, and keep track of your guest lists effortlessly"
+          },
+          "budgetTracking": {
+            "title": "Budget Tracking",
+            "description": "Track expenses and manage your wedding budget efficiently in one place"
+          },
+          "taskManagement": {
+            "title": "Task Management",
+            "description": "Stay organized with to-do lists and never miss an important detail"
+          },
+          "budgetPlanning": {
+            "title": "Budget Planning",
+            "description": "Plan and track your wedding expenses with smart budgeting tools"
+          },
+          "guestLists": {
+            "title": "Guest Lists",
+            "description": "Create and manage your guest lists for all your wedding events"
+          },
+          "timeline": {
+            "title": "Timeline",
+            "description": "Stay on track with automated timelines for all your wedding events"
+          }
+        },
+        "eventTypes": {
+          "title": "Plan Every Event",
+          "subtitle": "From engagement to wedding day, we've got you covered",
+          "engagement": {
+            "title": "Engagement",
+            "description": "Plan your engagement party with style and elegance"
+          },
+          "bridalShower": {
+            "title": "Bridal Shower",
+            "description": "Organize a memorable bridal shower celebration"
+          },
+          "wedding": {
+            "title": "Wedding Day",
+            "description": "Make your big day perfect with comprehensive planning tools"
+          },
+          "photoshoot": {
+            "title": "Photoshoot",
+            "description": "Plan and organize your pre-wedding photoshoot sessions"
+          }
+        },
+        "benefits": {
+          "title": "Why Choose Us",
+          "subtitle": "Experience the best event planning platform",
+          "verified": {
+            "title": "Verified & Trusted",
+            "description": "All our service providers are carefully verified and trusted"
+          },
+          "allInOne": {
+            "title": "All-in-One Platform",
+            "description": "Plan, book, shop, and celebrate everything in one place"
+          },
+          "secure": {
+            "title": "Secure & Safe",
+            "description": "Your data and payments are safe with our trusted system"
+          },
+          "exclusive": {
+            "title": "Exclusive Offers",
+            "description": "Get access to exclusive discounts and special offers"
+          }
+        },
+        "statistics": {
+          "eventsPlanned": "Events Planned",
+          "happyCouples": "Happy Couples",
+          "satisfaction": "Satisfaction Rate",
+          "support": "Support Available"
+        },
+        "cta": "Start Planning",
+        "ctaDetails": {
+          "title": "Ready to Plan Your Perfect Wedding?",
+          "description": "Join thousands of happy couples who trust OurBride for their special day",
+          "getStarted": "Get Started",
+          "exploreFeatures": "Explore Features",
+          "learnMore": "Learn More"
+        },
+        "viewAllEvents": "View All Events",
+        "planningTools": {
+          "toDoLists": "To-Do Lists",
+          "guestManagement": "Guest Management",
+          "budgetTracking": "Budget Tracking",
+          "eventCalendar": "Event Calendar",
+          "timeline": "Timeline",
+          "venueFinder": "Venue Finder",
+          "unlimited": "Unlimited",
+          "realTime": "Real-time",
+          "sync": "Sync",
+          "automated": "Automated"
+        }
       }
     },
     "trustCards": {
@@ -839,6 +1024,27 @@
     "productOffersSection": {
       "title": "Today's Best Product Offers",
       "timerText": "23 H 45 Min"
+    },
+    "productTagsSection": {
+      "title": "Tagged Products"
+    },
+    "productAttributesSection": {
+      "title": "Featured Products"
+    },
+    "productFlashSaleSection": {
+      "title": "Flash Sale",
+      "timerText": "Limited Time Offer"
+    },
+    "productBrandsSection": {
+      "title": "Our Brands",
+      "products": "products"
+    },
+    "productStatisticsSection": {
+      "title": "Our Statistics",
+      "customers": "Customers",
+      "orders": "Orders",
+      "reviews": "Reviews",
+      "rating": "Rating"
     },
     "productHeroSlides": {
       "slide1": {
@@ -2998,6 +3204,141 @@
   "processing": "Processing...",
   "countryFallback": "Egypt"
   },
+  "userSidebar": {
+    "welcomeBack": "Welcome Back",
+    "comingSoon": "Coming Soon",
+    "menuItems": {
+      "events": "Events",
+      "myCart": "My Cart",
+      "reservations": "Reservations",
+      "wishlist": "Wishlist",
+      "favorites": "Favorites",
+      "follows": "Follows",
+      "ordersList": "Orders List",
+      "deliveryAddress": "Delivery Address",
+      "messages": "Messages",
+      "notifications": "Notifications",
+      "giftCenter": "Gift Center",
+      "affiliateProgram": "Affiliate Program",
+      "referrals": "Referrals",
+      "coupons": "Coupons",
+      "profile": "Profile",
+      "settings": "Settings",
+      "helpCenter": "Help Center"
+    }
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "loading": {
+      "title": "Loading wishlists...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Error loading wishlists",
+      "message": "Please try again later",
+      "actionLabel": "Back to Home"
+    },
+    "subtitle": {
+      "item": "Item",
+      "items": "Items"
+    },
+    "list": {
+      "title": "Your Wishlists ({count})",
+      "fallbackName": "Wishlist #{id}",
+      "sourceId": "ID: {id}",
+      "itemCount": "{count} items",
+      "updated": "Updated {date}",
+      "view": "View"
+    },
+    "empty": {
+      "title": "You don't have any items in your wishlist",
+      "description": "Start exploring services and products to begin your journey",
+      "actionLabel": "Start Shopping"
+    },
+    "updating": {
+      "title": "Updating wishlist...",
+      "subtitle": "Please wait a moment"
+    },
+    "cards": {
+      "noImageAvailable": "No image available",
+      "removeFromWishlist": "Remove from wishlist",
+      "discountOff": "{percent}% OFF",
+      "buyNow": "Buy Now",
+      "bookNow": "Book Now",
+      "startFrom": "Start From",
+      "verified": "Verified",
+      "services": "Services",
+      "reviews": "Reviews",
+      "viewProfile": "View Profile",
+      "providerFallback": "Provider #{id}"
+    }
+  },
+  "favorites": {
+    "title": "Favorites",
+    "loading": {
+      "title": "Loading favorites...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Error loading favorites",
+      "message": "Please try again later",
+      "actionLabel": "Back to Home"
+    },
+    "subtitle": {
+      "item": "Item",
+      "items": "Items"
+    },
+    "list": {
+      "title": "Your Favorites ({count})",
+      "fallbackName": "Favorite #{id}",
+      "sourceId": "ID: {id}",
+      "viewCount": "{count} views",
+      "updated": "Updated {date}",
+      "view": "View"
+    },
+    "empty": {
+      "title": "You don't have any items in your favorites",
+      "description": "Start exploring services and products to begin your journey",
+      "actionLabel": "Start Shopping"
+    },
+    "updating": {
+      "title": "Updating favorites...",
+      "subtitle": "Please wait a moment"
+    }
+  },
+  "follows": {
+    "title": "Follows",
+    "loading": {
+      "title": "Loading follows...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Error loading follows",
+      "message": "Please try again later",
+      "actionLabel": "Back to Home"
+    },
+    "subtitle": {
+      "item": "Item",
+      "items": "Items"
+    },
+    "list": {
+      "title": "Your Follows ({count})",
+      "fallbackName": "Follow #{id}",
+      "sourceId": "ID: {id}",
+      "interactions": "{count} interactions",
+      "updated": "Updated {date}",
+      "view": "View"
+    },
+    "empty": {
+      "title": "You don't have any items in your follows",
+      "description": "Start exploring services and products to begin your journey",
+      "actionLabel": "Start Shopping"
+    },
+    "updating": {
+      "title": "Updating follows...",
+      "subtitle": "Please wait a moment"
+    }
+  },
   "footer": {
     "description": "Your all-in-one platform for wedding planning and shopping. Find everything you need to create your perfect day.",
     "downloadApp": "Download Ourbride App",
@@ -3049,5 +3390,819 @@
       "tiktok": "Visit our TikTok page"
     },
     "copyright": "© {year} Crafted by OurBride All Rights Reserved"
+  },
+  "messages": {
+    "title": "Messages",
+    "empty": {
+      "title": "You don't have any Messages",
+      "description": "Start exploring services and products to begin your journey",
+      "actionLabel": "Start Shopping"
+    },
+    "center": {
+      "title": "Messages Center",
+      "searchPlaceholder": "Search Chat",
+      "backToConversations": "Back to Conversations"
+    },
+    "chat": {
+      "placeholder": "Select a conversation to start",
+      "lastSeen": "Last Seen",
+      "sharedImage": "Shared image",
+      "you": "You",
+      "demoStartCall": "Demo Start Call",
+      "demoReceiveCall": "Demo Receive Call"
+    },
+    "input": {
+      "placeholder": "Enter Your Message..",
+      "location": "Location",
+      "uploadImage": "Upload Image",
+      "uploadDocument": "Upload Document",
+      "microphoneDenied": "Microphone access denied. Please allow microphone access to record voice messages."
+    },
+    "quickReplies": {
+      "goodMorning": "Good Morning",
+      "discussPrice": "Can we discuss the price?",
+      "thankYou": "Thank you",
+      "lookingForward": "Looking forward to it"
+    },
+    "profile": {
+      "back": "Back",
+      "profile": "Profile",
+      "mute": "Mute",
+      "block": "Block",
+      "call": "Call",
+      "mediaAndFiles": "Media And Files"
+    },
+    "call": {
+      "title": "Calling",
+      "speakersOn": "Speakers On",
+      "speakersOff": "Speakers Off",
+      "micOn": "Mic On",
+      "micOff": "Mic Off",
+      "endCall": "End Call",
+      "isCalling": "Is Calling",
+      "answer": "Answer",
+      "callUser": "Call {userName} ?",
+      "callNote": "Please note that all calls made through OurBride are recorded to ensure your safety, security, and protection of your rights.",
+      "startCall": "Start Call",
+      "calling": "Calling..."
+    },
+    "callRating": {
+      "title": "Call Rating",
+      "question": "How Was Your Call ?",
+      "submit": "Submit",
+      "thankYou": "Thank you For Your Rating !",
+      "done": "Done"
+    },
+    "blockUser": {
+      "title": "Block User",
+      "confirmTitle": "Are you sure you want to block {userName}?",
+      "confirmDescription": "They will no longer be able to contact you once blocked.",
+      "cancel": "Cancel",
+      "block": "Block User",
+      "successTitle": "This account has been blocked",
+      "successDescription": "You will no longer be able to communicate with this user to ensure safety and compliance with OurBride policies.",
+      "done": "Done",
+      "report": "Report"
+    },
+    "reportUser": {
+      "title": "Report User",
+      "reasons": {
+        "spam": "Spam / Fake Activity",
+        "fakeProfile": "Fake Profile",
+        "scam": "Scam / Fraud",
+        "harassment": "Harassment / Abuse",
+        "other": "Other"
+      },
+      "detailsPlaceholder": "Tell Us What Happened ?",
+      "submit": "Submit",
+      "successTitle": "Report Submitted",
+      "successDescription": "Thank you for your report. Our team will review your report and update you soon.",
+      "done": "Done"
+    }
+  },
+  "coupons": {
+    "title": "Coupons",
+    "receivedGifts": {
+      "title": "Received Gifts",
+      "sentYouGift": "{senderName} Sent You A Gift"
+    },
+    "expressYourLove": {
+      "title": "Express Your Love",
+      "description": "Send a simple gift now to show how much you care.",
+      "couponDescription": "a simple way to show your appreciation"
+    },
+    "couponCard": {
+      "coupon": "Coupon",
+      "sendNow": "Send Now"
+    },
+    "wallet": {
+      "lastUpdate": "Last Update",
+      "yourBalance": "Your Balance",
+      "notice": "Notice: Balance Can Only Used in Our Bride App Only"
+    },
+    "referral": {
+      "title": "Referral Program",
+      "viewDetails": "View Details",
+      "youHaveEarned": "You have earned",
+      "invited": "Invited",
+      "friends": "Freinds"
+    },
+    "sentGifts": {
+      "title": "Sent Gifts",
+      "youSentGiftTo": "You sent a gift to {recipientName}",
+      "empty": {
+        "title": "You Don't Have any sent gifts, express Your Love and send a gift now.",
+        "alt": "No Sent Gifts"
+      }
+    },
+    "sendGiftModal": {
+      "title": "Send Gift",
+      "yourInformations": "Your Informations",
+      "fullName": "Full Name",
+      "mobileNumber": "Mobile Number",
+      "recipientTitle": "Who will receive your gift ?",
+      "email": "E-mail",
+      "paymentMethod": "Payment Method",
+      "debitCredit": "Debit / Credit",
+      "mobileWallet": "Mobile Wallet",
+      "cardDetails": "Card Details",
+      "nameOnCard": "Name On Card",
+      "cardNumber": "Card Number",
+      "mmYy": "MM/YY",
+      "cvv": "CVV",
+      "orderSummary": "Order Summary",
+      "subtotal": "Subtotal",
+      "taxesFees": "Taxes & Fees",
+      "total": "Total",
+      "acceptTerms": "I Accept",
+      "termsConditions": "Terms & Conditions",
+      "deliveryNotice": "If you are not around when the delivery person arrives, they will leave your order at the door. by placing your order, you agree to take full responsibility for it once it's delivered.",
+      "checkout": "Checkout"
+    },
+    "successModal": {
+      "title": "Booking Confirmation",
+      "success": "Success! 🎉",
+      "message": "Your Gift Sent Successfully!",
+      "gotIt": "Got It",
+      "alt": "Gift Sent Successfully"
+    }
+  },
+  "affiliate": {
+    "title": "Affiliate Program",
+    "join": {
+      "title": "Join Affiliate Program",
+      "description": "Share your unique link, promote OurBride, and earn commission for every successful booking made through you",
+      "joinNow": "Join Now",
+      "alt": "Join Affiliate Program"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "campaigns": "Campaigns",
+      "tools": "Tools",
+      "wallet": "Wallet"
+    },
+    "overview": {
+      "earningInsights": "Earning Insights",
+      "totalEarning": "Total Earning",
+      "pendingPayout": "Pending Payout",
+      "approvedPayout": "Approved Payout",
+      "promotedCampaigns": "Promoted Campaigns",
+      "viewAll": "View All",
+      "recentActivity": "Recent Activity",
+      "viewAllActivity": "View all",
+      "joined": "Joined",
+      "booking": "Booking",
+      "bookings": "Bookings",
+      "confirmed": "Confirmed",
+      "pendingPayout": "Pending Payout"
+    },
+    "campaigns": {
+      "searchPlaceholder": "Search For Campaigns...",
+      "topCampaigns": "Top Campaigns",
+      "bridalMakeupEssentials": "Bridal Makeup Essentials",
+      "promoteDescription": "Promote our best selling bridal makeup sets for the big day.",
+      "forEachBooking": "EGP For Each Booking",
+      "generateLink": "Generate Link"
+    },
+    "tools": {
+      "yourCampaigns": "Your Campaigns",
+      "active": "Active",
+      "edit": "Edit",
+      "save": "Save",
+      "campaignName": "Campaign Name",
+      "badgeText": "Badge Text",
+      "offerText": "Offer Text",
+      "campaignDescription": "Campaign description...",
+      "commission": "Commission",
+      "regenerateLink": "Regenerate Link",
+      "bannerColor": "Banner Color",
+      "deactivateCampaign": "Deactivate Campaign"
+    },
+    "wallet": {
+      "transactionsHistory": "Transactions History",
+      "balance": "Balance",
+      "lastUpdate": "Last Update",
+      "status": "Status",
+      "active": "Active",
+      "withdrawFunds": "Withdraw Funds",
+      "addNewCard": "+ Add New Card"
+    },
+    "onboarding": {
+      "paymentMethod": {
+        "title": "Payment Method",
+        "subtitle": "Add Your Payment Method With Paymob",
+        "fullName": "Full Name",
+        "mobileNumber": "Mobile Number",
+        "debitCredit": "Debit / Credit",
+        "mobileWallet": "Mobile Wallet",
+        "walletDetails": "Wallet Details",
+        "cardDetails": "Card Details",
+        "nameOnCard": "Name On Card",
+        "cardNumber": "Card Number",
+        "mmYy": "MM/YY",
+        "cvv": "CVV",
+        "addPaymentMethod": "Add Payment Method",
+        "errors": {
+          "fullNameRequired": "Full name is required",
+          "fullNameMinLength": "Full name must be at least 2 characters",
+          "mobileNumberRequired": "Mobile number is required",
+          "mobileNumberInvalid": "Please enter a valid mobile number (10-11 digits)",
+          "cardNameRequired": "Cardholder name is required",
+          "cardNameMinLength": "Cardholder name must be at least 2 characters",
+          "cardNumberRequired": "Card number is required",
+          "cardNumberInvalid": "Please enter a valid card number",
+          "expiryRequired": "Expiry date is required",
+          "expiryInvalid": "Please enter a valid expiry date (MM/YY)",
+          "cvvRequired": "CVV is required",
+          "cvvInvalid": "Please enter a valid CVV"
+        }
+      },
+      "paymentSuccess": {
+        "title": "Your Payout is Added Successfully!",
+        "description": "Your payment method has been added and verified successfully",
+        "nextStep": "Next Step"
+      },
+      "createPin": {
+        "title": "Wallet PIN",
+        "heading": "Create Your Wallet PIN",
+        "description": "Add an extra layer of security to protect your earnings",
+        "next": "Next",
+        "alt": "Create PIN",
+        "error": "Please enter a 4-digit PIN"
+      },
+      "confirmPin": {
+        "title": "Wallet PIN",
+        "heading": "Confirm Your PIN",
+        "description": "Add an extra layer of security to protect your earnings",
+        "confirm": "Confirm",
+        "alt": "Confirm PIN",
+        "error": "Please enter a 4-digit PIN",
+        "mismatch": "PINs do not match"
+      },
+      "pinSuccess": {
+        "title": "PIN Created Successfully",
+        "description": "Your wallet PIN has been created successfully. You can now start earning with the affiliate program",
+        "letsStart": "Let's Start"
+      }
+    },
+    "addCard": {
+      "title": "Payout Cards Management",
+      "subtitle": "Add Your Payment Method With Paymob",
+      "defaultCard": "Ahmed Ramadan -Master Card ( Defualt )",
+      "fullName": "Full Name",
+      "mobileNumber": "Mobile Number",
+      "debitCredit": "Debit / Credit",
+      "mobileWallet": "Mobile Wallet",
+      "cardDetails": "Card Details",
+      "nameOnCard": "Name On Card",
+      "cardNumber": "Card Number",
+      "mmYy": "MM/YY",
+      "cvv": "CVV",
+      "addNewCard": "Add New Card",
+      "savedCards": "Saved Cards"
+    },
+    "withdraw": {
+      "title": "Payout Cards Management",
+      "balance": "Balance",
+      "lastUpdate": "Last Update",
+      "withdrawDetails": "Withdraw Details",
+      "amount": "Amount",
+      "availableCards": "Available Cards",
+      "withdrawButton": "Withdraw EGP {amount}",
+      "success": {
+        "title": "Withdrawal successful",
+        "description": "Your funds have been transferred to your bank account.",
+        "letsStart": "Let's Start"
+      }
+    }
+  },
+  "referrals": {
+    "title": "Referrals",
+    "insights": {
+      "title": "Referral Insights",
+      "totalInvitesSent": "Total Invites Sent",
+      "friendsJoined": "Friends Joined",
+      "pendingPayout": "Pending Payout"
+    },
+    "inviteLink": {
+      "title": "Invite Link",
+      "copyLink": "Copy Link"
+    },
+    "bonusProgress": {
+      "title": "Bonus Progress",
+      "description": "Invite 10 Friends To Get Bonus Coupon",
+      "invited": "{current}/{total} Invited"
+    },
+    "coupons": {
+      "title": "Your Coupons",
+      "coupon": "Coupon",
+      "valid": "Valid",
+      "expired": "Expired",
+      "redeemNow": "Redeem Now",
+      "due": "Due"
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "joined": "Joined",
+      "booking": "Booking",
+      "bookings": "Bookings",
+      "inviteSent": "Invite Sent",
+      "confirmed": "Confirmed",
+      "delivered": "Delivered",
+      "processing": "Processing",
+      "pending": "Pending"
+    },
+    "onboarding": {
+      "title": "Referral",
+      "steps": {
+        "welcome": {
+          "title": "Welcome To Referral System",
+          "description": "Invite people using your custom link\nThey'll get special offers, and earn\nrewards!"
+        },
+        "invite": {
+          "title": "Invite People To Earn More Coupons",
+          "description": "Invite friends\nand get coupons you can use to buy\nproducts or services"
+        },
+        "collect": {
+          "title": "Collect Diamond Points",
+          "description": "Earn extra Diamond Points\nwith every referral and unlock Special\nrewards!"
+        }
+      },
+      "next": "Next",
+      "finish": "Finish"
+    }
+  },
+  "profile": {
+    "loading": {
+      "title": "Loading profile..."
+    },
+    "error": {
+      "title": "Failed to Load Profile",
+      "message": "Unable to load your profile information. Please try again later.",
+      "retry": "Retry"
+    },
+    "empty": {
+      "title": "No profile data available",
+      "reload": "Reload"
+    },
+    "header": {
+      "edit": "Edit"
+    },
+    "stats": {
+      "unread": "{count} Unread",
+      "points": "{count} Points"
+    },
+    "personalInfo": {
+      "title": "Personal Information",
+      "email": "Email",
+      "phone": "Phone",
+      "profileType": "Profile Type",
+      "accountType": "Account Type",
+      "gender": "Gender",
+      "dateOfBirth": "Date of Birth",
+      "username": "Username"
+    },
+    "statistics": {
+      "title": "Statistics",
+      "items": "Items",
+      "services": "Services",
+      "todos": "Todos",
+      "coupons": "Coupons",
+      "points": "Points",
+      "wallet": "Wallet",
+      "giftCards": "Gift Cards",
+      "notifications": "Notifications",
+      "completed": "{count} completed",
+      "unread": "{count} unread"
+    },
+    "partner": {
+      "title": "Partner Information",
+      "name": "Partner Name"
+    },
+    "edit": {
+      "title": "Personal Information",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "loading": "Loading profile...",
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "gender": "Gender",
+        "mobileNumber": "Mobile Number",
+        "email": "E-mail",
+        "personalId": "Personal ID / Passport",
+        "personalIdType": "Personal ID Type",
+        "birthDate": "Birth Date",
+        "customTag": "Custom Tag",
+        "language": "Language",
+        "country": "Country"
+      },
+      "placeholders": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "selectGender": "Select Gender",
+        "mobileNumber": "Mobile Number",
+        "email": "E-mail",
+        "personalId": "Personal ID or Passport Number",
+        "selectType": "Select Type",
+        "selectBirthDate": "Select Birth Date",
+        "customTag": "Custom Tag",
+        "selectLanguage": "Select Language",
+        "selectCountry": "Select Country"
+      },
+      "genderOptions": {
+        "unknown": "Unknown",
+        "male": "Male",
+        "female": "Female"
+      },
+      "personalIdTypes": {
+        "national": "National ID",
+        "passport": "Passport"
+      },
+      "languages": {
+        "arabic": "العربية",
+        "english": "English"
+      },
+      "profilePicture": {
+        "title": "Profile Picture",
+        "upload": "Upload a new Picture"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "appPreferences": {
+      "title": "App Preferences",
+      "appLanguage": "App Language",
+      "darkMode": "Dark Mode",
+      "selectLanguage": "Select Language"
+    },
+    "securityPrivacy": {
+      "title": "Security & Privacy",
+      "password": "Password",
+      "changePassword": "Change Password",
+      "blockedUsers": "Blocked Users",
+      "viewAll": "View All"
+    },
+    "notifications": {
+      "title": "Notifications Management",
+      "bookingConfirmations": "Booking Confirmations & Updates",
+      "offerAlerts": "Offer Alerts",
+      "communityUpdates": "Community Updates",
+      "messages": "Messages",
+      "emailNotifications": "E-mail Notifications"
+    },
+    "ordersPayments": {
+      "title": "Orders & Payments",
+      "ordersList": "Orders List",
+      "paymentHistory": "Payment History"
+    },
+    "legal": {
+      "title": "Legal",
+      "termsConditions": "Terms & Conditions",
+      "privacyPolicy": "Privacy Policy",
+      "communityGuidelines": "Community Guidelines"
+    },
+    "accountActions": {
+      "logout": "Logout",
+      "deleteAccount": "Delete Account"
+    },
+    "deleteAccountModal": {
+      "title": "Delete Account",
+      "question": "Are you sure you want to delete your account?",
+      "description": "This action will permanently delete your account and all associated data. Are you sure you want to continue?",
+      "keepAccount": "Keep Account",
+      "deleteAccount": "Delete Account"
+    },
+    "logoutModal": {
+      "title": "Logout",
+      "question": "Are you sure you want to log out of your account?",
+      "description": "You'll need to enter your credentials again to sign back in",
+      "cancel": "Cancel",
+      "logout": "Logout"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "sections": {
+        "informationWeCollect": {
+          "title": "Information We Collect",
+          "content": [
+            "Name, email, phone, ID (for providers).",
+            "Payment details (encrypted)."
+          ]
+        },
+        "howWeUse": {
+          "title": "How We Use Your Information",
+          "content": [
+            "To manage bookings and payments.",
+            "To improve services and personalize offers."
+          ]
+        },
+        "dataProtection": {
+          "title": "Data Protection",
+          "content": [
+            "All data is encrypted and stored securely.",
+            "We never sell your data to third parties."
+          ]
+        },
+        "sharingData": {
+          "title": "Sharing Data",
+          "content": [
+            "Shared only with providers/clients for booking purposes.",
+            "Required by law when necessary."
+          ]
+        },
+        "userRights": {
+          "title": "User Rights",
+          "content": [
+            "Edit or delete your data at any time.",
+            "Request account deletion permanently."
+          ]
+        },
+        "changesToPolicy": {
+          "title": "Changes to Policy",
+          "content": "Updates will be notified in-app."
+        }
+      }
+    },
+    "terms": {
+      "title": "Terms & Conditions",
+      "sections": {
+        "introduction": {
+          "title": "Introduction",
+          "content": "By using OurBride, you agree to the following terms and conditions."
+        },
+        "accountUsage": {
+          "title": "Account Usage",
+          "content": [
+            "Users must provide accurate personal information.",
+            "You are responsible for keeping your account secure."
+          ]
+        },
+        "bookingsServices": {
+          "title": "Bookings & Services",
+          "content": [
+            "Bookings depend on provider availability.",
+            "Cancellations and refunds follow each provider's policy."
+          ]
+        },
+        "paymentsFees": {
+          "title": "Payments & Fees",
+          "content": [
+            "All payments must be made through the app.",
+            "OurBride deducts a 2% commission from provider earnings monthly."
+          ]
+        },
+        "contentCommunity": {
+          "title": "Content & Community",
+          "content": [
+            "Users must not post offensive or harmful content.",
+            "OurBride reserves the right to remove any inappropriate material."
+          ]
+        },
+        "privacySecurity": {
+          "title": "Privacy & Security",
+          "content": [
+            "We protect your data under our Privacy Policy.",
+            "Identity verification is required for providers."
+          ]
+        },
+        "liability": {
+          "title": "Liability",
+          "content": [
+            "OurBride is not responsible for direct agreements made outside the platform.",
+            "Any disputes must follow our dispute resolution process."
+          ]
+        },
+        "changesToTerms": {
+          "title": "Changes to Terms",
+          "content": [
+            "OurBride may update these terms at any time.",
+            "Continued use of the app means you accept the updated terms."
+          ]
+        }
+      }
+    },
+    "community": {
+      "title": "Community Guidelines",
+      "sections": {
+        "respectOthers": {
+          "title": "Respect Others",
+          "content": "No harassment, hate speech, or offensive content."
+        },
+        "authenticity": {
+          "title": "Authenticity",
+          "content": [
+            "Provide real and accurate information.",
+            "Do not impersonate others."
+          ]
+        },
+        "safeCommunication": {
+          "title": "Safe Communication",
+          "content": [
+            "Keep conversations respectful.",
+            "Calls/messages may be recorded for safety."
+          ]
+        },
+        "serviceIntegrity": {
+          "title": "Service Integrity",
+          "content": [
+            "Providers must deliver services as promised.",
+            "No direct transactions outside the app."
+          ]
+        },
+        "reportingConsequences": {
+          "title": "Reporting & Consequences",
+          "content": [
+            "Use Report a Problem for issues.",
+            "Violations may result in account suspension or removal."
+          ]
+        }
+      }
+    },
+    "businessProfile": {
+      "title": "Business Profile Settings",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "loading": "Loading business profile settings...",
+      "error": {
+        "title": "Failed to Load Business Profile Settings",
+        "message": "Failed to load business profile settings. Please try again."
+      },
+      "profileImage": {
+        "title": "Profile Image",
+        "noImage": "No profile image uploaded",
+        "change": "Change Profile Image",
+        "upload": "Upload Profile Image",
+        "currentUrl": "Current URL:"
+      },
+      "logoImage": {
+        "title": "Logo Image",
+        "noImage": "No logo uploaded",
+        "change": "Change Logo",
+        "upload": "Upload Logo",
+        "currentUrl": "Current URL:"
+      },
+      "bannerImage": {
+        "title": "Banner Image",
+        "noImage": "No banner uploaded",
+        "change": "Change Banner",
+        "upload": "Upload Banner",
+        "currentUrl": "Current URL:"
+      },
+      "profileSettings": {
+        "title": "Profile Settings",
+        "publicProfileSlug": "Public Profile Slug",
+        "publicProfileSlugPlaceholder": "public-profile-slug",
+        "descriptionEn": "Description (English)",
+        "descriptionEnPlaceholder": "Enter description in English",
+        "descriptionAr": "Description (Arabic)",
+        "descriptionArPlaceholder": "Enter description in Arabic",
+        "seoMetaTitle": "SEO Meta Title",
+        "seoMetaTitlePlaceholder": "SEO Meta Title"
+      },
+      "toast": {
+        "success": "Business profile settings updated successfully",
+        "error": "Failed to update business profile settings"
+      }
+    }
+  },
+  "helpCenter": {
+    "title": "Frequently Asked Questions ( FAQ )",
+    "reportSubmitted": "Report Submitted Successfully",
+    "reportSubmittedDescription": "Thank you! Your report has been submitted and our team will review it shortly",
+    "confirm": "Confirm",
+    "liveChat": {
+      "title": "Live Chat",
+      "heading": "Start Live Chat Now",
+      "description": "Connect instantly with our support team for quick help, guidance, or answers to any questions while planning your big day.",
+      "startChat": "Start Chat"
+    },
+    "reportProblem": {
+      "title": "Report A Problem",
+      "heading": "Tell Us What Went Wrong",
+      "description": "Share the issue you faced so we can fix it quickly and keep your experience smooth",
+      "describeLabel": "Describe The Problem",
+      "describePlaceholder": "Please describe the problem in detail...",
+      "submit": "Submit",
+      "problemTypes": {
+        "bookingIssue": "Booking issue",
+        "serviceProviderIssue": "Service provider issue",
+        "paymentIssue": "Payment issue",
+        "technicalProblem": "Technical problem",
+        "other": "Other"
+      }
+    },
+    "categories": {
+      "accountProfile": {
+        "title": "Account & Profile",
+        "items": {
+          "createAccount": {
+            "question": "How do I create an account?",
+            "answer": "Download the OurBride app, click Sign Up, and fill in your details. You can also register using Google, Facebook, or Apple."
+          },
+          "resetPassword": {
+            "question": "How do I reset my password?",
+            "answer": "Go to Settings → Security → Change Password. Enter your old password, then create and confirm your new one."
+          }
+        }
+      },
+      "bookingsServices": {
+        "title": "Bookings & Services",
+        "items": {
+          "bookService": {
+            "question": "How do I book a service?",
+            "answer": "Browse services, choose a provider, select a date, and click Book Now. You'll receive confirmation once the provider accepts."
+          },
+          "cancelReschedule": {
+            "question": "Can I cancel or reschedule a booking?",
+            "answer": "Yes, go to My Bookings, select the booking, and choose Cancel or Reschedule. Please check the provider's cancellation policy first."
+          },
+          "trackBooking": {
+            "question": "How do I track my booking request?",
+            "answer": "Open My Bookings → select your request. You'll see the status: Submitted → Under Review → Confirmed → Payment Due."
+          }
+        }
+      },
+      "payments": {
+        "title": "Payments",
+        "items": {
+          "paymentMethods": {
+            "question": "What payment methods are accepted?",
+            "answer": "We support credit/debit cards, mobile wallets, and bank transfers depending on your region."
+          }
+        }
+      },
+      "offersCoupons": {
+        "title": "Offers & Coupons",
+        "items": {
+          "applyCoupon": {
+            "question": "How do I apply a coupon?",
+            "answer": "At checkout, enter your coupon code in the Apply Coupon field. The discount will be applied automatically."
+          },
+          "couponNotWorking": {
+            "question": "Why is my coupon not working?",
+            "answer": "Make sure the coupon hasn't expired, applies to the selected service, and meets the minimum order amount."
+          }
+        }
+      },
+      "trustSafety": {
+        "title": "Trust & Safety",
+        "items": {
+          "providerVerification": {
+            "question": "How are service providers verified?",
+            "answer": "Every provider must upload valid ID and service documents. Verified providers have a ✅ badge next to their name."
+          },
+          "paymentSecurity": {
+            "question": "Are my payments secure?",
+            "answer": "Yes, all transactions are processed through encrypted payment gateways to protect your data."
+          },
+          "reportProblem": {
+            "question": "Can I report a problem with a provider?",
+            "answer": "Yes, go to the provider's profile or your booking details, click Report a Problem, and describe the issue."
+          }
+        }
+      }
+    }
+  },
+  "chat": {
+    "support": {
+      "name": "Our Bride Help Center",
+      "subtitle": "We usually respond within a few minutes.",
+      "greeting": "Hello,\nhow can We help you today ?",
+      "quickReplies": {
+        "bookingIssue": "Booking issue",
+        "serviceProviderIssue": "Service provider issue",
+        "paymentIssue": "Payment issue",
+        "technicalProblem": "Technical problem",
+        "other": "Other"
+      },
+      "response": "Your request has been submitted. A customer support representative will contact you within a few minutes.\nPlease do not close this window.\n\nClient Number: 50\nPeople Ahead of You: 2",
+      "quickReplyChips": {
+        "goodMorning": "Good Morning",
+        "discussPrice": "Can we discuss the price?",
+        "thankYou": "Thank you"
+      }
+    }
   }
 }

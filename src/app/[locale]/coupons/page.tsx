@@ -12,6 +12,7 @@ import {
   SendGiftModal,
   type SentGiftItem,
 } from '@/components/gift-center'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 /**
  * Mock data for received gifts
@@ -69,32 +70,13 @@ const mockReceivedGifts = [
  * - 5K EGP: Purple
  * - 10K EGP: Orange
  */
+// Mock coupons - description will be set in component using translations
 const mockCoupons = [
-  {
-    id: '1',
-    amount: 500,
-    description: 'a simple way to show your appreciation',
-  },
-  {
-    id: '2',
-    amount: 1000,
-    description: 'a simple way to show your appreciation',
-  },
-  {
-    id: '3',
-    amount: 2000,
-    description: 'a simple way to show your appreciation',
-  },
-  {
-    id: '4',
-    amount: 5000,
-    description: 'a simple way to show your appreciation',
-  },
-  {
-    id: '5',
-    amount: 10000,
-    description: 'a simple way to show your appreciation',
-  },
+  { id: '1', amount: 500 },
+  { id: '2', amount: 1000 },
+  { id: '3', amount: 2000 },
+  { id: '4', amount: 5000 },
+  { id: '5', amount: 10000 },
 ]
 
 /**
@@ -150,6 +132,7 @@ const mockSentGifts: SentGiftItem[] = [
  * This is a separate page from the gift center, accessible from the user sidebar
  */
 export default function CouponsPage() {
+  const t = useI18nTranslations('coupons')
   const [sendGiftModalOpen, setSendGiftModalOpen] = useState(false)
   const [successModalOpen, setSuccessModalOpen] = useState(false)
   const [hasSentGifts, setHasSentGifts] = useState(false)
@@ -178,7 +161,7 @@ export default function CouponsPage() {
           {/* Received Gifts Section */}
           <div>
             <h2 className="text-14 sm:text-16 font-normal text-gray-900 mb-2 sm:mb-3">
-              Received Gifts
+              {t('receivedGifts.title')}
             </h2>
             <div className="space-y-2 sm:space-y-2.5">
               {mockReceivedGifts.map(gift => (
@@ -197,10 +180,10 @@ export default function CouponsPage() {
           <div>
             <div className="flex flex-col gap-0.5 sm:gap-1 mb-2 sm:mb-3">
               <h2 className="text-14 sm:text-16 font-normal text-gray-900 leading-4 sm:leading-5">
-                Express Your Love
+                {t('expressYourLove.title')}
               </h2>
               <p className="text-12 sm:text-14 font-normal text-gray-500 leading-3 sm:leading-4">
-                Send a simple gift now to show how much you care.
+                {t('expressYourLove.description')}
               </p>
             </div>
             <div className="space-y-2 sm:space-y-2.5">
@@ -208,7 +191,7 @@ export default function CouponsPage() {
                 <CouponCard
                   key={coupon.id}
                   amount={coupon.amount}
-                  description={coupon.description}
+                  description={t('expressYourLove.couponDescription')}
                   onSendClick={() => handleSendClick(coupon.amount)}
                 />
               ))}

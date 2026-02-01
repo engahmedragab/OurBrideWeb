@@ -7,6 +7,7 @@ import { Gift, User, Mail, CreditCard, Wallet } from 'lucide-react'
 import { Modal, Button, Input, Checkbox } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import phoneIconSvg from '@/assets/svg/PhoneIcon.svg'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 /**
  * Get gift icon color based on coupon amount
@@ -71,6 +72,7 @@ export const SendGiftModal = ({
   couponAmount,
   onCheckout,
 }: SendGiftModalProps) => {
+  const t = useI18nTranslations('coupons')
   const router = useRouter()
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'wallet'>('card')
   const [acceptTerms, setAcceptTerms] = useState(false)
@@ -105,7 +107,7 @@ export const SendGiftModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Send Gift"
+      title={t('sendGiftModal.title')}
       maxWidth="2xl"
       contentClassName="p-0 max-h-[90vh] overflow-y-auto"
       headerClassName="px-2.5 py-2 sm:px-3 sm:py-2.5 md:px-4 md:py-3"
@@ -117,11 +119,11 @@ export const SendGiftModal = ({
           {/* Your Information */}
           <div>
             <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">
-              Your Informations
+              {t('sendGiftModal.yourInformations')}
             </h3>
             <div className="space-y-2">
               <Input
-                placeholder="Full Name"
+                placeholder={t('sendGiftModal.fullName')}
                 prefixIcon={
                   <User className="h-4 w-4 text-gray-400" />
                 }
@@ -130,7 +132,7 @@ export const SendGiftModal = ({
                 variant="default"
               />
               <Input
-                placeholder="Mobile Number"
+                placeholder={t('sendGiftModal.mobileNumber')}
                 prefixIcon={
                   <Image
                     src={
@@ -155,11 +157,11 @@ export const SendGiftModal = ({
           {/* Recipient Information */}
           <div>
             <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">
-              Who will receive your gift ?
+              {t('sendGiftModal.recipientTitle')}
             </h3>
             <div className="space-y-2">
               <Input
-                placeholder="Full Name"
+                placeholder={t('sendGiftModal.fullName')}
                 prefixIcon={
                   <User className="h-4 w-4 text-gray-400" />
                 }
@@ -168,7 +170,7 @@ export const SendGiftModal = ({
                 variant="default"
               />
               <Input
-                placeholder="E-mail"
+                placeholder={t('sendGiftModal.email')}
                 prefixIcon={
                   <Mail className="h-4 w-4 text-gray-400" />
                 }
@@ -178,7 +180,7 @@ export const SendGiftModal = ({
                 variant="default"
               />
               <Input
-                placeholder="Mobile Number"
+                placeholder={t('sendGiftModal.mobileNumber')}
                 prefixIcon={
                   <Image
                     src={
@@ -201,7 +203,7 @@ export const SendGiftModal = ({
           {/* Payment Method */}
           <div>
             <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">
-              Payment Method
+              {t('sendGiftModal.paymentMethod')}
             </h3>
             <div className="flex gap-2">
               <Button
@@ -215,7 +217,7 @@ export const SendGiftModal = ({
                     : '!border-gray-300 !text-gray-600 !bg-white hover:!bg-gray-50 hover:!text-gray-700'
                 )}
               >
-                Debit / Credit
+                {t('sendGiftModal.debitCredit')}
               </Button>
               <Button
                 variant={paymentMethod === 'wallet' ? 'outlineBrand' : 'outline'}
@@ -228,7 +230,7 @@ export const SendGiftModal = ({
                     : '!border-gray-300 !text-gray-600 !bg-white hover:!bg-gray-50 hover:!text-gray-700'
                 )}
               >
-                Mobile Wallet
+                {t('sendGiftModal.mobileWallet')}
               </Button>
             </div>
           </div>
@@ -237,17 +239,17 @@ export const SendGiftModal = ({
           {paymentMethod === 'card' && (
             <div>
               <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">
-                Card Details
+                {t('sendGiftModal.cardDetails')}
               </h3>
               <div className="space-y-2 sm:space-y-3">
                 <Input
-                  placeholder="Name On Card"
+                  placeholder={t('sendGiftModal.nameOnCard')}
                   className="w-full"
                   size="sm"
                   variant="default"
                 />
                 <Input
-                  placeholder="Card Number"
+                  placeholder={t('sendGiftModal.cardNumber')}
                   type="tel"
                   className="w-full"
                   size="sm"
@@ -255,14 +257,14 @@ export const SendGiftModal = ({
                 />
                 <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <Input
-                    placeholder="MM/YY"
+                    placeholder={t('sendGiftModal.mmYy')}
                     type="tel"
                     className="w-full"
                     size="sm"
                     variant="default"
                   />
                   <Input
-                    placeholder="CVV"
+                    placeholder={t('sendGiftModal.cvv')}
                     type="tel"
                     className="w-full"
                     size="sm"
@@ -276,7 +278,7 @@ export const SendGiftModal = ({
 
         {/* Right Column - Order Summary */}
         <div className="rounded-xl p-2.5 sm:p-3 md:p-4 space-y-2.5 sm:space-y-3 md:space-y-4">
-          <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">Order Summary</h3>
+          <h3 className="text-12 sm:text-14 font-semibold text-gray-900 mb-2">{t('sendGiftModal.orderSummary')}</h3>
 
           {/* Order Items */}
           <div className="space-y-2 sm:space-y-3">
@@ -298,7 +300,7 @@ export const SendGiftModal = ({
                     <Gift className={cn('h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7', iconColor)} />
                   </div>
                   <span className="text-12 sm:text-14 font-normal text-gray-900 flex-1">
-                    {formattedAmount} Coupon
+                    {formattedAmount} {t('couponCard.coupon')}
                   </span>
                 </div>
               )
@@ -308,19 +310,19 @@ export const SendGiftModal = ({
           {/* Cost Breakdown */}
           <div className="space-y-1.5 pt-2 border-t border-gray-200">
             <div className="flex justify-between items-center">
-              <span className="text-10 sm:text-12 text-gray-600">Subtotal</span>
+              <span className="text-10 sm:text-12 text-gray-600">{t('sendGiftModal.subtotal')}</span>
               <span className="text-10 sm:text-12 font-semibold text-gray-900">
                 {subtotal} EGP
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-10 sm:text-12 text-gray-600">Taxes & Fees</span>
+              <span className="text-10 sm:text-12 text-gray-600">{t('sendGiftModal.taxesFees')}</span>
               <span className="text-10 sm:text-12 font-semibold text-gray-900">
                 {taxes} EGP
               </span>
             </div>
             <div className="flex justify-between items-center pt-1.5 border-t border-gray-200">
-              <span className="text-12 sm:text-14 font-semibold text-gray-900">Total</span>
+              <span className="text-12 sm:text-14 font-semibold text-gray-900">{t('sendGiftModal.total')}</span>
               <span className="text-12 sm:text-14 font-semibold text-gray-900">
                 {total} EGP
               </span>
@@ -337,21 +339,19 @@ export const SendGiftModal = ({
                 size="sm"
               />
               <label className="text-10 sm:text-12 text-gray-600 cursor-pointer flex-1">
-                I Accept{' '}
+                {t('sendGiftModal.acceptTerms')}{' '}
                 <span
                   onClick={navigateToTermsAndConditions}
                   role="button"
                   tabIndex={0}
                   className="font-semibold text-gray-900 hover:text-brand-500 cursor-pointer transition-colors "
                 >
-                  Terms & Conditions
+                  {t('sendGiftModal.termsConditions')}
                 </span>
               </label>
             </div>
             <p className="text-8 sm:text-10 text-gray-500 leading-3 sm:leading-4">
-              If you are not around when the delivery person arrives, they will
-              leave your order at the door. by placing your order, you agree to
-              take full responsibility for it once it&apos;s delivered.
+              {t('sendGiftModal.deliveryNotice')}
             </p>
           </div>
 
@@ -367,7 +367,7 @@ export const SendGiftModal = ({
               }
             }}
           >
-            Checkout
+            {t('sendGiftModal.checkout')}
           </Button>
         </div>
       </div>

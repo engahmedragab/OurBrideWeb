@@ -55,12 +55,22 @@ export const mapProductResponseToProduct = (
     slug: '',
   }
 
-  // Use category object if available, otherwise use categoryId
+  // Check for categories field (string) from backend
+  const productWithCategories = apiProduct as typeof apiProduct & {
+    categories?: string | null
+  }
+  
+  // Use category object if available
   if (apiProduct.category) {
     category.id = String(apiProduct.category.id || category.id)
     const categoryWithName = apiProduct.category as typeof apiProduct.category & { nameEn?: string; nameAr?: string; name?: string }
     category.name = categoryWithName.nameEn || categoryWithName.nameAr || categoryWithName.name || ''
     category.slug = apiProduct.category.slug || ''
+  }
+  // Use categories string field if available (from backend)
+  else if (productWithCategories.categories && typeof productWithCategories.categories === 'string') {
+    category.name = productWithCategories.categories
+    category.slug = productWithCategories.categories.toLowerCase().replace(/\s+/g, '-')
   }
 
   // Extract provider

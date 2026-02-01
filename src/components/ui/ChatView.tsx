@@ -12,6 +12,7 @@ import { UserProfileView } from './UserProfileView'
 import type { Conversation, Message } from '@/types/message'
 import { CallUserModal } from '@/components/ui/CallUserModal'
 import { CallRatingModal } from '@/components/ui/CallRatingModal'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ChatViewProps {
   conversation: Conversation
@@ -30,6 +31,7 @@ export const ChatView = ({
   onSendMessage,
   className,
 }: ChatViewProps) => {
+  const t = useI18nTranslations('messages')
   const [inputValue, setInputValue] = useState('')
   const [selectedQuickReply, setSelectedQuickReply] = useState<
     string | undefined
@@ -55,10 +57,10 @@ export const ChatView = ({
   };
 
   const quickReplySuggestions = [
-    'Good Morning',
-    'Can we discuss the price?',
-    'Thank you',
-    'Looking forward to it',
+    t('quickReplies.goodMorning'),
+    t('quickReplies.discussPrice'),
+    t('quickReplies.thankYou'),
+    t('quickReplies.lookingForward'),
   ]
 
   // Get media items from messages (images only)
@@ -181,17 +183,17 @@ export const ChatView = ({
                   {conversation.participantName}
                 </h2>
                 <p className="text-12 font-normal text-gray-500">
-                  {conversation.lastSeen || 'Last Seen : Today at 5:52 PM'}
+                  {conversation.lastSeen || `${t('chat.lastSeen')} : Today at 5:52 PM`}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               {/* Demo Only: Start and Receive Call Test Buttons */}
               <Button variant="brand" size="sm" className="mr-2" onClick={openOutgoing}>
-                Demo Start Call
+                {t('chat.demoStartCall')}
               </Button>
               <Button variant="success" size="sm" className="mr-2" onClick={openIncoming}>
-                Demo Receive Call
+                {t('chat.demoReceiveCall')}
               </Button>
               {/* Normal Call icon button to open outgoing modal for user action (optional) */}
               <Button
@@ -276,7 +278,7 @@ export const ChatView = ({
                     <div className="relative rounded-2xl overflow-hidden max-w-full max-h-80 aspect-auto">
                       <Image
                         src={message.content}
-                        alt="Shared image"
+                        alt={t('chat.sharedImage')}
                         fill
                         sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover"
@@ -339,7 +341,7 @@ export const ChatView = ({
               onAttachDocument={handleAttachDocument}
               onAttachLocation={handleAttachLocation}
               onImagesChange={setHasAttachments}
-              placeholder="Enter Your Message.."
+              placeholder={t('input.placeholder')}
             />
           </div>
         </div>

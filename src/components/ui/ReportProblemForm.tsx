@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Textarea } from './Textarea'
 import { ProblemTypeSelector, type ProblemType } from './ProblemTypeSelector'
+import { useI18nTranslations } from '@/i18n'
 
 export interface ReportProblemFormProps {
   onSubmit?: (data: { problemType: ProblemType; description: string }) => void
@@ -18,6 +19,7 @@ export const ReportProblemForm = ({
   onSubmit,
   className,
 }: ReportProblemFormProps) => {
+  const t = useI18nTranslations('helpCenter.reportProblem')
   const [selectedProblemType, setSelectedProblemType] =
     useState<ProblemType>('Booking issue')
   const [description, setDescription] = useState('')
@@ -43,18 +45,17 @@ export const ReportProblemForm = ({
       {/* Header */}
       <div className="flex w-full flex-col gap-4">
         <h2 className="text-16 lg:text-20 font-normal leading-8 text-gray-900">
-          Report A Problem
+          {t('title')}
         </h2>
       </div>
 
       {/* Description */}
       <div className="flex flex-col gap-2">
         <h3 className="text-16 font-normal leading-6 text-gray-900">
-          Tell Us What Went Wrong
+          {t('heading')}
         </h3>
         <p className="text-16 font-normal leading-6 text-gray-500">
-          Share the issue you faced so we can fix it quickly and keep your
-          experience smooth
+          {t('description')}
         </p>
       </div>
 
@@ -67,10 +68,10 @@ export const ReportProblemForm = ({
       {/* Description Textarea */}
       <div className="flex flex-col gap-2">
         <label className="text-16 font-normal leading-6 text-gray-900">
-          Describe The Problem
+          {t('describeLabel')}
         </label>
         <Textarea
-          placeholder="Please describe the problem in detail..."
+          placeholder={t('describePlaceholder')}
           value={description}
           onChange={e => setDescription(e.target.value)}
           variant="default"
@@ -87,7 +88,7 @@ export const ReportProblemForm = ({
         size="lg"
         className="w-full rounded-full py-[18px] text-20 font-medium text-white"
       >
-        Submit
+        {t('submit')}
       </Button>
     </form>
   )

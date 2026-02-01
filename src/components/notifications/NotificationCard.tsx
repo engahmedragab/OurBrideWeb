@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import type { Notification, NotificationType } from '@/types/notification'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface NotificationCardProps {
   notification: Notification
@@ -77,6 +78,7 @@ export const NotificationCard = ({
   compact = false,
   showActions = true,
 }: NotificationCardProps) => {
+  const t = useI18nTranslations('notifications')
   const [isHovered, setIsHovered] = useState(false)
 
   const handleCardClick = () => {
@@ -146,10 +148,10 @@ export const NotificationCard = ({
                 {notification.message}
               </p>
               <div className="flex items-center justify-between">
-                <span className={cn('text-gray-500', compact ? 'text-11' : 'text-12')}>{notification.timestamp}</span>
+                <span className="text-16 font-normal text-gray-500">{notification.timestamp}</span>
                 {notification.actionUrl && !compact && (
                   <span className="text-12 text-brand-500 font-medium flex items-center gap-1">
-                    View
+                    {t('card.view')}
                     <ExternalLink className="h-3 w-3" />
                   </span>
                 )}
@@ -171,7 +173,7 @@ export const NotificationCard = ({
                     size="icon"
                     className="h-8 w-8"
                     onClick={onMarkAsRead}
-                    title="Mark as read"
+                    title={t('card.markAsRead')}
                   >
                     <CheckCircle2 className="h-4 w-4 text-gray-600" />
                   </Button>
@@ -181,7 +183,7 @@ export const NotificationCard = ({
                   size="icon"
                   className="h-8 w-8"
                   onClick={onDelete}
-                  title="Delete"
+                  title={t('card.delete')}
                 >
                   <X className="h-4 w-4 text-gray-600" />
                 </Button>

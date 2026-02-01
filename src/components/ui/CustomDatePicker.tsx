@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-reac
 import { Popover, PopoverTrigger, PopoverContent } from './Popover'
 import { Input } from './Input'
 import { cn } from '@/lib/utils'
+import { useIsRTL } from '@/i18n/hooks'
 
 export type DatePickerTimeSlot = 'any' | 'morning' | 'afternoon' | 'evening' | 'custom'
 
@@ -32,6 +33,7 @@ export const CustomDatePicker = ({
   className,
   disabled = false,
 }: CustomDatePickerProps) => {
+  const isRTL = useIsRTL()
   const [isOpen, setIsOpen] = useState(false)
   const [currentMonth, setCurrentMonth] = useState(() => value ? new Date(value.getFullYear(), value.getMonth(), 1) : new Date())
   const [selectedTime, setSelectedTime] = useState<DatePickerTimeSlot>(selectedTimeSlot)
@@ -173,7 +175,7 @@ export const CustomDatePicker = ({
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   aria-label="Previous month"
                 >
-                  <ChevronLeft className="h-5 w-5 text-gray-600" />
+                  <ChevronLeft className={cn("h-5 w-5 text-gray-600", isRTL && "rotate-180")} />
                 </button>
                 <h3 className="text-18 font-semibold text-gray-900">
                   {format(currentMonth, 'MMM d, yyyy')}
@@ -183,7 +185,7 @@ export const CustomDatePicker = ({
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   aria-label="Next month"
                 >
-                  <ChevronRight className="h-5 w-5 text-gray-600" />
+                  <ChevronRight className={cn("h-5 w-5 text-gray-600", isRTL && "rotate-180")} />
                 </button>
               </div>
 

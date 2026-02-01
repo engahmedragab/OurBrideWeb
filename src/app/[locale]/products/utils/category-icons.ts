@@ -2,28 +2,29 @@
  * Category icon mapping utility
  */
 
-import perfumesIcon from '@/assets/category/perfumes.svg'
-import skinCareIcon from '@/assets/category/skin-care.svg'
-import boxesIcon from '@/assets/category/boxes.svg'
-import hairCareIcon from '@/assets/category/hair-care.svg'
-import bodyCareIcon from '@/assets/category/body-soap.svg'
-import toolsDevicesIcon from '@/assets/category/tools-devices.svg'
-import hairDryerIcon from '@/assets/category/hair-dryer.svg'
+import perfumesIcon from '@/assets/svg/prefumes-icon.svg'
+import skinCareIcon from '@/assets/svg/skincare-icon.svg'
+import bagIcon from '@/assets/svg/bag-icon.svg'
+import hairCareIcon from '@/assets/svg/haircare-icon.svg'
+import makeupIcon from '@/assets/svg/makeup-icon.svg'
 
 /**
- * Get category icon mapping
+ * Get list of available category icons (static, no slug matching)
  */
-export const getCategoryIconMap = (): Record<string, string> & { default: string } => {
-  return {
-    perfumes: perfumesIcon,
-    makeup: toolsDevicesIcon,
-    'skin-care': skinCareIcon,
-    boxes: boxesIcon,
-    'hair-care': hairCareIcon,
-    'body-care': bodyCareIcon,
-    'tools-devices': toolsDevicesIcon,
-    'hair-dryer': hairDryerIcon,
-    default: toolsDevicesIcon,
-  }
+export const getCategoryIcons = (): string[] => {
+  return [
+    perfumesIcon,
+    skinCareIcon,
+    bagIcon,
+    hairCareIcon,
+    makeupIcon,
+  ]
+}
+
+/**
+ * Get default icon
+ */
+export const getDefaultCategoryIcon = (): string => {
+  return bagIcon
 }
 

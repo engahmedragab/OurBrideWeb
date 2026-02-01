@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Button } from './Button'
 import { Trash2 } from 'lucide-react'
 import type { Service } from '@/types/service'
+import { useI18nTranslations } from '@/i18n'
 
 export interface WishlistServiceCardProps {
   service: Service
@@ -24,6 +25,7 @@ export const WishlistServiceCard = React.memo(({
 }: WishlistServiceCardProps) => {
   const [imageError, setImageError] = React.useState(false)
   const router = useRouter()
+  const t = useI18nTranslations('wishlist.cards')
 
   const handleBookNow = () => {
       router.push(`/booking/${service.id}`)
@@ -59,7 +61,7 @@ export const WishlistServiceCard = React.memo(({
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
                 <span className="text-gray-400 text-10 font-medium text-center px-1">
-                  No image available
+                  {t('noImageAvailable')}
                 </span>
               </div>
             )}
@@ -71,7 +73,7 @@ export const WishlistServiceCard = React.memo(({
             type="button"
             onClick={handleRemove}
             className="p-2 rounded-full border-2 border-red-300 hover:bg-red-50 hover:border-red-400 transition-colors"
-            aria-label="Remove from wishlist"
+            aria-label={t('removeFromWishlist')}
           >
             <Trash2 className="h-4 w-4 text-red-500" />
           </button>
@@ -100,7 +102,7 @@ export const WishlistServiceCard = React.memo(({
 
         {/* Price */}
         <div className="mb-1 flex items-baseline gap-2">
-          <span className="text-12 text-gray-600 mr-1">Start From</span>
+          <span className="text-12 text-gray-600 mr-1">{t('startFrom')}</span>
           <span className="text-14 font-semibold text-gray-900">
             {service.price.discounted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {service.price.currency}
           </span>
@@ -114,7 +116,7 @@ export const WishlistServiceCard = React.memo(({
             onClick={handleBookNow}
             className='!text-white'
           >
-            Book Now
+            {t('bookNow')}
           </Button>
         </div>
       </div>

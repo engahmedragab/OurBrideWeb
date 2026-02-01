@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface ChatPlaceholderProps {
   message?: string
@@ -12,9 +13,12 @@ export interface ChatPlaceholderProps {
  * Displays a placeholder message when no conversation is selected
  */
 export const ChatPlaceholder = ({
-  message = 'Select a conversation to start',
+  message,
   className,
 }: ChatPlaceholderProps) => {
+  const t = useI18nTranslations('messages')
+  const displayMessage = message || t('chat.placeholder')
+  
   return (
     <div
       className={cn(
@@ -23,7 +27,7 @@ export const ChatPlaceholder = ({
       )}
     >
       <p className="text-14 sm:text-16 text-gray-500 px-4 text-center">
-        {message}
+        {displayMessage}
       </p>
     </div>
   )

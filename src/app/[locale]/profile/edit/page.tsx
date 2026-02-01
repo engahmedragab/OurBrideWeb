@@ -10,6 +10,7 @@ import { useUserProfileData, useUpdateUserProfile } from '@/hooks/profile/usePro
 import { useMineInfo } from '@/hooks/home'
 import { useAuth } from '@/auth'
 import { useCountries } from '@/hooks/location/useLocations'
+import { useI18nTranslations } from '@/i18n'
 import { PersonalType, Language, Gender, Source, TenantScopeLevel, MediaType, CommonEntityStatus } from '@/../client/common/api/gen/ourbride-api'
 import type { MediaRequest, UserRequest } from '@/../client/common/api/gen/ourbride-api'
 
@@ -18,6 +19,7 @@ import type { MediaRequest, UserRequest } from '@/../client/common/api/gen/ourbr
  * Allows users to edit their personal information and profile picture
  */
 export default function ProfileEditPage() {
+  const t = useI18nTranslations('profile.edit')
   const router = useRouter()
   const pathname = usePathname()
   const { user: authUser } = useAuth()
@@ -259,7 +261,7 @@ export default function ProfileEditPage() {
     return (
       <UserPageLayout>
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner size="lg" text="Loading profile..." fullScreen={true} />
+          <LoadingSpinner size="lg" text={t('loading')} fullScreen={true} />
         </div>
       </UserPageLayout>
     )
@@ -271,7 +273,7 @@ export default function ProfileEditPage() {
         {/* Header with Save Button */}
         <div className="flex items-center justify-between">
           <h2 className="text-18 font-normal text-gray-900">
-            Personal Information
+            {t('title')}
           </h2>
           <Button
             variant="ghost"
@@ -279,7 +281,7 @@ export default function ProfileEditPage() {
             onClick={handleSave}
             disabled={updateMutation.isPending}
           >
-            {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+            {updateMutation.isPending ? t('saving') : t('saveChanges')}
           </Button>
         </div>
 
@@ -290,12 +292,12 @@ export default function ProfileEditPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  First Name
+                  {t('fields.firstName')}
                 </label>
                 <Input
                   value={formData.firstName}
                   onChange={e => handleInputChange('firstName', e.target.value)}
-                  placeholder="First Name"
+                  placeholder={t('placeholders.firstName')}
                   variant="default"
                   size="lg"
                 />
@@ -303,12 +305,12 @@ export default function ProfileEditPage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Last Name
+                  {t('fields.lastName')}
                 </label>
                 <Input
                   value={formData.lastName}
                   onChange={e => handleInputChange('lastName', e.target.value)}
-                  placeholder="Last Name"
+                  placeholder={t('placeholders.lastName')}
                   variant="default"
                   size="lg"
                 />
@@ -316,31 +318,31 @@ export default function ProfileEditPage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Gender
+                  {t('fields.gender')}
                 </label>
                 <SelectPopover
                   value={formData.gender || ''}
                   onChange={value => handleInputChange('gender', value as Gender)}
                   options={[
-                    { value: '', label: 'Select Gender' },
-                    { value: Gender.Unknown, label: 'Unknown' },
-                    { value: Gender.Male, label: 'Male' },
-                    { value: Gender.Female, label: 'Female' },
+                    { value: '', label: t('placeholders.selectGender') },
+                    { value: Gender.Unknown, label: t('genderOptions.unknown') },
+                    { value: Gender.Male, label: t('genderOptions.male') },
+                    { value: Gender.Female, label: t('genderOptions.female') },
                   ]}
-                  placeholder="Select Gender"
+                  placeholder={t('placeholders.selectGender')}
                 />
               </div>
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Mobile Number
+                  {t('fields.mobileNumber')}
                 </label>
                 <Input
                   value={formData.mobileNumber}
                   onChange={e =>
                     handleInputChange('mobileNumber', e.target.value)
                   }
-                  placeholder="Mobile Number"
+                  placeholder={t('placeholders.mobileNumber')}
                   variant="default"
                   size="lg"
                 />
@@ -348,12 +350,12 @@ export default function ProfileEditPage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  E-mail
+                  {t('fields.email')}
                 </label>
                 <Input
                   value={formData.email}
                   onChange={e => handleInputChange('email', e.target.value)}
-                  placeholder="E-mail"
+                  placeholder={t('placeholders.email')}
                   variant="default"
                   size="lg"
                 />
@@ -361,12 +363,12 @@ export default function ProfileEditPage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Personal ID / Passport
+                  {t('fields.personalId')}
                 </label>
                 <Input
                   value={formData.personal}
                   onChange={e => handleInputChange('personal', e.target.value)}
-                  placeholder="Personal ID or Passport Number"
+                  placeholder={t('placeholders.personalId')}
                   variant="default"
                   size="lg"
                 />
@@ -374,23 +376,23 @@ export default function ProfileEditPage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Personal ID Type
+                  {t('fields.personalIdType')}
                 </label>
                 <SelectPopover
                   value={formData.personalType || ''}
                   onChange={value => handleInputChange('personalType', value as PersonalType)}
                   options={[
-                    { value: '', label: 'Select Type' },
-                    { value: PersonalType.National, label: 'National ID' },
-                    { value: PersonalType.Passport, label: 'Passport' },
+                    { value: '', label: t('placeholders.selectType') },
+                    { value: PersonalType.National, label: t('personalIdTypes.national') },
+                    { value: PersonalType.Passport, label: t('personalIdTypes.passport') },
                   ]}
-                  placeholder="Select Type"
+                  placeholder={t('placeholders.selectType')}
                 />
               </div>
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Birth Date
+                  {t('fields.birthDate')}
                 </label>
                 <DatePicker
                   value={formData.birthDate || undefined}
@@ -403,7 +405,7 @@ export default function ProfileEditPage() {
                       handleInputChange('birthDate', '')
                     }
                   }}
-                  placeholder="Select Birth Date"
+                  placeholder={t('placeholders.selectBirthDate')}
                   dateFormat="string"
                   size="lg"
                 />
@@ -411,12 +413,12 @@ export default function ProfileEditPage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Custom Tag
+                  {t('fields.customTag')}
                 </label>
                 <Input
                   value={formData.customTag}
                   onChange={e => handleInputChange('customTag', e.target.value)}
-                  placeholder="Custom Tag"
+                  placeholder={t('placeholders.customTag')}
                   variant="default"
                   size="lg"
                 />
@@ -424,7 +426,7 @@ export default function ProfileEditPage() {
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Language
+                  {t('fields.language')}
                 </label>
                 <SelectPopover
                   value={formData.language || ''}
@@ -452,28 +454,28 @@ export default function ProfileEditPage() {
                     }
                   }}
                   options={[
-                    { value: Language.Arabic, label: 'العربية' },
-                    { value: Language.English, label: 'English' },
+                    { value: Language.Arabic, label: t('languages.arabic') },
+                    { value: Language.English, label: t('languages.english') },
                   ]}
-                  placeholder="Select Language"
+                  placeholder={t('placeholders.selectLanguage')}
                 />
               </div>
 
               <div>
                 <label className="block text-14 font-normal text-gray-700 mb-2">
-                  Country
+                  {t('fields.country')}
                 </label>
                 <SelectPopover
                   value={formData.countryId?.toString() || ''}
                   onChange={value => handleInputChange('countryId', value ? parseInt(value, 10) : null)}
                   options={[
-                    { value: '', label: 'Select Country' },
+                    { value: '', label: t('placeholders.selectCountry') },
                     ...(countries?.map(country => ({
                       value: country.id.toString(),
                       label: country.nameEn || country.nameAr || `Country ${country.id}`,
                     })) || []),
                   ]}
-                  placeholder="Select Country"
+                  placeholder={t('placeholders.selectCountry')}
                   disabled={isLoadingCountries}
                 />
               </div>
@@ -483,7 +485,7 @@ export default function ProfileEditPage() {
           {/* Right Section: Profile Picture */}
           <div>
             <h2 className="text-18 font-normal text-gray-900 mb-6">
-              Profile Picture
+              {t('profilePicture.title')}
             </h2>
 
             <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
@@ -491,7 +493,7 @@ export default function ProfileEditPage() {
                 existingImageUrl={formData.profileUrl}
                 onImageUploaded={handleImageUploaded}
                 onImageRemoved={handleImageRemoved}
-                uploadButtonText="Upload a new Picture"
+                uploadButtonText={t('profilePicture.upload')}
                 circular={true}
                 previewSize="md"
                 maxSize={2 * 1024 * 1024} // 2MB

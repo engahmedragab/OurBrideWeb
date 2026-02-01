@@ -3,6 +3,7 @@
 import { Gift, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { cn } from '@/lib'
+import { useI18nTranslations, useIsRTL } from '@/i18n/hooks'
 
 /**
  * Coupon Card Component Props
@@ -58,6 +59,8 @@ const formatCouponAmount = (amount: number): string => {
  * Gift icon color changes based on the coupon amount
  */
 export const CouponCard = ({ amount, description, onSendClick }: CouponCardProps) => {
+  const t = useI18nTranslations('coupons')
+  const isRTL = useIsRTL()
   const iconColor = getGiftIconColor(amount)
   const formattedAmount = formatCouponAmount(amount)
 
@@ -72,7 +75,7 @@ export const CouponCard = ({ amount, description, onSendClick }: CouponCardProps
         {/* Content */}
         <div className="flex flex-col gap-0.5 sm:gap-1 flex-1 min-w-0">
           <p className="text-12 sm:text-14 font-medium text-gray-900 leading-4 sm:leading-5">
-            {formattedAmount} Coupon
+            {formattedAmount} {t('couponCard.coupon')}
           </p>
           <p className="text-10 sm:text-12 font-normal text-gray-500 leading-3 sm:leading-4">
             {description}
@@ -87,8 +90,8 @@ export const CouponCard = ({ amount, description, onSendClick }: CouponCardProps
         className="flex items-center gap-1.5 rounded-full px-3 sm:px-5 py-1 sm:py-1.5 flex-shrink-0 text-white"
         size="sm"
       >
-        <span className="text-10 sm:text-12 font-medium">Send Now</span>
-        <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+        <span className="text-10 sm:text-12 font-medium">{t('couponCard.sendNow')}</span>
+        <ArrowRight className={cn("h-3 w-3 sm:h-3.5 sm:w-3.5", isRTL && "scale-x-[-1]")} />
       </Button>
     </div>
   )
