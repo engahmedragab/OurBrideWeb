@@ -7,6 +7,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { newEventSchema, type NewEventFormValues } from '@/schema/event.schema'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface AddEventModalProps {
   open: boolean
@@ -25,6 +26,8 @@ export const AddEventModal = ({
   initialTime = '',
   initialDuration = '',
 }: AddEventModalProps) => {
+  const t = useI18nTranslations('eventsPlanning.addEvent')
+  const tValidation = useI18nTranslations('eventsPlanning.addEvent.validation')
   const {
     register,
     handleSubmit,
@@ -82,22 +85,22 @@ export const AddEventModal = ({
     <Modal
       isOpen={open}
       onClose={handleClose}
-      title="Add New Event"
+      title={t('modal.title')}
       maxWidth="md"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Title Field */}
         <div className="space-y-1.5">
           <label htmlFor="event-title" className="text-14 font-medium text-gray-700">
-            Title <span className="text-red-500">*</span>
+            {t('modal.fields.titleLabel')} <span className="text-red-500">*</span>
           </label>
           <Input
             id="event-title"
             type="text"
-            placeholder="Enter event title"
+            placeholder={t('modal.placeholders.title')}
             {...register('title')}
             variant={errors.title ? 'error' : titleValue ? 'fill' : 'default'}
-            errorMessage={errors.title?.message}
+            errorMessage={errors.title?.message && tValidation(errors.title?.message as keyof typeof tValidation) }
             size="lg"
           />
         </div>
@@ -105,14 +108,14 @@ export const AddEventModal = ({
         {/* Start Time Field */}
         <div className="space-y-1.5">
           <label htmlFor="event-time" className="text-14 font-medium text-gray-700">
-            Start Time <span className="text-red-500">*</span>
+            {t('modal.fields.startDateTimeLabel')} <span className="text-red-500">*</span>
           </label>
           <Input
             id="event-time"
             type="time"
             {...register('time')}
             variant={errors.time ? 'error' : timeValue ? 'fill' : 'default'}
-            errorMessage={errors.time?.message}
+            errorMessage={errors.time?.message && tValidation(errors.time?.message as keyof typeof tValidation) }
             size="lg"
           />
         </div>
@@ -120,16 +123,16 @@ export const AddEventModal = ({
         {/* Duration Field */}
         <div className="space-y-1.5">
           <label htmlFor="event-duration" className="text-14 font-medium text-gray-700">
-            Duration (minutes) <span className="text-red-500">*</span>
+            {t('modal.fields.durationLabel')} <span className="text-red-500">*</span>
           </label>
           <Input
             id="event-duration"
             type="number"
-            placeholder="Enter duration in minutes"
+            placeholder={t('modal.placeholders.duration')}
             {...register('duration')}
             min="1"
             variant={errors.duration ? 'error' : durationValue ? 'fill' : 'default'}
-            errorMessage={errors.duration?.message}
+            errorMessage={errors.duration?.message && tValidation(errors.duration?.message as keyof typeof tValidation)   }
             size="lg"
           />
         </div>
@@ -142,7 +145,7 @@ export const AddEventModal = ({
             size="md"
             onClick={handleClose}
           >
-            Cancel
+            {t('modal.actions.cancel')}
           </Button>
           <Button
             type="submit"
@@ -150,7 +153,7 @@ export const AddEventModal = ({
             size="md"
             className="text-white"
           >
-            Create Event
+            {t('modal.actions.create')}
           </Button>
         </div>
       </form>
@@ -158,3 +161,4 @@ export const AddEventModal = ({
   )
 }
 
+ 

@@ -6,7 +6,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "save": "Save", 
-    "delete": "Delete",
+    "delete": "Delete", 
     "edit": "Edit",
     "search": "Search",
     "filter": "Filter",
@@ -802,7 +802,22 @@
       "successMessage": "Your Request Has Been Sent!",
       "successDescription": "Your service request has been successfully submitted. The provider has been notified and you will receive an update once they respond.",
       "trackRequest": "Track Request"
-    }
+    },
+      "toast": {
+    "favoriteToggleSuccess": "Service favorite updated successfully",
+    "favoriteToggleFail": "Failed to update service favorite",
+    "wishlistToggleSuccess": "Service wishlist updated successfully",
+    "wishlistToggleFail": "Failed to update service wishlist"
+  },
+  "providers":{
+      "toast": {
+    "followToggleSuccess": "Follow status updated successfully",
+    "followToggleFail": "Failed to update follow status",
+    "favoriteToggleSuccess": "Favorite status updated successfully",
+    "favoriteToggleFail": "Failed to update favorite status"
+  }
+  }
+
   },
   "products": {
       "whyBridesChooseProducts": {
@@ -1273,5 +1288,1697 @@
     "tiktok": "Visit our TikTok page"
   },
   "copyright": "© {year} Crafted by OurBride All Rights Reserved"
+},
+"eventsPlanning": {
+  "addEvent": {
+    "modal": {
+      "title": "New Event",
+      "fields": {
+        "titleLabel": "Event Title",
+        "descriptionLabel": "Description",
+        "startDateTimeLabel": "Start Date & Time",
+        "endDateTimeLabel": "End Date & Time",
+        "defaultLabel": "Set as default event"
+      },
+      "placeholders": {
+        "title": "Enter Event Title",
+        "description": "Enter event description (optional)",
+        "startDate": "Select start date",
+        "endDate": "Select end date",
+        "time": "HH:MM"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "create": "Create Event",
+        "addNewEvent": "Add New Event"
+      }
+    },
+    "validation": {
+      "titleRequired": "Event title is required",
+      "startTimeRequired": "Start time is required",
+      "durationRequired": "Duration is required",
+      "invalidTimeFormat": "Invalid time format (use HH:MM)",
+      "durationPositive": "Duration must be a positive number"
+    }
+  },
+
+
+  "common": {
+    "createdBy": "Created By",
+    "viewAll": "View All",
+    "viewDetails": "View Details",
+    "outOf": "{completed} Out of {total}",
+    "untitledTask": "Untitled Task",
+    "untitledService": "Untitled Service",
+    "untitledNote": "Untitled Note",
+    "untitledOccasion": "Untitled Occasion",
+    "guestSingular": "Guest",
+    "guestPlural": "Guests",
+    "ofGuests": "of guests",
+    "provider": "Provider",
+    "noBookings": "No bookings yet",
+    "noNotes": "No notes yet"
+  },
+    "sideMenu": {
+      "title": "Planning",
+      "tabs": {
+        "overview": "Overview",
+        "budget": "Budget",
+        "items": "Items",
+        "events": "Events",
+        "invitation": "Guests",
+        "occasions": "Occasions",
+        "preparations": "Preparations",
+        "ToDo": "To Do",
+        "notes": "Notes"
+      },
+      "status": {
+        "initializing": "Initializing...",
+        "needsInit": "Needs init",
+        "ready": "Ready"
+      }
+    },
+    "overview": {
+    "actions": {
+      "backToEvents": "Back to Events",
+      "addNewEvent": "Add New Event"
+    },
+    "tabsHeader": {
+      "myEvents": "My Events",
+      "sharedEvents": "Shared Events"
+    },
+    "loading": {
+      "events": "Loading events...",
+      "eventDetails": "Loading event details...",
+      "initializing": "Initializing...",
+      "settingUpBook": "Setting up {book}...",
+      "pleaseWait": "Please wait"
+    },
+    "errors": {
+      "loadEventsTitle": "Failed to Load Events",
+      "loadEventsMessage": "Failed to load events. Please try again.",
+      "loadEventDetailsTitle": "Failed to Load Event Details",
+      "loadEventDetailsMessage": "Failed to load event details. Please try again."
+    },
+    "empty": {
+      "noMyEvents": "No events found. Create your first event!",
+      "noSharedEvents": "No shared events found."
+    },
+    "toasts": {
+      "enterTitle": "Please enter an event title",
+      "createdSuccess": "Event created successfully",
+      "createFailed": "Failed to create event",
+      "initFailed": "Failed to initialize {book}"
+    },
+    "stats": {
+      "completedServices": "Completed services",
+      "completeLists": "Complete Lists",
+      "planningBooks": "Planning Books"
+    }
+
+  },
+  "cards": {
+    "eventSummary": {
+      "imageAlt": "Event Hero",
+      "countdown": {
+        "days": "Days",
+        "hours": "Hours",
+        "minutesShort": "Min"
+      }
+    },
+    "quickStats": {
+      "guestsCountText": "{count} of guests",
+      "zero": "0"
+    },
+    "items": {
+      "title": "Items",
+      "estimatedBudget": "Estimated Budget",
+      "totalPrice": "Total Price"
+    },
+    "tasks": {
+      "title": "Tasks Reminder",
+      "empty": "No tasks yet"
+    },
+    "upcomingBookings": {
+      "title": "Services Bookings",
+      "badges": {
+        "pending": "Pending",
+        "completed": "Completed"
+      },
+      "empty": "No bookings yet"
+    },
+    "budget": {
+      "fallbackTitle": "Budget Book",
+      "allBudget": "All Budget",
+      "paid": "Paid",
+      "remaining": "Remaining",
+      "empty": "No budget set yet"
+    },
+"guests": {
+          "title": "Guests & Invitation",
+          "subtitle": "Track invited guests and details",
+          "ariaViewDetails": "View guest invitation details",
+          "imageAlt": "Event Image",
+          "descriptionFallback": "Manage your guest list and invitations in one place.",
+          "invitedGuests": "Invited Guests",
+          "guestSingular": "Guest",
+          "guestPlural": "Guests"
+        }
+},
+"budget": {
+  "pageTitle": "Budget",
+  "noBudgetTitle": "No budget data available",
+  "loading": {
+    "loadingBudgetTitle": "Loading budget...",
+    "loadingBudgetSubtitle": "Please wait a moment",
+    "initializingTitle": "Initializing budget book...",
+    "initializingSubtitle": "Setting up your budget book",
+    "addingModelsTitle": "Adding default models...",
+    "addingModelsSubtitle": "Please wait while we add default categories"
+  },
+  "error": {
+    "failedToLoad": "Failed to load budget. Please try again.",
+    "retry": "Retry"
+  },
+  "event": {
+    "eventIdRequired": "Event ID is required"
+  },
+  "header": {
+    "goBack": "Go back",
+    "searchPlaceholder": "Search expenses",
+    "clearSearch": "Clear search",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "unsavedChanges": "Unsaved changes",
+    "noChangesToSave": "No changes to save",
+    "changesSaved": "Changes saved successfully",
+    "failedToSave": "Failed to save changes"
+  },
+  "filters": {
+    "placeholder": "Select filter...",
+    "all": "All",
+    "done": "Done",
+    "notDone": "Not Done",
+    "favorite": "Favorite",
+    "notFavorite": "Not Favorite"
+  },
+  "overview": {
+    "title": "Budget Overview",
+    "savedPercent": "{percent}% Saved",
+    "budget": "Budget",
+    "estimatedCost": "Estimated Cost",
+    "paid": "Paid",
+    "finalCost": "Final Cost",
+    "enterBudget": "Enter Budget",
+    "save": "Save",
+    "egp": "EGP",
+    "unnamedCategory": "Unnamed Category"
+  },
+  "categories": {
+    "title": "Categories",
+    "new": "New",
+    "noCategoriesTitle": "No categories yet",
+    "noCategoriesDesc": "Create a category to start organizing items.",
+    "editCategory": "Edit category",
+    "deleteCategory": "Delete category",
+    "unnamedCategory": "Unnamed Category"
+  },
+  "lines": {
+    "empty": "No budget lines found",
+    "addNew": "Add New",
+    "estimatedLabel": "Estimated:",
+    "selectCategoryHint": "Select a category to see its estimated",
+    "headers": {
+      "service": "Service",
+      "totalPrice": "Total Price",
+      "paid": "Paid",
+      "remaining": "Remaining",
+      "percentOfBudget": "% Of Budget",
+      "actions": "Actions"
+    },
+    "unnamedService": "Unnamed Service"
+  },
+  "toasts": {
+    "lineSaved": "Budget line saved",
+    "categorySaved": "Category saved",
+    "categoryAndLineAdded": "Category and line added",
+    "deletedSuccessfully": "\"{name}\" deleted successfully",
+    "categoryDeletedSuccessfully": "Category \"{name}\" deleted successfully",
+    "lineDataRequired": "Line data is required when creating a new category",
+    "noChangesToSave": "No changes to save",
+    "failedToSaveChanges": "Failed to save changes",
+    "changesSavedSuccessfully": "Changes saved successfully"
+  },
+  "modals": {
+    "confirmDelete": {
+      "title": "Confirm Delete",
+      
+      "lineMessage": "Are you sure you want to delete this budget line? This action cannot be undone.",
+      "categoryMessage": "Are you sure you want to delete this category? All lines in this category will also be deleted. This action cannot be undone.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "budgetLine": {
+      "addTitle": "Add Budget Line",
+      "editTitle": "Edit Budget Line",
+      "serviceName": "Service Name",
+      "serviceNamePlaceholder": "Enter service name",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "totalPrice": "Total Price",
+      "paid": "Paid",
+      "final": "Final",
+      "count": "Count",
+      "payer": "Payer",
+      "payerPlaceholder": "Enter payer name",
+      "isDone": "Is Done",
+      "isDoneDesc": "Mark this line as completed",
+      "isFavorite": "Is Favorite",
+      "isFavoriteDesc": "Mark this line as favorite",
+      "notesOptional": "Notes (Optional)",
+      "notesPlaceholder": "Add any additional notes...",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "category": {
+      "editTitle": "Edit Category",
+      "addTitle": "Add Category (with first line)",
+      "categorySectionTitle": "Category",
+      "editHint": "Update category details",
+      "createHint": "Create a new category",
+      "name": "Name",
+      "namePlaceholder": "e.g. Category",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional…",
+      "icon": "Icon",
+      "selectIcon": "Select an icon",
+      "changeIcon": "Change icon",
+      "color": "Color",
+      "selectColor": "Select color",
+      "estimated": "Estimated",
+      "firstLineTitle": "First budget line",
+      "firstLineHint": "Required to sync category properly",
+      "serviceName": "Service Name",
+      "serviceNamePlaceholder": "e.g. Family invitation",
+      "totalPrice": "Total Price",
+      "paid": "Paid",
+      "final": "Final",
+      "count": "Count",
+      "dueDate": "Due Date",
+      "payer": "Payer",
+      "payerPlaceholder": "Bride / Groom / ...",
+      "note": "Note",
+      "notePlaceholder": "Optional…",
+      "done": "Done",
+      "doneDesc": "Mark as completed",
+      "favorite": "Favorite",
+      "favoriteDesc": "Pin it on top",
+      "cancel": "Cancel",
+      "save": "Save",
+      "addCategoryAndLine": "Add Category & Line"
+    },
+    "colorPicker": {
+      "Green": "Green",
+      "Yellow": "Yellow",
+      "Blue": "Blue",
+      "Red": "Red",
+      "Purple": "Purple",
+      "Orange": "Orange",
+      "Pink": "Pink",
+      "Cyan": "Cyan"
+    },
+    "validation": {
+      "serviceNameRequired": "Service name is required",
+      "totalPriceRequired": "Total price must be 0 or greater",
+      "paidRequired": "Paid must be 0 or greater",
+      "nameRequired": "Name is required",
+      "estimatedRequired": "Estimated must be 0 or greater",
+      "categoryNameRequired": "Category name is required"
+    }
+  }
+},
+"guestList": {
+  "common": {
+
+    "pageTitle": "Guests List",
+    
+    "loading": "Loading guests list...",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "unsavedChanges": "Unsaved changes",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "cancel": "Cancel",
+    "addGuest": "Add Guest",
+    "addNewGuest": "Add New Guest",
+    "addTable": "Add Table",
+    "addNewTable": "Add New Table",
+    "selectedTable": "Selected Table",
+    "untitledTable": "Untitled Table",
+    "uncategorized": "Uncategorized",
+    "unnamed": "Unnamed",
+    "categoryName": "Category Name",
+    "categoryNamePlaceholder": "Enter category name",
+    "slug": "Slug",
+    "slugPlaceholder": "Slug (optional)",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter category description",
+    "addNewCategory": "Add New Category"
+  },
+  "toasts": {
+    "refreshed": "Guest list refreshed",
+    "guestDeleted": "Guest deleted",
+    "guestAdded": "Guest added",
+    "saveSuccess": "Changes saved successfully",
+    "saveFailed": "Failed to save changes"
+  },
+  "loadingStates": {
+    "initializingTitle": "Initializing guest book...",
+    "initializingSubtitle": "Setting up your guest book",
+    "addingModelsTitle": "Adding default models...",
+    "addingModelsSubtitle": "Please wait while we add default categories",
+    "loadingGuestsTitle": "Loading guests...",
+    "loadingGuestsSubtitle": "Please wait a moment"
+  },
+  "error": {
+    "title": "Failed to load guests. Please try again.",
+    "unknown": "Unknown error"
+  },
+  "empty": {
+    "noGuestBook": "No guest book found",
+    "noTablesTitle": "No tables yet",
+    "noTablesSubtitle": "Create a table to start adding guests.",
+    "noGuestsInTable": "No guests in this table"
+  },
+  "tabs": {
+    "bride": "Bride",
+    "groom": "Groom",
+    "ariaLabel": "Guest side tabs"
+  },
+  "summary": {
+    "guestsCount": " Guests",
+    "totalPeople": " Total People"
+  },
+  "table": {
+    "columns": {
+      "select": "Select",
+      "tableGuestName": "Table / Guest Name",
+      "people": "People",
+      "registered": "Registered",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "statsInline": "({{total}} guests, {{confirmed}} confirmed)",
+    "dash": "—"
+  },
+  "status": {
+    "confirmed": "Confirmed",
+    "none": "None"
+  },
+  "dialog": {
+    "title": "Add New Guest",
+    "mode": {
+      "selectTable": "Select Table",
+      "newTable": "New Table",
+      "needToAddTable": "You need to add a table first.",
+      "noTablesTitle": "No tables available",
+      "noTablesSubtitle": "You'll create a new table when adding this guest."
+    },
+    "fields": {
+      "tableLabel": "Table",
+      "nameLabel": "Name",
+      "peopleCountLabel": "Total People Number",
+      "statusLabel": "Status"
+    },
+    "placeholders": {
+      "tableName": "Table name",
+      "slugOptional": "Slug (optional)",
+      "descriptionOptional": "Description (optional)",
+      "selectTable": "Select table",
+      "guestName": "Enter guest name",
+      "peopleCount": "Enter number of people",
+      "selectStatus": "Select status"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Add Guest",
+      "saving": "Saving...",
+      "addCategory": "Add Category"
+
+    },
+    "validation": {
+      "categoryRequired": "Category is required",
+      "guestNameMin": "Guest name must be at least 2 characters",
+      "categoryNameMin": "Category name must be at least 2 characters",
+      "peopleMin": "Minimum is 1",
+      "peopleMax": "Maximum is 20"
+    }
+  }
+},
+"occasions": {
+  "page": {
+    "actions": {
+      "addNewOccasion": "Add New Occasion",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "createOccasion": "Create Occasion",
+      "updateOccasion": "Update Occasion",
+      "edit": "Edit",
+      "delete": "Delete",
+      "close": "Close"
+    },
+    "status": {
+      "unsavedChanges": "Unsaved changes",
+      "noOccasionsTitle": "No occasions found",
+      "noOccasionsSubtitle": "Create your first occasion to get started"
+    },
+    "loading": {
+      "loadingOccasionsTitle": "Loading occasions...",
+      "initializingTitle": "Initializing occasion book...",
+      "initializingSubtitle": "Setting up your occasion book",
+      "addingModelsTitle": "Adding default models...",
+      "addingModelsSubtitle": "Please wait while we add default models",
+      "pleaseWait": "Please wait a moment"
+    },
+    "error": {
+      "failedToLoadTitle": "Failed to Load Occasions",
+      "failedToLoadMessage": "Failed to load occasions. Please try again."
+    }
+  },
+
+  "common": {
+    "fallbacks": {
+      "noDate": "No date",
+      "invalidDate": "Invalid date",
+      "groomName": "Groom Name",
+      "brideName": "Bride Name",
+      "occasionName": "Occasion Name"
+    },
+    "countdown": {
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes"
+    }
+  },
+
+  "form": {
+    "title": {
+      "create": "Add Occasion",
+      "edit": "Edit Occasion"
+    },
+    "labels": {
+      "titleEn": "Title (English)",
+      "titleAr": "Title (Arabic)",
+      "subTitleEn": "Sub Title (English)",
+      "subTitleAr": "Sub Title (Arabic)",
+      "date": "Date",
+      "subDate": "Sub Date (Optional)",
+      "brideFirstName": "Bride First Name",
+      "brideLastName": "Bride Last Name",
+      "groomFirstName": "Groom First Name",
+      "groomLastName": "Groom Last Name",
+      "caption": "Caption"
+    },
+    "placeholders": {
+      "titleEn": "Enter title in English",
+      "titleAr": "Enter title in Arabic",
+      "subTitleEn": "Enter sub title in English",
+      "subTitleAr": "Enter sub title in Arabic",
+      "brideFirstName": "Enter bride first name",
+      "brideLastName": "Enter bride last name",
+      "groomFirstName": "Enter groom first name",
+      "groomLastName": "Enter groom last name",
+      "caption": "Enter caption"
+    },
+    "helperText": {
+      "titleRequiredNote": "Please enter a title in English or Arabic"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "create": "Create Occasion",
+      "update": "Update Occasion"
+    },
+    "validation":{
+      "brideFirstNameMin":"Bride first name must be at least 2 characters ",
+      "brideFirstNameMax":"Bride first name must not exceed 15 characters",
+      "groomFirstNameMin":"groom first name must be at least 2 characters ",
+      "groomFirstNameMax":"groom first name must not exceed 15 characters",
+      "titleRequired": "Please enter a title in English or Arabic"
+    }
+  },
+
+  "detail": {
+    "locationFallback": "Giza, 6 of October",
+    "labels": {
+      "dateTime": "Date & Time"
+    }
+  }
+},
+  "notes": {
+    "page": {
+      "title": "Notes", 
+      "back": "Back"
+    },
+    "header": {
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "unsavedChanges": "Unsaved changes"
+    },
+    "loading": {
+      "loadingNotes": "Loading notes...",
+      "loadingSubtitle": "Please wait a moment",
+      "initializingTitle": "Initializing notes book...",
+      "initializingSubtitle": "Setting up your notes book",
+      "addingModelsTitle": "Adding default models...",
+      "addingModelsSubtitle": "Please wait while we add default categories"
+    },
+    "sidebar": {
+      "title": "Your notes",
+      "addNew": "Add New",
+      "empty": "No lists yet",
+      "untitled": "Untitled List",
+      "actions": {
+        "editAria": "Edit note",
+        "deleteAria": "Delete note"
+      }
+    },
+    "main": {
+      "empty": {
+        "title": "Select a list to view its note",
+        "cta": "Add new Notes"
+      },
+      "edit": "Edit",
+      "dash": "—"
+    },
+    "modal": {
+      "addTitle": "Add New Note",
+      "editTitle": "Edit Note",
+      "fields": {
+        "titleLabel": "Notes Name",
+        "noteLabel": "Note"
+      },
+      "placeholders": {
+        "title": "Enter list name",
+        "note": "Write your note..."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "add": "Add Note",
+        "saveChanges": "Save Changes",
+        "saving": "Saving..."
+      },
+      "validation":{
+        "Listnameisrequired":"List name is required",
+        "Noteisrequired":"Note is required"
+      }
+    }
+  }
+},
+  "reservations": {
+    "page": {
+      "title": "My Reservations",
+      "subtitle": { 
+        "one": "{count} Reservation",
+        "other": "{count} Reservations"
+      },
+      "actions": {
+        "newReservation": "New Reservation",
+        "refreshAria": "Refresh reservations"
+      }
+    },
+    "list": {
+      "empty": {
+        "title": "You don't have any reservations",
+        "description": "Book a service to create your first reservation",
+        "actionLabel": "Browse Services"
+      }
+    },
+    "loading": {
+      "title": "Loading reservations...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Error loading reservations",
+      "message": "Please try again later",
+      "actionLabel": "Back to Home"
+    },
+    "toast": {
+      "cancelSuccess": "Reservation cancelled successfully",
+      "cancelFail": "Failed to cancel reservation"
+    },
+    "confirm": {
+      "title": "Confirm Cancellation",
+      "cancelTitle": "Are you sure you want to cancel this reservation?",
+      "keepButton":"keep Reservation",
+      "cancelButton":"Cancel Reservation"
+    },
+    "navigation": {
+      "browseServicesHref": "/services",
+      "backHomeHref": "/",
+      "detailsHrefPattern": "/reservations/{reservationId}"
+    },
+    "pagination": {
+      "srLabel": "Reservations pagination"
+    },
+    "details": {
+      "pageTitle": "Reservation Details",
+      "back": "Back",
+      "header": {
+        "title": "Reservation #{reservationId}"
+      },
+      "loading": {
+        "title": "Loading reservation...",
+        "subtitle": "Please wait a moment"
+      },
+      "notFound": {
+        "title": "Reservation not found",
+        "message": "The reservation you're looking for doesn't exist or has been removed",
+        "actionLabel": "Back to Reservations",
+        "actionHref": "/reservations"
+      },
+      "statusCard": {
+        "title": "Reservation Status",
+        "label": "Status:",
+        "messages": {
+          "completed": "This reservation has been completed.",
+          "cancelled": "This reservation has been cancelled.",
+          "confirmed": "This reservation has been confirmed.",
+          "pending": "This reservation is pending confirmation.",
+          "inProgress": "This reservation is in progress."
+        }
+      },
+      "serviceCard": {
+        "title": "Service Information",
+        "viewDetails": "View Service Details"
+      },
+      "reservationCard": {
+        "title": "Reservation Details",
+        "fields": {
+          "dateTime": "Reservation Date & Time",
+          "date": "Reservation Date",
+          "time": "Reservation Time",
+          "quantity": "Quantity",
+          "createdOn": "Created On",
+          "lastModified": "Last Modified"
+        }
+      },
+      "locationCard": {
+        "title": "Location"
+      },
+      "staffCard": {
+        "title": "Assigned Staff"
+      },
+      "packageCard": {
+        "title": "Package Details"
+      },
+      "resourcesCard": {
+        "title": "Resources",
+        "fallbackName": "Resource {id}"
+      },
+      "notesCard": {
+        "title": "Notes"
+      },
+      "feedbackCard": {
+        "title": "Your Feedback"
+      },
+      "testRequestCard": {
+        "title": "Test Request",
+        "message": "You have requested a test for this service.",
+        "statusLabel": "Status:",
+        "status": {
+          "accepted": "Accepted",
+          "rejected": "Rejected"
+        },
+        "continueLabel": "Continue with service:",
+        "continue": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      },
+      "providerCard": {
+        "title": "Provider",
+        "viewProfile": "View Provider Profile"
+      },
+      "pricingCard": {
+        "title": "Pricing",
+        "fields": {
+          "servicePrice": "Service Price:",
+          "deposit": "Deposit:",
+          "total": "Total:"
+        },
+        "currency": "EGP"
+      },
+      "actionsCard": {
+        "title": "Actions",
+        "cancel": "Cancel Reservation"
+      },
+      "mutation": {
+        "cancelling": {
+          "title": "Cancelling reservation...",
+          "subtitle": "Please wait a moment"
+        }
+      },
+      "confirm": {
+        "cancelLong": "Are you sure you want to cancel this reservation? This action cannot be undone."
+      },
+      "toast": {
+        "cancelSuccess": "Reservation cancelled successfully",
+        "cancelFail": "Failed to cancel reservation"
+      }
+    },
+     "card": {
+  "status": {
+  "pending": "Pending",
+  "confirmed": "Confirmed",
+  "completed": "Completed",
+  "cancelled": "Cancelled",
+  "inProgress": "In Progress"
+},
+    "header": {
+      "title": "Reservation #{reservationId}",
+      "created": "Created"
+    },
+    "service": {
+      "noImage": "No image available",
+      "providerLabel": "Provider:"
+    },
+    "fields": {
+      "date": "Date",
+      "time": "Time",
+      "staff": "Staff",
+      "quantity": "Quantity"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "cancel": "Cancel",
+      "expandDetailsAria": "Expand details",
+      "collapseDetailsAria": "Collapse details"
+    },
+    "details": {
+      "title": "Reservation Details",
+      "packageLabel": "Package:",
+      "locationTitle": "Location",
+      "deposit": "Deposit",
+      "totalPrice": "Total Price",
+      "notes": "Notes",
+      "feedback": "Your Feedback",
+      "currency": "EGP"
+    },
+    "fallback": {
+      "service": "Service",
+      "provider": "Provider",
+      "package": "Package"
+    }
+  }
+  },
+   "cart": {
+    "filters": {
+      "services": "Services",
+      "products": "Products"
+    },
+    "page": {
+      "title": "My Cart",
+      "subtitle": {
+        "one": "{count} Item",
+        "other": "{count} Items"
+      }
+    },
+    "states": {
+      "loading": {
+        "title": "Loading cart...",
+        "subtitle": "Please wait a moment"
+      },
+      "error": {
+        "title": "Error loading cart",
+        "message": "Please try again later",
+        "backHome": "Back to Home"
+      },
+      "empty": {
+        "title": "You don't have any items in your cart",
+        "description": "Start exploring {type} to begin your journey",
+        "viewProducts": "View Products",
+        "viewServices": "View Services"
+      }
+    },
+    "actions": {
+      "refreshAria": "Refresh cart",
+      "clearAllAria": "Clear all items",
+      "checkoutAll": "Checkout All",
+      "checkout": "Checkout",
+      "redeem": "Redeem",
+      "remove": "Remove",
+      "keep": "Keep"
+    },
+    "cartItem": {
+      "noImage": "No image available",
+      "discountOff": "{percent}% OFF",
+      "getInBy": "Get In By {date}",
+      "purchasePrice": "Purchase Price:",
+      "addedOn": "Added on:",
+      "totalPrice": "Total Price :",
+      "decreaseQtyAria": "Decrease quantity",
+      "increaseQtyAria": "Increase quantity",
+      "removeItemAria": "Remove item",
+      "checkout": "Checkout "
+    },
+    "itemTypes": {
+      "product": "Product",
+      "service": "Service",
+      "reservation": "Reservation",
+      "membership": "Membership",
+      "giftCard": "Gift Card",
+      "item": "Item"
+    },
+    "orderSummary": {
+      "promo": {
+        "placeholder": "Enter Promo Code",
+        "removeCouponAria": "Remove coupon",
+        "redeemed": "Redeemed"
+      },
+      "rewards": {
+        "diamonds": "Diamonds : {points} Points",
+        "giftsCash": "Gifts Cash : {amount} {currency}",
+        "appliedGiftCards": "Applied Gift Cards:"
+      },
+      "breakdown": {
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "couponDiscount": "Coupon Discount",
+        "membershipDiscount": "Membership Discount",
+        "walletCredit": "Wallet Credit",
+        "giftCard": "Gift Card",
+        "cashCard": "Cash Card",
+        "taxesFees": "Taxes & Fees",
+        "deliveryFee": "Delivery Fee",
+        "total": "Total"
+      },
+      "deposit": {
+        "depositAmount": "Deposit Amount",
+        "depositPaid": "Deposit Paid",
+        "depositRemaining": "Deposit Remaining"
+      },
+      "terms": {
+        "accept": "I Accept Terms & Conditions",
+        "note": "If you are not around when the delivery person arrives, they will leave your order at the door. By placing your order, you agree to take full responsibility for it once it's delivered."
+      }
+    },
+    "modals": {
+      "deleteItem": {
+        "title": "Remove Item",
+        "question": "Are you sure you want to remove {item} from your cart?",
+        "confirm": "Remove Item",
+        "cancel": "Keep Item",
+        "defaultItem": "this item"
+      },
+      "cancelRequest": {
+        "title": "Cancel Request",
+        "question": "Are you sure you want to cancel this request?",
+        "placeholder": "Please tell us why you're canceling (optional).",
+        "keep": "Keep Request",
+        "confirm": "Cancel Request"
+      }
+    },
+    "mutationOverlay": {
+      "clearing": "Clearing cart...",
+      "processingCheckout": "Processing checkout...",
+      "updating": "Updating cart...",
+      "subtitle": "Please wait a moment"
+    }
+  },
+  
+
+
+  "checkoutPage": {
+    "checkout": {
+      "page": {
+        "title": "Order Checkout"
+      },
+      "loading": {
+        "loadingCheckoutTitle": "Loading checkout...",
+        "subtitle": "Please wait a moment",
+        "processingCheckoutTitle": "Processing checkout...",
+        "updatingCartTitle": "Updating cart...",
+        "validatingTitle": "Validating..."
+      },
+      "error": {
+        "title": "Error loading cart",
+        "message": "Please try again later",
+        "actionLabel": "Back to Home"
+      },
+      "empty": {
+        "title": "Order Checkout",
+        "message": "Your cart is empty",
+        "goToCart": "Go to Cart"
+      },
+      "form": {
+        "fullName": {
+          "placeholder": "Full Name",
+          "errors": {
+            "minLength": "Full name must be at least 2 characters"
+          }
+        },
+        "mobileNumber": {
+          "placeholder": "Mobile Number",
+          "errors": {
+            "required": "Mobile number is required",
+            "invalid": "Please enter a valid mobile number (10-11 digits)"
+          }
+        },
+        "location": {
+          "placeholder": "Location",
+          "errors": {
+            "minLength": "Location must be at least 3 characters"
+          }
+        },
+        "street": {
+          "placeholder": "Street / Apartment",
+          "errors": {
+            "minLength": "Street/Apartment must be at least 3 characters"
+          }
+        },
+        "notes": {
+          "placeholder": "Notes to the delivery person..."
+        },
+        "acceptTerms": {
+          "labelPrefix": "I Accept",
+          "termsButton": "Terms & Conditions",
+          "helperText": "If you are not around when the delivery person comes, then will leave your order at the door. By placing your order, you agree to take full responsibility for it once it's delivered.",
+          "errors": {
+            "required": "You must accept the terms and conditions"
+          }
+        }
+      },
+      "delivery": {
+        "title": "Delivery Details",
+        "loadingAddresses": "Loading addresses...",
+        "addressFallbackName": "Address",
+        "addAddress": "Add Address",
+        "slider": {
+          "prev": "Previous address",
+          "next": "Next address",
+          "goToSlide": "Go to slide {{index}}"
+        }
+      },
+      "payment": {
+        "title": "Payment Method",
+        "loadingMethods": "Loading payment methods...",
+        "noMethods": "No payment methods available",
+        "installments": "Up to {{count}} installments",
+        "wallet": {
+          "title": "Wallet Details",
+          "mobilePlaceholder": "Mobile Number",
+          "errors": {
+            "required": "Wallet mobile number is required",
+            "invalid": "Wallet isn't valid, please enter valid number"
+          }
+        }
+      },
+      "summary": {
+        "title": "Order Summary",
+        "itemsError": "Please select at least one item",
+        "promo": {
+          "placeholder": "Enter Promo Code",
+          "redeem": "Redeem",
+          "pending": "..."
+        },
+        "rewards": {
+          "diamondsLabel": "Diamonds",
+          "diamondsValue": " Points",
+          "giftsCashLabel": "Gifts Cash",
+          "applied": "Applied",
+          "redeem": "Redeem"
+        },
+        "prices": {
+          "subtotal": "Subtotal",
+          "couponDiscount": "Coupon Discount",
+          "taxesFees": "Taxes & Fees",
+          "deliveryFee": "Delivery Fee",
+          "total": "Total"
+        },
+        "coupon": {
+          "redeemed": "Redeemed"
+        }
+      },
+      "actions": {
+        "pay": "Pay  {amount} {currency} ",
+        "processing": "Processing..."
+      },
+      "toasts": {
+        "promoRequired": "Please enter a promo code",
+        "diamondsApplied": "Diamonds applied",
+        "diamondsRemoved": "Diamonds removed",
+        "giftsCashApplied": "Gifts Cash applied",
+        "giftsCashRemoved": "Gifts Cash removed",
+        "quantityUpdateFailed": "Failed to update quantity. Please try again.",
+        "removeItemFailed": "Failed to remove item. Please try again.",
+        "checkoutGenericError": "An error occurred during checkout. Please try again.",
+        "cartDataNotAvailable": "Cart data not available",
+        "cartNotActive": "Cart is not active. Please refresh your cart and try again."
+      }
+    },
+    "addressModal": {
+      "title": {
+        "add": "Add Delivery Address",
+        "edit": "Edit Address"
+      },
+      "pickFromMap": "Pick Location from Map",
+      "fields": {
+        "contactName": "Contact Name *",
+        "contactNumber1": "Contact Number *",
+        "contactNumber2": "Alternative Number (Optional)",
+        "email": "Email (Optional)",
+        "address1": "Address Line 1 *",
+        "address2": "Address Line 2 (Optional)",
+        "city": "City *",
+        "state": "State (Optional)",
+        "postcode": "Postcode (Optional)",
+        "country": "Country *",
+        "comment": "Additional Notes (Optional)",
+        "defaultLabel": "Set as default delivery address"
+      },
+      "errors": {
+        "address1Required": "Address is required",
+        "cityRequired": "City is required",
+        "countryRequired": "Country is required",
+        "contactNameRequired": "Contact name is required",
+        "contactNumberRequired": "Contact number is required"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "add": "Add Address",
+        "update": "Update Address"
+      },
+      "toasts": {
+        "locationSelectedSuccess": "Location selected successfully",
+        "locationSelectedVerify": "Location selected. Please verify and complete the address details.",
+        "addressUpdated": "Address updated successfully",
+        "addressAdded": "Address added successfully",
+        "loginRequired": "Please login to add an address",
+        "saveFailed": "Failed to save address. Please try again."
+      }
+    },
+    "paymentConfirmationModal": {
+      "title": "Payment Confirmation",
+      "text": {
+        "aboutToPay": "You Are About To Pay {amount} {currency}",
+        "areYouSure": "Are You Sure?"
+      },
+      "actions": {
+        "confirm": "Yes I'm Sure",
+        "cancel": "Cancel",
+        "processing": "Processing..."
+      }
+    },
+    "orderConfirmationModal": {
+      "title": "Order Confirmation",
+      "text": {
+        "successTitle": "Your Order Is Placed successfully",
+        "successDesc": "Enjoy exclusive coupons, seasonal discounts, and real offers from trusted vendors in your city"
+      },
+      "actions": {
+        "track": "Track My Order"
+      }
+    },
+    "checkoutCartItem": {
+      "typeLabel": {
+        "product": "Product",
+        "service": "Service",
+        "reservation": "Reservation",
+        "membership": "Membership",
+        "giftCard": "Gift Card",
+        "item": "Item"
+      },
+      "noImage": "No image available",
+      "discountOff": "{{percent}}% OFF",
+      "deliveryBy": "Get In By {{date}}",
+      "purchasePrice": "Purchase Price:",
+      "addedOn": "Added on:",
+      "aria": {
+        "removeItem": "Remove item",
+        "decreaseQty": "Decrease quantity",
+        "increaseQty": "Increase quantity"
+      }
+    },
+    "notes": {
+      "page": {
+      "title": "Notes",
+      "back": "Back"
+     },
+     "header": {
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "unsavedChanges": "Unsaved changes"
+     },
+     "loading": {
+      "loadingNotes": "Loading notes...",
+      "loadingSubtitle": "Please wait a moment",
+      "initializingTitle": "Initializing notes book...",
+      "initializingSubtitle": "Setting up your notes book",
+      "addingModelsTitle": "Adding default models...",
+      "addingModelsSubtitle": "Please wait while we add default categories"
+     },
+     "sidebar": {
+      "title": "Your notes",
+      "addNew": "Add New",
+      "empty": "No lists yet",
+      "untitled": "Untitled List",
+      "actions": {
+        "editAria": "Edit note",
+        "deleteAria": "Delete note"
+      }
+    },
+     "main": {
+      "empty": {
+        "title": "Select a list to view its note",
+        "cta": "Add new Notes"
+      },
+      "edit": "Edit"
+    }
+  },
+   "addEvent": {
+    "modal": {
+      "title": "New Event",
+      "fields": {
+        "titleLabel": "Event Title",
+        "descriptionLabel": "Description",
+        "startDateTimeLabel": "Start Date & Time",
+        "endDateTimeLabel": "End Date & Time",
+        "defaultLabel": "Set as default event"
+      },
+      "placeholders": {
+        "title": "Enter Event Title",
+        "description": "Enter event description (optional)",
+        "startDate": "Select start date",
+        "endDate": "Select end date",
+        "time": "HH:MM"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "create": "Create Event",
+        "addNewEvent": "Add New Event"
+      }
+    },
+    "validation": {
+      "titleRequired": "Event title is required",
+      "startTimeRequired": "Start time is required",
+      "durationRequired": "Duration is required",
+      "invalidTimeFormat": "Invalid time format (use HH:MM)",
+      "durationPositive": "Duration must be a positive number"
+    }
+  },
+   "orderProcessing": {
+    "pageTitle": "Processing Your Order",
+    "processingTitle": "Processing Your Order",
+    "orderProcessingTitle": "Order Processing",
+    "suspense": {
+      "title": "Loading...",
+      "subtitle": "Please wait while we load your order information."
+    },
+    "errors": {
+      "missingCheckoutInfo": "Missing checkout information",
+      "checkoutFailed": "Checkout failed. Please try again.",
+      "processingTimeout": "Order processing timeout. Please try again.",
+      "statusCheckFailed": "Failed to check order status. Please try again.",
+      "processingFailed": "Order processing failed. Please try again.",
+      "orderDataNotAvailable": "Order data not available",
+      "createOrderFailed": "Failed to create order"
+    },
+    "toast": {
+      "checkoutFailed": "Checkout failed. Please try again.",
+      "processingTimeout": "Order processing timeout. Please try again.",
+      "statusCheckFailed": "Failed to check order status. Please try again.",
+      "processingFailed": "Order processing failed. Please try again.",
+      "orderCreated": "Order created successfully!"
+    },
+    "status": {
+      "creatingTitle": "Creating Your Order...",
+      "creatingSubtitle": "Please wait while we finalize your order.",
+      "completeTitle": "Order Processing Complete",
+      "completeSubtitle": "Your order has been processed successfully.",
+      "failedTitle": "Order Processing Failed",
+      "failedSubtitle": "There was an error processing your order.",
+      "processingTitle": "Processing Your Order...",
+      "processingSubtitle": "Your order is being processed. This may take a moment.",
+      "queuedTitle": "Your Order is in Queue",
+      "queuedSubtitle": "Your order is waiting to be processed. This may take a moment."
+    },
+    "polling": {
+      "checking": "Checking order status...",
+      "attempt": "Attempt {current} of {max}"
+    },
+    "actions": {
+      "backToCart": "Back to Cart",
+      "retry": "Retry"
+    },
+    "errorScreen": {
+      "title": "Order Processing Failed",
+      "actionLabel": "Back to Cart"
+    },
+    "overlay": {
+      "title": "Creating Order...",
+      "subtitle": "Please wait a moment"
+    }
+   }
+  },
+  "orders": {
+    "page": {
+      "title": "Order List"
+    },
+    "loading": {
+      "title": "Loading orders...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Error loading orders",
+      "message": "Please try again later",
+      "actionLabel": "Back to Home"
+    },
+    "empty": {
+      "title": "You don't have any orders",
+      "description": "Start exploring services and products to begin your journey",
+      "actionLabel": "Start Shopping"
+    },
+    "sections": {
+      "requestsInProgressTitle": "Request in Progress",
+      "requestsInProgressSuffix": "Requests in Progress",
+      "ordersInProgressTitle": "Order In Progress",
+      "ordersInProgressSuffix": "Orders In Progress",
+      "requestsHistoryTitle": "Requests History",
+      "requestsHistorySuffix": "Requests",
+      "ordersHistoryTitle": "Orders History",
+      "ordersHistorySuffix": "Orders"
+    },
+    "table": {
+      "orderNumber": "Order Number",
+      "arriveIn": "Arrive in",
+      "paid": "Paid",
+      "status": "Status"
+    },
+    "aria": {
+      "gridView": "Grid view",
+      "listView": "List view"
+    },
+    "actions": {
+      "cancelLoadingTitle": "Cancelling order...",
+      "cancelLoadingSubtitle": "Please wait a moment"
+    },
+    "card": {
+      "itemFallback": "Item",
+      "serviceFallback": "Service",
+      "providerFallback": "Provider",
+      "servicePackage": "Service Package"
+    }
+  },
+  "orderDetails": {
+    "pageTitle": "Order Details",
+    "loading": {
+      "title": "Loading order...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Order not found",
+      "message": "The order you're looking for doesn't exist or has been removed",
+      "actionLabel": "Back to Orders"
+    },
+    "header": {
+      "collapseSummary": "Collapse order summary",
+      "expandSummary": "Expand order summary",
+      "orderLabel": "Order",
+      "placedLabel": "Placed",
+      "orderIdLabel": "Order ID",
+      "item": "item",
+      "items": "items",
+      "countLabel": "Count",
+      "providerLabel": "Provider",
+      "urgentOrder": "Urgent Order",
+      "clientConfirmation": "Client Confirmation",
+      "confirmed": "Confirmed",
+      "pending": "Pending"
+    },
+    "delivery": {
+      "expected": "Expected Delivery",
+      "preferred": "Preferred Delivery",
+      "status": "Delivery Status",
+      "trackTitle": "Track Your Order",
+      "trackingNumber": "Tracking Number",
+      "copy": "Copy",
+      "trackOnline": "Track Online",
+      "trackDesc": "Track your order status and delivery updates",
+      "track": "Track",
+      "detailsTitle": "Delivery Details",
+      "start": "Start",
+      "delivery": "Delivery"
+    },
+    "summary": {
+      "title": "Order Summary",
+      "noImage": "No img",
+      "subtotal": "Subtotal",
+      "taxesFees": "Taxes & Fees",
+      "shipping": "Shipping",
+      "discount": "Discount",
+      "deposit": "Deposit",
+      "total": "Total"
+    },
+    "payment": {
+      "infoTitle": "Payment Information",
+      "method": "Payment Method",
+      "status": "Payment Status",
+      "coupon": "Coupon Code",
+      "summaryTitle": "Payment Summary",
+      "paidAmount": "Paid Amount",
+      "paidAlt": "Paid (Alt)",
+      "remainingAmount": "Remaining Amount",
+      "progress": "Payment Progress",
+      "planTitle": "Payment Plan",
+      "planName": "Plan Name",
+      "numPayments": "Number of Payments",
+      "firstPayment": "First Payment",
+      "lastPayment": "Last Payment",
+      "planStatus": "Plan Status"
+    },
+    "paymentStatus": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "failed": "Failed",
+      "processing": "Processing"
+    },
+    "paymentMethod": {
+      "cashOnDelivery": "Cash on Delivery",
+      "card": "Card",
+      "wallet": "Wallet"
+    },
+    "client": {
+      "title": "Client Information",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "createdBy": {
+      "title": "Created By",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "notes": {
+      "title": "Notes & Comments",
+      "orderComment": "Order Comment",
+      "orderNotes": "Order Notes",
+      "providerNotes": "Provider Notes"
+    },
+    "additional": {
+      "title": "Additional Information",
+      "cartId": "Cart ID",
+      "checkoutOrderId": "Checkout Order ID",
+      "paymentPlanId": "Payment Plan ID",
+      "created": "Created",
+      "lastModified": "Last Modified",
+      "overdue": "Overdue",
+      "day": "day",
+      "days": "days",
+      "inactiveStatus": "Status: Inactive"
+    },
+    "actions": {
+      "viewInvoice": "View Invoice",
+      "downloadInvoice": "Download Invoice",
+      "downloading": "Downloading...",
+      "backToOrders": "Back to Orders"
+    },
+    "reviews": {
+      "title": "Order Reviews & Comments",
+      "addReview": "Add Review",
+      "writeReview": "Write Your Review",
+      "ratingLabel": "Rating *",
+      "reviewTitle": "Review Title",
+      "reviewBodyLabel": "Your Review *",
+      "reviewPlaceholder": "Share your experience with this order...",
+      "cancel": "Cancel",
+      "submit": "Submit Review",
+      "submitting": "Submitting...",
+      "submitSuccess": "Review submitted successfully!",
+      "submitError": "Failed to submit review",
+      "loading": "Loading reviews...",
+      "empty": "No reviews yet. Be the first to review this order!"
+    },
+    "itemReviews": {
+      "title": "Review Items in This Order",
+      "addReview": "Add Review",
+      "productTitle": "Review This Product",
+      "serviceTitle": "Review This Service",
+      "titlePlaceholder": "Enter a title (optional)",
+      "productPlaceholder": "Share your experience with this product...",
+      "servicePlaceholder": "Share your experience with this service...",
+      "quantityLabel": "Quantity",
+      "productSubmitSuccess": "Product review submitted successfully!",
+      "serviceSubmitSuccess": "Service review submitted successfully!",
+      "submitError": "Failed to submit review",
+      "productFallback": "Product",
+      "serviceFallback": "Service"
+    },
+    "toast": {
+      "trackingCopied": "Tracking number copied to clipboard",
+      "invoiceDownloaded": "Invoice downloaded successfully",
+      "invoiceDownloadFailed": "Failed to download invoice"
+    }
+  },
+  "invoice": {
+    "pageTitle": "Invoice",
+    "loading": {
+      "title": "Loading invoice...",
+      "subtitle": "Please wait a moment"
+    },
+    "error": {
+      "title": "Invoice not found",
+      "message": "The invoice for this order could not be loaded",
+      "actionLabel": "Back to Order"
+    },
+    "header": {
+      "back": "Back",
+      "invoiceNumber": "Invoice",
+      "downloadPdf": "Download PDF",
+      "downloading": "Downloading...",
+      "print": "Print"
+    },
+    "invoice": {
+      "title": "INVOICE",
+      "orderLabel": "Order",
+      "dateLabel": "Date",
+      "fileLabel": "File",
+      "from": "From",
+      "to": "To",
+      "noBilling": "No billing information available"
+    },
+    "items": {
+      "title": "Items",
+      "item": "Item",
+      "quantity": "Quantity",
+      "price": "Price",
+      "total": "Total",
+      "empty": "No items found"
+    },
+    "summary": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "deposit": "Deposit",
+      "discountCodes": "Discount Codes",
+      "total": "Total"
+    },
+    "payment": {
+      "title": "Payment Information",
+      "method": "Payment Method",
+      "status": "Payment Status",
+      "coupon": "Coupon Code",
+      "amount": "Payment Amount"
+    },
+    "plan": {
+      "title": "Payment Plan",
+      "plan": "Plan",
+      "numPayments": "Number of Payments",
+      "amount": "Payment Amount",
+      "firstPayment": "First Payment",
+      "lastPayment": "Last Payment",
+      "status": "Status"
+    },
+    "delivery": {
+      "title": "Delivery Information",
+      "preferredDate": "Preferred Delivery Date",
+      "urgent": "Urgent Order",
+      "requireConfirmation": "Requires Client Confirmation",
+      "confirmed": "Confirmed",
+      "pending": "Pending"
+    },
+    "notes": {
+      "title": "Notes"
+    },
+    "footer": {
+      "thanks": "Thank you for your business!",
+      "tagline": "Your trusted wedding partner"
+    },
+    "toast": {
+      "downloaded": "Invoice downloaded successfully",
+      "downloadFailed": "Failed to download invoice"
+    }
+  },
+  "orderCard": {
+    "aria": {
+      "collapseSummary": "Collapse order summary",
+      "expandSummary": "Expand order summary"
+    },
+    "header": {
+      "orderLabel": "Order",
+      "placedLabel": "Placed",
+      "item": "item",
+      "items": "items"
+    },
+    "payment": {
+      "status": "Payment Status",
+      "method": "Payment Method",
+      "progress": "Payment Progress",
+      "paid": "Paid",
+      "remaining": "Remaining"
+    },
+    "paymentStatus": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "unpaid": "Unpaid",
+      "failed": "Failed",
+      "processing": "Processing"
+    },
+    "paymentMethod": {
+      "cashOnDelivery": "Cash on Delivery",
+      "card": "Card",
+      "wallet": "Wallet"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "reorder": "Re-Order",
+      "cancelOrder": "Cancel Order"
+    },
+    "arrival": {
+      "label": "Arrive In"
+    },
+    "summary": {
+      "title": "Order Summary",
+      "quantity": "Qty",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "taxesFees": "Taxes & Fees",
+      "deliveryFee": "Delivery Fee",
+      "deposit": "Deposit",
+      "total": "Total"
+    }
+  },
+  "orderListItem": {
+    "orderLabel": "Order",
+    "placedLabel": "Placed",
+    "status": {
+      "inProgress": "In Progress",
+      "outForDelivery": "Out For Delivery",
+      "completed": "Completed",
+      "cancelled": "Canceled"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "cancelAria": "Cancel order"
+    }
+  },
+  "historySection": {
+    "clear": "Clear History"
+  },
+  "cancelOrderModal": {
+    "title": "Cancel Order",
+    "question": "Are you sure you want to cancel this order?",
+    "placeholder": "Please tell us why you're canceling (optional).",
+    "keep": "Keep Order",
+    "cancel": "Cancel Order"
+  },
+  "orderProgress": {
+    "status": {
+      "preparing": {
+        "title": "We've Got Your Order!",
+        "description": "Your order is confirmed and we're preparing it with care."
+      },
+      "onTheWay": {
+        "title": "Your order is on the way!",
+        "description": "Your order has been shipped and is on its way to you."
+      },
+      "received": {
+        "title": "Order received",
+        "description": "Your order has been received and is ready for pickup."
+      },
+      "delivered": {
+        "title": "Order Completed",
+        "description": "Your order is done and delivered successfully. Thank you for choosing OurBride!"
+      },
+      "cancelled": {
+        "title": "Order Canceled",
+        "description": "This order was canceled. We hope to serve you next time."
+      }
+    },
+    "steps": {
+      "preparing": "Preparing Order",
+      "onTheWay": "On The Way",
+      "received": "Received"
+    },
+    "alt": {
+      "preparing": "Order Preparing",
+      "onTheWay": "Order On The Way",
+      "received": "Order Received",
+      "delivered": "Order Complete",
+      "cancelled": "Order Cancelled"
+    }
+  },
+  "deliveryStatus": {
+    "notSet": "Not Set",
+    "created": "Created",
+    "readyForDelivery": "Ready for Delivery",
+    "inTransit": "In Transit",
+    "outForDelivery": "Out for Delivery",
+    "delivered": "Delivered",
+    "failed": "Failed",
+    "returned": "Returned"
+  },
+  "statusBadge": {
+    "default": {
+      "completed": "Done",
+      "delivered": "Done",
+      "cancelled": "Canceled",
+      "inProgress": "In Progress"
+    }
+  },
+  "deliveryAddresses": {
+  "title": "Delivery Addresses",
+  "count": "{count} {count, plural, one {Address} other {Addresses}}",
+  "addAddress": "Add Address",
+  "loadingTitle": "Loading addresses...",
+  "loadingSubtitle": "Please wait a moment",
+  "errorTitle": "Error loading addresses",
+  "errorMessage": "Please try again later",
+  "errorAction": "Back to Home",
+  "emptyTitle": "You don't have any delivery addresses",
+  "emptyDescription": "Add your first delivery address to make checkout faster",
+  "contactFallback": "Delivery Address",
+  "defaultLabel": "Default Address",
+  "phone": "Phone:",
+  "altPhone": "Alt:",
+  "email": "Email:",
+  "setDefault": "Set as Default",
+  "edit": "Edit",
+  "delete": "Delete",
+  "confirmDelete": "Are you sure you want to delete this address?",
+  "deleteSuccess": "Address deleted successfully",
+  "deleteError": "Failed to delete address",
+  "defaultSuccess": "Default address updated successfully",
+  "defaultError": "Failed to set default address",
+  "deleteLoading": "Deleting address...",
+  "defaultLoading": "Setting default address...",
+  "saveLoading": "Saving address...",
+  "processing": "Processing...",
+  "countryFallback": "Egypt"
 }
+
+
 }

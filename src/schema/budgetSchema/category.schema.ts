@@ -54,13 +54,13 @@ const parseCount = (val: unknown): number | null => {
  * Includes all fields required by API
  */
 export const categoryFormSchema = z.object({
-  name: z.string().min(1, 'Name is required').trim(),
+  name: z.string().min(1, 'nameRequired').trim(),
   nameAr: z.string().default(''),
   nameEn: z.string().default(''),
   description: z.string().default(''),
   descriptionAr: z.string().default(''),
   descriptionEn: z.string().default(''),
-  estimated: z.preprocess(parseAmount, z.number().min(0, 'Estimated must be 0 or greater')),
+  estimated: z.preprocess(parseAmount, z.number().min(0, 'estimatedRequired')),
   iconName: z.string().nullable().default(null),
   colorName: z.string().nullable().default(null),
 })
@@ -70,7 +70,7 @@ export const categoryFormSchema = z.object({
  */
 export const categoryWithLineFormSchema = z.object({
   // Category fields
-  name: z.string().min(1, 'Category name is required').trim(),
+  name: z.string().min(1, 'nameRequired').trim(),
   nameAr: z.string().default(''),
   nameEn: z.string().default(''),
   description: z.string().default(''),
@@ -80,11 +80,11 @@ export const categoryWithLineFormSchema = z.object({
   colorName: z.string().nullable().default(null),
   
   // Line fields (required when creating new category)
-  expense: z.string().min(1, 'Service name is required').trim(),
+  expense: z.string().min(1, 'serviceNameRequired').trim(),
   expenseAr: z.string().default(''),
   expenseEn: z.string().default(''),
-  estimated: z.preprocess(parseAmount, z.number().min(0, 'Total price must be 0 or greater')),
-  paid: z.preprocess(parseAmount, z.number().min(0, 'Paid must be 0 or greater')).default(0),
+  estimated: z.preprocess(parseAmount, z.number().min(0, 'totalPriceRequired')),
+  paid: z.preprocess(parseAmount, z.number().min(0, 'paidRequired')).default(0),
   final: z.preprocess(parseNullableAmount, z.number().min(0).nullable()).default(null),
   dueDate: z.string().nullable().default(null),
   count: z.preprocess(parseCount, z.number().min(0).nullable()).default(null),

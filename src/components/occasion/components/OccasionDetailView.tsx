@@ -8,6 +8,8 @@ import occasionImage from '@/assets/images/occasion.png'
 import brideNameSvg from '@/assets/svg/bridename.svg'
 import groomNameSvg from '@/assets/svg/groomname.svg'
 import heartSvg from '@/assets/svg/heart.svg'
+import { useI18nLocale, useI18nTranslations } from '@/i18n'
+import { pickLocalizedText } from '@/utils/translation/i18nText'
 
 interface OccasionDetailViewProps {
   occasion: OccasionLineResponse
@@ -74,6 +76,8 @@ const calculateTimeRemaining = (targetDate: string | null | undefined) => {
 }
 
 export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetailViewProps) {
+  const t = useI18nTranslations('eventsPlanning.occasions')
+  const locale = useI18nLocale()
   // Initialize with null to avoid hydration mismatch, then calculate on client side
   const [timeRemaining, setTimeRemaining] = useState<ReturnType<typeof calculateTimeRemaining> | null>(null)
   const [isMounted, setIsMounted] = useState(false)
@@ -94,10 +98,14 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
   const groomLastName = occasion.groomLastName || ''
   const brideFirstName = occasion.brideFirstName || ''
   const brideLastName = occasion.brideLastName || ''
-  const groomFullName = [groomFirstName, groomLastName].filter(Boolean).join(' ') || 'Groom Name'
-  const brideFullName = [brideFirstName, brideLastName].filter(Boolean).join(' ') || 'Bride Name'
-  const occasionTitle = occasion.title || occasion.titleEn || occasion.titleAr || 'Occasion Name'
-  const location = 'Giza, 6 of October' // This could come from occasion data if available
+  const groomFullName = [groomFirstName, groomLastName].filter(Boolean).join(' ') || t('common.fallbacks.groomName')
+    const brideFullName = [brideFirstName, brideLastName].filter(Boolean).join(' ') || t('common.fallbacks.brideName')
+    const occasionTitle = pickLocalizedText(locale, {
+      en: occasion?.titleEn,
+      ar: occasion?.titleAr,
+      fallback: t('common.fallbacks.occasionName')
+    })
+  const location = t('detail.locationFallback') // This could come from occasion data if available
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -120,7 +128,7 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
               <button
                 onClick={onClose}
                 className="p-2  backdrop-blur-sm rounded-lg text-gray-600 hover:bg-white/50 transition-all shadow-sm"
-                title="Close"
+                title={t('page.actions.close')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -174,15 +182,15 @@ export function OccasionDetailView({ occasion, onClose, onEdit }: OccasionDetail
               <div className="flex items-baseline justify-center gap-4 md:gap-6">
                 <div className="text-center">
                   <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">{timeRemaining.days}</div>
-                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">Days</div>
+                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">{t('common.countdown.days')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">{timeRemaining.hours}</div>
-                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">Hours</div>
+                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">{t('common.countdown.hours')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-24 md:text-32 font-bold text-gray-900 leading-tight italic">{timeRemaining.minutes}</div>
-                  <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">Minutes</div>
+                    <div className="text-12 md:text-14 text-gray-600 font-medium mt-0.5 italic">{t('common.countdown.minutes')}</div>
                 </div>
               </div>
             </div>

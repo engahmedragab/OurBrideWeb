@@ -2,6 +2,7 @@
 
 import { CheckCircle2, X, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations } from '@/i18n'
 
 export type StatusBadgeType =
   | 'completed'
@@ -43,6 +44,7 @@ const statusConfig = {
 }
 
 export const StatusBadge = ({ status, label, className }: StatusBadgeProps) => {
+  const t = useI18nTranslations('statusBadge')
   const config = statusConfig[status]
   const Icon = config.icon
   const textColor = config.textColor || 'text-white'
@@ -57,7 +59,7 @@ export const StatusBadge = ({ status, label, className }: StatusBadgeProps) => {
       )}
     >
       <Icon className="h-4 w-4" />
-      <span>{label || config.defaultLabel}</span>
+      <span>{label || t(`default.${status}`)}</span>
     </div>
   )
 }

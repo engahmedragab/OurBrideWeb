@@ -52,6 +52,11 @@ export const SelectPopover = ({
               disabled && 'cursor-not-allowed opacity-50'
             )}
           >
+            {isRTL && (
+              <ChevronDown
+                className={cn(
+                  'h-5 w-5 text-gray-400  flex-shrink-0')}/>)}
+              
             <span
               className={cn(
                 'flex-1',
@@ -62,21 +67,13 @@ export const SelectPopover = ({
             >
               {selectedOption ? selectedOption.label : placeholder}
             </span>
-            {isRTL ? (
-              <ChevronLeft
+          
+                  
+              {!isRTL && (
+            <ChevronDown
                 className={cn(
-                  'h-5 w-5 text-gray-400 transition-transform flex-shrink-0',
-                  open && 'rotate-90'
-                )}
-              />
-            ) : (
-              <ChevronDown
-                className={cn(
-                  'h-5 w-5 text-gray-400 transition-transform flex-shrink-0',
-                  open && 'rotate-180'
-                )}
-              />
-            )}
+                  'h-5 w-5 text-gray-400  flex-shrink-0')}/>
+              )}
           </button>
         </PopoverTrigger>
         <PopoverContent

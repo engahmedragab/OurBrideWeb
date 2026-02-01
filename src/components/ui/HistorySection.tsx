@@ -1,6 +1,7 @@
 'use client'
 
 import { ReactNode } from 'react'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface HistorySectionProps {
   title: string
@@ -12,15 +13,17 @@ export interface HistorySectionProps {
 }
 
 export const HistorySection = ({
-  title,
+  title, 
   itemCount,
   suffix,
   onClearHistory,
   children,
   className,
 }: HistorySectionProps) => {
+  const t = useI18nTranslations('historySection')
+  const isRTL = useIsRTL()
   return (
-    <section className={`mt-12 ${className || ''}`}>
+    <section dir={isRTL ? 'rtl' : 'ltr'} className={`mt-12 ${className || ''}`}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-32 font-semibold text-gray-900">{title}</h2>
@@ -35,7 +38,7 @@ export const HistorySection = ({
             onClick={onClearHistory}
             className="text-16 font-medium text-brand-500 hover:text-brand-600 transition-colors"
           >
-            Clear History
+            {t('clear')}
           </button>
         )}
       </div>

@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { Modal } from './Modal'
-import { Input } from './Input'
 import { Button } from './Button'
 import { AlertTriangle } from 'lucide-react'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface CancelRequestModalProps {
   isOpen: boolean
@@ -22,6 +22,7 @@ export const CancelRequestModal = ({
   onConfirm,
   requestId,
 }: CancelRequestModalProps) => {
+  const t = useI18nTranslations('cart.modals.cancelRequest')
   const [cancelReason, setCancelReason] = useState('')
 
   const handleConfirm = () => {
@@ -38,7 +39,7 @@ export const CancelRequestModal = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Cancel Request"
+      title={t('title')}
       maxWidth="md"
       containerClassName="p-0"
       headerClassName="px-6 py-4"
@@ -59,13 +60,13 @@ export const CancelRequestModal = ({
 
         {/* Question */}
         <p className="mb-6 text-center text-16 font-medium text-gray-900">
-          Are you sure you want to cancel this request?
+          {t('question')}
         </p>
 
         {/* Input Field */}
         <div className="mb-6 w-full">
           <textarea
-            placeholder="Please tell us why you're canceling (optional)."
+            placeholder={t('placeholder')}
             value={cancelReason}
             onChange={e => setCancelReason(e.target.value)}
             className="flex w-full min-h-[100px] resize-none items-center gap-2 rounded-md border border-gray-300 bg-background px-3 py-2 text-16 text-gray-900 ring-offset-background transition-colors placeholder:text-gray-400 focus-visible:border-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
@@ -81,15 +82,16 @@ export const CancelRequestModal = ({
             className="w-full text-white"
             onClick={handleClose}
           >
-            Keep Request
+            {t('keep')}
           </Button>
+
           <Button
             variant="outlineBrand"
             size="lg"
             className="w-full border-brand-500 bg-white !text-brand-500 hover:bg-brand-50"
             onClick={handleConfirm}
           >
-            Cancel Request
+            {t('confirm')}
           </Button>
         </div>
       </div>

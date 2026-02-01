@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import Image from 'next/image'
 import { Package, Calendar, Crown, Gift, Scissors, Trash2, Minus, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { CartItemType } from './CartItem'
+import { useI18nTranslations, } from '@/i18n/hooks'
 
 export interface CheckoutCartItemProps {
   id: string
@@ -44,29 +45,6 @@ const getTypeIcon = (type?: CartItemType) => {
   }
 }
 
-/**
- * Get type label for display
- */
-const getTypeLabel = (type?: CartItemType): string => {
-  switch (type) {
-    case 'Product':
-      return 'Product'
-    case 'Service':
-      return 'Service'
-    case 'Reservation':
-      return 'Reservation'
-    case 'Membership':
-      return 'Membership'
-    case 'GiftCard':
-      return 'Gift Card'
-    default:
-      return 'Item'
-  }
-}
-
-/**
- * CheckoutCartItem - Cart item for checkout screen with quantity and delete controls
- */
 export const CheckoutCartItem = ({
   id,
   title,
@@ -84,11 +62,29 @@ export const CheckoutCartItem = ({
   className,
   type,
 }: CheckoutCartItemProps) => {
+  const t = useI18nTranslations('checkoutPage.checkoutCartItem')
+  
+
   const [imageError, setImageError] = useState(false)
   const TypeIcon = getTypeIcon(type)
-  const typeLabel = getTypeLabel(type)
 
-  // Check if image is valid (not empty, not a placeholder, and not just a slash)
+  const typeLabel = useMemo(() => {
+    switch (type) {
+      case 'Product':
+        return t('typeLabel.product')
+      case 'Service':
+        return t('typeLabel.service')
+      case 'Reservation':
+        return t('typeLabel.reservation')
+      case 'Membership':
+        return t('typeLabel.membership')
+      case 'GiftCard':
+        return t('typeLabel.giftCard')
+      default:
+        return t('typeLabel.item')
+    }
+  }, [t, type])
+
   const hasValidImage =
     image &&
     image.trim() !== '' &&
@@ -116,7 +112,7 @@ export const CheckoutCartItem = ({
             <div className="w-full h-full rounded-lg bg-gray-100 overflow-hidden">
               <Image
                 src={image}
-                alt={title}
+                alt={title || typeLabel}
                 fill
                 sizes="80px"
                 className="object-cover"
@@ -126,7 +122,7 @@ export const CheckoutCartItem = ({
           ) : (
             <div className="w-full h-full rounded-lg bg-gray-100 flex items-center justify-center">
               <span className="text-gray-400 text-10 font-medium text-center px-1">
-                No image available
+                {t('noImage')}
               </span>
             </div>
           )}
@@ -140,7 +136,7 @@ export const CheckoutCartItem = ({
               onRemove(id)
             }}
             className="p-2 rounded-full border-2 border-red-300 hover:bg-red-50 hover:border-red-400 transition-colors"
-            aria-label="Remove item"
+            aria-label={t('aria.removeItem')}
           >
             <Trash2 className="h-4 w-4 text-red-500" />
           </button>
@@ -152,12 +148,12 @@ export const CheckoutCartItem = ({
         {/* Discount Badge - Top Right */}
         {discountPercentage && (
           <span className="absolute top-0 right-0 text-12 font-medium text-green-500">
-            {discountPercentage}% OFF
+            {t('discountOff', { percent: discountPercentage })}
           </span>
         )}
 
         {/* Title */}
-        <h3 className="text-14 font-semibold text-gray-900 line-clamp-2 mb-2 pr-16">
+        <h3 className="text-14 font-semibold text-gray-900 line-clamp-2 mb-2 ">
           {title || typeLabel}
         </h3>
 
@@ -176,7 +172,7 @@ export const CheckoutCartItem = ({
         {/* Delivery Date */}
         {deliveryDate && (
           <p className="text-12 text-gray-600 mb-2">
-            Get In By {deliveryDate}
+            {t('deliveryBy', { date: deliveryDate })}
           </p>
         )}
 
@@ -184,13 +180,15 @@ export const CheckoutCartItem = ({
         <div className="flex flex-col gap-1 mb-auto">
           {purchasePrice !== undefined && purchasePrice !== null && (
             <p className="text-12 text-gray-600">
-              <span className="font-medium">Purchase Price: </span>
-              <span>{purchasePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}</span>
+              <span className="font-medium">{t('purchasePrice')} </span>
+              <span>
+                {purchasePrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {currency}
+              </span>
             </p>
           )}
           {purchaseDate && (
             <p className="text-12 text-gray-600">
-              <span className="font-medium">Added on: </span>
+              <span className="font-medium">{t('addedOn')} </span>
               <span>{new Date(purchaseDate).toLocaleDateString('en-GB', {
                 day: '2-digit',
                 month: 'short',
@@ -202,7 +200,11 @@ export const CheckoutCartItem = ({
 
         {/* Bottom: Quantity Selector */}
         {onQuantityChange && (
-          <div className="flex items-center gap-2 mt-auto pt-3 ml-auto">
+         <div  className={cn(
+      "flex w-full justify-end",          
+     
+    )} > 
+          <div className="flex items-center gap-2 mt-auto pt-3  ">
             <button
               type="button"
               onClick={(e) => {
@@ -217,7 +219,7 @@ export const CheckoutCartItem = ({
                 'disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
                 'border-gray-300 hover:bg-gray-50 text-gray-600'
               )}
-              aria-label="Decrease quantity"
+              aria-label={t('aria.decreaseQty')}
             >
               <Minus className="h-3.5 w-3.5" />
             </button>
@@ -235,11 +237,13 @@ export const CheckoutCartItem = ({
                 'transition-colors',
                 'border-red-300 hover:bg-red-50 hover:border-red-400 text-red-500'
               )}
-              aria-label="Increase quantity"
+              aria-label={t('aria.increaseQty')}
             >
               <Plus className="h-3.5 w-3.5" />
             </button>
           </div>
+          </div>
+         
         )}
       </div>
     </div>

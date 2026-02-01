@@ -5,10 +5,10 @@ import { UserPageLayout } from '@/components/layout'
 import {
   PageHeader,
   ErrorDisplay,
-  LoadingOverlay,
   AddressModal,
   Button,
   EmptyState,
+  LoadingSpinner,
 } from '@/components/ui'
 import { useAddresses, useDeleteAddress, useCreateAddress, useUpdateAddress, useSetDefaultAddress } from '@/hooks'
 import type { DeliveryAddressResponse } from '@/types/responses'
@@ -16,12 +16,18 @@ import { MapPin, Plus, Edit, Trash2, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useToast } from '@/components/ui/Toaster'
 import orderEmptySvg from '@/assets/svg/order-empty.svg'
+import { useI18nTranslations } from '@/i18n'
+import { ConfirmDialog } from '@/components/planning'
 
 export default function AddressesPage() {
+  const t = useI18nTranslations('deliveryAddresses')
+  const tCommon = useI18nTranslations('common')
   const { addToast } = useToast()
   const [showAddressModal, setShowAddressModal] = useState(false)
   const [editingAddress, setEditingAddress] = useState<DeliveryAddressResponse | null>(null)
   const [isMounted, setIsMounted] = useState(false)
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
+  const [addressToDelete, setAddressToDelete] = useState<number | null>(null)
 
   // Track mount state to prevent hydration mismatch
   useEffect(() => {
@@ -46,31 +52,37 @@ export default function AddressesPage() {
     setShowAddressModal(true)
   }
 
-  const handleDeleteAddress = async (addressId: number) => {
-    if (!confirm('Are you sure you want to delete this address?')) {
-      return
-    }
+  const handleDeleteAddress = (addressId: number) => {
+    setAddressToDelete(addressId)
+    setIsDeleteConfirmOpen(true)
+  }
+
+  const handleConfirmDeleteAddress = async () => {
+    if (!addressToDelete) return
 
     try {
-      await deleteAddressMutation.mutateAsync(addressId)
-      addToast('Address deleted successfully', 'success')
+      await deleteAddressMutation.mutateAsync(addressToDelete)
+      addToast(t('deleteSuccess'), 'success')
     } catch (error) {
       console.error('Failed to delete address:', error)
       addToast(
-        error instanceof Error ? error.message : 'Failed to delete address',
+        error instanceof Error ? error.message : t('deleteError'),
         'error'
       )
+    } finally {
+      setIsDeleteConfirmOpen(false)
+      setAddressToDelete(null)
     }
   }
 
   const handleSetDefaultAddress = async (addressId: number) => {
     try {
       await setDefaultAddressMutation.mutateAsync(addressId)
-      addToast('Default address updated successfully', 'success')
+      addToast(t('defaultSuccess'), 'success')
     } catch (error) {
       console.error('Failed to set default address:', error)
       addToast(
-        error instanceof Error ? error.message : 'Failed to set default address',
+        error instanceof Error ? error.message : t('defaultError'),
         'error'
       )
     }
@@ -86,7 +98,7 @@ export default function AddressesPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Delivery Addresses"
+          title={t('title')}
           rightContent={
             <Button
               variant="default"
@@ -95,14 +107,14 @@ export default function AddressesPage() {
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
-              Add Address
+              {t('addAddress')}
             </Button>
           }
         />
-        <LoadingOverlay
+        <LoadingSpinner
           open={true}
-          title="Loading addresses..."
-          subtitle="Please wait a moment"
+          text={`${t('loadingTitle')} ${t('loadingSubtitle')}`}
+      
         />
       </UserPageLayout>
     )
@@ -113,7 +125,7 @@ export default function AddressesPage() {
     return (
       <UserPageLayout>
         <PageHeader
-          title="Delivery Addresses"
+          title={t('title')}
           rightContent={
             <Button
               variant="default"
@@ -122,14 +134,14 @@ export default function AddressesPage() {
               className="flex items-center gap-2"
             >
               <Plus className="h-4 w-4" />
-              Add Address
+              {t('addAddress')}
             </Button>
           }
         />
         <ErrorDisplay
-          title="Error loading addresses"
-          message="Please try again later"
-          actionLabel="Back to Home"
+          title={t('errorTitle')}
+          message={t('errorMessage')}
+          actionLabel={t('errorAction')}
           actionHref="/"
         />
       </UserPageLayout>
@@ -140,10 +152,10 @@ export default function AddressesPage() {
     <UserPageLayout>
       {/* Page Header */}
       <PageHeader
-        title="Delivery Addresses"
+        title={t('title')}
         subtitle={
           addresses.length > 0
-            ? `${addresses.length} ${addresses.length === 1 ? 'Address' : 'Addresses'}`
+            ? t('count', { count: addresses.length })
             : undefined
         }
         rightContent={
@@ -154,7 +166,7 @@ export default function AddressesPage() {
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
-            Add Address
+            {t('addAddress')}
           </Button>
         }
       />
@@ -163,9 +175,9 @@ export default function AddressesPage() {
       {addresses.length === 0 ? (
         <EmptyState
           illustration={orderEmptySvg}
-          title="You don't have any delivery addresses"
-          description="Add your first delivery address to make checkout faster"
-          actionLabel="Add Address"
+          title={t('emptyTitle')}
+          description={t('emptyDescription')}
+          actionLabel={t('addAddress')}
           onAction={handleAddAddress}
         />
       ) : (
@@ -192,12 +204,14 @@ export default function AddressesPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-16 font-semibold text-gray-900 truncate">
-                      {address.contactName || 'Delivery Address'}
+                      {address.contactName || t('contactFallback')}
                     </h3>
                     {address.isDefault && (
                       <div className="flex items-center gap-1 mt-1">
                         <Star className="h-3 w-3 fill-brand-600 text-brand-600" />
-                        <span className="text-10 font-medium text-brand-600">Default Address</span>
+                        <span className="text-10 font-medium text-brand-600">
+                          {t('defaultLabel')}
+                        </span>
                       </div>
                     )}
                   </div>
@@ -215,23 +229,23 @@ export default function AddressesPage() {
                 <p className="text-14 text-gray-600">
                   {address.city && `${address.city}, `}
                   {address.state && `${address.state}, `}
-                  {address.country || 'Egypt'}
+                  {address.country || t('countryFallback')}
                   {address.postcode && ` ${address.postcode}`}
                 </p>
                 <div className="flex flex-col gap-1 pt-2 border-t border-gray-100">
                   {address.contactNumber1 && (
                     <p className="text-13 text-gray-600 flex items-center gap-1">
-                      <span className="font-medium">Phone:</span> {address.contactNumber1}
+                      <span className="font-medium">{t('phone')}</span> {address.contactNumber1}
                     </p>
                   )}
                   {address.contactNumber2 && (
                     <p className="text-13 text-gray-600 flex items-center gap-1">
-                      <span className="font-medium">Alt:</span> {address.contactNumber2}
+                      <span className="font-medium">{t('altPhone')}</span> {address.contactNumber2}
                     </p>
                   )}
                   {address.email && (
                     <p className="text-13 text-gray-600 flex items-center gap-1">
-                      <span className="font-medium">Email:</span> {address.email}
+                      <span className="font-medium">{t('email')}</span> {address.email}
                     </p>
                   )}
                 </div>
@@ -248,7 +262,7 @@ export default function AddressesPage() {
                     className="w-full flex items-center justify-center gap-2 text-brand-600 hover:text-brand-700 hover:bg-brand-50 border-brand-200"
                   >
                     <Star className="h-4 w-4" />
-                    Set as Default
+                    {t('setDefault')}
                   </Button>
                 )}
                 <div className="flex items-center gap-2">
@@ -259,7 +273,7 @@ export default function AddressesPage() {
                     className="flex-1 flex items-center justify-center gap-2"
                   >
                     <Edit className="h-4 w-4" />
-                    Edit
+                    {t('edit')}
                   </Button>
                   <Button
                     variant="outline"
@@ -269,7 +283,7 @@ export default function AddressesPage() {
                     className="flex items-center justify-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
                   >
                     <Trash2 className="h-4 w-4" />
-                    Delete
+                    {t('delete')}
                   </Button>
                 </div>
               </div>
@@ -289,26 +303,40 @@ export default function AddressesPage() {
         onSuccess={handleModalSuccess}
       />
 
+      <ConfirmDialog
+        open={isDeleteConfirmOpen}
+        title={t('delete')}
+        description={t('confirmDelete')}
+        confirmText={t('delete')}
+        cancelText={tCommon('cancel')}
+        onConfirm={handleConfirmDeleteAddress}
+        onCancel={() => {
+          setIsDeleteConfirmOpen(false)
+          setAddressToDelete(null)
+        }}
+      />
+
       {/* Loading Overlay for Mutations */}
-      <LoadingOverlay
+      <LoadingSpinner
         open={
           deleteAddressMutation.isPending ||
           createAddressMutation.isPending ||
           updateAddressMutation.isPending ||
           setDefaultAddressMutation.isPending
         }
-        title={
+        fullScreen={true}
+        size="xl"
+        text={`${
           deleteAddressMutation.isPending
-            ? 'Deleting address...'
+            ? t('deleteLoading')
             : setDefaultAddressMutation.isPending
-              ? 'Setting default address...'
+              ? t('defaultLoading')
               : createAddressMutation.isPending || updateAddressMutation.isPending
-                ? 'Saving address...'
-                : 'Processing...'
-        }
-        subtitle="Please wait a moment"
+                ? t('saveLoading')
+                : t('processing')
+        }\n${t('loadingSubtitle')}`}
       />
     </UserPageLayout>
   )
 }
-
+ 

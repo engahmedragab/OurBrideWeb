@@ -4,6 +4,7 @@ import Image from 'next/image'
 import type { ImageProps } from 'next/image'
 import type { MouseEvent } from 'react'
 import type { MainGuestBookResponse } from '@/types/responses'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 export interface GuestsInvitationProps {
   book: MainGuestBookResponse
@@ -20,7 +21,9 @@ export const GuestsInvitation = ({
   eventId,
   imageSrc,
 }: GuestsInvitationProps) => {
-  const needsInit = !book.isBookInit
+  const t = useI18nTranslations('eventsPlanning')
+  const tCards = useI18nTranslations('eventsPlanning.cards')
+  const needsInit = !book.isBookInit 
 
   const handleClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -30,9 +33,10 @@ export const GuestsInvitation = ({
 
   const guestCount = Number(book.count ?? 0)
   const description =
-    book.description?.trim() || 'Manage your guest list and invitations in one place.'
+    book.description?.trim() || tCards('guests.descriptionFallback')
 
-  const guestLabel = guestCount === 1 ? 'Guest' : 'Guests'
+  
+  const guestLabel = guestCount === 1 ? tCards('guests.guestSingular') : tCards('guests.guestPlural')
 
   const clamp2LinesStyle: React.CSSProperties = {
     display: '-webkit-box',
@@ -47,10 +51,10 @@ export const GuestsInvitation = ({
       <div className="flex items-start justify-between gap-3 px-4 pt-4">
         <div className="min-w-0">
           <h2 className="text-[16px] font-semibold text-gray-900">
-            Guests &amp; Invitation
+            {tCards('guests.title')}
           </h2>
           <p className="mt-0.5 text-[12px] text-gray-500">
-            Track invited guests and details
+            {tCards('guests.subtitle')}
           </p>
         </div>
 
@@ -60,7 +64,7 @@ export const GuestsInvitation = ({
           className="shrink-0 rounded-lg px-3 py-1.5 text-[12px] font-medium text-brand-600 transition-colors hover:bg-brand-50 hover:text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-200"
           aria-label="View guest invitation details"
         >
-          View details
+          {t('common.viewDetails')}
         </button>
       </div>
 
@@ -70,7 +74,7 @@ export const GuestsInvitation = ({
           <div className="relative h-40 w-full">
             <Image
               src={imageSrc}
-              alt="Event Image"
+              alt={tCards('guests.imageAlt')}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               sizes="(max-width: 768px) 100vw, 400px"
@@ -91,7 +95,7 @@ export const GuestsInvitation = ({
       {/* Content */}
       <div className="space-y-3 px-4 pb-4 pt-4">
         <div className="flex items-center justify-between rounded-xl bg-gray-50 px-3 py-2">
-          <span className="text-[12px] text-gray-600">Invited Guests</span>
+          <span className="text-[12px] text-gray-600">{tCards('guests.invitedGuests')}</span>
           <span className="text-[14px] font-semibold text-gray-900">
             {guestCount} {guestLabel}
           </span>
