@@ -26,12 +26,12 @@
     "noDataAvailable": "لا توجد بيانات متاحة",
     "noImageAvailable": "لا توجد صورة متاحة",
     "enterYourEmail": "أدخل بريدك الإلكتروني",
-    "productsLoading":"جاري تحميل المنتجات...",
-    "Anonymous":"مجهول",
-    "recently":"مؤخرا",
-    "viewAll":"عرض الكل",
-    "suggestedForYou":"مقترح لك",
-    "subscribe":"اشتركي",
+    "productsLoading": "جاري تحميل المنتجات...",
+    "Anonymous": "مجهول",
+    "recently": "مؤخرا",
+    "viewAll": "عرض الكل",
+    "suggestedForYou": "مقترح لك",
+    "subscribe": "اشتركي",
     "productCommon": {
       "productNotFound": "المنتج غير موجود",
       "productNotFoundMessage": "المنتج الذي تبحثين عنه غير موجود أو تم حذفه",
@@ -77,7 +77,7 @@
       "removeStockFilter": "إزالة فلتر التوفر"
     }
   },
-    "auth": {
+  "auth": {
     "hero": {
       "backToHome": "  الصفحة الرئيسية",
       "title": "نظّم زفافك",
@@ -131,7 +131,6 @@
       "female": "أنثى",
       "male": "ذكر",
       "gender": {
-
         "errorRequired": "يرجى اختيار النوع"
       },
       "terms": {
@@ -224,7 +223,6 @@
         "title": "تم بنجاح!",
         "description": "تم حفظ تفضيلات التخطيط الخاصة بك",
         "confirmLabel": "تأكيد",
-       
         "skipButton": "تخطي الآن"
       },
       "errors": {
@@ -256,7 +254,6 @@
         "invalidOtpCode": "رمز التحقق غير صحيح",
         "invalidConfirmationCode": "رمز التأكيد غير صحيح",
         "refreshUserFailed": "فشل تحديث بيانات المستخدم"
-       
       }
     },
     "api": {
@@ -312,30 +309,28 @@
     "downloadApp": {
       "title": "تحميل التطبيق"
     }
-     },
-   
-    "changePassword": {
-      "title": "تغيير    الكلمة المرور",
-      "saveChanges": "حفظ التغييرات",
-      "currentPassword": "كلمة المرور الحالية",
-      "newPassword": "كلمة المرور الجديدة",
-      "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
-      "enterPassword": "أدخل كلمة المرور",
-      "enterNewPassword": "أدخل كلمة المرور الجديدة",
-      "confirmNewPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
-      "success": {
-        "title": "تم تغيير كلمة المرور بنجاح",
-        "description": "تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة"
-      },
-      "errors": {
-        "currentInvalid": "كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى",
-        "newRequired": "كلمة المرور مطلوبة",
-        "newMin": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
-        "confirmRequired": "يرجى تأكيد كلمة المرور",
-        "notMatch": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى"
-      }
+  },
+  "changePassword": {
+    "title": "تغيير    الكلمة المرور",
+    "saveChanges": "حفظ التغييرات",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "enterPassword": "أدخل كلمة المرور",
+    "enterNewPassword": "أدخل كلمة المرور الجديدة",
+    "confirmNewPasswordPlaceholder": "تأكيد كلمة المرور الجديدة",
+    "success": {
+      "title": "تم تغيير كلمة المرور بنجاح",
+      "description": "تم تغيير كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة"
     },
-
+    "errors": {
+      "currentInvalid": "كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى",
+      "newRequired": "كلمة المرور مطلوبة",
+      "newMin": "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
+      "confirmRequired": "يرجى تأكيد كلمة المرور",
+      "notMatch": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى"
+    }
+  },
   "navbar": {
     "search": {
       "placeholder": "بحث..."
@@ -364,7 +359,6 @@
       "notifications": "الإشعارات",
       "noNotificationsYet": "لا توجد إشعارات حتى الآن",
       "viewAll": "عرض كل الإشعارات"
-
     },
     "menu": {
       "wishlist": "قائمة الأمنيات",
@@ -377,210 +371,131 @@
       "closeSearch": "إغلاق البحث"
     }
   },
-    "home": {
-      "hero": {
-        "activeUsers": "المستخدمون النشطون",
-        "badge": "منصة شاملة لحفلات الزفاف.",
-        "headline": {
-          "line1": "عروستك",
-          "line2": "دائمًا هي",
-          "line3": "مسؤوليتنا."
-        },
-        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
-        "circularText": "ابدأي التسوق الآن",
-        "exploreProducts": "استكشفي المنتجات",
-        "exploreServices": "استكشفي الخدمات"
+  "home": {
+    "hero": {
+      "activeUsers": "المستخدمون النشطون",
+      "badge": "منصة شاملة لحفلات الزفاف.",
+      "headline": {
+        "line1": "عروستك",
+        "line2": "دائمًا هي",
+        "line3": "مسؤوليتنا."
       },
-      "statistics": {
-        "clients": "العملاء",
-        "serviceProviders": "مقدمو الخدمات",
-        "availableServices": "الخدمات المتاحة",
-        "products": "المنتجات"
+      "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
+      "circularText": "ابدأي التسوق الآن",
+      "exploreProducts": "استكشفي المنتجات",
+      "exploreServices": "استكشفي الخدمات"
+    },
+    "statistics": {
+      "clients": "العملاء",
+      "serviceProviders": "مقدمو الخدمات",
+      "availableServices": "الخدمات المتاحة",
+      "products": "المنتجات"
+    },
+    "benefits": {
+      "verifiedTrustedProviders": {
+        "title": "مقدمو خدمات موثوقون ومتحققون",
+        "description": "يتم التحقق من هوية كل خدمة لضمان تجربة آمنة وموثوقة."
       },
-      "benefits": {
-        "verifiedTrustedProviders": {
-          "title": "مقدمو خدمات موثوقون ومتحققون",
-          "description": "يتم التحقق من هوية كل خدمة لضمان تجربة آمنة وموثوقة."
-        },
-        "allInOneWeddingHub": {
-          "title": "مركز شامل لحفلات الزفاف",
-          "description": "خططي، تسوقي، احجزي، وأديري كل شيء من منصة واحدة."
-        },
-        "securePayments": {
-          "title": "مدفوعات آمنة",
-          "description": "معاملات آمنة، أسعار شفافة، وضمان تقديم الخدمة."
-        },
-        "exclusiveOffers": {
-          "title": "عروض ومكافآت حصرية",
-          "description": "استمتعي بخصومات وخيارات هدايا مصممة ليومك الكبير."
-        }
+      "allInOneWeddingHub": {
+        "title": "مركز شامل لحفلات الزفاف",
+        "description": "خططي، تسوقي، احجزي، وأديري كل شيء من منصة واحدة."
       },
-      "sections": {
-        "productsSuggested": "المنتجات المقترحة لك",
-        "servicesSuggested": "الخدمات المقترحة لك",
-        "viewAll": "عرض الكل",
-        "whyTrust": {
-          "title": "لماذا",
-          "brides": "العرائس",
-          "trust": "تثق",
-          "ourServices": "بخدماتنا"
-        },
-        "testimonials": {
-          "title": "اقرأي",
-          "reviews": "التقييمات",
-          "rideWith": "وتنقلي",
-          "confidence": "بثقة",
-          "whatOurCustomers": "ماذا يقول",
-          "customers": "عملاؤنا",
-          "areSaying": "",
-          "previous": "التقييمات السابقة",
-          "next": "التقييمات التالية",
-          "goToPage": "الانتقال إلى الصفحة"
-        },
-        "providers": {
-          "title": "اكتشفي",
-          "trusted": "مقدمي",
-          "wedding": "خدمات الزفاف",
-          "providers": "الموثوقين"
-        },
-        "journey": {
-          "title": "رحلة",
-          "journey": "زفافك",
-          "starts": "تبدأ",
-          "here": "من هنا"
-        },
-        "appDownload": {
-          "title": "اجعلي تخطيط حفل الزفاف أسهل",
-          "subtitle": "مع OurBride"
-        }
+      "securePayments": {
+        "title": "مدفوعات آمنة",
+        "description": "معاملات آمنة، أسعار شفافة، وضمان تقديم الخدمة."
       },
-      "trustCards": {
-        "madeForLocalBrides": {
-          "heading": "مصمم للعروسات المحليات",
-          "description": "مصمم خصيصًا للعروسات في جميع أنحاء مصر — خاصة خارج العاصمة."
-        },
-        "simpleBeautifulExperience": {
-          "heading": "تجربة بسيطة وجميلة",
-          "description": "تصميم أنثوي وسهل الاستخدام يجعل التخطيط ممتعًا."
-        },
-        "realOffersSavings": {
-          "heading": "عروض ومدخرات حقيقية",
-          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
-        },
-        "allInOnePlatform": {
-          "heading": "منصة شاملة",
-          "description": "خططي، احجزي، تسوقي، واحتفلي بكل شيء في مكان واحد."
-        },
-        "verifiedTrustedProviders": {
-          "heading": "مقدمو خدمات موثوقون ومتحققون",
-          "description": "جميع مقدمي الخدمات لدينا تم التحقق منهم بعناية وهم موثوقون."
-        },
-        "securePayments": {
-          "heading": "مدفوعات آمنة",
-          "description": "مدفوعاتك آمنة ومضمونة مع نظام الدفع الموثوق لدينا."
-        }
-      },
-      "journeySteps": {
-        "step1": {
-          "title": "الخطوة #1",
-          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
-        },
-        "step2": {
-          "title": "الخطوة #2",
-          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
-        },
-        "step3": {
-          "title": "الخطوة #3",
-          "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
-        }
+      "exclusiveOffers": {
+        "title": "عروض ومكافآت حصرية",
+        "description": "استمتعي بخصومات وخيارات هدايا مصممة ليومك الكبير."
       }
-    }, 
-    "services": {
-      "intro": {
-        "error": {
-          "loadFailed": "فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا."
-        },
-        "hero": {
-          "defaultSlides": {
-            "slide1": {
-              "label": "خدمة مميزة",
-              "title": "مكياج وتسريحة العروس",
-              "description": "خدمات تجميل احترافية للعروس لتجعلك تبدين رائعة في يومك الخاص. خبراء مكياج ومصففي شعر جاهزون لإنشاء إطلالتك المثالية كعروس.",
-              "ctaText": "احجزي الآن",
-              "discountText": "خصم 30%"
-            },
-            "slide2": {
-              "label": "الأعلى تقييمًا",
-              "title": "تصوير حفلات الزفاف",
-              "description": "التقطي لحظاتك الثمينة مع خدمات تصوير حفلات الزفاف الاحترافية. مصورون ذوو خبرة مكرسون لإنشاء ذكريات جميلة.",
-              "ctaText": "استكشفي الخدمات",
-              "discountText": "خصم 50%"
-            }
-          }
-        },
-        "sections": {
-          "why": "لماذا",
-          "brides": "العرائس",
-          "trust": "تثق",
-          "ourBride": "OurBride",
-          "todayOffersTitle": "عروض اليوم",
-          "best": "أفضل",
-          "providers": "المزودين",
-          "with": "مع",
-          "bestProducts": "أفضل المنتجات",
-          "exploreNow": "اكتشفي الآن"
-        },
-        "categories": {
-          "fallbackDescription": "كوبونات وخصومات حصرية مصممة لميزانيتك.",
-          "Choose": "اختاري",
-          "From": "من",
-          "OurProduct": "منتجاتنا",
-          "Categories": "الفئات"
-        },
-        "providers": {
-          "defaultProfession": "مزود خدمة",
-          "fallbackProductTitle": "عرض الخدمات"
-        },
-        "trustFeatures": {
-          "title": "عنوان الميزة التنافسية",
-          "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف."
-        },
-        "newsletter": {
-          "emailPlaceholder": "أدخل بريدك الإلكتروني",
-          "heading": "جاهزة توصلك أخبارنا؟",
-          "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
-        }
+    },
+    "sections": {
+      "productsSuggested": "المنتجات المقترحة لك",
+      "servicesSuggested": "الخدمات المقترحة لك",
+      "viewAll": "عرض الكل",
+      "whyTrust": {
+        "title": "لماذا",
+        "brides": "العرائس",
+        "trust": "تثق",
+        "ourServices": "بخدماتنا"
       },
-      "serviceCategories": {
-        "loading": "جاري تحميل الخدمات...",
-        "FailedtoLoadServices": "فشل تحميل الخدمات",
-        "failedPleaseTryAgain ": "فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا.",
-        "searchPlaceholder": "ابحثي عن خدمة...",
-        "servicesFound": "خدمة متاحة",
-        "page": "الصفحة",
-        "of": "من",
-        "topOffers": "أفضل العروض",
-        "servicefilters": {
-          "categories": "الفئات",
-          "clear": "مسح",
-          "price": "السعر",
-          "from": "من",
-          "to": "إلى",
-          "inStock": "متوفر",
-          "priceFromValue": "من {value} {currency}",
-          "priceToValue": "إلى {value} {currency}",
-          "availability": "التوفر",
-          "inStockOnly": "المتوفر فقط"
-        },
-        "sortServicesOptions": {
-          "default": "الافتراضي",
-          "priceLowToHigh": "من الأقل إلى الأعلى",
-          "priceHighToLow": "من الأعلى إلى الأقل",
-          "highestRated": "الأعلى تقييمًا",
-          "newestFirst": "الأحدث أولاً",
-          "mostPopular": "الأكثر شيوعًا"
-        },
-        "heroSlides": {
+      "testimonials": {
+        "title": "اقرأي",
+        "reviews": "التقييمات",
+        "rideWith": "وتنقلي",
+        "confidence": "بثقة",
+        "whatOurCustomers": "ماذا يقول",
+        "customers": "عملاؤنا",
+        "areSaying": "",
+        "previous": "التقييمات السابقة",
+        "next": "التقييمات التالية",
+        "goToPage": "الانتقال إلى الصفحة"
+      },
+      "providers": {
+        "title": "اكتشفي",
+        "trusted": "مقدمي",
+        "wedding": "خدمات الزفاف",
+        "providers": "الموثوقين"
+      },
+      "journey": {
+        "title": "رحلة",
+        "journey": "زفافك",
+        "starts": "تبدأ",
+        "here": "من هنا"
+      },
+      "appDownload": {
+        "title": "اجعلي تخطيط حفل الزفاف أسهل",
+        "subtitle": "مع OurBride"
+      }
+    },
+    "trustCards": {
+      "madeForLocalBrides": {
+        "heading": "مصمم للعروسات المحليات",
+        "description": "مصمم خصيصًا للعروسات في جميع أنحاء مصر — خاصة خارج العاصمة."
+      },
+      "simpleBeautifulExperience": {
+        "heading": "تجربة بسيطة وجميلة",
+        "description": "تصميم أنثوي وسهل الاستخدام يجعل التخطيط ممتعًا."
+      },
+      "realOffersSavings": {
+        "heading": "عروض ومدخرات حقيقية",
+        "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+      },
+      "allInOnePlatform": {
+        "heading": "منصة شاملة",
+        "description": "خططي، احجزي، تسوقي، واحتفلي بكل شيء في مكان واحد."
+      },
+      "verifiedTrustedProviders": {
+        "heading": "مقدمو خدمات موثوقون ومتحققون",
+        "description": "جميع مقدمي الخدمات لدينا تم التحقق منهم بعناية وهم موثوقون."
+      },
+      "securePayments": {
+        "heading": "مدفوعات آمنة",
+        "description": "مدفوعاتك آمنة ومضمونة مع نظام الدفع الموثوق لدينا."
+      }
+    },
+    "journeySteps": {
+      "step1": {
+        "title": "الخطوة #1",
+        "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+      },
+      "step2": {
+        "title": "الخطوة #2",
+        "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+      },
+      "step3": {
+        "title": "الخطوة #3",
+        "description": "كوبونات وخصومات حصرية مصممة لميزانيتك."
+      }
+    }
+  },
+  "services": {
+    "intro": {
+      "error": {
+        "loadFailed": "فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا."
+      },
+      "hero": {
+        "defaultSlides": {
           "slide1": {
             "label": "خدمة مميزة",
             "title": "مكياج وتسريحة العروس",
@@ -597,182 +512,24 @@
           }
         }
       },
-      "serviceDetail": {
-        "loading": {
-          "title": "جاري تحميل الخدمة..."
-        },
-        "error": {
-          "notFound": "الخدمة غير موجودة. يرجى المحاولة مرة أخرى لاحقًا.",
-          "backToServices": "العودة إلى الخدمات"
-        },
-        "backButton": {
-          "label": "العودة إلى الخدمات"
-        },
-        "badges": {
-          "topOffer": "أفضل عرض",
-          "verified": "موثوق"
-        },
-        "delivery": {
-          "bookNowAndGetBy": "احجزي الآن واحصلي عليه قبل",
-          "dateFallback": "25 أغسطس 2025"
-        },
-        "branchExpanded": {
-          "6OfOctober": "الجيزة، السادس من أكتوبر",
-          "maadi": "القاهرة، المعادي",
-          "elshikhZayed": "الجيزة، الشيخ زايد",
-          "mansoura": "المنصورة، شارع الجلاء",
-          "dokki": "الجيزة، الدقي",
-          "nasrCity": "القاهرة، مدينة نصر",
-          "corniche": "الإسكندرية، الكورنيش",
-          "zamalek": "القاهرة، الزمالك",
-          "agouza": "الجيزة، العجوزة",
-          "heliopolis": "القاهرة، مصر الجديدة"
-        },
-        "bookingCard": {
-          "startFrom": "يبدأ من",
-          "availableBranches": "الفروع المتاحة",
-          "seeMore": "عرض المزيد",
-          "seeLess": "عرض أقل",
-          "packagesDetails": "تفاصيل الباقات",
-          "loadingPackages": "جاري تحميل الباقات...",
-          "bookNow": "احجزي الآن",
-          "chatAriaLabel": "الدردشة مع المزود"
-        },
-        "reviews": {
-          "title": "التقييمات",
-          "reviewsCount": "{count} تقييم",
-          "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذه الخدمة!",
-          "seeMoreReviews": "عرض المزيد من التقييمات",
-          "writeYourReview": "اكتبي تقييمك",
-          "commentPlaceholder": "شاركي تعليقك",
-          "sendReviewAriaLabel": "إرسال التقييم",
-          "ratingCount": " تقييم",
-          "userAvatar": "مستخدم "
-        },
-        "reviewSubmit": {
-          "success": "تم إرسال التقييم بنجاح!",
-          "fail": "فشل إرسال التقييم",
-          "failTryAgain": "فشل إرسال التقييم. يرجى المحاولة مرة أخرى."
-        },
-        "favorite": {
-          "added": "تمت الإضافة إلى المفضلة",
-          "removed": "تمت الإزالة من المفضلة",
-          "fail": "فشل تحديث المفضلة",
-          "failTryAgain": "فشل تحديث المفضلة. يرجى المحاولة مرة أخرى."
-        },
-        "wishlist": {
-          "added": "تمت الإضافة إلى قائمة الأمنيات",
-          "removed": "تمت الإزالة من قائمة الأمنيات",
-          "fail": "فشل تحديث قائمة الأمنيات",
-          "failTryAgain": "فشل تحديث قائمة الأمنيات. يرجى المحاولة مرة أخرى."
-        },
-        "ratingLabels": {
-          "excellent": "ممتاز",
-          "good": "جيد",
-          "average": "متوسط",
-          "belowAverage": "أقل من المتوسط",
-          "poor": "ضعيف"
-        },
-        "newsletterOffer": {
-          "heading": "عرض 25% على منتجاتنا",
-          "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
-        },
-        "suggested": {
-          "title": "مقترح لك",
-          "viewAll": "عرض الكل",
-          "noRelated": "لا توجد خدمات ذات صلة."
-        },
-        "relativeTime": {
-          "justNow": "الآن",
-          "minute": "منذ {count} دقيقة",
-          "minutes": "منذ {count} دقيقة",
-          "hour": "منذ {count} ساعة",
-          "hours": "منذ {count} ساعة",
-          "day": "منذ {count} يوم",
-          "days": "منذ {count} يوم",
-          "month": "منذ {count} شهر",
-          "months": "منذ {count} شهر",
-          "year": "منذ {count} سنة",
-          "years": "منذ {count} سنة"
-        }
+      "sections": {
+        "why": "لماذا",
+        "brides": "العرائس",
+        "trust": "تثق",
+        "ourBride": "OurBride",
+        "todayOffersTitle": "عروض اليوم",
+        "best": "أفضل",
+        "providers": "المزودين",
+        "with": "مع",
+        "bestProducts": "أفضل المنتجات",
+        "exploreNow": "اكتشفي الآن"
       },
-      "bookingPage": {
-        "min": "دقيقة",
-        "pageTitle": "حجز موعد",
-        "loadingBookingDetails": "جاري تحميل تفاصيل الحجز...",
-        "steps": {
-          "details": "تفاصيل الحجز",
-          "datetime": "اختيار التاريخ والوقت",
-          "confirm": "تأكيد الحجز"
-        },
-        "sections": {
-          "bookingDetails": "تفاصيل الحجز",
-          "availableBranches": "الفروع المتاحة",
-          "selectStaff": "اختيار الموظف",
-          "selectYourPackage": "اختيار الباقة",
-          "packageDetails": "تفاصيل الباقة",
-          "selectDate": "اختيار التاريخ",
-          "selectTime": "اختيار الوقت",
-          "reviewTitle": "مراجعة الحجز",
-          "reviewDesc": "يرجى مراجعة تفاصيل الحجز على اليمين. بمجرد أن تكوني جاهزة، انقري على \"تأكيد الحجز\" أدناه لإكمال موعدك.",
-          "almostDoneTitle": "أوشكنا على الانتهاء!",
-          "almostDoneDesc": "سيتم تأكيد موعدك وستتلقين رسالة تأكيد.",
-          "totalPrice": "السعر الإجمالي",
-          "duration": "المدة",
-          "total": "الإجمالي",
-          "bookingSummaryTitle": "ملخص الحجز",
-          "serviceLabel": "الخدمة",
-          "servicesLabel": "الخدمات",
-          "serviceSelectedCount": "تم اختيار {count} خدمة",
-          "bookingDetailsSummary": "تفاصيل الحجز",
-          "branch": "الفرع",
-          "staff": "الموظف",
-          "package": "الباقة",
-          "dateTime": "التاريخ والوقت",
-          "termsBodyDesc": "سيترك طلبك عند الباب. بإنشاء طلبك، فإنك توافقين على تحمل المسؤولية الكاملة عنه بمجرد تسليمه.",
-          "termsTitle": "أوافق على الشروط والأحكام",
-          "termsBody": "إذا لم تكوني موجودة عند وصول الشخص المسؤول عن التسليم، فسيترك طلبك عند الباب. بإنشاء طلبك، فإنك توافقين على تحمل المسؤولية الكاملة عنه بمجرد تسليمه."
-        },
-        "actions": {
-          "continue": "متابعة",
-          "confirmBooking": "تأكيد الحجز",
-          "processing": "جاري المعالجة..."
-        },
-        "states": {
-          "failedToCreateReservation": "فشل إنشاء الحجز. يرجى المحاولة مرة أخرى.",
-          "invalidRequest": "طلب غير صالح. يرجى التحقق من المدخلات.",
-          "pollingTimeout": "الحجوزات تستغرق وقتًا أطول من المتوقع. يرجى التحقق من صفحة الحجوزات.",
-          "reservationRejected": "تم رفض الحجز. يرجى التحقق من صفحة الحجوزات للتفاصيل.",
-          "missingReservationId": "معرف الحجز مفقود. يرجى التحقق من صفحة الحجوزات.",
-          "processingReservationTitle": "معالجة الحجز",
-          "processingReservationMessage": "تمت إضافة إنشاء الحجز إلى قائمة الانتظار. جاري المعالجة...",
-          "loadingBookingDetails": "جاري تحميل تفاصيل الحجز...",
-          "loadingDates": "جاري تحميل التواريخ...",
-          "loadingTimeSlots": "جاري تحميل الأوقات المتاحة...",
-          "noTimeSlots": "لا توجد أوقات متاحة لهذا التاريخ",
-          "failedLoadTimeSlots": "فشل تحميل الأوقات المتاحة",
-          "serviceNotFoundTitle": "الخدمة غير موجودة",
-          "serviceNotFoundMsg": "الخدمة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-          "backToServices": "العودة إلى الخدمات",
-          "serviceNotFound": "الخدمة غير موجودة",
-          "failedLoadServiceTitle": "فشل تحميل تفاصيل الخدمة",
-          "missingServiceIdMsg": "يرجى توفير معرف الخدمة في الرابط",
-          "failedLoadServiceMsg": "فشل تحميل تفاصيل الخدمة. يرجى المحاولة مرة أخرى."
-        },
-        "validation": {
-          "selectBranch": "يرجى اختيار فرع",
-          "selectDate": "يرجى اختيار تاريخ",
-          "selectTime": "يرجى اختيار وقت",
-          "selectDateAndTime": "يرجى اختيار التاريخ والوقت",
-          "acceptTerms": "يجب الموافقة على الشروط والأحكام"
-        },
-        "processingModal": {
-          "title": "معالجة الحجز",
-          "message": "تمت إضافة إنشاء الحجز إلى قائمة الانتظار. جاري المعالجة..."
-        },
-        "labels": {
-          "pricePrefix": "السعر |"
-        }
+      "categories": {
+        "fallbackDescription": "كوبونات وخصومات حصرية مصممة لميزانيتك.",
+        "Choose": "اختاري",
+        "From": "من",
+        "OurProduct": "منتجاتنا",
+        "Categories": "الفئات"
       },
       "bookingConfirmationModal": {
         "title": "تأكيد الحجز",
@@ -808,461 +565,749 @@
   "productFeatures": {
     "premiumBrands": {
       "title": "علامات تجارية فاخرة",
-      "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف"
-    },
-    "bridalFriendlyFormulas": {
-      "title": "تركيبات مناسبة للعرائس",
-      "description": "منتجات مناسبة للبشرة الحساسة وتتحمل أيام المناسبات الطويلة"
-    },
-    "exclusiveDiscounts": {
-      "title": "خصومات حصرية",
-      "description": "عروض خاصة مصممة لتناسب ميزانية كل عروس"
-    },
-    "verifiedSellers": {
-      "title": "بائعون موثوقون",
-      "description": "نتعامل فقط مع مزودي خدمات تجميل موثوقين ومعتمدين"
-    }
-  },
-  "newsletterBanner": {
-    "heading": "احصلي على آخر التحديثات والعروض",
-    "description": "كوني على اطلاع دائم بأحدث مقدمي الخدمات والعروض ونصائح التخطيط للزفاف",
-    "ctaText": "اشتركي الآن"
-  },
-  "bestProvidersSection": {
-    "topText": "أفضل",
-    "highlightText": "المزودين",
-    "bottomText": "مع",
-    "bottomHighlightText": "أفضل المنتجات",
-    "buttonText": "اكتشفي الآن"
-  },
-  "productOffersSection": {
-    "title": "أفضل عروض المنتجات اليوم",
-    "timerText": "23 ساعة 45 دقيقة"
-  },
-  "categoryBanner": {
-    "heading": "جاهزة توصلك أخبارنا؟",
-    "description": "OurBride هي منصتك الشاملة لتخطيط الزفاف والتسوق. هتلاقي كل اللي محتاجاه علشان تعملي يومك المثالي.",
-    "ctaText": "إرسال"
-  },
-  "productHeroSlides": {
-    "slide1": {
-      "label": "وصل حديثًا",
-      "title": "كريم أفكا للشمس",
-      "description": "كريم شمس خفيف وغني بالرطوبة مصمم لحماية بشرتك مع الحفاظ على نعومتها ونضارتها وإشراقها الجاهز للعرائس اللواتي يرغبن في بشرة مثالية وصحية تحت المكياج.",
-      "ctaText": "اشتري الآن"
-    },
-    "slide2": {
-      "label": "الأكثر مبيعًا",
-      "title": "كريم الزفاف الأساسي",
-      "description": "منتجات عالية الجودة ليومك الخاص. اكتشفي مجموعتنا المختارة من أساسيات الزفاف المصممة لتجعلك تبدين وتشعرين بأفضل ما لديك.",
-      "ctaText": "تسوقي الآن"
-    }
-  },
-  "productCategoriesSection": {
-    "choose": "اختاري",
-    "from": "من",
-    "ourProduct": "منتجاتنا",
-    "categories": " حسب الفئات"
-  },
-  "exclusiveCoupons": {
-    "text": "كوبونات وخصومات حصرية مصممة لتناسب ميزانيتك."
-  },
-  "offerCommon": {
-    "specialOffer": "عرض خاص",
-    "buyNowAndGetBy": "اشترِ الآن واحصل عليه قبل",
-    "reviews": "التقييمات"
-  },
-  "date": {
-    "aug25_2025": "25 أغسطس 2025"
-  },
-  "provider": {
-    "makeupArtist": "خبيرة مكياج"
-  },
-  "location": {
-    "gizaShort": "الجيزة، 6 أكتو...",
-    "gizaFull": "الجيزة، مدينة السادس من أكتوبر، مبنى 15، شقة 42"
-  },
-  "reviewsSection": {
-    "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذا المنتج!",
-    "seeMore": "عرض المزيد من التقييمات",
-    "writeReview": "اكتبي تقييمك",
-    "submitSuccess": "تم إرسال التقييم بنجاح!",
-    "submitError": "فشل في إرسال التقييم",
-    "submitErrorWithReason": "حدث خطأ أثناء إرسال التقييم:",
-    "submitRetry": "فشل في إرسال التقييم. من فضلكِ حاولي مرة أخرى.",
-    "shareComments": "شاركي تعليقك"
-  },
-  "ratingSummary": {
-    "basedOnReviews": "بناءً على",
-    "reviews": "تقييمات",
-    "starsLabel": {
-      "5": "ممتاز",
-      "4": "جيد جدًا",
-      "3": "جيد",
-      "2": "مقبول",
-      "1": "ضعيف"
-    }
-  },
-  "offerBanner": {
-    "heading": "خصم 24٪ على منتجاتنا!",
-    "description": "اشتركي في النشرة البريدية واحصلي على عروض حصرية على منتجات الزفاف الفاخرة."
-  }
-  },
-  "community": {
-  "communityFeed": {
-    "createPostPlaceholder": "شاركي ما يدور في ذهنك، {name} ....",
-    "emptyMessage": "لا توجد منشورات للعرض في الوقت الحالي. كوني أول من يشارك شيئًا!",
-    "aria": {
-      "uploadImage": "رفع صورة",
-      "addReels": "إضافة ريلز",
-      "textFormat": "تنسيق النص"
-    }
-  },
-  "recentPosts": "المنشورات الأخيرة",
-  "recentArticles": "المقالات الأخيرة",
-  "topProviders": "أفضل المزودين",
-  "tabs": {
-    "community": "المجتمع",
-    "posts": "المنشورات",
-    "blogs": "المدونات",
-    "articles": "المقالات",
-    "reels": "الريلز",
-    "decision-groups": "القرارات",
-    "contests": "المسابقات",
-    "profile": "الملف الشخصي"
-  },
-  "links": {
-    "myProfile": "ملفي الشخصي"
-  },
-  "actions": {
-    "search": "بحث",
-    "clearSearch": "مسح البحث",
-    "close": "إغلاق",
-    "seeAll": "عرض الكل",
-    "follow": "متابعة",
-    "following": "متابع"
-  },
-  "placeholders": {
-    "searchInTab": "البحث في {tab}..."
-  },
-  "labels": {
-    "showingResultsFor": "عرض النتائج لـ: \"{query}\""
-  },
-  "errors": {
-    "failedToLoadCommunityData": "فشل تحميل بيانات المجتمع",
-    "unknownError": "خطأ غير معروف"
-  },
-  "user": {
-    "fallbackName": "مستخدم"
-  },
-  "states": {
-    "loading": "جاري التحميل...",
-    "noBlogsTitle": "لا توجد مدونات متاحة",
-    "noBlogsMessage": "لا توجد مدونات للعرض في الوقت الحالي.",
-    "noArticlesTitle": "لا توجد مقالات متاحة",
-    "noArticlesMessage": "لا توجد مقالات للعرض في الوقت الحالي.",
-    "noContentTitle": "لا يوجد محتوى متاح",
-    "noContentMessage": "لا يوجد محتوى للعرض في الوقت الحالي. تحققي لاحقًا أو كوني أول من يشارك شيئًا!"
-  },
-  "search": {
-    "title": {
-      "page": "البحث في المجتمع"
-    },
-    "searchBar": {
-      "placeholder": "البحث في المنشورات والمقالات والمدونات والريلز والمسابقات...",
-      "button": "بحث",
-      "filtersButton": "الفلاتر",
-      "applyFilters": "تطبيق الفلاتر",
-      "searching": "جاري البحث...",
-      "all": "الكل"
-    },
-    "filters": {
-      "title": "الفلاتر",
-      "clearAll": "مسح الكل",
-      "categoryIdLabel": "معرف الفئة",
-      "categoryIdPlaceholder": "معرف الفئة",
-      "itemIdLabel": "معرف العنصر",
-      "itemIdPlaceholder": "معرف العنصر",
-      "providerIdLabel": "معرف المزود",
-      "providerIdPlaceholder": "معرف المزود",
-      "tagIdsLabel": "معرفات العلامات (مفصولة بفواصل)",
-      "tagIdsPlaceholder": "1,2,3"
-    },
-    "contentTypes": {
-      "all": "الكل",
-      "post": "منشور",
-      "blog": "مدونة",
-      "article": "مقال",
-      "reel": "ريل",
-      "decisionGroup": "مجموعة قرارات",
-      "contest": "مسابقة"
-    },
-    "notices": {
-      "textSearchNotSupported": {
-        "title": "ملاحظة:",
-        "body": "البحث النصي غير مدعوم حاليًا من قبل واجهة برمجة التطبيقات. لا يمكن استخدام استعلام البحث \"{query}\". يرجى استخدام الفلاتر أعلاه للعثور على المحتوى حسب معرف الفئة أو معرف العنصر أو معرف المزود أو معرفات العلامات."
+      "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف",
+      "providers": {
+        "defaultProfession": "مزود خدمة",
+        "fallbackProductTitle": "عرض الخدمات"
+      },
+      "trustFeatures": {
+        "title": "عنوان الميزة التنافسية",
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف."
+      },
+      "newsletter": {
+        "emailPlaceholder": "أدخل بريدك الإلكتروني",
+        "heading": "جاهزة توصلك أخبارنا؟",
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
       }
     },
-    "empty": {
-      "startTitle": "ابدئي البحث",
-      "startSubtitle": "استخدمي الفلاتر للعثور على محتوى المجتمع حسب الفئة أو العنصر أو المزود أو العلامات"
+    "serviceCategories": {
+      "loading": "جاري تحميل الخدمات...",
+      "FailedtoLoadServices": "فشل تحميل الخدمات",
+      "failedPleaseTryAgain ": "فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا.",
+      "searchPlaceholder": "ابحثي عن خدمة...",
+      "servicesFound": "خدمة متاحة",
+      "page": "الصفحة",
+      "of": "من",
+      "topOffers": "أفضل العروض",
+      "servicefilters": {
+        "categories": "الفئات",
+        "clear": "مسح",
+        "price": "السعر",
+        "from": "من",
+        "to": "إلى",
+        "inStock": "متوفر",
+        "priceFromValue": "من {value} {currency}",
+        "priceToValue": "إلى {value} {currency}",
+        "availability": "التوفر",
+        "inStockOnly": "المتوفر فقط"
+      },
+      "sortServicesOptions": {
+        "default": "الافتراضي",
+        "priceLowToHigh": "من الأقل إلى الأعلى",
+        "priceHighToLow": "من الأعلى إلى الأقل",
+        "highestRated": "الأعلى تقييمًا",
+        "newestFirst": "الأحدث أولاً",
+        "mostPopular": "الأكثر شيوعًا"
+      },
+      "heroSlides": {
+        "slide1": {
+          "label": "خدمة مميزة",
+          "title": "مكياج وتسريحة العروس",
+          "description": "خدمات تجميل احترافية للعروس لتجعلك تبدين رائعة في يومك الخاص. خبراء مكياج ومصففي شعر جاهزون لإنشاء إطلالتك المثالية كعروس.",
+          "ctaText": "احجزي الآن",
+          "discountText": "خصم 30%"
+        },
+        "slide2": {
+          "label": "الأعلى تقييمًا",
+          "title": "تصوير حفلات الزفاف",
+          "description": "التقطي لحظاتك الثمينة مع خدمات تصوير حفلات الزفاف الاحترافية. مصورون ذوو خبرة مكرسون لإنشاء ذكريات جميلة.",
+          "ctaText": "استكشفي الخدمات",
+          "discountText": "خصم 50%"
+        }
+      }
     },
-    "results": {
-      "found": "تم العثور على {count} نتيجة"
+    "serviceDetail": {
+      "loading": {
+        "title": "جاري تحميل الخدمة..."
+      },
+      "error": {
+        "notFound": "الخدمة غير موجودة. يرجى المحاولة مرة أخرى لاحقًا.",
+        "backToServices": "العودة إلى الخدمات"
+      },
+      "backButton": {
+        "label": "العودة إلى الخدمات"
+      },
+      "badges": {
+        "topOffer": "أفضل عرض",
+        "verified": "موثوق"
+      },
+      "delivery": {
+        "bookNowAndGetBy": "احجزي الآن واحصلي عليه قبل",
+        "dateFallback": "25 أغسطس 2025"
+      },
+      "branchExpanded": {
+        "6OfOctober": "الجيزة، السادس من أكتوبر",
+        "maadi": "القاهرة، المعادي",
+        "elshikhZayed": "الجيزة، الشيخ زايد",
+        "mansoura": "المنصورة، شارع الجلاء",
+        "dokki": "الجيزة، الدقي",
+        "nasrCity": "القاهرة، مدينة نصر",
+        "corniche": "الإسكندرية، الكورنيش",
+        "zamalek": "القاهرة، الزمالك",
+        "agouza": "الجيزة، العجوزة",
+        "heliopolis": "القاهرة، مصر الجديدة"
+      },
+      "bookingCard": {
+        "startFrom": "يبدأ من",
+        "availableBranches": "الفروع المتاحة",
+        "seeMore": "عرض المزيد",
+        "seeLess": "عرض أقل",
+        "packagesDetails": "تفاصيل الباقات",
+        "loadingPackages": "جاري تحميل الباقات...",
+        "bookNow": "احجزي الآن",
+        "chatAriaLabel": "الدردشة مع المزود"
+      },
+      "reviews": {
+        "title": "التقييمات",
+        "reviewsCount": "{count} تقييم",
+        "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذه الخدمة!",
+        "seeMoreReviews": "عرض المزيد من التقييمات",
+        "writeYourReview": "اكتبي تقييمك",
+        "commentPlaceholder": "شاركي تعليقك",
+        "sendReviewAriaLabel": "إرسال التقييم",
+        "ratingCount": " تقييم",
+        "userAvatar": "مستخدم "
+      },
+      "reviewSubmit": {
+        "success": "تم إرسال التقييم بنجاح!",
+        "fail": "فشل إرسال التقييم",
+        "failTryAgain": "فشل إرسال التقييم. يرجى المحاولة مرة أخرى."
+      },
+      "favorite": {
+        "added": "تمت الإضافة إلى المفضلة",
+        "removed": "تمت الإزالة من المفضلة",
+        "fail": "فشل تحديث المفضلة",
+        "failTryAgain": "فشل تحديث المفضلة. يرجى المحاولة مرة أخرى."
+      },
+      "wishlist": {
+        "added": "تمت الإضافة إلى قائمة الأمنيات",
+        "removed": "تمت الإزالة من قائمة الأمنيات",
+        "fail": "فشل تحديث قائمة الأمنيات",
+        "failTryAgain": "فشل تحديث قائمة الأمنيات. يرجى المحاولة مرة أخرى."
+      },
+      "ratingLabels": {
+        "excellent": "ممتاز",
+        "good": "جيد",
+        "average": "متوسط",
+        "belowAverage": "أقل من المتوسط",
+        "poor": "ضعيف"
+      },
+      "newsletterOffer": {
+        "heading": "عرض 25% على منتجاتنا",
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
+      },
+      "suggested": {
+        "title": "مقترح لك",
+        "viewAll": "عرض الكل",
+        "noRelated": "لا توجد خدمات ذات صلة."
+      },
+      "relativeTime": {
+        "justNow": "الآن",
+        "minute": "منذ {count} دقيقة",
+        "minutes": "منذ {count} دقيقة",
+        "hour": "منذ {count} ساعة",
+        "hours": "منذ {count} ساعة",
+        "day": "منذ {count} يوم",
+        "days": "منذ {count} يوم",
+        "month": "منذ {count} شهر",
+        "months": "منذ {count} شهر",
+        "year": "منذ {count} سنة",
+        "years": "منذ {count} سنة"
+      }
     },
-    "states": {
-      "errorTitle": "خطأ في البحث",
-      "errorFallback": "حدث خطأ أثناء البحث",
-      "noResultsTitle": "لم يتم العثور على نتائج",
-      "noResultsSubtitle": "حاولي تعديل البحث أو الفلاتر",
-      "noPostsTitle": "لا توجد منشورات متاحة",
-      "noPostsMessage": "لا توجد منشورات للعرض في الوقت الحالي.",
-      "noReelsTitle": "لا توجد ريلز متاحة",
-      "noReelsMessage": "لا توجد ريلز للعرض في الوقت الحالي."
-  },
-    "actions": {
-      "search": "بحث",
-      "close": "إغلاق",
-      "clearSearch": "مسح البحث"
+    "bookingPage": {
+      "min": "دقيقة",
+      "pageTitle": "حجز موعد",
+      "loadingBookingDetails": "جاري تحميل تفاصيل الحجز...",
+      "steps": {
+        "details": "تفاصيل الحجز",
+        "datetime": "اختيار التاريخ والوقت",
+        "confirm": "تأكيد الحجز"
+      },
+      "sections": {
+        "bookingDetails": "تفاصيل الحجز",
+        "availableBranches": "الفروع المتاحة",
+        "selectStaff": "اختيار الموظف",
+        "selectYourPackage": "اختيار الباقة",
+        "packageDetails": "تفاصيل الباقة",
+        "selectDate": "اختيار التاريخ",
+        "selectTime": "اختيار الوقت",
+        "reviewTitle": "مراجعة الحجز",
+        "reviewDesc": "يرجى مراجعة تفاصيل الحجز على اليمين. بمجرد أن تكوني جاهزة، انقري على \"تأكيد الحجز\" أدناه لإكمال موعدك.",
+        "almostDoneTitle": "أوشكنا على الانتهاء!",
+        "almostDoneDesc": "سيتم تأكيد موعدك وستتلقين رسالة تأكيد.",
+        "totalPrice": "السعر الإجمالي",
+        "duration": "المدة",
+        "total": "الإجمالي",
+        "bookingSummaryTitle": "ملخص الحجز",
+        "serviceLabel": "الخدمة",
+        "servicesLabel": "الخدمات",
+        "serviceSelectedCount": "تم اختيار {count} خدمة",
+        "bookingDetailsSummary": "تفاصيل الحجز",
+        "branch": "الفرع",
+        "staff": "الموظف",
+        "package": "الباقة",
+        "dateTime": "التاريخ والوقت",
+        "termsBodyDesc": "سيترك طلبك عند الباب. بإنشاء طلبك، فإنك توافقين على تحمل المسؤولية الكاملة عنه بمجرد تسليمه.",
+        "termsTitle": "أوافق على الشروط والأحكام",
+        "termsBody": "إذا لم تكوني موجودة عند وصول الشخص المسؤول عن التسليم، فسيترك طلبك عند الباب. بإنشاء طلبك، فإنك توافقين على تحمل المسؤولية الكاملة عنه بمجرد تسليمه."
+      },
+      "actions": {
+        "continue": "متابعة",
+        "confirmBooking": "تأكيد الحجز",
+        "processing": "جاري المعالجة..."
+      },
+      "states": {
+        "failedToCreateReservation": "فشل إنشاء الحجز. يرجى المحاولة مرة أخرى.",
+        "invalidRequest": "طلب غير صالح. يرجى التحقق من المدخلات.",
+        "pollingTimeout": "الحجوزات تستغرق وقتًا أطول من المتوقع. يرجى التحقق من صفحة الحجوزات.",
+        "reservationRejected": "تم رفض الحجز. يرجى التحقق من صفحة الحجوزات للتفاصيل.",
+        "missingReservationId": "معرف الحجز مفقود. يرجى التحقق من صفحة الحجوزات.",
+        "processingReservationTitle": "معالجة الحجز",
+        "processingReservationMessage": "تمت إضافة إنشاء الحجز إلى قائمة الانتظار. جاري المعالجة...",
+        "loadingBookingDetails": "جاري تحميل تفاصيل الحجز...",
+        "loadingDates": "جاري تحميل التواريخ...",
+        "loadingTimeSlots": "جاري تحميل الأوقات المتاحة...",
+        "noTimeSlots": "لا توجد أوقات متاحة لهذا التاريخ",
+        "failedLoadTimeSlots": "فشل تحميل الأوقات المتاحة",
+        "serviceNotFoundTitle": "الخدمة غير موجودة",
+        "serviceNotFoundMsg": "الخدمة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+        "backToServices": "العودة إلى الخدمات",
+        "serviceNotFound": "الخدمة غير موجودة",
+        "failedLoadServiceTitle": "فشل تحميل تفاصيل الخدمة",
+        "missingServiceIdMsg": "يرجى توفير معرف الخدمة في الرابط",
+        "failedLoadServiceMsg": "فشل تحميل تفاصيل الخدمة. يرجى المحاولة مرة أخرى."
+      },
+      "validation": {
+        "selectBranch": "يرجى اختيار فرع",
+        "selectDate": "يرجى اختيار تاريخ",
+        "selectTime": "يرجى اختيار وقت",
+        "selectDateAndTime": "يرجى اختيار التاريخ والوقت",
+        "acceptTerms": "يجب الموافقة على الشروط والأحكام"
+      },
+      "processingModal": {
+        "title": "معالجة الحجز",
+        "message": "تمت إضافة إنشاء الحجز إلى قائمة الانتظار. جاري المعالجة..."
+      },
+      "labels": {
+        "pricePrefix": "السعر |"
+      }
+    },
+    "bookingConfirmationModal": {
+      "title": "تأكيد الحجز",
+      "message": "تم تأكيد حجزك. يرجى التحقق من بريدك الإلكتروني للتفاصيل.",
+      "successMessage": "تم إرسال طلبك!",
+      "successDescription": "تم إرسال طلب الخدمة بنجاح. تم إشعار المزود وستتلقين تحديثًا بمجرد الرد.",
+      "trackRequest": "تتبع الطلب"
     }
   },
-  "postCard": {
-  "failedToToggleLike": "فشل تبديل الإعجاب",
-  "sharedSuccessfully": "تم المشاركة بنجاح! تم نسخ الرابط إلى الحافظة.",
-  "failedToSharePost": "فشل مشاركة المنشور",
-  "failedToToggleFavorite": "فشل تبديل المفضلة",
-  "fallbackName": "مستخدم",
-  "likes": "إعجابات",
-  "comments": "تعليقات",
-  "shares": "مشاركات",
-  "favorites": "مفضلة"
-  },
-  "communityRightSidebar": {
-  "commentAdded": "تمت إضافة التعليق!",
-  "linkCopied": "تم نسخ الرابط إلى الحافظة!",
-  "noComments": "لا توجد تعليقات بعد. كوني أول من يعلق!",
-  "shareYourComments": "شاركي تعليقك",
-  "suggestsToFollow": "اقتراحات للمتابعة",
-  "provider": "مزود",
-  "popularTags": "العلامات الشائعة",
-  "topArticles": "أفضل المقالات",
-  "communityPosts": "منشورات المجتمع"
-  },
-  "articleDetails": {
-  "loading": "جاري تحميل المقال...",
-  "notFoundTitle": "المقال غير موجود",
-  "notFoundMessage": "المقال الذي تبحثين عنه غير موجود أو تمت إزالتها.",
-  "commentAdded": "تمت إضافة التعليق بنجاح!",
-  "failedToAddComment": "فشل إضافة التعليق",
-  "failedToToggleLike": "فشل تبديل الإعجاب",
-  "sharedSuccessfully": "تم المشاركة بنجاح! تم نسخ الرابط إلى الحافظة.",
-  "failedToShareArticle": "فشل مشاركة المقال",
-  "failedToToggleFavorite": "فشل تبديل المفضلة",
-  "userIDNotAvailable": "معرف المستخدم غير متاح",
-  "unfollowedSuccessfully": "تم إلغاء المتابعة بنجاح",
-  "followedSuccessfully": "تمت المتابعة بنجاح",
-  "failedToToggleFollow": "فشل تبديل المتابعة",
-  "load": "جاري التحميل...",
-  "following": "متابع",
-  "follow": "متابعة",
-  "noComments": "لا توجد تعليقات بعد. كوني أول من يعلق!",
-  "writeComment": "اكتبي تعليقًا...",
-  "postComment": "نشر التعليق",
-  "posting": "جاري النشر...",
-  "articleCard": {
-    "readMore": "اقرأي المزيد",
-    "minRead": "دقيقة قراءة"
-  }
-  },
-  "blogDetails": {
-  "loading": "جاري تحميل المدونة...",
-  "blogNotFoundTitle": "المدونة غير موجودة",
-  "blogNotFoundMessage": "المدونة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-  "Anonymous": "مجهول",
-  "user": "مستخدم",
-  "failedToShareBlog": "فشل مشاركة المدونة"
-  },
-  "contestDetails": {
-  "loading": "جاري تحميل المسابقة...",
-  "contestNotFoundTitle": "المسابقة غير موجودة",
-  "contestNotFoundMessage": "المسابقة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-  "failedToShareContest": "فشل مشاركة المسابقة",
-  "alreadyJoined": "لقد انضممتِ بالفعل إلى هذه المسابقة!",
-  "joinedSuccessfully": "تم الانضمام إلى المسابقة بنجاح!",
-  "active": "نشطة",
-  "ended": "انتهت",
-  "upcoming": "قادمة",
-  "prize": "الجائزة",
-  "participants": "المشاركون",
-  "ends": "تنتهي",
-  "joinContest": "الانضمام إلى المسابقة",
-  "contestEnded": "انتهت المسابقة",
-  "joined": "منضم",
-  "noContestsTitle": "لا توجد مسابقات متاحة",
-  "noContestsMessage": "لا توجد مسابقات للعرض في الوقت الحالي."
-  },
-  "decisionGroupDetails": {
-  "loading": "جاري تحميل مجموعة القرارات...",
-  "decisionGroupNotFoundTitle": "مجموعة القرارات غير موجودة",
-  "decisionGroupNotFoundMessage": "مجموعة القرارات التي تبحثين عنها غير موجودة أو تمت إزالتها.",
-  "haveAlreadyVoted": "لقد صوّتِ بالفعل!",
-  "voteCastSuccessfully": "تم إرسال صوتك بنجاح!",
-  "failedToVote": "فشل التصويت",
-  "votes": "أصوات",
-  "participants": "مشاركون",
-  "totalVotes": "إجمالي الأصوات",
-  "noDecisionGroupsTitle": "لا توجد مجموعات قرارات متاحة",
-  "noDecisionGroupsMessage": "لا توجد مجموعات قرارات للعرض في الوقت الحالي.",
-  "moreOptions": "خيارات أخرى"
-  },
-  "profile": {
-  "profileIdRequired": "معرف الملف الشخصي مطلوب",
-  "profileIdRequiredMessage": "يرجى توفير معرف الملف الشخصي في الرابط.",
-  "loading": "جاري تحميل الملف الشخصي...",
-  "profileNotFoundTitle": "الملف الشخصي غير موجود",
-  "profileNotFoundMessage": "الملف الشخصي الذي تبحثين عنه غير موجود أو تمت إزالتها.",
-  "tabs": {
-    "all": "الكل",
-    "withCount": "{label} ({count})"
-  },
-  "headings": {
-    "featuredContent": "المحتوى المميز",
-    "allContent": "كل المحتوى"
-  },
-  "stats": {
-    "totalContent": "إجمالي المحتوى",
-    "followers": "متابعون",
-    "following": "متابع",
-    "likes": "إعجابات",
-    "views": "مشاهدات"
-  },
-  "states": {
-    "noContentFound": "لم يتم العثور على محتوى"
-  },
-  "aria": {
-    "goBack": "العودة",
-    "like": "إعجاب",
-    "unlike": "إلغاء الإعجاب",
-    "addToFavorites": "إضافة إلى المفضلة",
-    "removeFromFavorites": "إزالة من المفضلة",
-    "moreOptions": "خيارات أخرى",
-    "coverAlt": "غلاف {name}",
-    "avatarAlt": "صورة {name} الشخصية"
-  },
-  "toasts": {
-    "liked": "تم الإعجاب",
-    "unliked": "تم إلغاء الإعجاب",
-    "addedToFavorites": "تمت الإضافة إلى المفضلة",
-    "removedFromFavorites": "تمت الإزالة من المفضلة"
-  }
-  },
-  "createPostModal": {
-  "title": "إنشاء منشور",
-  "privacy": {
-    "public": "عام",
-    "friends": "أصدقاء",
-    "private": "خاص"
-  },
-  "fields": {
-    "titlePlaceholder": "عنوان المنشور (اختياري)",
-    "contentPlaceholder": "شاركي ما يدور في ذهنك، {name}..."
-  },
-  "buttons": {
-    "post": "نشر",
-    "posting": "جاري النشر..."
-  },
-  "aria": {
-    "close": "إغلاق النافذة",
-    "removeImage": "إزالة الصورة",
-    "uploadImage": "رفع صورة",
-    "generateAi": "إنشاء محتوى بالذكاء الاصطناعي",
-    "addReels": "إضافة ريلز",
-    "textFormat": "تنسيق النص"
-  },
-  "tooltips": {
-    "maxImages": "الحد الأقصى {max} صورة",
-    "uploadImage": "رفع صورة",
-    "generateAi": "إنشاء محتوى بالذكاء الاصطناعي",
-    "addVideoComingSoon": "إضافة فيديو (قريبًا)",
-    "textFormatComingSoon": "تنسيق النص (قريبًا)"
-  },
-  "toasts": {
-    "uploadLimit": "يمكنك رفع ما يصل إلى {max} صورة فقط. سيتم رفع أول {count} صورة فقط.",
-    "uploadFileFail": "فشل رفع {fileName}",
-    "uploadSuccess": "تم رفع {count} صورة بنجاح",
-    "uploadFail": "فشل رفع الصور",
-    "generateNeedInput": "يرجى إدخال عنوان أو بعض المحتوى للإنشاء منه",
-    "generateSuccess": "تم إنشاء المحتوى بنجاح!",
-    "generateFail": "فشل إنشاء المحتوى. يرجى المحاولة مرة أخرى.",
-    "postNeedInput": "يرجى إدخال عنوان أو محتوى لمنشورك",
-    "postSuccess": "تم إنشاء المنشور بنجاح!",
-    "postFail": "فشل إنشاء المنشور. يرجى المحاولة مرة أخرى.",
-    "postNoResponse": "فشل إنشاء المنشور: لا توجد استجابة من الخادم"
-  },
-  "fallback": {
-    "newPostTitle": "منشور جديد"
-  }
-  }
-},
-"reelDetails": {
-  "loading": "جاري تحميل الريل...",
-  "reelNotFoundTitle": "الريل غير موجود",
-  "reelNotFoundMessage": "الريل الذي تبحثين عنه غير موجود أو تمت إزالتها."
-},
-"postDetails": {
-  "loading": "جاري تحميل المنشور...",
-  "postNotFoundTitle": "المنشور غير موجود",
-  "postNotFoundMessage": "المنشور الذي تبحثين عنه غير موجود أو تمت إزالتها."
-},
-"footer": {
-  "description": "منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
-  "downloadApp": "تحميل تطبيق Ourbride",
-  "socialLinks": "روابط التواصل الاجتماعي",
-  "sections": {
-    "mainPages": {
-      "title": "الصفحات الرئيسية",
-      "home": "الرئيسية",
-      "products": "المنتجات",
-      "services": "الخدمات",
-      "community": "المجتمع"
+  "products": {
+    "whyBridesChooseProducts": {
+      "why": "لماذا",
+      "brides": "العرائس",
+      "choose": "يخترن",
+      "ourBrideProducts": "منتجات OurBride"
     },
-    "eventsPlanning": {
-      "title": "تخطيط الفعاليات",
-      "myEvents": "فعالياتي",
-      "eventsDay": "يوم الفعاليات",
-      "budgetPlanning": "تخطيط الميزانية",
-      "guestList": "قائمة الضيوف",
-      "todoList": "قائمة المهام"
+    "productFeatures": {
+      "premiumBrands": {
+        "title": "علامات تجارية فاخرة",
+        "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف"
+      },
+      "bridalFriendlyFormulas": {
+        "title": "تركيبات مناسبة للعرائس",
+        "description": "منتجات مناسبة للبشرة الحساسة وتتحمل أيام المناسبات الطويلة"
+      },
+      "exclusiveDiscounts": {
+        "title": "خصومات حصرية",
+        "description": "عروض خاصة مصممة لتناسب ميزانية كل عروس"
+      },
+      "verifiedSellers": {
+        "title": "بائعون موثوقون",
+        "description": "نتعامل فقط مع مزودي خدمات تجميل موثوقين ومعتمدين"
+      }
     },
-    "legal": {
-      "title": "قانوني",
-      "privacyPolicy": "سياسة الخصوصية",
-      "termsConditions": "الشروط والأحكام",
-      "settings": "الإعدادات"
+    "newsletterBanner": {
+      "heading": "احصلي على آخر التحديثات والعروض",
+      "description": "كوني على اطلاع دائم بأحدث مقدمي الخدمات والعروض ونصائح التخطيط للزفاف",
+      "ctaText": "اشتركي الآن"
     },
-    "support": {
-      "title": "الدعم",
-      "helpCenter": "مركز المساعدة",
-      "aboutUs": "من نحن",
-      "shipping": "الشحن",
-      "returns": "الإرجاع",
-      "downloadApp": "تحميل التطبيق",
-      "sitemap": "خريطة الموقع"
+    "bestProvidersSection": {
+      "topText": "أفضل",
+      "highlightText": "المزودين",
+      "bottomText": "مع",
+      "bottomHighlightText": "أفضل المنتجات",
+      "buttonText": "اكتشفي الآن"
     },
-    "community": {
-      "title": "المجتمع",
+    "productOffersSection": {
+      "title": "أفضل عروض المنتجات اليوم",
+      "timerText": "23 ساعة 45 دقيقة"
+    },
+    "categoryBanner": {
+      "heading": "جاهزة توصلك أخبارنا؟",
+      "description": "OurBride هي منصتك الشاملة لتخطيط الزفاف والتسوق. هتلاقي كل اللي محتاجاه علشان تعملي يومك المثالي.",
+      "ctaText": "إرسال"
+    },
+    "productHeroSlides": {
+      "slide1": {
+        "label": "وصل حديثًا",
+        "title": "كريم أفكا للشمس",
+        "description": "كريم شمس خفيف وغني بالرطوبة مصمم لحماية بشرتك مع الحفاظ على نعومتها ونضارتها وإشراقها الجاهز للعرائس اللواتي يرغبن في بشرة مثالية وصحية تحت المكياج.",
+        "ctaText": "اشتري الآن"
+      },
+      "slide2": {
+        "label": "الأكثر مبيعًا",
+        "title": "كريم الزفاف الأساسي",
+        "description": "منتجات عالية الجودة ليومك الخاص. اكتشفي مجموعتنا المختارة من أساسيات الزفاف المصممة لتجعلك تبدين وتشعرين بأفضل ما لديك.",
+        "ctaText": "تسوقي الآن"
+      }
+    },
+    "productCategoriesSection": {
+      "choose": "اختاري",
+      "from": "من",
+      "ourProduct": "منتجاتنا",
+      "categories": " حسب الفئات"
+    },
+    "exclusiveCoupons": {
+      "text": "كوبونات وخصومات حصرية مصممة لتناسب ميزانيتك."
+    },
+    "offerCommon": {
+      "specialOffer": "عرض خاص",
+      "buyNowAndGetBy": "اشترِ الآن واحصل عليه قبل",
+      "reviews": "التقييمات"
+    },
+    "date": {
+      "aug25_2025": "25 أغسطس 2025"
+    },
+    "provider": {
+      "makeupArtist": "خبيرة مكياج"
+    },
+    "location": {
+      "gizaShort": "الجيزة، 6 أكتو...",
+      "gizaFull": "الجيزة، مدينة السادس من أكتوبر، مبنى 15، شقة 42"
+    },
+    "reviewsSection": {
+      "noReviews": "لا توجد تقييمات بعد. كوني أول من يقيّم هذا المنتج!",
+      "seeMore": "عرض المزيد من التقييمات",
+      "writeReview": "اكتبي تقييمك",
+      "submitSuccess": "تم إرسال التقييم بنجاح!",
+      "submitError": "فشل في إرسال التقييم",
+      "submitErrorWithReason": "حدث خطأ أثناء إرسال التقييم:",
+      "submitRetry": "فشل في إرسال التقييم. من فضلكِ حاولي مرة أخرى.",
+      "shareComments": "شاركي تعليقك"
+    },
+    "ratingSummary": {
+      "basedOnReviews": "بناءً على",
+      "reviews": "تقييمات",
+      "starsLabel": {
+        "5": "ممتاز",
+        "4": "جيد جدًا",
+        "3": "جيد",
+        "2": "مقبول",
+        "1": "ضعيف"
+      }
+    },
+    "offerBanner": {
+      "heading": "خصم 24٪ على منتجاتنا!",
+      "description": "اشتركي في النشرة البريدية واحصلي على عروض حصرية على منتجات الزفاف الفاخرة."
+    }
+  },
+  "community": {
+    "communityFeed": {
+      "createPostPlaceholder": "شاركي ما يدور في ذهنك، {name} ....",
+      "emptyMessage": "لا توجد منشورات للعرض في الوقت الحالي. كوني أول من يشارك شيئًا!",
+      "aria": {
+        "uploadImage": "رفع صورة",
+        "addReels": "إضافة ريلز",
+        "textFormat": "تنسيق النص"
+      }
+    },
+    "recentPosts": "المنشورات الأخيرة",
+    "recentArticles": "المقالات الأخيرة",
+    "topProviders": "أفضل المزودين",
+    "tabs": {
+      "community": "المجتمع",
       "posts": "المنشورات",
       "blogs": "المدونات",
       "articles": "المقالات",
       "reels": "الريلز",
-      "decisionGroups": "مجموعات القرارات",
-      "contests": "المسابقات"
+      "decision-groups": "القرارات",
+      "contests": "المسابقات",
+      "profile": "الملف الشخصي"
+    },
+    "links": {
+      "myProfile": "ملفي الشخصي"
+    },
+    "actions": {
+      "search": "بحث",
+      "clearSearch": "مسح البحث",
+      "close": "إغلاق",
+      "seeAll": "عرض الكل",
+      "follow": "متابعة",
+      "following": "متابع"
+    },
+    "placeholders": {
+      "searchInTab": "البحث في {tab}..."
+    },
+    "labels": {
+      "showingResultsFor": "عرض النتائج لـ: \"{query}\""
+    },
+    "errors": {
+      "failedToLoadCommunityData": "فشل تحميل بيانات المجتمع",
+      "unknownError": "خطأ غير معروف"
+    },
+    "user": {
+      "fallbackName": "مستخدم"
+    },
+    "states": {
+      "loading": "جاري التحميل...",
+      "noBlogsTitle": "لا توجد مدونات متاحة",
+      "noBlogsMessage": "لا توجد مدونات للعرض في الوقت الحالي.",
+      "noArticlesTitle": "لا توجد مقالات متاحة",
+      "noArticlesMessage": "لا توجد مقالات للعرض في الوقت الحالي.",
+      "noContentTitle": "لا يوجد محتوى متاح",
+      "noContentMessage": "لا يوجد محتوى للعرض في الوقت الحالي. تحققي لاحقًا أو كوني أول من يشارك شيئًا!"
+    },
+    "search": {
+      "title": {
+        "page": "البحث في المجتمع"
+      },
+      "searchBar": {
+        "placeholder": "البحث في المنشورات والمقالات والمدونات والريلز والمسابقات...",
+        "button": "بحث",
+        "filtersButton": "الفلاتر",
+        "applyFilters": "تطبيق الفلاتر",
+        "searching": "جاري البحث...",
+        "all": "الكل"
+      },
+      "filters": {
+        "title": "الفلاتر",
+        "clearAll": "مسح الكل",
+        "categoryIdLabel": "معرف الفئة",
+        "categoryIdPlaceholder": "معرف الفئة",
+        "itemIdLabel": "معرف العنصر",
+        "itemIdPlaceholder": "معرف العنصر",
+        "providerIdLabel": "معرف المزود",
+        "providerIdPlaceholder": "معرف المزود",
+        "tagIdsLabel": "معرفات العلامات (مفصولة بفواصل)",
+        "tagIdsPlaceholder": "1,2,3"
+      },
+      "contentTypes": {
+        "all": "الكل",
+        "post": "منشور",
+        "blog": "مدونة",
+        "article": "مقال",
+        "reel": "ريل",
+        "decisionGroup": "مجموعة قرارات",
+        "contest": "مسابقة"
+      },
+      "notices": {
+        "textSearchNotSupported": {
+          "title": "ملاحظة:",
+          "body": "البحث النصي غير مدعوم حاليًا من قبل واجهة برمجة التطبيقات. لا يمكن استخدام استعلام البحث \"{query}\". يرجى استخدام الفلاتر أعلاه للعثور على المحتوى حسب معرف الفئة أو معرف العنصر أو معرف المزود أو معرفات العلامات."
+        }
+      },
+      "empty": {
+        "startTitle": "ابدئي البحث",
+        "startSubtitle": "استخدمي الفلاتر للعثور على محتوى المجتمع حسب الفئة أو العنصر أو المزود أو العلامات"
+      },
+      "results": {
+        "found": "تم العثور على {count} نتيجة"
+      },
+      "states": {
+        "errorTitle": "خطأ في البحث",
+        "errorFallback": "حدث خطأ أثناء البحث",
+        "noResultsTitle": "لم يتم العثور على نتائج",
+        "noResultsSubtitle": "حاولي تعديل البحث أو الفلاتر",
+        "noPostsTitle": "لا توجد منشورات متاحة",
+        "noPostsMessage": "لا توجد منشورات للعرض في الوقت الحالي.",
+        "noReelsTitle": "لا توجد ريلز متاحة",
+        "noReelsMessage": "لا توجد ريلز للعرض في الوقت الحالي."
+      },
+      "actions": {
+        "search": "بحث",
+        "close": "إغلاق",
+        "clearSearch": "مسح البحث"
+      }
+    },
+    "postCard": {
+      "failedToToggleLike": "فشل تبديل الإعجاب",
+      "sharedSuccessfully": "تم المشاركة بنجاح! تم نسخ الرابط إلى الحافظة.",
+      "failedToSharePost": "فشل مشاركة المنشور",
+      "failedToToggleFavorite": "فشل تبديل المفضلة",
+      "fallbackName": "مستخدم",
+      "likes": "إعجابات",
+      "comments": "تعليقات",
+      "shares": "مشاركات",
+      "favorites": "مفضلة"
+    },
+    "communityRightSidebar": {
+      "commentAdded": "تمت إضافة التعليق!",
+      "linkCopied": "تم نسخ الرابط إلى الحافظة!",
+      "noComments": "لا توجد تعليقات بعد. كوني أول من يعلق!",
+      "shareYourComments": "شاركي تعليقك",
+      "suggestsToFollow": "اقتراحات للمتابعة",
+      "provider": "مزود",
+      "popularTags": "العلامات الشائعة",
+      "topArticles": "أفضل المقالات",
+      "communityPosts": "منشورات المجتمع"
+    },
+    "articleDetails": {
+      "loading": "جاري تحميل المقال...",
+      "notFoundTitle": "المقال غير موجود",
+      "notFoundMessage": "المقال الذي تبحثين عنه غير موجود أو تمت إزالتها.",
+      "commentAdded": "تمت إضافة التعليق بنجاح!",
+      "failedToAddComment": "فشل إضافة التعليق",
+      "failedToToggleLike": "فشل تبديل الإعجاب",
+      "sharedSuccessfully": "تم المشاركة بنجاح! تم نسخ الرابط إلى الحافظة.",
+      "failedToShareArticle": "فشل مشاركة المقال",
+      "failedToToggleFavorite": "فشل تبديل المفضلة",
+      "userIDNotAvailable": "معرف المستخدم غير متاح",
+      "unfollowedSuccessfully": "تم إلغاء المتابعة بنجاح",
+      "followedSuccessfully": "تمت المتابعة بنجاح",
+      "failedToToggleFollow": "فشل تبديل المتابعة",
+      "load": "جاري التحميل...",
+      "following": "متابع",
+      "follow": "متابعة",
+      "noComments": "لا توجد تعليقات بعد. كوني أول من يعلق!",
+      "writeComment": "اكتبي تعليقًا...",
+      "postComment": "نشر التعليق",
+      "posting": "جاري النشر...",
+      "articleCard": {
+        "readMore": "اقرأي المزيد",
+        "minRead": "دقيقة قراءة"
+      }
+    },
+    "blogDetails": {
+      "loading": "جاري تحميل المدونة...",
+      "blogNotFoundTitle": "المدونة غير موجودة",
+      "blogNotFoundMessage": "المدونة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+      "Anonymous": "مجهول",
+      "user": "مستخدم",
+      "failedToShareBlog": "فشل مشاركة المدونة"
+    },
+    "contestDetails": {
+      "loading": "جاري تحميل المسابقة...",
+      "contestNotFoundTitle": "المسابقة غير موجودة",
+      "contestNotFoundMessage": "المسابقة التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+      "failedToShareContest": "فشل مشاركة المسابقة",
+      "alreadyJoined": "لقد انضممتِ بالفعل إلى هذه المسابقة!",
+      "joinedSuccessfully": "تم الانضمام إلى المسابقة بنجاح!",
+      "active": "نشطة",
+      "ended": "انتهت",
+      "upcoming": "قادمة",
+      "prize": "الجائزة",
+      "participants": "المشاركون",
+      "ends": "تنتهي",
+      "joinContest": "الانضمام إلى المسابقة",
+      "contestEnded": "انتهت المسابقة",
+      "joined": "منضم",
+      "noContestsTitle": "لا توجد مسابقات متاحة",
+      "noContestsMessage": "لا توجد مسابقات للعرض في الوقت الحالي."
+    },
+    "decisionGroupDetails": {
+      "loading": "جاري تحميل مجموعة القرارات...",
+      "decisionGroupNotFoundTitle": "مجموعة القرارات غير موجودة",
+      "decisionGroupNotFoundMessage": "مجموعة القرارات التي تبحثين عنها غير موجودة أو تمت إزالتها.",
+      "haveAlreadyVoted": "لقد صوّتِ بالفعل!",
+      "voteCastSuccessfully": "تم إرسال صوتك بنجاح!",
+      "failedToVote": "فشل التصويت",
+      "votes": "أصوات",
+      "participants": "مشاركون",
+      "totalVotes": "إجمالي الأصوات",
+      "noDecisionGroupsTitle": "لا توجد مجموعات قرارات متاحة",
+      "noDecisionGroupsMessage": "لا توجد مجموعات قرارات للعرض في الوقت الحالي.",
+      "moreOptions": "خيارات أخرى"
+    },
+    "profile": {
+      "profileIdRequired": "معرف الملف الشخصي مطلوب",
+      "profileIdRequiredMessage": "يرجى توفير معرف الملف الشخصي في الرابط.",
+      "loading": "جاري تحميل الملف الشخصي...",
+      "profileNotFoundTitle": "الملف الشخصي غير موجود",
+      "profileNotFoundMessage": "الملف الشخصي الذي تبحثين عنه غير موجود أو تمت إزالتها.",
+      "tabs": {
+        "all": "الكل",
+        "withCount": "{label} ({count})"
+      },
+      "headings": {
+        "featuredContent": "المحتوى المميز",
+        "allContent": "كل المحتوى"
+      },
+      "stats": {
+        "totalContent": "إجمالي المحتوى",
+        "followers": "متابعون",
+        "following": "متابع",
+        "likes": "إعجابات",
+        "views": "مشاهدات"
+      },
+      "states": {
+        "noContentFound": "لم يتم العثور على محتوى"
+      },
+      "aria": {
+        "goBack": "العودة",
+        "like": "إعجاب",
+        "unlike": "إلغاء الإعجاب",
+        "addToFavorites": "إضافة إلى المفضلة",
+        "removeFromFavorites": "إزالة من المفضلة",
+        "moreOptions": "خيارات أخرى",
+        "coverAlt": "غلاف {name}",
+        "avatarAlt": "صورة {name} الشخصية"
+      },
+      "toasts": {
+        "liked": "تم الإعجاب",
+        "unliked": "تم إلغاء الإعجاب",
+        "addedToFavorites": "تمت الإضافة إلى المفضلة",
+        "removedFromFavorites": "تمت الإزالة من المفضلة"
+      }
+    },
+    "createPostModal": {
+      "title": "إنشاء منشور",
+      "privacy": {
+        "public": "عام",
+        "friends": "أصدقاء",
+        "private": "خاص"
+      },
+      "fields": {
+        "titlePlaceholder": "عنوان المنشور (اختياري)",
+        "contentPlaceholder": "شاركي ما يدور في ذهنك، {name}..."
+      },
+      "buttons": {
+        "post": "نشر",
+        "posting": "جاري النشر..."
+      },
+      "aria": {
+        "close": "إغلاق النافذة",
+        "removeImage": "إزالة الصورة",
+        "uploadImage": "رفع صورة",
+        "generateAi": "إنشاء محتوى بالذكاء الاصطناعي",
+        "addReels": "إضافة ريلز",
+        "textFormat": "تنسيق النص"
+      },
+      "tooltips": {
+        "maxImages": "الحد الأقصى {max} صورة",
+        "uploadImage": "رفع صورة",
+        "generateAi": "إنشاء محتوى بالذكاء الاصطناعي",
+        "addVideoComingSoon": "إضافة فيديو (قريبًا)",
+        "textFormatComingSoon": "تنسيق النص (قريبًا)"
+      },
+      "toasts": {
+        "uploadLimit": "يمكنك رفع ما يصل إلى {max} صورة فقط. سيتم رفع أول {count} صورة فقط.",
+        "uploadFileFail": "فشل رفع {fileName}",
+        "uploadSuccess": "تم رفع {count} صورة بنجاح",
+        "uploadFail": "فشل رفع الصور",
+        "generateNeedInput": "يرجى إدخال عنوان أو بعض المحتوى للإنشاء منه",
+        "generateSuccess": "تم إنشاء المحتوى بنجاح!",
+        "generateFail": "فشل إنشاء المحتوى. يرجى المحاولة مرة أخرى.",
+        "postNeedInput": "يرجى إدخال عنوان أو محتوى لمنشورك",
+        "postSuccess": "تم إنشاء المنشور بنجاح!",
+        "postFail": "فشل إنشاء المنشور. يرجى المحاولة مرة أخرى.",
+        "postNoResponse": "فشل إنشاء المنشور: لا توجد استجابة من الخادم"
+      },
+      "fallback": {
+        "newPostTitle": "منشور جديد"
+      }
     }
   },
-  "social": {
-    "instagram": "زيارة صفحة الإنستجرام",
-    "facebook": "زيارة صفحة الفيسبوك",
-    "tiktok": "زيارة صفحة التيك توك"
+  "items": {
+    "title": "العناصر",
+    "backToEvents": "العودة إلى مناسباتي",
+    "uncategorized": "غير مصنف",
+    "loading": {
+      "items": "جاري تحميل العناصر...",
+      "initializingBook": "جاري تهيئة دفتر العناصر...",
+      "addingModels": "جاري إضافة العناصر الافتراضية..."
+    },
+    "errors": {
+      "loadTitle": "فشل تحميل العناصر",
+      "loadMessage": "فشل تحميل العناصر. حاول مرة أخرى.",
+      "noBook": "لم يتم العثور على دفتر عناصر. يرجى تهيئته أولاً.",
+      "ItemBookNotFound": "دفتر العناصر غير موجود"
+    },
+    "actions": {
+      "save": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "unsavedChanges": "تغييرات غير محفوظة",
+      "addNew": "إضافة جديد",
+      "cancel": "إلغاء"
+    },
+    "lists": {
+      "yourLists": "قوائمك",
+      "untitled": "قائمة بدون اسم",
+      "noItems": "لا توجد عناصر في هذه القائمة بعد.",
+      "createNewList": "إنشاء قائمة جديدة"
+    },
+    "itemForm": {
+      "titles": {
+        "add": "إضافة عنصر جديد",
+        "edit": "تعديل العنصر",
+        "saving": "جاري الحفظ...",
+        "addItem": "إضافة العنصر"
+      },
+      "fields": {
+        "name": "الاسم",
+        "description": "الوصف",
+        "quantity": "الكمية",
+        "totalPrice": "السعر الإجمالي",
+        "providerName": "اسم المورّد",
+        "buyDate": "تاريخ الشراء"
+      },
+      "placeholders": {
+        "name": "أدخل اسم العنصر",
+        "description": "أدخل الوصف",
+        "quantity": "0",
+        "totalPrice": "0",
+        "providerName": "أدخل اسم المورّد"
+      },
+      "checkbox": {
+        "completed": "مكتمل",
+        "stillOnTheWay": "قيد التنفيذ",
+        "total": "إجمالي"
+      },
+      "actions": {
+        "cancel": "إلغاء",
+        "add": "إضافة العنصر",
+        "save": "حفظ التغييرات",
+        "saving": "جاري الحفظ..."
+      },
+      "validation": {
+        "nameRequired": "الاسم مطلوب",
+        "quantityInvalid": "الكمية يجب أن تكون رقمًا صحيحًا",
+        "totalPriceInvalid": "السعر الإجمالي يجب أن يكون رقمًا صحيحًا"
+      },
+      "errors": {
+        "createFailed": "فشل إنشاء العنصر:",
+        "updateFailed": "فشل تحديث العنصر:"
+      }
+    },
+    "listColors": {
+      "gray": "رمادي",
+      "red": "أحمر",
+      "orange": "برتقالي",
+      "yellow": "أصفر",
+      "green": "أخضر",
+      "blue": "أزرق",
+      "purple": "بنفسجي"
+    },
+    "createList": {
+      "title": "اسم القائمة",
+      "namePlaceholder": "ادخلي اسم القائمة",
+      "color": "لون القائمة",
+      "selectColor": "اختاري اللون...",
+      "creating": "جاري الإنشاء...",
+      "create": "إنشاء قائمة"
+    },
+    "progress": {
+      "itemsCompleted": "{completed} من {total} عناصر مكتملة"
+    }
   },
   "copyright": "© {year} جميع الحقوق محفوظة لـ OurBride"
 },
@@ -2954,7 +2999,68 @@
   "saveLoading": "جارٍ حفظ العنوان...",
   "processing": "جارٍ المعالجة...",
   "countryFallback": "مصر"
-}
-
-
+  },
+  "reelDetails": {
+    "loading": "جاري تحميل الريل...",
+    "reelNotFoundTitle": "الريل غير موجود",
+    "reelNotFoundMessage": "الريل الذي تبحثين عنه غير موجود أو تمت إزالتها."
+  },
+  "postDetails": {
+    "loading": "جاري تحميل المنشور...",
+    "postNotFoundTitle": "المنشور غير موجود",
+    "postNotFoundMessage": "المنشور الذي تبحثين عنه غير موجود أو تمت إزالتها."
+  },
+  "footer": {
+    "description": "منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي.",
+    "downloadApp": "تحميل تطبيق Ourbride",
+    "socialLinks": "روابط التواصل الاجتماعي",
+    "sections": {
+      "mainPages": {
+        "title": "الصفحات الرئيسية",
+        "home": "الرئيسية",
+        "products": "المنتجات",
+        "services": "الخدمات",
+        "community": "المجتمع"
+      },
+      "eventsPlanning": {
+        "title": "تخطيط الفعاليات",
+        "myEvents": "فعالياتي",
+        "eventsDay": "يوم الفعاليات",
+        "budgetPlanning": "تخطيط الميزانية",
+        "guestList": "قائمة الضيوف",
+        "todoList": "قائمة المهام"
+      },
+      "legal": {
+        "title": "قانوني",
+        "privacyPolicy": "سياسة الخصوصية",
+        "termsConditions": "الشروط والأحكام",
+        "settings": "الإعدادات"
+      },
+      "support": {
+        "title": "الدعم",
+        "helpCenter": "مركز المساعدة",
+        "aboutUs": "من نحن",
+        "shipping": "الشحن",
+        "returns": "الإرجاع",
+        "downloadApp": "تحميل التطبيق",
+        "sitemap": "خريطة الموقع"
+      },
+      "community": {
+        "title": "المجتمع",
+        "posts": "المنشورات",
+        "blogs": "المدونات",
+        "articles": "المقالات",
+        "reels": "الريلز",
+        "decisionGroups": "مجموعات القرارات",
+        "contests": "المسابقات"
+      }
+    },
+    "social": {
+      "instagram": "زيارة صفحة الإنستجرام",
+      "facebook": "زيارة صفحة الفيسبوك",
+      "tiktok": "زيارة صفحة التيك توك"
+    },
+    "copyright": "© {year} جميع الحقوق محفوظة لـ OurBride"
+  }
+  }
 }

@@ -4,6 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { ChevronRight, Trash2 } from 'lucide-react'
 import type { UiCategory } from '@/utils/planning/mappers/itemsMappers'
+import { useIsRTL } from '@/i18n'
 
 const STYLE_BY_COLOR: Record<
   string,
@@ -31,7 +32,8 @@ export function ItemListRow({
 }) {
   const colorKey = category.color ?? 'gray'
   const style = STYLE_BY_COLOR[colorKey] ?? STYLE_BY_COLOR.gray
-
+  const isRtl =  useIsRTL()
+  
   return (
     <button
       type="button"
@@ -51,7 +53,7 @@ export function ItemListRow({
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <div className="truncate text-sm font-medium text-gray-900">
-            {category.name}
+            { isRtl ? category.nameAr : category.nameEn}
           </div>
         </div>
 

@@ -9,25 +9,26 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { X } from 'lucide-react'
 import { SelectMenu, type SelectMenuOption } from '@/components/ui/SelectMenu'
+import { useI18nTranslations } from '@/i18n/hooks'
 
 const COLOR_OPTIONS = [
-  { value: 'gray', label: 'Gray' },
-  { value: 'red', label: 'Red' },
-  { value: 'orange', label: 'Orange' },
-  { value: 'yellow', label: 'Yellow' },
-  { value: 'green', label: 'Green' },
-  { value: 'blue', label: 'Blue' },
-  { value: 'purple', label: 'Purple' },
+  { value: 'gray', label: 'listColors.gray'},
+  { value: 'red', label: 'listColors.red'},
+  { value: 'orange', label: 'listColors.orange'},
+  { value: 'yellow', label: 'listColors.yellow'},
+  { value: 'green', label:'listColors.green'},
+  { value: 'blue', label:'listColors.blue'},
+  { value: 'purple', label:'listColors.purple'},
 ] as const
 
 export type ColorKey = (typeof COLOR_OPTIONS)[number]['value']
 
-const createItemListSchema = z.object({
-  name: z.string().min(1, 'List name is required'),
+const createItemListSchema =(t: (key: string) => string) => z.object({
+  name: z.string().min(1, t('itemForm.validation.nameRequired')),
   color: z.enum(['gray', 'red', 'orange', 'yellow', 'green', 'blue', 'purple']),
 })
 
-type CreateItemListFormValues = z.infer<typeof createItemListSchema>
+type CreateItemListFormValues = z.infer<ReturnType<typeof createItemListSchema>>
 
 export interface CreateItemListModalProps {
   open: boolean
@@ -42,6 +43,8 @@ export const CreateItemListModal = ({
   onSubmit,
   isLoading = false,
 }: CreateItemListModalProps) => {
+  const t = useI18nTranslations('items')
+  const schema = createItemListSchema(t)
   const {
     register,
     handleSubmit,
@@ -50,7 +53,7 @@ export const CreateItemListModal = ({
     reset,
     formState: { errors, isSubmitting, isValid },
   } = useForm<CreateItemListFormValues>({
-    resolver: zodResolver(createItemListSchema),
+    resolver: zodResolver(schema) as never,
     defaultValues: { name: '', color: 'gray' },
     mode: 'onChange',
   })
@@ -59,7 +62,7 @@ export const CreateItemListModal = ({
   const selectedColor = watch('color')
 
   const selectOptions: SelectMenuOption[] = useMemo(() => {
-    return COLOR_OPTIONS.map((c) => ({ label: c.label, value: c.value }))
+    return COLOR_OPTIONS.map((c) => ({ label: t(c.label) , value: c.value }))
   }, [])
 
   // Reset form when modal closes
@@ -106,7 +109,7 @@ export const CreateItemListModal = ({
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-6">
         {/* Header */}
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-20 font-semibold text-gray-900">Create New List</h2>
+          <h2 className="text-20 font-semibold text-gray-900">{t('lists.createNewList')}</h2>
           <button
             type="button"
             onClick={handleClose}
@@ -120,12 +123,12 @@ export const CreateItemListModal = ({
         {/* Name */}
         <div className="space-y-1.5">
           <label htmlFor="list-name" className="block text-14 font-medium text-gray-700">
-            List name <span className="text-red-500">*</span>
+           {t('createList.title')} <span className="text-red-500">*</span>
           </label>
           <Input
             id="list-name"
             type="text"
-            placeholder="Enter list name"
+            placeholder={t('createList.namePlaceholder')}
             {...register('name')}
             variant={errors.name ? 'error' : nameValue ? 'fill' : 'default'}
             errorMessage={errors.name?.message}
@@ -136,13 +139,13 @@ export const CreateItemListModal = ({
 
         {/* Color (SelectMenu) */}
         <div className="space-y-1.5">
-          <label className="block text-14 font-medium text-gray-700">List color</label>
+          <label className="block text-14 font-medium text-gray-700">{t('createList.color')}</label>
 
           <SelectMenu
             value={selectedColor}
             onChange={(val) => setValue('color', val as ColorKey, { shouldDirty: true, shouldValidate: true })}
             options={selectOptions}
-            placeholder="Select color..."
+            placeholder={t('createList.selectColor')}
             size="lg"
             className="focus:!border-none focus:!ring-0 focus:!ring-offset-0"
             variant={errors.color ? 'error' : 'default'}
@@ -155,7 +158,7 @@ export const CreateItemListModal = ({
         {/* Footer */}
         <div className="flex justify-end gap-3 border-t border-gray-200 pt-4">
           <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting || isLoading}>
-            Cancel
+            {t('actions.cancel')}
           </Button>
           <Button
             type="submit"
@@ -163,7 +166,7 @@ export const CreateItemListModal = ({
             className="text-white"
             disabled={isSubmitting || isLoading || !isValid}
           >
-            {isSubmitting || isLoading ? 'Creating...' : 'Create List'}
+            {isSubmitting || isLoading ? t('createList.creating') : t('createList.create')}
           </Button>
         </div>
       </form>
