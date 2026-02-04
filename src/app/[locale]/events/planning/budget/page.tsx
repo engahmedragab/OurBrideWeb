@@ -718,7 +718,7 @@ function BudgetPageContent() {
           </h1>
         </div>
         <div className="flex items-center justify-center py-12">
-          <LoadingSpinner text={loadingTitle} fullScreen={true} />
+          <LoadingSpinner size="lg" text={loadingTitle} fullScreen={true} />
         </div>
       </div>
     )
@@ -927,7 +927,7 @@ export default function BudgetPage() {
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <LoadingSpinner  fullScreen={true} />
+            <LoadingSpinner size="lg"  fullScreen={true} />
           </div>
         </div>
       }

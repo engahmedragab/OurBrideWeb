@@ -4,6 +4,8 @@ import { Footer } from '@/components/layout'
 import { ContestDetailsClient } from './ContestDetailsClient'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+
 // Generate static params for static export
 export function generateStaticParams() {
   // Return array of contest IDs to pre-generate at build time
@@ -23,7 +25,7 @@ export default function ContestDetailsPage({
         <div className="min-h-screen flex flex-col bg-gray-50">
           <Header />
           <main className="flex-1 flex items-center justify-center">
-            <LoadingOverlay open={true} />
+            <LoadingSpinner open={true} />
           </main>
           <Footer />
         </div>
