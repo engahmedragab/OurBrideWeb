@@ -520,7 +520,7 @@ export default function ProductIntroPage() {
                   t('newsletterBanner.description'),
                 variant: 'newsletter',
                 ctaText: t('newsletterBanner.ctaText'),
-                productImage: isRTL ? flowersImageRight : flowersImage,
+                productImage:  flowersImage,
               },
             ]}
             onSubscribe={handleSubscribe}

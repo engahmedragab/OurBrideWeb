@@ -139,6 +139,7 @@ export default function Home() {
   const locale = useI18nLocale()
   // Translations
   const t = useTranslations('home')
+  const tsideBar= useTranslations('userSidebar') 
   const tMember = useTranslations('home.sections.memberTestimonials')
   const isRTL = useIsRTL()
 
@@ -373,10 +374,20 @@ export default function Home() {
         <section className="container-custom py-8 md:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12 items-start">
             {/* Left Content */}
-            <div className="flex flex-col gap-4">
+            <div
+              className={cn(
+                "flex flex-col gap-4 items-center text-center order-2 lg:order-1 lg:items-start lg:text-left",
+                isRTL && "lg:items-start lg:text-right"
+              )}
+            >
               {/* Active Users */}
-              <div className="flex items-center gap-3 -mt-2">
-                <span className="text-14 font-semibold text-gray-700">
+              <div
+                className={cn(
+                  "flex items-center gap-2 -mt-2 justify-center flex-nowrap lg:gap-3 lg:justify-start",
+                  isRTL && "flex-row-reverse lg:justify-end"
+                )}
+              >
+                <span  className="text-8 md:text-14 font-semibold text-gray-700 whitespace-nowrap">
                   <span className="text-gray-500 font-normal text-24">
                     {statistics?.activeUsers || '+0'}
                   </span>
@@ -385,7 +396,7 @@ export default function Home() {
                   </span>
                 </span>
                 <div className="flex -space-x-2">
-                  {[1, 2, 3, 4].map(i => (
+                  {[1, 2, 3].map(i => (
                     <div
                       key={i}
                       className="w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-brand-100 to-brand-200 flex items-center justify-center overflow-hidden"
@@ -396,7 +407,12 @@ export default function Home() {
                 </div>
               </div>
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 self-start">
+              <div
+                className={cn(
+                  "inline-flex items-center gap-2 self-center lg:self-start",
+                  isRTL && "lg:self-start"
+                )}
+              >
                 <span className=" rounded-full text-brand-500 text-18 font-semibold">
                   {t('hero.badge')}
                 </span>
@@ -414,20 +430,22 @@ export default function Home() {
               </div>
 
               {/* Description */}
-              <p className="text-16 sm:text-18 md:text-20 lg:text-22 text-gray-500 leading-relaxed max-w-lg">
+              <p className="text-16 sm:text-18 md:text-20 lg:text-22 text-gray-500 leading-relaxed max-w-lg mx-auto ">
                 {t('hero.description')}
               </p>
             </div>
 
             {/* Center: Bride Image */}
-            <div className={cn(
-              "relative flex items-start justify-start lg:pt-0",
-              isRTL ? "lg:-ml-24 md:-ml-12" : "lg:-mr-24 md:-mr-12"
-            )}>
+            <div
+              className={cn(
+                "relative flex items-start justify-center lg:justify-start lg:pt-0 order-1 lg:order-2",
+                isRTL ? "lg:-ml-24" : "lg:-mr-24"
+              )}
+            >
               {/* Main Bride Image - Centered */}
               <div className="relative">
                 {/* Circular Image Container with Gradient Border */}
-                <div className="relative w-96 h-96 md:w-[450px] md:h-[450px] lg:w-[500px] lg:h-[500px]">
+                <div className="relative w-80 h-80 sm:w-88 sm:h-88 md:w-[450px] md:h-[450px] lg:w-[500px] lg:h-[500px]">
                   {/* SVG Border */}
                   <Image
                     src={
@@ -462,13 +480,15 @@ export default function Home() {
             </div>
 
             {/* Right Content: Circular Text and Explore Products Card */}
-            <div className={cn(
-              "relative flex flex-col items-center lg:items-start gap-4 z-10 w-full lg:justify-start lg:pb-4 md:pb-6",
-              isRTL && "lg:items-end"
-            )}>
+            <div
+              className={cn(
+                "relative flex flex-col items-center gap-4 z-10 w-full order-3 lg:order-3 lg:justify-start lg:pb-4 md:pb-6",
+                isRTL ? "lg:items-end" : "lg:items-start"
+              )}
+            >
               {/* Circular Badge Button - Positioned higher, centered above cards */}
               <div className={cn(
-                "relative w-[100px] h-[100px] flex items-center justify-center",
+                "relative w-[100px] h-[100px] items-center justify-center hidden lg:flex",
                 isRTL 
                   ? "lg:mr-auto lg:ml-0 lg:translate-x-[62px]" 
                   : "lg:ml-auto lg:mr-0 lg:-translate-x-[62px]"
@@ -531,13 +551,20 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
-              {/* Products Card */}
+              <div
+                className={cn(
+                  "flex justify-between items-start gap-4 w-full max-w-md",
+                  "lg:flex-col lg:items-start lg:max-w-none",
+                  isRTL && "lg:items-end"
+                )}
+              >
+                {/* Products Card */}
               <div className={cn(
                 "relative w-48 md:w-56 rounded-xl shadow-lg overflow-hidden border border-gray-100",
                 isRTL ? "lg:mr-auto lg:ml-0" : "lg:ml-auto lg:mr-0"
               )}>
-                <div className="aspect-[5/2] overflow-hidden relative">
+                <div className="relative h-48 sm:h-40 md:h-48 lg:h-auto lg:aspect-[5/2] overflow-hidden">
+            
                   <Image
                     src={
                       typeof heroCardBrideImage === 'string'
@@ -552,9 +579,9 @@ export default function Home() {
                 </div>
                 <div className="p-4">
                   <Button
-                    variant="outline"
+                    variant="outlineBrand"
                     size="sm"
-                    className="w-full text-14 font-semibold rounded-full"
+                    className="w-full !text-8 md:!text-12 lg:!text-13 font-semibold text-brand-500 rounded-full"
                     asChild
                   >
                     <Link href="/products">{t('hero.exploreProducts')}</Link>
@@ -564,10 +591,16 @@ export default function Home() {
 
               {/* Services Card */}
               <div className={cn(
-                "relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100",
+                "relative w-48 md:w-56 bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 opacity-70",
                 isRTL ? "lg:mr-auto lg:ml-0" : "lg:ml-auto lg:mr-0"
               )}>
-                <div className="aspect-[5/2] overflow-hidden relative">
+                <div className="relative h-48 sm:h-40 md:h-48 lg:h-auto lg:aspect-[5/2] overflow-hidden">
+                      <div className="absolute top-2 inset-x-2 z-10 flex items-center justify-between">
+                  
+                    <span className="rounded-full border border-brand-500/70 bg-white/90 px-2.5 py-1 text-12 font-semibold tracking-wider text-brand-600 shadow-[0_0_12px_rgba(241,72,54,0.35)] animate-pulse">
+                      {tsideBar('comingSoon')}
+                    </span>
+                  </div>
                   <Image
                     src={
                       typeof heroCardBrideImage === 'string'
@@ -580,17 +613,18 @@ export default function Home() {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-4">
+                <div className="p-4 space-y-2">
                   <Button
-                    variant="outline"
+                    variant="outlineBrand"
                     size="sm"
-                    className="w-full text-14 font-semibold rounded-full"
-                    asChild
+                    disabled
+                    aria-disabled="true"
+                    className="w-full !text-8 md:!text-12 lg:!text-13  font-semibold rounded-full cursor-not-allowed opacity-70"
                   >
-                    <Link href="/services">{t('hero.exploreServices')}</Link>
+                    {t('hero.exploreServices')}
                   </Button>
                 </div>
-              </div>
+              </div></div>
             </div>
           </div>
         </section>
@@ -795,7 +829,7 @@ export default function Home() {
               src={typeof lineS2Svg === 'string' ? lineS2Svg : lineS2Svg.src}
               alt=""
               fill
-              sizes="100vw"
+              sizes="70vw"
               className="object-cover"
               aria-hidden="true"
             />
@@ -1330,14 +1364,14 @@ export default function Home() {
 
             <div className="flex flex-col items-center">
               <div className="flex items-center justify-center relative z-20">
-                <StoreBadges size="5xl" className="gap-4" />
+                <StoreBadges size="3xl" className="gap-4" />
               </div>
               <div className="relative flex items-center justify-center w-full h-auto -mt-12 md:-mt-20 lg:-mt-24">
                 {/* Background Glow */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-brand-400 via-brand-300 to-brand-200 rounded-full opacity-30 blur-3xl" />
 
                 {/* Phone Image */}
-                <div className="relative z-10 w-[750px] md:w-[950px] lg:w-[1200px] aspect-[26/16]">
+                <div className="relative z-10 w-[750px] md:w-[950px] lg:w-[800px] aspect-[26/16]">
                   <Image
                     src={
                       typeof phoneImage === 'string'
