@@ -175,7 +175,7 @@ export default function EventsPage() {
                     className="group text-16 font-semibold px-8 py-6 rounded-2xl shadow-lg shadow-brand-500/25 hover:shadow-xl hover:shadow-brand-500/30 transition-all"
                     asChild
                   >
-                    <Link href="/auth/register">
+                    <Link href="/auth/signup">
                       {t('ctaDetails.getStarted')}
                       <ArrowRight className={cn("ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform", isRTL && "scale-x-[-1]")} />
                     </Link>
@@ -186,7 +186,7 @@ export default function EventsPage() {
                     className="group text-16 font-medium px-6 py-6 text-gray-700 hover:text-brand-500"
                     asChild
                   >
-                    <Link href="/events/planning">
+                    <Link href="/dashboard/my-events">
                       <div className="w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm border border-brand-100 flex items-center justify-center mr-3 group-hover:bg-brand-50 transition-colors">
                         <Play className="w-5 h-5 text-brand-500 ml-0.5" />
                       </div>
@@ -294,7 +294,7 @@ export default function EventsPage() {
                 asChild
               >
                 <Link 
-                  href="/events/planning" 
+                  href="/dashboard/my-events" 
                   className={cn("flex items-center gap-2")}
                 >
                   <span className="whitespace-nowrap">{t('viewAllEvents')}</span>
@@ -460,7 +460,7 @@ export default function EventsPage() {
                   className="text-16 font-semibold px-8 py-6 rounded-2xl shadow-lg shadow-brand-500/25"
                   asChild
                 >
-                  <Link href="/auth/register">
+                  <Link href="/auth/signup">
                     {t('ctaDetails.getStarted')}
                     <ArrowRight className={cn("ml-2 w-5 h-5", isRTL && "scale-x-[-1]")} />
                   </Link>
@@ -512,7 +512,7 @@ export default function EventsPage() {
                       className="group text-16 font-semibold px-10 py-7 rounded-2xl shadow-xl shadow-brand-500/25 hover:shadow-2xl hover:shadow-brand-500/30 transition-all"
                       asChild
                     >
-                      <Link href="/auth/register">
+                      <Link href="/auth/signup">
                         {t('ctaDetails.getStarted')}
                         <ArrowRight className={cn("ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform", isRTL && "scale-x-[-1]")} />
                       </Link>
@@ -523,7 +523,7 @@ export default function EventsPage() {
                       className="text-16 font-semibold px-10 py-7 rounded-2xl border-2 bg-white/50"
                       asChild
                     >
-                      <Link href="/events/planning">
+                      <Link href="/dashboard/my-events">
                         {t('ctaDetails.learnMore')}
                       </Link>
                     </Button>

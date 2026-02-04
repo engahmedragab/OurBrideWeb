@@ -39,7 +39,7 @@ import { useI18nTranslations } from '@/i18n'
 import { LoadingSpinner } from '@/components/ui'
 
 function CommunityContent() {
-  const t =useI18nTranslations("community")
+  const t =useI18nTranslations('community')
     const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams?.get('tab')

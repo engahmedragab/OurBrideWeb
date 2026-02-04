@@ -85,9 +85,11 @@ export type ServiceCardData = ProductCardData
 
 // Testimonial Card Props
 export interface TestimonialCardData {
-  quote: string
+  quoteAr: string
+  quoteEn: string
   rating: number
-  authorName: string
+  authorNameAr: string
+  authorNameEn: string
   authorImage: string
   timeAgo: string
 }
@@ -482,19 +484,21 @@ const ProductServiceCard = ({
 // Testimonial Card Component
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   const [imageError, setImageError] = React.useState(false)
+  const isRtl = useIsRTL();
+  console.log({data})
   return (
     <div className="flex flex-col h-full">
       {/* Card */}
       <div className="bg-white rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow flex-1">
         {/* Quote */}
         <p className="text-16 text-gray-900 mb-6 flex-1 leading-relaxed">
-          &quot;{data.quote}&quot;
+          &quot;{isRtl ? data.quoteAr : data.quoteEn}&quot;
         </p>
 
         {/* Stars - All red for 5-star rating */}
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, index) => (
-            <Star key={`star-${data.authorName}-${index}`} className="h-5 w-5 fill-red-500 text-red-500" />
+            <Star key={`star-${ isRtl ? data.authorNameAr : data.authorNameEn}-${index}`} className="h-5 w-5 fill-red-500 text-red-500" />
           ))}
         </div>
       </div>
@@ -505,7 +509,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
           {data.authorImage && data.authorImage.trim() !== '' && !imageError ? (
             <Image
               src={data.authorImage}
-              alt={data.authorName}
+              alt={data.authorNameEn}
               fill
               sizes="48px"
               className="object-cover grayscale"
@@ -519,7 +523,7 @@ const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
         </div>
         <div>
           <p className="text-16 font-semibold text-gray-900">
-            {data.authorName}
+            { isRtl ? data.authorNameAr :  data.authorNameEn}
           </p>
           <p className="text-14 text-gray-500">{data.timeAgo || 'Recently'}</p>
         </div>

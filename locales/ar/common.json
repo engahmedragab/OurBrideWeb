@@ -84,6 +84,19 @@
       "removeRating": "إزالة فلتر التقييم"
     }
   },
+  "alert": {
+    
+      "wishlistToggleSuccess": "تم تحديث المنتج في قائمة المفضلة بنجاح",
+      "wishlistToggleError": "فشل تحديث المنتج في قائمة المفضلة",
+       "followSuccess": "تمت المتابعة بنجاح",
+      "followError": "فشلت عملية المتابعة",
+      "followUpdateSuccess": "تم تحديث المتابعة بنجاح",
+      "followUpdateError": "فشل تحديث المتابعة",
+      "unfollowSuccess": "تم إلغاء المتابعة بنجاح",
+      "unfollowError": "فشل إلغاء المتابعة"
+    
+  }
+  ,
   "auth": {
     "hero": {
       "backToHome": "  الصفحة الرئيسية",
@@ -679,6 +692,14 @@
       "error": {
         "loadFailed": "فشل تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقًا."
       },
+      "trustFeatures": {
+  "title": "مميزاتنا",
+  "description": "أور برايد هي منصتك المتكاملة لتخطيط الزفاف، من أول التحضيرات لحد أدق التفاصيل."
+},"newsletter": {
+  "emailPlaceholder": "اكتبي بريدك الإلكتروني",
+  "heading": "جاهزة توصلك آخر أخبارنا؟",
+  "description": "أور برايد هي منصتك المتكاملة لتخطيط وتسوق كل ما يخص الزفاف. هتلاقي كل اللي محتاجاه علشان تعملي يومك المثالي."
+},
       "hero": {
         "defaultSlides": {
           "slide1": {
