@@ -393,7 +393,7 @@ function NotesPageContent() {
 
         <div className="grid grid-cols-1 sm:grid-cols-[300px_1fr] gap-4 sm:gap-6">
           {/* Sidebar */}
-          <div className="order-1 sm:order-1 sm:sticky sm:top-6 sm:h-[calc(100vh-8rem)]">
+          <div className="order-1 sm:order-1 sm:sticky sm:top-6 ">
             <NoteCategoriesSidebar
               notes={activeNotes}
               selectedNoteId={selectedNoteId}
@@ -408,7 +408,7 @@ function NotesPageContent() {
           </div>
 
           {/* Main panel */}
-          <div className="order-2 sm:order-2 sm:h-[calc(100vh-8rem)] min-h-[400px]">
+          <div className="order-2 sm:order-2 ">
             <NoteMainPanel note={selectedNote} onAddNew={handleAddNew} onEdit={handleEdit} />
           </div>
         </div>

@@ -292,7 +292,7 @@ export const UserSidebar = ({
                       >
                         <Icon className="h-5 w-5 flex-shrink-0 text-gray-400" />
                         <span className="flex-1">{item.label}</span>
-                        <span className="flex items-center justify-center rounded-full bg-gray-200 text-8 font-medium text-brand-500 px-1 h-3.5 min-w-[28px] flex-shrink-0">
+                        <span className="flex items-center justify-center rounded-full bg-gray-200 text-8 rtl:text-12 font-medium text-brand-500 px-1 rtl:px-3 rtl:h-5 h-3.5 min-w-[28px] flex-shrink-0">
                           {t('comingSoon')}
                         </span>
                       </div>

@@ -6,6 +6,7 @@ import { MobileVerificationForm } from '@/components/ui/auth/MobileVerificationF
 import { AuthLayout } from '@/components/ui/auth/AuthLayout'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { useI18nTranslations } from '@/i18n'
+import { LoadingSpinner } from '@/components/ui'
 
 /**
  * Mobile Verification Page - OTP verification after signup
@@ -56,10 +57,9 @@ export default function MobileVerificationPage() {
       </AuthLayout>
 
       {/* Loading Overlay */}
-      <LoadingOverlay
+      <LoadingSpinner
         open={isLoading}
-        title={tCommon('loading')}
-        subtitle={tCommon('pleaseWait')}
+     text={`${tCommon('loading')} ${tCommon('pleaseWait')}`}
       />
     </>
   )

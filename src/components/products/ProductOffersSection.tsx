@@ -34,61 +34,61 @@ export const ProductOffersSection = ({
       className={cn('py-8 md:py-12', className)}
     >
       {/* Section Header with Timer */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 md:mb-8">
-        <h2 className="text-20 sm:text-24 md:text-30 font-medium text-gray-900 leading-tight sm:leading-[32px] md:leading-[40px]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4 mb-6 md:mb-8">
+        <h2 className="text-18 sm:text-22 md:text-28 font-medium text-gray-900 leading-tight sm:leading-[28px] md:leading-[36px]">
           {title}
         </h2>
         {timerText && (
-          <p className="text-14 sm:text-16 md:text-20 font-normal text-gray-500 leading-normal sm:leading-[24px] md:leading-[32px]">
+          <p className="text-12 sm:text-14 md:text-18 font-normal text-gray-500 leading-normal sm:leading-[20px] md:leading-[28px]">
             {timerText}
           </p>
         )}
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map(product => {
-          // Inline component to use hooks properly
-          const ProductCardItem = () => {
-            const handlers = useProductCardHandlers(parseInt(product.id, 10))
-            const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map(product => {
+            // Inline component to use hooks properly
+            const ProductCardItem = () => {
+              const handlers = useProductCardHandlers(parseInt(product.id, 10))
+              const { handleAddToCart, isLoading: isLoadingAddToCart } = useAddProductToCart()
 
-            const handleAddToCartClick = (e: React.MouseEvent) => {
-              e.preventDefault()
-              e.stopPropagation()
-              // Ensure providerId is available before adding to cart
-              if (!product.provider?.id) {
-                return
+              const handleAddToCartClick = (e: React.MouseEvent) => {
+                e.preventDefault()
+                e.stopPropagation()
+                // Ensure providerId is available before adding to cart
+                if (!product.provider?.id) {
+                  return
+                }
+                handleAddToCart(product, 1)
               }
-              handleAddToCart(product, 1)
-            }
 
-            const cardData: ProductCardData = {
-              id: product.id,
-              image: product.images?.[0]?.trim() || '',
-              title: product.title,
-              providerName: product.provider.name,
-              providerId: product.provider.id,
-              verified: product.provider.verified,
-              rating: product.rating.value,
-              originalPrice: product.price.original,
-              discountedPrice: product.price.discounted,
-              tags: product.tags,
-              showTopOfferBadge: product.showTopOfferBadge,
-              isWishlisted: product.isWishlisted,
-              isFavorite: product.isFavorite,
-              inStock: product.inStock,
-              onWishlistToggle: handlers.handleWishlistToggle,
-              onFavoriteToggle: handlers.handleFavoriteToggle,
-              onAddToCart: handleAddToCartClick,
-              isLoadingWishlist: handlers.isLoadingWishlist,
-              isLoadingFavorite: handlers.isLoadingFavorite,
-              isLoadingAddToCart,
+              const cardData: ProductCardData = {
+                id: product.id,
+                image: product.images?.[0]?.trim() || '',
+                title: product.title,
+                providerName: product.provider.name,
+                providerId: product.provider.id,
+                verified: product.provider.verified,
+                rating: product.rating.value,
+                originalPrice: product.price.original,
+                discountedPrice: product.price.discounted,
+                tags: product.tags,
+                showTopOfferBadge: product.showTopOfferBadge,
+                isWishlisted: product.isWishlisted,
+                isFavorite: product.isFavorite,
+                inStock: product.inStock,
+                onWishlistToggle: handlers.handleWishlistToggle,
+                onFavoriteToggle: handlers.handleFavoriteToggle,
+                onAddToCart: handleAddToCartClick,
+                isLoadingWishlist: handlers.isLoadingWishlist,
+                isLoadingFavorite: handlers.isLoadingFavorite,
+                isLoadingAddToCart,
+              }
+              return <Card cardData={{ type: 'product', ...cardData }} />
             }
-            return <Card cardData={{ type: 'product', ...cardData }} />
-          }
           return <ProductCardItem key={product.id} />
-        })}
+          })}
       </div>
     </section>
   )

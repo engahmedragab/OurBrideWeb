@@ -85,7 +85,7 @@ export const OrderCard = ({
   const t = useI18nTranslations('orderCard')
   const tCommon = useI18nTranslations('common')
   const isRTL = useIsRTL()
-  const [isSummaryOpen, setIsSummaryOpen] = useState(true)
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false)
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
   const [providerLogoError, setProviderLogoError] = useState(false)
   const isCompleted = status === 'delivered' || status === 'cancelled'
@@ -142,7 +142,7 @@ export const OrderCard = ({
         {/* Left Section - Order Info and Progress */}
         <div className="flex-1">
           {/* Status Badge - Top Right */}
-          <div className={cn('absolute top-6 flex items-center gap-2', isRTL ? 'left-6' : 'right-6')}>
+          <div className={cn('absolute top-6 flex items-center gap-2', isRTL ? 'left-4' : 'right-4')}>
             <StatusBadge status={getStatusBadgeType()} />
             <button
               onClick={() => setIsSummaryOpen(!isSummaryOpen)}
@@ -167,6 +167,13 @@ export const OrderCard = ({
               {t('header.orderLabel')} #{orderId}
             </h3>
             <p className="text-14 text-gray-600 mb-2">{t('header.placedLabel')}: {orderDate}</p>
+
+            {arrivalDate && (
+              <p className="text-14 text-gray-600 mb-2">
+                {t('arrival.label')}: {arrivalDate}
+                {arrivalTime && ` ${arrivalTime}`}
+              </p>
+            )}
             
             {/* Delivery Status */}
             {deliveryStatus && (
@@ -175,138 +182,135 @@ export const OrderCard = ({
               </div>
             )}
             
-            {/* Provider Info */}
-            {providerName && (
-              <div className="flex items-center gap-2 mb-2">
-                {providerLogo && (
-                  <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
-                    {providerLogo && providerLogo.trim() !== '' && !providerLogoError ? (
-                      <Image
-                        src={providerLogo}
-                        alt={providerName}
-                        fill
-                        sizes="24px"
-                        className="object-cover"
-                      onError={() => setProviderLogoError(true)}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-gray-400 text-8 font-medium">
-                        {tCommon('noImageAvailable')}
-                      </span>
+            {isSummaryOpen && (
+              <>
+                {/* Provider Info */}
+                {providerName && (
+                  <div className="flex items-center gap-2 mb-2">
+                    {providerLogo && (
+                      <div className="relative w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
+                        {providerLogo && providerLogo.trim() !== '' && !providerLogoError ? (
+                          <Image
+                            src={providerLogo}
+                            alt={providerName}
+                            fill
+                            sizes="24px"
+                            className="object-cover"
+                            onError={() => setProviderLogoError(true)}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-gray-400 text-8 font-medium">
+                              {tCommon('noImageAvailable')}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {providerId ? (
+                      <Link
+                        href={`/provider/${providerId}`}
+                        className="text-14 text-brand-500 hover:text-brand-600 transition-colors inline-flex items-center gap-1"
+                      >
+                        {providerName}
+                        <ExternalLink className="h-3 w-3" />
+                      </Link>
+                    ) : (
+                      <p className="text-14 text-gray-600">{providerName}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Item Count */}
+                {itemCount !== undefined && (
+                  <p className="text-12 text-gray-500">
+                    {itemCount} {itemCount === 1 ? t('header.item') : t('header.items')}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+
+          {isSummaryOpen && (
+            <>
+              {/* Progress Indicator */}
+              <div className="mb-6">
+                <OrderProgressIndicator status={status} />
+              </div>
+
+              {/* Payment Status */}
+              {paymentStatus && (
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-12 text-gray-600">{t('payment.status')}:</span>
+                    <span className="text-12 font-medium text-gray-900">
+                      {normalizePaymentStatus(paymentStatus)}
+                    </span>
+                  </div>
+                  {paymentMethod && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-12 text-gray-600">{t('payment.method')}:</span>
+                      <span className="text-12 text-gray-700">{normalizePaymentMethod(paymentMethod)}</span>
                     </div>
                   )}
                 </div>
               )}
-                {providerId ? (
-                  <Link
-                    href={`/provider/${providerId}`}
-                    className="text-14 text-brand-500 hover:text-brand-600 transition-colors inline-flex items-center gap-1"
-                  >
-                    {providerName}
-                    <ExternalLink className="h-3 w-3" />
-                  </Link>
-                ) : (
-                  <p className="text-14 text-gray-600">{providerName}</p>
-                )}
-              </div>
-            )}
 
-            {/* Item Count */}
-            {itemCount !== undefined && (
-              <p className="text-12 text-gray-500">
-                {itemCount} {itemCount === 1 ? t('header.item') : t('header.items')}
-              </p>
-            )}
-          </div>
-
-          {/* Progress Indicator */}
-          <div className="mb-6">
-            <OrderProgressIndicator status={status} />
-          </div>
-
-          {/* Payment Status */}
-          {paymentStatus && (
-            <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-12 text-gray-600">{t('payment.status')}:</span>
-                <span className="text-12 font-medium text-gray-900">
-                  {normalizePaymentStatus(paymentStatus)}
-                </span>
-              </div>
-              {paymentMethod && (
-                <div className="flex justify-between items-center">
-                  <span className="text-12 text-gray-600">{t('payment.method')}:</span>
-                  <span className="text-12 text-gray-700">{normalizePaymentMethod(paymentMethod)}</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Payment Progress */}
-          {paymentProgressPercentage > 0 && (
-            <div className="mb-4">
-              <div className="flex justify-between text-12 text-gray-600 mb-1">
-                <span>{t('payment.progress')}</span>
-                <span>{paymentProgressPercentage}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-brand-500 h-2 rounded-full transition-all"
-                  style={{ width: `${paymentProgressPercentage}%` }}
-                />
-              </div>
-              {totalPaidAmount > 0 && (
-                <div className="flex justify-between text-12 text-gray-600 mt-1">
-                  <span>{t('payment.paid')}: {totalPaidAmount.toLocaleString()} EGP</span>
-                  {totalRemainingAmount > 0 && (
-                    <span>{t('payment.remaining')}: {totalRemainingAmount.toLocaleString()} EGP</span>
+              {/* Payment Progress */}
+              {paymentProgressPercentage > 0 && (
+                <div className="mb-4">
+                  <div className="flex justify-between text-12 text-gray-600 mb-1">
+                    <span>{t('payment.progress')}</span>
+                    <span>{paymentProgressPercentage}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-brand-500 h-2 rounded-full transition-all"
+                      style={{ width: `${paymentProgressPercentage}%` }}
+                    />
+                  </div>
+                  {totalPaidAmount > 0 && (
+                    <div className="flex justify-between text-12 text-gray-600 mt-1">
+                      <span>{t('payment.paid')}: {totalPaidAmount.toLocaleString()} EGP</span>
+                      {totalRemainingAmount > 0 && (
+                        <span>{t('payment.remaining')}: {totalRemainingAmount.toLocaleString()} EGP</span>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
-            </div>
-          )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-col gap-2 mt-4">
-            {onViewDetails && (
-              <Button
-                variant="outline"
-                size="md"
-                className="w-full flex items-center justify-center gap-2"
-                onClick={onViewDetails}
-              >
-                <FileText className="h-4 w-4" />
-                {t('actions.viewDetails')}
-              </Button>
-            )}
-            {isCompleted && onReorder && (
-              <Button
-                variant="brand"
-                size="md"
-                className="w-full text-white"
-                onClick={onReorder}
-              >
-                {t('actions.reorder')}
-              </Button>
-            )}
-          </div>
+              {/* Action Buttons */}
+              <div className="flex flex-col gap-2 mt-4">
+                {onViewDetails && (
+                  <Button
+                    variant="outline"
+                    size="md"
+                    className="w-full flex items-center justify-center gap-2"
+                    onClick={onViewDetails}
+                  >
+                    <FileText className="h-4 w-4" />
+                    {t('actions.viewDetails')}
+                  </Button>
+                )}
+                {isCompleted && onReorder && (
+                  <Button
+                    variant="brand"
+                    size="md"
+                    className="w-full text-white"
+                    onClick={onReorder}
+                  >
+                    {t('actions.reorder')}
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Right Section - Order Summary */}
-        <div className="flex-1 lg:max-w-md">
-          {/* Arrival Info */}
-          {arrivalDate && (
-            <div className="text-14 text-gray-600 mb-4">
-              <p>
-                {t('arrival.label')}: {arrivalDate}
-                {arrivalTime && ` ${arrivalTime}`}
-              </p>
-            </div>
-          )}
-
-          {/* Collapsible Order Summary */}
-          {isSummaryOpen && (
+        {isSummaryOpen && (
+          <div className="flex-1 lg:max-w-md">
             <>
               <h4 className="text-16 font-semibold text-gray-900 mb-4">
                 {t('summary.title')}
@@ -403,8 +407,8 @@ export const OrderCard = ({
                 </button>
               )}
             </>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -178,7 +178,7 @@ export default function BusinessProfilePage() {
   if (isLoading) {
     return (
       <UserPageLayout>
-        <LoadingSpinner text={t('loading')} fullScreen={true} />
+        <LoadingSpinner size="lg" text={t('loading')} fullScreen={true} />
       </UserPageLayout>
     )
   }

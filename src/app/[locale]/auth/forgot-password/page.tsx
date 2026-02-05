@@ -7,6 +7,7 @@ import { ForgotPasswordForm } from '@/components/ui/auth/ForgotPasswordForm'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { useI18nTranslations } from '@/i18n'
 import { useToast } from '@/components/ui/Toaster'
+import { LoadingSpinner } from '@/components/ui'
 
 export default function ForgotPasswordPage() {
   const router = useRouter()
@@ -81,7 +82,7 @@ export default function ForgotPasswordPage() {
         />
       </div>
 
-      <LoadingOverlay open={showLoading} />
+      
     </>
   )
 }

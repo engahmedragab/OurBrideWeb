@@ -531,7 +531,7 @@ export function ProductCategoryDetailClient({
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {relatedProducts.map(product => {
                   // Inline component to use hooks properly
                   const ProductCardItem = () => {

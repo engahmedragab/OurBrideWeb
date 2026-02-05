@@ -824,9 +824,9 @@ function MyEventsPageContent() {
 
           {/* Add New Event Button */}
           <Button
-            variant="ghost"
+            variant="outlineBrand"
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-end gap-2 !text-14 font-normal text-brand-500 hover:text-brand-600 flex-shrink-0 lg:w-1/2"
+            className="flex items-center justify-end gap-2 !text-14 font-normal text-brand-500 hover:bg-transparent hover:text-brand-500 flex-shrink-0 "
           >
             <Plus className="size-4 sm:size-5" />
             {t('actions.addNewEvent')}
@@ -837,7 +837,7 @@ function MyEventsPageContent() {
       {/* Loading State */}
       {isMounted && isLoading && (
         <div className="flex items-center justify-center py-12">
-          <LoadingOverlay open={true} title={t('loading.events')} />
+          <LoadingSpinner size="lg" fullScreen={true} open={true} text={t('loading.events')} />
         </div>
       )}
 

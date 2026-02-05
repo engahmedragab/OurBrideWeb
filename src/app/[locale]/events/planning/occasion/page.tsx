@@ -401,7 +401,7 @@ function OccasionsPageContent() {
 
     return (
       <div className="flex items-center justify-center py-12">
-        <LoadingSpinner text={`${loadingTitle} ${loadingSubtitle}`} fullScreen={true} />
+        <LoadingSpinner size="lg" text={`${loadingTitle} ${loadingSubtitle}`} fullScreen={true} />
       </div>
     )
   }

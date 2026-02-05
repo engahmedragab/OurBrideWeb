@@ -7,6 +7,7 @@ import { ErrorModal } from '@/components/ui/ErrorModal'
 import { useMineInfo } from '@/hooks/home'
 import { ProfilePageContent } from './ProfilePageContent'
 import { useI18nTranslations } from '@/i18n'
+import { LoadingSpinner } from '@/components/ui'
 
 function ProfileContent() {
   const t = useI18nTranslations('profile')
@@ -25,7 +26,7 @@ function ProfileContent() {
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center py-12">
-        <LoadingOverlay open={true} title={t('loading.title')} />
+        <LoadingSpinner size="lg" fullScreen={true} open={true} text={t('loading.title')} />
       </div>
     )
   }
@@ -84,7 +85,7 @@ export default function ProfilePage() {
       <Suspense
         fallback={
           <div className="min-h-[60vh] flex items-center justify-center py-12">
-            <LoadingOverlay open={true} title="Loading profile..." />
+            <LoadingSpinner size="lg" fullScreen={true} open={true} text="Loading profile..." />
           </div>
         }
       >

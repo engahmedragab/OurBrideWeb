@@ -451,6 +451,7 @@ export default function OrdersPage() {
           }
         />
         <LoadingSpinner
+          fullScreen={true}
           size='xl'
           open={true}
           text={t('loading.title')}

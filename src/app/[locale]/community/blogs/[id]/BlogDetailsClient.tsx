@@ -10,6 +10,7 @@ import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { cn } from '@/lib/utils'
 import type { BlogResponse } from '@/types/responses/community'
 import { useI18nTranslations } from '@/i18n/hooks'
+import { LoadingSpinner } from '@/components/ui'
 
 // Helper function to determine if a string is a number
 const isNumeric = (str: string): boolean => {
@@ -48,7 +49,7 @@ export function BlogDetailsClient({ id }: { id: string }) {
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header />
         <main className="flex-1 flex items-center justify-center min-h-[60vh] py-12">
-          <LoadingOverlay open={true} title={t("blogDetails.loading")} />
+          <LoadingSpinner open={true} text={t("blogDetails.loading")} />
         </main>
         <Footer />
       </div>

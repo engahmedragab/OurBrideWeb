@@ -19,6 +19,7 @@ import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-
 import { useI18nTranslations } from '@/i18n'
 
 import { useToast } from '@/components/ui/Toaster'
+import { LoadingSpinner } from '@/components/ui'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -174,7 +175,7 @@ export default function SignupPage() {
         }}
       />
 
-      <LoadingOverlay open={isLoading} />
+     
     </>
   )
 }
