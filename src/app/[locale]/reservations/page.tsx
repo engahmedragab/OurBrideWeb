@@ -13,7 +13,7 @@ import {
     LoadingOverlay,
     Button,
     Pagination,
-    LoadingSpinner,
+    LoadingSpinner, 
 } from '@/components/ui'
 import { CancelOrderModal } from '@/components/ui/CancelOrderModal'
 import { getClientReservationsPaginated, cancelReservation } from '@/services/api/reservationApi'
@@ -149,7 +149,7 @@ export default function ReservationsPage() {
     return (
       <UserPageLayout>
         <PageHeader title={t('page.title')} />
-        <LoadingSpinner size="lg" text={`${t('loading.title')} ${t('loading.subtitle')}`} />
+        <LoadingSpinner fullScreen={true} size="lg" text={`${t('loading.title')} ${t('loading.subtitle')}`} />
       </UserPageLayout>
     )
   }
@@ -172,7 +172,7 @@ export default function ReservationsPage() {
   return (
     <UserPageLayout>
       {/* Page Header */}
-      <div className="flex items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6">
         <PageHeader
           title={t('page.title')}
           subtitle={
@@ -182,7 +182,7 @@ export default function ReservationsPage() {
           }
         />
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0 sm:self-auto self-start">
           <Button
             variant="default"
             size="sm"

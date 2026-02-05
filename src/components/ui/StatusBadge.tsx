@@ -14,6 +14,7 @@ export interface StatusBadgeProps {
   status: StatusBadgeType
   label?: string
   className?: string
+  size?: 'sm' | 'md'
 }
 
 const statusConfig = {
@@ -43,22 +44,38 @@ const statusConfig = {
   },
 }
 
-export const StatusBadge = ({ status, label, className }: StatusBadgeProps) => {
+export const StatusBadge = ({
+  status,
+  label,
+  className,
+  size = 'md',
+}: StatusBadgeProps) => {
   const t = useI18nTranslations('statusBadge')
   const config = statusConfig[status]
   const Icon = config.icon
   const textColor = config.textColor || 'text-white'
+  const sizeClasses =
+    size === 'sm'
+      ? {
+          container: 'gap-1 px-1.5 py-0.5 text-[9px] leading-none',
+          icon: 'h-3.5 w-3.5',
+        }
+      : {
+          container: 'gap-1 px-2 py-1.5 text-[12px]',
+          icon: 'h-3.5 w-3.5',
+        }
 
   return (
     <div
       className={cn(
-        'flex items-center gap-1.5 px-2 py-1.5 rounded-full text-10 font-normal',
+        'flex items-center rounded-full font-normal',
+        sizeClasses.container,
         config.bgColor,
         textColor,
         className
       )}
     >
-      <Icon className="h-4 w-4" />
+      <Icon className={sizeClasses.icon} />
       <span>{label || t(`default.${status}`)}</span>
     </div>
   )
