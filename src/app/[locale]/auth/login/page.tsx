@@ -18,6 +18,7 @@ import type { ExternalProvidersType } from '@/../client/common/api/gen/ourbride-
 import { useI18nTranslations } from '@/i18n'
 
 import {  useToast } from '@/components/ui/Toaster'
+import { LoadingSpinner } from '@/components/ui'
 
 
 /**
@@ -197,8 +198,8 @@ function LoginFormContent() {
         </div>
       </div>
 
-      {/* Loading Overlay */}
-      <LoadingOverlay open={isLoading} />
+    
+      
     </>
   )
 }
@@ -217,13 +218,15 @@ export default function LoginPage() {
 
       <Suspense
         fallback={
-          <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2.5">
+          <div className="w-full max-w-[328px] sm:max-w-[360px] md:max-w-[380px] mx-auto space-y-2">
             <WelcomeHeader welcomeText={t('welcomeHeader.defaultWelcome')} />
             <AuthTabs />
-            <LoadingOverlay
+            <LoadingSpinner
+            size='xl'
+            fullScreen={true}
               open={true}
-              title={tCommon('loading')}
-              subtitle={tCommon('pleaseWait')}
+              text={`${tCommon('loading')} ${tCommon('pleaseWait')}`}
+            
             />
           </div>
         }

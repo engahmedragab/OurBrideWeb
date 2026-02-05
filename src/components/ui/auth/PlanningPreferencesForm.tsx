@@ -22,6 +22,7 @@ import { getServiceIcon } from '@/utils/serviceIconMapper'
 import { useAuth } from '@/auth'
 import { LoadingOverlay } from '../LoadingOverlay'
 import { useI18nTranslations, useIsRTL } from '@/i18n'
+import { LoadingSpinner } from '../LoadingSpinner'
 
 export interface PlanningPreferencesFormProps {
   onBackClick?: () => void
@@ -497,10 +498,10 @@ export const PlanningPreferencesForm = ({
       />
 
       {/* Loading Overlay */}
-      <LoadingOverlay
+      <LoadingSpinner
         open={isSubmitting || isLoadingPreferences}
-        title={isSubmitting ? t('savingButton') : t('loadingServices')}
-        subtitle={tCommon('pleaseWait')}
+        text={isSubmitting ? t('savingButton') : t('loadingServices')}
+        
       />
     </>
   )

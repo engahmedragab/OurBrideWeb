@@ -10,6 +10,7 @@ import { AuthErrorDisplay } from '@/components/ui/auth/index'
 import { useToast } from '@/components/ui/Toaster'
 import { LoadingOverlay } from '@/components/ui/LoadingOverlay'
 import { useI18nTranslations } from '@/i18n'
+import { LoadingSpinner } from '@/components/ui'
 export default function PlanningPreferencesPage() {
   const router = useRouter()
   const toast = useToast()
@@ -87,7 +88,7 @@ export default function PlanningPreferencesPage() {
   if (checking) {
     return (
       <>
-        <LoadingOverlay open title={t('common.loading')} subtitle={t('common.pleaseWait')} />
+        <LoadingSpinner open text={`${t('common.loading')} ${t('common.pleaseWait')}`}  />
       </>
     )
   }

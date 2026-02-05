@@ -220,7 +220,7 @@ export const Header = ({ className }: HeaderProps) => {
               alt="OurBride Logo"
               width={120}
               height={48}
-              className="h-14 sm:h-14 w-auto"
+              className="h-14 sm:h-16 w-auto"
             />
           </Link>
           </div>
@@ -232,7 +232,7 @@ export const Header = ({ className }: HeaderProps) => {
     className={cn(
       'gap-0.5 rounded-full border border-gray-100 bg-white shadow-sm',
       'lg:h-12 lg:px-1 lg:py-1.5',
-      isRTL ? 'md:h-10 md:px-1.5 md:py-2' : 'md:h-14 md:px-2 md:py-2'
+      isRTL ? 'md:h-14 md:px-2 md:py-2' : 'md:h-14 md:px-2 md:py-2'
     )}
   >
     {navigationItems.map(item => {
@@ -254,7 +254,7 @@ export const Header = ({ className }: HeaderProps) => {
                 isRTL && 'flex-row-reverse',
                 'lg:gap-2 lg:px-3 lg:py-2 lg:text-16',
                 isRTL
-                  ? 'md:gap-1 md:px-1.5 md:py-2 md:text-14'
+                  ? 'md:gap-2 md:px-2.5 md:py-2 md:text-16'
                   : 'md:gap-2 md:px-2 md:py-2 md:text-14'
               )}
             >
@@ -265,7 +265,7 @@ export const Header = ({ className }: HeaderProps) => {
                     ? 'text-brand-600'
                     : 'text-gray-400 group-hover:text-brand-600',
                   'lg:h-5 lg:w-5',
-                  isRTL ? 'md:h-4 md:w-4' : 'md:h-5 md:w-5'
+                  isRTL ? 'md:h-5 md:w-5' : 'md:h-5 md:w-5'
                 )}
               />
               {item.label}
@@ -344,7 +344,7 @@ export const Header = ({ className }: HeaderProps) => {
               isRTL && 'flex-row-reverse',
               'lg:gap-2 lg:px-3 lg:py-2 lg:text-16',
               isRTL
-                ? 'md:gap-1.5 md:px-1.5 md:py-2 md:text-14'
+                ? 'md:gap-2 md:px-2.5 md:py-2 md:text-16'
                 : 'md:gap-2 md:px-2 md:py-2 md:text-14'
             )}
           >
@@ -355,7 +355,7 @@ export const Header = ({ className }: HeaderProps) => {
                   ? 'text-brand-600'
                   : 'text-gray-400 group-hover:text-brand-600',
                 'lg:h-5 lg:w-5',
-                isRTL ? 'md:h-4 md:w-4' : 'md:h-5 md:w-5'
+                isRTL ? 'md:h-5 md:w-5' : 'md:h-5 md:w-5'
               )}
             />
             {item.label}

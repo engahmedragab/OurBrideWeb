@@ -52,7 +52,7 @@ export const StatusBadge = ({ status, label, className }: StatusBadgeProps) => {
   return (
     <div
       className={cn(
-        'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-14 font-normal',
+        'flex items-center gap-1.5 px-2 py-1.5 rounded-full text-10 font-normal',
         config.bgColor,
         textColor,
         className
