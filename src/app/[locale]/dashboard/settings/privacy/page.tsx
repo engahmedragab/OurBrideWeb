@@ -20,28 +20,28 @@ export default function PrivacyPage() {
 
   const sections = [
     {
-      title: t('sections.informationWeCollect.title'),
-      content: t('sections.informationWeCollect.content'),
+      title: t.raw('sections.informationWeCollect.title'),
+      content: t.raw('sections.informationWeCollect.content'),
     },
     {
-      title: t('sections.howWeUse.title'),
-      content: t('sections.howWeUse.content'),
+      title: t.raw('sections.howWeUse.title'),
+      content: t.raw('sections.howWeUse.content'),
     },
     {
-      title: t('sections.dataProtection.title'),
-      content: t('sections.dataProtection.content'),
+      title: t.raw('sections.dataProtection.title'),
+      content: t.raw('sections.dataProtection.content'),
     },
     {
-      title: t('sections.sharingData.title'),
-      content: t('sections.sharingData.content'),
+      title: t.raw('sections.sharingData.title'),
+      content: t.raw('sections.sharingData.content'),
     },
     {
-      title: t('sections.userRights.title'),
-      content: t('sections.userRights.content'),
+      title: t.raw('sections.userRights.title'),
+      content: t.raw('sections.userRights.content'),
     },
     {
-      title: t('sections.changesToPolicy.title'),
-      content: t('sections.changesToPolicy.content'),
+      title: t.raw('sections.changesToPolicy.title'),
+      content: t.raw('sections.changesToPolicy.content'),
     },
   ]
 

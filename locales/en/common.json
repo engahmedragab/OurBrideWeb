@@ -92,10 +92,25 @@
       "followUpdateSuccess": "Follow updated successfully",
       "followUpdateError": "Failed to update follow",
       "unfollowSuccess": "Unfollowed successfully",
-      "unfollowError": "Failed to unfollow"
+      "unfollowError": "Failed to unfollow",
       
-    }
-  ,
+    "cartUpdatedSuccess": "Cart updated successfully",
+    "cartUpdatedError": "Failed to update cart",
+    "itemRemovedSuccess": "Item removed from cart successfully",
+    "itemRemovedError": "Failed to remove item from cart",
+    "checkoutSuccess": "Checkout completed successfully",
+    "checkoutError": "Failed to complete checkout",
+    "couponAppliedSuccess": "Coupon applied successfully",
+    "couponInvalidError": "Invalid coupon code",
+    "couponValidateError": "Failed to validate coupon",
+    "cartClearedSuccess": "Cart cleared successfully",
+    "cartClearedError": "Failed to clear cart",
+    "productAddedSuccess": "Product added to cart successfully",
+    "productAddedError": "Failed to add product to cart",
+    "providerIdRequired": "Provider ID is required"
+
+      
+    },
   "auth": {
     "hero": {
       "backToHome": "Back To home",

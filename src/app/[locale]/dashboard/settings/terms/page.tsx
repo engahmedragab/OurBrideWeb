@@ -20,36 +20,36 @@ export default function TermsPage() {
 
   const sections = [
     {
-      title: t('sections.introduction.title'),
-      content: t('sections.introduction.content'),
+      title: t.raw('sections.introduction.title'),
+      content: t.raw('sections.introduction.content'),
     },
     {
-      title: t('sections.accountUsage.title'),
-      content: t('sections.accountUsage.content'),
+      title: t.raw('sections.accountUsage.title'),
+      content: t.raw('sections.accountUsage.content'),
     },
     {
-      title: t('sections.bookingsServices.title'),
-      content: t('sections.bookingsServices.content'),
+      title: t.raw('sections.bookingsServices.title'),
+      content: t.raw('sections.bookingsServices.content'),
     },
     {
-      title: t('sections.paymentsFees.title'),
-      content: t('sections.paymentsFees.content'),
+      title: t.raw('sections.paymentsFees.title'),
+      content: t.raw('sections.paymentsFees.content'),
     },
     {
-      title: t('sections.contentCommunity.title'),
-      content: t('sections.contentCommunity.content'),
+      title: t.raw('sections.contentCommunity.title'),
+      content: t.raw('sections.contentCommunity.content'),
     },
     {
-      title: t('sections.privacySecurity.title'),
-      content: t('sections.privacySecurity.content'),
+      title: t.raw('sections.privacySecurity.title'),
+      content: t.raw('sections.privacySecurity.content'),
     },
     {
-      title: t('sections.liability.title'),
-      content: t('sections.liability.content'),
+      title: t.raw('sections.liability.title'),
+      content: t.raw('sections.liability.content'),
     },
     {
-      title: t('sections.changesToTerms.title'),
-      content: t('sections.changesToTerms.content'),
+      title: t.raw('sections.changesToTerms.title'),
+      content: t.raw('sections.changesToTerms.content'),
     },
   ]
 

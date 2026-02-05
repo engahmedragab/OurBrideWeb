@@ -93,10 +93,24 @@
       "followUpdateSuccess": "تم تحديث المتابعة بنجاح",
       "followUpdateError": "فشل تحديث المتابعة",
       "unfollowSuccess": "تم إلغاء المتابعة بنجاح",
-      "unfollowError": "فشل إلغاء المتابعة"
+      "unfollowError": "فشل إلغاء المتابعة",
+      "cartUpdatedSuccess": "تم تحديث السلة بنجاح",
+      "cartUpdatedError": "فشل تحديث السلة",
+      "itemRemovedSuccess": "تمت إزالة العنصر من السلة بنجاح",
+      "itemRemovedError": "فشل إزالة العنصر من السلة",
+      "checkoutSuccess": "تم إتمام الدفع بنجاح",
+      "checkoutError": "فشل إتمام الدفع",
+      "couponAppliedSuccess": "تم تطبيق الكوبون بنجاح",
+      "couponInvalidError": "كود الكوبون غير صالح",
+      "couponValidateError": "فشل التحقق من الكوبون",
+      "cartClearedSuccess": "تم إفراغ السلة بنجاح",
+      "cartClearedError": "فشل إفراغ السلة",
+      "productAddedSuccess": "تمت إضافة المنتج إلى السلة بنجاح",
+      "productAddedError": "فشل إضافة المنتج إلى السلة",
+      "providerIdRequired": "مطلوب رقم المزوّد"
+
     
-  }
-  ,
+  },
   "auth": {
     "hero": {
       "backToHome": "  الصفحة الرئيسية",
@@ -751,32 +765,6 @@
         "wishlistToggleFail": "فشل تحديث قائمة الرغبات"
       }
     },
-    "providers": {
-      "toast": {
-        "followToggleSuccess": "تم تحديث المتابعة بنجاح",
-        "followToggleFail": "فشل تحديث المتابعة",
-        "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
-        "favoriteToggleFail": "فشل تحديث المفضلة"
-      }
-    },
-    "productFeatures": {
-    "premiumBrands": {
-      "title": "علامات تجارية فاخرة",
-      "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف",
-      "providers": {
-        "defaultProfession": "مزود خدمة",
-        "fallbackProductTitle": "عرض الخدمات"
-      },
-      "trustFeatures": {
-        "title": "عنوان الميزة التنافسية",
-        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف."
-      },
-      "newsletter": {
-        "emailPlaceholder": "أدخل بريدك الإلكتروني",
-        "heading": "جاهزة توصلك أخبارنا؟",
-        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
-      }
-    },
     "serviceCategories": {
       "loading": "جاري تحميل الخدمات...",
       "FailedtoLoadServices": "فشل تحميل الخدمات",
@@ -1000,13 +988,43 @@
         "pricePrefix": "السعر |"
       }
     },
+    
     "bookingConfirmationModal": {
       "title": "تأكيد الحجز",
       "message": "تم تأكيد حجزك. يرجى التحقق من بريدك الإلكتروني للتفاصيل.",
       "successMessage": "تم إرسال طلبك!",
       "successDescription": "تم إرسال طلب الخدمة بنجاح. تم إشعار المزود وستتلقين تحديثًا بمجرد الرد.",
       "trackRequest": "تتبع الطلب"
+    },
+    "providers": {
+      "toast": {
+        "followToggleSuccess": "تم تحديث المتابعة بنجاح",
+        "followToggleFail": "فشل تحديث المتابعة",
+        "favoriteToggleSuccess": "تم تحديث المفضلة بنجاح",
+        "favoriteToggleFail": "فشل تحديث المفضلة"
+      }
+    },
+    "productFeatures": {
+    "premiumBrands": {
+      "title": "علامات تجارية فاخرة",
+      "description": "منتجات مختارة بعناية من موردين موثوقين وعاليي الجودة لمستلزمات الزفاف",
+      "providers": {
+        "defaultProfession": "مزود خدمة",
+        "fallbackProductTitle": "عرض الخدمات"
+      },
+      "trustFeatures": {
+        "title": "عنوان الميزة التنافسية",
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف."
+      },
+      "newsletter": {
+        "emailPlaceholder": "أدخل بريدك الإلكتروني",
+        "heading": "جاهزة توصلك أخبارنا؟",
+        "description": "OurBride هي منصتك الشاملة لتخطيط حفلات الزفاف والتسوق. ابحثي عن كل ما تحتاجينه لإنشاء يومك المثالي."
+      }
     }
+   
+   
+  
     }
   },
   "products": {

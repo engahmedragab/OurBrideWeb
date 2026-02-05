@@ -20,24 +20,24 @@ export default function CommunityPage() {
 
   const sections = [
     {
-      title: t('sections.respectOthers.title'),
-      content: t('sections.respectOthers.content'),
+      title: t.raw('sections.respectOthers.title'),
+      content: t.raw('sections.respectOthers.content'),
     },
     {
-      title: t('sections.authenticity.title'),
-      content: t('sections.authenticity.content'),
+      title: t.raw('sections.authenticity.title'),
+      content: t.raw('sections.authenticity.content'),
     },
     {
-      title: t('sections.safeCommunication.title'),
-      content: t('sections.safeCommunication.content'),
+      title: t.raw('sections.safeCommunication.title'),
+      content: t.raw('sections.safeCommunication.content'),
     },
     {
-      title: t('sections.serviceIntegrity.title'),
-      content: t('sections.serviceIntegrity.content'),
+      title: t.raw('sections.serviceIntegrity.title'),
+      content: t.raw('sections.serviceIntegrity.content'),
     },
     {
-      title: t('sections.reportingConsequences.title'),
-      content: t('sections.reportingConsequences.content'),
+      title: t.raw('sections.reportingConsequences.title'),
+      content: t.raw('sections.reportingConsequences.content'),
     },
   ]
 
