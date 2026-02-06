@@ -172,12 +172,30 @@ export const UpcomingBookings = ({
                           {format(new Date(date), 'dd MMM, yyyy')}
                         </p>
                       )}
+
+                      <div className="flex items-center gap-2 mt-2 sm:hidden">
+                        {isCompleted ? (
+                          <Badge
+                            variant="confirmed"
+                            className="text-11 flex items-center gap-1 whitespace-nowrap"
+                          >
+                            <CheckCircle2 className="w-3 h-3" />
+                            <span>{tCards('upcomingBookings.badges.completed')}</span>
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="pending"
+                            className="text-11 flex items-center gap-1 whitespace-nowrap"
+                          >
+                            <Clock className="w-3 h-3" />
+                            <span>{tCards('upcomingBookings.badges.pending')}</span>
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    
-
+                  <div className="hidden sm:flex items-end gap-2 flex-shrink-0">
                     {isCompleted ? (
                       <Badge
                         variant="confirmed"

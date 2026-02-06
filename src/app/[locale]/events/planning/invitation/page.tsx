@@ -589,8 +589,9 @@ function InvitationPageContent() {
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <GuestsHeader onRefresh={handleRefresh} />
       <div className="flex items-center justify-between mb-4">
-        <GuestsHeader onRefresh={handleRefresh} />
+        
 
         {(hasUnsavedChanges || syncMutation.isPending) && (
           <div className="flex items-center gap-3">

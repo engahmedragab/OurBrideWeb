@@ -333,7 +333,7 @@ export const UserSidebar = ({
                         <Icon
                           className={cn(
                             'h-5 w-5 flex-shrink-0',
-                            active ? 'text-brand-500' : 'text-gray-900'
+                            active ? 'text-brand-500 mx-0.5' : 'text-gray-900 mx-0'
                           )}
                         />
                         <span className="flex-1">{item.label}</span>
