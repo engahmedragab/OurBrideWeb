@@ -310,7 +310,7 @@ export const extractProviders = (
 /**
  * Extract banners from API response
  */
-const extractBanners = (data: Record<string, unknown>): OfferItem[] => {
+const extractBanners = (data: Record<string, unknown>, lang: string): OfferItem[] => {
   if (Array.isArray(data.banners)) {
     return data.banners
       .filter((b): b is Record<string, unknown> => isObject(b))
@@ -327,12 +327,10 @@ const extractBanners = (data: Record<string, unknown>): OfferItem[] => {
           imageUrl && imageUrl.trim() !== '' ? imageUrl : undefined
 
         return {
-          heading: (b.title || b.nameEn || b.nameAr || '') as string,
-          description: (b.description ||
-            b.subtitle ||
-            b.descriptionEn ||
-            b.descriptionAr ||
-            '') as string,
+          heading: pickLocalizedText(lang, {  en: (b.nameEn as string) ?? '',
+    ar: (b.nameAr as string) ?? '',
+    fallback: (b.name as string) ?? ''}),
+          description: pickLocalizedText(lang, {  en: (b.descriptionEn as string) ?? '', ar: (b.descriptionAr as string) ?? '', fallback: (b.subtitle as string) ?? (b.description as string) ?? ''}),
           ctaText: (b.buttonText || 'Start Shopping') as string,
           ctaLink: (b.buttonLink || b.linkUrl || '/products') as string,
           productImage,
@@ -588,7 +586,7 @@ export const extractHomeData = (apiResponse: unknown, lang: string) => {
   result.testimonials = extractTestimonials(data)
   result.providers = extractProviders(data,lang)
   result.memberTestimonials = extractMemberTestimonials(data)
-  result.banners = extractBanners(data)
+  result.banners = extractBanners(data,lang)
 
   // Extract statistics
   if (isObject(data.statistics)) {
@@ -705,7 +703,7 @@ export const extractStoreHomeData = (apiResponse: unknown, lang: string) => {
   result.categories = extractCategories(data)
   result.offers = extractOffers(data)
   result.providers = extractProviders(data,lang)
-  result.banners = extractBanners(data)
+  result.banners = extractBanners(data,lang)
   result.topBarTexts = extractTopBarTexts(data)
   result.testimonials = extractStoreTestimonials(data)
   result.faqs = extractFAQs(data)
@@ -964,7 +962,7 @@ export const extractServicesHomeData = (apiResponse: unknown, lang: string) => {
       })
   }
 
-  result.banners = extractBanners(data)
+  result.banners = extractBanners(data,lang)
 
   if (Array.isArray(data.featureProviders)) {
     result.providers = data.featureProviders

@@ -483,9 +483,9 @@ const ProductServiceCard = ({
 const TestimonialCard = ({ data }: { data: TestimonialCardData }) => {
   const [imageError, setImageError] = React.useState(false)
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full ">
       {/* Card */}
-      <div className="bg-white rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow flex-1">
+      <div className="bg-white border border-gray300/40 rounded-xl p-6 md:p-8 flex flex-col shadow-sm hover:shadow-md transition-shadow flex-1">
         {/* Quote */}
         <p className="text-16 text-gray-900 mb-6 flex-1 leading-relaxed">
           &quot;{data.quote}&quot;

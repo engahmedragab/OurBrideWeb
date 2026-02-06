@@ -22,15 +22,16 @@ export const UserPageLayout = ({
       <Header />
       
       {/* Mobile Sidebar Toggle Button - Sticky below header */}
-      <div className="lg:hidden sticky top-16 z-30 bg-white border-b border-gray-200 px-4 py-2">
+      <div className="lg:hidden  w-full top-16 z-30 bg-white border-b border-gray-200 px-4 py-2 flex justify-between items-center">
+         <span className="flex ltr:justify-start ">Menu</span>
         <Button
           variant="ghost"
           onClick={() => setIsSidebarOpen(true)}
-          className="w-full justify-start gap-3 text-16 font-semibold text-gray-700 hover:bg-gray-50"
+          className="w-fit gap-3 px-3 text-16 font-semibold text-gray-700 hover:bg-gray-50 flex-row"
           aria-label="Open menu"
         >
           <Menu className="h-5 w-5 text-brand-500" />
-          Menu
+         
         </Button>
       </div>
 
@@ -47,13 +48,16 @@ export const UserPageLayout = ({
         {/* Mobile Sidebar Drawer */}
         <div
           className={cn(
-            'lg:hidden fixed inset-y-0 left-0 z-[70] w-80 bg-white shadow-xl',
+            'lg:hidden fixed inset-y-0 z-[70] w-80 bg-white shadow-xl',
+            'ltr:left-0 rtl:right-0',
             'transition-transform duration-300 ease-in-out',
-            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            isSidebarOpen
+              ? 'translate-x-0'
+              : 'ltr:-translate-x-full rtl:translate-x-full'
           )}
         >
           {/* Drawer Header */}
-          <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200 bg-white">
+          <div className="flex h-16 items-center justify-between px-4 border-b border-gray-200 bg-white ">
             <span className="text-18 font-semibold text-gray-900">Menu</span>
             <Button
               variant="ghost"

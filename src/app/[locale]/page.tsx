@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, memo } from 'react'
+import { useState, useMemo, useCallback, useRef, memo } from 'react'
 import { Link } from '@/i18n/navigation'
 import Image from 'next/image'
 import { Header } from '@/components/layout'
@@ -33,6 +33,11 @@ import {
 
 import { StoreBadges } from '@/components/ui/StoreBadges'
 import { Users, ChevronLeft, ChevronRight, Quote, Calendar, DollarSign, UserPlus, Clock } from 'lucide-react'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import type { SwiperRef } from 'swiper/react'
+import type { Swiper as SwiperType } from 'swiper'
+import { Autoplay } from 'swiper/modules'
+import 'swiper/css'
 import heroBrideImage from '@/assets/images/Hero-Bride.png'
 import heroCardBrideImage from '@/assets/images/HeroCard-Bride.png'
 import heroCircularSvg from '@/assets/svg/Hero-circular.svg'
@@ -171,9 +176,12 @@ export default function Home() {
 
   // Testimonials carousel state
   const [testimonialsIndex, setTestimonialsIndex] = useState(0)
+  const [testimonialsMobileIndex, setTestimonialsMobileIndex] = useState(0)
+  const testimonialsSwiperRef = useRef<SwiperRef | null>(null)
   const testimonialsTotalPages = Math.ceil(
     testimonials.length / PAGINATION_CONFIG.TESTIMONIALS_PER_PAGE
   )
+  const testimonialsMobileTotal = testimonials.length
 
   // Fetch community posts for member testimonials section
   const { data: communityPosts, isLoading: isLoadingPosts } = usePosts({
@@ -294,6 +302,24 @@ export default function Home() {
 
   const goToTestimonialsPage = useCallback((index: number) => {
     setTestimonialsIndex(index)
+  }, [])
+
+  const goToTestimonialsMobilePrevious = useCallback(() => {
+    testimonialsSwiperRef.current?.swiper.slidePrev()
+  }, [])
+
+  const goToTestimonialsMobileNext = useCallback(() => {
+    testimonialsSwiperRef.current?.swiper.slideNext()
+  }, [])
+
+  const goToTestimonialsMobilePage = useCallback((index: number) => {
+    const swiper = testimonialsSwiperRef.current?.swiper
+    if (!swiper) return
+    if (swiper.params.loop) {
+      swiper.slideToLoop(index)
+      return
+    }
+    swiper.slideTo(index)
   }, [])
 
   // Get translated trust cards
@@ -419,12 +445,12 @@ export default function Home() {
               </div>
 
               {/* Headline */}
-              <div className="text-16 sm:text-20 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2">
+              <div className="text-24 sm:text-24 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2">
                 {t('hero.headline.line1')} <br />
-                <span className="text-16 sm:text-20 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2  ">
+                <span className="text-24 sm:text-24 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2  ">
                   {t('hero.headline.line2')} <br />
                 </span>
-                <span className="text-16 sm:text-20 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2  ">
+                <span className="text-24 sm:text-24 md:text-28 lg:text-36 xl:text-40 2xl:text-48 font-semibold text-gray-900 leading-tight mt-2  ">
                   {t('hero.headline.line3')}
                 </span>
               </div>
@@ -574,6 +600,7 @@ export default function Home() {
                     alt="Explore Products"
                     fill
                     sizes="(max-width: 768px) 192px, 224px"
+                    style={{ objectPosition: 'center 16%' }}
                     className="object-cover"
                   />
                 </div>
@@ -611,6 +638,7 @@ export default function Home() {
                     fill
                     sizes="(max-width: 768px) 192px, 224px"
                     className="object-cover"
+                    style={{ objectPosition: 'center 16%' }}
                   />
                 </div>
                 <div className="p-4 space-y-2">
@@ -619,7 +647,7 @@ export default function Home() {
                     size="sm"
                     disabled
                     aria-disabled="true"
-                    className="w-full !text-8 md:!text-12 lg:!text-13  font-semibold rounded-full cursor-not-allowed opacity-70"
+                    className="w-full !text-8 md:!text-12 lg:!text-13 text-brand-500 font-semibold rounded-full cursor-not-allowed opacity-70"
                   >
                     {t('hero.exploreServices')}
                   </Button>
@@ -680,7 +708,7 @@ export default function Home() {
 
         {/* Section 4: Benefits */}
         <section className="container-custom py-8 md:py-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             <div className="flex flex-col items-center text-center">
               <div className="mb-4">
                 <Image
@@ -857,8 +885,37 @@ export default function Home() {
                 </span>
               </h2>
             </div>
-            <div className="relative min-h-[600px] md:min-h-[700px]">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 relative">
+            <div className="relative min-h-[480px] md:min-h-[560px]">
+              {/* Mobile: Swiper */}
+              <div className="md:hidden -mx-4 px-4">
+                <Swiper
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                  spaceBetween={16}
+                  slidesPerView={1.1}
+                  centeredSlides={false}
+                  modules={[Autoplay]}
+                  autoplay={{ delay: 2000, disableOnInteraction: false }}
+                  speed={3000}
+                >
+                  {translatedTrustCards.map((card) => (
+                    <SwiperSlide key={card.id} className="!h-auto">
+                      <Card
+                        cardData={{
+                          type: 'trust',
+                          heading: card.heading,
+                          description: card.description,
+                          rotation: 0,
+                          background: card.background,
+                        }}
+                        className="h-full"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+
+              {/* Desktop: Grid */}
+              <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 relative">
                 {translatedTrustCards.map((card, index) => {
                   const positionClass = TRUST_CARD_POSITION_CLASSES[index] || ''
                   return (
@@ -908,23 +965,62 @@ export default function Home() {
               </h2>
             </div>
 
-            <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
+            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12 mb-8 md:mb-12">
               {/* Left Side - Quote Icon and Heading */}
-              <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
-                <div className="flex-1 lg:max-w-md">
+              <div className="flex items-center lg:items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
+                <div className="flex-1 lg:max-w-md text-center lg:text-left">
                   <div className="mb-4 md:mb-6">
-                    <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
-                    <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
-                      <span className="block">{t('sections.testimonials.whatOurCustomers')}</span>
-                      <span className="block font-semibold text-gray-900">
+                    <Quote className="mx-auto lg:mx-0 h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
+                    <p className={cn(
+                      "text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900",
+                      isRTL && "lg:text-right"
+                    )}>
+                      <span className="inline lg:block">
+                        {t('sections.testimonials.whatOurCustomers')}
+                      </span>{' '}
+                      <span className="inline lg:block font-semibold text-gray-900">
                         {t('sections.testimonials.customers')}
                       </span>
                       {t('sections.testimonials.areSaying') && (
-                        <span className="block">{t('sections.testimonials.areSaying')}</span>
+                        <span className="inline lg:block">
+                          {' '}
+                          {t('sections.testimonials.areSaying')}
+                        </span>
                       )}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3 md:gap-4">
+                  <div className="flex items-center gap-3 md:gap-4 md:hidden">
+                    <button
+                      onClick={goToTestimonialsMobilePrevious}
+                      aria-label={t('sections.testimonials.previous')}
+                    >
+                      <ChevronLeft className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
+                    </button>
+                    <div className="flex-1 flex items-center gap-2">
+                      {Array.from({ length: testimonialsMobileTotal }).map(
+                        (_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => goToTestimonialsMobilePage(index)}
+                            className={cn(
+                              'flex-1 h-2 rounded-full transition-all',
+                              index === testimonialsMobileIndex
+                                ? 'bg-red-500'
+                                : 'bg-gray-200 hover:bg-gray-300'
+                            )}
+                            aria-label={`${t('sections.testimonials.goToPage')} ${index + 1}`}
+                          />
+                        )
+                      )}
+                    </div>
+                    <button
+                      onClick={goToTestimonialsMobileNext}
+                      aria-label={t('sections.testimonials.next')}
+                    >
+                      <ChevronRight className={cn("h-5 w-5 text-gray-700", isRTL && "rotate-180")} />
+                    </button>
+                  </div>
+                  <div className="hidden md:flex items-center gap-3 md:gap-4">
                     <button
                       onClick={goToTestimonialsPrevious}
                       aria-label={t('sections.testimonials.previous')}
@@ -959,18 +1055,49 @@ export default function Home() {
               </div>
 
               {/* Right Side - Testimonial Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full lg:w-auto items-stretch">
-                {isLoading ? (
-                  <TestimonialCardSkeleton count={3} />
-                ) : (
-                  currentTestimonials.map((testimonial, index) => (
-                    <Card
-                      key={`${testimonialsIndex}-${index}`}
-                      cardData={{ type: 'testimonial', ...testimonial }}
-                      className="h-full"
-                    />
-                  ))
-                )}
+              <div className="flex-1 w-full lg:w-auto items-stretch">
+                <div className="md:hidden -mx-4 px-4">
+                  {isLoading ? (
+                    <TestimonialCardSkeleton count={1} />
+                  ) : (
+                    <Swiper
+                      ref={testimonialsSwiperRef}
+                      dir={isRTL ? 'rtl' : 'ltr'}
+                      spaceBetween={16}
+                      slidesPerView={1}
+                      centeredSlides={false}
+                      loop={testimonialsMobileTotal > 1}
+                      onSlideChange={(swiper) => {
+                        setTestimonialsMobileIndex(swiper.realIndex)
+                      }}
+                    >
+                      {testimonials.map((testimonial, index) => (
+                        <SwiperSlide
+                          key={`${'testimonial'}-${index}`}
+                          className="!h-auto"
+                        >
+                          <Card
+                            cardData={{ type: 'testimonial', ...testimonial }}
+                            className="h-full "
+                          />
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  )}
+                </div>
+                <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+                  {isLoading ? (
+                    <TestimonialCardSkeleton count={3} />
+                  ) : (
+                    currentTestimonials.map((testimonial, index) => (
+                      <Card
+                        key={`${testimonialsIndex}-${index}`}
+                        cardData={{ type: 'testimonial', ...testimonial }}
+                        className="h-full "
+                      />
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           </section>
@@ -1108,24 +1235,34 @@ export default function Home() {
 
             <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12 mb-8 md:mb-12">
               {/* Left Side - Quote Icon and Heading */}
-              <div className="flex items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
-                <div className="flex-1 lg:max-w-md">
+              <div className="flex items-center lg:items-start gap-4 lg:gap-6 w-full lg:w-auto lg:flex-shrink-0">
+                <div className={cn(
+                  "flex-1 lg:max-w-md text-center lg:text-left",
+                  isRTL && "lg:text-right"
+                )}>
                   <div className="mb-4 md:mb-6">
-                    <Quote className="h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
+                    <Quote className="mx-auto lg:mx-0 h-10 w-10 sm:h-12 sm:w-12 md:h-10 md:w-10 text-gray-400 mb-3" />
                     <p className="text-18 sm:text-20 md:text-24 lg:text-28 font-normal text-gray-900">
                       {tMember('fullPhrase') ? (
-                        <span className="block">{tMember('fullPhrase')}</span>
+                        <span className="inline lg:block">
+                          {tMember('fullPhrase')}
+                        </span>
                       ) : (
                         <>
-                          <span className="block">{tMember('discover')}</span>
-                          <span className="block font-semibold text-gray-900">
+                          <span className="inline lg:block">
+                            {tMember('discover')}
+                          </span>{' '}
+                          <span className="inline lg:block font-semibold text-gray-900">
                             {tMember('what')}
-                          </span>
-                          <span className="block font-semibold text-gray-900">
+                          </span>{' '}
+                          <span className="inline lg:block font-semibold text-gray-900">
                             {tMember('membersLabel')}
                           </span>
                           {tMember('areSaying') && (
-                            <span className="block">{tMember('areSaying')}</span>
+                            <span className="inline lg:block">
+                              {' '}
+                              {tMember('areSaying')}
+                            </span>
                           )}
                         </>
                       )}
@@ -1281,9 +1418,9 @@ export default function Home() {
           </div>
 
           {/* Features Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-8 md:mb-12">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4  gap-2 md:gap-8 mb-8 md:mb-12">
             {/* Feature 1: Event Management */}
-            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
               <div className="mb-4 p-4 rounded-full bg-brand-100">
                 <Calendar className="h-8 w-8 text-brand-500" />
               </div>
@@ -1296,7 +1433,7 @@ export default function Home() {
             </div>
 
             {/* Feature 2: Budget Planning */}
-            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
               <div className="mb-4 p-4 rounded-full bg-brand-100">
                 <DollarSign className="h-8 w-8 text-brand-500" />
               </div>
@@ -1309,7 +1446,7 @@ export default function Home() {
             </div>
 
             {/* Feature 3: Guest Lists */}
-            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
               <div className="mb-4 p-4 rounded-full bg-brand-100">
                 <UserPlus className="h-8 w-8 text-brand-500" />
               </div>
@@ -1322,7 +1459,7 @@ export default function Home() {
             </div>
 
             {/* Feature 4: Timeline */}
-            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
+            <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
               <div className="mb-4 p-4 rounded-full bg-brand-100">
                 <Clock className="h-8 w-8 text-brand-500" />
               </div>
@@ -1362,16 +1499,16 @@ export default function Home() {
               </h2>
             </div>
 
-            <div className="flex flex-col items-center">
-              <div className="flex items-center justify-center relative z-20">
-                <StoreBadges size="3xl" className="gap-4" />
-              </div>
-              <div className="relative flex items-center justify-center w-full h-auto -mt-12 md:-mt-20 lg:-mt-24">
+            <div className="flex flex-col items-center ">
+               <div className="flex items-center justify-center relative z-20">
+                <StoreBadges size="5xl" className=" hidden md:flex gap-4" />
+              </div>             
+               <div className="relative flex items-center justify-center w-full h-auto -mt-6 md:-mt-10 lg:-mt-12">
                 {/* Background Glow */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-brand-400 via-brand-300 to-brand-200 rounded-full opacity-30 blur-3xl" />
 
                 {/* Phone Image */}
-                <div className="relative z-10 w-[750px] md:w-[950px] lg:w-[800px] aspect-[26/16]">
+                <div className="relative z-10 w-[750px] md:w-[950px] lg:w-[900px] aspect-[26/16]">
                   <Image
                     src={
                       typeof phoneImage === 'string'
@@ -1384,6 +1521,9 @@ export default function Home() {
                     className="object-contain drop-shadow-2xl"
                   />
                 </div>
+              </div>
+              <div className="flex items-center justify-center relative z-20">
+                <StoreBadges size="4xl" className="gap-4 md:hidden" />
               </div>
             </div>
           </div>

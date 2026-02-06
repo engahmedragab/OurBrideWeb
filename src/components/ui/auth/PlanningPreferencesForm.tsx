@@ -498,11 +498,11 @@ export const PlanningPreferencesForm = ({
       />
 
       {/* Loading Overlay */}
-      <LoadingSpinner
+      {/* <LoadingSpinner
         open={isSubmitting || isLoadingPreferences}
         text={isSubmitting ? t('savingButton') : t('loadingServices')}
         
-      />
+      /> */}
     </>
   )
 }
