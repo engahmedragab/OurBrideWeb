@@ -57,7 +57,7 @@ export const PlanningSideMenu = ({
                 'whitespace-nowrap',
                 'lg:shrink-0 lg:flex-row lg:items-center lg:justify-between lg:gap-2 lg:px-3 md:text-14 lg:font-medium',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
-                isActive ? 'bg-brand-50 text-brand-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                isActive ? ' text-brand-500' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               )}
             >
               <div className="flex items-center gap-2 min-w-0 justify-center lg:flex-1 lg:justify-start">

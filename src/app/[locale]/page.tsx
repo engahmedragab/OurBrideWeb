@@ -514,7 +514,7 @@ export default function Home() {
             >
               {/* Circular Badge Button - Positioned higher, centered above cards */}
               <div className={cn(
-                "relative w-[100px] h-[100px] items-center justify-center hidden lg:flex",
+                "relative w-[100px] h-[100px] items-center justify-center flex",
                 isRTL 
                   ? "lg:mr-auto lg:ml-0 lg:translate-x-[62px]" 
                   : "lg:ml-auto lg:mr-0 lg:-translate-x-[62px]"
@@ -579,7 +579,7 @@ export default function Home() {
               </div>
               <div
                 className={cn(
-                  "flex justify-between items-start gap-4 w-full max-w-md",
+                  "flex justify-between items-start gap-2 md:gap-4 w-full max-w-md",
                   "lg:flex-col lg:items-start lg:max-w-none",
                   isRTL && "lg:items-end"
                 )}
@@ -604,11 +604,11 @@ export default function Home() {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-4">
+                <div className="p-1 md:p-2">
                   <Button
                     variant="outlineBrand"
                     size="sm"
-                    className="w-full !text-8 md:!text-12 lg:!text-13 font-semibold text-brand-500 rounded-full"
+                    className="w-full rtl:!text-[8px] rtl:md:!text-12  !text-10 md:!text-12 lg:!text-13 font-semibold text-brand-500 rounded-full"
                     asChild
                   >
                     <Link href="/products">{t('hero.exploreProducts')}</Link>
@@ -624,7 +624,7 @@ export default function Home() {
                 <div className="relative h-48 sm:h-40 md:h-48 lg:h-auto lg:aspect-[5/2] overflow-hidden">
                       <div className="absolute top-2 inset-x-2 z-10 flex items-center justify-between">
                   
-                    <span className="rounded-full border border-brand-500/70 bg-white/90 px-2.5 py-1 text-12 font-semibold tracking-wider text-brand-600 shadow-[0_0_12px_rgba(241,72,54,0.35)] animate-pulse">
+                    <span className="rounded-full border border-brand-500/70 bg-white/90 px-2.5 py-1 text-10 font-semibold tracking-wider text-brand-600 shadow-[0_0_12px_rgba(241,72,54,0.35)] animate-pulse">
                       {tsideBar('comingSoon')}
                     </span>
                   </div>
@@ -641,13 +641,13 @@ export default function Home() {
                     style={{ objectPosition: 'center 16%' }}
                   />
                 </div>
-                <div className="p-4 space-y-2">
+                <div className="p-1 md:p-2 space-y-2">
                   <Button
                     variant="outlineBrand"
                     size="sm"
                     disabled
                     aria-disabled="true"
-                    className="w-full !text-8 md:!text-12 lg:!text-13 text-brand-500 font-semibold rounded-full cursor-not-allowed opacity-70"
+                    className="w-full rtl:!text-[8px] rtl:md:!text-12  !text-10 md:!text-12 lg:!text-13 text-brand-500 font-semibold rounded-full cursor-not-allowed opacity-70"
                   >
                     {t('hero.exploreServices')}
                   </Button>
@@ -1499,7 +1499,7 @@ export default function Home() {
               </h2>
             </div>
 
-            <div className="flex flex-col items-center ">
+            <div className="flex flex-col items-center  ">
                <div className="flex items-center justify-center relative z-20">
                 <StoreBadges size="5xl" className=" hidden md:flex gap-4" />
               </div>             
@@ -1508,7 +1508,7 @@ export default function Home() {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-brand-400 via-brand-300 to-brand-200 rounded-full opacity-30 blur-3xl" />
 
                 {/* Phone Image */}
-                <div className="relative z-10 w-[750px] md:w-[950px] lg:w-[900px] aspect-[26/16]">
+                <div className="relative z-10 w-[800px] md:w-[950px] lg:w-[1000px] aspect-[26/16] ">
                   <Image
                     src={
                       typeof phoneImage === 'string'
@@ -1523,7 +1523,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex items-center justify-center relative z-20">
-                <StoreBadges size="4xl" className="gap-4 md:hidden" />
+                <StoreBadges size="4xl" className="gap-2 md:hidden" />
               </div>
             </div>
           </div>

@@ -803,7 +803,7 @@ function MyEventsPageContent() {
     <div className="w-full">
       {/* Header with Tabs and Add Button */}
       <div className="mb-6 sm:mb-8">
-        <div className="flex items-center justify-between gap-6 sm:gap-8 w-full">
+        <div className="flex items-center gap-6 sm:gap-8 w-full">
           {tabs.map(tab => {
             const isActive = activeTab === tab.value
             return (
@@ -821,12 +821,13 @@ function MyEventsPageContent() {
               </button>
             )
           })}
-
+        </div>
+        <div className={cn("mt-4 flex", isRTL ? "justify-start" : "justify-end")}>
           {/* Add New Event Button */}
           <Button
             variant="outlineBrand"
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-end gap-2 !text-14 font-normal text-brand-500 hover:bg-transparent hover:text-brand-500 flex-shrink-0 "
+            className="flex items-center gap-2 !text-14 font-normal text-brand-500 hover:bg-transparent hover:text-brand-500"
           >
             <Plus className="size-4 sm:size-5" />
             {t('actions.addNewEvent')}
@@ -858,7 +859,7 @@ function MyEventsPageContent() {
       {isMounted && !isLoading && !error && (
         <>
           {currentEvents.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 py-12">
               {currentEvents.map(event => (
                 <div
                   key={event.id}
@@ -912,7 +913,7 @@ export default function MyEventsPage() {
     <Suspense
       fallback={
         <div className="w-full min-h-screen flex items-center justify-center">
-          <LoadingSpinner  size="lg" />
+          <LoadingSpinner fullScreen={true} size="lg" />
         </div>
       }
     >
