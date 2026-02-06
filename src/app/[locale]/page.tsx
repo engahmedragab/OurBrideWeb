@@ -1418,10 +1418,10 @@ export default function Home() {
           </div>
 
           {/* Features Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4  gap-2 md:gap-8 mb-8 md:mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4  gap-2 md:gap-8 mb-8 md:mb-12">
             {/* Feature 1: Event Management */}
             <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
-              <div className="mb-4 p-4 rounded-full bg-brand-100">
+              <div className="mb-4 p-6 rounded-full bg-brand-100">
                 <Calendar className="h-8 w-8 text-brand-500" />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
@@ -1434,7 +1434,7 @@ export default function Home() {
 
             {/* Feature 2: Budget Planning */}
             <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
-              <div className="mb-4 p-4 rounded-full bg-brand-100">
+              <div className="mb-4 p-6 rounded-full bg-brand-100">
                 <DollarSign className="h-8 w-8 text-brand-500" />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
@@ -1447,7 +1447,7 @@ export default function Home() {
 
             {/* Feature 3: Guest Lists */}
             <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
-              <div className="mb-4 p-4 rounded-full bg-brand-100">
+              <div className="mb-4 p-6 rounded-full bg-brand-100">
                 <UserPlus className="h-8 w-8 text-brand-500" />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
@@ -1460,7 +1460,7 @@ export default function Home() {
 
             {/* Feature 4: Timeline */}
             <div className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:border-brand-500 hover:shadow-md transition-all">
-              <div className="mb-4 p-4 rounded-full bg-brand-100">
+              <div className="mb-4 p-6 rounded-full bg-brand-100">
                 <Clock className="h-8 w-8 text-brand-500" />
               </div>
               <h3 className="text-18 md:text-20 font-semibold text-gray-900 mb-2">
