@@ -1,7 +1,8 @@
+'use client'
+
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { Typography, CardWrapper, Button } from '@/components/ui'
-import type { Metadata } from 'next'
 import {
   RotateCcw,
   FileText,
@@ -13,13 +14,12 @@ import {
   XCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-export const metadata: Metadata = {
-  title: 'Returns & Refunds | OurBride',
-  description: 'Learn about OurBride return policy, refund process, and exchange information',
-}
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export default function ReturnsPage() {
+  const t = useI18nTranslations('returns')
+  const isRtl = useIsRTL();
+
   return (
     <div className="min-h-screen flex flex-col bg-background-secondary">
       <Header />
@@ -33,12 +33,16 @@ export default function ReturnsPage() {
                   <RotateCcw className="h-6 w-6 text-brand-500" />
                 </div>
                 <Typography variant="h1" className="text-24 md:text-32 font-normal">
-                  Returns & Refunds
+                  {t('pageTitle')}
                 </Typography>
               </div>
               <div className="w-20 h-1 bg-brand-500 mx-auto md:mx-0" />
-              <Typography variant="bodyLarge" textColor="secondary" className="mt-4 max-w-2xl">
-                Simple and hassle-free return process for your peace of mind
+              <Typography
+                variant="bodyLarge"
+                textColor="secondary"
+                className={cn("mt-4 max-w-2xl", isRtl ? "text-right" : "text-left")}
+              >
+                {t('pageSubtitle')}
               </Typography>
             </div>
 
@@ -51,38 +55,39 @@ export default function ReturnsPage() {
                       <FileText className="h-5 w-5 text-blue-600" />
                     </div>
                     <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Return Policy
+                      {t('policy.title')}
                     </Typography>
                   </div>
                   <div className="space-y-6">
                     <CardWrapper className="bg-blue-50 border-blue-100" padding="sm">
-                        <Typography variant="body" className="leading-relaxed">
-                          We want you to be completely satisfied with your purchase. If you&apos;re not happy with your order, 
-                          you can return most items within <span className="font-semibold text-gray-900">30 days</span> of delivery for a full refund or exchange.
+                        <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                          {t('policy.introPrefix')}{' '}
+                          <span className="font-semibold text-gray-900">{t('policy.introHighlight')}</span>{' '}
+                          {t('policy.introSuffix')}
                         </Typography>
                     </CardWrapper>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <CardWrapper className="bg-green-50 border-green-100" padding="sm">
                           <div className="flex items-center gap-2 mb-3">
                             <CheckCircle2 className="h-5 w-5 text-green-600" />
-                            <Typography variant="h5">Eligible Items</Typography>
+                            <Typography variant="h5">{t('policy.eligible.title')}</Typography>
                           </div>
                           <ul className="list-disc list-inside space-y-1.5 ml-2">
-                            <li><Typography variant="bodySmall" as="span">Unused and in original condition</Typography></li>
-                            <li><Typography variant="bodySmall" as="span">Original packaging and tags included</Typography></li>
-                            <li><Typography variant="bodySmall" as="span">Proof of purchase required</Typography></li>
+                            <li><Typography variant="bodySmall" as="span">{t('policy.eligible.bullets.unused')}</Typography></li>
+                            <li><Typography variant="bodySmall" as="span">{t('policy.eligible.bullets.packaging')}</Typography></li>
+                            <li><Typography variant="bodySmall" as="span">{t('policy.eligible.bullets.proof')}</Typography></li>
                           </ul>
                       </CardWrapper>
                       <CardWrapper className="bg-red-50 border-red-100" padding="sm">
                           <div className="flex items-center gap-2 mb-3">
                             <XCircle className="h-5 w-5 text-red-600" />
-                            <Typography variant="h5">Non-Returnable</Typography>
+                            <Typography variant="h5">{t('policy.nonReturnable.title')}</Typography>
                           </div>
                           <ul className="list-disc list-inside space-y-1.5 ml-2">
-                            <li><Typography variant="bodySmall" as="span">Personalized or customized items</Typography></li>
-                            <li><Typography variant="bodySmall" as="span">Perishable goods</Typography></li>
-                            <li><Typography variant="bodySmall" as="span">Items damaged by misuse</Typography></li>
-                            <li><Typography variant="bodySmall" as="span">Digital products or services</Typography></li>
+                            <li><Typography variant="bodySmall" as="span">{t('policy.nonReturnable.bullets.personalized')}</Typography></li>
+                            <li><Typography variant="bodySmall" as="span">{t('policy.nonReturnable.bullets.perishable')}</Typography></li>
+                            <li><Typography variant="bodySmall" as="span">{t('policy.nonReturnable.bullets.misuse')}</Typography></li>
+                            <li><Typography variant="bodySmall" as="span">{t('policy.nonReturnable.bullets.digital')}</Typography></li>
                           </ul>
                       </CardWrapper>
                     </div>
@@ -96,7 +101,7 @@ export default function ReturnsPage() {
                       <RotateCcw className="h-5 w-5 text-purple-600" />
                     </div>
                     <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      How to Return an Item
+                      {t('process.title')}
                     </Typography>
                   </div>
                   <div className="space-y-4">
@@ -105,10 +110,11 @@ export default function ReturnsPage() {
                         1
                       </div>
                       <div className="flex-1">
-                        <Typography variant="h5" className="mb-2">Initiate Return</Typography>
-                        <Typography variant="body" className="leading-relaxed">
-                          Go to your <a href="/orders" className="text-brand-500 hover:text-brand-600 underline font-medium">Orders</a> page, 
-                          select the item you want to return, and click &quot;Request Return&quot;.
+                        <Typography variant="h5" className={cn("mb-2", isRtl ? "text-right" : "text-left")}>{t('process.steps.1.title')}</Typography>
+                        <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                          {t('process.steps.1.p1Prefix')}
+                          <a href="/orders" className="text-brand-500 hover:text-brand-600 underline font-medium">{t('process.steps.1.ordersLinkText')}</a>{' '}
+                          {t('process.steps.1.p1Suffix')}
                         </Typography>
                       </div>
                     </div>
@@ -117,9 +123,9 @@ export default function ReturnsPage() {
                         2
                       </div>
                       <div className="flex-1">
-                        <Typography variant="h5" className="mb-2">Get Return Authorization</Typography>
-                        <Typography variant="body" className="leading-relaxed">
-                          Once approved, you&apos;ll receive a return authorization and shipping label via email.
+                        <Typography variant="h5" className={cn("mb-2", isRtl ? "text-right" : "text-left")}>{t('process.steps.2.title')}</Typography>
+                        <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                          {t('process.steps.2.desc')}
                         </Typography>
                       </div>
                     </div>
@@ -128,10 +134,9 @@ export default function ReturnsPage() {
                         3
                       </div>
                       <div className="flex-1">
-                        <Typography variant="h5" className="mb-2">Package & Ship</Typography>
-                        <Typography variant="body" className="leading-relaxed">
-                          Package the item securely with all original packaging and tags, attach the return label, 
-                          and ship it back to us.
+                        <Typography variant="h5" className={cn("mb-2", isRtl ? "text-right" : "text-left")}>{t('process.steps.3.title')}</Typography>
+                        <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                          {t('process.steps.3.desc')}
                         </Typography>
                       </div>
                     </div>
@@ -140,10 +145,9 @@ export default function ReturnsPage() {
                         4
                       </div>
                       <div className="flex-1">
-                        <Typography variant="h5" className="mb-2">Receive Refund</Typography>
-                        <Typography variant="body" className="leading-relaxed">
-                          Once we receive and inspect your return, we&apos;ll process your refund to the original 
-                          payment method within 5-10 business days.
+                        <Typography variant="h5" className={cn("mb-2", isRtl ? "text-right" : "text-left")}>{t('process.steps.4.title')}</Typography>
+                        <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                          {t('process.steps.4.desc')}
                         </Typography>
                       </div>
                     </div>
@@ -157,23 +161,20 @@ export default function ReturnsPage() {
                       <DollarSign className="h-5 w-5 text-green-600" />
                     </div>
                     <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Refund Information
+                      {t('refund.title')}
                     </Typography>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <Typography variant="h5" className="mb-2">Refund Processing Time</Typography>
-                      <Typography variant="body" className="leading-relaxed">
-                        Refunds are typically processed within 5-10 business days after we receive your return. 
-                        The time it takes for the refund to appear in your account depends on your payment method 
-                        and financial institution.
+                      <Typography variant="h5" className={cn("mb-2", isRtl ? "text-right" : "text-left")}>{t('refund.processing.title')}</Typography>
+                      <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                        {t('refund.processing.desc')}
                       </Typography>
                     </div>
                     <div>
-                      <Typography variant="h5" className="mb-2">Shipping Costs</Typography>
-                      <Typography variant="body" className="leading-relaxed">
-                        Original shipping costs are non-refundable unless the item was defective or we made an error. 
-                        Return shipping costs are the responsibility of the customer unless the return is due to our error.
+                      <Typography variant="h5" className={cn("mb-2", isRtl ? "text-right" : "text-left")}>{t('refund.shippingCosts.title')}</Typography>
+                      <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                        {t('refund.shippingCosts.desc')}
                       </Typography>
                     </div>
                   </div>
@@ -186,15 +187,14 @@ export default function ReturnsPage() {
                       <RefreshCw className="h-5 w-5 text-indigo-600" />
                     </div>
                     <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Exchanges
+                      {t('exchanges.title')}
                     </Typography>
                   </div>
-                  <Typography variant="body" className="mb-4 leading-relaxed">
-                    If you need a different size, color, or style, you can request an exchange during the return process. 
-                    Exchanges are subject to product availability.
+                  <Typography variant="body" className={cn("mb-4 leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                    {t('exchanges.p1')}
                   </Typography>
-                  <Typography variant="body" className="leading-relaxed">
-                    If the item you want is not available, we&apos;ll process a refund instead.
+                  <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                    {t('exchanges.p2')}
                   </Typography>
               </CardWrapper>
 
@@ -205,15 +205,14 @@ export default function ReturnsPage() {
                       <AlertCircle className="h-5 w-5 text-red-600" />
                     </div>
                     <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Damaged or Defective Items
+                      {t('damaged.title')}
                     </Typography>
                   </div>
-                  <Typography variant="body" className="mb-4 leading-relaxed">
-                    If you receive a damaged or defective item, please contact us immediately. We&apos;ll arrange for 
-                    a replacement or full refund, including return shipping costs.
+                  <Typography variant="body" className={cn("mb-4 leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                    {t('damaged.p1')}
                   </Typography>
-                  <Typography variant="body" className="leading-relaxed">
-                    Please take photos of the damaged item and packaging to help us process your claim faster.
+                  <Typography variant="body" className={cn("leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                    {t('damaged.p2')}
                   </Typography>
               </CardWrapper>
 
@@ -224,11 +223,11 @@ export default function ReturnsPage() {
                       <HelpCircle className="h-5 w-5 text-white" />
                     </div>
                     <Typography variant="h3" className="text-20 md:text-24 font-normal">
-                      Need Help with Returns?
+                      {t('contact.title')}
                     </Typography>
                   </div>
-                  <Typography variant="body" className="mb-4 leading-relaxed">
-                    If you have questions about returns or need assistance, we&apos;re here to help.
+                  <Typography variant="body" className={cn("mb-4 leading-relaxed", isRtl ? "text-right" : "text-left")}>
+                    {t('contact.desc')}
                   </Typography>
                   <Button
                     variant="outline"
@@ -238,7 +237,7 @@ export default function ReturnsPage() {
                   >
                     <a href="/dashboard/help-center">
                       <HelpCircle className="h-4 w-4 mr-2" />
-                      Visit Help Center
+                      {t('contact.helpCta')}
                     </a>
                   </Button>
               </CardWrapper>

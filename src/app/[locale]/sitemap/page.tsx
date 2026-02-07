@@ -1,8 +1,9 @@
+'use client'
+
 import { Link } from '@/i18n/navigation'
 import { Header } from '@/components/layout'
 import { Footer } from '@/components/layout'
 import { Typography, CardWrapper } from '@/components/ui'
-import type { Metadata } from 'next'
 import {
   Home,
   User,
@@ -13,99 +14,99 @@ import {
   Settings,
   ChevronRight,
 } from 'lucide-react'
-
-export const metadata: Metadata = {
-  title: 'Sitemap | OurBride',
-  description: 'Browse all pages and sections of OurBride website',
-}
+import { cn } from '@/lib/utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export default function SitemapPage() {
+  const t = useI18nTranslations('sitemap')
+  const isRtl = useIsRTL();
+
   const sitemapSections = [
     {
-      title: 'Main Pages',
+      title: t('sections.main.title'),
       icon: Home,
       iconColor: 'bg-blue-100 text-blue-600',
       links: [
-        { label: 'Home', href: '/' },
-        { label: 'Products', href: '/products' },
-        { label: 'Services', href: '/services' },
-        { label: 'Community', href: '/community' },
+        { label: t('sections.main.links.home'), href: '/' },
+        { label: t('sections.main.links.products'), href: '/products' },
+        { label: t('sections.main.links.services'), href: '/services' },
+        { label: t('sections.main.links.community'), href: '/community' },
       ],
     },
     {
-      title: 'Account',
+      title: t('sections.account.title'),
       icon: User,
       iconColor: 'bg-purple-100 text-purple-600',
       links: [
-        { label: 'Profile', href: '/profile' },
-        { label: 'Orders', href: '/orders' },
-        { label: 'Cart', href: '/cart' },
-        { label: 'Wishlist', href: '/wishlist' },
-        { label: 'Favorites', href: '/favorites' },
-        { label: 'Messages', href: '/messages' },
-        { label: 'Notifications', href: '/notifications' },
+        { label: t('sections.account.links.profile'), href: '/profile' },
+        { label: t('sections.account.links.orders'), href: '/orders' },
+        { label: t('sections.account.links.cart'), href: '/cart' },
+        { label: t('sections.account.links.wishlist'), href: '/wishlist' },
+        { label: t('sections.account.links.favorites'), href: '/favorites' },
+        { label: t('sections.account.links.messages'), href: '/messages' },
+        { label: t('sections.account.links.notifications'), href: '/notifications' },
       ],
     },
     {
-      title: 'Wedding Planning',
+      title: t('sections.wedding.title'),
       icon: Calendar,
       iconColor: 'bg-pink-100 text-pink-600',
       links: [
-        { label: 'Events', href: '/events' },
-        { label: 'My Events', href: '/dashboard/my-events' },
-        { label: 'Calendar', href: '/dashboard/calendar' },
-        { label: 'Budget Planning', href: '/events/planning/budget' },
-        { label: 'Guest List', href: '/events/planning/events' },
-        { label: 'To-Do List', href: '/events/planning/todo' },
+        { label: t('sections.wedding.links.events'), href: '/events' },
+        { label: t('sections.wedding.links.myEvents'), href: '/dashboard/my-events' },
+        { label: t('sections.wedding.links.calendar'), href: '/dashboard/calendar' },
+        { label: t('sections.wedding.links.budget'), href: '/events/planning/budget' },
+        { label: t('sections.wedding.links.guestList'), href: '/events/planning/events' },
+        { label: t('sections.wedding.links.todo'), href: '/events/planning/todo' },
       ],
     },
     {
-      title: 'Community',
+      title: t('sections.community.title'),
       icon: Users,
       iconColor: 'bg-green-100 text-green-600',
       links: [
-        { label: 'Posts', href: '/community?tab=posts' },
-        { label: 'Blogs', href: '/community?tab=blogs' },
-        { label: 'Articles', href: '/community?tab=articles' },
-        { label: 'Reels', href: '/community?tab=reels' },
-        { label: 'Decision Groups', href: '/community?tab=decision-groups' },
-        { label: 'Contests', href: '/community?tab=contests' },
+        { label: t('sections.community.links.posts'), href: '/community?tab=posts' },
+        { label: t('sections.community.links.blogs'), href: '/community?tab=blogs' },
+        { label: t('sections.community.links.articles'), href: '/community?tab=articles' },
+        { label: t('sections.community.links.reels'), href: '/community?tab=reels' },
+        { label: t('sections.community.links.decisionGroups'), href: '/community?tab=decision-groups' },
+        { label: t('sections.community.links.contests'), href: '/community?tab=contests' },
       ],
     },
     {
-      title: 'Gift Center',
+      title: t('sections.gift.title'),
       icon: Gift,
       iconColor: 'bg-yellow-100 text-yellow-600',
       links: [
-        { label: 'Gift Center', href: '/dashboard/gift-center' },
-        { label: 'Coupons', href: '/dashboard/gift-center/coupons' },
-        { label: 'Offers', href: '/dashboard/gift-center/offers' },
-        { label: 'Rewards', href: '/dashboard/gift-center/rewards' },
-        { label: 'Ranking', href: '/dashboard/gift-center/ranking' },
+        { label: t('sections.gift.links.giftCenter'), href: '/dashboard/gift-center' },
+        { label: t('sections.gift.links.coupons'), href: '/dashboard/gift-center/coupons' },
+        { label: t('sections.gift.links.offers'), href: '/dashboard/gift-center/offers' },
+        { label: t('sections.gift.links.rewards'), href: '/dashboard/gift-center/rewards' },
+        { label: t('sections.gift.links.ranking'), href: '/dashboard/gift-center/ranking' },
       ],
     },
     {
-      title: 'Support & Information',
+      title: t('sections.support.title'),
       icon: HelpCircle,
       iconColor: 'bg-indigo-100 text-indigo-600',
       links: [
-        { label: 'Help Center', href: '/dashboard/help-center' },
-        { label: 'About Us', href: '/about' },
-        { label: 'Shipping', href: '/shipping' },
-        { label: 'Returns', href: '/returns' },
-        { label: 'Download App', href: '/download-app' },
-        { label: 'Sitemap', href: '/sitemap' },
+        { label: t('sections.support.links.helpCenter'), href: '/dashboard/help-center' },
+        { label: t('sections.support.links.about'), href: '/about' },
+        { label: t('sections.support.links.shipping'), href: '/shipping' },
+        { label: t('sections.support.links.returns'), href: '/returns' },
+        { label: t('sections.support.links.downloadApp'), href: '/download-app' },
+        { label: t('sections.support.links.sitemap'), href: '/sitemap' },
       ],
     },
     {
-      title: 'Settings',
+      title: t('sections.settings.title'),
       icon: Settings,
       iconColor: 'bg-gray-100 text-gray-600',
       links: [
-        { label: 'Settings', href: '/dashboard/settings' },
-        { label: 'Privacy', href: '/dashboard/settings/privacy' },
-        { label: 'Terms', href: '/dashboard/settings/terms' },
-        { label: 'Community Settings', href: '/dashboard/settings/community' },
+        { label: t('sections.settings.links.settings'), href: '/dashboard/settings' },
+        { label: t('sections.settings.links.privacy'), href: '/dashboard/settings/privacy' },
+        { label: t('sections.settings.links.terms'), href: '/dashboard/settings/terms' },
+        { label: t('sections.settings.links.communitySettings'), href: '/dashboard/settings/community' },
       ],
     },
   ]
@@ -122,13 +123,17 @@ export default function SitemapPage() {
                 <div className="w-12 h-12 rounded-full bg-brand-50 flex items-center justify-center">
                   <Settings className="h-6 w-6 text-brand-500" />
                 </div>
-                <Typography variant="h1" className="text-24 md:text-32 font-normal">
-                  Sitemap
+                <Typography variant="h1" className={cn("text-24 md:text-32 font-normal", isRtl ? "text-right" : "text-left")}>
+                  {t('pageTitle')}
                 </Typography>
               </div>
               <div className="w-20 h-1 bg-brand-500 mx-auto md:mx-0" />
-              <Typography variant="bodyLarge" textColor="secondary" className="mt-4 max-w-2xl">
-                Find all pages and sections of OurBride
+              <Typography
+                variant="bodyLarge"
+                textColor="secondary"
+                className={cn("mt-4 max-w-2xl", isRtl ? "text-right" : "text-left")}
+              >
+                {t('pageSubtitle')}
               </Typography>
             </div>
 
@@ -146,7 +151,10 @@ export default function SitemapPage() {
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${section.iconColor}`}>
                         <Icon className="h-5 w-5" />
                       </div>
-                      <Typography variant="h3" className="text-18 md:text-20 font-normal">
+                      <Typography
+                        variant="h3"
+                        className={cn("text-18 md:text-20 font-normal", isRtl ? "text-right" : "text-left")}
+                      >
                         {section.title}
                       </Typography>
                     </div>
@@ -158,7 +166,13 @@ export default function SitemapPage() {
                             className="flex items-center gap-2 text-14 md:text-16 text-gray-700 hover:text-brand-500 transition-colors group"
                           >
                             <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-brand-500 transition-colors" />
-                            <Typography variant="body" as="span">{link.label}</Typography>
+                            <Typography
+                              variant="body"
+                              as="span"
+                              className={cn(isRtl ? "text-right" : "text-left")}
+                            >
+                              {link.label}
+                            </Typography>
                           </Link>
                         </li>
                       ))}
@@ -174,4 +188,3 @@ export default function SitemapPage() {
     </div>
   )
 }
-

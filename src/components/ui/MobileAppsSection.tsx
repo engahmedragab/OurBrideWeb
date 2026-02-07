@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { StoreBadges } from './StoreBadges'
 import { QRCode } from './QRCode'
 import { cn } from '@/lib/utils'
+import { useI18nTranslations, useIsRTL } from '@/i18n'
 
 export interface MobileAppCardProps {
   title: string
@@ -29,6 +30,9 @@ const MobileAppCard = ({
   mockupImage,
   className,
 }: MobileAppCardProps) => {
+  const t = useI18nTranslations('mobileApps')
+  const isRtl = useIsRTL();
+
   return (
     <div
       className={cn(
@@ -39,19 +43,21 @@ const MobileAppCard = ({
     >
       {/* Available on */}
       <div className="mb-4">
-        <p className="text-14 text-gray-700 mb-3 font-medium">Available on</p>
+        <p className={cn("text-14 text-gray-700 mb-3 font-medium", isRtl ? "text-right" : "text-left")}>
+          {t('availableOn')}
+        </p>
         <div className="flex items-center gap-2">
           <StoreBadges size="sm" appStoreUrl={appStoreUrl} playStoreUrl={playStoreUrl} />
         </div>
       </div>
 
       {/* Title */}
-      <h3 className="text-24 md:text-32 lg:text-40 font-bold text-gray-900 mb-4 leading-tight">
+      <h3 className={cn("text-24 md:text-32 lg:text-40 font-bold text-gray-900 mb-4 leading-tight", isRtl ? "text-right" : "text-left")}>
         {title}
       </h3>
 
       {/* Description */}
-      <p className="text-16 md:text-18 text-gray-700 mb-8 leading-relaxed">
+      <p className={cn("text-16 md:text-18 text-gray-700 mb-8 leading-relaxed", isRtl ? "text-right" : "text-left")}>
         {description}
       </p>
 
@@ -117,16 +123,19 @@ export const MobileAppsSection = ({
   customerMockupImage,
   professionalMockupImage,
 }: MobileAppsSectionProps) => {
+  const t = useI18nTranslations('mobileApps')
+  const isRtl = useIsRTL();
+
   return (
     <section className={cn('py-12 sm:py-16 md:py-20 bg-white', className)}>
       <div className="container-custom">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-32 sm:text-40 md:text-48 font-bold text-gray-900 mb-4">
-            Download our mobile apps
+          <h2 className={cn("text-32 sm:text-40 md:text-48 font-bold text-gray-900 mb-4")}>
+            {t('sectionTitle')}
           </h2>
-          <p className="text-16 sm:text-18 md:text-20 text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Book unforgettable beauty and wellness experiences with our mobile app, or run your business with our powerful, award-winning iOS and Android booking platform.
+          <p className={cn("text-16 sm:text-18 md:text-20 text-gray-600 max-w-3xl mx-auto leading-relaxed")}>
+            {t('sectionDesc')}
           </p>
         </div>
 
@@ -134,8 +143,8 @@ export const MobileAppsSection = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {/* Customer App Card */}
           <MobileAppCard
-            title="Booking app for customers"
-            description="Book unforgettable beauty and wellness experiences with the OurBride mobile app - the best way to discover top-rated salons and spas."
+            title={t('customer.title')}
+            description={t('customer.desc')}
             gradientFrom="from-purple-400"
             gradientTo="to-blue-500"
             appStoreUrl={customerAppStoreUrl}
@@ -146,8 +155,8 @@ export const MobileAppsSection = ({
 
           {/* Professional App Card */}
           <MobileAppCard
-            title="Booking app for professionals"
-            description="Get started with the OurBride for professionals and never miss an opportunity to connect with customers and build your business."
+            title={t('professional.title')}
+            description={t('professional.desc')}
             gradientFrom="from-green-400"
             gradientTo="to-yellow-400"
             appStoreUrl={professionalAppStoreUrl}
@@ -160,4 +169,3 @@ export const MobileAppsSection = ({
     </section>
   )
 }
-
