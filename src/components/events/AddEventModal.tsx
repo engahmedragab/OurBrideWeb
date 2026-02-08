@@ -1,11 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Modal } from '@/components/ui'
-import { Input } from '@/components/ui'
-import { Button } from '@/components/ui'
-import { Textarea } from '@/components/ui'
-import { DatePicker } from '@/components/ui'
+import { Modal, Input, Button, Textarea, DatePicker, TimePicker } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import type { WeddingEventCreateRequest } from '@/../client/common/api/gen/ourbride-api'
 import { useI18nTranslations } from '@/i18n/hooks'
@@ -135,12 +131,11 @@ export const AddEventModal = ({
               />
             </div>
             <div className="w-32">
-              <Input
-                type="time"
+              <TimePicker
                 value={startTime}
-                onChange={e => setStartTime(e.target.value)}
+                onChange={setStartTime}
                 placeholder={t('modal.placeholders.time')}
-                className="h-auto px-4 py-3 text-14"
+                size="md"
               />
             </div>
           </div>
@@ -161,12 +156,11 @@ export const AddEventModal = ({
               />
             </div>
             <div className="w-32">
-              <Input
-                type="time"
+              <TimePicker
                 value={endTime}
-                onChange={e => setEndTime(e.target.value)}
+                onChange={setEndTime}
                 placeholder={t('modal.placeholders.time')}
-                className="h-auto px-4 py-3 text-14"
+                size="md"
               />
             </div>
           </div>

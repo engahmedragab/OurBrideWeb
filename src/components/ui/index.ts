@@ -250,6 +250,9 @@ export type { CalendarProps } from './Calendar'
 export { DatePicker } from './DatePicker'
 export type { DatePickerProps } from './DatePicker'
 
+export { TimePicker } from './TimePicker'
+export type { TimePickerProps } from './TimePicker'
+
 export { RequestCard } from './RequestCard'
 export type { RequestCardProps, ServiceRequest } from './RequestCard'
 
